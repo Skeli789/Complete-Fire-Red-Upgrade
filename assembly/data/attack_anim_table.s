@@ -10251,47 +10251,38 @@ TW_GREENWHEEL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF
 TW_ROTATINGHITS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x83E741C 0x80B477D
 TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA6C9
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to BadgerLordZeus
+@Credit to Skeli
 ANIM_PARABOLICCHARGE:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x6 0xe12
-	waitanimation
 	loadparticle ANIM_TAG_ELECTRIC_ORBS
-	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
-	loadparticle ANIM_TAG_SPARK
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_BLUE_STAR
 	loadparticle ANIM_TAG_LIGHTNING
 	pokespritetoBG bank_attacker
 	setblends 0x80c
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x6 0xe12
+	waitanimation
 	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x14 0x0 0x2
 	playsound2 0xce SOUND_PAN_ATTACKER
-	pause 0xc
-	launchtemplate 0x83e6290 0x2 0x0
-	pause 0x1e
-	launchtask 0x80aece1 0x5 0x0
-	pause 0xc
 	waitanimation
-	launchtask 0x80aefa1 0x5 0x0
+	launchtask AnimTask_TargetedLightning 0x5 0x1 bank_target
+	launchtask AnimTask_TargetedLightning 0x5 0x1 target_partner
+	launchtask AnimTask_TargetedLightning 0x5 0x1 attacker_partner
 	playsound2 0xd6 SOUND_PAN_TARGET
-	waitanimation
-	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x0 0x6 0x12 0x1
-	launchtask AnimTask_pal_fade 0x5 0x5 0x4 0x0 0x10 0x10 0x0
+	pause 0x8
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x6 0x12 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x6 0x12 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 attacker_partner 0x0 0x6 0x12 0x1
+	launchtask AnimTask_pal_fade 0x5 0x5 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x0 0x10 0x10 0x0
 	pause 0x4
-	launchtask AnimTask_pal_fade 0x5 0x5 0x4 0x0 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0x5 0x5 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x0 0x0 0x0 0x0
 	waitanimation
-	pokespritefromBG bank_attacker
-	resetblends
-	loadparticle ANIM_TAG_ORBS
-	loadparticle ANIM_TAG_BLUE_STAR
-	waitanimation
-	pokespritefromBG side_attacker
-	resetblends
-	pause 0x1
+	pause 0x4
 	call HEALING_ANIM
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x6 0x0 0xe12
 	waitanimation
-	pokespritefromBG side_target
+	pokespritefromBG bank_attacker
 	resetblends
 	endanimation
 

@@ -439,6 +439,7 @@ u8 __attribute__((long_call)) LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8
 u8 __attribute__((long_call)) LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
 void __attribute__((long_call)) SpriteCB_ThrowBallMovement(struct Sprite *sprite);
 void __attribute__((long_call)) CompleteOnSpecialAnimDone(void);
+bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 taskId);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

@@ -624,6 +624,7 @@ GetBattlerSpriteBGPriority = 0x8076884 | 1;
 GetBattlerSpriteCoordAttr = 0x8076B2C | 1;
 SetAverageBattlerPositions = 0x8076D9C | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
+CreateShockWaveLightning = 0x80AF058 | 1;
 AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
 SpriteCB_SpiderWeb = 0x80B42C1 | 1;
 SpriteCB_AnimMissileArcStep = 0x80B4510 | 1;

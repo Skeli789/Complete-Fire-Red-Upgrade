@@ -367,13 +367,13 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_HydroCannonBall[] =
 
 static const union AffineAnimCmd sSpriteAffineAnim_AuraSphereBall[] =
 {
-    AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start at 1 pixel
-    AFFINEANIMCMD_FRAME(16, 16, 0, 15),
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start at 1 pixel
+	AFFINEANIMCMD_FRAME(16, 16, 0, 15),
 
 	//Pulsate
-    AFFINEANIMCMD_FRAME(-8, -8, 10, 3), //Shrink & Spin
+	AFFINEANIMCMD_FRAME(-8, -8, 10, 3), //Shrink & Spin
 	AFFINEANIMCMD_FRAME(8, 8, 10, 3), //Grow & Spin
-    AFFINEANIMCMD_JUMP(2),
+	AFFINEANIMCMD_JUMP(2),
 };
 
 const union AffineAnimCmd* const gSpriteAffineAnimTable_AuraSphereBall[] =
@@ -1031,28 +1031,28 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix(struct Sprite *sprite)
 {
-    bool8 v1;
-    u8 coordType;
+	bool8 v1;
+	u8 coordType;
 
-    if (!(gBattleAnimArgs[5] & 0xff00))
-        v1 = TRUE;
-    else
-        v1 = FALSE;
+	if (!(gBattleAnimArgs[5] & 0xff00))
+		v1 = TRUE;
+	else
+		v1 = FALSE;
 
-    if (!(gBattleAnimArgs[5] & 0xff))
-        coordType = BATTLER_COORD_Y_PIC_OFFSET;
-    else
-        coordType = BATTLER_COORD_Y;
+	if (!(gBattleAnimArgs[5] & 0xff))
+		coordType = BATTLER_COORD_Y_PIC_OFFSET;
+	else
+		coordType = BATTLER_COORD_Y;
 
-    InitSpritePosToAnimAttacker(sprite, v1);
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+	InitSpritePosToAnimAttacker(sprite, v1);
+	if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 
-    sprite->data[0] = gBattleAnimArgs[4];
-    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
-    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, coordType) + gBattleAnimArgs[3];
-    sprite->callback = StartAnimLinearTranslation;
-    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, coordType) + gBattleAnimArgs[3];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
 }
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite)
@@ -2241,26 +2241,26 @@ void SpriteCB_SurroundingRing(struct Sprite *sprite)
 	sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 0);
 	sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 1) + 40;
 
-    sprite->data[0] = 13;
-    sprite->data[2] = sprite->pos1.x;
-    sprite->data[4] = sprite->pos1.y - 72;
+	sprite->data[0] = 13;
+	sprite->data[2] = sprite->pos1.x;
+	sprite->data[4] = sprite->pos1.y - 72;
 
-    sprite->callback = StartAnimLinearTranslation;
-    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 void SpriteCB_ToxicThreadWrap(struct Sprite *sprite)
 {
-    if (SIDE(gBattleAnimAttacker) != B_SIDE_PLAYER)
-        sprite->pos1.x -= gBattleAnimArgs[0];
-    else
-        sprite->pos1.x += gBattleAnimArgs[0];
+	if (SIDE(gBattleAnimAttacker) != B_SIDE_PLAYER)
+		sprite->pos1.x -= gBattleAnimArgs[0];
+	else
+		sprite->pos1.x += gBattleAnimArgs[0];
 
-    sprite->pos1.y += gBattleAnimArgs[1];
-    if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
-        sprite->pos1.y += 8;
+	sprite->pos1.y += gBattleAnimArgs[1];
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+		sprite->pos1.y += 8;
 
-    sprite->callback = (void*) (0x80B4274 | 1);
+	sprite->callback = (void*) (0x80B4274 | 1);
 }
 
 void SpriteCB_HorizontalSliceStep(struct Sprite *sprite)
@@ -2300,19 +2300,19 @@ void SpriteCB_HorizontalSlice(struct Sprite *sprite)
 //arg 2: Target
 void SpriteCB_BlockXOnTarget(struct Sprite *sprite)
 {
-    s16 y;
+	s16 y;
 	u8 target = LoadBattleAnimTarget(2);
 
-    if (SIDE(target) == B_SIDE_PLAYER)
-    {
-        sprite->subpriority = GetBattlerSpriteSubpriority(target) - 2;
-        y = -144;
-    }
-    else
-    {
-        sprite->subpriority = GetBattlerSpriteSubpriority(target) + 2;
-        y = -96;
-    }
+	if (SIDE(target) == B_SIDE_PLAYER)
+	{
+		sprite->subpriority = GetBattlerSpriteSubpriority(target) - 2;
+		y = -144;
+	}
+	else
+	{
+		sprite->subpriority = GetBattlerSpriteSubpriority(target) + 2;
+		y = -96;
+	}
 
 	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
@@ -2321,6 +2321,44 @@ void SpriteCB_BlockXOnTarget(struct Sprite *sprite)
 		InitSpritePosToGivenTarget(sprite, target);
 		sprite->pos2.y = y;
 		sprite->callback = (void*) (0x80E3534 | 1); //AnimBlockX_Step;
+	}
+}
+
+//Creates a bolt of lightning on the designated target
+//arg 0: Target
+void AnimTask_TargetedLightning(u8 taskId)
+{
+	struct Task *task = &gTasks[taskId];
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+	{
+		DestroyAnimVisualTask(taskId);
+		return;
+	}
+
+	switch (task->data[0]) {
+		case 0:
+			task->data[15] = GetBattlerSpriteCoord(target, BATTLER_COORD_Y) + 32;
+			task->data[14] = task->data[15];
+			while (task->data[14] > 16)
+				task->data[14] -= 32;
+			task->data[13] = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2);
+			task->data[12] = GetBattlerSpriteSubpriority(target) - 2;
+			++task->data[0];
+			break;
+		case 1:
+			if (++task->data[1] > 1)
+			{
+				task->data[1] = 0;
+				if (CreateShockWaveLightning(task, taskId))
+					++task->data[0];
+			}
+			break;
+		case 2:
+			if (task->data[10] == 0)
+				DestroyAnimVisualTask(taskId);
+			break;
 	}
 }
 
@@ -2556,7 +2594,7 @@ void SpriteCB_Geyser(struct Sprite* sprite)
 //Animates the beam of light
 void SpriteCB_BeamUpStep(struct Sprite* sprite)
 {
-    if (sprite->data[1]-- == 0)
+	if (sprite->data[1]-- == 0)
 		StartSpriteAffineAnim(sprite, 1);
 
 	if (sprite->data[0]-- <= 0)
@@ -2733,14 +2771,14 @@ void SpriteCB_MaxWyrmwindTornado(struct Sprite* sprite)
 
 void SpriteCB_RolloutExplosion(struct Sprite *sprite)
 {
-    if (TranslateAnimHorizontalArc(sprite))
-    {
+	if (TranslateAnimHorizontalArc(sprite))
+	{
 		//u8 taskId = FindTaskIdByFunc((void*) 0x80B4D01); //AnimTask_RolloutRocksStep
 		//if (taskId != 0xFF && gTasks[taskId].data[11] > 0)
 		//	gTasks[taskId].data[11]--;
 
 		DestroySprite(sprite);
-    }
+	}
 }
 
 //Anim Tasks//
