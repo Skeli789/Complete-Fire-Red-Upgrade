@@ -547,6 +547,7 @@ def main():
                         continue
 
                     try:
+                        eventId = -1  # Reset just in case of error
                         if len(line.split()) == 4 or len(line.split()) == 5:
                             if len(line.split()) == 5:
                                 eventType, mapBank, mapNum, eventId, symbol = line.split()
@@ -571,6 +572,8 @@ def main():
                             if eventType == "map":
                                 offset = mapHeader + 0x8
                             elif eventType == "npc":
+                                if eventId < 0:
+                                    raise(OSError)
                                 if dictId not in npcTables:
                                     rom.seek(mapHeader + 0x4)
                                     eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
@@ -583,6 +586,8 @@ def main():
                                 offset = npcTable + eventId * 0x18 + 0x10
 
                             elif eventType == "tile":
+                                if eventId < 0:
+                                    raise(OSError)
                                 if dictId not in tileTables:
                                     rom.seek(mapHeader + 0x4)
                                     eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
@@ -595,6 +600,8 @@ def main():
                                 offset = tileTable + eventId * length + 0xC
 
                             elif eventType == "sign":
+                                if eventId < 0:
+                                    raise(OSError)
                                 if dictId not in signTables:
                                     rom.seek(mapHeader + 0x4)
                                     eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
