@@ -1108,6 +1108,37 @@ bool8 IsMockBattle(void)
 	return (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
 }
 
+bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
+{
+	if (SPLIT(move) != SPLIT_STATUS
+	&& !IsAnyMaxMove(move)
+	&& !CheckTableForMove(move, gParentalBondBannedMoves)
+	&& !IsTwoTurnsMove(move)
+	&& gBattleMoves[move].effect != EFFECT_0HKO
+	&& gBattleMoves[move].effect != EFFECT_MULTI_HIT
+	&& gBattleMoves[move].effect != EFFECT_TRIPLE_KICK
+	&& gBattleMoves[move].effect != EFFECT_DOUBLE_HIT)
+	{
+		if (IS_DOUBLE_BATTLE)
+		{
+			switch (gBattleMoves[move].target) {
+				case MOVE_TARGET_BOTH:
+					if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, 0, FOE(bankAtk)) >= 2) //Check for single target
+						return FALSE;
+					break;
+				case MOVE_TARGET_FOES_AND_ALLY:
+					if (CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, bankAtk, 0) >= 2) //Count mons on both sides; ignore attacker
+						return FALSE;
+					break;
+			}
+		}
+
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
 u8 CalcMoveSplit(u8 bank, u16 move)
 {
 	if (CheckTableForMove(move, gMovesThatChangePhysicality)

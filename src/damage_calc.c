@@ -367,6 +367,15 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 		damage *= 2;
 		return damage;
 	}
+	else if (ABILITY(bankAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	{
+		#ifdef OLD_PARENTAL_BOND_DAMAGE
+			damage = (damage * 150) / 100; //1.5x overall boost
+		#else
+			damage = (damage * 125) / 100; //1.25x overall boost
+		#endif
+		return damage;
+	}
 
 	//Multi hit moves skip these checks
 	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
@@ -454,7 +463,15 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 		damage *= 2;
 		return damage;
 	}
-
+	else if (GetMonAbility(monAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	{
+		#ifdef OLD_PARENTAL_BOND_DAMAGE
+			damage = (damage * 150) / 100; //1.5x overall boost
+		#else
+			damage = (damage * 125) / 100; //1.25x overall boost
+		#endif
+		return damage;
+	}
 
 	//Multi hit moves skip these checks
 	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
@@ -537,6 +554,15 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	else if (CheckTableForMove(move, gTwoStrikesMoves))
 	{
 		damage *= 2;
+		return damage;
+	}
+	else if (ABILITY(bankAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	{
+		#ifdef OLD_PARENTAL_BOND_DAMAGE
+			damage = (damage * 150) / 100; //1.5x overall boost
+		#else
+			damage = (damage * 125) / 100; //1.25x overall boost
+		#endif
 		return damage;
 	}
 

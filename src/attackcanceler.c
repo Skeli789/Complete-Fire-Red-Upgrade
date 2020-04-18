@@ -87,44 +87,14 @@ void atk00_attackcanceler(void)
 		return;
 
 	else if (!gNewBS->ParentalBondOn
+	&& gNewBS->OriginalAttackerTargetCount == 0
 	&& ABILITY(gBankAttacker) == ABILITY_PARENTALBOND
-	&& SPLIT(gCurrentMove) != SPLIT_STATUS
-	&& !CheckTableForMove(gCurrentMove, gParentalBondBannedMoves)
-	&& !IsTwoTurnsMove(gCurrentMove)
-	&& gBattleMoves[gCurrentMove].effect != EFFECT_MULTI_HIT
-	&& gBattleMoves[gCurrentMove].effect != EFFECT_DOUBLE_HIT
+	&& IsMoveAffectedByParentalBond(gCurrentMove, gBankAttacker)
 	&& !(gAbsentBattlerFlags & gBitTable[gBankTarget]))
 	{
-		if (IS_DOUBLE_BATTLE)
-		{
-			switch (gBattleMoves[gCurrentMove].target) {
-				case MOVE_TARGET_BOTH:
-					if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, FOE(gBankAttacker)) <= 1) //Check for single target
-					{
-						gNewBS->ParentalBondOn = 2;
-						gMultiHitCounter = 2;
-					}
-					break;
-				case MOVE_TARGET_FOES_AND_ALLY:
-					if (CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, gBankAttacker, 0) <= 1) //Count mons on both sides; ignore attacker
-					{
-						gNewBS->ParentalBondOn = 2;
-						gMultiHitCounter = 2;
-					}
-					break;
-				default:
-					gNewBS->ParentalBondOn = 2;
-					gMultiHitCounter = 2;
-			}
-		}
-		else
-		{
-			gNewBS->ParentalBondOn = 2;
-			gMultiHitCounter = 2;
-		}
-
-		if (gNewBS->ParentalBondOn == 2)
-			PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0);
+		gNewBS->ParentalBondOn = 2;
+		gMultiHitCounter = 2;
+		PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0);
 	}
 
 	if (gBattleMons[gBankAttacker].pp[gCurrMovePos] == 0
