@@ -520,8 +520,8 @@ static void PrintInstructions(void)
 	struct TextColor partnerColour =
 	{
 		.bgColor = 0, //Transparent
-		.fgColor = 12, //Black
-		.shadowColor = 11, //Gray
+		.fgColor = 2, //Dark Gray
+		.shadowColor = 3, //Gray
 	};
 
 	struct TextColor colour =
