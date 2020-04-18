@@ -824,6 +824,10 @@ BuyMenuConfirmPurchase = 0x809BE90 | 1;
 RedrawListMenu = 0x8107180 | 1;
 BuyMenuInitWindows = 0x813F66C | 1;
 BuyMenuPrint = 0x813F6F4 | 1;
+PrintMoneyAmountInMoneyBox = 0x809FE40 | 1;
+RemoveMoney = 0x809FDD8 | 1;
+RedrawListMenu = 0x8107180 | 1;
+GetMoney = 0x809FD58 | 1;
 
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;
