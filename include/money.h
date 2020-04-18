@@ -8,10 +8,6 @@ void __attribute__((long_call)) RemoveMoney(u32* moneyPtr, u32 toSub);
 bool8 __attribute__((long_call)) IsEnoughMoney(u32* moneyPtr, u32 cost);
 void __attribute__((long_call)) PrintMoneyAmountInMoneyBox(u8 windowId, int amount, u8 speed);
 
-void __attribute__((long_call)) RemoveMoney(u32* moneyPtr, u32 toSub);
-void __attribute__((long_call)) PrintMoneyAmountInMoneyBox(u8 windowId, int amount, u8 speed);
-u32 __attribute__((long_call)) GetMoney(u32* moneyPtr);
-
 /*
 void SetMoney(u32* moneyPtr, u32 newValue);
 bool8 IsEnoughForCostInVar0x8005(void);
