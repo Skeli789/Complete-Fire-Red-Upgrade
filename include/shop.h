@@ -36,7 +36,8 @@ void __attribute__((long_call)) Task_ReturnToShopMenu(u8 taskId);
 void __attribute__((long_call)) Task_BuyMenu(u8 taskId);
 void __attribute__((long_call)) Task_SellMenu(u8 taskId);
 void __attribute__((long_call)) BuildMartStrings(u16 item);
-void __attribute__((long_call)) BuyMenuPrintPriceInList(u8 windowId, int item, u8 y);
-void __attribute__((long_call)) BuyMenuPrint(u8 windowId, const u8 *text, u8 x, u8 y, s8 speed, u8 colorSet);
+//void __attribute__((long_call)) BuyMenuPrintPriceInList(u8 windowId, int item, u8 y);
+void __attribute__((long_call)) BuyMenuPrint(u8 windowId, u8 font, const u8 *text, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 color);
+void __attribute__((long_call)) RedrawListMenu(u8 taskId);
 
 #endif // GUARD_SHOP_H

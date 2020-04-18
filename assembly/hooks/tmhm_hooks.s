@@ -23,6 +23,7 @@
 .global SingleTmPurchaseFix
 .global AddSingleTmFix
 .global UnbuyableTmFix
+.global FixTmShopPrice
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -127,17 +128,24 @@ UnsellableTmFix:
 Unsellable:
 	ldr r0, =(0x08132928 +1)
 	bx r0
-
-
+    
 .align 2
 .pool
-FixBoughtTmPrice:
-	mov r0, r1
-	bl CheckTmPrice
-	mov r1, r0
-	ldr r0, =(0x0809B42C +1)
-	bx r0
-
+FixTmShopPrice:
+    mov r0, r6  @window
+    mov r2, r5  @y
+    bl PrintTmPriceOrPurchased
+    add sp, sp, #0x14
+    pop {r4-r6, pc}
+    
+.align 2
+.pool
+ReloadMartList:
+    mov r0, r5  @taskID
+    bl ReloadMartListForTmPurchase
+    ldr r0, =(0x0809BED4 +1)
+    bx r0
+    
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Fix Mart Listings

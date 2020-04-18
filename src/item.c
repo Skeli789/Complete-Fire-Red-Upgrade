@@ -713,24 +713,31 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 	#endif
 }
 
-
-u16 CheckTmPrice(u16 item)
+extern const u8 gText_Purchased[];
+void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 {
+	s32 x;
+	u8 *loc;
+	
 	#ifdef REUSABLE_TMS
-		if (GetPocketByItemId(item) == POCKET_TM_HM && CheckBagHasItem(item, 1))
-			return 0;
-		else
-			return ItemId_GetPrice(item);
-	#else
-		return ItemId_GetPrice(item);
+		if (GetPocketByItemId(item) == POCKET_TM_CASE && CheckBagHasItem(item, 1))
+		{
+			BuyMenuPrint(windowId, 0, gText_Purchased, 0x58, y, 0, 0, 0xFF, 1);
+			return;
+		}
 	#endif
+	
+	ConvertIntToDecimalStringN(gStringVar1, ItemId_GetPrice(item), 0, 5);
+	x = 5 - StringLength(gStringVar1);
+	loc = gStringVar4;
+	while (x-- != 0)
+		*loc++ = 0;
+	
+	StringExpandPlaceholders(loc, (void*) 0x841697A);
+	BuyMenuPrint(windowId, 0, gStringVar4, 0x66, y, 0, 0, 0xFF, 1);
 }
 
-#ifdef REUSABLE_TMS
-u8 CheckSingleBagTm(u16 item)
-#else
 u8 CheckSingleBagTm(unusedArg u16 item)
-#endif
 {
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_HM)
@@ -789,6 +796,35 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 			BuyMenuReturnToItemList(taskId);
 		}
 	}
+}
+
+#define tItemCount data[1]
+#define tListTaskId data[7]
+void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+
+	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+	{
+		IncrementGameStat(GAME_STAT_SHOPPED);
+		RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
+		PlaySE(SE_RG_SHOP);
+		PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
+		RedrawListMenu(tListTaskId);
+		BuyMenuReturnToItemList(taskId);
+	}
+}
+
+void ReloadMartListForTmPurchase(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	
+	#ifdef REUSABLE_TMS
+	if (GetPocketByItemId(tItemId) == POCKET_TM_CASE)
+		BuyMenuDisplayMessage(taskId, (void*) 0x84167E7, Task_ReturnToSellListAfterTmPurchase);
+	else
+	#endif
+		BuyMenuDisplayMessage(taskId, (void*) 0x84167E7, (TaskFunc) (0x809BF0C | 1)); //BuyMenuSubtractMoney
 }
 #undef tItemId
 
