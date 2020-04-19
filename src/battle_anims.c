@@ -90,6 +90,15 @@ const struct OamData gPoisonColumnOam =
 	.priority = 2, //Save level as sprites
 };
 
+const struct OamData gPoisonColumnOamPlayer =
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x64),
+	.size = SPRITE_SIZE(32x64),
+	.priority = 3, //Below sprites
+};
+
 static const union AnimCmd sAnimCmdPoisonColumn[] =
 {
 	ANIMCMD_FRAME(0, 3),

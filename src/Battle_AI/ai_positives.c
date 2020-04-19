@@ -857,7 +857,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						else
 							IncreaseTeamProtectionViability(&viability, class);
 					}
-					else if (IS_DOUBLE_BATTLE && gBattleMoves[data->partnerMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
+					else if (IS_DOUBLE_BATTLE && gBattleMoves[data->partnerMove].target & MOVE_TARGET_ALL)
 					{
 						if (atkAbility != ABILITY_TELEPATHY
 						&& !(AI_SpecialTypeCalc(data->partnerMove, data->bankAtkPartner, bankAtk) & MOVE_RESULT_NO_EFFECT)) //Move has effect

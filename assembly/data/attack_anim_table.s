@@ -23704,15 +23704,16 @@ MAX_OOZE_REJOIN:
 	
 POISON_COLUMNS_ON_PLAYER:
 	leftbankBG_over_partnerBG bank_target
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, -15, -60, 0xC5 0x0
+	launchtemplate POISON_COLUMN_PLAYER TEMPLATE_TARGET | 0, 0x5, bank_target, -15, -60, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, 45, -40, 0x95 0x0
+	launchtemplate POISON_COLUMN_PLAYER TEMPLATE_TARGET | 0, 0x5, bank_target, 45, -40, 0x95 0x0
 	goto MAX_OOZE_REJOIN
 
 .align 2
 OOZE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
 POISON_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
+POISON_COLUMN_PLAYER: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOamPlayer gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
