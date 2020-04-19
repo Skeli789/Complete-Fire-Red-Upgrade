@@ -983,8 +983,9 @@ void HandleAction_UseMove(void)
 		  && !gNewBS->zMoveData.toBeUsed[gBankAttacker] //If a Z-Move was chosen, it can still be used
 		  && !gNewBS->dynamaxData.active)
 	{
+		gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
 		if (gChosenMove != gDisableStructs[gBankAttacker].encoredMove) //The encored move wasn't chosen
-			gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0); //Get correct target
+			gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gDisableStructs[gBankAttacker].encoredMove, 0); //Get correct target
 
 		gCurrentMove = gChosenMove = gDisableStructs[gBankAttacker].encoredMove;
 		gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
