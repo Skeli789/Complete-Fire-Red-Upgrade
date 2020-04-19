@@ -1014,6 +1014,13 @@ static bool8 TryDoForceSwitchOut(void)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
 	}
+	
+	//Roar always fails in wild boss battles
+	else if (FlagGet(FLAG_NO_RUNNING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+		return FALSE;
+	}	
 
 	gBankSwitching = bankDef;
 	gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
@@ -1102,7 +1109,15 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->synchronizeTarget[bank] = 0;
 	gNewBS->statFellThisTurn[bank] = FALSE;
 	gNewBS->dynamaxData.timer[bank] = 0;
+	gNewBS->zMoveData.toBeUsed[bank] = 0; //Force switch or fainted before Z-Move could be used
 	gNewBS->sandblastCentiferno[bank] = 0;
+
+	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
+	gProtectStructs[bank].SpikyShield = 0;
+	gProtectStructs[bank].BanefulBunker = 0;
+	gProtectStructs[bank].obstruct = 0;
+	gProtectStructs[bank].enduredSturdy = 0;
+	
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);

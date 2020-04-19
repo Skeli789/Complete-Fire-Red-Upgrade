@@ -33,6 +33,7 @@ void MoveValuesCleanUp(void);
 
 enum FaintEffectsStates
 {
+	Faint_DynamaxHP,
 	Faint_ClearEffects,
 	Faint_SoulHeart,
 	Faint_ReceiverActivate,

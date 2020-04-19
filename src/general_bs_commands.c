@@ -1235,6 +1235,19 @@ void atk1B_cleareffectsonfaint(void) {
 
 	if (!gBattleExecBuffer) {
 		switch (gNewBS->FaintEffectsTracker) {
+			case Faint_DynamaxHP:
+				if (IsDynamaxed(gActiveBattler))
+				{
+					//Get ceiling of HP divided by boost
+					gBattleMons[gActiveBattler].maxHP = MathMax(mon->maxHP / GetDynamaxHPBoost(gActiveBattler) + (mon->maxHP & 1), 1);
+					EmitSetMonData(0, REQUEST_MAX_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].maxHP);
+					MarkBufferBankForExecution(gActiveBattler);
+					gNewBS->dynamaxData.timer[gActiveBattler] = 0;
+					return;
+				}
+				++gNewBS->FaintEffectsTracker;
+				__attribute__ ((fallthrough));
+
 			case Faint_ClearEffects:
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
@@ -1251,18 +1264,10 @@ void atk1B_cleareffectsonfaint(void) {
 				ClearSwitchBytes(gActiveBattler);
 				ClearSwitchBits(gActiveBattler);
 
-				gProtectStructs[gActiveBattler].KingsShield = 0;	//Necessary because could be sent away with Roar
-				gProtectStructs[gActiveBattler].SpikyShield = 0;
-				gProtectStructs[gActiveBattler].BanefulBunker = 0;
-				gProtectStructs[gActiveBattler].obstruct = 0;
-				gProtectStructs[gActiveBattler].enduredSturdy = 0;
-
-				gNewBS->zMoveData.toBeUsed[gActiveBattler] = 0; //Because you died before you could use the Z-Move
-
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 				*gSeedHelper = 0;
 				++gNewBS->FaintEffectsTracker;
-			__attribute__ ((fallthrough));
+				return;
 
 			case Faint_SoulHeart:
 				for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
