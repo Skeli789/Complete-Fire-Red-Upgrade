@@ -190,3 +190,4 @@ u8 __attribute__((long_call)) sub_81202F8(const u8* str, u8 b);
 void __attribute__((long_call)) sub_81224B4(struct Pokemon *mon, struct Struct203B0B4* ptr);
 void __attribute__((long_call)) sub_8123BF0(u8 taskId);
 bool8 __attribute__((long_call)) some_other_kind_of_link_test(void);
+void __attribute__((long_call)) InitChooseHalfPartyForBattle(u8 a1);

@@ -33,13 +33,13 @@ void OpponentHandleChooseMove(void)
 
 	if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
 	#ifdef FLAG_SMART_WILD
-	||   FlagGet(FLAG_SMART_WILD)
+	||  FlagGet(FLAG_SMART_WILD)
 	#endif
 	#ifdef VAR_GAME_DIFFICULTY //Wild Pokemon are smart in expert mode
-	||   difficulty == OPTIONS_EXPERT_DIFFICULTY
+	||  difficulty == OPTIONS_EXPERT_DIFFICULTY
 	#endif
-	||	 WildMonIsSmart(gActiveBattler)
-	||  (IsRaidBattle() && gRaidBattleStars >= 6))
+	|| (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && WildMonIsSmart(gActiveBattler))
+	|| (IsRaidBattle() && gRaidBattleStars >= 6))
 	{
 		if (RAID_BATTLE_END)
 			goto CHOOSE_DUMB_MOVE;

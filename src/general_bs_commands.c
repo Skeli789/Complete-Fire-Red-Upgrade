@@ -2702,17 +2702,17 @@ void atk93_tryKO(void)
 			{
 				chance = FALSE; //Doesn't work on Dynamaxed foe
 			}
-			else if (((gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk)
-			|| atkAbility == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD))
-			{
-				chance = TRUE;
-			}
 			#ifndef NO_SHEER_COLD_NERF
 			else if (gCurrentMove == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 			{
 				chance = FALSE;
 			}
 			#endif
+			else if (((gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk)
+			|| atkAbility == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD))
+			{
+				chance = TRUE;
+			}
 			else
 			{
 				chance = baseAcc + (gBattleMons[bankAtk].level - gBattleMons[bankDef].level);

@@ -1152,6 +1152,7 @@ sub_8122D78 = 0x8122D78 | 1;
 sub_8123BF0 = 0x8123BF0 | 1;
 sub_8124258 = 0x8124258 | 1;
 FieldCallback_PrepareFadeInFromMenu = 0x81248B0 | 1;
+InitChooseHalfPartyForBattle = 0x81274A8 | 1;
 sub_813A45C = 0x813A45C | 1;
 some_other_kind_of_link_test = 0x80BF748 |1;
 

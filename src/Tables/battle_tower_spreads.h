@@ -7557,7 +7557,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_AERODACTYL,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -7574,7 +7574,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 			MOVE_STONEEDGE,
 			MOVE_AERIALACE,
 			MOVE_EARTHQUAKE,
-			MOVE_HONECLAWS,
+			MOVE_DRAGONDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -8595,7 +8595,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_HURRICANE,
 			MOVE_MOONBLAST,
-			MOVE_DREAMEATER,
+			MOVE_NASTYPLOT,
 			MOVE_HYPNOSIS,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -8645,8 +8645,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
-			MOVE_TOXIC,
-			MOVE_REFLECT,
+			MOVE_STOREDPOWER,
+			MOVE_CALMMIND,
 			MOVE_ROOST,
 			MOVE_SUBSTITUTE,
 		},
@@ -14610,7 +14610,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_SOLARBEAM,
 			MOVE_HEATWAVE,
-			MOVE_ROCKSLIDE,
+			MOVE_BEATUP,
 			MOVE_SUNNYDAY,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -17344,7 +17344,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 			MOVE_PSYCHIC,
 			MOVE_FOCUSBLAST,
 			MOVE_SHADOWBALL,
-			MOVE_CALMMIND,
+			MOVE_NASTYPLOT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -26261,7 +26261,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_PSYSHOCK,
+			MOVE_STOREDPOWER,
 			MOVE_ICEBEAM,
 			MOVE_CALMMIND,
 			MOVE_SUBSTITUTE,
