@@ -800,9 +800,7 @@ void ClearBallAnimActiveBit(void)
 
 void atkFF2F_setmaxmoveeffect(void)
 {
-	u8 statId, increase, decrease, flags;
-	bool8 mirrorArmorReflected = ABILITY(gBankTarget) == ABILITY_MIRRORARMOR;
-
+	u8 statId, increase;
 	gBattlescriptCurrInstr += 1;
 
 	if (IsRaidBattle()
@@ -855,27 +853,8 @@ void atkFF2F_setmaxmoveeffect(void)
 		case MAX_EFFECT_LOWER_SP_DEF:
 			if (BATTLER_ALIVE(gBankTarget))
 			{
-				statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK) + 1;
-				decrease = SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE;
-
-				flags = 0;
-				if (mirrorArmorReflected)
-				{
-					gBattleScripting.statChanger = decrease | statId;
-					flags = STAT_CHANGE_BS_PTR;
-				}
-
-				if (!ChangeStatBuffs(decrease, statId, flags, gBattlescriptCurrInstr))
-				{
-					if (!mirrorArmorReflected)
-					{
-						gEffectBank = gBankTarget;
-						gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + statId - 1;
-						gBattleScripting.animArg2 = 0;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_StatDown;
-					}
-				}
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerStatFoes;
 			}
 			break;
 
@@ -1126,6 +1105,12 @@ void atkFF2F_setmaxmoveeffect(void)
 			}
 			break;
 	}
+}
+
+void SetMaxMoveStatLowerEffect(void)
+{
+	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK);
+	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_MINUS_1 + statId;
 }
 
 void PickRandomGMaxBefuddleEffect(void)
