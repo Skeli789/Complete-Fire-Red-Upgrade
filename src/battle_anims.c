@@ -2371,6 +2371,16 @@ void AnimTask_TargetedLightning(u8 taskId)
 	}
 }
 
+//Creates The Extreme Evoboost Circles
+void SpriteCB_ExtremeEvoboostCircle(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, FALSE);
+    sprite->pos1.y += 20;
+    sprite->data[1] = 191;
+    sprite->callback = (void*) (0x80B190C | 1);
+    sprite->callback(sprite);
+}
+
 //Creates a twinkle in the upper corner of the screen
 void SpriteCB_SparkleInCorner(struct Sprite *sprite)
 {

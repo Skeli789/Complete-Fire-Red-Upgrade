@@ -2132,6 +2132,25 @@ MOVESCR_CHECK_0:
 			}
 			break;
 
+		case EFFECT_EXTREME_EVOBOOST:
+			if (MainStatsMaxed(bankAtk))
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
+
+			switch (move) {
+				case MOVE_NORETREAT:
+					if (gNewBS->trappedByNoRetreat & gBitTable[gBankAttacker])
+						DECREASE_VIABILITY(10);
+					break;
+				case MOVE_CLANGOROUSSOUL:
+					if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 3)
+						DECREASE_VIABILITY(10);
+					break;	
+			}
+			break;
+
 		case EFFECT_BULK_UP:
 			if (data->atkAbility == ABILITY_CONTRARY)
 				DECREASE_VIABILITY(10);

@@ -299,7 +299,7 @@ void BufferStringBattle(u16 stringID)
 
 		ChooseTypeOfMoveUsedString(gBattleTextBuff2);
 
-		if (zMoveActive && SPLIT(move) == SPLIT_STATUS)
+		if (zMoveActive && SPLIT(move) == SPLIT_STATUS && move != MOVE_EXTREME_EVOBOOST)
 			stringPtr = BattleText_AttackerUsedZStatusMove; //NEED DATA
 		else
 			stringPtr = BattleText_AttackerUsedX; //0x83FD57B
