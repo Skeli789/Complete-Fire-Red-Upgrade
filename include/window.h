@@ -71,7 +71,7 @@ u8 __attribute__((long_call)) WindowPrint(u8 windowId, u8 fontId, u8 left, u8 to
 void __attribute__((long_call)) ChoiceSetupSimple(u8 rid, u8 fboxid, u8 x, u8 y, u8 y_stride, u8 num_choices, u8 preselected_choice);
 s8 __attribute__((long_call)) RboxChoiceUpdate(void);
 u8 __attribute__((long_call)) ClearStdWindowAndFrameToTransparent(u8 id, bool8 update);
-void __attribute__((long_call)) DeleteWindow(u8 windowId, bool8 copyToVram);
+void __attribute__((long_call)) ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram);
 
 /*
 int AddWindowWithoutTileMap(const struct WindowTemplate *template);

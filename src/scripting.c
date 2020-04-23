@@ -2064,7 +2064,7 @@ void Task_Hof_DisplayMon(u8 taskId) {
 	// gSprites[spriteId].tSpecies = currMon->species;
 	gSprites[spriteId].callback = SpriteCB_GetOnScreenAndAnimate;
 	gTasks[taskId].tMonSpriteId(currMonId) = spriteId;
-	DeleteWindow(0, TRUE);
+	ClearDialogWindowAndFrame(0, TRUE);
 	gTasks[taskId].func = Task_Hof_PrintMonInfoAfterAnimating;
 }
 

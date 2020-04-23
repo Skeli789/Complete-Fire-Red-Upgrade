@@ -957,7 +957,7 @@
 .byte \showcontestwinner_byte
 .endm
 
-.macro braille braille_text
+.macro braillemessage braille_text
 .byte 0x78
 .word \braille_text
 .endm
@@ -1463,15 +1463,15 @@
 .byte 0xD1
 .endm
 
-.macro setcatchlocation setcatchlocation_slot setcatchlocation_map
+.macro setmonmetlocation setcatchlocation_slot setcatchlocation_map
 .byte 0xD2
 .hword \setcatchlocation_slot
 .byte \setcatchlocation_map
 .endm
 
-.macro braille2 braille2_text
+.macro getbraillestringwidth getbraillestringwidth_text
 .byte 0xD3
-.word \braille2_text
+.word \getbraillestringwidth_text
 .endm
 
 .macro bufferitemnameplural bufferitems_buffer bufferitems_item bufferitems_amount
@@ -1481,83 +1481,6 @@
 .hword \bufferitems_amount
 .endm
 
-.macro cmdD5
-.byte 0xD5
-.endm
-
-.macro cmdD6
-.byte 0xD6
-.endm
-
-.macro warp7 warp7_bank warp7_map warp7_warp warp7_x warp7_y
-.byte 0xD7
-.byte \warp7_bank
-.byte \warp7_map
-.byte \warp7_warp
-.hword \warp7_x
-.hword \warp7_y
-.endm
-
-.macro cmdD8
-.byte 0xD8
-.endm
-
-.macro cmdD9
-.byte 0xD9
-.endm
-
-.macro hidebox2
-.byte 0xDA
-.endm
-
-.macro preparemsg3 preparemsg3_pointer
-.byte 0xDB
-.word \preparemsg3_pointer
-.endm
-
-.macro fadescreen3 fadescreen3_param
-.byte 0xDC
-.byte \fadescreen3_param
-.endm
-
-.macro buffertrainerclass buffertrainerclass_buffer buffertrainerclass_class
-.byte 0xDD
-.byte \buffertrainerclass_buffer
-.hword \buffertrainerclass_class
-.endm
-
-.macro buffertrainername buffertrainername_buffer buffertrainername_trainer
-.byte 0xDE
-.byte \buffertrainername_buffer
-.hword \buffertrainername_trainer
-.endm
-
-.macro pokenavcall pokenavcall_text
-.byte 0xDF
-.word \pokenavcall_text
-.endm
-
-.macro warp8 warp8_bank warp8_map warp8_warp warp8_x warp8_y
-.byte 0xE0
-.byte \warp8_bank
-.byte \warp8_map
-.byte \warp8_warp
-.hword \warp8_x
-.hword \warp8_y
-.endm
-
-.macro buffercontesttype buffercontesttype_param1 buffercontesttype_param2
-.byte 0xE1
-.byte \buffercontesttype_param1
-.hword \buffercontesttype_param2
-.endm
-
-.macro bufferitems2 bufferitems2_buffer bufferitems2_item bufferitems2_amount
-.byte 0xE2
-.byte \bufferitems2_buffer
-.hword \bufferitems2_item
-.hword \bufferitems2_amount
-.endm
 
 .macro mapscript tag pointer
 .byte \tag

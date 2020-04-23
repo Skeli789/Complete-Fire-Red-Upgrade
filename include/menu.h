@@ -31,3 +31,6 @@ struct WindowTemplate __attribute__((long_call)) SetWindowTemplateFields(u8 bg, 
 void __attribute__((long_call)) DrawStdFrameWithCustomTileAndPalette(u8 windowId, bool8 copyToVram, u16 tileStart, u8 palette);
 void __attribute__((long_call)) TextWindow_SetStdFrame0_WithPal(u8 windowId, u16 tileStart, u8 palette);
 void __attribute__((long_call)) ResetBgPositions(void);
+void __attribute__((long_call)) ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram);
+void __attribute__((long_call)) DrawStdWindowFrame(u8 windowId, bool8 CopyToVram);
+u16 __attribute__((long_call)) CreateWindowTemplate(u8 bg, u8 left, u8 top, u8 width, u8 height, u8 paletteNum, u16 baseBlock);
