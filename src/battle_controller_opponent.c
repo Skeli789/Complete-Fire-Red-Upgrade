@@ -192,7 +192,7 @@ void OpponentHandleDrawTrainerPic(void)
 											   GetBattlerSpriteSubpriority(gActiveBattler)); //0x807685C
 
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -240;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 3; //2; //Speed scrolling in
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag); //0x80089E8
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag); //0x8008804
@@ -327,4 +327,29 @@ static u8 LoadCorrectTrainerPicId(void) {
 	}
 
 	return trainerPicId;
+}
+
+void SpriteCB_SlideInTrainer(struct Sprite* sprite)
+{
+    if (!(gIntroSlideFlags & 1))
+    {
+        sprite->pos2.x += sprite->data[0];
+		
+		if (sprite->data[0] > 0) //Positive
+		{
+			if (sprite->pos2.x > 0)
+			{
+				sprite->callback = SpriteCallbackDummy;
+				sprite->pos2.x = 0;
+			}
+		}
+		else //Negative
+		{
+			if (sprite->pos2.x < 0)
+			{
+				sprite->callback = SpriteCallbackDummy;
+				sprite->pos2.x = 0;
+			}
+		}
+    }
 }

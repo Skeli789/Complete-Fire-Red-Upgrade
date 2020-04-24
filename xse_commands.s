@@ -1211,7 +1211,7 @@
 .byte 0xA5
 .endm
 
-.macro cmdA6 cmdA6_byte activate_per_step_task @(u8 caseID), table of functions that get called everytime you take a step, think stepping on ash grass.
+.macro setstepcallback caseID @(u8 caseID), table of functions that get called everytime you take a step, think stepping on ash grass.
 .byte 0xA6
 .byte \caseID
 .endm

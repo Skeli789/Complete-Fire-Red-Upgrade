@@ -357,7 +357,7 @@ void PlayerHandleDrawTrainerPic(void)
 
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -3; //-2; //Speed scrolling in
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
 
 	gBattlerControllerFuncs[gActiveBattler] = sub_802F730;

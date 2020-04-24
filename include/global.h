@@ -188,6 +188,12 @@ enum
     POCKET_BERRIES
 };
 
+struct Coords8
+{
+    s8 x;
+    s8 y;
+};
+
 struct UCoords8
 {
     u8 x;
