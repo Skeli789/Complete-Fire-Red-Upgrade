@@ -43,6 +43,8 @@
 0807C23E 4B E0
 0807BE56 20
 08079DBE 04 1C E1 F7 32 F8 0D 4A D9 21 C9 00 88 5C
+##Faster Bike Speed
+#080BD34C 9E F7 0A FF
 ##End of Optional Byte Changes##
 
 ##Remove Things##

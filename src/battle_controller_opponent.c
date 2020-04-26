@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/pokeball.h"
 #include "../include/random.h"
 
 #include "../include/new/ai_util.h"
@@ -353,3 +354,30 @@ void SpriteCB_SlideInTrainer(struct Sprite* sprite)
 		}
     }
 }
+
+#define sBattler data[0]
+void SpriteCB_WildMon(struct Sprite *sprite)
+{
+	u32 selectedPalettes = 0x10000 << sprite->oam.paletteNum;
+
+    sprite->callback = (void*) (0x8011D94 | 1); //SpriteCB_MoveWildMonToRight
+    StartSpriteAnimIfDifferent(sprite, 0);
+    if (!BeginNormalPaletteFade(selectedPalettes, 0, 10, 10, RGB(8, 8, 8))) //If a fade is already in progress,
+		gPaletteFade_selectedPalettes |= selectedPalettes; //Then add second mon in wild doubles to the palettes to fade
+}
+
+void SpriteCB_WildMonShowHealthbox(struct Sprite *sprite)
+{
+    if (sprite->animEnded)
+    {
+		u32 selectedPalettes = 0x10000 << sprite->oam.paletteNum;
+
+        sub_804BD94(sprite->sBattler);
+        SetHealthboxSpriteVisible(gHealthboxSpriteIds[sprite->sBattler]);
+        sprite->callback = SpriteCallbackDummy;
+        StartSpriteAnimIfDifferent(sprite, 0);
+        if (!BeginNormalPaletteFade(selectedPalettes, 0, 10, 0, RGB(8, 8, 8))) //If a fade is already in progress,
+			gPaletteFade_selectedPalettes |= selectedPalettes; //Then add second mon in wild doubles to the palettes to unfade
+    }
+}
+#undef sBattler

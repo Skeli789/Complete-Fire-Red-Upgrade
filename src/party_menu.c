@@ -1295,6 +1295,7 @@ void Task_ClosePartyMenuAfterText(u8 taskId)
 	if (!IsPartyMenuTextPrinterActive())
 	{
 		if (gPartyMenu.menuType != PARTY_MENU_TYPE_IN_BATTLE
+		&& gPartyMenu.action == PARTY_ACTION_USE_ITEM
 		&& CheckBagHasItem(Var800E, 1)
 		&& Var800E != ITEM_DNA_SPLICERS
 		&& Var800E != ITEM_N_SOLARIZER
