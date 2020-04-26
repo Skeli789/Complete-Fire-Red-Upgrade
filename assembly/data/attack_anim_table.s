@@ -2100,11 +2100,14 @@ ANIM_CROSSPOISON:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DARKPULSE:
-	loadparticle ANIM_TAG_ORBS @Hyper Beam
-	loadparticle ANIM_TAG_POISON_JAB @Purple
+	loadparticle ANIM_TAG_PURPLE_RING
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	pause 0x4
-	playsound2 0x1E0 SOUND_PAN_ATTACKER
+	launchtask AnimTask_IsUnbound 0x5 0x0
+	jumpifargmatches 0x0 0x1 DARK_PULSE_UNBOUND_SOUND
+	launchsoundtask 0x80DCF39 0x7 0xc8 0xffc0 SOUND_PAN_TARGET 0x3 0x4 0x0 0xf  
+
+DARK_PULSE_REJOIN:
 	launchtask 0x80B9F6D 0x2 0x7 ANIM_TAG_ORBS 0x1 0xc 0x1F 0x10 0x0 0x0
 	call PURPLE_BEAM
 	call PURPLE_BEAM
@@ -2131,9 +2134,6 @@ ANIM_DARKPULSE:
 	call PURPLE_BEAM
 	call PURPLE_BEAM
 	call PURPLE_BEAM
-	call PURPLE_BEAM
-	call PURPLE_BEAM
-	call PURPLE_BEAM
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x3006
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
@@ -2141,13 +2141,16 @@ ANIM_DARKPULSE:
 	endanimation
 
 PURPLE_BEAM:
-	launchtemplate PURPLEPARTICLES 0x82 0x0
-	launchtemplate PURPLEPARTICLES 0x82 0x0
-	pause 0x1
+	launchtemplate PURPLEPARTICLES 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x03
+	pause 0x2
 	return
 
+DARK_PULSE_UNBOUND_SOUND:
+	playsoundpanchange 0x1E0 SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
+	goto DARK_PULSE_REJOIN
+
 .align 2
-PURPLEPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+PURPLEPARTICLES: objtemplate ANIM_TAG_PURPLE_RING ANIM_TAG_PURPLE_RING OAM_DOUBLE_16x32 0x8231CF0 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -807,6 +807,16 @@ void AnimTask_GetRaidBattleStormLevel(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_IsUnbound(u8 taskId)
+{
+	#ifdef UNBOUND
+	gBattleAnimArgs[0] = TRUE;
+	#else
+	gBattleAnimArgs[0] = FALSE;
+	#endif
+	DestroyAnimVisualTask(taskId);
+}
+
 bool8 ShadowSneakAnimHelper(void)
 {
 	switch (sAnimMoveIndex) {
