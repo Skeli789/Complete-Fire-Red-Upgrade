@@ -114,7 +114,7 @@ StoreSpeciesID:
 	ldr r2, =var8000
 	ldrh r0, [r2]
 	ldrh r1, [r2, #0x2]
-	mov r2, #REQ_SPECIES
+	mov r2, #11 @REQ_SPECIES
 	bl GetBoxMonDataAt
 	ldr r2, =var8000
 	strh r0, [r2, #0x4]		@species to var8002

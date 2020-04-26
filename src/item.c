@@ -1415,7 +1415,7 @@ static void BagMenu_CancelSort(u8 taskId)
 
 	HideBagWindow(6);
 	PutWindowTilemap(1);
-	BgIdMarkForSync(0);
+	ScheduleBgCopyTilemapToVram(0);
 	BagMenu_PrintCursor_(data[0], 1);
 	Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 }
@@ -1449,7 +1449,7 @@ static void Task_SortFinish(u8 taskId)
 		PlaySE(SE_SELECT);
 		HideBagWindow(6);
 		PutWindowTilemap(1);
-		BgIdMarkForSync(0);
+		ScheduleBgCopyTilemapToVram(0);
 		BagMenu_PrintCursor_(data[0], 1);
 		Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 	}

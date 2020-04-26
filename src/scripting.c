@@ -1940,7 +1940,7 @@ bool8 sp18B_ShowFossilImage(void) {
 	gTasks[taskId].data[2] = objId;
 
 	SetStandardWindowBorderStyle(windowId, 1);
-	BgIdMarkForSync(0);
+	ScheduleBgCopyTilemapToVram(0);
 
 	return TRUE;
 }

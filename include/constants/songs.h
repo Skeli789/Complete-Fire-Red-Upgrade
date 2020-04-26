@@ -97,6 +97,8 @@
 #define SE_POKENAV_OFF 0x68
 #define SE_POKENAV_SEARCHING 0x69
 
+#define SE_FLUTE 0x6E
+
 #define SE_CHOMP 0x9A
 
 #define SE_MUD_SLAP 0xA1
@@ -120,6 +122,7 @@
 #define SE_RG_EXCELLENT 254
 
 #define SE_CAUGHT_POKEMON 0x13F
+#define MUS_FANFA1 0x101
 
 #ifdef UNBOUND //For Unbound
 

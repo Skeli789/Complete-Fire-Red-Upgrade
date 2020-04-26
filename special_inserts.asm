@@ -429,11 +429,33 @@ RemoveCaughtMonPokedex151Limiter:
 	.byte 0x0, 0x0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Stay On Item Screen - Medicine
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x12538E, 0xFF
+MedicinePostUseFix:
+	mov r1, r8
+	bl MedicinePostUseFix + 0x22 @0x81253B0 ItemUseCB_MedicineStep
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1262D2, 0xFF
 MaxLevelRareCandies:
 	.byte MAX_LEVEL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Stay On Item Screen - Rare Candies
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x126332, 0xFF
+RareCandiesPostUseFix:
+	mov r1, r8
+	bl RareCandiesPostUseFix + 0x1E @ItemUseCB_RareCandyStep
+	mov r8, r8
+	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Summary Screen

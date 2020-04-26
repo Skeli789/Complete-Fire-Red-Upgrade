@@ -21,7 +21,7 @@ void __attribute__((long_call)) SetVBlankCallback(void (*callback));
 void __attribute__((long_call)) SetHBlankCallback(void (*callback));
 void __attribute__((long_call)) BuildOAMBuffer(void);
 void __attribute__((long_call)) AnimateSprites(void);
-void __attribute__((long_call)) BgIdMarkForSync(u8 bgid);
+void __attribute__((long_call)) ScheduleBgCopyTilemapToVram(u8 bgid);
 void __attribute__((long_call)) CleanupOverworldWindowsAndTilemaps(void);
 void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 
