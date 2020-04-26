@@ -9,6 +9,8 @@
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
 #include "../include/party_menu.h"
+#include "../include/pokemon_icon.h"
+#include "../include/pokemon_storage_system.h"
 #include "../include/script.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
@@ -76,7 +78,9 @@ struct PartyMenuInternal
 extern struct PartyMenuInternal* sPartyMenuInternal;
 extern struct PartyMenuBox* sPartyMenuBoxes;
 
-//Old Static Functions
+//Vanilla Static Functions
+void __attribute__((long_call)) CreatePartyMonSprites(u8 slot);
+void __attribute__((long_call)) RenderPartyMenuBox(u8 slot);
 u8 __attribute__((long_call)) DisplayPartyMenuMessage(const u8* str, u8 b);
 void __attribute__((long_call)) Task_ClosePartyMenu(u8 taskId);
 void __attribute__((long_call)) ReturnToUseOnWhichMon(u8 taskId);
@@ -102,6 +106,9 @@ void __attribute__((long_call)) ResetHPTaskData(u8 taskId, u8 caseId, u32 hp);
 void __attribute__((long_call)) GetMedicineItemEffectMessage(u16 item);
 void __attribute__((long_call)) Task_DisplayHPRestoredMessage(u8 taskId);
 void __attribute__((long_call)) UpdateMonDisplayInfoAfterRareCandy(u8 slot, struct Pokemon *mon);
+void __attribute__((long_call)) PartyMenu_DisplayMonNeedsToReplaceMove(u8 taskId);
+void __attribute__((long_call)) PartyMenu_DisplayMonLearnedMove(u8 taskId, u16 move);
+void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom);
 
 //This file's functions:
 static void OpenSummary(u8 taskId);
@@ -548,7 +555,7 @@ void CursorCb_Enter(u8 taskId)
 			if (i == (max - 1))
 				PartyMenu_MoveCursorToConfirm();
 
-			PrintPartyMenuPromptText(0);
+			DisplayPartyMenuStdMessage(0);
 			gTasks[taskId].func = Task_HandleChooseMonInput;
 
 			for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
@@ -608,7 +615,7 @@ void CursorCb_NoEntry(u8 taskId)
 			DisplayPartyPokemonSelectData(i, 1);  //Reload eligibility text
 	}
 
-	PrintPartyMenuPromptText(0);
+	DisplayPartyMenuStdMessage(0);
 	gTasks[taskId].func = Task_HandleChooseMonInput;
 }
 
@@ -1162,6 +1169,7 @@ extern const u8 gText_SwapItemsPart1[];
 extern const u8 gText_SwapItemsPart2[];
 
 #define MSG_MOVE 37
+#define MSG_FUSE 38
 
 const u8 gPartyMenu_ItemMenuActions[] = {MENU_GIVE, MENU_TAKE_ITEM, MENU_MOVE_ITEM, MENU_CANCEL2};
 
@@ -1184,7 +1192,7 @@ static void CursorCb_MoveItemCallback(u8 taskId)
 			}
 
 			PlaySE(SE_SELECT);
-			gPartyMenu.action = 0;
+			gPartyMenu.action = PARTY_ACTION_CHOOSE_MON;
 
 			//Look up held items
 			item1 = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM, NULL);
@@ -1249,10 +1257,10 @@ static void CursorCb_MoveItem(u8 taskId)
 
 	if (GetMonData(mon, MON_DATA_HELD_ITEM, NULL) != ITEM_NONE)
 	{
-		gPartyMenu.action = 8;
+		gPartyMenu.action = PARTY_ACTION_SWITCH;
 
 		//Show "Move item to where" in bottom left
-		PrintPartyMenuPromptText(MSG_MOVE);
+		DisplayPartyMenuStdMessage(MSG_MOVE);
 		//Update color of first selected box
 		AnimatePartySlot(gPartyMenu.slotId, 1);
 
@@ -1277,13 +1285,20 @@ static void CursorCb_MoveItem(u8 taskId)
 static bool8 IsUsePartyMenuItemHPEVModifier(struct Pokemon* mon, u16 oldHP, u16 item);
 static void AdjustFriendshipForEVReducingBerry(struct Pokemon* mon);
 static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func);
+static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func);
+static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func);
+static void Task_TryLearnPostFormeChangeMove(u8 taskId);
+static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
 	if (!IsPartyMenuTextPrinterActive())
 	{
 		if (gPartyMenu.menuType != PARTY_MENU_TYPE_IN_BATTLE
-		&&  CheckBagHasItem(Var800E, 1))
+		&& CheckBagHasItem(Var800E, 1)
+		&& Var800E != ITEM_DNA_SPLICERS
+		&& Var800E != ITEM_N_SOLARIZER
+		&& Var800E != ITEM_N_LUNARIZER)
 		{
 			ClearStdWindowAndFrameToTransparent(6, 0);
 			ScheduleBgCopyTilemapToVram(2);
@@ -1513,4 +1528,470 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
         ScheduleBgCopyTilemapToVram(2);
         gTasks[taskId].func = func;
     }
+}
+
+void FieldUseFunc_FormChangeItem(u8 taskId)
+{
+    gItemUseCB = ItemUseCB_FormChangeItem;
+    SetUpItemUseCallback(taskId);
+}
+
+void UpdateMonIconSpecies(u8 iconSpriteId, u16 species)
+{
+	gSprites[iconSpriteId].images = (void*) GetMonIconTiles(species, FALSE);
+	gSprites[iconSpriteId].oam.paletteNum = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + GetMonIconPaletteIndexFromSpecies(species));
+}
+
+extern const u8 gText_FormChangeItem[];
+extern const u8 gText_AlreadyHaveFused[];
+extern const u8 gText_NoSpaceForDefuse[];
+extern const u8 gText_CantFuseWithPokemon[];
+void DoItemFormChange(struct Pokemon* mon, u16 species)
+{
+	SetMonData(mon, MON_DATA_SPECIES, &species);
+	CalculateMonStats(mon);
+	UpdateMonIconSpecies(sPartyMenuBoxes[gPartyMenu.slotId].monSpriteId, species);
+	PlayCry1(species, 0);
+	GetMonNickname(mon, gStringVar1);
+	StringExpandPlaceholders(gStringVar4, gText_FormChangeItem);
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);	
+}
+
+static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
+{
+    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 item = Var800E;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+
+    PlaySE(SE_SELECT);
+	switch (item) {
+		case ITEM_GRACIDEA:
+			#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
+			if (species == SPECIES_SHAYMIN)
+			{
+				species = SPECIES_SHAYMIN_SKY;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_REVEAL_GLASS:
+			switch (species) {
+				#if (defined SPECIES_TORNADUS && defined SPECIES_TORNADUS_THERIAN)
+				case SPECIES_TORNADUS:
+					species = SPECIES_TORNADUS_THERIAN;
+					break;
+				case SPECIES_TORNADUS_THERIAN:
+					species = SPECIES_TORNADUS;
+					break;
+				#endif
+				#if (defined SPECIES_THUNDURUS && defined SPECIES_THUNDURUS_THERIAN)
+				case SPECIES_THUNDURUS:
+					species = SPECIES_THUNDURUS_THERIAN;
+					break;
+				case SPECIES_THUNDURUS_THERIAN:
+					species = SPECIES_THUNDURUS;
+					break;
+				#endif
+				#if (defined SPECIES_LANDORUS && defined SPECIES_LANDORUS_THERIAN)
+				case SPECIES_LANDORUS:
+					species = SPECIES_LANDORUS_THERIAN;
+					break;
+				case SPECIES_LANDORUS_THERIAN:
+					species = SPECIES_LANDORUS;
+					break;	
+				#endif
+				default:
+					goto NO_EFFECT;
+			}
+
+			DoItemFormChange(mon, species);
+			gTasks[taskId].func = func;
+			break;
+		case ITEM_PRISON_BOTTLE:
+			#if (defined SPECIES_HOOPA && defined SPECIES_HOOPA_UNBOUND)
+			if (species == SPECIES_HOOPA)
+			{
+				species = SPECIES_HOOPA_UNBOUND;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_RED_NECTAR:
+			#if (defined SPECIES_ORICORIO && defined SPECIES_ORICORIO_Y && defined SPECIES_ORICORIO_P && defined SPECIES_ORICORIO_S)
+			if (species == SPECIES_ORICORIO_Y || species == SPECIES_ORICORIO_P || species == SPECIES_ORICORIO_S)
+			{
+				species = SPECIES_ORICORIO;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_YELLOW_NECTAR:
+			#if (defined SPECIES_ORICORIO && defined SPECIES_ORICORIO_Y && defined SPECIES_ORICORIO_P && defined SPECIES_ORICORIO_S)
+			if (species == SPECIES_ORICORIO || species == SPECIES_ORICORIO_P || species == SPECIES_ORICORIO_S)
+			{
+				species = SPECIES_ORICORIO_Y;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_PINK_NECTAR:
+			#if (defined SPECIES_ORICORIO && defined SPECIES_ORICORIO_Y && defined SPECIES_ORICORIO_P && defined SPECIES_ORICORIO_S)
+			if (species == SPECIES_ORICORIO || species == SPECIES_ORICORIO_Y || species == SPECIES_ORICORIO_S)
+			{
+				species = SPECIES_ORICORIO_P;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_PURPLE_NECTAR:
+			#if (defined SPECIES_ORICORIO && defined SPECIES_ORICORIO_Y && defined SPECIES_ORICORIO_P && defined SPECIES_ORICORIO_S)
+			if (species == SPECIES_ORICORIO || species == SPECIES_ORICORIO_Y || species == SPECIES_ORICORIO_P)
+			{
+				species = SPECIES_ORICORIO_S;
+				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
+				gTasks[taskId].func = func;
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		case ITEM_DNA_SPLICERS:
+		case ITEM_N_SOLARIZER:
+		case ITEM_N_LUNARIZER:
+			#if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA)
+			if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA)
+			{
+				DisplayPartyMenuStdMessage(MSG_FUSE); //Show "Fuse with which Pokemon?" in bottom left
+				AnimatePartySlot(gPartyMenu.slotId, 1); //Update color of first selected box
+
+				//Set up callback
+				gPartyMenu.slotId2 = gPartyMenu.slotId;
+				gItemUseCB = ItemUseCB_DNASplicersStep;
+			}
+			else
+			#endif
+			#if (defined SPECIES_KYUREM_BLACK && defined SPECIES_KYUREM_WHITE && defined SPECIES_NECROZMA_DUSK_MANE && defined SPECIES_NECROZMA_DAWN_WINGS)
+				if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE || species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS)
+			{
+				u8 slotId;
+				for (slotId = 0; GetMonData(&gPlayerParty[slotId], MON_DATA_SPECIES, NULL) != SPECIES_NONE && slotId < PARTY_SIZE; ++slotId);
+
+				if (GetMonData(GetBaseMonForFusedSpecies(species), MON_DATA_SPECIES, NULL) == SPECIES_NONE) //No fused mon
+				{
+					goto NO_EFFECT;
+				}
+				else if (slotId == PARTY_SIZE) //No space for fused mon
+				{
+					GetMonNickname(mon, gStringVar1);
+					StringExpandPlaceholders(gStringVar4, gText_NoSpaceForDefuse);
+					DisplayPartyMenuMessage(gStringVar4, TRUE);
+					ScheduleBgCopyTilemapToVram(2);
+					gTasks[taskId].func = func;
+				}
+				else
+				{
+					struct Pokemon* baseMon = GetBaseMonForFusedSpecies(species);
+					gPlayerParty[slotId] = *baseMon;
+					Memset(baseMon, 0, sizeof(*baseMon));
+					CreatePartyMonSprites(slotId);
+					RenderPartyMenuBox(slotId);
+
+					if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE)
+						species = SPECIES_KYUREM;
+					else
+						species = SPECIES_NECROZMA;
+					DoItemFormChange(mon, species);
+					gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+				}
+			}
+			else
+			#endif
+				goto NO_EFFECT;
+			break;
+		default:
+		NO_EFFECT:
+			gPartyMenuUseExitCallback = FALSE;
+			DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+			ScheduleBgCopyTilemapToVram(2);
+			gTasks[taskId].func = func;
+	}
+}
+
+static struct Pokemon* GetBaseMonForFusedSpecies(u16 species)
+{
+	switch (species) {
+		case SPECIES_KYUREM_BLACK:
+			return &gSaveBlock1->fusedZekrom;
+		case SPECIES_KYUREM_WHITE:
+			return &gSaveBlock1->fusedReshiram;
+		case SPECIES_NECROZMA_DUSK_MANE:
+			return &gSaveBlock1->fusedSolgaleo;
+		case SPECIES_NECROZMA_DAWN_WINGS:
+			return &gSaveBlock1->fusedLunala;
+	}
+	
+	return NULL;
+}
+
+static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
+{
+	bool8 alreadyFused = FALSE;
+	
+	switch (baseSpecies) {
+		case SPECIES_KYUREM:
+			switch (fuseSpecies) {
+				case SPECIES_RESHIRAM:
+					if (GetMonData(&gSaveBlock1->fusedReshiram, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+				case SPECIES_ZEKROM:
+					if (GetMonData(&gSaveBlock1->fusedZekrom, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+			}
+			break;
+		case SPECIES_NECROZMA:
+			switch (fuseSpecies) {
+				case SPECIES_SOLGALEO:
+					if (GetMonData(&gSaveBlock1->fusedSolgaleo, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+				case SPECIES_ZEKROM:
+					if (GetMonData(&gSaveBlock1->fusedLunala, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+			}
+			break;
+	}
+	
+	if (alreadyFused)	
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		GetSpeciesName(gStringVar1, baseSpecies);
+		GetSpeciesName(gStringVar2, fuseSpecies);
+		StringExpandPlaceholders(gStringVar4, gText_AlreadyHaveFused);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+	}
+	
+	return alreadyFused;
+}
+
+static bool8 DoBaseAndFuseSpeciesMatch(u16 baseSpecies, u16 fuseSpecies)
+{
+	switch (baseSpecies) {
+		case SPECIES_KYUREM:
+			switch (fuseSpecies) {
+				case SPECIES_RESHIRAM:
+				case SPECIES_ZEKROM:
+					return TRUE;
+			}
+			break;
+		case SPECIES_NECROZMA:
+			switch (fuseSpecies) {
+				case SPECIES_SOLGALEO:
+				case SPECIES_LUNALA:
+					return TRUE;
+			}
+			break;
+	}
+	
+	return FALSE;
+}
+
+static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
+{
+	u16 baseSpecies, fuseSpecies;
+
+	if (gPaletteFade->active || some_other_kind_of_link_test())
+		return;
+
+	switch (PartyMenuButtonHandler(&gPartyMenu.slotId2)) {
+		case 1: //User hit A on a Pokemon
+			baseSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId2], MON_DATA_SPECIES2, NULL);
+			fuseSpecies = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES2, NULL);
+			PlaySE(SE_SELECT);
+
+			//Update colors of selected windows
+			AnimatePartySlot(gPartyMenu.slotId2, 1); //Kyurem
+			AnimatePartySlot(gPartyMenu.slotId, 0); //Reshiram or Zekrom
+
+			if (AlreadyFused(baseSpecies, fuseSpecies))
+			{
+				gTasks[taskId].func = func;
+				return;
+			}
+
+			if (DoBaseAndFuseSpeciesMatch(baseSpecies, fuseSpecies))
+			{
+				//Swap Slot Ids
+				u8 temp = gPartyMenu.slotId;
+				gPartyMenu.slotId = gPartyMenu.slotId2;
+				gPartyMenu.slotId2 = temp; //Icon update acts on slotId 1
+
+				//Get Proper Form
+				struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+				switch (fuseSpecies) {
+					case SPECIES_RESHIRAM:
+						baseSpecies = SPECIES_KYUREM_WHITE;
+						break;
+					case SPECIES_ZEKROM:
+						baseSpecies = SPECIES_KYUREM_BLACK;
+						break;
+					case SPECIES_SOLGALEO:
+						baseSpecies = SPECIES_NECROZMA_DUSK_MANE;
+						break;
+					case SPECIES_LUNALA:
+						baseSpecies = SPECIES_NECROZMA_DAWN_WINGS;
+						break;
+				}
+				DoItemFormChange(mon, baseSpecies);
+
+				//Backup and Delete Fused Mon
+				*GetBaseMonForFusedSpecies(baseSpecies) = gPlayerParty[gPartyMenu.slotId2]; //Save base mon
+				ZeroMonData(&gPlayerParty[gPartyMenu.slotId2]);
+				FillWindowPixelBuffer(sPartyMenuBoxes[gPartyMenu.slotId2].windowId, PIXEL_FILL(0));
+				CopyWindowToVram(sPartyMenuBoxes[gPartyMenu.slotId2].windowId, 3);
+				PutWindowTilemap(sPartyMenuBoxes[gPartyMenu.slotId2].windowId);
+				RenderPartyMenuBox(gPartyMenu.slotId2);
+				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].pokeballSpriteId]);
+				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].itemSpriteId]);
+				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId]);
+				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].statusSpriteId]);
+				CompactPartySlots(); //Must be down here so Pokemon don't shift before the empty space is loaded
+				gPartyMenuUseExitCallback = FALSE;
+				gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
+			}
+			else
+			{
+				//Return to the bag menu
+				gPartyMenuUseExitCallback = FALSE;
+				DisplayPartyMenuMessage(gText_CantFuseWithPokemon, TRUE);
+				ScheduleBgCopyTilemapToVram(2);
+				gTasks[taskId].func = func;
+			}
+			break;
+		case 2:	 // User hit B or A while on Cancel
+			gTasks[taskId].func = func;
+			break;
+	}
+}
+
+extern u16 gMoveToLearn;
+static void Task_TryLearnPostFormeChangeMove(u8 taskId)
+{
+	if (!IsPartyMenuTextPrinterActive())
+	{
+		struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+		u16 species = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES, NULL);
+		u16 replaceMove = MOVE_NONE;
+		u16 replaceMove2 = MOVE_NONE;
+
+		gMoveToLearn = MOVE_NONE;
+		switch (species) {
+			case SPECIES_KYUREM:
+				gMoveToLearn = MOVE_GLACIATE;
+				replaceMove = MOVE_FUSIONBOLT; //Either Fusion Bolt or Fusion Flare
+				replaceMove2 = MOVE_FUSIONFLARE;
+				break;
+			case SPECIES_KYUREM_WHITE:
+				gMoveToLearn = MOVE_FUSIONFLARE;
+				replaceMove = MOVE_GLACIATE;
+				break;
+			case SPECIES_KYUREM_BLACK:
+				gMoveToLearn = MOVE_FUSIONBOLT;
+				replaceMove = MOVE_GLACIATE;
+				break;
+			case SPECIES_NECROZMA:
+				replaceMove = MOVE_SUNSTEELSTRIKE;
+				replaceMove2 = MOVE_MOONGEISTBEAM;
+				break;
+			case SPECIES_NECROZMA_DUSK_MANE:
+				gMoveToLearn = MOVE_SUNSTEELSTRIKE;
+				break;
+			case SPECIES_NECROZMA_DAWN_WINGS:
+				gMoveToLearn = MOVE_MOONGEISTBEAM;
+				break;
+		}
+
+		if (gMoveToLearn != MOVE_NONE)
+		{
+			if (replaceMove != MOVE_NONE)
+			{
+				u8 movePos = FindMovePositionInMonMoveset(replaceMove, mon);
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, gMoveToLearn, movePos);
+					PartyMenu_DisplayMonLearnedMove(taskId, gMoveToLearn);
+					return;
+				}
+			}
+
+			if (replaceMove2 != MOVE_NONE)
+			{
+				u8 movePos = FindMovePositionInMonMoveset(replaceMove2, mon);
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, gMoveToLearn, movePos);
+					PartyMenu_DisplayMonLearnedMove(taskId, gMoveToLearn);
+					return;
+				}
+			}
+
+			u8 movePos = FindMovePositionInMonMoveset(MOVE_NONE, mon);
+			if (movePos < MAX_MON_MOVES)
+			{
+				SetMonMoveSlot(mon, gMoveToLearn, movePos);
+				PartyMenu_DisplayMonLearnedMove(taskId, gMoveToLearn);
+				return;
+			}
+
+			PartyMenu_DisplayMonNeedsToReplaceMove(taskId);
+		}
+		else
+		{
+			if (replaceMove != MOVE_NONE)
+			{
+				u8 movePos = FindMovePositionInMonMoveset(replaceMove, mon);
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, MOVE_NONE, movePos);
+					RemoveMonPPBonus(mon, movePos);
+					for (u8 i = movePos; i < MAX_MON_MOVES - 1; ++i)
+						ShiftMoveSlot(mon, i, i + 1);
+				}
+			}
+
+			if (replaceMove2 != MOVE_NONE)
+			{
+				u8 movePos = FindMovePositionInMonMoveset(replaceMove2, mon);
+				if (movePos < MAX_MON_MOVES)
+				{
+					SetMonMoveSlot(mon, MOVE_NONE, movePos);
+					RemoveMonPPBonus(mon, movePos);
+					for (u8 i = movePos; i < MAX_MON_MOVES - 1; ++i)
+						ShiftMoveSlot(mon, i, i + 1);
+				}
+			}
+
+			Task_ClosePartyMenuAfterText(taskId);
+		}
+	}
 }

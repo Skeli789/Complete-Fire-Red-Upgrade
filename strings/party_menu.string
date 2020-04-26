@@ -18,3 +18,27 @@ Remove foggy weather.
 
 #org @gText_FieldMoveDesc_Dive
 Dive underwater.
+
+#org @gText_EVReducingBerryBothEffects
+[BUFFER1] became more friendly.\nHowever, its base [BUFFER2] fell![PAUSE_UNTIL_PRESS]
+
+#org @gText_EVReducingBerryLoweredStat
+[BUFFER1] adores you!\nIts base [BUFFER2] fell![PAUSE_UNTIL_PRESS]
+
+#org @gText_EVReducingBerryIncreasedFriendship
+[BUFFER1] became more friendly.\nIts base [BUFFER2] can't go lower.[PAUSE_UNTIL_PRESS]
+
+#org @gText_FormChangeItem
+[BUFFER1] changed Forme![PAUSE_UNTIL_PRESS]
+
+#org @gText_DNASplicersFuseWithWhich
+Fuse with which Pok\emon?[PAUSE_UNTIL_PRESS]
+
+#org @gText_AlreadyHaveFused
+You already have a [BUFFER1]\nfused with a [BUFFER2].[PAUSE_UNTIL_PRESS]
+
+#org @gText_NoSpaceForDefuse
+You have no room to\nseparate the Pok\emon.[PAUSE_UNTIL_PRESS]
+
+#org @gText_CantFuseWithPokemon
+It cannot be fused with\nthat Pok\emon.[PAUSE_UNTIL_PRESS]

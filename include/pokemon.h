@@ -391,39 +391,6 @@ typedef struct Pokemon
 	u16 spDefense;
 } pokemon_t;
 
-struct pokerusStruct {
-
-};
-
-struct origins_infoStruct {
-
-};
-
-struct ivs_egg_abilityStruct {
-
-};
-
-struct ribbons_obedienceStruct {
-
-};
-
-/*
-struct Pokemon
-{
-    struct BoxPokemon box;
-    u32 status;
-    u8 level;
-    u8 mail;
-    u16 hp;
-    u16 maxHP;
-    u16 attack;
-    u16 defense;
-    u16 speed;
-    u16 spAttack;
-    u16 spDefense;
-};
-*/
-
 struct SaveBlock3
 {
     /*0x0000*/ u8 currentBox;
@@ -763,11 +730,13 @@ u8 __attribute__((long_call)) SizeMinigame_CalculateMonHeight(u16 species, void*
 u16 __attribute__((long_call)) SizeMinigame_GetHeightBonus(struct Pokemon* mon);
 u32 __attribute__((long_call)) SizeMinigame_CalculateAdjustedHeight(u16 species, u16 heightBonus);
 void __attribute__((long_call)) SizeMinigame_BufferHeightInches(u8* stringBuffer, u16 height);
-void __attribute__((long_call)) PokemonSlotPurge(struct Pokemon* mon);
+void __attribute__((long_call)) ZeroMonData(struct Pokemon* mon);
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
+void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
+void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -787,7 +756,6 @@ u16 GiveMoveToMon(struct Pokemon *mon, u16 move);
 u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 u16 GiveMoveToBattleMon(struct BattlePokemon *mon, u16 move);
 void MonRestorePP(struct Pokemon *mon);
-void SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
 void SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot);
 void GiveMonInitialMoveset(struct Pokemon *mon);
 void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon);
@@ -829,7 +797,6 @@ u8 GetSecretBaseTrainerPicIndex(void);
 u8 GetSecretBaseTrainerNameIndex(void);
 bool8 IsPlayerPartyAndPokemonStorageFull(void);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
-void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);
 void CopyPlayerPartyMonToBattleData(u8 battleIndex, u8 partyIndex);
 

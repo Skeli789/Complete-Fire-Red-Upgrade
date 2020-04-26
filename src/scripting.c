@@ -724,7 +724,7 @@ void sp062_PokemonEraser(void)
 		ZeroPlayerPartyMons();
 	else
 	{
-		PokemonSlotPurge(&gPlayerParty[slot]);
+		ZeroMonData(&gPlayerParty[slot]);
 		CompactPartySlots();
 		CalculatePlayerPartyCount();
 	}

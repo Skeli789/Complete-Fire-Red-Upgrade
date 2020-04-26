@@ -149,7 +149,7 @@ void __attribute__((long_call)) DisplayPartyPokemonSelectData(u8 slot, u8 string
 void __attribute__((long_call)) Task_HandleChooseMonInput(u8 taskId);
 bool8 __attribute__((long_call)) IsPartyMenuTextPrinterActive(void);
 u8 __attribute__((long_call)) GetMonPrimaryAilments(u32 status);
-void __attribute__((long_call)) PrintPartyMenuPromptText(u32 stringID);
+void __attribute__((long_call)) DisplayPartyMenuStdMessage(u32 stringID);
 u8* __attribute__((long_call)) GetMonNickname(struct Pokemon *mon, u8 *dest);
 u8 __attribute__((long_call)) GetCursorSelectionMonId(void);
 bool8 __attribute__((long_call)) FieldCallback_PrepareFadeInFromMenu(void);

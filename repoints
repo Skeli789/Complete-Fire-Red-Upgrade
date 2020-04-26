@@ -165,6 +165,7 @@ sNamingScreenTitlePrintingFuncs 0809F588
 ##New Field Moves
 gPartyMenu_ItemMenuActions 845A74C
 gText_MoveItemWhere 845A37C
+gText_DNASplicersFuseWithWhich 845A380
 gFieldMoveDescriptions 81221D0
 gFieldMoveCursorCallbacks 8124614
 gFieldMoveCursorCallbacks 8124680

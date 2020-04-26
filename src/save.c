@@ -12,7 +12,6 @@ save.c
 #define SECTOR_DATA_SIZE 0xFF0
 #define SECTOR_FOOTER_SIZE 128
 #define SECTOR_SAVE_SLOT_LENGTH 14
-#define PLAYER_NAME_LENGTH 8
 #define FILE_SIGNATURE 0x08012025
 #define gSaveBlockParasite 0x0203B174
 #define parasiteSize 0xEC4
