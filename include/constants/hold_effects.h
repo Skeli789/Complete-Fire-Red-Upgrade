@@ -1,6 +1,6 @@
 #pragma once
 
-#define ITEM_EFFECT_NONE            0
+//#define ITEM_EFFECT_NONE            0
 #define ITEM_EFFECT_RESTORE_HP      1
 #define ITEM_EFFECT_CURE_PAR        2
 #define ITEM_EFFECT_CURE_SLP        3

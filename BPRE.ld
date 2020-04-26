@@ -258,6 +258,7 @@ sBerryPouchListMenuItems = 0x203F37C;
 /* Other RAM */
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
+gItemUseCB = 0x3005E98;
 
 /*==========================
 ===========ROM==============
@@ -369,6 +370,7 @@ CalculatePlayerPartyCount = 0x8040C3C | 1;
 //GetMonAbility = 0x8040D38 | 1;
 GetSpeciesName = 0x8040FD0 | 1;
 CalculatePPWithBonus = 0x804101C | 1;
+ExecuteTableBasedItemEffect = 0x80413C0 | 1;
 GetNature = 0x8042E9C | 1;
 GetNatureFromPersonality = 0x8042EB4 | 1;
 NationalPokedexNumToSpecies = 0x8043200 | 1; 
@@ -574,6 +576,7 @@ SetPpNumbersPaletteInMoveSelection = 0x80D89DC | 1;
 sub_80EB2E0 = 0x80EB2E0 | 1;
 //IsLinkDoubleBattle = 0x811FA20 | 1;
 SwitchPartyOrderLinkMulti = 0x8127EC4 | 1;
+GetPartyIdFromBattleSlot = 0x8127F7C | 1;
 SwitchPartyMonSlots = 0x8127FF4 | 1;
 
 
@@ -782,6 +785,7 @@ ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
 PrepareOverworldReturn = 0x80A1184 | 1;
+SetUpItemUseCallback = 0x80A16D0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
 ListMenuInit = 0x8106FF8 | 1; 
 DestroyListMenuTask = 0x810713C | 1;

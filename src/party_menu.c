@@ -4,6 +4,7 @@
 #include "../include/field_effect.h"
 #include "../include/field_weather.h"
 #include "../include/fieldmap.h"
+#include "../include/item_use.h"
 #include "../include/menu.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -13,6 +14,7 @@
 #include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/window.h"
+#include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
 #include "../include/constants/moves.h"
@@ -1272,6 +1274,9 @@ static void CursorCb_MoveItem(u8 taskId)
 }
 
 //Functions relating to staying on the party screen after an item is used
+static bool8 IsUsePartyMenuItemHPEVModifier(struct Pokemon* mon, u16 oldHP, u16 item);
+static void AdjustFriendshipForEVReducingBerry(struct Pokemon* mon);
+static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
@@ -1384,5 +1389,128 @@ void Task_DoLearnedMoveFanfareAfterText(u8 taskId)
 
         PlayFanfare(MUS_FANFA1);
         gTasks[taskId].func = (void*) (0x8125D2C | 1); //Task_LearnNextMoveOrClosePartyMenu
+    }
+}
+
+void FieldUseFunc_EVReducingBerry(u8 taskId)
+{
+    gItemUseCB = ItemUseCB_EVReducingBerry;
+    SetUpItemUseCallback(taskId);
+}
+
+static void AdjustFriendshipForEVReducingBerry(struct Pokemon* mon)
+{
+	u8 boostAmount;
+	u8 holdEffect = ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
+	u16 friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
+
+	if (friendship < 100)
+	{
+		boostAmount = 10;
+	}
+	else if (friendship >= 100 && friendship < 200)
+	{
+		boostAmount = 5;
+	}
+	else //friendship >= 200
+	{
+		boostAmount = 2;
+	}
+
+	if (holdEffect == ITEM_EFFECT_HAPPINESS_UP)
+		friendship += (boostAmount * 15) / 10; //1.5x Boost
+	else
+		friendship += boostAmount;
+
+	if (GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_LUXURY_BALL)
+		friendship++;
+	if (GetMonData(mon, MON_DATA_MET_LOCATION, NULL) == GetCurrentRegionMapSectionId()) //This is official...who knew?
+		friendship++;
+
+	if (friendship > MAX_FRIENDSHIP)
+		friendship = MAX_FRIENDSHIP;
+
+	SetMonData(mon, MON_DATA_FRIENDSHIP, &friendship);
+}
+
+#define gStatNamesTable ((const u8**) 0x83FD5D0)
+extern const u8 gText_EVReducingBerryBothEffects[];
+extern const u8 gText_EVReducingBerryLoweredStat[];
+extern const u8 gText_EVReducingBerryIncreasedFriendship[];
+static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
+{
+    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 item = Var800E;
+	u8 stat = ItemId_GetHoldEffectParam(item);
+	u8 ev = GetMonData(mon, MON_DATA_HP_EV + stat, NULL);
+	u8 friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
+
+    PlaySE(SE_SELECT);
+	if (friendship < MAX_FRIENDSHIP || ev > 0) //Stat can fall or friendship can increase
+	{
+		u16 oldHP = GetMonData(mon, MON_DATA_HP, NULL);
+		u16 oldMaxHP = GetMonData(mon, MON_DATA_MAX_HP, NULL);
+		GetMonNickname(mon, gStringVar1);
+		StringCopy(gStringVar2, gStatNamesTable[stat]);
+
+		if (friendship < MAX_FRIENDSHIP && ev > 0)
+		{
+			if (ev > 10)
+				ev -= 10;
+			else
+				ev = 0;
+
+			SetMonData(mon, MON_DATA_HP_EV + stat, &ev);
+			AdjustFriendshipForEVReducingBerry(mon);
+			StringExpandPlaceholders(gStringVar4, gText_EVReducingBerryBothEffects);
+			CalculateMonStats(mon);
+		}
+		else if (friendship == MAX_FRIENDSHIP && ev > 0)
+		{
+			if (ev > 10)
+				ev -= 10;
+			else
+				ev = 0;
+
+			SetMonData(mon, MON_DATA_HP_EV + stat, &ev);
+			StringExpandPlaceholders(gStringVar4, gText_EVReducingBerryLoweredStat);
+			CalculateMonStats(mon);
+		}
+		else
+		{
+			AdjustFriendshipForEVReducingBerry(mon);
+			StringExpandPlaceholders(gStringVar4, gText_EVReducingBerryIncreasedFriendship);
+		}
+		
+		if (oldMaxHP != GetMonData(mon, MON_DATA_MAX_HP, NULL) //Pomeg Berry
+		#ifdef SPECIES_SHEDINJA
+		&& GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_SHEDINJA
+		#endif
+		)
+		{
+			u16 hpDiff = oldMaxHP - GetMonData(mon, MON_DATA_MAX_HP, NULL);
+			if (GetMonData(mon, MON_DATA_HP, NULL) == oldHP) //HP didn't change for some reason
+			{
+				if (hpDiff > oldHP)
+					oldHP = 1; //Don't faint it
+				else
+					oldHP = MathMax(1, oldHP - hpDiff);
+
+				SetMonData(mon, MON_DATA_HP, &oldHP);
+			}
+		
+			UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon); //So Max HP Updates
+		}
+
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+    else //No Effect
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = func;
     }
 }

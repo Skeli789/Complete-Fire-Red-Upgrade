@@ -2120,7 +2120,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_ATTACK_BLOCKERS:
 			switch (move) {
 				case MOVE_EMBARGO:
-					if (data->defItemEffect != ITEM_EFFECT_NONE)
+					if (data->defItemEffect != 0)
 						INCREASE_STATUS_VIABILITY(1);
 					break;
 

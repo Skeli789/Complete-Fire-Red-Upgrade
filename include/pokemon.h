@@ -767,6 +767,7 @@ void __attribute__((long_call)) PokemonSlotPurge(struct Pokemon* mon);
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
+bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -792,7 +793,6 @@ void GiveMonInitialMoveset(struct Pokemon *mon);
 void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon);
 void DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
-bool8 ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex, u8 e);
 
 u8 GetMonGender(struct Pokemon *mon);
