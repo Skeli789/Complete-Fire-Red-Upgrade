@@ -2,9 +2,13 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
+#include "../include/overworld.h"
 #include "../include/random.h"
+#include "../include/region_map.h"
 #include "../include/script.h"
+#include "../include/pokemon_icon.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/species.h"
 
 #include "../include/new/battle_start_turn_start.h"
@@ -342,4 +346,47 @@ void BattleSetup_StartRoamerBattle(void)
 	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+extern const u16 sMapSectionTopLeftCorners[][2];
+extern const u16 sMapSectionDimensions[][2];
+void CreateTownMapRoamerSprites(void)
+{
+	if (GetSelectedRegionMap() != 0)
+		return; //Roaming only tracked on the main map
+
+	for (int i = 0; i < MAX_NUM_ROAMERS; ++i)
+	{
+		//FlagSet(FLAG_SYS_SEVII_MAP_123); //For debugging
+		if (gRoamers[i].species != SPECIES_NONE)
+		{
+			LoadMonIconPalettes();
+			u8 mapGroup = gRoamers[i].location[MAP_GRP];
+			u8 mapNum = gRoamers[i].location[MAP_NUM];
+			const struct MapHeader* mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
+			u8 regionMapSecId = mapHeader->regionMapSectionId - (MAPSEC_DYNAMIC + 1);
+
+			s16 x = sMapSectionTopLeftCorners[regionMapSecId][0];
+			s16 y = sMapSectionTopLeftCorners[regionMapSecId][1];
+
+			gSprites[CreateMonIcon(gRoamers[i].species, SpriteCB_PokeIcon, 8 * x + 36, 8 * y + 36, 0, gRoamers[i].personality, FALSE)].oam.priority = 2;	
+		}
+	}
+}
+
+void DestroyTownMapRoamerSprites(void)
+{
+	u32 i, j;
+	
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		for (j = 0; j < MAX_NUM_ROAMERS; ++j)
+		{
+			if (gRoamers[j].species != SPECIES_NONE
+			&&  (void*) gSprites[i].images == (void*) GetMonIconTiles(gRoamers[j].species, FALSE))
+			{
+				DestroyMonIconSprite(&gSprites[i]);
+			}
+		}
+	}
 }

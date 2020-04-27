@@ -1059,3 +1059,39 @@ ActivateMGBAPrint:
 	add sp, #0x10
 	bl mgba_open
 	pop {r4, r7, pc}
+
+.pool
+@0x80C446E with r0
+CreateRoamerIconTownMapHook:
+	bl CreateTownMapRoamerSprites
+	mov r4, #0x1
+	neg r4, r4
+	mov r0, r4
+	mov r1, #0x10
+	mov r2, #0x0
+	ldr r3, =0x80C4478 | 1
+	bx r3
+
+.pool
+.align 2
+@0x80C120C with r0
+CreateRoamerIconTownMapPostSwitchMapHook:
+	bl CreateTownMapRoamerSprites
+	ldr r1, [r5]
+	ldr r0, =0x80001CC8
+	lsl r0, #0x1
+	lsr r0, #0x1 @Dumb compiler thing
+	add r1, r0
+	ldr r0, =0x80C1262 | 1
+	bx r0
+
+.pool
+@0x80C111C with r0
+DestroyRoamerIconTownMapHook:
+	bl DestroyTownMapRoamerSprites
+	ldr r1, [r4]
+	mov r2, #0x80
+	lsl r2, #0x5
+	mov r0, #2
+	ldr r3, =0x80C1124 | 1
+	bx r3

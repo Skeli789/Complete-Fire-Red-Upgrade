@@ -32,6 +32,7 @@ bool8 MoveInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType);
 u8 GetMonType(struct Pokemon* mon, u8 typeId);
 bool8 IsMonOfType(struct Pokemon* mon, u8 type);
+void DestroyMonIconSprite(struct Sprite* sprite);
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon);
 bool8 CanPartyMonBePutToSleep(struct Pokemon* mon);
 bool8 CanPartyMonBePoisoned(struct Pokemon* mon);

@@ -581,10 +581,6 @@ static void NullSubHBlank(void)
 {
 };
 
-
-#define sSpriteTileAllocBitmap ((u8*) 0x2021B48)
-#define FREE_SPRITE_TILE(n) (sSpriteTileAllocBitmap[(n) / 8] &= ~(1 << ((n) % 8)))
-
 static void DexNavFreeHUD(void)
 {
 	switch (sDNavState->environment)
@@ -602,14 +598,7 @@ static void DexNavFreeHUD(void)
 
 	//Clear mon icon sprite
 	SafeFreeMonIconPalette(sDNavState->species);
-	u16 tile = gSprites[sDNavState->objIdSpecies].oam.tileNum;
-	u8* tiles = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
-	Memset(tiles, 0, 0x200);
-
-	for (int i = tile; i < tile + 16; ++i)
-		FREE_SPRITE_TILE(i);
-
-	ResetSprite(&gSprites[sDNavState->objIdSpecies]);
+	DestroyMonIconSprite(&gSprites[sDNavState->objIdSpecies]);
 
 	//Clear black bars
 	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdBlackBar[0]]);

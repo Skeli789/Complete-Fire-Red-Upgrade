@@ -256,6 +256,7 @@ sBagContextMenuNumItems = 0x203AD28;
 sBerryPouchListMenuItems = 0x203F37C;
 
 /* Other RAM */
+sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
@@ -320,6 +321,8 @@ sMonIconAffineAnims = 0x83D40E0;
 sPokemonIconSpriteImageSizes = 0x83D40E8;
 gOWYDisplacementPtrs = 0x83A71EC;
 sBattleIntroSlideFuncs = 0x83E7CD4;
+sMapSectionTopLeftCorners = 0x83F1E60;
+sMapSectionDimensions = 0x83F2178;
 sMugshotsOpponentRotationScales = 0x83FA49A;
 sMugshotsOpponentCoords = 0x83FA4AE;
 sHallOfFame_MonFullTeamPositions = 0x840C268;
@@ -953,10 +956,14 @@ FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
 DoWarp = 0x807E438 | 1;
 DoDiveWarp = 0x807E470 | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
-GetMapName = 0x80C4D78 | 1;
 BindObj = 0x80DC44C | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 sub_8150498 = 0x8150498 | 1;
+
+/* Region Map Functions */
+GetSelectedRegionMap = 0x80C0E20 | 1;
+RegionMap_SetPlayerIconInvisibility = 0x80C4324 | 1;
+GetMapName = 0x80C4D78 | 1;
 
 /* Script Functions */
 SetupNativeScript = 0x80697F4 | 1;

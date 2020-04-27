@@ -247,6 +247,9 @@ GetAbilityEncounterRateModType 8082C58 0
 GetMapBaseEncounterCooldown 0808324C 1
 
 #Roamer Hooks
+CreateRoamerIconTownMapPostSwitchMapHook 80C120C 0
+CreateRoamerIconTownMapHook 80C446E 0
+DestroyRoamerIconTownMapHook 80C111C 0
 ClearRoamersData 8141C54 0
 sp129_InitRoamer 8141D9C 0
 UpdateLocationHistoryForRoamers 8141DAC 0
