@@ -209,7 +209,8 @@ enum
 #define CMP_COMMON_BITS         0x4
 #define CMP_NO_COMMON_BITS      0x5
 
-struct TrainerMoney {
+struct TrainerMoney
+{
     u8 trainerClass;
     u8 money;
     u16 field2;

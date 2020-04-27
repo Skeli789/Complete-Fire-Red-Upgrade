@@ -29,6 +29,7 @@ void __attribute__((long_call)) UpdateSpritePaletteWithWeather(u8 spritePaletteI
 void __attribute__((long_call)) ApplyWeatherGammaShiftToPal(u8 paletteIndex);
 void __attribute__((long_call)) DoCurrentWeather(void);
 void __attribute__((long_call)) ApplyGammaShift(u8 startPalIndex, u8 numPalettes, s8 gammaIndex);
+void __attribute__((long_call)) FadeSelectedPals(u8 mode, s8 delay, u32 selectedPalettes);
 
 // Controls how the weather should be changing the screen palettes.
 enum

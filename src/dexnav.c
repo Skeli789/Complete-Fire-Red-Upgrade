@@ -181,7 +181,7 @@ static void DexNavGUICallback2(void)
 	AnimateSprites();
 	UpdatePaletteFade();
 	RunTasks();
-	SyncTilemaps();
+	DoScheduledBgTilemapCopiesToVram();
 	// merge textbox and text tile maps
 	RunTextPrinters();
 }

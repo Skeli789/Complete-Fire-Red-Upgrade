@@ -16,7 +16,7 @@ void __attribute__((long_call)) Free(void *pointer);
 //PokeFireRed Function Names
 
 /*Overworld Functions*/
-void __attribute__((long_call)) SyncTilemaps(void);
+void __attribute__((long_call)) DoScheduledBgTilemapCopiesToVram(void);
 void __attribute__((long_call)) SetVBlankCallback(void (*callback));
 void __attribute__((long_call)) SetHBlankCallback(void (*callback));
 void __attribute__((long_call)) BuildOAMBuffer(void);

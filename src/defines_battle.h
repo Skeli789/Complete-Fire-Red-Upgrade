@@ -117,7 +117,6 @@ typedef u8 TrainerClassNames_t[13];
 #define gTrainerFrontPicTable ((struct CompressedSpriteSheet*) 0x823957C)
 #define gTrainerFrontPicPaletteTable ((struct CompressedSpritePalette*) 0x8239A1C)
 extern struct TrainerPicCoords gTrainerBackPicCoords[];
-#define gTrainerMoneyTable ((struct TrainerMoney*) 0x824F220)
 
 #define sATypeMove_Table ((u8**) 0x83FEA28) //Table of things like "A Normal Move!"
 #define gBattleStringsTable ((u8**) 0x83FDF3C)

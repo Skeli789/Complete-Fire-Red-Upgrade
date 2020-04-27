@@ -256,6 +256,7 @@ sBagContextMenuNumItems = 0x203AD28;
 sBerryPouchListMenuItems = 0x203F37C;
 
 /* Other RAM */
+sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
 gItemUseCB = 0x3005E98;
@@ -1215,7 +1216,7 @@ LoadBattleMenuWindowGfx = 0x800F380 | 1;
 LoadBattleTextboxAndBackground = 0x800F420 | 1;
 RemoveHealthbarWindow = 0x804A6D8 | 1;
 DrawHealthbar = 0x804A6E8 | 1;
-SyncTilemaps = 0x80F67B8 | 1;
+DoScheduledBgTilemapCopiesToVram = 0x80F67B8 | 1;
 DrawStdWindowFrame = 0x80F6F1C | 1;
 ClearDialogWindowAndFrame = 0x80F6F54 | 1;
 ClearStdWindowAndFrame = 0x80F6F9C | 1;
@@ -1453,6 +1454,7 @@ TintPalette_CustomTone = 0x8071660 | 1;
 sub_80717A8 = 0x80717A8 | 1;
 sub_807185C = 0x807185C | 1;
 UpdateSpritePaletteWithWeather = 0x807AA8C | 1;
+FadeSelectedPals = 0x807A944 | 1;
 PreservePaletteInWeather = 0x807B084 | 1;
 
 

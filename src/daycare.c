@@ -241,17 +241,20 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 {
 	u16 i;
 	u16 species[DAYCARE_MON_COUNT];
-	u16 eggSpecies;
+	u16 motherSpecies, eggSpecies;
+
+	for (i = 0; i < DAYCARE_MON_COUNT; ++i)
+		species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES, NULL);
 
 	// Determine which of the daycare mons is the mother and father of the egg.
 	// The 0th index of the parentSlots array is considered the mother slot, and the
 	// 1st index is the father slot.
-	for (i = 0; i < DAYCARE_MON_COUNT; ++i)
+	for (i = 0, motherSpecies = SPECIES_NONE; i < DAYCARE_MON_COUNT; ++i)
 	{
-		species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES, NULL);
 		#ifdef SPECIES_DITTO
 		if (species[i] == SPECIES_DITTO)
 		{
+			motherSpecies = species[i ^ 1]; //Other species
 			parentSlots[0] = i ^ 1;
 			parentSlots[1] = i;
 		}
@@ -259,12 +262,30 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 		#endif
 		if (GetBoxMonGender(&daycare->mons[i].mon) == MON_FEMALE)
 		{
+			motherSpecies = species[i];
+
+			//Handle Regional Form Breeding
+			if (species[i] != species[i ^ 1]) //Different species
+			{
+				u16 currDexNum = SpeciesToNationalPokedexNum(species[i]);
+				u16 otherDexNum = SpeciesToNationalPokedexNum(species[i ^ 1]);
+				if (currDexNum == otherDexNum) //Two different species of the same dexNum
+				{
+					u16 currHeldItem = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_HELD_ITEM, NULL);
+					u16 otherHeldItem = GetBoxMonData(&daycare->mons[i ^ 1].mon, MON_DATA_HELD_ITEM, NULL);
+					if (currHeldItem != ITEM_EVERSTONE && otherHeldItem == ITEM_EVERSTONE) //Go by the species of the Everstone holder
+					{
+						motherSpecies = species[i ^ 1]; //Mon with Everstone
+					}
+				}
+			}
+
 			parentSlots[0] = i;
 			parentSlots[1] = i ^ 1;
 		}
 	}
 
-	eggSpecies = GetEggSpecies(species[parentSlots[0]]);
+	eggSpecies = GetEggSpecies(motherSpecies);
 	switch(SpeciesToNationalPokedexNum(eggSpecies))
 	{
 		#if (defined NATIONAL_DEX_NIDORAN_F && defined SPECIES_NIDORAN_M)
@@ -742,7 +763,7 @@ static u8 GetEggStepsToSubtract(void)
 		if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
 		{
 			u8 ability = GetMonAbility(&gPlayerParty[i]);
-			if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
+			if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY || ability == ABILITY_STEAMENGINE)
 			{
 				return 2;
 			}
