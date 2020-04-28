@@ -941,6 +941,7 @@ void HandleAction_UseMove(void)
 	for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 	{
 		gNewBS->DamageTaken[i] = 0;
+		gNewBS->turnDamageTaken[i] = 0;
 		gNewBS->criticalMultiplier[i] = 0;
 		gNewBS->ResultFlags[i] = 0;
 		gNewBS->missStringId[i] = 0;

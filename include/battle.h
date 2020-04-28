@@ -854,6 +854,7 @@ struct NewBattleStruct
 	
 	//Things for Spread Moves
 	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC0
+	s32 turnDamageTaken[MAX_BATTLERS_COUNT]; //Specifically for multi-hit moves and Emergency Exit
 	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
 	u8 missStringId[MAX_BATTLERS_COUNT];

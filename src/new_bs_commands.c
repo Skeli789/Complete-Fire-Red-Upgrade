@@ -947,10 +947,10 @@ void atkFE_prefaintmoveendeffects(void)
 		switch (gNewBS->preFaintEffectsTracker)
 		{
 		case FAINT_SET_UP: //For Emergency Exit to use later
-			//if (gNewBS->MultiHitOn)
-			//	gNewBS->DamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
-			//else
-				gNewBS->DamageTaken[gBankTarget] = gHpDealt;
+			if (gNewBS->MultiHitOn)
+				gNewBS->turnDamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
+			else
+				gNewBS->turnDamageTaken[gBankTarget] = gHpDealt;
 
 			gNewBS->totalDamageGiven += gHpDealt;
 			gNewBS->ResultFlags[gBankTarget] = gMoveResultFlags;

@@ -146,10 +146,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_SET_UP: //For Emergency Exit to use later
 			gNewBS->originalAttackerBackup = gBankAttacker;
 
-			//if (gNewBS->MultiHitOn)
-			//	gNewBS->DamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
-			//else
-				gNewBS->DamageTaken[gBankTarget] = gHpDealt;
+			if (gNewBS->MultiHitOn)
+				gNewBS->turnDamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
+			else
+				gNewBS->turnDamageTaken[gBankTarget] = gHpDealt;
 
 			gNewBS->totalDamageGiven += gHpDealt;
 			gNewBS->ResultFlags[gBankTarget] = gMoveResultFlags;
@@ -1116,7 +1116,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !SheerForceCheck()
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_EJECT_BUTTON
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
-					&&  gNewBS->DamageTaken[banks[i]]
+					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER)) //Wilds can't activate
 					{
@@ -1152,7 +1152,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					//&&  !IsDynamaxed(banks[i]) //Can't force out a Dynamaxed mon - handled in BS
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_RED_CARD
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
-					&&  gNewBS->DamageTaken[banks[i]]
+					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)) //Wild attackers can't activate
 					{
@@ -1212,7 +1212,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 					&&  BATTLER_ALIVE(bank)
 					&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
-					&&  gBattleMons[bank].hp + gNewBS->DamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
+					&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
 					{
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
@@ -1327,6 +1327,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 			{
+				gNewBS->turnDamageTaken[i] = 0;
 				gNewBS->DamageTaken[i] = 0;
 				gNewBS->criticalMultiplier[i] = 0;
 				gNewBS->ResultFlags[i] = 0;
