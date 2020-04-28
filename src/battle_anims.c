@@ -700,13 +700,33 @@ void ScriptCmd_loadspritegfx(void)
 	gAnimScriptCallback = WaitAnimFrameCount;
 }
 
-void ShinyAnimFix(void)
+void LoadShinyStarsSpriteTiles(void)
 {
 	if (GetSpriteTileStartByTag(ANIM_TAG_GOLD_STARS) == 0xFFFF)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
 		LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
 	}
+}
+
+void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
+{
+    u8 taskId1, taskId2;
+    gBattleSpritesDataPtr->healthBoxesData[battler].flag_x80 = 1;
+
+    if (IsBattlerSpriteVisible(battler) && IsMonShiny(GetIllusionPartyData(battler)))
+    {
+		LoadShinyStarsSpriteTiles();
+		taskId1 = CreateTask((void*) (0x80F181C | 1), 10);
+		taskId2 = CreateTask((void*) (0x80F181C | 1), 10);
+		gTasks[taskId1].data[0] = battler;
+		gTasks[taskId2].data[0] = battler;
+		gTasks[taskId1].data[1] = 0;
+		gTasks[taskId2].data[1] = 1;
+		return;
+    }
+
+    gBattleSpritesDataPtr->healthBoxesData[battler].field_1_x1 = 1;
 }
 
 void AnimTask_TechnoBlast(u8 taskId)

@@ -113,7 +113,7 @@ ShinyAnimFixHook:
 	lsl r0, r0, #0x18
 	lsr r2, r0, #0x18
 	push {r2}
-	bl ShinyAnimFix
+	bl LoadShinyStarsSpriteTiles
 	pop {r2}
 	ldr r0, =0x80F1884 | 1
 	bx r0

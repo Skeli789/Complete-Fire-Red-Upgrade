@@ -2018,6 +2018,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				{
 					gNewBS->IllusionBroken |= gBitTable[bank];
 					gStatuses3[bank] &= ~(STATUS3_ILLUSION);
+					gNewBS->disguisedAs[bank] = 0;
 					gActiveBattler = bank;
 					EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
 					MarkBufferBankForExecution(gActiveBattler);

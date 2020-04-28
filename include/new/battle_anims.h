@@ -64,7 +64,6 @@ bool8 IsAnimMoveKingsShield(void);
 //Functions hooked in
 bank_t LoadBattleAnimTarget(u8 arg);
 void ScriptCmd_loadspritegfx(void);
-void ShinyAnimFix(void);
 bool8 ShadowSneakAnimHelper(void);
 void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite);
 void UpdateOamPriorityInAllHealthboxes(u8 priority);

@@ -2130,3 +2130,8 @@ void TryActivateDefiantForStickyWeb(void)
 	DefiantActivation();
 	gBattlescriptCurrInstr -= 5; //Reset either normal script or Defiant script
 }
+
+void ClearScriptingBankDisguisedAs(void)
+{
+	gNewBS->disguisedAs[gBattleScripting.bank] = SPECIES_NONE;
+}

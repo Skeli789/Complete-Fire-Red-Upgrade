@@ -241,6 +241,7 @@ BattleScript_TryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
+	callasm ClearScriptingBankDisguisedAs
 	reloadhealthbar BANK_SCRIPTING
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER IllusionWoreOffString

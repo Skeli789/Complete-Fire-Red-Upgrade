@@ -869,6 +869,13 @@ u8 GetIllusionPartyNumber(u8 bank)
 		//Wild Pokemon can't diguise themselves
 		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)
 			return gBattlerPartyIndexes[bank];
+		
+		//Check for a saved party number first.
+		//This is necessary for when in doubles the last alive Pokemon is KOd.
+		//If the party was checked each time, the Pokemon could change who it was
+		//disguised as mid-Illusion.
+		if (gNewBS->disguisedAs[bank] > 0)
+			return gNewBS->disguisedAs[bank] - 1;
 
 		struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 
@@ -882,6 +889,7 @@ u8 GetIllusionPartyNumber(u8 bank)
 			|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
 				continue;
 
+			gNewBS->disguisedAs[bank] = i + 1;
 			return i;
 		}
 	}
