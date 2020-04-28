@@ -51,6 +51,12 @@ loop_label:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x1D760, 0xFF @Replaced Attackcanceler
+GetEventObjectGraphicsInfoByEventObj:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Limiters
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x21CFA, 0xFF
 MaxLevelChange2:
 	.byte MAX_LEVEL
@@ -305,10 +311,10 @@ MaxLevelChange1:
 	.byte 0x2, 0x0, 0x0, 0x0
 
 .org 0x5f5e8, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
-	.byte 0x70, 0x47
+	bx lr
 		
 .org 0x5f658, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
-	.byte 0x70, 0x47
+	bx lr
 	
 .org 0x79c18, 0xff	@don't load rain palette on entering map
 	.byte 0x0, 0x25, 0xe, 0xe0
@@ -382,7 +388,7 @@ MaxLevelChange1:
 	ldrh r0, [r0]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Dynamic Overworld Palettes & More OW Sprites
+@ Dynamic Overworld Palettes & More OW Sprites: Field Effects
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0xC97AC, 0xFF	@16 bit sprite ids
 	lsl r5, #0x10
@@ -392,15 +398,63 @@ MaxLevelChange1:
 	lsl r1, #0x10
 	lsr r1, #0x10
 
-.org 0xdaec4, 0xff	@@don't auto-load NPC palettes into slot 0 or 0xA
-	.byte 0x70, 0x47
+.org 0xDAE42, 0xFF
+	mov r0, r0
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDAE6A, 0xFF
+	mov r0, r5
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDAEC4, 0xff @don't auto-load NPC palettes into slot 0 or 0xA
+	bx lr
+
+/*.org 0xDAECC, 0xFF
+	mov r0, r0
+	bl GetEventObjectGraphicsInfoByEventObj*/
 	
-.org 0xdaf20, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
-	.byte 0x70, 0x47
-	
-.org 0xdafb8, 0xff	@don't reset pal slot during player animation or reflection
-	.hword 0x0
-	
+.org 0xdaf20, 0xff @don't auto-load NPC palettes into slot 0 or 0xA
+	bx lr
+
+/*.org 0xDAF28, 0xFF
+	mov r0, r0
+	bl GetEventObjectGraphicsInfoByEventObj*/
+
+.org 0xdafb8, 0xff @don't reset pal slot during player animation or reflection
+	mov r8, r8
+
+.org 0xDB1F8, 0xFF @FldEff_Shadow
+	mov r0, r1
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDB8F8, 0xFF
+	mov r0, r1 @UpdateShortGrassFieldEffect
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDBBBA, 0xFF @FldEff_Splash
+	mov r0, r5
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDBDCA, 0xFF @FldEff_FeetInFlowingWater
+	mov r0, r6
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDC03C, 0xFF @UpdateHotSpringsWaterFieldEffect
+	mov r0, r1
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDC7E2, 0xFF @FldEff_SandPile
+	mov r0, r6
+	bl GetEventObjectGraphicsInfoByEventObj
+
+.org 0xDCB06, 0xFF @UpdateDisguiseFieldEffect
+	mov r0, r0
+	bl GetEventObjectGraphicsInfoByEventObj
+
+/*.org 0xDCD70, 0xFF
+	mov r0, r4
+	bl GetEventObjectGraphicsInfoByEventObj*/
+
 .org 0xdcd70, 0xff  @remove time wasting useless function call
 	mov r8, r8
 	mov r8, r8

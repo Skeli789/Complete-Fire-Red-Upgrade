@@ -161,6 +161,11 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	return spriteAddr;
 };
 
+NPCPtr GetEventObjectGraphicsInfoByEventObj(struct EventObject* eventObj)
+{
+	return GetEventObjectGraphicsInfo(GetEventObjectGraphicsId(eventObj));
+}
+
 static u16 GetCustomGraphicsIdByState(u8 state)
 {
 	u16 spriteId = 0;
@@ -271,7 +276,8 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
 	u8 upperByte = eventObj->graphicsIdUpperByte;
 
 	#ifndef EXISTING_OW_TABLE_ADDRESS
-	if (upperByte >= ARRAY_COUNT(gOverworldTableSwitcher))
+	if (upperByte >= ARRAY_COUNT(gOverworldTableSwitcher)
+	&& upperByte != 0xFF) //Dynamic OW table
 		return lowerByte;
 	#endif
 

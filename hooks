@@ -300,24 +300,25 @@ DiveCheckEmergeHook 806CB30 0
 DiveCheckDownHook 806CCCC 0
 
 ##Character Customization
-GetEventObjectGraphicsInfo 0805F2C8 1
-InitPlayerAvatarHook 080570CC 3
+GetEventObjectGraphicsInfo 805F2C8 1
+InitPlayerAvatarHook 80570CC 3
 UpdateEventObjectLargerGraphicsId 805E150 0
-NpcSizeFix 0805e510 1
-NewNpcInfo 0805e964 4
+NpcSizeFix 805e510 1
+NewNpcInfo 805e964 4
 SetPlayerAvatarEventObjectIdAndObjectId 805F02C 2
 EventObjectSetGraphicsIdFix 805F168 0
-NpcOffscreenFix 08067a12 5
-NpcWaterFix 08067f92 5
-NPCMartFix 0809BA6C 1
-CharacterCustomizationUpdateTrainerFrontPic2 0810BD64 1
-PlayerGenderToFrontTrainerPicId 0810C374 2
-GetPlayerAvatarGraphicsIdByStateIdAndGender 0805C7E0 2
-GetPlayerAvatarGraphicsIdByStateId 0805C808 1
-GetPlayerAvatarStateTransitionByGraphicsId 0805C988 2
-GetPlayerAvatarGraphicsIdByCurrentState 0805C9C8 0
-GetPlayerAvatarGenderByGraphicsId 0805C824 1
-PlayerFishingFix 0805D3AC 1
+NpcOffscreenFix 8067a12 5
+NpcWaterFix 8067f92 5
+NPCMartFix 809BA6C 1
+CharacterCustomizationUpdateTrainerFrontPic2 810BD64 1
+PlayerGenderToFrontTrainerPicId 810C374 2
+GetPlayerAvatarGraphicsIdByStateIdAndGender 805C7E0 2
+GetPlayerAvatarGraphicsIdByStateId 805C808 1
+GetPlayerAvatarStateTransitionByGraphicsId 805C988 2
+GetPlayerAvatarGraphicsIdByCurrentState 805C9C8 0
+GetPlayerAvatarGenderByGraphicsId 805C824 1
+PlayerFishingFix 805D3AC 1
+GetEventObjectGraphicsInfoByEventObj 801D760 1
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0

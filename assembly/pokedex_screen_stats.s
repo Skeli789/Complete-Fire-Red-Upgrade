@@ -154,7 +154,7 @@ print_stat:
 	add r2, r0
 	ldrb r1, [r2]
 	mov r4, r0
-	ldr r0, fcode_buffer2
+	ldr r0, =gStringVar1
 	mov r3, #0
 	cmp r1, #99
 	bhi no_leading_zeroes
@@ -171,38 +171,34 @@ one_leading_zero:
 
 no_leading_zeroes:
 	mov r3, #3
-	ldr r5, int_to_str
+	ldr r5, =ConvertIntToDecimalStringN
 	bl call_via_r5
 
 	mov r2, r4
-	ldr r0, displayed_string
+	ldr r0, =gStringVar4
 	ldr r1, str_table
 	lsl r2, r2, #2
 	add r1, r2
 	ldr r1, [r1]
-	ldr r5, fdecoder
+	ldr r5, =StringExpandPlaceholders
 	bl call_via_r5
 	ldr r1, [r7]
 	add r1, #0x53
 	ldrb r1, [r1]
 	mov r0, r1
 	mov r1, #0
-	ldr r2, displayed_string
+	ldr r2, =gStringVar4
 	pop {r5}
 
 call_via_r5:
 	bx r5
 
 .align 2
-	base_stats:			.word 0x80001BC
-	str_table:			.word table
-	str_unknown:		.word capture
-	fcode_buffer2:		.word 0x02021CD0
-	displayed_string: 	.word 0x02021D18
-	int_to_str:			.word 0x08008E78|1
-	fdecoder:			.word 0x08008FCC|1
-	write_method:		.word 0x081047C8|1
-	return_loc:			.word 0x08106380|1
+	base_stats:	.word 0x80001BC
+	str_table:	.word table
+	str_unknown:	.word capture
+	write_method:	.word 0x081047C8|1
+	return_loc:	.word 0x08106380|1
 table:
 	.word stat_hp
 	.word stat_atk
