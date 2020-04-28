@@ -91,15 +91,15 @@ static const struct OamData sIndicatorOam =
 
 static const union AffineAnimCmd sSpriteAffineAnim_RaidShieldCreate[] =
 {
-    AFFINEANIMCMD_FRAME(32, 32, 0, 4), //Double in size
+	AFFINEANIMCMD_FRAME(32, 32, 0, 4), //Double in size
 	AFFINEANIMCMD_FRAME(-8, -8, 0, 16), //Shrink into place
-    AFFINEANIMCMD_END,
+	AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_RaidShieldDestroy[] =
 {
-    AFFINEANIMCMD_FRAME(32, 32, 0, 4), //Double in size
-    AFFINEANIMCMD_END,
+	AFFINEANIMCMD_FRAME(32, 32, 0, 4), //Double in size
+	AFFINEANIMCMD_END,
 };
 
 static const union AffineAnimCmd* const sSpriteAffineAnimTable_RaidShield[] =
@@ -381,7 +381,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 		}
 	}
 
-  	const struct Evolution* evo;
+	const struct Evolution* evo;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
 	if (TAG == GFX_TAG_MEGA_TRIGGER)
 	{
@@ -632,7 +632,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 		}
 	}
 
-  	if (gNewBS->zMoveData.viewing)
+	if (gNewBS->zMoveData.viewing)
 		PALETTE_STATE = MegaTriggerLightUp;
 	else
 		PALETTE_STATE = MegaTriggerNormalColour;
@@ -734,7 +734,7 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 		}
 	}
 
-  	if (gNewBS->dynamaxData.viewing)
+	if (gNewBS->dynamaxData.viewing)
 		PALETTE_STATE = MegaTriggerLightUp;
 	else
 		PALETTE_STATE = MegaTriggerNormalColour;
@@ -781,6 +781,13 @@ static void SpriteCB_RaidShield(struct Sprite* sprite)
 		sprite->invisible = FALSE;
 	else
 		sprite->invisible = TRUE;
+	
+	if (sprite->affineAnimEnded && sprite->oam.affineMode == ST_OAM_AFFINE_DOUBLE)
+	{
+		//Remove the OAM matrix to save space in memory
+		FreeSpriteOamMatrix(sprite);
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+	}
 }
 
 
@@ -1012,11 +1019,11 @@ static void DestroyDynamaxTrigger(void)
 
 static void DestroyRaidShieldSpriteAndMatrix(struct Sprite *sprite)
 {
-    m4aMPlayStop(&gMPlayInfo_SE1);
-    m4aMPlayStop(&gMPlayInfo_SE2);
+	m4aMPlayStop(&gMPlayInfo_SE1);
+	m4aMPlayStop(&gMPlayInfo_SE2);
 	PlaySE(0xBF); //Screen break
 
-    FreeSpriteOamMatrix(sprite);
+	FreeSpriteOamMatrix(sprite);
 	DestroySprite(sprite);
 }
 
@@ -1035,6 +1042,10 @@ void DestroyRaidShieldSprite(void)
 			struct Sprite* sprite = &gSprites[gNewBS->dynamaxData.shieldSpriteIds[i] - 1];
 			gNewBS->dynamaxData.shieldSpriteIds[i] = 0;
 
+			//Turn on affine anims again since they were turned off earlier
+			sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+			CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+			InitSpriteAffineAnim(sprite);
 			StartSpriteAffineAnim(sprite, 1);
 			StoreSpriteCallbackInData6(sprite, DestroyRaidShieldSpriteAndMatrix);
 			sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
