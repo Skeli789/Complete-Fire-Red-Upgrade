@@ -106,6 +106,8 @@
 
 #define SE_GLASS_BREAK 0xBF
 
+#define SE_EARTHQUAKE 0xE3
+
 #define SE_RG_W_DOOR 241        // Door
 #define SE_RG_CARD1 242         // Trainer Card 1
 #define SE_RG_CARD2 243         // Trainer Card 2
@@ -123,6 +125,7 @@
 
 #define SE_CAUGHT_POKEMON 0x13F
 #define MUS_FANFA1 0x101
+#define MUS_FANFA2 0x10D
 
 #ifdef UNBOUND //For Unbound
 

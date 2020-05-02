@@ -16,6 +16,7 @@ set_effect_battle_scripts.s
 .global BattleScript_KnockedOff
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner
+.global BattleScript_MaxMoveRaiseStatTeam
 .global BattleScript_MaxMoveLowerStatFoes
 .global BattleScript_EatEffectBankBerry
 .global BattleScript_MaxMoveSetWeather
@@ -123,6 +124,18 @@ BattleScript_StatUpPartner:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MaxMoveRaiseStatTeam:
+	callasm SetMaxMoveStatRaiseEffect
+	seteffectprimary
+	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
+	callasm SetAttackerPartner
+	callasm SetMaxMoveStatRaiseEffect
+	seteffectprimary
+	callasm SetAttackerPartner
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

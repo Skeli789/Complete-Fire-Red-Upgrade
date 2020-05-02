@@ -34,3 +34,7 @@ void __attribute__((long_call)) ResetBgPositions(void);
 void __attribute__((long_call)) ClearStdWindowAndFrame(u8 windowId, bool8 copyToVram);
 void __attribute__((long_call)) DrawStdWindowFrame(u8 windowId, bool8 CopyToVram);
 u16 __attribute__((long_call)) CreateWindowTemplate(u8 bg, u8 left, u8 top, u8 width, u8 height, u8 paletteNum, u16 baseBlock);
+void __attribute__((long_call)) AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress);
+u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
+u8 __attribute__((long_call)) GetPlayerTextSpeedDelay(void);
+u16 __attribute__((long_call)) RunTextPrintersAndIsPrinter0Active(void);

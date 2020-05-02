@@ -4,11 +4,26 @@
 #include "global.h"
 
 #define CHAR_SPACE          0x00
+#define CHAR_PLUS           0x2E
 #define CHAR_0              0xA1
+#define CHAR_1              0xA2
+#define CHAR_2              0xA3
+#define CHAR_3              0xA4
+#define CHAR_4              0xA5
+#define CHAR_5              0xA6
+#define CHAR_6              0xA7
+#define CHAR_7              0xA8
+#define CHAR_8              0xA9
+#define CHAR_9              0xAA
+#define CHAR_EXCL_MARK      0xAB
 #define CHAR_QUESTION_MARK  0xAC
 #define CHAR_PERIOD         0xAD
 #define CHAR_HYPHEN         0xAE
 #define CHAR_ELLIPSIS       0xB0
+#define CHAR_DBL_QUOT_LEFT  0xB1
+#define CHAR_DBL_QUOT_RIGHT 0xB2
+#define CHAR_SGL_QUOT_LEFT  0xB3
+#define CHAR_SGL_QUOT_RIGHT 0xB4
 #define CHAR_MALE           0xB5
 #define CHAR_FEMALE         0xB6
 #define CHAR_CURRENCY       0xB7
@@ -68,6 +83,7 @@
 #define CHAR_y              0xED
 #define CHAR_z              0xEE
 #define CHAR_SPECIAL_F7     0xF7
+#define CHAR_SPECIAL_F8     0xF8
 #define CHAR_SPECIAL_F9     0xF9
 #define CHAR_COLON          0xF0
 #define CHAR_PROMPT_SCROLL  0xFA // waits for button press and scrolls dialog
@@ -76,6 +92,31 @@
 #define PLACEHOLDER_BEGIN   0xFD // string placeholder
 #define CHAR_NEWLINE        0xFE
 #define EOS                 0xFF // end of string
+
+// Special F9 chars
+#define CHAR_UP_ARROW_2    0x00
+#define CHAR_DOWN_ARROW_2  0x01
+#define CHAR_LEFT_ARROW_2  0x02
+#define CHAR_RIGHT_ARROW_2 0x03
+#define CHAR_PLUS_2        0x04
+#define CHAR_LV_2          0x05
+#define CHAR_PP            0x06
+#define CHAR_ID            0x07
+#define CHAR_NO            0x08
+#define CHAR_UNDERSCORE    0x09
+
+#define EXT_CTRL_CODE_COLOR     0x1
+#define EXT_CTRL_CODE_HIGHLIGHT 0x2
+#define EXT_CTRL_CODE_SHADOW    0x3
+//
+#define EXT_CTRL_CODE_UNKNOWN_7 0x7
+//
+#define EXT_CTRL_CODE_CLEAR     0x11
+//
+#define EXT_CTRL_CODE_CLEAR_TO  0x13
+#define EXT_CTRL_CODE_MIN_LETTER_SPACING 0x14
+#define EXT_CTRL_CODE_JPN       0x15
+#define EXT_CTRL_CODE_ENG       0x16
 
 #define TEXT_COLOR_TRANSPARENT  0x0
 #define TEXT_COLOR_WHITE        0x1
@@ -109,109 +150,11 @@
 #define PLACEHOLDER_ID_KYOGRE        0xC
 #define PLACEHOLDER_ID_GROUDON       0xD
 
-#define EXT_CTRL_CODE_JPN   0x15
-#define EXT_CTRL_CODE_ENG   0x16
+// battle placeholders are located in battle_message.h
 
 #define NUM_TEXT_PRINTERS 32
 
 #define TEXT_SPEED_FF 0xFF
-
-struct TextPrinterSubStruct
-{
-    u8 font_type:4;  // 0x14
-    u8 font_type_upper:1;
-    u8 font_type_5:3;
-    u8 field_1:5;
-    u8 field_1_upmid:2;
-    u8 field_1_top:1;
-    u8 frames_visible_counter;
-    u8 field_3;
-    u8 field_4; // 0x18
-    u8 field_5;
-    u8 field_6;
-    u8 active;
-};
-
-struct TextSubPrinter // TODO: Better name
-{
-    const u8* current_text_offset;
-    u8 windowId;
-    u8 fontId;
-    u8 x;
-    u8 y;
-    u8 currentX;        // 0x8
-    u8 currentY;
-    u8 letterSpacing;
-    u8 lineSpacing;
-    u8 fontColor_l:4;   // 0xC
-    u8 fontColor_h:4;
-    u8 bgColor:4;
-    u8 shadowColor:4;
-};
-
-struct TextPrinter
-{
-    struct TextSubPrinter subPrinter;
-
-    void (*callback)(struct TextSubPrinter *, u16); // 0x10
-
-    union {
-        struct TextPrinterSubStruct sub;
-
-        u8 sub_fields[8];
-    } sub_union;
-
-    u8 state;       // 0x1C
-    u8 text_speed;
-    u8 delayCounter;
-    u8 scrollDistance;
-    u8 minLetterSpacing;  // 0x20
-    u8 japanese;
-};
-
-struct FontInfo
-{
-    u16 (*fontFunction)(struct TextPrinter *x);
-    u8 maxLetterWidth;
-    u8 maxLetterHeight;
-    u8 letterSpacing;
-    u8 lineSpacing;
-    u8 fontColor_l:4;
-    u8 fontColor_h:4;
-    u8 bgColor:4;
-    u8 shadowColor:4;
-};
-
-extern const struct FontInfo *gFonts;
-
-struct GlyphWidthFunc
-{
-    u32 font_id;
-    s32 (*func)(u16 glyphId, bool32 isJapanese);
-};
-
-struct KeypadIcon
-{
-    u16 tile_offset;
-    u8 width;
-    u8 height;
-};
-
-typedef struct {
-    u8 flag_0:1;
-    u8 flag_1:1;
-    u8 flag_2:1;
-    u8 flag_3:1;
-} TextFlags;
-
-extern TextFlags gTextFlags;
-
-struct __attribute__((packed)) TextColor
-{
-    u8 bgColor;
-    u8 fgColor;
-    u8 shadowColor;
-};
 
 enum
 {
@@ -225,7 +168,116 @@ enum
     FONTATTR_COLOR_SHADOW
 };
 
-u16 __attribute__((long_call)) AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextSubPrinter *, u16));
+struct TextPrinterSubStruct
+{
+    u8 glyphId:4;  // 0x14
+    bool8 hasPrintBeenSpedUp:1;
+    u8 unk:3;
+    u8 downArrowDelay:5;
+    u8 downArrowYPosIdx:2;
+    bool8 hasGlyphIdBeenSet:1;
+    u8 autoScrollDelay;
+};
+
+struct TextPrinterTemplate
+{
+    const u8* currentChar;
+    u8 windowId;
+    u8 fontId;
+    u8 x;
+    u8 y;
+    u8 currentX;        // 0x8
+    u8 currentY;
+    u8 letterSpacing;
+    u8 lineSpacing;
+    u8 unk:4;   // 0xC
+    u8 fgColor:4;
+    u8 bgColor:4;
+    u8 shadowColor:4;
+};
+
+struct TextPrinter
+{
+    struct TextPrinterTemplate printerTemplate;
+
+    void (*callback)(struct TextPrinterTemplate *, u16); // 0x10
+
+    union
+#if !MODERN
+    __attribute__((packed))
+#endif
+    {
+        struct TextPrinterSubStruct sub;
+        u8 fields[7];
+    } subUnion;
+
+    u8 active;
+    u8 state;       // 0x1C
+    u8 textSpeed;
+    u8 delayCounter;
+    u8 scrollDistance;
+    u8 minLetterSpacing;  // 0x20
+    u8 japanese;
+};
+
+struct FontInfo
+{
+    u16 (*fontFunction)(struct TextPrinter *x);
+    u8 maxLetterWidth;
+    u8 maxLetterHeight;
+    u8 letterSpacing;
+    u8 lineSpacing;
+    u8 unk:4;
+    u8 fgColor:4;
+    u8 bgColor:4;
+    u8 shadowColor:4;
+};
+
+extern const struct FontInfo *gFonts;
+
+struct GlyphWidthFunc
+{
+    u32 fontId;
+    u32 (*func)(u16 glyphId, bool32 isJapanese);
+};
+
+struct KeypadIcon
+{
+    u16 tileOffset;
+    u8 width;
+    u8 height;
+};
+
+typedef struct {
+    bool8 canABSpeedUpPrint:1;
+    bool8 useAlternateDownArrow:1;
+    bool8 autoScroll:1;
+    bool8 forceMidTextSpeed:1;
+} TextFlags;
+
+struct Struct_03002F90
+{
+    u32 unk0[8];
+    u32 unk20[8];
+    u32 unk40[8];
+    u32 unk60[8];
+    u8 unk80;
+    u8 unk81;
+};
+
+struct __attribute__((packed)) TextColor
+{
+    u8 bgColor;
+    u8 fgColor;
+    u8 shadowColor;
+};
+
+extern TextFlags gTextFlags;
+
+extern u8 gUnknown_03002F84;
+extern struct Struct_03002F90 gUnknown_03002F90;
+
+u16 __attribute__((long_call)) AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16));
 s32 __attribute__((long_call)) GetStringWidth(u8 fontId, const u8 *str, s16 letterSpacing);
 u8 __attribute__((long_call)) GetFontAttribute(u8 fontId, u8 attributeId);
 void __attribute__((long_call)) RunTextPrinters(void);

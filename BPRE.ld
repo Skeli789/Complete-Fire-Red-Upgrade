@@ -1035,8 +1035,10 @@ GetExpandedPlaceholder = 0x80091E0 | 1;
 TextboxFdecodeAutoAndCreateTask = 0x80694C8 | 1;
 HideFieldMessageBox = 0x80694F4 | 1;
 ReturnEmptyStringIfNull = 0x80806C8 | 1;
+RunTextPrintersAndIsPrinter0Active = 0x80F6CBC | 1;
 DrawHelpMessageWindowWithText = 0x80F7974 | 1;
-GetTextSpeed = 0x80F78A8 | 1;
+AddTextPrinterForMessage = 0x80F6D5C | 1;
+GetPlayerTextSpeedDelay = 0x80F78A8 | 1;
 ChoiceSetupSimple = 0x810F7D8 | 1;
 AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 
@@ -1317,7 +1319,9 @@ TrySavingData = 0x80DA364 | 1;
 
 /* GPU Regs Functions */
 SetGpuReg = 0x8000A38 | 1;
-
+GetGpuReg = 0x8000AC4 | 1;
+SetGpuRegBits = 0x8000AF4 | 1;
+ClearGpuRegBits = 0x8000B14 | 1;
 
 /* Sprite Functions */
 ResetSpriteData = 0x8006B10 | 1;

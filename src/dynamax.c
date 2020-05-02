@@ -800,7 +800,6 @@ void ClearBallAnimActiveBit(void)
 
 void atkFF2F_setmaxmoveeffect(void)
 {
-	u8 statId, increase;
 	gBattlescriptCurrInstr += 1;
 
 	if (IsRaidBattle()
@@ -816,33 +815,10 @@ void atkFF2F_setmaxmoveeffect(void)
 		case MAX_EFFECT_RAISE_TEAM_SPEED:
 		case MAX_EFFECT_RAISE_TEAM_SP_ATK:
 		case MAX_EFFECT_RAISE_TEAM_SP_DEF:
-			statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_RAISE_TEAM_ATTACK) + 1;
-			increase = SET_STAT_BUFF_VALUE(1);
-
-			if (!ChangeStatBuffs(increase, statId, MOVE_EFFECT_CERTAIN | MOVE_EFFECT_AFFECTS_USER, NULL))
+			if (BATTLER_ALIVE(gBankAttacker) || BATTLER_ALIVE(PARTNER(gBankAttacker)))
 			{
-				gEffectBank = gBankAttacker;
-				gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + statId - 1;
-				gBattleScripting.animArg2 = 0;
 				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_StatUp;
-			}
-
-			if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker)))
-			{
-				u8 backup = gBankAttacker;
-				gBankAttacker = PARTNER(gBankAttacker);
-
-				if (!ChangeStatBuffs(increase, statId, MOVE_EFFECT_CERTAIN | MOVE_EFFECT_AFFECTS_USER, NULL))
-				{
-					gBattleScripting.bank = gBankAttacker;
-					gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + statId - 1;
-					gBattleScripting.animArg2 = 0;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_StatUpPartner;
-				}
-
-				gBankAttacker = backup; //Restore the original attacker
+				gBattlescriptCurrInstr = BattleScript_MaxMoveRaiseStatTeam;
 			}
 			break;
 
@@ -851,7 +827,7 @@ void atkFF2F_setmaxmoveeffect(void)
 		case MAX_EFFECT_LOWER_SPEED:
 		case MAX_EFFECT_LOWER_SP_ATK:
 		case MAX_EFFECT_LOWER_SP_DEF:
-			if (BATTLER_ALIVE(gBankTarget))
+			if (BATTLER_ALIVE(gBankTarget) || BATTLER_ALIVE(PARTNER(gBankTarget)))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerStatFoes;
@@ -1105,6 +1081,12 @@ void atkFF2F_setmaxmoveeffect(void)
 			}
 			break;
 	}
+}
+
+void SetMaxMoveStatRaiseEffect(void)
+{
+	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_RAISE_TEAM_ATTACK);
+	gBattleCommunication[MOVE_EFFECT_BYTE] = (MOVE_EFFECT_ATK_PLUS_1 + statId) | MOVE_EFFECT_AFFECTS_USER;
 }
 
 void SetMaxMoveStatLowerEffect(void)
