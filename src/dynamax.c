@@ -1768,8 +1768,12 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 {
 	switch (item) {
 		case ITEM_HP_UP: //HP UP to Carbos
+			item += RandRange(0, NUM_STATS);
+			if (item >= ITEM_RARE_CANDY) //For some reason it comes before Zinc
+				item = ITEM_ZINC;
+			break;
 		case ITEM_POMEG_BERRY:
-			item += RandRange(0, NUM_STATS - 1); //Pomeg - Tamato
+			item += RandRange(0, NUM_STATS); //Pomeg - Tamato
 			break;
 		case ITEM_LIECHI_BERRY:
 			item += RandRange(0, NUM_STATS + 1); //Liechi - Starf

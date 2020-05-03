@@ -29,6 +29,13 @@ struct PokemonStorage
     /*0x83C2*/ u8 boxWallpapers[ORIGINAL_TOTAL_BOXES_COUNT];
 };
 
+struct WallpaperTable
+{
+    const u8* tiles;
+    const u8* tileMap;
+    const u16* palettes;
+};
+
 //extern struct PokemonStorage* gPokemonStoragePtr;
 
 u8 __attribute__((long_call)) StorageGetCurrentBox(void);

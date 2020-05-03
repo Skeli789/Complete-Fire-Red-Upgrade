@@ -494,6 +494,17 @@ MedicinePostUseFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Stay On Item Screen - PP Up
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x12587C, 0xFF
+PPUpPostUseFix:
+	mov r0, r5
+	bl PPUpPostUseFix + 0x1C @ItemUseCB_PPUpStep
+	mov r8, r8
+	mov r8, r8
+	mov r8, r8
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1262D2, 0xFF

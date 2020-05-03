@@ -142,9 +142,11 @@ Type_IconsTiles 08107DB0
 Type_IconsPal 08107D64
 
 ##PC Selection BRM
+#ifdef SELECT_FROM_PC
 pcSelect_newBrmTable 08094e48
 pcSelect_OperationsTable 0808fbc8
 pcSelect_OperationsTable 0808fce4
+#endif
 
 ##Expanded Text Buffers
 sScriptStringVars 0806bcc0

@@ -3137,9 +3137,9 @@ static void AnimTask_GrowStep(u8 taskId)
 
 static const union AffineAnimCmd sDynamaxGrowthAffineAnimCmds[] =
 {
-	AFFINEANIMCMD_FRAME(-2, -2, 0, 64), //Double in size
-	AFFINEANIMCMD_FRAME(0, 0, 0, 64),
-	AFFINEANIMCMD_FRAME(16, 16, 0, 8),
+	AFFINEANIMCMD_FRAME(-2, -2, 0, 64), //Double in size over 1 second
+	AFFINEANIMCMD_FRAME(0, 0, 0, 64), //Pause for 1 seconds
+	AFFINEANIMCMD_FRAME(16, 16, 0, 8), //Shrink back down in 1/8 of a second
 	AFFINEANIMCMD_END,
 };
 
