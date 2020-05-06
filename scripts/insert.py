@@ -240,7 +240,7 @@ def TryProcessConditionalCompilation(line: str, definesDict: dict, conditionals:
         condition = line.strip().split()[1]
         conditionals.insert(0, (condition, True))  # Insert at front
         return True
-    elif upperLine.startswith('#INFDEF ') and numWordsOnLine > 1:
+    elif upperLine.startswith('#IFNDEF ') and numWordsOnLine > 1:
         condition = line.strip().split()[1]
         conditionals.insert(0, (condition, False))  # Insert at front
         return True
