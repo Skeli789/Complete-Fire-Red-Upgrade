@@ -1,7 +1,9 @@
 #include "defines.h"
 #include "../include/link.h"
 #include "../include/menu.h"
+#include "../include/menu_helpers.h"
 #include "../include/safari_zone.h"
+#include "../include/script.h"
 #include "../include/start_menu.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/songs.h"
@@ -14,30 +16,114 @@ start_menu.c
 	associated functions such as safari steps/ball count.
 */
 
-//This file's functions:
-static void CloseStartMenu(void);
-static void BuildNormalStartMenu();
-static void BuildSafariZoneStartMenu();
-#ifdef FLAG_POKETOOLS_MENU
-static void BuildPokeToolsMenu(void);
-#endif
-
-const struct MenuAction sStartMenuItems[] =
+enum
 {
-	{gText_MenuPokedex, {.u8_void = StartMenuPokedexCallback}},
-	{gText_MenuPokemon, {.u8_void = StartMenuPokemonCallback}},
-	{gText_MenuBag, {.u8_void = StartMenuBagCallback}},
-	{gText_MenuPlayer, {.u8_void = StartMenuPlayerNameCallback}},
-	{gText_MenuSave, {.u8_void = StartMenuSaveCallback}},
-	{gText_MenuOption, {.u8_void = StartMenuOptionCallback}},
-	{gText_MenuExit, {.u8_void = StartMenuExitCallback}},
-	{gText_MenuRetire, {.u8_void = StartMenuSafariZoneRetireCallback}},
-	{gText_MenuPlayer, {.u8_void = StartMenuLinkModePlayerNameCallback}},
-	{gText_PokeTools, {.u8_void = PokeToolsFunc}},
-	{gText_DexNav, {.u8_void = ExecDexNav}},
+	STARTMENU_POKEDEX,
+	STARTMENU_POKEMON,
+	STARTMENU_BAG,
+	STARTMENU_PLAYER,
+	STARTMENU_SAVE,
+	STARTMENU_OPTION,
+	STARTMENU_EXIT,
+	STARTMENU_RETIRE_SAFARI,
+	STARTMENU_PLAYER_LINK,
+	STARTMENU_DEXNAV,
+	STARTMENU_EXIT_RIGHT,
+	STARTMENU_EXIT_LEFT,
+	MAX_STARTMENU_ITEMS
 };
 
-const u8* const sStartMenuDescriptionItems[] =
+enum STARTMENU_TOOLS
+{
+	START_MENU_NORMAL,
+	START_MENU_TOOLS,
+};
+
+extern const u8 gText_MenuPokedex[];
+extern const u8 gText_MenuPokemon[];
+extern const u8 gText_MenuPlayer[];
+extern const u8 gText_MenuSave[];
+extern const u8 gText_MenuOption[];
+extern const u8 gText_MenuExit[];
+extern const u8 gText_MenuExitRight[];
+extern const u8 gText_MenuExitLeft[];
+extern const u8 gText_MenuRetire[];
+extern const u8 gText_DexNav[];
+extern const u8 gText_MenuBag[];
+extern const u8 gText_MenuCube[];
+#ifdef UNBOUND
+#define gText_MenuBag gText_MenuCube
+#endif
+
+extern const u8 gText_PokedexDescription[];
+extern const u8 gText_PokemonDescription[];
+extern const u8 gText_BagDescription[];
+extern const u8 gText_PlayerDescription[];
+extern const u8 gText_SaveDescription[];
+extern const u8 gText_OptionDescription[];
+extern const u8 gText_ExitDescription[];
+extern const u8 gText_RetireDescription[];
+extern const u8 gText_PlayerDescription[];
+extern const u8 gText_ToolsDescription[];
+extern const u8 gText_DexNavDescription[];
+
+extern bool8 (*sStartMenuCallback)(void);
+extern u8 sStartMenuCursorPos;
+extern u8 sNumStartMenuItems;
+extern u8 sStartMenuOrder[];
+extern s8 sDrawStartMenuState[2];
+extern u8 sStartMenuOpen;
+
+//Vanilla functions:
+void __attribute__((long_call)) SetUpStartMenu_Link(void);
+void __attribute__((long_call)) SetUpStartMenu_UnionRoom(void);
+void __attribute__((long_call)) DestroyHelpMessageWindow_(void);
+void __attribute__((long_call)) HideStartMenu(void);
+bool8 __attribute__((long_call)) StartMenuPokedexCallback(void);
+bool8 __attribute__((long_call)) StartMenuPokemonCallback(void);
+bool8 __attribute__((long_call)) StartMenuBagCallback(void);
+bool8 __attribute__((long_call)) StartMenuPlayerCallback(void);
+bool8 __attribute__((long_call)) StartMenuSaveCallback(void);
+bool8 __attribute__((long_call)) StartMenuOptionCallback(void);
+bool8 __attribute__((long_call)) StartMenuExitCallback(void);
+bool8 __attribute__((long_call)) StartMenuSafariZoneRetireCallback(void);
+bool8 __attribute__((long_call)) StartMenuLinkModePlayerCallback(void);
+void __attribute__((long_call)) AppendToStartMenuItems(u8 action);
+void __attribute__((long_call)) DestroySafariZoneStatsWindow(void);
+s8 __attribute__((long_call)) PrintStartMenuItems(s8* cursor_p, u8 nitems);
+void __attribute__((long_call)) StartMenu_FadeScreenIfLeavingOverworld(void);
+bool8 __attribute__((long_call)) StartMenuPokedexSanityCheck(void);
+void __attribute__((long_call)) CloseStartMenu(void);
+void __attribute__((long_call)) PrintTextOnHelpMessageWindow(const u8 * text, u8 mode);
+
+//Exported functions:
+void BuildStartMenuActions(void);
+
+//This file's functions:
+static void SetUpStartMenu_NormalField(void);
+static void SetUpStartMenu_SafariZone(void);
+static void BuildPokeToolsMenu(void);
+static bool8 CloseAndReloadStartMenu(void);
+static bool8 ReloadStartMenu(void);
+static bool8 ReloadStartMenuItems(void);
+
+const struct MenuAction sStartMenuActionTable[] =
+{
+	{gText_MenuPokedex,   {.u8_void = StartMenuPokedexCallback}},
+	{gText_MenuPokemon,   {.u8_void = StartMenuPokemonCallback}},
+	{gText_MenuBag,       {.u8_void = StartMenuBagCallback}},
+	{gText_MenuPlayer,    {.u8_void = StartMenuPlayerCallback}},
+	{gText_MenuSave,      {.u8_void = StartMenuSaveCallback}},
+	{gText_MenuOption,    {.u8_void = StartMenuOptionCallback}},
+	{gText_MenuExit,      {.u8_void = StartMenuExitCallback}},
+	{gText_MenuRetire,    {.u8_void = StartMenuSafariZoneRetireCallback}},
+	{gText_MenuPlayer,    {.u8_void = StartMenuLinkModePlayerCallback}},
+	{gText_DexNav,        {.u8_void = StartMenuDexNavCallback}},
+	{gText_MenuExitRight, {.u8_void = StartMenuExitCallback}},
+	{gText_MenuExitLeft,  {.u8_void = StartMenuExitCallback}},
+};
+
+const u8* const sStartMenuDescPointers[] =
 {
 	gText_PokedexDescription,
 	gText_PokemonDescription,
@@ -50,133 +136,202 @@ const u8* const sStartMenuDescriptionItems[] =
 	gText_PlayerDescription,
 	gText_ToolsDescription,
 	gText_DexNavDescription,
+	gText_ExitDescription,
+	gText_ExitDescription,
 };
 
-void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
-void __attribute__((long_call)) HideStartMenu(void);
+static bool8 CanSetUpSecondaryStartMenu(void)
+{
+	#ifdef FLAG_SYS_DEXNAV
+	if (FlagGet(FLAG_SYS_DEXNAV))
+		return TRUE;
+	#endif
 
-static void BuildNormalStartMenu()
+	return FALSE;
+}
+
+static void SetUpStartMenu_NormalField(void)
 {
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
-	{
-		#ifdef FLAG_SYS_DEXNAV
-			if (FlagGet(FLAG_SYS_DEXNAV))
-				AddStartMenuAction(MENU_ACTION_POKETOOLS);
-			else
-		#endif
-				AddStartMenuAction(MENU_ACTION_POKEDEX);
-	}
+		AppendToStartMenuItems(STARTMENU_POKEDEX);
 
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
-		AddStartMenuAction(MENU_ACTION_POKEMON);
+		AppendToStartMenuItems(STARTMENU_POKEMON);
 
 	#ifdef FLAG_SYS_BAG_HIDE
 		if (!FlagGet(FLAG_SYS_BAG_HIDE))
 	#endif
-			AddStartMenuAction(MENU_ACTION_BAG);
+			AppendToStartMenuItems(STARTMENU_BAG);
 
 	#ifdef FLAG_SYS_PLAYER_HIDE
 		if (!FlagGet(FLAG_SYS_PLAYER_HIDE))
 	#endif
-			AddStartMenuAction(MENU_ACTION_PLAYER);
+			AppendToStartMenuItems(STARTMENU_PLAYER);
 
 	#ifdef FLAG_SYS_SAVE_HIDE
 		if (!FlagGet(FLAG_SYS_SAVE_HIDE))
 	#endif
-			AddStartMenuAction(MENU_ACTION_SAVE);
+			AppendToStartMenuItems(STARTMENU_SAVE);
 
 	//These two are always present
-	AddStartMenuAction(MENU_ACTION_OPTION);
-	AddStartMenuAction(MENU_ACTION_EXIT);
+	AppendToStartMenuItems(STARTMENU_OPTION);
+
+	if  (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
+		AppendToStartMenuItems(STARTMENU_EXIT_RIGHT);
+	else
+		AppendToStartMenuItems(STARTMENU_EXIT);
 }
 
-
-static void BuildSafariZoneStartMenu()
+static void SetUpStartMenu_SafariZone(void)
 {
-	AddStartMenuAction(MENU_ACTION_RETIRE_SAFARI);
+	AppendToStartMenuItems(STARTMENU_RETIRE_SAFARI);
 
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
-	{
-		#ifdef FLAG_SYS_DEXNAV
-			if (FlagGet(FLAG_SYS_DEXNAV))
-				AddStartMenuAction(MENU_ACTION_POKETOOLS);
-			else
-		#endif
-				AddStartMenuAction(MENU_ACTION_POKEDEX);
-	}
+		AppendToStartMenuItems(STARTMENU_POKEDEX);
 
 	#ifdef FLAG_SYS_POKEMON_GET
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
 	#endif
-		AddStartMenuAction(MENU_ACTION_POKEMON);
+		AppendToStartMenuItems(STARTMENU_POKEMON);
 
 	#ifdef FLAG_SYS_BAG_GET
 		if (FlagGet(FLAG_SYS_BAG_GET))
 	#endif
-			AddStartMenuAction(MENU_ACTION_BAG);
+			AppendToStartMenuItems(STARTMENU_BAG);
 
 	#ifdef FLAG_SYS_PLAYER_GET
 		if (FlagGet(FLAG_SYS_PLAYER_GET))
 	#endif
-			AddStartMenuAction(MENU_ACTION_PLAYER);
+			AppendToStartMenuItems(STARTMENU_PLAYER);
 
-	AddStartMenuAction(MENU_ACTION_OPTION);
-	AddStartMenuAction(MENU_ACTION_EXIT);
+	AppendToStartMenuItems(STARTMENU_OPTION);
+
+	if  (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
+		AppendToStartMenuItems(STARTMENU_EXIT_RIGHT);
+	else
+		AppendToStartMenuItems(STARTMENU_EXIT);
 }
 
-
-#ifdef FLAG_POKETOOLS_MENU
 static void BuildPokeToolsMenu(void)
 {
-	gStartMenu->numItems = 0;
+	sNumStartMenuItems = 0;
 
-	AddStartMenuAction(MENU_ACTION_POKEDEX);
-	AddStartMenuAction(MENU_ACTION_DEXNAV);
-	AddStartMenuAction(MENU_ACTION_EXIT);
-
-	FlagClear(FLAG_POKETOOLS_MENU);
+	AppendToStartMenuItems(STARTMENU_DEXNAV);
+	AppendToStartMenuItems(STARTMENU_EXIT_LEFT);
 }
-#endif
 
-
-void BuildStartMenuActions(void)
+void SetUpStartMenu(void)
 {
-	gStartMenu->numItems = 0;
+	sNumStartMenuItems = 0;
 
 	if (IsUpdateLinkStateCBActive())
-		BuildLinkModeStartMenu();
+		SetUpStartMenu_Link();
 	else if (InUnionRoom())
-		BuildUnionRoomStartMenu();
+		SetUpStartMenu_UnionRoom();
 	else if (GetSafariZoneFlag())
-		BuildSafariZoneStartMenu();
-	#ifdef FLAG_POKETOOLS_MENU
-	else if (FlagGet(FLAG_POKETOOLS_MENU))
+		SetUpStartMenu_SafariZone();
+	else if (sStartMenuOpen == START_MENU_TOOLS)
 		BuildPokeToolsMenu();
-	#endif
 	else
-		BuildNormalStartMenu();
+		SetUpStartMenu_NormalField();
 }
 
-
-static void CloseStartMenu(void)
+bool8 StartCB_HandleInput(void)
 {
-	DestroySafariZoneStatsWindow();	//0x806EF18
-	CloseStartMenuDescriptionBox();	//0x80F7998
-	HideStartMenu();		//0x806FEA0
+	if (JOY_NEW(DPAD_UP))
+	{
+		PlaySE(SE_SELECT);
+		sStartMenuCursorPos = Menu_MoveCursor(-1);
+		#ifndef UNBOUND
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		{
+			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
+		}
+		#endif
+	}
+	else if (JOY_NEW(DPAD_DOWN))
+	{
+		PlaySE(SE_SELECT);
+		sStartMenuCursorPos = Menu_MoveCursor(+1);
+		#ifndef UNBOUND
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		{
+			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
+		}
+		#endif
+	}
+	else if (JOY_NEW(DPAD_RIGHT))
+	{
+		if (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
+		{
+			PlaySE(SE_SELECT);
+			sStartMenuCursorPos = 0; //Reset cursor position
+			sStartMenuOpen = START_MENU_TOOLS;
+			sStartMenuCallback = CloseAndReloadStartMenu;
+		}
+	}
+	else if (JOY_NEW(DPAD_LEFT))
+	{
+		if (sStartMenuOpen == START_MENU_TOOLS)
+		{
+			PlaySE(SE_SELECT);
+			sStartMenuCursorPos = 0; //Reset cursor position
+			sStartMenuOpen = START_MENU_NORMAL;
+			sStartMenuCallback = CloseAndReloadStartMenu;
+		}
+	}
+	else if (JOY_NEW(A_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		if (!StartMenuPokedexSanityCheck())
+			return FALSE;
+		sStartMenuCallback = sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void;
+		StartMenu_FadeScreenIfLeavingOverworld();
+		return FALSE;
+	}
+	else if (JOY_NEW(B_BUTTON | START_BUTTON))
+	{
+		DestroySafariZoneStatsWindow();
+		DestroyHelpMessageWindow_();
+		CloseStartMenu();
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
-
-u8 PokeToolsFunc(void)
+static bool8 CloseAndReloadStartMenu(void)
 {
-	CloseStartMenu();
-	PlaySE(SE_WIN_OPEN);
+	ClearStdWindowAndFrame(GetStartMenuWindowId(), TRUE);
+	RemoveStartMenuWindow();
+	sStartMenuCallback = ReloadStartMenu;
+	return FALSE;
+}
 
-	#ifdef FLAG_POKETOOLS_MENU
-		FlagSet(FLAG_POKETOOLS_MENU);
-		ShowStartMenu();
-	#else
-		CreateTask(ToolSelection, 0);
-	#endif
+static bool8 ReloadStartMenu(void)
+{
+	SetUpStartMenu();
+	DrawStdWindowFrame(CreateStartMenuWindow(sNumStartMenuItems), FALSE);
+	CopyWindowToVram(GetStartMenuWindowId(), 1);
+	sDrawStartMenuState[1] = 0;
+	sStartMenuCallback = ReloadStartMenuItems;
+	return FALSE;
+}
 
-	return 1;
+static bool8 ReloadStartMenuItems(void)
+{
+	if (PrintStartMenuItems(&sDrawStartMenuState[1], 2))
+	{
+		sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
+		#ifndef UNBOUND
+        if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+        {
+            DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
+        }
+		#endif
+		CopyWindowToVram(GetStartMenuWindowId(), 1);
+		sStartMenuCallback = StartCB_HandleInput;
+	}
+
+	return FALSE;
 }

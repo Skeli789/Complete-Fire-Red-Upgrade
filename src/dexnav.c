@@ -101,7 +101,7 @@ static void DexNavDrawHeldItem(u8* objidAddr);
 static void DexNavDrawIcons(void);
 void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
-//static u8 ExecDexNav(void);
+//static u8 StartMenuDexNavCallback(void);
 static void DexNavGuiSetup(void);
 static void DexNavLoadPokeIcons(void);
 static void CreateNoDataIcon(s16 x, s16 y);
@@ -1720,7 +1720,7 @@ static void ExecDexNavHUD(void)
 }
 
 
-u8 ExecDexNav(void)
+u8 StartMenuDexNavCallback(void)
 {
 	BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, 0x0000);
 	SetMainCallback1(DexNavGuiHandler);
@@ -2129,10 +2129,6 @@ static void DexNavGuiExitNoSearch(void)
 		case 2:
 			m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
 			SetMainCallback1(CB1_Overworld);
-
-			#ifdef FLAG_POKETOOLS_MENU
-				FlagSet(FLAG_POKETOOLS_MENU);
-			#endif
 			SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
 			break;
 	}
@@ -2678,56 +2674,3 @@ bool8 IsDexNavHudActive(void)
 {
 	return FuncIsActiveTask(DexNavManageHUD);
 }
-
-// ============================== //
-// ========= POKETOOLS ========== //
-// ============================== //
-void __attribute__((long_call)) StartMenuPokedexFunc(void);
-void ToolSelection(u8 taskId)
-{
-	switch (priv0)
-	{
-		case 0:
-			if (!ScriptContext2_IsEnabled())
-				priv0++;
-			break;
-		case 1:
-			ScriptContext2_Enable();
-			u8 boxId = AddWindow(&Tbox);
-			FillWindowPixelBuffer(boxId, 0x11);
-			DrawStdFrameWithCustomTileAndPalette(boxId, 1, 0x214, 0xE);
-			WindowPrint(boxId, 1, 8, 2, &MenuTextBlack, 0, gText_DexNavText);
-			ChoiceSetupSimple(boxId, 2, 0, 1, 16, TOOL_COUNT, 0);
-			CopyWindowToVram(boxId, 3);
-			PutWindowTilemap(boxId);
-			gTasks[taskId].data[1] = boxId;
-			priv0++;
-			break;
-		case 2:
-		{
-			s8 choice = RboxChoiceUpdate();
-			if (choice == 0)
-			{
-				//pokedex
-				StartMenuPokedexFunc();
-				DestroyTask(taskId);
-			}
-			else if (choice == 1)
-			{
-				// dexnav
-				ExecDexNav();
-				DestroyTask(taskId);
-			}
-			else if (choice == -1)
-			{
-				// b pressed, exit
-				ClearStdWindowAndFrameToTransparent(gTasks[taskId].data[1], 1);
-				RemoveWindow(gTasks[taskId].data[1]);
-				ScriptContext2_Disable();
-				DestroyTask(taskId);
-			}
-			break;
-		}
-	}
-};
-

@@ -39,7 +39,6 @@ extern const u16 gInterfaceGfx_LavaBubblesPal[];
 extern const u8 gInterfaceGfx_DexNavNoDataSymbolTiles[];
 
 // STRINGS
-extern const u8 gText_DexNavText[];
 extern const u8 gText_DexNavWater[];
 extern const u8 gText_DexNavLand[];
 extern const u8 gText_PinkFlowers[];

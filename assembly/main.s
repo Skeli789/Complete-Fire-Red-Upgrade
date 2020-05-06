@@ -260,27 +260,6 @@ NoHack:
 	ldr r2, =(0x080bfd64|1)
 	bx r2
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
-.pool
-@ hook at 6F3A8 via r3
-PokeToolNoFade:
-    cmp r1, r0
-    beq EndStartOptFadeCheck
-    ldr r0, =(PokeToolsFunc)
-    cmp r1, r0
-    beq EndStartOptFadeCheck
-    ldr r0, =(0x080CCB68|1)
-    bl CallViaR0
-    ldr r0, =(0x0806F3B0|1)
-CallViaR0:
-    bx r0
-EndStartOptFadeCheck:
-    pop {pc}
-
-
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ SPECIALS
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

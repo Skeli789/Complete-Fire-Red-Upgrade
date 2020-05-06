@@ -192,6 +192,13 @@ gFieldEffectScript_JumpLongGrass 81D96F4
 gBattleAnims_Special 08034238
 #endif
 
+##Start Menu
+sStartMenuActionTable 806EF9C
+sStartMenuActionTable 806F374
+sStartMenuActionTable 806F3F8
+sStartMenuDescPointers 806F138
+sStartMenuDescPointers 806F368
+
 #ifdef UNBOUND
 TestScript 08B7AD70
 TestScript 08B7ADA0

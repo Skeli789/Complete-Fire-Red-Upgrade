@@ -45,9 +45,6 @@ struct Clock
 
 		#define gBoxStatusAndType ((u8*) 0x0203709C)
 
-		#define gStartMenu ((struct StartMenu*) 0x020370F0)
-
-
 /*u8*/  #define gUnknown_2024005 ((u8*) 0x2024005) //Length 0x3
 /*u8*/  #define gUnknown_2024008 ((u8*) 0x2024008) //Length 0x10
 
@@ -207,5 +204,6 @@ extern bool8 gInShop; //0x203E043
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))
+//#define sStartMenuOpen (*((bool8*) 0x203E054))
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

@@ -10,6 +10,7 @@ gFollowerState = 0x203B818;
 gNewBS = 0x203E038;
 gInShop = 0x203E043;
 sItemDescriptionPocket = 0x203E053;
+sStartMenuOpen = 0x203E054;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
 
@@ -255,11 +256,19 @@ sBagContextMenuItemsPtr = 0x203AD24;
 sBagContextMenuNumItems = 0x203AD28;
 sBerryPouchListMenuItems = 0x203F37C;
 
+/* Start Menu RAM */
+sStartMenuCallback = 0x20370F0;
+sStartMenuCursorPos = 0x20370F4;
+sNumStartMenuItems = 0x20370F5;
+sStartMenuOrder = 0x20370F6;
+sDrawStartMenuState = 0x20370FF;
+
 /* Other RAM */
 sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
+gLocalLinkPlayerId = 0x300502C;
 gItemUseCB = 0x3005E98;
 
 /*==========================
@@ -1263,6 +1272,13 @@ DeleteTextCharacter = 0x809F700 | 1;
 NameChooserSelectLetter = 0x809F75C | 1;
 
 
+/* Menu Functions */
+MenuHelpers_LinkSomething = 0x80BF708 | 1;
+Menu_InitCursor = 0x810F7D8 | 1;
+Menu_MoveCursor = 0x810F904 | 1;
+Menu_MoveCursorNoWrapAround = 0x810F948 | 1;
+
+
 /* PicBox Functions */
 Task_PokemonPicWindow = 0x809D288 | 1;
 TaskDestroyPicBox = 0x809D494 | 1;
@@ -1281,26 +1297,34 @@ DrawTextBorderInner = 0x81501D0 | 1;
 
 /* Start Menu Functions */
 IsUpdateLinkStateCBActive = 0x805642C | 1;
-AddStartMenuAction = 0x806ED94 | 1;
-BuildLinkModeStartMenu = 0x806EE34 | 1;
-BuildUnionRoomStartMenu = 0x806EE58 | 1;
+AppendToStartMenuItems = 0x806ED94 | 1;
+SetUpStartMenu_Link = 0x806EE34 | 1;
+SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
 DestroySafariZoneStatsWindow = 0x806EF18 | 1;
-TaskStartMenu = 0x806F168 | 1;
+PrintStartMenuItems = 0x806EF44 | 1;
+DrawStartMenuInOneGo = 0x806F14C | 1;
+task50_startmenu = 0x806F168 | 1;
 ShowStartMenu = 0x806F258 | 1;
+StartMenu_FadeScreenIfLeavingOverworld = 0x806F394 | 1;
+StartMenuPokedexSanityCheck = 0x806F3CC | 1;
 StartMenuPokedexFunc = 0x806F410 | 1;
 StartMenuPokedexCallback = 0x806F410 | 1;
 StartMenuPokemonCallback = 0x806F44C | 1;
 StartMenuBagCallback = 0x806F480 | 1;
-StartMenuPlayerNameCallback = 0x806F4B4 | 1;
+StartMenuPlayerCallback = 0x806F4B4 | 1;
 StartMenuSaveCallback = 0x806F4E8 | 1;
 StartMenuOptionCallback = 0x806F4FC | 1;
 StartMenuExitCallback = 0x806F540 | 1;
 StartMenuSafariZoneRetireCallback = 0x806F554 | 1;
-StartMenuLinkModePlayerNameCallback = 0x806F56C | 1;
-HideStartMenu = 0x806FEA0 | 1;
+StartMenuLinkModePlayerCallback = 0x806F56C | 1;
+CloseStartMenu = 0x806FEA0 | 1;
 CB2_OptionMenu = 0x08088454 | 1;
-CloseStartMenuDescriptionBox = 0x80F7998 | 1;
+CreateStartMenuWindow = 0x80F78E0 | 1;
+DestroyHelpMessageWindow_ = 0x80F7998 | 1;
+GetStartMenuWindowId = 0x80F793C | 1;
+RemoveStartMenuWindow = 0x80F7948 | 1;
 InUnionRoom = 0x811B0D0 | 1;
+PrintTextOnHelpMessageWindow = 0x8113018 | 1;
 
 /* Save State Functions */
 SaveSerializedGame = 0x804C300 | 1;

@@ -38,3 +38,9 @@ void __attribute__((long_call)) AddTextPrinterForMessage(bool8 allowSkippingDela
 u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
 u8 __attribute__((long_call)) GetPlayerTextSpeedDelay(void);
 u16 __attribute__((long_call)) RunTextPrintersAndIsPrinter0Active(void);
+u8 __attribute__((long_call)) Menu_MoveCursor(s8 cursorDelta);
+u8 __attribute__((long_call)) Menu_MoveCursorNoWrapAround(s8 cursorDelta);
+u8 __attribute__((long_call)) CreateStartMenuWindow(u8 numItems);
+u8 __attribute__((long_call)) GetStartMenuWindowId(void);
+void __attribute__((long_call)) RemoveStartMenuWindow(void);
+u8 __attribute__((long_call)) Menu_InitCursor(u8 windowId, u8 fontId, u8 left, u8 top, u8 cursorHeight, u8 numChoices, u8 initialCursorPos);

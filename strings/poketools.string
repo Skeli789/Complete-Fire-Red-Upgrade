@@ -1,14 +1,13 @@
-//These two can be decapitalized!
-
-#org @gText_PokeTools
-TOOLS
+//This can be decapitalized!
 
 #org @gText_DexNav
 DEXNAV
 
+#org @gText_MenuExitRight
+EXIT  [DPAD_RIGHT]
 
-#org @gText_DexNavText
-Pok\edex\nDexnav
+#org @gText_MenuExitLeft
+EXIT  [DPAD_LEFT]
 
 #org @gText_DexNavWater
 WATER

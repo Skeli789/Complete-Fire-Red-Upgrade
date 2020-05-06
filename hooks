@@ -485,9 +485,9 @@ UnsellableTmFix 0813291C 0
 ReloadMartList 0809BECA 0
 
 ##Start Menu
-BuildStartMenuActions 0806ed54 0
+SetUpStartMenu 0806ed54 0
+StartCB_HandleInput 0806F280 0
 #CheckDexNavSelect 0810AD98 1 //Replaced with R-Button
-PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
 
 ##Pokemon Storage System
