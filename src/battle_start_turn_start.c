@@ -94,6 +94,7 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	Memset(FIRST_NEW_BATTLE_RAM_LOC, 0, (u32) LAST_NEW_BATTLE_RAM_LOC - (u32) FIRST_NEW_BATTLE_RAM_LOC);
 	Memset(gBattleBufferA, 0x0, sizeof(gBattleBufferA)); //Clear both battle buffers
 	Memset(gBattleBufferB, 0x0, sizeof(gBattleBufferB));
+	Memset(gBattleMons, 0x0, sizeof(gBattleMons)); //Clear battle data - can be filled from last double battle and interfere with battle engine
 	//Memset((u8*) 0x203C020, 0x0, 0xE0);
 
 	if (IsRaidBattle())

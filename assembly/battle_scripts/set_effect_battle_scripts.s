@@ -133,8 +133,10 @@ BattleScript_MaxMoveRaiseStatTeam:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetAttackerPartner
+	jumpiffainted BANK_ATTACKER BattleScript_MaxMoveSetAttackerBackAndReturn
 	callasm SetMaxMoveStatRaiseEffect
 	seteffectprimary
+BattleScript_MaxMoveSetAttackerBackAndReturn:
 	callasm SetAttackerPartner
 	return
 
@@ -145,8 +147,10 @@ BattleScript_MaxMoveLowerStatFoes:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetMaxMoveStatLowerEffect
 	seteffectprimary
+BattleScript_MaxMoveSetTargetBackAndReturn:
 	callasm SetTargetFoePartner
 	return
 
@@ -179,6 +183,7 @@ BattleScript_MaxMoveEffectSporeFoes:
 	seteffectsecondary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm PickRandomGMaxBefuddleEffect
 	seteffectsecondary
 	callasm SetTargetFoePartner
@@ -191,6 +196,7 @@ BattleScript_MaxMoveParalyzeFoes:
 	seteffectsecondary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetGMaxVoltCrashEffect
 	seteffectsecondary
 	callasm SetTargetFoePartner
@@ -246,12 +252,12 @@ BattleScript_MaxMoveInfatuation:
 BS_MaxMoveInfatuation_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
-	tryinfatuatebank BANK_TARGET BS_MaxMoveInfatuation_RestoreOriginalTarget
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
+	tryinfatuatebank BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	status2animation BANK_TARGET STATUS2_INLOVE
 	printstring 0x45
 	waitmessage DELAY_1SECOND
 	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_DESTINY_KNOT BS_MaxMoveInfatuation_CheckTarget2DestinyKnot
-BS_MaxMoveInfatuation_RestoreOriginalTarget:
 	callasm SetTargetFoePartner
 	return
 
@@ -263,7 +269,7 @@ BS_MaxMoveInfatuation_CheckTarget1DestinyKnot:
 BS_MaxMoveInfatuation_CheckTarget2DestinyKnot:
 	tryinfatuatebank BANK_ATTACKER BS_MaxMoveInfatuation_CheckPartner
 	call BS_MaxMoveInfatuation_ActivateDestinyKnot
-	goto BS_MaxMoveInfatuation_RestoreOriginalTarget
+	goto BattleScript_MaxMoveSetTargetBackAndReturn
 
 BS_MaxMoveInfatuation_ActivateDestinyKnot:
 	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
@@ -329,6 +335,7 @@ BattleScript_MaxMovePoisonFoes:
 	seteffectsecondary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetGMaxMalodorEffect
 	seteffectsecondary
 	callasm SetTargetFoePartner
@@ -356,6 +363,7 @@ BattleScript_MaxMovePoisonParalyzeFoes:
 	seteffectsecondary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm PickRandomGMaxStunshockEffect
 	seteffectsecondary
 	callasm SetTargetFoePartner
@@ -391,6 +399,7 @@ BattleScript_MaxMoveTrapAndDamageFoes:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	setmoveeffect MOVE_EFFECT_WRAP
 	seteffectprimary
 	callasm SetTargetFoePartner
@@ -403,6 +412,7 @@ BattleScript_MaxMoveLowerEvasivenessFoes:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	setmoveeffect MOVE_EFFECT_EVS_MINUS_1
 	seteffectprimary
 	callasm SetTargetFoePartner
@@ -425,6 +435,7 @@ BattleScript_MaxMoveConfuseFoes:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetGMaxSmiteEffect
 	seteffectprimary
 	callasm SetTargetFoePartner
@@ -440,10 +451,10 @@ BattleScript_MaxMoveTormentFoes:
 BS_MaxMoveTormentFoes_TryPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
-	settorment BS_MaxMoveTormentFoes_RestoreOriginalTarget
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
+	settorment BattleScript_MaxMoveSetTargetBackAndReturn
 	printstring 0xA9 @;STRINGID_PKMNSUBJECTEDTOTORMENT
 	waitmessage DELAY_1SECOND
-BS_MaxMoveTormentFoes_RestoreOriginalTarget:
 	callasm SetTargetFoePartner
 	return
 
@@ -454,6 +465,7 @@ BattleScript_MaxMoveLowerSpeed2Foes:
 	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
+	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	setmoveeffect MOVE_EFFECT_SPD_MINUS_2
 	seteffectprimary
 	callasm SetTargetFoePartner
