@@ -2458,6 +2458,7 @@ void SpriteCB_MaxSteelspike(struct Sprite* sprite)
 {
 	if (--sprite->data[7] == 0)
 	{
+		FreeSpriteOamMatrix(sprite);
 		DestroySprite(sprite);
 	}
 }
