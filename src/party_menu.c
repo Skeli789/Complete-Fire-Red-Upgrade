@@ -1408,6 +1408,60 @@ void Task_DoLearnedMoveFanfareAfterText(u8 taskId)
     }
 }
 
+#define sLevelUpWindowStatNames ((const u8**) 0x8459B48)
+//Fix vanilla function
+void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, u8 shadowColor)
+{
+	s16 statsRearrange[NUM_STATS];
+	u8 textbuf[12];
+	struct TextColor textColor = {bgColor, fgColor, shadowColor};
+	u16 i;
+	u8 ndigits;
+	u16 x;
+
+	FillWindowPixelBuffer(windowId, PIXEL_FILL(bgColor));
+
+	statsRearrange[0] = currStats[0];
+	statsRearrange[1] = currStats[1];
+	statsRearrange[2] = currStats[2];
+	statsRearrange[3] = currStats[4];
+	statsRearrange[4] = currStats[5];
+	statsRearrange[5] = currStats[3];
+
+	//Align the numbers based on the largest numbers of digits
+	for (i = 0; i < NUM_STATS; ++i)
+	{
+		if (statsRearrange[i] >= 1000)
+		{
+			ndigits = 4;
+			break; //No bigger number
+		}
+		else if (statsRearrange[i] >= 100)
+		{
+			if (ndigits < 3)
+				ndigits = 3;
+		}
+		else if (statsRearrange[i] >= 10)
+		{
+			if (ndigits < 2)
+				ndigits = 2;
+		}
+		else
+		{
+			if (ndigits < 1)
+				ndigits = 1;
+		}
+	}
+
+	for (i = 0; i < NUM_STATS; ++i)
+	{
+		ConvertIntToDecimalStringN(textbuf, statsRearrange[i], STR_CONV_MODE_RIGHT_ALIGN, ndigits);
+		x = 6 * (4 - ndigits);
+		WindowPrint(windowId, 2, 0, i * 15, &textColor, TEXT_SPEED_FF, sLevelUpWindowStatNames[i]);
+		WindowPrint(windowId, 2, 56 + x, i * 15, &textColor, TEXT_SPEED_FF, textbuf);
+	}
+}
+
 void FieldUseFunc_EVReducingBerry(u8 taskId)
 {
     gItemUseCB = ItemUseCB_EVReducingBerry;

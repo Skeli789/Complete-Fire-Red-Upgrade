@@ -1095,3 +1095,12 @@ DestroyRoamerIconTownMapHook:
 	mov r0, #2
 	ldr r3, =0x80C1124 | 1
 	bx r3
+
+.pool
+@0x811E950 with r4
+DrawLevelUpWindowPg2Hook:
+	ldr r4, [sp, #0x4C] @Shadow Colour
+	str r4, [sp] @Param Shadow Colour
+	bl DrawLevelUpWindowPg2
+	ldr r0, =0x811EA2E | 1
+	bx r0
