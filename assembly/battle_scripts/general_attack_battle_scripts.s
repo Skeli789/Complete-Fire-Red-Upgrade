@@ -4692,7 +4692,7 @@ BS_223_RelicSong:
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
-	jumpifmovehadnoeffect BS_MOVE_END
+	callasm GotoMoveEndIfMoveDidntDamageAtLeastOnce
 	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
 	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA TransformToPirouetteBS
 	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE TransformToAriaBS

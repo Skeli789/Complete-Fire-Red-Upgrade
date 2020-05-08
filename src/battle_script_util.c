@@ -2135,3 +2135,9 @@ void ClearScriptingBankDisguisedAs(void)
 {
 	gNewBS->disguisedAs[gBattleScripting.bank] = SPECIES_NONE;
 }
+
+void GotoMoveEndIfMoveDidntDamageAtLeastOnce(void)
+{
+	if (!gNewBS->AttackerDidDamageAtLeastOnce)
+		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
+}

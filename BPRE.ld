@@ -1538,7 +1538,6 @@ clear_scheduled_bg_copies_to_vram = 0x80F6790 | 1;
 ScheduleBgCopyTilemapToVram = 0x80F67A4 | 1;
 ResetTempTileDataBuffers = 0x80F6808 | 1;
 ResetBgPositions = 0x80F6C14 | 1;
-ResetAllPicSprites = 0x810BB8C | 1;
 free_temp_tile_data_buffers_if_possible = 0x80F682C | 1;
 decompress_and_copy_tile_data_to_vram = 0x80F6878 | 1;
 ResetBGs = 0x812D594 | 1;
@@ -1604,10 +1603,18 @@ AddTextPrinterParameterized2 = 0x80F6CD0 | 1;
 NewMenuHelpers_DrawDialogueFrame = 0x80F6EE4 | 1;
 GetFontAttribute = 0x80F79D8 | 1;
 dp13_810BB8C = 0x810BB8C | 1;
-CreateMonPicSprite_HandleDeoxys = 0x810C1CC | 1;
 HofPC_CreateWindow = 0x810F558 | 1;
 HofPC_PutText = 0x810F650 | 1;
 sub_8112450 = 0x8112450 | 1;
+
+/* Pokemon/Trainer Sprite Functions */
+ResetAllPicSprites = 0x810BB8C | 1;
+CreateMonPicSprite_HandleDeoxys = 0x810C1CC | 1;
+FreeAndDestroyMonPicSprite = 0x810C214 | 1;
+CreateTrainerCardMonIconSprite = 0x810C25C | 1;
+CreateTrainerPicSprite = 0x810C2A4 | 1;
+FreeAndDestroyTrainerPicSprite = 0x810C2E8 | 1;
+CreateTrainerCardTrainerPicSprite = 0x810C330 | 1;
 
 /* Title Screen Functions */
 sub_8071898 = 0x8071898 | 1;

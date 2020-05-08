@@ -22,7 +22,6 @@ struct MoveMenuInfoIcon
 };
 
 void __attribute__((long_call)) clear_scheduled_bg_copies_to_vram(void);
-void __attribute__((long_call)) ResetAllPicSprites(void);
 int __attribute__((long_call)) decompress_and_copy_tile_data_to_vram(u8 bg_id, const void *src, int size, u16 offset, u8 mode);
 bool8 __attribute__((long_call)) free_temp_tile_data_buffers_if_possible(void);
 void __attribute__((long_call)) LoadMenuElementsPalette(u8 palOffset, u8 palId);
