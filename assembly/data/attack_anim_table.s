@@ -5449,8 +5449,8 @@ ANIM_TAILWIND:
 	playsound2 0x7E SOUND_PAN_TARGET
 	pause 0x38
 	waitanimation
+	stopmusic @;Temp fix for some bug reported once that I couldn't recreate
 	endanimation
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7083,7 +7083,7 @@ ANIM_DEFENDORDER:
 	loadparticle ANIM_TAG_BEES
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_VERTICAL_HEX
-	playsound2 0xe5 SOUND_PAN_TARGET
+	playsound2 0xe5 SOUND_PAN_ATTACKER
 	call ATTACK_ORDER_TRAP_PARTICLES
 	call ATTACK_ORDER_TRAP_PARTICLES
 	call ATTACK_ORDER_TRAP_PARTICLES
@@ -7102,7 +7102,7 @@ ANIM_DEFENDORDER:
 ANIM_HEALORDER:
 	loadparticle ANIM_TAG_BEES
 	loadparticle ANIM_TAG_BLUE_STAR
-	playsound2 0xe5 SOUND_PAN_TARGET
+	playsound2 0xe5 SOUND_PAN_ATTACKER
 	call ATTACK_ORDER_TRAP_PARTICLES
 	call ATTACK_ORDER_TRAP_PARTICLES
 	call ATTACK_ORDER_TRAP_PARTICLES
