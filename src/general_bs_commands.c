@@ -56,6 +56,10 @@ tables:
 }
 
 //This file's functions:
+static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags);
+static bool8 IsSingleTargetOfDoublesSpreadMove(void);
+static bool8 IsDoubleSpreadMove(void);
+static bool8 DoesBankNegateDamage(u8 bank, u16 move);
 static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
 static item_t ChoosePickupItem(u8 level);
 
@@ -221,15 +225,15 @@ void atk03_ppreduce(void) {
 	gBattlescriptCurrInstr++;
 }
 
-bool8 TryActivateWeakenessBerryFutureSight(void)
+static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
-	if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_WEAKNESS_BERRY && !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankTarget, ABILITY_UNNERVE, 0, 0))
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY && !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
 	{
-		if ((gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(gBankTarget) == gBattleStruct->dynamicMoveType)
-		||  (ITEM_QUALITY(gBankTarget) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
+		if ((resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(bank) == gBattleStruct->dynamicMoveType && !DoesBankNegateDamage(bank, gCurrentMove))
+		||  (ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
 		{
-			gLastUsedItem = ITEM(gBankTarget);
-			gBattleScripting.bank = gBankTarget;
+			gLastUsedItem = ITEM(bank);
+			gBattleScripting.bank = bank;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate - 5;
 			return TRUE;
@@ -237,6 +241,11 @@ bool8 TryActivateWeakenessBerryFutureSight(void)
 	}
 
 	return FALSE;
+}
+
+void TryActivateWeakenessBerryFutureSight(void)
+{
+	TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags);
 }
 
 static bool8 IsSingleTargetOfDoublesSpreadMove(void)
@@ -308,10 +317,29 @@ void atk09_attackanimation(void)
 {
 	if (gBattleExecBuffer) return;
 
-	if (TryActivateWeakenessBerryFutureSight())
+	if (IsDoubleSpreadMove())
 	{
-		gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
-		return;
+		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+			|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
+				continue; //Don't bother with this target
+
+			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
+			{
+				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+				return;
+			}
+		}
+	}
+	else //Single Target Move
+	{
+		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
+		{
+			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+			return;
+		}
 	}
 	
 	u8 resultFlags = gMoveResultFlags;

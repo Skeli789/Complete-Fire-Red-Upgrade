@@ -560,11 +560,12 @@ BattleScript_Gems:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_WeaknessBerryActivate:
+	pause DELAY_HALFSECOND
 	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	setword BATTLE_STRING_LOADER WeaknessBerryString
 	printstring 0x184
-	waitmessage DELAY_1SECOND
+	waitmessage DELAY_HALFSECOND
 	call BattleScript_CheekPouch
 	return
 
