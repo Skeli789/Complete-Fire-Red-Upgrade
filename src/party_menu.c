@@ -1572,6 +1572,7 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 			UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon); //So Max HP Updates
 		}
 
+		RemoveBagItem(item, 1);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);
 		ScheduleBgCopyTilemapToVram(2);
 		gTasks[taskId].func = func;
