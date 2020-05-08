@@ -989,7 +989,7 @@ ANIM_WATERGUN:
 	endanimation
 
 .align 2
-WATERGUN_PARTICLE: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3D90 0x80A7BC5
+WATERGUN_PARTICLE: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E3D90 0x80A7BC5
 
 @ hook at A7C28
 WATERGUN_ASM:
@@ -1081,7 +1081,7 @@ ANIM_ROCKSMASH:
 	endanimation
 
 .align 2
-SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
+SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1152,7 +1152,7 @@ ANIM_LEECHLIFE:
 	endanimation
 
 .align 2
-LEECH_LIFE_NEEDLE: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E726C SpriteCB_LeechLifeNeedle 
+LEECH_LIFE_NEEDLE: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E726C SpriteCB_LeechLifeNeedle 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1287,7 +1287,7 @@ HYDROCANNON_SHOT:
 	return
 
 .align 2
-HYDROCANNON_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B8CC9
+HYDROCANNON_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1381,7 +1381,7 @@ BRICKBREAK_SCREEN_DESTROY_ANIM:
 	endanimation
 
 .align 2
-BRICKBREAK_CHOP: objtemplate ANIM_TAG_CHOP ANIM_TAG_CHOP OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+BRICKBREAK_CHOP: objtemplate ANIM_TAG_CHOP ANIM_TAG_CHOP OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1516,7 +1516,7 @@ DRAGON_DANCE_SMOKE_UP:
 	return
 
 .align 2
-DRAGON_DANCE_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B477D
+DRAGON_DANCE_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1691,7 +1691,7 @@ ANIM_AIRSLASH:
 	endanimation
 
 .align 2
-AIR_SLASH_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+AIR_SLASH_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1794,7 +1794,7 @@ ANIM_AURASPHERE:
 	endanimation
 
 .align 2
-AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_AuraSphereBall SpriteCB_SpriteOnMonForDuration
+AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_AuraSphereBall SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1853,7 +1853,7 @@ AvalancheRocks:
 	return
 
 .align 2
-ICEROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_DRAGON_ASCENT_FOE OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B4635
+ICEROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_DRAGON_ASCENT_FOE OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1890,7 +1890,7 @@ LOAD_BG_ON_PLAYER:
 	goto BraveBirdHit
 
 .align 2
-BIRD_TEMPLATE: objtemplate ANIM_TAG_BIRD ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_64x64 0x8231CF0 0x0 0x8231CFC 0x80B2D65
+BIRD_TEMPLATE: objtemplate ANIM_TAG_BIRD ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B2D65
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2032,7 +2032,7 @@ CHARGE_BEAM_TEMPLATE:
 	return
 
 .align 2
-YELLOWPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+YELLOWPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2080,7 +2080,7 @@ BeatDown_closecombat:
 	return
 
 .align 2
-REDFIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0955
+REDFIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2152,7 +2152,7 @@ DARK_PULSE_UNBOUND_SOUND:
 	goto DARK_PULSE_REJOIN
 
 .align 2
-PURPLEPARTICLES: objtemplate ANIM_TAG_PURPLE_RING ANIM_TAG_PURPLE_RING OAM_DOUBLE_16x32 0x8231CF0 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
+PURPLEPARTICLES: objtemplate ANIM_TAG_PURPLE_RING ANIM_TAG_PURPLE_RING OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2235,8 +2235,8 @@ CENTRED_ELECTRICITY_ANIM:
 	return
 
 .align 2
-DISCHARGE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
-CENTRED_ELECTRICITY: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredElectricity
+DISCHARGE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+CENTRED_ELECTRICITY: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_CentredElectricity
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2336,8 +2336,8 @@ DRACO_METEOR_4:
 
 .align 2
 .global gDracoMeteorTailSpriteTemplate
-DRACO_ROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_FAIRY_LOCK_CHAINS sDracoMeteorRockOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_DracoMeteorRock
-DRACO_TAIL: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN sDracoMeteorTailOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall SpriteCB_DracoMeteorRock
+DRACO_ROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_FAIRY_LOCK_CHAINS sDracoMeteorRockOAM gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_DracoMeteorRock
+DRACO_TAIL: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN sDracoMeteorTailOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_HydroCannonBall SpriteCB_DracoMeteorRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2380,8 +2380,8 @@ DRAGON_PULSE_CALL:
 	return
 
 .align 2
-PULSE_RING: objtemplate ANIM_TAG_DRAGON_PULSE_RING ANIM_TAG_DRAGON_PULSE_RING OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-PULSE_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+PULSE_RING: objtemplate ANIM_TAG_DRAGON_PULSE_RING ANIM_TAG_DRAGON_PULSE_RING OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+PULSE_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2407,7 +2407,7 @@ ANIM_DRAINPUNCH:
 	endanimation
 
 .align 2
-DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_SpriteOnMonForDuration
+DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2463,7 +2463,7 @@ ANIM_ENERGYBALL:
 	endanimation
 
 .align 2
-ENERGY_BALL: objtemplate ANIM_TAG_ENERGY_BALL ANIM_TAG_ENERGY_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+ENERGY_BALL: objtemplate ANIM_TAG_ENERGY_BALL ANIM_TAG_ENERGY_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2493,7 +2493,7 @@ ANIM_FOCUSBLAST:
 	endanimation
 
 .align 2
-FOCUS_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FOCUS_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2517,8 +2517,8 @@ ANIM_FORCEPALM:
 	endanimation
 
 .align 2
-FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC SpriteCB_ForcePalm
-PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SHADOW_BALL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable SpriteCB_ForcePalm
+PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SHADOW_BALL OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2567,7 +2567,7 @@ ANIM_GRASSKNOT:
 	endanimation
 
 .align 2
-KNOT: objtemplate ANIM_TAG_RAZOR_LEAF ANIM_TAG_RAZOR_LEAF OAM_OFF_32x16 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
+KNOT: objtemplate ANIM_TAG_RAZOR_LEAF ANIM_TAG_RAZOR_LEAF OAM_OFF_32x16 0x83E2C4C 0x0 gDummySpriteAffineAnimTable 0x80B0C29
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2627,8 +2627,8 @@ GUNK_SHOT2:
 	return
 
 .align 2
-GUNK_PUMP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80AB025
-GUNK_HIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GUNK_PUMP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AB025
+GUNK_HIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2645,7 +2645,7 @@ ANIM_HAMMERARM:
 	endanimation
 
 .align 2
-HAMMERARM_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+HAMMERARM_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2688,7 +2688,7 @@ ANIM_ICESHARD:
 
 .align 2
 ICICLE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 0x83E74A8 0x0 0x83E7540 0x80B5075
-BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2757,7 +2757,7 @@ ANIM_LAVAPLUME:
 	endanimation
 
 .align 2
-PLUME_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x8231CF0 0x0 0x83FF504 0x80E1929
+PLUME_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 0x83FF504 0x80E1929
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2808,8 +2808,8 @@ ANIM_MAGNETBOMB:
 	endanimation
 
 .align 2
-MAGNET_ROCKHITS: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_BLACK_BALL_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-MAGNET_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+MAGNET_ROCKHITS: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_BLACK_BALL_2 OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+MAGNET_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2830,7 +2830,7 @@ ANIM_MUDBOMB:
 	endanimation
 
 .align 2
-MUD_BOMB_BALL: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB OAM_NORMAL_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MudBombBall SpriteCB_AcidLaunchSingleTarget
+MUD_BOMB_BALL: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MudBombBall SpriteCB_AcidLaunchSingleTarget
 BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6A18 0x80B46F9
 BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_NORMAL_16x16 0x83E69E0 0x0 0x83E6A80 0x80B17C5
 
@@ -2953,9 +2953,9 @@ POWERGEM_LOAD_PARTICLE:
 	return
 
 .align 2
-POWERGEM_WHEEL: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E2C78 0x80ACDE9
-POWERGEM_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7604 0x80B8CC9
-POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
+POWERGEM_WHEEL: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E2C78 0x80ACDE9
+POWERGEM_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80B8CC9
+POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E5BD8 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2982,7 +2982,7 @@ POWER_WHIP:
 	return
 
 .align 2
-POWER_WHIP_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 OAM_OFF_32x32 gAnimCmdPowerWhip 0x0 0x8231CFC 0x80A4451
+POWER_WHIP_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 OAM_OFF_32x32 gAnimCmdPowerWhip 0x0 gDummySpriteAffineAnimTable 0x80A4451
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3001,8 +3001,8 @@ ANIM_PSYCHOCUT:
 	endanimation
 
 .align 2
-PSYCHOCUT_WHEEL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x8231CF0 0x0 0x83e7604 SpriteCB_SpriteOnMonForDuration
-PSYCHOCUT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80B563D
+PSYCHOCUT_WHEEL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83e7604 SpriteCB_SpriteOnMonForDuration
+PSYCHOCUT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3043,7 +3043,7 @@ ROCKCLIMB_ROCKY:
 	return
 
 .align 2
-CLIMB_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
+CLIMB_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3102,7 +3102,7 @@ ANIM_ROCKWRECKER:
 	endanimation
 
 .align 2
-ROCKWRECKER_BIGROCK: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
+ROCKWRECKER_BIGROCK: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_OFF_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B12E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3176,7 +3176,7 @@ ANIM_SEEDBOMB:
 	endanimation
 
 .align 2
-SEEDBOMB_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3D90 0x80B4495
+SEEDBOMB_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E3D90 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3200,7 +3200,7 @@ ANIM_SHADOWCLAW:
 	endanimation
 
 .align 2
-SHADOW_DARKCLAW: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E79E0 0x0 0x8231CFC 0x80B86B1
+SHADOW_DARKCLAW: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E79E0 0x0 gDummySpriteAffineAnimTable 0x80B86B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3244,7 +3244,7 @@ SHADOWSNEAK_MOVE:
 	return
 
 .align 2
-SHADOWSNEAK_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SHADOWSNEAK_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3268,7 +3268,7 @@ ANIM_VACUUMWAVE:
 	endanimation
 
 .align 2
-VACUUM_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+VACUUM_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3286,7 +3286,7 @@ ANIM_XSCISSOR:
 	endanimation
 
 .align 2
-XSCISSOR_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+XSCISSOR_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3317,8 +3317,8 @@ ANIM_ZENHEADBUTT:
 	endanimation
 
 .align 2
-ZEN_BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80B12E9
+ZEN_BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AEC81
+ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80B12E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3459,7 +3459,7 @@ ANIM_ELECTROWEB:
 	endanimation
 
 .align 2
-CENTRED_WEB: objtemplate ANIM_TAG_SPIDER_WEB ANIM_TAG_SPIDER_WEB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E72D8 SpriteCB_CentredSpiderWeb
+CENTRED_WEB: objtemplate ANIM_TAG_SPIDER_WEB ANIM_TAG_SPIDER_WEB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E72D8 SpriteCB_CentredSpiderWeb
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3498,7 +3498,7 @@ FLAMEWHEEL_SWIRL:
 	return
 
 .align 2
-FLAMES_CHARGE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80A2921
+FLAMES_CHARGE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E59CC 0x0 gDummySpriteAffineAnimTable 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3541,7 +3541,7 @@ ANIM_FROSTBREATH:
 	endanimation
 
 .align 2
-BLUERAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC 0x80B73AD
+BLUERAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E77D4 0x0 gDummySpriteAffineAnimTable 0x80B73AD
 BLUEBALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x32 0x83E7800 0x0 0x83E7828 0x80B741D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3613,7 +3613,7 @@ ANIM_HORNLEECH:
 	endanimation
 
 .align 2
-LEECH_HORN: objtemplate ANIM_TAG_HORN_LEECH ANIM_TAG_HORN_LEECH OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
+LEECH_HORN: objtemplate ANIM_TAG_HORN_LEECH ANIM_TAG_HORN_LEECH OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3728,7 +3728,7 @@ More_IcicleCrash:
 	return
 
 .align 2
-ICICLE_CRASH: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_IcicleCrash 0x80B4635
+ICICLE_CRASH: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_IcicleCrash 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3759,7 +3759,7 @@ WORKUP_BUFF:
 	return
 
 .align 2
-RED_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_16x32 0x83e3600 0x0 0x8231cfc 0x80a5ad9
+RED_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_16x32 0x83e3600 0x0 gDummySpriteAffineAnimTable 0x80a5ad9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3790,7 +3790,7 @@ ANIM_QUIVERDANCE:
 	endanimation
 
 .align 2
-QUIVERDANCE_CIRCLE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B7449
+QUIVERDANCE_CIRCLE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B7449
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3827,7 +3827,7 @@ LEAFTORNADO_TORNADO:
 	return
 
 .align 2
-LEAFTORNADO_BITS: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+LEAFTORNADO_BITS: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3928,7 +3928,7 @@ ANIM_STEAMROLLER:
 	endanimation
 
 .align 2
-STEAMROLLER: objtemplate ANIM_TAG_STEAMROLLER ANIM_TAG_STEAMROLLER OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+STEAMROLLER: objtemplate ANIM_TAG_STEAMROLLER ANIM_TAG_STEAMROLLER OAM_OFF_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3961,7 +3961,7 @@ ANIM_STORMTHROW:
 	endanimation
 
 .align 2
-STORM_THROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+STORM_THROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3998,7 +3998,7 @@ ANIM_VENOSHOCK:
 	endanimation
 
 .align 2
-VENOSHOCK_POISON: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69E4 0x0 0x8231CFC 0x80A4299
+VENOSHOCK_POISON: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69E4 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4074,7 +4074,7 @@ ANIM_POISONJAB:
 	endanimation
 
 .align 2
-POISONJAB: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+POISONJAB: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4164,7 +4164,7 @@ CLEARSMOG_SWIRL:
 	return
 
 .align 2
-CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM OAM_OFF_BLEND_32x16 0x83E64A0 0x0 0x8231CFC 0x80AF915
+CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM OAM_OFF_BLEND_32x16 0x83E64A0 0x0 gDummySpriteAffineAnimTable 0x80AF915
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4272,7 +4272,7 @@ ANIM_STONEEDGE:
 	endanimation
 
 .align 2
-STONEEDGE_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_StoneEdgeRock
+STONEEDGE_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_StoneEdgeRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4327,7 +4327,7 @@ PAYBACK_MOVE:
 
 .align 2
 PAYBACK_RECOVER: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
-PAYBACK_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+PAYBACK_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4466,7 +4466,7 @@ FLAME_BUFF:
 	return
 
 .align 2
-FLAREBLITZ_BUFF: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_FlareBlitzUpFlames
+FLAREBLITZ_BUFF: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_FlareBlitzUpFlames
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4541,7 +4541,7 @@ ANIM_DUALCHOP:
 	endanimation
 
 .align 2
-DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4662,8 +4662,8 @@ ANIM_UTURN:
 	endanimation
 
 .align 2
-BALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x83E7604 0x80B563D
-BALLBACK: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x83E7604 0x80A2581
+BALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
+BALLBACK: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80A2581
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4696,7 +4696,7 @@ ANIM_VOLTSWITCH:
 	endanimation
 
 .align 2
-VOLTSWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+VOLTSWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4759,7 +4759,7 @@ ANIM_CIRCLETHROW:
 	endanimation
 
 .align 2
-CIRCLETHROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+CIRCLETHROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4796,8 +4796,8 @@ ANIM_WOODHAMMER:
 	endanimation
 
 .align 2
-WOODSTOMP: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_NORMAL_32x32 0x83E74A8 0x0 0x8231CFC 0x80B0D59
-WOODBURST: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B46F9
+WOODSTOMP: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_NORMAL_32x32 0x83E74A8 0x0 gDummySpriteAffineAnimTable 0x80B0D59
+WOODBURST: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable 0x80B46F9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4834,7 +4834,7 @@ HEALPULSE_Beam:
 	return
 
 .align 2
-HEALPULSE_RING: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_RED_HEART OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+HEALPULSE_RING: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_RED_HEART OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4877,8 +4877,8 @@ ANIM_FLASHCANNON:
 	endanimation
 
 .align 2
-GRAYCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BALLTRAVEL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+GRAYCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+BALLTRAVEL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4953,9 +4953,9 @@ ANIM_SHELLSMASH:
 	endanimation
 
 .align 2
-ShellLeft: objtemplate ANIM_TAG_SHELL_RIGHT ANIM_TAG_SHELL_RIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-ShellRight: objtemplate ANIM_TAG_SHELL_LEFT ANIM_TAG_SHELL_LEFT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-PurpleRocks: objtemplate ANIM_TAG_ROCKS ANIM_TAG_SHELL_RIGHT OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B46F9
+ShellLeft: objtemplate ANIM_TAG_SHELL_RIGHT ANIM_TAG_SHELL_RIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 0x80B7BD5
+ShellRight: objtemplate ANIM_TAG_SHELL_LEFT ANIM_TAG_SHELL_LEFT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 0x80B7BD5
+PurpleRocks: objtemplate ANIM_TAG_ROCKS ANIM_TAG_SHELL_RIGHT OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable 0x80B46F9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4983,7 +4983,7 @@ Sprinkle:
 	return
 
 .align 2
-RED_POWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HEART_STAMP OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
+RED_POWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HEART_STAMP OAM_OFF_16x16 0x83E2B5C 0x0 gDummySpriteAffineAnimTable 0x80A27D1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5012,8 +5012,8 @@ Wack:
 	return
 
 .align 2
-WAKEUP_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B08DD
-WAKEUP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+WAKEUP_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B08DD
+WAKEUP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5032,7 +5032,7 @@ ANIM_RAZORSHELL:
 	endanimation
 
 .align 2
-RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
+RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5074,7 +5074,7 @@ ANIM_SUCKERPUNCH:
 	endanimation
 
 .align 2
-SUCKER_PUNCH: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
+SUCKER_PUNCH: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E2C4C 0x0 gDummySpriteAffineAnimTable 0x80B0C29
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5112,7 +5112,7 @@ SCALD_GUN:
 	pause 0x2
 	return
 
-SCALD_WATERGUN: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_OFF_BLEND_16x16 0x83e5a78 0x0 0x8231cfc 0x8075e81
+SCALD_WATERGUN: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_OFF_BLEND_16x16 0x83e5a78 0x0 gDummySpriteAffineAnimTable 0x8075e81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5155,7 +5155,7 @@ BrineCall:
 	return
 
 .align 2
-BRINE_WATER: objtemplate ANIM_TAG_BRINE ANIM_TAG_BRINE OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B4635
+BRINE_WATER: objtemplate ANIM_TAG_BRINE ANIM_TAG_BRINE OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5187,7 +5187,7 @@ ANIM_FAIRYWIND:
 	endanimation
 
 .align 2
-FAIRY_WIND: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E2C78 0x80A2B9D
+FAIRY_WIND: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E2C78 0x80A2B9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5294,7 +5294,7 @@ ANIM_MOONBLAST:
 	endanimation
 
 .align 2
-MOON_BLAST: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+MOON_BLAST: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5375,7 +5375,7 @@ ANIM_STEALTHROCK:
 	endanimation
 
 .align 2
-STEALTH_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x83E2B2C 0x0 0x8231CFC 0x80A26F1
+STEALTH_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x83E2B2C 0x0 gDummySpriteAffineAnimTable 0x80A26F1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5401,7 +5401,7 @@ ANIM_TOXICSPIKES:
 	endanimation
 
 .align 2
-TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80DE8B1
+TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE8B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5437,7 +5437,7 @@ ANIM_LUNARDANCE:
 	resetblends
 	endanimation
 
-LUNAR_DANCE_RINGS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
+LUNAR_DANCE_RINGS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5506,8 +5506,8 @@ BOOMBURST_BLAST:
 	return
 
 .align 2
-BOOMBURST_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-BOOMBURST_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_SpriteToCentreOfSide
+BOOMBURST_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 0x80A8CA5
+BOOMBURST_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteToCentreOfSide
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5615,7 +5615,7 @@ GastroAcidCall:
 	return
 
 .align 2
-GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
+GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x83E69DC 0x0 gDummySpriteAffineAnimTable 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5755,14 +5755,14 @@ BUFFEFFECTATTACK:
 	return
 
 .align 2
-GEOMANCY_RING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-YELLOWRAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_PAW_PRINT OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC 0x80B73AD
-REDCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
-GREENCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
-BLUECELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
-REDCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
-GREENCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
-BLUECELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
+GEOMANCY_RING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+YELLOWRAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_PAW_PRINT OAM_OFF_32x32 0x83E77D4 0x0 gDummySpriteAffineAnimTable 0x80B73AD
+REDCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
+GREENCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
+BLUECELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
+REDCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B4B8D
+GREENCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B4B8D
+BLUECELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B4B8D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5831,7 +5831,7 @@ ANIM_SHIFTGEAR:
 	endanimation
 
 .align 2
-SHIFT_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
+SHIFT_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5911,7 +5911,7 @@ ANIM_ACUPRESSURE:
 	endanimation
 
 .align 2
-ACUPRESSURE_FINGER: objtemplate ANIM_TAG_ACUPRESSURE_FINGER ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+ACUPRESSURE_FINGER: objtemplate ANIM_TAG_ACUPRESSURE_FINGER ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5938,8 +5938,8 @@ ANIM_PUNISHMENT:
 	endanimation
 
 .align 2
-PUNISHMENT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x83FEDFC 0x0 0x8231CFC 0x80E4335
-PUNISHMENT_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+PUNISHMENT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x83FEDFC 0x0 gDummySpriteAffineAnimTable 0x80E4335
+PUNISHMENT_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5964,7 +5964,7 @@ ANIM_ASSURANCE:
 	endanimation
 
 .align 2
-PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6024,8 +6024,8 @@ ANIM_DARKVOID:
 	endanimation
 
 .align 2
-BLACKHOLE: objtemplate ANIM_TAG_WHITE_SHADOW ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_BLEND_64x32 0x8231CF0 0x0 0x8231CFC 0x80B5EC1
-PURPLESTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+BLACKHOLE: objtemplate ANIM_TAG_WHITE_SHADOW ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_BLEND_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B5EC1
+PURPLESTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
 
 @ hook at 0xB60BC via r0
 .align 2
@@ -6067,7 +6067,7 @@ ANIM_FEINT:
 	endanimation
 
 .align 2
-FEINT_MOVING_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC SpriteCB_LeftRightSlice
+FEINT_MOVING_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable SpriteCB_LeftRightSlice
 FEINT_HIT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_FeintFist SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -6174,8 +6174,8 @@ ANIM_PETALBLIZZARD:
 	endanimation
 
 .align 2
-PETALBLIZZARD_OBJ: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 PB_OBJPTR_1 0x0 0x8231cfc 0x80a2d11
-PETALBLIZZARD_OBJ_2: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER PB_OBJPTR_2 PB_OBJPTR_3 0x0 0x8231cfc 0x80a2d11
+PETALBLIZZARD_OBJ: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 PB_OBJPTR_1 0x0 gDummySpriteAffineAnimTable 0x80a2d11
+PETALBLIZZARD_OBJ_2: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER PB_OBJPTR_2 PB_OBJPTR_3 0x0 gDummySpriteAffineAnimTable 0x80a2d11
 
 .align 2
 PB_OBJPTR_1: .word PB_TEMPLATE_1
@@ -6238,7 +6238,7 @@ ANIM_ROAROFTIME:
 	endanimation
 
 .align 2
-ROAROFTIME_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+ROAROFTIME_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -6282,8 +6282,8 @@ ANIM_SPACIALRENDANIMATION:
 	endanimation
 
 .align 2
-TWISTYS: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5D48 0x0 0x8231CFC 0x80ACDE9
-TWISTYS2: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
+TWISTYS: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5D48 0x0 gDummySpriteAffineAnimTable 0x80ACDE9
+TWISTYS2: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5BD8 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6345,8 +6345,8 @@ ANIM_FINALGAMBIT:
 	endanimation
 
 .align 2
-GAMBIT_BLUEYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_IMPACT OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
-GAMBIT_EXPLOSIONHIT: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_IMPACT OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+GAMBIT_BLUEYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_IMPACT OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
+GAMBIT_EXPLOSIONHIT: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_IMPACT OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6402,7 +6402,7 @@ SHADOW_FORCE_ATTACK:
     goto SHADOW_FORCE_WAIT_END
 
 .align 2
-SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6551,9 +6551,9 @@ INWARDSPIKES2:
 	return
 
 .align 2
-BLACKCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_JudgmentBall 0x80AE71D
-GRAYOUTWARDSPIKES: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_GUST OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-GRAYINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
+BLACKCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_JudgmentBall 0x80AE71D
+GRAYOUTWARDSPIKES: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_GUST OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+GRAYINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6666,9 +6666,9 @@ ANIM_PSYSHOCK:
 	endanimation
 
 .align 2
-PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x83E741C 0x80B477D
-PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E741C 0x80B477D
+PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6739,7 +6739,7 @@ TAILSLAP_LEFT:
 	goto TAILSLAP_HIT
 
 .align 2
-TAILSLAP_TAIL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_32x32 0x83FEDFC 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+TAILSLAP_TAIL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_32x32 0x83FEDFC 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6767,7 +6767,7 @@ ANIM_GEARGRIND:
 	endanimation
 
 .align 2
-GEARGRIND_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B7BD5
+GEARGRIND_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B7BD5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6790,7 +6790,7 @@ ANIM_NATURALGIFT:
 	endanimation
 
 .align 2
-GIFT_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ANCHOR OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+GIFT_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ANCHOR OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6885,7 +6885,7 @@ HYPERSPACEHOLE_MOVE:
 	return
 
 .align
-HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6927,9 +6927,9 @@ ANIM_GYROBALL:
 	endanimation
 
 .align 2
-GYRO_STEELBALL: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_GUST OAM_OFF_16x16 0x83E5EA4 0x0 0x8231CFC 0x80ACDE9
-GYRO_HITS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_GUST OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GYRO_CIRCLEHIT: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_GUST OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GYRO_STEELBALL: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_GUST OAM_OFF_16x16 0x83E5EA4 0x0 gDummySpriteAffineAnimTable 0x80ACDE9
+GYRO_HITS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_GUST OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+GYRO_CIRCLEHIT: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_GUST OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7021,9 +7021,9 @@ HYPERSPACEFURY_RANDOMHIT:
 	return
 
 .align 2
-HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80ACDE9
-HYPERSPACEFURY_HAND: objtemplate ANIM_TAG_HOOPA_HAND ANIM_TAG_HOOPA_HAND OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-HYPERSPACEFURY_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
+HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80ACDE9
+HYPERSPACEFURY_HAND: objtemplate ANIM_TAG_HOOPA_HAND ANIM_TAG_HOOPA_HAND OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+HYPERSPACEFURY_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA631
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7075,9 +7075,9 @@ ATTACKORDER_MOVE:
 	return
 
 .align 2
-ORDER_BEES: objtemplate ANIM_TAG_BEES ANIM_TAG_BEES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
-ORDER_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
-ORDER_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 SpriteCB_AnimSpriteOnMonPos
+ORDER_BEES: objtemplate ANIM_TAG_BEES ANIM_TAG_BEES OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
+ORDER_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
+ORDER_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7141,7 +7141,7 @@ ANIM_CAPTIVATE:
 	endanimation
 
 .align 2
-BLUE_HEARTS: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_BLUE_STAR OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A9861
+BLUE_HEARTS: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_BLUE_STAR OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A9861
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7232,11 +7232,11 @@ ANIM_ORIGINPULSE:
 	endanimation
 
 .align 2
-ORIGINPULSE_BLUERINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-ORIGINPULSE_BLUECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80B7449
-ORIGINPULSE_BLUEINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
-ORIGINPULSE_BLUEHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
-ORIGINPULSE_BLUEHITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+ORIGINPULSE_BLUERINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+ORIGINPULSE_BLUECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80B7449
+ORIGINPULSE_BLUEINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80A4299
+ORIGINPULSE_BLUEHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA631
+ORIGINPULSE_BLUEHITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7301,9 +7301,9 @@ PRECIPICE_BLADES_OPPONENT_ATTACK:
 	goto PRECIPICE_BLADES_REJOIN
 
 .align 2
-PRECIPICE_SPIKE: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
+PRECIPICE_SPIKE: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
 LARGE_PRECIPICE_SPIKE: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_DOUBLE_32x64 gAnimCmdTable_LargeSpike 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
-PRECIPICE_PLUME: objtemplate  ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC SpriteCB_AnimSpriteOnSelectedMonPos
+PRECIPICE_PLUME: objtemplate  ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E77D4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7403,8 +7403,8 @@ METALBURST_CALL2:
 	return
 
 .align 2
-METALBURST_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_FLASH_CANNON_BALL OAM_OFF_32x32 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
-METALBURST_SPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_OFF_16x16 0x8231cf0 0x0 0x8231cfc 0x80b725d
+METALBURST_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_FLASH_CANNON_BALL OAM_OFF_32x32 0x83e33f0 0x0 gDummySpriteAffineAnimTable 0x80a4d0d
+METALBURST_SPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80b725d
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7426,7 +7426,7 @@ ANIM_POWERTRICK:
 	endanimation
 
 .align 2
-POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK OAM_NORMAL_64x64 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
+POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7487,7 +7487,7 @@ WRINGOUT_CALL:
 	return
 
 .align 2
-WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_NORMAL_BLEND_32x32 0x8231cf0 0x0 0x83e7bf8 0x80ba561
+WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83e7bf8 0x80ba561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7586,9 +7586,9 @@ PSYSTRIKE_DESTROY:
 	return
 
 .align 2
-VIOLETMIND: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x83E741C 0x80B477D
-PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+VIOLETMIND: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E741C 0x80B477D
+PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7618,7 +7618,7 @@ ANIM_AUTOTOMIZE:
 	endanimation
 
 .align 2
-METALBITS: objtemplate ANIM_TAG_METAL_BITS ANIM_TAG_METAL_BITS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
+METALBITS: objtemplate ANIM_TAG_METAL_BITS ANIM_TAG_METAL_BITS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7697,8 +7697,8 @@ ANIM_DIAMONDSTORM:
 	endanimation
 
 .align 2
-BLIZDIAMOND1: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_8x8 0x83E6328 0x0 0x8231CFC 0x80AF469
-BLIZDIAMOND2: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x83E632C 0x0 0x8231CFC 0x80AF6D9
+BLIZDIAMOND1: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_8x8 0x83E6328 0x0 gDummySpriteAffineAnimTable 0x80AF469
+BLIZDIAMOND2: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x83E632C 0x0 gDummySpriteAffineAnimTable 0x80AF6D9
 DIAMOND: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E7540 0x80A2D11
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7751,8 +7751,8 @@ ANIM_HEAVYSLAM:
 	endanimation
 
 .align 2
-HEAVYSLAM_METALUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-HEAVYSLAM_METALHIT: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6CF8 0x80B2975
+HEAVYSLAM_METALUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
+HEAVYSLAM_METALHIT: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6CF8 0x80B2975
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7797,10 +7797,10 @@ ANIM_SYNCHRONOISE:
 	endanimation
 
 .align 2
-SYNCHRONOISE_VIOLETRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_BLUERING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_AEROWHEEL: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 0x8231CFC 0x80AC94D
+SYNCHRONOISE_VIOLETRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_BLUERING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_AEROWHEEL: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 @need light black background and sounds
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7835,7 +7835,7 @@ ANIM_ELECTROBALL:
 	endanimation
 
 .align 2
-ELECTRO_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_32x32 0x8231cf0 0x0 0x83e7604 0x80b563d
+ELECTRO_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83e7604 0x80b563d
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7864,8 +7864,8 @@ ANIM_FOULPLAY:
 	endanimation
 
 .align 2
-FOUL_PLAY_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-FOUL_PLAY_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+FOUL_PLAY_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+FOUL_PLAY_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7926,8 +7926,8 @@ ANIM_NIGHTDAZE:
 	endanimation
 
 .align 2
-DAZE_VIOLETRINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-DAZE_VIOLETCIRCLES: objtemplate ANIM_TAG_RED_ORB ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E4278 0x80AA2B1
+DAZE_VIOLETRINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+DAZE_VIOLETCIRCLES: objtemplate ANIM_TAG_RED_ORB ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 0x83E4278 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8041,7 +8041,7 @@ OBLIVION_CREATE_BEAM:
 	return
 
 .align 2
-OBLIVION_BEAM: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
+OBLIVION_BEAM: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8090,7 +8090,7 @@ ANIM_CRUSHGRIP:
 	endanimation
 
 .align 2
-CRUSHGRIP_HITPARTICLES: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+CRUSHGRIP_HITPARTICLES: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 CRUSHGRIP_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_NORMAL_32x32 0x83E74A8 0x0 gSpriteAffineAnimTable_CrushGripHand 0x80B5075
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -8122,8 +8122,8 @@ ANIM_SACREDSWORD:
 	endanimation
 
 .align 2
-SWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 0x8231CFC 0x80AC94D
-SWORD_CUT:objtemplate ANIM_TAG_CUT ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+SWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 gDummySpriteAffineAnimTable 0x80AC94D
+SWORD_CUT:objtemplate ANIM_TAG_CUT ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8153,7 +8153,7 @@ ANIM_HEATCRASH:
 	endanimation
 
 .align 2
-ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8291,11 +8291,11 @@ CIRCLES:
 	return
 
 .align 2
-WHITECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+WHITECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
 WHITECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
-WHITEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-WHITEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-WHITEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+WHITEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+WHITEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+WHITEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 TECHNO_BLAST_ELECTRIC_ANIM:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -8376,9 +8376,9 @@ CHARGING2:
 	return
 
 .align 2
-YELLOWBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-YELLOWBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-YELLOWDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+YELLOWBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+YELLOWBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+YELLOWDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 TECHNO_BLAST_WATER_ANIM:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -8501,11 +8501,11 @@ TECHNO_BLAST_WATER_ANIM:
 	endanimation
 
 .align 2
-BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80AB309
-BLUEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_WATER_ORB OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-BLUEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-BLUEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 gDummySpriteAffineAnimTable 0x80AB309
+BLUEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_WATER_ORB OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+BLUEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+BLUEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 TECHNO_BLAST_FIRE_ANIM:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
@@ -8583,10 +8583,10 @@ FIRES:
 	return
 
 .align 2
-REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-REDBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-REDBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-REDDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+REDBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+REDBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+REDDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 TECHNO_BLAST_ICE_ANIM:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
@@ -8672,10 +8672,10 @@ ICEFROMCHARGE:
 	return
 
 .align 2
-ICECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-ICEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_ICE_CHUNK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation @278D
-ICEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CHUNK OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-ICEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+ICECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+ICEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_ICE_CHUNK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation @278D
+ICEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CHUNK OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+ICEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 ICEPARTICLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -8794,7 +8794,7 @@ ANIM_SECRETSWORD:
 	endanimation
 
 .align 2
-SECRETSWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 0x8231CFC 0x80AC94D
+SECRETSWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8830,7 +8830,7 @@ ANIM_GLACIATE:
 	endanimation
 
 .align 2
-GLACIATE_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+GLACIATE_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8952,9 +8952,9 @@ BLUE_BURN_CHANCE_ANIM:
 	return
 
 .align 2
-BLUE_FLAMEJAB: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80A4299
-BLUE_FLAMESWIRL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80B477D
-BLUEBURN: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80AC94D
+BLUE_FLAMEJAB: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 gDummySpriteAffineAnimTable 0x80A4299
+BLUE_FLAMESWIRL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 gDummySpriteAffineAnimTable 0x80B477D
+BLUEBURN: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9003,8 +9003,8 @@ FREEZE_SHOCK_ATTACK:
 	endanimation
 
 .align 2
-SHOCK_ELECTRICCIRLCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-SHOCK_ICEBALL: objtemplate ANIM_TAG_ICE_CHUNK ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x32 0x83E65F0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SHOCK_ELECTRICCIRLCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AEC81
+SHOCK_ICEBALL: objtemplate ANIM_TAG_ICE_CHUNK ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x32 0x83E65F0 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9076,7 +9076,7 @@ ICE_BURN_ATTACK:
 	endanimation
 
 .align 2
-ICEBURN_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+ICEBURN_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9164,9 +9164,9 @@ VF:
 	return
 
 .align 2
-V_VFLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E5DB8 0x0 0x8231CFC 0x80A4299
-V_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83FF114 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+V_VFLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E5DB8 0x0 gDummySpriteAffineAnimTable 0x80A4299
+V_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83FF114 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9230,10 +9230,10 @@ FF_BUFF_EFFECT:
 	return
 
 .align 2
-FF_REDBALLUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x807729D
-FF_REDBALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B0D59
-FF_REDPARTICLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_8x8 0x83E5B10 0x0 0x8231CFC 0x80AC625
-FF_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FF_REDBALLUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x807729D
+FF_REDBALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
+FF_REDPARTICLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_8x8 0x83E5B10 0x0 gDummySpriteAffineAnimTable 0x80AC625
+FF_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9284,7 +9284,7 @@ ANIM_FUSIONBOLT:
 	endanimation
 
 .align 2
-FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9390,8 +9390,8 @@ ANIM_DRAGONASCENT:
 	endanimation
 
 .align 2
-ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
-DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_UP_ROTATIONS 0x80B477D
+DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9667,15 +9667,15 @@ ANIM_COREENFORCER:
 	endanimation
 
 .align 2
-CE_bluering: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-CE_yellowring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-CE_greenring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+CE_bluering: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+CE_yellowring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+CE_greenring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
 CE_circlecharge: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 OAM_NORMAL_32x32 0x83E6030 0x0 0x83E7BF8 0x80BA781
-CE_bluecharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-CE_greencharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredSpiderWeb
-CE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_CoreEnforcerHits
-CE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC SpriteCB_CoreEnforcerBeam
+CE_bluecharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D
+CE_greencharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D
+CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_CentredSpiderWeb
+CE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_CoreEnforcerHits
+CE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable SpriteCB_CoreEnforcerBeam
 
 .align 2
 @Hook @0x80A243C with r0
@@ -9763,7 +9763,7 @@ ANIM_CONFIDE:
 	endanimation
 
 .align 2
-CONFIDE_BUBBLE: objtemplate ANIM_TAG_CONFIDE ANIM_TAG_CONFIDE OAM_OFF_32x32 0x83E397C 0x0 0x8231CFC 0x80A6B65
+CONFIDE_BUBBLE: objtemplate ANIM_TAG_CONFIDE ANIM_TAG_CONFIDE OAM_OFF_32x32 0x83E397C 0x0 gDummySpriteAffineAnimTable 0x80A6B65
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9792,9 +9792,9 @@ ANIM_WATERSHURIKEN:
 	endanimation
 
 .align 2
-WS_BLUESHURIKEN: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
-WS_BLUERINGS: objtemplate ANIM_TAG_BLUE_RING_2 ANIM_TAG_WATER_ORB OAM_DOUBLE_16x32 0x8231CF0 0x0 0x83E3C9C 0x80AC6D9
-WS_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+WS_BLUESHURIKEN: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
+WS_BLUERINGS: objtemplate ANIM_TAG_BLUE_RING_2 ANIM_TAG_WATER_ORB OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 0x83E3C9C 0x80AC6D9
+WS_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9916,8 +9916,8 @@ ANIM_EERIEIMPULSE:
 	endanimation
 
 .align 2
-EERIE_ELECTRICRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-EERIE_HITCIRCLES: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SPARK_H OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC 0x80A4D0D
+EERIE_ELECTRICRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4090 0x80A8CA5
+EERIE_HITCIRCLES: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SPARK_H OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9950,9 +9950,9 @@ ANIM_HOLDBACK:
 	endanimation
 
 .align 2
-HOLDBACK_SWIPE: objtemplate ANIM_TAG_PURPLE_SWIPE ANIM_TAG_PAW_PRINT OAM_OFF_64x64 0x83E693C 0x0 0x8231CFC 0x80B1485
-HOLDBACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PAW_PRINT OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-HOLDBACK_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+HOLDBACK_SWIPE: objtemplate ANIM_TAG_PURPLE_SWIPE ANIM_TAG_PAW_PRINT OAM_OFF_64x64 0x83E693C 0x0 gDummySpriteAffineAnimTable 0x80B1485
+HOLDBACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PAW_PRINT OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+HOLDBACK_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9992,7 +9992,7 @@ INFESTATION_TRAP_PARTICLES:
 	return
 
 .align 2
-INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET OAM_OFF_8x8 0x83E5B10 0x0 0x8231CFC 0x80B477D
+INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET OAM_OFF_8x8 0x83E5B10 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10111,10 +10111,10 @@ THOUSAND_ARROWS_DOWN:
 	return
 
 .align 2
-GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-GREENHEXAGONS: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
-GREEN_ARROWS_DOWN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_IcicleCrash SpriteCB_FallingObjectOnTargetCentre
-GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
+GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+GREENHEXAGONS: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+GREEN_ARROWS_DOWN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_IcicleCrash SpriteCB_FallingObjectOnTargetCentre
+GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E6200 0x0 gDummySpriteAffineAnimTable 0x80AE775
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10251,11 +10251,11 @@ ROTATINGHITSANDWAVE:
 
 
 .align 2
-TW_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
+TW_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B4AA9
 TW_GREENRECOVER2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x83E2A54 0x80A2389
-TW_GREENWHEEL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B7449
+TW_GREENWHEEL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B7449
 TW_ROTATINGHITS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x83E741C 0x80B477D
-TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA6C9
+TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA6C9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10382,8 +10382,8 @@ ANIM_SEARINGSHOT:
 	endanimation
 
 .align 2
-SS_REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SS_ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B77E5
+SS_REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+SS_ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B77E5
 SS_ERUPTIONHIT: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_SearingShotRock SpriteCB_SearingShotRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -10475,9 +10475,9 @@ ANIM_SEEDFLARE:
 	endanimation
 
 .align 2
-SF_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SF_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
 SF_GREENCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
-SF_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
+SF_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B4AA9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10530,8 +10530,8 @@ ANIM_ANCHORSHOT:
 	endanimation
 
 .align 2
-ANCHOR: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80E34D1
-ANCHORANGLED: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+ANCHOR: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80E34D1
+ANCHORANGLED: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
 
 @ hook at 0xAE484 via r2
 .align 2
@@ -10556,7 +10556,7 @@ Jump:
 .align 2
 .NormalTWaveTemplate: .word 0x83E60B8
 .ATemplate: .word CHAIN
-CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80AE471
+CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AE471
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10615,7 +10615,7 @@ ANIM_BANEFULBUNKER:
 	endanimation
 
 .align 2
-POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69DC 0x0 0x8231CFC 0x80AB309
+POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69DC 0x0 gDummySpriteAffineAnimTable 0x80AB309
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10693,8 +10693,8 @@ ANIM_BRUTALSWING:
 	endanimation
 
 .align 2
-BRUTALSWING_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
-BRUTALSWING_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BRUTALSWING_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA631
+BRUTALSWING_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10760,7 +10760,7 @@ ANIM_BURNUP:
 	endanimation
 
 .align 2
-REDYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80AFD4D @or use the fire particle you used on vcreate
+REDYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AFD4D @or use the fire particle you used on vcreate
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10795,7 +10795,7 @@ SCALES_SOUNDPARTICLES:
 	return
 
 .align 2
-PURPLEMETAL: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_DOUBLE_32x64 0x8231CF0 0x0 0x83E3C98 SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles
+PURPLEMETAL: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_DOUBLE_32x64 gDummySpriteAnimTable 0x0 0x83E3C98 SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10840,7 +10840,7 @@ PURPLE_HIT_CALL:
 	return
 
 .align 2
-DARKLARIAT_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+DARKLARIAT_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10964,7 +10964,7 @@ ANIM_FIRSTIMPRESSION:
 	endanimation
 
 .align 2
-FI_GREENPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FI_GREENPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11025,8 +11025,8 @@ PINK_BEAM:
 	return
 
 .align 2
-PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
+PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 gDummySpriteAffineAnimTable 0x80AE775
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11137,10 +11137,10 @@ CIRCLES_LEAVES:
 	return
 
 .align 2
-FH_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80A27D1
+FH_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 gDummySpriteAffineAnimTable 0x80A27D1
 FH_CIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E741C 0x80B477D
 FH_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x83E741C 0x80B477D
-FH_WINDLEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80E0791
+FH_WINDLEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80E0791
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11199,7 +11199,7 @@ GEARUP_SPARKS:
 	return
 
 .align 2
-GEARUP_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A2921
+GEARUP_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11267,8 +11267,8 @@ ANIM_ICEHAMMER:
 	endanimation
 
 .align 2
-ICEHAMMER_PUNCHSTOMP: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
-ICEHAMMER_GRAYSMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ECLIPSING_ORB OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+ICEHAMMER_PUNCHSTOMP: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0D59
+ICEHAMMER_GRAYSMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ECLIPSING_ORB OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11291,7 +11291,7 @@ ANIM_LASERFOCUS:
 	endanimation
 
 .align 2
-LASERFOCUS_REDEYES: objtemplate ANIM_TAG_OPENING_EYE ANIM_TAG_EYE_SPARKLE OAM_OFF_32x32 0x83FEE58 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+LASERFOCUS_REDEYES: objtemplate ANIM_TAG_OPENING_EYE ANIM_TAG_EYE_SPARKLE OAM_OFF_32x32 0x83FEE58 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11312,7 +11312,7 @@ ANIM_LEAFAGE:
 	endanimation
 
 .align 2
-LEAFAGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+LEAFAGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11392,9 +11392,9 @@ ANIM_LUNGE:
 	endanimation
 
 .align 2
-LUNGE_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E71C8 0x80B3E85
-LUNGE_GREENBALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x8075E81
-LUNGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+LUNGE_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E71C8 0x80B3E85
+LUNGE_GREENBALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x8075E81
+LUNGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11482,9 +11482,9 @@ GEIST_HYPER_BEAM_PARTICLES:
 	return
 
 .align 2
-GEIST_BALLS_1: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-GEIST_BALLS_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ASSURANCE_HAND OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-GEIST_CHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC SpriteCB_MoongeistCharge
+GEIST_BALLS_1: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+GEIST_BALLS_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ASSURANCE_HAND OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+GEIST_CHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 gDummySpriteAffineAnimTable SpriteCB_MoongeistCharge
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11611,10 +11611,10 @@ ANIM_NATURESMADNESS:
 	endanimation
 
 .align 2
-NM_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80AB309
-NM_BGCIRCLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CHUNK OAM_OFF_8x8 0x83E6330 0x0 0x8231CFC 0x80AB309
-NM_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+NM_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80AB309
+NM_BGCIRCLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CHUNK OAM_OFF_8x8 0x83E6330 0x0 gDummySpriteAffineAnimTable 0x80AB309
+NM_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11684,12 +11684,12 @@ POLLEN_PUFF_ENEMY:
 
 
 .align 2
-PP_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80AB309
+PP_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80AB309
 PP_STARPARTICLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x83E6004 0x80ADEB1
 PP_STARPARTICLES2: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E33F0 0x0 0x83E6004 0x80ADEB1
-PP_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x8075E81
-PP_HITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
-PP_PINKHEAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E37A0 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+PP_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 gDummySpriteAffineAnimTable 0x8075E81
+PP_HITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PP_PINKHEAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E37A0 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 POLLEN_PUFF_ALLY:
 	loadparticle ANIM_TAG_SPARKLE_2 @stars
@@ -11791,8 +11791,8 @@ POWERTRIP_BUFF:
 	return
 
 .align 2
-BLACKFOCUSENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-POWERTRIP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PURPLE_FLAME OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BLACKFOCUSENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+POWERTRIP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PURPLE_FLAME OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11919,21 +11919,21 @@ PL_DOWN:
 	return
 
 .align 2
-PL_BGCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-PL_YELLOWOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_SPARK_H OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_GREENOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_RAZOR_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_REDOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_VIOLETOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_BGCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+PL_YELLOWOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_SPARK_H OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_GREENOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_RAZOR_LEAF OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_REDOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_VIOLETOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
-PL_YELLOWINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_GREENINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_VIOLETINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_YELLOWINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_GREENINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PL_VIOLETINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
-PL_YELLOWRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
-PL_GREENRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
-PL_REDRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
-PL_VIOLETRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_YELLOWRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_GREENRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_REDRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_VIOLETRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12024,8 +12024,8 @@ ANIM_PURIFY:
 	endanimation
 
 .align 2
-PURIFY_WHITEBALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
-PURIFY_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+PURIFY_WHITEBALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B4495
+PURIFY_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12084,12 +12084,12 @@ ANIM_REVELATIONDANCE:
 	endanimation
 
 .align 2
-RD_YELLOWCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A2921
-RD_YELLOWPARTICLES: objtemplate ANIM_TAG_FLOWER ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_8x8 0x83E2B90 0x0 0x8231CFC 0x80A29ED
-RD_YELLOWSONIC: objtemplate ANIM_TAG_AIR_WAVE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_32x16 0x8231CF0 0x0 0x8231CFC 0x80A72C9
-RD_YELLOWHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-RD_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-RD_YELLOWDISPERSAL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80AC94D
+RD_YELLOWCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80A2921
+RD_YELLOWPARTICLES: objtemplate ANIM_TAG_FLOWER ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_8x8 0x83E2B90 0x0 gDummySpriteAffineAnimTable 0x80A29ED
+RD_YELLOWSONIC: objtemplate ANIM_TAG_AIR_WAVE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A72C9
+RD_YELLOWHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+RD_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+RD_YELLOWDISPERSAL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12318,9 +12318,9 @@ ST_FIRELAUNCH2:
 	return
 
 .align 2
-ST_YELLOWPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-ST_REDPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-ST_FIREHITS: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_SMALL_EMBER OAM_OFF_8x8 0x83E6328 0x0 0x8231CFC 0x80AF6D9
+ST_YELLOWPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+ST_REDPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+ST_FIREHITS: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_SMALL_EMBER OAM_OFF_8x8 0x83E6328 0x0 gDummySpriteAffineAnimTable 0x80AF6D9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12390,8 +12390,8 @@ ANIM_SMARTSTRIKE:
 	endanimation
 
 .align 2
-SMARTSTRIKE_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
-SMARTSTRIKE_TGT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+SMARTSTRIKE_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+SMARTSTRIKE_TGT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12436,7 +12436,7 @@ SOLARBLADE_SUNRAYS:
 	return
 
 .align 2
-SOLARBLADE_BLADEHIT: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_SPARK_2 OAM_OFF_32x32 0x83E79E0 0x0 0x8231CFC 0x80B86B1
+SOLARBLADE_BLADEHIT: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_SPARK_2 OAM_OFF_32x32 0x83E79E0 0x0 gDummySpriteAffineAnimTable 0x80B86B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12536,9 +12536,9 @@ SA_BUBBLECHARGE:
 
 .align 2
 SA_BLUECHARGE: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_16x16 0x83E5958 0x0 0x83E61C8 0x80AE71D
-SA_CIRCLERAIN: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80B8D59
-SA_BUBBLERAIN: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_OFF_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80B8D59
-SA_BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_OFF_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80AB309
+SA_CIRCLERAIN: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_16x16 0x83E58DC 0x0 gDummySpriteAffineAnimTable 0x80B8D59
+SA_BUBBLERAIN: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_OFF_BLEND_16x16 0x83E58DC 0x0 gDummySpriteAffineAnimTable 0x80B8D59
+SA_BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_OFF_BLEND_16x16 0x83E58DC 0x0 gDummySpriteAffineAnimTable 0x80AB309
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12634,8 +12634,8 @@ SPECTRAL_THIEF_ATTACK:
 
 
 .align 2
-SPECTRAL_THIEF_BLACKSMOKE: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-SPECTRAL_THIEF_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SPECTRAL_THIEF_BLACKSMOKE: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+SPECTRAL_THIEF_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 SPECTRAL_THIEF_STEAL:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
@@ -12673,7 +12673,7 @@ SPECTRAL_THIEF_BUFF:
 
 .align 2
 SPECTRAL_THIEF_BLACKCIRCLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80A3099
-SPECTRAL_THIEF_BLACKFE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SPECTRAL_THIEF_BLACKFE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12713,11 +12713,11 @@ ANIM_SPEEDSWAP:
 	endanimation
 
 .align 2
-SPEEDSWAP_BGRING1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-SPEEDSWAP_BGRING2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+SPEEDSWAP_BGRING1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+SPEEDSWAP_BGRING2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 SPEEDSWAP_BGCIRCLE1: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80A3099
 SPEEDSWAP_BGCIRCLE2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80B4495
-SPEEDSWAP_BGPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_OFF_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
+SPEEDSWAP_BGPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_OFF_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12748,8 +12748,8 @@ ANIM_SPIRITSHACKLE:
 	endanimation
 
 .align 2
-SHACKLE_ARROW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A72C9
-SHACKLE_CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80AE471
+SHACKLE_ARROW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A72C9
+SHACKLE_CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AE471
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12809,7 +12809,7 @@ TANTRUM_HIT:
 	return
 
 .align 2
-TANTRUM_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
+TANTRUM_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12883,8 +12883,8 @@ ANIM_STRENGTHSAP:
 	endanimation
 
 .align 2
-SAP_REDSMOKES: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_RED_HEART OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos @or try pink (ANIM_TAG_PINK_PETAL)
-SAP_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RED_HEART OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80DE441 @or try pink (ANIM_TAG_PINK_PETAL)
+SAP_REDSMOKES: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_RED_HEART OAM_OFF_32x32 0x83E36A4 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos @or try pink (ANIM_TAG_PINK_PETAL)
+SAP_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RED_HEART OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE441 @or try pink (ANIM_TAG_PINK_PETAL)
 SAP_PINKABSORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2AE4 0x80A2581
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -12956,12 +12956,12 @@ SUNSTRIKE_BEAM:
 	return
 
 .align 2
-SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SUNSTRIKE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sSunsteelStrikeBlastOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
-SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x32 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
-SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_OFF_16x32 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
-SUNSTRIKE_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-SUNSTRIKE_ROCKS: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
+SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
+SUNSTRIKE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sSunsteelStrikeBlastOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
+SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x32 gDummySpriteAnimTable 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
+SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_OFF_16x32 gDummySpriteAnimTable 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
+SUNSTRIKE_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+SUNSTRIKE_ROCKS: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13031,7 +13031,7 @@ ANIM_THROATCHOP:
 	endanimation
 
 .align 2
-THROATCHOP_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+THROATCHOP_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13078,7 +13078,7 @@ ANIM_TOXICTHREAD:
 	endanimation
 
 .align 2
-ToxicThreadString: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_ToxicThreadWrap
+ToxicThreadString: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ToxicThreadWrap
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13105,9 +13105,9 @@ ANIM_TROPKICK:
 	endanimation
 
 .align 2
-TROPKICK_GREENKICK: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
-TROPKICK_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80AC94D
-TROPKICK_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80AC94D
+TROPKICK_GREENKICK: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0929
+TROPKICK_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 gDummySpriteAffineAnimTable 0x80AC94D
+TROPKICK_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13166,8 +13166,8 @@ ZZ_SPARKS2:
 	return
 
 .align 2
-ZZ_YELLOWBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_SPARK_H OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E7604 0x80B563D
-ZZ_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+ZZ_YELLOWBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_SPARK_H OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
+ZZ_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13202,8 +13202,8 @@ ANIM_ELECTRICTERRAIN:
 	endanimation
 
 .align 2
-ELEC_TERRAIN_BALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x80AA175
-ELEC_TERRAIN_FLYINGBALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x80AA2B1
+ELEC_TERRAIN_BALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 gDummySpriteAffineAnimTable 0x80AA175
+ELEC_TERRAIN_FLYINGBALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 gDummySpriteAffineAnimTable 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13238,7 +13238,7 @@ ANIM_GRASSYTERRAIN:
 
 .align 2
 GRASSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
-GRASSY_TERRAIN_GREENSTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_GREEN_SPARKLE OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+GRASSY_TERRAIN_GREENSTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_GREEN_SPARKLE OAM_OFF_16x16 0x83E3760 0x0 gDummySpriteAffineAnimTable 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13274,7 +13274,7 @@ ANIM_MISTYTERRAIN:
 
 .align 2
 MISTY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
-MISTY_TERRAIN_BLUESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_WATER_GUN OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+MISTY_TERRAIN_BLUESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_WATER_GUN OAM_OFF_16x16 0x83E3760 0x0 gDummySpriteAffineAnimTable 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13310,7 +13310,7 @@ ANIM_PSYCHICTERRAIN:
 
 .align 2
 PSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
-PSY_TERRAIN_PURPLESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+PSY_TERRAIN_PURPLESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 0x83E3760 0x0 gDummySpriteAffineAnimTable 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13446,9 +13446,9 @@ ANIM_GRASSPLEDGE:
 	endanimation
 
 .align 2
-GP_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80ABA79
-GP_LEAVES2: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
-GP_GREENHIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GP_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80ABA79
+GP_LEAVES2: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable 0x80B477D
+GP_GREENHIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13822,7 +13822,7 @@ ANIM_QUICKGUARD:
 	endanimation
 
 .align 2
-QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0955
+QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13930,8 +13930,8 @@ AQUA_RING_ANIM:
 	endanimation
 
 .align 2
-AQUARING_BLUERING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-AQUARING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_BLEND_16x16 0x83E5A78 0x0 0x8231CFC 0x80AB309
+AQUARING_BLUERING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+AQUARING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_BLEND_16x16 0x83E5A78 0x0 gDummySpriteAffineAnimTable 0x80AB309
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -13988,7 +13988,7 @@ ANIM_BELCH:
 	endanimation
 
 .align 2
-BELCH_BERRY: objtemplate ANIM_TAG_BERRY_NORMAL ANIM_TAG_BERRY_NORMAL OAM_NORMAL_32x32 gAnimCmdBerryEaten 0x0 0x8231CFC 0x80B4495
+BELCH_BERRY: objtemplate ANIM_TAG_BERRY_NORMAL ANIM_TAG_BERRY_NORMAL OAM_NORMAL_32x32 gAnimCmdBerryEaten 0x0 gDummySpriteAffineAnimTable 0x80B4495
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -14026,7 +14026,7 @@ ANIM_FLING:
 	endanimation
 
 @;.align 2
-@;FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
+@;FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14092,7 +14092,7 @@ ANIM_GRAVITY:
 	endanimation
 
 .align 2
-GRAVITY_BLACKHOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_SHADOW_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
+GRAVITY_BLACKHOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_SHADOW_BALL OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14122,8 +14122,8 @@ GuardSplitLaunch:
 	return
 
 .align 2
-GUARD_SPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80A3099
-GUARD_SPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80B4495
+GUARD_SPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80A3099
+GUARD_SPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14155,7 +14155,7 @@ HEAL_BLOCK_STARS:
 	return
 
 .align 2
-HEAL_BLOCK_X: objtemplate ANIM_TAG_X_SIGN ANIM_TAG_X_SIGN OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_BlockXOnTarget
+HEAL_BLOCK_X: objtemplate ANIM_TAG_X_SIGN ANIM_TAG_X_SIGN OAM_OFF_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_BlockXOnTarget
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14174,7 +14174,7 @@ ANIM_IONDELUGE:
 	endanimation
 
 .align 2
-IONS: objtemplate ANIM_TAG_IONS ANIM_TAG_IONS OAM_OFF_16x32 0x83E5894 0x0 0x8231CFC 0x80AAC55
+IONS: objtemplate ANIM_TAG_IONS ANIM_TAG_IONS OAM_OFF_16x32 0x83E5894 0x0 gDummySpriteAffineAnimTable 0x80AAC55
 
 @ hook at 0xAAC24 via r0
 .align 2
@@ -14231,7 +14231,7 @@ ANIM_LUCKYCHANT:
 	endanimation
 
 .align 2
-LUCKYCHANT_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+LUCKYCHANT_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 LUCKYCHANT_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x83E7604 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -14312,7 +14312,7 @@ FLUX_SPARKS2:
 	return
 
 .align 2
-FLUX_YELLOWUPROAR: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FLUX_YELLOWUPROAR: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14338,7 +14338,7 @@ POWDER_SPORE:
 	return
 
 .align 2
-POWDER_BLACKPOWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
+POWDER_BLACKPOWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E2B5C 0x0 gDummySpriteAffineAnimTable 0x80A27D1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14369,8 +14369,8 @@ POWERSPLIT_Launch:
 	return
 
 .align 2
-POWERSPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80A3099
-POWERSPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80B4495
+POWERSPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80A3099
+POWERSPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14414,13 +14414,13 @@ ANIM_REFLECTTYPE:
 	endanimation
 
 .align 2
-BGSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_OFF_BLEND_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_ToxicThreadWrap
-VIOLETSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_OFF_BLEND_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_ToxicThreadWrap
-WHITESS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_OFF_BLEND_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_ToxicThreadWrap
-WHITESG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-PINKSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-VIOLETSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-BGSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
+BGSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_OFF_BLEND_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ToxicThreadWrap
+VIOLETSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_OFF_BLEND_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ToxicThreadWrap
+WHITESS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_OFF_BLEND_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ToxicThreadWrap
+WHITESG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+PINKSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+VIOLETSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+BGSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14473,10 +14473,10 @@ SIMPLE_BEAMWITHRINGS:
 	return
 
 .align 2
-SIMPLE_BROWNBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_ROCKS OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-SIMPLE_PINKBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-SIMPLE_BROWNRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ROCKS OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-SIMPLE_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+SIMPLE_BROWNBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_ROCKS OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+SIMPLE_PINKBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
+SIMPLE_BROWNRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ROCKS OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+SIMPLE_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14520,7 +14520,7 @@ SOAK_CALL:
 	return
 
 .align 2
-SOAK_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
+SOAK_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x83E69DC 0x0 gDummySpriteAffineAnimTable 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14574,8 +14574,8 @@ ANIM_TRICKORTREAT:
 	endanimation
 
 .align 2
-TOT_GHOST: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80AB309
-TOT_GHOST2: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80AA58D
+TOT_GHOST: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AB309
+TOT_GHOST2: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AA58D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14628,7 +14628,7 @@ VENOM_DRENCH_CALL:
 	return
 
 .align 2
-DRENCH_ACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
+DRENCH_ACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 gDummySpriteAffineAnimTable 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14672,7 +14672,7 @@ ANIM_FORESTSCURSE:
 	endanimation
 
 .align 2
-CURSE_PLANTSPLANTS: objtemplate ANIM_TAG_ROOTS ANIM_TAG_ROOTS OAM_OFF_32x32 0x83E2DB4 0x0 0x8231CFC 0x80AC625
+CURSE_PLANTSPLANTS: objtemplate ANIM_TAG_ROOTS ANIM_TAG_ROOTS OAM_OFF_32x32 0x83E2DB4 0x0 gDummySpriteAffineAnimTable 0x80AC625
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14735,11 +14735,11 @@ MINDBLOWN_OUTWARD2:
 	return
 
 .align 2
-MINDBLOWN_BLACEPHALONHEAD: objtemplate ANIM_TAG_BLACEPHALON_HEAD ANIM_TAG_BLACEPHALON_HEAD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_MindBlownBall
-MINDBLOWN_OUTWARDCIRCLES1: objtemplate ANIM_TAG_ORBS ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
-MINDBLOWN_OUTWARDCIRCLES2: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
-MINDBLOWN_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
-MINDBLOWN_PINKHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+MINDBLOWN_BLACEPHALONHEAD: objtemplate ANIM_TAG_BLACEPHALON_HEAD ANIM_TAG_BLACEPHALON_HEAD OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_MindBlownBall
+MINDBLOWN_OUTWARDCIRCLES1: objtemplate ANIM_TAG_ORBS ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable SpriteCB_MindBlownExplosion
+MINDBLOWN_OUTWARDCIRCLES2: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 gDummySpriteAffineAnimTable SpriteCB_MindBlownExplosion
+MINDBLOWN_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+MINDBLOWN_PINKHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14860,11 +14860,11 @@ PHOTON_GEYSER_BEAM:
 
 .align 2
 GEYSER_CHARGE: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32 0x83E6030 0x0 0x83E61C8 0x80AE71D
-GEYSER_SPARKS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-GEYSER_SPARKSS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-GEYSER_UPROAR1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GEYSER_UPROAR2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL OAM_DOUBLE_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+GEYSER_SPARKS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D
+GEYSER_SPARKSS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80ADEB1
+GEYSER_UPROAR1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+GEYSER_UPROAR2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15029,8 +15029,8 @@ ANIM_ELECTRIFY:
 	endanimation
 
 .align 2
-ELECTRIFY_YELLOWSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 SpriteCB_SurroundingRing
-ELECTRIFY_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+ELECTRIFY_YELLOWSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x32 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
+ELECTRIFY_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15096,7 +15096,7 @@ ANIM_FAIRYLOCK:
 	endanimation
 
 .align 2
-FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK OAM_OFF_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_FairyLockChain
+FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK OAM_OFF_64x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_FairyLockChain
 
 @hook at 0xAEBA0 via r0
 .align 2
@@ -15187,12 +15187,12 @@ LOR_PINK_BEAM:
 	return
 
 .align 2
-LOR_PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+LOR_PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
 LOR_PINKAFTERMATH: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_16x16 0x83E5A78 0x0 0x83E6AB4 0x80B1839
-LOR_PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
-LOR_PINKEXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+LOR_PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 gDummySpriteAffineAnimTable 0x80AE775
+LOR_PINKEXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
-LOR_GRAYCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_GUST OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x800760D
+LOR_GRAYCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_GUST OAM_OFF_8x8 0x83E6118 0x0 gDummySpriteAffineAnimTable 0x800760D
 
 @ hook at 0xAE5EC via r0
 .align 2
@@ -15276,7 +15276,7 @@ ANIM_AFTERYOU:
 
 
 .align 2
-AFTERYOU_GREENRAGE: objtemplate ANIM_TAG_ANGER ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3F00 0x80A85AD
+AFTERYOU_GREENRAGE: objtemplate ANIM_TAG_ANGER ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E3F00 0x80A85AD
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15332,7 +15332,7 @@ ANIM_QUASH:
 	endanimation
 
 .align 2
-QUASH_ARMHIT: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+QUASH_ARMHIT: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15375,7 +15375,7 @@ COINFALL:
 	return
 
 .align 2
-COIN_DROP: objtemplate ANIM_TAG_COIN ANIM_TAG_COIN OAM_NORMAL_16x16 0x83E3D38 0x0 0x8231CFC ROCKSLIDE_USER_ASM+1
+COIN_DROP: objtemplate ANIM_TAG_COIN ANIM_TAG_COIN OAM_NORMAL_16x16 0x83E3D38 0x0 gDummySpriteAffineAnimTable ROCKSLIDE_USER_ASM+1
 
 ROCKSLIDE_USER_ASM:
 	push {r4-r6,lr}
@@ -15465,9 +15465,9 @@ LASTRESORT_CALL:
 	return
 
 .align 2
-LR_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_THIN_RING OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-LR_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PAIN_SPLIT OAM_OFF_32x32 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
-LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+LR_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_THIN_RING OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+LR_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PAIN_SPLIT OAM_OFF_32x32 0x83e33f0 0x0 gDummySpriteAffineAnimTable 0x80a4d0d
+LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15523,10 +15523,10 @@ SKYDROP_SECOND_TURN:
 	endanimation
 
 .align 2
-SKYDROP_FLY_BALL: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D
+SKYDROP_FLY_BALL: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 SKYDROP_ROT 0x80AFD4D
 SKYDROP_ROT: .word SKYDROP_ROTATIONS
 SKYDROP_ROTATIONS: .hword 0xa0, 0x100, 0x50, 0x0, 0x7fff, 0x0, 0x0, 0x0
-SKYDROP_TARGET_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
+SKYDROP_TARGET_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c TARGET_FLY_ASM+1
 
 .align 2
 TARGET_FLY_ASM:
@@ -15555,7 +15555,7 @@ ANIM_CELEBRATE:
 	endanimation
 
 .align 2
-CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E3A2C 0x80A6C85
+CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E3A2C 0x80A6C85
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15602,7 +15602,7 @@ ANIM_HOLDHANDS:
 	endanimation
 
 .align 2
-HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A2921
+HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15659,7 +15659,7 @@ ANIM_JAW_LOCK:
 	endanimation
 
 .align 2
-LOCKED_JAW: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 SpriteCB_LockingJaw
+LOCKED_JAW: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 SpriteCB_LockingJaw
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15681,7 +15681,7 @@ ANIM_NO_RETREAT:
 	endanimation
 
 .align 2
-NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
+NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15742,7 +15742,7 @@ ANIM_MAGIC_POWDER:
 	endanimation
 
 .align 2
-BLUE_MAGIC_POWDER: objtemplate ANIM_TAG_POISON_POWDER ANIM_TAG_WATER_GUN OAM_OFF_8x16 0x83E298C 0x0 0x8231CFC 0x80A22E9
+BLUE_MAGIC_POWDER: objtemplate ANIM_TAG_POISON_POWDER ANIM_TAG_WATER_GUN OAM_OFF_8x16 0x83E298C 0x0 gDummySpriteAffineAnimTable 0x80A22E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15760,7 +15760,7 @@ ANIM_DRAGON_DARTS:
 	endanimation
 
 .align 2
-DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
+DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15850,8 +15850,8 @@ YELLOW_BLUE_SPARKS_ON_PLAYER:
 	return
 
 .align 2	
-BLUE_SPARK_PLAYER: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D 
-BLUE_SPARK_PLAYER_2: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80AE06D
+BLUE_SPARK_PLAYER: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D 
+BLUE_SPARK_PLAYER_2: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80AE06D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15912,7 +15912,7 @@ FISHY_REND_BUBBLES:
 	return 
 
 .align 2
-FISHIOUS_TEETH: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH sFishiousRendTeethOam 0x8231CF0 0x0 0x8231CFC SpriteCB_LeftRightSlice
+FISHIOUS_TEETH: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH sFishiousRendTeethOam gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_LeftRightSlice
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16078,10 +16078,10 @@ ANIM_PYRO_BALL:
 	endanimation
 
 .align 2
-PYRO_BALL_ROCK: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK sPyroBallRockOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
-PYRO_BALL_BURNING_ROCK: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
-PYRO_BALL_FLAMES_UP: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
-PYRO_BALL_BALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_PyroBallLaunch
+PYRO_BALL_ROCK: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK sPyroBallRockOAM gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_PyroBallRockBounce
+PYRO_BALL_BURNING_ROCK: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_PyroBallRockBounce
+PYRO_BALL_FLAMES_UP: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_PyroBallRockBounce
+PYRO_BALL_BALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_PyroBallLaunch
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16149,8 +16149,8 @@ ANIM_AURA_WHEEL:
 	endanimation
 
 .align 2
-AURA_WHEEL_ELECTRICITY_BLUE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7604 0x80ACDE9
-AURA_WHEEL_ELECTRICITY_RED: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7604 0x80ACDE9
+AURA_WHEEL_ELECTRICITY_BLUE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80ACDE9
+AURA_WHEEL_ELECTRICITY_RED: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7604 0x80ACDE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16201,7 +16201,7 @@ ANIM_BRANCH_POKE:
 	endanimation
 
 .align 2
-BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
+BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16273,7 +16273,7 @@ ANIM_APPLE_ACID:
 	endanimation
 
 .align 2
-APPLE_FLOAT: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_DOUBLE_32x32 0x8231CF0 0x0 0x83E3A2C 0x80A6C09
+APPLE_FLOAT: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 0x83E3A2C 0x80A6C09
 APPLE_ACID_LAUNCH: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 SpriteCB_AcidLaunchSingleTarget
 APPLE_ACID_DRIP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69E0 0x0 0x83E6A80 SpriteCB_AcidDripSingleTarget
 
@@ -16332,8 +16332,8 @@ SMALL_APPLES_FALL:
 	return
 
 .align 2
-SMALL_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
-LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_ScaledApple SpriteCB_FallingObject
+SMALL_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_FallingObject
+LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_ScaledApple SpriteCB_FallingObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16379,9 +16379,9 @@ STRANGE_STEAM_CLOUD:
 	return
 
 .align 2	
-STRANGE_STEAM_PINK: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
-STRANGE_STEAM_GREEN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_FINGER OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
-STRANGE_STEAM_BLUE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_GUN OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
+STRANGE_STEAM_PINK: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B8CC9
+STRANGE_STEAM_GREEN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_FINGER OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B8CC9
+STRANGE_STEAM_BLUE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_GUN OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16413,8 +16413,8 @@ ANIM_LIFE_DEW:
 	endanimation
 
 .align 2
-WATER_DROPLET: objtemplate ANIM_TAG_UNUSED_WATER_DROPLET ANIM_TAG_UNUSED_WATER_DROPLET sAppleOAM gAnimCmdWaterDroplet 0x0 0x8231CFC SpriteCB_WaterDroplet
-HEALING_ORBS_SPECIAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_BLUE_STAR OAM_OFF_32x32 0x83E37A0 0x0 0x8231CFC SpriteCB_AnimSpriteOnSelectedMonPos
+WATER_DROPLET: objtemplate ANIM_TAG_UNUSED_WATER_DROPLET ANIM_TAG_UNUSED_WATER_DROPLET sAppleOAM gAnimCmdWaterDroplet 0x0 gDummySpriteAffineAnimTable SpriteCB_WaterDroplet
+HEALING_ORBS_SPECIAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_BLUE_STAR OAM_OFF_32x32 0x83E37A0 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16441,7 +16441,7 @@ ANIM_OBSTRUCT:
 	endanimation
 
 .align 2
-OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
+OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80BA739
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16549,7 +16549,7 @@ STEEL_BEAM_SHOT:
 	return
 
 .align 2
-STEEL_BEAM_SHARDS: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_16x16 0x8231CF0 0x0 0x83e7604 0x80B8CC9
+STEEL_BEAM_SHARDS: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83e7604 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16635,9 +16635,9 @@ ANIM_BREAKNECK_BLITZ:
 	endanimation
 
 .align 2
-BLITZ_DANCE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B7449
-GROWING_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-BLITZ_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BLITZ_DANCE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B7449
+GROWING_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sGrowingSuperpowerOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
+BLITZ_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16736,7 +16736,7 @@ ANIM_ALL_OUT_PUMMELING:
 	endanimation
 
 .align 2
-PUMMEL_ONSLAUGHT: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_IMPACT OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
+PUMMEL_ONSLAUGHT: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_IMPACT OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0929
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16814,7 +16814,7 @@ finishBG_SSSS:
 	endanimation
 
 .align 2
-FLY_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_BIRD OAM_NORMAL_64x64 0x8231CF0 0x0 ROTATIONS_SSSS 0x80B1C3D
+FLY_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_BIRD OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 ROTATIONS_SSSS 0x80B1C3D
 ROTATIONS_SSSS: .word PLAYER_ROT_SSSS, ENEMY_ROT_SSSS
 PLAYER_ROT_SSSS: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 ENEMY_ROT_SSSS: .hword 0,0,0x0150,0,0x7fff,0,0,0
@@ -16910,8 +16910,8 @@ PURPLE_FLARE_SELF:
 	return
 
 .align 2
-PURPLE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80E0E95
-PURPLE_Z_AURA: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
+PURPLE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80E0E95
+PURPLE_Z_AURA: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @ hook at AB43C via r0
 .pool
@@ -17065,8 +17065,8 @@ TEC_RAGE_EXPLOSION:
 
 
 .align 2
-TEC_RAGE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-TECTONIC_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+TEC_RAGE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM+1
+TECTONIC_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 .align 2
 .pool
@@ -17281,11 +17281,11 @@ ROCKS_COALESCE:
 	return
 
 .align 2
-NEEDLEARM_ROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80A4299
-BIGROCK_STOMP: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_DOUBLE_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObject
-CC_FOCUS_ENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ROCKS OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-CC_ROCK_GROW: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_NORMAL_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80AD455
+NEEDLEARM_ROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable 0x80A4299
+BIGROCK_STOMP: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObject
+CC_FOCUS_ENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ROCKS OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+CC_ROCK_GROW: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AD455
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -17451,11 +17451,11 @@ SPINOUT_BG_SLOWDOWN:
 	return
 
 .align 2
-AEROBLAST_STRING: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 0x83E6B48 0x0 0x8231CFC 0x80B1AB9
-SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-SPINOUT_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SPINOUT_GREEN_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_RAZOR_LEAF OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
-SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+AEROBLAST_STRING: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 0x83E6B48 0x0 gDummySpriteAffineAnimTable 0x80B1AB9
+SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 0x80B7BD5
+SPINOUT_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+SPINOUT_GREEN_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_RAZOR_LEAF OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
+SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -17650,13 +17650,13 @@ NEN_GEYSER:
 	return
 
 .align 2
-NEN_PURPLE_RING_USER: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-NEN_PURPLE_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-NEN_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-NEN_NIGHTMARE_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
-NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-NEN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
-NEN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+NEN_PURPLE_RING_USER: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+NEN_PURPLE_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+NEN_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+NEN_NIGHTMARE_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM+1
+NEN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+NEN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @ hook at 0xb8d74 via r0
 .align 2
@@ -17819,20 +17819,20 @@ CORKSCREW_ROCKS_SPRAY:
 
 
 .align 2
-CORKSCREW_METALBIT: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E7990 0x80B477D
-CORKSCREW_CHARGE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-CORKSCREW_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 0x83e6b8c 0x80B477D
-CORKSCREW_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
+CORKSCREW_METALBIT: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E7990 0x80B477D
+CORKSCREW_CHARGE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+CORKSCREW_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c 0x80B477D
+CORKSCREW_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
 CORKSCREW_DOWN_ROTATIONS: .word CORKSCREW_DOWN_ROT
 CORKSCREW_DOWN_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
-CORKSCREW_STRIKE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
+CORKSCREW_STRIKE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
 CORKSCREW_STRIKE_ROTS: .word CORKSCREW_PLAYER_ROT, CORKSCREW_ENEMY_ROT
 CORKSCREW_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 CORKSCREW_ENEMY_ROT: .hword 0,0,0x0150,0,0x7fff,0,0,0
 
 @ on opponent
-CORKSCREW_RIGHT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1
-CORKSCREW_LEFT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1
+CORKSCREW_LEFT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTUP_ROTATIONS: .word CORKSCREW_RIGHTUP_ROT
 CORKSCREW_RIGHTUP_ROT: .hword 0,0,0x01c2,0,0x7fff,0,0,0
 
@@ -17842,8 +17842,8 @@ CORKSCREW_DOWNUP_ROTATIONS: .word CORKSCREW_DOWNUP_ROT
 CORKSCREW_DOWNUP_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
 
 @ on player
-CORKSCREW_RIGHT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1
-CORKSCREW_LEFT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1
+CORKSCREW_LEFT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTDOWN_ROTATIONS: .word CORKSCREW_RIGHTDOWN_ROT
 CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 
@@ -17963,9 +17963,9 @@ IO_EXPLOSION:
 	return
 
 .align 2
-IO_RED_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_VERTICAL_HEX sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+IO_RED_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_VERTICAL_HEX sGrowingSuperpowerOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
+IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18086,9 +18086,9 @@ HV_WHIRLPOOL_HURRICANE:
 	return
 
 .align 2
-HV_BLUE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WATER_ORB sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-HV_BLUE_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_WATER_ORB OAM_OFF_32x64 0x8231CF0 0x0 0x8231CFC 0x80B18E5
-HV_BLUE_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+HV_BLUE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WATER_ORB sGrowingSuperpowerOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
+HV_BLUE_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_WATER_ORB OAM_OFF_32x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B18E5
+HV_BLUE_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18294,13 +18294,13 @@ RESET_FROM_GREEN_SCREEN:
 	return
 
 .align 2
-BD_PETAL_SPIN: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231cfc 0x80ACDE9
-BD_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BD_GREEN_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_RAZOR_LEAF OAM_OFF_32x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-BD_GEYSER_FLOWER: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC SpriteCB_Geyser
-BD_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-BD_PETAL_STAR: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80A4299
-BD_GREEN_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+BD_PETAL_SPIN: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 gDummySpriteAffineAnimTable 0x80ACDE9
+BD_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+BD_GREEN_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_RAZOR_LEAF OAM_OFF_32x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable HURRICANE_USER_ASM+1
+BD_GEYSER_FLOWER: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+BD_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+BD_PETAL_STAR: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 gDummySpriteAffineAnimTable 0x80A4299
+BD_GREEN_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @ original 080B18E4
 HURRICANE_USER_ASM:
@@ -18527,10 +18527,10 @@ HAVOC_SPARK_TARGET:
 	return
 
 .align 2
-HAVOC_CHARGE_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-HAVOC_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
-HAVOC_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-HAVOC_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+HAVOC_CHARGE_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+HAVOC_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B12E9
+HAVOC_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+HAVOC_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18698,9 +18698,9 @@ SPSY_PLAYER_FLINGING:
 	return
 
 .align 2
-SPSY_REFLECT_HIT: objtemplate ANIM_TAG_BLUE_LIGHT_WALL ANIM_TAG_BLUE_LIGHT_WALL OAM_NORMAL_BLEND_32x32 0x8231cf0 0x0 0x83e7bf8 0x80ba561
-SPSY_PINK_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SPSY_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+SPSY_REFLECT_HIT: objtemplate ANIM_TAG_BLUE_LIGHT_WALL ANIM_TAG_BLUE_LIGHT_WALL OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83e7bf8 0x80ba561
+SPSY_PINK_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+SPSY_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18861,7 +18861,7 @@ SZS_ICE_SWIRL_CALL:
 
 .align 2
 SZS_ICE_SPIN: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E63DC 0x80ACDE9
-SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 SZS_ICE_SWIRL: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E63DC 0x80B477D
 
 .align 2
@@ -19101,16 +19101,16 @@ DRAKE_EXPLOSION:
 	return
 
 .align 2
-DRAKE_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-DRAKE_PURPLE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
-DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1
-DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
-DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
-DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
-DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+DRAKE_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+DRAKE_PURPLE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AEC81
+DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_UP_ROTATIONS 0x80B477D
+DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1
+DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
+DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM+1
+DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 DRAKE_STRIKE_ROTATIONS: .word DRAKE_STRIKE_PLAYER_ROT, DRAKE_STRIKE_ENEMY_ROT
 DRAKE_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -19258,18 +19258,18 @@ BHE_EXPLODE:
 	return
 
 .align 2
-BHE_BLACK_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BLACK_BALL_2 OAM_NORMAL_BLEND_64x64 0x8231cf0 0x0 0x83e61c8 0x80aec81
-BHE_BLUE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
-BHE_BLACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
-BHE_DARKRED_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-BHE_BLACK_WISP: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E5EA4 0x0 0x8231CFC 0x80AD541
-BHE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
-BHE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-BHE_RED_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+BHE_BLACK_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BLACK_BALL_2 OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83e61c8 0x80aec81
+BHE_BLUE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
+BHE_BLACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
+BHE_DARKRED_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+BHE_BLACK_WISP: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E5EA4 0x0 gDummySpriteAffineAnimTable 0x80AD541
+BHE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e4088 SpriteCB_AnimSpriteOnMonPos
+BHE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+BHE_RED_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
 
-BHE_ECLIPSE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_GROW_HOLE SpriteCB_AnimSpriteOnMonPos
-BHE_ECLIPSE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_SHRINK_HOLE SpriteCB_AnimSpriteOnMonPos
-BHE_ECLIPSE_USER: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_GROW SpriteCB_AnimSpriteOnMonPos
+BHE_ECLIPSE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 BHE_ECLIPSE_GROW_HOLE SpriteCB_AnimSpriteOnMonPos
+BHE_ECLIPSE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 BHE_ECLIPSE_SHRINK_HOLE SpriteCB_AnimSpriteOnMonPos
+BHE_ECLIPSE_USER: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 BHE_ECLIPSE_GROW SpriteCB_AnimSpriteOnMonPos
 
 BHE_ECLIPSE_GROW: .word BHE_GROW_PLAYER
 BHE_GROW_PLAYER: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x48f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
@@ -19281,7 +19281,7 @@ BHE_ECLIPSE_SHRINK_HOLE: .word BHE_HOLE_SHRINK
 BHE_HOLE_SHRINK: @.hword 0x0100, 0x0100, 0x0, 0x0, 0xfff0, 0xfff0, 0x1e00, 0x0, 0x7fff, 0x1, 0x0, 0x0
 .hword 0x100, 0x100, 0x0, 0x0, 0xfff0, 0xfff0, 0x08f6, 0x0, 0x7fff, 0x1, 0x0, 0x0
 
-BHE_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC SpriteCB_TwinkleOnBank
+BHE_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable SpriteCB_TwinkleOnBank
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -19448,13 +19448,13 @@ TWINKLE_STARS_TARGET:
 	return
 
 .align 2
-TWINKLE_PINK_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
-TWINKLE_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-TWINKLE_STAR_GROW: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 TWINKLE_STAR_SCALING SpriteCB_AnimSpriteOnMonPos
-TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC SpriteCB_TwinkleOnBank
-TWINKLE_DIG_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 0x8231CFC 0x80B9379
-TWINKLE_YELLOW_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_YELLOW_STAR OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-TWINKLE_HIT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_YELLOW_STAR OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+TWINKLE_PINK_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
+TWINKLE_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+TWINKLE_STAR_GROW: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 TWINKLE_STAR_SCALING SpriteCB_AnimSpriteOnMonPos
+TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable SpriteCB_TwinkleOnBank
+TWINKLE_DIG_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B9379
+TWINKLE_YELLOW_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_YELLOW_STAR OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+TWINKLE_HIT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_YELLOW_STAR OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
 
 TWINKLE_STAR_SCALING:
 .word TWINKLE_SCALE_PLAYER, TWINKLE_SCALE_OPPONENT
@@ -19655,7 +19655,7 @@ CPIKA_THUNDERING:
 	return
 
 .align 2
-CPIKA_YELLOW_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_CIRCLE_OF_LIGHT sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
+CPIKA_YELLOW_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_CIRCLE_OF_LIGHT sGrowingSuperpowerOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -19926,14 +19926,14 @@ TENE6_SPARK_GEYSER:
 	return
 
 .align 2
-TENE6_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
-TENE6_TARGET_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-TENE6_RED_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_VERTICAL_HEX OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_BLUE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_PINK_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_BERRY_EATEN OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_YELLOW_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_LEAF OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_PURPLE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c 0x80b1bb1
+TENE6_TARGET_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+TENE6_RED_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_VERTICAL_HEX OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+TENE6_BLUE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+TENE6_PINK_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_BERRY_EATEN OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+TENE6_YELLOW_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+TENE6_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_LEAF OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+TENE6_PURPLE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
 
 .align 2
 TARGET_SHOCKWAVE_TRAJ:
@@ -20100,7 +20100,7 @@ SPARKSURF_SPARK_GEYSER:
 	return
 
 .align 2
-SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c 0x80b1bb1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -20244,30 +20244,30 @@ EVOBOOST_COLORS_CIRCLE_CHARGE:
 	return
 
 .align 2
-EVOBOOST_RED_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_PINK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_ICE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_BLACK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_BLUE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_PURPLE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_YELLOW_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_GREEN_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_RED_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_PINK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_ICE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_BLACK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_BLUE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_PURPLE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_YELLOW_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_GREEN_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC SpriteCB_ExtremeEvoboostCircle
-EVOBOOST_RED_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_PINK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_ICE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_BLACK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_BLUE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_PURPLE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_YELLOW_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_RED_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_PINK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_ICE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_BLACK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_BLUE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_PURPLE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_YELLOW_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_GREEN_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+EVOBOOST_RED_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_PINK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_ICE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_BLACK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_BLUE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_PURPLE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_YELLOW_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_GREEN_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_ExtremeEvoboostCircle
+EVOBOOST_RED_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_PINK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_ICE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_BLACK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_BLUE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_PURPLE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_YELLOW_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF OAM_NORMAL_BLEND_16x16 gDummySpriteAnimTable 0x0 0x83E2AB8 0x80A2389
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -20390,9 +20390,9 @@ PANCAKE_EXPLODE:
 	return
 
 .align 2
-PANCAKE_RED_DETECT: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC 0x8076FD1
-PANCAKE_YELLOW_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ELECTRIC_ORBS OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-PANCAKE_YELLOW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ELECTRIC_ORBS OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+PANCAKE_RED_DETECT: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable 0x8076FD1
+PANCAKE_YELLOW_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ELECTRIC_ORBS OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+PANCAKE_YELLOW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ELECTRIC_ORBS OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
 
 
 @ hook at 0xB6092 via r0
@@ -20637,13 +20637,13 @@ GENESIS_RISING_2_OPPONENT:
 
 .align 2
 GENESIS_RISE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6AB4 0x80E24E1
-GENESIS_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80E0E95
-GENESIS_SPINUP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
-GENESIS_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-GENESIS_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WISP_ORB sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
+GENESIS_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80E0E95
+GENESIS_SPINUP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+GENESIS_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+GENESIS_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WISP_ORB sGrowingSuperpowerOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
 GENESIS_BUBBLE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6AB4 0x80B1839
-GENESIS_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_ORB OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-GENESIS_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+GENESIS_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_ORB OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+GENESIS_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -20962,11 +20962,11 @@ SAR_FINAL_EXPLOSION:
 	return
 
 .align 2
-SAR_PURPLE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-SAR_RAID_FLYUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_LEAF OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SAR_RAID_RIGHT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_RIGHT_ROTATIONS 0x80E24E1
-SAR_RAID_LEFT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_LEFT_ROTATIONS 0x80E24E1
-SAR_RAID_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_STRIKE_ROTATIONS 0x80B1C3D
+SAR_PURPLE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+SAR_RAID_FLYUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_LEAF OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
+SAR_RAID_RIGHT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 SAR_RAID_RIGHT_ROTATIONS 0x80E24E1
+SAR_RAID_LEFT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 SAR_RAID_LEFT_ROTATIONS 0x80E24E1
+SAR_RAID_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 SAR_RAID_STRIKE_ROTATIONS 0x80B1C3D
 
 SAR_RAID_STRIKE_ROTATIONS: .word SAR_RAID_STRIKE_PLAYER_ROT, SAR_RAID_STRIKE_ENEMY_ROT
 SAR_RAID_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -20980,42 +20980,42 @@ SAR_RAID_LEFT_ROT: .hword 0,0,0x0140,0,0x7fff,0,0,0
 
 @@@ Arrow Particles
 @ arrow up
-SAR_ARROW_UP: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_UP_ROTATIONS 0x80B477D
+SAR_ARROW_UP: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_UP_ROTATIONS 0x80B477D
 SAR_UP_ROTATIONS: .word SAR_UP_ROT
 SAR_UP_ROT: .hword 0,0,0x01a0,0,0x7fff,0,0,0
 
 @ arrow face right and up
-SAR_ARROW_RIGHT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_ARROW_RIGHT_ROTATIONS 0x80E24E1
+SAR_ARROW_RIGHT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_ARROW_RIGHT_ROTATIONS 0x80E24E1
 SAR_ARROW_RIGHT_ROTATIONS: .word SAR_ARROW_RIGHT_ROT
 SAR_ARROW_RIGHT_ROT: .hword 0,0,0x0175,0,0x7fff,0,0,0
 
 @ arrow face right and down
-SAR_ARROW_RIGHT2: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_ARROW_RIGHT2_ROTATIONS 0x80E24E1
+SAR_ARROW_RIGHT2: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_ARROW_RIGHT2_ROTATIONS 0x80E24E1
 SAR_ARROW_RIGHT2_ROTATIONS: .word SAR_ARROW_RIGHT2_ROT
 SAR_ARROW_RIGHT2_ROT: .hword 0,0,0x0160,0,0x7fff,0,0,0
 
 @ arrow face left and up
-SAR_ARROW_LEFT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS 0x80E24E1
+SAR_ARROW_LEFT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_LEFT_ROTATIONS 0x80E24E1
 SAR_LEFT_ROTATIONS: .word SAR_LEFT_ROT
 SAR_LEFT_ROT: .hword 0,0,0x01e0,0,0x7fff,0,0,0
 
 @ arrow face up and to left
-SAR_ARROW_LEFT_TGT_HI: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_HI 0x80E24E1
+SAR_ARROW_LEFT_TGT_HI: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_LEFT_ROTATIONS_TGT_HI 0x80E24E1
 SAR_LEFT_ROTATIONS_TGT_HI: .word SAR_LEFT_ROT_TGT
 SAR_LEFT_ROT_TGT: .hword 0,0,0x01e0,0,0x7fff,0,0,0
 
 @ arrow face right
-SAR_ARROW_RIGHT_TGT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_RIGHT_ROTATIONS_TGT 0x80E24E1
+SAR_ARROW_RIGHT_TGT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_RIGHT_ROTATIONS_TGT 0x80E24E1
 SAR_RIGHT_ROTATIONS_TGT: .word SAR_RIGHT_ROT_TGT
 SAR_RIGHT_ROT_TGT: .hword 0,0,0x0160,0,0x7fff,0,0,0
 
 @ arrow face left and down
-SAR_ARROW_LEFT_TGT_LOW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_LOW 0x80E24E1
+SAR_ARROW_LEFT_TGT_LOW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_LEFT_ROTATIONS_TGT_LOW 0x80E24E1
 SAR_LEFT_ROTATIONS_TGT_LOW: .word SAR_LEFT_ROT_TGT_LOW
 SAR_LEFT_ROT_TGT_LOW: .hword 0,0,0x01d0,0,0x7fff,0,0,0
 
 @ arrow onslaught
-SAR_ARROW_STRIKE: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_STRIKE_ROTATIONS 0x80E24E1
+SAR_ARROW_STRIKE: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 SAR_STRIKE_ROTATIONS 0x80E24E1
 SAR_STRIKE_ROTATIONS: .word SAR_STRIKE_ROT
 SAR_STRIKE_ROT: .hword 0,0,0x0130,0,0x7fff,0,0,0
 
@@ -21145,11 +21145,11 @@ MOONSAULT_EXPLOSION:
 	return
 
 .align 2
-MOONSAULT_RED_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-MOONSAULT_RED_BOUNCE: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6CF8 0x80B2975
-MOONSAULT_RED_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-MOONSAULT_DEEP_FIREBLAST: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E5DB8 0x0 0x8231CFC 0x80ACDA9
-MOONSAULT_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+MOONSAULT_RED_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
+MOONSAULT_RED_BOUNCE: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6CF8 0x80B2975
+MOONSAULT_RED_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+MOONSAULT_DEEP_FIREBLAST: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E5DB8 0x0 gDummySpriteAffineAnimTable 0x80ACDA9
+MOONSAULT_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -21343,14 +21343,14 @@ OPERA_BLUE_EXPLODE:
 	return
 
 .align 2
-OPERA_BLUE_FLARE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-OPERA_BLUE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-OPERA_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-OPERA_BLUE_BALL_MOVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80AFD4D
-OPERA_FINAL_BLUE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B7BD5
-OPERA_BLUE_RING_OUT: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-OPERA_BLUE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-OPERA_BLUE_SPARKLE: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+OPERA_BLUE_FLARE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+OPERA_BLUE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+OPERA_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
+OPERA_BLUE_BALL_MOVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AFD4D
+OPERA_FINAL_BLUE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B7BD5
+OPERA_BLUE_RING_OUT: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+OPERA_BLUE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+OPERA_BLUE_SPARKLE: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
 
 .pool
 .align 2
@@ -21661,12 +21661,12 @@ SPLINTER_FINISH_FADE_RETURN:
 	return
 
 .align 2
-SPLINTER_BROWN_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROCKS OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
-SPLINTER_BROWN_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-SPLINTER_RISE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80E24E1
+SPLINTER_BROWN_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROCKS OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c 0x80b1bb1
+SPLINTER_BROWN_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+SPLINTER_RISE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80E24E1
 
-SPLINTER_THROWN_ON_OPPONENT_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP 0x80B0929
-SPLINTER_THROWN_ON_OPPONENT_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW 0x80B0929
+SPLINTER_THROWN_ON_OPPONENT_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP 0x80B0929
+SPLINTER_THROWN_ON_OPPONENT_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW 0x80B0929
 
 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP: .word SPLINTER_THROWN_STEEP_OPPONENT
 SPLINTER_THROWN_STEEP_OPPONENT: .hword 0,0,0x01ca,0,0x7fff,0,0,0
@@ -21674,8 +21674,8 @@ SPLINTER_THROWN_STEEP_OPPONENT: .hword 0,0,0x01ca,0,0x7fff,0,0,0
 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW: .word SPLINTER_THROWN_SHALLOW_OPPONENT
 SPLINTER_THROWN_SHALLOW_OPPONENT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 
-SPLINTER_THROWN_ON_PLAYER_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP 0x80B0929
-SPLINTER_THROWN_ON_PLAYER_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_SHALLOW 0x80B0929
+SPLINTER_THROWN_ON_PLAYER_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP 0x80B0929
+SPLINTER_THROWN_ON_PLAYER_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_SHALLOW 0x80B0929
 
 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP: .word SPLINTER_THROWN_STEEP_PLAYER
 SPLINTER_THROWN_STEEP_PLAYER: .hword 0,0,0x0160,0,0x7fff,0,0,0
@@ -21834,9 +21834,9 @@ SNUGGLE_SOUNDS:
 
 
 .align 2
-SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC 0x8076FD1
-SNUGGLE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
-SNUGGLE_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A9861
+SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable 0x8076FD1
+SNUGGLE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
+SNUGGLE_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A9861
 
 @ hook at 0xA7FF8 via r1
 .align 2
@@ -22167,15 +22167,15 @@ RESET_FROM_WHITE_SCREEN:
 	return
 
 .align 2
-SOULBLAZE_BLUE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_PURPLE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_WHITE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_RED_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
-SOULBLAZE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
-SOULBLAZE_WHITE_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+SOULBLAZE_BLUE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+SOULBLAZE_PURPLE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+SOULBLAZE_WHITE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+SOULBLAZE_RED_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0929
+SOULBLAZE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 SpriteCB_AnimSpriteOnMonPos
+SOULBLAZE_WHITE_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83e6b8c 0x80b1bb1
 SOULBLAZE_PURPLE_SWIRL: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E5958 0x0 0x83E741C 0x80B477D
-SOULBLAZE_PURPLE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SOULBLAZE_PULSE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_OFF_BLEND_64x64 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SOULBLAZE_PURPLE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+SOULBLAZE_PULSE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_OFF_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22281,8 +22281,8 @@ GUARDIAN_ROCK_GEYSER:
 	return
 
 .align 2
-GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
-GUARDIAN_ROCK_UP: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
+GUARDIAN_ROCK_UP: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22521,20 +22521,20 @@ RESET_FROM_RED_SCREEN:
 	return
 
 .align 2
-SUNRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 SUNRAZE_GROW_SCALE SpriteCB_AnimSpriteOnMonPos
+SUNRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SUNRAZE_GROW_SCALE SpriteCB_AnimSpriteOnMonPos
 SUNRAZE_GROW_SCALE: .word SUNRAZE_GROW_SCALE_PTR
 SUNRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
-SUNRAZE_WORMHOLE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 SUNRAZE_SHRINK_SCALE SpriteCB_AnimSpriteOnMonPos
+SUNRAZE_WORMHOLE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 SUNRAZE_SHRINK_SCALE SpriteCB_AnimSpriteOnMonPos
 SUNRAZE_SHRINK_SCALE: .word SUNRAZE_SHRINK_SCALE_PTR
 SUNRAZE_SHRINK_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0xfff0, 0xfff0, 0x08f6, 0x0, 0x7fff, 0x1, 0x0, 0x0
-SUNRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
-SUNRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
-SUNRAZE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-SUNRAZE_X: objtemplate ANIM_TAG_CROSS_IMPACT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
-SUNRAZE_WHITECUT: objtemplate ANIM_TAG_CUT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
-SUNRAZE_INFERNO_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SUNRAZE_RED_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-SUNRAZE_REDFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+SUNRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
+SUNRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
+SUNRAZE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AEC81
+SUNRAZE_X: objtemplate ANIM_TAG_CROSS_IMPACT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80BA739
+SUNRAZE_WHITECUT: objtemplate ANIM_TAG_CUT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
+SUNRAZE_INFERNO_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
+SUNRAZE_RED_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+SUNRAZE_REDFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22735,18 +22735,18 @@ MOONRAZE_BEAM:
 	return
 
 .align 2
-MOONRAZE_BLUE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_BLACK_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_PURPLE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_BLACK_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
-MOONRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
-MOONRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
-MOONRAZE_BLACK_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_HANDS_AND_FEET OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
-MOONRAZE_BLACK_BALL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
-MOONRAZE_BEAM_PARTICLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-MOONRAZE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-MOONRAZE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-MOONRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 MOONRAZE_GROW_SCALE SpriteCB_AnimSpriteOnMonPos
+MOONRAZE_BLUE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+MOONRAZE_BLACK_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+MOONRAZE_PURPLE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+MOONRAZE_BLACK_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E33F0 0x0 gDummySpriteAffineAnimTable 0x80A4D0D
+MOONRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
+MOONRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83e40c4 SpriteCB_AnimSpriteOnMonPos
+MOONRAZE_BLACK_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_HANDS_AND_FEET OAM_OFF_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B12E9
+MOONRAZE_BLACK_BALL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B477D
+MOONRAZE_BEAM_PARTICLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80A25ED
+MOONRAZE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+MOONRAZE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+MOONRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 MOONRAZE_GROW_SCALE SpriteCB_AnimSpriteOnMonPos
 MOONRAZE_GROW_SCALE: .word MOONRAZE_GROW_SCALE_PTR
 MOONRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
 
@@ -22916,9 +22916,9 @@ LIGHTBURN_GREEN_SPARKS:
 	return
 
 .align 2
-LIGHTBURN_GREEN_SPARK: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80AE06D
-LIGHTBURN_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 sGeyserOam 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
+LIGHTBURN_GREEN_SPARK: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E6004 0x80AE06D
+LIGHTBURN_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM+1
+LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 sGeyserOam 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23099,15 +23099,15 @@ SOULSTEAL_EXPLODE:
 	return
 
 .align 2
-SOULSTEAL_BLACK_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SOULSTEAL_ICE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULSTEAL_BLUE_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_ICE_CRYSTALS OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
-SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x8231CF0 0x0 0x83E7910 SpriteCB_SoulStealingStar
-SOULSTEAL_BLUE_PARALYZE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80AE1A1
-SOULSTEAL_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC SpriteCB_TwinkleOnBank
-SOULSTEAL_BLACK_BLASTBURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC 0x80AC991
-SOULSTEAL_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
-SOULSTEAL_ZSTAR: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
+SOULSTEAL_BLACK_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E6B8C 0x80B1BB1
+SOULSTEAL_ICE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
+SOULSTEAL_BLUE_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_ICE_CRYSTALS OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0929
+SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E7910 SpriteCB_SoulStealingStar
+SOULSTEAL_BLUE_PARALYZE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AE1A1
+SOULSTEAL_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable SpriteCB_TwinkleOnBank
+SOULSTEAL_BLACK_BLASTBURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable 0x80AC991
+SOULSTEAL_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
+SOULSTEAL_ZSTAR: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80BA739
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23217,11 +23217,11 @@ MAX_FLARE_GEYSER:
 	return
 
 .align 2
-MAX_FLARE_BALL_ATTACKER: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBallOnAttacker
-MAX_FLARE_BALL_LAUNCH_RED: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
-MAX_FLARE_BALL_LAUNCH_ORANGE: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_SHARP_TEETH sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
-MAX_FLARE_BALL_LAUNCH_YELLOW: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_ACUPRESSURE_FINGER sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
-MAX_FLARE_GEYSER_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sGeyserOam 0x83E7764 0x0 0x8231CFC SpriteCB_Geyser
+MAX_FLARE_BALL_ATTACKER: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBallOnAttacker
+MAX_FLARE_BALL_LAUNCH_RED: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_ORANGE: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_SHARP_TEETH sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_YELLOW: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_ACUPRESSURE_FINGER sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_GEYSER_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sGeyserOam 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23308,8 +23308,8 @@ FLUTTERBY_CLOUD_EXPLOSION:
 	return
 
 .align 2
-BUTTERFLY: objtemplate ANIM_TAG_SPARKLE_6 ANIM_TAG_SPARKLE_6 OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_Flutterby SpriteCB_MaxFlutterby
-FLUTTERBY_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
+BUTTERFLY: objtemplate ANIM_TAG_SPARKLE_6 ANIM_TAG_SPARKLE_6 OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_Flutterby SpriteCB_MaxFlutterby
+FLUTTERBY_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23389,7 +23389,7 @@ MAX_LIGHTNING_PLAYER_SPARK_2:
 	return
 
 .align 2
-UNUSED_LIGHTNING: objtemplate ANIM_TAG_UNUSED_LIGHTNING ANIM_TAG_UNUSED_LIGHTNING OAM_OFF_32x32 0x83E5F34 0x0 0x8231CFC 0x80ADBED
+UNUSED_LIGHTNING: objtemplate ANIM_TAG_UNUSED_LIGHTNING ANIM_TAG_UNUSED_LIGHTNING OAM_OFF_32x32 0x83E5F34 0x0 gDummySpriteAffineAnimTable 0x80ADBED
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23496,9 +23496,9 @@ EXPLOSION_GEYSER:
 	return
 
 .align 2
-MAX_KNUCKLE_USER_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX sTransparentFistOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_SpriteOnMonForDuration
-MAX_KNUCKLE_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 0x8231CFC SpriteCB_SparkleInCorner
-MAX_KNUCKLE_FLYING_FIST: objtemplate ANIM_TAG_PUNCH_IMPACT ANIM_TAG_PUNCH_IMPACT sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
+MAX_KNUCKLE_USER_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX sTransparentFistOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_SpriteOnMonForDuration
+MAX_KNUCKLE_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 gDummySpriteAffineAnimTable SpriteCB_SparkleInCorner
+MAX_KNUCKLE_FLYING_FIST: objtemplate ANIM_TAG_PUNCH_IMPACT ANIM_TAG_PUNCH_IMPACT sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23540,11 +23540,11 @@ ANIM_MAX_PHANTASM:
 	endanimation
 
 .align 2
-PHANTASM_OBJ_1: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
-PHANTASM_OBJ_2: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
-PHANTASM_OBJ_3: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
-PHANTASM_OBJ_4: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
-PHANTASM_OBJ_5: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_1: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS sMaxPhantasmObjectsOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_2: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND sMaxPhantasmObjectsOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_3: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD sMaxPhantasmObjectsOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_4: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK sMaxPhantasmObjectsOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_5: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL sMaxPhantasmObjectsOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23715,7 +23715,7 @@ POISON_COLUMNS_ON_PLAYER:
 	goto MAX_OOZE_REJOIN
 
 .align 2
-OOZE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
+OOZE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
 POISON_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 POISON_COLUMN_PLAYER: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOamPlayer gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
@@ -23850,9 +23850,9 @@ MAX_GEYSER_EXPLOSION_BUBBLES:
 
 .align 2
 LARGE_BUBBLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_DOUBLE_8x8 0x83E6330 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80AB309
-GEYSER_SHOT: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B563D
-GEYSER_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_DOUBLE_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
-GEYSER_BUBBLE_SHOT: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B563D
+GEYSER_SHOT: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B563D
+GEYSER_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
+GEYSER_BUBBLE_SHOT: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -23912,8 +23912,8 @@ MAX_AIRSTREAM_CALL:
 	return
 	
 .align 2
-AIRSTREAM_SPINNING_BLADE: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 0x8231CFC 0x80ACDE9
-AIRSTREAM_RING: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_NORMAL_32x64 0x8231CF0 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
+AIRSTREAM_SPINNING_BLADE: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 gDummySpriteAffineAnimTable 0x80ACDE9
+AIRSTREAM_RING: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_NORMAL_32x64 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24004,8 +24004,8 @@ STARFALL_TARGET_BEAM_UP:
 	return
 
 .align 2
-STARFALL_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 0x8231CFC SpriteCB_TwinkleAboveTarget
-STARFALL_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
+STARFALL_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 gDummySpriteAffineAnimTable SpriteCB_TwinkleAboveTarget
+STARFALL_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
 STARFALL_BEAM: objtemplate ANIM_TAG_STRAIGHT_BEAM ANIM_TAG_STRAIGHT_BEAM OAM_DOUBLE_16x16 gAnimCmdTable_StarfallBeam 0x0 gSpriteAffineAnimTable_StarfallBeam SpriteCB_StarfallBeam
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24153,10 +24153,10 @@ MINDSTORM_GEYSER:
 	return
 
 .align 2
-MINDSTORM_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_LaunchObjectUpwards
-MINDTORM_RING_PINK: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
-MINDTORM_RING_PURPLE: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
-BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+MINDSTORM_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_LaunchObjectUpwards
+MINDTORM_RING_PINK: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
+MINDTORM_RING_PURPLE: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
+BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24328,9 +24328,9 @@ DIRT_GEYSER:
 
 .align 2
 .global gRolloutExplosionSpriteTemplate
-gRolloutExplosionSpriteTemplate: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_RolloutExplosion
-MAX_QUAKE_DIRT_GEYSER: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B8D59
-MAX_QUAKE_ROCK_GEYSER: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC SpriteCB_Geyser
+gRolloutExplosionSpriteTemplate: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_RolloutExplosion
+MAX_QUAKE_DIRT_GEYSER: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B8D59
+MAX_QUAKE_ROCK_GEYSER: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24409,9 +24409,9 @@ DARKNESS_CLOUD_EXPLOSION:
 	return
 
 .align 2
-DARKNESS_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
-DARKNESS_ORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80AB025
-DARKNESS_ORB_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_UNUSED_PINK_ORB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80AB025
+DARKNESS_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
+DARKNESS_ORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80AB025
+DARKNESS_ORB_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_UNUSED_PINK_ORB OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable 0x80AB025
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24542,11 +24542,11 @@ LEAVES_COTTON_EXPLOSION_GEYSER:
 	return
 
 .align 2
-OVERGROWTH_SMALL_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED sPyroBallRockOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_LaunchObjectUpwards
-OVERGROWTH_LARGE_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
+OVERGROWTH_SMALL_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED sPyroBallRockOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_LaunchObjectUpwards
+OVERGROWTH_LARGE_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
 OVERGROWTH_MUSHROOM: objtemplate ANIM_TAG_MUSHROOM ANIM_TAG_MUSHROOM OAM_DOUBLE_32x32 gAnimCmdTable_GrowingMushroom 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
-OVERGROWTH_LEAF_GEYSER: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
-OVERGROWTH_COTTON_GEYSER: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC SpriteCB_Geyser
+OVERGROWTH_LEAF_GEYSER: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+OVERGROWTH_COTTON_GEYSER: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24569,7 +24569,7 @@ ANIM_MAX_STEELSPIKE_BEGIN:
 .align 2
 .global gMaxSteelspikeSpriteTemplate
 .global gMaxSteelspikeCurvedSpriteTemplate
-gMaxSteelspikeSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 0x8231CFC SpriteCB_MaxSteelspike
+gMaxSteelspikeSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 gDummySpriteAffineAnimTable SpriteCB_MaxSteelspike
 gMaxSteelspikeCurvedSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_DOUBLE_32x64 gAnimCmdTable_LargeSpike 0x0 gSpriteAffineAnimTable_LargeSpike SpriteCB_MaxSteelspike
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24730,7 +24730,7 @@ GARBAGE_COLUMNS_ON_PLAYER:
 	goto MALODOR_REJOIN
 
 .align 2
-MALODOR_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
+MALODOR_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
 GARBAGE_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_GARBAGE_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24917,7 +24917,7 @@ ANIM_G_MAX_SNOOZE:
 	endanimation
 
 .align 2
-SNOOZE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_ICE_CHUNK OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
+SNOOZE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_ICE_CHUNK OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -25015,7 +25015,7 @@ LEAVES_APPLE_EXPLOSION_GEYSER:
 
 .align 2
 TARTNESS_APPLE: objtemplate ANIM_TAG_GOLDEN_APPLE ANIM_TAG_GOLDEN_APPLE OAM_DOUBLE_32x32 gAnimCmdTable_GrowingMushroom 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
-OVERGROWTH_APPLE_GEYSER: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+OVERGROWTH_APPLE_GEYSER: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -25089,7 +25089,7 @@ SMITE_TARGET_BEAM_UP:
 	return
 
 .align 2
-SMITE_SPARK_LINE: objtemplate ANIM_TAG_SPARK ANIM_TAG_SPARK OAM_DOUBLE_8x32 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_Geyser
+SMITE_SPARK_LINE: objtemplate ANIM_TAG_SPARK ANIM_TAG_SPARK OAM_DOUBLE_8x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -25159,6 +25159,6 @@ DoHeartSwap:
 .SkillSwapTemplatePointer: .word SKILLSWAP_TEMPL @This is how they're called!
 .PowerSwapTemplatePointer: .word POWERSWAP_TEMPL @Don't change!
 .HeartSwapTemplatePointer: .word HEARTSWAP_TEMPL
-SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35
-POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35
-HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35
+SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
+POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
+HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
