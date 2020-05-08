@@ -1015,6 +1015,10 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 9;
 	else if (streakLength == 100)
 		toGive = 100;
+	else if (streakLength == 1000) //Why not lol, if you get here you deserve it
+		toGive = 1000;
+	else if (streakLength == 10000)
+		toGive = 10000;
 	else
 		toGive = 10;
 
