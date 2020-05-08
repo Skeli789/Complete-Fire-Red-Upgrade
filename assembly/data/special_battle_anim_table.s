@@ -535,7 +535,7 @@ ANIM_GRASSY_TERRAIN_HEAL:
 	setblends 0x80c
 	waitanimation
 	pause 0x3
-	call 0x81cec44
+	call SMALL_ABSORB_ANIM
 	waitanimation
 	pause 0xf
 	call HEALING_ANIM

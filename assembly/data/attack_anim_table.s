@@ -1129,21 +1129,20 @@ ANIM_RAINDANCE:
 ANIM_LEECHLIFE:
 	loadparticle ANIM_TAG_NEEDLE
 	loadparticle ANIM_TAG_ORBS
-	pause 0x1
 	loadparticle ANIM_TAG_BLUE_STAR
 	loadparticle ANIM_TAG_IMPACT
 	pokespritetoBG side_target
 	leftopponentbankBG_over_partnerBG bank_target
 	setblends 0x80c
 	pause 0x1
-	launchtemplate 0x83e7278 0x2 0x3 0xffec 0xf 0xc
+	launchtemplate LEECH_LIFE_NEEDLE 0x2 0x3 0xffec 0xf 0xc
 	waitanimation
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
 	playsound2 0xad SOUND_PAN_TARGET
 	pause 0x2
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x5 0x5 0x1
 	waitanimation
-	call 0x81cec44
+	call SMALL_ABSORB_ANIM
 	waitanimation
 	pause 0xf
 	call HEALING_ANIM
@@ -1151,6 +1150,9 @@ ANIM_LEECHLIFE:
 	pokespritefromBG side_target
 	resetblends
 	endanimation
+
+.align 2
+LEECH_LIFE_NEEDLE: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E726C SpriteCB_LeechLifeNeedle 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1657,7 +1659,7 @@ ANIM_LEECHFANG:
 	pause 0xa
 	launchtask AnimTask_move_bank 0x3 0x5 bank_target 0x3 0x0 0xa 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x0
-	call 0x81CEC44
+	call ABSORB_ANIM
 	waitanimation
 	pause 0xf
 	call 0x81D56C9 @HEALING_ANIM
@@ -10035,13 +10037,13 @@ ANIM_THOUSANDARROWS:
 	pause 0x18
 	playsound2 0xce SOUND_PAN_ATTACKER
 	pause 0x18
-	call UPHEXAGONS
-	call UPHEXAGONS
-	call UPHEXAGONS
-	call UPHEXAGONS
-	call UPHEXAGONS
-	call UPHEXAGONS
-	call UPHEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
+	call THOUSAND_ARROWS_UP_HEXAGONS
 	launchtemplate GREENDISCHARGE 0x2 0x3 0x0 0x10 0x10
 	pause 0x2
 	launchtemplate GREENDISCHARGE 0x2 0x3 0x0 0xfff0 0xfff0
@@ -10050,10 +10052,10 @@ ANIM_THOUSANDARROWS:
 	pause 0x30
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0xa 0x32
 	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0xa 0x32
-	call DOWNARROWS
-	call DOWNARROWS
-	call DOWNARROWS
-	call DOWNARROWS
+	call THOUSAND_ARROWS_DOWN
+	call THOUSAND_ARROWS_DOWN
+	call THOUSAND_ARROWS_DOWN
+	call THOUSAND_ARROWS_DOWN
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0xffff
 	waitanimation
@@ -10061,7 +10063,7 @@ ANIM_THOUSANDARROWS:
 	resetblends
 	endanimation
 
-UPHEXAGONS:
+THOUSAND_ARROWS_UP_HEXAGONS:
 	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0xfff0
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
@@ -10075,42 +10077,43 @@ UPHEXAGONS:
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
 	return
-DOWNARROWS:
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xdc 0x3c
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+
+THOUSAND_ARROWS_DOWN:
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, 35, 0x3c, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x3c 0x64
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, -30, 0x44, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x8c 0x37
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, 27, 0x37, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xb4 0x32
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, -20, 0x32, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0x5a
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, 33, 0x3a, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x5a 0x5a
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, -12, 0x3a, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xa0 0x3c
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, 19, 0x3c, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x1e 0x5a
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, -38, 0x3a, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x78 0x3c
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, 5, 0x3c, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xc8 0x28
-	playsound2 0xa8 SOUND_PAN_ATTACKER
+	launchtemplate GREEN_ARROWS_DOWN TEMPLATE_TARGET | 2, 0x3, -23, 0x28, 4
+	playsound2 0xa8 SOUND_PAN_TARGET
 	return
 
 .align 2
 GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
 GREENHEXAGONS: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
-GREENARROWS: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B8D59
+GREEN_ARROWS_DOWN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_IcicleCrash SpriteCB_FallingObjectOnTargetCentre
 GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -11803,7 +11806,6 @@ ANIM_PRISMATICLASER:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
 	loadparticle ANIM_TAG_TEAL_ALERT @straight lines
 	loadparticle ANIM_TAG_GREEN_SPIKE @needle arm animation
-	loadparticle ANIM_TAG_NEEDLE @sting
 	pokespritetoBG bank_attacker
 	setblends 0x80E
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
@@ -11828,7 +11830,6 @@ ANIM_PRISMATICLASER:
 	pause 0x5
 	call PL_OUTWARDSPIKES
 	waitanimation
-	unloadparticle ANIM_TAG_TEAL_ALERT
 	unloadparticle ANIM_TAG_GREEN_SPIKE
 	unloadparticle ANIM_TAG_ICE_CHUNK
 	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT
@@ -11929,10 +11930,10 @@ PL_GREENINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_3
 PL_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
 PL_VIOLETINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
 
-PL_YELLOWRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_SPARK_H OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
-PL_GREENRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
-PL_REDRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
-PL_VIOLETRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
+PL_YELLOWRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_GREENRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_REDRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
+PL_VIOLETRAIN: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_FallingTealAlert SpriteCB_FallingObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24155,7 +24156,7 @@ MINDSTORM_GEYSER:
 MINDSTORM_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_LaunchObjectUpwards
 MINDTORM_RING_PINK: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
 MINDTORM_RING_PURPLE: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
-BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

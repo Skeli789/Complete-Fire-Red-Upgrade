@@ -173,7 +173,7 @@ animparticle 0x8d1bb00,	0x200,	ANIM_TAG_SUNLIGHT
 animparticle 0x8d1bb7c,	0x100,	ANIM_TAG_SPORE
 animparticle 0x8d1bc68,	0xa0,	ANIM_TAG_FLOWER
 animparticle 0x8d1bd0c,	0x100,	ANIM_TAG_RAZOR_LEAF
-animparticle 0x8d02964,	0x80,	ANIM_TAG_NEEDLE
+animparticle NEEDLE_IMG, (32 * 32) / 2,	ANIM_TAG_NEEDLE
 animparticle 0x8d1bfb8,	0x300,	ANIM_TAG_WHIRLWIND_LINES
 animparticle 0x8d1c05c,	0x100,	ANIM_TAG_GOLD_RING
 animparticle 0x8d1c05c,	0x100,	ANIM_TAG_PURPLE_RING
@@ -543,7 +543,7 @@ animparticlepal 0x8d1bb64,	ANIM_TAG_SUNLIGHT
 animparticlepal 0x8d1bc44,	ANIM_TAG_SPORE
 animparticlepal 0x8d1bce4,	ANIM_TAG_FLOWER
 animparticlepal 0x8d1bdb4,	ANIM_TAG_RAZOR_LEAF
-animparticlepal 0x8d0298c,	ANIM_TAG_NEEDLE
+animparticlepal NEEDLE_PAL,	ANIM_TAG_NEEDLE
 animparticlepal 0x8d1c03c,	ANIM_TAG_WHIRLWIND_LINES
 animparticlepal 0x8d1c0bc,	ANIM_TAG_GOLD_RING
 animparticlepal 0x8d1c0ec,	ANIM_TAG_PURPLE_RING

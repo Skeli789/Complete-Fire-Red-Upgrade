@@ -10,6 +10,7 @@ definitions for animation particles
 .equ SHARP_TEETH_IMG, TeethTiles
 .equ HANDS_AND_FEET_IMG, ThrashTiles
 .equ ROUND_SHADOW_IMG, FlyTiles
+.equ NEEDLE_IMG, NeedleTiles
 .equ ROCKS_IMG, RocksTiles
 .equ BATON_PASS_POKEBALL_IMG, Baton_Pass_BallTiles
 .equ GREEN_STAR_IMG, Green_StarTiles
@@ -104,6 +105,7 @@ definitions for animation particles
 .equ SHARP_TEETH_PAL, TeethPal
 .equ HANDS_AND_FEET_PAL, ThrashPal
 .equ ROUND_SHADOW_PAL, FlyPal
+.equ NEEDLE_PAL, NeedlePal
 .equ ROCKS_PAL, RocksPal
 .equ BATON_PASS_POKEBALL_PAL, Baton_Pass_BallPal
 .equ GREEN_STAR_PAL, Green_StarPal

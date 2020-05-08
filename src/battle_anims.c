@@ -332,6 +332,17 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_IcicleCrash[] =
 	sSpriteAffineAnim_IcicleCrash,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_FallingTealAlert[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 32, 1), //45 degree turn
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_FallingTealAlert[] =
+{
+	sSpriteAffineAnim_FallingTealAlert,
+};
+
 const struct OamData sSunsteelStrikeBlastOAM =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,
@@ -1928,6 +1939,29 @@ void SpriteCB_FallingObjectPlayAnimOnEnd(struct Sprite *sprite)
 	}
 }
 
+//Causes an object to fall from the sky on the centre of the side.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: speed
+void SpriteCB_FallingObjectOnTargetCentre(struct Sprite *sprite)
+{
+	sprite->pos1.x = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_X);
+	sprite->pos1.y = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_Y);
+
+	sprite->pos2.x = gBattleAnimArgs[0];
+	sprite->pos1.y = gBattleAnimArgs[1];
+	sprite->pos2.y = -gBattleAnimArgs[1];
+
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+	{
+		sprite->pos1.y += 45;
+		sprite->pos2.y -= 45;
+	}
+
+	sprite->data[3] = gBattleAnimArgs[2]; //Speed
+	sprite->callback = SpriteCB_FallingObjectStep;
+}
+
 //Throws acid at a single target.
 void SpriteCB_AcidLaunchSingleTarget(struct Sprite *sprite)
 {
@@ -2399,6 +2433,27 @@ void AnimTask_TargetedLightning(u8 taskId)
 				DestroyAnimVisualTask(taskId);
 			break;
 	}
+}
+
+//Creates the mini Leech Life Needle
+void SpriteCB_LeechLifeNeedle(struct Sprite *sprite)
+{
+	if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
+	{
+		gBattleAnimArgs[1] = -gBattleAnimArgs[1];
+		gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+		StartSpriteAffineAnim(sprite, 1);
+	}
+
+	sprite->pos1.x = GetBattlerSpriteCoord2(gBattleAnimTarget, 2) + gBattleAnimArgs[0];
+	sprite->pos1.y = GetBattlerSpriteCoord2(gBattleAnimTarget, 3) + gBattleAnimArgs[1];
+	sprite->data[0] = gBattleAnimArgs[2];
+
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 2);
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, 3);
+
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 //Creates The Extreme Evoboost Circles
