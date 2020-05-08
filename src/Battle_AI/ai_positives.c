@@ -1674,6 +1674,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (IsRaidBattle() && SIDE(bankAtk) == B_SIDE_PLAYER
 			&& gNewBS->dynamaxData.raidShieldsUp //Brick Break destroys 2 Raid shields
 			&& (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed >= 2) //At least two shields left
+			&& !MoveBlockedBySubstitute(move, bankAtk, bankDef)
 			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_DOESNT_AFFECT_FOE))
 			{
 				INCREASE_VIABILITY(18); //Super important
