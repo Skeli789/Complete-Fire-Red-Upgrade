@@ -1597,6 +1597,77 @@ bool8 Overworld_IsBikingAllowed(void)
 	;
 }
 
+//If you use Spherical Ice's sideways stairs
+static bool8 MetatileBehavior_IsWestSidewaysStairs(u8 behaviour)
+{
+	return behaviour == 0xB5 || behaviour == 0xB2 || behaviour == 0xB0 || behaviour == 0xB3 //Stairs
+		|| behaviour == 0xB1; //Tile at bottom
+}
+
+static bool8 MetatileBehavior_IsEastSidewaysStairs(u8 behaviour)
+{
+	return behaviour == 0xB5 || behaviour == 0xB2 || behaviour == 0xB0 || behaviour == 0xB3 //Stairs
+		|| behaviour == 0xB4; //Tile at bottom
+}
+
+static bool8 PlayerIsMovingOnSidewaysStairs(u8 direction)
+{
+	struct EventObject* eventObject = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = eventObject->currentCoords.x;
+	s16 y = eventObject->currentCoords.y;
+
+	switch (direction)
+	{
+		case DIR_WEST:
+			return MetatileBehavior_IsWestSidewaysStairs(MapGridGetMetatileBehaviorAt(x, y));
+		case DIR_EAST:
+			return MetatileBehavior_IsEastSidewaysStairs(MapGridGetMetatileBehaviorAt(x, y));
+	}
+
+	return FALSE;
+}
+
+s16 GetPlayerSpeed(void)
+{
+	s16 exp[] = { 1, 2, 4 };
+	u8 direction = GetPlayerFacing();
+
+	#ifdef FLAG_BIKE_TURBO_BOOST
+	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_BIKE
+		&& !gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
+		&& gPlayerAvatar->runningState > 0
+		&& (FlagGet(FLAG_BIKE_TURBO_BOOST) || JOY_HELD(B_BUTTON))
+		&& !PlayerIsMovingOnRockStairs(direction)
+		&& !PlayerIsMovingOnSidewaysStairs(direction))
+			return 4;
+	else
+	#endif
+	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_MACH_BIKE)
+		return exp[gPlayerAvatar->bikeFrameCounter];
+	else if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_ACRO_BIKE)
+		return 3;
+	else if (gPlayerAvatar->flags & (PLAYER_AVATAR_FLAG_SURFING | PLAYER_AVATAR_FLAG_DASH))
+		return 2;
+	else
+		return 1;
+}
+
+void MoveOnBike(u8 direction)
+{
+	if (PlayerIsMovingOnRockStairs(direction))
+		PlayerGoSpeed2(direction);
+	else if (PlayerIsMovingOnSidewaysStairs(direction))
+		PlayerRideWaterCurrent(direction);
+	#ifdef FLAG_BIKE_TURBO_BOOST
+	else if (!gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
+			&& (FlagGet(FLAG_BIKE_TURBO_BOOST) || JOY_HELD(B_BUTTON)))
+		PlayerGoSpeed4(direction);
+	#endif
+	else
+		PlayerRideWaterCurrent(direction);
+
+}
+
 bool8 CanUseEscapeRopeOnCurrMap(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
@@ -1604,6 +1675,34 @@ bool8 CanUseEscapeRopeOnCurrMap(void)
 
 	return (gMapHeader.escapeRope & 1) != 0;
 }
+
+bool8 MetatileBehavior_IsMuddySlope(u8 metatileBehavior)
+{
+	return metatileBehavior == MB_MUDDY_SLOPE;
+}
+
+bool8 ForcedMovement_MuddySlope(void)
+{
+    struct EventObject* playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+
+    if (playerEventObj->movementDirection != DIR_NORTH || GetPlayerSpeed() <= 3)
+    {
+        playerEventObj->facingDirectionLocked = 1;
+        return DoForcedMovement(1, PlayerGoSpeed2);
+    }
+
+    return FALSE;
+}
+
+//Taken From EM for if people want to use them
+//Although they need to be hooked in manually, as the previous functions
+//are too small to replace.
+bool8 MetatileBehavior_IsBumpySlope(u8 metatileBehavior) { return metatileBehavior == MB_BUMPY_SLOPE; }
+bool8 MetatileBehavior_IsCrackedFloor(u8 metatileBehavior) { return metatileBehavior == MB_CRACKED_FLOOR; }
+bool8 MetatileBehavior_IsIsolatedVerticalRail(u8 metatileBehavior) { return metatileBehavior == MB_ISOLATED_VERTICAL_RAIL; }
+bool8 MetatileBehavior_IsIsolatedHorizontalRail(u8 metatileBehavior) { return metatileBehavior == MB_ISOLATED_HORIZONTAL_RAIL; }
+bool8 MetatileBehavior_IsVerticalRail(u8 metatileBehavior) { return metatileBehavior == MB_VERTICAL_RAIL; }
+bool8 MetatileBehavior_IsHorizontalRail(u8 metatileBehavior) { return metatileBehavior == MB_HORIZONTAL_RAIL; }
 
 s32 DoPoisonFieldEffect(void)
 {

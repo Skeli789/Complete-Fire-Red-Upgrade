@@ -115,3 +115,12 @@
 #define MB_TRAINER_TOWER_RECORD 0xA3
 #define MB_CYCLING_ROAD_PULL_DOWN 0xD0
 #define MB_CYCLING_ROAD_PULL_DOWN_GRASS 0xD1
+
+//Taken from Emerald:
+#define MB_MUDDY_SLOPE 0xD2 //Slope only for bike on turbo boost
+#define MB_BUMPY_SLOPE 0xD3
+#define MB_CRACKED_FLOOR 0xD3 //Sky Pillar floor
+#define MB_ISOLATED_VERTICAL_RAIL 0xD4
+#define MB_ISOLATED_HORIZONTAL_RAIL 0xD5
+#define MB_VERTICAL_RAIL 0xD6
+#define MB_HORIZONTAL_RAIL 0xD7

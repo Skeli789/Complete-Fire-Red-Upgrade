@@ -10,25 +10,48 @@
 
 .global SystemScript_EnableAutoRun
 SystemScript_EnableAutoRun:
-	lock
+	lockall
 	checksound
 	sound 0x2
 	signmsg
 	msgboxsign
 	msgbox gText_AutoRunEnable MSG_SIGN
 	checksound
-	release
+	releaseall
 	end
 	
 .global SystemScript_DisableAutoRun
 SystemScript_DisableAutoRun:
-	lock
+	lockall
 	checksound
 	sound 0x3
 	msgboxsign
 	msgbox gText_AutoRunDisable MSG_SIGN
 	checksound
-	release
+	releaseall
+	end
+
+.global SystemScript_EnableBikeTurboBoost
+SystemScript_EnableBikeTurboBoost:
+	lockall
+	@;checksound - otherwise lags after hopping on bike
+	sound 0x2
+	signmsg
+	msgboxsign
+	msgbox gText_BikeTurboBoostEnable MSG_SIGN
+	checksound
+	releaseall
+	end
+	
+.global SystemScript_DisableBikeTurboBoost
+SystemScript_DisableBikeTurboBoost:
+	lockall
+	@;checksound
+	sound 0x3
+	msgboxsign
+	msgbox gText_BikeTurboBoostDisable MSG_SIGN
+	checksound
+	releaseall
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

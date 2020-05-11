@@ -214,6 +214,10 @@ UpdatedAnimStealItemFinalCallback 80A37B8
 PlayerAvatarTransition_Underwater 835B854
 PlayerAvatarTransition_HandleUnderwater 8471EEC
 
+##Muddy Slope Forced Movement
+MetatileBehavior_IsMuddySlope 835B7FC
+ForcedMovement_MuddySlope 835B800
+
 #ifdef UNBOUND
 FieldUseFunc_EVReducingBerry 8877C68
 FieldUseFunc_EVReducingBerry 8877C94

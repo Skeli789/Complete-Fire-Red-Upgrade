@@ -432,7 +432,7 @@ AutoRunHook:
 	beq NoRunning
 
 CheckIfRunningAllowed:
-	ldr r2, .EventObjects
+	ldr r2, =gEventObjects
 	ldrb r1, [r6, #0x5] @NPC Id
 	lsl r0, r1, #0x3
 	add r0, r1
@@ -449,8 +449,13 @@ NoRunning:
 	ldr r0, =0x805BA8C | 1
 	bx r0
 
-.align 2
-.EventObjects: .word 0x2036E38
+.pool
+@0x80BD338 with r0
+BikeTurboBoostHook:
+	mov r0, r4
+	bl MoveOnBike
+	ldr r0, =0x80BD350 | 1
+	bx r0
 
 .pool
 @0x8046390 with r1

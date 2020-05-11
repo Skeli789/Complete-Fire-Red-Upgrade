@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../include/link.h"
 #include "../include/script.h"
+#include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
 #include "../include/overworld.h"
@@ -36,6 +37,8 @@ void InitKeys(void)
 
 extern const u8 SystemScript_EnableAutoRun[];
 extern const u8 SystemScript_DisableAutoRun[];
+extern const u8 SystemScript_EnableBikeTurboBoost[];
+extern const u8 SystemScript_DisableBikeTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
 
@@ -141,29 +144,49 @@ void ReadKeys(void)
 		if (gMain.heldKeys & L_BUTTON)
 			gMain.heldKeys |= A_BUTTON;
 	}
-#ifdef FLAG_AUTO_RUN
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
 	&& !ScriptContext2_IsEnabled()
-	#ifdef FLAG_RUNNING_ENABLED
-	&& FlagGet(FLAG_RUNNING_ENABLED) //Only toggle auto-run if can run in the first place
-	#endif
 	&& !IsDexNavHudActive()
 	&& inOverworld) //In the overworld
 	{
-		ScriptContext2_Enable();
-
-		if (FlagGet(FLAG_AUTO_RUN))
+		#ifdef FLAG_BIKE_TURBO_BOOST
+		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
 		{
-			FlagClear(FLAG_AUTO_RUN);
-			ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
+			ScriptContext2_Enable();
+
+			if (FlagGet(FLAG_BIKE_TURBO_BOOST))
+			{
+				FlagClear(FLAG_BIKE_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_DisableBikeTurboBoost);
+			}
+			else
+			{
+				FlagSet(FLAG_BIKE_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_EnableBikeTurboBoost);
+			}
 		}
 		else
+		#endif
+		#ifdef FLAG_RUNNING_ENABLED
+		if (FlagGet(FLAG_RUNNING_ENABLED)) //Only toggle auto-run if can run in the first place
+		#endif
 		{
-			FlagSet(FLAG_AUTO_RUN);
-			ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
+			#ifdef FLAG_AUTO_RUN
+			ScriptContext2_Enable();
+
+			if (FlagGet(FLAG_AUTO_RUN))
+			{
+				FlagClear(FLAG_AUTO_RUN);
+				ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
+			}
+			else
+			{
+				FlagSet(FLAG_AUTO_RUN);
+				ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
+			}
+			#endif
 		}
 	}
-#endif
 
 	if (gMain.newKeys & R_BUTTON
 	&& inOverworld

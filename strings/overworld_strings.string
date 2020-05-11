@@ -10,6 +10,12 @@
 #org @gText_AutoRunDisable
 [GREEN]Auto-run[BLACK] has been [GREEN]disabled[BLACK].
 
+#org @gText_BikeTurboBoostEnable
+[GREEN]Turbo boost[BLACK] has been [GREEN]activated[BLACK].
+
+#org @gText_BikeTurboBoostDisable
+[GREEN]Turbo boost[BLACK] has been [GREEN]deactivated[BLACK].
+
 #org @gText_PoisonSurvial
 [BUFFER][02] survived the Poison.\nThe Poison faded away!
 

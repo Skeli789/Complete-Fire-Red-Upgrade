@@ -142,6 +142,12 @@ Overworld_IsBikingAllowed 8055C9C 0
 apply_map_tileset_palette 80599C8 3
 MetatileBehavior_IsDiveable 8059FB0 1
 MetatileBehavior_IsUnableToEmerge 8059FCC 1
+#MetatileBehavior_IsCrackedFloor 805A1D8 1 Space isn't big enough for hooks
+#MetatileBehavior_IsBumpySlope 805A20C 1
+#MetatileBehavior_IsIsolatedVerticalRail 805A210 1
+#MetatileBehavior_IsIsolatedHorizontalRail 805A214 1
+#MetatileBehavior_IsVerticalRail 805A218 1
+#MetatileBehavior_IsHorizontalRail 805A21C 1
 DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
 GetLedgeJumpDirection 80680F8 3
@@ -162,6 +168,8 @@ CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 ReplaceOWSandstormPaletteHook 807D5F0 0
 SetCutGrassMetatile 8097B50 2
+BikeTurboBoostHook 80BD338 0
+GetPlayerSpeed 80BD674 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
