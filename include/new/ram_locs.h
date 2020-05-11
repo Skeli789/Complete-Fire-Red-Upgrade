@@ -54,7 +54,6 @@ struct Clock
 
 /*u8*/  #define gMultiuseSpriteTemplate ((struct SpriteTemplate*) 0x20244DC)
 
-		//SaveBlock1ActualLocation 0x202552C
 		extern struct MapHeader gMapHeader;
 		//#define gEventObjects ((struct MapObject*) 0x2036E38)
 /*

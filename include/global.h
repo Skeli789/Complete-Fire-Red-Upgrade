@@ -15,23 +15,15 @@
 #define asm_comment(x) asm volatile("@ -- " x " -- ")
 #define asm_unified(x) asm(".syntax unified\n" x "\n.syntax divided")
 
-#if defined (__APPLE__) || defined (__CYGWIN__)
-// Get the IDE to stfu
-
-// We define it this way to fool preproc.
-#define INCBIN(x) {0}
-#define INCBIN_U8  INCBIN
-#define INCBIN_U16 INCBIN
-#define INCBIN_U32 INCBIN
-#define INCBIN_S8  INCBIN
-#define INCBIN_S16 INCBIN
-#define INCBIN_S32 INCBIN
-#define _(x) (x)
-#define __(x) (x)
-#endif // __APPLE__
-
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 #define NELEMS(arr) (sizeof(arr)/sizeof(*(arr)))
+
+#define SWAP(a, b, temp)    \
+{                           \
+    temp = a;               \
+    a = b;                  \
+    b = temp;               \
+}
 
 // useful math macros
 
@@ -82,6 +74,7 @@
 #define TEST_BUTTON(field, button) ({(field) & (button);})
 #define JOY_NEW(button) TEST_BUTTON(gMain.newKeys,  button)
 #define JOY_NEW_AND_REPEATED(button) TEST_BUTTON(gMain.newAndRepeatedKeys,  button)
+#define JOY_REPT(button) TEST_BUTTON(gMain.newAndRepeatedKeys, button)
 #define JOY_HELD(button)  TEST_BUTTON(gMain.heldKeys, button)
 
 #define SPECIES_TABLES_TERMIN 0xFEFE
@@ -124,7 +117,6 @@ enum LanguageId
 #define BAG_TMHM_COUNT      58
 #define BAG_BERRIES_COUNT   43
 
-#define QUEST_LOG_SCENE_COUNT 4
 #define NUM_TOWER_CHALLENGE_TYPES 4
 
 enum
@@ -196,6 +188,8 @@ struct Coords8
 {
 	s8 x;
 	s8 y;
+	u8 _;
+	u8 __;
 };
 
 struct UCoords8
@@ -216,6 +210,12 @@ struct UCoords16
 {
 	u16 x;
 	u16 y;
+};
+
+struct Coords32
+{
+    s32 x;
+    s32 y;
 };
 
 struct UCoords32
@@ -245,8 +245,6 @@ struct Pokedex
 	/*0x04*/ u32 unownPersonality; // set when you first see Unown
 	/*0x08*/ u32 spindaPersonality; // set when you first see Spinda
 	/*0x0C*/ u32 unknown3;
-	/*0x10*/ u8 owned[DEX_FLAGS_NO];
-	/*0x44*/ u8 seen[DEX_FLAGS_NO];
 };
 
 struct PokemonJumpResults // possibly used in the game itself?
@@ -275,13 +273,6 @@ struct BerryPickingResults // possibly used in the game itself? Size may be wron
 	u8 field_F;
 };
 
-struct PyramidBag
-{
-	u16 items_Lvl50[10];
-	u16 items_OpenLvl[10];
-	u8 quantity[10];
-};
-
 struct BerryCrush
 {
 	u16 berryCrushResults[4];
@@ -290,41 +281,6 @@ struct BerryCrush
 };
 
 #define PLAYER_NAME_LENGTH  7
-
-struct UnknownSaveBlock2Struct
-{
-	u8 field_0;
-	u8 field_1;
-	u8 field_2[2];
-	u8 field_4[8];
-	u8 field_C[16];
-	u16 field_1C[6];
-	u16 field_28[6];
-	u8 field_34[176];
-	u8 field_E4;
-	u8 field_E5;
-	u8 field_E6;
-	u8 field_E7;
-	u8 field_E8;
-	u8 field_E9;
-	u8 field_EA;
-	u8 field_EB;
-}; // sizeof = 0xEC
-
-struct UnkSaveBlock2Substruct_55C
-{
-	/* 0x000:0x55C */ u8 unk_00_0:1;
-	u8 unk_00_1:1;
-	/* 0x001:0x55D */ u8 unk_01;
-	/* 0x002:0x55E */ u8 unk_02[2];
-	/* 0x004:0x560 */ u16 unk_04[2];
-	/* 0x008:0x564 */ u16 unk_08[2];
-	/* 0x00C:0x568 */ u16 unk_0C[2];
-	/* 0x010:0x56C */ u8 unk_10;
-	/* 0x011:0x56D */ u8 unk_11[3];
-	/* 0x014:0x570 */ u16 unk_14;
-	/* 0x016:0x572 */ u8 unk_16;
-}; // size: 0x018
 
 #define LINK_B_RECORDS_COUNT 5
 
@@ -441,13 +397,15 @@ struct SaveBlock2 //0x2024588
 			  u16 optionsBattleSceneOff:1; // whether battle animations are disabled
 			  u16 regionMapZoom:1; // whether the map is zoomed in
 	/*0x018*/ struct Pokedex pokedex;
-	/*0x090*/ u8 filler_90[0x8];
+	/*0x028*/ u8 filler_28[112];
 	/*0x098*/ struct Time localTimeOffset;
 	/*0x0A0*/ struct Time lastBerryTreeUpdate;
 	/*0x0A8*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
 	/*0x0AC*/ u8 field_AC;
 	/*0x0AD*/ u8 field_AD;
-	/*0x0B0*/ struct BattleTowerData battleTower;
+	/*0x0AE*/ u8 filler_AE[0x3E6];
+	/*0x494*/ u32 unkAnnoyingWord;
+	/*0x498*/ u8 filler_548[0x404];
 	/*0x898*/ u16 mapView[0x100];
 	/*0xA98*/ struct LinkBattleRecords linkBattleRecords;
 	/*0xAF0*/ struct BerryCrush berryCrush;
@@ -471,29 +429,28 @@ struct SecretBaseParty
 	u8 EVs[PARTY_SIZE];
 };
 
-struct SecretBaseRecord
-{
-	/*0x1A9C*/ u8 secretBaseId;
-	/*0x1A9D*/ u8 sbr_field_1_0:4;
-	/*0x1A9D*/ u8 gender:1;
-	/*0x1A9D*/ u8 sbr_field_1_5:1;
-	/*0x1A9D*/ u8 sbr_field_1_6:2;
-	/*0x1A9E*/ u8 trainerName[7]; // TODO: Change PLAYER_NAME_LENGTH to 7
-	/*0x1AA5*/ u8 trainerId[4]; // byte 0 is used for determining trainer class
-	/*0x1AA9*/ u8 language;
-	/*0x1AAA*/ u16 sbr_field_e;
-	/*0x1AAC*/ u8 sbr_field_10;
-	/*0x1AAD*/ u8 sbr_field_11;
-	/*0x1AAE*/ u8 decorations[16];
-	/*0x1ABE*/ u8 decorationPos[16];
-	/*0x1AD0*/ struct SecretBaseParty party;
-};
+//struct SecretBaseRecord
+//{
+//	/*0x1A9C*/ u8 secretBaseId;
+//	/*0x1A9D*/ u8 sbr_field_1_0:4;
+//	/*0x1A9D*/ u8 gender:1;
+//	/*0x1A9D*/ u8 sbr_field_1_5:1;
+//	/*0x1A9D*/ u8 sbr_field_1_6:2;
+//	/*0x1A9E*/ u8 trainerName[7]; // TODO: Change PLAYER_NAME_LENGTH to 7
+//	/*0x1AA5*/ u8 trainerId[4]; // byte 0 is used for determining trainer class
+//	/*0x1AA9*/ u8 language;
+//	/*0x1AAA*/ u16 sbr_field_e;
+//	/*0x1AAC*/ u8 sbr_field_10;
+//	/*0x1AAD*/ u8 sbr_field_11;
+//	/*0x1AAE*/ u8 decorations[16];
+//	/*0x1ABE*/ u8 decorationPos[16];
+//	/*0x1AD0*/ struct SecretBaseParty party;
+//};
 
 #include "constants/game_stat.h"
 #include "global.fieldmap.h"
 #include "global.berry.h"
 #include "pokemon.h"
-#include "shop.h"
 
 struct WarpData
 {
@@ -553,15 +510,6 @@ struct RamScript
 	struct RamScriptData data;
 };
 
-struct EasyChatPair
-{
-	u16 unk0_0:7;
-	u16 unk0_7:7;
-	u16 unk1_6:1;
-	u16 unk2;
-	u16 words[2];
-}; /*size = 0x8*/
-
 struct __attribute__((packed)) MailStruct
 {
 	/*0x00*/ u16 words[9];
@@ -580,44 +528,6 @@ struct MailStructDaycare
 	/*0x1E*/ u16 species;
 	/*0x20*/ u16 itemId;
 };
-
-struct UnkMauvilleOldManStruct
-{
-			   u8 unk_2D94;
-			   u8 unk_2D95;
-	/*0x2D96*/ u16 mauvilleOldMan_ecArray[6];
-	/*0x2DA2*/ u16 mauvilleOldMan_ecArray2[6];
-	/*0x2DAE*/ u8 playerName[8];
-	/*0x2DB6*/ u8 filler_2DB6[0x3];
-	/*0x2DB9*/ u8 playerTrainerId[4];
-			   u8 unk_2DBD;
-}; /*size = 0x2C*/
-
-struct UnkMauvilleOldManStruct2
-{
-	u8 filler0;
-	u8 unk1;
-	u8 unk2;
-	u16 mauvilleOldMan_ecArray[10];
-	u8 mauvilleOldMan_ecArray2[12];
-	u8 fillerF[0x2];
-}; /*size = 0x2C*/
-
-struct MauvilleOldManTrader
-{
-	u8 unk0;
-	u8 unk1[4];
-	u8 unk5[4][11];
-	u8 unk31;
-};
-
-typedef union OldMan
-{
-	struct UnkMauvilleOldManStruct oldMan1;
-	struct UnkMauvilleOldManStruct2 oldMan2;
-	struct MauvilleOldManTrader trader;
-	u8 filler[0x3C];
-} OldMan;
 
 struct RecordMixing_UnknownStructSub
 {
@@ -638,7 +548,7 @@ struct RecordMixingGiftData
 	u8 unk0;
 	u8 quantity;
 	u16 itemId;
-	u8 filler4[8];
+	u8 filler_4[8];
 };
 
 struct RecordMixingGift
@@ -696,65 +606,6 @@ struct MENewsJisanStruct
 	u8 unk_0_2:3;
 	u8 unk_0_5:3;
 	u8 berry;
-};
-
-struct QuestLogNPCData
-{
-	u32 x:8;
-	u32 negx:1;
-	u32 y:8;
-	u32 negy:1;
-	u32 elevation:6;
-	u32 movementType:8;
-};
-
-struct UnkStruct_203B024
-{
-	u16 unk_00;
-	u16 unk_02;
-	u16 unk_04[14];
-};
-
-union QuestLogScene
-{
-	u8 allocation[32];
-	u16 ident;
-};
-
-typedef union QuestLogScene QuestLogScene;
-
-// This name is a complete guess and may change.
-
-// Declare here so that it can be recursively referenced.
-union QuestLogMovement;
-
-// Define here
-union QuestLogMovement
-{
-	u16 ident_raw;
-	struct {
-		u16 ident:12;
-		u16 flags:4;
-	} ident_struct;
-};
-
-struct QuestLog
-{
-	/*0x0000*/ u8 unk_000;
-	/*0x0001*/ s8 unk_001;
-	/*0x0002*/ s8 unk_002;
-	/*0x0003*/ s8 unk_003;
-	/*0x0004*/ s16 unk_004;
-	/*0x0006*/ s16 unk_006;
-	/*0x0008*/ u8 filler_008[0x140];
-
-	// These arrays hold the game state for
-	// playing back the quest log
-	/*0x0148*/ u8 flags[0x120];
-	/*0x02c8*/ u16 vars[0x100];
-	/*0x0468*/ struct QuestLogNPCData npcData[64];
-	/*0x0568*/ u16 unk_568[128];
-	/*0x0668*/ u16 end[0];
 };
 
 #include "fame_checker.h"
@@ -889,31 +740,25 @@ struct SaveBlock1 //0x202552C
 	/*0x0294*/ u16 coins;
 	/*0x0296*/ u16 registeredItem; // registered for use with SELECT button
 	/*0x0298*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
-	/*0x0310*/ struct ItemSlot bagPocket_Items[BAG_ITEMS_COUNT];
-	/*0x03b8*/ struct ItemSlot bagPocket_KeyItems[BAG_KEYITEMS_COUNT];
-	/*0x0430*/ struct ItemSlot bagPocket_PokeBalls[BAG_POKEBALLS_COUNT];
-	/*0x0464*/ struct ItemSlot bagPocket_TMHM[BAG_TMHM_COUNT];
-	/*0x054c*/ struct ItemSlot bagPocket_Berries[BAG_BERRIES_COUNT];
-	/*0x05F8*/ u8 seen1[DEX_FLAGS_NO];
-	/*0x062C*/ u16 berryBlenderRecords[3]; // unused
-	/*0x0632*/ u8 field_632[6]; // unused?
+	/*0x0310*/ u8 dexSeenFlags[(999 / 8) + 1]; //size = 125
+	/*0x038D*/ u8 dexCaughtFlags[(999 / 8) + 1];
+	/*0x040A*/ u8 filler_40A[0x4E];
+	/*0x0458*/ struct BoxPokemon safeBackupParty[PARTY_SIZE]; // the party saved here is safe from tampering
 	/*0x0638*/ u16 trainerRematchStepCounter;
-	/*0x063A*/ u8 ALIGNED(2) trainerRematches[100];
+	/*0x063A*/ bool8 ALIGNED(2) trainerRematches[100];
 	/*0x06A0*/ struct EventObject eventObjects[MAP_OBJECTS_COUNT];
 	/*0x08E0*/ struct EventObjectTemplate eventObjectTemplates[64];
 	/*0x0EE0*/ u8 flags[FLAGS_COUNT];
 	/*0x1000*/ u16 vars[VARS_COUNT];
 	/*0x1200*/ u32 gameStats[NUM_GAME_STATS];
-	/*0x1300*/ struct QuestLog questLog[QUEST_LOG_SCENE_COUNT];
+	/*0x1300*/ u8 frontierRecords[0x19A0]; // defined in bpre.ld & include/new/frontier.h
 	/*0x2CA0*/ u16 easyChatProfile[6];
 	/*0x2CAC*/ u16 easyChatBattleStart[6];
 	/*0x2CB8*/ u16 easyChatBattleWon[6];
 	/*0x2CC4*/ u16 easyChatBattleLost[6];
 	/*0x2CD0*/ struct MailStruct mail[MAIL_COUNT];
 	/*0x2F10*/ u8 additionalPhrases[EASY_CHAT_EXTRA_PHRASES_SIZE];
-	/*0x2F18*/ OldMan oldMan; // unused
-	/*0x2F54*/ struct EasyChatPair easyChatPairs[5]; // unused
-	/*0x2F7C*/ u8 filler2F7C[4];
+	/*0x2F18*/ u8 filler_2F18[0x68];
 	/*0x2F80*/ struct DayCare daycare;
 	/*0x309C*/ u8 giftRibbons[52];
 	/*0x30D0*/ struct RoamerOld roamer;
@@ -924,15 +769,14 @@ struct SaveBlock1 //0x202552C
 	/*0x3554*/ struct Pokemon fusedSolgaleo;
 	/*0x35B8*/ struct Pokemon fusedLunala;	
 	/*0x361C*/ struct RamScript ramScript;
-	/*0x3A08*/ u8 filler3A08[16];
-	/*0x3A18*/ u8 seen2[DEX_FLAGS_NO];
+	/*0x3A08*/ u8 filler_3A08[0x44];
 	/*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
 	/*0x3A54*/ struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
-	/*0x3A94*/ u8 filler3A94[0x40];
+	/*0x3A94*/ u8 filler_3A94[0x40];
 	/*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
 	/*0x3C98*/ struct DaycareMon route5DayCareMon;
-	/*0x3D24*/ u8 filler3D24[0x10];
+	/*0x3D24*/ u8 filler_3D24[0x10];
 	/*0x3D34*/ u32 towerChallengeId;
 	/*0x3D38*/ struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 };

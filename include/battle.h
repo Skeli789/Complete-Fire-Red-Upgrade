@@ -533,6 +533,24 @@ struct StatFractions
 	u16 _;
 };
 
+struct SecretBaseRecord
+{
+    /*0x1A9C*/ u8 secretBaseId;
+    /*0x1A9D*/ u8 sbr_field_1_0:4;
+    /*0x1A9D*/ u8 gender:1;
+    /*0x1A9D*/ u8 sbr_field_1_5:1;
+    /*0x1A9D*/ u8 sbr_field_1_6:2;
+    /*0x1A9E*/ u8 trainerName[PLAYER_NAME_LENGTH];
+    /*0x1AA5*/ u8 trainerId[4]; // byte 0 is used for determining trainer class
+    /*0x1AA9*/ u8 language;
+    /*0x1AAA*/ u16 sbr_field_e;
+    /*0x1AAC*/ u8 sbr_field_10;
+    /*0x1AAD*/ u8 sbr_field_11;
+    /*0x1AAE*/ u8 decorations[16];
+    /*0x1ABE*/ u8 decorationPos[16];
+    /*0x1AD0*/ struct SecretBaseParty party;
+};
+
 struct BattleResources
 {
     struct SecretBaseRecord* secretBase;

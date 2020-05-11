@@ -305,6 +305,7 @@ extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_
 extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
 extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50 - sizeof(1) = 0x70
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
+//FREE SPACE POST CIRCUS - 0x2027170: 0x2C4 bytes
 
 extern const u8 gBattleTowerTiers[];
 extern const u8 gBattleMineTiers[];

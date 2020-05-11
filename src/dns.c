@@ -3,6 +3,7 @@
 #include "../include/field_weather.h"
 #include "../include/overworld.h"
 #include "../include/palette.h"
+#include "../include/shop.h"
 
 #include "../include/new/dns.h"
 #include "../include/new/dns_data.h"

@@ -9,11 +9,6 @@ extern const struct OamData gNewGameBirchOamAttributes;
 
 #define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
 
-struct Coords32 {
-    s32 x;
-    s32 y;
-};
-
 struct  __attribute__((packed)) FieldEffectScript
 {
 	u8 command;
