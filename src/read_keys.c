@@ -5,6 +5,7 @@
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
 #include "../include/overworld.h"
+#include "../include/map_name_popup.h"
 #include "../include/start_menu.h"
 #include "../include/party_menu.h"
 
@@ -64,6 +65,7 @@ static void TryForcedScript(u8 keyFlag, u16 currKeys)
 		return;
 
 	ScriptContext2_Enable();
+	DismissMapNamePopup();
 	ScriptContext1_SetupScript(gKeypadSetter->scriptToRun);
 }
 
@@ -153,6 +155,7 @@ void ReadKeys(void)
 		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
 		{
 			ScriptContext2_Enable();
+			DismissMapNamePopup();
 
 			if (FlagGet(FLAG_BIKE_TURBO_BOOST))
 			{
@@ -173,6 +176,7 @@ void ReadKeys(void)
 		{
 			#ifdef FLAG_AUTO_RUN
 			ScriptContext2_Enable();
+			DismissMapNamePopup();
 
 			if (FlagGet(FLAG_AUTO_RUN))
 			{

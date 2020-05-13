@@ -8,6 +8,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
 #include "../include/gpu_regs.h"
+#include "../include/map_name_popup.h"
 #include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/main.h"
@@ -139,6 +140,7 @@ static void MsgNormal(const u8* str)
    SetTextboxSignpostDesign();
    CreateTask(DestroyTaskCompletedTextbox, 0x1);
    ScriptContext2_Enable();
+   DismissMapNamePopup();
    return;
 }
 
@@ -1052,6 +1054,7 @@ static void DexNavManageHUD(u8 taskId)
 		Free(sDNavState);
 
 		gDexNavStartedBattle = TRUE;
+		DismissMapNamePopup();
 		ScriptContext1_SetupScript(SystemScript_StartDexNavBattle);
 /*
 		// exclamation point animation over the player

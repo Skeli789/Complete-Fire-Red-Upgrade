@@ -276,6 +276,8 @@ gItemUseCB = 0x3005E98;
 ==========================*/
 /* Vanilla Data Addressses */
 gIconPals = 0x808AB40;
+gStdScripts = 0x8160450;
+gStdScriptsEnd = 0x8160478;
 gDummySpriteAnimTable = 0x8231CF0;
 gDummySpriteAffineAnimTable = 0x8231CFC;
 anim_082347F8 = 0x82347F8;
@@ -971,6 +973,8 @@ FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
 DoWarp = 0x807E438 | 1;
 DoDiveWarp = 0x807E470 | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
+ShowMapNamePopup = 0x8098110 | 1;
+DismissMapNamePopup = 0x80982EC | 1;
 BindObj = 0x80DC44C | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 sub_8150498 = 0x8150498 | 1;

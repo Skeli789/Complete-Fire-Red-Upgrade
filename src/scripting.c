@@ -5,6 +5,7 @@
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
+#include "../include/map_name_popup.h"
 #include "../include/m4a.h"
 #include "../include/naming_screen.h"
 #include "../include/overworld.h"
@@ -2626,6 +2627,19 @@ void TryAppendSOntoEndOfItemString(void)
 				gStringVar2[length + 1] = EOS;
 		}
 	}
+}
+
+//Map Name Pop-Up Fix
+bool8 ScrCmd_callstd(struct ScriptContext * ctx)
+{
+    u8 stdIdx = ScriptReadByte(ctx);
+    const u8* const* script = gStdScripts + stdIdx;
+	DismissMapNamePopup();
+
+    if (script < gStdScriptsEnd)
+        ScriptCall(ctx, *script);
+
+    return FALSE;
 }
 
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////

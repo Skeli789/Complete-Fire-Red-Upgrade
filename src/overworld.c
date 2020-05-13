@@ -16,6 +16,7 @@
 #include "../include/item.h"
 #include "../include/link.h"
 #include "../include/m4a.h"
+#include "../include/map_name_popup.h"
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -797,6 +798,7 @@ static void SetUpTwoTrainersBattle(void)
 {
 	ScriptContext1_SetupScript(Script_TrainerSpottedMulti);
 	ScriptContext2_Enable();
+	DismissMapNamePopup();
 }
 
 const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)

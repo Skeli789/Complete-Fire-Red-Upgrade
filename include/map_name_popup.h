@@ -1,14 +1,6 @@
-#ifndef GUARD_MAP_NAME_POPUP_H
-#define GUARD_MAP_NAME_POPUP_H
+#pragma once
 
 #include "global.h"
 
-// Exported type declarations
-
-// Exported RAM declarations
-
-// Exported ROM declarations
-void HideMapNamePopUpWindow(void);
-void sub_8098110(u8);
-
-#endif //GUARD_MAP_NAME_POPUP_H
+void __attribute__((long_call)) ShowMapNamePopup(bool32 palIntoFadedBuffer);
+void __attribute__((long_call)) DismissMapNamePopup(void);
