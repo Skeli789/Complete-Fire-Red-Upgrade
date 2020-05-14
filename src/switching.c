@@ -768,8 +768,9 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_LastPokemonMusic:
 			++gNewBS->SwitchInEffectsTracker;
-			#ifdef UNBOUND
-			if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
+			#ifdef BGM_BATTLE_GYM_LEADER_LAST_POKEMON
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+			&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
 			&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
 			&& ((IS_SINGLE_BATTLE && ViableMonCount(gEnemyParty) <= 1)
 			 || (IS_DOUBLE_BATTLE && ViableMonCount(gEnemyParty) <= 2)))

@@ -192,6 +192,8 @@
 #define MAPSEC_CRYSTAL_PEAK					0x
 #define MAPSEC_MAGNOLIA_TOWN				0x91
 #define MAPSEC_REDWOOD_VILLAGE				0x92
+#define MAPSEC_ROUTE_18                     0x76
+#define MAPSEC_VICTORY_ROAD                 0x84
 
 #define MAPSEC_HIDDEN_GROTTO				0x80
 #endif

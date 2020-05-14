@@ -2632,14 +2632,15 @@ void TryAppendSOntoEndOfItemString(void)
 //Map Name Pop-Up Fix
 bool8 ScrCmd_callstd(struct ScriptContext * ctx)
 {
-    u8 stdIdx = ScriptReadByte(ctx);
-    const u8* const* script = gStdScripts + stdIdx;
+	u8 stdIdx = ScriptReadByte(ctx);
+	const u8* const* script = gStdScripts + stdIdx;
+	ChangeBgY(0, 0, 0);
 	DismissMapNamePopup();
 
-    if (script < gStdScriptsEnd)
-        ScriptCall(ctx, *script);
+	if (script < gStdScriptsEnd)
+		ScriptCall(ctx, *script);
 
-    return FALSE;
+	return FALSE;
 }
 
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////

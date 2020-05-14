@@ -51,6 +51,3 @@ void ChooseProperPartnerController(void);
 #define gApproachingTrainerId 			ExtensionState.spotted.approachingId
 #define gFirstTrainerNPCId				ExtensionState.spotted.firstTrainerNPCId
 #define gSecondTrainerNPCId				ExtensionState.spotted.secondTrainerNPCId
-
-//Exported Data Structures
-void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void);

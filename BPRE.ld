@@ -269,6 +269,8 @@ sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
 gLocalLinkPlayerId = 0x300502C;
+gTotalCameraPixelOffsetY = 0x3005068;
+gTotalCameraPixelOffsetX = 0x300506C;
 gItemUseCB = 0x3005E98;
 
 /*==========================

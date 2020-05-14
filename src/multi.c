@@ -33,6 +33,8 @@ static void PlayerPartnerHandlePrintSelectionString(void);
 static void PlayerPartnerHandleChooseAction(void);
 static void PlayerPartnerHandleChoosePokemon(void);
 
+extern void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void BattleIntroOpponent1SendsOutMonAnimation(void)

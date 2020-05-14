@@ -573,6 +573,8 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_THUNDERCAP_MT_EXT	((3 << 8) | 103)
 #define MAP_ROUTE_17			((3 << 8) | 104)
 #define MAP_SEAPORT_CITY		((3 << 8) | 105)
+#define MAP_ROUTE_18_A			((3 << 8) | 106)
+#define MAP_ROUTE_18_B			((3 << 8) | 107)
 
 #define MAP_ROUTE_13    ((3 << 8) | 67)
 #define MAP_ROUTE_14    ((3 << 8) | 67)

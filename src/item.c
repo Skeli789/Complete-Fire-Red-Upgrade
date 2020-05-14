@@ -816,10 +816,10 @@ void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
 }
 
 void ReloadMartListForTmPurchase(u8 taskId)
-{
-	s16 *data = gTasks[taskId].data;
-	
+{	
 	#ifdef REUSABLE_TMS
+	s16 *data = gTasks[taskId].data;
+
 	if (GetPocketByItemId(tItemId) == POCKET_TM_CASE)
 		BuyMenuDisplayMessage(taskId, (void*) 0x84167E7, Task_ReturnToSellListAfterTmPurchase);
 	else
