@@ -19,6 +19,8 @@ generatedrepoints
 *.idea
 tables.xlsx
 cfru_thread.txt
+src/Tables/criminon_trainer_spreads.c
+Cover Art.png
 
 # generated temporary files
 .fuse*
