@@ -76,7 +76,7 @@ SpecialBuffers = {
 
 def StringFileConverter(fileName: str):
     stringToWrite = ".thumb\n.text\n.align 2\n\n"
-    with open(fileName, 'r', encoding="utf-8") as file:
+    with open(fileName, 'r', encoding="ISO-8859-1") as file:
         maxLength = 0
         fillFF = False
         readingState = 0
@@ -206,7 +206,7 @@ def ProcessString(string: str, lineNum: int, maxLength=0, fillWithFF=False) -> s
 
 def PokeByteTableMaker():
     dictionary = {}
-    with open(CharMap, 'r', encoding="utf-8") as file:
+    with open(CharMap, 'r', encoding="ISO-8859-1") as file:
         for line in file:
             if line.strip() != "/FF" and line.strip() != "":
                 if line[2] == '=' and line[3] != "":
