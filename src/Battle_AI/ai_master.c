@@ -38,6 +38,7 @@ struct SmartWildMons
 	u32 aiFlags;
 };
 
+#ifndef WILD_ALWAYS_SMART
 static struct SmartWildMons sSmartWildAITable[] =
 {
 	{SPECIES_ARTICUNO, AI_SCRIPT_CHECK_BAD_MOVE},
@@ -171,6 +172,7 @@ static struct SmartWildMons sSmartWildAITable[] =
 	{SPECIES_CALYREX, AI_SCRIPT_CHECK_BAD_MOVE},
 	{0xFFFF, 0}
 };
+#endif
 
 static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8, struct AIScript*) =
 {

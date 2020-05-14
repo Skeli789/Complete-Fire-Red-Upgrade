@@ -1416,7 +1416,7 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 	u8 textbuf[12];
 	struct TextColor textColor = {bgColor, fgColor, shadowColor};
 	u16 i;
-	u8 ndigits;
+	u8 ndigits = 0;
 	u16 x;
 
 	FillWindowPixelBuffer(windowId, PIXEL_FILL(bgColor));
