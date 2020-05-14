@@ -1032,7 +1032,7 @@ Memcpy = 0x81E5E78 | 1;
 memcpy_ = 0x81E5E78 | 1;
 Memset = 0x81E5ED8 | 1;
 memset_ = 0x81E5ED8 | 1;
-
+memmove = 0x81E8E60 | 1;
 
 
 /* Text Functions */

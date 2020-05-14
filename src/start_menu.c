@@ -2,6 +2,7 @@
 #include "../include/link.h"
 #include "../include/menu.h"
 #include "../include/menu_helpers.h"
+#include "../include/new_menu_helpers.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
 #include "../include/start_menu.h"
@@ -324,10 +325,10 @@ static bool8 ReloadStartMenuItems(void)
 	{
 		sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
 		#ifndef UNBOUND
-        if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-        {
-            DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
-        }
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		{
+			DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
+		}
 		#endif
 		CopyWindowToVram(GetStartMenuWindowId(), 1);
 		sStartMenuCallback = StartCB_HandleInput;

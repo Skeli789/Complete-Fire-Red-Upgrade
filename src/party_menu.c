@@ -335,15 +335,15 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 		}
 		else if (*highlightedMon == 7)
 		{
-			if (sPartyMenuInternal->unk8_0) //gUnknown_0203CEC4->unk8_0 in Emerald
+			if (sPartyMenuInternal->chooseHalf)
 			{
 				*highlightedMon = 6; //Set to 6 here because the minus will set it to 5
 				break;
 			}
 			(*highlightedMon)--;
 		}
-		//This probably relates to getting the next mon in the party
-		unk2 = GetNewSlotDoubleLayout(*highlightedMon, unk2); //sub_81B1B00 in Emerald
+
+		unk2 = GetNewSlotDoubleLayout(*highlightedMon, unk2);
 		if (unk2 != -1)
 			*highlightedMon = unk2;
 		break;
@@ -359,10 +359,10 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 		}
 		else
 		{
-			unk2 = GetNewSlotDoubleLayout(*highlightedMon, 1); //sub_81B1B00 in Emerald
+			unk2 = GetNewSlotDoubleLayout(*highlightedMon, 1);
 			if (unk2 == -1)
 			{
-				if (sPartyMenuInternal->unk8_0) //gUnknown_0203CEC4->unk8_0 in Emerald
+				if (sPartyMenuInternal->chooseHalf)
 					*highlightedMon = 6;
 				else
 					*highlightedMon = 7;
@@ -376,7 +376,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 	case MENU_RIGHT:
 		if (*highlightedMon == 0)
 		{
-			if (sPartyMenuInternal->lastSelectedSlot == 3) //gUnknown_0203CEC4->unk8_1 in Emerald
+			if (sPartyMenuInternal->lastSelectedSlot == 3)
 			{
 				if (gPlayerParty[3].species != SPECIES_NONE)
 					*highlightedMon = 3; //Go to your last mon
@@ -388,7 +388,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 		}
 		else if (*highlightedMon == 1)
 		{
-			if (sPartyMenuInternal->lastSelectedSlot == 5) //gUnknown_0203CEC4->unk8_1 in Emerald
+			if (sPartyMenuInternal->lastSelectedSlot == 5)
 			{
 				if (gPlayerParty[5].species != SPECIES_NONE)
 					*highlightedMon = 5;
