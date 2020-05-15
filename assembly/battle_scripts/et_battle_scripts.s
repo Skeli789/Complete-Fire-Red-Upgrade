@@ -598,7 +598,9 @@ BattleScript_OctolockTurnDmgEnd:
 
 BattleScript_DynamaxEnd:
 	callasm UpdateHPForDynamax
+	waitstateatk
 	callasm UpdateCurrentHealthForDynamaxEnd
+	waitstateatk
 	reloadhealthbar BANK_SCRIPTING
 	callasm SetAndTransferDontRemoveTransformSpecies
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0

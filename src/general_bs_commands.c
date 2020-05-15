@@ -506,17 +506,13 @@ void atk0B_healthbarupdate(void)
 		#endif
 		else
 		{
-			s16 healthValue;
-			s32 currDmg, maxPossibleDmgValue;
-
-			maxPossibleDmgValue = 0xFFFF; //Ensures that huge damage values don't change sign
-
 			if (!IsDoubleSpreadMove())
 			{
-				currDmg = gBattleMoveDamage;
-
-				if (currDmg <= maxPossibleDmgValue)
-					healthValue = currDmg;
+				s32 healthValue, maxPossibleDmgValue;
+				maxPossibleDmgValue = 30000; //Ensures that huge damage values don't change sign
+			
+				if (gBattleMoveDamage <= maxPossibleDmgValue)
+					healthValue = gBattleMoveDamage;
 				else
 					healthValue = maxPossibleDmgValue;
 
@@ -1262,18 +1258,17 @@ void atk1B_cleareffectsonfaint(void) {
 	pokemon_t* mon = GetBankPartyData(gActiveBattler);
 
 	if (!gBattleExecBuffer) {
-		switch (gNewBS->FaintEffectsTracker) {
-			case Faint_DynamaxHP:
+		switch (gNewBS->faintEffectsState) {
+			case Faint_DynamaxHP: //Update max HP if was dynamaxed
 				if (IsDynamaxed(gActiveBattler))
 				{
-					//Get ceiling of HP divided by boost
-					gBattleMons[gActiveBattler].maxHP = MathMax(mon->maxHP / GetDynamaxHPBoost(gActiveBattler) + (mon->maxHP & 1), 1);
+					gBattleMons[gActiveBattler].maxHP = GetBaseMaxHP(gActiveBattler);
 					EmitSetMonData(0, REQUEST_MAX_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].maxHP);
 					MarkBufferBankForExecution(gActiveBattler);
 					gNewBS->dynamaxData.timer[gActiveBattler] = 0;
 					return;
 				}
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 				__attribute__ ((fallthrough));
 
 			case Faint_ClearEffects:
@@ -1294,7 +1289,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 				*gSeedHelper = 0;
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 				return;
 
 			case Faint_SoulHeart:
@@ -1323,7 +1318,7 @@ void atk1B_cleareffectsonfaint(void) {
 						return;
 					}
 				}
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
 			case Faint_ReceiverActivate:
@@ -1346,25 +1341,25 @@ void atk1B_cleareffectsonfaint(void) {
 					EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
 					MarkBufferBankForExecution(gActiveBattler);
 
-					++gNewBS->FaintEffectsTracker;
+					++gNewBS->faintEffectsState;
 					return;
 				}
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
 			case Faint_SwitchInAbilities: //Now null b/c handled in BS
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
 			case Faint_PrimalWeather:	;
 				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 					return;
 
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
 			case Faint_RaidBattle:
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 			#ifdef FLAG_RAID_BATTLE
 				if (IsRaidBattle() && SIDE(gActiveBattler) == B_SIDE_PLAYER)
 				{
@@ -1442,7 +1437,7 @@ void atk1B_cleareffectsonfaint(void) {
 					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->species);
 					MarkBufferBankForExecution(gActiveBattler);
 					mon->backupSpecies = SPECIES_NONE;
-					++gNewBS->FaintEffectsTracker;
+					++gNewBS->faintEffectsState;
 					return;
 				}
 				break; //No form change means skip the next two states
@@ -1451,7 +1446,7 @@ void atk1B_cleareffectsonfaint(void) {
 				CalculateMonStats(mon);
 				EmitSetRawMonData(0, offsetof(pokemon_t, attack), 2 /*Atk*/ + 2 /*Def*/ + 2 /*Spd*/ + 2 */*Sp Atk*/ + 2 /*Sp Def*/, &mon->attack); //Reload all stats
 				MarkBufferBankForExecution(gActiveBattler);
-				++gNewBS->FaintEffectsTracker;
+				++gNewBS->faintEffectsState;
 				return;
 
 			case Faint_FormsHP: ;
@@ -1464,13 +1459,13 @@ void atk1B_cleareffectsonfaint(void) {
 					newHP = MathMin(mon->maxHP, oldHP);
 					EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &newHP);
 					MarkBufferBankForExecution(gActiveBattler);
-					++gNewBS->FaintEffectsTracker;
+					++gNewBS->faintEffectsState;
 					return;
 				}
 				#endif
 		}
 
-		gNewBS->FaintEffectsTracker = 0;
+		gNewBS->faintEffectsState = 0;
 		gBattlescriptCurrInstr += 2;
 	}
 }

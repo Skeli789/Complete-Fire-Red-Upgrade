@@ -87,7 +87,7 @@ void RestoreBanksFromSynchronize(void);
 void TrySetAlternateFlingEffect(void);
 void TransferLastUsedItem(void);
 void TryToStopNewMonFromSwitchingInAfterSRHurt(void);
-void ClearSwitchInEffectsTracker(void);
+void ClearSwitchInEffectsState(void);
 void UpdatePrimalAbility(void);
 void ClearAttackerDidDamageOnce(void);
 void TryRemovePrimalWeatherOnForceSwitchout(void);

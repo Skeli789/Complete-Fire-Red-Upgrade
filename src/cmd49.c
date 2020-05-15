@@ -133,7 +133,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gBattleScripting.atk49_state = ATK49_SWITCH_OUT_ABILITIES;
 
 	if (gBattleScripting.atk49_state == ATK49_SET_UP //If these have already
-	&&  gNewBS->preFaintEffectsTracker == FAINT_COUNT) //been done
+	&&  gNewBS->preFaintEffectsState == FAINT_COUNT) //been done
 	{
 		gNewBS->originalAttackerBackup = gBankAttacker;
 		gBattleScripting.atk49_state = ATK49_UNDO_SKY_DROP;
@@ -672,7 +672,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 						gHitMarker |= (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING);
 						gBattleScripting.animTargetsHit = 0;
-						gNewBS->preFaintEffectsTracker = 0;
+						gNewBS->preFaintEffectsState = 0;
 						gBattleScripting.atk49_state = 0;
 						gNewBS->MultiHitOn = TRUE; //Used to help second accuracy calcs
 						MoveValuesCleanUp();
@@ -935,7 +935,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							if (gBattleMons[battlerId].hp && battlerId != gBankAttacker)
 							{
 								gBankTarget = battlerId;
-								gNewBS->preFaintEffectsTracker = 0;
+								gNewBS->preFaintEffectsState = 0;
 								gBattleScripting.atk49_state = 0;
 								MoveValuesCleanUp();
 
@@ -967,7 +967,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 								gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
 								gBankTarget = battlerId; //Attack Bouncer's partner
 								gBattleScripting.animTargetsHit = 0;
-								gNewBS->preFaintEffectsTracker = 0;
+								gNewBS->preFaintEffectsState = 0;
 								gBattleScripting.atk49_state = 0;
 								MoveValuesCleanUp();
 								BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
@@ -986,7 +986,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 								gBankTarget = battlerId;
 								if (BATTLER_ALIVE(battlerId) && battlerId != gBankAttacker)
 								{
-									gNewBS->preFaintEffectsTracker = 0;
+									gNewBS->preFaintEffectsState = 0;
 									gBattleScripting.atk49_state = 0;
 									MoveValuesCleanUp();
 									if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
@@ -1364,7 +1364,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->secondaryEffectApplied = FALSE;
 			gNewBS->InstructInProgress = FALSE;
 			gNewBS->bypassSubstitute = FALSE;
-			gNewBS->preFaintEffectsTracker = 0;
+			gNewBS->preFaintEffectsState = 0;
 			gNewBS->MeFirstByte = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gBattleScripting.atk49_state++;
@@ -1429,7 +1429,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				else
 					gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
 
-				gNewBS->preFaintEffectsTracker = 0;
+				gNewBS->preFaintEffectsState = 0;
 				gBattleScripting.atk49_state = 0;
 				gBattleStruct->atkCancellerTracker = 0;
 				gNewBS->AttackerDidDamageAtLeastOnce = FALSE;

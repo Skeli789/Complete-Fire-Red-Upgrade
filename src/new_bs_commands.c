@@ -944,7 +944,7 @@ void atkFE_prefaintmoveendeffects(void)
 
 	do
 	{
-		switch (gNewBS->preFaintEffectsTracker)
+		switch (gNewBS->preFaintEffectsState)
 		{
 		case FAINT_SET_UP: //For Emergency Exit to use later
 			if (gNewBS->MultiHitOn)
@@ -954,7 +954,7 @@ void atkFE_prefaintmoveendeffects(void)
 
 			gNewBS->totalDamageGiven += gHpDealt;
 			gNewBS->ResultFlags[gBankTarget] = gMoveResultFlags;
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_ATTACKER_ABILITIES:
@@ -985,7 +985,7 @@ void atkFE_prefaintmoveendeffects(void)
 						}
 				}
 			}
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_ADVERSE_PROTECTION:
@@ -1047,7 +1047,7 @@ void atkFE_prefaintmoveendeffects(void)
 				}
 			}
 	
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_RAGE: // rage check
@@ -1065,7 +1065,7 @@ void atkFE_prefaintmoveendeffects(void)
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;
 			}
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_SYNCHRONIZE_TARGET: // target synchronize
@@ -1074,7 +1074,7 @@ void atkFE_prefaintmoveendeffects(void)
 				if (AbilityBattleEffects(ABILITYEFFECT_SYNCHRONIZE, gBankTarget, 0, 0, 0))
 					effect = TRUE;
 			}
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_BEAK_BLAST_BURN:
@@ -1089,20 +1089,20 @@ void atkFE_prefaintmoveendeffects(void)
 				effect = TRUE;
 			}
 
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_SYNCHRONIZE_ATTACKER: // attacker synchronize
 		case FAINT_SYNCHRONIZE_ATTACKER_2:
 			if (AbilityBattleEffects(ABILITYEFFECT_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
 				effect = TRUE;
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_MOVE_END_ABILITIES: // Such as abilities activating on contact(Poison Spore, Rough Skin, etc.).
 			if (AbilityBattleEffects(ABILITYEFFECT_CONTACT, gBankTarget, 0, 0, 0))
 				effect = TRUE;
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_ITEM_EFFECTS_CONTACT_TARGET:
@@ -1118,15 +1118,15 @@ void atkFE_prefaintmoveendeffects(void)
 						effect = TRUE;
 				}
 			}
-			gNewBS->preFaintEffectsTracker++;
+			gNewBS->preFaintEffectsState++;
 			break;
 
 		case FAINT_COUNT:
 			break;
 		}
-	} while (gNewBS->preFaintEffectsTracker != FAINT_COUNT && effect == FALSE);
+	} while (gNewBS->preFaintEffectsState != FAINT_COUNT && effect == FALSE);
 
-	if (gNewBS->preFaintEffectsTracker == FAINT_COUNT && effect == FALSE)
+	if (gNewBS->preFaintEffectsState == FAINT_COUNT && effect == FALSE)
 		gBattlescriptCurrInstr += 3;
 }
 

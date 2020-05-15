@@ -789,7 +789,11 @@ struct NewBattleStruct
 	u8 IllusionBroken;
 
 	//Other Helpers
-	u8 SwitchInEffectsTracker;
+	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
+	u8 switchInEffectsState; //For tracking effects that happen on switch-in
+	u8 preFaintEffectsState; //For tracking effects that happen right before the target faints
+	u8 faintEffectsState; //For tracking effects that happen after the target faints
+	u8 endTurnBlockState; //For tracking sub-blocks utilized by the end turn function
 	u8 SentInBackup;
 	u8 OriginalAttackerTargetCount;
 	u8 MoveBounceTargetCount;
@@ -800,9 +804,6 @@ struct NewBattleStruct
 	u8 CurrentTurnTarget : 4;
 	u8 targetsToBringDown;
 	u8 backupMoveEffect;
-	u8 FaintEffectsTracker;
-	u8 blockTracker;
-	u8 preFaintEffectsTracker;
 	u8 savedObjId;
 	u8 lastFainted;
 	s8 intimidateActive;

@@ -332,7 +332,7 @@ BattleScript_HandleFaintedMonDoublesSwitchInEffects:
 	end2
 	
 BattleScript_FaintStealthRockHelper:
-	callasm ClearSwitchInEffectsTracker
+	callasm ClearSwitchInEffectsState
 	end2
 
 .global BattleScript_DoPlayerAndFoeSwitchInEffects

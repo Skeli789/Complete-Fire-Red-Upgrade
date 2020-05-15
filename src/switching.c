@@ -72,21 +72,52 @@ void atkE2_switchoutabilities(void)
 
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
-	switch (ABILITY(gActiveBattler)) {
-		case ABILITY_NATURALCURE:
-			gBattleMons[gActiveBattler].status1 = 0;
-			EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].status1);
-			MarkBufferBankForExecution(gActiveBattler);
+	switch (gNewBS->switchOutAbilitiesState) {
+		case 0: //Update current HP if dynamaxed
+			if (IsDynamaxed(gActiveBattler))
+			{
+				gBattleMons[gActiveBattler].hp = GetBaseCurrentHP(gActiveBattler);
+				EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
+				MarkBufferBankForExecution(gActiveBattler);
+			}
+			++gNewBS->switchOutAbilitiesState;
 			break;
-		case ABILITY_REGENERATOR:
-			gBattleMons[gActiveBattler].hp = MathMin(gBattleMons[gActiveBattler].maxHP, gBattleMons[gActiveBattler].hp + udivsi(gBattleMons[gActiveBattler].maxHP, 3));
-			EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].hp);
-			MarkBufferBankForExecution(gActiveBattler);
+
+		case 1: //Update max HP if dynamaxed
+			if (IsDynamaxed(gActiveBattler))
+			{
+				gBattleMons[gActiveBattler].maxHP = GetBaseMaxHP(gActiveBattler);
+				EmitSetMonData(0, REQUEST_MAX_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].maxHP);
+				MarkBufferBankForExecution(gActiveBattler);
+				gNewBS->dynamaxData.timer[gActiveBattler] = 0;
+			}
+			++gNewBS->switchOutAbilitiesState;
+			break;
+
+		case 2: //Switch out abilities
+			switch (ABILITY(gActiveBattler)) {
+				case ABILITY_NATURALCURE:
+					gBattleMons[gActiveBattler].status1 = 0;
+					EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].status1);
+					MarkBufferBankForExecution(gActiveBattler);
+					break;
+				case ABILITY_REGENERATOR:
+					gBattleMons[gActiveBattler].hp = MathMin(gBattleMons[gActiveBattler].maxHP, gBattleMons[gActiveBattler].hp + (gBattleMons[gActiveBattler].maxHP / 3));
+					EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].hp);
+					MarkBufferBankForExecution(gActiveBattler);
+			}
+			++gNewBS->switchOutAbilitiesState;
+			break;
+
+		case 3: //Form reversion
+			SwitchOutFormsRevert(gActiveBattler);
+			++gNewBS->switchOutAbilitiesState;
+			break;
+
+		case 4: //Done
+			gNewBS->switchOutAbilitiesState = 0; //Reset for next time
+			gBattlescriptCurrInstr += 2;
 	}
-
-	SwitchOutFormsRevert(gActiveBattler);
-
-	gBattlescriptCurrInstr += 2;
 }
 
 bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
@@ -485,11 +516,11 @@ void atk52_switchineffects(void)
 		goto SWITCH_IN_END;
 
 	if (!(gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) //Skip the entry hazards if there are none
-	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes
-	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
-		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
+	&& gNewBS->switchInEffectsState >= SwitchIn_Spikes
+	&& gNewBS->switchInEffectsState <= SwitchIn_StickyWeb)
+		gNewBS->switchInEffectsState = SwitchIn_PrimalReversion;
 
-	switch (gNewBS->SwitchInEffectsTracker) {
+	switch (gNewBS->switchInEffectsState) {
 		case SwitchIn_CamomonsReveal:
 			if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
 			{
@@ -504,7 +535,7 @@ void atk52_switchineffects(void)
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
 				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 			break;
 
 		case SwitchIn_HealingWish:
@@ -521,7 +552,7 @@ void atk52_switchineffects(void)
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 					gBattleScripting.bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
-					++gNewBS->SwitchInEffectsTracker;
+					++gNewBS->switchInEffectsState;
 					return;
 				}
 				else if (gNewBS->HealingWishLoc & (gBitTable[GetBattlerPosition(gActiveBattler)] << 4))
@@ -544,10 +575,10 @@ void atk52_switchineffects(void)
 
 				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_ZHealingWish:
@@ -564,7 +595,7 @@ void atk52_switchineffects(void)
 				gNewBS->zMoveData.healReplacement = FALSE;
 
 			gNewBS->DamageTaken[gActiveBattler] = 0;
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Spikes:
@@ -582,10 +613,10 @@ void atk52_switchineffects(void)
 				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_StealthRock:
@@ -602,10 +633,10 @@ void atk52_switchineffects(void)
 				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Steelsurge:
@@ -621,10 +652,10 @@ void atk52_switchineffects(void)
 				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBankTarget = gBattleScripting.bank = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_ToxicSpikes:
@@ -658,10 +689,10 @@ void atk52_switchineffects(void)
 				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_StickyWeb:
@@ -675,10 +706,10 @@ void atk52_switchineffects(void)
 				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_EmergencyExit:
@@ -694,7 +725,7 @@ void atk52_switchineffects(void)
 					return;
 				}
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_PrimalReversion:	;
@@ -705,16 +736,16 @@ void atk52_switchineffects(void)
 				gBattlescriptCurrInstr = script;
 				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Truant:
 			if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
 				gDisableStructs[gActiveBattler].truantCounter ^= 1;
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Abilities:
@@ -729,7 +760,7 @@ void atk52_switchineffects(void)
 			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 				return;
 
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Items:
@@ -738,7 +769,7 @@ void atk52_switchineffects(void)
 
 			if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, TRUE, FALSE))
 				return;
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_AirBalloon:
@@ -748,10 +779,10 @@ void atk52_switchineffects(void)
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
 				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_TotemPokemon:
@@ -760,14 +791,14 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
-				++gNewBS->SwitchInEffectsTracker;
+				++gNewBS->switchInEffectsState;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_LastPokemonMusic:
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 			#ifdef BGM_BATTLE_GYM_LEADER_LAST_POKEMON
 			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
 			&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
@@ -781,7 +812,7 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_TrainerMessage:
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 			if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_SWITCHIN))
 			{
 				BattleScriptPushCursor();
@@ -816,11 +847,11 @@ void atk52_switchineffects(void)
 					++gBankFainted;
 				}
 			}
-			++gNewBS->SwitchInEffectsTracker;
+			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_EjectPack:
-			gNewBS->SwitchInEffectsTracker = 0;
+			gNewBS->switchInEffectsState = 0;
 			gBattlescriptCurrInstr += 2;
 
 			for (i = 0; i < gBattlersCount; ++i)

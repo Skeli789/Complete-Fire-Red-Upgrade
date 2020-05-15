@@ -1665,16 +1665,16 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
 		gBattlescriptCurrInstr = BattleScript_EntryHazardsHurtReturn - 5; //Continue the switch in effects
 	}
 
-	gNewBS->SwitchInEffectsTracker = 0;
+	gNewBS->switchInEffectsState = 0;
 }
 
 extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
-void ClearSwitchInEffectsTracker(void)
+void ClearSwitchInEffectsState(void)
 {
 	if (!gNewBS->endTurnDone)
 	{
 		gBattlescriptCurrInstr = BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5;
-		gNewBS->SwitchInEffectsTracker = 0;
+		gNewBS->switchInEffectsState = 0;
 	}
 };
 

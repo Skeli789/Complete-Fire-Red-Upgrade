@@ -733,12 +733,13 @@ void EndBattleDynamaxRevert(u8 bank)
 {
 	if (BATTLER_ALIVE(bank) && IsDynamaxed(bank))
 	{
+		u16 hp, maxHP;
 		struct Pokemon* mon = GetBankPartyData(bank);
-		u8 hpBoost = GetDynamaxHPBoost(bank);
 
-		//Get ceiling of HP divided by boost
-		mon->maxHP = MathMax(mon->maxHP / hpBoost + (mon->maxHP & 1), 1);
-		mon->hp = MathMax(mon->hp / hpBoost + (mon->hp & 1), 1);
+		hp = GetBaseCurrentHP(bank);
+		maxHP = GetBaseMaxHP(bank);
+		SetMonData(mon, MON_DATA_HP, &hp);
+		SetMonData(mon, MON_DATA_MAX_HP, &maxHP);
 		gNewBS->dynamaxData.timer[bank] = 0;
 	}
 }

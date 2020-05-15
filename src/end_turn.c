@@ -374,11 +374,11 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(BattleScript_WishComesTrue);
 					effect++;
 				}
-				gNewBS->blockTracker = 0; //For later
+				gNewBS->endTurnBlockState = 0; //For later
 				break;
 
 			case ET_Block_A:
-				switch(gNewBS->blockTracker) {
+				switch(gNewBS->endTurnBlockState) {
 					case ET_Sea_Of_Fire:
 						if (BATTLER_ALIVE(gActiveBattler)
 						&&  BankSideHasSeaOfFire(gActiveBattler)
@@ -454,11 +454,11 @@ u8 TurnBasedEffects(void)
 						break;
 				}
 
-				++gNewBS->blockTracker;
-				if (gNewBS->blockTracker < MAX_CASES_BLOCK_A)
+				++gNewBS->endTurnBlockState;
+				if (gNewBS->endTurnBlockState < MAX_CASES_BLOCK_A)
 					goto SkipBankIncrement;
 
-				gNewBS->blockTracker = 0;
+				gNewBS->endTurnBlockState = 0;
 				break;
 
 			case ET_Aqua_Ring:
@@ -1136,7 +1136,7 @@ u8 TurnBasedEffects(void)
 				break;
 
 			case ET_Terrain_Timer:
-				gNewBS->blockTracker = 0; //For later
+				gNewBS->endTurnBlockState = 0; //For later
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
 				if (gNewBS->TerrainTimer && --gNewBS->TerrainTimer == 0)
@@ -1146,7 +1146,7 @@ u8 TurnBasedEffects(void)
 				}
 				__attribute__ ((fallthrough));
 			case ET_Block_B:
-				switch(gNewBS->blockTracker) {
+				switch(gNewBS->endTurnBlockState) {
 					case ET_Uproar:
 						if (gBattleMons[gActiveBattler].status2 & STATUS2_UPROAR
 						&& BATTLER_ALIVE(gActiveBattler))
@@ -1254,12 +1254,12 @@ u8 TurnBasedEffects(void)
 						break;
 				}
 
-				++gNewBS->blockTracker;
-				if (gNewBS->blockTracker < MAX_CASES_BLOCK_B)
+				++gNewBS->endTurnBlockState;
+				if (gNewBS->endTurnBlockState < MAX_CASES_BLOCK_B)
 					goto SkipBankIncrement;
 				else
 				{
-					gNewBS->blockTracker = 0;
+					gNewBS->endTurnBlockState = 0;
 					break;
 				}
 
