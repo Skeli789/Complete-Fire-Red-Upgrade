@@ -2109,7 +2109,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						effect = 1;
 					}
 					break;
-				case ABILITY_OBLIVIOUS: //TODO Add Taunt
+				case ABILITY_OBLIVIOUS:
 					if (gBattleMons[bank].status2 & STATUS2_INFATUATION)
 					{
 						if (gDisableStructs[bank].tauntTimer)
@@ -2136,7 +2136,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						gBattleMons[bank].status2 &= ~(STATUS2_CONFUSION);
 						break;
 					case 3: // get rid of infatuation and taunt
-						gDisableStructs[gActiveBattler].tauntTimer = 0;
+						gDisableStructs[bank].tauntTimer = 0;
 						gBattleMons[bank].status2 &= ~(STATUS2_INFATUATION);
 						break;
 					}
