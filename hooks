@@ -39,6 +39,7 @@ HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 8019C10 3
 SetMoveEffect 801FF20 2
 FrontierCheckBattleOverHook 8022400 0
+OpenPartyScreenBatonPassExplosionFix 8024C16 0
 CalcMonHiddenPowerType 802B678 1
 SpriteCB_SlideInTrainer 8033EEC 1
 HealthBarChangeAmountHook 804A00C 4

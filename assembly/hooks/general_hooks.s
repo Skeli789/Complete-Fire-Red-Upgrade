@@ -1109,3 +1109,21 @@ DrawLevelUpWindowPg2Hook:
 	bl DrawLevelUpWindowPg2
 	ldr r0, =0x811EA2E | 1
 	bx r0
+
+.pool
+@0x8024C16 with r0
+OpenPartyScreenBatonPassExplosionFix:
+	cmp r1, #0x0
+	beq OpenPartyScreenBatonPassExplosionFixReturn
+	ldr r1, =IsDoubleBattle
+	bl bxr1
+	ldrb r3, [r4]
+	cmp r0, #0x0 @Not doubles so no partner exists
+	beq OpenPartyScreenBatonPassExplosionFixReturn
+	mov r0, #0x2
+	eor r3, r0
+	strb r3, [r4]
+
+OpenPartyScreenBatonPassExplosionFixReturn:
+	ldr r0, =0x8024C20 | 1
+	bx r0
