@@ -52,7 +52,7 @@ extern struct SaveSectionLocation gRamSaveSectionLocations[0xE];
 
 #define UNKNOWN_CHECK_VALUE 0x8012025
 
-#define SECTOR_SAVE_SLOT_LENGTH 14
+#define NUM_SECTORS_PER_SAVE_SLOT 14  // Number of sectors occupied by a save slot
 #define SECTOR_ID_HOF_1 28
 #define SECTOR_ID_HOF_2 29
 #define SECTORS_COUNT 32
@@ -76,7 +76,7 @@ enum
     HOF_DELETE_SAVE // unused
 };
 
-extern u16 gLastWrittenSector;
+extern u16 gFirstSaveSector;
 extern u32 gPrevSaveCounter;
 extern u16 gLastKnownGoodSector;
 extern u32 gDamagedSaveSectors;

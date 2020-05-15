@@ -189,10 +189,11 @@ sScriptContext2Enabled = 0x3000F28;
 gTextflags = 0x3003E50;
 
 /* Save RAM */
+gSaveDataBuffer = 0x02039A38;
 gSaveBlock1 = 0x3005008;
 gSaveBlock2 = 0x300500C;
 gSaveBlock3 = 0x3005010;
-gLastWrittenSector = 0x3005380;
+gFirstSaveSector = 0x3005380;
 gSaveCounter = 0x3005390;
 gFastSaveSection = 0x3005394;
 gRamSaveSectionLocations = 0x30053B0;

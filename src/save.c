@@ -9,9 +9,10 @@ save.c
 */
 
 // Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
+extern struct SaveSection gSaveDataBuffer;
 #define SECTOR_DATA_SIZE 0xFF0
 #define SECTOR_FOOTER_SIZE 128
-#define SECTOR_SAVE_SLOT_LENGTH 14
+#define NUM_SECTORS_PER_SAVE_SLOT 14
 #define FILE_SIGNATURE 0x08012025
 #define gSaveBlockParasite 0x0203B174
 #define parasiteSize 0xEC4
@@ -51,7 +52,7 @@ static const u16 SaveBlockParasiteSizes[3] =
 
 //This file's functions:
 static void LoadSector30And31();
-static void SaveSector30And31();
+static u8 SaveSector30And31();
 static void SaveParasite();
 static void LoadParasite();
 static void CallSomething(u16 arg, EraseFlash func);
@@ -59,31 +60,39 @@ static void CallSomething(u16 arg, EraseFlash func);
 /* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
 static void LoadSector30And31()
 {
-	struct SaveSection* saveBuffer = (struct SaveSection*)0x02039A38;
+	struct SaveSection* saveBuffer = &gSaveDataBuffer;
+	
+	//Load sector 30
+	u32 startLoc = gSaveBlockParasite + parasiteSize;
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
 	DoReadFlashWholeSection(30, saveBuffer);
-	u32 startLoc = gSaveBlockParasite + parasiteSize;
 	Memcpy((void*)(startLoc), saveBuffer, SECTOR_DATA_SIZE);
 
+	//Load sector 31
+	startLoc += SECTOR_DATA_SIZE;
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
 	DoReadFlashWholeSection(31, saveBuffer);
-	startLoc += SECTOR_DATA_SIZE;
 	Memcpy((void*) startLoc, saveBuffer, SECTOR_DATA_SIZE);
 }
 
-static void SaveSector30And31()
+static u8 SaveSector30And31()
 {
-	struct SaveSection* saveBuffer = (struct SaveSection*)0x02039A38;
+	u8 retVal;
+	struct SaveSection* saveBuffer = &gSaveDataBuffer;
+	
+	//Write sector 30
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
 	u32 startLoc = gSaveBlockParasite + parasiteSize;
 	Memcpy(saveBuffer->data, (void*)(startLoc), SECTOR_DATA_SIZE);
-	TryWriteSector(30, saveBuffer->data);
+	retVal = TryWriteSector(30, saveBuffer->data);
+	if (retVal != SAVE_STATUS_OK)
+		return retVal; //Error
 
-	/* Write sector 31 */
+	//Write sector 31
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
 	startLoc += SECTOR_DATA_SIZE;
 	Memcpy(saveBuffer->data, (void*)(startLoc), SECTOR_DATA_SIZE);
-	TryWriteSector(31, saveBuffer->data);
+	return TryWriteSector(31, saveBuffer->data);
 }
 
 
@@ -152,16 +161,16 @@ static void LoadParasite()
 u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location)
 {
 	u16 id;
-	u16 sector = SECTOR_SAVE_SLOT_LENGTH * (gSaveCounter % 2);
+	u16 sector = NUM_SECTORS_PER_SAVE_SLOT * (gSaveCounter % 2);
 	bool8 checksumStatus = FALSE;
 
-	for (u8 i = 0; i < SECTOR_SAVE_SLOT_LENGTH; ++i)
+	for (u8 i = 0; i < NUM_SECTORS_PER_SAVE_SLOT; ++i)
 	{
 		DoReadFlashWholeSection(i + sector, gFastSaveSection);
 
 		id = gFastSaveSection->id;
 		if (id == 0)
-			gLastWrittenSector = i;
+			gFirstSaveSector = i;
 
 		u16 checksum = CalculateSaveChecksum(gFastSaveSection->data, location[id].size);
 		if (gFastSaveSection->security == FILE_SIGNATURE
@@ -183,17 +192,17 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location
 // 080D9870
 u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 {
-	u16 sector;
-	u8* data;
-	u16 size;
+	u16 sectorNum;
+	u8* chunkData;
+	u16 chunkSize;
 
 	//Get nonbackup sector slot
-	sector = chunkId + gLastWrittenSector;
-	sector %= SECTOR_SAVE_SLOT_LENGTH;
-	sector += SECTOR_SAVE_SLOT_LENGTH * (gSaveCounter % 2);
+	sectorNum = chunkId + gFirstSaveSector;
+	sectorNum %= NUM_SECTORS_PER_SAVE_SLOT;
+	sectorNum += NUM_SECTORS_PER_SAVE_SLOT * (gSaveCounter % 2);
 
-	data = location[chunkId].data;
-	size = location[chunkId].size;
+	chunkData = location[chunkId].data;
+	chunkSize = location[chunkId].size;
 
 	//Clear save section
 	Memset(gFastSaveSection, 0, sizeof(struct SaveSection));
@@ -202,14 +211,16 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 	gFastSaveSection->security = FILE_SIGNATURE;
 	gFastSaveSection->counter = gSaveCounter;
 
-	Memcpy(gFastSaveSection->data, data, size);
+	Memcpy(gFastSaveSection->data, chunkData, chunkSize);
 
-	gFastSaveSection->checksum = CalculateSaveChecksum(data, size);
+	gFastSaveSection->checksum = CalculateSaveChecksum(chunkData, chunkSize);
 
 	//Write data to leftover save section
 	SaveParasite();
-	u8 retVal = TryWriteSector(sector, gFastSaveSection->data);
-	SaveSector30And31();
+	u8 retVal = TryWriteSector(sectorNum, gFastSaveSection->data);
+	if (retVal == SAVE_STATUS_OK) //Save so far is fine
+		retVal = SaveSector30And31();
+
 	return retVal;
 }
 
