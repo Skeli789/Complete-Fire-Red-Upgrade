@@ -6,6 +6,7 @@
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
 #include "../include/map_name_popup.h"
+#include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/naming_screen.h"
 #include "../include/overworld.h"
@@ -2529,35 +2530,117 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 
 
 //Item Find Show Picture Special (Really Callasm)
+#define ITEM_ICON_X (10 + 16)
+#define ITEM_ICON_Y (8 + 16)
+#define sHeaderBoxWindowId (*((u8*) 0x2039A28)) //Steal coin box Id
+static void ShowObtainedItemDescription(unusedArg u16 itemId)
+{
+	#ifdef ITEM_PICTURE_ACQUIRE
+	struct WindowTemplate template;
+	s16 textX, textY, lineLength, windowHeight, numLines;
+	u8 pocket = GetPocketByItemId(Var8004);
+
+	if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE) //Displayed in the middle of the screen
+	{
+		textX = 2;
+		lineLength = 46;
+	}
+	else
+	{
+		textX = ITEM_ICON_X + 2;
+		lineLength = 38;
+	}
+
+	numLines = ReformatItemDescription(itemId, gStringVar4, lineLength);
+
+	if (numLines == 1)
+	{
+		textY = 4;
+		windowHeight = 3;
+	}
+	else if (numLines >= 3)
+	{
+		textY = 0;
+		windowHeight = 5;
+	}
+	else
+	{
+		textY = 0;
+		windowHeight = 4;
+	}
+
+	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 15, 0x20);
+	sHeaderBoxWindowId = AddWindow(&template);
+	FillWindowPixelBuffer(sHeaderBoxWindowId, PIXEL_FILL(1));
+	PutWindowTilemap(sHeaderBoxWindowId);
+	DrawStdFrameWithCustomTileAndPalette(sHeaderBoxWindowId, FALSE, 0x214, 14);
+	CopyWindowToVram(sHeaderBoxWindowId, 3);
+
+	AddTextPrinterParameterized(sHeaderBoxWindowId, 0, gStringVar4, textX, textY, 0, NULL);
+	GetSetItemObtained(itemId, FLAG_SET_OBTAINED);
+	#endif
+}
+
+
 #define ITEM_TAG 0xFDF3
 void ShowItemSpriteOnFind(void)
 {
-#ifdef ITEM_PICTURE_ACQUIRE
+	#ifdef ITEM_PICTURE_ACQUIRE
+	static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
+	{
+		AFFINEANIMCMD_FRAME(0, 0, 128, 1), //Start rotated left
+		AFFINEANIMCMD_FRAME(16, 16, -8, 16), //Double sprite size + rotate right
+		AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at right 24
+		AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+		AFFINEANIMCMD_FRAME(0, 0, -3, 16), //End at right 24
+		AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+		AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at 0
+		AFFINEANIMCMD_END,
+	};
+	
+	static const union AffineAnimCmd* const sSpriteAffineAnimTable_KeyItemTM[] =
+	{
+		sSpriteAffineAnim_KeyItemTM,
+	};
+
 	s16 x, y;
 	u8 iconSpriteId;
 
-	#ifdef UNBOUND
-		if (Var8004 == ITEM_TM59_DRAGON_PULSE)
-			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
-		else
-	#endif
-			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+	if (Var8004 == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
+		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+	else
+		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
 
 	if (iconSpriteId != MAX_SPRITES)
 	{
 		u8 pocket = GetPocketByItemId(Var8004);
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
-		{ //Double the size of the item and place it in the centre of the screen
+		{ 	//Double the size of the item and place it in the centre of the screen
 			x = 96 + 16;
 			y = 48 + 16;
 			gSprites[iconSpriteId].oam.affineMode = ST_OAM_AFFINE_DOUBLE;
 			gSprites[iconSpriteId].oam.matrixNum = AllocOamMatrix();
-			SetOamMatrixRotationScaling(gSprites[iconSpriteId].oam.matrixNum, 512, 512, 0);
+			gSprites[iconSpriteId].affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+			StartSpriteAffineAnim(&gSprites[iconSpriteId], 0);
+			
+			if (!GetSetItemObtained(Var8004, FLAG_GET_OBTAINED))
+				ShowObtainedItemDescription(Var8004);
 		}
 		else
-		{ //Place the item in the bottom right hand corner of the textbox
-			x = 197 + 16;
-			y = 124 + 16;
+		{
+			if (GetSetItemObtained(Var8004, FLAG_GET_OBTAINED))
+			{
+				//Place the item in the bottom right hand corner of the textbox
+				x = 197 + 16;
+				y = 124 + 16;
+				sHeaderBoxWindowId = 0xFF;
+			}
+			else //Show description
+			{
+				x = ITEM_ICON_X;
+				y = ITEM_ICON_Y;
+				ShowObtainedItemDescription(Var8004);
+			}
 		}
 
 		gSprites[iconSpriteId].pos2.x = x;
@@ -2566,17 +2649,24 @@ void ShowItemSpriteOnFind(void)
 	}
 
 	Var8006 = iconSpriteId;
-#endif
+	#endif
 }
 
 void ClearItemSpriteAfterFind(void)
 {
-#ifdef ITEM_PICTURE_ACQUIRE
+	#ifdef ITEM_PICTURE_ACQUIRE
 	FreeSpriteTilesByTag(ITEM_TAG);
 	FreeSpritePaletteByTag(ITEM_TAG);
 	FreeSpriteOamMatrix(&gSprites[Var8006]);
 	DestroySprite(&gSprites[Var8006]);
-#endif
+	
+	if (sHeaderBoxWindowId != 0xFF) //Description was shown
+	{
+		ClearStdWindowAndFrameToTransparent(sHeaderBoxWindowId, FALSE);
+		CopyWindowToVram(sHeaderBoxWindowId, 2);
+		RemoveWindow(sHeaderBoxWindowId);
+	}
+	#endif
 }
 
 bool8 sp196_TryCopyTMNameToBuffer1(void)

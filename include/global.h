@@ -758,7 +758,7 @@ struct SaveBlock1 //0x202552C
 	/*0x2CC4*/ u16 easyChatBattleLost[6];
 	/*0x2CD0*/ struct MailStruct mail[MAIL_COUNT];
 	/*0x2F10*/ u8 additionalPhrases[EASY_CHAT_EXTRA_PHRASES_SIZE];
-	/*0x2F18*/ u8 filler_2F18[0x68];
+	/*0x2F18*/ u8 itemObtainedFlags[0x68]; //Can go up to item Id 832
 	/*0x2F80*/ struct DayCare daycare;
 	/*0x309C*/ u8 giftRibbons[52];
 	/*0x30D0*/ struct RoamerOld roamer;

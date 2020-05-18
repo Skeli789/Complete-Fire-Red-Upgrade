@@ -182,6 +182,79 @@ u8 BerryIdFromItemId(u16 item)
 	return item - ITEM_CHERI_BERRY;
 }
 
+bool8 GetSetItemObtained(u16 item, u8 caseId)
+{
+	u8 index;
+	u8 bit;
+	u8 mask;
+	
+	index = item / 8;
+	bit = item % 8;
+	mask = 1 << bit;
+	switch (caseId)
+	{
+		case FLAG_GET_OBTAINED:
+			return gSaveBlock1->itemObtainedFlags[index] & mask;
+		case FLAG_SET_OBTAINED:
+			gSaveBlock1->itemObtainedFlags[index] |= mask;
+	}
+ 
+	return FALSE;
+}
+
+u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxChars)
+{
+	u8 count = 0;
+	u8 k = 0;
+	u8 numLines = 1;
+	u8 buffer[150];
+	u8 *desc;
+	
+	desc = ItemId_GetDescription(itemId);
+	StringExpandPlaceholders(buffer, desc);
+
+	while (buffer[k] != EOS)
+	{        
+		if (count >= maxChars)
+		{
+			while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE)
+			{
+				dest--; //Go to end of previous word
+				k--;
+			}
+
+			if (buffer[k + 1] != EOS) //String will continue on another line
+			{
+				*dest = CHAR_NEWLINE;
+				numLines++;
+			}
+
+			count = 0;
+			dest++;
+			k++;
+			continue;
+		}
+
+		*dest = buffer[k];
+		if (buffer[k] == CHAR_NEWLINE)
+		{
+			if (buffer[k - 1] != CHAR_SPACE) //Don't double space
+				*dest = CHAR_SPACE;
+			else
+				dest--; //Don't change curr position
+		}
+
+		dest++;
+		k++;
+		count++;
+	}
+
+	// finish string
+	*dest = EOS;
+
+	return numLines;
+}
+
 //////////////////////////TM + HMs////////////////////////////////////////////////
 #ifdef EXPANDED_TMSHMS
 	typedef u32 TM_HM_T[4]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
