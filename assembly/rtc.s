@@ -28,8 +28,15 @@ rtc.s
 
 */
 
-.global RealTimeClock
+@For if the time can't be read
+.equ DEFAULT_YEAR, 2009
+.equ DEFAULT_MONTH, 6
+.equ DEFAULT_DAY, 26
+.equ DEFAULT_DAY_OF_WEEK, 1
+.equ DEFAULT_HOUR, 12
+.equ DEFAULT_MINUTE, 0
 
+.global RealTimeClock
 RealTimeClock:
 	bl callRTC
 	ldr r0, .ClockArea
@@ -45,7 +52,7 @@ jump_r3:
 	mov pc, r3
 
 .align 2
-.ClockArea: .word 0x03003530
+.ClockArea: .word gSoftResetDisabled
 .word 0x8000445
 
 .pool
@@ -267,17 +274,19 @@ doFuncs2:
 	ldr r0, .Word3005504
 	ldr r0, [r0]
 	cmp r0, #0x0
-	bne otherFuncs2
-	mov r1, #0x0
-	ldr r0, .Word7D9
+	bne SetActualTime
+
+SetDefaultTime:
+	mov r1, #DEFAULT_MINUTE
+	ldr r0, .DefaultYear
 	strh r0, [r5]
-	mov r0, #0x6
+	mov r0, #DEFAULT_MONTH
 	strb r0, [r5, #0x2]
-	mov r0, #0x1a
+	mov r0, #DEFAULT_DAY
 	strb r0, [r5, #0x3]
-	mov r0, #0x1
+	mov r0, #DEFAULT_DAY_OF_WEEK
 	strb r0, [r5, #0x4]
-	mov r0, #0xc
+	mov r0, #DEFAULT_HOUR
 	strb r0, [r5, #0x5]
 	strb r1, [r5, #0x6]
 	strb r1, [r5, #0x7]
@@ -288,9 +297,9 @@ doFuncs2:
 	nop
 
 .Word3005504: .word 0x3005504
-.Word7D9: .word 0x7D9
+.DefaultYear: .word DEFAULT_YEAR
 
-otherFuncs2:
+SetActualTime:
 	mov r0, sp
 	bl timer3
 	mov r0, sp
@@ -403,7 +412,7 @@ skipOver:
 	nop
 	nop
 
-.word 0x0300553D
+.word gClock + 1
 
 callRTC:
 	push {lr}
@@ -551,4 +560,4 @@ lsl r0, #0x0
 .align 2
 .B00000Jump: .word 0x8000445 @.word 0x0B0101C - Mistake in Original
 .B000000Jump2: .word 0x80000C6 @0x0B01148 - Mistake in Original
-.Word300553D: .word 0x0300553D
+.Word300553D: .word gClock + 1

@@ -14,6 +14,7 @@ sStartMenuOpen = 0x203E054;
 sPrintedRTCWarning = 0x203E055;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
+gClock = 0x300553C;
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
@@ -270,6 +271,7 @@ sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
+gSoftResetDisabled = 0x03003530;
 gLocalLinkPlayerId = 0x300502C;
 gTotalCameraPixelOffsetY = 0x3005068;
 gTotalCameraPixelOffsetX = 0x300506C;
