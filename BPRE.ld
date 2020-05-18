@@ -11,6 +11,7 @@ gNewBS = 0x203E038;
 gInShop = 0x203E043;
 sItemDescriptionPocket = 0x203E053;
 sStartMenuOpen = 0x203E054;
+sPrintedRTCWarning = 0x203E055;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
 
@@ -1340,6 +1341,7 @@ InUnionRoom = 0x811B0D0 | 1;
 PrintTextOnHelpMessageWindow = 0x8113018 | 1;
 
 /* Save State Functions */
+PrintSaveErrorStatus = 0x800C634 | 1;
 SaveSerializedGame = 0x804C300 | 1;
 IncrementGameStat = 0x8054E90 | 1;
 GetGameStat = 0x8054EC4 | 1;

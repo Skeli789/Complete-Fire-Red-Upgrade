@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/menu_helpers.h"
 #include "../include/save.h"
 #include "../include/constants/vars.h"
 
@@ -18,7 +19,7 @@ extern struct SaveSection gSaveDataBuffer;
 #define parasiteSize 0xEC4
 
 // old 0x080DA23C table changes
-const struct SaveSectionOffset SaveSectionOffsets[] =
+const struct SaveSectionOffset gSaveSectionOffsets[] =
 {
 	{SECTOR_DATA_SIZE * 0, 0xF24}, // saveblock2
 	// 0xCC byes saved
@@ -42,13 +43,15 @@ const struct SaveSectionOffset SaveSectionOffsets[] =
 };
 
 /* Any save sector that isn't full, we'll plop our data of these sizes in there */
-static const u16 SaveBlockParasiteSizes[3] =
+static const u16 sSaveBlockParasiteSizes[3] =
 {
 	SECTOR_DATA_SIZE - 0xF24, // 0xCC
 	SECTOR_DATA_SIZE - 0xD98, // 0x258
 	SECTOR_DATA_SIZE - 0x450, // 0xBA0
 };
 
+//Old vanilla functions:
+void __attribute__((long_call)) PrintSaveErrorStatus(u8 taskId, const u8 *str);
 
 //This file's functions:
 static void LoadSector30And31();
@@ -99,62 +102,63 @@ static u8 SaveSector30And31()
 /* This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector */
 static void SaveParasite()
 {
-	struct SaveSection* s = gFastSaveSection;
+	struct SaveSection* sector = gFastSaveSection;
 	u32 size = 0;
 	u32* data = NULL;
-	u32* parasiteP1 = (u32*)gSaveBlockParasite;
-	u32* parasiteP2 = (u32*)(gSaveBlockParasite + SaveBlockParasiteSizes[0]);
-	u32* parasiteP3 = (u32*)(gSaveBlockParasite + SaveBlockParasiteSizes[0] + SaveBlockParasiteSizes[1]);
+	u32* parasiteP1 = (u32*) gSaveBlockParasite;
+	u32* parasiteP2 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0]);
+	u32* parasiteP3 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]);
 
-	switch (s->id) {
+	switch (sector->id) {
 		case 0:
 			data = parasiteP1;
-			size = SaveBlockParasiteSizes[0];
+			size = sSaveBlockParasiteSizes[0];
 			break;
 		case 4:
 			data = parasiteP2;
-			size = SaveBlockParasiteSizes[1];
+			size = sSaveBlockParasiteSizes[1];
 			break;
 		case 13:
 			data = parasiteP3;
-			size = SaveBlockParasiteSizes[2];
-			break;
-		default:
-			return;
-	};
-	u16 index = SECTOR_DATA_SIZE - size;
-	Memcpy(&(s->data[index]), (u32*)data, size);
-}
-
-
-static void LoadParasite()
-{
-	struct SaveSection* s = gFastSaveSection;
-	u32 size = 0;
-	u32* data = NULL;
-	u32* parasiteP1 = (u32*)gSaveBlockParasite;
-	u32* parasiteP2 = (u32*)(gSaveBlockParasite + SaveBlockParasiteSizes[0]); //b240
-	u32* parasiteP3 = (u32*)(gSaveBlockParasite + SaveBlockParasiteSizes[0] + SaveBlockParasiteSizes[1]); //b496
-
-	switch (s->id) {
-		case 0:
-			data = parasiteP1;
-			size = SaveBlockParasiteSizes[0];
-			break;
-		case 4:
-			data = parasiteP2;
-			size = SaveBlockParasiteSizes[1];
-			break;
-		case 13:
-			data = parasiteP3;
-			size = SaveBlockParasiteSizes[2];
+			size = sSaveBlockParasiteSizes[2];
 			break;
 		default:
 			return;
 	}
 
 	u16 index = SECTOR_DATA_SIZE - size;
-	Memcpy(data, &(s->data[index]), size);
+	Memcpy(&sector->data[index], (u32*) data, size);
+}
+
+
+static void LoadParasite()
+{
+	struct SaveSection* sector = gFastSaveSection;
+	u32 size = 0;
+	u32* data = NULL;
+	u32* parasiteP1 = (u32*) gSaveBlockParasite;
+	u32* parasiteP2 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0]); //b240
+	u32* parasiteP3 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]); //b496
+
+	switch (sector->id) {
+		case 0:
+			data = parasiteP1;
+			size = sSaveBlockParasiteSizes[0];
+			break;
+		case 4:
+			data = parasiteP2;
+			size = sSaveBlockParasiteSizes[1];
+			break;
+		case 13:
+			data = parasiteP3;
+			size = sSaveBlockParasiteSizes[2];
+			break;
+		default:
+			return;
+	}
+
+	u16 index = SECTOR_DATA_SIZE - size;
+	Memcpy(data, &sector->data[index], size);
 }
 
 // 080D9E54
@@ -282,6 +286,35 @@ u8 HandleSavingData(u8 saveType)
 void NewGameWipeNewSaveData(void)
 {
 	Memset((void*) gSaveBlockParasite, 0, 0x2EA4);
+}
+
+static void Task_SaveErrorStatus_RunPrinter(unusedArg u8 taskId)
+{
+	if (!gPaletteFade->active)
+		RunTextPrinters();
+}
+
+void PrintChangeSaveTypeErrorStatus(u8 taskId, const u8* str)
+{
+	PrintSaveErrorStatus(taskId, str);
+	gTasks[taskId].func = Task_SaveErrorStatus_RunPrinter; //Override normal
+}
+
+extern const u8 gText_MainMenuEnableRTC[];
+extern bool8 sPrintedRTCWarning;
+bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
+{
+	#ifdef TIME_ENABLED
+	if (Clock->year < 2020 && !sPrintedRTCWarning)
+	{
+		sPrintedRTCWarning = TRUE;
+		PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
+		gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
+		return TRUE;
+	}
+	#endif
+	
+	return FALSE;
 }
 
 u8* GetExpandedFlagPointer(u16 id)

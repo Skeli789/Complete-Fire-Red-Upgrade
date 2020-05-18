@@ -277,6 +277,11 @@ NewGameSaveClearHook 8054A60 0
 ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
+##Main Menu Hooks
+MainMenuBadSaveTypeMsgHook 800C61C 0
+MainMenuRTCWarningHook1 800C718 1
+MainMenuRTCWarningHook2 800C7A4 1
+
 ##Other Hooks
 CalculateMonStatsNew 803E47C 1
 SetMonHeldItemHook 8040784 2

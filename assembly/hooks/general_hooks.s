@@ -1127,3 +1127,51 @@ OpenPartyScreenBatonPassExplosionFix:
 OpenPartyScreenBatonPassExplosionFixReturn:
 	ldr r0, =0x8024C20 | 1
 	bx r0
+
+.pool
+@0x800C61C with r0
+MainMenuBadSaveTypeMsgHook:
+	strh r6, [r1, #0x8]
+	mov r0, r5
+	ldr r1, =gText_ChangeSaveType
+	bl PrintChangeSaveTypeErrorStatus
+	pop {r4-r6, pc}
+
+.pool
+@0x0800C718 with r1
+MainMenuRTCWarningHook1:
+	mov r0, r4
+	bl TryDisplayMainMenuRTCWarning
+	cmp r0, #0x0
+	bne MainMenuRTCWarningHook_WaitMsg
+	mov r0, #0x40
+	mov r1, #0x0
+	ldr r2, =SetGpuReg
+	bl bxr2
+	mov r0, #0x44
+	ldr r1, =0x800C720 | 1
+	bx r1
+
+MainMenuRTCWarningHook_WaitMsg:
+	ldr r0, =0x800C774 | 1
+	bx r0
+
+.pool
+@0x0800C7A4 with r1
+MainMenuRTCWarningHook2:
+	push {r7}
+	sub sp, #0x10
+	lsl r0, r0, #0x18
+	lsr r7, r0, #0x18
+	bl TryDisplayMainMenuRTCWarning
+	cmp r0, #0x0
+	bne MainMenuRTCWarningHook_WaitMsg2
+	ldr r0, =0x800C7AC | 1
+	bx r0
+
+MainMenuRTCWarningHook_WaitMsg2:
+	ldr r0, =0x0800C9A2 | 1
+	bx r0
+
+
+	

@@ -1,3 +1,9 @@
+#org @gText_ChangeSaveType
+WRONG SAVE TYPE!\nPlease change to Flash 128k.
+
+#org @gText_MainMenuEnableRTC
+WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.
+
 #org @gText_UsedVar2WildStronger
 [BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]
 

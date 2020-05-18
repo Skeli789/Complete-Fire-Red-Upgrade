@@ -42,7 +42,7 @@ gExperienceTables 081569E8
 gExperienceTables 08156B14
 gExperienceTables 08156C24
 
-SaveSectionOffsets 080DA23C
+gSaveSectionOffsets 080DA23C
 
 gStatusConditionStringsTable 080D7850
 
