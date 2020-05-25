@@ -934,7 +934,7 @@ static bool8 SetUpFieldMove_Waterfall(void)
 		return FALSE;
 
 	GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
-	if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) == TRUE && IsPlayerSurfingNorth() == TRUE)
+	if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) == TRUE && IsPlayerSurfingNorthOrSouth() == TRUE)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = (void*) 0x8124ADD;
@@ -1096,7 +1096,7 @@ void sp103_IsPlayerFacingClimbableWaterfall(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
 		return;
 
-	gSpecialVar_LastResult = MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) && IsPlayerSurfingNorth();
+	gSpecialVar_LastResult = MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) && IsPlayerSurfingNorthOrSouth();
 }
 
 void sp104_IsPlayerOnDiveableWater(void)

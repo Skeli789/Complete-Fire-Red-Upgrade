@@ -1872,7 +1872,6 @@ static void SpawnPointerArrow(void)
 }
 
 
-#define MAP_IS(map) (gSaveBlock1->location.mapGroup == MAP_GROUP(map) && gSaveBlock1->location.mapNum == MAP_NUM(map))
 static void DexNavLoadAreaNames(void)
 {
 	const u8* landText;

@@ -323,27 +323,27 @@ void DNSBattleBGPalFade(void)
 }
 #endif
 
-bool8 IsDayTime()
+bool8 IsDayTime(void)
 {
 	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
 }
 
-bool8 IsOnlyDayTime()
+bool8 IsOnlyDayTime(void)
 {
 	return Clock->hour >= TIME_DAY_START && Clock->hour < TIME_EVENING_START;
 }
 
-bool8 IsNightTime()
+bool8 IsNightTime(void)
 {
 	return Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START;
 }
 
-bool8 IsMorning()
+bool8 IsMorning(void)
 {
 	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_DAY_START;
 }
 
-bool8 IsEvening()
+bool8 IsEvening(void)
 {
 	return Clock->hour >= TIME_EVENING_START && Clock->hour < TIME_NIGHT_START;
 }

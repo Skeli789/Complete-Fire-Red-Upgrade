@@ -2,6 +2,26 @@
 
 #define NUM_FIELD_OBJECTS 16
 
+#define METATILE_COLLISION_MASK 0x0C00
+#define METATILE_ID_MASK 0x03FF
+#define METATILE_ID_UNDEFINED 0x03FF
+#define METATILE_ELEVATION_SHIFT 12
+#define METATILE_COLLISION_SHIFT 10
+#define METATILE_ELEVATION_MASK 0xF000
+
+enum
+{
+    METATILE_ATTRIBUTE_BEHAVIOR,
+    METATILE_ATTRIBUTE_TERRAIN,
+    METATILE_ATTRIBUTE_2,
+    METATILE_ATTRIBUTE_3,
+    METATILE_ATTRIBUTE_ENCOUNTER_TYPE,
+    METATILE_ATTRIBUTE_5,
+    METATILE_ATTRIBUTE_LAYER_TYPE,
+    METATILE_ATTRIBUTE_7,
+    METATILE_ATTRIBUTE_COUNT,
+};
+
 // mapConnection
 enum
 {
@@ -28,20 +48,6 @@ enum
 	MAP_TYPE_SECRET_BASE
 };
 
-// map battle scenes
-enum
-{
-	MAP_BATTLE_SCENE_NORMAL,	   // 0
-	MAP_BATTLE_SCENE_GYM,		  // 1
-	MAP_BATTLE_SCENE_MAGMA,		// 2
-	MAP_BATTLE_SCENE_AQUA,		 // 3
-	MAP_BATTLE_SCENE_SIDNEY,	   // 4
-	MAP_BATTLE_SCENE_PHOEBE,	   // 5
-	MAP_BATTLE_SCENE_GLACIA,	   // 6
-	MAP_BATTLE_SCENE_DRAKE,		// 7
-	MAP_BATTLE_SCENE_BATTLE_TOWER, // 8
-};
-
 typedef void (*TilesetCB)(void);
 
 struct Tileset
@@ -51,8 +57,8 @@ struct Tileset
 	/*0x04*/ void *tiles;
 	/*0x08*/ void *palettes;
 	/*0x0c*/ void *metatiles;
-	/*0x10*/ void *metatileAttributes;
-	/*0x14*/ TilesetCB callback;
+	/*0x10*/ TilesetCB callback;
+	/*0x14*/ void *metatileAttributes;
 };
 
 struct MapLayout
@@ -63,20 +69,26 @@ struct MapLayout
 	/*0x0c*/ u16 *map;
 	/*0x10*/ struct Tileset *primaryTileset;
 	/*0x14*/ struct Tileset *secondaryTileset;
+	/*0x18*/ u8 borderWidth;
+	/*0x19*/ u8 borderHeight;
 };
 
-typedef struct MapData MapLayout;
-
-struct BackupMapData
+struct BackupMapLayout
 {
 	s32 width;
 	s32 height;
 	u16 *map;
 };
 
-typedef struct BackupMapData BackupMapLayout;
+union __attribute__((packed)) EventObjectRange {
+    u8 as_byte;
+    struct __attribute__((packed)) {
+        u8 x:4;
+        u8 y:4;
+    } __attribute__((aligned (1))) as_nybbles;
+} __attribute__((aligned (1)));
 
-struct MapObjectTemplate
+struct EventObjectTemplate
 {
 	/*0x00*/ u8 localId;
 	/*0x01*/ u8 graphicsIdLowerByte;
@@ -96,8 +108,6 @@ struct MapObjectTemplate
 	/*0x16*/ u16 flagId2;
 };  /*size = 0x18*/
 
-#define EventObjectTemplate MapObjectTemplate
-
 struct WarpEvent
 {
 	s16 x, y;
@@ -109,35 +119,41 @@ struct WarpEvent
 
 struct CoordEvent
 {
-	s16 x, y;
-	u8 elevation;
-	u8 filler_5;
-	u16 trigger;
-	u16 index;
-	u8 filler_A[0x2];
-	u8 *script;
+    u16 x, y;
+    u8 elevation;
+    u16 trigger;
+    u16 index;
+    u8 *script;
+};
+
+struct HiddenItemStruct
+{
+    u16 itemId;
+    u8 hiddenItemId; // flag offset to determine flag lookup
+    u8 quantity:7;
+    u8 isUnderfoot:1;
+};
+
+union BgUnion
+{ // carried over from diego's FR/LG work, seems to be the same struct
+    // in gen 3, "kind" (0x3 in BgEvent struct) determines the method to read the union.
+    u8 *script;
+
+    // hidden item type probably
+    struct HiddenItemStruct hiddenItemStr;
+    u32 hiddenItem;
+
+    // secret base type
+    u32 secretBaseId;
 };
 
 struct BgEvent
 {
-	u16 x, y;
-	u8 unk4;
-	u8 kind;
-	// 0x2 padding for the union beginning.
-	union { // carried over from diego's FR/LG work, seems to be the same struct
-		// in gen 3, "kind" (0x3 in BgEvent struct) determines the method to read the union.
-		u8 *script;
-
-		// hidden item type
-		struct {
-			u16 item;
-			u16 hiddenItemId; // flag offset to determine flag lookup
-		} hiddenItem;
-
-		// secret base type
-		u32 secretBaseId;
-
-	} bgUnion;
+    u16 x, y;
+    u8 elevation;
+    u8 kind;
+    // 0x2 padding for the union beginning.
+    union BgUnion bgUnion;
 };
 
 struct MapEvents
@@ -147,7 +163,7 @@ struct MapEvents
 	u8 coordEventCount;
 	u8 bgEventCount;
 
-	struct MapObjectTemplate *eventObjects;
+	struct EventObjectTemplate *eventObjects;
 	struct WarpEvent *warps;
 	struct CoordEvent *coordEvents; //Script
 	struct BgEvent *bgEvents; //Signpost
@@ -155,10 +171,10 @@ struct MapEvents
 
 struct MapConnection
 {
- /*0x00*/ u8 direction;
- /*0x01*/ u32 offset;
- /*0x05*/ u8 mapGroup;
- /*0x06*/ u8 mapNum;
+	/*0x00*/ u8 direction;
+	/*0x01*/ u32 offset;
+	/*0x05*/ u8 mapGroup;
+	/*0x06*/ u8 mapNum;
 };
 
 struct MapConnections
@@ -179,13 +195,21 @@ struct MapHeader
 	/* 0x15 */ u8 cave;
 	/* 0x16 */ u8 weather;
 	/* 0x17 */ u8 mapType;
-	/* 0x18 */ u8 isBikeable;
-	/* 0x19 */ u8 escapeRope;
-	/* 0x1A */ u8 flags;
+	/* 0x18 */ u8 bikingAllowed;
+	/* 0x19 */ u8 flags;
+	/* 0x1A */ u8 floorNum;
 	/* 0x1B */ u8 battleType;
 };
 
-struct MapObject
+// Flags for gMapHeader.flags, as defined in the map_header_flags macro
+#define MAP_ALLOW_ESCAPE_ROPE  (1 << 0) //1
+#define MAP_ALLOW_RUN          (1 << 1) //2
+#define MAP_SHOW_MAP_NAME      (1 << 2) //4
+#define UNUSED_MAP_FLAGS       (1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7)
+
+#define SHOW_MAP_NAME_ENABLED  ((gMapHeader.flags & (MAP_SHOW_MAP_NAME | UNUSED_MAP_FLAGS)) == MAP_SHOW_MAP_NAME)
+
+struct EventObject
 {
 	/*0x00*/ u32 active:1;
 			 u32 singleMovementActive:1;
@@ -214,7 +238,7 @@ struct MapObject
 	/*0x03*/ u32 spriteAffineAnimPausedBackup:1;
 			 u32 disableJumpLandingGroundEffect:1;
 			 u32 fixedPriority:1;
-			 u32 unk3_3:1;
+			 u32 hideReflection:1;
 	/*0x04*/ u8 spriteId;
 	/*0x05*/ u8 graphicsIdLowerByte;
 	/*0x06*/ u8 movementType;
@@ -249,9 +273,7 @@ struct MapObject
 	/*size = 0x24*/
 };
 
-#define EventObject MapObject
-
-struct MapObjectGraphicsInfo
+struct EventObjectGraphicsInfo
 {
 	/*0x00*/ u16 tileTag;
 	/*0x02*/ u16 paletteTag1;
@@ -272,17 +294,15 @@ struct MapObjectGraphicsInfo
 	/*0x20*/ const union AffineAnimCmd *const *affineAnims;
 };
 
-#define EventObjectGraphicsInfo MapObjectGraphicsInfo
-
 enum
 {
-    PLAYER_AVATAR_STATE_NORMAL,
-    PLAYER_AVATAR_STATE_BIKE,
-    PLAYER_AVATAR_STATE_SURFING,
-    PLAYER_AVATAR_STATE_FIELD_MOVE,
-    PLAYER_AVATAR_STATE_FISHING,
-    PLAYER_AVATAR_STATE_FIELD_MOVE_2,
-    PLAYER_AVATAR_STATE_UNDERWATER,
+	PLAYER_AVATAR_STATE_NORMAL,
+	PLAYER_AVATAR_STATE_BIKE,
+	PLAYER_AVATAR_STATE_SURFING,
+	PLAYER_AVATAR_STATE_FIELD_MOVE,
+	PLAYER_AVATAR_STATE_FISHING,
+	PLAYER_AVATAR_STATE_FIELD_MOVE_2,
+	PLAYER_AVATAR_STATE_UNDERWATER,
 };
 
 #define PLAYER_AVATAR_FLAG_ON_FOOT    (1 << 0)
@@ -290,8 +310,8 @@ enum
 #define PLAYER_AVATAR_FLAG_ACRO_BIKE  (1 << 2)
 #define PLAYER_AVATAR_FLAG_SURFING    (1 << 3)
 #define PLAYER_AVATAR_FLAG_UNDERWATER (1 << 4)
-#define PLAYER_AVATAR_FLAG_5		  (1 << 5)
-#define PLAYER_AVATAR_FLAG_6		  (1 << 6)
+#define PLAYER_AVATAR_FLAG_FIELD_MOVE (1 << 5)
+#define PLAYER_AVATAR_FLAG_FISHING	  (1 << 6)
 #define PLAYER_AVATAR_FLAG_DASH	      (1 << 7)
 
 #define PLAYER_AVATAR_FLAG_BIKE (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE)
@@ -322,7 +342,21 @@ enum
 
 enum
 {
-	COLLISION_LEDGE_JUMP = 6
+	COLLISION_NONE,
+	COLLISION_OUTSIDE_RANGE,
+	COLLISION_IMPASSABLE,
+	COLLISION_ELEVATION_MISMATCH,
+	COLLISION_EVENT_OBJECT,
+	COLLISION_STOP_SURFING,
+	COLLISION_LEDGE_JUMP,
+	COLLISION_PUSHED_BOULDER,
+	COLLISION_UNKNOWN_WARP_6C_6D_6E_6F,
+	COLLISION_WHEELIE_HOP,
+	COLLISION_ISOLATED_VERTICAL_RAIL,
+	COLLISION_ISOLATED_HORIZONTAL_RAIL,
+	COLLISION_VERTICAL_RAIL,
+	COLLISION_HORIZONTAL_RAIL,
+	COLLISION_COUNT
 };
 
 // player running states
@@ -344,7 +378,7 @@ enum
 struct PlayerAvatar /* 0x02037078 */
 {
 	/*0x00*/ u8 flags;
-	/*0x01*/ u8 unk1; // used to be named bike, but its definitely not that. seems to be some transition flags
+	/*0x01*/ u8 transitionFlags; // used to be bike, but it's not that in Emerald and probably isn't here either
 	/*0x02*/ u8 runningState; // this is a static running state. 00 is not moving, 01 is turn direction, 02 is moving.
 	/*0x03*/ u8 tileTransitionState; // this is a transition running state: 00 is not moving, 01 is transition between tiles, 02 means you are on the frame in which you have centered on a tile but are about to keep moving, even if changing directions. 2 is also used for a ledge hop, since you are transitioning.
 	/*0x04*/ u8 spriteId;
@@ -360,7 +394,7 @@ struct PlayerAvatar /* 0x02037078 */
 	/*0x10*/ u32 abStartSelectHistory; // same as above but for A + B + start + select only
 	// these two are timer history arrays which [0] is the active timer for acro bike. every element is backed up to the next element upon update.
 	/*0x14*/ u8 dirTimerHistory[8];
-	/*0x1C*/ u8 abStartSelectTimerHistory[8];
+	/*0x1C*/ u16 lastSpinTile; // For the Rocket mazes
 };
 
 struct Camera
@@ -370,10 +404,9 @@ struct Camera
 	s32 y;
 };
 
-extern struct MapObject gMapObjects[NUM_FIELD_OBJECTS];
-extern struct MapObject gEventObjects[NUM_FIELD_OBJECTS];
-extern u8 gSelectedMapObject;
+extern struct EventObject gEventObjects[NUM_FIELD_OBJECTS];
+extern struct EventObject gEventObjects[NUM_FIELD_OBJECTS];
+extern u8 gSelectedEventObject;
 extern struct MapHeader gMapHeader;
 extern struct PlayerAvatar gPlayerAvatar;
 extern struct Camera gCamera;
-

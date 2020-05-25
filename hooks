@@ -168,6 +168,7 @@ CheckForTrainersWantingBattle 8081B30 0
 CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 ReplaceOWSandstormPaletteHook 807D5F0 0
+Waterfall3_MovePlayer 8084DA4 2
 SetCutGrassMetatile 8097B50 2
 BikeTurboBoostHook 80BD338 0
 GetPlayerSpeed 80BD674 0

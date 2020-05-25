@@ -174,6 +174,7 @@ SystemScript_WaitForFollower:
 .global SystemScript_FindItemMessage
 SystemScript_FindItemMessage:
 	hidesprite LASTTALKED
+	pause 0x1
 	callasm ShowItemSpriteOnFind
 	additem 0x8004 0x8005
 	special2 LASTRESULT 0x196

@@ -33,6 +33,7 @@ bool8 InTanobyRuins(void);
 void PlayGrassFootstepNoise(void);
 void PlaySandFootstepNoise(void);
 const u8* LoadProperWhiteoutString(const u8* string);
+bool8 IsPlayerSurfingNorthOrSouth(void);
 bool8 IsPlayerFacingRockClimbableWall(void);
 void ShouldRockClimbContinue(void);
 void ShouldRockClimbContinueDiagonally(void);

@@ -147,6 +147,7 @@
 #define MAPSEC_FROST_MOUNTAIN				0x82
 #define MAPSEC_BLIZZARD_CITY				0x5C
 #define MAPSEC_FROZEN_FOREST				0x99
+#define MAPSEC_FROZEN_TOMB					0xC2
 #define MAPSEC_ROUTE_9						0x6D
 #define MAPSEC_TEHL_TOWN					0x5D
 #define MAPSEC_UNDERGROUND_PASS				0x81
@@ -172,6 +173,7 @@
 #define MAPSEC_ROUTE_14						0x72
 #define MAPSEC_GREAT_DESERT					0x7B
 #define MAPSEC_TOMB_OF_BORRIUS				0x
+#define MAPSEC_DESERT_RUINS                 0xC1
 #define MAPSEC_GURUN_TOWN					0x7A
 #define MAPSEC_VIVILL_WOODS					0x8C
 #define MAPSEC_VIVILL_TOWN					0x79
@@ -193,6 +195,7 @@
 #define MAPSEC_MAGNOLIA_TOWN				0x91
 #define MAPSEC_REDWOOD_VILLAGE				0x92
 #define MAPSEC_ROUTE_18                     0x76
+#define MAPSEC_ISLAND_CAVE					0xC3
 #define MAPSEC_VICTORY_ROAD                 0x84
 
 #define MAPSEC_HIDDEN_GROTTO				0x80

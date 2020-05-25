@@ -249,7 +249,7 @@ bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move)
 
 bool8 CheckGrounding(u8 bank)
 {
-	if (gStatuses3[bank] & STATUS3_IN_AIR)
+	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
 
 	if (IsGravityActive()
@@ -270,7 +270,7 @@ bool8 CheckGrounding(u8 bank)
 
 bool8 NonInvasiveCheckGrounding(u8 bank)
 {
-	if (gStatuses3[bank] & STATUS3_IN_AIR)
+	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
 
 	if (IsGravityActive()

@@ -7,6 +7,7 @@
 
 #define MAP_GROUP(map) (MAP_##map >> 8)
 #define MAP_NUM(map) (MAP_##map & 0xFF)
+#define MAP_IS(map) (gSaveBlock1->location.mapGroup == MAP_GROUP(map) && gSaveBlock1->location.mapNum == MAP_NUM(map))
 
 #define MAP(map) MAP_GROUP(map), MAP_NUM(map)
 
@@ -610,6 +611,16 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_CINDER_VOLCANO_SHADOW_F1 	((6 << 8) | 12)
 #define MAP_CINDER_VOLCANO_SHADOW_B1F 	((1 << 8) | 51)
 #define MAP_CINDER_VOLCANO_SHADOW_B2F	((1 << 8) | 52)
+
+#define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
+#define MAP_VICTORY_ROAD_CAVE_B       ((55 << 8) | 1)
+#define MAP_VICTORY_ROAD_VOLCANO      ((55 << 8) | 2)
+#define MAP_VICTORY_ROAD_CAVE_C       ((55 << 8) | 3)
+#define MAP_VICTORY_ROAD_GRASSY       ((55 << 8) | 4)
+#define MAP_VICTORY_ROAD_CAVE_D       ((55 << 8) | 5)
+#define MAP_VICTORY_ROAD_MOUNTAINSIDE ((55 << 8) | 6)
+#define MAP_VICTORY_ROAD_ICE_CAVE_A   ((55 << 8) | 7)
+#define MAP_VICTORY_ROAD_ICE_CAVE_B   ((55 << 8) | 8)
 
 //Interior
 #define MAP_PLAYER_ROOM 		((4 << 8) | 1)

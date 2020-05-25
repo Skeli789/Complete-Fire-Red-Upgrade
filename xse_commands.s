@@ -1491,3 +1491,12 @@
 .hword \var, \val
 .word \script
 .endm
+
+.macro switch var:req
+	copyvar 0x8000, \var
+.endm
+
+.macro case condition:req, dest:req
+	compare 0x8000, \condition
+	if equal _goto \dest
+.endm

@@ -662,9 +662,7 @@ void atk52_switchineffects(void)
 			if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0
 			&& CheckGrounding(gActiveBattler))
 			{
-				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
+				if (IsOfType(gActiveBattler, TYPE_POISON))
 				{
 					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
 					BattleScriptPushCursor();

@@ -332,7 +332,7 @@ void InitPlayerAvatar(s16 x, s16 y, u8 direction, u8 gender)
 	gPlayerAvatar->eventObjectId = eventObjectId;
 	gPlayerAvatar->spriteId = eventObject->spriteId;
 	gPlayerAvatar->gender = gender;
-	SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_5 | PLAYER_AVATAR_FLAG_ON_FOOT);
+	SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_FIELD_MOVE | PLAYER_AVATAR_FLAG_ON_FOOT);
 	CreateFollowerAvatar();
 }
 

@@ -1399,7 +1399,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 
 	UpdateHappinessStepCounter();
 	UpdateJPANStepCounters();
-	if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_6) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
+	if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_FISHING) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
 	{
 		if (CheckVSSeeker() == TRUE)
 		{
@@ -1592,7 +1592,7 @@ bool8 Overworld_IsBikingAllowed(void)
 	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
 		return FALSE;
 
-	return gMapHeader.isBikeable
+	return gMapHeader.bikingAllowed
 #ifdef BIKE_ON_ANY_NON_INSIDE_MAP
 	|| !IsMapTypeIndoors(GetCurrentMapType());
 #endif
@@ -1667,7 +1667,6 @@ void MoveOnBike(u8 direction)
 	#endif
 	else
 		PlayerRideWaterCurrent(direction);
-
 }
 
 bool8 CanUseEscapeRopeOnCurrMap(void)
@@ -1675,7 +1674,7 @@ bool8 CanUseEscapeRopeOnCurrMap(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
 		return FALSE;
 
-	return (gMapHeader.escapeRope & 1) != 0;
+	return (gMapHeader.flags & MAP_ALLOW_ESCAPE_ROPE) != 0;
 }
 
 bool8 MetatileBehavior_IsMuddySlope(u8 metatileBehavior)
@@ -1810,7 +1809,9 @@ bool8 UpdateRepelCounter(void)
 bool8 IsCurrentAreaVolcano(void)
 {
 	#ifdef UNBOUND
-		return GetCurrentRegionMapSectionId() == MAPSEC_CINDER_VOLCANO;
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_CINDER_VOLCANO
+			|| (mapSec == MAPSEC_VICTORY_ROAD && MAP_IS(VICTORY_ROAD_VOLCANO));
 	#else
 		return FALSE;
 	#endif
@@ -1838,7 +1839,9 @@ bool8 IsCurrentAreaWinter(void)
 			|| mapSec == MAPSEC_BELLIN_TOWN
 			|| mapSec == MAPSEC_ROUTE_8
 			|| mapSec == MAPSEC_BLIZZARD_CITY
-			|| mapSec == MAPSEC_FROZEN_FOREST;
+			|| mapSec == MAPSEC_FROZEN_FOREST
+			|| (mapSec == MAPSEC_VICTORY_ROAD
+			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE));
 	#else
 		return FALSE;
 	#endif
@@ -1868,7 +1871,16 @@ bool8 IsCurrentAreaDarkerCave(void)
 			|| mapSec == MAPSEC_VALLEY_CAVE
 			|| mapSec == MAPSEC_FROST_MOUNTAIN
 			|| mapSec == MAPSEC_THUNDERCAP_MOUNTAIN
-			|| mapSec == MAPSEC_DISTORTION_WORLD;
+			|| mapSec == MAPSEC_DISTORTION_WORLD
+			|| mapSec == MAPSEC_FROZEN_TOMB
+			|| mapSec == MAPSEC_ISLAND_CAVE
+			|| (mapSec == MAPSEC_VICTORY_ROAD
+			 && (MAP_IS(VICTORY_ROAD_CAVE_A)
+			  || MAP_IS(VICTORY_ROAD_CAVE_B)
+			  || MAP_IS(VICTORY_ROAD_CAVE_C)
+			  || MAP_IS(VICTORY_ROAD_CAVE_D)
+			  || MAP_IS(VICTORY_ROAD_ICE_CAVE_A)
+			  || MAP_IS(VICTORY_ROAD_ICE_CAVE_B)));
 	#else
 		return FALSE;
 	#endif
@@ -2285,6 +2297,14 @@ u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingTyp
 	return PARTY_SIZE;
 }
 
+bool8 IsPlayerSurfingNorthOrSouth(void)
+{
+	u8 dir = GetPlayerMovementDirection();
+
+	return (dir == DIR_SOUTH || dir == DIR_NORTH)
+		&& TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING);
+}
+
 #ifdef MB_LAVA
 static bool8 MetatileBehavior_IsLava(u8 behaviour)
 {
@@ -2355,7 +2375,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	{
 		if (HasBadgeToUseWaterfall())
 		{
-			if (IsPlayerSurfingNorth())
+			if (IsPlayerSurfingNorthOrSouth())
 			{
 				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				item = ITEM_HM07_WATERFALL;
@@ -2395,6 +2415,13 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		return EventScript_JustRockWall;
 	}
 	return NULL;
+}
+
+bool8 Waterfall3_MovePlayer(struct Task* task, struct EventObject* playerObj)
+{
+	EventObjectSetHeldMovement(playerObj, GetWalkNormalMovementAction(GetPlayerMovementDirection()));
+	task->data[0]++;
+	return FALSE;
 }
 
 extern const u8 EventScript_UseDive[];

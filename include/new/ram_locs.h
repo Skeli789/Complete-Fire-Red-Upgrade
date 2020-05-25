@@ -55,7 +55,7 @@ struct Clock
 /*u8*/  #define gMultiuseSpriteTemplate ((struct SpriteTemplate*) 0x20244DC)
 
 		extern struct MapHeader gMapHeader;
-		//#define gEventObjects ((struct MapObject*) 0x2036E38)
+		//#define gEventObjects ((struct EventObject*) 0x2036E38)
 /*
 		#define Var8000 (*((u16*) 0x20370B8))
 		#define Var8001 (*((u16*) 0x20370BA))
