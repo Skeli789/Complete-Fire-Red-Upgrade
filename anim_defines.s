@@ -434,6 +434,7 @@
 @launchtemplate
 
 .equ Template_Hit, 0x83E7C08
+.equ Template_WaterHit, 0x83E7C38
 .equ Template_Fist, 0x83E6710
 .equ Template_Claws, 0x83E79E8
 .equ Template_Healing_Circle, 0x83E37A4
@@ -452,6 +453,7 @@
 .equ Template_ElectricSparkPlayer, 0x83e5fc4
 .equ Template_DigMound, 0x83E7AC4
 .equ Template_Lightning, 0x83E5F38
+.equ Template_SmallBubblePair, 0x83e5ab0
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5

@@ -886,11 +886,11 @@ bool8 IsAnimMoveOceanicOperretta(void)
 bool8 DoesMoveHaveGeyserOnTarget(void)
 {
 	return sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S
-		 || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P 		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
-		 || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P 		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
-		 || sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
-		 || sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY
-		 || IsAnyMaxMove(sAnimMoveIndex);
+		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P      || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
+		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P         || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
+		|| sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
+		|| sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY
+		|| IsAnyMaxMove(sAnimMoveIndex);
 }
 
 bool8 IsAnimMoveDestinyBond(void)
@@ -2676,20 +2676,19 @@ void SpriteCB_LaunchObjectUpwards(struct Sprite* sprite)
 }
 
 //Launches an object upwards like they were being shot from a geyser
-//arg 0: null
+//arg 0: target
 //arg 1: initial x pixel offset
 //arg 2: initial y pixel offset
 void SpriteCB_Geyser(struct Sprite* sprite)
 {
-	if (DoesMoveHaveGeyserOnTarget())
-	{
-		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
-		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
-	}
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
 	else
 	{
-		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2) + gBattleAnimArgs[1];
-		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3) + gBattleAnimArgs[2];
+		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
+		sprite->pos1.y = GetBattlerSpriteCoord(target, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
 	}
 
 	sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;

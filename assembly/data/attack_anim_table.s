@@ -908,28 +908,28 @@ ANIM_WATERFALL:
 	launchtask AnimTask_move_bank 0x5 0x5 0x0 0x0 0x2 0x17 0x1
 	pause 0x5
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xa 0xa 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xa 0xa 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff1 0x0 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff1 0x0 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x14 0xa 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x14 0xa 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x0 0xfff6 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x0 0xfff6 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff6 0xf 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff6 0xf 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x19 0x14 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x19 0x14 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xffec 0x14 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xffec 0x14 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xc 0x0 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xc 0x0 0x19 0x0
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x6 0x5
 	pause 0x6
 	call WATER_DIVE_ATTACK
@@ -1484,6 +1484,7 @@ ANIM_DRAGONCLAW:
 	waitanimation
 	endanimation
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DRAGONDANCE:
 	loadparticle ANIM_TAG_PINK_CLOUD @smoke
@@ -1723,43 +1724,42 @@ ANIM_AQUATAIL:
 	loadparticle ANIM_TAG_WATER_IMPACT
 	loadparticle ANIM_TAG_SMALL_BUBBLES
 	loadparticle ANIM_TAG_ICE_CRYSTALS
+	loadparticle ANIM_TAG_SLAM_HIT_2
 	pokespritetoBG 0x3
 	setblends 0x80c
 	launchtask AnimTask_move_bank 0x5 0x5 0x0 0x0 0x2 0x17 0x1
 	pause 0x5
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xa 0xa 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xa 0xa 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff1 0x0 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff1 0x0 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x14 0xa 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x14 0xa 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x0 0xfff6 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x0 0xfff6 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff6 0xf 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff6 0xf 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0x19 0x14 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x19 0x14 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xffec 0x14 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xffec 0x14 0x19 0x0
 	pause 0x4
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e5ab0 0x2 0x4 0xc 0x0 0x19 0x0
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xc 0x0 0x19 0x0
 	waitanimation
-	loadparticle ANIM_TAG_SLAM_HIT_2
-	loadparticle ANIM_TAG_IMPACT
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x6
 	pause 0x4
 	playsound2 0x73 SOUND_PAN_TARGET
 	launchtemplate 0x83ff764 0x82 0x2 0xfff0 0xfff0
 	pause 0x8
 	launchtemplate 0x83e7b3c 0x2 0x7 0x1f 0x5 0x1 0x7fff 0xa 0x0 0x0
-	launchtemplate Template_Hit 0x83 0x4 0x0 0x0 0x1 0x2
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 3, 0x4 0x0 0x0 0x1 0x0
 	playsound2 0x84 SOUND_PAN_TARGET
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xfff4 0xa 0x0 0x3
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x5
@@ -3322,7 +3322,7 @@ ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to MrDollSteak
+@Credits to MrDollSteak
 ANIM_SWITCHEROO:
 	loadBG1 BG_DARK
 	waitbgfadein
@@ -3732,7 +3732,7 @@ ICICLE_CRASH: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credits to ghoulslash
+@Credits to ghoulslash
 ANIM_WORKUP:
 	loadparticle ANIM_TAG_FOCUS_ENERGY
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE
@@ -3932,7 +3932,7 @@ STEAMROLLER: objtemplate ANIM_TAG_STEAMROLLER ANIM_TAG_STEAMROLLER OAM_OFF_64x64
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_STORMTHROW:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_THIN_RING
@@ -4517,7 +4517,7 @@ ANIM_HEX:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_DUALCHOP:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @hand
 	loadparticle ANIM_TAG_IMPACT @hit
@@ -4545,7 +4545,7 @@ DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit WesleyFG
+@Credit WesleyFG
 ANIM_DOUBLEHIT:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_POISON_BUBBLE
@@ -4730,7 +4730,7 @@ ANIM_DRAGONTAIL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CIRCLETHROW:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_THIN_RING
@@ -5619,7 +5619,7 @@ GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Ledxil
+@Credits to Ledxil
 ANIM_GEOMANCY:
 	loadparticle ANIM_TAG_ZYGARDE_HEXES @Hex
 	loadparticle ANIM_TAG_GUARD_RING @safeguard
@@ -6316,7 +6316,7 @@ ANIM_MAGMASTORM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FINALGAMBIT:
 	loadparticle ANIM_TAG_PINK_CLOUD @yawn animation
 	loadparticle ANIM_TAG_WATER_IMPACT @blue colour
@@ -6452,7 +6452,7 @@ ANIM_RETALIATE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_JUDGMENT:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -6557,7 +6557,7 @@ GRAYINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FREEZEDRY:
 	pokespritetoBG side_target
 	loadparticle ANIM_TAG_ICE_CRYSTALS
@@ -6592,7 +6592,7 @@ ANIM_FREEZEDRY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_PSYSHOCK:
 	loadparticle ANIM_TAG_WATER_ORB @whirlpool animation
 	loadparticle ANIM_TAG_ICE_CRYSTALS @freeze chance animation
@@ -6672,7 +6672,7 @@ PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_ROUND:
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_MUSIC_NOTES
@@ -6714,7 +6714,7 @@ ANIM_ROUND:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_TAILSLAP:
 	loadparticle ANIM_TAG_IMPACT @Hit
 	loadparticle ANIM_TAG_AIR_WAVE_2 @Aeroblast
@@ -6889,7 +6889,7 @@ HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Ledxil
+@Credits to Ledxil
 ANIM_GYROBALL:
 	loadparticle ANIM_TAG_SMALL_EMBER @flamewheel
 	loadparticle ANIM_TAG_WISP_ORB @will o wisp
@@ -7121,7 +7121,7 @@ ANIM_HEALORDER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CAPTIVATE:
 	loadparticle ANIM_TAG_BLUE_STAR
 	loadparticle ANIM_TAG_MAGENTA_HEART
@@ -7145,7 +7145,7 @@ BLUE_HEARTS: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_BLUE_STAR OAM_OFF_16x16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_DEFOG:
 	loadparticle ANIM_TAG_WHITE_FEATHER
 	playsound2 0xEF 0x0
@@ -7159,7 +7159,7 @@ ANIM_DEFOG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_ORIGINPULSE:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_WATER_ORB @blue color
@@ -7307,7 +7307,7 @@ PRECIPICE_PLUME: objtemplate  ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_STEAMERUPTION:
 	loadparticle ANIM_TAG_STEAM_ERUPTION @Steam Eruption Particle
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x7 0x043D
@@ -7355,7 +7355,7 @@ BREATHEHYDRO: objtemplate ANIM_TAG_STEAM_ERUPTION ANIM_TAG_STEAM_ERUPTION OAM_DO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credits to ghoulslash
+@Credits to ghoulslash
 ANIM_METALBURST:
 	loadparticle ANIM_TAG_IMPACT	@pound
 	loadparticle ANIM_TAG_SPIKES	@spikes
@@ -7451,7 +7451,7 @@ ANIM_PSYCHOSHIFT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to ghoulslash
+@Credits to ghoulslash
 ANIM_WRINGOUT:
 	loadparticle ANIM_TAG_ASSURANCE_HAND @hand (mrds)
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @White Hand Colour
@@ -7491,7 +7491,7 @@ WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER O
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Skeli
+@Credits to Skeli
 ANIM_KINGSSHIELD:
 	loadparticle ANIM_TAG_PROTECT @protect
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_PROTECT 0x0 0xC 0xC 0x318C @;Gray
@@ -7499,7 +7499,7 @@ ANIM_KINGSSHIELD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_PSYSTRIKE:
 	loadparticle ANIM_TAG_FLAT_ROCK @rocks
 	loadparticle ANIM_TAG_IMPACT @pound particles
@@ -7622,7 +7622,7 @@ METALBITS: objtemplate ANIM_TAG_METAL_BITS ANIM_TAG_METAL_BITS OAM_NORMAL_16x16 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_DIAMONDSTORM:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_ICE_CRYSTALS
@@ -7711,7 +7711,7 @@ ANIM_SLUDGEWAVE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_HEAVYSLAM:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly and bounce animation
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
@@ -7756,7 +7756,7 @@ HEAVYSLAM_METALHIT: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_6
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_SYNCHRONOISE:
 	loadparticle ANIM_TAG_THIN_RING @hypervoice ring
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
@@ -7805,7 +7805,7 @@ SYNCHRONOISE_AEROWHEEL: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_ELECTROBALL:
 	loadparticle ANIM_TAG_SPARK_2	@yelow
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
@@ -7839,7 +7839,7 @@ ELECTRO_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_CIRCLE_OF_LIGHT OA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_FOULPLAY:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	loadparticle ANIM_TAG_THIN_RING
@@ -7886,7 +7886,7 @@ ANIM_ENTRAINMENT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_NIGHTDAZE:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_PURPLE_FLAME @dark violet color
@@ -7931,6 +7931,7 @@ DAZE_VIOLETCIRCLES: objtemplate ANIM_TAG_RED_ORB ANIM_TAG_PURPLE_FLAME OAM_DOUBL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_ECHOEDVOICE:
 	loadparticle ANIM_TAG_METAL_SOUND_WAVES
 	pokespritetoBG side_target
@@ -7953,30 +7954,32 @@ METALSOUND_PARTICLE_LOAD_AND_PLAY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Skeli
 ANIM_LANDSWRATH:
 	loadparticle ANIM_TAG_WATER_ORB @whirl motion
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @For the geyser
+	loadparticle ANIM_TAG_NEEDLE @For the geyser
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_NEEDLE 0x0 0xA 0xA 0x079D @;Yellow
 	pokespritetoBG bank_attacker
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	waitanimation
+	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x18 0x5
+	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0x18 0x5
 	call WHIRL
 	call WHIRL
 	call WHIRL
 	call WHIRL
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x38 0x1
+	launchtask AnimTask_move_bank 0x5 0x5 target_partner 0x0 0x4 0x38 0x1
+	call LANDS_WRATH_GEYSER
+	call LANDS_WRATH_GEYSER
+	call LANDS_WRATH_GEYSER
 	waitanimation
-	loadBG1 BG_FISSURE
-	waitbgfadeout
-	playsound2 0xe3 0x0
-	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0xa 0x32
-	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0xa 0x32
-	launchtask 0x80B9801 0x5 0x3 0x1 0x5 0xffff
-	waitbgfadein
-	waitanimation
-	call UNSET_SCROLLING_BG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
 	pokespritefromBG bank_attacker
 	endanimation
+
 WHIRL:
 	playsound2 0x8F SOUND_PAN_TARGET
 	launchtemplate WHIRLPARTICLES 0x82 0x7 0x0 0x1c 0x180 0x32 0x8 0x32 0x0
@@ -7993,12 +7996,62 @@ WHIRL:
 	pause 0x2
 	return
 
+LANDS_WRATH_GEYSER:
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
+	playsound2 0x8a SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
+	pause 0x0
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
+	return
+
 .align 2
 WHIRLPARTICLES: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_SPARK_2 OAM_NORMAL_BLEND_16x16 0x83E5958 0x0 0x83E741C 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_OBLIVIONWING:
 	loadparticle ANIM_TAG_HYDRO_PUMP
 	loadparticle ANIM_TAG_ROUND_SHADOW
@@ -8045,7 +8098,7 @@ OBLIVION_BEAM: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to WesleyFG
+@Credits to WesleyFG
 ANIM_HEARTSWAP:
 	loadparticle ANIM_TAG_BLUEGREEN_ORB
 	loadparticle ANIM_TAG_RED_HEART
@@ -8063,7 +8116,7 @@ ANIM_HEARTSWAP:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_CRUSHGRIP:
 	loadparticle ANIM_TAG_EXPLOSION @hits
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @hand colour
@@ -8095,6 +8148,7 @@ CRUSHGRIP_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_SACREDSWORD:
 	loadparticle ANIM_TAG_CUT @Cut
 	loadparticle ANIM_TAG_SWORD @Sword
@@ -8127,7 +8181,7 @@ SWORD_CUT:objtemplate ANIM_TAG_CUT ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_32x32 0x83E
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_HEATCRASH:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_WARM_ROCK
@@ -8157,7 +8211,7 @@ ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 gD
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_HEADCHARGE:
 	loadparticle ANIM_TAG_IMPACT
 	chooseBG BG_GIGA_IMPACT_ON_OPPONENT BG_GIGA_IMPACT_ON_PLAYER BG_GIGA_IMPACT_ON_OPPONENT
@@ -8180,7 +8234,7 @@ ANIM_HEADCHARGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_TECHNOBLAST:
 TECHNO_BLAST:
 	launchtask AnimTask_TechnoBlast 0x5 0x0
@@ -8680,7 +8734,7 @@ ICEPARTICLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_RELICSONG:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE
 	loadparticle ANIM_TAG_THIN_RING
@@ -8958,7 +9012,7 @@ BLUEBURN: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FREEZESHOCK:
 	loadparticle ANIM_TAG_SPARK
 	loadparticle ANIM_TAG_SPARK_2
@@ -9008,7 +9062,7 @@ SHOCK_ICEBALL: objtemplate ANIM_TAG_ICE_CHUNK ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_ICEBURN:
 	loadparticle ANIM_TAG_BLACK_SMOKE @smoke
 	loadparticle ANIM_TAG_ICE_CHUNK @white color
@@ -9080,7 +9134,7 @@ ICEBURN_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_VCREATE:
 	loadparticle ANIM_TAG_SMALL_EMBER @fire blast flame
 	loadparticle ANIM_TAG_THIN_RING @calm mind animation
@@ -9170,7 +9224,7 @@ V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE OAM_O
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FUSIONFLARE:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @ball
@@ -9325,7 +9379,7 @@ ANIM_FELLSTINGER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_NOBLEROAR:
 	loadparticle ANIM_TAG_NOISE_LINE
 	pokespritetoBG bank_attacker
@@ -9395,7 +9449,7 @@ DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_PARTINGSHOT:
 	loadparticle ANIM_TAG_CONFIDE @Confide Bubble
 	loadparticle ANIM_TAG_ANGER @Anger Marks
@@ -9417,7 +9471,7 @@ ANIM_PARTINGSHOT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_TOPSYTURVY:
 	loadparticle ANIM_TAG_IMPACT
 	loadBG1 BG_DARK
@@ -9447,7 +9501,7 @@ ANIM_TOPSYTURVY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_COREENFORCER:
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
 	loadparticle ANIM_TAG_LEAF @green color
@@ -9708,7 +9762,7 @@ CoreEnforcerFuncCall:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_CHATTER:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @uproar
 	loadparticle ANIM_TAG_THIN_RING @uproar
@@ -9767,7 +9821,7 @@ CONFIDE_BUBBLE: objtemplate ANIM_TAG_CONFIDE ANIM_TAG_CONFIDE OAM_OFF_32x32 0x83
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_WATERSHURIKEN:
 	loadparticle ANIM_TAG_WATER_ORB @blue color
 	loadparticle ANIM_TAG_YELLOW_STAR @swift
@@ -9798,7 +9852,7 @@ WS_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credits to ghoulslash and BadgerLordZeus
+@Credits to ghoulslash and BadgerLordZeus
 ANIM_MYSTICALFIRE:
 	call SET_PSYCHIC_BG
 	loadparticle ANIM_TAG_FIRE
@@ -9831,7 +9885,7 @@ ANIM_MYSTICALFIRE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_SPIKYSHIELD:
 	loadparticle ANIM_TAG_PROTECT
 	loadparticle ANIM_TAG_GREEN_SPIKE
@@ -9869,7 +9923,7 @@ ANIM_SPIKYSHIELD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_EERIEIMPULSE:
 	loadparticle ANIM_TAG_THIN_RING  @hypervoice circle
 	loadparticle ANIM_TAG_SPARK  @electric particles
@@ -9921,7 +9975,7 @@ EERIE_HITCIRCLES: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SPARK_H OAM_OFF_16x32 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_HOLDBACK:
 	loadparticle ANIM_TAG_PAW_PRINT @ yellow/brown
 	loadparticle ANIM_TAG_IMPACT @ hit
@@ -9956,7 +10010,7 @@ HOLDBACK_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gDum
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_INFESTATION:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
 	loadparticle ANIM_TAG_SMALL_BUBBLES @circle particles
@@ -9996,7 +10050,7 @@ INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET OAM_OFF_8x8 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_POWERUPPUNCH:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_HANDS_AND_FEET
@@ -10064,16 +10118,16 @@ ANIM_THOUSANDARROWS:
 	endanimation
 
 THOUSAND_ARROWS_UP_HEXAGONS:
-	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, bank_attacker 0xfffc 0xfff0
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
-	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, bank_attacker 0x100D 0xfff0
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
-	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0xfff4
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, bank_attacker 0x4 0xfff4
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
-	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, bank_attacker 0xfff0 0xfff0
 	playsound2 0xa8 SOUND_PAN_ATTACKER
 	pause 0x2
 	return
@@ -10118,7 +10172,7 @@ GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF OAM_OFF_32x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_THOUSANDWAVES:
 	loadparticle ANIM_TAG_ZYGARDE_HEXES @Hex
 	loadparticle ANIM_TAG_FLYING_DIRT @heat wave animation
@@ -10259,7 +10313,7 @@ TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 g
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_PARABOLICCHARGE:
 	loadparticle ANIM_TAG_ELECTRIC_ORBS
 	loadparticle ANIM_TAG_ORBS
@@ -10294,7 +10348,7 @@ ANIM_PARABOLICCHARGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_SEARINGSHOT:
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
@@ -10388,7 +10442,7 @@ SS_ERUPTIONHIT: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_DOUBLE_32x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_SEEDFLARE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
 	loadparticle ANIM_TAG_LEAF @green color
@@ -10481,7 +10535,7 @@ SF_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 gDum
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_ACCELEROCK:
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_IMPACT
@@ -10560,7 +10614,7 @@ CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 gDummyS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_AURORAVEIL:
 	loadparticle ANIM_TAG_GUARD_RING
 	loadBG1 BG_AURORABEAM
@@ -10587,7 +10641,7 @@ ANIM_AURORAVEIL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_BANEFULBUNKER:
 	loadparticle ANIM_TAG_PROTECT @protect
 	loadparticle ANIM_TAG_POISON_BUBBLE @poison
@@ -10619,7 +10673,7 @@ POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NOR
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 @ charge-up anim
 ANIM_BEAKBLAST:
 	loadparticle ANIM_TAG_SMALL_EMBER @Fire
@@ -10656,7 +10710,7 @@ BEAK_BLAST_ANIM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_BRUTALSWING:
 	loadparticle ANIM_TAG_IMPACT @hits
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
@@ -10764,7 +10818,7 @@ REDYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_CLANGINGSCALES:
 	loadparticle ANIM_TAG_METAL_SOUND_WAVES @metal sound
 	loadparticle ANIM_TAG_POISON_BUBBLE @purple color
@@ -10799,7 +10853,7 @@ PURPLEMETAL: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES O
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_DARKESTLARIAT:
 	loadBG1 BG_DARK
 	waitbgfadeout
@@ -10844,7 +10898,7 @@ DARKLARIAT_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_DRAGONHAMMER:
 	loadparticle ANIM_TAG_ROUND_SHADOW
 	loadparticle ANIM_TAG_GRAY_SMOKE
@@ -10886,7 +10940,7 @@ ANIM_DRAGONHAMMER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_FIRELASH:
 	loadparticle ANIM_TAG_SMALL_EMBER
 	pokespritetoBG side_target
@@ -10932,7 +10986,7 @@ ANIM_FIRELASH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FIRSTIMPRESSION:
 	loadparticle ANIM_TAG_SWEAT_BEAD @astonish
 	loadparticle ANIM_TAG_IMPACT @pound hit
@@ -11030,7 +11084,7 @@ PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_FLORALHEALING:
 	loadparticle ANIM_TAG_SPARKLE_2 @heal
 	loadparticle ANIM_TAG_FLOWER @flowers
@@ -11144,7 +11198,7 @@ FH_WINDLEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_GEARUP:
 	loadparticle ANIM_TAG_GEAR
 	loadparticle ANIM_TAG_SPARK_2 @sparks
@@ -11203,7 +11257,7 @@ GEARUP_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 gDummySpri
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_HIGHHORSEPOWER:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @horseshoe
@@ -11234,7 +11288,7 @@ HORSESHOE: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Skeli
+@Credits to Skeli
 ANIM_ICEHAMMER:
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @punch
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
@@ -11272,7 +11326,7 @@ ICEHAMMER_GRAYSMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ECLIPSING_ORB OA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_LASERFOCUS:
 	loadparticle ANIM_TAG_EYE_SPARKLE @red
 	loadparticle ANIM_TAG_OPENING_EYE @eyes
@@ -11295,7 +11349,7 @@ LASERFOCUS_REDEYES: objtemplate ANIM_TAG_OPENING_EYE ANIM_TAG_EYE_SPARKLE OAM_OF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_LEAFAGE:
 	loadparticle ANIM_TAG_RAZOR_LEAF @leaf
 	loadparticle ANIM_TAG_IMPACT @hit
@@ -11316,7 +11370,7 @@ LEAFAGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_LIQUIDATION:
 	loadparticle ANIM_TAG_WATER_IMPACT
 	loadparticle ANIM_TAG_SMALL_BUBBLES
@@ -11338,7 +11392,7 @@ ANIM_LIQUIDATION:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_LUNGE:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_TEAL_ALERT @hit particles
@@ -11488,7 +11542,7 @@ GEIST_CHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_MULTIATTACK:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_CUT @cut
@@ -11618,7 +11672,7 @@ NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB OAM_DOUBLE_BL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Lixdel
+@Credits to Lixdel
 ANIM_POLLENPUFF:
 	launchtask AnimTask_IsTargetPartner 0x5 0x0
 	jumpifargmatches 0x0 0x1 POLLEN_PUFF_ALLY
@@ -12349,7 +12403,7 @@ ANIM_SHOREUP:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SMARTSTRIKE:
 	loadparticle ANIM_TAG_POWER_GEM @gem
 	loadparticle ANIM_TAG_AIR_WAVE @sonicboom
@@ -13534,115 +13588,115 @@ ANIM_WATERPLEDGE:
 	pokespritetoBG bank_target
 	playsound2 0xd1 SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank_2 0x5 0x5 0x1 0x4 0x0 0x11 0x1
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0x14 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0x14 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x14
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x14
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xf 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xf 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xf
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xf
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xa 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xa 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xa
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xa
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0x5 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0x5 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x5
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x5
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0x0 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0x0 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x0
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0x0
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xfffb 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xfffb 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfffb
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfffb
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xfff6 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xfff6 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfff6
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfff6
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xfff1 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xfff1 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfff1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xfff1
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0xffea 0xffec 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0xffea 0xffec 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xffec
 	launchtemplate 0x83E5AC8 0x4 0x2 0xffea 0xffec
 	pause 0x5
 	playsound2 0xd1 SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank_2 0x5 0x5 0x1 0x4 0x0 0x11 0x1
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0x14 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0x14 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x14
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x14
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xf 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xf 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xf
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xf
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xa 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xa 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xa
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xa
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0x5 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0x5 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x5
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x5
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0x0 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0x0 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x0
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0x0
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xfffb 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xfffb 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfffb
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfffb
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xfff6 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xfff6 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfff6
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfff6
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xfff1 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xfff1 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfff1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xfff1
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x15 0xffec 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x15 0xffec 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xffec
 	launchtemplate 0x83E5AC8 0x4 0x2 0x15 0xffec
 	pause 0x5
 	playsound2 0xd1 SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank_2 0x5 0x5 0x1 0x4 0x0 0x11 0x1
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0x14 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0x14 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x14
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x14
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xf 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xf 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xf
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xf
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xa 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xa 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xa
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xa
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0x5 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0x5 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x5
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x5
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0x0 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0x0 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xfffb 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xfffb 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfffb
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfffb
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xfff6 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xfff6 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfff6
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfff6
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xfff1 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xfff1 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfff1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xfff1
 	pause 0x2
-	launchtemplate 0x83E7C38 0x3 0x4 0x0 0xffec 0x1 0x1
+	launchtemplate Template_WaterHit 0x3 0x4 0x0 0xffec 0x1 0x1
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xffec
 	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0xffec
 	waitanimation
@@ -15034,7 +15088,7 @@ ELECTRIFY_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_EMBARGO:
 	loadparticle ANIM_TAG_PURPLE_FLAME
 	pokespritetoBG bank_target
@@ -15336,7 +15390,7 @@ QUASH_ARMHIT: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_OF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_HAPPYHOUR:
 	loadparticle ANIM_TAG_COIN
 	pokespritetoBG bank_attacker
@@ -15398,7 +15452,7 @@ SkipBankCheck:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_DOUBLEIRONBASH:
 	loadparticle ANIM_TAG_GUST
 	loadparticle ANIM_TAG_IMPACT
@@ -15431,7 +15485,7 @@ ANIM_DOUBLEIRONBASH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_LASTRESORT:
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_PAIN_SPLIT
@@ -15471,7 +15525,7 @@ LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gD
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SKYDROP:
 	loadparticle ANIM_TAG_ROUND_SHADOW
 	loadparticle ANIM_TAG_IMPACT
@@ -15543,7 +15597,7 @@ InitSpritePosToAnimTarget:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CELEBRATE:
 	loadparticle ANIM_TAG_ITEM_BAG
 	launchtemplate CELEBRATE_TEMPLATE 0x2 0x1 0x0
@@ -15559,7 +15613,7 @@ CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_HOLDHANDS:
 	loadparticle ANIM_TAG_TAG_HAND @hand
 	loadparticle ANIM_TAG_MAGENTA_HEART @charm
@@ -15606,14 +15660,14 @@ HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_DYNAMAX_CANNON:
 	goto 0x81d29a7 @ANIM_HYPERBEAM
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_SNIPE_SHOT:
 	loadparticle ANIM_TAG_UNUSED_IMPACT_2
 	loadparticle ANIM_TAG_LEER
@@ -15637,7 +15691,7 @@ SNIPE_SHOT_BALL: objtemplate ANIM_TAG_UNUSED_IMPACT_2 ANIM_TAG_UNUSED_IMPACT_2 O
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_JAW_LOCK:
 	loadparticle ANIM_TAG_SHARP_TEETH
 	loadparticle ANIM_TAG_IMPACT
@@ -15663,14 +15717,14 @@ LOCKED_JAW: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH OAM_NORMAL_BLE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_STUFF_CHEEKS:
 	goto ANIM_BERRY_EATING
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_NO_RETREAT:
 	loadparticle ANIM_TAG_SMALL_EMBER
 	soundcomplex 0x89 SOUND_PAN_ATTACKER 0x7 0x12
@@ -15685,7 +15739,7 @@ NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBal
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_TAR_SHOT:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_POISON_BUBBLE 0x0 0xF 0xF 0x0 @;Black
@@ -15712,7 +15766,7 @@ ANIM_TAR_SHOT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAGIC_POWDER:
 	loadparticle ANIM_TAG_POISON_POWDER
 	loadparticle ANIM_TAG_WATER_GUN
@@ -15746,7 +15800,7 @@ BLUE_MAGIC_POWDER: objtemplate ANIM_TAG_POISON_POWDER ANIM_TAG_WATER_GUN OAM_OFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_DRAGON_DARTS:
 	loadparticle ANIM_TAG_DREEPY
 	loadparticle ANIM_TAG_EXPLOSION
@@ -15764,14 +15818,14 @@ DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 gDummy
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_TEATIME:
 	goto 0x81cb40e @ANIM_MILKDRINK
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 .global ANIM_OCTOLOCK
 ANIM_OCTOLOCK:
 	loadparticle ANIM_TAG_TENDRILS
@@ -15794,7 +15848,7 @@ ANIM_OCTOLOCK:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_BOLT_BEAK:
 	loadparticle ANIM_TAG_HORN_HIT
 	loadparticle ANIM_TAG_IMPACT
@@ -15855,7 +15909,7 @@ BLUE_SPARK_PLAYER_2: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_FISHIOUS_REND:
 	loadparticle ANIM_TAG_SHARP_TEETH @Teeth
 	loadparticle ANIM_TAG_SMALL_BUBBLES
@@ -15916,14 +15970,14 @@ FISHIOUS_TEETH: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH sFishiousR
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_COURT_CHANGE:
 	goto ANIM_TRICKROOM @;Transparent balls going upwards on the player's side, followed by transparent balls falling on the opponent side, and then the same but swapped
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_CLANGOROUS_SOUL:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_WATER_ORB @blue
@@ -15949,7 +16003,7 @@ ANIM_CLANGOROUS_SOUL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_BODY_PRESS:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly and bounce animation
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
@@ -15969,14 +16023,14 @@ ANIM_BODY_PRESS:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_DECORATE:
 	goto 0x81c6f34 @ANIM_POUND
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_DRUM_BEATING:
 	loadparticle ANIM_TAG_MUSIC_NOTES 
 	loadparticle ANIM_TAG_PURPLE_HAND_OUTLINE
@@ -16040,7 +16094,7 @@ ANIM_DRUM_BEATING:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 .global ANIM_SNAP_TRAP
 ANIM_SNAP_TRAP:
 	goto 0x81c6f34 @ANIM_POUND
@@ -16048,7 +16102,7 @@ ANIM_SNAP_TRAP:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_PYRO_BALL:
 	loadparticle ANIM_TAG_FLAT_ROCK
 	loadparticle ANIM_TAG_SMALL_EMBER
@@ -16085,21 +16139,21 @@ PYRO_BALL_BALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_BEHEMOTH_BLADE:
 	goto ANIM_SACREDSWORD
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_BEHEMOTH_BASH:
 	goto ANIM_SUNSTEELSTRIKE
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_AURA_WHEEL:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SPARK
@@ -16154,7 +16208,7 @@ AURA_WHEEL_ELECTRICITY_RED: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK OAM_NORM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_BREAKING_SWIPE:
 	loadparticle ANIM_TAG_IMPACT @hits
 	loadparticle ANIM_TAG_SPARK_2
@@ -16187,7 +16241,7 @@ ANIM_BREAKING_SWIPE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_BRANCH_POKE:
 	loadparticle ANIM_TAG_BRANCH
 	loadparticle ANIM_TAG_IMPACT
@@ -16205,7 +16259,7 @@ BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH OAM_NORMAL_32x32 gDummySprit
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_OVERDRIVE:
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_SPARK_2
@@ -16235,7 +16289,7 @@ OVERDRIVE_RING:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_APPLE_ACID:
 	loadparticle ANIM_TAG_APPLE
 	loadparticle ANIM_TAG_POISON_BUBBLE
@@ -16279,7 +16333,7 @@ APPLE_ACID_DRIP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_GRAV_APPLE:
 	loadparticle ANIM_TAG_APPLE
 	loadBG1 BG_SEISMICTOSS_SKUUPPERCUT
@@ -16337,14 +16391,14 @@ LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM gDummyS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_SPIRIT_BREAK:
 	goto 0x81cd46c @ANIM_PSYCHIC
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_STRANGE_STEAM:
 	loadparticle ANIM_TAG_PINK_CLOUD
 	loadparticle ANIM_TAG_FINGER
@@ -16385,7 +16439,7 @@ STRANGE_STEAM_BLUE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_GUN OAM_NORMA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_LIFE_DEW:
 	loadparticle ANIM_TAG_UNUSED_WATER_DROPLET
 	loadparticle ANIM_TAG_BLUE_STAR
@@ -16418,7 +16472,7 @@ HEALING_ORBS_SPECIAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_BLUE_STAR OAM_OFF_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_OBSTRUCT:
 	loadparticle ANIM_TAG_NOISE_LINE @growl
 	loadparticle ANIM_TAG_PROTECT
@@ -16445,14 +16499,14 @@ OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS OAM_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_FALSE_SURRENDER:
 	goto ANIM_FEINT
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_METEOR_ASSAULT:
 	loadparticle ANIM_TAG_ELECTRIC_ORBS
 	loadparticle ANIM_TAG_METEOR
@@ -16495,14 +16549,14 @@ GENERIC_EXPLOSION:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_ETERNABEAM:
 	goto 0x81d29a7 @ANIM_HYPERBEAM
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_STEEL_BEAM:
 	loadparticle ANIM_TAG_ELECTRIC_ORBS
 	loadparticle ANIM_TAG_GUST
@@ -16553,7 +16607,7 @@ STEEL_BEAM_SHARDS: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_16x16 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_BREAKNECK_BLITZ:
 	loadparticle ANIM_TAG_HOLLOW_ORB
 	loadparticle ANIM_TAG_IMPACT
@@ -16641,7 +16695,7 @@ BLITZ_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 .equ OBJ_FIST1, 0x0
 .equ OBJ_FOOT1, 0x1
 .equ OBJ_FOOT2, 0x2
@@ -16740,7 +16794,7 @@ PUMMEL_ONSLAUGHT: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_IMPACT OAM_OFF_32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SUPERSONIC_SKYSTRIKE:
 	loadparticle ANIM_TAG_ROUND_SHADOW	@ fly
 	loadparticle ANIM_TAG_MUD_SAND @ dig
@@ -16821,7 +16875,7 @@ ENEMY_ROT_SSSS: .hword 0,0,0x0150,0,0x7fff,0,0,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_ACID_DOWNPOUR:
 	loadparticle ANIM_TAG_BLUE_ORB @ reversal
 	loadparticle ANIM_TAG_POISON_JAB	@ poison jab
@@ -16946,7 +17000,7 @@ SLUDGE_WAVE_PAL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_TECTONIC_RAGE:
 	loadparticle ANIM_TAG_DIRT_MOUND @ dig
 	loadparticle ANIM_TAG_MUD_SAND @ rollout small rocks
@@ -17074,7 +17128,7 @@ BLASTBURN_TARGET_ASM:
 	push {r4,lr}
 	mov r4, r0
 	bl get_blastburn_bank_status
-	ldr r0, .AnimDefender
+	ldr r0, =gBattleAnimTarget
 	ldrb r0, [r0]
 	ldr r1, =(0x080AC99C +1)
 	bx r1
@@ -17082,7 +17136,7 @@ BLASTBURN_TARGET_ASM:
 get_blastburn_bank_status:
 	push {r4-r6,lr}
 	mov r5, r0
-	ldr r4, .AnimDefender
+	ldr r4, =gBattleAnimTarget
 	ldrb r0, [r4]
 	mov r1, #0x2
 	bl get_bank_presence
@@ -17125,12 +17179,11 @@ GetRolloutTimer:
 	bx r0
 
 .align 2
-.AnimDefender: .word 0x02037f1b
 .GetRolloutTimer: .word 0x80B4FB8 | 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CONTINENTAL_CRUSH:
 	loadparticle ANIM_TAG_ROUND_SHADOW	@ fly
 	loadparticle ANIM_TAG_MUD_SAND @ dig
@@ -17289,7 +17342,7 @@ CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 gDummy
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SAVAGE_SPIN_OUT:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_RAZOR_LEAF @green color
@@ -17459,7 +17512,7 @@ SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_NEVER_ENDING_NIGHTMARE:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
@@ -17494,18 +17547,18 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	waitanimation
 	loadBG1 BG_NEVERENDING_NIGHTMARE
 	waitbgfadein
-	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x2 0x42 0x1
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x78 0x1
 	playsound2 0x9e SOUND_PAN_TARGET
 	call NEN_HANDS_ATTACK
 	call NEN_HANDS_ATTACK
 	pause 0xa
 	launchtask AnimTask_pal_fade 0xa 0x5 0x4 0x2 0x0 0x10 0x40c0		@ fade to purple
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	unloadparticle ANIM_TAG_THIN_RING
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x580A @;Purple
 	call NEN_GEYSER
-	playsound2 0x8e SOUND_PAN_ATTACKER
+	playsound2 0x8e SOUND_PAN_TARGET
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffe0 0x0 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffec 0xfff6 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x42 0x6 0x0 0xfff0 0x18 0x0 0x0 0x0
@@ -17514,9 +17567,9 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x42 0x6 0x14 0xa 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0x0 0x10 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffec 0xa 0x18 0x0 0x0 0x0
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	call NEN_GEYSER
-	playsound2 0x8a SOUND_PAN_ATTACKER
+	playsound2 0x8a SOUND_PAN_TARGET
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffc0 0x0 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x6 0x6 0xffd8 0xffec 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x46 0x6 0x0 0xffe0 0x18 0x0 0x0 0x0
@@ -17525,9 +17578,9 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x42 0x6 0x28 0x14 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0x0 0x20 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffd8 0x14 0x18 0x0 0x0 0x0
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	call NEN_GEYSER
-	playsound2 0x8a SOUND_PAN_ATTACKER
+	playsound2 0x8a SOUND_PAN_TARGET
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffa0 0x0 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x6 0x6 0xffc4 0xffe2 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x46 0x6 0x0 0xffd0 0x18 0x0 0x0 0x0
@@ -17536,9 +17589,8 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x42 0x6 0x3c 0x1e 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0x0 0x30 0x18 0x0 0x0 0x0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffc4 0x1e 0x18 0x0 0x0 0x0
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	call NEN_GEYSER
-	pause 0x4
 	launchtask AnimTask_pal_fade 0xa 0x5 0x4 0x2 0x10 0x0 0x40c0		@ fade to normal
 	waitanimation
 	loaddefaultBG
@@ -17597,56 +17649,56 @@ NEN_HANDS_ATTACK:
 	return
 
 NEN_GEYSER:
-	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
-	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
-	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
-	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
-	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	return
 
 .align 2
@@ -17654,7 +17706,7 @@ NEN_PURPLE_RING_USER: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_
 NEN_PURPLE_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
 NEN_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 gDummySpriteAffineAnimTable 0x80A5AD9
 NEN_NIGHTMARE_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
-NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM+1
+NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E5C50 0x0 gDummySpriteAffineAnimTable BLASTBURN_TARGET_ASM + 1
 NEN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 NEN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
@@ -17687,7 +17739,7 @@ OtherMove:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CORKSCREW_CRASH:
 	loadparticle ANIM_TAG_SPIKES @metal bits
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
@@ -17850,7 +17902,7 @@ CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_INFERNO_OVERDRIVE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_SMALL_EMBER @fire
@@ -17969,7 +18021,7 @@ INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_HYDRO_VORTEX:
 	loadparticle ANIM_TAG_SPLASH @dive
 	loadparticle ANIM_TAG_SWEAT_BEAD @dive
@@ -18038,29 +18090,29 @@ ANIM_HYDRO_VORTEX:
 	endanimation
 
 HV_BUBBLES_BOTH:
-	launchtemplate 0x83e5ab0 0x2 0x4 0xa 0xa 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xa 0xa 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xa 0xa 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0xa 0xa 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0x14 0xffec 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x14 0xffec 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x14 0xffec 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0x14 0xffec 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff1 0xf 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xf 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff1 0xf 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xf 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0x0 0x0 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x0 0x0 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff6 0xffec 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xffec 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff6 0xffec 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xffec 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0x10 0xfff8 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x10 0xfff8 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x10 0xfff8 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0x10 0xfff8 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0x5 0x8 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x5 0x8 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0x5 0x8 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0x5 0x8 0x14 bank_target
 	pause 0x4
-	launchtemplate 0x83e5ab0 0x2 0x4 0xfff0 0x0 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff0 0x0 0x14 bank_target
+	launchtemplate Template_SmallBubblePair 0x2 0x4 0xfff0 0x0 0x14 bank_attacker
+	launchtemplate Template_SmallBubblePair TEMPLATE_TARGET | 2, 0x4, 0xfff0 0x0 0x14 bank_target
 	return
 
 HV_WHIRLPOOL_HURRICANE:
@@ -18092,7 +18144,7 @@ HV_BLUE_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_BLOOM_DOOM:
 	loadparticle ANIM_TAG_FLOWER @petal
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
@@ -18224,13 +18276,13 @@ BD_GREEN_HURRICANE_USER:
 	return
 
 BD_FLOWER_GEYSER:
-	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 bank_attacker 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 0x0 0x100D 0x10	@
+	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 bank_attacker 0x100D 0x10	@
 	pause 0x0
-	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 0x0 0x4 0x10
+	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 bank_attacker 0x4 0x10
 	pause 0x0
-	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 0x0 0xfff0 0x10
+	launchtemplate BD_GEYSER_FLOWER 0x2 0x3 bank_attacker 0xfff0 0x10
 	pause 0x0
 	return
 
@@ -18342,7 +18394,7 @@ InitSpritePosToAnimTargetLoadFromArgs:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_GIGAVOLT_HAVOC:
 	loadparticle ANIM_TAG_HAVOC_SPEAR
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
@@ -18505,13 +18557,13 @@ ANIM_GIGAVOLT_HAVOC:
 	endanimation
 
 HAVOC_GEYSER:
-	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10	@
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10	@
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	return
 
@@ -18534,7 +18586,7 @@ HAVOC_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SHATTERED_PSYCHE:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_BLUE_LIGHT_WALL @reflect
@@ -18704,7 +18756,7 @@ SPSY_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SUBZERO_SLAMMER:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
 	loadparticle ANIM_TAG_ICE_CUBE @glacier
@@ -18875,7 +18927,7 @@ GLACIER_TASK_ATTACKER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_DEVASTATING_DRAKE:
 	loadparticle ANIM_TAG_PURPLE_DRAKE
 	loadparticle ANIM_TAG_POISON_BUBBLE @ purple
@@ -19030,55 +19082,55 @@ DRAKE_PURPLE_BUFF:
 
 DEVESTATING_DRAKE_GEYSER:
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	return
 
 DRAKE_EXPLOSION:
@@ -19128,7 +19180,7 @@ DRAKE_LEFT_ROT: .hword 0,0,0x0140,0,0x7fff,0,0,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_BLACK_HOLE_ECLIPSE:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @shock wave
@@ -19285,8 +19337,8 @@ BHE_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
-@ credit to Squeetz for the final launch
+@Credits to ghoulslash
+@Credits to Squeetz for the final launch
 ANIM_TWINKLE_TACKLE:
 	loadparticle ANIM_TAG_SPARKLE_2 @star
 	loadparticle ANIM_TAG_PINK_PETAL @pink
@@ -19464,7 +19516,7 @@ TWINKLE_SCALE_OPPONENT: .hword 0x8,0x8,0x0,0x0,0x20,0x20,0x0f00,0x0,0x7fff,0x1,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_CATASTROPIKA:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly
@@ -19659,7 +19711,7 @@ CPIKA_YELLOW_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_CIRCLE_OF_LIGHT sG
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_10000000_VOLT_THUNDERBOLT:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
@@ -19964,7 +20016,7 @@ EndSW:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_STOKED_SPARKSURFER:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly
 	loadparticle ANIM_TAG_SPARK_2 @spark
@@ -20104,7 +20156,7 @@ SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOU
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_EXTREME_EVOBOOST:
 	loadparticle ANIM_TAG_LEER @leer
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG | PAL_ATK | PAL_ATK_PARTNER | PAL_OPPONENT1 | PAL_OPPONENT2 0x3 0x0 0x10 0x0000
@@ -20272,7 +20324,7 @@ EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF OAM_NORMAL_BL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_PULVERIZING_PANCAKE:
 	loadparticle ANIM_TAG_SPARKLE_4 @detect
 	loadparticle ANIM_TAG_VERTICAL_HEX @red
@@ -20441,7 +20493,7 @@ EndDestinyBondLoop:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_GENESIS_SUPERNOVA:
 	loadparticle ANIM_TAG_BLUE_ORB @reversal
 	loadparticle ANIM_TAG_POISON_BUBBLE @poison bubble
@@ -20647,7 +20699,7 @@ GENESIS_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SINISTER_ARROW_RAID:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly
 	loadparticle ANIM_TAG_SPIRIT_ARROW @arrow
@@ -21022,7 +21074,7 @@ SAR_STRIKE_ROT: .hword 0,0,0x0130,0,0x7fff,0,0,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_MALICIOUS_MOONSAULT:
 	loadparticle ANIM_TAG_FIRE_PLUME @dragon rage
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly
@@ -21154,7 +21206,7 @@ MOONSAULT_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_OCEANIC_OPERETTA:
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	waitanimation
@@ -21390,7 +21442,7 @@ FinishBankArg:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SPLINTERED_STORMSHARDS:
 	loadparticle ANIM_TAG_ROCKS @rock
 	loadparticle ANIM_TAG_ICICLE_SPEAR @spear
@@ -21685,7 +21737,7 @@ SPLINTER_THROWN_SHALLOW_PLAYER: .hword 0,0,0x0150,0,0x7fff,0,0,0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_LETS_SNUGGLE_FOREVER:
 	loadparticle ANIM_TAG_MAGENTA_HEART @sharm
 	loadparticle ANIM_TAG_MUSIC_NOTES @music note
@@ -21858,7 +21910,7 @@ StoreDisableTimer:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 .equ RIGHT_FIST, 0x0
 .equ LEFT_FIST, 0x2
 ANIM_CLANGOROUS_SOULBLAZE:
@@ -22179,7 +22231,7 @@ SOULBLAZE_PULSE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_GUARDIAN_OF_ALOLA:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_MUD_SAND @dig
@@ -22270,23 +22322,22 @@ GUARDIAN_ROCKS_TARGET:
 	return
 
 GUARDIAN_ROCK_GEYSER:
-	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 2, 0x3, 0 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10	@
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 2, 0x3, 0 0x100D 0x10	@
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 2, 0x3, 0 0x4 0x10
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 2, 0x3, 0 0xfff0 0x10
 	pause 0x0
 	return
 
 .align 2
 GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
-GUARDIAN_ROCK_UP: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SEARING_SUNRAZE_SMASH:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_SPARKLE_2 @sparkles
@@ -22538,7 +22589,7 @@ SUNRAZE_REDFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUB
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_MENACING_MOONRAZE_MAELSTROM:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_SPARKLE_2 @sparkles
@@ -22752,7 +22803,7 @@ MOONRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_LIGHT_THAT_BURNS_THE_SKY:
 	loadparticle ANIM_TAG_SPARK_2 @spark
 	loadparticle ANIM_TAG_LEAF @green
@@ -22922,7 +22973,7 @@ LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ credit to ghoulslash
+@Credits to ghoulslash
 ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	loadparticle ANIM_TAG_ROUND_SHADOW @bounce
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice blue
@@ -23111,7 +23162,7 @@ SOULSTEAL_ZSTAR: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_GUARD:
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	waitanimation
@@ -23120,7 +23171,7 @@ ANIM_MAX_GUARD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_FLARE:
 	loadparticle ANIM_TAG_SMALL_EMBER
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
@@ -23165,55 +23216,55 @@ ANIM_MAX_FLARE:
 
 MAX_FLARE_GEYSER:
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, bank_target 0xfff0 0x10
 	return
 
 .align 2
@@ -23225,7 +23276,7 @@ MAX_FLARE_GEYSER_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sG
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_FLUTTERBY:
 	loadparticle ANIM_TAG_SPARKLE_6
 	loadparticle ANIM_TAG_EXPLOSION
@@ -23313,7 +23364,7 @@ FLUTTERBY_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIG
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_LIGHTNING:
 	loadparticle ANIM_TAG_UNUSED_LIGHTNING
 	loadparticle ANIM_TAG_LIGHTNING
@@ -23393,7 +23444,7 @@ UNUSED_LIGHTNING: objtemplate ANIM_TAG_UNUSED_LIGHTNING ANIM_TAG_UNUSED_LIGHTNIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_STRIKE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
@@ -23424,7 +23475,7 @@ MAX_STRIKE_SCREEN_SHAKE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_KNUCKLE:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @Fist
 	loadparticle ANIM_TAG_VERTICAL_HEX @Red Colour
@@ -23502,7 +23553,7 @@ MAX_KNUCKLE_FLYING_FIST: objtemplate ANIM_TAG_PUNCH_IMPACT ANIM_TAG_PUNCH_IMPACT
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_PHANTASM:
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_ASSURANCE_HAND
@@ -23548,7 +23599,7 @@ PHANTASM_OBJ_5: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL sMaxPhanta
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_HAILSTORM:
 	loadparticle ANIM_TAG_ICE_ROCK
 	loadparticle ANIM_TAG_HAIL
@@ -23658,7 +23709,7 @@ HAILSTORM_SINGLE_LARGER_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK_SINGLE ANIM_TAG_
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_OOZE:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	loadparticle ANIM_TAG_POISON_COLUMN
@@ -23721,7 +23772,7 @@ POISON_COLUMN_PLAYER: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_GEYSER:
 	loadparticle ANIM_TAG_HYDRO_PUMP
 	loadparticle ANIM_TAG_SMALL_BUBBLES
@@ -23856,7 +23907,7 @@ GEYSER_BUBBLE_SHOT: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_AIRSTREAM:
 	loadparticle ANIM_TAG_AIR_WAVE_2
 	loadparticle ANIM_TAG_METAL_SOUND_WAVES
@@ -23917,7 +23968,7 @@ AIRSTREAM_RING: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_STARFALL:
 	loadparticle ANIM_TAG_YELLOW_STAR
 	loadparticle ANIM_TAG_STRAIGHT_BEAM
@@ -24010,7 +24061,7 @@ STARFALL_BEAM: objtemplate ANIM_TAG_STRAIGHT_BEAM ANIM_TAG_STRAIGHT_BEAM OAM_DOU
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_WYRMWIND:
 	loadparticle ANIM_TAG_TORNADO
 	loadparticle ANIM_TAG_GUST
@@ -24048,7 +24099,7 @@ WYRMWIND_TWISER: objtemplate ANIM_TAG_TORNADO ANIM_TAG_TORNADO OAM_DOUBLE_64x64 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_MINDSTORM:
 	loadparticle ANIM_TAG_AURA_SPHERE
 	loadparticle ANIM_TAG_GOLD_RING
@@ -24101,66 +24152,66 @@ MINDSTORM_CREATE_RING:
 
 MINDSTORM_GEYSER:
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate NEEDLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	return
 
 .align 2
 MINDSTORM_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_LaunchObjectUpwards
 MINDTORM_RING_PINK: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
 MINDTORM_RING_PURPLE: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
-BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
+NEEDLE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_ROCKFALL:
 	loadparticle ANIM_TAG_STONE_PILLAR
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
@@ -24232,7 +24283,7 @@ STONE_PILLAR_MULTI: objtemplate ANIM_TAG_STONE_PILLAR_MULTI ANIM_TAG_STONE_PILLA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_QUAKE:
 	loadparticle ANIM_TAG_DIRT_MOUND @ dig
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
@@ -24275,55 +24326,55 @@ ANIM_MAX_QUAKE:
 
 DIRT_GEYSER:
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x100D 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0xfff0 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0xfffc 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x4 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0xfff0 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x100D 0x10
 	pause 0x0
 	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0 0x4 0x10
 	pause 0x0
-	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	return
 
 .align 2
@@ -24334,7 +24385,7 @@ MAX_QUAKE_ROCK_GEYSER: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_DARKNESS:
 	loadparticle ANIM_TAG_SHADOW_BALL
 	loadparticle ANIM_TAG_VERTICAL_HEX
@@ -24415,7 +24466,7 @@ DARKNESS_ORB_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_UNUSED_PINK_ORB OAM_OFF_8x8 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_OVERGROWTH:
 	loadparticle ANIM_TAG_SEED
 	loadparticle ANIM_TAG_MUSHROOM
@@ -24490,55 +24541,55 @@ OVERGROWTH_GIANT_MUSHROOMS:
 	
 LEAVES_COTTON_EXPLOSION_GEYSER:
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	return
 
 .align 2
@@ -24550,7 +24601,7 @@ OVERGROWTH_COTTON_GEYSER: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_MAX_STEELSPIKE:
 	loadparticle ANIM_TAG_LARGE_SPIKE
 
@@ -24574,37 +24625,37 @@ gMaxSteelspikeCurvedSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LA
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_WILDFIRE_MOVE:
 	goto ANIM_MAX_FLARE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_BEFUDDLE:
 	goto ANIM_MAX_FLUTTERBY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_VOLTCRASH:
 	goto ANIM_MAX_LIGHTNING
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_GOLDRUSH:
 	goto ANIM_MAX_STRIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_CHISTRIKE:
 	goto ANIM_MAX_KNUCKLE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_TERROR:
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_ASSURANCE_HAND
@@ -24654,25 +24705,25 @@ ANIM_G_MAX_TERROR:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_RESONANCE:
 	goto ANIM_MAX_HAILSTORM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_CUDDLE:
 	goto ANIM_MAX_STRIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_REPLENISH:
 	goto ANIM_MAX_STRIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_MALODOR:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	loadparticle ANIM_TAG_POISON_COLUMN
@@ -24735,19 +24786,19 @@ GARBAGE_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_GARBAGE_COLUMN gPois
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_STONESURGE:
 	goto ANIM_MAX_GEYSER
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_WINDRAGE:
 	goto ANIM_MAX_AIRSTREAM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_STUNSHOCK:
 	loadparticle ANIM_TAG_UNUSED_LIGHTNING
 	loadparticle ANIM_TAG_LIGHTNING
@@ -24759,13 +24810,13 @@ ANIM_G_MAX_STUNSHOCK:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_FINALE:
 	goto ANIM_MAX_STARFALL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_DEPLETION:
 	loadparticle ANIM_TAG_TORNADO
 	loadparticle ANIM_TAG_GUST
@@ -24800,7 +24851,7 @@ ANIM_G_MAX_DEPLETION:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_GRAVITAS:
 	loadparticle ANIM_TAG_AURA_SPHERE
 	loadparticle ANIM_TAG_GOLD_RING
@@ -24814,13 +24865,13 @@ ANIM_G_MAX_GRAVITAS:
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_VOLCALITH_MOVE:
 	goto ANIM_MAX_ROCKFALL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_SANDBLAST:
 	loadparticle ANIM_TAG_DIRT_MOUND @ dig
 	loadparticle ANIM_TAG_MUD_SAND
@@ -24868,7 +24919,7 @@ ANIM_G_MAX_SANDBLAST:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_SNOOZE:
 	loadparticle ANIM_TAG_SHADOW_BALL
 	loadparticle ANIM_TAG_VERTICAL_HEX
@@ -24921,7 +24972,7 @@ SNOOZE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_ICE_CHUNK OAM_NORMAL_32x3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_TARTNESS:
 	loadparticle ANIM_TAG_SEED
 	loadparticle ANIM_TAG_GOLDEN_APPLE
@@ -24962,55 +25013,55 @@ TARTNESS_GIANT_APPLES:
 
 LEAVES_APPLE_EXPLOSION_GEYSER:
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
 	pause 0x0
-	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
 	return
 
 .align 2
@@ -25019,13 +25070,13 @@ OVERGROWTH_APPLE_GEYSER: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_OFF_32x32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_SWEETNESS:
 	goto ANIM_G_MAX_TARTNESS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_SMITE:
 	loadparticle ANIM_TAG_YELLOW_STAR
 	loadparticle ANIM_TAG_STRAIGHT_BEAM
@@ -25066,9 +25117,9 @@ ANIM_G_MAX_SMITE:
 	endanimation
 
 SMITE_CREATE_ELECTRICITY:
-	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    0,  30,  3
-	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    0, -30,  3
-	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 0x43, 0x3, 0,   3, -1
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    bank_target,  30,  3
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    bank_target, -30,  3
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 0x43, 0x3, bank_target,   3, -1
 	pause 0x4
 	return
 
@@ -25093,7 +25144,7 @@ SMITE_SPARK_LINE: objtemplate ANIM_TAG_SPARK ANIM_TAG_SPARK OAM_DOUBLE_8x32 gDum
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_STEELSURGE:
 	loadparticle ANIM_TAG_LARGE_SPIKE
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x2 0x7 0x7 0x46A0 @;Greenish
@@ -25101,19 +25152,19 @@ ANIM_G_MAX_STEELSURGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_MELTDOWN:
 	goto ANIM_MAX_STEELSPIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to Skeli
+@Credits to Skeli
 ANIM_G_MAX_FOAMBURST:
 	goto ANIM_MAX_GEYSER
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credits to -
 ANIM_G_MAX_CENTIFERNO:
 	@;call ANIM_MAX_FLARE_MAIN
 	goto ANIM_MAX_FLARE
