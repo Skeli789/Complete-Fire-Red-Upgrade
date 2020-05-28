@@ -161,9 +161,9 @@ u8 TMIdFromItemId(u16 itemId)
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
-		return (itemId - ITEM_TM01_FOCUS_PUNCH);
+		return itemId - ITEM_TM01_FOCUS_PUNCH;
 	else
-		return (tmNum-1);
+		return tmNum-1;
 	#else
 		return itemId - ITEM_TM01_FOCUS_PUNCH;
 	#endif
@@ -496,7 +496,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2(itemId);
 	#else
-	u8 tmNum = itemId - ITEM_TM01_FOCUS_PUNCH;
+	u8 tmNum = (itemId - ITEM_TM01_FOCUS_PUNCH) + 1;
 	#endif
 
 	StringCopy(gStringVar4, (void*) 0x84166FF);
@@ -521,6 +521,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 		else
 			ConvertIntToDecimalStringN(gStringVar1, tmNum, 2, 3);
 	}
+
 	StringAppend(gStringVar4, gStringVar1);
 	StringAppend(gStringVar4, (void*) 0x846317C);
 	StringAppend(gStringVar4, (void*) 0x8416703);
@@ -537,13 +538,16 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 // Assumes no HMs will be in the mart...
 void LoadTmHmNameInMart(u16 item)
 {
-	u8 tmNum = ItemId_GetMystery2(item);
+	u8 tmNum;
+
 	#ifdef EXPANDED_TMSHMS
+		tmNum = ItemId_GetMystery2(item);
 		if (NUM_TMS < 100)
 			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
 		else
 			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 3);
 	#else
+		tmNum = (item - ITEM_TM01_FOCUS_PUNCH) + 1;
 		ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
 	#endif
 }
