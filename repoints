@@ -128,6 +128,12 @@ BattleScript_MoveEffectWrap 08250660
 BadPoisonedByBS 08250644
 BattleScript_ActionSwitch 0801640C
 
+##Battle Transitions
+sBT_Phase1Tasks 80D09E8
+sBT_Phase1Tasks 80D0A20
+sBT_Phase2Tasks 80D0A58
+sBT_Phase2Tasks 80D0A88
+
 ##Poke Ball Expansion
 GetMonPokeBallHook 0803FE70
 gBallParticleSpriteTemplates 080F0268

@@ -10,9 +10,21 @@
  */
 
 //Functions Hooked In
-bool8 Phase2_Mugshot_Func2(struct Task* task);
+bool8 BT_Phase2Mugshot_LoadGfx(struct Task* task);
 void Mugshots_CreateOpponentPlayerSprites(struct Task* task);
-bool8 Phase2_Mugshot_Func4(struct Task* task);
-bool8 Phase2_Mugshot_Func5(struct Task *task);
-bool8 Phase2_Mugshot_Func8(struct Task *task);
+bool8 BT_Phase2Mugshot_StartSpriteSlide(struct Task* task);
+bool8 BT_Phase2Mugshot_WaitForOpponentInPlace(struct Task *task);
+bool8 BT_Phase2Mugshot_StartBlackFade(struct Task *task);
 bool8 ShiftTrainerMugshotSprite(struct Sprite *sprite);
+
+//Exported Data Structures
+struct BattleTransitionLogo
+{
+	u8 trainerClass;
+	const u8* tiles;
+	const u16* pal;
+	const u8* map;
+};
+
+extern const struct BattleTransitionLogo gBattleTransitionLogos[];
+extern const u8 gNumBattleTransitionLogos;

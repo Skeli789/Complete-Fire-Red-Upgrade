@@ -339,11 +339,11 @@ GetEventObjectGraphicsInfoByEventObj 801D760 1
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0
-Phase2_Mugshot_Func2 80D28A8 1
+BT_Phase2Mugshot_LoadGfx 80D28A8 1
+BT_Phase2Mugshot_StartSpriteSlide 80D2A54 1
+BT_Phase2Mugshot_WaitForOpponentInPlace 80D2AD0 1
+BT_Phase2Mugshot_StartBlackFade 80D2C8C 1
 Mugshots_CreateOpponentPlayerSprites 80D2EA4 1
-Phase2_Mugshot_Func4 80D2A54 1
-Phase2_Mugshot_Func5 80D2AD0 1
-Phase2_Mugshot_Func8 80D2C8C 1
 ShiftTrainerMugshotSprite 80D3094 1
 
 ##Dynamic Overworld Palettes

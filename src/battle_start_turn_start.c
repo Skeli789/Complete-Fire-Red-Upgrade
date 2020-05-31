@@ -12,6 +12,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_transition.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
@@ -29,7 +30,7 @@
 /*
 battle_start_turn_start.c
 	-handles the logic for determining which pokemon attacks first
-	=also handles setting up battle data
+	-also handles setting up battle data
 */
 
 enum BattleBeginStates
@@ -1418,10 +1419,7 @@ u16 LoadProperMusicForLinkBattles(void)
 extern const u8 sBattleTransitionTable_Trainer[][2];
 u8 GetTrainerBattleTransition(void)
 {
-	u8 minPartyCount;
-	u8 transitionType;
-	u8 enemyLevel;
-	u8 playerLevel;
+	u8 minPartyCount, transitionType, enemyLevel, playerLevel;
 
 	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 		return B_TRANSITION_CHAMPION;
@@ -1455,6 +1453,27 @@ u8 GetTrainerBattleTransition(void)
 
 		return B_TRANSITION_CHAMPION;
 	}
+	#endif
+	
+	#ifdef VAR_BATTLE_TRANSITION_LOGO
+	u16 transitionLogo = VarGet(VAR_BATTLE_TRANSITION_LOGO);
+	if (transitionLogo == 0) //No preset logo
+	{
+		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+
+		for (u32 i = 0; i < gNumBattleTransitionLogos; ++i)
+		{
+			if (gBattleTransitionLogos[i].trainerClass != 0 //These logos must be set manually
+			&& gBattleTransitionLogos[i].trainerClass == trainerClass)
+			{
+				transitionLogo = i;
+				VarSet(VAR_BATTLE_TRANSITION_LOGO, transitionLogo); //Prep for later
+				return B_TRANSITION_CUSTOM_LOGO;
+			}
+		}
+	}
+	else
+		return B_TRANSITION_CUSTOM_LOGO;
 	#endif
 
 	if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
