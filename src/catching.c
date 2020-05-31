@@ -189,27 +189,61 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_MOON_BALL: ;
-					int i;
-					const struct Evolution* evolutions = gEvolutionTable[defSpecies];
-
-					for (i = 0; i < EVOS_PER_MON; ++i)
-					{
-						switch (evolutions[i].method) {
-							case EVO_ITEM:
-							case EVO_TRADE_ITEM:
-							case EVO_HOLD_ITEM_NIGHT:
-							case EVO_HOLD_ITEM_DAY:
-								if (evolutions[i].param == ITEM_MOON_STONE)
-								{
-									ballMultiplier = 40;
-									goto END_MOON_LOOP;
-								}
-						}
+					switch (defSpecies) {
+						default:
+							ballMultiplier = 10;
+							break;
+						#ifdef SPECIES_NIDORAN_F
+						case SPECIES_NIDORAN_F:
+						#endif
+						#ifdef SPECIES_NIDORINA
+						case SPECIES_NIDORINA:
+						#endif
+						#ifdef SPECIES_NIDOQUEEN
+						case SPECIES_NIDOQUEEN:
+						#endif
+						#ifdef SPECIES_NIDORAN_M
+						case SPECIES_NIDORAN_M:
+						#endif
+						#ifdef SPECIES_NIDORINO
+						case SPECIES_NIDORINO:
+						#endif
+						#ifdef SPECIES_NIDOKING
+						case SPECIES_NIDOKING:
+						#endif
+						#ifdef SPECIES_CLEFFA
+						case SPECIES_CLEFFA:
+						#endif
+						#ifdef SPECIES_CLEFAIRY
+						case SPECIES_CLEFAIRY:
+						#endif
+						#ifdef SPECIES_CLEFABLE
+						case SPECIES_CLEFABLE:
+						#endif
+						#ifdef SPECIES_IGGLYBUFF
+						case SPECIES_IGGLYBUFF:
+						#endif
+						#ifdef SPECIES_JIGGLYPUFF
+						case SPECIES_JIGGLYPUFF:
+						#endif
+						#ifdef SPECIES_WIGGLYTUFF
+						case SPECIES_WIGGLYTUFF:
+						#endif
+						#ifdef SPECIES_SKITTY
+						case SPECIES_SKITTY:
+						#endif
+						#ifdef SPECIES_DELCATTY
+						case SPECIES_DELCATTY:
+						#endif
+						#ifdef SPECIES_MUNNA
+						case SPECIES_MUNNA:
+						#endif
+						#ifdef SPECIES_MUSHARNA
+						case SPECIES_MUSHARNA:
+						#endif
+							ballMultiplier = 40;
+							break;
 					}
-
-					END_MOON_LOOP:
-					if (i == EVOS_PER_MON)
-						ballMultiplier = 10;
 
 					break;
 
