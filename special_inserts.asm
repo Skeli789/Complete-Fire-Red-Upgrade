@@ -427,9 +427,10 @@ MaxLevelChange1:
 	mov r0, r1
 	bl GetEventObjectGraphicsInfoByEventObj
 
-.org 0xDB8F8, 0xFF
-	mov r0, r1 @UpdateShortGrassFieldEffect
+.org 0xDB8F8, 0xFF @UpdateShortGrassFieldEffect
+	mov r0, r1
 	bl GetEventObjectGraphicsInfoByEventObj
+	mov r8, r0 @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0xDBBBA, 0xFF @FldEff_Splash
 	mov r0, r5
@@ -446,6 +447,7 @@ MaxLevelChange1:
 .org 0xDC7E2, 0xFF @FldEff_SandPile
 	mov r0, r6
 	bl GetEventObjectGraphicsInfoByEventObj
+	mov r5, r0 @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0xDCB06, 0xFF @UpdateDisguiseFieldEffect
 	mov r0, r0
