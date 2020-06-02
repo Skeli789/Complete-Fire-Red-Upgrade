@@ -70,6 +70,9 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	FLAG_RAID_BATTLE_NO_FORCE_END,
 #endif
+#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+	FLAG_KEEP_CONSUMABLE_ITEMS,
+#endif
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
 	FLAG_HIDDEN_ABILITY,
@@ -525,13 +528,19 @@ static void NaturalCureHeal(void)
 static void RestoreNonConsumableItems(void)
 {
 	u16 none = ITEM_NONE;
-	u16* items = gNewBS->itemBackup;;
+	u16* items = gNewBS->itemBackup;
+	#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+	bool8 keepConsumables = FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS);
+	#else
+	bool8 keepConsumables = FALSE;
+	#endif
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+			||  keepConsumables
 			||  items[i] == ITEM_NONE
 			||  !IsConsumable(items[i]))
 			{
