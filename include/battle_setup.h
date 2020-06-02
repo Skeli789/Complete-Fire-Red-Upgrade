@@ -17,6 +17,7 @@
 #define TRAINER_BATTLE_TAG								12
 #define TRAINER_BATTLE_SINGLE_SCALED					13
 #define TRAINER_BATTLE_DOUBLE_SCALED					14
+#define TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED		15
 
 struct TrainerBattleParameter
 {

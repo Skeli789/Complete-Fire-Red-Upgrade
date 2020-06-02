@@ -538,6 +538,14 @@ void FishingWildEncounter(u8 rod)
 
 	gFishingByte = TRUE;
 	GenerateFishingWildMon(fishingMonsInfo, rod);
+
+	u16 currSpecies = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL);
+	if (currSpecies == gLastFishingSpecies)
+		gFishingStreak = MathMin(gFishingStreak + 1, 0xFF); //Increment chain
+	else
+		gFishingStreak = 0; //Reset chain
+
+	gLastFishingSpecies = currSpecies;
 	IncrementGameStat(GAME_STAT_FISHING_CAPTURES);
 	BattleSetup_StartWildBattle();
 }
@@ -550,6 +558,27 @@ bool8 DoesCurrentMapHaveFishingMons(void)
 		return FALSE;
 
 	return TRUE;
+}
+
+bool8 DoesFishBite(void)
+{
+	if (DoesCurrentMapHaveFishingMons())
+	{
+		u8 chance = 50; //Default 50% chance of biting
+
+		if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
+		{
+			u8 ability = GetMonAbility(&gPlayerParty[0]);
+			if (ability == ABILITY_SUCTIONCUPS || ability  == ABILITY_STICKYHOLD)
+				chance = 85; //85% chance with abilities
+		}
+
+		if (Random() % 100 < chance)
+			return TRUE;
+	}
+
+	gFishingStreak = 0; //End fishing chain
+	return FALSE;
 }
 
 static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)

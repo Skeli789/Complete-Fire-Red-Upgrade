@@ -1173,5 +1173,15 @@ MainMenuRTCWarningHook_WaitMsg2:
 	ldr r0, =0x0800C9A2 | 1
 	bx r0
 
+.pool
+@0x0805D524 with r0
+SuctionCupsHook:
+	bl DoesFishBite
+	cmp r0, #0x0
+	beq NoFishBiting
+	ldr r0, =0x805D548 | 1
+	bx r0
 
-	
+NoFishBiting:
+	ldr r0, =0x805D53A | 1
+	bx r0

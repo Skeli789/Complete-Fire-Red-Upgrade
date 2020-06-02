@@ -152,6 +152,7 @@ MetatileBehavior_IsUnableToEmerge 8059FCC 1
 DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
 GetLedgeJumpDirection 80680F8 3
+RunOnTransitionMapScript 8069C44 0
 TryRunOnFrameMapScript 8069C74 0
 GetInteractedMetatileScript 806D1F0 3
 GetInteractedWaterScript 806D548 3
@@ -172,6 +173,7 @@ Waterfall3_MovePlayer 8084DA4 2
 SetCutGrassMetatile 8097B50 2
 BikeTurboBoostHook 80BD338 0
 GetPlayerSpeed 80BD674 0
+SuctionCupsHook 805D524 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1

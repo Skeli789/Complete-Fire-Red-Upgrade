@@ -806,6 +806,15 @@
 .word \trainerbattle4_cantbattle
 .endm
 
+@same as trainerbattle3
+.macro trainerbattle15 trainerbattle3_type trainerbattle3_index trainerbattle3_filler trainerbattle3_intro
+.byte 0x5C
+.byte 0xF
+.hword \trainerbattle3_index
+.hword \trainerbattle3_filler
+.word \trainerbattle3_intro
+.endm
+
 .macro repeattrainerbattle
 .byte 0x5D
 .endm

@@ -826,6 +826,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			return EventScript_TryDoNormalTrainerBattle;
 
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
+		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED:
 			TrainerBattleLoadArgs(sOrdinaryNoIntroBattleParams, data);
 			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A);
 			return EventScript_DoTrainerBattle;
@@ -939,6 +940,11 @@ static void InitTrainerBattleVariables(void)
 	sTrainerEventObjectLocalId = 0;
 	sTrainerCannotBattleSpeech = 0;
 	sTrainerBattleEndScript = 0;
+}
+
+void ClearTwoOpponentFlag(void)
+{
+	FlagClear(FLAG_TWO_OPPONENTS);
 }
 
 void BattleSetup_StartTrainerBattle(void)
@@ -1494,6 +1500,15 @@ static const u8* TryUseFlashInDarkCave(void)
 }
 #endif
 
+void RunOnTransitionMapScript(void)
+{
+	//Reset streaks upon moving to a new map
+	gCurrentDexNavChain = 0;
+	gFishingStreak = 0;
+	gLastFishingSpecies = 0;
+	MapHeaderRunScriptByTag(3);
+}
+
 bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
@@ -1684,15 +1699,15 @@ bool8 MetatileBehavior_IsMuddySlope(u8 metatileBehavior)
 
 bool8 ForcedMovement_MuddySlope(void)
 {
-    struct EventObject* playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	struct EventObject* playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
 
-    if (playerEventObj->movementDirection != DIR_NORTH || GetPlayerSpeed() <= 3)
-    {
-        playerEventObj->facingDirectionLocked = 1;
-        return DoForcedMovement(1, PlayerGoSpeed2);
-    }
+	if (playerEventObj->movementDirection != DIR_NORTH || GetPlayerSpeed() <= 3)
+	{
+		playerEventObj->facingDirectionLocked = 1;
+		return DoForcedMovement(1, PlayerGoSpeed2);
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 //Taken From EM for if people want to use them
@@ -1868,6 +1883,7 @@ bool8 IsCurrentAreaDarkerCave(void)
 	#ifdef UNBOUND
 		u8 mapSec = GetCurrentRegionMapSectionId();
 		return mapSec == MAPSEC_ICICLE_CAVE
+			|| mapSec == MAPSEC_ICY_HOLE
 			|| mapSec == MAPSEC_VALLEY_CAVE
 			|| mapSec == MAPSEC_FROST_MOUNTAIN
 			|| mapSec == MAPSEC_THUNDERCAP_MOUNTAIN
@@ -1957,10 +1973,10 @@ extern const u16 gFieldEffectObjectPic_SwampLongGrassPal[];
 static const struct SpritePalette sSwampGrassObjectPaletteInfo = {gFieldEffectObjectPic_SwampLongGrassPal, 0x1005};
 
 static const struct SpriteFrameImage sFieldEffectObjectPicTable_SwampLongGrass[] = {
-    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
-    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 1),
-    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 2),
-    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 1),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 2),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
 };
 
 const struct SpriteTemplate sFieldEffectObjectTemplate_SwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5938, sFieldEffectObjectPicTable_SwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DB69C | 1)};
@@ -2058,24 +2074,24 @@ static void FldEff_LongGrass(void)
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
-    spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 0);
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 0);
 
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = ZCoordToPriority(((u32*) gFieldEffectArguments)[2]);
+	if (spriteId != MAX_SPRITES)
+	{
+		sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = ZCoordToPriority(((u32*) gFieldEffectArguments)[2]);
 		sprite->data[0] = ((u32*) gFieldEffectArguments)[2];
 		sprite->data[1] = ((u32*) gFieldEffectArguments)[0];
 		sprite->data[2] = ((u32*) gFieldEffectArguments)[1];
 		sprite->data[3] = ((u32*) gFieldEffectArguments)[4];
 		sprite->data[4] = ((u32*) gFieldEffectArguments)[5];
 		sprite->data[5] = ((u32*) gFieldEffectArguments)[6];
-        if (((u32*) gFieldEffectArguments)[7])
-        {
-            SeekSpriteAnim(sprite, 6);
-        }
-    }
+		if (((u32*) gFieldEffectArguments)[7])
+		{
+			SeekSpriteAnim(sprite, 6);
+		}
+	}
 
 	PlayGrassFootstepNoise();
 }
@@ -2167,7 +2183,7 @@ void SetCutGrassMetatile(s16 x, s16 y)
 void FollowHiddenGrottoWarp(void)
 {
 	s8 warpEventId;
-    struct MapPosition position;
+	struct MapPosition position;
 
 	GetPlayerPosition(&position);
 	gSpecialVar_LastResult = FALSE;
@@ -2324,6 +2340,7 @@ static bool8 IsPlayerFacingSurfableLava(void)
 		&& MetatileBehavior_IsLava(MapGridGetMetatileBehaviorAt(x, y));
 }
 
+extern const u8 EventScript_UseLavaSurf_Debug[];
 const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
 {
 	u16 item = ITEM_NONE;
@@ -2343,7 +2360,12 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		if (HasBadgeToUseSurf())
 		{
 			if (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF)
+				#ifdef DEBUG_HMS
+				Var8004 = 0;
+				return EventScript_UseLavaSurf_Debug;
+				#else
 				return EventScript_UseLavaSurf; //Fire-type check done in script
+				#endif
 
 			return EventScript_MagmaGlistens;
 		}
@@ -2470,7 +2492,7 @@ bool8 TrySetupDiveEmergeScript(void)
 		if (partyId < PARTY_SIZE)
 		{
 			Var8004 = partyId;
-	 		ScriptContext1_SetupScript(EventScript_UseDiveUnderwater);
+			ScriptContext1_SetupScript(EventScript_UseDiveUnderwater);
 		}
 		else
 			ScriptContext1_SetupScript(EventScript_CantSurface);

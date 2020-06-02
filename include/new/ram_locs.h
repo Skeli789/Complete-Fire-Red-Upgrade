@@ -205,5 +205,7 @@ extern bool8 gInShop; //0x203E043
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))
 //#define sStartMenuOpen (*((bool8*) 0x203E054))
 //#define sPrintedRTCWarning (*((bool8*) 0x203E055))
+extern u16 gLastFishingSpecies; //0x203E056
+extern u8 gFishingStreak; //0x203E058
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

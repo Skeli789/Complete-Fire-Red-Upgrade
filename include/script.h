@@ -40,6 +40,7 @@ extern const u8 *const gStdScriptsEnd[];
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);
 u32 __attribute__((long_call)) ScriptReadWord(struct ScriptContext *ctx);
+void __attribute__((long_call)) MapHeaderRunScriptByTag(u8 tag);
 u8* __attribute__((long_call)) MapHeaderCheckScriptTable(u8 tag);
 void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
 void __attribute__((long_call)) ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
@@ -69,7 +70,6 @@ bool8 ScriptContext2_RunScript(void);
 void EnableBothScriptContexts(void);
 void ScriptContext2_RunNewScript(const u8 *ptr);
 u8 *mapheader_get_tagged_pointer(u8 tag);
-void mapheader_run_script_by_tag(u8 tag);
 u8 *mapheader_get_first_match_from_tagged_ptr_list(u8 tag);
 void mapheader_run_script_with_tag_x1(void);
 void mapheader_run_script_with_tag_x3(void);
