@@ -1478,6 +1478,9 @@ bool8 IsRaidBossUsingRegularMove(u8 bank, u16 baseMove)
 static u8 GetRaidMapSectionId(void)
 {
 	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_ICY_HOLE)
+		return MAPSEC_ICY_HOLE - MAPSEC_DYNAMIC;
+
 	return Overworld_GetMapHeaderByGroupAndId((u16) gSaveBlock1->dynamicWarp.mapGroup, (u16) gSaveBlock1->dynamicWarp.mapNum) -> regionMapSectionId - MAPSEC_DYNAMIC;
 	#else
 	return GetCurrentRegionMapSectionId() - MAPSEC_DYNAMIC;

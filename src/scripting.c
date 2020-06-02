@@ -2538,7 +2538,7 @@ static void ShowObtainedItemDescription(unusedArg u16 itemId)
 	#ifdef ITEM_PICTURE_ACQUIRE
 	struct WindowTemplate template;
 	s16 textX, textY, lineLength, windowHeight, numLines;
-	u8 pocket = GetPocketByItemId(Var8004);
+	u8 pocket = GetPocketByItemId(itemId);
 
 	if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE) //Displayed in the middle of the screen
 	{
@@ -2569,11 +2569,11 @@ static void ShowObtainedItemDescription(unusedArg u16 itemId)
 		windowHeight = 4;
 	}
 
-	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 15, 0x20);
+	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
 	sHeaderBoxWindowId = AddWindow(&template);
 	FillWindowPixelBuffer(sHeaderBoxWindowId, PIXEL_FILL(1));
-	PutWindowTilemap(sHeaderBoxWindowId);
 	DrawStdFrameWithCustomTileAndPalette(sHeaderBoxWindowId, FALSE, 0x214, 14);
+	PutWindowTilemap(sHeaderBoxWindowId);
 	CopyWindowToVram(sHeaderBoxWindowId, 3);
 
 	AddTextPrinterParameterized(sHeaderBoxWindowId, 0, gStringVar4, textX, textY, 0, NULL);
@@ -2581,9 +2581,8 @@ static void ShowObtainedItemDescription(unusedArg u16 itemId)
 	#endif
 }
 
-
 #define ITEM_TAG 0xFDF3
-void ShowItemSpriteOnFind(void)
+static void ShowItemSpriteOnFind(u16 itemId, u8* spriteId)
 {
 	#ifdef ITEM_PICTURE_ACQUIRE
 	static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
@@ -2606,14 +2605,14 @@ void ShowItemSpriteOnFind(void)
 	s16 x, y;
 	u8 iconSpriteId;
 
-	if (Var8004 == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
+	if (itemId == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
 		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
 	else
-		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemId);
 
 	if (iconSpriteId != MAX_SPRITES)
 	{
-		u8 pocket = GetPocketByItemId(Var8004);
+		u8 pocket = GetPocketByItemId(itemId);
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
 		{ 	//Double the size of the item and place it in the centre of the screen
 			x = 96 + 16;
@@ -2623,12 +2622,12 @@ void ShowItemSpriteOnFind(void)
 			gSprites[iconSpriteId].affineAnims = sSpriteAffineAnimTable_KeyItemTM;
 			StartSpriteAffineAnim(&gSprites[iconSpriteId], 0);
 			
-			if (!GetSetItemObtained(Var8004, FLAG_GET_OBTAINED))
-				ShowObtainedItemDescription(Var8004);
+			if (!GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+				ShowObtainedItemDescription(itemId);
 		}
 		else
 		{
-			if (GetSetItemObtained(Var8004, FLAG_GET_OBTAINED))
+			if (GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
 			{
 				//Place the item in the bottom right hand corner of the textbox
 				x = 197 + 16;
@@ -2639,7 +2638,7 @@ void ShowItemSpriteOnFind(void)
 			{
 				x = ITEM_ICON_X;
 				y = ITEM_ICON_Y;
-				ShowObtainedItemDescription(Var8004);
+				ShowObtainedItemDescription(itemId);
 			}
 		}
 
@@ -2648,17 +2647,17 @@ void ShowItemSpriteOnFind(void)
 		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
 	}
 
-	Var8006 = iconSpriteId;
+	*spriteId = iconSpriteId;
 	#endif
 }
 
-void ClearItemSpriteAfterFind(void)
+static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 {
 	#ifdef ITEM_PICTURE_ACQUIRE
 	FreeSpriteTilesByTag(ITEM_TAG);
 	FreeSpritePaletteByTag(ITEM_TAG);
-	FreeSpriteOamMatrix(&gSprites[Var8006]);
-	DestroySprite(&gSprites[Var8006]);
+	FreeSpriteOamMatrix(&gSprites[spriteId]);
+	DestroySprite(&gSprites[spriteId]);
 	
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
@@ -2667,6 +2666,26 @@ void ClearItemSpriteAfterFind(void)
 		RemoveWindow(sHeaderBoxWindowId);
 	}
 	#endif
+}
+
+void ShowItemSpriteOnFindObtain(void)
+{
+	ShowItemSpriteOnFind(Var8004, (u8*) &Var8006);
+}
+
+void ShowItemSpriteOnFindHidden(void)
+{
+	ShowItemSpriteOnFind(Var8005, (u8*) &Var8007);
+}
+
+void ClearItemSpriteAfterFindObtain(void)
+{
+	ClearItemSpriteAfterFind(Var8006);
+}
+
+void ClearItemSpriteAfterFindHidden(void)
+{
+	ClearItemSpriteAfterFind(Var8007);
 }
 
 bool8 sp196_TryCopyTMNameToBuffer1(void)

@@ -25,8 +25,6 @@ tables to edit:
 */
 
 #ifdef UNBOUND
-typedef const u8* CustomPal;
-
 extern const u8 TS_Male_Player_White_Brunette_BlackPal[];
 extern const u8 TS_Male_Player_White_Silver_RedPal[];
 extern const u8 TS_Male_Player_White_Silver_BlackPal[];
@@ -34,7 +32,13 @@ extern const u8 TS_Male_Player_Brown_Dark_RedPal[];
 extern const u8 TS_Male_Player_Brown_Dark_BlackPal[];
 extern const u8 TS_Male_Player_Brown_Silver_RedPal[];
 extern const u8 TS_Male_Player_Brown_Silver_BlackPal[];
-
+extern const u8 BS_Male_Player_White_Brunette_BlackPal[];
+extern const u8 BS_Male_Player_White_Silver_RedPal[];
+extern const u8 BS_Male_Player_White_Silver_BlackPal[];
+extern const u8 BS_Male_Player_Brown_Dark_RedPal[];
+extern const u8 BS_Male_Player_Brown_Dark_BlackPal[];
+extern const u8 BS_Male_Player_Brown_Silver_RedPal[];
+extern const u8 BS_Male_Player_Brown_Silver_BlackPal[];
 extern const u8 TS_Female_Player_White_Brunette_PurplePal[];
 extern const u8 TS_Female_Player_White_Silver_RedPal[];
 extern const u8 TS_Female_Player_White_Silver_PurplePal[];
@@ -42,6 +46,13 @@ extern const u8 TS_Female_Player_Brown_Dark_RedPal[];
 extern const u8 TS_Female_Player_Brown_Dark_PurplePal[];
 extern const u8 TS_Female_Player_Brown_Silver_RedPal[];
 extern const u8 TS_Female_Player_Brown_Silver_PurplePal[];
+extern const u8 BS_Female_Player_White_Brunette_PurplePal[];
+extern const u8 BS_Female_Player_White_Silver_RedPal[];
+extern const u8 BS_Female_Player_White_Silver_PurplePal[];
+extern const u8 BS_Female_Player_Brown_Dark_RedPal[];
+extern const u8 BS_Female_Player_Brown_Dark_PurplePal[];
+extern const u8 BS_Female_Player_Brown_Silver_RedPal[];
+extern const u8 BS_Female_Player_Brown_Silver_PurplePal[];
 
 struct CharacterCustomizationPaletteSwitch
 {
@@ -52,21 +63,21 @@ struct CharacterCustomizationPaletteSwitch
 
 static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable[] =
 {
-	{262, 		TS_Male_Player_White_Brunette_BlackPal, (CustomPal) 0x8F08000},
-	{271, 		TS_Male_Player_White_Silver_RedPal, (CustomPal) 0x8F08030},
-	{280, 		TS_Male_Player_White_Silver_BlackPal, (CustomPal) 0x8F08060},
-	{289, 		TS_Male_Player_Brown_Dark_RedPal, (CustomPal) 0x8F08090},
-	{298, 		TS_Male_Player_Brown_Dark_BlackPal, (CustomPal) 0x8F080C0},
-	{307, 		TS_Male_Player_Brown_Silver_RedPal, (CustomPal) 0x8F080F0},
-	{316, 		TS_Male_Player_Brown_Silver_BlackPal, (CustomPal) 0x8F08120},
-	{325, 		TS_Female_Player_White_Brunette_PurplePal, (CustomPal) 0x8F08150},
-	{334, 		TS_Female_Player_White_Silver_RedPal, (CustomPal) 0x8F08180},
-	{343, 		TS_Female_Player_White_Silver_PurplePal, (CustomPal) 0x8F081B0},
-	{352, 		TS_Female_Player_Brown_Dark_RedPal, (CustomPal) 0x8F081E0},
-	{361, 		TS_Female_Player_Brown_Dark_PurplePal, (CustomPal) 0x8F08210},
-	{370, 		TS_Female_Player_Brown_Silver_RedPal, (CustomPal) 0x8F08240},
-	{379, 		TS_Female_Player_Brown_Silver_PurplePal, (CustomPal) 0x8F08270},
-	{0xFFFF, 	(CustomPal) 0, (CustomPal) 0},
+	{262, 		TS_Male_Player_White_Brunette_BlackPal, BS_Male_Player_White_Brunette_BlackPal},
+	{271, 		TS_Male_Player_White_Silver_RedPal, BS_Male_Player_White_Silver_RedPal},
+	{280, 		TS_Male_Player_White_Silver_BlackPal, BS_Male_Player_White_Silver_BlackPal},
+	{289, 		TS_Male_Player_Brown_Dark_RedPal, BS_Male_Player_Brown_Dark_RedPal},
+	{298, 		TS_Male_Player_Brown_Dark_BlackPal, BS_Male_Player_Brown_Dark_BlackPal},
+	{307, 		TS_Male_Player_Brown_Silver_RedPal, BS_Male_Player_Brown_Silver_RedPal},
+	{316, 		TS_Male_Player_Brown_Silver_BlackPal, BS_Male_Player_Brown_Silver_BlackPal},
+	{325, 		TS_Female_Player_White_Brunette_PurplePal, BS_Female_Player_White_Brunette_PurplePal},
+	{334, 		TS_Female_Player_White_Silver_RedPal, BS_Female_Player_White_Silver_RedPal},
+	{343, 		TS_Female_Player_White_Silver_PurplePal, BS_Female_Player_White_Silver_PurplePal},
+	{352, 		TS_Female_Player_Brown_Dark_RedPal, BS_Female_Player_Brown_Dark_RedPal},
+	{361, 		TS_Female_Player_Brown_Dark_PurplePal, BS_Female_Player_Brown_Dark_PurplePal},
+	{370, 		TS_Female_Player_Brown_Silver_RedPal, BS_Female_Player_Brown_Silver_RedPal},
+	{379, 		TS_Female_Player_Brown_Silver_PurplePal, BS_Female_Player_Brown_Silver_PurplePal},
+	{0xFFFF, 	NULL, NULL},
 };
 #endif
 

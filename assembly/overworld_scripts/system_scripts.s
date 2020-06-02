@@ -175,7 +175,7 @@ SystemScript_WaitForFollower:
 SystemScript_FindItemMessage:
 	hidesprite LASTTALKED
 	pause 0x1
-	callasm ShowItemSpriteOnFind
+	callasm ShowItemSpriteOnFindObtain
 	additem 0x8004 0x8005
 	special2 LASTRESULT 0x196
 	copyvar 0x8008 LASTRESULT
@@ -186,7 +186,7 @@ SystemScript_FindItemMessage:
 	waitfanfare
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN 
-	callasm ClearItemSpriteAfterFind
+	callasm ClearItemSpriteAfterFindObtain
 	return
 
 SystemScript_FindNormalItem:
@@ -216,7 +216,7 @@ SystemScript_ObtainItem:
 
 .global SystemScript_ObtainItemMessage
 SystemScript_ObtainItemMessage:
-	callasm ShowItemSpriteOnFind
+	callasm ShowItemSpriteOnFindObtain
 	compare 0x8005 1
 	if lessorequal _call ObtainedSingleItemMsg
 	compare 0x8005 1
@@ -225,7 +225,7 @@ SystemScript_ObtainItemMessage:
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
-	callasm ClearItemSpriteAfterFind
+	callasm ClearItemSpriteAfterFindObtain
 	return
 
 ObtainedSingleItemMsg:
@@ -249,6 +249,24 @@ ObtainedMultipleItemMsg:
 	callasm TryAppendSOntoEndOfItemString
 	preparemsg gText_ObtainedMultipleItems
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@Var8005 = Item
+@Var8006 = Quantity
+SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
+	callasm ShowItemSpriteOnFindHidden
+	compare 0x8006 1
+	if equal _call 0x81A68AA @;EventScript_FoundSingleHiddenItem
+	compare 0x8006 1
+	if notequal _call 0x81A68BA @;EventScript_FoundMultipleHiddenItems
+	waitfanfare
+	waitmsg
+	msgbox 0x81A5218 MSG_KEEPOPEN @;gText_PutItemAway
+	callasm ClearItemSpriteAfterFindHidden
+	special 0x96 @;SetHiddenItemFlag
+	releaseall
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -420,12 +438,14 @@ EventScript_Defog:
 
 .equ SPECIAL_POKEMON_TYPE_IN_PARTY, 0xB2
 .global EventScript_UseLavaSurf
+.global EventScript_UseLavaSurf_Debug
 EventScript_UseLavaSurf:
 	setvar 0x8000 TYPE_FIRE
 	special SPECIAL_POKEMON_TYPE_IN_PARTY
 	compare LASTRESULT PARTY_SIZE
 	if equal _goto EventScript_MagmaGlistens
 	copyvar 0x8004 LASTRESULT
+EventScript_UseLavaSurf_Debug:
 	bufferpartypokemon 0x0 0x8004
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0

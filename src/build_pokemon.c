@@ -788,6 +788,7 @@ static bool8 IsScaledTrainerBattleMode()
 {
 	return sTrainerBattleMode == TRAINER_BATTLE_SINGLE_SCALED
 		|| sTrainerBattleMode == TRAINER_BATTLE_DOUBLE_SCALED
+		|| sTrainerBattleMode == TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED
 		#ifdef UNBOUND
 		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH
 		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH_DOUBLE
@@ -3246,15 +3247,22 @@ u32 CheckShinyMon(struct Pokemon* mon)
 	u16 chance = 0;
 	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 
-	#ifdef ITEM_SHINY_CHARM
-	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
-		chance = 3; //Tries an extra two times
-	#endif
-
 	#ifdef FLAG_SHINY_CREATION
 	if (FlagGet(FLAG_SHINY_CREATION))
+	{
 		chance = 4097;
+	}
+	else
 	#endif
+	{
+		#ifdef ITEM_SHINY_CHARM
+		if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
+			chance = 3; //Tries an extra two times
+		#endif
+
+		if (gFishingByte) //Currently fishing
+			chance += (1 + 2 * MathMin(gFishingStreak, 20)); //Tries an extra 2 times per Pokemon in the streak up to 41 times
+	}
 
 	if (RandRange(0, 4097) < chance)		//Nominal 1/4096
 	{

@@ -129,6 +129,7 @@
 #define MAPSEC_ROUTE_1 						0x65
 #define	MAPSEC_BELLIN_TOWN					0x59
 #define MAPSEC_ICICLE_CAVE					0x8D
+#define MAPSEC_ICY_HOLE						0x9D
 #define MAPSEC_ROUTE_2 						0x66
 #define MAPSEC_DRESCO_TOWN					0x5A
 #define MAPSEC_ROUTE_3						0x67
@@ -154,7 +155,7 @@
 #define MAPSEC_ROUTE_10						0x64
 #define MAPSEC_CAVE_OF_BEING				0x9A
 #define MAPSEC_AUBURN_WATERWAY	            0x8E
-#define MAPSEC_LOST_TUNNEL					0x9c
+#define MAPSEC_LOST_TUNNEL					0x9C
 #define MAPSEC_FALLSHORE_CITY				0x5E
 #define MAPSEC_ROUTE_11						0x6F
 #define MAPSEC_EPIDIMY_TOWN					0x5F
