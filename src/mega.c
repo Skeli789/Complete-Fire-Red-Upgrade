@@ -190,17 +190,20 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	u16 item = mon->item;
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i)
+	if (item != ITEM_NONE)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
+		for (u8 i = 0; i < EVOS_PER_MON; ++i)
 		{
-			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE, TRUE);
+			if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
+			{
+				DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE, TRUE);
 
-			switch (caseId) {
-				case 0:
-					return BattleScript_Primal;
-				default:
-					return BattleScript_PrimalSub;
+				switch (caseId) {
+					case 0:
+						return BattleScript_Primal;
+					default:
+						return BattleScript_PrimalSub;
+				}
 			}
 		}
 	}
