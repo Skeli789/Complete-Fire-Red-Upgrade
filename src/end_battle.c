@@ -498,6 +498,7 @@ void EndOfBattleThings(void)
 		EndBattleFlagClear();
 		HealPokemonInFrontier();
 		gTerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+		CalculatePlayerPartyCount(); //Party size can change after multi battle is over
 
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();
