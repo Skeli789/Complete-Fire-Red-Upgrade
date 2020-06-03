@@ -638,8 +638,8 @@ EventScript_UseFlash:
 	msgbox 0x81BDFD7 MSG_NORMAL
 	checksound
 	sound 0xC8
-	lighten 0x0
-	darken 0x0
+	animateflash 0x0
+	setflashradius 0x0
 	releaseall
 	end
 

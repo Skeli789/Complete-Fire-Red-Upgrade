@@ -10,7 +10,7 @@ extern struct MapCoords {
     int height;
 } gUnknown_03005DC0;
 
-u8 __attribute__((long_call)) MetatileBehavior_GetLowerBytes(const u32 a, const u8 b);
+u8 __attribute__((long_call)) GetMetatileAttributeFromRawMetatileBehavior(const u32 a, const u8 b);
 u32 __attribute__((long_call)) MapGridGetMetatileIdAt(int x, int y);
 void __attribute__((long_call)) MapGridSetMetatileIdAt(int, int, u16);
 u16 __attribute__((long_call)) MapGridGetMetatileField(u16 x, u16 y, u8 a);

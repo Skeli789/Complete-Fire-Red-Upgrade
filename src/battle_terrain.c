@@ -58,7 +58,7 @@ u8 BattleSetup_GetTerrainId(void)
 		}
 		else if (tileBehavior == MB_VERY_TALL_GRASS) //The old useless function for this check just returns 0
 			terrain = BATTLE_TERRAIN_LONG_GRASS;
-		else if (MetatileBehavior_IsSandOrDeepSand(tileBehavior))
+		else if (MetatileBehavior_IsSandOrShallowFlowingWater(tileBehavior))
 			terrain = BATTLE_TERRAIN_SAND;
 		else if (MetatileBehavior_IsMountain(tileBehavior))
 			terrain = BATTLE_TERRAIN_MOUNTAIN;

@@ -406,7 +406,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 		while (topX < botX)
 		{
 			u32 tileBehaviour = MapGridGetMetatileField(topX, topY, 0xFF);
-			u8 blockProperties = MetatileBehavior_GetLowerBytes(tileBehaviour, 4);
+			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 
 			Var8005 = tileBehaviour;	//020370c2
 
@@ -509,7 +509,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 							FieldEffectStart(FLDEFF_SHAKING_GRASS);
 						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
 							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
-						else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour))
+						else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour))
 							FieldEffectStart(FLDEFF_SAND_HOLE);
 						else
 							FieldEffectStart(FLDEFF_CAVE_DUST); //Default in caves is dust
@@ -520,7 +520,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 							FieldEffectStart(FLDEFF_SHAKING_GRASS);
 						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
 							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
-						else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour)) //Desert Sand
+						else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour)) //Desert Sand
 							FieldEffectStart(FLDEFF_SAND_HOLE);
 						else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
 							FieldEffectStart(FLDEFF_CAVE_DUST);

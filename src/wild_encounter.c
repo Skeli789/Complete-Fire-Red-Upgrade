@@ -656,7 +656,7 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 {
 	struct Roamer* roamer;
 	bool8 clearDoubleFlag = FALSE;
-	const u8 lowerByte = MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4);
+	const u8 lowerByte = GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 
 	if (sWildEncountersDisabled == TRUE)
 		return FALSE;
@@ -674,7 +674,8 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 		{
 			if (landMonsInfo == NULL)
 				return FALSE;
-			else if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 0) != previousMetaTileBehavior && !DoGlobalWildEncounterDiceRoll())
+			else if (GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR) != previousMetaTileBehavior
+			&& !DoGlobalWildEncounterDiceRoll())
 				return FALSE;
 			else if (DoWildEncounterRateTest(landMonsInfo->encounterRate, FALSE) != TRUE)
 			{
@@ -724,7 +725,8 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 		{
 			if (waterMonsInfo == NULL)
 			   return FALSE;
-			else if (previousMetaTileBehavior != MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 0) && !DoGlobalWildEncounterDiceRoll())
+			else if (previousMetaTileBehavior != GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR)
+			&& !DoGlobalWildEncounterDiceRoll())
 				return FALSE;
 			else if (DoWildEncounterRateTest(waterMonsInfo->encounterRate, FALSE) != TRUE)
 				return FALSE;
@@ -774,19 +776,19 @@ bool8 TryStandardWildEncounter(u32 currMetatileBehavior)
 {
 	if (!HandleWildEncounterCooldown(currMetatileBehavior))
     {
-        sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
+        sWildEncounterData.prevMetatileBehavior = GetMetatileAttributeFromRawMetatileBehavior(currMetatileBehavior, METATILE_ATTRIBUTE_BEHAVIOR);
         return FALSE;
     }
 	else if (StandardWildEncounter(currMetatileBehavior, sWildEncounterData.prevMetatileBehavior) == TRUE)
 	{
 		sWildEncounterData.encounterRateBuff = 0;
 		sWildEncounterData.stepsSinceLastEncounter = 0;
-		sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
+		sWildEncounterData.prevMetatileBehavior = GetMetatileAttributeFromRawMetatileBehavior(currMetatileBehavior, METATILE_ATTRIBUTE_BEHAVIOR);
 		return TRUE;
 	}
 	else
 	{
-		sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
+		sWildEncounterData.prevMetatileBehavior = GetMetatileAttributeFromRawMetatileBehavior(currMetatileBehavior, METATILE_ATTRIBUTE_BEHAVIOR);
 		return FALSE;
 	}
 }

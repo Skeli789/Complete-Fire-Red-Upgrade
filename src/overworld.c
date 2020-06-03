@@ -209,6 +209,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_Route17_LandEdgeBottomMiddle 0x299
 
 	#define METATILE_Forest_Ground 0x280
+	#define METATILE_Forest_Pressure_Plate 0x297
 	#define METATILE_Forest_TreeTopLeft 0x289
 	#define METATILE_Forest_TreeTopRight 0x28A
 	#define METATILE_Forest_TreeTopCornerLeft 0x2EE
@@ -252,6 +253,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x30A, METATILE_Forest_Ground, Tileset_Forest},
 	{0x30B, METATILE_Forest_Ground, Tileset_Forest},
 	{0x30C, METATILE_Forest_Ground, Tileset_Forest},
+	{0x28F, METATILE_Forest_Pressure_Plate, Tileset_Forest},
 	{0x310, METATILE_Forest_TreeTopLeft, Tileset_Forest},
 	{0x312, METATILE_Forest_TreeTopLeft, Tileset_Forest},
 	{0x314, METATILE_Forest_TreeTopRight, Tileset_Forest},
@@ -326,6 +328,15 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x332, METATILE_General_TreeTopRight, Tileset_CraterTown},
 	{0x340, METATILE_General_TreeTopRight, Tileset_CraterTown},
 	{0x341, METATILE_General_TreeSideRight, Tileset_CraterTown},
+	{0x365, METATILE_General_TreeTopLeftOverTreeSideRight, Tileset_CraterTown},
+	{0x36D, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
+	{0x370, METATILE_General_TreeTopLeft, Tileset_CraterTown},
+	{0x371, METATILE_General_TreeTopRight, Tileset_CraterTown},
+	{0x372, METATILE_General_TreeTopLeft, Tileset_CraterTown},
+	{0x396, METATILE_General_LandEdgeLeft, Tileset_CraterTown},
+	{0x397, METATILE_General_LandEdgeRight, Tileset_CraterTown},
+	{0x3AE, METATILE_General_TreeTopLeftOverTreeSideRight, Tileset_CraterTown},
+	{0x3B5, METATILE_General_TreeSideRight, Tileset_CraterTown},
 
 	{0x2C0, METATILE_Autumn_Ground, Tileset_Autumn},
 	{0x2C1, METATILE_Autumn_Ground, Tileset_Autumn},
