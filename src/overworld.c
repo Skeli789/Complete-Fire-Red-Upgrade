@@ -839,7 +839,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED:
 			TrainerBattleLoadArgs(sOrdinaryNoIntroBattleParams, data);
-			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A);
+			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_DOUBLE:
@@ -883,6 +883,8 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 		case TRAINER_BATTLE_MULTI:
 			TrainerBattleLoadArgs(sMultiBattleParams, data);
+			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
+			gTrainerBattleOpponent_B = VarGet(gTrainerBattleOpponent_B); //Allow dynamic loading
 			VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
 			VarSet(VAR_PARTNER, gTrainerBattlePartner);
 			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
@@ -900,6 +902,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
+			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
 			VarSet(VAR_PARTNER, gTrainerBattlePartner);
 			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
 			FlagSet(FLAG_TAG_BATTLE);
@@ -2356,27 +2359,28 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 {
 	u16 item = ITEM_NONE;
 
-	#ifdef UNBOUND
-	if (FALSE) {}
-	#else
+	#ifndef UNBOUND
 	if (MetatileBehavior_IsFastCurrent(metatileBehavior))
 	{
 		if (PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
 			return EventScript_CurrentTooFast;
 	}
+	else 
 	#endif
 	#ifdef MB_LAVA
-	else if (IsPlayerFacingSurfableLava())
+	if (IsPlayerFacingSurfableLava())
 	{
 		if (HasBadgeToUseSurf())
 		{
 			if (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF)
+			{
 				#ifdef DEBUG_HMS
 				Var8004 = 0;
 				return EventScript_UseLavaSurf_Debug;
 				#else
 				return EventScript_UseLavaSurf; //Fire-type check done in script
 				#endif
+			}
 
 			return EventScript_MagmaGlistens;
 		}

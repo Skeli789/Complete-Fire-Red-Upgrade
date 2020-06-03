@@ -1,6 +1,8 @@
 #ifndef GUARD_CONSTANTS_GAME_STAT_H
 #define GUARD_CONSTANTS_GAME_STAT_H
 
+//Flags start at 0x202672C
+
 #define GAME_STAT_SAVED_GAME                 0
 #define GAME_STAT_FIRST_HOF_PLAY_TIME        1
 #define GAME_STAT_STARTED_TRENDS             2 //Unused
