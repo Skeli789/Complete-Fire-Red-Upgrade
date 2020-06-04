@@ -2760,7 +2760,9 @@ DefogLoweredStat:
 BattleScript_DefogAdditionalEffects:
 	attackanimation @;Should only play after the Second Defog Check
 	waitanimation
+	jumpifweather weather_circus SkipRemoveFogBS
 	jumpifweather weather_fog | weather_permament_fog RemoveFogBS
+SkipRemoveFogBS:
 	breakfree
 	goto BS_MOVE_END
 
