@@ -1459,7 +1459,7 @@ u8 GetTrainerBattleTransition(void)
 	u16 transitionLogo = VarGet(VAR_BATTLE_TRANSITION_LOGO);
 	if (transitionLogo == 0) //No preset logo
 	{
-		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+		u8 trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0);
 
 		for (u32 i = 0; i < gNumBattleTransitionLogos; ++i)
 		{

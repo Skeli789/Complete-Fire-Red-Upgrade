@@ -10,6 +10,7 @@
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
+#include "../include/new/frontier.h"
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
 /*
@@ -146,9 +147,9 @@ u8 LoadBattleBG_TerrainID(void) {
 	#endif
 	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
-		u8 trainerClassB = gTrainers[SECOND_OPPONENT].trainerClass;
 		#ifdef OVERWRITE_BG_FOR_LEADER_CHAMPION
+			u8 trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0);
+			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
 			if (trainerClass == CLASS_LEADER || trainerClassB == CLASS_LEADER)
 			{
 				terrain = 12;
@@ -162,7 +163,6 @@ u8 LoadBattleBG_TerrainID(void) {
 				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
 			}
 		#else
-			trainerClass += trainerClassB; //Useless statement so it compiles without warning
 			if (GetCurrentMapBattleScene() != 0)
 			{
 				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
