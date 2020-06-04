@@ -298,9 +298,8 @@ GiveRandomFrontierMonByTier 802883C 3
 
 ##DNS
 TransferPlttBuffer 8070474 0
-RealTimeClock 0800041E 3
-DNSCreateBuyMenuHook 0809AC84 0
-DNSEndBuyMenuHook 0809C078 1
+DNSCreateBuyMenuHook 809AC84 0
+DNSEndBuyMenuHook 809C078 1
 
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0

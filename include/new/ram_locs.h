@@ -207,5 +207,12 @@ extern bool8 gInShop; //0x203E043
 //#define sPrintedRTCWarning (*((bool8*) 0x203E055))
 extern u16 gLastFishingSpecies; //0x203E056
 extern u8 gFishingStreak; //0x203E058
+//#define sLocked (*((bool8*) 0x203E059))
+//#define sRTCErrorStatus (*((u16*) 0x203E05A))
+//#define sRTCSavedIme (*((u16*) 0x203E05C))
+//#define sRTCProbeResult (*((u8*) 0x203E05E))
+//#define sRTCFrameCount (*((u8*) 0x203E05F))
+//#define sRtc (*((struct SiiRtcInfo*) 0x203E060))
+//FREE: 0x203E06A
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

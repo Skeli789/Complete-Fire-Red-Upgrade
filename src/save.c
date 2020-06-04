@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/menu_helpers.h"
+#include "../include/rtc.h"
 #include "../include/save.h"
 #include "../include/constants/vars.h"
 
@@ -305,7 +306,7 @@ extern bool8 sPrintedRTCWarning;
 bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 {
 	#ifdef TIME_ENABLED
-	if (Clock->year < 2020 && !sPrintedRTCWarning)
+	if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK && !sPrintedRTCWarning)
 	{
 		sPrintedRTCWarning = TRUE;
 		PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
@@ -313,7 +314,7 @@ bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 		return TRUE;
 	}
 	#endif
-	
+
 	return FALSE;
 }
 

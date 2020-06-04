@@ -6,6 +6,7 @@
 #include "../include/item_menu.h"
 #include "../include/overworld.h"
 #include "../include/map_name_popup.h"
+#include "../include/rtc.h"
 #include "../include/start_menu.h"
 #include "../include/party_menu.h"
 
@@ -96,6 +97,8 @@ static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys)
 // hook at 080005e8 via r0
 void ReadKeys(void)
 {
+	RtcCalcLocalTime(); //Called here for convenience
+
 	#ifdef SAVE_BLOCK_EXPANSION
 		u16 currKeys = gKeyReg;
 		u8 tryKey = gKeypadSetter->keyFlags;

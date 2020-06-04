@@ -3,6 +3,7 @@
 #include "../include/menu.h"
 #include "../include/menu_helpers.h"
 #include "../include/new_menu_helpers.h"
+#include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
 #include "../include/start_menu.h"
@@ -239,6 +240,8 @@ void SetUpStartMenu(void)
 
 bool8 StartCB_HandleInput(void)
 {
+	ForceClockUpdate(); //To help with the clock in the start menu routine
+
 	if (JOY_NEW(DPAD_UP))
 	{
 		PlaySE(SE_SELECT);
