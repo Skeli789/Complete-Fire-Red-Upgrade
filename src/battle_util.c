@@ -591,6 +591,19 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 	return unusableMoves;
 }
 
+void CancelMultiTurnMoves(u8 battler)
+{
+    gBattleMons[battler].status2 &= ~(STATUS2_MULTIPLETURNS);
+    gBattleMons[battler].status2 &= ~(STATUS2_LOCK_CONFUSE);
+    gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
+    gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
+
+    gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+
+    gDisableStructs[battler].rolloutTimer = 0;
+    gDisableStructs[battler].furyCutterCounter = 0;
+}
+
 bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
 {
 	return move == MOVE_SKYDROP

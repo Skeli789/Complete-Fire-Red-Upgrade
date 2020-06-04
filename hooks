@@ -31,6 +31,7 @@ HandleEndTurn_RanFromBattle 8015850 0
 HandleAction_UseMove 8015CA0 0
 TryRunFromBattle 8016748 1
 GetBankForBattleScript 8016E24 1
+CancelMultiTurnMoves 80172E8 1
 PrepareStringBattle 80173AC 3
 TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
