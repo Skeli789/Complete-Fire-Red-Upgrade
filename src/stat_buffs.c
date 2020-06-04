@@ -29,9 +29,11 @@ void atk13_printfromtable(void)
 	gBattlescriptCurrInstr += 5;
 	gBattleCommunication[MSG_DISPLAY] = 1;
 
-	if (stringId == STRINGID_PKMNSSTATCHANGED4 && SIDE(gBankTarget) != SIDE(gBankAttacker))
-		//Stat Fell From Enemy
-		DefiantActivation();
+	if (stringId == STRINGID_PKMNSSTATCHANGED4)
+	{	
+		if (gNewBS->intimidateActive || SIDE(gBankTarget) != SIDE(gBankAttacker))
+			DefiantActivation(); //Stat Fell From Enemy
+	}
 }
 
 bool8 DefiantActivation(void)
