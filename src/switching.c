@@ -915,59 +915,26 @@ void atk8F_forcerandomswitch(void)
 	{
 		party = LoadPartyRange(bankDef, &firstMonId, &lastMonId);
 
-		if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_LINK)
-		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
+		if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
+		||  (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER && SIDE(bankDef) == B_SIDE_PLAYER)
+		||  (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && SIDE(bankDef) == B_SIDE_OPPONENT)
+		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && SIDE(bankDef) == B_SIDE_PLAYER))
 		{
 			monsCount = 3;
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
-		}
-		else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-		{
-			if (SIDE(bankDef) == B_SIDE_PLAYER)
-			{
-				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-				{
-					monsCount = 3;
-				}
-				else //Player Vs. 2 Trainers
-				{
-					monsCount = 6;
-				}
-			}
-			else //B_OPPONENT_SIDE - Player Vs. 2 Trainers
-			{
-				monsCount = 3;
-			}
-
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
-		}
-		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-		{
-			if (SIDE(bankDef) == B_SIDE_PLAYER)
-			{
-				monsCount = 3;
-			}
-			else
-			{
-				monsCount = 6;
-			}
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
+			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler2PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
+			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler2PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else //Single Battle
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[bankDef]; // there is only one pokemon out in single battles
-			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[bankDef]; // there is only one pokemon out in single battles
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
 		}
 
 		for (i = firstMonId; i < lastMonId; ++i)
