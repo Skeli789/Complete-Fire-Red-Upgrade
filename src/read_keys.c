@@ -47,6 +47,7 @@ extern const u8 SystemScript_DisableBikeTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
 extern const u8 SystemScript_MiningScan[];
+extern const u8 SystemScript_DebugMenu[];
 
 static void CB2_PartyMenuFromField(void);
 static void CB2_ItemMenuFromField(void);
@@ -240,6 +241,10 @@ void ReadKeys(void)
 					ScriptContext1_SetupScript(SystemScript_MiningScan);
 				}
 				#endif
+				break;
+			case OPTIONS_R_BUTTON_MODE_DEBUG:
+				ScriptContext2_Enable();
+				ScriptContext1_SetupScript(SystemScript_DebugMenu);
 				break;
 		}
 		#endif
