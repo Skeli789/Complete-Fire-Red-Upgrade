@@ -59,7 +59,7 @@ static void FadeDayNightPalettes()
 		case MAP_TYPE_7:
 		default:
 			inOverworld = FuncIsActiveTask(Task_WeatherMain);
-			fadePalettes = (inOverworld || gInShop) && Clock->year > 0; //Don't fade if RTC isn't working
+			fadePalettes = inOverworld || gInShop;
 
 			if (fadePalettes)
 			{

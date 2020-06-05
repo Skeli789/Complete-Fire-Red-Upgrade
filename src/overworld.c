@@ -1528,8 +1528,13 @@ void RunOnTransitionMapScript(void)
 	gFishingStreak = 0;
 	gLastFishingSpecies = 0;
 	ResetMiningSpots();
-	ForceClockUpdate();
 	MapHeaderRunScriptByTag(3);
+}
+
+void RunOnResumeMapScript(void)
+{
+	ForceClockUpdate();
+	MapHeaderRunScriptByTag(5);
 }
 
 bool8 TryRunOnFrameMapScript(void)

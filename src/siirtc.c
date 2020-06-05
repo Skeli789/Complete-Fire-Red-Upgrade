@@ -131,7 +131,7 @@ bool8 SiiRtcReset(void)
 	u8 result;
 	struct SiiRtcInfo rtc;
 
-	if (sLocked == TRUE)
+	/*if (sLocked == TRUE)
 		return FALSE;
 
 	sLocked = TRUE;
@@ -146,7 +146,7 @@ bool8 SiiRtcReset(void)
 	GPIO_PORT_DATA = SCK_HI;
 	GPIO_PORT_DATA = SCK_HI;
 
-	sLocked = FALSE;
+	sLocked = FALSE;*/
 
 	rtc.status = SIIRTCINFO_24HOUR;
 

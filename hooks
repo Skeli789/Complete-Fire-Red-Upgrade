@@ -154,6 +154,7 @@ DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
 GetLedgeJumpDirection 80680F8 3
 RunOnTransitionMapScript 8069C44 0
+RunOnResumeMapScript 8069C50 0
 TryRunOnFrameMapScript 8069C74 0
 GetInteractedMetatileScript 806D1F0 3
 GetInteractedWaterScript 806D548 3
