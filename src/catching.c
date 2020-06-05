@@ -693,22 +693,22 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 {
 	bool8 effect = FALSE;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IsRaidBattle() && !RAID_BATTLE_END)
+	{
+		DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonYet, Task_ReturnToBagFromContextMenu);
+		effect = TRUE;
+	}
+	else if (FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	{
+		DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonRightNow, Task_ReturnToBagFromContextMenu);
+		effect = TRUE;
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
 		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
 		{
 			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtTwoTargets, Task_ReturnToBagFromContextMenu);
-			effect = TRUE;
-		}
-		else if (IsRaidBattle() && !RAID_BATTLE_END)
-		{
-			DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonYet, Task_ReturnToBagFromContextMenu);
-			effect = TRUE;
-		}
-		else if (FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
-		{
-			DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonRightNow, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
