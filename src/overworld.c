@@ -2722,41 +2722,6 @@ void ChooseMiningSpotToShow(void)
 	((u32*) gFieldEffectArguments)[2] = 2; //Priority
 }
 
-void IsBestMiningSpotOutOfView(void)
-{
-	s16 left =   gSaveBlock1->pos.x - 2;
-	s16 right =  gSaveBlock1->pos.x + 17;
-	s16 top =    gSaveBlock1->pos.y;
-	s16 bottom = gSaveBlock1->pos.y + 16;
-	s16 x = ((u32*) gFieldEffectArguments)[0] + 7;
-	s16 y = ((u32*) gFieldEffectArguments)[1] + 7;
-
-	gSpecialVar_LastResult = FALSE;
-	if (x >= left && x <= right && y >= top && y <= bottom)
-		return; //In view
-
-	gSpecialVar_LastResult = TRUE;
-}
-
-extern const struct CompressedSpriteSheet gThinRingSpriteSheet;
-extern const struct CompressedSpritePalette gThinRingSpritePalette;
-void CreateMiningScanRing(void)
-{
-	LoadCompressedSpriteSheetUsingHeap(&gThinRingSpriteSheet);
-	LoadCompressedSpritePaletteUsingHeap(&gThinRingSpritePalette);
-	CreateSprite(&sMiningScanRingSpriteTemplate, 120, 80, 0);
-	
-	//Blend the palette a light blue
-	u16 paletteOffset = IndexOfSpritePaletteTag(TAG_MINING_SCAN_RING) * 16 + 16 * 16;
-	BlendPalette(paletteOffset, 16, 0x10, 0x5F72); //Light greenish
-	CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
-}
-
-void ResetMiningSpots(void)
-{
-	Memset(gMiningSpots, 0, sizeof(gMiningSpots));
-}
-
 bool8 IsValidMiningSpot(s16 x, s16 y)
 {
 	u32 i;
@@ -2772,6 +2737,45 @@ bool8 IsValidMiningSpot(s16 x, s16 y)
 }
 
 #endif
+
+void ResetMiningSpots(void)
+{
+	Memset(gMiningSpots, 0, sizeof(gMiningSpots));
+}
+
+void IsBestMiningSpotOutOfView(void)
+{
+	#ifdef MB_UNDERGROUND_MINING
+	s16 left =   gSaveBlock1->pos.x - 2;
+	s16 right =  gSaveBlock1->pos.x + 17;
+	s16 top =    gSaveBlock1->pos.y;
+	s16 bottom = gSaveBlock1->pos.y + 16;
+	s16 x = ((u32*) gFieldEffectArguments)[0] + 7;
+	s16 y = ((u32*) gFieldEffectArguments)[1] + 7;
+
+	gSpecialVar_LastResult = FALSE;
+	if (x >= left && x <= right && y >= top && y <= bottom)
+		return; //In view
+
+	gSpecialVar_LastResult = TRUE;
+	#endif
+}
+
+extern const struct CompressedSpriteSheet gThinRingSpriteSheet;
+extern const struct CompressedSpritePalette gThinRingSpritePalette;
+void CreateMiningScanRing(void)
+{
+	#ifdef MB_UNDERGROUND_MINING
+	LoadCompressedSpriteSheetUsingHeap(&gThinRingSpriteSheet);
+	LoadCompressedSpritePaletteUsingHeap(&gThinRingSpritePalette);
+	CreateSprite(&sMiningScanRingSpriteTemplate, 120, 80, 0);
+	
+	//Blend the palette a light blue
+	u16 paletteOffset = IndexOfSpritePaletteTag(TAG_MINING_SCAN_RING) * 16 + 16 * 16;
+	BlendPalette(paletteOffset, 16, 0x10, 0x5F72); //Light greenish
+	CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+	#endif
+}
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =

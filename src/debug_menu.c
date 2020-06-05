@@ -90,14 +90,22 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_MARANGA_BERRY, 100);
 			break;
 		case 3: //TMs & HMs
+			#if (defined ITEM_TM01_FOCUS_PUNCH && defined ITEM_TM50_OVERHEAT)
 			for (i = ITEM_TM01_FOCUS_PUNCH; i <= ITEM_TM50_OVERHEAT; ++i)
 				AddBagItem(i, 1);
+			#endif
+			#if (defined ITEM_TM51_ROOST && defined ITEM_TM58_ENDURE)
 			for (i = ITEM_TM51_ROOST; i <= ITEM_TM58_ENDURE; ++i)
 				AddBagItem(i, 1);
+			#endif
+			#if (defined ITEM_TM59_DRAGON_PULSE && defined ITEM_TM120_NATURE_POWER)
 			for (i = ITEM_TM59_DRAGON_PULSE; i <= ITEM_TM120_NATURE_POWER; ++i)
 				AddBagItem(i, 1);
+			#endif
+			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
 			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
 				AddBagItem(i, 1);
+			#endif
 			break;
 		case 4: //General Useful Items
 			AddBagItem(ITEM_HEART_SCALE, 100);
