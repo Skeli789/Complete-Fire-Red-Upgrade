@@ -140,7 +140,7 @@
 #define MAPSEC_ROUTE_5 						0x69
 #define MAPSEC_POKEMON_DAY_CARE				0x9B
 #define MAPSEC_CRATER_TOWN					0x5B
-#define MAPSEC_SES_EXPRESSWAY				0x86
+#define MAPSEC_KBT_EXPRESSWAY				0x86
 #define MAPSEC_VALLEY_CAVE 					0x83
 #define MAPSEC_ROUTE_6 						0x6A
 #define MAPSEC_ROUTE_7 						0x6B

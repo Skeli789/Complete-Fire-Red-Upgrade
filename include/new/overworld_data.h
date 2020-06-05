@@ -39,6 +39,7 @@ extern const u8 EventScript_PsychicBarrier[];
 extern const u8 EventScript_Ladder[];
 extern const u8 EventScript_HiddenGrottoForest[];
 extern const u8 EventScript_HeadbuttTree[];
+extern const u8 EventScript_UndergroundMining[];
 
 #define EventScript_CurrentTooFast (const u8*) 0x81A6B0D
 #define EventScript_CannotUseWaterfall (const u8*) 0x81BE2FF

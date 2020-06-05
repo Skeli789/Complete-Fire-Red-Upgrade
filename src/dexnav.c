@@ -73,7 +73,6 @@ static void Setup(void);
 static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter);
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
-static u8 GetPlayerDistance(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
@@ -384,7 +383,7 @@ static u8 FindHeaderIndexWithLetter(u16 species, u8 letter)
 }
 
 // ===== Pokemon Field Tile ===== //
-static u8 GetPlayerDistance(s16 x, s16 y)
+u8 GetPlayerDistance(s16 x, s16 y)
 {
 	u16 deltaX = abs(x - (gSaveBlock1->pos.x + 7));
 	u16 deltaY = abs(y - (gSaveBlock1->pos.y + 7));

@@ -9,10 +9,13 @@
 #include "../include/rtc.h"
 #include "../include/start_menu.h"
 #include "../include/party_menu.h"
+#include "../include/constants/region_map_sections.h"
 
 #include "../include/new/dexnav.h"
+#include "../include/new/overworld.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/util.h"
+
 /*
 read_keys.c
 	emulated JPANs keypad hacks, allowing the designer to force key presses, prevent them, or map functions onto them, among other uses.
@@ -43,6 +46,7 @@ extern const u8 SystemScript_EnableBikeTurboBoost[];
 extern const u8 SystemScript_DisableBikeTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
+extern const u8 SystemScript_MiningScan[];
 
 static void CB2_PartyMenuFromField(void);
 static void CB2_ItemMenuFromField(void);
@@ -225,6 +229,17 @@ void ReadKeys(void)
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_ItemMenuFromField);
 				}
+				break;
+			case OPTIONS_R_BUTTON_MODE_MINING:
+				#ifdef MB_UNDERGROUND_MINING
+				if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY)
+				{
+					TryLoadMiningSpots();
+					ChooseMiningSpotToShow();
+					ScriptContext2_Enable();
+					ScriptContext1_SetupScript(SystemScript_MiningScan);
+				}
+				#endif
 				break;
 		}
 		#endif

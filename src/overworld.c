@@ -22,6 +22,8 @@
 #include "../include/overworld.h"
 #include "../include/party_menu.h"
 #include "../include/quest_log.h"
+#include "../include/random.h"
+#include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
 #include "../include/sound.h"
@@ -35,6 +37,7 @@
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/dexnav.h"
 #include "../include/new/item.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/frontier.h"
@@ -44,6 +47,7 @@
 #include "../include/new/overworld_data.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/wild_encounter.h"
+
 /*
 overworld.c
 	functions for anything regarding the overworld, such as trainer spotting, whiteout, step counters, etc.
@@ -142,6 +146,9 @@ static const u8* const sMetatileInteractionScripts[] =
 #endif
 #ifdef MB_HEADBUTT_TREE
 	[MB_HEADBUTT_TREE] = EventScript_HeadbuttTree,
+#endif
+#ifdef MB_UNDERGROUND_MINING
+	[MB_UNDERGROUND_MINING] = EventScript_UndergroundMining,
 #endif
 };
 
@@ -1520,6 +1527,8 @@ void RunOnTransitionMapScript(void)
 	gCurrentDexNavChain = 0;
 	gFishingStreak = 0;
 	gLastFishingSpecies = 0;
+	ResetMiningSpots();
+	ForceClockUpdate();
 	MapHeaderRunScriptByTag(3);
 }
 
@@ -2146,7 +2155,7 @@ const struct FieldEffectScript gFieldEffectScript_JumpLongGrass =
 	FLDEFF_END,
 };
 
-const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavior, u8 direction)
+const u8* GetInteractedMetatileScript(unusedArg struct MapPosition* position, u8 metatileBehavior, u8 direction)
 {
 	gSpecialVar_PlayerFacing = direction;
 
@@ -2165,6 +2174,12 @@ const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavio
 				return sMetatileInteractionScripts[metatileBehavior];
 			}
 			break;
+		#ifdef MB_UNDERGROUND_MINING
+		case MB_UNDERGROUND_MINING:
+			if (IsValidMiningSpot(position->x, position->y))
+				return sMetatileInteractionScripts[metatileBehavior];
+			break;
+		#endif
 		case MB_INDIGO_PLATEAU_MARK_DPAD:
 		case MB_INDIGO_PLATEAU_MARK_2_DPAD:
 			SetTextboxSignpostDesign();
@@ -2208,6 +2223,23 @@ void FollowHiddenGrottoWarp(void)
 		StoreInitialPlayerAvatarState();
 		SetupWarp(&gMapHeader, warpEventId, &position);
 		DoWarp();
+		gSpecialVar_LastResult = TRUE;
+	}
+}
+
+void PrepMiningWarp(void)
+{
+	s8 warpEventId;
+	struct MapPosition position;
+
+	GetPlayerPosition(&position);
+	gSpecialVar_LastResult = FALSE;
+	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);
+
+	if (warpEventId != -1)
+	{
+		StoreInitialPlayerAvatarState();
+		SetupWarp(&gMapHeader, warpEventId, &position);
 		gSpecialVar_LastResult = TRUE;
 	}
 }
@@ -2570,6 +2602,171 @@ u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStru
 	else
 		return PLAYER_AVATAR_FLAG_ON_FOOT;
 }
+
+#ifdef MB_UNDERGROUND_MINING
+#define TAG_MINING_SCAN_RING 0x27DB //ANIM_TAG_THIN_RING
+void SpriteCB_MiningScanRing(struct Sprite* sprite)
+{
+	if (sprite->affineAnimEnded)
+	{
+		FreeSpriteTilesByTag(sprite->template->tileTag);
+		FreeSpritePaletteByTag(sprite->template->paletteTag);
+		FreeSpriteOamMatrix(sprite);
+		DestroyAnimSprite(sprite);
+	}
+}
+
+static const struct OamData sMiningScanRing =
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x64),
+	.size = SPRITE_SIZE(64x64),
+	.priority = 0, //Above all
+};
+
+static const union AffineAnimCmd sMiningScanRingAffineAnimCmds[] =
+{
+	AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 0),
+	AFFINEANIMCMD_FRAME(0xB, 0xB, 0, 45),
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sMiningScanRingAffineAnimTable[] =
+{
+	sMiningScanRingAffineAnimCmds,
+};
+
+static const struct SpriteTemplate sMiningScanRingSpriteTemplate =
+{
+	.tileTag = TAG_MINING_SCAN_RING, 
+	.paletteTag = TAG_MINING_SCAN_RING,
+	.oam = &sMiningScanRing,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = sMiningScanRingAffineAnimTable,
+	.callback = SpriteCB_MiningScanRing,
+};
+
+static u8 GetNumMiningSpots(void)
+{
+	u16 width = gMapHeader.mapLayout->width;
+	u16 height = gMapHeader.mapLayout->height;
+	return MathMax(1, (width * height) / 1000); //One possible tile per every 1000sq blocks
+}
+
+void TryLoadMiningSpots(void)
+{
+	if (gMiningSpots[0].x == 0 && gMiningSpots[0].y == 0) //Data wasn't set yet
+	{
+		u16 counter, total, width, height;
+		width = gMapHeader.mapLayout->width;
+		height = gMapHeader.mapLayout->height;
+		total = GetNumMiningSpots();
+		counter = 0;
+
+		do
+		{
+			//Choose random spot
+			s16 x = Random() % width + 7;
+			s16 y = Random() % height + 7;
+			u8 metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+			
+			//Make sure correct type of spot
+			if (metatileBehavior == MB_UNDERGROUND_MINING)
+			{
+				//Check access in any direction
+				for (u8 dir = DIR_SOUTH; dir <= DIR_EAST; ++dir)
+				{
+					s16 xCopy = x;
+					s16 yCopy = y;
+					MoveCoords(dir, &xCopy, &yCopy);
+					
+					if (!MapGridIsImpassableAt(xCopy, yCopy))
+					{
+						//Good spot
+						gMiningSpots[counter].x = x;
+						gMiningSpots[counter++].y = y;
+						break;
+					}
+				}
+			}
+
+		} while (counter < total);
+	}
+}
+
+void ChooseMiningSpotToShow(void)
+{
+	u32 i, total, bestId, lowestDist;
+	total = GetNumMiningSpots();
+
+	for (i = 0, bestId = 0, lowestDist = 0xFFFFFFFF; i < total; ++i)
+	{
+		u32 distance = GetPlayerDistance(gMiningSpots[i].x, gMiningSpots[i].y);
+		if (distance < lowestDist) //Closer spot
+		{
+			bestId = i;
+			lowestDist = distance;
+		}
+	}
+
+	//Set up sparkle field effect
+	((u32*) gFieldEffectArguments)[0] = gMiningSpots[bestId].x - 7;
+	((u32*) gFieldEffectArguments)[1] = gMiningSpots[bestId].y - 7;
+	((u32*) gFieldEffectArguments)[2] = 2; //Priority
+}
+
+void IsBestMiningSpotOutOfView(void)
+{
+	s16 left =   gSaveBlock1->pos.x - 2;
+	s16 right =  gSaveBlock1->pos.x + 17;
+	s16 top =    gSaveBlock1->pos.y;
+	s16 bottom = gSaveBlock1->pos.y + 16;
+	s16 x = ((u32*) gFieldEffectArguments)[0] + 7;
+	s16 y = ((u32*) gFieldEffectArguments)[1] + 7;
+
+	gSpecialVar_LastResult = FALSE;
+	if (x >= left && x <= right && y >= top && y <= bottom)
+		return; //In view
+
+	gSpecialVar_LastResult = TRUE;
+}
+
+extern const struct CompressedSpriteSheet gThinRingSpriteSheet;
+extern const struct CompressedSpritePalette gThinRingSpritePalette;
+void CreateMiningScanRing(void)
+{
+	LoadCompressedSpriteSheetUsingHeap(&gThinRingSpriteSheet);
+	LoadCompressedSpritePaletteUsingHeap(&gThinRingSpritePalette);
+	CreateSprite(&sMiningScanRingSpriteTemplate, 120, 80, 0);
+	
+	//Blend the palette a light blue
+	u16 paletteOffset = IndexOfSpritePaletteTag(TAG_MINING_SCAN_RING) * 16 + 16 * 16;
+	BlendPalette(paletteOffset, 16, 0x10, 0x5F72); //Light greenish
+	CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+}
+
+void ResetMiningSpots(void)
+{
+	Memset(gMiningSpots, 0, sizeof(gMiningSpots));
+}
+
+bool8 IsValidMiningSpot(s16 x, s16 y)
+{
+	u32 i;
+	u32 total = GetNumMiningSpots();
+
+	for (i = 0; i < total; ++i)
+	{
+		if (gMiningSpots[i].x == x && gMiningSpots[i].y == y)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+#endif
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =

@@ -1924,6 +1924,10 @@ map \map
 	special2 LASTRESULT 0xA0
 .endm
 
+.macro startmining
+.byte 0xb2
+.endm
+
 .macro mapscript tag:req pointer:req
 .byte \tag
 .word \pointer

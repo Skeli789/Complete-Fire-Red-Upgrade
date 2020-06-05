@@ -58,18 +58,41 @@ SystemScript_DisableBikeTurboBoost:
 
 .global SystemScript_PartyMenuFromField
 SystemScript_PartyMenuFromField:
+	lock
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitPartyMenuFromField
+	release
 	end
 
 .global SystemScript_ItemMenuFromField
 SystemScript_ItemMenuFromField:
+	lock
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitBagMenuFromField
+	release
+	end
+
+.global SystemScript_MiningScan
+SystemScript_MiningScan:
+	lock
+	checksound
+	sound 0xCA @SE_TWINKLE
+	callasm CreateMiningScanRing
+	callasm IsBestMiningSpotOutOfView
+	compare LASTRESULT 0x0 @Out of view
+	if notequal _goto SystemScript_MiningScan_SkipFieldEffect
+	dofieldeffect 54 @FLDEFF_SPARKLE
+	waitfieldeffect 54 @FLDEFF_SPARKLE
+	release
+	end
+
+SystemScript_MiningScan_SkipFieldEffect:
+	pause 50 @Wait for the ring to finish
+	release
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -173,6 +196,7 @@ SystemScript_WaitForFollower:
 
 .global SystemScript_FindItemMessage
 SystemScript_FindItemMessage:
+	textcolor BLACK
 	hidesprite LASTTALKED
 	pause 0x1
 	callasm ShowItemSpriteOnFindObtain
@@ -226,6 +250,7 @@ SystemScript_ObtainItemMessage:
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
 	callasm ClearItemSpriteAfterFindObtain
+	closeonkeypress
 	return
 
 ObtainedSingleItemMsg:
@@ -777,3 +802,54 @@ EventScript_HeadbuttTree_End:
 EventScript_HeadbuttTree_NoUsableMons:
 	msgbox gText_TreeCanBeHeadbutted MSG_NORMAL
 	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_UndergroundMining
+EventScript_UndergroundMining:
+	msgbox gText_StartMining MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_UndergroundMining_End
+	callasm ResetMiningSpots
+	startmining @Right now is not implemented
+	waitstate
+	callasm PrepMiningWarp @Try to go through door if there is one
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UndergroundMining_End
+
+	@Update door tiles
+	sound 0x7C @Rock Smash
+	getplayerpos 0x8004 0x8005
+	subvar 0x8004 1 @1 Left
+	subvar 0x8005 2 @2 Up
+	setmaptile 0x8004 0x8005 0x2D0 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D1 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D2 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2D8 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D9 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2DA 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2E0 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2E1 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2E2 0x0
+	special 0x8E @Reload tiles
+	checksound
+	applymovement PLAYER m_WalkUp1
+	waitmovement 0x0
+	callasm DoWarp
+	waitstate
+
+EventScript_UndergroundMining_End:
+	release
+	end
+
+m_WalkUp1: .byte walk_up, end_m

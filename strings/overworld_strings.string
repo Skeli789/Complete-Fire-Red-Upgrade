@@ -115,6 +115,9 @@ It's a moderately sized tree.\nWould you like to use Headbutt?
 #org @gText_TreeCanBeHeadbutted
 There's a formidable tree that\nlooks like it can be headbutted!
 
+#org @gText_StartMining
+The wall is bulging slightly.\nTry digging into it?
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

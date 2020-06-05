@@ -20,6 +20,7 @@ sRTCSavedIme = 0x203E05C;
 sRTCProbeResult = 0x203E05E;
 sRTCFrameCount = 0x203E05F;
 sRtc = 0x203E060;
+gMiningSpots = 0x203E070;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
 gClock = 0x300553C;

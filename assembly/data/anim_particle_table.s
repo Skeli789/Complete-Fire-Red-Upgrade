@@ -3,6 +3,8 @@
 .align 2
 .global gBattleAnimPicTable
 .global gBattleAnimPaletteTable
+.global gThinRingSpriteSheet
+.global gThinRingSpritePalette
 /*
 anim_particle_table.s
 	tables for animation particles
@@ -215,6 +217,7 @@ animparticle NAIL_IMG,	0x400,	ANIM_TAG_NAIL
 animparticle 0x8d218ec,	0x200,	ANIM_TAG_GHOSTLY_SPIRIT
 animparticle 0x8d21a48,	0xa80,	ANIM_TAG_WARM_ROCK
 animparticle 0x8d2227c,	0x600,	ANIM_TAG_BREAKING_EGG
+gThinRingSpriteSheet:
 animparticle 0x8d22408,	0x800,	ANIM_TAG_THIN_RING
 animparticle 0x8d220e0,	0x200,	ANIM_TAG_PUNCH_IMPACT
 animparticle 0x8d22878,	0x600,	ANIM_TAG_BELL
@@ -585,6 +588,7 @@ animparticlepal NAIL_PAL,	ANIM_TAG_NAIL
 animparticlepal 0x8d21a2c,	ANIM_TAG_GHOSTLY_SPIRIT
 animparticlepal 0x8d220b8,	ANIM_TAG_WARM_ROCK
 animparticlepal 0x8d223e4,	ANIM_TAG_BREAKING_EGG
+gThinRingSpritePalette:
 animparticlepal 0x8d225b4,	ANIM_TAG_THIN_RING
 animparticlepal 0x8d22254,	ANIM_TAG_PUNCH_IMPACT
 animparticlepal 0x8d22aac,	ANIM_TAG_BELL

@@ -214,5 +214,7 @@ extern u8 gFishingStreak; //0x203E058
 //#define sRTCFrameCount (*((u8*) 0x203E05F))
 //#define sRtc (*((struct SiiRtcInfo*) 0x203E060))
 //FREE: 0x203E06A
+extern struct Coords16 gMiningSpots[8]; //0x203E070
+//FREE: 0x203E090
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4
