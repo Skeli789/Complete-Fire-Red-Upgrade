@@ -94,7 +94,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 }
 
 //Assumes Wish Evolution isn't important
-species_t GetMegaSpecies(u16 species, u16 item, const u16* moves)
+species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg const u16* moves)
 {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return SPECIES_NONE;
@@ -534,7 +534,7 @@ const u8* GetTrainerName(u8 bank)
 	}
 }
 
-u8* TryGetRivalNameByTrainerClass(u8 class)
+u8* TryGetRivalNameByTrainerClass(unusedArg u8 class)
 {
 	#ifdef UNBOUND
 		if (class == CLASS_RIVAL|| class == CLASS_RIVAL_2)

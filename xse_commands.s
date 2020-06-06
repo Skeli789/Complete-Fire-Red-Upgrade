@@ -1530,16 +1530,18 @@ map \map
 .hword \setmapfooter_param
 .endm
 
-.macro setobjectpriority index:req, map:req, priority:req
+.macro setobjectpriority index:req, bank:req, map:req, priority:req
 .byte 0xa8
 .2byte \index
-map \map
+.byte \bank
+.byte \map
 .byte \priority
 .endm
 
-.macro resetobjectpriority index:req, map:req
+.macro resetobjectpriority index:req, bank:req, map:req
 .byte 0xa9
-.2byte \index
+.byte \bank
+.byte \map
 map \map
 .endm
 

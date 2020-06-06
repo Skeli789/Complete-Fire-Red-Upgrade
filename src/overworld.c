@@ -1675,9 +1675,9 @@ static bool8 PlayerIsMovingOnSidewaysStairs(u8 direction)
 s16 GetPlayerSpeed(void)
 {
 	s16 exp[] = { 1, 2, 4 };
-	u8 direction = GetPlayerFacing();
 
 	#ifdef FLAG_BIKE_TURBO_BOOST
+	u8 direction = GetPlayerFacing();
 	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_BIKE
 		&& !gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
 		&& gPlayerAvatar->runningState > 0
@@ -2379,6 +2379,7 @@ static bool8 MetatileBehavior_IsLava(u8 behaviour)
 }
 #endif
 
+#ifdef MB_LAVA
 static bool8 IsPlayerFacingSurfableLava(void)
 {
 	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
@@ -2390,6 +2391,7 @@ static bool8 IsPlayerFacingSurfableLava(void)
 		&& PlayerGetZCoord() == 3
 		&& MetatileBehavior_IsLava(MapGridGetMetatileBehaviorAt(x, y));
 }
+#endif
 
 extern const u8 EventScript_UseLavaSurf_Debug[];
 const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
@@ -2422,8 +2424,9 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			return EventScript_MagmaGlistens;
 		}
 	}
+	else
 	#endif
-	else if (IsPlayerFacingSurfableFishableWater())
+	if (IsPlayerFacingSurfableFishableWater())
 	{
 		if (HasBadgeToUseSurf())
 		{
