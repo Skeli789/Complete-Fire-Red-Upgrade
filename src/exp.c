@@ -384,11 +384,15 @@ void atk23_getexp(void)
 				gBattleMons[leveledUpBank].level = gPlayerParty[gBattleStruct->expGetterMonId].level;
 				gBattleMons[leveledUpBank].hp = gPlayerParty[gBattleStruct->expGetterMonId].hp;
 				gBattleMons[leveledUpBank].maxHP = gPlayerParty[gBattleStruct->expGetterMonId].maxHP;
-				gBattleMons[leveledUpBank].attack = gPlayerParty[gBattleStruct->expGetterMonId].attack;
-				gBattleMons[leveledUpBank].defense = gPlayerParty[gBattleStruct->expGetterMonId].defense;
-				gBattleMons[leveledUpBank].speed = gPlayerParty[gBattleStruct->expGetterMonId].speed;
-				gBattleMons[leveledUpBank].spAttack = gPlayerParty[gBattleStruct->expGetterMonId].spAttack;
-				gBattleMons[leveledUpBank].spDefense = gPlayerParty[gBattleStruct->expGetterMonId].spDefense;
+
+				if (!IS_TRANSFORMED(leveledUpBank)) //Don't replace the temp stats
+				{
+					gBattleMons[leveledUpBank].attack = gPlayerParty[gBattleStruct->expGetterMonId].attack;
+					gBattleMons[leveledUpBank].defense = gPlayerParty[gBattleStruct->expGetterMonId].defense;
+					gBattleMons[leveledUpBank].speed = gPlayerParty[gBattleStruct->expGetterMonId].speed;
+					gBattleMons[leveledUpBank].spAttack = gPlayerParty[gBattleStruct->expGetterMonId].spAttack;
+					gBattleMons[leveledUpBank].spDefense = gPlayerParty[gBattleStruct->expGetterMonId].spDefense;
+				}
 			}
 		}
 		else
