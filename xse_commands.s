@@ -1926,6 +1926,10 @@ map \map
 	special2 LASTRESULT 0xA0
 .endm
 
+.macro hidemappopup
+.byte 0xb1
+.endm
+
 .macro startmining
 .byte 0xb2
 .endm

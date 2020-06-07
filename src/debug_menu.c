@@ -37,6 +37,7 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_GOOD_ROD, 1);
 			AddBagItem(ITEM_SUPER_ROD, 1);
 			AddBagItem(ITEM_VS_SEEKER, 1);
+			AddBagItem(ITEM_ITEMFINDER, 1);
 			AddBagItem(ITEM_MEGA_RING, 1);
 			break;
 		case 1: //Poke Balls
@@ -110,8 +111,10 @@ void DebugMenu_ProcessGiveItem(void)
 		case 4: //General Useful Items
 			AddBagItem(ITEM_HEART_SCALE, 100);
 			AddBagItem(ITEM_MAX_REPEL, 100);
+			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
 			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
 				AddBagItem(i, 1);
+			#endif
 
 			AddBagItem(ITEM_RED_SHARD, 100);
 			AddBagItem(ITEM_BLUE_SHARD, 100);

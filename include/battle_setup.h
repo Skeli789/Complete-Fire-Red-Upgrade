@@ -40,6 +40,8 @@ u16 __attribute__((long_call)) GetRematchTrainerId(u16 opponentId);
 u8 __attribute__((long_call)) GetBattleTransitionTypeByMap(void);
 u16 __attribute__((long_call)) GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons);
 u16 __attribute__((long_call)) GetSumOfPlayerPartyLevel(u8 numMons);
+bool8 __attribute__((long_call)) HasTrainerBeenFought(u16 trainerId);
+bool32 __attribute__((long_call)) IsThisTrainerRematchable(u32);
 
 /*
 void __attribute__((long_call)) BattleSetup_StartScriptedWildBattle(void);

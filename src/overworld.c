@@ -606,15 +606,11 @@ static const struct TrainerBattleParameter sTagBattleParams[] =
 	{&sTrainerBattleEndScript,	   		TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-u8 CheckForTrainersWantingBattle(void) {
-	//if (IsQuestLogActive())
-	//	return FALSE;
+u8 CheckForTrainersWantingBattle(void)
+{
+	u8 viableMons = 0xFF;
 
 	if (FuncIsActiveTask(Task_OverworldMultiTrainers))
-		return FALSE;
-
-	u8 viableMons = ViableMonCount(gPlayerParty);
-	if (viableMons == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
 		return FALSE;
 
 	ExtensionState.spotted.count = 0;
@@ -628,6 +624,12 @@ u8 CheckForTrainersWantingBattle(void) {
 
 		if (CheckTrainerSpotting(eventObjId))
 		{
+			if (viableMons == 0xFF) //No data loaded yet
+				viableMons = ViableMonCount(gPlayerParty); //Load data now to not waste unnecessary time
+
+			if (viableMons == 0)
+				return FALSE; //NPC's won't challenge you if, for some reason, you have no Pokemon
+
 			if (viableMons < 2 && !FlagGet(FLAG_TAG_BATTLE)) //The tag partner gives you the second mon
 				break;
 

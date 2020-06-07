@@ -70,7 +70,9 @@ extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTraine
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
 
+#ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void);
+#endif
 
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
@@ -2400,6 +2402,7 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 	return FALSE;
 }
 
+#ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void)
 {
 	u8 i;
@@ -2410,6 +2413,7 @@ static u8 GetTextCaretPosition(void)
 	}
 	return gNamingScreenData->template->maxChars - 1;
 }
+#endif
 
 #define sPlayerNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E245C
 #define sPCBoxNamingTemplate (const struct NamingScreenTemplate*) 0x83E2468
@@ -2533,9 +2537,9 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 #define ITEM_ICON_X (10 + 16)
 #define ITEM_ICON_Y (8 + 16)
 #define sHeaderBoxWindowId (*((u8*) 0x2039A28)) //Steal coin box Id
+#ifdef ITEM_PICTURE_ACQUIRE
 static void ShowObtainedItemDescription(unusedArg u16 itemId)
 {
-	#ifdef ITEM_PICTURE_ACQUIRE
 	struct WindowTemplate template;
 	s16 textX, textY, lineLength, windowHeight, numLines;
 	u8 pocket = GetPocketByItemId(itemId);
@@ -2578,11 +2582,11 @@ static void ShowObtainedItemDescription(unusedArg u16 itemId)
 
 	AddTextPrinterParameterized(sHeaderBoxWindowId, 0, gStringVar4, textX, textY, 0, NULL);
 	GetSetItemObtained(itemId, FLAG_SET_OBTAINED);
-	#endif
 }
+#endif
 
 #define ITEM_TAG 0xFDF3
-static void ShowItemSpriteOnFind(u16 itemId, u8* spriteId)
+static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 {
 	#ifdef ITEM_PICTURE_ACQUIRE
 	static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
@@ -2743,11 +2747,25 @@ bool8 ScrCmd_callstd(struct ScriptContext * ctx)
 {
 	u8 stdIdx = ScriptReadByte(ctx);
 	const u8* const* script = gStdScripts + stdIdx;
-	ChangeBgY(0, 0, 0);
-	DismissMapNamePopup();
+	if (IsMapNamePopupTaskActive())
+	{
+		ChangeBgY(0, 0, 0);
+		DismissMapNamePopup();
+	}
 
 	if (script < gStdScriptsEnd)
 		ScriptCall(ctx, *script);
+
+	return FALSE;
+}
+
+bool8 ScrCmd_hidemappopup(unusedArg struct ScriptContext * ctx)
+{
+	if (IsMapNamePopupTaskActive())
+	{
+		ChangeBgY(0, 0, 0);
+		DismissMapNamePopup();
+	}
 
 	return FALSE;
 }

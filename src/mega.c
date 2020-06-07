@@ -42,7 +42,7 @@ static const item_t sKeystoneTable[] =
 #endif
 };
 
-const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
+const struct Evolution* CanMegaEvolve(unusedArg u8 bank, unusedArg bool8 CheckUBInstead)
 {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return NULL;

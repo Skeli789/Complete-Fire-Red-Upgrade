@@ -803,11 +803,11 @@ void LoadMegaGraphics(u8 state)
 
 	if (state == 2 || state == 0xFF)
 	{
-		bool8 loadedMegaGfx = IndexOfSpriteTileTag(GFX_TAG_MEGA_INDICATOR) != 0xFF;
-		bool8 loadedAlphaGfx = IndexOfSpriteTileTag(GFX_TAG_ALPHA_INDICATOR) != 0xFF;
-		bool8 loadedOmegaGfx = IndexOfSpriteTileTag(GFX_TAG_OMEGA_INDICATOR) != 0xFF;
-		bool8 loadedUltraGfx = IndexOfSpriteTileTag(GFX_TAG_ULTRA_INDICATOR) != 0xFF;;
-		bool8 loadedDynamaxGfx = IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedMegaGfx = IndexOfSpriteTileTag(GFX_TAG_MEGA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedAlphaGfx = IndexOfSpriteTileTag(GFX_TAG_ALPHA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedOmegaGfx = IndexOfSpriteTileTag(GFX_TAG_OMEGA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedUltraGfx = IndexOfSpriteTileTag(GFX_TAG_ULTRA_INDICATOR) != 0xFF;;
+		unusedArg bool8 loadedDynamaxGfx = IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_INDICATOR) != 0xFF;
 
 		#if (defined MEGA_EVOLUTION_FEATURE || defined DYNAMAX_FEATURE)
 		LoadSpritePalette(&sMegaIndicatorPalette);

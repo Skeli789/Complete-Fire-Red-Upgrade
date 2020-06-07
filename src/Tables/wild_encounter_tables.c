@@ -193,18 +193,18 @@ static const struct WildPokemonInfo sRoute6_LandMonsInfoNight = {20, sRoute6_Lan
 
 static const struct WildPokemon sRoute7_LandMonsNight[] =
 {
-	{21, 23, SPECIES_YUNGOOS},
-	{21, 23, SPECIES_DODUO},
+	{21, 23, SPECIES_RATTATA_A},
+	{21, 23, SPECIES_HOOTHOOT},
 	{21, 23, SPECIES_BUNEARY},
-	{21, 23, SPECIES_ESPURR},
+	{21, 23, SPECIES_DROWZEE},
 	{21, 23, SPECIES_ABRA},
 	{21, 23, SPECIES_MAREEP},
 	{21, 23, SPECIES_SHINX},
 	{21, 23, SPECIES_SHINX},
-	{22, 23, SPECIES_YUNGOOS},
+	{22, 23, SPECIES_RATTATA_A},
 	{22, 23, SPECIES_BUNEARY},
 	{23, 23, SPECIES_LUXIO},
-	{23, 23, SPECIES_GUMSHOOS},
+	{23, 23, SPECIES_RATICATE_A},
 };
 
 static const struct WildPokemonInfo sRoute7_LandMonsInfoNight = {20, sRoute7_LandMonsNight};
