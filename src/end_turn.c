@@ -1732,6 +1732,7 @@ bool8 HandleFaintedMonActions(void)
 								{
 									BattleScriptExecute(BattleScript_HandleFaintedMon);
 									gNewBS->doSwitchInEffects |= gBitTable[gBattleStruct->faintedActionsBank];
+									gNewBS->handlingFaintSwitching = TRUE;
 
 									for (i = 0; i < gBattlersCount; ++i)
 									{
@@ -1864,6 +1865,7 @@ bool8 HandleFaintedMonActions(void)
 				break;
 
 			case FAINTED_ACTIONS_MAX_CASE:
+				gNewBS->handlingFaintSwitching = FALSE;
 				break;
 		}
 	} while (gBattleStruct->faintedActionsState != FAINTED_ACTIONS_MAX_CASE);

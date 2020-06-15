@@ -274,7 +274,8 @@ void atk61_drawpartystatussummary(void)
 	if (gBattleExecBuffer)
 		return;
 
-	RestoreOriginalAttackerAndTarget();
+	if (!gNewBS->handlingFaintSwitching)
+		RestoreOriginalAttackerAndTarget(); //I'm not sure if this function is even necessary anymore, but I'd rather not remove it and cause bugs
 	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
@@ -301,6 +302,7 @@ void atk61_drawpartystatussummary(void)
 			hpStatus[i].status = party[i].condition;
 		}
 	}
+
 	EmitDrawPartyStatusSummary(0, hpStatus, 1);
 	MarkBufferBankForExecution(gActiveBattler);
 	gBattlescriptCurrInstr += 2;
@@ -783,11 +785,21 @@ void atk52_switchineffects(void)
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
-		case SwitchIn_TotemPokemon:
-			if (CanActivateTotemBoost(gActiveBattler))
+		case SwitchIn_TotemPokemon: ;
+			u8 totemBoostType = CanActivateTotemBoost(gActiveBattler);
+
+			if (totemBoostType == TOTEM_SINGLE_BOOST)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			else if (totemBoostType == TOTEM_OMNIBOOST)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemOmniboostRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
 				++gNewBS->switchInEffectsState;
 				return;

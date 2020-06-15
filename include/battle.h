@@ -856,6 +856,7 @@ struct NewBattleStruct
 	bool8 calculatedSpreadMoveData : 1; //After the damage has been calculated for all Pokemon hit by a spread move
 	bool8 calculatedSpreadMoveAccuracy : 1;  //After the accuracy has been calculated for all Pokemon hit by a spread move
 	bool8 breakDisguiseSpecialDmg : 1;
+	bool8 handlingFaintSwitching : 1;
 
 	//Other
 	u16 LastUsedMove;

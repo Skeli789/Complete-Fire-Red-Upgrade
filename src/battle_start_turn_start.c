@@ -314,9 +314,17 @@ void BattleBeginFirstTurn(void)
 							continue;
 						#endif
 
-						if (CanActivateTotemBoost(*bank))
+						u8 totemBoostType = CanActivateTotemBoost(*bank);
+						if (totemBoostType == TOTEM_SINGLE_BOOST)
 						{
 							BattleScriptPushCursorAndCallback(BattleScript_Totem);
+							gBankAttacker = gBattleScripting.bank = *bank;
+							++*bank;
+							return;
+						}
+						else if (totemBoostType == TOTEM_OMNIBOOST) //All stats
+						{
+							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							gBankAttacker = gBattleScripting.bank = *bank;
 							++*bank;
 							return;
@@ -434,26 +442,35 @@ bool8 TryActivateOWTerrain(void)
 	return effect;
 }
 
-bool8 CanActivateTotemBoost(u8 bank)
+u8 CanActivateTotemBoost(u8 bank)
 {
-	u16 stat = VarGet(VAR_TOTEM + bank) & 0x7;
+	u16 val = VarGet(VAR_TOTEM + bank);
+	u16 stat = val & 0x7;
 
 	if (bank < gBattlersCount && stat != 0)
 	{
-		u8 raiseAmount = VarGet(VAR_TOTEM + bank) & ~(0xF);
+		u8 raiseAmount = val & ~(0xF);
 
-		if (stat <= STAT_STAGE_EVASION
+		if (val == 0xFFFF) //Omniboost
+		{
+			if (InBattleSands())
+				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
+
+			return TOTEM_OMNIBOOST;
+		}
+		else if (stat <= STAT_STAGE_EVASION
 		&& ((raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gBattleScripting.statChanger = stat | raiseAmount;
 			if (InBattleSands())
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
-			return TRUE;
+
+			return TOTEM_SINGLE_BOOST;
 		}
 	}
 
-	return FALSE;
+	return TOTEM_NO_BOOST;
 }
 
 static void TryPrepareTotemBoostInBattleSands(void)
