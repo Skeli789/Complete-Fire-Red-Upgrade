@@ -533,6 +533,10 @@ def main():
             tileTables = {}  # For script tiles
             signTables = {}  # For signpost events
 
+            npcCounts = {}  # For people events
+            tileCounts = {}  # For script tiles
+            signCounts = {}  # For signpost events
+
             conditionals = []
             rom.seek(0x5524C)
             mapBanksHeader = ExtractPointer(rom.read(4)) - 0x08000000
@@ -563,25 +567,45 @@ def main():
                             if dictId not in mapHeaders:
                                 rom.seek(mapBanksHeader + mapBank * 4)
                                 mapBankHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                if mapBankHeader == (0xF7F7F7F7 - 0x08000000):
+                                    continue  # Garbage map bank header
                                 rom.seek(mapBankHeader + mapNum * 4)
                                 mapHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                if mapHeader == (0xF7F7F7F7 - 0x08000000):
+                                    continue  # Garbage map header
                                 mapHeaders[dictId] = mapHeader  # Store for later
                             else:
                                 mapHeader = mapHeaders[dictId]
 
                             if eventType == "map":
                                 offset = mapHeader + 0x8
-                            elif eventType == "npc":
+                            elif eventType == "npc" or eventType == "trainer" or eventType == "item":
                                 if eventId < 0:
                                     raise(OSError)
                                 if dictId not in npcTables:
                                     rom.seek(mapHeader + 0x4)
                                     eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                    rom.seek(eventHeader)
+                                    npcCount = int(rom.read(1)[0])
                                     rom.seek(eventHeader + 0x4)
                                     npcTable = ExtractPointer(rom.read(4)) - 0x08000000
                                     npcTables[dictId] = npcTable  # Store for later
+                                    npcCounts[dictId] = npcCount  # Store for later
                                 else:
                                     npcTable = npcTables[dictId]
+                                    npcCount = npcCounts[dictId]
+
+                                # Check if valid npc
+                                if eventId >= npcCount:
+                                    print("Errror! NPC id {} exceeds the count of {} on line {}: {}".format(eventId, npcCount, i, line.strip()))
+                                    continue
+
+                                # Check shortcut npcs and modify symbol
+                                if eventType == "trainer":
+                                    symbol = "EventScript_" + symbol
+                                elif eventType == "item":
+                                    symbol = "ItemFindScript_" + symbol
+
                                 length = 0x18  # Length of one entry
                                 offset = npcTable + eventId * 0x18 + 0x10
 
@@ -613,6 +637,10 @@ def main():
                                 length = 0xC  # Length of one entry
                                 offset = signTable + eventId * length + 0x8
 
+                            else:
+                                print("Unknown event type \"{}\"!".format(eventType))
+                                continue
+
                             if symbol in definesDict:
                                 symbol = definesDict[symbol]
 
@@ -627,7 +655,7 @@ def main():
 
                             Repoint(rom, code, offset)
                     except OSError:
-                        print("There was an error inserting the event script on line {}: {}".format(i, line))
+                        print("There was an error inserting the event script on line {}: {}".format(i, line.strip()))
 
         width = max(map(len, table.keys())) + 1
         if os.path.isfile('offsets.ini'):
