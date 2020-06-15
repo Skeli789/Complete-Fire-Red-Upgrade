@@ -3,6 +3,7 @@
 .thumb
 
 .include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Game Speed Up
@@ -611,6 +612,19 @@ SummaryScreenExpDisplay2:
 .org 0x1507BE, 0xff	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Losing Trainer Battle 9
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x1D888A, 0xFF
+	printstring 31 @;STRINGID_PLAYERWHITEOUT
+	waitmessage 0x40
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x1d9895, 0xff		@don't load sand palette on healing
 	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4
