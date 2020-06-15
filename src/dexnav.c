@@ -680,23 +680,26 @@ static void DexNavFreeHUD(void)
 	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);*/
 }
 
-
+extern const u8 SystemScript_DisplayDexnavMsg[];
 static void DexNavShowMessage(u8 id)
 {
 	switch(id)
 	{
 		case 0:
-			MsgNormal(gText_GotAway);
+			gLoadPointer = gText_GotAway;
 			break;
 		case 1:
-			MsgNormal(gText_LostSignal);
+			gLoadPointer = gText_LostSignal;
 			break;
 		case 2:
-			MsgNormal(gText_GotAwayShouldSneak);
+			gLoadPointer = gText_GotAwayShouldSneak;
 			break;
-	};
-	return;
-};
+	}
+
+	ScriptContext2_Enable();
+	DismissMapNamePopup();
+	ScriptContext1_SetupScript(SystemScript_DisplayDexnavMsg);
+}
 
 
 static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)

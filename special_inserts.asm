@@ -41,6 +41,19 @@ loop_label:
 .word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Vanilla Roamer Bug Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x15BB6, 0xFF
+	mov r8, r8
+	mov r8, r8
+	cmp r1, #0x1
+	beq SetRoamerInactiveCall
+
+.org 0x15BC2, 0xFF
+SetRoamerInactiveCall:	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Ball Count
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x16ADA, 0xFF
@@ -153,6 +166,18 @@ MaxLevelChange4:
 .org 0x3E872, 0xFF
 MaxLevelChange5:
 	.byte MAX_LEVEL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Roamer IVs Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x40A92, 0xFF
+RoamerIVsFix:
+	ldr r1, [r4]
+	str r1, [r5, #0x4]
+	b RoamerIVsFixEnd
+
+.org 0x40AdD, 0xFF
+RoamerIVsFixEnd:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Summary Screen

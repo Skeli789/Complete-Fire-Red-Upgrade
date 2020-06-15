@@ -1066,22 +1066,18 @@ ActivateMGBAPrint:
 	pop {r4, r7, pc}
 
 .pool
-@0x80C446E with r0
+@0x80C48AC with r0
 CreateRoamerIconTownMapHook:
 	bl CreateTownMapRoamerSprites
-	mov r4, #0x1
-	neg r4, r4
-	mov r0, r4
-	mov r1, #0x10
-	mov r2, #0x0
-	ldr r3, =0x80C4478 | 1
-	bx r3
+	pop {r4-r7, pc}
 
 .pool
 .align 2
 @0x80C120C with r0
 CreateRoamerIconTownMapPostSwitchMapHook:
 	bl CreateTownMapRoamerSprites
+	mov r0, #0x0 @Not invisible
+	bl HideOrShowTownMapRoamerSprites
 	ldr r1, [r5]
 	ldr r0, =0x80001CC8
 	lsl r0, #0x1
@@ -1092,7 +1088,7 @@ CreateRoamerIconTownMapPostSwitchMapHook:
 
 .pool
 @0x80C111C with r0
-DestroyRoamerIconTownMapHook:
+DestroyRoamerIconTownMapSwitchHook:
 	bl DestroyTownMapRoamerSprites
 	ldr r1, [r4]
 	mov r2, #0x80
@@ -1100,6 +1096,27 @@ DestroyRoamerIconTownMapHook:
 	mov r0, #2
 	ldr r3, =0x80C1124 | 1
 	bx r3
+
+.pool
+@0x80C2D44 with r0
+DestroyRoamerIconTownMapCloseHook:
+	bl DestroyTownMapRoamerSprites
+	ldr r1, =sMapOpenCloseAnim
+	ldr r0, [r1]
+	ldr r4, .CCE
+	add r0, r4
+	ldr r2, =0x080C2D4C | 1
+	bx r2
+
+.align 2
+.CCE: .word 0xCCE
+
+.pool
+@0x80C49F8 with r0
+HideOrShowRoamerIconTownMapHook:
+	mov r0, r5
+	bl HideOrShowTownMapRoamerSprites
+	pop {r4-r7, pc}
 
 .pool
 @0x811E950 with r4

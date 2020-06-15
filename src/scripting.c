@@ -2,6 +2,7 @@
 #include "../include/bike.h"
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
+#include "../include/field_message_box.h"
 #include "../include/hall_of_fame.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
@@ -2761,19 +2762,20 @@ void TryAppendSOntoEndOfItemString(void)
 }
 
 //Map Name Pop-Up Fix
-bool8 ScrCmd_callstd(struct ScriptContext * ctx)
+bool8 ScrCmd_message(struct ScriptContext* ctx)
 {
-	u8 stdIdx = ScriptReadByte(ctx);
-	const u8* const* script = gStdScripts + stdIdx;
+	const u8* msg = (const u8*) ScriptReadWord(ctx);
+
 	if (IsMapNamePopupTaskActive())
 	{
 		ChangeBgY(0, 0, 0);
 		DismissMapNamePopup();
 	}
 
-	if (script < gStdScriptsEnd)
-		ScriptCall(ctx, *script);
+	if (msg == NULL)
+		msg = (const u8*) ctx->data[0];
 
+	ShowFieldMessage(msg);
 	return FALSE;
 }
 

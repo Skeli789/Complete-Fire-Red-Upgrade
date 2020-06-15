@@ -263,9 +263,11 @@ GetAbilityEncounterRateModType 8082C58 0
 GetMapBaseEncounterCooldown 0808324C 1
 
 #Roamer Hooks
+DestroyRoamerIconTownMapSwitchHook 80C111C 0
 CreateRoamerIconTownMapPostSwitchMapHook 80C120C 0
-CreateRoamerIconTownMapHook 80C446E 0
-DestroyRoamerIconTownMapHook 80C111C 0
+DestroyRoamerIconTownMapCloseHook 80C2D44 0
+CreateRoamerIconTownMapHook 80C48AC 0
+HideOrShowRoamerIconTownMapHook 80C49F8 0
 ClearRoamersData 8141C54 0
 sp129_InitRoamer 8141D9C 0
 UpdateLocationHistoryForRoamers 8141DAC 0
@@ -394,6 +396,7 @@ LoadCloudOrSandstormPalette 0807ABC0 1
 ##Whiteout Hack
 DynamicWhiteoutMap 080BFD54 0
 WhiteoutScreenFix 0807F542 0
+FieldCB_RushInjuredPokemonToCenter 0807F5F0 0
 
 ## Summary Screen
 CamomonsSummaryScreenHook 08136168 0

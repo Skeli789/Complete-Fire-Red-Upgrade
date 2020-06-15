@@ -198,6 +198,7 @@
 #define MAPSEC_ROUTE_18                     0x76
 #define MAPSEC_ISLAND_CAVE					0xC3
 #define MAPSEC_VICTORY_ROAD                 0x84
+#define MAPSEC_POKEMON_LEAGUE               0x89
 
 #define MAPSEC_HIDDEN_GROTTO				0x80
 #endif

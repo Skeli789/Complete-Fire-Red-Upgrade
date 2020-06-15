@@ -9,7 +9,7 @@ void DebugMenu_ProcessSetFlag(void)
 
 	switch (gSpecialVar_LastResult) {
 		case 0: //Badges
-			for (i = FLAG_BADGE01_GET; i < FLAG_BADGE08_GET; ++i)
+			for (i = FLAG_BADGE01_GET; i <= FLAG_BADGE08_GET; ++i)
 				FlagSet(i);
 			break;
 		case 1: //Game Clear
@@ -19,8 +19,15 @@ void DebugMenu_ProcessSetFlag(void)
 			FlagSet(FLAG_SYS_POKEDEX_GET);
 			FlagSet(FLAG_SYS_DEXNAV);
 			break;
-		case 3: //Custom Flag - Modify this number
+		case 3: //Fly Spots
+			for (i = 0x890; i <= 0x8CA; ++i)
+				FlagSet(i);
+			FlagSet(FLAG_SYS_SEVII_MAP_123);
+			FlagSet(FLAG_SYS_SEVII_MAP_4567);
+			break;
+		case 4: //Custom Flag and Var - Modify this number
 			FlagSet(0x152D);
+			VarSet(0x504E, 5);
 			break;
 	}
 }
@@ -91,26 +98,24 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_MARANGA_BERRY, 100);
 			break;
 		case 3: //TMs & HMs
-			#if (defined ITEM_TM01_FOCUS_PUNCH && defined ITEM_TM50_OVERHEAT)
+			#ifdef UNBOUND //Remove if you want this, enums can't be #ifdefed
 			for (i = ITEM_TM01_FOCUS_PUNCH; i <= ITEM_TM50_OVERHEAT; ++i)
 				AddBagItem(i, 1);
-			#endif
-			#if (defined ITEM_TM51_ROOST && defined ITEM_TM58_ENDURE)
+
 			for (i = ITEM_TM51_ROOST; i <= ITEM_TM58_ENDURE; ++i)
 				AddBagItem(i, 1);
-			#endif
-			#if (defined ITEM_TM59_DRAGON_PULSE && defined ITEM_TM120_NATURE_POWER)
+
 			for (i = ITEM_TM59_DRAGON_PULSE; i <= ITEM_TM120_NATURE_POWER; ++i)
 				AddBagItem(i, 1);
-			#endif
-			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
+
 			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
 				AddBagItem(i, 1);
 			#endif
 			break;
 		case 4: //General Useful Items
-			AddBagItem(ITEM_HEART_SCALE, 100);
 			AddBagItem(ITEM_MAX_REPEL, 100);
+			AddBagItem(ITEM_ESCAPE_ROPE, 100);
+			AddBagItem(ITEM_HEART_SCALE, 100);
 			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
 			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
 				AddBagItem(i, 1);

@@ -4,7 +4,7 @@
 TagTeamExecutionCompleteHook 802E384
 
 ##Script Commands
-ScrCmd_callstd 815F9D8
+ScrCmd_message 815FB50
 ScrCmd_hidemappopup 815FC78
 CreateSpriteLoadTable 0815fc5c
 

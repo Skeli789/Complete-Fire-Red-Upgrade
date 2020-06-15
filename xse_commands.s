@@ -1906,12 +1906,12 @@ map \map
 	special 0x25
 .endm
 
-.macro comparehour hour:req
-	comparefarbytetobyte 0x3005542 \hour
+.macro comparedayofweek day:req
+	comparefarbytetobyte 0x3005EA5 \day
 .endm
 
-.macro comparedayofweek day:req
-	comparefarbytetobyte 0x3005541 \day
+.macro comparehour hour:req
+	comparefarbytetobyte 0x3005EA6 \hour
 .endm
 
 .macro candodailyevent var:req

@@ -277,6 +277,7 @@ sDrawStartMenuState = 0x20370FF;
 
 /* Other RAM */
 sRegionMap = 0x20399D4;
+sMapOpenCloseAnim = 0x20399E0;
 sMapCursor = 0x20399E4;
 sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
@@ -1098,6 +1099,7 @@ ConvertIntToDecimalStringN = 0x8008E78 | 1;
 StringExpandPlaceholders = 0x8008FCC | 1;
 GetExpandedPlaceholder = 0x80091E0 | 1;
 TextboxFdecodeAutoAndCreateTask = 0x80694C8 | 1;
+ShowFieldMessage = 0x806943C | 1;
 HideFieldMessageBox = 0x80694F4 | 1;
 ReturnEmptyStringIfNull = 0x80806C8 | 1;
 RunTextPrintersAndIsPrinter0Active = 0x80F6CBC | 1;

@@ -58,7 +58,10 @@
 .equ walk_up_onspot_vfast, 0x2A
 .equ walk_left_onspot_vfast, 0x2B
 .equ walk_right_onspot_vfast, 0x2C
-
+.equ walk_down_onspot_fastest, 0x2D
+.equ walk_up_onspot_fastest, 0x2E
+.equ walk_left_onspot_fastest, 0x2F
+.equ walk_right_onspot_fastest, 0x30
 .equ slide_down_slow, 0x31
 .equ slide_up_slow, 0x32
 .equ slide_left_slow, 0x33
@@ -113,7 +116,7 @@
 .equ say_cross, 0x64
 .equ say_double_exclaim, 0x65
 .equ say_smile, 0x66
-.equ reveal_Trainer, 0x67
+.equ reveal_trainer, 0x67
 .equ smash_rock, 0x68
 .equ cut_tree, 0x69
 .equ set_fixed_priority, 0x6A

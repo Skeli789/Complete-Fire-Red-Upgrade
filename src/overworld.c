@@ -4,9 +4,10 @@
 #include "../include/daycare.h"
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
+#include "../include/field_control_avatar.h"
 #include "../include/field_effect.h"
 #include "../include/field_effect_helpers.h"
-#include "../include/field_control_avatar.h"
+#include "../include/field_fadetransition.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
 #include "../include/field_screen_effect.h"
@@ -1530,6 +1531,7 @@ void RunOnTransitionMapScript(void)
 	gFishingStreak = 0;
 	gLastFishingSpecies = 0;
 	ResetMiningSpots();
+	ForceClockUpdate();
 	MapHeaderRunScriptByTag(3);
 }
 
@@ -1565,6 +1567,18 @@ bool8 TryRunOnFrameMapScript(void)
 }
 
 // Whiteout Hack
+void __attribute__((long_call)) Task_RushInjuredPokemonToCenter(u8 taskId);
+void FieldCB_RushInjuredPokemonToCenter(void)
+{
+    u8 taskId;
+
+    ScriptContext2_Enable();
+    palette_bg_faded_fill_black();
+	DismissMapNamePopup();
+    taskId = CreateTask(Task_RushInjuredPokemonToCenter, 10);
+    gTasks[taskId].data[0] = 0;
+}
+
 bool8 WhiteoutLogic(void)
 {
 #ifdef SET_HEALING_PLACE_HACK

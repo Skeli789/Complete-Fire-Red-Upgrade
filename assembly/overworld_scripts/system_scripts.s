@@ -169,19 +169,27 @@ EndScript:
 
 .global SystemScript_StartDexNavBattle
 SystemScript_StartDexNavBattle:
-	lock
+	lockall
 	call FollowerPositionFixScript
 	checksound
 	sound 0x15 @;Exclaim
 	applymovement PLAYER PlayerExclaim
 	waitmovement 0x0
 	checksound
+	pause 0x10
 	dowildbattle
-	release
+	releaseall
 	end
 
 PlayerExclaim:
 .byte exclaim, end_m
+
+.global SystemScript_DisplayDexnavMsg
+SystemScript_DisplayDexnavMsg:
+	lockall
+	callstd MSG_NORMAL
+	releaseall
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -250,7 +258,6 @@ SystemScript_ObtainItemMessage:
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
 	callasm ClearItemSpriteAfterFindObtain
-	closeonkeypress
 	return
 
 ObtainedSingleItemMsg:
@@ -277,6 +284,8 @@ ObtainedMultipleItemMsg:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ GAME_STAT_FOUND_HIDDEN_ITEM, 20
+
 @Var8005 = Item
 @Var8006 = Quantity
 SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
@@ -290,6 +299,7 @@ SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
 	msgbox 0x81A5218 MSG_KEEPOPEN @;gText_PutItemAway
 	callasm ClearItemSpriteAfterFindHidden
 	special 0x96 @;SetHiddenItemFlag
+	incrementgamestat GAME_STAT_FOUND_HIDDEN_ITEM
 	releaseall
 	end
 
@@ -874,9 +884,10 @@ SystemScript_DebugMenu_SetFlag:
 	multichoiceoption gText_DebugMenu_AllBadges 0
 	multichoiceoption gText_DebugMenu_GameClear 1
 	multichoiceoption gText_DebugMenu_Pokedexes 2
-	multichoiceoption gText_DebugMenu_CustomFlag 3
-	multichoice 0x0 0x0 FOUR_MULTICHOICE_OPTIONS 0x0
-	compare LASTRESULT 0x4
+	multichoiceoption gText_DebugMenu_FlySpots 3
+	multichoiceoption gText_DebugMenu_CustomFlag 4
+	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x5
 	if greaterorequal _goto SystemScript_DebugMenu_End
 	callasm DebugMenu_ProcessSetFlag
 	goto SystemScript_DebugMenu_SetFlag

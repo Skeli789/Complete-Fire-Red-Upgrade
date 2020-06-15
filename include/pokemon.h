@@ -737,6 +737,8 @@ u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
+bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);
+u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 selection);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -840,7 +842,6 @@ void sub_8068AA4(void); // sets stats for deoxys
 bool8 HasTwoFramesAnimation(u16 species);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
-u8 CheckPartyPokerus(struct Pokemon *party, u8 selection);
 void UpdatePartyPokerusTime(u16 days);
 void PartySpreadPokerus(struct Pokemon *party);
 s8 GetMonFlavorRelation(struct Pokemon *mon, u8 a2);
@@ -851,7 +852,6 @@ u16 PlayerGenderToFrontTrainerPicId(u8 playerGender);
 void sub_806A1C0(u16 arg0, u8 bankIdentity);
 void sub_806A12C(u16 trainerSpriteId, u8 bankIdentity);
 u8 GetSecretBaseTrainerPicIndex(void);
-bool8 TryIncrementMonLevel(struct Pokemon *mon);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 battlePartyId, u32 healMask, u8 battlerId);
 
