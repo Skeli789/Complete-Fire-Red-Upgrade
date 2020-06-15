@@ -1406,3 +1406,12 @@ void sp0E1_DoesPlayerHaveFollower(void)
 {
 	gSpecialVar_LastResult = gFollowerState.inProgress;
 }
+
+bool8 ShouldFollowerIgnoreActiveScript(void)
+{
+	#ifdef FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT
+	return FlagGet(FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT);
+	#else
+	return FALSE;
+	#endif
+}
