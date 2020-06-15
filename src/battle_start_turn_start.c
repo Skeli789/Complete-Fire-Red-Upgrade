@@ -1441,20 +1441,15 @@ u8 GetTrainerBattleTransition(void)
 	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 		return B_TRANSITION_CHAMPION;
 
-	#ifdef TUTORIAL_BATTLES
-	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId != 0)
-		return B_TRANSITION_CHAMPION;
-	#else
-	if (sTrainerEventObjectLocalId != 0) //Used for mugshots
-		return B_TRANSITION_CHAMPION;
-	#endif
-
 	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)
 		return B_TRANSITION_CHAMPION;
 
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR)
 	{
+		VarSet(VAR_PRE_BATTLE_MUGSHOT_STYLE, MUGSHOT_TWO_BARS);
+		VarSet(VAR_PRE_BATTLE_MUGSHOT_SPRITE, MUGSHOT_PLAYER);
+
 		if (gTrainerBattleOpponent_A == TRAINER_LORELEI
 		||  gTrainerBattleOpponent_A == TRAINER_LORELEI_REMATCH)
 			return B_TRANSITION_LORELEI;
@@ -1471,7 +1466,15 @@ u8 GetTrainerBattleTransition(void)
 		return B_TRANSITION_CHAMPION;
 	}
 	#endif
-	
+
+	#ifdef TUTORIAL_BATTLES
+	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId >= 0x100)
+		return B_TRANSITION_CHAMPION;
+	#else
+	if (sTrainerEventObjectLocalId >= 0x100) //Used for mugshots
+		return B_TRANSITION_CHAMPION;
+	#endif
+
 	#ifdef VAR_BATTLE_TRANSITION_LOGO
 	u16 transitionLogo = VarGet(VAR_BATTLE_TRANSITION_LOGO);
 	if (transitionLogo == 0) //No preset logo

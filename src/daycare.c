@@ -683,7 +683,7 @@ void GiveEggFromDaycare(struct DayCare* daycare)
 
 void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare)
 {
-	#ifdef UNBOUND
+	#ifdef VAR_DAYCARE_NUM_EGGS
 		u16 numEggs = VarGet(VAR_DAYCARE_NUM_EGGS);
 		if (numEggs < 100)
 			++numEggs;
