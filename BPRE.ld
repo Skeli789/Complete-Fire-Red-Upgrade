@@ -19,11 +19,11 @@ sRTCErrorStatus = 0x203E05A;
 sRTCSavedIme = 0x203E05C;
 sRTCProbeResult = 0x203E05E;
 sRTCFrameCount = 0x203E05F;
-sRtc = 0x203E060;
-gMiningSpots = 0x203E070;
+gMiningSpots = 0x203E060;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
-gClock = 0x300553C;
+sRtc = 0x3005E88;
+gClock = 0x3005EA0;
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
@@ -276,6 +276,8 @@ sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
 
 /* Other RAM */
+sRegionMap = 0x20399D4;
+sMapCursor = 0x20399E4;
 sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
 gKeypadInitialCountdown = 0x030030e0;
@@ -410,7 +412,9 @@ SpeciesToNationalPokedexNum = 0x8043298 | 1;
 ModifyStatByNature = 0x8043698 | 1;
 //MonGainEVs = 0x8043890 | 1;
 GetMonEVCount = 0x8043A40 | 1;
+CheckPartyPokerus = 0x8043A70 | 1; 
 CheckPartyHasHadPokerus = 0x8043AD8 | 1;
+TryIncrementMonLevel = 0x8043B90 | 1;
 GetMonSpritePalStructFromOtIdPersonality = 0x8044180 | 1;
 GetPokeFlavourRelation = 0x8044234 | 1;
 IsTradedMon = 0x804425C | 1;
@@ -984,6 +988,7 @@ GetOppositeDirection = 0x8064480 | 1;
 FaceDirection = 0x80645F4 | 1;
 walkrun_is_standing_still = 0x8069554 | 1;
 ScriptCall = 0x80698D4 | 1;
+EnableBothScriptContexts = 0x8069B34 | 1;
 MapHeaderRunScriptByTag = 0x8069BC0 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 GetPlayerPosition = 0x806CE20 | 1;
@@ -995,21 +1000,34 @@ TrySetDiveWarp = 0x806DFB8 | 1;
 FadeScreen = 0x807A818 | 1;
 PlayRainStoppingSoundEffect = 0x807B004 | 1;
 WarpFadeScreen = 0x807DC18 | 1;
+palette_bg_faded_fill_black = 0x807DB38 | 1;
 sub_807DCB0 = 0x807DCB0 | 1;
 FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
 DoWarp = 0x807E438 | 1;
 DoDiveWarp = 0x807E470 | 1;
+Task_RushInjuredPokemonToCenter = 0x807F45D | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
+ReturnToFieldFromFlyMapSelect = 0x80842C8 | 1;
 ShowMapNamePopup = 0x8098110 | 1;
 DismissMapNamePopup = 0x80982EC | 1;
 IsMapNamePopupTaskActive = 0x8098320 | 1;
+StartTransitionToFlipBikeState = 0x80BD5C8 | 1;
 BindObj = 0x80DC44C | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 sub_8150498 = 0x8150498 | 1;
 
 /* Region Map Functions */
+RegionMap_NullVBlankHBlankCallbacks = 0x80C08E0 | 1;
+SetRegionMapVBlankCB = 0x80C08F4 | 1;
+GetRegionMapPermission = 0x80C0E04 | 1;
 GetSelectedRegionMap = 0x80C0E20 | 1;
+//GetMapsecUnderCursor = 0x80C3520 | 1;
+GetPlayerPositionOnRegionMap = 0x80C3B28 | 1;
+GetSelectedMapSection = 0x80C4164 | 1;
 RegionMap_SetPlayerIconInvisibility = 0x80C4324 | 1;
+RegionMap_CreateFlyIconSprite = 0x80C450C | 1;
+RegionMap_CreateFlyIcons = 0x80C4750 | 1;
+RegionMap_CreateDungeonIcons = 0x80C47F0 | 1;
 GetMapName = 0x80C4D78 | 1;
 
 /* Script Functions */
@@ -1640,6 +1658,7 @@ PlayCry1 = 0x8071DF0 | 1;
 PlayCry3 = 0x8071E60 | 1;
 StopCryAndClearCrySongs = 0x80721C4 | 1;
 IsCryPlayingOrClearCrySongs = 0x80721F0 | 1;
+IsCryPlaying = 0x8072214 | 1;
 PlayBGM = 0x80722A0 | 1;
 PlaySE = 0x80722CC | 1;
 PlaySE2WithPanning = 0x0807237C | 1;

@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/bike.h"
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
 #include "../include/hall_of_fame.h"
@@ -1590,6 +1591,23 @@ struct DailyEventVar
 	u32 century : 5; //31 centuries max - starts at 0
 };
 
+bool8 IsTimeInVarInFuture(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u8 hour = timeData->hour;
+	u8 minute = timeData->minute;
+	u8 day = timeData->day;
+	u8 month = timeData->month;
+	u32 year = timeData->year + timeData->century * 100;
+
+	return year > gClock.year
+	|| (year == gClock.year && month > gClock.month)
+	|| (year == gClock.year && month == gClock.month && day > gClock.day)
+	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
+	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+}
+
 //@Details: Runs a daily event.
 //@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.
@@ -1609,23 +1627,23 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 	u8 dailyMonth = dailyData->month;
 	u32 dailyYear = dailyData->year + dailyData->century * 100;
 
-	if (dailyYear > Clock->year
-	|| (dailyYear == Clock->year && dailyMonth > Clock->month)
-	|| (dailyYear == Clock->year && dailyMonth == Clock->month && dailyDay > Clock->day))
+	if (dailyYear > gClock.year
+	|| (dailyYear == gClock.year && dailyMonth > gClock.month)
+	|| (dailyYear == gClock.year && dailyMonth == gClock.month && dailyDay > gClock.day))
 		return FALSE; //Player changed date on their computer.
 
-	if (dailyDay != Clock->day
-	||  dailyMonth != Clock->month
-	||  dailyYear != Clock->year)
+	if (dailyDay != gClock.day
+	||  dailyMonth != gClock.month
+	||  dailyYear != gClock.year)
 	{
 		if (setDailyEventVar)
 		{
-			dailyData->minute = Clock->minute;
-			dailyData->hour = Clock->hour;
-			dailyData->day = Clock->day;
-			dailyData->month = Clock->month;
-			dailyData->year = Clock->year % 100;
-			dailyData->century = Clock->year / 100;
+			dailyData->minute = gClock.minute;
+			dailyData->hour = gClock.hour;
+			dailyData->day = gClock.day;
+			dailyData->month = gClock.month;
+			dailyData->year = gClock.year % 100;
+			dailyData->century = gClock.year / 100;
 		}
 		toReturn = TRUE;
 	}
@@ -1641,7 +1659,7 @@ u32 GetDaysSinceTimeInValue(u32 value)
 	if (startYear < 1900)
 		startYear = 1900;
 
-	return GetDayDifference(startYear, startTime->month, startTime->day, Clock->year, Clock->month, Clock->day);
+	return GetDayDifference(startYear, startTime->month, startTime->day, gClock.year, gClock.month, gClock.day);
 }
 
 //@Details: Updates the time stored in a pair of vars.
@@ -1652,12 +1670,12 @@ void sp0A1_UpdateTimeInVars(void)
 	u16 eventVar = Var8000; //Var contained in Var8000
 	struct DailyEventVar* data = (struct DailyEventVar*) GetVarPointer(eventVar);
 
-	data->minute = Clock->minute;
-	data->hour = Clock->hour;
-	data->day = Clock->day;
-	data->month = Clock->month;
-	data->year = Clock->year % 100;
-	data->century = Clock->year / 100;
+	data->minute = gClock.minute;
+	data->hour = gClock.hour;
+	data->day = gClock.day;
+	data->month = gClock.month;
+	data->year = gClock.year % 100;
+	data->century = gClock.year / 100;
 }
 
 //@Details: Gets the time difference between the data stored in a var and the current time.
@@ -1683,19 +1701,19 @@ u32 sp0A2_GetTimeDifference(void)
 
 	switch (Var8001) {
 		case 0: //Get minute difference
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute);
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute);
 			break;
 		case 1: //Get hour difference
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60;
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute) / 60;
 			break;
 		case 2: //Get day difference.
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60 / 24;
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute) / 60 / 24;
 			break;
 		case 3: //Get month difference.
-			difference = GetMonthDifference(startYear, startMonth, Clock->year, Clock->month);
+			difference = GetMonthDifference(startYear, startMonth, gClock.year, gClock.month);
 			break;
 		case 4: //Get year difference.
-			difference = GetYearDifference(startYear, Clock->year);
+			difference = GetYearDifference(startYear, gClock.year);
 			break;
 	}
 
@@ -1739,14 +1757,14 @@ u8 sp0AD_GetTimeOfDay(void)
 //@Returns: The current hour of the day.
 u8 sp0D9_GetHour(void)
 {
-	return Clock->hour;
+	return gClock.hour;
 }
 
 //@Details: Gets the current day of week.
 //@Returns: The current day of week.
 u8 sp0DA_GetDayOfWeek(void)
 {
-	return Clock->dayOfWeek;
+	return gClock.dayOfWeek;
 }
 
 //@Details: Gets the time of day.
@@ -1760,7 +1778,7 @@ void sp0AE_ClearFlag(void)
 void sp0AF_DismountBicyle(void)
 {
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
-		SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
+		StartTransitionToFlipBikeState(PLAYER_AVATAR_FLAG_ON_FOOT);
 }
 
 //@Details: Stops any sound effects from playing.
@@ -2541,21 +2559,22 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 static void ShowObtainedItemDescription(unusedArg u16 itemId)
 {
 	struct WindowTemplate template;
-	s16 textX, textY, lineLength, windowHeight, numLines;
+	s16 textX, textY, maxWidth, windowHeight, numLines;
 	u8 pocket = GetPocketByItemId(itemId);
 
 	if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE) //Displayed in the middle of the screen
 	{
-		textX = 2;
-		lineLength = 46;
+		textX = 1;
+		maxWidth = 222;
 	}
 	else
 	{
 		textX = ITEM_ICON_X + 2;
-		lineLength = 38;
+		maxWidth = 195;
 	}
 
-	numLines = ReformatItemDescription(itemId, gStringVar4, lineLength);
+	Memset(gStringVar4, 0xFF, 500); //Clear enough so GetStringWidth can work properly
+	numLines = ReformatItemDescription(itemId, gStringVar4, maxWidth);
 
 	if (numLines == 1)
 	{
@@ -2665,8 +2684,7 @@ static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 	
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
-		ClearStdWindowAndFrameToTransparent(sHeaderBoxWindowId, FALSE);
-		CopyWindowToVram(sHeaderBoxWindowId, 2);
+		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
 		RemoveWindow(sHeaderBoxWindowId);
 	}
 	#endif

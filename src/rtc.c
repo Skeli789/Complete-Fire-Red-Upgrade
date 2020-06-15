@@ -7,7 +7,7 @@ extern u8 sRTCProbeResult;
 extern u16 sRTCSavedIme;
 extern u8 sRTCFrameCount;
 
-extern struct SiiRtcInfo sRtc; //0x203E060
+extern struct SiiRtcInfo sRtc; //0x3005E88
 
 // const rom
 static const struct SiiRtcInfo sRtcDummy = {.year = 0, .month = MONTH_JAN, .day = 1}; // 2000 Jan 1
@@ -163,13 +163,13 @@ u16 RtcCheckInfo(struct SiiRtcInfo *rtc)
 
 static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
 {
-	Clock->year = ConvertBcdToBinary(rtc->year) + 2000; //Base year is 2000
-	Clock->month = ConvertBcdToBinary(rtc->month);
-	Clock->day = ConvertBcdToBinary(rtc->day);
-	Clock->dayOfWeek = ConvertBcdToBinary(rtc->dayOfWeek);
-	Clock->hour = ConvertBcdToBinary(rtc->hour);
-	Clock->minute = ConvertBcdToBinary(rtc->minute);
-	Clock->second = ConvertBcdToBinary(rtc->second);
+	gClock.year = ConvertBcdToBinary(rtc->year) + 2000; //Base year is 2000
+	gClock.month = ConvertBcdToBinary(rtc->month);
+	gClock.day = ConvertBcdToBinary(rtc->day);
+	gClock.dayOfWeek = ConvertBcdToBinary(rtc->dayOfWeek);
+	gClock.hour = ConvertBcdToBinary(rtc->hour);
+	gClock.minute = ConvertBcdToBinary(rtc->minute);
+	gClock.second = ConvertBcdToBinary(rtc->second);
 }
 
 void RtcCalcLocalTime(void)

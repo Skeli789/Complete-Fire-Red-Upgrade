@@ -202,26 +202,30 @@ bool8 GetSetItemObtained(u16 item, u8 caseId)
 	return FALSE;
 }
 
-u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxChars)
+u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxWidth)
 {
+	//Requires dest be memset to 0xFF before calling!
 	u8 count = 0;
 	u8 k = 0;
 	u8 numLines = 1;
 	u8 buffer[150];
-	u8 *desc;
+	u8* desc;
+	u8* lineStart;
 	
 	desc = ItemId_GetDescription(itemId);
 	StringExpandPlaceholders(buffer, desc);
+	lineStart = dest;
 
 	while (buffer[k] != EOS)
-	{        
-		if (count >= maxChars)
+	{
+		if (GetStringWidth(0, lineStart, 0) >= maxWidth)
 		{
-			while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE)
+			do
 			{
-				dest--; //Go to end of previous word
+				//Go to end of previous word
+				dest--;
 				k--;
-			}
+			} while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
 
 			if (buffer[k + 1] != EOS) //String will continue on another line
 			{
@@ -232,6 +236,7 @@ u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxChars)
 			count = 0;
 			dest++;
 			k++;
+			lineStart = dest;
 			continue;
 		}
 

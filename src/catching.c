@@ -8,6 +8,7 @@
 #include "../include/overworld.h"
 #include "../include/random.h"
 #include "../include/string_util.h"
+#include "../include/constants/game_stat.h"
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_util.h"
@@ -559,6 +560,10 @@ void atkF0_givecaughtmon(void)
 			++gBattleCommunication[MULTISTRING_CHOOSER];
 	}
 
+	if (!IsTimeInVarInFuture(VAR_SWARM_DAILY_EVENT))
+		IncrementGameStat(GAME_STAT_CAUGHT_TODAY);
+	else
+		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
 	gBattleResults.caughtMonSpecies = SPECIES(gBankTarget);
 	GetMonData(mon, MON_DATA_NICKNAME, gBattleResults.caughtMonNick);
 	++gBattlescriptCurrInstr;

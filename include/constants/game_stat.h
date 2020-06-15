@@ -23,21 +23,21 @@
 #define GAME_STAT_ENTERED_SAFARI_ZONE       17
 #define GAME_STAT_USED_CUT                  18
 #define GAME_STAT_USED_ROCK_SMASH           19
-#define GAME_STAT_MOVED_SECRET_BASE         20 //Unused
+#define GAME_STAT_FOUND_HIDDEN_ITEM         20 //NEW!
 #define GAME_STAT_POKEMON_TRADES            21
-#define GAME_STAT_UNKNOWN_22                22 //Unused
+#define GAME_STAT_CHECKED_TRASH             22 //NEW!
 #define GAME_STAT_LINK_BATTLE_WINS          23
 #define GAME_STAT_LINK_BATTLE_LOSSES        24
 #define GAME_STAT_LINK_BATTLE_DRAWS         25
 #define GAME_STAT_USED_SPLASH               26
 #define GAME_STAT_USED_STRUGGLE             27
 #define GAME_STAT_SLOT_JACKPOTS             28
-#define GAME_STAT_CONSECUTIVE_ROULETTE_WINS 29 //Unused / Read Trainer Tips signs
+#define GAME_STAT_READ_TRAINER_TIPS_SIGNS   29 //NEW!
 #define GAME_STAT_ENTERED_BATTLE_FACILITY   30
-#define GAME_STAT_UNDERGROUND_MINING        31
+#define GAME_STAT_UNDERGROUND_MINING        31 //NEW!
 #define GAME_STAT_BATTLE_FACILITY_BEST_STREAK  32
-#define GAME_STAT_POKEBLOCKS                33 //Unused
-#define GAME_STAT_POKEBLOCKS_WITH_FRIENDS   34 //Unused
+#define GAME_STAT_CAUGHT_TODAY              33 //NEW!
+#define GAME_STAT_EXP_EARNED_TODAY          34 //NEW!
 #define GAME_STAT_WON_LINK_CONTEST          35 //Unused
 #define GAME_STAT_ENTERED_CONTEST           36 //Unused
 #define GAME_STAT_WON_CONTEST               37 //Unused
@@ -48,10 +48,10 @@
 #define GAME_STAT_RECEIVED_RIBBONS          42
 #define GAME_STAT_JUMPED_DOWN_LEDGES        43
 #define GAME_STAT_WATCHED_TV                44
-#define GAME_STAT_DEXNAV_SCANNED            45
+#define GAME_STAT_DEXNAV_SCANNED            45 //NEW!
 #define GAME_STAT_WON_POKEMON_LOTTERY       46
 #define GAME_STAT_USED_DAYCARE              47
-#define GAME_STAT_RAID_BATTLES              48
+#define GAME_STAT_RAID_BATTLES              48 //NEW!
 #define GAME_STAT_ENTERED_HOT_SPRINGS       49
 #define GAME_STAT_NUM_UNION_ROOM_BATTLES    50
 #define GAME_STAT_BERRY_CRUSH_POINTS        51

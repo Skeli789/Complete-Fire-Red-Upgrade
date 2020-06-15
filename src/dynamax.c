@@ -1493,10 +1493,10 @@ static u8 GetRaidMapSectionId(void)
 static u32 GetRaidRandomNumber(void)
 {
 	//Make sure no values are 0
-	u8 dayOfWeek = (Clock->dayOfWeek == 0) ? 8 : Clock->dayOfWeek;
-	u8 hour = (Clock->hour == 0) ? 24 : Clock->hour;
-	u8 day = (Clock->day == 0) ? 32 : Clock->day;
-	u8 month = (Clock->month == 0) ? 13 : Clock->month;
+	u8 dayOfWeek = (gClock.dayOfWeek == 0) ? 8 : gClock.dayOfWeek;
+	u8 hour = (gClock.hour == 0) ? 24 : gClock.hour;
+	u8 day = (gClock.day == 0) ? 32 : gClock.day;
+	u8 month = (gClock.month == 0) ? 13 : gClock.month;
 	u8 lastMapGroup = (gSaveBlock1->dynamicWarp.mapGroup == 0) ? 0xFF : gSaveBlock1->dynamicWarp.mapGroup;
 	u8 lastMapNum = (gSaveBlock1->dynamicWarp.mapNum == 0) ? 0xFF : gSaveBlock1->dynamicWarp.mapNum;
 	u8 lastWarpId = (gSaveBlock1->dynamicWarp.warpId == 0) ? 0xFF : gSaveBlock1->dynamicWarp.warpId;

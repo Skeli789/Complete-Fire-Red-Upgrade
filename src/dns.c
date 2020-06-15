@@ -67,8 +67,8 @@ static void FadeDayNightPalettes()
 
 			if (fadePalettes)
 			{
-				u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
-				u16 colour = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
+				u8 coeff = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].amount;
+				u16 colour = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].colour;
 				bool8 palFadeActive = gPaletteFade->active || gWeatherPtr->palProcessingState == WEATHER_PAL_STATE_SCREEN_FADING_IN;
 
 				if (inOverworld)
@@ -300,8 +300,8 @@ void DNSBattleBGPalFade(void)
 	}
 
 	u16 i, palOffset;
-	u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
-	u32 blendColor = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
+	u8 coeff = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].amount;
+	u32 blendColor = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].colour;
 	u8 selectedPalettes = BATTLE_DNS_PAL_FADE & 0x1C;
 
 	for (palOffset = 0; selectedPalettes; palOffset += 16)
@@ -329,27 +329,27 @@ void DNSBattleBGPalFade(void)
 
 bool8 IsDayTime(void)
 {
-	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
+	return gClock.hour >= TIME_MORNING_START && gClock.hour < TIME_NIGHT_START;
 }
 
 bool8 IsOnlyDayTime(void)
 {
-	return Clock->hour >= TIME_DAY_START && Clock->hour < TIME_EVENING_START;
+	return gClock.hour >= TIME_DAY_START && gClock.hour < TIME_EVENING_START;
 }
 
 bool8 IsNightTime(void)
 {
-	return Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START;
+	return gClock.hour >= TIME_NIGHT_START || gClock.hour < TIME_MORNING_START;
 }
 
 bool8 IsMorning(void)
 {
-	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_DAY_START;
+	return gClock.hour >= TIME_MORNING_START && gClock.hour < TIME_DAY_START;
 }
 
 bool8 IsEvening(void)
 {
-	return Clock->hour >= TIME_EVENING_START && Clock->hour < TIME_NIGHT_START;
+	return gClock.hour >= TIME_EVENING_START && gClock.hour < TIME_NIGHT_START;
 }
 
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)

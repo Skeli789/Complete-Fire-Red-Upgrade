@@ -4,11 +4,13 @@
 #include "../include/event_data.h"
 #include "../include/m4a.h"
 
+#include "../include/constants/game_stat.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/exp.h"
 #include "../include/new/util.h"
@@ -541,6 +543,24 @@ static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c)
 #define tExpTask_gainedExp1 data[3]
 #define tExpTask_gainedExp2 data[4]
 #define tExpTask_frames     data[10]
+static void UpdateDailyExpGameStat(u32 gainedExp)
+{
+	if (!IsTimeInVarInFuture(VAR_SWARM_DAILY_EVENT))
+	{
+		u32 totalExpGainedToday = GetGameStat(GAME_STAT_EXP_EARNED_TODAY);
+		u32 remainingPossibleInGameStat = 0xFFFFFFFF - totalExpGainedToday;
+
+		if (gainedExp > remainingPossibleInGameStat)		
+			SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0xFFFFFFFF);
+		else
+			SetGameStat(GAME_STAT_EXP_EARNED_TODAY, totalExpGainedToday + gainedExp);
+	}
+	else
+	{
+		SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
+	}
+}
+
 void PlayerHandleExpBarUpdate(void)
 {
 	u8 monId = gBattleBufferA[gActiveBattler][1];
@@ -556,6 +576,8 @@ void PlayerHandleExpBarUpdate(void)
 
 		load_gfxc_health_bar(1);
 		gainedExp = T1_READ_32(&gBattleBufferA[gActiveBattler][2]);
+		UpdateDailyExpGameStat(gainedExp);
+
 		taskId = CreateTask(Task_GiveExpToMon, 10);
 		gTasks[taskId].tExpTask_monId = monId;
 		gTasks[taskId].tExpTask_battler = gActiveBattler;

@@ -3,23 +3,9 @@
 #include "../global.h"
 #include "../list_menu.h"
 
-struct Clock
-{
-	u16 year;
-	u8 _; //For some reason always set to 4
-	u8 month;
-	u8 day;
-	u8 dayOfWeek;
-	u8 hour;
-	u8 minute;
-	u8 second;
-};
-
 //#define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
 //#define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
 //#define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
-
-#define Clock ((struct Clock*) 0x300553C)
 
 //#define gEnemyParty ((struct Pokemon*) 0x202402C)
 //#define gPlayerParty ((struct Pokemon*) 0x2024284)
@@ -30,7 +16,7 @@ struct Clock
 /*u32*/ #define gTrainerId 				*((u32*) 0x2020000)
 
 		#define gWindows ((struct Window*) 0x20204B4)
-/*u8*/  #define gSprites ((struct Sprite*) 0x202063C)
+/*u8*/  //#define gSprites ((struct Sprite*) 0x202063C)
 
 ///*u8*/  #define gStringVar1 ((u8*) 0x2021CD0)
 ///*u8*/  #define gStringVar2 ((u8*) 0x2021CF0)
@@ -212,9 +198,7 @@ extern u8 gFishingStreak; //0x203E058
 //#define sRTCSavedIme (*((u16*) 0x203E05C))
 //#define sRTCProbeResult (*((u8*) 0x203E05E))
 //#define sRTCFrameCount (*((u8*) 0x203E05F))
-//#define sRtc (*((struct SiiRtcInfo*) 0x203E060))
-//FREE: 0x203E06A
-extern struct Coords16 gMiningSpots[8]; //0x203E070
-//FREE: 0x203E090
+extern struct Coords16 gMiningSpots[8]; //0x203E060
+//FREE: 0x203E080
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

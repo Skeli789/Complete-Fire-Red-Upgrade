@@ -408,6 +408,8 @@ void TryUpdateSwarm(void)
 		u32 daysSince = GetDaysSinceTimeInValue(backupVar);
 		UpdatePartyPokerusTime(daysSince);
 		ClearDailyEventFlags();
+		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
+		SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
 	}
 }
 

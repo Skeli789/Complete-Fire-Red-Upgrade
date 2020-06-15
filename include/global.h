@@ -803,4 +803,18 @@ extern u8 gReservedSpritePaletteCount;
 
 #define gText_Cancel ((u8*) 0x84161C1)
 
+struct Clock
+{
+	u16 year;
+	u8 _; //Unused - left in to maintain compatability with old hacks
+	u8 month;
+	u8 day;
+	u8 dayOfWeek;
+	u8 hour;
+	u8 minute;
+	u8 second;
+};
+
+extern struct Clock gClock; //0x3005EA0 - Was 0x300553C - new one doesn't conflict with linking
+
 #endif // GUARD_GLOBAL_H
