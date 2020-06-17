@@ -871,11 +871,14 @@ SystemScript_DebugMenu:
 	lock
 	multichoiceoption gText_DebugMenu_SetFlag 0
 	multichoiceoption gText_DebugMenu_GiveItem 1
-	multichoice 0x0 0x0 TWO_MULTICHOICE_OPTIONS 0x0
+	multichoiceoption gText_DebugMenu_Level100Team 2
+	multichoice 0x0 0x0 THREE_MULTICHOICE_OPTIONS 0x0
 	compare LASTRESULT 0x0
 	if equal _goto SystemScript_DebugMenu_SetFlag
 	compare LASTRESULT 0x1
 	if equal _goto SystemScript_DebugMenu_GiveItem
+	compare LASTRESULT 0x2
+	if equal _goto SystemScript_DebugMenu_Level100Team
 SystemScript_DebugMenu_End:
 	release
 	end
@@ -894,12 +897,17 @@ SystemScript_DebugMenu_SetFlag:
 
 SystemScript_DebugMenu_GiveItem:
 	multichoiceoption gText_DebugMenu_UsefulKeyItems 0
-	multichoiceoption gText_DebugMenu_PokeBalls 1
-	multichoiceoption gText_DebugMenu_Berries 2
-	multichoiceoption gText_DebugMenu_TMs 3
-	multichoiceoption gText_DebugMenu_GeneralUsefulItems 4
-	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
-	compare LASTRESULT 0x5
+	multichoiceoption gText_DebugMenu_GeneralUsefulItems 1
+	multichoiceoption gText_DebugMenu_PokeBalls 2
+	multichoiceoption gText_DebugMenu_Berries 3
+	multichoiceoption gText_DebugMenu_TMs 4
+	multichoiceoption gText_DebugMenu_AllItems 5
+	multichoice 0x0 0x0 SIX_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x6
 	if greaterorequal _goto SystemScript_DebugMenu_End
 	callasm DebugMenu_ProcessGiveItem
 	goto SystemScript_DebugMenu_GiveItem
+
+SystemScript_DebugMenu_Level100Team:
+	callasm DebugMenu_SetTeamToLevel100
+	goto SystemScript_DebugMenu

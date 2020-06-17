@@ -3,6 +3,9 @@
 #include "../include/item.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/item.h"
+#include "../include/new/util.h"
+
 void DebugMenu_ProcessSetFlag(void)
 {
 	u32 i;
@@ -47,7 +50,21 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_ITEMFINDER, 1);
 			AddBagItem(ITEM_MEGA_RING, 1);
 			break;
-		case 1: //Poke Balls
+		case 1: //General Useful Items
+			AddBagItem(ITEM_MAX_REPEL, 100);
+			AddBagItem(ITEM_ESCAPE_ROPE, 100);
+			AddBagItem(ITEM_HEART_SCALE, 100);
+			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
+			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
+				AddBagItem(i, 1);
+			#endif
+
+			AddBagItem(ITEM_RED_SHARD, 100);
+			AddBagItem(ITEM_BLUE_SHARD, 100);
+			AddBagItem(ITEM_YELLOW_SHARD, 100);
+			AddBagItem(ITEM_GREEN_SHARD, 100);
+			break;
+		case 2: //Poke Balls
 			for (i = ITEM_MASTER_BALL; i <= ITEM_PREMIER_BALL; ++i)
 				AddBagItem(i, 100);
 
@@ -67,7 +84,7 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_BEAST_BALL, 100);
 			AddBagItem(ITEM_DREAM_BALL, 100);
 			break;
-		case 2: //Berries
+		case 3: //Berries
 			for (i = ITEM_CHERI_BERRY; i <= ITEM_STARF_BERRY; ++i)
 				AddBagItem(i, 100);
 			
@@ -97,7 +114,7 @@ void DebugMenu_ProcessGiveItem(void)
 			AddBagItem(ITEM_KEE_BERRY, 100);
 			AddBagItem(ITEM_MARANGA_BERRY, 100);
 			break;
-		case 3: //TMs & HMs
+		case 4: //TMs & HMs
 			#ifdef UNBOUND //Remove if you want this, enums can't be #ifdefed
 			for (i = ITEM_TM01_FOCUS_PUNCH; i <= ITEM_TM50_OVERHEAT; ++i)
 				AddBagItem(i, 1);
@@ -112,19 +129,29 @@ void DebugMenu_ProcessGiveItem(void)
 				AddBagItem(i, 1);
 			#endif
 			break;
-		case 4: //General Useful Items
-			AddBagItem(ITEM_MAX_REPEL, 100);
-			AddBagItem(ITEM_ESCAPE_ROPE, 100);
-			AddBagItem(ITEM_HEART_SCALE, 100);
-			#if (defined ITEM_HM01_CUT && defined ITEM_HM08_ROCK_CLIMB)
-			for (i = ITEM_HM01_CUT; i <= ITEM_HM08_ROCK_CLIMB; ++i)
-				AddBagItem(i, 1);
-			#endif
-
-			AddBagItem(ITEM_RED_SHARD, 100);
-			AddBagItem(ITEM_BLUE_SHARD, 100);
-			AddBagItem(ITEM_YELLOW_SHARD, 100);
-			AddBagItem(ITEM_GREEN_SHARD, 100);
+		case 5: //All items
+			for (i = 0; i < ITEMS_COUNT; ++i)
+			{
+				const u8* name = ItemId_GetName(i);
+				if (name[0] != 0xAC && name[0] != 0xFF) //'?', ' '
+					AddBagItem(i, 1);
+			}
 			break;
 	}
 }
+
+void DebugMenu_SetTeamToLevel100(void)
+{
+	for (u32 i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			u32 exp = gExperienceTables[gBaseStats[species].growthRate][MAX_LEVEL];
+			SetMonData(&gPlayerParty[i], MON_DATA_EXP, &exp);
+			CalculateMonStats(&gPlayerParty[i]);
+			HealMon(&gPlayerParty[i]);
+		}
+	}
+}
+
