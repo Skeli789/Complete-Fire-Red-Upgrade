@@ -1,5 +1,6 @@
 #include "../include/global.h"
 #include "../include/rtc.h"
+#include "../include/script.h"
 #include "../include/new/ram_locs.h"
 
 extern u16 sRTCErrorStatus;
@@ -172,12 +173,24 @@ static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
 	gClock.second = ConvertBcdToBinary(rtc->second);
 }
 
+extern const u8 SystemScript_StopZooming[];
 void RtcCalcLocalTime(void)
 {
 	if (sRTCFrameCount == 0)
 	{
 		RtcInit();
+		//u8 prevSecond = gClock.second;
 		UpdateClockFromRtc(&sRtc);
+		
+		/*if (prevSecond == gClock.second
+		&& !ScriptContext2_IsEnabled())
+		//Probably needs an overworld check and a minute/hour/day etc check too
+		//Also the below value should be ~70 for it to work normally
+		//Really best to use a custom task that runs in the overworld for this
+		{
+			ScriptContext2_Enable();
+			ScriptContext1_SetupScript(SystemScript_StopZooming);
+		}*/
 	}
 	else if (sRTCFrameCount >= 60) //Update once a second
 	{

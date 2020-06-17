@@ -866,6 +866,16 @@ m_WalkUp1: .byte walk_up, end_m
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global SystemScript_StopZooming
+SystemScript_StopZooming:
+	lockall
+	msgbox gText_StopZooming MSG_KEEPOPEN
+	pause 0x80
+	releaseall
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global SystemScript_DebugMenu
 SystemScript_DebugMenu:
 	lock
