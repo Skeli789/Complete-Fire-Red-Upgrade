@@ -199,7 +199,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 	return FALSE;
 }
 
-bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef)
+bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef, const bool8 ignoreFutureAttacks)
 {
 	u16 move;
 	int i;
@@ -214,7 +214,8 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = GetBattleMonMove(bankAtk, i);
-		if (move == ignoredMove)
+
+		if (move == ignoredMove || (ignoreFutureAttacks && gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)) //Can't actually knock out right now
 			continue;
 
 		if (move == MOVE_NONE)
@@ -748,6 +749,9 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 
 	switch (numHits) {
 		case 1:
+			if (gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
+				return FALSE; //Really always 3 hits
+
 			movePos = FindMovePositionInMoveset(move, bankAtk);
 			if (movePos >= MAX_MON_MOVES)
 				break; //Move not in moveset
@@ -757,6 +761,9 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			return gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][movePos] = CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, 1);
 
 		case 2:
+			if (gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
+				return FALSE; //Really always 3 hits
+
 			movePos = FindMovePositionInMoveset(move, bankAtk);
 			if (movePos >= MAX_MON_MOVES)
 				break; //Move not in moveset
