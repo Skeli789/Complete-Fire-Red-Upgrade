@@ -16391,10 +16391,32 @@ LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM gDummyS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+@Credits to Skeli
 ANIM_SPIRIT_BREAK:
-	goto 0x81cd46c @ANIM_PSYCHIC
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_TEAL_ALERT
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x10 0x10 0x7FFF @;White
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_TEAL_ALERT 0x0 0xA 0xA 0x7DDE @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0xA 0xA 0x7DDE @;Pink
+	pokespritetoBG side_target
+	playsound2 0x85 SOUND_PAN_TARGET
+	launchtemplate SPIRIT_BREAK_CHARGE_BALL TEMPLATE_TARGET | 1, 0x1, bank_target
+	call MIND_READER_EYE_SPIKE_EFFECT
+	call MIND_READER_EYE_SPIKE_EFFECT
+	call MIND_READER_EYE_SPIKE_EFFECT
+	call MIND_READER_EYE_SPIKE_EFFECT
+	waitanimation
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x5 0x1
+	playsound2 0xAA SOUND_PAN_TARGET
+	launchtemplate Template_UnusedExplosion2, TEMPLATE_TARGET | 3, 0x4 0x0 0x0 0x1 0x1
+	pause 0x3
+	pokespritefromBG side_target
 	endanimation
+	
+.align 2
+SPIRIT_BREAK_CHARGE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_SpiritBreakBall 0x80AE71D
+Template_UnusedExplosion2: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

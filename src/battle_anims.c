@@ -496,6 +496,18 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_JudgmentBall[] =
 	sSpriteAffineAnim_JudgmentBall,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_SpiritBreakBall[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+	AFFINEANIMCMD_FRAME(2, 2, 0, 50), //Grow slowly to half size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_SpiritBreakBall[] =
+{
+	sSpriteAffineAnim_SpiritBreakBall,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_HalfSize[] =
 {
 	AFFINEANIMCMD_FRAME(-128, -128, 0, 1), //Half size
