@@ -3553,8 +3553,9 @@ HIDE_BOXES:
 u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 {
 	#ifdef FASTER_HEALTHBOX_CHANGE
-		u16 amount = gBattleMons[bank].maxHP / 48; //48 pixels on healthbar
-		u16 leftover = gBattleMons[bank].maxHP % 48;
+		u16 maxHP = GetMonData(GetBankPartyData(bank), MON_DATA_MAX_HP, NULL);
+		u16 amount = maxHP / 48; //48 pixels on healthbar
+		u16 leftover = maxHP % 48;
 
 		if (leftover >= 40) //So health like 95 (worst case) is included in next level up
 			amount += 1;
