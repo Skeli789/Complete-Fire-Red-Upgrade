@@ -214,18 +214,18 @@ void ReadKeys(void)
 		#else
 		switch (VarGet(VAR_R_BUTTON_MODE)) {
 			case OPTIONS_R_BUTTON_MODE_DEXNAV:
-				if (dexNavSpecies != SPECIES_NONE)
+				if (dexNavSpecies != SPECIES_NONE && FlagGet(FLAG_SYS_DEXNAV))
 					InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 				break;
 			case OPTIONS_R_BUTTON_MODE_POKEMON_MENU:
-				if (!gPaletteFade->active)
+				if (!gPaletteFade->active && FlagGet(FLAG_SYS_POKEMON_GET))
 				{
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_PartyMenuFromField);
 				}
 				break;
 			case OPTIONS_R_BUTTON_MODE_BAG:
-				if (!gPaletteFade->active)
+				if (!gPaletteFade->active && !FlagGet(FLAG_SYS_BAG_HIDE))
 				{
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_ItemMenuFromField);
