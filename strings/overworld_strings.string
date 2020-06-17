@@ -52,6 +52,9 @@ Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 #org @gText_ScurriedToNearestHealer
 [PLAYER] scurried to the nearest healer,\nprotecting the exhausted and fainted\nPok\emon from further harm[.]\p
 
+#org @gText_AllJustADream
+It was all just a dream[.]\p
+
 #org @gText_WantToScaleCliff
 The wall is very rocky[.]\nWould you like to use [BUFFER2]?
 

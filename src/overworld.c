@@ -1596,17 +1596,29 @@ bool8 WhiteoutLogic(void)
 
 #define sText_ScurriedHome (const u8*) 0x841B5B6
 extern const u8 gText_ScurriedToNearestHealer[];
+extern const u8 gText_AllJustADream[];
 
 const u8* LoadProperWhiteoutString(const u8* string)
 {
-#ifdef SET_HEALING_PLACE_HACK
+	#ifdef SET_HEALING_PLACE_HACK
 	if (string == sText_ScurriedHome)
 	{
 		if (gSaveBlock1->location.mapNum != MAP_NUM(PLAYER_HOME)
 		||  gSaveBlock1->location.mapGroup != MAP_GROUP(PLAYER_HOME))
-			string = gText_ScurriedToNearestHealer;
+		{
+			#ifdef FLAG_HEALER_DREAM
+			if (FlagGet(FLAG_HEALER_DREAM))
+			{
+				FlagClear(FLAG_HEALER_DREAM);
+				string = gText_AllJustADream;
+			}
+			else
+			#endif
+				string = gText_ScurriedToNearestHealer;
+		}
 	}
-#endif
+	#endif
+
 	return string;
 }
 
