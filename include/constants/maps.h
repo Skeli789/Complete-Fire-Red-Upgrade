@@ -643,6 +643,14 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_THUNDERCAP_MT_WEST_2F	((52 << 8) | 1)
 #define MAP_THUNDERCAP_MT_WEST_3F	((52 << 8) | 2)
 
+#define MAP_THUNDERCAP_MT_SUMMIT	((53 << 8) | 0)
+#define MAP_THUNDERCAP_MT_1F		((53 << 8) | 1)
+#define MAP_THUNDERCAP_MT_2F		((53 << 8) | 2)
+#define MAP_THUNDERCAP_MT_3F_3		((53 << 8) | 3)
+#define MAP_THUNDERCAP_MT_3F_2		((53 << 8) | 4)
+#define MAP_THUNDERCAP_MT_3F_1		((53 << 8) | 5)
+#define MAP_THUNDERCAP_MT_3F_1_BACK	((53 << 8) | 6)
+
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
 #define MAP_VICTORY_ROAD_CAVE_B       ((55 << 8) | 1)
 #define MAP_VICTORY_ROAD_VOLCANO      ((55 << 8) | 2)
