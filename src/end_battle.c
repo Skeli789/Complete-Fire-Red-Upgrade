@@ -409,7 +409,25 @@ bool8 TryRunFromBattle(u8 bank)
 	itemEffect = ITEM_EFFECT(bank);
 	gStringBank = bank;
 
-	if (IsOfType(bank, TYPE_GHOST))
+	#ifdef FLAG_NO_RUNNING
+	if (FlagGet(FLAG_NO_RUNNING))
+	{
+		return FALSE;
+	}
+	else
+	#endif
+	#ifdef FLAG_NO_CATCHING_AND_RUNNING
+	if (FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	{
+		return FALSE;
+	}
+	else
+	#endif
+	if (IsRaidBattle() && !RAID_BATTLE_END)
+	{
+		return FALSE;
+	}
+	else if (IsOfType(bank, TYPE_GHOST))
 	{
 		++effect;
 	}

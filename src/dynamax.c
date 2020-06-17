@@ -1670,7 +1670,7 @@ u8 GetRaidEggMoveChance(void)
 
 bool8 ShouldShowOpponentBattlerSprite(struct Pokemon* mon)
 {
-	return mon->hp > 0 || IsRaidBattle();
+	return mon->hp > 0 || IsCatchableRaidBattle();
 }
 
 bool8 HasRaidBattleAlreadyBeenDone(void)
