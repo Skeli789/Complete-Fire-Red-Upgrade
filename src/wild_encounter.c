@@ -41,6 +41,10 @@ struct EncounterRate
 	u16 leadMonHeldItem;
 };
 
+extern const struct WildPokemonHeader* sSavedWildDataDaytimeHeader;
+extern u8 sSavedWildDataMapGroup;
+extern u8 sSavedWildDataMapNum;
+
 extern struct EncounterRate sWildEncounterData;
 
 extern u8 gUnownDistributionByChamber[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
@@ -189,6 +193,17 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 			gWildDataSwitch = NULL;
 	}
 
+	if (gSaveBlock1->location.mapGroup == sSavedWildDataMapGroup
+	&&  gSaveBlock1->location.mapNum == sSavedWildDataMapNum)
+	{
+		return sSavedWildDataDaytimeHeader;
+	}
+	else //Cache data for faster data access
+	{
+		sSavedWildDataMapGroup = gSaveBlock1->location.mapGroup;
+		sSavedWildDataMapNum = gSaveBlock1->location.mapNum;
+	}
+
 	for (i = 0; gWildMonHeaders[i].mapGroup != 0xFF; ++i)
 	{
 		const struct WildPokemonHeader* wildHeader = &gWildMonHeaders[i];
@@ -213,6 +228,8 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 				return NULL;					 //Tanoby Key flag has been set.
 			#endif								 //If it hasn't, and you're in the ruins, then
 												 //return false to indicate no Pokemon can be found.
+
+			sSavedWildDataDaytimeHeader = &gWildMonHeaders[i]; //Cache data for faster data access
 			return &gWildMonHeaders[i];
 		}
 	}
@@ -656,6 +673,7 @@ u8 GetAbilityEncounterRateModType(void)
 
 bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMetaTileBehavior)
 {
+	const struct WildPokemonInfo* landMonsInfo, *waterMonsInfo;
 	struct Roamer* roamer;
 	bool8 clearDoubleFlag = FALSE;
 	const u8 lowerByte = GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
@@ -663,111 +681,112 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 	if (sWildEncountersDisabled == TRUE)
 		return FALSE;
 
-	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
-	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-
 	#ifdef FLAG_NO_RANDOM_WILD_ENCOUNTERS
 	if (FlagGet(FLAG_NO_RANDOM_WILD_ENCOUNTERS))
 		return FALSE;
-	else
 	#endif
+
+	if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
 	{
-		if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
+		if (GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR) != previousMetaTileBehavior
+		&& !DoGlobalWildEncounterDiceRoll())
+			return FALSE;
+
+		landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+
+		if (landMonsInfo == NULL)
+			return FALSE;
+		else if (DoWildEncounterRateTest(landMonsInfo->encounterRate, FALSE) != TRUE)
 		{
-			if (landMonsInfo == NULL)
-				return FALSE;
-			else if (GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR) != previousMetaTileBehavior
-			&& !DoGlobalWildEncounterDiceRoll())
-				return FALSE;
-			else if (DoWildEncounterRateTest(landMonsInfo->encounterRate, FALSE) != TRUE)
-			{
-				AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
-				return FALSE;
-			}
-
-			if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND))
-			{
-				roamer = &gRoamers[gLastSelectedRoamer];
-				if (!IsWildLevelAllowedByRepel(roamer->level))
-					return FALSE;
-
-				BattleSetup_StartRoamerBattle();
-				return TRUE;
-			}
-			else
-			{
-				//Try a regular wild land encounter
-				#ifdef FLAG_DOUBLE_WILD_BATTLE
-				if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
-				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  (lowerByte & TILE_FLAG_WILD_DOUBLE)
-				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
-				{
-					FlagSet(FLAG_DOUBLE_WILD_BATTLE);
-					clearDoubleFlag = TRUE;
-				}
-				#endif
-
-				if (TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
-				{
-					BattleSetup_StartWildBattle();
-					return TRUE;
-				}
-
-				#ifdef FLAG_DOUBLE_WILD_BATTLE
-				if (clearDoubleFlag)
-					FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
-				#endif
-
-				AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
-			}
+			AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
+			return FALSE;
 		}
-		else if (lowerByte & TILE_FLAG_SURFABLE
-			 &&  (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) || (currMetaTileBehavior & 0xFF) == MB_CAVE)) //For alternate grass data on route
+
+		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND))
 		{
-			if (waterMonsInfo == NULL)
-			   return FALSE;
-			else if (previousMetaTileBehavior != GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR)
-			&& !DoGlobalWildEncounterDiceRoll())
-				return FALSE;
-			else if (DoWildEncounterRateTest(waterMonsInfo->encounterRate, FALSE) != TRUE)
+			roamer = &gRoamers[gLastSelectedRoamer];
+			if (!IsWildLevelAllowedByRepel(roamer->level))
 				return FALSE;
 
-			if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
+			BattleSetup_StartRoamerBattle();
+			return TRUE;
+		}
+		else
+		{
+			//Try a regular wild land encounter
+			#ifdef FLAG_DOUBLE_WILD_BATTLE
+			if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
+			&&  ViableMonCount(gPlayerParty) >= 2
+			&&  (lowerByte & TILE_FLAG_WILD_DOUBLE)
+			&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 			{
-				roamer = &gRoamers[gLastSelectedRoamer];
-				if (!IsWildLevelAllowedByRepel(roamer->level))
-					return FALSE;
+				FlagSet(FLAG_DOUBLE_WILD_BATTLE);
+				clearDoubleFlag = TRUE;
+			}
+			#endif
 
-				BattleSetup_StartRoamerBattle();
+			if (TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+			{
+				BattleSetup_StartWildBattle();
 				return TRUE;
 			}
-			else // try a regular surfing encounter
-			{
-				#ifdef FLAG_DOUBLE_WILD_BATTLE
-				if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
-				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  lowerByte & TILE_FLAG_WILD_DOUBLE
-				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
-				{
-					FlagSet(FLAG_DOUBLE_WILD_BATTLE);
-					clearDoubleFlag = TRUE;
-				}
-				#endif
 
-				if (TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
-				{
-					BattleSetup_StartWildBattle();
-					return TRUE;
-				}
+			#ifdef FLAG_DOUBLE_WILD_BATTLE
+			if (clearDoubleFlag)
+				FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
+			#endif
 
-				#ifdef FLAG_DOUBLE_WILD_BATTLE
-				if (clearDoubleFlag)
-					FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
-				#endif
+			AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
+		}
+	}
+	else if (lowerByte & TILE_FLAG_SURFABLE
+		 &&  (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) || (currMetaTileBehavior & 0xFF) == MB_CAVE)) //For alternate grass data on route
+	{
+		if (previousMetaTileBehavior != GetMetatileAttributeFromRawMetatileBehavior(currMetaTileBehavior, METATILE_ATTRIBUTE_BEHAVIOR)
+		&& !DoGlobalWildEncounterDiceRoll())
+			return FALSE;
 
+		waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+		if (waterMonsInfo == NULL)
+		   return FALSE;
+		else if (DoWildEncounterRateTest(waterMonsInfo->encounterRate, FALSE) != TRUE)
+			return FALSE;
+
+		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
+		{
+			roamer = &gRoamers[gLastSelectedRoamer];
+			if (!IsWildLevelAllowedByRepel(roamer->level))
 				return FALSE;
+
+			BattleSetup_StartRoamerBattle();
+			return TRUE;
+		}
+		else // try a regular surfing encounter
+		{
+			#ifdef FLAG_DOUBLE_WILD_BATTLE
+			if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
+			&&  ViableMonCount(gPlayerParty) >= 2
+			&&  lowerByte & TILE_FLAG_WILD_DOUBLE
+			&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
+			{
+				FlagSet(FLAG_DOUBLE_WILD_BATTLE);
+				clearDoubleFlag = TRUE;
 			}
+			#endif
+
+			if (TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+			{
+				BattleSetup_StartWildBattle();
+				return TRUE;
+			}
+
+			#ifdef FLAG_DOUBLE_WILD_BATTLE
+			if (clearDoubleFlag)
+				FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
+			#endif
+
+			return FALSE;
 		}
 	}
 

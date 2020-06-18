@@ -108,12 +108,12 @@
 #define SE_RG_BAG1 245          // Bag Scroll
 #define SE_RG_BAG2 246          // Bag Pocket Change
 #define SE_RG_GETTING 247
-#define SE_RG_SHOP 248          // Cash Register
-#define SE_RG_KITEKI 249        // S.S. Anne Horn
-#define SE_RG_HELP_OP 250       // Help Menu Open
-#define SE_RG_HELP_CL 251       // Help Menu Close
-#define SE_RG_HELP_NG 252       // Help Menu Error
-#define SE_RG_DEOMOV 253        // Deoxys Moves
+#define SE_MONEY 248
+#define SE_SHIP_HORN 249
+#define SE_SAND_FOOTSTEP 250
+#define SE_GRASS_FOOTSTEP 251
+#define SE_RG_HELP_MENU_ERROR 252
+#define SE_RG_DEOXYS_MOVE 253
 #define SE_RG_EXCELLENT 254
 
 #define SE_CAUGHT_POKEMON 0x13F

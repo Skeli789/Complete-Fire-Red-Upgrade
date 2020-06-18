@@ -1516,7 +1516,7 @@ static const u8* TryUseFlashInDarkCave(void)
 
 	if (gSpecialVar_LastResult && HasBadgeToUseFlash())
 	{
-		if ((Var8004 = ((u32*) gFieldEffectArguments)[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70_FLASH, 0)) < PARTY_SIZE)
+		if ((Var8004 = gFieldEffectArguments[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70_FLASH, 0)) < PARTY_SIZE)
 			return EventScript_UseFlash;
 	}
 
@@ -1973,20 +1973,12 @@ bool8 InTanobyRuins(void)
 
 void PlayGrassFootstepNoise(void)
 {
-	#ifdef UNBOUND
-		PlaySE(SE_LEAVES);
-	#elif defined FOOTSTEP_NOISES
-		PlaySE(SE_LEAVES);
-	#endif
+	PlaySE(SE_GRASS_FOOTSTEP);
 }
 
 void PlaySandFootstepNoise(void)
 {
-	#ifdef UNBOUND
-		PlaySE(SE_MUD_SLAP);
-	#elif defined FOOTSTEP_NOISES
-		PlaySE(SE_MUD_SLAP);
-	#endif
+	PlaySE(SE_SAND_FOOTSTEP);
 }
 
 extern bool8 (*const GetLedgeJumpFuncs[])(u8);
@@ -2069,11 +2061,10 @@ static void FldEff_TallGrass(void)
 {
 	s32 x, y;
 	u8 spriteId;
-	struct Sprite *sprite;
 	const struct SpriteTemplate* spriteTemplate;
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
-	x = ((u32*) gFieldEffectArguments)[0];
-	y = ((u32*) gFieldEffectArguments)[1];
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
@@ -2085,16 +2076,18 @@ static void FldEff_TallGrass(void)
 
 	if (spriteId != MAX_SPRITES)
 	{
+		struct Sprite *sprite;
+
 		sprite = &gSprites[spriteId];
 		sprite->coordOffsetEnabled = TRUE;
-		sprite->oam.priority = ((u32*) gFieldEffectArguments)[3];
-		sprite->data[0] = ((u32*) gFieldEffectArguments)[2];
-		sprite->data[1] = ((u32*) gFieldEffectArguments)[0];
-		sprite->data[2] = ((u32*) gFieldEffectArguments)[1];
-		sprite->data[3] = ((u32*) gFieldEffectArguments)[4];
-		sprite->data[4] = ((u32*) gFieldEffectArguments)[5];
-		sprite->data[5] = ((u32*) gFieldEffectArguments)[6];
-		if (((u32*) gFieldEffectArguments)[7])
+		sprite->oam.priority = gFieldEffectArguments[3];
+		sprite->data[0] = gFieldEffectArguments[2];
+		sprite->data[1] = gFieldEffectArguments[0];
+		sprite->data[2] = gFieldEffectArguments[1];
+		sprite->data[3] = gFieldEffectArguments[4];
+		sprite->data[4] = gFieldEffectArguments[5];
+		sprite->data[5] = gFieldEffectArguments[6];
+		if (gFieldEffectArguments[7])
 		{
 			SeekSpriteAnim(sprite, 4);
 		}
@@ -2122,8 +2115,8 @@ static void FldEff_LongGrass(void)
 	struct Sprite *sprite;
 	const struct SpriteTemplate* spriteTemplate;
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
-	x = ((u32*) gFieldEffectArguments)[0];
-	y = ((u32*) gFieldEffectArguments)[1];
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
@@ -2136,14 +2129,14 @@ static void FldEff_LongGrass(void)
 	{
 		sprite = &gSprites[spriteId];
 		sprite->coordOffsetEnabled = TRUE;
-		sprite->oam.priority = ZCoordToPriority(((u32*) gFieldEffectArguments)[2]);
-		sprite->data[0] = ((u32*) gFieldEffectArguments)[2];
-		sprite->data[1] = ((u32*) gFieldEffectArguments)[0];
-		sprite->data[2] = ((u32*) gFieldEffectArguments)[1];
-		sprite->data[3] = ((u32*) gFieldEffectArguments)[4];
-		sprite->data[4] = ((u32*) gFieldEffectArguments)[5];
-		sprite->data[5] = ((u32*) gFieldEffectArguments)[6];
-		if (((u32*) gFieldEffectArguments)[7])
+		sprite->oam.priority = ZCoordToPriority(gFieldEffectArguments[2]);
+		sprite->data[0] = gFieldEffectArguments[2];
+		sprite->data[1] = gFieldEffectArguments[0];
+		sprite->data[2] = gFieldEffectArguments[1];
+		sprite->data[3] = gFieldEffectArguments[4];
+		sprite->data[4] = gFieldEffectArguments[5];
+		sprite->data[5] = gFieldEffectArguments[6];
+		if (gFieldEffectArguments[7])
 		{
 			SeekSpriteAnim(sprite, 6);
 		}
@@ -2162,6 +2155,29 @@ static void FldEff_JumpLongGrassLoadPalette(void)
 	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
 	FldEff_JumpLongGrass();
+}
+
+u32 FldEff_BikeTireTracks(void)
+{
+	s32 x, y;
+	u8 spriteId;
+    struct Sprite * sprite;
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[27], x, y, gFieldEffectArguments[2]);
+    if (spriteId != MAX_SPRITES)
+    {
+        sprite = &gSprites[spriteId];
+        sprite->coordOffsetEnabled = TRUE;
+        sprite->oam.priority = gFieldEffectArguments[3];
+        sprite->data[7] = FLDEFF_BIKE_TIRE_TRACKS;
+        StartSpriteAnim(sprite, gFieldEffectArguments[4]);
+    }
+	
+	PlaySE(SE_MUD_SLAP); //Different sound on bike
+    return spriteId;
 }
 
 const struct FieldEffectScript gFieldEffectScript_TallGrass =
@@ -2748,9 +2764,9 @@ void ChooseMiningSpotToShow(void)
 	}
 
 	//Set up sparkle field effect
-	((u32*) gFieldEffectArguments)[0] = gMiningSpots[bestId].x - 7;
-	((u32*) gFieldEffectArguments)[1] = gMiningSpots[bestId].y - 7;
-	((u32*) gFieldEffectArguments)[2] = 2; //Priority
+	gFieldEffectArguments[0] = gMiningSpots[bestId].x - 7;
+	gFieldEffectArguments[1] = gMiningSpots[bestId].y - 7;
+	gFieldEffectArguments[2] = 2; //Priority
 }
 
 bool8 IsValidMiningSpot(s16 x, s16 y)
@@ -2781,8 +2797,8 @@ void IsBestMiningSpotOutOfView(void)
 	s16 right =  gSaveBlock1->pos.x + 17;
 	s16 top =    gSaveBlock1->pos.y;
 	s16 bottom = gSaveBlock1->pos.y + 16;
-	s16 x = ((u32*) gFieldEffectArguments)[0] + 7;
-	s16 y = ((u32*) gFieldEffectArguments)[1] + 7;
+	s16 x = gFieldEffectArguments[0] + 7;
+	s16 y = gFieldEffectArguments[1] + 7;
 
 	gSpecialVar_LastResult = FALSE;
 	if (x >= left && x <= right && y >= top && y <= bottom)

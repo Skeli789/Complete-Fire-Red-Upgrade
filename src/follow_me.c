@@ -52,9 +52,6 @@ static void CalculateFollowerEscalatorTrajectoryDown(struct Task *task);
 static void SetFollowerSprite(u8 spriteIndex);
 static void TurnNPCIntoFollower(u8 localId, u8 followerFlags);
 
-#undef gFieldEffectArguments
-#define gFieldEffectArguments ((u32*) 0x20386E0)
-
 #define MOVEMENT_INVALID 0xFE
 
 enum

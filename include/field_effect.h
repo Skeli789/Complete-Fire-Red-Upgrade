@@ -7,7 +7,7 @@
 extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[36];
 extern const struct OamData gNewGameBirchOamAttributes;
 
-#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
+#define gFieldEffectArguments ((u32*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
 
 struct  __attribute__((packed)) FieldEffectScript
 {

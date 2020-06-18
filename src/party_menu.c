@@ -962,7 +962,7 @@ static bool8 SetUpFieldMove_Teleport(void)
 
 static void FieldCallback_Dive(void)
 {
-	((u32*) gFieldEffectArguments)[0] = GetCursorSelectionMonId();
+	gFieldEffectArguments[0] = GetCursorSelectionMonId();
 	FieldEffectStart(FLDEFF_USE_DIVE);
 }
 
@@ -971,8 +971,8 @@ static bool8 SetUpFieldMove_Dive(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
 		return FALSE;
 
-	((u32*) gFieldEffectArguments)[1] = TrySetDiveWarp();
-	if (((u32*) gFieldEffectArguments)[1] != 0)
+	gFieldEffectArguments[1] = TrySetDiveWarp();
+	if (gFieldEffectArguments[1] != 0)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = FieldCallback_Dive;
@@ -984,7 +984,7 @@ static bool8 SetUpFieldMove_Dive(void)
 
 static void FieldCallback_RockClimb(void)
 {
-	((u32*) gFieldEffectArguments)[0] = GetCursorSelectionMonId();
+	gFieldEffectArguments[0] = GetCursorSelectionMonId();
 	ScriptContext1_SetupScript(EventScript_RockClimb);
 }
 
@@ -1007,7 +1007,7 @@ static void FieldCallback_Defog(void)
 {
 	u8 monId = GetCursorSelectionMonId();
 
-	((u32*) gFieldEffectArguments)[0] = monId;
+	gFieldEffectArguments[0] = monId;
 	GetMonNickname(&gPlayerParty[monId], gStringVar1);
 	ScriptContext1_SetupScript(EventScript_Defog);
 }

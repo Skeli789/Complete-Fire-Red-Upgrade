@@ -45,6 +45,7 @@ REPOINT_ALL = 'repointall'
 ROUTINE_POINTERS = 'routinepointers'
 FUNCTION_REWRITES = 'functionrewrites'
 EVENT_SCRIPTS = "eventscripts"
+SONGS = "songs"
 SPECIAL_INSERTS = 'special_inserts.asm'
 SPECIAL_INSERTS_OUT = 'build/special_inserts.bin'
 
@@ -656,6 +657,42 @@ def main():
                             Repoint(rom, code, offset)
                     except OSError:
                         print("There was an error inserting the event script on line {}: {}".format(i, line.strip()))
+
+        # Insert Song Pointers
+        if os.path.isfile(SONGS):
+            rom.seek(0x1DD11C)  # m4aSongNumStart
+            songTable = ExtractPointer(rom.read(4)) - 0x08000000
+
+            with open(SONGS, "r") as file:
+                for i, line in enumerate(file):
+                    if TryProcessFileInclusion(line, definesDict):
+                        continue
+                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
+                        continue
+                    if line.strip().startswith('#') or line.strip() == '':
+                        continue
+
+                    try:
+                        lineList = line.split()
+                        try:
+                            songId = int(lineList[0])
+                        except ValueError:
+                            songId = int(lineList[0], 16)  # Hex
+                        song = lineList[1]
+                        offset = songTable + songId * 8
+
+                        try:
+                                code = table[song]
+                        except KeyError:
+                            try:
+                                code = int(song, 16)  # If script offset was written in hex
+                            except ValueError:
+                                print('Symbol missing:', song)
+                                continue
+
+                        Repoint(rom, code, offset)
+                    except:
+                        print("There was an error inserting the song on line {}: {}".format(i, line.strip()))
 
         width = max(map(len, table.keys())) + 1
         if os.path.isfile('offsets.ini'):

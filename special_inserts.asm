@@ -242,7 +242,28 @@ MaxLevelChange12:
 .org 0x4A216, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Fix Slow Camera Update
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+/*
+In bytereplacement
+.org 0x56578, 0xFF
+OverworldBasic:
+	push {LR}
+	bl 0x69AA8 @ScriptContext2_RunScript
+	bl 0x77578 @RunTasks
+	bl 0x6B5C @AnimateSprites
+	bl 0x5ABB0 @CameraUpdate
+	bl 0x5AE28 @UpdateCameraPanning
+	bl 0x704D0 @UpdatePaletteFade
+	bl 0x6FFBC @UpdateTilesetAnimations
+	bl 0xF67B8 @DoScheduledBgTilemapCopiesToVram
+	bl 0x6BA8 @BuildOamBuffer
+	pop {pc}
+*/
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

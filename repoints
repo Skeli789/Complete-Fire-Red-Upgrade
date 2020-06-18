@@ -189,11 +189,13 @@ sItemMenuActions 8109BA4
 sItemMenuActions 8109C20
 sItemMenuActions 8109C48
 
-##Grass Field Effects
+##Grass Field Effects and Footstep Noises
 gFieldEffectScript_TallGrass 81D96BC
 gFieldEffectScript_JumpTallGrass 81D96DC
 gFieldEffectScript_LongGrass 81D96F0
 gFieldEffectScript_JumpLongGrass 81D96F4
+Wav_grass_footstep_sample 0848EE14
+Wav_sand_footstep_sample 0848EE20
 
 #ifdef CRITICAL_CAPTURE
 gBattleAnims_Special 08034238

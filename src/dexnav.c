@@ -61,6 +61,9 @@ dexnav.c
 
 #define IS_NEWER_UNOWN_LETTER(species) (species >= SPECIES_UNOWN_B && species <= SPECIES_UNOWN_QUESTION)
 
+#undef gFieldEffectArguments
+#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
+
 //This file's functions:
 static void DestroyTaskCompletedTextbox(u8 tId);
 static void MsgNormal(const u8* str);

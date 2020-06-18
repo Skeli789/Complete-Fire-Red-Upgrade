@@ -18,12 +18,15 @@ sLocked = 0x203E059;
 sRTCErrorStatus = 0x203E05A;
 sRTCSavedIme = 0x203E05C;
 sRTCProbeResult = 0x203E05E;
-sRTCFrameCount = 0x203E05F;
 gMiningSpots = 0x203E060;
+sSavedWildDataDaytimeHeader = 0x203E080;
+sSavedWildDataMapGroup = 0x203E084;
+sSavedWildDataMapNum = 0x203E085;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
 sRtc = 0x3005E88;
 gClock = 0x3005EA0;
+sRTCFrameCount = 0x3005EA9;
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
