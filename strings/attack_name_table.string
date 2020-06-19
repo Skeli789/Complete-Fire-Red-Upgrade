@@ -2141,6 +2141,87 @@ Eternabeam
 #org @NAME_STEEL_BEAM
 Steel Beam
 
+#org @NAME_EXPANDING_FORCE
+Expand Force
+
+#org @NAME_STEEL_ROLLER
+Steel Roller
+
+#org @NAME_SCALE_SHOT
+Scale Shot
+
+#org @NAME_METEOR_BEAM
+Meteor Beam
+
+#org @NAME_SHELL_SIDE_ARM
+ShellSideArm
+
+#org @NAME_MISTY_EXPLOSION
+MistDestruct
+
+#org @NAME_GRASSY_GLIDE
+Grassy Glide
+
+#org @NAME_RISING_VOLTAGE
+Rising Volt
+
+#org @NAME_TERRAIN_PULSE
+TerrainPulse
+
+#org @NAME_SKITTER_SMACK
+SkitterSmack
+
+#org @NAME_BURNING_JEALOUSY
+Jealous Burn
+
+#org @NAME_LASH_OUT
+Lash Out
+
+#org @NAME_POLTERGEIST
+Poltergeist
+
+#org @NAME_CORROSIVE_GAS
+Corrode Gas
+
+#org @NAME_COACHING
+Coaching
+
+#org @NAME_FLIP_TURN
+Flip Turn
+
+#org @NAME_TRIPLE_AXEL
+Triple Axel
+
+#org @NAME_DUAL_WINGBEAT
+DualWingbeat
+
+#org @NAME_SCORCHING_SANDS
+Scorch Sands
+
+#org @NAME_JUNGLE_HEALING
+Jungle Heal
+
+#org @NAME_WICKED_BLOW
+Wicked Blow
+
+#org @NAME_SURGING_STRIKES
+SurgeStrikes
+
+#org @NAME_FREEZING_GLARE
+Freeze Glare
+
+#org @NAME_THUNDEROUS_KICK
+Thunder Kick
+
+#org @NAME_FIERY_WRATH
+Fiery Wrath
+
+#org @NAME_THUNDER_CAGE
+Thunder Cage
+
+#org @NAME_DRAGON_ENERGY
+DragonEnergy
+
 #org @Z_Move_1
 Z-Move 1
 
@@ -2411,11 +2492,23 @@ Starfall
 #org @NAME_MAX_STARFALL_S
 Starfall
 
+#org @NAME_G_MAX_VINE_LASH_P
+Vine Lash
+
+#org @NAME_G_MAX_VINE_LASH_S
+Vine Lash
+
 #org @NAME_G_MAX_WILDFIRE_P
 Wildfire
 
 #org @NAME_G_MAX_WILDFIRE_S
 Wildfire
+
+#org @NAME_G_MAX_CANNONADE_P
+Cannonade
+
+#org @NAME_G_MAX_CANNONADE_S
+Cannonade
 
 #org @NAME_G_MAX_BEFUDDLE_P
 Befuddle
@@ -2483,11 +2576,23 @@ Meltdown
 #org @NAME_G_MAX_MELTDOWN_S
 Meltdown
 
-#org @NAME_G_MAX_STONESURGE_P
-Stonesurge
+#org @NAME_G_MAX_DRUM_SOLO_P
+Drum Solo
 
-#org @NAME_G_MAX_STONESURGE_S
-Stonesurge
+#org @NAME_G_MAX_DRUM_SOLO_S
+Drum Solo
+
+#org @NAME_G_MAX_FIREBALL_P
+Fireball
+
+#org @NAME_G_MAX_FIREBALL_S
+Fireball
+
+#org @NAME_G_MAX_HYDROSNIPE_P
+Hydrosnipe
+
+#org @NAME_G_MAX_HYDROSNIPE_S
+Hydrosnipe
 
 #org @NAME_G_MAX_WINDRAGE_P
 Windrage
@@ -2495,47 +2600,23 @@ Windrage
 #org @NAME_G_MAX_WINDRAGE_S
 Windrage
 
-#org @NAME_G_MAX_STUNSHOCK_P
-Stunshock
-
-#org @NAME_G_MAX_STUNSHOCK_S
-Stunshock
-
-#org @NAME_G_MAX_FINALE_P
-Finale
-
-#org @NAME_G_MAX_FINALE_S
-Finale
-
-#org @NAME_G_MAX_DEPLETION_P
-Depletion
-
-#org @NAME_G_MAX_DEPLETION_S
-Depletion
-
 #org @NAME_G_MAX_GRAVITAS_P
 Gravitas
 
 #org @NAME_G_MAX_GRAVITAS_S
 Gravitas
 
+#org @NAME_G_MAX_STONESURGE_P
+Stonesurge
+
+#org @NAME_G_MAX_STONESURGE_S
+Stonesurge
+
 #org @NAME_G_MAX_VOLCALITH_P
 Volcalith
 
 #org @NAME_G_MAX_VOLCALITH_S
 Volcalith
-
-#org @NAME_G_MAX_SANDBLAST_P
-Sandblast
-
-#org @NAME_G_MAX_SANDBLAST_S
-Sandblast
-
-#org @NAME_G_MAX_SNOOZE_P
-Snooze
-
-#org @NAME_G_MAX_SNOOZE_S
-Snooze
 
 #org @NAME_G_MAX_TARTNESS_P
 Tartness
@@ -2549,11 +2630,41 @@ Sweetness
 #org @NAME_G_MAX_SWEETNESS_S
 Sweetness
 
+#org @NAME_G_MAX_SANDBLAST_P
+Sandblast
+
+#org @NAME_G_MAX_SANDBLAST_S
+Sandblast
+
+#org @NAME_G_MAX_STUNSHOCK_P
+Stunshock
+
+#org @NAME_G_MAX_STUNSHOCK_S
+Stunshock
+
+#org @NAME_G_MAX_CENTIFERNO_P
+Centiferno
+
+#org @NAME_G_MAX_CENTIFERNO_S
+Centiferno
+
 #org @NAME_G_MAX_SMITE_P
 Smite
 
 #org @NAME_G_MAX_SMITE_S
 Smite
+
+#org @NAME_G_MAX_SNOOZE_P
+Snooze
+
+#org @NAME_G_MAX_SNOOZE_S
+Snooze
+
+#org @NAME_G_MAX_FINALE_P
+Finale
+
+#org @NAME_G_MAX_FINALE_S
+Finale
 
 #org @NAME_G_MAX_STEELSURGE_P
 Steelsurge
@@ -2561,8 +2672,20 @@ Steelsurge
 #org @NAME_G_MAX_STEELSURGE_S
 Steelsurge
 
-#org @NAME_G_MAX_CENTIFERNO_P
-Centiferno
+#org @NAME_G_MAX_DEPLETION_P
+Depletion
 
-#org @NAME_G_MAX_CENTIFERNO_S
-Centiferno
+#org @NAME_G_MAX_DEPLETION_S
+Depletion
+
+#org @NAME_G_MAX_ONE_BLOW_P
+One Blow
+
+#org @NAME_G_MAX_ONE_BLOW_S
+One Blow
+
+#org @NAME_G_MAX_RAPID_FLOW_P
+Rapid Flow
+
+#org @NAME_G_MAX_RAPID_FLOW_S
+Rapid Flow
