@@ -612,6 +612,12 @@ enum EvolutionMethods
 	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
 	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
 	EVO_FLAG_SET, //If a certain flag is set. Can be used for touching the Mossy/Icy Rock for Leafeon/Glaceon evolutions
+/*	//Evolution Defines Added in DPE
+	EVO_CRITICAL_HIT, // successfully land 3 critical hits in one battle
+	EVO_NATURE_HIGH, // evolution based on high key nature at a certain level
+	EVO_NATURE_LOW, // evolution based on low key nature at a certain level
+	EVO_DAMAGE_LOCATION // recieve 49+ damage in battle without fainting, walk to specific tile
+*/
 };
 #define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE
