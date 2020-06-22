@@ -600,19 +600,20 @@ static void Task_GiveExpToMon(u8 taskId)
 	u32 currExp = GetMonData(mon, MON_DATA_EXP, NULL);
 	u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats[species].growthRate);
 
-	if (IS_DOUBLE_BATTLE || monId != gBattlerPartyIndexes[bank])
+	if (IS_DOUBLE_BATTLE || monId != gBattlerPartyIndexes[bank]) //Give exp without moving the expbar.
 	{
 		if (currExp + gainedExp >= nextLvlExp)
 		{
-			u8 savedActiveBank = gActiveBattler;
+			u8 savedActiveBattler = gActiveBattler;
 
 			SetMonData(mon, MON_DATA_EXP, &nextLvlExp);
 			CalculateMonStats(mon);
-			TryBoostDynamaxHPAfterLevelUp(bank);
+			if (monId == gBattlerPartyIndexes[bank]) //Pokemon in battle
+				TryBoostDynamaxHPAfterLevelUp(bank);
 			gainedExp -= (nextLvlExp - currExp);
 			gActiveBattler = bank;
-			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitCmd33, but Cmd34 allows for more data transfer
-			gActiveBattler = savedActiveBank;
+			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitTwoReturnValues, but Cmd34 allows for more data transfer
+			gActiveBattler = savedActiveBattler;
 
 			if (IS_DOUBLE_BATTLE && (monId == gBattlerPartyIndexes[bank] || monId == gBattlerPartyIndexes[bank ^ BIT_FLANK]))
 				gTasks[taskId].func = Task_LaunchLvlUpAnim;
