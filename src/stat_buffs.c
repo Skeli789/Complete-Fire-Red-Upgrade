@@ -446,6 +446,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);
 
 			gNewBS->statFellThisTurn[gActiveBattler] = TRUE;
+			gNewBS->statFellThisRound[gActiveBattler] = TRUE;
 		}
 	}
 
@@ -487,17 +488,19 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 		gBattleTextBuff2[index] = B_BUFF_EOS;
 
-		if (gBattleMons[gActiveBattler].statStages[statId - 1] == 12)
+		if (gBattleMons[gActiveBattler].statStages[statId - 1] == STAT_STAGE_MAX)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		else
 			gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);
+
+		gNewBS->statRoseThisRound[gActiveBattler] = TRUE;
 	}
 
 	gBattleMons[gActiveBattler].statStages[statId - 1] += statValue;
 	if (gBattleMons[gActiveBattler].statStages[statId - 1] < 0)
 		gBattleMons[gActiveBattler].statStages[statId - 1] = 0;
-	if (gBattleMons[gActiveBattler].statStages[statId - 1] > 12)
-		gBattleMons[gActiveBattler].statStages[statId - 1] = 12;
+	if (gBattleMons[gActiveBattler].statStages[statId - 1] > STAT_STAGE_MAX)
+		gBattleMons[gActiveBattler].statStages[statId - 1] = STAT_STAGE_MAX;
 
 	if (gBattleCommunication[MULTISTRING_CHOOSER] == 2 && flags & STAT_CHANGE_BS_PTR)
 		gMoveResultFlags |= MOVE_RESULT_MISSED;

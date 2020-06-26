@@ -5,6 +5,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/script.h"
+#include "../include/text.h"
 #include "../include/wild_encounter.h"
 #include "../include/random.h"
 
@@ -12,6 +13,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/metatile_behaviors.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/battle_start_turn_start.h"
@@ -19,8 +21,9 @@
 #include "../include/new/daycare.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
-#include "../include/new/util.h"
+#include "../include/new/overworld.h"
 #include "../include/new/roamer.h"
+#include "../include/new/util.h"
 #include "../include/new/wild_encounter.h"
 /*
 wild_encounter.c
@@ -47,7 +50,7 @@ extern u8 sSavedWildDataMapNum;
 
 extern struct EncounterRate sWildEncounterData;
 
-extern u8 gUnownDistributionByChamber[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
+extern u8 sUnownLetterSlots[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 extern const struct WildPokemonHeader gWildMonMorningHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
@@ -224,16 +227,22 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 			#endif
 
 			#ifdef TANOBY_RUINS_ENABLED
-			if (!CanEncounterUnownInTanobyRuins()) //A function that returns true if the
-				return NULL;					 //Tanoby Key flag has been set.
-			#endif								 //If it hasn't, and you're in the ruins, then
-												 //return false to indicate no Pokemon can be found.
+			/* A function that returns true if the Tanoby Key flag has been set.
+			   If it hasn't, and you're in the ruins, then return false to indicate
+			   no Pokemon can be found. */
+			if (!CanEncounterUnownInTanobyRuins())
+				break; //No Pokemon here					 
+			#elif (defined UNBOUND) //For Pokemon Unbound
+			if (GetCurrentRegionMapSectionId() == MAPSEC_TOMB_OF_BORRIUS && !FlagGet(FLAG_OPENED_TOMB_OF_BORRIUS_HOLE))
+				break; //No Pokemon here
+			#endif
 
 			sSavedWildDataDaytimeHeader = &gWildMonHeaders[i]; //Cache data for faster data access
 			return &gWildMonHeaders[i];
 		}
 	}
 
+	sSavedWildDataDaytimeHeader = NULL; //No data on this map
 	return NULL;
 }
 
@@ -287,13 +296,13 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 			goto REGULAR_NATURE_CREATION;
 
 		CreateMonWithGenderNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, gender, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
-		goto ASSIGN_HIDDEN_ABILITY;
 	}
-	REGULAR_NATURE_CREATION:
+	else
+	{
+		REGULAR_NATURE_CREATION:
+		CreateMonWithNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
+	}
 
-	CreateMonWithNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
-
-	ASSIGN_HIDDEN_ABILITY:
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		gEnemyParty[enemyMonIndex].hiddenAbility = TRUE;
 
@@ -343,7 +352,7 @@ void sp117_CreateRaidMon(void)
 	CreateWildMon(gRaidBattleSpecies, gRaidBattleLevel, 0, TRUE);
 
 	if (abilityNum == RAID_ABILITY_1 || abilityNum == RAID_ABILITY_2)
-		GiveMonNatureAndAbility(mon, GetNature(mon), abilityNum - RAID_ABILITY_1, IsMonShiny(mon));
+		GiveMonNatureAndAbility(mon, GetNature(mon), abilityNum - RAID_ABILITY_1, IsMonShiny(mon), FALSE, FALSE);
 
 	numEggMoves = GetAllEggMoves(&gEnemyParty[0], eggMoveBuffer, TRUE);
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -377,6 +386,21 @@ void sp117_CreateRaidMon(void)
 	}
 }
 
+#ifdef UNBOUND
+#define WILD_UNOWN(letter) (CHAR_##letter - CHAR_A)
+static const u8 sUnboundUnownLetterSlots[][12] =
+{
+	{WILD_UNOWN(A), WILD_UNOWN(B), WILD_UNOWN(C), WILD_UNOWN(C), WILD_UNOWN(D), WILD_UNOWN(D), WILD_UNOWN(E), WILD_UNOWN(E), WILD_UNOWN(E), WILD_UNOWN(E), WILD_UNOWN(E), WILD_UNOWN(E)},
+	{WILD_UNOWN(F), WILD_UNOWN(G), WILD_UNOWN(H), WILD_UNOWN(H), WILD_UNOWN(I), WILD_UNOWN(I), WILD_UNOWN(J), WILD_UNOWN(J), WILD_UNOWN(J), WILD_UNOWN(J), WILD_UNOWN(J), WILD_UNOWN(J)},
+	{WILD_UNOWN(K), WILD_UNOWN(L), WILD_UNOWN(M), WILD_UNOWN(M), WILD_UNOWN(N), WILD_UNOWN(N), WILD_UNOWN(O), WILD_UNOWN(O), WILD_UNOWN(O), WILD_UNOWN(O), WILD_UNOWN(O), WILD_UNOWN(O)},
+	{}, //Alternate map footer
+	{}, //Alternate map footer
+	{WILD_UNOWN(P), WILD_UNOWN(Q), WILD_UNOWN(R), WILD_UNOWN(R), WILD_UNOWN(S), WILD_UNOWN(S), WILD_UNOWN(T), WILD_UNOWN(T), WILD_UNOWN(T), WILD_UNOWN(T), WILD_UNOWN(T), WILD_UNOWN(T)},
+	{WILD_UNOWN(U), WILD_UNOWN(V), WILD_UNOWN(W), WILD_UNOWN(W), WILD_UNOWN(X), WILD_UNOWN(X), WILD_UNOWN(Y), WILD_UNOWN(Y), WILD_UNOWN(Y), WILD_UNOWN(Y), WILD_UNOWN(Y), WILD_UNOWN(T)},
+	{WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), WILD_UNOWN(Z), 26, 27}, //Last two are ! and ?
+};
+#endif
+
 u8 PickUnownLetter(unusedArg u16 species, unusedArg u8 headerIndex)
 {
 	#ifdef TANOBY_RUINS_ENABLED
@@ -387,7 +411,17 @@ u8 PickUnownLetter(unusedArg u16 species, unusedArg u8 headerIndex)
 			if (room >= NUM_TANOBY_CHAMBERS)
 				return 0;
 			else
-				return gUnownDistributionByChamber[room][headerIndex] + 1;
+				return sUnownLetterSlots[room][headerIndex] + 1;
+		}
+	#elif (defined UNBOUND)
+		if (species == SPECIES_UNOWN)
+		{
+			u8 room = gSaveBlock1->location.mapNum - MAP_NUM(TOMB_OF_BORRIUS_1F);
+
+			if (room >= NELEMS(sUnboundUnownLetterSlots))
+				return 0;
+			else
+				return sUnboundUnownLetterSlots[room][headerIndex] + 1;
 		}
 	#endif
 
@@ -882,7 +916,7 @@ bool8 SweetScentWildEncounter(void)
 	#endif
 
 	PlayerGetDestCoords(&x, &y);
-	if (MapGridGetMetatileField(x, y, 4) & TILE_FLAG_ENCOUNTER_TILE)
+	if (MapGridGetMetatileField(x, y, METATILE_ATTRIBUTE_ENCOUNTER_TYPE) & TILE_FLAG_ENCOUNTER_TILE)
 	{
 		if (landMonsInfo == NULL)
 			return FALSE;
@@ -893,12 +927,16 @@ bool8 SweetScentWildEncounter(void)
 			return TRUE;
 		}
 
+		#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
+		if (Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
+			FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
+		#endif
 		TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
 
 		BattleSetup_StartWildBattle();
 		return TRUE;
 	}
-	else if (MapGridGetMetatileField(x, y, 4) & TILE_FLAG_SURFABLE)
+	else if (MapGridGetMetatileField(x, y, METATILE_ATTRIBUTE_ENCOUNTER_TYPE) & TILE_FLAG_SURFABLE)
 	{
 		if (waterMonsInfo == NULL)
 			return FALSE;
@@ -909,6 +947,10 @@ bool8 SweetScentWildEncounter(void)
 			return TRUE;
 		}
 
+		#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
+		if (Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
+			FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
+		#endif
 		TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, 0);
 		BattleSetup_StartWildBattle();
 		return TRUE;

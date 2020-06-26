@@ -247,7 +247,7 @@ static bool8 IsItemKeystone(u16 item)
 
 static item_t FindTrainerKeystone(u16 trainerId)
 {
-	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK) || IsFrontierTrainerId(trainerId))
 		return ITEM_MEGA_RING;
 
 	for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
@@ -524,7 +524,7 @@ const u8* GetTrainerName(u8 bank)
 		if (name == NULL)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-			|| (IsRaidBattle() && trainerId == RAID_BATTLE_MULTI_TRAINER_TID))
+			|| IsFrontierTrainerId(trainerId))
 				return GetFrontierTrainerName(trainerId, battlerNum);
 
 			return gTrainers[trainerId].trainerName;

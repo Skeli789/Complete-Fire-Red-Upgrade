@@ -1,6 +1,7 @@
 #include "../defines.h"
 #include "../defines_battle.h"
 #include "../../include/random.h"
+#include "../../include/constants/trainers.h"
 
 #include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
@@ -222,7 +223,8 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
 	// Items are allowed to use in ONLY trainer battles.
 	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
-		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT)
+		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT
+		&& !IsFrontierTrainerId(gTrainerBattleOpponent_A))
 	{
 		for (i = 0; i < 4; i++)
 		{
@@ -304,9 +306,9 @@ u32 GetAIFlags(void)
 		flags = AI_SCRIPT_ROAMING | WildMonIsSmart(gActiveBattler);
 	else if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
 		flags = AI_SCRIPT_FIRST_BATTLE;
-	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
+	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER) || IsFrontierTrainerId(gTrainerBattleOpponent_A))
 		flags = GetAIFlagsInBattleFrontier(gActiveBattler);
-	else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
+	else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != TRAINER_SECRET_BASE)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 	else if (IsRaidBattle())
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Make partner smart
@@ -1020,7 +1022,6 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 		default:
 			return FALSE;
 	}
-
 
 	u8 atkAbility = GetPredictedAIAbility(gActiveBattler, foe1);
 	if (atkAbility == absorbingTypeAbility1

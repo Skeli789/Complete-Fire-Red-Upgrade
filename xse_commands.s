@@ -502,7 +502,7 @@
 .hword \y_axis
 .endm
 
-@ Clone of warp. Used by a Safari Zone script to return the player to the gatehouse and end the Safari Game.
+@ Clone of warp. Used by a Safari Zone script to return the player to the gatehouse and end the Safari Game. Also used for warpholes.
 .macro setwarp bank:req map:req warp:req x_axis=0 y_axis=0
 .byte 0x3E
 .byte \bank

@@ -757,7 +757,9 @@ struct NewBattleStruct
 	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
 	u8 synchronizeTarget[MAX_BATTLERS_COUNT]; //Bank + 1 that statused given bank
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
+	u8 statRoseThisRound[MAX_BATTLERS_COUNT];
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
+	u8 statFellThisRound[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
 	s8 lastBracketCalc[MAX_BATTLERS_COUNT];
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
@@ -812,6 +814,7 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
+	u8 playerItemUsedCount;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 

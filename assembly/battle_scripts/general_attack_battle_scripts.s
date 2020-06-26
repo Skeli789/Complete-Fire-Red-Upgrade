@@ -992,6 +992,7 @@ BS_032_Recover:
 	ppreduce
 	jumpifmove MOVE_ROOST RoostBS
 	jumpifmove MOVE_LIFEDEW LifeDewBS
+	jumpifmove MOVE_JUNGLEHEALING LifeDewBS @TODO
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -2144,7 +2145,12 @@ BS_104_TripleKick:
 	attackstring
 	ppreduce
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifmove MOVE_TRIPLEAXEL BS_TripleAxel
 	addbyte TRIPLE_KICK_POWER 10
+	goto BS_STANDARD_HIT
+
+BS_TripleAxel:
+	addbyte TRIPLE_KICK_POWER 20
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

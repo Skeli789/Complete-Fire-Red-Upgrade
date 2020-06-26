@@ -878,19 +878,19 @@ SystemScript_StopZooming:
 
 .global SystemScript_DebugMenu
 SystemScript_DebugMenu:
-	lock
+	lockall
 	multichoiceoption gText_DebugMenu_SetFlag 0
 	multichoiceoption gText_DebugMenu_GiveItem 1
 	multichoiceoption gText_DebugMenu_Level100Team 2
-	multichoice 0x0 0x0 THREE_MULTICHOICE_OPTIONS 0x0
-	compare LASTRESULT 0x0
-	if equal _goto SystemScript_DebugMenu_SetFlag
-	compare LASTRESULT 0x1
-	if equal _goto SystemScript_DebugMenu_GiveItem
-	compare LASTRESULT 0x2
-	if equal _goto SystemScript_DebugMenu_Level100Team
+	multichoiceoption gText_DebugMenu_MaxCoinage 3
+	multichoice 0x0 0x0 FOUR_MULTICHOICE_OPTIONS 0x0
+	switch LASTRESULT
+	case 0, SystemScript_DebugMenu_SetFlag
+	case 1, SystemScript_DebugMenu_GiveItem
+	case 2, SystemScript_DebugMenu_Level100Team
+	case 3, SystemScript_DebugMenu_MaxCoinage
 SystemScript_DebugMenu_End:
-	release
+	releaseall
 	end
 
 SystemScript_DebugMenu_SetFlag:
@@ -920,4 +920,8 @@ SystemScript_DebugMenu_GiveItem:
 
 SystemScript_DebugMenu_Level100Team:
 	callasm DebugMenu_SetTeamToLevel100
+	goto SystemScript_DebugMenu
+
+SystemScript_DebugMenu_MaxCoinage:
+	callasm DebugMenu_MaxMoneyAndCoins
 	goto SystemScript_DebugMenu

@@ -5,6 +5,9 @@
 
 extern bool32 gFlashMemoryPresent;
 
+void __attribute__((long_call)) SetContinueGameWarpStatus(void);
+
+/*
 void ClearSav2(void);
 void ClearSav1(void);
 void CheckForFlashMemory(void);
@@ -24,5 +27,11 @@ void SetSaveBlocksPointers(void);
 void MoveSaveBlocks_ResetHeap(void);
 void ApplyNewEncryptionKeyToAllEncryptedData(u32 encryptionKey);
 void ApplyNewEncryptionKeyToBagItems(u32 encryptionKey);
+void ApplyNewEncryptionKeyToWord(u32 * word, u32 encryptionKey);
+void ApplyNewEncryptionKeyToHword(u16 * hword, u32 encryptionKey);
+void ClearContinueGameWarpStatus2(void);
+void SetContinueGameWarpStatusToDynamicWarp(void);
+bool32 UseContinueGameWarp(void);
+void ClearContinueGameWarpStatus();*/
 
 #endif // GUARD_LOAD_SAVE_H

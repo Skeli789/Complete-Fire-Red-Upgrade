@@ -262,6 +262,20 @@ u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 	}
 }
 
+bool8 IsFrontierTrainerId(u16 trainerId)
+{
+	switch (trainerId) {
+		case BATTLE_TOWER_TID:
+		case BATTLE_TOWER_SPECIAL_TID:
+		case FRONTIER_BRAIN_TID:
+		case BATTLE_FACILITY_MULTI_TRAINER_TID:
+		case RAID_BATTLE_MULTI_TRAINER_TID:
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
 void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum)
 {
 	int i;
@@ -490,7 +504,7 @@ bool8 DynamaxAllowedInTier(u8 tier)
 	return FALSE;
 }
 
-u8 GetBattleTowerLevel(u8 tier)
+u8 GetBattleFacilityLevel(u8 tier)
 {
 	return AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
 }

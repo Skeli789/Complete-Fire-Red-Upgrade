@@ -890,7 +890,7 @@ void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
 	{
 		IncrementGameStat(GAME_STAT_SHOPPED);
 		RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
-		PlaySE(SE_RG_SHOP);
+		PlaySE(SE_MONEY);
 		PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
 		RedrawListMenu(tListTaskId);
 		BuyMenuReturnToItemList(taskId);

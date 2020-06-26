@@ -197,11 +197,12 @@ extern u8 gFishingStreak; //0x203E058
 //#define sRTCErrorStatus (*((u16*) 0x203E05A))
 //#define sRTCSavedIme (*((u16*) 0x203E05C))
 //#define sRTCProbeResult (*((u8*) 0x203E05E))
-//FREE: 0x203E05F
+extern bool8 gDexNavCooldown; //0x203E05F
 extern struct Coords16 gMiningSpots[8]; //0x203E060
 //#define sSavedWildDataDaytimeHeader (*((const struct WildPokemonHeader**) 0x203E080))
 //#define sSavedWildDataMapGroup (*((u8*) 0x203E084))
 //#define sSavedWildDataMapNum (*((u8*) 0x203E085))
-//FREE: 0x203E086
+extern u16 gLastDexNavSpecies; //0x203E086
+//FREE: 0x203E088
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

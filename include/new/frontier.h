@@ -4,6 +4,7 @@
 #include "dynamax.h"
 
 //Exported Functions
+bool8 IsFrontierTrainerId(u16 trainerId);
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
 void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum);
@@ -19,7 +20,7 @@ bool8 IsGSCupBattle();
 bool8 IsRandomBattleTowerBattle();
 bool8 RayquazaCanMegaEvolveInFrontierBattle();
 bool8 DynamaxAllowedInTier(u8 tier);
-u8 GetBattleTowerLevel(u8 tier);
+u8 GetBattleFacilityLevel(u8 tier);
 void UpdateTypesForCamomons(u8 bank);
 u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
 //u8 GetCamomonsTypeBySpread(struct BattleTowerSpread* spread, u8 whichType); - Defined further down

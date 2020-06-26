@@ -49,7 +49,6 @@ extern const move_t gMovesCanUnfreezeTarget[];
 extern const move_t gMovesThatChangePhysicality[];
 extern const move_t gTwoToFiveStrikesMoves[];
 extern const move_t gTwoStrikesMoves[];
-extern const move_t gThreeStrikesMoves[];
 extern const move_t gPercent25RecoilMoves[];
 extern const move_t gPercent33RecoilMoves[];
 extern const move_t gPercent50RecoilMoves[];

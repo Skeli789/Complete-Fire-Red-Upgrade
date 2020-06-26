@@ -63,37 +63,44 @@ struct GMaxMove
 
 static const struct GMaxMove sGMaxMoveTable[] =
 {
-	{SPECIES_CHARIZARD_GIGA,	TYPE_FIRE, 		MOVE_G_MAX_WILDFIRE_P},
-	{SPECIES_BUTTERFREE_GIGA,	TYPE_BUG,		MOVE_G_MAX_BEFUDDLE_P},
-	{SPECIES_PIKACHU_GIGA,		TYPE_ELECTRIC,	MOVE_G_MAX_VOLT_CRASH_P},
-	{SPECIES_MEOWTH_GIGA,		TYPE_NORMAL,	MOVE_G_MAX_GOLD_RUSH_P},
-	{SPECIES_MACHAMP_GIGA,		TYPE_FIGHTING,	MOVE_G_MAX_CHI_STRIKE_P},
-	{SPECIES_GENGAR_GIGA,		TYPE_GHOST,		MOVE_G_MAX_TERROR_P},
-	{SPECIES_KINGLER_GIGA,		TYPE_WATER,		MOVE_G_MAX_FOAM_BURST_P},
-	{SPECIES_LAPRAS_GIGA,		TYPE_ICE,		MOVE_G_MAX_RESONANCE_P},
-	{SPECIES_EEVEE_GIGA,		TYPE_NORMAL,	MOVE_G_MAX_CUDDLE_P},
-	{SPECIES_SNORLAX_GIGA,		TYPE_NORMAL,	MOVE_G_MAX_REPLENISH_P},
-	{SPECIES_GARBODOR_GIGA,		TYPE_POISON,	MOVE_G_MAX_MALODOR_P},
-	{SPECIES_MELMETAL_GIGA,		TYPE_STEEL,		MOVE_G_MAX_MELTDOWN_P},
-	{SPECIES_DREDNAW_GIGA,		TYPE_WATER,		MOVE_G_MAX_STONESURGE_P},
-	{SPECIES_CORVIKNIGHT_GIGA,	TYPE_FLYING,	MOVE_G_MAX_WIND_RAGE_P},
-	{SPECIES_TOXTRICITY_GIGA,	TYPE_ELECTRIC,	MOVE_G_MAX_STUN_SHOCK_P},
-	{SPECIES_ALCREMIE_GIGA,		TYPE_FAIRY,		MOVE_G_MAX_FINALE_P},
-	{SPECIES_DURALUDON_GIGA,	TYPE_DRAGON,	MOVE_G_MAX_DEPLETION_P},
-	{SPECIES_ORBEETLE_GIGA,		TYPE_PSYCHIC,	MOVE_G_MAX_GRAVITAS_P},
-	{SPECIES_COALOSSAL_GIGA,	TYPE_ROCK,		MOVE_G_MAX_VOLCALITH_P},
-	{SPECIES_SANDACONDA_GIGA,	TYPE_GROUND,	MOVE_G_MAX_SANDBLAST_P},
-	{SPECIES_GRIMMSNARL_GIGA,	TYPE_DARK,		MOVE_G_MAX_SNOOZE_P},
-	{SPECIES_FLAPPLE_GIGA,		TYPE_GRASS,		MOVE_G_MAX_TARTNESS_P},
-	{SPECIES_APPLETUN_GIGA,		TYPE_GRASS,		MOVE_G_MAX_SWEETNESS_P},
-	{SPECIES_HATTERENE,			TYPE_FAIRY,		MOVE_G_MAX_SMITE_P},
-	{SPECIES_COPPERAJAH_GIGA,	TYPE_STEEL,		MOVE_G_MAX_STEELSURGE_P},
-	{SPECIES_CENTISKORCH_GIGA,	TYPE_FIRE, 		MOVE_G_MAX_CENTIFERNO_P},
+	{SPECIES_VENUSAUR_GIGA,	      TYPE_GRASS,      MOVE_G_MAX_VINE_LASH_P},
+	{SPECIES_CHARIZARD_GIGA,      TYPE_FIRE,       MOVE_G_MAX_WILDFIRE_P},
+	{SPECIES_BLASTOISE_GIGA,      TYPE_WATER,      MOVE_G_MAX_CANNONADE_P},
+	{SPECIES_BUTTERFREE_GIGA,     TYPE_BUG,        MOVE_G_MAX_BEFUDDLE_P},
+	{SPECIES_PIKACHU_GIGA,        TYPE_ELECTRIC,   MOVE_G_MAX_VOLT_CRASH_P},
+	{SPECIES_MEOWTH_GIGA,         TYPE_NORMAL,     MOVE_G_MAX_GOLD_RUSH_P},
+	{SPECIES_MACHAMP_GIGA,        TYPE_FIGHTING,   MOVE_G_MAX_CHI_STRIKE_P},
+	{SPECIES_GENGAR_GIGA,         TYPE_GHOST,      MOVE_G_MAX_TERROR_P},
+	{SPECIES_KINGLER_GIGA,        TYPE_WATER,      MOVE_G_MAX_FOAM_BURST_P},
+	{SPECIES_LAPRAS_GIGA,         TYPE_ICE,        MOVE_G_MAX_RESONANCE_P},
+	{SPECIES_EEVEE_GIGA,          TYPE_NORMAL,     MOVE_G_MAX_CUDDLE_P},
+	{SPECIES_SNORLAX_GIGA,        TYPE_NORMAL,     MOVE_G_MAX_REPLENISH_P},
+	{SPECIES_GARBODOR_GIGA,       TYPE_POISON,     MOVE_G_MAX_MALODOR_P},
+	{SPECIES_MELMETAL_GIGA,       TYPE_STEEL,      MOVE_G_MAX_MELTDOWN_P},
+	{SPECIES_RILLABOOM_GIGA,      TYPE_GRASS,      MOVE_G_MAX_DRUM_SOLO_P},
+	{SPECIES_CINDERACE_GIGA,      TYPE_FIRE,       MOVE_G_MAX_FIREBALL_P},
+	{SPECIES_INTELEON_GIGA,       TYPE_WATER,      MOVE_G_MAX_HYDROSNIPE_P},
+	{SPECIES_CORVIKNIGHT_GIGA,    TYPE_FLYING,     MOVE_G_MAX_WIND_RAGE_P},
+	{SPECIES_ORBEETLE_GIGA,       TYPE_PSYCHIC,    MOVE_G_MAX_GRAVITAS_P},
+	{SPECIES_DREDNAW_GIGA,        TYPE_WATER,      MOVE_G_MAX_STONESURGE_P},
+	{SPECIES_COALOSSAL_GIGA,      TYPE_ROCK,       MOVE_G_MAX_VOLCALITH_P},
+	{SPECIES_FLAPPLE_GIGA,        TYPE_GRASS,      MOVE_G_MAX_TARTNESS_P},
+	{SPECIES_APPLETUN_GIGA,       TYPE_GRASS,      MOVE_G_MAX_SWEETNESS_P},
+	{SPECIES_SANDACONDA_GIGA,     TYPE_GROUND,     MOVE_G_MAX_SANDBLAST_P},
+	{SPECIES_TOXTRICITY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
+	{SPECIES_CENTISKORCH_GIGA,    TYPE_FIRE,       MOVE_G_MAX_CENTIFERNO_P},
+	{SPECIES_HATTERENE,           TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
+	{SPECIES_GRIMMSNARL_GIGA,     TYPE_DARK,       MOVE_G_MAX_SNOOZE_P},
+	{SPECIES_ALCREMIE_GIGA,       TYPE_FAIRY,      MOVE_G_MAX_FINALE_P},
+	{SPECIES_COPPERAJAH_GIGA,     TYPE_STEEL,      MOVE_G_MAX_STEELSURGE_P},
+	{SPECIES_DURALUDON_GIGA,      TYPE_DRAGON,     MOVE_G_MAX_DEPLETION_P},
+	{SPECIES_URSHIFU_SINGLE_GIGA, TYPE_DARK,       MOVE_G_MAX_ONE_BLOW_P},
+	{SPECIES_URSHIFU_RAPID_GIGA,  TYPE_WATER,      MOVE_G_MAX_RAPID_FLOW_P},
 };
 
 const u8 gRaidBattleStarsByBadges[NUM_BADGE_OPTIONS][2] =
 {
-	[0] = {NO_RAID, 		NO_RAID},
+	[0] = {NO_RAID,         NO_RAID},
 	[1] = {ONE_STAR_RAID, 	ONE_STAR_RAID},
 	[2] = {ONE_STAR_RAID,   TWO_STAR_RAID},
 	[3] = {TWO_STAR_RAID,   TWO_STAR_RAID},
@@ -329,7 +336,7 @@ static bool8 IsItemDynamaxBand(u16 item)
 
 static item_t FindTrainerDynamaxBand(u16 trainerId)
 {
-	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK) || IsFrontierTrainerId(trainerId))
 		return ITEM_DYNAMAX_BAND;
 
 	for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
@@ -638,8 +645,8 @@ void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 	if (IsDynamaxed(bank)
 	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
 	{
-        BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
-        CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+		BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+		CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
 	}
 }
 
@@ -662,25 +669,25 @@ s16 GetBattlerYCoord(u8 bank)
 
 void LoadAndCreateEnemyShadowSprites(void)
 {
-    u8 battlerId;
+	u8 battlerId;
 
-    LoadCompressedSpriteSheetUsingHeap((void*) 0x8250A0C); //gSpriteSheet_EnemyShadow
+	LoadCompressedSpriteSheetUsingHeap((void*) 0x8250A0C); //gSpriteSheet_EnemyShadow
 
-    battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-    gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8); //gSpriteTemplate_EnemyShadow
-    gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
+	battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8); //gSpriteTemplate_EnemyShadow
+	gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
 
-    if (IS_DOUBLE_BATTLE)
-    {
-        battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-        gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8);
-        gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
+	if (IS_DOUBLE_BATTLE)
+	{
+		battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+		gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8);
+		gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
 
 		//The game is insistent that there must be two shadow sprites in Doubles, otherwise things break
 		//So overlap the two shadow sprites in a Raid Battle
 		if (IsRaidBattle())
 			gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = BANK_RAID_BOSS;
-    }
+	}
 }
 
 void HandleDeadRaidMonAndDeadPlayer(void)

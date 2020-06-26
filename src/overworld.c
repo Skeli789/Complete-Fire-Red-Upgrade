@@ -850,6 +850,8 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED:
 			TrainerBattleLoadArgs(sOrdinaryNoIntroBattleParams, data);
 			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
+			if (FlagGet(FLAG_TWO_OPPONENTS))
+				gTrainerBattleOpponent_B = VarGet(VAR_SECOND_OPPONENT);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_DOUBLE:
@@ -1427,6 +1429,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 	||  gQuestLogMode == 2)
 		return FALSE;
 
+	gDexNavCooldown = FALSE; //Pokemon can be found with the DexNav again
 	UpdateHappinessStepCounter();
 	UpdateJPANStepCounters();
 	if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_FISHING) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
@@ -1705,14 +1708,8 @@ s16 GetPlayerSpeed(void)
 	s16 exp[] = { 1, 2, 4 };
 
 	#ifdef FLAG_BIKE_TURBO_BOOST
-	u8 direction = GetPlayerFacing();
-	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_BIKE
-		&& !gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
-		&& gPlayerAvatar->runningState > 0
-		&& (FlagGet(FLAG_BIKE_TURBO_BOOST) || JOY_HELD(B_BUTTON))
-		&& !PlayerIsMovingOnRockStairs(direction)
-		&& !PlayerIsMovingOnSidewaysStairs(direction))
-			return 4;
+	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_BIKE && gPlayerAvatar->bikeSpeed == 4 && gPlayerAvatar->runningState > 0)
+		return 4;
 	else
 	#endif
 	if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_MACH_BIKE)
@@ -1727,6 +1724,8 @@ s16 GetPlayerSpeed(void)
 
 void MoveOnBike(u8 direction)
 {
+	gPlayerAvatar->bikeSpeed = 0; //Reset
+
 	if (PlayerIsMovingOnRockStairs(direction))
 		PlayerGoSpeed2(direction);
 	else if (PlayerIsMovingOnSidewaysStairs(direction))
@@ -1734,10 +1733,20 @@ void MoveOnBike(u8 direction)
 	#ifdef FLAG_BIKE_TURBO_BOOST
 	else if (!gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
 			&& (FlagGet(FLAG_BIKE_TURBO_BOOST) || JOY_HELD(B_BUTTON)))
+	{
 		PlayerGoSpeed4(direction);
+		gPlayerAvatar->bikeSpeed = 4;
+	}
 	#endif
 	else
 		PlayerRideWaterCurrent(direction);
+}
+
+void PlayerOnBikeCollide(u8 direction)
+{
+	gPlayerAvatar->bikeSpeed = 0; //Reset
+    PlayCollisionSoundIfNotFacingWarp(direction);
+    PlayerSetAnimId(GetWalkInPlaceNormalMovementAction(direction), 2);
 }
 
 bool8 CanUseEscapeRopeOnCurrMap(void)
@@ -1882,7 +1891,8 @@ bool8 IsCurrentAreaVolcano(void)
 	#ifdef UNBOUND
 		u8 mapSec = GetCurrentRegionMapSectionId();
 		return mapSec == MAPSEC_CINDER_VOLCANO
-			|| (mapSec == MAPSEC_VICTORY_ROAD && MAP_IS(VICTORY_ROAD_VOLCANO));
+			|| (mapSec == MAPSEC_VICTORY_ROAD && MAP_IS(VICTORY_ROAD_VOLCANO))
+			|| (mapSec == MAPSEC_TOMB_OF_BORRIUS && MAP_IS(TOMB_OF_BORRIUS_B3F));
 	#else
 		return FALSE;
 	#endif
@@ -1913,6 +1923,17 @@ bool8 IsCurrentAreaWinter(void)
 			|| mapSec == MAPSEC_FROZEN_FOREST
 			|| (mapSec == MAPSEC_VICTORY_ROAD
 			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE));
+	#else
+		return FALSE;
+	#endif
+}
+
+bool8 IsCurrentAreaDesert(void)
+{
+	#ifdef UNBOUND
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_GREAT_DESERT
+			|| mapSec == MAPSEC_GURUN_TOWN;
 	#else
 		return FALSE;
 	#endif
@@ -1966,6 +1987,9 @@ bool8 InTanobyRuins(void)
 			u8 mapSec = GetCurrentRegionMapSectionId();
 			return mapSec >= MAPSEC_MONEAN_CHAMBER && mapSec <= MAPSEC_VIAPOIS_CHAMBER;
 		}
+	#elif (defined UNBOUND) //For Pokemon Unbound
+		if (FlagGet(FLAG_OPENED_TOMB_OF_BORRIUS_HOLE))
+			return GetCurrentRegionMapSectionId() == MAPSEC_TOMB_OF_BORRIUS;
 	#endif
 
 	return FALSE;

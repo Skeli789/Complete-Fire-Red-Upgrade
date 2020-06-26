@@ -173,7 +173,7 @@
 #define MAPSEC_ROUTE_13						0x71
 #define MAPSEC_ROUTE_14						0x72
 #define MAPSEC_GREAT_DESERT					0x7B
-#define MAPSEC_TOMB_OF_BORRIUS				0x
+#define MAPSEC_TOMB_OF_BORRIUS				0xC0
 #define MAPSEC_DESERT_RUINS                 0xC1
 #define MAPSEC_GURUN_TOWN					0x7A
 #define MAPSEC_VIVILL_WOODS					0x8C

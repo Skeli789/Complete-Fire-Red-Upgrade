@@ -357,7 +357,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 		damage *= 5;
 		return damage;
 	}
-	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || CheckTableForMove(move, gThreeStrikesMoves)) //Three hits on average
+	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -453,7 +453,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 		damage *= 5;
 		return damage;
 	}
-	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || CheckTableForMove(move, gThreeStrikesMoves)) //Three hits on average
+	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -546,7 +546,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 		damage *= 5;
 		return damage;
 	}
-	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || CheckTableForMove(move, gThreeStrikesMoves)) //Three hits on average
+	else if (CheckTableForMove(move, gTwoToFiveStrikesMoves) || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -1450,6 +1450,26 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 				moveType = TYPE_DARK;
 			#endif
 			break;
+		
+		case MOVE_TERRAINPULSE:
+			switch (gTerrainType) {
+				case ELECTRIC_TERRAIN:
+					moveType = TYPE_ELECTRIC;
+					break;
+				case GRASSY_TERRAIN:
+					moveType = TYPE_GRASS;
+					break;
+				case MISTY_TERRAIN:
+					moveType = TYPE_FAIRY;
+					break;
+				case PSYCHIC_TERRAIN:
+					moveType = TYPE_PSYCHIC;
+					break;
+				default:
+					moveType = TYPE_NORMAL;
+					break;
+			}
+			break;
 	}
 
 	if (moveType == TYPE_NORMAL && IsIonDelugeActive())
@@ -1541,6 +1561,26 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			else
 			#endif
 				moveType = TYPE_ELECTRIC;
+			break;
+
+		case MOVE_TERRAINPULSE:
+			switch (gTerrainType) {
+				case ELECTRIC_TERRAIN:
+					moveType = TYPE_ELECTRIC;
+					break;
+				case GRASSY_TERRAIN:
+					moveType = TYPE_GRASS;
+					break;
+				case MISTY_TERRAIN:
+					moveType = TYPE_FAIRY;
+					break;
+				case PSYCHIC_TERRAIN:
+					moveType = TYPE_PSYCHIC;
+					break;
+				default:
+					moveType = TYPE_NORMAL;
+					break;
+			}
 			break;
 	}
 
@@ -2873,6 +2913,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_CRUSHGRIP:
 		case MOVE_WRINGOUT:
+		case MOVE_DRAGONENERGY:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 				power = MathMax(1, (data->defHP * 120) / data->defMaxHP);
 			break;
@@ -3022,11 +3063,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 		#endif
 			break;
 
-		case MOVE_TRIPLEKICK:
-			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
-				power = gBattleScripting.tripleKickPower;
-			break;
-
 		case MOVE_MAGNITUDE:
 		case MOVE_PRESENT:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
@@ -3042,6 +3078,34 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_GRAVAPPLE:
 			if (IsGravityActive())
 				power = (power * 15) / 10; //1.5x boost in Gravity
+			break;
+
+		case MOVE_TERRAINPULSE:
+			if (gTerrainType && data->atkIsGrounded)
+				power *= 2;
+			break;
+
+		case MOVE_RISINGVOLTAGE:
+			if (gTerrainType == ELECTRIC_TERRAIN && data->defIsGrounded)
+				power *= 2;
+			break;
+		
+		case MOVE_MISTYEXPLOSION:
+			if (gTerrainType == MISTY_TERRAIN && data->atkIsGrounded)
+				power = (power * 15) / 10;
+			break;
+
+		case MOVE_LASHOUT:
+			if (gNewBS->statFellThisRound[bankAtk])
+				power *= 2;
+			break;
+
+		default:
+			if (gBattleMoves[move].effect == EFFECT_TRIPLE_KICK)
+			{
+				if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
+					power = gBattleScripting.tripleKickPower;
+			}
 			break;
 	}
 
@@ -3345,8 +3409,13 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case PSYCHIC_TERRAIN:
 		//1.5x Boost
-			if (data->atkIsGrounded && data->moveType == TYPE_PSYCHIC)
-				power = (power * 15) / 10;
+			if (data->atkIsGrounded)
+			{
+				if (move == MOVE_EXPANDINGFORCE)
+					power *= 2;
+				if (data->moveType == TYPE_PSYCHIC)
+					power = (power * 15) / 10;
+			}
 			break;
 	}
 

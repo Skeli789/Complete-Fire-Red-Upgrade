@@ -2895,7 +2895,7 @@ void SetCoins(u32 numCoins)
 	#ifdef SAVE_BLOCK_EXPANSION
 		gPlayerCoins = numCoins;
 	#else
-		gSaveBlock1->coins = numCoins;
+		gSaveBlock1->coins = MathMin(numCoins, 0xFFFF);
 	#endif
 }
 

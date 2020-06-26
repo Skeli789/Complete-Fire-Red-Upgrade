@@ -427,6 +427,10 @@ bool8 TryRunFromBattle(u8 bank)
 	{
 		return FALSE;
 	}
+	else if (IsRaidBattle() && RAID_BATTLE_END)
+	{
+		++effect; //So you can always run at the end of a Raid
+	}
 	else if (IsOfType(bank, TYPE_GHOST))
 	{
 		++effect;

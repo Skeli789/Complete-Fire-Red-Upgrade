@@ -1442,6 +1442,8 @@ u8 TurnBasedEffects(void)
 				{
 					gNewBS->pickupStack[i] = 0xFF;
 					gNewBS->leftoverHealingDone[i] = FALSE;
+					gNewBS->statRoseThisRound[i] = FALSE;
+					gNewBS->statFellThisRound[i] = FALSE;
 					gNewBS->ai.calculatedAISwitchings[i] = FALSE;
 					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
 					gNewBS->ai.fightingStyle[i] = 0xFF;

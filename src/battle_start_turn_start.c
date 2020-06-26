@@ -374,7 +374,9 @@ void BattleBeginFirstTurn(void)
 				{
 					gBattleMons[i].status2 &= ~8;
 					gNewBS->pickupStack[i] = 0xFF;
+					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisTurn[i] = FALSE;
+					gNewBS->statFellThisRound[i] = FALSE;
 				}
 
 				gBattleStruct->turnEffectsTracker = 0;
@@ -534,7 +536,8 @@ void SetActionsAndBanksTurnOrder(void)
 
 	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
 	{
-		for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+		for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+		{
 			gActionsByTurnOrder[turnOrderId] = gChosenActionByBank[gActiveBattler];
 			gBanksByTurnOrder[turnOrderId] = gActiveBattler;
 			++turnOrderId;
@@ -544,7 +547,8 @@ void SetActionsAndBanksTurnOrder(void)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 		{
-			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+			{
 				if (gChosenActionByBank[gActiveBattler] == ACTION_RUN)
 				{
 					turnOrderId = 5;
@@ -554,14 +558,24 @@ void SetActionsAndBanksTurnOrder(void)
 		}
 		else
 		{
-			if (gChosenActionByBank[0] == ACTION_RUN) {
+			if (gChosenActionByBank[0] == ACTION_RUN)
+			{
 				gActiveBattler = 0;
 				turnOrderId = 5;
 			}
+			else if (gChosenActionByBank[0] == ACTION_USE_ITEM)
+			{
+				gNewBS->playerItemUsedCount = MathMin(gNewBS->playerItemUsedCount + 1, 0xFF);
+			}
 
-			if (gChosenActionByBank[2] == ACTION_RUN) {
+			if (gChosenActionByBank[2] == ACTION_RUN)
+			{
 				gActiveBattler = 2;
 				turnOrderId = 5;
+			}
+			else if (gChosenActionByBank[2] == ACTION_USE_ITEM && !IsTagBattle())
+			{
+				gNewBS->playerItemUsedCount = MathMin(gNewBS->playerItemUsedCount + 1, 0xFF);
 			}
 		}
 
@@ -1319,7 +1333,7 @@ u16 GetMUS_ForBattle(void)
 	{
 		u8 trainerClass;
 
-		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_A))
 		{
 			//If either trainer is special, try to load their music
 			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, BATTLE_FACILITY_TRAINER_A);
@@ -1643,6 +1657,9 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 					priority += 3;
 		}
+		
+		if (move == MOVE_GRASSYGLIDE && gTerrainType == GRASSY_TERRAIN && CheckGrounding(bank))
+			++priority;
 	}
 
 	return priority;

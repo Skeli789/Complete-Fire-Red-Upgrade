@@ -1633,7 +1633,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_BATON_PASS:
-			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
+			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH || move == MOVE_FLIPTURN)
 			{
 				goto AI_STANDARD_DAMAGE;
 			}

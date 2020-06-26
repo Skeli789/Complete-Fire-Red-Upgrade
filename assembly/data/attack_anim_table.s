@@ -750,6 +750,33 @@ gMoveAnimations:
 .word ANIM_METEOR_ASSAULT
 .word ANIM_ETERNABEAM
 .word ANIM_STEEL_BEAM
+.word ANIM_EXPANDING_FORCE
+.word ANIM_STEEL_ROLLER
+.word ANIM_SCALE_SHOT
+.word ANIM_METEOR_BEAM
+.word ANIM_SHELL_SIDE_ARM
+.word ANIM_MISTY_EXPLOSION
+.word ANIM_GRASSY_GLIDE
+.word ANIM_RISING_VOLTAGE
+.word ANIM_TERRAIN_PULSE
+.word ANIM_SKITTER_SMACK
+.word ANIM_BURNING_JEALOUSY
+.word ANIM_LASH_OUT
+.word ANIM_POLTERGEIST
+.word ANIM_CORROSIVE_GAS
+.word ANIM_COACHING
+.word ANIM_FLIP_TURN
+.word ANIM_TRIPLE_AXEL
+.word ANIM_DUAL_WINGBEAT
+.word ANIM_SCORCHING_SANDS
+.word ANIM_JUNGLE_HEALING
+.word ANIM_WICKED_BLOW
+.word ANIM_SURGING_STRIKES
+.word ANIM_FREEZING_GLARE
+.word ANIM_THUNDEROUS_KICK
+.word ANIM_FIERY_WRATH
+.word ANIM_THUNDER_CAGE
+.word ANIM_DRAGON_ENERGY
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_ALL_OUT_PUMMELING
@@ -840,8 +867,12 @@ gMoveAnimations:
 .word ANIM_MAX_DARKNESS
 .word ANIM_MAX_STARFALL
 .word ANIM_MAX_STARFALL
+.word ANIM_G_MAX_VINE_LASH_MOVE
+.word ANIM_G_MAX_VINE_LASH_MOVE
 .word ANIM_G_MAX_WILDFIRE_MOVE
 .word ANIM_G_MAX_WILDFIRE_MOVE
+.word ANIM_G_MAX_CANNONADE_MOVE
+.word ANIM_G_MAX_CANNONADE_MOVE
 .word ANIM_G_MAX_BEFUDDLE
 .word ANIM_G_MAX_BEFUDDLE
 .word ANIM_G_MAX_VOLTCRASH
@@ -864,34 +895,44 @@ gMoveAnimations:
 .word ANIM_G_MAX_MALODOR
 .word ANIM_G_MAX_MELTDOWN
 .word ANIM_G_MAX_MELTDOWN
-.word ANIM_G_MAX_STONESURGE
-.word ANIM_G_MAX_STONESURGE
+.word ANIM_G_MAX_DRUM_SOLO
+.word ANIM_G_MAX_DRUM_SOLO
+.word ANIM_G_MAX_FIREBALL
+.word ANIM_G_MAX_FIREBALL
+.word ANIM_G_MAX_HYDROSNIPE
+.word ANIM_G_MAX_HYDROSNIPE
 .word ANIM_G_MAX_WINDRAGE
 .word ANIM_G_MAX_WINDRAGE
-.word ANIM_G_MAX_STUNSHOCK
-.word ANIM_G_MAX_STUNSHOCK
-.word ANIM_G_MAX_FINALE
-.word ANIM_G_MAX_FINALE
-.word ANIM_G_MAX_DEPLETION
-.word ANIM_G_MAX_DEPLETION
 .word ANIM_G_MAX_GRAVITAS
 .word ANIM_G_MAX_GRAVITAS
+.word ANIM_G_MAX_STONESURGE
+.word ANIM_G_MAX_STONESURGE
 .word ANIM_G_MAX_VOLCALITH_MOVE
 .word ANIM_G_MAX_VOLCALITH_MOVE
-.word ANIM_G_MAX_SANDBLAST
-.word ANIM_G_MAX_SANDBLAST
-.word ANIM_G_MAX_SNOOZE
-.word ANIM_G_MAX_SNOOZE
 .word ANIM_G_MAX_TARTNESS
 .word ANIM_G_MAX_TARTNESS
 .word ANIM_G_MAX_SWEETNESS
 .word ANIM_G_MAX_SWEETNESS
-.word ANIM_G_MAX_SMITE
-.word ANIM_G_MAX_SMITE
-.word ANIM_G_MAX_STEELSURGE
-.word ANIM_G_MAX_STEELSURGE
+.word ANIM_G_MAX_SANDBLAST
+.word ANIM_G_MAX_SANDBLAST
+.word ANIM_G_MAX_STUNSHOCK
+.word ANIM_G_MAX_STUNSHOCK
 .word ANIM_G_MAX_CENTIFERNO
 .word ANIM_G_MAX_CENTIFERNO
+.word ANIM_G_MAX_SMITE
+.word ANIM_G_MAX_SMITE
+.word ANIM_G_MAX_SNOOZE
+.word ANIM_G_MAX_SNOOZE
+.word ANIM_G_MAX_FINALE
+.word ANIM_G_MAX_FINALE
+.word ANIM_G_MAX_STEELSURGE
+.word ANIM_G_MAX_STEELSURGE
+.word ANIM_G_MAX_DEPLETION
+.word ANIM_G_MAX_DEPLETION
+.word ANIM_G_MAX_ONE_BLOW
+.word ANIM_G_MAX_ONE_BLOW
+.word ANIM_G_MAX_RAPID_FLOW
+.word ANIM_G_MAX_RAPID_FLOW
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16629,6 +16670,168 @@ STEEL_BEAM_SHARDS: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_16x16 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+ANIM_EXPANDING_FORCE:
+	goto 0x81cd46c @MOVE_PSYCHIC
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_STEEL_ROLLER:
+	goto ANIM_STEAMROLLER
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SCALE_SHOT:
+	goto 0x81d4223 @MOVE_ROCKBLAST
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_METEOR_BEAM:
+	goto 0x81cad1b @MOVE_SKYATTACK
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SHELL_SIDE_ARM:
+	goto 0x81cf1e2 @MOVE_SLUDGEBOMB
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_MISTY_EXPLOSION:
+	goto 0x81c8e15 @MOVE_EXPLOSION
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_GRASSY_GLIDE:
+	goto ANIM_GRASSPLEDGE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_RISING_VOLTAGE:
+	goto 0x81cd009 @MOVE_SHOCKWAVE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TERRAIN_PULSE:
+	goto 0x81d0d50 @MOVE_PSYBEAM
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SKITTER_SMACK:
+	goto ANIM_HYPERSPACEHOLE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_BURNING_JEALOUSY:
+	goto ANIM_LAVAPLUME
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_LASH_OUT:
+	goto ANIM_BRUTALSWING
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_POLTERGEIST:
+	goto 0x81d4a0f @MOVE_KNOCKOFF
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_CORROSIVE_GAS:
+	goto ANIM_LAVAPLUME
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_COACHING:
+	goto 0x81cba5f @MOVE_HELPINGHAND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_FLIP_TURN:
+	goto ANIM_UTURN
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TRIPLE_AXEL:
+	goto 0x81cfecb @MOVE_TRIPLEKICK
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_DUAL_WINGBEAT:
+	goto 0x81cf699 @MOVE_WINGATTACK
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SCORCHING_SANDS:
+	goto 0x81cdf22 @MOVE_SANDATTACK
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_JUNGLE_HEALING:
+	goto ANIM_LIFE_DEW
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_WICKED_BLOW:
+	goto 0x81cff92 @MOVE_DYNAMICPUNCH
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SURGING_STRIKES:
+	goto ANIM_AQUATAIL
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_FREEZING_GLARE:
+	goto 0x81cac6a @MOVE_GLARE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_THUNDEROUS_KICK:
+	goto 0x81c7dc7 @MOVE_MEGAKICK
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_FIERY_WRATH:
+	goto 0x81d42c0 @MOVE_OVERHEAT
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_THUNDER_CAGE:
+	goto 0x81c8160 @MOVE_THUNDERWAVE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_DRAGON_ENERGY:
+	goto ANIM_DRAGONPULSE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 @Credits to ghoulslash
 ANIM_BREAKNECK_BLITZ:
 	loadparticle ANIM_TAG_HOLLOW_ORB
@@ -25190,6 +25393,48 @@ ANIM_G_MAX_FOAMBURST:
 ANIM_G_MAX_CENTIFERNO:
 	@;call ANIM_MAX_FLARE_MAIN
 	goto ANIM_MAX_FLARE
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_VINE_LASH_MOVE:
+	goto ANIM_POWERWHIP
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_CANNONADE_MOVE:
+	goto ANIM_MAX_GEYSER
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_DRUM_SOLO:
+	goto ANIM_DRUM_BEATING
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_FIREBALL:
+	goto ANIM_PYRO_BALL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_HYDROSNIPE:
+	goto ANIM_SNIPE_SHOT
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_ONE_BLOW:
+	goto ANIM_MAX_DARKNESS
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to -
+ANIM_G_MAX_RAPID_FLOW:
+	goto ANIM_AQUAJET
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

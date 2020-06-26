@@ -530,7 +530,10 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 	u32 otid = Random32();
 	u8 setMonGender = 0xFF;
 
-	if (trainerId == TRAINER_SECRET_BASE) return 0;
+	if (trainerId == TRAINER_SECRET_BASE)
+		return 0;
+	else if (IsFrontierTrainerId(trainerId))
+		return BuildFrontierParty(party, trainerId, BATTLE_FACILITY_STANDARD, firstTrainer, FALSE, side);
 
 	struct Trainer* trainer = &gTrainers[trainerId];
 
@@ -736,15 +739,15 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 					switch(spread->ability) {
 						case Ability_Hidden:
 						TRAINER_WITH_EV_GIVE_HIDDEN_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF, FALSE); //Give Hidden Ability
+							GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF, FALSE, TRUE, FALSE); //Give Hidden Ability
 							break;
 						case Ability_1:
 						case Ability_2:
-							GiveMonNatureAndAbility(&party[i], spread->nature, MathMin(1, spread->ability - 1), FALSE);
+							GiveMonNatureAndAbility(&party[i], spread->nature, MathMin(1, spread->ability - 1), FALSE, TRUE, FALSE);
 							break;
 						case Ability_Random_1_2:
 						TRAINER_WITH_EV_GIVE_RANDOM_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread->nature, Random() % 2, FALSE);
+							GiveMonNatureAndAbility(&party[i], spread->nature, Random() % 2, FALSE, TRUE, FALSE);
 							break;
 						case Ability_RandomAll: ;
 							u8 random = Random() % 3;
@@ -853,20 +856,15 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 	u8 trainerGender = 0;
 	u8 battleTowerPokeNum = VarGet(VAR_BATTLE_FACILITY_POKE_NUM);
 	u8 battleType = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
-	u8 level = GetBattleTowerLevel(tier);
+	u8 level = GetBattleFacilityLevel(tier);
 	u16 tableId = VarGet(VAR_FACILITY_TRAINER_ID + (firstTrainer ^ 1));
 
 	if (!forPlayer)
 	{
-		if (trainerId == 0x400)
+		if (trainerId == TRAINER_SECRET_BASE)
 			return 0;
-		else if (trainerId != BATTLE_TOWER_TID
-			  && trainerId != BATTLE_TOWER_SPECIAL_TID
-			  && trainerId != FRONTIER_BRAIN_TID
-			  && trainerId != BATTLE_FACILITY_MULTI_TRAINER_TID)
-		{
+		else if (!IsFrontierTrainerId(trainerId))
 			return (CreateNPCTrainerParty(party, trainerId, firstTrainer, side));
-		}
 	}
 
 	//Two of the three variables here hold garbage data which is never called.
@@ -912,7 +910,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 
 	for (i = 0; i < monsCount; ++i)
 	{
-		u8 loop = 1;
+		bool8 loop = TRUE;
 		u16 species, dexNum, item;
 		u8 ability, itemEffect, class;
 		const struct BattleTowerSpread* spread = NULL;
@@ -1448,9 +1446,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 					}
 				}
 
-				loop = 0;
+				loop = FALSE;
 			}
-		} while (loop == 1);
+		} while (loop);
 
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
 	}
@@ -1476,6 +1474,7 @@ static void BuildFrontierMultiParty(u8 multiId)
 	int i;
 	u8 numRegMonsOnTeam = 0;
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
+	u8 level = GetBattleFacilityLevel(tier);
 	const struct BattleTowerSpread* spread = NULL;
 	const struct MultiBattleTowerTrainer* multiPartner = &gFrontierMultiBattleTrainers[multiId];
 	u8 idOnTeam[multiPartner->regSpreadSize];
@@ -1537,7 +1536,7 @@ static void BuildFrontierMultiParty(u8 multiId)
 					return; //No Pokemon data to load
 		}
 
-		CreateFrontierMon(&gPlayerParty[i], GetBattleTowerLevel(tier), spread, BATTLE_FACILITY_MULTI_TRAINER_TID, 2, multiPartner->gender, FALSE);
+		CreateFrontierMon(&gPlayerParty[i], level, spread, BATTLE_FACILITY_MULTI_TRAINER_TID, 2, multiPartner->gender, FALSE);
 	}
 
 	TryShuffleMovesForCamomons(gPlayerParty, tier, BATTLE_FACILITY_MULTI_TRAINER_TID);
@@ -1631,11 +1630,11 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 
 	if (spread->ability > FRONTIER_ABILITY_HIDDEN)
 	{
-		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1, spread->shiny);
+		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1, spread->shiny, FALSE, FALSE);
 	}
 	else //Hidden Ability
 	{
-		GiveMonNatureAndAbility(mon, spread->nature, 0xFF, spread->shiny);
+		GiveMonNatureAndAbility(mon, spread->nature, 0xFF, spread->shiny, FALSE, FALSE);
 	}
 
 	for (j = 0; j < MAX_MON_MOVES; j++)
@@ -1698,15 +1697,22 @@ static void SetWildMonHeldItem(void)
 	}
 }
 
-void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool8 forceShiny)
+void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool8 forceShiny, bool8 keepGender, bool8 keepLetterCore)
 {
-	u32 personality;
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	u16 species  = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
 	u16 sid = HIHALF(trainerId);
 	u16 tid = LOHALF(trainerId);
+	u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
+	u8 letter = GetUnownLetterFromPersonality(personality);
+	bool8 isMinior = IsMinior(species);
+	u8 miniorCore = GetMiniorCoreSpecies(mon);
 
 	if (abilityNum == 0xFF) //Hidden Ability
 		mon->hiddenAbility = TRUE;
+	else
+		abilityNum = MathMin(1, abilityNum); //Either 0 or 1
 
 	do
 	{
@@ -1720,10 +1726,12 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 		if (abilityNum != 0xFF)
 		{
 			personality &= ~(1);
-			personality |= MathMin(1, abilityNum); //Either 0 or 1
+			personality |= abilityNum; 
 		}
-
-	} while (GetNatureFromPersonality(personality) != nature);
+	} while (GetNatureFromPersonality(personality) != nature
+	|| (keepGender && GetGenderFromSpeciesAndPersonality(species, personality) != gender)
+	|| (keepLetterCore && species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter) //Make sure the Unown letter doesn't change
+	|| (keepLetterCore && isMinior && miniorCore != GetMiniorCoreSpecies(mon))); //Make sure the Minior core doesn't change
 
 	mon->personality = personality;
 }
@@ -3223,7 +3231,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 		if (nature >= NUM_NATURES)
 			nature = Random() % NUM_NATURES;
 
-		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny);
+		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny, FALSE, FALSE);
 		MonRestorePP(&mon);
 	}
 	#endif
@@ -3424,7 +3432,8 @@ void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fi
 	u32 personality;
 	letter -= 1;
 
-	if ((u8)(letter) < 28)
+	#ifdef SPECIES_UNOWN
+	if ((u8)(letter) < 28 && species == SPECIES_UNOWN)
 	{
 		u16 actualLetter;
 
@@ -3434,14 +3443,14 @@ void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fi
 			actualLetter = GetUnownLetterFromPersonality(personality);
 		}
 		while (nature != GetNatureFromPersonality(personality) || actualLetter != letter);
+
+		CreateMon(mon, species, level, fixedIV, TRUE, personality, OT_ID_PLAYER_ID, 0);
 	}
 	else
+	#endif
 	{
 		CreateMonWithNature(mon, species, level, 32, nature);
-		return;
 	}
-
-	CreateMon(mon, species, level, fixedIV, TRUE, personality, OT_ID_PLAYER_ID, 0);
 }
 
 void TryStatusInducer(unusedArg struct Pokemon* mon)

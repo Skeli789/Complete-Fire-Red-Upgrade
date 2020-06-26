@@ -651,6 +651,15 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_THUNDERCAP_MT_3F_1		((53 << 8) | 5)
 #define MAP_THUNDERCAP_MT_3F_1_BACK	((53 << 8) | 6)
 
+#define MAP_RIFT_CAVE_B1F	((1 << 8) | 35)
+
+#define MAP_RUINS_OF_VOID_B3F		((1 << 8) | 114)
+#define MAP_RUINS_OF_VOID_B3F_ALT	((1 << 8) | 107)
+
+#define MAP_TOMB_OF_BORRIUS_1F		((1 << 8) | 83)
+#define MAP_TOMB_OF_BORRIUS_B3F		((1 << 8) | 85)
+#define MAP_TOMB_OF_BORRIUS_1F_BACK	((1 << 8) | 90)
+
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
 #define MAP_VICTORY_ROAD_CAVE_B       ((55 << 8) | 1)
 #define MAP_VICTORY_ROAD_VOLCANO      ((55 << 8) | 2)
@@ -670,7 +679,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_SHADOW_BASE_B3F		((1 << 8) | 45)
 
 #define MAP_UNDERGROUND_PASS_A	((1 << 8) | 31)
-#define MAP_UNDERGROUND_PASS_B	((1 << 8) | 34)
+#define MAP_UNDERGROUND_PASS_B	((1 << 8) | 32)
 
 #define MAP_FALLSHORE_CITY_EVOLUTION_HOUSE_LOWER	((14 << 8) | 2)
 

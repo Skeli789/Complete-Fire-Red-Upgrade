@@ -227,6 +227,7 @@ void atkFF06_setterrain(void)
 				break;
 			case MOVE_SPLINTERED_STORMSHARDS:
 			case MOVE_DEFOG:
+			case MOVE_STEELROLLER:
 			REMOVE_TERRAIN:
 				type = 0;
 				gNewBS->terrainForcefullyRemoved = TRUE;

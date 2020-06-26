@@ -84,7 +84,7 @@ static void DexNavProximityUpdate(void);
 static void NullSubHBlank(void);
 static void DexNavFreeHUD(void);
 static void DexNavShowMessage(u8 id);
-static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size);
+static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size);
 static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
 static void DexNavManageHUD(u8 taskId);
@@ -94,13 +94,13 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
-static void DexNavDrawBlackBars(u8* objidAddr);
-static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr);
-static void DexNavDrawAbility(u8 ability, u8* objidAddr);
-static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr);
-static void DexNavDrawPotential(u8 potential, u8* objidAddr);
-static void DexNavHudDrawSpeciesIcon(u16 species, u8* objIdAddr);
-static void DexNavDrawHeldItem(u8* objidAddr);
+static void DexNavDrawBlackBars(u8* spriteIdAddr);
+static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
+static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
+static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
+static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
+static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
+static void DexNavDrawHeldItem(u8* spriteIdAddr);
 static void DexNavDrawIcons(void);
 void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
@@ -298,7 +298,7 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 
 void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain)
 {
-	struct Pokemon* pkmn = &gEnemyParty[0];
+	struct Pokemon* mon = &gEnemyParty[0];
 
 	//Try Force Shiny
 	//https://bulbapedia.bulbagarden.net/wiki/DexNav#Shiny_probability
@@ -347,27 +347,27 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 	{
 		u8 perfectIv = 0x1F;
 		if (potential > 2)
-			SetMonData(pkmn, MON_DATA_HP_IV + iv[2], &perfectIv);
+			SetMonData(mon, MON_DATA_HP_IV + iv[2], &perfectIv);
 		else if (potential > 1)
-			SetMonData(pkmn, MON_DATA_HP_IV + iv[1], &perfectIv);
+			SetMonData(mon, MON_DATA_HP_IV + iv[1], &perfectIv);
 		else if (potential)
-			SetMonData(pkmn, MON_DATA_HP_IV + iv[0], &perfectIv);
+			SetMonData(mon, MON_DATA_HP_IV + iv[0], &perfectIv);
 	}
 
 	//Set ability
 	if (gBaseStats[species].hiddenAbility == ability)
-		pkmn->hiddenAbility = TRUE;
-	else
-		GiveMonNatureAndAbility(pkmn, GetNature(pkmn), (gBaseStats[species].ability2 == ability) ? 1 : 0, FALSE);
+		mon->hiddenAbility = TRUE;
+	else if (gBaseStats[species].ability2 != ABILITY_NONE) //Helps fix a bug where Unown would crash the game in the below function
+		GiveMonNatureAndAbility(mon, GetNature(mon), (gBaseStats[species].ability2 == ability) ? 1 : 0, IsMonShiny(mon), TRUE, TRUE); //Make sure details match what was on the HUD
 
 	//Set moves
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		pkmn->moves[i] = sDNavState->moveId[i];
-		pkmn->pp[i] = gBattleMoves[moves[i]].pp;
+		mon->moves[i] = sDNavState->moveId[i];
+		mon->pp[i] = gBattleMoves[moves[i]].pp;
 	}
 
-	CalculateMonStats(pkmn);
+	CalculateMonStats(mon);
 }
 
 
@@ -542,12 +542,12 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 				break;
 		};
 
-		//Get objid of shaking grass
+		//Get spriteId of shaking grass
 		for (u32 i = 0; i < MAX_SPRITES; ++i)
 		{
 			if (gSprites[i].callback == (SpriteCallback) 0x080DCD1D)
 			{
-				sDNavState->objIdShakingGrass = i;
+				sDNavState->spriteIdShakingGrass = i;
 				return TRUE;
 			}
 		}
@@ -558,22 +558,22 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 	return FALSE;
 };
 
-/* //Causes the game to lag due to interference from DNS :(
-static void DexHUDHBlank(void)
+ //Causes the game to lag due to interference from DNS :(
+/*static void DexHUDHBlank(void)
 {
 	if (REG_VCOUNT > (160 - 19)) //Fill 19 pixels
 	{
 		REG_BLDY = 0xC;
-		REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD,  WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD);
+		REG_WININ = WININ_WIN0_BG_ALL | WININ_WIN1_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 		REG_BLDCNT = (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_EFFECT_DARKEN);
 	}
 	else //Default values from overworld
 	{
-		REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
+		REG_WININ = WININ_WIN0_BG_ALL | WININ_WIN1_BG_ALL | WININ_WIN0_OBJ | WININ_WIN1_OBJ;
 		REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
 	}
-};
-*/
+};*/
+
 
 static void DexNavProximityUpdate(void)
 {
@@ -591,66 +591,66 @@ static void DexNavFreeHUD(void)
 	{
 		case 0:
 			if (!IsMapTypeOutdoors(GetCurrentMapType()))
-				FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x1A); //cave
+				FieldEffectStop(&gSprites[sDNavState->spriteIdShakingGrass], 0x1A); //cave
 			else
-				FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x13);
+				FieldEffectStop(&gSprites[sDNavState->spriteIdShakingGrass], 0x13);
 			break;
 		case 1:
-			FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x13);
+			FieldEffectStop(&gSprites[sDNavState->spriteIdShakingGrass], 0x13);
 			break;
 	}
 
 	//Clear mon icon sprite
 	SafeFreeMonIconPalette(sDNavState->species);
-	DestroyMonIconSprite(&gSprites[sDNavState->objIdSpecies]);
+	DestroyMonIconSprite(&gSprites[sDNavState->spriteIdSpecies]);
 
 	//Clear black bars
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdBlackBar[0]]);
-	ResetSprite(&gSprites[sDNavState->objIdBlackBar[0]]);
-	ResetSprite(&gSprites[sDNavState->objIdBlackBar[1]]);
-	ResetSprite(&gSprites[sDNavState->objIdBlackBar[2]]);
-	ResetSprite(&gSprites[sDNavState->objIdBlackBar[3]]);
+	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdBlackBar[0]]);
+	FreeSpriteOamMatrix(&gSprites[sDNavState->spriteIdBlackBar[0]]);
+	FreeSpriteOamMatrix(&gSprites[sDNavState->spriteIdBlackBar[1]]);
+	DestroySprite(&gSprites[sDNavState->spriteIdBlackBar[0]]);
+	DestroySprite(&gSprites[sDNavState->spriteIdBlackBar[1]]);
 
-	if (sDNavState->objIdSight < MAX_SPRITES)
+	if (sDNavState->spriteIdSight < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdSight]);
-		ResetSprite(&gSprites[sDNavState->objIdSight]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdSight]);
+		DestroySprite(&gSprites[sDNavState->spriteIdSight]);
 	}
 
-	if (sDNavState->objIdAbility < MAX_SPRITES)
+	if (sDNavState->spriteIdAbility < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdAbility]);
-		ResetSprite(&gSprites[sDNavState->objIdAbility]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdAbility]);
+		DestroySprite(&gSprites[sDNavState->spriteIdAbility]);
 	}
 
-	if (sDNavState->objIdMove < MAX_SPRITES)
+	if (sDNavState->spriteIdMove < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdMove]);
-		ResetSprite(&gSprites[sDNavState->objIdMove]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdMove]);
+		DestroySprite(&gSprites[sDNavState->spriteIdMove]);
 	}
 
-	if (sDNavState->objIdItem < MAX_SPRITES)
+	if (sDNavState->spriteIdItem < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdItem]);
-		ResetSprite(&gSprites[sDNavState->objIdItem]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdItem]);
+		DestroySprite(&gSprites[sDNavState->spriteIdItem]);
 	}
 
-	if (sDNavState->objIdPotential[0] < MAX_SPRITES)
+	if (sDNavState->spriteIdPotential[0] < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[0]]);
-		ResetSprite(&gSprites[sDNavState->objIdPotential[0]]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdPotential[0]]);
+		DestroySprite(&gSprites[sDNavState->spriteIdPotential[0]]);
 	}
 
-	if (sDNavState->objIdPotential[1] < MAX_SPRITES)
+	if (sDNavState->spriteIdPotential[1] < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[1]]);
-		ResetSprite(&gSprites[sDNavState->objIdPotential[1]]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdPotential[1]]);
+		DestroySprite(&gSprites[sDNavState->spriteIdPotential[1]]);
 	}
 
-	if (sDNavState->objIdPotential[2] < MAX_SPRITES)
+	if (sDNavState->spriteIdPotential[2] < MAX_SPRITES)
 	{
-		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[2]]);
-		ResetSprite(&gSprites[sDNavState->objIdPotential[2]]);
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->spriteIdPotential[2]]);
+		DestroySprite(&gSprites[sDNavState->spriteIdPotential[2]]);
 	}
 
 	//FreeSpriteTilesByTag(0x4736);
@@ -686,6 +686,10 @@ static void DexNavFreeHUD(void)
 extern const u8 SystemScript_DisplayDexnavMsg[];
 static void DexNavShowMessage(u8 id)
 {
+	ScriptContext2_Enable();
+	DismissMapNamePopup();
+	ScriptContext1_SetupScript(SystemScript_DisplayDexnavMsg);
+
 	switch(id)
 	{
 		case 0:
@@ -698,19 +702,15 @@ static void DexNavShowMessage(u8 id)
 			gLoadPointer = gText_GotAwayShouldSneak;
 			break;
 	}
-
-	ScriptContext2_Enable();
-	DismissMapNamePopup();
-	ScriptContext1_SetupScript(SystemScript_DisplayDexnavMsg);
 }
 
 
-static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
+static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size)
 {
-	if (objId >= MAX_SPRITES)
+	if (spriteId >= MAX_SPRITES)
 		return;
 
-	u8 tile = gSprites[objId].oam.tileNum + tileNum;
+	u8 tile = gSprites[spriteId].oam.tileNum + tileNum;
 	u8* toWrite = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
 	//u8* dst = (u8*)Malloc(size + TILE_SIZE);
 	//u8* dst = &gEnemyParty[0];
@@ -880,11 +880,11 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 
 static void DexNavSightUpdate(u8 sight)
 {
-	u8 objId = sDNavState->objIdSight;
-	if (objId < MAX_SPRITES)
+	u8 spriteId = sDNavState->spriteIdSight;
+	if (spriteId < MAX_SPRITES)
 	{
 		// draw sight eye on first tile, takes up two tiles
-		u8 tileid = gSprites[objId].oam.tileNum;
+		u8 tileid = gSprites[spriteId].oam.tileNum;
 		u8* toWrite = (u8*)((tileid * 32) + (SPRITE_RAM));
 		Memcpy(toWrite, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + (7 - (2 * sight))) * 32], 64);
 
@@ -893,8 +893,8 @@ static void DexNavSightUpdate(u8 sight)
 
 		// draw info text on the 5th tile
 		//pchar back[] = _(" Back  ");
-		StringCopy((u8*) gStringVar4, (u8*) &gText_DexNavBack[0]);
-		OutlinedFontDraw(objId, 5, 32 * 8);
+		StringCopy(gStringVar4, gText_DexNavBack);
+		OutlinedFontDraw(spriteId, 5, 32 * 8);
 	}
 }
 
@@ -907,30 +907,30 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 	// 	At search level 5, Potential is drawn
 
 	// species and sight/info are always shown, regardless of proximity
-	if (sDNavState->objIdSpecies < MAX_SPRITES)
-		gSprites[sDNavState->objIdSpecies].invisible = FALSE;
+	if (sDNavState->spriteIdSpecies < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdSpecies].invisible = FALSE;
 
-	if (sDNavState->objIdSight < MAX_SPRITES)
-		gSprites[sDNavState->objIdSight].invisible = FALSE;
+	if (sDNavState->spriteIdSight < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdSight].invisible = FALSE;
 
 	// hide everything at the start, and recalc what needs to be shown
-	if (sDNavState->objIdMove < MAX_SPRITES)
-		gSprites[sDNavState->objIdMove].invisible = TRUE;
+	if (sDNavState->spriteIdMove < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdMove].invisible = TRUE;
 
-	if (sDNavState->objIdAbility < MAX_SPRITES)
-		gSprites[sDNavState->objIdAbility].invisible = TRUE;
+	if (sDNavState->spriteIdAbility < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdAbility].invisible = TRUE;
 
-	if (sDNavState->objIdItem < MAX_SPRITES)
-		gSprites[sDNavState->objIdItem].invisible = TRUE;
+	if (sDNavState->spriteIdItem < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdItem].invisible = TRUE;
 
-	if (sDNavState->objIdPotential[0] < MAX_SPRITES)
-		gSprites[sDNavState->objIdPotential[0]].invisible = TRUE;
+	if (sDNavState->spriteIdPotential[0] < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdPotential[0]].invisible = TRUE;
 
-	if (sDNavState->objIdPotential[1] < MAX_SPRITES)
-		gSprites[sDNavState->objIdPotential[1]].invisible = TRUE;
+	if (sDNavState->spriteIdPotential[1] < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdPotential[1]].invisible = TRUE;
 
-	if (sDNavState->objIdPotential[2] < MAX_SPRITES)
-		gSprites[sDNavState->objIdPotential[2]].invisible = TRUE;
+	if (sDNavState->spriteIdPotential[2] < MAX_SPRITES)
+		gSprites[sDNavState->spriteIdPotential[2]].invisible = TRUE;
 
 	if (proximity < 3)
 	{
@@ -939,31 +939,31 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 		if (searchLevel > 1)
 		{
 			// show move, hide others
-			if (sDNavState->objIdMove < MAX_SPRITES)
-				gSprites[sDNavState->objIdMove].invisible = FALSE;
+			if (sDNavState->spriteIdMove < MAX_SPRITES)
+				gSprites[sDNavState->spriteIdMove].invisible = FALSE;
 		}
 		if (searchLevel > 2)
 		{
 			// show ability, move, hide others
-			if (sDNavState->objIdAbility < MAX_SPRITES)
-				gSprites[sDNavState->objIdAbility].invisible = FALSE;
+			if (sDNavState->spriteIdAbility < MAX_SPRITES)
+				gSprites[sDNavState->spriteIdAbility].invisible = FALSE;
 			if (sDNavState->heldItem)
 			{
 				// toggle item view
-				if (sDNavState->objIdItem < MAX_SPRITES)
-					gSprites[sDNavState->objIdItem].invisible = FALSE;
+				if (sDNavState->spriteIdItem < MAX_SPRITES)
+					gSprites[sDNavState->spriteIdItem].invisible = FALSE;
 			}
 		}
 		if (searchLevel > 4)
 		{
-			if (sDNavState->objIdPotential[0] < MAX_SPRITES)
-				gSprites[sDNavState->objIdPotential[0]].invisible = FALSE;
+			if (sDNavState->spriteIdPotential[0] < MAX_SPRITES)
+				gSprites[sDNavState->spriteIdPotential[0]].invisible = FALSE;
 
-			if (sDNavState->objIdPotential[1] < MAX_SPRITES)
-				gSprites[sDNavState->objIdPotential[1]].invisible = FALSE;
+			if (sDNavState->spriteIdPotential[1] < MAX_SPRITES)
+				gSprites[sDNavState->spriteIdPotential[1]].invisible = FALSE;
 
-			if (sDNavState->objIdPotential[2] < MAX_SPRITES)
-				gSprites[sDNavState->objIdPotential[2]].invisible = FALSE;
+			if (sDNavState->spriteIdPotential[2] < MAX_SPRITES)
+				gSprites[sDNavState->spriteIdPotential[2]].invisible = FALSE;
 		}
 	}
 	else if (proximity <= SNEAKING_PROXIMITY)
@@ -1030,10 +1030,10 @@ static void DexNavManageHUD(u8 taskId)
 		switch(sDNavState->environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
-				FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], FLDEFF_CAVE_DUST); // 1a
+				FieldEffectStop(&gSprites[sDNavState->spriteIdShakingGrass], FLDEFF_CAVE_DUST); // 1a
 				break;
 			case ENCOUNTER_TYPE_WATER:
-				FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], FLDEFF_SPLASHING_WATER);
+				FieldEffectStop(&gSprites[sDNavState->spriteIdShakingGrass], FLDEFF_SPLASHING_WATER);
 				break;
 			default:
 				break;
@@ -1418,7 +1418,18 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 }
 
 extern const u8 gInterfaceGfx_DexnavBarTiles[];
-static const struct CompressedSpriteSheet sBlackBarTiles = {gInterfaceGfx_DexnavBarTiles, (64 * 32) / 2, 0xFDF1};
+
+static const union AffineAnimCmd sSpriteAffineAnim_DexNavBar[] =
+{
+	AFFINEANIMCMD_FRAME(256, 0, 0, 1), //Double sprite width
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_DexNavBar[] =
+{
+	sSpriteAffineAnim_DexNavBar,
+};
+
 static const struct SpriteTemplate sBlackBarTemplate =
 {
 	.tileTag = 0xFDF1,
@@ -1426,18 +1437,18 @@ static const struct SpriteTemplate sBlackBarTemplate =
 	.oam = &sBlackBarOAM,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
-	.affineAnims = gDummySpriteAffineAnimTable,
+	.affineAnims = sSpriteAffineAnimTable_DexNavBar,
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavDrawBlackBars(u8 objidAddr[4])
+static const struct CompressedSpriteSheet sBlackBarTiles = {gInterfaceGfx_DexnavBarTiles, (64 * 32) / 2, 0xFDF1};
+
+static void DexNavDrawBlackBars(u8 spriteIdAddr[2])
 {
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&sBlackBarTiles);
-	objidAddr[0] = CreateSprite(&sBlackBarTemplate, ICONX + 16, ICONY - 2, 0x0);
-	objidAddr[1] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64, ICONY - 2, 0x0);
-	objidAddr[2] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64 + 64, ICONY - 2, 0x0);
-	objidAddr[3] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64 + 64 + 64, ICONY - 2, 0x0);
+	spriteIdAddr[0] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 16, ICONY - 2, 0x0);
+	spriteIdAddr[1] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 144, ICONY - 2, 0x0);
 }
 
 // create empty object of size 64x32 to draw icons on
@@ -1447,22 +1458,21 @@ static const struct SpriteTemplate fontTempSight =
 	.tileTag = 0x5424,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &FontOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.anims = gDummySpriteAnimTable,
 	.images = NULL,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr)
+static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
 {
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&sightTiles);
-	u8 objId = CreateSprite(&fontTempSight, ICONX + 192, ICONY + 0x12, 0x0);
-	if (objId < MAX_SPRITES)
-	{
-		*objidAddr = objId;
-		DexNavSightUpdate(sight_lvl);
-	}
+	u8 spriteId = CreateSprite(&fontTempSight, ICONX + 192, ICONY + 0x12, 0x0);
+	if (spriteId < MAX_SPRITES)
+		DexNavSightUpdate(sightLevel);
+
+	*spriteIdAddr = spriteId;
 };
 
 // create empty object of size 64x32 to draw font on
@@ -1474,22 +1484,20 @@ static const struct SpriteTemplate FontTempAbility =
 	.oam = (struct OamData*) &FontOAM,
 	.anims = (const union AnimCmd* const*)gDummySpriteAnimTable,
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavDrawAbility(u8 ability, u8* objidAddr)
+static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
 {
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&FontSpriteAbility);
-	u8 objId = CreateSprite(&FontTempAbility, ICONX + 80, ICONY + 0x12, 0x0);
-	if (objId < MAX_SPRITES)
+	u8 spriteId = CreateSprite(&FontTempAbility, ICONX + 80, ICONY + 0x12, 0x0);
+	if (spriteId < MAX_SPRITES)
 	{
-		*objidAddr = objId;
-
 		//Ability name beside move name
 		u8 len = sDNavState->moveNameLength;
-		gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
+		gSprites[spriteId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
 
 		//Copy ability string from table using state id
 		CopyAbilityName(gStringVar4, ability);
@@ -1504,8 +1512,10 @@ static void DexNavDrawAbility(u8 ability, u8* objidAddr)
 		}
 
 		//Write ability name on sprite
-		OutlinedFontDraw(objId, 0, 32 * 8);
+		OutlinedFontDraw(spriteId, 0, 32 * 8);
 	}
+
+	*spriteIdAddr = spriteId;
 }
 
 	// create empty object of size 64x32 to draw font on
@@ -1515,21 +1525,19 @@ static const struct SpriteTemplate FontTempMove =
 	.tileTag = 0x4736,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &FontOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.anims = gDummySpriteAnimTable,
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
+static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr)
 {
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&FontSpriteMove);
-	u8 objId = CreateSprite(&FontTempMove, ICONX + 80, ICONY + 0x12, 0x0);
-	if (objId < MAX_SPRITES)
+	u8 spriteId = CreateSprite(&FontTempMove, ICONX + 80, ICONY + 0x12, 0x0);
+	if (spriteId < MAX_SPRITES)
 	{
-		*objidAddr = objId;
-
 		// Copy move string from table using state id, add '/' character to the end of it
 		u8* ptr = StringCopy(gStringVar4, gMoveNames[move]);
 		u8 len = StringLength(gStringVar4);
@@ -1556,8 +1564,10 @@ static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
 		}
 
 		// write name to object
-		OutlinedFontDraw(objId, 0, 32 * 8);
+		OutlinedFontDraw(spriteId, 0, 32 * 8);
 	}
+
+	*spriteIdAddr = spriteId;
 };
 
 //19 tiles per row, stars are on the 4th row. 1 tile is 32 bytes. Hence 19 * 4 *32
@@ -1569,9 +1579,9 @@ static const struct SpriteTemplate StarLitTemp =
 	.tileTag = 0x61,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.anims = gDummySpriteAnimTable,
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
@@ -1586,7 +1596,7 @@ static const struct SpriteTemplate StarOffTemp =
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavDrawPotential(u8 potential, u8* objidAddr)
+static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr)
 {
 	// allocate both the lit and unlit star to VRAM
 	LoadSpriteSheet(&StarIconLit);
@@ -1594,32 +1604,31 @@ static void DexNavDrawPotential(u8 potential, u8* objidAddr)
 	LoadSpritePalette(&HeldPal);
 
 	// create star objects and space them according to potential 0 - 3
-	u8 objId;
-	u8 i;
+	u8 i, spriteId;
 	for (i = 0; i < 3; ++i)
 	{
 		if (potential > i)
-			objId = CreateSprite(&StarLitTemp, ICONX + 23 + (i * 8), ICONY + 0x5, 0x0);
+			spriteId = CreateSprite(&StarLitTemp, ICONX + 23 + (i * 8), ICONY + 0x5, 0x0);
 		else
-			objId = CreateSprite(&StarOffTemp, ICONX + 23 + (i * 8), ICONY + 0x5, 0x0);
+			spriteId = CreateSprite(&StarOffTemp, ICONX + 23 + (i * 8), ICONY + 0x5, 0x0);
 
-		objidAddr[i] = objId;
+		spriteIdAddr[i] = spriteId;
 	}
 }
 
 
-void DexNavHudDrawSpeciesIcon(u16 species, u8* objIdAddr)
+void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 {
 	u32 pid = 0xFFFFFFFF;
 	if (species == SPECIES_UNOWN)
-		pid = GenerateUnownPersonality(sDNavState->unownLetter - 1);
+		pid = GenerateUnownPersonalityByLetter(sDNavState->unownLetter - 1);
 
 	//Load which palette the species icon uses
 	LoadMonIconPalette(species);
 
 	//Create the icon
-	u8 objId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
-	*objIdAddr = objId;
+	u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
+	*spriteIdAddr = spriteId;
 }
 
 static const struct SpriteSheet HeldIcon = {(const u8*) (0x0845A3AC), 64, 0x8472};
@@ -1634,26 +1643,26 @@ static const struct SpriteTemplate HeldTemp =
 	.callback = SpriteCallbackDummy,
 };
 
-void DexNavDrawHeldItem(u8* objidAddr)
+void DexNavDrawHeldItem(u8* spriteIdAddr)
 {
 	//Create SPRITE for held item icon
 	LoadSpriteSheet(&HeldIcon);
 	LoadSpritePalette(&HeldPal);
-	u8 objId = CreateSprite(&HeldTemp, ICONX + 0x8, ICONY + 0xC, 0x0);
-	*objidAddr = objId;
+	u8 spriteId = CreateSprite(&HeldTemp, ICONX + 0x8, ICONY + 0xC, 0x0);
+	*spriteIdAddr = spriteId;
 };
 
 
 static void DexNavDrawIcons(void)
 {
 	u8 searchLevel = sDNavState->searchLevel;
-	DexNavDrawBlackBars(sDNavState->objIdBlackBar);
-	DexNavDrawSight(sDNavState->proximity, &sDNavState->objIdSight);
-	DexNavDrawMove(sDNavState->moveId[0], searchLevel, &sDNavState->objIdMove);
-	DexNavDrawHeldItem(&sDNavState->objIdItem);
-	DexNavDrawAbility(sDNavState->ability, &sDNavState->objIdAbility);
-	DexNavDrawPotential(sDNavState->potential, &sDNavState->objIdPotential[0]);
-	DexNavHudDrawSpeciesIcon(sDNavState->species, &sDNavState->objIdSpecies);
+	DexNavDrawBlackBars(sDNavState->spriteIdBlackBar);
+	DexNavDrawSight(sDNavState->proximity, &sDNavState->spriteIdSight);
+	DexNavDrawMove(sDNavState->moveId[0], searchLevel, &sDNavState->spriteIdMove);
+	DexNavDrawHeldItem(&sDNavState->spriteIdItem);
+	DexNavDrawAbility(sDNavState->ability, &sDNavState->spriteIdAbility);
+	DexNavDrawPotential(sDNavState->potential, &sDNavState->spriteIdPotential[0]);
+	DexNavHudDrawSpeciesIcon(sDNavState->species, &sDNavState->spriteIdSpecies);
 };
 
 
@@ -1662,6 +1671,12 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDNavState = Calloc(sizeof(struct DexnavHudData));
 	// assign non-objects to struct
 	sDNavState->species = species;
+
+	if (species != gLastDexNavSpecies)
+	{
+		gLastDexNavSpecies = species;
+		gDexNavCooldown = FALSE; //Don't need to walk another step if searching for a different Pokemon
+	}
 
 	if (IS_NEWER_UNOWN_LETTER(species))
 	{
@@ -1685,9 +1700,10 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 	// draw shaking grass
 	//extern u8 ShakingGrass(u8, u8, u8, bool8);
-	if (!ShakingGrass(environment, 12, 12, 0))
+	if (gDexNavCooldown || !ShakingGrass(environment, 12, 12, 0))
 	{
 		Free(sDNavState);
+		gDexNavCooldown = TRUE; //A Pokemon can't be found until the player takes at least one step or searches for another Pokemon manually
 		MsgNormal(gText_NotFoundNearby);
 		return;
 	}
@@ -1706,8 +1722,8 @@ void InitDexNavHUD(u16 species, u8 environment)
 	DexNavIconsVisionUpdate(sDNavState->proximity, searchLevel);
 
 	//Enable Hblank interrupt
-	//EnableInterrupts(2);
-	//SetHBlankCallback(DexHUDHBlank);
+	/*EnableInterrupts(2);
+	SetHBlankCallback(DexHUDHBlank);*/
 
 	// task update HUD
 	u8 taskId = CreateTask((TaskFunc)DexNavManageHUD, 0x1);
@@ -1785,7 +1801,7 @@ static void DexNavLoadPokeIcons(void)
 
 		letter = sDNavState->unownFormsByDNavIndices[i];
 		if (letter > 0)
-			pid = GenerateUnownPersonality(sDNavState->unownFormsByDNavIndices[i] - 1);
+			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
 	}
@@ -1809,7 +1825,7 @@ static void DexNavLoadPokeIcons(void)
 
 		letter = PickUnownLetter(species, i);
 		if (letter > 0)
-			pid = GenerateUnownPersonality(letter - 1);
+			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
 	}
@@ -1826,9 +1842,9 @@ static void CreateNoDataIcon(s16 x, s16 y)
 		.tileTag = ICON_GFX_TAG,
 		.paletteTag = ICON_PAL_TAG,
 		.oam = (struct OamData*) &IconOAM,
-		.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+		.anims = gDummySpriteAnimTable,
 		.images = NULL,
-		.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = (SpriteCallback) SpriteCallbackDummy,
 	};
 
@@ -1860,9 +1876,9 @@ static const struct SpriteTemplate CursorTemp =
 	.tileTag = SELECTION_CURSOR_TAG,
 	.paletteTag = SELECTION_CURSOR_TAG,
 	.oam = (struct OamData*) &CursorOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.anims = gDummySpriteAnimTable,
 	.images = (const struct SpriteFrameImage *) &CursorGFX,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
@@ -1902,6 +1918,11 @@ static void DexNavLoadAreaNames(void)
 	{
 		landText = gText_DexNavLand;
 		waterText = gText_Magma;
+	}
+	else if (IsCurrentAreaDesert())
+	{
+		landText = gText_Sand;
+		waterText = gText_DexNavWater;
 	}
 	else
 	#endif
@@ -2004,9 +2025,9 @@ static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate =
 	.tileTag = 0xFDF2,
 	.paletteTag = SELECTION_CURSOR_TAG,
 	.oam = (struct OamData*) &sCapturedAllPokemonSymbolOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.anims = gDummySpriteAnimTable,
 	.images = NULL,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
@@ -2264,6 +2285,8 @@ static void DexNavGuiHandler(void)
 				palette = gInterfaceGfx_DexNavGuiAutumnPal;
 			else if (IsCurrentAreaWinter())
 				palette = gInterfaceGfx_DexNavGuiWinterPal;
+			else if (IsCurrentAreaDesert())
+				palette = gInterfaceGfx_DexNavGuiDesertPal;
 			else if (IsCurrentAreaSwamp())
 				palette = gInterfaceGfx_DexNavGuiSwampPal;
 			else
@@ -2527,11 +2550,11 @@ static void FieldEff_CaveDust(void)
 	LoadPalette(gInterfaceGfx_caveSmokePal, 29 * 16, 32);
 	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
 
-	u8 objId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (objId != MAX_SPRITES)
+	u8 spriteId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+	if (spriteId != MAX_SPRITES)
 	{
-		gSprites[objId].coordOffsetEnabled = 1;
-		gSprites[objId].data[0] = 22;
+		gSprites[spriteId].coordOffsetEnabled = 1;
+		gSprites[spriteId].data[0] = 22;
 	}
 }
 
@@ -2585,11 +2608,11 @@ static void FieldEff_Sparkles(void)
 	LoadPalette(gInterfaceGfx_SparklesPal, 29 * 16, 32);
 	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
 
-	u8 objId = CreateSpriteAtEnd(&sSpriteTemplateSparkles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (objId != MAX_SPRITES)
+	u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplateSparkles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+	if (spriteId != MAX_SPRITES)
 	{
-		gSprites[objId].coordOffsetEnabled = 1;
-		gSprites[objId].data[0] = 22;
+		gSprites[spriteId].coordOffsetEnabled = 1;
+		gSprites[spriteId].data[0] = 22;
 	}
 }
 
@@ -2625,11 +2648,11 @@ static void FieldEff_LavaBubbles(void)
 	LoadPalette(gInterfaceGfx_LavaBubblesPal, 29 * 16, 32);
 	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
 
-	u8 objId = CreateSpriteAtEnd(&sSpriteTemplateLavaBubbles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (objId != MAX_SPRITES)
+	u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplateLavaBubbles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+	if (spriteId != MAX_SPRITES)
 	{
-		gSprites[objId].coordOffsetEnabled = 1;
-		gSprites[objId].data[0] = 22;
+		gSprites[spriteId].coordOffsetEnabled = 1;
+		gSprites[spriteId].data[0] = 22;
 	}
 }
 

@@ -104,6 +104,7 @@ void __attribute__((long_call)) InitObjectPriorityByZCoord(struct Sprite *, u8);
 u8 __attribute__((long_call)) EventObjectFaceOppositeDirection(struct EventObject *, u8);
 void __attribute__((long_call)) LockSelectedEventObject(void);
 bool8 __attribute__((long_call)) FreezeEventObject(struct EventObject *eventObject);
+void __attribute__((long_call)) ClearPlayerHeldMovementAndUnfreezeEventObjects(void);
 u8 __attribute__((long_call)) ZCoordToPriority(u8);
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 u8 __attribute__((long_call)) GetWalkNormalMovementAction(u32);
@@ -112,6 +113,7 @@ u8 __attribute__((long_call)) GetRideWaterCurrentMovementAction(u32);
 u8 __attribute__((long_call)) GetWalkFastestMovementAction(u32);
 u8 __attribute__((long_call)) GetPlayerRunMovementAction(u32);
 u8 __attribute__((long_call)) GetJumpInPlaceMovementAction(u32);
+u8 __attribute__((long_call)) GetWalkInPlaceNormalMovementAction(u32);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -159,7 +161,6 @@ void InitEventObjectPalettes(u8 palSlot);
 void UpdateEventObjectCurrentMovement(struct EventObject *, struct Sprite *, bool8(struct EventObject *, struct Sprite *));
 u8 GetWalkInPlaceFastestMovementAction(u32);
 u8 GetWalkInPlaceFastMovementAction(u32);
-u8 GetWalkInPlaceNormalMovementAction(u32);
 u8 GetWalkInPlaceSlowMovementAction(u32);
 bool8 EventObjectIsHeldMovementActive(struct EventObject *);
 u8 EventObjectClearHeldMovementIfFinished(struct EventObject *);

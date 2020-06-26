@@ -27,6 +27,7 @@ bool8 IsRunningDisallowed(u8 tile);
 bool8 IsCurrentAreaVolcano(void);
 bool8 IsCurrentAreaAutumn(void);
 bool8 IsCurrentAreaWinter(void);
+bool8 IsCurrentAreaDesert(void);
 bool8 IsCurrentAreaSwamp(void);
 bool8 IsCurrentAreaDarkerCave(void);
 bool8 InTanobyRuins(void);

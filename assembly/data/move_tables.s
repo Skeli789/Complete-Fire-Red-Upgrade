@@ -47,7 +47,6 @@ move_tables.s
 .global gMovesThatChangePhysicality
 .global gTwoToFiveStrikesMoves
 .global gTwoStrikesMoves
-.global gThreeStrikesMoves
 .global gPercent25RecoilMoves
 .global gPercent33RecoilMoves
 .global gPercent50RecoilMoves
@@ -477,7 +476,6 @@ gDynamaxBannedMoves:
 .hword MOVE_HEATCRASH
 .hword MOVE_HEAVYSLAM
 .hword MOVE_LOWKICK
-.hword MOVE_PLUCK
 .hword MOVE_ROAR
 .hword MOVE_WHIRLWIND
 .hword MOVE_SKYDROP
@@ -619,6 +617,7 @@ gPulseAuraMoves:
 .hword MOVE_DRAGONPULSE
 .hword MOVE_HEALPULSE
 .hword MOVE_ORIGINPULSE
+.hword MOVE_TERRAINPULSE
 .hword MOVE_WATERPULSE
 .hword MOVE_TABLES_TERMIN
 
@@ -777,6 +776,7 @@ gSubstituteBypassMoves:
 .hword MOVE_SPECTRALTHIEF
 .hword MOVE_TEATIME
 .hword MOVE_LIFEDEW
+.hword MOVE_JUNGLEHEALING
 .hword MOVE_STEALTHROCK
 .hword MOVE_STICKYWEB
 .hword MOVE_SPIKES
@@ -836,6 +836,8 @@ gHighCriticalChanceMoves:
 gAlwaysCriticalMoves:
 .hword MOVE_STORMTHROW
 .hword MOVE_FROSTBREATH
+.hword MOVE_SURGINGSTRIKES
+.hword MOVE_WICKEDBLOW
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -965,6 +967,7 @@ gTwoToFiveStrikesMoves:
 .hword MOVE_ICICLESPEAR
 .hword MOVE_PINMISSILE
 .hword MOVE_ROCKBLAST
+.hword MOVE_SCALESHOT
 .hword MOVE_SPIKECANNON
 .hword MOVE_TAILSLAP
 .hword MOVE_WATERSHURIKEN
@@ -975,18 +978,13 @@ gTwoToFiveStrikesMoves:
 gTwoStrikesMoves:
 .hword MOVE_BONEMERANG
 .hword MOVE_DOUBLEHIT
+.hword MOVE_DOUBLEIRONBASH
 .hword MOVE_DOUBLEKICK
+.hword MOVE_DRAGONDARTS
 .hword MOVE_DUALCHOP
+.hword MOVE_DUALWINGBEAT
 .hword MOVE_GEARGRIND
 .hword MOVE_TWINEEDLE
-.hword MOVE_DOUBLEIRONBASH
-.hword MOVE_DRAGONDARTS
-.hword MOVE_TABLES_TERMIN
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-gThreeStrikesMoves:
-.hword MOVE_TRIPLEKICK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

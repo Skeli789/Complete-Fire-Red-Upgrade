@@ -18,6 +18,7 @@ extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseBPal[];
 extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseCPal[];
 extern const u8 gInterfaceGfx_DexNavGuiAutumnPal[];
 extern const u8 gInterfaceGfx_DexNavGuiWinterPal[];
+extern const u8 gInterfaceGfx_DexNavGuiDesertPal[];
 extern const u8 gInterfaceGfx_DexNavGuiSwampPal[];
 extern const u8 gInterfaceGfx_DexNavGuiCavePal[];
 extern const u8 gInterfaceGfx_DexNavGuiDarkerCavePal[];
@@ -48,6 +49,7 @@ extern const u8 gText_BlueFlowers[];
 extern const u8 gText_PinkAndPurpleFlowers[];
 extern const u8 gText_BlueAndYellowFlowers[];
 extern const u8 gText_Magma[];
+extern const u8 gText_Sand[];
 extern const u8 gText_PokeTools[];
 extern const u8 gText_GotAway[];
 extern const u8 gText_LostSignal[];
@@ -96,8 +98,8 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 
 //extern void dprintf(const char * str, ...);
 
-//#define OBJID_HIDE(objid) objects[objid].final_oam.affineMode = 2
-//#define OBJID_SHOW(objid) objects[objid].final_oam.affineMode = 0
+//#define spriteId_HIDE(spriteId) objects[spriteId].final_oam.affineMode = 2
+//#define spriteId_SHOW(spriteId) objects[spriteId].final_oam.affineMode = 0
 
 #define ICONX 0x10
 #define ICONY 0x92
@@ -138,14 +140,14 @@ struct DexnavHudData
 	u8 unownLetter;
     s16 tileX; // position of shaking grass
     s16 tileY;
-    u8 objIdSpecies;
-    u8 objIdBlackBar[4];
-    u8 objIdSight;
-    u8 objIdAbility;
-    u8 objIdMove;
-    u8 objIdItem;
-    u8 objIdShakingGrass;
-    u8 objIdPotential[3];
+    u8 spriteIdSpecies;
+    u8 spriteIdBlackBar[4];
+    u8 spriteIdSight;
+    u8 spriteIdAbility;
+    u8 spriteIdMove;
+    u8 spriteIdItem;
+    u8 spriteIdShakingGrass;
+    u8 spriteIdPotential[3];
     u8 movementTimes;
 
     // GUI data
@@ -159,7 +161,7 @@ struct DexnavHudData
 	u8 numHiddenLandMons;
 	u8 numHiddenWaterMons;
     u8 cursorId;
-    u8 objids[17];
+    u8 spriteIds[17];
     u8 selectedIndex;
     u8 selectedArr;
     void* backBuffer;
@@ -423,7 +425,7 @@ static const struct WindowTemplate sDexNavWindows[] =
 //64x32 oam with second highest priority
 static const struct OamData sBlackBarOAM =
 {
-	.affineMode = ST_OAM_AFFINE_OFF,
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
 	.objMode = ST_OAM_OBJ_NORMAL,
 	.shape = SPRITE_SHAPE(64x32),
 	.size = SPRITE_SIZE(64x32),

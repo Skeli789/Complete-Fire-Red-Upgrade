@@ -1,4 +1,6 @@
 #include "defines.h"
+#include "../include/coins.h"
+#include "../include/money.h"
 #include "../include/event_data.h"
 #include "../include/item.h"
 #include "../include/constants/items.h"
@@ -155,3 +157,8 @@ void DebugMenu_SetTeamToLevel100(void)
 	}
 }
 
+void DebugMenu_MaxMoneyAndCoins(void)
+{
+	AddMoney(&gSaveBlock1->money, 0xFFFFFFFF);
+	SetCoins(999999999);
+}

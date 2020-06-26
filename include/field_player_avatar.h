@@ -20,6 +20,8 @@ void __attribute__((long_call)) PlayerGoSpeed1(u8);
 void __attribute__((long_call)) PlayerGoSpeed2(u8);
 void __attribute__((long_call)) PlayerRideWaterCurrent(u8);
 void __attribute__((long_call)) PlayerGoSpeed4(u8);
+void __attribute__((long_call)) PlayerSetAnimId(u8 a, u8 b);
+void __attribute__((long_call)) PlayCollisionSoundIfNotFacingWarp(u8 a);
 
 //In Engine
 u16 GetPlayerAvatarGraphicsIdByStateIdAndGender(u8 state, u8 gender);

@@ -903,7 +903,7 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 {
-	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+	u16 predictedMove = GetStrongestMove(bankDef, bankAtk); //Get the strongest move as the predicted move
 	u32 predictedDamage = 0;
 
 	if (predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
@@ -963,7 +963,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (gBattleMoves[move].power == 0
-			||  (onlySpreadMoves && !(gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
+			|| (onlySpreadMoves && !(gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
 				continue;
 
 			if (gBattleMoves[move].effect == EFFECT_COUNTER || gBattleMoves[move].effect == EFFECT_MIRROR_COAT) //Includes Metal Burst

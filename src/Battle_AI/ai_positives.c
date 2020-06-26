@@ -367,10 +367,15 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 		case EFFECT_MULTI_HIT:
 		case EFFECT_TRIPLE_KICK:
-		case EFFECT_DOUBLE_HIT:
+		case EFFECT_DOUBLE_HIT: ;
+			u8 strongestMoveEffect = gBattleMoves[GetStrongestMove(bankAtk, bankDef)].effect;
+
 			if (IS_SINGLE_BATTLE
 			&& IsClassSweeper(class)
-			&& !IsStrongestMove(move, bankAtk, bankDef)
+			&& !IsStrongestMove(move, bankAtk, bankDef) //This multi-hit move wouldn't be chosen normally
+			&& strongestMoveEffect != EFFECT_MULTI_HIT //The strongest move isn't a multi-hit move
+			&& strongestMoveEffect != EFFECT_TRIPLE_KICK
+			&& strongestMoveEffect != EFFECT_DOUBLE_HIT
 			&& (MoveBlockedBySubstitute(move, bankAtk, bankDef) //Attack has to hit substitute to break it
 			 || data->atkItemEffect == ITEM_EFFECT_FLINCH))
 				INCREASE_VIABILITY(3); //Move past strongest move
@@ -1159,6 +1164,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			{
 				case MOVE_UTURN:
 				case MOVE_VOLTSWITCH:
+				case MOVE_FLIPTURN:
 				case MOVE_PARTINGSHOT:
 					PIVOT_CHECK:
 					if (IS_SINGLE_BATTLE)

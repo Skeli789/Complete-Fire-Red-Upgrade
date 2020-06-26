@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/bg.h"
 #include "../include/event_data.h"
+#include "../include/gpu_regs.h"
 #include "../include/fieldmap.h"
 #include "../include/field_player_avatar.h"
 #include "../include/metatile_behavior.h"
@@ -188,24 +190,24 @@ u8 LoadBattleBG_TerrainID(void) {
 
 void DrawBattleEntryBackground(void)
 {
-  /*  if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 	{
-		LZDecompressVram(gUnknown_08E7737C, (void*)(BG_CHAR_ADDR(1)));
-		LZDecompressVram(gUnknown_08E77598, (void*)(VRAM + 0x10000));
-		LoadCompressedPalette(gUnknown_08E77570, 0x60, 0x20);
+		LZDecompressVram((void*) 0x8E7737C, (void*) (BG_CHAR_ADDR(1)));
+		LZDecompressVram((void*) 0x08E77598, (void*) (VRAM + 0x10000));
+		LoadCompressedPalette((void*) 0x8E77570, 0x60, 0x20);
 		SetBgAttribute(1, BG_ATTR_SCREENSIZE, 1);
-		SetGpuReg(REG_OFFSET_BG1CNT, 0x5C04);
-		CopyToBgTilemapBuffer(1, gUnknown_08E77464, 0, 0);
-		CopyToBgTilemapBuffer(2, gUnknown_08E77464, 0, 0);
+        SetGpuReg(REG_OFFSET_BG1CNT, BGCNT_PRIORITY(0) | BGCNT_CHARBASE(1) | BGCNT_16COLOR | BGCNT_SCREENBASE(28) | BGCNT_TXT512x256);
+        CopyToBgTilemapBuffer(1, (void*) 0x8E77464, 0, 0);
+		CopyToBgTilemapBuffer(2, (void*) 0x8E77464, 0, 0);
 		CopyBgTilemapBufferToVram(1);
 		CopyBgTilemapBufferToVram(2);
-		SetGpuReg(REG_OFFSET_WININ, 0x36);
-		SetGpuReg(REG_OFFSET_WINOUT, 0x36);
-		gBattle_BG1_Y = 0xFF5C;
-		gBattle_BG2_Y = 0xFF5C;
-		LoadCompressedSpriteSheetUsingHeap(&gUnknown_08248318);
+        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ | WININ_WIN0_CLR);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR);
+        gBattle_BG1_Y = -164;
+        gBattle_BG2_Y = -164;
+		LoadCompressedSpriteSheetUsingHeap((void*) 0x8248318);
 	}
-	else*/
+	else
 	{
 		u8 terrain = LoadBattleBG_TerrainID();
 		LoadBattleBG_EntryOverlay(terrain);
@@ -292,21 +294,30 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		}
 	}
 
-	if (terrain == BATTLE_TERRAIN_SNOW_CAVE
-	&&  MetatileBehavior_IsIce(tileBehavior))
-		terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
-	else if (terrain == BATTLE_TERRAIN_PLAIN
-	&& IsCurrentAreaAutumn())
-		terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
-	else if (terrain == BATTLE_TERRAIN_PLAIN
-	&& IsCurrentAreaWinter())
-		terrain = BATTLE_TERRAIN_SNOW_FIELD;
-	else if (terrain == BATTLE_TERRAIN_GRASS
-	&& IsCurrentAreaWinter())
-		terrain = BATTLE_TERRAIN_SNOW_GRASS;
-	else if (terrain == BATTLE_TERRAIN_SNOW_FIELD
-	&& MetatileBehavior_IsTallGrass(tileBehavior))
-		terrain = BATTLE_TERRAIN_SNOW_GRASS;
+	switch (terrain) {
+		case BATTLE_TERRAIN_SNOW_CAVE:
+			if (MetatileBehavior_IsIce(tileBehavior))
+				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
+			break;
+		case BATTLE_TERRAIN_PLAIN:
+			if (IsCurrentAreaAutumn())
+				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
+			else if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_FIELD;
+			break;
+		case BATTLE_TERRAIN_GRASS:
+			if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_SNOW_FIELD:
+			if (MetatileBehavior_IsTallGrass(tileBehavior))
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_SAND:
+			if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
+			break;
+	}
 #endif
 
 	return terrain;

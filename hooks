@@ -152,6 +152,7 @@ MetatileBehavior_IsUnableToEmerge 8059FCC 1
 #MetatileBehavior_IsHorizontalRail 805A21C 1
 DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
+PlayerOnBikeCollide 805C1AC 1
 GetLedgeJumpDirection 80680F8 3
 RunOnTransitionMapScript 8069C44 0
 RunOnResumeMapScript 8069C50 0
