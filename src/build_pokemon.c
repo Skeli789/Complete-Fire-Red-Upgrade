@@ -523,9 +523,9 @@ void sp06B_ReplacePlayerTeamWithMultiTrainerTeam(void)
 //Returns the number of Pokemon
 static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {
+	u32 i, j;
+	u8 baseIV;
 	u32 nameHash = 0;
-	u32 personalityValue;
-	int i, j;
 	u8 monsCount = 1;
 	u32 otid = Random32();
 	u8 setMonGender = 0xFF;
@@ -536,6 +536,17 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		return BuildFrontierParty(party, trainerId, BATTLE_FACILITY_STANDARD, firstTrainer, FALSE, side);
 
 	struct Trainer* trainer = &gTrainers[trainerId];
+
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+		baseIV = 31;
+	else
+	#endif
+	{
+		baseIV = MathMin(gBaseIVsByTrainerClass[trainer->trainerClass], 31);
+		if (baseIV == 0) //No data in the table
+			baseIV = STANDARD_IV;
+	}
 
 	if (!firstTrainer && side == B_SIDE_PLAYER && trainer->encounterMusic > 0) //Multi partner with preset Id
 	{
@@ -618,7 +629,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 		for (i = 0; i < monsCount; ++i)
 		{
-			//gBankAttacker = i + 1;
+			u32 personalityValue;
 			u8 genderOffset = 0x80;
 
 			if (setMonGender == 1)
