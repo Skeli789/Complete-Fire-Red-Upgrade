@@ -14,6 +14,7 @@ definitions for animation particles
 .equ ROCKS_IMG, RocksTiles
 .equ BATON_PASS_POKEBALL_IMG, Baton_Pass_BallTiles
 .equ GREEN_STAR_IMG, Green_StarTiles
+.equ HELPING_HAND_IMG, Helping_HandTiles
 .equ EYE_IMG, Mean_LookTiles
 .equ NAIL_IMG, Curse_NailTiles
 .equ SPIKES_IMG, SpikesTiles
@@ -109,6 +110,7 @@ definitions for animation particles
 .equ ROCKS_PAL, RocksPal
 .equ BATON_PASS_POKEBALL_PAL, Baton_Pass_BallPal
 .equ GREEN_STAR_PAL, Green_StarPal
+.equ HELPING_HAND_PAL, Helping_HandPal
 .equ EYE_PAL, Mean_LookPal
 .equ NAIL_PAL, Curse_NailPal
 .equ SPIKES_PAL, SpikesPal

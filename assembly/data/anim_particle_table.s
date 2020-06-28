@@ -262,7 +262,7 @@ animparticle 0x8d2d8a4,	0x20,	ANIM_TAG_SWEAT_DROP
 animparticle 0x8d2e728,	0x400,	ANIM_TAG_GUARD_RING
 animparticle 0x8d2e0dc,	0x600,	ANIM_TAG_PURPLE_SCRATCH
 animparticle 0x8d2e280,	0x1000,	ANIM_TAG_PURPLE_SWIPE
-animparticle 0x8d2e820,	0x400,	ANIM_TAG_TAG_HAND
+animparticle HELPING_HAND_IMG,	0x400,	ANIM_TAG_TAG_HAND
 animparticle 0x8d2ed78,	0x20,	ANIM_TAG_SMALL_RED_EYE
 animparticle 0x8d2eda8,	0x80,	ANIM_TAG_HOLLOW_ORB
 animparticle 0x8d2ee18,	0x800,	ANIM_TAG_X_SIGN
@@ -633,7 +633,7 @@ animparticlepal 0x8d2d8cc,	ANIM_TAG_SWEAT_DROP
 animparticlepal 0x8d2e804,	ANIM_TAG_GUARD_RING
 animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SCRATCH
 animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SWIPE
-animparticlepal 0x8d233c8,	ANIM_TAG_TAG_HAND
+animparticlepal HELPING_HAND_PAL,	ANIM_TAG_TAG_HAND
 animparticlepal 0x8d2ed90,	ANIM_TAG_SMALL_RED_EYE
 animparticlepal 0x8d2edf8,	ANIM_TAG_HOLLOW_ORB
 animparticlepal 0x8d2edf8,	ANIM_TAG_X_SIGN
