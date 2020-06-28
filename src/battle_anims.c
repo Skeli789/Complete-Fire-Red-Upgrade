@@ -589,6 +589,18 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_NightSlashRight[] =
 	sSpriteAffineAnim_NightSlashRight,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_PsychoCutOpponent[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 128, 1), //180 degree turn
+	AFFINEANIMCMD_FRAME(4, 4, 0, 64), //Double in size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_PsychoCutOpponent[] =
+{
+	sSpriteAffineAnim_PsychoCutOpponent,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
 {
 	AFFINEANIMCMD_FRAME(16, 16, 0, 4),

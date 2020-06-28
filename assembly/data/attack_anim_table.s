@@ -3033,7 +3033,10 @@ ANIM_PSYCHOCUT:
 	soundcomplex 0xb1 SOUND_PAN_ATTACKER 0xa 0x3
 	launchtemplate PSYCHOCUT_WHEEL TEMPLATE_ATTACKER | 3, 0x5 bank_attacker 0x0 0x0 0x45 0x0 
 	pause 0x25
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 bank_target PSYCHO_CUT_OPPONENT_ATTACK
 	launchtemplate PSYCHOCUT_BLADE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
+PSYCHO_CUT_REJOIN:
 	pause 0x25
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
 	playsound2 0x81 SOUND_PAN_TARGET
@@ -3041,9 +3044,14 @@ ANIM_PSYCHOCUT:
 	pokespritefromBG side_target
 	endanimation
 
+PSYCHO_CUT_OPPONENT_ATTACK:
+	launchtemplate PSYCHOCUT_BLADE_OPPONENT TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
+	goto PSYCHO_CUT_REJOIN
+
 .align 2
 PSYCHOCUT_WHEEL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83e7604 SpriteCB_SpriteOnMonForDuration
 PSYCHOCUT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80B563D
+PSYCHOCUT_BLADE_OPPONENT: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PsychoCutOpponent 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12850,7 +12858,6 @@ SHACKLE_CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16
 .pool
 ANIM_SPOTLIGHT:
 	loadparticle ANIM_TAG_SPOTLIGHT
-	loadparticle ANIM_TAG_TAG_HAND
 	launchtask 0x80DEDD9 0x2 0x0
 	launchtask 0x80BAB39 0x2 0x5 0xf8 0x3 0x0 0xa 0x0
 	waitanimation
