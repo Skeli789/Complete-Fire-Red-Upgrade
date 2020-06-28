@@ -582,6 +582,10 @@ const struct SwarmData gSwarmTable[] =
 		.species = SPECIES_PURRLOIN,
 	},
 	{
+		.mapName = MAPSEC_ROUTE_5,
+		.species = SPECIES_ELGYEM,
+	},
+	{
 		.mapName = MAPSEC_VALLEY_CAVE,
 		.species = SPECIES_DUNSPARCE,
 	},

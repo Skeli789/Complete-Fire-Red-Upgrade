@@ -439,6 +439,7 @@ enum
 #define WILD_CHECK_REPEL	0x1
 #define WILD_CHECK_KEEN_EYE 0x2
 
+#ifdef TIME_ENABLED
 static void ClearDailyEventFlags(void)
 {
 	#ifdef FLAG_DAILY_EVENTS_START
@@ -446,9 +447,11 @@ static void ClearDailyEventFlags(void)
 		FlagClear(i);
 	#endif
 }
+#endif
 
 void TryUpdateSwarm(void)
 {
+	#ifdef TIME_ENABLED //Otherwise causes lags
 	u32 backupVar = VarGet(VAR_SWARM_DAILY_EVENT) | (VarGet(VAR_SWARM_DAILY_EVENT + 1) << 16);
 
 	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE))
@@ -462,6 +465,7 @@ void TryUpdateSwarm(void)
 		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
 		SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
 	}
+	#endif
 }
 
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
