@@ -2937,7 +2937,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			}
 			else
 			{
-				index = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
+				index = gBattleStruct->chosenMovePositions[bankAtk];
 				pp = gBattleMons[bankAtk].pp[index];
 			}
 
@@ -2968,7 +2968,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 					default:
 						power = 40;
 				}
-			}
+			}		
 			break;
 
 		case MOVE_SPITUP:
@@ -3485,6 +3485,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	data.bankAtk = bankAtk;
 	data.bankDef = bankDef;
 	data.move = move;
+	data.specialFlags = FLAG_CHECKING_FROM_MENU;
 	u16 power = 0;
 
 //Load attacker Data
