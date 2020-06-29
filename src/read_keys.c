@@ -270,10 +270,10 @@ void InitBagMenuFromField(void)
 
 static void CB2_PartyMenuFromField(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToField);
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldContinueScript);
 }
 
 static void CB2_ItemMenuFromField(void)
 {
-	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToField);
+	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
 }

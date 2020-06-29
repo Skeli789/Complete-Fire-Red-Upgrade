@@ -7,5 +7,6 @@ typedef void (*MainCallback)(void);
 
 bool8 __attribute__((long_call)) IsUpdateLinkStateCBActive(void);
 void __attribute__((long_call)) ShowStartMenu(void);
+void __attribute__((long_call)) DestroySafariZoneStatsWindow(void);
 
 #endif // GUARD_START_MENU_H

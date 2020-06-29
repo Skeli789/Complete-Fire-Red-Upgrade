@@ -1,58 +1,68 @@
-//This can be decapitalized!
-
 #org @gText_DexNav
-DEXNAV
+Dexnav
+
+#org @gText_MissionLog
+Missions
 
 #org @gText_MenuExitRight
-EXIT  [DPAD_RIGHT]
+Exit  [DPAD_RIGHT]
 
 #org @gText_MenuExitLeft
-EXIT  [DPAD_LEFT]
+Exit  [DPAD_LEFT]
+
+#org @gText_DexNavInstructions
+[R_BUTTON]Register [B_BUTTON]Cancel
 
 #org @gText_DexNavWater
-WATER
+Water
 
 #org @gText_DexNavLand
-LAND
+Land
 
 #org @gText_PinkFlowers
-PINK FLOWERS
+Pink Flowers
 
 #org @gText_YellowFlowers
-YELLOW FLOWERS
+Yellow Flowers
 
 #org @gText_RedFlowers
-RED FLOWERS
+Red Flowers
 
 #org @gText_BlueFlowers
-BLUE FLOWERS
+Blue Flowers
 
 #org @gText_PinkAndPurpleFlowers
-PINK-PURPLE FLOWERS
+Pink-Purple Flowers
 
 #org @gText_BlueAndYellowFlowers
-BLUE-YELLOW FLOWERS
+Blue-Yellow Flowers
 
 #org @gText_Magma
-MAGMA
+Magma
+
+#org @gText_Sand
+Sand
 
 #org @gText_DexNavDescription
 Search for wild Pok\emon in the area\nwith potential special qualities!
 
 #org @gText_GotAway
-The Pok\emon got away!\p
+[BUFFER1] got away!
 
 #org @gText_GotAwayShouldSneak
-The Pok\emon got away!\nTry moving more slowly.\p
+[BUFFER1] got away!\nTry moving more slowly.
 
 #org @gText_LostSignal
-There is no reaction.\nThe signal was lost!\p
+There is no reaction.\nThe signal was lost!
 
 #org @gText_CannotBeFound
-This Pok\emon cannot be found here.\p
+[BUFFER1] cannot be found here.
 
 #org @gText_NotFoundNearby
-It couldn't be found nearby.\nTry looking in a different area!\p
+[BUFFER1] couldn't be found nearby.\nTry looking in a different area!
+
+#org @gText_TooDarkForDexNav
+It's too dark to search for\na Pok\emon!
 
 #org @gText_DexNavBack
  Back  
@@ -73,10 +83,10 @@ That Pok\emon can't be searched yet!
 There's no data for that Pok\emon[.]
 
 #org @gText_DexNav_Locked
-Pok\emon searchable via R-button!
+Pok\emon searchable via [R_BUTTON]!
 
-#org @gText_ToolsDescription
-Tools to view your Pok\edex progress\nor search for specific species.
+#org @gText_DexNav_TooDark
+It's too dark to search for a Pok\emon!
 
 #org @gText_MenuCube
 Cube

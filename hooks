@@ -510,7 +510,6 @@ ReloadMartList 0809BECA 0
 ##Start Menu
 SetUpStartMenu 0806ed54 0
 StartCB_HandleInput 0806F280 0
-#CheckDexNavSelect 0810AD98 1 //Replaced with R-Button
 FixStartMenuSize 080f78f4 0
 
 ##Pokemon Storage System

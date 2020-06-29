@@ -833,7 +833,9 @@ PrepareOverworldReturn = 0x80A1184 | 1;
 SetUpItemUseCallback = 0x80A16D0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
 ListMenuInit = 0x8106FF8 | 1; 
+ListMenu_ProcessInput = 0x8107078 | 1;
 DestroyListMenuTask = 0x810713C | 1;
+ListMenuGetScrollAndRow = 0x81072D4 | 1;
 GoToBagMenu = 0x8107DB4 | 1;
 CB2_BagMenuFromStartMenu = 0x8107EB8 | 1;
 Bag_BuildListMenuTemplate = 0x810842C | 1;
@@ -854,6 +856,7 @@ GetBagWindow = 0x810BAD8 | 1;
 BagCreateYesNoMenuBottomRight = 0x810BAE8 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
 GoToTMMenu = 0x81317F8 | 1;
+AddScrollIndicatorArrowPairParameterized = 0x8133B40 | 1;
 GoToBerryMenu = 0x813CD50 | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
 
