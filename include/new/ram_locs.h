@@ -143,7 +143,7 @@
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
-#define gMultiChoice ((struct ListMenuItem*) 0x203B774)	// up to 7 pointers, 8 bytes each
+//FREE: 0x203B774
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
@@ -203,6 +203,8 @@ extern struct Coords16 gMiningSpots[8]; //0x203E060
 //#define sSavedWildDataMapGroup (*((u8*) 0x203E084))
 //#define sSavedWildDataMapNum (*((u8*) 0x203E085))
 extern u16 gLastDexNavSpecies; //0x203E086
-//FREE: 0x203E088
+//extern struct ListMenuItem[7] gMultiChoice; //0x203E088 - up to 7 pointers, 8 bytes each
+
+//FREE: 0x203E0C0
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4
