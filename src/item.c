@@ -1615,7 +1615,7 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 	const u8 *description;
 	FillWindowPixelBuffer(1, PIXEL_FILL(0));
 
-	if (itemIndex != sBagMenuDisplay->nItems[gBagMenuState.pocket]) //Not end of bag
+	if (itemIndex < GetCurrentPocketItemAmount()) //Not end of bag
 	{
 		description = ItemId_GetDescription(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, itemIndex));
 
