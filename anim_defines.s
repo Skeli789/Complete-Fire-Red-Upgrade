@@ -510,6 +510,8 @@
 .equ Template_CurseGhost, 0x83E7698
 .equ Template_KarateChop, 0x83e66e0
 .equ Template_DragonBreathFire, 0x83e77a4
+.equ Template_SweetScentPetal, 0x83FF324
+.equ Template_CentredSparklingStars, 0x83E340C
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -613,6 +615,7 @@
 .equ SPIDER_WEB_THREAD, 0x81d15a5
 .equ FIRE_SPIN_TRAP_PARTICLES, 0x81C885F
 .equ CREATE_COTTON_SPORES, 0x81D03B5
+.equ HEALING_ANIM_TARGET, 0x81D5712
 
 @supercommands
 
