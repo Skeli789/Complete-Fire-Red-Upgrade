@@ -281,6 +281,7 @@ sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
 
 /* Other RAM */
+sItemUseOnFieldCB = 0x2039998;
 sRegionMap = 0x20399D4;
 sMapOpenCloseAnim = 0x20399E0;
 sMapCursor = 0x20399E4;
@@ -829,6 +830,8 @@ ItemIsUnique = 0x809A990 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
+sub_80A103C = 0x80A103C | 1;
+PrintNotTheTimeToUseThat = 0x80A1110 | 1;
 PrepareOverworldReturn = 0x80A1184 | 1;
 SetUpItemUseCallback = 0x80A16D0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;

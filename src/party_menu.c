@@ -22,6 +22,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/build_pokemon.h"
@@ -2074,3 +2075,24 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 		}
 	}
 }
+
+#ifdef UNBOUND
+void FieldUseFunc_VsSeeker(u8 taskId)
+{
+	u8 mapSec = GetCurrentRegionMapSectionId();
+
+    if ((gMapHeader.mapType != MAP_TYPE_ROUTE
+      && gMapHeader.mapType != MAP_TYPE_TOWN
+      && gMapHeader.mapType != MAP_TYPE_CITY)
+    || mapSec == MAPSEC_GRIM_WOODS
+	|| mapSec == MAPSEC_VIVILL_WOODS)
+    {
+        PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
+    }
+    else
+    {
+        sItemUseOnFieldCB = (void*) (0x810C670 | 1); //Task_VsSeeker_0
+        sub_80A103C(taskId);
+    }
+}
+#endif
