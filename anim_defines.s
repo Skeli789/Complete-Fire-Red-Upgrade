@@ -456,6 +456,7 @@
 .equ AnimTask_BlendPalInAndOutByTag, 0x8076289
 .equ AnimTask_UproarDistortion, 0x80AA7C9
 .equ AnimTask_FlailMovement, 0x80E0851
+.equ AnimTask_TraceMonBlended, 0x80bab99
 
 @launchtemplate
 
