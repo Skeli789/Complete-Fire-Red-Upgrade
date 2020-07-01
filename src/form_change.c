@@ -272,9 +272,14 @@ void UpdateBurmy(void)
 	#endif
 }
 
+species_t GetMiniorCoreFromPersonality(u32 personality)
+{
+	return gMiniorCores[personality % (NELEMS(gMiniorCores) - 1)];
+}
+
 species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 {
-	return gMiniorCores[mon->personality % (ARRAY_COUNT(gMiniorCores) - 1)];
+	return GetMiniorCoreFromPersonality(mon->personality);
 }
 
 bool8 IsMinior(u16 species)

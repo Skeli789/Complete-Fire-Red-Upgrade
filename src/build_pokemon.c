@@ -1718,7 +1718,7 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 	u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
 	u8 letter = GetUnownLetterFromPersonality(personality);
 	bool8 isMinior = IsMinior(species);
-	u8 miniorCore = GetMiniorCoreSpecies(mon);
+	u8 miniorCore = GetMiniorCoreFromPersonality(personality);
 
 	if (abilityNum == 0xFF) //Hidden Ability
 		mon->hiddenAbility = TRUE;
@@ -1742,7 +1742,7 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 	} while (GetNatureFromPersonality(personality) != nature
 	|| (keepGender && GetGenderFromSpeciesAndPersonality(species, personality) != gender)
 	|| (keepLetterCore && species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter) //Make sure the Unown letter doesn't change
-	|| (keepLetterCore && isMinior && miniorCore != GetMiniorCoreSpecies(mon))); //Make sure the Minior core doesn't change
+	|| (keepLetterCore && isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore)); //Make sure the Minior core doesn't change
 
 	mon->personality = personality;
 }
