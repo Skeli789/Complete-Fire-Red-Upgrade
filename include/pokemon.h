@@ -710,6 +710,7 @@ u16 __attribute__((long_call)) GetMonEVCount(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetLevelFromMonExp(struct Pokemon *mon);
 u16 __attribute__((long_call)) ModifyStatByNature(u8 nature, u16 n, u8 statIndex);
 const struct CompressedSpritePalette* __attribute__((long_call)) GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
+const u32* __attribute__((long_call)) GetMonSpritePalFromSpeciesAndPersonality(u16 species, u32 otId, u32 personality);
 
 void __attribute__((long_call)) EmitSetMonData(u8 a, u8 request, u8 c, u8 bytes, void *data);
 void __attribute__((long_call)) ZeroPlayerPartyMons(void);

@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "../include/event_data.h"
+#include "../include/pokemon_icon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/pokemon_storage_system_internal.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/vars.h"
 
@@ -457,4 +459,48 @@ void RestorePartyFromTempTeam(u8 firstId, u8 numPokes)
 		CreateBoxMonFromCompressedMon((struct BoxPokemon*) &gPlayerParty[firstId + i], &backup[firstId + i]);
 		CalculateMonStats(&gPlayerParty[firstId + i]);
 	}
+}
+
+u16 __attribute__((long_call)) sub_80911D4(u16 species);
+void __attribute__((long_call)) LoadCursorMonSprite(void);
+void __attribute__((long_call)) RefreshCursorMonData(void);
+void PlaceBoxMonIcon(u8 boxId, u8 position)
+{
+    if (boxId >= TOTAL_BOXES_COUNT) //Party mon
+    {
+        gPSSData->partySprites[position] = gPSSData->movingMonSprite;
+        gPSSData->partySprites[position]->oam.priority = 1;
+        gPSSData->partySprites[position]->subpriority = 12;
+    }
+    else
+    {
+		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES);
+	
+		#if (defined SPECIES_HOOPA || defined SPECIES_SHAYMIN)
+		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC
+		if (species == SPECIES_HOOPA || species == SPECIES_SHAYMIN)
+		{
+			u16 tileNum = sub_80911D4(species); //Gets the tile number of the mon icon
+			if (tileNum != 0xFFFF)
+			{
+				//Update mon Icon
+				gPSSData->movingMonSprite->oam.tileNum = tileNum;
+				gPSSData->movingMonSprite->oam.paletteNum = IndexOfSpritePaletteTag(0xDAC0 + GetMonIconPaletteIndexFromSpecies(species));
+			}
+
+			//Update front sprite
+			u32 otId = GetBoxMonDataAt(boxId, position, MON_DATA_OT_ID);
+			gPSSData->cursorMonSpecies = species;
+			gPSSData->cursorMonPalette = GetMonSpritePalFromSpeciesAndPersonality(gPSSData->cursorMonSpecies, otId, gPSSData->cursorMonPersonality);
+			RefreshCursorMonData();
+		}
+		#endif
+
+        gPSSData->boxMonsSprites[position] = gPSSData->movingMonSprite;
+        gPSSData->boxMonsSprites[position]->oam.priority = 2;
+        gPSSData->boxMonsSprites[position]->subpriority = 19 - (position % IN_BOX_ROWS);
+    }
+
+    gPSSData->movingMonSprite->callback = SpriteCallbackDummy;
+    gPSSData->movingMonSprite = NULL;
 }

@@ -481,13 +481,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 	}
 }
 
-void HoopaShayminPCRevertLogic(struct Pokemon* dst, void* src)
-{
-	Memcpy(dst, src, sizeof(struct Pokemon));
-
-	HoopaShayminPCRevertCheck(dst, TRUE);
-}
-
 void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);

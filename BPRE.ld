@@ -281,6 +281,7 @@ sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
 
 /* Other RAM */
+gPSSData = 0x20397B0;
 sItemUseOnFieldCB = 0x2039998;
 sRegionMap = 0x20399D4;
 sMapOpenCloseAnim = 0x20399E0;
@@ -422,6 +423,7 @@ GetMonEVCount = 0x8043A40 | 1;
 CheckPartyPokerus = 0x8043A70 | 1; 
 CheckPartyHasHadPokerus = 0x8043AD8 | 1;
 TryIncrementMonLevel = 0x8043B90 | 1;
+GetMonSpritePalFromSpeciesAndPersonality = 0x80440F4 | 1;
 GetMonSpritePalStructFromOtIdPersonality = 0x8044180 | 1;
 GetPokeFlavourRelation = 0x8044234 | 1;
 IsTradedMon = 0x804425C | 1;
@@ -754,6 +756,9 @@ IsPokemonStorageFull = 0x8040FA0 | 1;
 StorageGetCurrentBox = 0x808B9F4 | 1;
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
+RefreshCursorMonData = 0x808F1D0 | 1;
+LoadCursorMonSprite = 0x808F2BC | 1;
+sub_80911D4 = 0x80911D4 | 1;
 CompactPartySlots = 0x80937DC | 1;
 sub_8094AD8 = 0x8094AD8 | 1;
 SetPCBoxToSendMon = 0x80CC79C | 1;

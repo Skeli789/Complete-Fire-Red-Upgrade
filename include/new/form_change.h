@@ -23,7 +23,6 @@ void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats);
 
 //Hooked In Functions
 void HandleFormChange(void);
-void HoopaShayminPCRevertLogic(struct Pokemon* dst, void* src);
 
 //Exported Structs
 extern const species_t gMiniorCores[];

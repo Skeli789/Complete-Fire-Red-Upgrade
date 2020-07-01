@@ -63,13 +63,6 @@ CreateBoxMonHook:
 	ldr r0, =0x803DD84 | 1
 	bx r0
 
-@Hook at 0x8092FF0 with r0
-PCFormChangeRevertHook:
-	add r1, r2
-	bl HoopaShayminPCRevertLogic
-	ldr r3, =0x8093020 | 1
-	bx r3
-
 @Repoint at 0x803FDEC
 CheckHasSpeciesJump:
 	mov r0, r8
