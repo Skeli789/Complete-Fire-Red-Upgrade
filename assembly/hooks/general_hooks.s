@@ -285,6 +285,13 @@ SkipEncoreReturn:
 	bx r0
 
 .pool
+@0x806FC84 with r0
+LinkBattleSaveHook:
+	bl SaveDataAfterLinkBattle
+	ldr r1, =0x806FCE6 | 1
+	bx r1
+
+.pool
 @0x8054A60 with r0
 NewGameSaveClearHook:
 	push {r4-r6, lr}

@@ -310,6 +310,31 @@ const union AnimCmd *const gAnimCmdTable_SnipeShot[] =
 	sAnimCmdSnipeShot,
 };
 
+static const union AnimCmd sAnimCmdHoopaRing[] =
+{
+	ANIMCMD_FRAME(0, 8),
+	ANIMCMD_FRAME(16, 8),
+	ANIMCMD_FRAME(32, 8),
+	ANIMCMD_FRAME(48, 8),
+	ANIMCMD_JUMP(0)
+};
+
+const union AnimCmd *const gAnimCmdTable_HoopaRing[] =
+{
+	sAnimCmdHoopaRing,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_HoopaRing[] =
+{
+	AFFINEANIMCMD_FRAME(4, 4, 10, 1), //Grow & Spin
+	AFFINEANIMCMD_JUMP(0),
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_HoopaRing[] =
+{
+	sSpriteAffineAnim_HoopaRing,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_GrowingRing[] =
 {
 	AFFINEANIMCMD_FRAME(8, 8, 0, 16), //Double in size
@@ -746,11 +771,11 @@ void LoadShinyStarsSpriteTiles(void)
 
 void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
 {
-    u8 taskId1, taskId2;
-    gBattleSpritesDataPtr->healthBoxesData[battler].flag_x80 = 1;
+	u8 taskId1, taskId2;
+	gBattleSpritesDataPtr->healthBoxesData[battler].flag_x80 = 1;
 
-    if (IsBattlerSpriteVisible(battler) && IsMonShiny(GetIllusionPartyData(battler)))
-    {
+	if (IsBattlerSpriteVisible(battler) && IsMonShiny(GetIllusionPartyData(battler)))
+	{
 		LoadShinyStarsSpriteTiles();
 		taskId1 = CreateTask((void*) (0x80F181C | 1), 10);
 		taskId2 = CreateTask((void*) (0x80F181C | 1), 10);
@@ -759,9 +784,9 @@ void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
 		gTasks[taskId1].data[1] = 0;
 		gTasks[taskId2].data[1] = 1;
 		return;
-    }
+	}
 
-    gBattleSpritesDataPtr->healthBoxesData[battler].field_1_x1 = 1;
+	gBattleSpritesDataPtr->healthBoxesData[battler].field_1_x1 = 1;
 }
 
 void AnimTask_TechnoBlast(u8 taskId)
@@ -2483,11 +2508,11 @@ void SpriteCB_LeechLifeNeedle(struct Sprite *sprite)
 //Creates The Extreme Evoboost Circles
 void SpriteCB_ExtremeEvoboostCircle(struct Sprite *sprite)
 {
-    InitSpritePosToAnimAttacker(sprite, FALSE);
-    sprite->pos1.y += 20;
-    sprite->data[1] = 191;
-    sprite->callback = (void*) (0x80B190C | 1);
-    sprite->callback(sprite);
+	InitSpritePosToAnimAttacker(sprite, FALSE);
+	sprite->pos1.y += 20;
+	sprite->data[1] = 191;
+	sprite->callback = (void*) (0x80B190C | 1);
+	sprite->callback(sprite);
 }
 
 //Creates a twinkle in the upper corner of the screen
@@ -2910,6 +2935,110 @@ void SpriteCB_RolloutExplosion(struct Sprite *sprite)
 }
 
 //Anim Tasks//
+static const union AffineAnimCmd sSpriteAffineAnim_HyperspaceFuryEnemySide[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 32, 1), //Rotate 45 degrees left
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_HyperspaceFuryPlayerSide[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, -32, 1), //Rotate 45 degrees right
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnim_HyperspaceFuryMon[] =
+{
+	sSpriteAffineAnim_HyperspaceFuryEnemySide,
+	sSpriteAffineAnim_HyperspaceFuryPlayerSide,
+};
+
+//Creates a sideways sprite of the attacker behind the enemy's side
+void AnimTask_CreateHyperspaceFuryMon(u8 taskId)
+{
+	u8 spriteId, subpriority, isBackPic;
+	u16 species;
+	s16 x;
+	u32 personality, otId;
+	struct Pokemon* monAtk;
+
+	switch (gTasks[taskId].data[0]) {
+		case 0: //Set up sprite
+			monAtk = GetBankPartyData(gBattleAnimAttacker);
+			personality = GetMonData(monAtk, MON_DATA_PERSONALITY, NULL);
+			otId = GetMonData(monAtk, MON_DATA_OT_ID, NULL);
+			if (gBattleSpritesDataPtr->bankData[gBattleAnimAttacker].transformSpecies == SPECIES_NONE)
+				species = GetMonData(monAtk, MON_DATA_SPECIES, NULL);
+			else
+				species = gBattleSpritesDataPtr->bankData[gBattleAnimAttacker].transformSpecies;
+
+			if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+			{
+				
+				subpriority = gSprites[GetAnimBattlerSpriteId(ANIM_TARGET)].subpriority + 1;
+				isBackPic = 0;
+				x = 272;
+			}
+			else
+			{
+				subpriority = gSprites[GetAnimBattlerSpriteId(ANIM_TARGET)].subpriority - 1;
+				isBackPic = 1;
+				x = -32;
+			}
+
+			spriteId = CreateMonPicBattleAnim(species, isBackPic, 0, x, GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y), subpriority, personality, otId, gBattleAnimAttacker, 0);
+			gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+			gSprites[spriteId].affineAnims = sSpriteAffineAnim_HyperspaceFuryMon;
+			CalcCenterToCornerVec(&gSprites[spriteId], gSprites[spriteId].oam.shape, gSprites[spriteId].oam.size, gSprites[spriteId].oam.affineMode);
+			InitSpriteAffineAnim(&gSprites[spriteId]);
+			if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+				StartSpriteAffineAnim(&gSprites[spriteId], 1);
+			PlayCry1(species, 0);
+			gTasks[taskId].data[1] = spriteId;
+			gTasks[taskId].data[0]++;
+			break;
+		case 1: //Hoopa pop in
+			spriteId = gTasks[taskId].data[1];
+			if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+			{
+				if (gSprites[spriteId].pos2.x > -30)
+					gSprites[spriteId].pos2.x -= 3;
+				else if (!IsCryPlaying())
+					gTasks[taskId].data[0]++;
+			}
+			else
+			{
+				if (gSprites[spriteId].pos2.x < 30)
+					gSprites[spriteId].pos2.x += 3;
+				else if (!IsCryPlaying())
+					gTasks[taskId].data[0]++;
+			}
+			break;
+		case 2: //Hoopa pop out
+			spriteId = gTasks[taskId].data[1];
+			if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+			{
+				if (gSprites[spriteId].pos2.x < 0)
+					gSprites[spriteId].pos2.x += 4;
+				else
+					gTasks[taskId].data[0]++;
+			}
+			else
+			{
+				if (gSprites[spriteId].pos2.x > 0)
+					gSprites[spriteId].pos2.x -= 4;
+				else
+					gTasks[taskId].data[0]++;
+			}
+			break;
+		case 3: //Destroy sprite
+			spriteId = gTasks[taskId].data[1];
+			DestroySpriteAndFreeResources(&gSprites[spriteId]);
+			DestroyAnimVisualTask(taskId);
+			break;
+	}
+}
+
 extern const struct SpriteTemplate gRolloutExplosionSpriteTemplate;
 static void CreateRolloutExplosionSprite(struct Task* task)
 {
@@ -3685,7 +3814,6 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 	switch (animId) {
 		case B_ANIM_SUBSTITUTE_FADE:
 		case B_ANIM_SNATCH_MOVE:
-		case B_ANIM_LOAD_DEFAULT_BG:
 		case B_ANIM_LOAD_ABILITY_POP_UP:
 		case B_ANIM_DESTROY_ABILITY_POP_UP:
 		case B_ANIM_RAIN_CONTINUES:
@@ -3694,6 +3822,16 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 		case B_ANIM_HAIL_CONTINUES:
 		case B_ANIM_STRONG_WINDS_CONTINUE:
 		case B_ANIM_FOG_CONTINUES:
+		case B_ANIM_ELECTRIC_SURGE:
+		case B_ANIM_GRASSY_SURGE:
+		case B_ANIM_MISTY_SURGE:
+		case B_ANIM_PSYCHIC_SURGE:
+		case B_ELECTRIC_TERRAIN_ACTIVE_ANIM:
+		case B_GRASSY_TERRAIN_ACTIVE_ANIM:
+		case B_MISTY_TERRAIN_ACTIVE_ANIM:
+		case B_PSYCHIC_TERRAIN_ACTIVE_ANIM:
+		case B_ANIM_LOAD_DEFAULT_BG:
+		case B_ANIM_TOTEM_BOOST:
 		case B_ANIM_DYNAMAX_START:
 		case B_ANIM_RAID_BATTLE_STORM:
 		case B_ANIM_DYNAMAX_ENERGY_SWIRL:
@@ -3711,6 +3849,11 @@ static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId)
 		case B_ANIM_ZYGARDE_CELL_SWIRL:
 		case B_ANIM_BLUE_PRIMAL_REVERSION:
 		case B_ANIM_RED_PRIMAL_REVERSION:
+		case B_ANIM_POWDER_EXPLOSION:
+		case B_ANIM_BEAK_BLAST_WARM_UP:
+		case B_ANIM_SHELL_TRAP_SET:
+		case B_BATON_PASS_ANIM:
+		case B_DRAGON_TAIL_BLOW_AWAY_ANIM:
 		case B_ANIM_ZMOVE_ACTIVATE:
 		case B_ANIM_MEGA_EVOLUTION:
 		case B_ANIM_ULTRA_BURST:

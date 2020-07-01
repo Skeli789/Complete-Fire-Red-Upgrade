@@ -1,10 +1,12 @@
 #include "defines.h"
+#include "../include/load_save.h"
 #include "../include/menu_helpers.h"
 #include "../include/rtc.h"
 #include "../include/save.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/save.h"
+#include "../include/new/ram_locs_battle.h"
 /*
 save.c
 	handles save block expansion functions/structures
@@ -282,6 +284,15 @@ u8 HandleSavingData(u8 saveType)
 	};
 	gMain.vblankCounter1 = backupPtr;
 	return 0;
+}
+
+//Vanilla save wasn't saving the new sectors
+u8 SaveDataAfterLinkBattle(void)
+{
+	gTerrainType = 0; //Doesn't get cleared for the second player
+	TrySavingData(SAVE_NORMAL);
+	ClearContinueGameWarpStatus2();
+	return 3; //New state in switch statemeny
 }
 
 void NewGameWipeNewSaveData(void)

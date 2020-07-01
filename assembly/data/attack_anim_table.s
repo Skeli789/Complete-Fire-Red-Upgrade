@@ -5275,8 +5275,8 @@ ANIM_PLAYROUGH:
 	playsoundwait 0x8b SOUND_PAN_TARGET 0x46
 	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x50
 	playsoundwait 0x8b SOUND_PAN_TARGET 0x5a
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	launchtemplate 0x83e4338 0x83 0x2 0xff00 0xffd6
 	launchtemplate 0x83e4338 0x83 0x2 0x80 0xfff2
 	launchtemplate 0x83e4338 0x83 0x2 0x1a0 0xffda
@@ -6895,19 +6895,25 @@ ANIM_HYPERSPACEHOLE:
 	waitforsound
 	launchtask AnimTask_DestinyBondWhiteShadow 0x5 0x2 0x0 0x30
 	pause 0x17
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	pause 0x19
 	makebankvisible bank_attacker
 	makebankinvisible bank_attacker
 	pause 0x5
 	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
-	call HYPERSPACEHOLE_MOVE
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x3 0x0 0x1C 0x1
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
 	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
-	call HYPERSPACEHOLE_MOVE
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
 	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
-	call HYPERSPACEHOLE_MOVE
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
 	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
-	call HYPERSPACEHOLE_MOVE
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
 	waitanimation
 	makebankvisible bank_attacker
 	pause 0x1
@@ -6921,12 +6927,6 @@ ANIM_HYPERSPACEHOLE:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x7FFF
 	waitanimation
 	endanimation
-
-HYPERSPACEHOLE_MOVE:
-	playsound2 0x7f SOUND_PAN_TARGET
-	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x3 0x0 0xf 0x1
-	pause 0x4
-	return
 
 .align
 HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
@@ -7002,17 +7002,17 @@ ANIM_HYPERSPACEFURY:
 	launchtask AnimTask_prepare_moving_psychicBG 0x5 0x0
 	waitbgfadein
 	soundcomplex 0x7f SOUND_PAN_TARGET 0x2 0x10
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x20 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x28 0x1
 	launchtemplate HYPERSPACEFURY_HAND 0x82 0x5 0x1 0x0 0x0 0xffe0 0x10
 	call HYPERSPACEFURY_RANDOMHIT
 	pause 0x2
 	launchtemplate HYPERSPACEFURY_HAND 0x82 0x5 0x1 0x0 0x16 0xffea 0x10
 	call HYPERSPACEFURY_RANDOMHIT
 	pause 0x2
+	launchtask AnimTask_CreateHyperspaceFuryMon 0x2 0x0
 	launchtemplate HYPERSPACEFURY_HAND 0x82 0x5 0x1 0x0 0x1e 0x0 0x10
 	call HYPERSPACEFURY_RANDOMHIT
 	pause 0x2
-	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	launchtemplate HYPERSPACEFURY_HAND 0x82 0x5 0x1 0x0 0x14 0x14 0x10
 	call HYPERSPACEFURY_RANDOMHIT
 	pause 0x2
@@ -7040,13 +7040,11 @@ ANIM_HYPERSPACEFURY:
 	launchtemplate HYPERSPACEFURY_HAND 0x82 0x5 0x1 0x0 0x10 0x10 0x10
 	call HYPERSPACEFURY_RANDOMHIT
 	pause 0x7
-	launchtask AnimTask_play_growling_cry 0x2 0x2 bank_attacker 0xff
 	makebankvisible bank_attacker
-	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x0 0x3 0x20 0x1
 	playsound2 0x8C SOUND_PAN_TARGET
 	makebankinvisible bank_attacker
-	call UNSET_SCROLLING_BG
 	waitanimation
+	call UNSET_SCROLLING_BG
 	makebankvisible bank_attacker
 	pause 0x1
 	makebankinvisible bank_attacker
@@ -7064,7 +7062,7 @@ HYPERSPACEFURY_RANDOMHIT:
 	return
 
 .align 2
-HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80ACDE9
+HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING OAM_DOUBLE_32x32 gAnimCmdTable_HoopaRing 0x0 gSpriteAffineAnimTable_HoopaRing 0x80ACDE9
 HYPERSPACEFURY_HAND: objtemplate ANIM_TAG_HOOPA_HAND ANIM_TAG_HOOPA_HAND OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
 HYPERSPACEFURY_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA631
 
@@ -7510,8 +7508,8 @@ ANIM_WRINGOUT:
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
 	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	call WRINGOUT_CALL
 	call WRINGOUT_CALL
 	call WRINGOUT_CALL
@@ -9533,8 +9531,8 @@ ANIM_TOPSYTURVY:
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
 	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
@@ -10912,8 +10910,8 @@ ANIM_DARKESTLARIAT:
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
 	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
 	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	call PURPLE_HIT_CALL
 	call PURPLE_HIT_CALL
 	call PURPLE_HIT_CALL
@@ -13067,15 +13065,15 @@ ANIM_TEARFULLOOK:
 	pause 0x35
 	soundcomplex 0xA0 SOUND_PAN_ATTACKER 0xC 0x2
 	pause 0x8
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x0
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x1
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x2
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x3
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x0
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x1
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x2
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x3
 	pause 0x8
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x0
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x1
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x2
-	launchtemplate 0x83E7998 0x2 0x2 0x1 0x3
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x0
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x1
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x2
+	launchtemplate Template_TearDrop 0x2 0x2 0x1 0x3
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x5 0x0 0x7DE0
 	waitanimation
@@ -15499,7 +15497,7 @@ ANIM_DOUBLEIRONBASH:
 	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
 	soundcomplex 0x96 SOUND_PAN_ATTACKER 0x14 0x2
-	launchtask 0x8098f85 0x2 0x5 0x0 0xc 0x4 0x1 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xc 0x4 0x1 0x4
 	launchtask AnimTask_AnimateGustTornadoPalette 0x5 0x2 0x1 0x46
 	launchtemplate 0x83e6b1c 0x2 0x5 0xffe7 0x0 0x0 0x0 0x0 	@wing attack
 	launchtemplate 0x83e6b1c 0x2 0x5 0x19 0x0 0x0 0x0 0x0 		@wing attack
@@ -17592,7 +17590,7 @@ ANIM_SAVAGE_SPIN_OUT:
 	call AEROBLAST_STRINGSHOT
 	call AEROBLAST_STRINGSHOT
 	call AEROBLAST_STRINGSHOT
-	launchtemplate 0x83e72dc 0x82 0x0	@ spider web
+	launchtemplate Template_SpiderWeb 0x82 0x0	@ spider web
 	call AEROBLAST_STRINGSHOT
 	pause 0xe
 	resetblends
@@ -17606,13 +17604,13 @@ ANIM_SAVAGE_SPIN_OUT:
 	pause 0x0
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	pause 0x0
-	jumpifargmatches 0x7 bank_target CACOON_ON_PLAYER
-CACOON_ON_OPPONENT:
-	launchtemplate SPINOUT_CACOON 0x82 0x6 0x0 bank_target 0x2 0x0 0x0 0x80
-	goto FINISH_CACOON
-CACOON_ON_PLAYER:
-	launchtemplate SPINOUT_CACOON 0x3 0x6 0x0 bank_target 0x2 0x0 0x0 0x80
-FINISH_CACOON:
+	jumpifargmatches 0x7 bank_target COCOON_ON_PLAYER
+COCOON_ON_OPPONENT:
+	launchtemplate SPINOUT_COCOON 0x82 0x6 0x0 bank_target 0x2 0x0 0x0 0x80
+	goto FINISH_COCOON
+COCOON_ON_PLAYER:
+	launchtemplate SPINOUT_COCOON 0x3 0x6 0x0 bank_target 0x2 0x0 0x0 0x80
+FINISH_COCOON:
 	loadBG1 BG_SEISMICTOSS_SKUUPPERCUT
 	waitbgfadeout
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x1000 0x0 0xffff	@+0x1000
@@ -17630,8 +17628,6 @@ FINISH_CACOON:
 	call SPINOUT_BG_SLOWDOWN
 	call SPINOUT_BG_SLOWDOWN
 	call SPINOUT_BG_SLOWDOWN	@-0x1000
-	pause 0x1
-	waitbgfadein
 	pause 0x4
 	call SPINOUT_SMASH_GROUND2 	@SeismicToss2
 	pause 0xa
@@ -17641,38 +17637,37 @@ FINISH_CACOON:
 	pause 0xa
 	call SPINOUT_SMASH_GROUND1 	@SeismicToss1
 	pause 0xc
-	playsound2 0x80 SOUND_PAN_ATTACKER
+	call UNSET_SCROLLING_BG
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles - no idea why though - something to do with the background scrolling
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0		@ user fly on screen on enemy side
-	loaddefaultBG
-	waitbgfadeout
-	setarg 0x7 0xffff
-	waitbgfadein
+	playsound2 0x80 SOUND_PAN_ATTACKER
+	pause 0x1E
 	unloadparticle ANIM_TAG_MUD_SAND
 	unloadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_CUT @cut
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
 	loadparticle ANIM_TAG_AIR_WAVE_2 @white/gray
-	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 0x1 0x4 0x0 0xc 0x1
-	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 0x1 0x4 0x0 0xc 0x1
+	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 bank_target 0x4 0x0 0xc 0x1
+	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 bank_target 0x4 0x0 0xc 0x1
 	launchtemplate SPINOUT_GREEN_CUT TEMPLATE_TARGET | 2, 0x3, 0x28 0xffe0 0x0
 	launchtemplate SPINOUT_GREEN_CUT TEMPLATE_TARGET | 2, 0x3, 0x28 0xffd0 0x0
 	playsound2 0x81 SOUND_PAN_TARGET
 	pause 0xc
 	playsound2 0x81 SOUND_PAN_TARGET
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	launchtemplate SPINOUT_WHITE_EXPLODE 0x83 0x4 0x0 0x0 bank_target 0x1
 	pause 0x6
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	launchtemplate SPINOUT_WHITE_EXPLODE 0x83 0x4 0x18 0xffe8 bank_target 0x1
 	pause 0x6
-	launchtemplate 0x83e72dc 0x82 0x0	@ spider web
-	playsound2 0xab SOUND_PAN_ATTACKER
+	launchtemplate Template_SpiderWeb 0x82 0x0	@ spider web
+	playsound2 0xab SOUND_PAN_TARGET
 	launchtemplate SPINOUT_WHITE_EXPLODE 0x83 0x4 0xfff0 0x10 bank_target 0x1
 	pause 0x6
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	launchtemplate SPINOUT_WHITE_EXPLODE 0x83 0x4 0xffe8 0xfff4 bank_target 0x1
 	pause 0x6
-	playsound2 0xab SOUND_PAN_ATTACKER
+	playsound2 0xab SOUND_PAN_TARGET
 	launchtemplate SPINOUT_WHITE_EXPLODE 0x83 0x4 0x10 0x10 bank_target 0x1
 	pause 0x6
 	waitanimation
@@ -17724,7 +17719,7 @@ SPINOUT_BG_SLOWDOWN:
 
 .align 2
 AEROBLAST_STRING: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 0x83E6B48 0x0 gDummySpriteAffineAnimTable 0x80B1AB9
-SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 0x80B7BD5
+SPINOUT_COCOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7910 0x80B7BD5
 SPINOUT_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
 SPINOUT_GREEN_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_RAZOR_LEAF OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
 SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
@@ -19625,6 +19620,7 @@ TWINKLE_PINK_STARS_CALL:
 
 PLAYER_TWINKLE:
 	playsound2 0xdd SOUND_PAN_ATTACKER
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0	@ user fly on screen on enemy side
 	launchtemplate TWINKLE_PINK_STARS 0x2 0x6 0x12 0x0 0x0 0x0 0x20 0x1c
 	pause 0x3
@@ -19662,6 +19658,7 @@ PLAYER_TWINKLE:
 
 OPPONENT_TWINKLE:
 	playsound2 0xdd SOUND_PAN_ATTACKER
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0	@ user fly on screen on enemy side
 	launchtemplate TWINKLE_PINK_STARS 0x2 0x6 0x10 0xfffb 0x0 0x0 0x20 0x1c
 	pause 0x1
@@ -21983,14 +21980,17 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	waitbgfadeout
 	makebankinvisible bank_attacker
 	pause 0x1
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	pause 0x10
 	playsound2 0xb7 SOUND_PAN_ATTACKER
 	waitanimation
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	pause 0x10
 	playsound2 0xb7 SOUND_PAN_ATTACKER
 	waitanimation
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	pause 0x10
 	playsound2 0xb7 SOUND_PAN_ATTACKER
@@ -22016,30 +22016,25 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_PAIN_SPLIT @painsplit
 	loadparticle ANIM_TAG_DUCK @duck
-	call SNUGGLE_SOUNDS
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0xa 0xa 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0xa 0xa 0x4
+	soundcomplex 0x87 SOUND_PAN_TARGET 0x14 10
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0xa 0xa 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0xa 0xa 0x4
 	call SNUGGLE_STARS_1
 	call SNUGGLE_HITS
-	playsound2 0x8b SOUND_PAN_TARGET
 	call SNUGGLE_STARS_2
 	call SNUGGLE_HITS
-	playsound2 0xe2 SOUND_PAN_TARGET
 	call SNUGGLE_STARS_1
 	playsound2 0x8b SOUND_PAN_TARGET
 	call SNUGGLE_STARS_2
 	call SNUGGLE_HITS
-	call SNUGGLE_SOUNDS
-	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
-	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
+	launchtask AnimTask_TranslateMonElliptical 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	call SNUGGLE_STARS_1
 	pause 0x0
 	call SNUGGLE_HITS
-	playsound2 0x8b SOUND_PAN_TARGET
 	call SNUGGLE_STARS_2
 	pause 0x0
 	call SNUGGLE_HITS
-	playsound2 0xe2 SOUND_PAN_TARGET
 	call SNUGGLE_STARS_1
 	pause 0x0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL-PAL_DEF 0x2 0x0 0x10 0x7fff
@@ -22054,12 +22049,12 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	endanimation
 
 SNUGGLE_TEARS:
-	playsound2 0xa0 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e7998 0x82 0x2 bank_target 0x0
-	launchtemplate 0x83e7998 0x82 0x2 bank_target 0x1
+	playsound2 0xa0 SOUND_PAN_TARGET
+	launchtemplate Template_TearDrop 0x82 0x2 bank_target 0x0
+	launchtemplate Template_TearDrop 0x82 0x2 bank_target 0x1
 	pause 0x8
-	launchtemplate 0x83e7998 0x82 0x2 bank_target 0x2
-	launchtemplate 0x83e7998 0x82 0x2 bank_target 0x3
+	launchtemplate Template_TearDrop 0x82 0x2 bank_target 0x2
+	launchtemplate Template_TearDrop 0x82 0x2 bank_target 0x3
 	return
 
 SNUGGLE_HITS:
@@ -22088,20 +22083,6 @@ SNUGGLE_STARS_2:
 	launchtemplate SNUGGLE_STAR 0x83 0x4 0x10 0x8 0xff80 0xffea
 	launchtemplate SNUGGLE_STAR 0x83 0x4 0x10 0x8 0xfe80 0xffe1
 	return
-
-SNUGGLE_SOUNDS:
-	playsound2 0x87 SOUND_PAN_ATTACKER
-	playsoundwait 0x8b SOUND_PAN_TARGET 0xa
-	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x14
-	playsoundwait 0x8b SOUND_PAN_TARGET 0x1e
-	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x28
-	playsoundwait 0x8b SOUND_PAN_TARGET 0x32
-	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x3c
-	playsoundwait 0x8b SOUND_PAN_TARGET 0x46
-	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x50
-	playsoundwait 0x8b SOUND_PAN_TARGET 0x5a
-	return
-
 
 .align 2
 SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 gDummySpriteAffineAnimTable 0x8076FD1
@@ -23279,6 +23260,7 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	loadparticle ANIM_TAG_SPARK_2 @paralyze
 	loadparticle ANIM_TAG_SNORE_Z @z
 	playsound2 0x80 SOUND_PAN_ATTACKER
+	setarg 0x7 0x0 @;Clear arg 7 so task works properly in Link battles
 	launchtask AnimTask_SnatchOpposingMonMove 0x2 0x0
 	pause 0x1c
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 0x0000

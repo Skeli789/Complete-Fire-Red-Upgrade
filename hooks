@@ -281,6 +281,7 @@ SetFoughtRoamerInactive 814201C 1
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2
 HandleSavingData 80DA248 1
+LinkBattleSaveHook 806FC84 0
 NewGameSaveClearHook 8054A60 0
 ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1

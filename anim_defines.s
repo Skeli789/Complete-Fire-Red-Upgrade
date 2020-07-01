@@ -446,6 +446,7 @@
 .equ AnimTask_SlideOffScreen, 0x80995fd
 .equ AnimTask_Rollout, 0x80b4bd1
 .equ AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 0x8099bd5
+.equ AnimTask_TranslateMonElliptical, 0x8098f85
 .equ AnimTask_TranslateMonEllipticalRespectSide, 0x809907D
 .equ AnimTask_AttackerFadeToInvisible, 0x80B78E1
 .equ AnimTask_StretchTargetUp, 0x80A9A21
@@ -512,6 +513,8 @@
 .equ Template_DragonBreathFire, 0x83e77a4
 .equ Template_SweetScentPetal, 0x83FF324
 .equ Template_CentredSparklingStars, 0x83E340C
+.equ Template_SpiderWeb, 0x83e72dc
+.equ Template_TearDrop, 0x83e7998
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5

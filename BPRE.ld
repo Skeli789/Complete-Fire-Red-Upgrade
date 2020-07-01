@@ -676,6 +676,7 @@ PrepareAffineAnimInTaskData = 0x80762D0 | 1;
 RunAffineAnimFromTaskData = 0x8076308 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
 GetBattlerSpriteBGPriority = 0x8076884 | 1;
+CreateMonPicBattleAnim = 0x80768D0 | 1;
 GetBattlerSpriteCoordAttr = 0x8076B2C | 1;
 SetAverageBattlerPositions = 0x8076D9C | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
@@ -1435,6 +1436,7 @@ PrintTextOnHelpMessageWindow = 0x8113018 | 1;
 /* Save State Functions */
 PrintSaveErrorStatus = 0x800C634 | 1;
 SetContinueGameWarpStatus = 0x804C1AC | 1;
+ClearContinueGameWarpStatus2 = 0x804C1DC | 1;
 SaveSerializedGame = 0x804C300 | 1;
 IncrementGameStat = 0x8054E90 | 1;
 GetGameStat = 0x8054EC4 | 1;
