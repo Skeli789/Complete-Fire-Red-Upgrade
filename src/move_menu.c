@@ -239,7 +239,7 @@ void HandleInputChooseMove(void)
 			moveTarget = gBattleMoves[chosenMove].target;
 
 		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
-			moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, chosenMove)].target;
+			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
 
 		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)
 			moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;

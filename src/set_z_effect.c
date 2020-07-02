@@ -9,6 +9,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
+#include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/z_move_battle_scripts.h"
@@ -253,6 +254,20 @@ move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 
 	if (move == MOVE_NONE)
 		move = gBattleMons[bank].moves[moveIndex];
+
+	#if (defined VAR_KEYSTONE && !defined DEBUG_MEGA)
+	//Z-Moves can't be used until receieving a Keystone
+	if (!(gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))) //Z-Moves can always be used in these battles
+	{
+		u8 position = GetBattlerPosition(bank);
+		if (position == B_POSITION_PLAYER_LEFT || (!IsTagBattle() && position == B_POSITION_PLAYER_RIGHT))
+		{
+			u16 keystone = VarGet(VAR_KEYSTONE);
+			if (keystone == ITEM_NONE)
+				return MOVE_NONE;
+		}
+	}
+	#endif
 
 	if (IsMegaZMoveBannedBattle()
 	|| IsMega(bank)
