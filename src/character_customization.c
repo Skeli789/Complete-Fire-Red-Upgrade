@@ -110,13 +110,13 @@ struct PlayerGraphics
 
 static const struct PlayerGraphics sPlayerAvatarGfxIds[][2] =
 {
-	[PLAYER_AVATAR_STATE_NORMAL] =			{{EVENT_OBJ_GFX_RED_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT},			{EVENT_OBJ_GFX_LEAF_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT}},
-	[PLAYER_AVATAR_STATE_BIKE] =			{{EVENT_OBJ_GFX_RED_BIKE, PLAYER_AVATAR_FLAG_BIKE},					{EVENT_OBJ_GFX_LEAF_BIKE, PLAYER_AVATAR_FLAG_BIKE}},
-	[PLAYER_AVATAR_STATE_SURFING] =			{{EVENT_OBJ_GFX_RED_SURFING, PLAYER_AVATAR_FLAG_SURFING},			{EVENT_OBJ_GFX_LEAF_SURFING, PLAYER_AVATAR_FLAG_SURFING}},
-	[PLAYER_AVATAR_STATE_FIELD_MOVE] =		{{EVENT_OBJ_GFX_RED_FIELD_MOVE, 0},									{EVENT_OBJ_GFX_LEAF_FIELD_MOVE, 0}},
-	[PLAYER_AVATAR_STATE_FISHING] =			{{EVENT_OBJ_GFX_RED_FISHING, 0},									{EVENT_OBJ_GFX_LEAF_FISHING, 0}},
-	[PLAYER_AVATAR_STATE_FIELD_MOVE_2] =	{{EVENT_OBJ_GFX_RED_FIELD_MOVE_2, 0},								{EVENT_OBJ_GFX_LEAF_FIELD_MOVE_2, 0}},
-	[PLAYER_AVATAR_STATE_UNDERWATER] =		{{EVENT_OBJ_GFX_RED_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER},		{EVENT_OBJ_GFX_LEAF_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER}},
+	[PLAYER_AVATAR_STATE_NORMAL] =     {{EVENT_OBJ_GFX_RED_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT},          {EVENT_OBJ_GFX_LEAF_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT}},
+	[PLAYER_AVATAR_STATE_BIKE] =       {{EVENT_OBJ_GFX_RED_BIKE, PLAYER_AVATAR_FLAG_BIKE},               {EVENT_OBJ_GFX_LEAF_BIKE, PLAYER_AVATAR_FLAG_BIKE}},
+	[PLAYER_AVATAR_STATE_SURFING] =    {{EVENT_OBJ_GFX_RED_SURFING, PLAYER_AVATAR_FLAG_SURFING},         {EVENT_OBJ_GFX_LEAF_SURFING, PLAYER_AVATAR_FLAG_SURFING}},
+	[PLAYER_AVATAR_STATE_FIELD_MOVE] = {{EVENT_OBJ_GFX_RED_FIELD_MOVE, PLAYER_AVATAR_FLAG_FIELD_MOVE},   {EVENT_OBJ_GFX_LEAF_FIELD_MOVE, PLAYER_AVATAR_FLAG_FIELD_MOVE}},
+	[PLAYER_AVATAR_STATE_FISHING] =    {{EVENT_OBJ_GFX_RED_FISHING, 0},                                  {EVENT_OBJ_GFX_LEAF_FISHING, 0}},
+	[PLAYER_AVATAR_STATE_VS_SEEKER] =  {{EVENT_OBJ_GFX_RED_VS_SEEKER, 0},                                {EVENT_OBJ_GFX_LEAF_VS_SEEKER, 0}},
+	[PLAYER_AVATAR_STATE_UNDERWATER] = {{EVENT_OBJ_GFX_RED_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER},   {EVENT_OBJ_GFX_LEAF_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER}},
 };
 
 //This file's functions:
@@ -159,7 +159,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 
 	NPCPtr spriteAddr;
 	#ifndef EXISTING_OW_TABLE_ADDRESS
-	if (tableId >= ARRAY_COUNT(gOverworldTableSwitcher)
+	if (tableId >= NELEMS(gOverworldTableSwitcher)
 	|| gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
@@ -191,8 +191,10 @@ static u16 GetCustomGraphicsIdByState(u8 state)
 		case PLAYER_AVATAR_STATE_SURFING:
 			spriteId = VarGet(VAR_PLAYER_SURFING);
 			break;
-		case PLAYER_AVATAR_STATE_FIELD_MOVE:
-		case PLAYER_AVATAR_STATE_FIELD_MOVE_2:
+		case PLAYER_AVATAR_STATE_FIELD_MOVE: //HM Use
+			spriteId = VarGet(VAR_PLAYER_HM_USE);
+			break;
+		case PLAYER_AVATAR_STATE_VS_SEEKER:
 			spriteId = VarGet(VAR_PLAYER_VS_SEEKER);
 			break;
 		case PLAYER_AVATAR_STATE_FISHING:
@@ -222,7 +224,7 @@ u16 GetPlayerAvatarGraphicsIdByStateId(u8 state)
 
 u8 GetPlayerAvatarStateTransitionByGraphicsId(u16 graphicsId, u8 gender)
 {
-    for (u8 state = 0; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    for (u8 state = 0; state < NELEMS(sPlayerAvatarGfxIds); ++state)
     {
 		u16 customGraphicsId = GetCustomGraphicsIdByState(state);
 		if (customGraphicsId == graphicsId)
@@ -241,7 +243,7 @@ u16 GetPlayerAvatarGraphicsIdByCurrentState(void)
 	u8 gender = gPlayerAvatar->gender;
     u8 flags = gPlayerAvatar->flags;
 
-    for (; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    for (; state < NELEMS(sPlayerAvatarGfxIds); ++state)
     {
         if (sPlayerAvatarGfxIds[state][gender].stateFlag & flags)
 		{
@@ -259,9 +261,9 @@ u16 GetPlayerAvatarGraphicsIdByCurrentState(void)
 
 u8 GetPlayerAvatarGenderByGraphicsId(u8 gfxId)
 {
-    for (u8 state = 0; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    for (u8 state = 0; state < NELEMS(sPlayerAvatarGfxIds); ++state)
     {
-		for (u8 gender = 0; gender < ARRAY_COUNT(sPlayerAvatarGfxIds[0]); ++gender)
+		for (u8 gender = 0; gender < NELEMS(sPlayerAvatarGfxIds[0]); ++gender)
 		{
 			if (sPlayerAvatarGfxIds[state][gender].graphicsId == gfxId)
 				return gender;
@@ -287,7 +289,7 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
 	u8 upperByte = eventObj->graphicsIdUpperByte;
 
 	#ifndef EXISTING_OW_TABLE_ADDRESS
-	if (upperByte >= ARRAY_COUNT(gOverworldTableSwitcher)
+	if (upperByte >= NELEMS(gOverworldTableSwitcher)
 	&& upperByte != 0xFF) //Dynamic OW table
 		return lowerByte;
 	#endif

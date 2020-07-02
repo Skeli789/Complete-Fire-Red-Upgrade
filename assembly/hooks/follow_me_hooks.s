@@ -69,11 +69,11 @@ FollowMe_BikeHook:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Surf hook, make follower jump into water as well
-@hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
+@hook via R0, at 0x8086B00
 FollowMe_SurfHook:
-	ldr r0, =(FollowMe_FollowerToWater)
-	bl linker
-	ldr r1, =(0x20386E0)
+	ldr r0, =FollowMe_FollowerToWater
+	bl bxr0
+	ldr r1, =gFieldEffectArguments
 	mov r2, #0xA
 	ldrsh r0, [r6, r2]
 	str r0, [r1]
@@ -82,7 +82,7 @@ FollowMe_SurfHook:
 	str r0, [r1, #0x4]
 	ldr r0, =(0x8086B0C +1)
 
-linker:
+bxr0:
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -91,11 +91,11 @@ linker:
 @hook via R0, at 0x8056D12.
 FollowMe_SurfBagHook:
 	ldr r0, =0x8057100 | 1
-	bl linker
+	bl bxr0
 	ldr r0, =0x8057114 | 1
-	bl linker
-	ldr r0, =(FollowMe_BindToSurbBlobOnReloadScreen)
-	bl linker
+	bl bxr0
+	ldr r0, =FollowMe_BindToSurbBlobOnReloadScreen
+	bl bxr0
 	ldr r0, =0x8056D30 | 1
 	bx r0
 
@@ -136,7 +136,7 @@ FollowMe_EscalatorMoveHook:
 	ldrb r0, [r5, #0xA]
 	bl EscalatorMoveFollower
 	ldrb r0, [r5, #0xA]
-	ldr r1, =(0x08084870 + 1)
+	ldr r1, =0x08084870 + 1
 	bx r1
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -154,9 +154,9 @@ FollowMe_WarpDoorEndHook:
 	bl FollowMe_SetIndicatorToComeOutDoor
 	bl FollowMe_WarpSetEnd
 	ldr r3, =UnfreezeEventObjects
-	bl call_via_r3
+	bl bxr3
 	ldr r3, =ScriptContext2_Disable
-	bl call_via_r3
+	bl bxr3
 	ldr r0, =0x0807E200 | 1
 	bx r0
 
@@ -165,9 +165,9 @@ FollowMe_WarpDoorEndHook:
 FollowMe_WarpArrowEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =UnfreezeEventObjects
-	bl call_via_r3
+	bl bxr3
 	ldr r3, =ScriptContext2_Disable
-	bl call_via_r3
+	bl bxr3
 	ldr r0, =0x807E2C0 | 1
 	bx r0
 
@@ -178,7 +178,7 @@ FollowMe_WarpArrowEndHook:
 FollowMe_WarpNormalEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =ScriptContext2_Enable
-	bl call_via_r3
+	bl bxr3
 	pop {pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -186,9 +186,9 @@ FollowMe_WarpNormalEndHook:
 FollowMe_WarpTeleportEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =UnfreezeEventObjects
-	bl call_via_r3
+	bl bxr3
 	ldr r3, =ScriptContext2_Disable
-	bl call_via_r3
+	bl bxr3
 	ldr r0, =0x0807E36C | 1
 	bx r0
 
@@ -205,14 +205,14 @@ FollowMe_WarpHoleEndHook:
 FollowMe_WarpStairsEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =0x0805FAA8 | 1
-	bl call_via_r3
+	bl bxr3
 	ldr r3, =0x0806994C | 1
-	bl call_via_r3
+	bl bxr3
 	mov r0, r4
 	ldr r1, =0x0807EC64 | 1
 	bx r1
 
-call_via_r3:
+bxr3:
 	bx r3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
