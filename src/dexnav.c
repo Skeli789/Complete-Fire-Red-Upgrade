@@ -1040,6 +1040,8 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 {
 	bool8 genAbility = FALSE;
 	u16 randVal = Random() % 100;
+	TryRandomizeSpecies(&species);
+
 	if (searchLevel < 5)
 	{
 		#if (SEARCHLEVEL0_ABILITYCHANCE != 0)
@@ -1386,10 +1388,10 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 		pid = GenerateUnownPersonalityByLetter(sDexNavHudPtr->unownLetter - 1);
 
 	//Load which palette the species icon uses
+	TryRandomizeSpecies(&species);
 	LoadMonIconPalette(species);
 
 	//Create the icon
-	TryRandomizeSpecies(&species);
 	u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 	*spriteIdAddr = spriteId;
 }
@@ -2074,12 +2076,18 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 			}
 			else
 			#endif
-			if (SpeciesToNationalPokedexNum(sDexNavGuiPtr->grassSpecies[i]) == dexNum)
-				return TRUE;
+			{
+				u16 wildSpecies = sDexNavGuiPtr->grassSpecies[i];
+				TryRandomizeSpecies(&wildSpecies);
+				if (SpeciesToNationalPokedexNum(wildSpecies) == dexNum)
+					return TRUE;
+			}
 		}
 		else
 		{
-			if (SpeciesToNationalPokedexNum(sDexNavGuiPtr->waterSpecies[i]) == dexNum)
+			u16 wildSpecies = sDexNavGuiPtr->waterSpecies[i];
+			TryRandomizeSpecies(&wildSpecies);
+			if (SpeciesToNationalPokedexNum(wildSpecies) == dexNum)
 				return TRUE;
 		}
 	}

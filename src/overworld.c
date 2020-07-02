@@ -2071,11 +2071,19 @@ static const struct SpriteFrameImage sFieldEffectObjectPicTable_SwampLongGrass[]
 	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
 };
 
+static const struct SpriteFrameImage sFieldEffectObjectPicTable_ShakingSwampLongGrass[] = {
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 1),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 2),
+	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
+};
+
 const struct SpriteTemplate sFieldEffectObjectTemplate_SwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5938, sFieldEffectObjectPicTable_SwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DB69C | 1)};
+const struct SpriteTemplate sFieldEffectObjectTemplate_ShakingSwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5A84, sFieldEffectObjectPicTable_ShakingSwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DCD1D | 1)};
 
 #endif
 
-static void GetSpriteTemplateAndPaletteForlGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette, u8 fieldEffectTemplateArg)
+static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette, u8 fieldEffectTemplateArg)
 {
 	switch (GetCurrentRegionMapSectionId()) {
 	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
@@ -2087,8 +2095,10 @@ static void GetSpriteTemplateAndPaletteForlGrassFieldEffect(const struct SpriteT
 			break;
 		//case MAPSEC_POLDER_TOWN:
 		case MAPSEC_COOTES_BOG:
-			if (fieldEffectTemplateArg == 15) //Long Grass
+			if (fieldEffectTemplateArg == 15 || fieldEffectTemplateArg == 18) //Long Grass and Shaking Long Grass
 				*spriteTemplate = &sFieldEffectObjectTemplate_SwampLongGrass;
+			else if (fieldEffectTemplateArg == 18)
+				*spriteTemplate = &sFieldEffectObjectTemplate_ShakingSwampLongGrass;
 			else
 				*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = &sSwampGrassObjectPaletteInfo;
@@ -2111,7 +2121,7 @@ static void FldEff_TallGrass(void)
 	y = gFieldEffectArguments[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
-	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 
@@ -2140,6 +2150,36 @@ static void FldEff_TallGrass(void)
 	PlayGrassFootstepNoise();
 }
 
+void FldEff_ShakingTallGrass(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 17);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, gFieldEffectArguments[2]);
+
+	if (spriteId != MAX_SPRITES)
+	{
+		struct Sprite *sprite;
+
+		sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = gFieldEffectArguments[3];
+		sprite->data[0] = FLDEFF_SHAKING_GRASS;
+	}
+
+	PlaySE(SE_LEAVES);
+}
+
 static void FldEff_JumpTallGrassLoadPalette(void)
 {
 	const struct SpriteTemplate* spriteTemplate;
@@ -2147,7 +2187,7 @@ static void FldEff_JumpTallGrassLoadPalette(void)
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 
-	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
 	FldEff_JumpTallGrass();
 }
@@ -2163,7 +2203,7 @@ static void FldEff_LongGrass(void)
 	y = gFieldEffectArguments[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
-	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
@@ -2196,9 +2236,39 @@ static void FldEff_JumpLongGrassLoadPalette(void)
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 
-	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
 	FldEff_JumpLongGrass();
+}
+
+void FldEff_ShakingLongGrass(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 18);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, gFieldEffectArguments[2]);
+
+	if (spriteId != MAX_SPRITES)
+	{
+		struct Sprite *sprite;
+
+		sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = gFieldEffectArguments[3];
+		sprite->data[0] = FLDEFF_SHAKING_LONG_GRASS;
+	}
+
+	PlaySE(SE_LEAVES);
 }
 
 u32 FldEff_BikeTireTracks(void)
@@ -2236,6 +2306,12 @@ const struct FieldEffectScript gFieldEffectScript_JumpTallGrass =
 	FLDEFF_END,
 };
 
+const struct FieldEffectScript gFieldEffectScript_ShakingTallGrass =
+{
+	FLDEFF_CALLASM, FldEff_ShakingTallGrass,
+	FLDEFF_END,
+};
+
 const struct FieldEffectScript gFieldEffectScript_LongGrass =
 {
 	FLDEFF_CALLASM, FldEff_LongGrass,
@@ -2245,6 +2321,12 @@ const struct FieldEffectScript gFieldEffectScript_LongGrass =
 const struct FieldEffectScript gFieldEffectScript_JumpLongGrass =
 {
 	FLDEFF_CALLASM, FldEff_JumpLongGrassLoadPalette,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript gFieldEffectScript_ShakingLongGrass =
+{
+	FLDEFF_CALLASM, FldEff_ShakingLongGrass,
 	FLDEFF_END,
 };
 

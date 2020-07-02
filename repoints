@@ -196,6 +196,8 @@ gFieldEffectScript_TallGrass 081D96BC
 gFieldEffectScript_JumpTallGrass 081D96DC
 gFieldEffectScript_LongGrass 081D96F0
 gFieldEffectScript_JumpLongGrass 081D96F4
+gFieldEffectScript_ShakingTallGrass 081D96F8
+gFieldEffectScript_ShakingLongGrass 081D96FC
 Wav_grass_footstep_sample 0848EE14
 Wav_sand_footstep_sample 0848EE20
 
