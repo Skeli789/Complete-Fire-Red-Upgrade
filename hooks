@@ -247,6 +247,8 @@ UpdateNickForIllusionHook 80496C8 2
 UpdatePokeBallForIllusionHook 804A9E0 1
 UpdateCryForIllusionHook 804B2DC 1
 UpdateAltitudeForIllusionHook 8074598 2
+UpdateBattlerYDeltaForIllusionHook1 807652E 0
+UpdateBattlerYDeltaForIllusionHook2 8076578 0
 
 ##Wild Encounter Hooks
 StandardWildEncounter 8082CBC 2
