@@ -1864,7 +1864,7 @@ void atk47_setgraphicalstatchangevalues(void)
 
 void atk5C_hitanimation(void)
 {
-    gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (!IsDoubleSpreadMove())
 	{
@@ -3084,6 +3084,8 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 		else
 			gBattleMons[bankAtk].pp[i] = 5;
 	}
+	
+	gNewBS->chiStrikeCritBoosts[bankAtk] = gNewBS->chiStrikeCritBoosts[bankDef];
 
 	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 	gBattleSpritesDataPtr->bankData[bankAtk].transformSpecies = species;
@@ -4013,6 +4015,10 @@ void atkBD_copyfoestats(void) //Psych up
 		for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 			STAT_STAGE(gBankAttacker, i) = STAT_STAGE(gBankTarget, i);
 
+		//Copy critical hit ratio
+		gBattleMons[gBankAttacker].status2 &= ~STATUS2_FOCUS_ENERGY; //Remove old boost if had
+		gBattleMons[gBankAttacker].status2 |= (gBattleMons[gBankTarget].status2 & STATUS2_FOCUS_ENERGY); //Give boost if opponent has
+		gNewBS->chiStrikeCritBoosts[gBankAttacker] = gNewBS->chiStrikeCritBoosts[gBankTarget];
 		gBattlescriptCurrInstr += 5;
 	}
 }
@@ -4368,18 +4374,18 @@ u16 GetNaturePowerMove(void)
 
 void atkCD_cureifburnedparalysedorpoisoned(void) // refresh
 {
-    if (gBattleMons[gBankAttacker].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
-    {
-        gBattleMons[gBankAttacker].status1 = 0;
-        gBattlescriptCurrInstr += 5;
-        gActiveBattler = gBankAttacker;
-        EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-        MarkBufferBankForExecution(gActiveBattler);
-    }
-    else
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
+	if (gBattleMons[gBankAttacker].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
+	{
+		gBattleMons[gBankAttacker].status1 = 0;
+		gBattlescriptCurrInstr += 5;
+		gActiveBattler = gBankAttacker;
+		EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+		MarkBufferBankForExecution(gActiveBattler);
+	}
+	else
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
 }
 
 void atkCE_settorment(void)

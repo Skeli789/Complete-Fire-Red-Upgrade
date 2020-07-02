@@ -80,7 +80,7 @@ extern const u8 BattleScript_MaxMoveEffectSporeFoes[];
 extern const u8 BattleScript_MaxMoveParalyzeFoes[];
 extern const u8 BattleScript_MaxMovePoisonFoes[];
 extern const u8 BattleScript_MaxMovePayDayConfuseFoes[];
-extern const u8 BattleScript_MaxMoveFocusEnergy[];
+extern const u8 BattleScript_MaxMoveCritUp[];
 extern const u8 BattleScript_MaxMoveTrap[];
 extern const u8 BattleScript_MaxMoveInfatuation[];
 extern const u8 BattleScript_MaxMoveRecycle[];

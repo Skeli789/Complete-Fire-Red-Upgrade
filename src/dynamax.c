@@ -911,11 +911,11 @@ void atkFF2F_setmaxmoveeffect(void)
 			break;
 
 		case MAX_EFFECT_CRIT_PLUS:
-			if ((BATTLER_ALIVE(gBankAttacker) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker))))
-			&& (!(gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) || (IS_DOUBLE_BATTLE && !(gBattleMons[PARTNER(gBankAttacker)].status2 & STATUS2_FOCUS_ENERGY))))
+			if ((BATTLER_ALIVE(gBankAttacker) && gNewBS->chiStrikeCritBoosts[gBankAttacker] < 3) //Capped at 3
+			|| ((IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker))) && gNewBS->chiStrikeCritBoosts[PARTNER(gBankAttacker)] < 3))
 			{
 				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_MaxMoveFocusEnergy;
+				gBattlescriptCurrInstr = BattleScript_MaxMoveCritUp;
 			}
 			break;
 
@@ -1139,6 +1139,12 @@ void SetGMaxMalodorEffect(void)
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
 	if (CanBePoisoned(gBankTarget, gBankAttacker, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+}
+
+void SetGMaxChiStrikeEffect(void)
+{
+	if (BATTLER_ALIVE(gBankAttacker) && gNewBS->chiStrikeCritBoosts[gBankAttacker] < 3) //Capped at 3
+		++gNewBS->chiStrikeCritBoosts[gBankAttacker];
 }
 
 void PickRandomGMaxStunshockEffect(void)

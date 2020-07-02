@@ -1733,3 +1733,9 @@
 	.byte \bank
 	.4byte \rom_address
 	.endm
+
+	.macro jumpifmaxchistrikecapped bank rom_address
+	.byte 0xFF, 0x35
+	.byte \bank
+	.4byte \rom_address
+	.endm

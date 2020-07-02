@@ -25,7 +25,7 @@ set_effect_battle_scripts.s
 .global BattleScript_MaxMoveParalyzeFoes
 .global BattleScript_MaxMovePoisonFoes
 .global BattleScript_MaxMovePayDayConfuseFoes
-.global BattleScript_MaxMoveFocusEnergy
+.global BattleScript_MaxMoveCritUp
 .global BattleScript_MaxMoveTrap
 .global BattleScript_MaxMoveInfatuation
 .global BattleScript_MaxMoveRecycle
@@ -211,23 +211,23 @@ BattleScript_MaxMovePayDayConfuseFoes:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_MaxMoveFocusEnergy:
-	jumpiffainted BANK_ATTACKER BS_MaxMoveFocusEnergy_CheckPartner
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_PUMPEDUP BS_MaxMoveFocusEnergy_CheckPartner
-	setincreasedcriticalchance
+BattleScript_MaxMoveCritUp:
+	jumpiffainted BANK_ATTACKER BS_MaxMoveCritUp_CheckPartner
+	jumpifmaxchistrikecapped BANK_ATTACKER BS_MaxMoveCritUp_CheckPartner
+	callasm SetGMaxChiStrikeEffect
 	printfromtable 0x83FE5B0
 	waitmessage DELAY_1SECOND
 
-BS_MaxMoveFocusEnergy_CheckPartner:
+BS_MaxMoveCritUp_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetAttackerPartner
-	jumpiffainted BANK_ATTACKER BS_MaxMoveFocusEnergy_RestoreOriginalAttacker
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_PUMPEDUP BS_MaxMoveFocusEnergy_RestoreOriginalAttacker
-	setincreasedcriticalchance
+	jumpiffainted BANK_ATTACKER BS_MaxMoveCritUp_RestoreOriginalAttacker
+	jumpifmaxchistrikecapped BANK_ATTACKER BS_MaxMoveCritUp_RestoreOriginalAttacker
+	callasm SetGMaxChiStrikeEffect
 	printfromtable 0x83FE5B0
 	waitmessage DELAY_1SECOND
 
-BS_MaxMoveFocusEnergy_RestoreOriginalAttacker:
+BS_MaxMoveCritUp_RestoreOriginalAttacker:
 	callasm SetAttackerPartner
 	return
 

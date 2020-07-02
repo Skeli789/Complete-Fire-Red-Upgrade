@@ -1119,6 +1119,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->statFellThisTurn[bank] = FALSE;
 	gNewBS->dynamaxData.timer[bank] = 0;
 	gNewBS->zMoveData.toBeUsed[bank] = 0; //Force switch or fainted before Z-Move could be used
+	gNewBS->chiStrikeCritBoosts[bank] = 0;
 	gNewBS->sandblastCentiferno[bank] = 0;
 	gNewBS->disguisedAs[bank] = 0;
 

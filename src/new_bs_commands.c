@@ -913,6 +913,9 @@ void atkFF21_tryspectralthiefsteal(void)
 				success = TRUE;
 				gBattleMons[gBankTarget].statStages[i] -= 1;
 				gBattleMons[gBankAttacker].statStages[i] += increment;
+				
+				gNewBS->statFellThisTurn[gBankAttacker] = TRUE;
+				gNewBS->statFellThisRound[gBankAttacker] = TRUE;
 			}
 		}
 		else
@@ -923,8 +926,10 @@ void atkFF21_tryspectralthiefsteal(void)
 				gBattleMons[gBankTarget].statStages[i] -= 1;
 				gBattleMons[gBankAttacker].statStages[i] += increment;
 
-				if (gBattleMons[gBankAttacker].statStages[i] > 12)
-					gBattleMons[gBankAttacker].statStages[i] = 12;
+				if (gBattleMons[gBankAttacker].statStages[i] > STAT_STAGE_MAX)
+					gBattleMons[gBankAttacker].statStages[i] = STAT_STAGE_MAX;
+				
+				gNewBS->statRoseThisRound[gBankAttacker] = TRUE;
 			}
 		}
 	}
@@ -1962,4 +1967,16 @@ void atkFF34_canconfuse(void)
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = ptr;
 	}
+}
+
+//jumpifmaxchistrikecapped BANK FAIL_ADDRESS
+void atkFF35_jumpifmaxchistrikecapped(void)
+{
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+
+	if (gNewBS->chiStrikeCritBoosts[bank] >= 3)
+		gBattlescriptCurrInstr = ptr;
+	else
+		gBattlescriptCurrInstr += 6;
 }

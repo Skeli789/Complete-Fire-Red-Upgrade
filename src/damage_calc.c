@@ -110,6 +110,7 @@ void atk04_critcalc(void)
 		else 
 		{
 			critChance  = 2 * ((gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
+						+ gNewBS->chiStrikeCritBoosts[gBankAttacker]
 						+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
 						+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 						+ (atkAbility == ABILITY_SUPERLUCK)
@@ -195,6 +196,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 
 	else {
 		critChance  = 2 * ((atkStatus2 & STATUS2_FOCUS_ENERGY) != 0)
+					+ gNewBS->chiStrikeCritBoosts[bankAtk]
 					+ (CheckTableForMove(move, gHighCriticalChanceMoves))
 					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 					+ (atkAbility == ABILITY_SUPERLUCK)

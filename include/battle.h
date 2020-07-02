@@ -733,12 +733,12 @@ struct NewBattleStruct
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
 	u8 MagnetRiseTimers[MAX_BATTLERS_COUNT];
-	u8 HealBlockTimers[MAX_BATTLERS_COUNT]; 			//0x20179D7
+	u8 HealBlockTimers[MAX_BATTLERS_COUNT];
 	u8 LaserFocusTimers[MAX_BATTLERS_COUNT];
 	u8 ThroatChopTimers[MAX_BATTLERS_COUNT];
 	u8 EmbargoTimers[MAX_BATTLERS_COUNT];
 	u8 ElectrifyTimers[MAX_BATTLERS_COUNT];
-	u8 SlowStartTimers[MAX_BATTLERS_COUNT];				//0x20175E8
+	u8 SlowStartTimers[MAX_BATTLERS_COUNT];
 	u8 StakeoutCounters[MAX_BATTLERS_COUNT];
 	u8 StompingTantrumTimers[MAX_BATTLERS_COUNT];
 	u8 NimbleCounters[MAX_BATTLERS_COUNT];
@@ -754,7 +754,7 @@ struct NewBattleStruct
 	u8 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
 	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
-	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
+	u8 pickupStack[MAX_BATTLERS_COUNT];
 	u8 synchronizeTarget[MAX_BATTLERS_COUNT]; //Bank + 1 that statused given bank
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
 	u8 statRoseThisRound[MAX_BATTLERS_COUNT];
@@ -762,6 +762,7 @@ struct NewBattleStruct
 	u8 statFellThisRound[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
 	s8 lastBracketCalc[MAX_BATTLERS_COUNT];
+	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT]; //~0x2017A4B
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
 
