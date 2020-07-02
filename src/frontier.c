@@ -1029,10 +1029,13 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 9;
 	else if (streakLength == 100)
 		toGive = 100;
-	else if (streakLength == 1000) //Why not lol, if you get here you deserve it
-		toGive = 1000;
-	else if (streakLength == 10000)
+	else if (streakLength == 500)
+		toGive = 500;
+	//Why not lol, if you get here you deserve it
+	else if ((streakLength % 10000) == 0 && streakLength != 0) //Every 10000 wins give 10000
 		toGive = 10000;
+	else if ((streakLength % 1000) == 0 && streakLength != 0) //Every 1000 wins give 1000
+		toGive = 1000;
 	else
 		toGive = 10;
 
@@ -1224,8 +1227,25 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 
 		for (j = 0, tier = tiers[j]; j < numTiers; ++j, tier = tiers[j]) //Check every tier in requested format
 		{
+			u16 varBackup = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
+
+			//Check if mon is banned in singles
+			VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, BATTLE_FACILITY_SINGLE);
 			if (IsMonBannedInTier(mon, tier))
+			{
+				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
 				return;
+			}
+
+			//Check if mon is banned in doubles
+			VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, BATTLE_FACILITY_DOUBLE);
+			if (IsMonBannedInTier(mon, tier))
+			{
+				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
+				return;
+			}
+
+			VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
 		}
 	}
 

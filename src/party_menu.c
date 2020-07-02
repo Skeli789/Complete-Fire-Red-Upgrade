@@ -441,7 +441,7 @@ static void OpenSummary(u8 taskId)
 #define PAGE_SKILLS	 1
 #define PAGE_ATTACKS	2
 
-u8 ChangeSummaryScreenMon(u8 delta)
+u8 ChangeSummaryScreenMonSinglesDoubles(u8 delta)
 {
 	u8 numMons = gSummaryScreenData->maxPartyIndex + 1;
 	delta += numMons;
