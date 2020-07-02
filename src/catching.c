@@ -454,6 +454,24 @@ static u8 GetCatchingBattler(void)
 	return battler;
 }
 
+#ifdef CRITICAL_CAPTURE
+struct CriticalCaptureOdds
+{
+	u16 numCaught; //Less than or equal to this number
+	u16 oddsMultiplier; //x10
+};
+
+static const struct CriticalCaptureOdds sCriticalCaptureSpeciesCounts[] =
+{
+	{30,      0}, //x0.0
+	{150,     5}, //x0.5
+	{300,    10}, //x1.0
+	{450,    15}, //x1.5
+	{600,    20}, //x2.0
+	{0xFFFF, 25}, //x2.5 default
+};
+#endif
+
 static bool8 CriticalCapture(unusedArg u32 odds)
 {
 	#ifndef CRITICAL_CAPTURE
@@ -461,30 +479,28 @@ static bool8 CriticalCapture(unusedArg u32 odds)
 		return FALSE;
 	#else
 	u16 pokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+	pokesCaught = 500;
 
-	if (pokesCaught <= 30)
-		odds = 0;
-	else if (pokesCaught <= 150)
-		odds /= 2;
-	else if (pokesCaught <= 300)
-		;
-	else if (pokesCaught <= 450)
-		odds = (odds * 15) / 10;
-	else if (pokesCaught <= 600)
-		odds *= 2;
-	else
-		odds = (odds * 25) / 10;
+	for (u32 i = 0; i < NELEMS(sCriticalCaptureSpeciesCounts); ++i)
+	{
+		if (pokesCaught <= sCriticalCaptureSpeciesCounts[i].numCaught)
+		{
+			u8 multiplier = sCriticalCaptureSpeciesCounts[i].oddsMultiplier;
+			#ifdef ITEM_CATCHING_CHARM
+			if (CheckBagHasItem(ITEM_CATCHING_CHARM, 1) > 0)
+				multiplier += 5; //Temp value until the real one becomes known
+			#endif
+			odds = (odds * multiplier) / 10;
+			break;
+		}
+	}
 
 	odds /= 6;
 	gNewBS->criticalCaptureSuccess = FALSE;
 	if (Random() % 0xFF < odds)
-	{
 		return gNewBS->criticalCapture = TRUE;
-	}
 	else
-	{
 		return gNewBS->criticalCapture = FALSE;
-	}
 	#endif
 }
 
