@@ -536,10 +536,13 @@ static void DexNavFreeHUD(void)
 extern const u8 SystemScript_DisplayDexnavMsg[];
 static void DexNavShowFieldMessage(u8 id)
 {
+	u16 species = sDexNavHudPtr->species;
+	TryRandomizeSpecies(&species);
+
 	ScriptContext2_Enable();
 	DismissMapNamePopup();
 	ScriptContext1_SetupScript(SystemScript_DisplayDexnavMsg);
-	GetSpeciesName(gStringVar1, sDexNavHudPtr->species);
+	GetSpeciesName(gStringVar1, species);
 
 	switch(id)
 	{
@@ -1386,6 +1389,7 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 	LoadMonIconPalette(species);
 
 	//Create the icon
+	TryRandomizeSpecies(&species);
 	u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 	*spriteIdAddr = spriteId;
 }
@@ -2024,6 +2028,7 @@ static void VBlankCB_DexNav(void)
 
 static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 {
+	TryRandomizeSpecies(&species);
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 
 	//Disallow species not seen
@@ -2229,6 +2234,7 @@ static void PrintGUIHiddenAbility(u16 species)
 static void DexNavDisplaySpeciesData(void)
 {
 	u16 species = sDexNavGuiPtr->selectedArr == ROW_WATER ? sDexNavGuiPtr->waterSpecies[sDexNavGuiPtr->selectedIndex >> 1] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex >> 1];
+	TryRandomizeSpecies(&species);
 
 	PrintGUISpeciesName(species);
 	PrintGUISearchLevel(species);
@@ -2333,6 +2339,7 @@ static void DexNavLoadMonIcons(void)
 		if (letter > 0)
 			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
+		TryRandomizeSpecies(&species);
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
 	}
 
@@ -2357,6 +2364,7 @@ static void DexNavLoadMonIcons(void)
 		if (letter > 0)
 			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
+		TryRandomizeSpecies(&species);
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
 	}
 }

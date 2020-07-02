@@ -301,6 +301,7 @@ UpdatePartyPokerusTime 8043B38 1
 PartySpreadPokerus 8043B40 1
 SetMonExpWithMaxLevelCheck 8043B48 2
 GiveRandomFrontierMonByTier 802883C 3
+RandomizerShowPokepicHook 809D2FC 3
 
 ##DNS
 TransferPlttBuffer 8070474 0

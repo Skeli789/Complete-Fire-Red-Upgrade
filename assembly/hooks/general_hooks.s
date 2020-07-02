@@ -1209,3 +1209,16 @@ SuctionCupsHook:
 NoFishBiting:
 	ldr r0, =0x805D53A | 1
 	bx r0
+
+.pool
+@0x809D2FC with r3
+RandomizerShowPokepicHook:
+	lsl r1, r1, #0x18
+	lsr r7, r1, #0x18
+	lsl r2, r2, #0x18
+	lsr r6, r2, #0x18
+	mov r0, r8
+	bl GetRandomizedSpecies
+	mov r8, r0
+	ldr r0, =0x809D304 | 1
+	bx r0

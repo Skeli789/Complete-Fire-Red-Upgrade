@@ -234,7 +234,7 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 				break; //No Pokemon here					 
 			#elif (defined UNBOUND) //For Pokemon Unbound
 			if (GetCurrentRegionMapSectionId() == MAPSEC_TOMB_OF_BORRIUS && !FlagGet(FLAG_OPENED_TOMB_OF_BORRIUS_HOLE))
-				break; //No Pokemon here
+				break; //No Unown yet
 			#endif
 
 			sSavedWildDataDaytimeHeader = &gWildMonHeaders[i]; //Cache data for faster data access

@@ -3318,7 +3318,31 @@ u32 CheckShinyMon(struct Pokemon* mon)
 
 	return personality;
 };
+ 
+void TryRandomizeSpecies(unusedArg u16* species)
+{
+	#ifdef FLAG_POKEMON_RANDOMIZER
+	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY) && *species != SPECIES_NONE && *species < NUM_SPECIES)
+	{
+		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
+		u32 newSpecies = *species;
 
+		do
+		{
+			newSpecies *= id;
+			newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
+		} while (CheckTableForSpecies(newSpecies, gRandomizerSpeciesBanList));
+		
+		*species = newSpecies;
+	}
+	#endif
+}
+
+u16 GetRandomizedSpecies(u16 species)
+{
+	TryRandomizeSpecies(&species);
+	return species;
+}
 
 void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
 {
@@ -3327,17 +3351,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	u32 personality;
 	u32 value;
 
-#ifdef FLAG_POKEMON_RANDOMIZER
-	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)) //Don't randomize in battle facilities
-	{
-		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
-		u32 newSpecies = species * id;
-		species = MathMax(1, newSpecies % NUM_SPECIES);
-
-		while (CheckTableForSpecies(species, gRandomizerSpeciesBanList))
-			species *= id;
-	}
-#endif
+	TryRandomizeSpecies(&species);
 
 	ZeroBoxMonData(boxMon);
 	if (hasFixedPersonality)
