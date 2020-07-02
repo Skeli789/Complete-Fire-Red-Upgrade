@@ -1254,7 +1254,11 @@ void LoadProperIntroSpeechForTwoOpponentSighting(void)
 void PrepTrainerB(void)
 {
 	if (gEventObjects[gSelectedEventObject].localId == ExtensionState.spotted.firstTrainerNPCId)
+	{
 		gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
+		OverrideMovementTypeForEventObject(&gEventObjects[gSelectedEventObject], GetTrainerFacingDirectionMovementType(gEventObjects[gSelectedEventObject].facingDirection));
+		OverrideTemplateCoordsForEventObject(&gEventObjects[gSelectedEventObject]);
+	}
 	else
 		gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
 

@@ -66,7 +66,7 @@ EventScript_DoTwoOpponentBattle:
 	waitstate
 	
 TwoOpponentLoop:
-	callasm MoveSecondNPCForTwoOpponentSighting + 1
+	callasm MoveSecondNPCForTwoOpponentSighting
 	compare LASTRESULT 0xFFFF
 	if equal _goto StartTwoOpponentBattle
 	call WalkCall	
@@ -85,7 +85,7 @@ TwoOpponentBattleShowMessage:
 	special CAMERA_START
 	callasm MoveCameraToTrainerB
 	call WalkCall
-	callasm PrepTrainerB + 1
+	callasm PrepTrainerB
 	faceplayer
 	special ShowTrainerIntroSpeech
 	waitmsg
@@ -103,7 +103,7 @@ EventScript_TryDoTwoOpponentBattle:
 	lock
 	faceplayer
 	call EventScript_RevealTrainer
-	callasm HasOneTrainerBeenDefeated + 1
+	callasm HasOneTrainerBeenDefeated
 	compare LASTRESULT 0
 	if notequal _goto EventScript_TwoOpponent_NoDoubleTrainerBattle
 	special HasEnoughMonsForDoubleBattle
@@ -126,35 +126,31 @@ EventScript_TwoOpponent_NotEnoughMonsForDoubleBattle:
 
 TrainerFaceFixScript:
 	call FollowerPositionFixScript
-	callasm TrainerFaceFix + 1
+	callasm TrainerFaceFix
 	compare LASTRESULT 0xFFFF
-	if equal _goto TrainerFaceFixScriptReturn
-	compare LASTRESULT 0x0
-	if equal _call LookDownCall
-	compare LASTRESULT 0x1
-	if equal _call LookUpCall
-	compare LASTRESULT 0x2
-	if equal _call LookLeftCall
-	compare LASTRESULT 0x3
-	if equal _call LookRightCall
-	waitmovement PLAYER
-TrainerFaceFixScriptReturn:
+	if equal _goto .LReturn
+	switch LASTRESULT
+	case 0, PlayerLookDown
+	case 1, PlayerLookUp
+	case 2, PlayerLookLeft
+	case 3, PlayerLookRight
+.LReturn:
 	return
 
-LookDownCall:
-	applymovement PLAYER LookDown
+PlayerLookDown:
+	spriteface PLAYER DOWN
 	return
 
-LookUpCall:
-	applymovement PLAYER LookUp
+PlayerLookUp:
+	spriteface PLAYER UP
 	return
 
-LookLeftCall:
-	applymovement PLAYER LookLeft
+PlayerLookLeft:
+	spriteface PLAYER LEFT
 	return
 
-LookRightCall:
-	applymovement PLAYER LookRight
+PlayerLookRight:
+	spriteface PLAYER RIGHT
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -185,56 +181,34 @@ FollowerIntoPlayerScript:
 	return
 
 WalkCall:
-	compare LASTRESULT 0x0
-	if equal _call WalkDownCall
-	compare LASTRESULT 0x1
-	if equal _call WalkUpCall
-	compare LASTRESULT 0x2
-	if equal _call WalkLeftCall
-	compare LASTRESULT 0x3
-	if equal _call WalkRightCall
-	waitmovement 0x8005
+	switch LASTRESULT
+	case 0, Var8005WalkDown
+	case 1, Var8005WalkUp
+	case 2, Var8005WalkLeft
+	case 3, Var8005WalkRight
 	return
 	
-WalkDownCall:
-	applymovement 0x8005 WalkDown
+Var8005WalkDown:
+	applymovement 0x8005 m_WalkDown
+	waitmovement 0x0
 	return
 
-WalkUpCall:
-	applymovement 0x8005 WalkUp
+Var8005WalkUp:
+	applymovement 0x8005 m_WalkUp
+	waitmovement 0x0
 	return
 
-WalkLeftCall:
-	applymovement 0x8005 WalkLeft
+Var8005WalkLeft:
+	applymovement 0x8005 m_WalkLeft
+	waitmovement 0x0
 	return
 
-WalkRightCall:
-	applymovement 0x8005 WalkRight
+Var8005WalkRight:
+	applymovement 0x8005 m_WalkRight
+	waitmovement 0x0
 	return
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-LookDown:
-.byte look_down, end_m 
-
-LookUp:
-.byte look_up, end_m
-
-LookLeft:
-.byte look_left, end_m
-
-LookRight:
-.byte look_right, end_m
-
-WalkDown:
-.byte walk_down, end_m 
-
-WalkUp:
-.byte walk_up, end_m
-
-WalkLeft:
-.byte walk_left, end_m
-
-WalkRight:
-.byte walk_right, end_m
-
+m_WalkDown: .byte walk_down, end_m 
+m_WalkUp: .byte walk_up, end_m
+m_WalkLeft: .byte walk_left, end_m
+m_WalkRight: .byte walk_right, end_m
