@@ -850,7 +850,7 @@ map \map
 @trainerbattle 0xA FOE_1_ID FOE_2_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A DEFEAT_TEXT_B
 .macro trainerbattle10 type:req foeindex1:req foeindex2:req partnerindex:req partnerbackspriteindex:req filler:req loss1:req loss2:req
 .byte 0x5C
-.byte 0xA
+.byte 10
 .hword \foeindex1
 .hword \foeindex2
 .hword \partnerindex
@@ -863,7 +863,7 @@ map \map
 @trainerbattle 0xB FOE_1_ID FOE_2_ID FOE_1_NPC_ID FOE_2_NPC_ID 0x0 INTRO_TEXT_A INTRO_TEXT_B DEFEAT_TEXT_A DEFEAT_TEXT_B CANNOT_BATTLE_TEXT_A CANNOT_BATTLE_TEXT_B
 .macro trainerbattle11 type:req foeindex1:req foeindex2:req foenpcid1:req foenpcid2:req filler:req intro1:req intro2:req loss1:req loss2:req cannotbattle1:req cannotbattle2:req
 .byte 0x5C
-.byte 0xB
+.byte 11
 .hword \foeindex1
 .hword \foeindex2
 .byte \foenpcid1
@@ -880,7 +880,7 @@ map \map
 @trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
 .macro trainerbattle12 type:req foeindex:req partnerindex:req partnerbackspriteindex:req filler:req loss:req
 .byte 0x5C
-.byte 0xC
+.byte 12
 .hword \foeindex
 .hword \partnerindex
 .hword \partnerbackspriteindex
@@ -891,7 +891,7 @@ map \map
 @same as trainerbattle0
 .macro trainerbattle13 type:req index:req filler:req intro:req loss:req
 .byte 0x5C
-.byte 0xD
+.byte 13
 .hword \index
 .hword \filler
 .word \intro
@@ -901,7 +901,7 @@ map \map
 @same as trainerbattle4
 .macro trainerbattle14 type:req index:req filler:req intro:req loss:req cantbattle:req
 .byte 0x5C
-.byte 0xE
+.byte 14
 .hword \index
 .hword \filler
 .word \intro
@@ -912,10 +912,27 @@ map \map
 @same as trainerbattle3
 .macro trainerbattle15 type:req index:req filler:req intro:req
 .byte 0x5C
-.byte 0xF
+.byte 15
 .hword \index
 .hword \filler
 .word \intro
+.endm
+
+@same as trainerbattle11
+.macro trainerbattle16 type:req foeindex1:req foeindex2:req foenpcid1:req foenpcid2:req filler:req intro1:req intro2:req loss1:req loss2:req cannotbattle1:req cannotbattle2:req
+.byte 0x5C
+.byte 16
+.hword \foeindex1
+.hword \foeindex2
+.byte \foenpcid1
+.byte \foenpcid2
+.hword \filler
+.word \intro1
+.word \intro2
+.word \loss1
+.word \loss2
+.word \cannotbattle1
+.word \cannotbattle2
 .endm
 
 @ Starts a trainer battle using the battle information stored in RAM (usually by trainerbattle, which actually calls this command behind-the-scenes), and blocks script execution until the battle finishes.

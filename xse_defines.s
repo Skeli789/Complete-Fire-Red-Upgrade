@@ -5,6 +5,7 @@
 .equ GetTrainerFlag, 0x36
 .equ EndTrainerApproach, 0x37
 .equ SetUpTrainerEncounterMusic, 0x38
+.equ IsTrainerReadyForRematch, 0x3A
 .equ HasEnoughMonsForDoubleBattle, 0x3D
 .equ CAMERA_START, 0x113
 .equ CAMERA_END, 0x114

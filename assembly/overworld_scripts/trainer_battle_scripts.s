@@ -124,6 +124,24 @@ EventScript_TwoOpponent_NotEnoughMonsForDoubleBattle:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global EventScript_TryDoTwoOpponentRematchBattle
+EventScript_TryDoTwoOpponentRematchBattle:
+	lock
+	faceplayer
+	call EventScript_RevealTrainer
+	special2 LASTRESULT, IsTrainerReadyForRematch
+	compare LASTRESULT FALSE
+	if equal _goto EventScript_TwoOpponent_NoDoubleTrainerBattle
+	special HasEnoughMonsForDoubleBattle
+	compare LASTRESULT 0
+	if notequal _goto EventScript_TwoOpponent_NotEnoughMonsForDoubleBattle
+	special SetUpTrainerEncounterMusic
+	special SetUpTrainerMovement
+	setvar 0x8000 0x1
+	goto TwoOpponentBattleShowMessage
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 TrainerFaceFixScript:
 	call FollowerPositionFixScript
 	callasm TrainerFaceFix

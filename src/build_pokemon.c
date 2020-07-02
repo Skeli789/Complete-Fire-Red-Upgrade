@@ -806,6 +806,7 @@ static bool8 IsScaledTrainerBattleMode()
 		#ifdef UNBOUND
 		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH
 		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH_DOUBLE
+		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH_TWO_OPPONENTS
 		#endif
 		;
 }

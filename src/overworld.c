@@ -706,6 +706,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 			case TRAINER_BATTLE_REMATCH_DOUBLE:
 			case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
 			case TRAINER_BATTLE_TWO_OPPONENTS:
+			case TRAINER_BATTLE_REMATCH_TWO_OPPONENTS:
 			case TRAINER_BATTLE_DOUBLE_SCALED:
 				if (ViableMonCount(gPlayerParty) < 2 && !FlagGet(FLAG_TAG_BATTLE))
 					return FALSE;
@@ -912,6 +913,18 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			gApproachingTrainerId = 0;
 			return EventScript_TryDoTwoOpponentBattle;
 
+		case TRAINER_BATTLE_REMATCH_TWO_OPPONENTS:
+			TrainerBattleLoadArgs(sTwoOpponentBattleParams, data);
+			SetMapVarsToTrainer();
+			#ifndef UNBOUND
+			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
+			gTrainerBattleOpponent_B = GetRematchTrainerId(gTrainerBattleOpponent_B);
+			#endif
+			VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
+			FlagSet(FLAG_TWO_OPPONENTS);
+			gApproachingTrainerId = 0;
+			return EventScript_TryDoTwoOpponentRematchBattle;
+
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
 			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
@@ -938,7 +951,10 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 bool8 IsTrainerBattleModeAgainstTwoOpponents(void)
 {
-	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS || FlagGet(FLAG_TWO_OPPONENTS);
+	return sTrainerBattleMode == TRAINER_BATTLE_MULTI
+		|| sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS
+		|| sTrainerBattleMode == TRAINER_BATTLE_REMATCH_TWO_OPPONENTS
+		|| FlagGet(FLAG_TWO_OPPONENTS);
 }
 
 bool8 IsTrainerBattleModeWithPartner(void)
@@ -1105,7 +1121,7 @@ const u8* GetIntroSpeechOfApproachingTrainer(void)
 //Special 0x35
 const u8* GetTrainerCantBattleSpeech(void)
 {
-	if (sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS
+	if ((sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS || sTrainerBattleMode == TRAINER_BATTLE_REMATCH_TWO_OPPONENTS)
 	&& gEventObjects[gSelectedEventObject].localId == ExtensionState.spotted.secondTrainerNPCId)
 		return ReturnEmptyStringIfNull((const u8*) sTrainerCannotBattleSpeech_B);
 	else

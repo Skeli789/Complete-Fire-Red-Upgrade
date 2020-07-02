@@ -31,6 +31,7 @@ extern const u8 EventScript_SetUpNPCSpotting[];
 extern const u8 Script_TrainerSpottedMulti[];
 extern const u8 EventScript_DoTwoOpponentBattle[];
 extern const u8 EventScript_TryDoTwoOpponentBattle[];
+extern const u8 EventScript_TryDoTwoOpponentRematchBattle[];
 extern const u8 SystemScript_PoisonSurvial[];
 extern const u8 EventScript_RepelWoreOff[];
 extern const u8 EventScript_BwRepelWoreOff[];

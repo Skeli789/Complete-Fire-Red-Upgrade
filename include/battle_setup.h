@@ -12,12 +12,13 @@
 #define TRAINER_BATTLE_REMATCH_DOUBLE                   7
 #define TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC  8
 #define TRAINER_BATTLE_OAK_TUTORIAL                     9
-#define TRAINER_BATTLE_MULTI							10
-#define TRAINER_BATTLE_TWO_OPPONENTS					11
-#define TRAINER_BATTLE_TAG								12
-#define TRAINER_BATTLE_SINGLE_SCALED					13
-#define TRAINER_BATTLE_DOUBLE_SCALED					14
-#define TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED		15
+#define TRAINER_BATTLE_MULTI                            10
+#define TRAINER_BATTLE_TWO_OPPONENTS                    11
+#define TRAINER_BATTLE_TAG                              12
+#define TRAINER_BATTLE_SINGLE_SCALED                    13
+#define TRAINER_BATTLE_DOUBLE_SCALED                    14
+#define TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT_SCALED      15
+#define TRAINER_BATTLE_REMATCH_TWO_OPPONENTS            16
 
 struct TrainerBattleParameter
 {
