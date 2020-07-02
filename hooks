@@ -533,6 +533,7 @@ GetBoxWallpaper 808BD94 1
 SetBoxWallpaper 808BDBC 2
 PlaceBoxMonIcon 8090D58 2
 sub_80916F4 80916F4 1
+ExpandedItemNameFixPokemonStorageSystemHook 8093F58 3
 CompressedStorageSummaryScreenUpdate1 8093768 1
 CompressedStorageSummaryScreenUpdate2 8138BD2 1
 CompressedStorageSummaryScreenUpdate2 813936E 1

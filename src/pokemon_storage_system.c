@@ -3,12 +3,15 @@
 #include "../include/pokemon_icon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/pokemon_storage_system_internal.h"
+#include "../include/string_util.h"
+#include "../include/text.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
+#include "../include/new/item.h"
 #include "../include/new/pokemon_storage_system.h"
 /*
 pokemon_storage_system.c
@@ -503,4 +506,17 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
 
     gPSSData->movingMonSprite->callback = SpriteCallbackDummy;
     gPSSData->movingMonSprite = NULL;
+}
+
+void FixItemNameInPokemonStorageSystem(void)
+{
+	const u8* name = ItemId_GetName(gPSSData->cursorMonItem);
+	u8 length = StringLength(name);
+
+	StringCopyPadded(gPSSData->cursorMonTexts[3], name, CHAR_SPACE, 14);
+	if (length >= 14) //Too long to look nice
+	{
+		gPSSData->cursorMonTexts[3][12] = CHAR_ELLIPSIS; //End with trailing ...
+		gPSSData->cursorMonTexts[3][13] = EOS;
+	}
 }

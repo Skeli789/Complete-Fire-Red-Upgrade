@@ -567,6 +567,13 @@ SwapBoxMonMovesUpdate2:
 	pop {r4-r7,pc}
 
 .pool
+@0x8093F58 with r3
+ExpandedItemNameFixPokemonStorageSystemHook:
+	bl FixItemNameInPokemonStorageSystem
+	ldr r0, =0x8093F85 | 1
+	bx r0
+
+.pool
 @0x80D860C with r0
 ExpandedAbilityNamesBattle2:
 	add r0, r5, r7

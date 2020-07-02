@@ -36,6 +36,7 @@ u8* __attribute__((long_call)) StringExpandPlaceholders(u8 *dest, const u8 *src)
 s32 __attribute__((long_call)) StringCompare(const u8 *str1, const u8 *str2);
 s32 __attribute__((long_call)) StringCompareN(const u8 *str1, const u8 *str2, u32 n);
 u8* __attribute__((long_call)) StringAppendN(u8 *dest, const u8 *src, u8 n);
+u8* __attribute__((long_call)) StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n);
 
 /*
 u8 *StringGetEnd10(u8 *str);
@@ -51,7 +52,6 @@ u8 *StringExpandPlaceholders(u8 *dest, const u8 *src);
 u8 *StringBraille(u8 *dest, const u8 *src);
 u8 *GetExpandedPlaceholder(u32 id);
 u8 *StringFill(u8 *dest, u8 c, u16 n);
-u8 *StringCopyPadded(u8 *dest, const u8 *src, u8 c, u16 n);
 u8 *StringFillWithTerminator(u8 *dest, u16 n);
 u8 *StringCopyN_Multibyte(u8 *dest, u8 *src, u32 n);
 u32 StringLength_Multibyte(u8 *str);
