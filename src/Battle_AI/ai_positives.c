@@ -31,7 +31,7 @@ extern const struct FlingStruct gFlingTable[];
 #undef IS_DOUBLE_BATTLE
 #define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ((BATTLER_ALIVE(data->foe1) && BATTLER_ALIVE(data->foe2)) || BATTLER_ALIVE(data->bankAtkPartner)))
 
-u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
+u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	u32 i, j;
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
@@ -54,7 +54,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 	//Begin
 	if (IS_DOUBLE_BATTLE && TARGETING_PARTNER)
-		return AI_Script_Partner(bankAtk, data->bankAtkPartner, originalMove, originalViability, data);
+		return AIScript_Partner(bankAtk, data->bankAtkPartner, originalMove, originalViability, data);
 
 	if (IsAnyMaxMove(move))
 		moveEffect = GetAIMoveEffectForMaxMove(move, bankAtk, bankDef);
@@ -91,6 +91,17 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				goto AI_PARALYZE_CHECKS;
 			break;
 
+		case EFFECT_BURN_HIT:
+			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+				goto AI_BURN_CHECKS;
+			break;
+
+		case EFFECT_POISON_HIT:
+		case EFFECT_BAD_POISON_HIT:
+			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+				goto AI_POISON_CHECKS;
+			break;
+
 		case EFFECT_EXPLOSION:
 			if (predictedMove != MOVE_NONE //If foe isn't going to attack, don't kill yourself now
 			&&  gBattleMoves[predictedMove].effect != EFFECT_PROTECT)
@@ -118,7 +129,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						&& gNewBS->LastUsedMove != 0xFFFF
 						&& !CheckTableForMove(gNewBS->LastUsedMove, gCopycatBannedMoves)
 						&& !MoveInMoveset(gNewBS->LastUsedMove, bankAtk)) //If you have the move, use it directly
-							return AI_Script_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
+							return AIScript_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
 					}
 					else
 					{
@@ -127,14 +138,14 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						else if (!CheckTableForMove(predictedMove, gCopycatBannedMoves)
 							 &&  !MoveInMoveset(predictedMove, bankAtk))
 						{
-							return AI_Script_Positives(bankAtk, bankDef, predictedMove, originalViability, data);
+							return AIScript_Positives(bankAtk, bankDef, predictedMove, originalViability, data);
 						}
 					}
 					break;
 
 				default: //Mirror Move
 					if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != MOVE_NONE)
-						return AI_Script_Positives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
+						return AIScript_Positives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
 			}
 			break;
 
@@ -1526,7 +1537,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_NATURE_POWER:
-			return AI_Script_Positives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
+			return AIScript_Positives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
 
 		case EFFECT_CHARGE:
 			for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -2370,4 +2381,140 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	}
 
 	return MathMin(viability, 255);
+}
+
+//An AI script meant for generic Trainers who have no set strategy built into their team
+u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
+{
+	if (!(AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE)) //Semi smart only works if the AI isn't already smart
+	{
+		u16 move = TryReplaceMoveWithZMove(bankAtk, bankDef, originalMove);
+		s16 viability = originalViability;
+
+		switch (gBattleMoves[move].effect) {
+			case EFFECT_HIT:
+			case EFFECT_SLEEP:
+			case EFFECT_YAWN:
+			case EFFECT_ABSORB:
+			case EFFECT_DREAM_EATER:
+			case EFFECT_POISON_HIT:
+			case EFFECT_BURN_HIT:
+			case EFFECT_FREEZE_HIT:
+			case EFFECT_PARALYZE_HIT:
+			case EFFECT_BAD_POISON_HIT:
+			case EFFECT_EXPLOSION:
+			case EFFECT_MIRROR_MOVE:
+			case EFFECT_ATTACK_UP:
+			case EFFECT_ATTACK_UP_2:
+			case EFFECT_SPEED_UP:
+			case EFFECT_SPEED_UP_2:
+			case EFFECT_SPECIAL_ATTACK_UP:
+			case EFFECT_SPECIAL_ATTACK_UP_2:
+			case EFFECT_MULTI_HIT:
+			case EFFECT_TRIPLE_KICK:
+			case EFFECT_DOUBLE_HIT:
+			case EFFECT_FLINCH_HIT:
+			case EFFECT_RESTORE_HP:
+			case EFFECT_MORNING_SUN:
+			case EFFECT_SWALLOW:
+			case EFFECT_TOXIC:
+			case EFFECT_POISON:
+			case EFFECT_REST:
+			case EFFECT_CONFUSE:
+			case EFFECT_PARALYZE:
+			case EFFECT_CONFUSE_HIT:
+			case EFFECT_SUBSTITUTE:
+			case EFFECT_LEECH_SEED:
+			case EFFECT_SPLASH:
+			case EFFECT_ENCORE:
+			case EFFECT_PAIN_SPLIT:
+			case EFFECT_SNORE:
+			case EFFECT_SLEEP_TALK:
+			case EFFECT_DESTINY_BOND:
+			case EFFECT_NIGHTMARE:
+			case EFFECT_PROTECT:
+			case EFFECT_PERISH_SONG:
+			case EFFECT_ROLLOUT:
+			case EFFECT_SWAGGER:
+			case EFFECT_FLATTER:
+			case EFFECT_FURY_CUTTER:
+			case EFFECT_ATTRACT:
+			case EFFECT_BATON_PASS:
+			case EFFECT_ATTACK_UP_HIT:
+			case EFFECT_BELLY_DRUM:
+			case EFFECT_SEMI_INVULNERABLE:
+			case EFFECT_DEFENSE_CURL:
+			case EFFECT_FAKE_OUT:
+			case EFFECT_STOCKPILE:
+			case EFFECT_WILL_O_WISP:
+			case EFFECT_FOLLOW_ME:
+			case EFFECT_NATURE_POWER:
+			case EFFECT_WISH:
+			case EFFECT_MAGIC_COAT:
+			case EFFECT_BRICK_BREAK:
+			case EFFECT_KNOCK_OFF:
+			case EFFECT_EXTREME_EVOBOOST:
+			case EFFECT_BULK_UP:
+			case EFFECT_CALM_MIND:
+			case EFFECT_DRAGON_DANCE:
+			case EFFECT_RELIC_SONG:
+			case EFFECT_DAMAGE_SET_TERRAIN:
+			case EFFECT_PLEDGE:
+			case EFFECT_FEINT:
+				return AIScript_Positives(bankAtk, data->bankAtkPartner, originalMove, originalViability, data);
+		}
+
+		//Copied from above
+		if (SPLIT(move) != SPLIT_STATUS)
+		{
+			u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
+
+			//Every spread type has the same viability increases for these two
+			if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
+			&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
+			 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
+			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
+			{
+				INCREASE_VIABILITY(9);
+			}
+			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
+			&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
+			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
+			{
+				INCREASE_VIABILITY(8); //Use the killing move with the best accuracy
+			}
+			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
+			&& (!MoveInMoveset(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+			{
+				INCREASE_VIABILITY(9);
+			}
+			else if (IsStrongestMove(move, bankAtk, bankDef))
+			{
+				//If the attacker is slower than the target and the target is going to die
+				//anyways, then do something else and let it die.
+				if (MoveWouldHitFirst(move, bankAtk, bankDef)
+				|| !WillFaintFromSecondaryDamage(bankDef)
+				|| IsMovePredictionHealingMove(bankDef, bankAtk)
+				|| data->atkAbility == ABILITY_MOXIE
+				|| data->atkAbility == ABILITY_BEASTBOOST)
+					INCREASE_VIABILITY(2);
+			}
+		}
+
+		if (data->atkStatus1 & STATUS1_FREEZE && CheckTableForMove(move, gMovesCanUnfreezeAttacker))
+		{
+			//Unfreeze yourself
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				INCREASE_VIABILITY(20);
+			else
+				INCREASE_VIABILITY(10);
+		}
+		
+		return viability;
+	}
+
+	return originalViability; //No change if not one of the above listed move effects
 }

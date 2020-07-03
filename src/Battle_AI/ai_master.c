@@ -177,12 +177,13 @@ static struct SmartWildMons sSmartWildAITable[] =
 
 static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8, struct AIScript*) =
 {
-	[0] = AI_Script_Negatives,
-	[1] = AI_Script_Positives,
+	[0] = AIScript_Negatives,
+	[1] = AIScript_SemiSmart,
+	[2] = AIScript_Positives,
 
-	[29] = AI_Script_Roaming,
-	[30] = AI_Script_Safari,
-	[31] = AI_Script_FirstBattle,
+	[29] = AIScript_Roaming,
+	[30] = AIScript_Safari,
+	[31] = AIScript_FirstBattle,
 };
 
 //This file's functions:
@@ -260,7 +261,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 		defaultScoreMoves >>= 1;
 	}
 
-	gBattleResources->AI_ScriptsStack->size = 0;
+	gBattleResources->AIScriptsStack->size = 0;
 	gBankAttacker = gActiveBattler;
 
 	// Decide a random target battlerId in doubles.
@@ -315,24 +316,34 @@ u32 GetAIFlags(void)
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)
-		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
-	#ifdef VAR_GAME_DIFFICULTY
-	else if (difficulty == OPTIONS_EASY_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-		flags = AI_SCRIPT_CHECK_BAD_MOVE; //Trainers are always barely smart in easy mode
-	else if (difficulty == OPTIONS_HARD_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Trainers are always fully smart in hard mode
-	else if (difficulty == OPTIONS_EXPERT_DIFFICULTY)
-	{
-		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-			flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Traienrs are always fully smart in expert mode
-		else
-			flags = AI_SCRIPT_CHECK_BAD_MOVE; //Even Wild Pokemon are moderately smart in expert mode
-	}
-	#endif
-	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 	else
-		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
+		else
+			flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+
+		#ifdef VAR_GAME_DIFFICULTY
+		if (difficulty == OPTIONS_EASY_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+			flags = AI_SCRIPT_CHECK_BAD_MOVE; //Trainers are always barely smart in easy mode
+		else if (difficulty == OPTIONS_HARD_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		{
+			if (!(flags & AI_SCRIPT_CHECK_GOOD_MOVE)) //Not Trainers who are already smart
+				flags |= AI_SCRIPT_SEMI_SMART; //Regular Trainers are always semi smart in hard mode
+		}
+		else if (difficulty == OPTIONS_EXPERT_DIFFICULTY)
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+			{
+				if (!(flags & AI_SCRIPT_CHECK_GOOD_MOVE)) //Not Trainers who are already smart
+					flags |= AI_SCRIPT_SEMI_SMART; //Regular Trainers are always semi smart in expert mode
+			}
+			else
+				flags = AI_SCRIPT_CHECK_BAD_MOVE; //Even Wild Pokemon are moderately smart in expert mode
+		}
+		#endif
+	}
 
 	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		flags |= AI_SCRIPT_CHECK_BAD_MOVE; //Partners in wild double battles are like normal trainers
@@ -2376,7 +2387,7 @@ u32 WildMonIsSmart(unusedArg u8 bank)
 		|| IsRedPrimalSpecies(species)
 		|| IsBluePrimalSpecies(species)
 		|| IsUltraNecrozmaSpecies(species))
-			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
+			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 
 		for (u32 i = 0; sSmartWildAITable[i].species != 0xFFFF; ++i)
 		{
@@ -2499,8 +2510,8 @@ static void PredictMovesForBanks(void)
 
 						u16 move = gBattleMons[bankAtk].moves[i];
 						move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
-						viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
-						viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i], &aiScriptData);
+						viabilities[i] = AIScript_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
+						viabilities[i] = AIScript_Positives(bankAtk, bankDef, move, viabilities[i], &aiScriptData);
 					}
 
 					AI_THINKING_STRUCT->aiFlags = backupFlags;

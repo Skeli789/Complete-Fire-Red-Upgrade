@@ -2440,7 +2440,7 @@ static bool8 ShouldAIFreeChoiceLockWithDynamax(u8 bankAtk, u8 bankDef)
 
 			if (!(gBitTable[i] & moveLimitations))
 			{
-				if (AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData) >= 100)
+				if (AIScript_Negatives(bankAtk, bankDef, move, 100, &aiScriptData) >= 100)
 					return TRUE;
 			}
 		}
@@ -2474,7 +2474,7 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			viability = AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
+			viability = AIScript_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
 			if (viability >= 100)
 			{
 				if (SPLIT(move) == SPLIT_STATUS)

@@ -29,7 +29,7 @@ extern move_effect_t gStatLoweringMoveEffects[];
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
 
-u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 originalMove, const u8 originalViability, struct AIScript* data)
+u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	//u32 i, j;
 	u8 class = GetBankFightingStyle(bankAtk);

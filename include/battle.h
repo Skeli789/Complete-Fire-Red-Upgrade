@@ -480,15 +480,9 @@ extern u8 gAbsentBattlerFlags;
 
 // script's table id to bit
 #define AI_SCRIPT_CHECK_BAD_MOVE (1 << 0)
-#define AI_SCRIPT_CHECK_GOOD_MOVE (1 << 1)
-#define AI_SCRIPT_CHECK_VIABILITY (1 << 2)
-#define AI_SCRIPT_SETUP_FIRST_TURN (1 << 3)
-#define AI_SCRIPT_RISKY (1 << 4)
-#define AI_SCRIPT_PREFER_STRONGEST_MOVE (1 << 5)
-#define AI_SCRIPT_PREFER_BATON_PASS (1 << 6)
-#define AI_SCRIPT_DOUBLE_BATTLE (1 << 7)
-#define AI_SCRIPT_HP_AWARE (1 << 8)
-#define AI_SCRIPT_UNKNOWN (1 << 9)
+#define AI_SCRIPT_SEMI_SMART (1 << 1)
+#define AI_SCRIPT_CHECK_GOOD_MOVE (1 << 2)
+
 // 10 - 28 are not used
 #define AI_SCRIPT_ROAMING (1 << 29)
 #define AI_SCRIPT_SAFARI (1 << 30)
@@ -561,7 +555,7 @@ struct BattleResources
     struct StatsArray* statsBeforeLvlUp;
     struct AI_ThinkingStruct *ai;
     struct BattleHistory *battleHistory;
-    struct BattleScriptsStack *AI_ScriptsStack;
+    struct BattleScriptsStack *AIScriptsStack;
  //   u8 bufferA[MAX_BATTLERS_COUNT][0x200];
  //   u8 bufferB[MAX_BATTLERS_COUNT][0x200];
 };

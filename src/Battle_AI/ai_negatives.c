@@ -92,7 +92,7 @@ extern const struct FlingStruct gFlingTable[];
 static void AI_Flee(void);
 static void AI_Watch(void);
 
-u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
+u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	
 	s16 viability = originalViability;
@@ -675,7 +675,7 @@ MOVESCR_CHECK_0:
 						|| FindMovePositionInMoveset(gNewBS->LastUsedMove, bankAtk) < 4) //If you have the move, use it directly
 							DECREASE_VIABILITY(10);
 						else
-							return AI_Script_Negatives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
+							return AIScript_Negatives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
 					}
 					else
 					{
@@ -687,13 +687,13 @@ MOVESCR_CHECK_0:
 							DECREASE_VIABILITY(10);
 						}
 						else
-							return AI_Script_Negatives(bankAtk, bankDef, predictedMove, originalViability, data);
+							return AIScript_Negatives(bankAtk, bankDef, predictedMove, originalViability, data);
 					}
 					break;
 
 				default: //Mirror Move
 					if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != MOVE_NONE)
-						return AI_Script_Negatives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
+						return AIScript_Negatives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
 					DECREASE_VIABILITY(10);
 			}
 			break;
@@ -1879,7 +1879,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_NATURE_POWER:
-			return AI_Script_Negatives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
+			return AIScript_Negatives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
 
 		case EFFECT_CHARGE:
 			if (data->atkStatus3 & STATUS3_CHARGED_UP)
@@ -2307,7 +2307,7 @@ MOVESCR_CHECK_0:
 				if (!MoveWouldHitFirst(move, bankAtk, bankDef))
 					DECREASE_VIABILITY(10);
 				else
-					return AI_Script_Negatives(bankAtk, bankDef, predictedMove, originalViability, data);
+					return AIScript_Negatives(bankAtk, bankDef, predictedMove, originalViability, data);
 			}
 			else //Target is predicted to switch most likely
 				DECREASE_VIABILITY(10);
@@ -2759,7 +2759,7 @@ static void AI_Flee(void)
 	AI_THINKING_STRUCT->aiAction |= (AI_ACTION_DONE | AI_ACTION_FLEE | AI_ACTION_DO_NOT_ATTACK);
 }
 
-u8 AI_Script_Roaming(const u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
+u8 AIScript_Roaming(const u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
@@ -2784,7 +2784,7 @@ static void AI_Watch(void)
 	AI_THINKING_STRUCT->aiAction |= (AI_ACTION_DONE | AI_ACTION_WATCH | AI_ACTION_DO_NOT_ATTACK);
 }
 
-u8 AI_Script_Safari(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
+u8 AIScript_Safari(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
 {
 	u8 safariFleeRate = gBattleStruct->safariEscapeFactor * 5; // Safari flee rate, from 0-20.
 
@@ -2800,7 +2800,7 @@ u8 AI_Script_Safari(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, cons
 	return originalViability;
 }
 
-u8 AI_Script_FirstBattle(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
+u8 AIScript_FirstBattle(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, const unusedArg u16 move, const u8 originalViability, unusedArg struct AIScript* data)
 {
 	s16 viability = originalViability;
 	if (GetHealthPercentage(bankDef) < 20 &&  SPLIT(move) != SPLIT_STATUS)
