@@ -88,9 +88,9 @@ static bool8 IsRunningDisabledByFlag(void);
 static const u8* const sDefaultWalkingScripts[] =
 {
 	NULL,
-	NULL,
-	NULL,
-	NULL,
+	//NULL,
+	//NULL,
+	//NULL,
 	//etc
 };
 #endif
@@ -1474,6 +1474,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 		const u8* customWalkingScript = GetCustomWalkingScript();
 		if (customWalkingScript != NULL)
 		{
+			break_func(customWalkingScript);
 			ScriptContext1_SetupScript(customWalkingScript);
 			return TRUE;
 		}
@@ -1509,7 +1510,7 @@ static const u8* GetCustomWalkingScript(void)
 		return gWalkingScript;
 
 	u8 scriptInd = VarGet(VAR_DEFAULT_WALKING_SCRIPT);
-	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(sDefaultWalkingScripts))
+	if (scriptInd != 0 && scriptInd <= ARRAY_COUNT(sDefaultWalkingScripts))
 		return sDefaultWalkingScripts[scriptInd - 1];
 	#endif
 
