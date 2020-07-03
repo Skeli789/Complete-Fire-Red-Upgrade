@@ -81,6 +81,23 @@ const union AnimCmd *const gAnimCmdPowerWhip[] =
 	sAnimCmdPowerWhipOnOpponent,
 };
 
+static const union AnimCmd sAnimCmdQuickGuardLeft[] =
+{
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnimCmdQuickGuardRight[] =
+{
+	ANIMCMD_FRAME(0, 1, .hFlip = TRUE),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_QuickGuard[] =
+{
+	sAnimCmdQuickGuardLeft,
+	sAnimCmdQuickGuardRight,
+};
+
 const struct OamData gPoisonColumnOam =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,
@@ -624,6 +641,23 @@ static const union AffineAnimCmd sSpriteAffineAnim_PsychoCutOpponent[] =
 const union AffineAnimCmd* const gSpriteAffineAnimTable_PsychoCutOpponent[] =
 {
 	sSpriteAffineAnim_PsychoCutOpponent,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_WakeUpSlap[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 64, 1), //Rotate left 90 degrees
+	AFFINEANIMCMD_FRAME(0, -32, 0, 7), //Flatten horizontally (on its side)
+	AFFINEANIMCMD_FRAME(0, 0, 0, 8), //Do Nothing
+	AFFINEANIMCMD_FRAME(0, -288, 0, 1), //Unflatten in other direction
+	AFFINEANIMCMD_FRAME(0, 32, 0, 7), //Flatten horizontally (on its side)
+	AFFINEANIMCMD_FRAME(0, 0, 0, 8), //Do Nothing
+	AFFINEANIMCMD_FRAME(0, 288, 0, 1), //Unflatten in other direction
+	AFFINEANIMCMD_JUMP(1),
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_WakeUpSlap[] =
+{
+	sSpriteAffineAnim_WakeUpSlap,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
@@ -2346,6 +2380,65 @@ void SpriteCB_ForcePalm(struct Sprite* sprite)
 	sprite->data[5] = gBattleAnimArgs[5]; //Pause before motion
 	sprite->data[6] = 0;
 	sprite->callback = SpriteCB_ForcePalmStep1;
+}
+
+void SpriteCB_WakeUpSlapStep1(struct Sprite *sprite)
+{
+	sprite->pos2.x += sprite->data[1];
+
+	if (sprite->pos2.x >= sprite->data[0])
+		DestroyAnimSprite(sprite);
+}
+
+void SpriteCB_WakeUpSlapStep0(struct Sprite *sprite)
+{
+	sprite->pos2.x -= sprite->data[1];
+
+	if (sprite->pos2.x <= sprite->data[0])
+	{
+		sprite->data[0] = -sprite->data[0];
+		sprite->callback = SpriteCB_WakeUpSlapStep1;
+	}
+}
+
+//Creates a sprite that moves right then then along the target.
+//arg 0: Swipe distance
+//arg 1: Speed
+void SpriteCB_WakeUpSlap(struct Sprite *sprite)
+{
+	switch (sprite->data[7]) { //State
+		case 0:
+			sprite->pos2.x = gBattleAnimArgs[0];
+			sprite->data[0] = -gBattleAnimArgs[0]; //Swipe distance
+			sprite->data[1] = gBattleAnimArgs[1]; //Swipe speed
+			++sprite->data[7];
+			break;
+		//Right
+		case 1:
+		case 3:
+			sprite->pos2.x += sprite->data[1];
+
+			if (sprite->pos2.x >= sprite->data[0])
+			{
+				sprite->data[0] = -sprite->data[0];
+				++sprite->data[7];
+			}
+			break;
+		//Left
+		case 2:
+		case 4:
+			sprite->pos2.x -= sprite->data[1];
+
+			if (sprite->pos2.x <= sprite->data[0])
+			{
+				sprite->data[0] = -sprite->data[0];
+				++sprite->data[7];
+			}
+			break;
+		case 5:
+			DestroyAnimSprite(sprite);
+			break;
+	}
 }
 
 //Destroys the chains for Fairy Lock

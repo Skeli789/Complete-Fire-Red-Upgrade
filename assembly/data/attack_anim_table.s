@@ -5034,32 +5034,37 @@ RED_POWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HEART_STAMP OAM_OFF_16x16 0x83E2
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_WAKEUPSLAP:
-	loadparticle ANIM_TAG_ASSURANCE_HAND  @Palm
-	loadparticle ANIM_TAG_ACUPRESSURE_FINGER  @Palm Colour
 	loadparticle ANIM_TAG_IMPACT
-	loadparticle ANIM_TAG_WATER_ORB
+	loadparticle ANIM_TAG_PAIN_SPLIT
+	loadparticle ANIM_TAG_DUCK
+	loadparticle ANIM_TAG_QUICK_GUARD_HAND
 	pokespritetoBG side_target
-	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
-	call Wack
-	call Wack
+	launchtemplate WAKE_UP_SLAP_PALM TEMPLATE_TARGET | 3, 0x2, -64, 8
+	pause 5
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 4 0 4 16
+	call WAKE_UP_SLAP_HIT
+	call WAKE_UP_SLAP_HIT
+	call WAKE_UP_SLAP_HIT
+	call WAKE_UP_SLAP_HIT
+	waitanimation
 	pokespritefromBG side_target
 	resetblends
 	endanimation
 
-Wack:
-	playsound2 0x80 SOUND_PAN_TARGET
-	launchtemplate WAKEUP_PALM 0x2 0x8 0xfff0 0x0 0x0 0x0 0xa 0x1 0x0 0x0
-	waitanimation
-	playsound2 0x84 SOUND_PAN_TARGET
-	launchtemplate WAKEUP_HIT 0x3 0x4 0x0 0x0 0x1 0x2
-	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x4 0x0 0x6 0x1
-	waitanimation
+WAKE_UP_SLAP_HIT:
+	playsound2 0x7F SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 1, 0x4, 0x0 0x0 bank_target 0x1
+	launchtemplate WAKE_UP_SLAP_STARS TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xa0 0xffe0
+	launchtemplate WAKE_UP_SLAP_STARS TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xff00 0xffd8
+	launchtemplate WAKE_UP_SLAP_STARS TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0x1a0 0xffda
+	launchtemplate WAKE_UP_SLAP_STARS TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xfe80 0xffe1
+	pause 14
 	return
 
 .align 2
-WAKEUP_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B08DD
-WAKEUP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+WAKE_UP_SLAP_PALM: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_WakeUpSlap SpriteCB_WakeUpSlap
+WAKE_UP_SLAP_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13886,13 +13891,13 @@ ANIM_QUICKGUARD:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x2 0x0 0xa 0x7FFF
 	pause 0x10
 	pokespritetoBG bank_attacker
-	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x0
+	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x1
 	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xfff2 0x0 0x8 0x0 0x0
 	pause 0x1
-	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x0
+	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x1
 	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xfff2 0x0 0x8 0x0 0x0
 	pause 0x1
-	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x0
+	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xE 0x0 0x8 0x0 0x1
 	launchtemplate QUICKGUARD_ARMHIT 0x83 0x5 0xfff2 0x0 0x8 0x0 0x0
 	waitanimation
 	playsound2 0xca SOUND_PAN_ATTACKER
@@ -13910,7 +13915,7 @@ ANIM_QUICKGUARD:
 	endanimation
 
 .align 2
-QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable 0x80B0955
+QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_32x32 gAnimCmdTable_QuickGuard 0x0 gDummySpriteAffineAnimTable 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
