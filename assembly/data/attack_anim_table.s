@@ -45,7 +45,7 @@ gMoveAnimations:
 .word 0x81c9455		@MOVE_PAYDAY
 .word 0x81d08b5		@MOVE_FIREPUNCH
 .word 0x81cd2e0		@MOVE_ICEPUNCH
-.word ANIM_THUNDERPUNCH		@MOVE_THUNDERPUNCH
+.word ANIM_THUNDERPUNCH
 .word 0x81cd97a		@MOVE_SCRATCH
 .word 0x81c9381		@MOVE_VICEGRIP
 .word 0x81c93c9		@MOVE_GUILLOTINE
@@ -53,7 +53,7 @@ gMoveAnimations:
 .word 0x81c8644		@MOVE_SWORDSDANCE
 .word 0x81c832a		@MOVE_CUT
 .word 0x81cf648		@MOVE_GUST
-.word 0x81cf699		@MOVE_WINGATTACK
+.word ANIM_WINGATTACK
 .word 0x81c9989		@MOVE_WHIRLWIND
 .word 0x81cfc1d		@MOVE_FLY
 .word 0x81d0d00		@MOVE_BIND
@@ -74,7 +74,7 @@ gMoveAnimations:
 .word 0x81d0d3a		@MOVE_WRAP
 .word 0x81c7886		@MOVE_TAKEDOWN
 .word 0x81ca521		@MOVE_THRASH
-.word ANIM_DOUBLEEDGE		@MOVE_DOUBLEEDGE
+.word ANIM_DOUBLEEDGE
 .word 0x81c8311		@MOVE_TAILWHIP
 .word 0x81c7a2d		@MOVE_POISONSTING
 .word 0x81c7a82		@MOVE_TWINEEDLE
@@ -89,10 +89,10 @@ gMoveAnimations:
 .word 0x81d169f		@MOVE_DISABLE
 .word 0x81cf308		@MOVE_ACID
 .word 0x81c7c79		@MOVE_EMBER
-.word ANIM_FLAMETHROWER		@MOVE_FLAMETHROWER
+.word ANIM_FLAMETHROWER
 .word 0x81d0821		@MOVE_MIST
-.word ANIM_WATERGUN		@MOVE_WATERGUN
-.word ANIM_HYDROPUMP		@MOVE_HYDROPUMP
+.word ANIM_WATERGUN
+.word ANIM_HYDROPUMP
 .word 0x81cfa01		@MOVE_SURF
 .word 0x81ce2fb		@MOVE_ICEBEAM
 .word 0x81ce768		@MOVE_BLIZZARD
@@ -163,7 +163,7 @@ gMoveAnimations:
 .word 0x81cf1a0		@MOVE_SLUDGE
 .word 0x81cf456		@MOVE_BONECLUB
 .word 0x81c7af5		@MOVE_FIREBLAST
-.word ANIM_WATERFALL		@MOVE_WATERFALL
+.word ANIM_WATERFALL
 .word ANIM_CLAMP
 .word 0x81c7345		@MOVE_SWIFT
 .word 0x81cab2f		@MOVE_SKULLBASH
@@ -177,7 +177,7 @@ gMoveAnimations:
 .word 0x81d0a1f		@MOVE_DREAMEATER
 .word 0x81d0c22		@MOVE_POISONGAS
 .word 0x81cacd3		@MOVE_BARRAGE
-.word ANIM_LEECHLIFE		@MOVE_LEECHLIFE
+.word ANIM_LEECHLIFE
 .word 0x81d1c6c		@MOVE_LOVELYKISS
 .word 0x81cad1b		@MOVE_SKYATTACK
 .word 0x81d2811		@MOVE_TRANSFORM
@@ -193,7 +193,7 @@ gMoveAnimations:
 .word 0x81d1cb3		@MOVE_FURYSWIPES
 .word 0x81cf402		@MOVE_BONEMERANG
 .word 0x81cd3cb		@MOVE_REST
-.word ANIM_ROCKSLIDE		@MOVE_ROCKSLIDE
+.word ANIM_ROCKSLIDE
 .word 0x81d2165		@MOVE_HYPERFANG
 .word 0x81caeee		@MOVE_SHARPEN
 .word 0x81c9fa9		@MOVE_CONVERSION
@@ -243,11 +243,11 @@ gMoveAnimations:
 .word 0x81cb2bb		@MOVE_CHARM
 .word 0x81cb2fe		@MOVE_ROLLOUT
 .word 0x81cb33f		@MOVE_FALSESWIPE
-.word ANIM_SWAGGER		@MOVE_SWAGGER
+.word ANIM_SWAGGER
 .word 0x81cb40e		@MOVE_MILKDRINK
 .word 0x81c9643		@MOVE_SPARK
 .word 0x81c88ea		@MOVE_FURYCUTTER
-.word 0x81d0fb5		@MOVE_STEELWING
+.word ANIM_STEELWING
 .word 0x81c9aba		@MOVE_MEANLOOK
 .word 0x81c985a		@MOVE_ATTRACT
 .word 0x81d20aa		@MOVE_SLEEPTALK
@@ -261,13 +261,13 @@ gMoveAnimations:
 .word 0x81cb450		@MOVE_MAGNITUDE
 .word 0x81cff92		@MOVE_DYNAMICPUNCH
 .word 0x81cf55a		@MOVE_MEGAHORN
-.word ANIM_DRAGONBREATH		@MOVE_DRAGONBREATH
+.word ANIM_DRAGONBREATH
 .word 0x81d1f1f		@MOVE_BATONPASS
 .word 0x81d23fe		@MOVE_ENCORE
 .word 0x81c8520		@MOVE_PURSUIT
 .word 0x81cb4e1		@MOVE_RAPIDSPIN
 .word 0x81d28bd		@MOVE_SWEETSCENT
-.word ANIM_IRONTAIL		@MOVE_IRONTAIL
+.word ANIM_IRONTAIL
 .word 0x81d1128		@MOVE_METALCLAW
 .word 0x81d0129		@MOVE_VITALTHROW
 .word 0x81d2829		@MOVE_MORNINGSUN
@@ -276,7 +276,7 @@ gMoveAnimations:
 .word 0x81c835c		@MOVE_HIDDENPOWER
 .word 0x81cfd3c		@MOVE_CROSSCHOP
 .word 0x81d4d0e		@MOVE_TWISTER
-.word ANIM_RAINDANCE		@MOVE_RAINDANCE
+.word ANIM_RAINDANCE
 .word 0x81d033f		@MOVE_SUNNYDAY
 .word 0x81ce1ee		@MOVE_CRUNCH
 .word 0x81cdcb4		@MOVE_MIRRORCOAT
@@ -285,7 +285,7 @@ gMoveAnimations:
 .word 0x81d0693		@MOVE_ANCIENTPOWER
 .word 0x81d129d		@MOVE_SHADOWBALL
 .word 0x81cd4cf		@MOVE_FUTURESIGHT
-.word ANIM_ROCKSMASH		@MOVE_ROCKSMASH
+.word ANIM_ROCKSMASH
 .word 0x81cfb3a		@MOVE_WHIRLPOOL
 .word 0x81c81cf		@MOVE_BEATUP
 .word 0x81d1b65		@MOVE_FAKEOUT
@@ -316,12 +316,12 @@ gMoveAnimations:
 .word 0x81d4889		@MOVE_MAGICCOAT
 .word 0x81cbbfe		@MOVE_RECYCLE
 .word 0x81d335d		@MOVE_REVENGE
-.word ANIM_BRICKBREAK		@MOVE_BRICKBREAK
+.word ANIM_BRICKBREAK
 .word 0x81cbe37		@MOVE_YAWN
 .word 0x81d4a0f		@MOVE_KNOCKOFF
 .word 0x81cbe7a		@MOVE_ENDANIMATIONEAVOR
 .word 0x81cbeef		@MOVE_ERUPTION
-.word ANIM_SKILLSWAP		@MOVE_SKILLSWAP (orig 0x81cbfbc)
+.word ANIM_SKILLSWAP
 .word 0x81cc007		@MOVE_IMPRISON
 .word 0x81d2c42		@MOVE_REFRESH
 .word 0x81cc04a		@MOVE_GRUDGE
@@ -344,7 +344,7 @@ gMoveAnimations:
 .word 0x81d33f4		@MOVE_POISONFANG
 .word 0x81cc6db		@MOVE_CRUSHCLAW
 .word ANIM_BLASTBURN
-.word ANIM_HYDROCANNON		@MOVE_HYDROCANNON
+.word ANIM_HYDROCANNON
 .word 0x81d32d6		@MOVE_METEORMASH
 .word 0x81d46e4		@MOVE_ASTONISH
 .word 0x81d515d		@MOVE_WEATHERBALL
@@ -373,8 +373,8 @@ gMoveAnimations:
 .word 0x81ccca3		@MOVE_IRONDEFENSE
 .word 0x81ccccd		@MOVE_BLOCK
 .word 0x81cccdc		@MOVE_HOWL
-.word ANIM_DRAGONCLAW		@MOVE_DRAGONCLAW
-.word ANIM_FRENZYPLANT		@MOVE_FRENZYPLANT
+.word ANIM_DRAGONCLAW
+.word ANIM_FRENZYPLANT
 .word 0x81cccfe		@MOVE_BULKUP
 .word 0x81cfc87		@MOVE_BOUNCE
 .word 0x81d3239		@MOVE_MUDSHOT
@@ -1051,7 +1051,6 @@ PlayBulletSeedAudio:
 	ldr r2, =0x80722F5
 	bx r2
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_THUNDERPUNCH:
@@ -1079,6 +1078,45 @@ ANIM_THUNDERPUNCH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
+ANIM_WINGATTACK:
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_WHITE_FEATHER
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WHITE_FEATHER 0x2 0xA 0xA 0x339C @;Yellow
+	setblends 0x80c
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 10 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0, 10 bank_target 0x2  
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 3, 0x4, 0, 0 bank_target 0x2
+	call WING_ATTACK_SCATTER_FEATHERS
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0, -10 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 5, 0x4, 0, -20 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 6, 0x4, 0, -30 bank_target 0x2
+	waitanimation
+	resetblends 
+	endanimation
+
+WING_ATTACK_SCATTER_FEATHERS:
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff8 0xfff8 0xa0 0xffe0
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff8 0xfff8 0xff00 0xffd8
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff8 0xfff8 0x1a0 0xffda
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff8 0xfff8 0xfe80 0xffe1
+	return
+
+.align 2
+WING_ATTACK_FEATHERS: objtemplate ANIM_TAG_WHITE_FEATHER ANIM_TAG_WHITE_FEATHER OAM_OFF_32x32 0x83E6BF8 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to Skeli
 ANIM_SWAGGER:
 	loadparticle ANIM_TAG_BREATH @swagger
 	loadparticle ANIM_TAG_ANGER @swagger
@@ -1094,9 +1132,40 @@ ANIM_SWAGGER:
 	playsound2 0xBB SOUND_PAN_TARGET
 	waitanimation
 	endanimation
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credits to Skeli
+ANIM_STEELWING:
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_WHITE_FEATHER
+	launchtask AnimTask_GrayscaleParticle 0x5 0x1 ANIM_TAG_IMPACT
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WHITE_FEATHER 0x2 0xE 0xE 0x5672 @;Silver
+	soundcomplex 0x71 0xc0 0x1c 0x2 
+	launchtask AnimTask_steel_sprite 0x5 0x3 0x0 0x0 0x0 
+	waitanimation
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 10 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, -30, 10 bank_target 0x1
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 3, 0x4, -15, 0 bank_target 0x1
+	call WING_ATTACK_SCATTER_FEATHERS
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0, -10 bank_target 0x1
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 5, 0x4, 15, -20 bank_target 0x1
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 6, 0x4, 30, -30 bank_target 0x1
+	waitanimation 
+	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_ROCKSMASH:
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_HANDS_AND_FEET
@@ -16770,9 +16839,66 @@ ANIM_TRIPLE_AXEL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_DUAL_WINGBEAT:
-	goto 0x81cf699 @MOVE_WINGATTACK
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_WHITE_FEATHER
+	setblends 0x80c
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 10 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	jumpifmoveturn 1, DUAL_WINGBEAT_RIGHT
+
+DUAL_WINGBEAT_LEFT:
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, -20, 10 bank_target 0x2  
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 3, 0x4, -20, 0 bank_target 0x2
+	call DUAL_WINGBEAT_SCATTER_FEATHERS_LEFT
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, -20, -10 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 5, 0x4, -20, -20 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 6, 0x4, -20, -30 bank_target 0x2
+	waitanimation
+	resetblends 
 	endanimation
+
+DUAL_WINGBEAT_RIGHT:
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 10, 10 bank_target 0x2  
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 3, 0x4, 10, 0 bank_target 0x2
+	call DUAL_WINGBEAT_SCATTER_FEATHERS_RIGHT
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 10, -10 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 5, 0x4, 10, -20 bank_target 0x2
+	pause 0x1
+	playsound2 0x96 SOUND_PAN_TARGET
+	launchtemplate Template_Hit TEMPLATE_TARGET | 6, 0x4, 10, -30 bank_target 0x2
+	waitanimation
+	resetblends 
+	endanimation
+
+DUAL_WINGBEAT_SCATTER_FEATHERS_LEFT:
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff0 0xfff8 0xa0 0xffe0
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff0 0xfff8 0xff00 0xffd8
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff0 0xfff8 0x1a0 0xffda
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0xfff0 0xfff8 0xfe80 0xffe1
+	return
+
+DUAL_WINGBEAT_SCATTER_FEATHERS_RIGHT:
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0 0xfff8 0xa0 0xffe0
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0 0xfff8 0xff00 0xffd8
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0 0xfff8 0x1a0 0xffda
+	launchtemplate WING_ATTACK_FEATHERS TEMPLATE_TARGET | 1, 0x4 0 0xfff8 0xfe80 0xffe1
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

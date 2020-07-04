@@ -139,7 +139,7 @@ extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
 //This file's functions:
 static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
-#ifdef SCALED_TRAINERS
+#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 static u8 GetPlayerBiasedAverageLevel(u8 maxLevel);
 static bool8 CanTrainerEvolveMon(void);
 static bool8 IsPseudoBossTrainerClassForLevelScaling(u8 trainerClass);
@@ -615,7 +615,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		}
 		
 		//Get details for level scaling
-		#ifdef SCALED_TRAINERS
+		#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 		#ifdef VAR_GAME_DIFFICUTY
 		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY; //Don't scale Trainers on easy mode
 		#else
@@ -840,7 +840,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 }
 
 //These next few functions are related to scaling a Trainer's team dynamically based the player's strength
-#ifdef SCALED_TRAINERS
+#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 struct LevelScaler
 {
 	u8 minLevel;
@@ -931,7 +931,7 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 
 static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerClass, unusedArg bool8 shouldEvolve)
 {
-	#ifdef SCALED_TRAINERS
+	#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 	u8 minEnemyLevel, startScalingAtLevel, prevStartScalingAtLevel, levelRange, newLevel, badgeCount, levelSubtractor;
 	bool8 levelChangedForEvolution = FALSE;
 
@@ -975,6 +975,7 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	else if (averagePlayerTeamLevel >= prevStartScalingAtLevel) //Team is stronger than prev Gym Leader
 	{
 		//So scale normal enemies based on the previous Gym's start scaling level
+		//This section is most likely never going to be used
 		newLevel = MathMin(prevStartScalingAtLevel + levelRange - levelSubtractor, MAX_LEVEL);
 		if (prevStartScalingAtLevel > 0 && *level < newLevel)
 			*level = newLevel;
@@ -987,7 +988,7 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 
 static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 maxEnemyTeamLevel, unusedArg u8 maxPlayerTeamLevel, unusedArg bool8 canEvolve)
 {
-	#ifdef SCALED_TRAINERS
+	#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 	u8 levelRange, newLevel;
 
 	levelRange = maxEnemyTeamLevel - *level; //The offset in the team from the strongest mon

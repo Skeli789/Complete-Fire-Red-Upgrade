@@ -227,7 +227,7 @@
 .word \choosetwoturnanim2
 .endm
 
-.macro jumpifmoveturnEQ jumpifmoveturnEQturn jumpifmoveturnEQPTR
+.macro jumpifmoveturn jumpifmoveturnEQturn jumpifmoveturnEQPTR
 .byte 0x12
 .byte \jumpifmoveturnEQturn
 .word \jumpifmoveturnEQPTR
