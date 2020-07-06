@@ -34,6 +34,7 @@
 #include "../include/constants/maps.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/species.h"
 #include "../include/gba/io_reg.h"
@@ -61,9 +62,6 @@ dexnav.c
 #define ROW_WATER 1
 
 #define IS_NEWER_UNOWN_LETTER(species) (species >= SPECIES_UNOWN_B && species <= SPECIES_UNOWN_QUESTION)
-
-#undef gFieldEffectArguments
-#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
 //This file's functions:
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
@@ -96,8 +94,6 @@ static void DexNavDrawHeldItem(u8* spriteIdAddr);
 static void DexNavDrawIcons(void);
 void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
-static void FieldEff_CaveDust(void);
-static void FieldEff_Sparkles(void);
 
 //GUI Functions
 static void CleanWindow(u8 windowId);
@@ -332,7 +328,7 @@ static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 
 	//u8 searchLevel = sDexNavHudPtr->searchLevel / 5;
 	//u8 chance = searchLevel + 1;
-	return PickTileScreen(targetBehaviour, xSize, ySize, &(sDexNavHudPtr->tileX), &(sDexNavHudPtr->tileY), smallScan);
+	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, smallScan);
 }
 
 
@@ -341,9 +337,10 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 	if (DexNavPickTile(environment, xSize, ySize, smallScan))
 	{
 		u8 metatileBehaviour = MapGridGetMetatileField(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY, 0xFF);
-		gFieldEffectArguments->effectPos.x = sDexNavHudPtr->tileX;
-		gFieldEffectArguments->effectPos.y = sDexNavHudPtr->tileY;
-		gFieldEffectArguments->priority = 0xFF; // height.
+		gFieldEffectArguments[0] = sDexNavHudPtr->tileX;
+		gFieldEffectArguments[1] = sDexNavHudPtr->tileY;
+		gFieldEffectArguments[2] = 0xFF; //Below everything
+		gFieldEffectArguments[3] = 2; //Normal height
 		switch (environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
@@ -375,6 +372,11 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 					break;
 				}
 			case ENCOUNTER_TYPE_WATER:
+				#ifdef UNBOUND
+				if (GetCurrentRegionMapSectionId() == MAPSEC_FLOWER_PARADISE)
+					FieldEffectStart(FLDEFF_REPEATING_SPARKLES);
+				else
+				#endif
 				if (IsCurrentAreaVolcano())
 					FieldEffectStart(FLDEFF_LAVA_BUBBLES);
 				else
@@ -863,16 +865,26 @@ static void DexNavManageHUD(u8 taskId)
 
 	//Caves and water the pokemon moves around
 	if ((sDexNavHudPtr->environment == ENCOUNTER_TYPE_WATER || !IsMapTypeOutdoors(GetCurrentMapType()))
+	#ifdef UNBOUND
+	&& GetCurrentRegionMapSectionId() != MAPSEC_FLOWER_PARADISE
+	#endif
 	&& sDexNavHudPtr->proximity < 2
 	&& sDexNavHudPtr->movementTimes < 2)
 	{
 		switch(sDexNavHudPtr->environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
-				FieldEffectStop(&gSprites[sDexNavHudPtr->spriteIdShakingGrass], FLDEFF_CAVE_DUST); // 1a
+				FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
+				FieldEffectActiveListRemove(FLDEFF_CAVE_DUST);
+				FieldEffectActiveListRemove(FLDEFF_REPEATING_SPARKLES);
+				FieldEffectActiveListRemove(FLDEFF_SHAKING_GRASS);
+				FieldEffectActiveListRemove(FLDEFF_SHAKING_LONG_GRASS);
+				FieldEffectActiveListRemove(FLDEFF_SAND_HOLE);
 				break;
 			case ENCOUNTER_TYPE_WATER:
-				FieldEffectStop(&gSprites[sDexNavHudPtr->spriteIdShakingGrass], FLDEFF_SPLASHING_WATER);
+				FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
+				FieldEffectActiveListRemove(FLDEFF_SPLASHING_WATER);
+				FieldEffectActiveListRemove(FLDEFF_LAVA_BUBBLES);
 				break;
 			default:
 				break;
@@ -1502,181 +1514,6 @@ static void ExecDexNavHUD(void)
 		InitDexNavHUD(Var8000, Var8001);
 	}
 }
-
-// =================================== //
-// ===== Overworld Field Effects ===== //
-// =================================== //
-static const struct SpriteSheet sCaveGfx[4] =
-{
-	{
-		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
-		.size = 0x80,
-		.tag = 0xFFFF,
-	},
-	{
-		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 1],
-		.size = 0x80,
-		.tag = 0xFFFF,
-	},
-	{
-		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 2],
-		.size = 0x80,
-		.tag = 0xFFFF,
-	},
-	{
-		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 3],
-		.size = 0x80,
-		.tag = 0xFFFF,
-	},
-};
-
-static const struct SpriteTemplate ObjtCave =
-{
-	.tileTag = 0xFFFF,
-	.paletteTag = SMOKE_TAG,
-	.oam = (struct OamData*) 0x83A36F0,
-	.anims = (const union AnimCmd* const*) 0x83A5B70,
-	.images = (const struct SpriteFrameImage *) sCaveGfx,
-	.affineAnims = gDummySpriteAffineAnimTable,
-	.callback = (void*) 0x80DCD1D,
-};
-
-
-static const struct SpritePalette sCaveSmokePalTemplate =
-{
-	.data = gInterfaceGfx_caveSmokePal,
-	.tag = SMOKE_TAG,
-};
-
-static void FieldEff_CaveDust(void)
-{
-	LoadSpritePalette(&sCaveSmokePalTemplate);
-	LoadPalette(gInterfaceGfx_caveSmokePal, 29 * 16, 32);
-	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
-
-	u8 spriteId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (spriteId != MAX_SPRITES)
-	{
-		gSprites[spriteId].coordOffsetEnabled = 1;
-		gSprites[spriteId].data[0] = 22;
-	}
-}
-
-
-const union AnimCmd sFieldEffectObjectImageAnim_Sparkles[] =
-{
-	ANIMCMD_FRAME(0, 8),
-	ANIMCMD_FRAME(1, 8),
-	ANIMCMD_FRAME(2, 8),
-	ANIMCMD_FRAME(3, 8),
-	ANIMCMD_FRAME(4, 8),
-	ANIMCMD_FRAME(5, 8),
-	ANIMCMD_JUMP(0),
-};
-
-const union AnimCmd* const sFieldEffectObjectImageAnimTable_Sparkles[] =
-{
-	sFieldEffectObjectImageAnim_Sparkles,
-};
-
-static const struct SpriteFrameImage sFieldEffectObjectPicTable_Sparkles[] =
-{
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 0),
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 1),
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 2),
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 3),
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 4),
-	overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 5),
-};
-
-static const struct SpriteTemplate sSpriteTemplateSparkles =
-{
-	.tileTag = 0xFFFF,
-	.paletteTag = SMOKE_TAG,
-	.oam = (void*) 0x83A36F0,
-	.anims = sFieldEffectObjectImageAnimTable_Sparkles,
-	.images = sFieldEffectObjectPicTable_Sparkles,
-	.affineAnims = gDummySpriteAffineAnimTable,
-	.callback = (void*) 0x80DCD1D,
-};
-
-static const struct SpritePalette sSparklesPalTemplate =
-{
-	.data = gInterfaceGfx_SparklesPal,
-	.tag = SMOKE_TAG,
-};
-
-static void FieldEff_Sparkles(void)
-{
-	LoadSpritePalette(&sSparklesPalTemplate);
-	LoadPalette(gInterfaceGfx_SparklesPal, 29 * 16, 32);
-	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
-
-	u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplateSparkles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (spriteId != MAX_SPRITES)
-	{
-		gSprites[spriteId].coordOffsetEnabled = 1;
-		gSprites[spriteId].data[0] = 22;
-	}
-}
-
-
-static const struct SpriteFrameImage sFieldEffectObjectPicTable_LavaBubbles[] =
-{
-	overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 0),
-	overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 1),
-	overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 2),
-	overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 3),
-};
-
-static const struct SpriteTemplate sSpriteTemplateLavaBubbles =
-{
-	.tileTag = 0xFFFF,
-	.paletteTag = SMOKE_TAG,
-	.oam = (void*) 0x83A36F0,
-	.anims = (void*) 0x83A5B70,
-	.images = sFieldEffectObjectPicTable_LavaBubbles,
-	.affineAnims = gDummySpriteAffineAnimTable,
-	.callback = (void*) 0x80DCD1D,
-};
-
-static const struct SpritePalette sLavaBubblesPalTemplate =
-{
-	.data = gInterfaceGfx_LavaBubblesPal,
-	.tag = SMOKE_TAG,
-};
-
-static void FieldEff_LavaBubbles(void)
-{
-	LoadSpritePalette(&sLavaBubblesPalTemplate);
-	LoadPalette(gInterfaceGfx_LavaBubblesPal, 29 * 16, 32);
-	LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
-
-	u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplateLavaBubbles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-	if (spriteId != MAX_SPRITES)
-	{
-		gSprites[spriteId].coordOffsetEnabled = 1;
-		gSprites[spriteId].data[0] = 22;
-	}
-}
-
-const struct FieldEffectScript FieldEffectScript_CaveDust =
-{
-	FLDEFF_CALLASM, FieldEff_CaveDust,
-	FLDEFF_END,
-};
-
-const struct FieldEffectScript FieldEffectScript_Sparkles =
-{
-	FLDEFF_CALLASM, FieldEff_Sparkles,
-	FLDEFF_END,
-};
-
-const struct FieldEffectScript FieldEffectScript_LavaBubbles =
-{
-	FLDEFF_CALLASM, FieldEff_LavaBubbles,
-	FLDEFF_END,
-};
 
 bool8 IsDexNavHudActive(void)
 {

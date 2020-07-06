@@ -31,12 +31,6 @@ extern const u8 gInterfaceGfx_emptyTiles[];
 extern const u8 gInterfaceGfx_emptyPal[];
 extern const u8 gInterfaceGfx_CapturedAllPokemonTiles[];
 extern const u8 gInterfaceGfx_CapturedAllPokemonPal[];
-extern const u8 gInterfaceGfx_caveSmokeTiles[];
-extern const u16 gInterfaceGfx_caveSmokePal[];
-extern const u8 gInterfaceGfx_SparklesTiles[];
-extern const u16 gInterfaceGfx_SparklesPal[];
-extern const u8 gInterfaceGfx_LavaBubblesTiles[];
-extern const u16 gInterfaceGfx_LavaBubblesPal[];
 extern const u8 gInterfaceGfx_DexNavNoDataSymbolTiles[];
 extern const u8 DexNavBarTiles[];
 extern const u8 DexNavSightTiles[];
@@ -92,8 +86,6 @@ extern const u8 gText_DexNav_TooDark[];
 #define ICON_GFX_TAG 0xD75A
 #define SELECTION_CURSOR_TAG 0x200
 
-#define SMOKE_TAG 0x2710
-
 #define ICONX 0x10
 #define ICONY 0x92
 
@@ -109,12 +101,6 @@ extern const u8 gText_DexNav_TooDark[];
 #define LAND_SECOND_ROW_FIRST_INDEX (6 * 2)
 #define WATER_ROW_LAST_INDEX (4 * 2)
 #define ROW_MON_LENGTH 2
-
-struct FieldEffectArguments
-{
-    struct Coords32 effectPos;
-    u32 priority;
-};
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 

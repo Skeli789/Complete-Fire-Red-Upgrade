@@ -875,23 +875,6 @@ ModifyMegaCryHook:
 	ldr r3, =0x8071F98 | 1
 	bx r3
 
-@0x8122A9A with r0
-DisablePartyMenuListItemsBattleSalon:
-	bl ShouldDisablePartyMenuItemsBattleTower
-	cmp r0, #0x0
-	bne SkipAddPartyMenuListItems
-	ldr r0, [sp, #0x4]
-	mov r1, #0xB @species
-	ldr r2, =GetMonData
-	bl bxr2
-	cmp r0, #0x0
-	ldr r1, =0x8122AA4 | 1
-	bx r1
-
-SkipAddPartyMenuListItems:
-	ldr r0, =0x8122AFC | 1
-	bx r0
-
 @0x8136168 with r0
 CamomonsSummaryScreenHook:
 	ldr r5, .hword3290

@@ -327,6 +327,17 @@ const union AnimCmd *const gAnimCmdTable_SnipeShot[] =
 	sAnimCmdSnipeShot,
 };
 
+static const union AnimCmd sAnimCmdSmallRock[] =
+{
+	ANIMCMD_FRAME(4, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_SmallRock[] =
+{
+	sAnimCmdSmallRock,
+};
+
 static const union AnimCmd sAnimCmdHoopaRing[] =
 {
 	ANIMCMD_FRAME(0, 8),
@@ -658,6 +669,18 @@ static const union AffineAnimCmd sSpriteAffineAnim_WakeUpSlap[] =
 const union AffineAnimCmd* const gSpriteAffineAnimTable_WakeUpSlap[] =
 {
 	sSpriteAffineAnim_WakeUpSlap,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_WingAttackFeather[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, -1, 14), //Rotate a little right
+	AFFINEANIMCMD_FRAME(0, 0, 1, 28), //Rotate a little left
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_WingAttackFeather[] =
+{
+	sSpriteAffineAnim_WingAttackFeather,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
@@ -2235,11 +2258,32 @@ void SpriteCB_SpriteOnMonForDuration(struct Sprite *sprite)
 		DestroyAnimSprite(sprite);
 	else
 	{
-		sprite->pos1.x = GetBattlerSpriteCoord(target, 0);
-		sprite->pos1.y = GetBattlerSpriteCoord(target, 1);
+		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X);
+		sprite->pos1.y = GetBattlerSpriteCoord(target, BATTLER_COORD_Y);
 
 		sprite->pos1.x += gBattleAnimArgs[1];
 		sprite->pos1.y += gBattleAnimArgs[2];
+		sprite->data[0] = 0;
+		sprite->data[1] = gBattleAnimArgs[3];
+		sprite->data[2] = gBattleAnimArgs[4];
+		sprite->data[3] = 0;
+		sprite->callback = (void*) (0x80B0EF0 | 1);
+	}
+}
+
+void SpriteCB_SpriteOnMonForDurationUseY(struct Sprite *sprite)
+{
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X);
+		sprite->pos1.y = GetBattlerSpriteCoord(target, BATTLER_COORD_Y_PIC_OFFSET);
+
+		sprite->pos2.x = gBattleAnimArgs[1];
+		sprite->pos2.y = gBattleAnimArgs[2];
 		sprite->data[0] = 0;
 		sprite->data[1] = gBattleAnimArgs[3];
 		sprite->data[2] = gBattleAnimArgs[4];

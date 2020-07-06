@@ -479,7 +479,6 @@ static bool8 CriticalCapture(unusedArg u32 odds)
 		return FALSE;
 	#else
 	u16 pokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
-	pokesCaught = 500;
 
 	for (u32 i = 0; i < NELEMS(sCriticalCaptureSpeciesCounts); ++i)
 	{

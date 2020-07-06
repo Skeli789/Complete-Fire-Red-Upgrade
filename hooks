@@ -180,8 +180,8 @@ SuctionCupsHook 805D524 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
-DisablePartyMenuListItemsBattleSalon 8122A9A 0
 CursorCb_Summary 8122D4C 1
+SetPartyMonFieldSelectionActions 81229FC 2
 CursorCb_NoEntry 8124278 1
 LoadMaxNumPokemonChooseBattleTowerStringHook 8124184 0
 CursorCb_Enter 8124154 1
@@ -330,12 +330,9 @@ DiveCheckDownHook 806CCCC 0
 GetEventObjectGraphicsInfo 805F2C8 1
 InitPlayerAvatarHook 80570CC 3
 UpdateEventObjectLargerGraphicsId 805E150 0
-NpcSizeFix 805e510 1
 NewNpcInfo 805e964 4
 SetPlayerAvatarEventObjectIdAndObjectId 805F02C 2
 EventObjectSetGraphicsIdFix 805F168 0
-NpcOffscreenFix 8067a12 5
-NpcWaterFix 8067f92 5
 NPCMartFix 809BA6C 1
 CharacterCustomizationUpdateTrainerFrontPic2 810BD64 1
 PlayerGenderToFrontTrainerPicId 810C374 2

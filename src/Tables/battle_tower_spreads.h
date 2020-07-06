@@ -1848,7 +1848,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_CHARTI_BERRY,
 		.moves =
 		{
-			MOVE_INCINERATE,
+			MOVE_SCORCHINGSANDS,
 			MOVE_HEX,
 			MOVE_WILLOWISP,
 			MOVE_CONFUSERAY,
@@ -40675,7 +40675,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_SHADOWBALL,
+			MOVE_SCORCHINGSANDS,
 			MOVE_TOXIC,
 			MOVE_STEALTHROCK,
 			MOVE_SHOREUP,
@@ -40701,7 +40701,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_SHADOWBALL,
-			MOVE_EARTHPOWER,
+			MOVE_SCORCHINGSANDS,
 			MOVE_SANDSTORM,
 			MOVE_SHOREUP,
 		},
@@ -40752,7 +40752,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_SMOOTH_ROCK,
 		.moves =
 		{
-			MOVE_TOXIC,
+			MOVE_SCORCHINGSANDS,
 			MOVE_STEALTHROCK,
 			MOVE_SANDSTORM,
 			MOVE_SHOREUP,

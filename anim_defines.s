@@ -515,6 +515,8 @@
 .equ Template_CentredSparklingStars, 0x83E340C
 .equ Template_SpiderWeb, 0x83e72dc
 .equ Template_TearDrop, 0x83e7998
+.equ Template_ShakeMonOrTerrain, 0x83e7b88
+.equ Template_FallingRock, 0x83e73b4
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -619,6 +621,7 @@
 .equ FIRE_SPIN_TRAP_PARTICLES, 0x81C885F
 .equ CREATE_COTTON_SPORES, 0x81D03B5
 .equ HEALING_ANIM_TARGET, 0x81D5712
+.equ SAND_ATTACK_DIRT, 0x81cdf72
 
 @supercommands
 

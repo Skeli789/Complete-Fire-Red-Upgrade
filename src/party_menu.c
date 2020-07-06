@@ -15,6 +15,7 @@
 #include "../include/pokemon_storage_system.h"
 #include "../include/script.h"
 #include "../include/sound.h"
+#include "../include/start_menu.h"
 #include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/window.h"
@@ -27,6 +28,7 @@
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/follow_me.h"
+#include "../include/new/item.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/util.h"
@@ -841,8 +843,7 @@ const u8* const gFieldMoveDescriptions[] =
 	[FIELD_MOVE_DIVE] = gText_FieldMoveDesc_Dive,
 };
 
-#define FIELD_MOVE_TERMINATOR MOVE_GUILLOTINE
-const u16 gFieldMoves[] =
+const u16 gFieldMoves[FIELD_MOVE_COUNT] =
 {
 	[FIELD_MOVE_FLASH] = MOVE_FLASH,
 	[FIELD_MOVE_CUT] = MOVE_CUT,
@@ -859,7 +860,6 @@ const u16 gFieldMoves[] =
 	[FIELD_MOVE_ROCK_CLIMB] = MOVE_ROCKCLIMB,
 	[FIELD_MOVE_DEFOG] = MOVE_DEFOG,
 	[FIELD_MOVE_DIVE] = MOVE_DIVE,
-	[FIELD_MOVE_COUNT] = FIELD_MOVE_TERMINATOR
 };
 
 #ifndef UNBOUND //MODIFY THIS
@@ -895,6 +895,63 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 };
 
 #endif
+
+void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
+{
+	u8 i, j, k;
+
+	sPartyMenuInternal->numActions = 0;
+	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
+
+	//Add field moves to action list
+	for (i = 0, k = 0; i < MAX_MON_MOVES; ++i)
+	{
+		for (j = 0; j < NELEMS(gFieldMoves); ++j)
+		{
+			if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1, NULL) == gFieldMoves[j])
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
+				++k;
+
+				if (gFieldMoves[j] == MOVE_FLY)
+					k = MAX_MON_MOVES; //No point in appending Fly if it is already there
+				break;
+			}
+		}
+	}
+
+	//Try to give the mon fly
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
+	{
+		#ifndef DEBUG_HMS
+		bool8 hasHM = CheckBagHasItem(ITEM_HM02_FLY, 1) > 0;
+		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
+		
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& hasHM
+		&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
+		&& CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE)
+		#endif
+		{
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
+		}
+	}
+	#endif
+
+	if (!ShouldDisablePartyMenuItemsBattleTower())
+	{
+		if (GetMonData(&mons[1], MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SWITCH);
+		if (IsMail(GetMonData(&mons[slotId], MON_DATA_HELD_ITEM, NULL)))
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_MAIL);
+		else
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_ITEM);
+	}
+
+	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
+}
 
 static bool8 SetUpFieldMove_Fly(void)
 {

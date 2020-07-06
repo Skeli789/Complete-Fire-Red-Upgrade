@@ -10,6 +10,7 @@
 #include "../include/start_menu.h"
 #include "../include/party_menu.h"
 #include "../include/constants/region_map_sections.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/dexnav.h"
 #include "../include/new/overworld.h"
@@ -230,6 +231,17 @@ void ReadKeys(void)
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_ItemMenuFromField);
 				}
+				break;
+			case OPTIONS_R_BUTTON_MODE_MISSION_LOG:
+				#ifdef FLAG_SYS_QUEST_LOG
+				if (!gPaletteFade->active && FlagGet(FLAG_SYS_QUEST_LOG))
+				{
+					PlaySE(SE_SELECT);
+					typedef void (*OpenQuestLogFromOverworld_T) (void);
+					#define OpenQuestLogFromOverworld ((OpenQuestLogFromOverworld_T) (0x801D770 |1))
+					OpenQuestLogFromOverworld();
+				}
+				#endif
 				break;
 			case OPTIONS_R_BUTTON_MODE_MINING:
 				#ifdef MB_UNDERGROUND_MINING

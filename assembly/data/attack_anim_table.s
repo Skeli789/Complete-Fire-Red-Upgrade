@@ -124,7 +124,7 @@ gMoveAnimations:
 .word 0x81c7faa		@MOVE_THUNDERBOLT
 .word 0x81c8160		@MOVE_THUNDERWAVE
 .word 0x81cd570		@MOVE_THUNDER
-.word 0x81c9aff		@MOVE_ROCKTHROW
+.word ANIM_ROCKTHROW
 .word 0x81ca6d1		@MOVE_EARTHQUAKE
 .word 0x81ca71e		@MOVE_FISSURE
 .word 0x81ca841		@MOVE_DIG
@@ -1112,7 +1112,7 @@ WING_ATTACK_SCATTER_FEATHERS:
 	return
 
 .align 2
-WING_ATTACK_FEATHERS: objtemplate ANIM_TAG_WHITE_FEATHER ANIM_TAG_WHITE_FEATHER OAM_OFF_32x32 0x83E6BF8 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
+WING_ATTACK_FEATHERS: objtemplate ANIM_TAG_WHITE_FEATHER ANIM_TAG_WHITE_FEATHER OAM_NORMAL_32x32 0x83E6BF8 0x0 gSpriteAffineAnimTable_WingAttackFeather 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1198,16 +1198,16 @@ SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73
 ANIM_ROCKSLIDE:
 	loadparticle ANIM_TAG_ROCKS
 	pokespritetoBG side_target
-	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x1
+	launchtemplate Template_FallingRock TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x1
 	playsound2 0x7C SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x1
+	launchtemplate Template_FallingRock TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x1
 	playsound2 0x7C SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x1
+	launchtemplate Template_FallingRock TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x1
 	playsound2 0x7C SOUND_PAN_TARGET
 	pause 0x2
-	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x1
+	launchtemplate Template_FallingRock TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x1
 	playsound2 0x7C SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x5 0x32 0x1
@@ -1347,6 +1347,25 @@ ANIM_HYDROPUMP:
 	resetblends
 	call 0x81d59c7
 	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_ROCKTHROW:
+	loadparticle ANIM_TAG_ROCKS
+	loadparticle ANIM_TAG_SMALL_ROCK
+	launchtemplate Template_FallingRock TEMPLATE_TARGET | 2, 0x4 0x0 0x1 0x0 0x0 
+	playsound2 0x7c 0x3f
+	pause 0xC
+	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x0 0x5 0x14 0x1
+	launchtemplate SMALL_ROCK_SCATTER TEMPLATE_TARGET | 2, 0x4 0xfff4 0x11 0x2 0x0
+	launchtemplate SMALL_ROCK_SCATTER TEMPLATE_TARGET | 2, 0x4 0x8 0x12 0x3 0x0
+	launchtemplate SMALL_ROCK_SCATTER TEMPLATE_TARGET | 2, 0x4 0xfffc 0x14 0x2 0x0
+	launchtemplate SMALL_ROCK_SCATTER TEMPLATE_TARGET | 2, 0x4 0xc 0xF 0x4 0x0
+	waitanimation 
+	endanimation 
+
+.align 2
+SMALL_ROCK_SCATTER: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_OFF_16x16 gAnimCmdTable_SmallRock 0x0 0x83E7540 0x80B50A1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1583,14 +1602,14 @@ ANIM_DRAGONCLAW:
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x2 0x0 0x12 0x1
 	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xa 0x0
-	launchtemplate 0x83E7B88 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
+	launchtemplate Template_ShakeMonOrTerrain 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
 	pause 0xA
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x6 0x4
 	pause 0x2
 	playsound2 0x81 SOUND_PAN_TARGET
 	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xa 0xfff6 0x1
 	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xa 0xa 0x1
-	launchtemplate 0x83E7B88 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
+	launchtemplate Template_ShakeMonOrTerrain 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
 	waitanimation
 	endanimation
 
@@ -2805,6 +2824,7 @@ BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_BLEND_32x3
 ANIM_IRONHEAD:
 	loadparticle ANIM_TAG_GUST
 	loadparticle ANIM_TAG_IMPACT
+	launchtask AnimTask_GrayscaleParticle 0x5 0x1 ANIM_TAG_IMPACT
 	soundcomplex 0x71 SOUND_PAN_ATTACKER 0x1c 0x2
 	launchtask 0x80b86ed 0x5 0x3 0x0 0x0 0x0
 	waitanimation
@@ -2821,7 +2841,6 @@ ANIM_IRONHEAD:
 	playsound2 0x74 SOUND_PAN_TARGET
 	waitanimation
 	endanimation
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6178,7 +6197,7 @@ ANIM_FEINT:
 	waitanimation
 	launchtemplate FEINT_HIT_FIST TEMPLATE_TARGET | 3, 0x5, bank_target, 0, 0, 20, 0x0
 	pause 10
-	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x2
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	playsound2 0x84 SOUND_PAN_TARGET
 	waitanimation
@@ -6188,7 +6207,7 @@ ANIM_FEINT:
 
 .align 2
 FEINT_MOVING_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 gDummySpriteAffineAnimTable SpriteCB_LeftRightSlice
-FEINT_HIT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_FeintFist SpriteCB_SpriteOnMonForDuration
+FEINT_HIT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_FeintFist SpriteCB_SpriteOnMonForDurationUseY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16903,7 +16922,27 @@ DUAL_WINGBEAT_SCATTER_FEATHERS_RIGHT:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_SCORCHING_SANDS:
-	goto 0x81cdf22 @MOVE_SANDATTACK
+	loadparticle ANIM_TAG_MUD_SAND
+	loadparticle ANIM_TAG_SMALL_EMBER
+	pokespritetoBG side_attacker
+	leftbankBG_over_partnerBG bank_attacker
+	setblends 0x80c
+	playsound2 0x98 SOUND_PAN_ATTACKER
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 0x0 0xfff6 0x0 0x0 0x3
+	waitanimation
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 0x0 0x0 0x2 
+	call SAND_ATTACK_DIRT
+	call SAND_ATTACK_DIRT
+	call SAND_ATTACK_DIRT
+	call SAND_ATTACK_DIRT
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x2 0x0 25 0x1
+	call SAND_ATTACK_DIRT
+	call SAND_ATTACK_DIRT
+	playsound2 0x8C SOUND_PAN_TARGET
+	call BURN_CHANCE_ANIM
+	waitanimation
+	pokespritefromBG side_attacker
+	resetblends
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

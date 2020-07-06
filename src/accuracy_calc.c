@@ -119,7 +119,7 @@ ACCURACY_CHECK_START:
 					gStringBank = bankDef;
 
 					// final calculation
-					if (Random() % 101 > calc)
+					if (Random32() % 101 > calc)
 					{
 						gNewBS->ResultFlags[bankDef] = MOVE_RESULT_MISSED; //Overwrite old value which can include effectiveness
 						gNewBS->missStringId[bankDef] = gBattleCommunication[6] = 2; //STRINGID_PKMNAVOIDEDATTACK

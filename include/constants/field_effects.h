@@ -48,7 +48,7 @@
 #define FLDEFF_POKEBALL                  45
 #define FLDEFF_HEART_ICON                46
 #define FLDEFF_LAVA_BUBBLES              47 //NEW!
-#define FLDEFF_NOP_48                    48
+#define FLDEFF_THIN_RING                 48 //NEW!
 #define FLDEFF_POP_OUT_OF_ASH            49
 #define FLDEFF_LAVARIDGE_GYM_WARP        50
 #define FLDEFF_SWEET_SCENT               51

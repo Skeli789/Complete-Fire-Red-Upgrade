@@ -16,14 +16,17 @@ struct  __attribute__((packed)) FieldEffectScript
 	u8 endCommand;
 };
 
+struct  __attribute__((packed)) FieldEffectScript2
+{
+	u8 command;
+	const struct SpritePalette* palette;
+	void (*func)(void);
+	u8 endCommand;
+};
+
 #define FLDEFF_CALLASM 3
 #define FLDEFF_END 4
-
-/*extern struct gFieldEffectArguments {
-    struct Coords32 effect_pos;
-    u32 priority;
-};
-*/
+#define FLDEFF_LOAD_FADED_PAL_CALLASM 7
 
 u8 __attribute__((long_call)) FieldEffectStart(u8);
 void __attribute__((long_call)) FieldEffectFreeGraphicsResources(struct Sprite *s);

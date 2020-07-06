@@ -1411,7 +1411,7 @@ LoadWindowGfx = 0x14FFC4 | 1;
 LoadUserWindowBorderGfx = 0x815001C | 1;
 DrawTextBorderOuter = 0x8150048 | 1;
 DrawTextBorderInner = 0x81501D0 | 1;
-
+stdpal_get = 0x8150408 | 1;
 
 /* Start Menu Functions */
 IsUpdateLinkStateCBActive = 0x805642C | 1;
@@ -1436,6 +1436,7 @@ StartMenuExitCallback = 0x806F540 | 1;
 StartMenuSafariZoneRetireCallback = 0x806F554 | 1;
 StartMenuLinkModePlayerCallback = 0x806F56C | 1;
 CloseStartMenu = 0x806FEA0 | 1;
+AppendToList = 0x806FEC8 | 1;
 CB2_OptionMenu = 0x08088454 | 1;
 CreateStartMenuWindow = 0x80F78E0 | 1;
 DestroyHelpMessageWindow_ = 0x80F7998 | 1;

@@ -58,52 +58,59 @@ SystemScript_DisableBikeTurboBoost:
 
 .global SystemScript_PartyMenuFromField
 SystemScript_PartyMenuFromField:
-	lock
+	lockall
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitPartyMenuFromField
-	release
+	releaseall
 	end
 
 .global SystemScript_ItemMenuFromField
 SystemScript_ItemMenuFromField:
-	lock
+	lockall
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitBagMenuFromField
-	release
+	releaseall
 	end
 
 .global SystemScript_MiningScan
 SystemScript_MiningScan:
-	lock
+	lockall
 	checksound
 	sound 0xCA @SE_TWINKLE
-	callasm CreateMiningScanRing
+	getplayerpos 0x8000 0x8001
+	setfieldeffectarg 0, 0x8000
+	setfieldeffectarg 1, 0x8001
+	setfieldeffectarg 2, TRUE
+	dofieldeffect 48 @FLDEFF_THIN_RING
 	callasm IsBestMiningSpotOutOfView
 	compare LASTRESULT 0x0 @Out of view
 	if notequal _goto SystemScript_MiningScan_SkipFieldEffect
+	setfieldeffectarg 0, 0x8004
+	setfieldeffectarg 1, 0x8005
+	setfieldeffectarg 2, 0x8006
 	dofieldeffect 54 @FLDEFF_SPARKLE
 	waitfieldeffect 54 @FLDEFF_SPARKLE
-	release
+	releaseall
 	end
 
 SystemScript_MiningScan_SkipFieldEffect:
-	pause 50 @Wait for the ring to finish
-	release
+	waitfieldeffect 48 @FLDEFF_THIN_RING
+	releaseall
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global SystemScript_PoisonSurvial
 SystemScript_PoisonSurvial:
-	lock
+	lockall
 	msgboxsign
 	msgbox gText_PoisonSurvial MSG_KEEPOPEN
 	closeonkeypress
-	release
+	releaseall
 	end
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -113,7 +120,7 @@ SystemScript_PoisonSurvial:
 .global EventScript_BwRepelWoreOff
 .global EventScript_RepelWoreOff
 EventScript_BwRepelWoreOff:
-	lock
+	lockall
 	checkitem 0x800E 1
 	compare LASTRESULT 1
 	if greaterorequal _goto AnotherRepel
@@ -156,13 +163,13 @@ FinishNewRepel:
 	goto EndScript
 	
 EventScript_RepelWoreOff:
-	lock
+	lockall
 	msgboxsign
 	msgbox gText_RepelWoreOff MSG_KEEPOPEN
 	closeonkeypress
 	
 EndScript:
-	release
+	releaseall
 	end
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

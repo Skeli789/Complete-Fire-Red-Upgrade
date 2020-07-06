@@ -75,23 +75,6 @@ NpcSpawnWithTemplate:
 	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@	hook at 5e510 via r1
-.align 2
-.pool
-NpcSizeFix:
-	push {r4, lr}
-	sub sp, #0x8
-	mov r4, r0
-	ldrb r0, [r4, #0x5]
-	add r1, r4, #0x7
-	ldrb r1, [r1, #0x1C] @0x23
-	lsl r1, r1, #0x8
-	orr r0, r1
-	bl GetEventObjectGraphicsInfo
-	ldr r1, =(0x0805e51c+1)
-	bx r1
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 5e964 via r4
 .align 2
 .pool
@@ -156,44 +139,6 @@ EventObjectSetGraphicsIdFix:
 	ldrsh r0, [r6, r1]
 	ldr r2, =0x805F170 | 1
 	bx r2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@	hook at 67a12 via r5
-.align 2
-.pool
-NpcOffscreenFix:
-	add r5, r0, #0x0
-	add r4, r1, #0x0
-	ldrb r1, [r5,#1]
-	mov r0, #0x41
-	neg r0, r0
-	and r0, r1
-	strb r0, [r5,#1]
-	ldrb r0, [r5, #0x5]
-	add r1, r5, #0x7
-	ldrb r1, [r1, #0x1C] @0x23
-	lsl r1, r1, #0x8
-	orr r0, r1
-	bl GetEventObjectGraphicsInfo
-	ldr r1, =(0x08067a26+1)
-	bx r1
-
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@	hook at 67f92 via r5
-.align 2
-.pool
-NpcWaterFix:
-	mov r5, r0
-	mov r4, #0x0
-	ldrb r0, [r5, #0x5]
-	add r1, r5, #0x7
-	ldrb r1, [r1, #0x1C] @0x23
-	lsl r1, r1, #0x8
-	orr r0, r1
-	bl GetEventObjectGraphicsInfo
-	ldr r1, =(0x08067f9c+1)
-	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 5D3AC via r1
