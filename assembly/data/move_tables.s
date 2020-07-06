@@ -1013,6 +1013,7 @@ gMovesCanUnfreezeAttacker:
 .hword MOVE_SACREDFIRE
 .hword MOVE_FLAREBLITZ
 .hword MOVE_SCALD
+.hword MOVE_SCORCHINGSANDS
 .hword MOVE_FUSIONFLARE
 .hword MOVE_STEAMERUPTION
 .hword MOVE_BURNUP
@@ -1024,6 +1025,7 @@ gMovesCanUnfreezeAttacker:
 gMovesCanUnfreezeTarget:
 .hword MOVE_SCALD
 .hword MOVE_STEAMERUPTION
+.hword MOVE_SCORCHINGSANDS
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

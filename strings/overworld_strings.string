@@ -49,6 +49,9 @@ Obtained [BUFFER1] [BUFFER2]!
 #org @gText_ObtainedTMHM
 Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 
+#org @gText_UseWhichRegisteredItem
+Use which item?
+
 #org @gText_ScurriedToNearestHealer
 [PLAYER] scurried to the nearest healer,\nprotecting the exhausted and fainted\nPok\emon from further harm[.]\p
 

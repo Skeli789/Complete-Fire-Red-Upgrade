@@ -269,8 +269,10 @@ gMPlayInfo_SE3 = 0x30073D0;
 /* Bag RAM */
 gBagMenuState = 0x203ACFC;
 sBagMenuDisplay = 0x203AD10;
+sBagContextMenuItemsBuffer = 0x203AD20;
 sBagContextMenuItemsPtr = 0x203AD24;
 sBagContextMenuNumItems = 0x203AD28;
+sBackupPlayerBag = 0x203AD2C;
 sBerryPouchListMenuItems = 0x203F37C;
 
 /* Start Menu RAM */
@@ -294,6 +296,7 @@ gSoftResetDisabled = 0x03003530;
 gLocalLinkPlayerId = 0x300502C;
 gTotalCameraPixelOffsetY = 0x3005068;
 gTotalCameraPixelOffsetX = 0x300506C;
+gInputToStoreInQuestLogMaybe = 0x3005078;
 gItemUseCB = 0x3005E98;
 
 /*==========================
@@ -825,6 +828,7 @@ CheckBagHasItem = 0x8099F40 | 1;
 CheckBagHasSpace = 0x809A000 | 1;
 AddBagItem = 0x809A084 | 1;
 RemoveBagItem = 0x809A1D8 | 1;
+ClearItemSlots = 0x809A274 | 1;
 BagGetItemIdByPocketPosition = 0x809A798 | 1;
 CountTotalItemQuantityInBag = 0x809A7DC | 1;
 //SanitizeItemId = 0x809A8A4 | 1;
@@ -836,6 +840,7 @@ ItemIsUnique = 0x809A990 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
+ItemId_GetFieldFunc = 0x809AA20 | 1;
 sub_80A103C = 0x80A103C | 1;
 PrintNotTheTimeToUseThat = 0x80A1110 | 1;
 PrepareOverworldReturn = 0x80A1184 | 1;
@@ -850,6 +855,7 @@ CB2_BagMenuFromStartMenu = 0x8107EB8 | 1;
 Bag_BuildListMenuTemplate = 0x810842C | 1;
 BagMenu_PrintCursor_ = 0x810876C | 1;
 BagDestroyPocketScrollArrowPair = 0x8108978 | 1;
+ResetBagCursorPositions = 0x81089BC | 1;
 SetInitialScrollAndCursorPositions = 0x81089F4 | 1;
 DestroyBagMenuResources = 0x8108B04 | 1;
 ReturnFromItemToBag = 0x8108B50 | 1;
@@ -986,12 +992,13 @@ PlayerGoSpeed1 = 0x805C104 | 1;
 PlayerGoSpeed2 = 0x805C11C | 1;
 PlayerRideWaterCurrent = 0x805C14C | 1;
 PlayerGoSpeed4 = 0x805C164 | 1;
+HandleEnforcedLookDirectionOnPlayerStopMoving = 0x805C270 | 1;
 PlayCollisionSoundIfNotFacingWarp = 0x805C438 | 1;
 GetXYCoordsOneStepInFrontOfPlayer = 0x805C4F4 | 1;
 GetPlayerFacing = 0x805C6C4 | 1;
 GetPlayerMovementDirection = 0x805C6E4 | 1;
 PlayerGetZCoord = 0x805C700 | 1;
-sub_805C780 = 0x805C780 | 1;
+StopPlayerAvatar = 0x805C780 | 1;
 //GetPlayerAvatarGraphicsIdByStateId = 0x805C808 | 1;
 PartyHasMonWithSurfOriginal = 0x805C83C | 1;
 IsPlayerSurfingNorth = 0x805C88C | 1;

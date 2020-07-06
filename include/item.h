@@ -54,6 +54,8 @@ void __attribute__((long_call)) DisplayItemMessageInBag(u8 taskId, u8 a, const u
 void __attribute__((long_call)) Task_ReturnToBagFromContextMenu(u8 taskId);
 bool8 __attribute__((long_call)) CheckBagHasSpace(u16 itemId, u16 count);
 u16 __attribute__((long_call)) BagGetItemIdByPocketPosition(u8 pocketId, u16 itemId);
+ItemUseFunc __attribute__((long_call)) ItemId_GetFieldFunc(u16 itemId);
+void __attribute__((long_call)) ClearItemSlots(struct ItemSlot *itemSlots, u8 b);
 
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);
@@ -62,7 +64,6 @@ bool8 IsBagPocketNonEmpty(u8 pocket);
 bool8 CheckBagHasItem(u16 itemId, u16 count);
 bool8 AddBagItem(u16 itemId, u16 count);
 u8 GetPocketByItemId(u16 itemId);
-void ClearItemSlots(struct ItemSlot *itemSlots, u8 b);
 u8 CountUsedPCItemSlots(void);
 bool8 CheckPCHasItem(u16 itemId, u16 count);
 bool8 AddPCItem(u16 itemId, u16 count);
@@ -77,7 +78,6 @@ u8 ItemId_GetImportance(u16 itemId);
 u8 ItemId_GetUnknownValue(u16 itemId);
 u8 ItemId_GetPocket(u16 itemId);
 u8 ItemId_GetType(u16 itemId);
-ItemUseFunc ItemId_GetFieldFunc(u16 itemId);
 u8 ItemId_GetBattleUsage(u16 itemId);
 ItemUseFunc ItemId_GetBattleFunc(u16 itemId);
 u8 ItemId_GetSecondaryId(u16 itemId);

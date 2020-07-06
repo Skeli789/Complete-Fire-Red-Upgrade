@@ -8,6 +8,10 @@
  *		  used to set up a script to launch when the user presses certain keys.
  */
 
+//Exported Functions
+bool8 StartLButtonFunc(void);
+bool8 StartRButtonFunc(void);
+
 //Functions Hooked In
 void ReadKeys(void);
 

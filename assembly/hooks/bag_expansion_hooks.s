@@ -120,30 +120,6 @@ GetBerryNameBerryIdFix:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-PokeDudeBackupRegularBagHook:
-	bl PokeDudeBackupBag
-	ldr r5, .PokeDudeItemBackupPtr
-	ldr r4, .SaveBlock1
-	ldr r0, =0x810AE22 | 1
-	bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-PokeDudeBackupRegularBagClearHook:
-	ldr r4, .SaveBlock1
-	ldr r0, =0x810AEA4 | 1
-	bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-PokeDudeBackupBagRestoreHook:
-	bl PokeDudeRestoreBag
-	ldr r4, .SaveBlock1
-	ldr r0, =0x810AF0C | 1
-	bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
 PokeDudeBackupTMCaseHook:
 	bl PokeDudeBackupKeyItemsTMs
 	ldr r0, =0x8132E98 | 1
@@ -176,12 +152,6 @@ AreItemsDisabledHook:
 CanUseItemsReturn:
 	ldr r0, =0x8014428 | 1
 	bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.align 2
-.PokeDudeItemBackupPtr: .word 0x203AD2C
-.SaveBlock1: .word 0x3005008
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -241,3 +211,47 @@ PrintRegularItemSelected:
 
 .align 2
 .BagSortIndicator: .word 0xF9F9
+
+@
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+@0x810872C with r0
+PrintRegisteredItemInBagHook:
+	mov r0, r7
+	bl IsItemRegistered
+	cmp r0, #0x0
+	bne PrintRegisteredItem
+	ldr r0, =0x8108752 | 1
+	bx r0
+
+PrintRegisteredItem:
+	ldr r0, =0x810873E | 1
+	bx r0
+
+.pool
+@0x8109A44 with r0
+RegisteredItemBagActionsHook:
+	mov r7, r3
+	ldr r0, =Var800E
+	ldrh r0, [r0]
+	push {r2}
+	bl IsItemRegistered
+	pop {r2}
+	cmp r0, #0x0
+	bne RegisteredItemBagAction
+	ldr r0, =0x8109A74 | 1
+	bx r0
+
+RegisteredItemBagAction:
+	ldr r0, =0x8109A58 | 1
+	bx r0
+
+.pool
+@0x810A02A with r0
+RegisterItemHook:
+	mov r0, r2
+	bl HandleItemRegistration
+	ldr r0, =0x810A052 | 1
+	bx r0

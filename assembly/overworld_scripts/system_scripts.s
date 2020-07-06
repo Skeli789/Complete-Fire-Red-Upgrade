@@ -171,7 +171,7 @@ EventScript_RepelWoreOff:
 EndScript:
 	releaseall
 	end
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global SystemScript_StartDexNavBattle
@@ -307,6 +307,42 @@ SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
 	callasm ClearItemSpriteAfterFindHidden
 	special 0x96 @;SetHiddenItemFlag
 	incrementgamestat GAME_STAT_FOUND_HIDDEN_ITEM
+	releaseall
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.macro showselectitems num
+EventScript_ShowSelectItems\num:
+	multichoice 0x0 0x0 TWO_MULTICHOICE_OPTIONS + \num - 2 0x0
+	goto EventScript_ChooseSelectItem
+.endm
+
+.global EventScript_ShowSelectItems
+EventScript_ShowSelectItems:
+	lockall
+	preparemsg gText_UseWhichRegisteredItem
+	waitmsg
+	switch 0x8004
+	case 2, EventScript_ShowSelectItems2
+	case 3, EventScript_ShowSelectItems3
+	case 4, EventScript_ShowSelectItems4
+	case 5, EventScript_ShowSelectItems5
+	case 6, EventScript_ShowSelectItems6
+	releaseall
+	end
+
+showselectitems 2
+showselectitems 3
+showselectitems 4
+showselectitems 5
+showselectitems 6
+
+EventScript_ChooseSelectItem:
+	comparevars LASTRESULT 0x8004
+	if greaterorequal _goto .LEnd @Chose to cancel
+	callasm UseChosenRegisteredItem
+.LEnd:
 	releaseall
 	end
 

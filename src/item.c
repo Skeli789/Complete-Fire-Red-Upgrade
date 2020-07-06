@@ -910,6 +910,96 @@ void ReloadMartListForTmPurchase(u8 taskId)
 }
 #undef tItemId
 
+//Multiple Registered Items////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool8 IsItemRegistered(u16 item)
+{
+	u32 i;
+
+	for (i = 0; i < REGISTERED_ITEM_COUNT; ++i)
+	{
+		if (gSaveBlock1->registeredItems[i] == item)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 CanRegisterNewItem(void)
+{
+	u32 i;
+
+	for (i = 0; i < REGISTERED_ITEM_COUNT; ++i)
+	{
+		if (gSaveBlock1->registeredItems[i] == ITEM_NONE)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+void RegisterItem(u16 item)
+{
+	u32 i;
+
+	for (i = 0; i < REGISTERED_ITEM_COUNT; ++i)
+	{
+		if (gSaveBlock1->registeredItems[i] == ITEM_NONE)
+		{
+			gSaveBlock1->registeredItems[i] = item;
+			break;
+		}
+	}
+}
+
+void RemoveRegisteredItem(u16 item)
+{
+	u32 i;
+
+	for (i = 0; i < REGISTERED_ITEM_COUNT; ++i)
+	{
+		if (gSaveBlock1->registeredItems[i] == item)
+		{
+			gSaveBlock1->registeredItems[i] = ITEM_NONE;
+			CompactRegisteredItems();
+			break;
+		}
+	}
+}
+
+void CompactRegisteredItems(void)
+{
+	u32 i, j;
+ 
+	//Bubble sort because it doesn't need to be quick
+	for (i = 0; i < REGISTERED_ITEM_COUNT - 1; ++i)       
+	{
+	   // Last i elements are already in place    
+		for (j = 0; j < REGISTERED_ITEM_COUNT - i - 1; ++j)
+		{
+			if (gSaveBlock1->registeredItems[j] == ITEM_NONE && gSaveBlock1->registeredItems[j + 1] != ITEM_NONE)
+			{
+			    u16 temp = gSaveBlock1->registeredItems[j + 1];
+				gSaveBlock1->registeredItems[j + 1] = gSaveBlock1->registeredItems[j];
+				gSaveBlock1->registeredItems[j] = temp;
+			}
+		}
+	}
+}
+
+void HandleItemRegistration(u16 item)
+{
+	if (IsItemRegistered(item))
+		RemoveRegisteredItem(item); //Toggle off
+	else
+	{
+		if (!CanRegisterNewItem())
+			RemoveRegisteredItem(gSaveBlock1->registeredItems[0]); //Remove the oldest item to make room for a new one
+
+		RegisterItem(item);
+	}
+}
+
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define gBagPockets ((struct BagPockets*) 0x203988C)
 
@@ -942,6 +1032,17 @@ struct ListBuffer1
 struct ListBuffer2
 {
 	s8 name[LARGEST_POCKET_NUM][24];
+};
+
+struct BagSlots
+{
+    struct ItemSlot bagPocket_Items[NUM_REGULAR_ITEMS];
+    struct ItemSlot bagPocket_KeyItems[NUM_KEY_ITEMS];
+    struct ItemSlot bagPocket_PokeBalls[NUM_POKE_BALLS];
+    u16 itemsAbove[3];
+    u16 cursorPos[3];
+    u16 registeredItems[NELEMS(gSaveBlock1->registeredItems)];
+    u16 pocket;
 };
 
 struct BagPockets
@@ -997,23 +1098,46 @@ bool8 AllocateBerryPouchListBuffers(void)
 	return TRUE;
 }
 
-#define sPokeDudeItemBackupPtr (*((struct ItemSlot***) 0x203AD2C))
-void PokeDudeBackupBag(void)
+extern struct BagSlots* sBackupPlayerBag;
+void BackupPlayerBag(void)
 {
-	struct ItemSlot* ptr = Calloc((NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS + 1) * sizeof(struct ItemSlot));
-	sPokeDudeItemBackupPtr = Calloc(0x164);
-	*sPokeDudeItemBackupPtr = ptr;
-	Memcpy(ptr, sBagPocketArrangement.itemRam, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
-	Memset(sBagPocketArrangement.itemRam, 0, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
-	(ptr + NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS)->itemId = gSaveBlock1->registeredItem; //Backup Select Item
+	u32 i;
+
+	sBackupPlayerBag = Calloc(sizeof(struct BagSlots));
+	Memcpy(sBackupPlayerBag->bagPocket_Items, sBagRegularItems, NUM_REGULAR_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(sBackupPlayerBag->bagPocket_KeyItems, sBagKeyItems, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(sBackupPlayerBag->bagPocket_PokeBalls, sBagPokeBalls, NUM_POKE_BALLS * sizeof(struct ItemSlot));
+	Memcpy(sBackupPlayerBag->registeredItems, gSaveBlock1->registeredItems, sizeof(gSaveBlock1->registeredItems));
+	sBackupPlayerBag->pocket = gBagMenuState.pocket;
+	for (i = 0; i < 3; i++)
+	{
+		sBackupPlayerBag->itemsAbove[i] = gBagMenuState.scrollPosition[i];
+		sBackupPlayerBag->cursorPos[i] = gBagMenuState.cursorPosition[i];
+	}
+
+	Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS); //Too many to use ClearItemSlots
+	ClearItemSlots(sBagKeyItems, NUM_KEY_ITEMS);
+	ClearItemSlots(sBagPokeBalls, NUM_POKE_BALLS);
+	Memset(gSaveBlock1->registeredItems, 0, sizeof(gSaveBlock1->registeredItems));
+	ResetBagCursorPositions();
 }
 
-void PokeDudeRestoreBag(void)
+void RestorePlayerBag(void)
 {
-	struct ItemSlot* ptr = *sPokeDudeItemBackupPtr;
-	Memcpy(sBagPocketArrangement.itemRam, ptr, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
-	gSaveBlock1->registeredItem = (ptr + NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS)->itemId;
-	Free(ptr);
+	u32 i;
+
+	Memcpy(sBagRegularItems, sBackupPlayerBag->bagPocket_Items, NUM_REGULAR_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(sBagKeyItems, sBackupPlayerBag->bagPocket_KeyItems, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(sBagPokeBalls, sBackupPlayerBag->bagPocket_PokeBalls, NUM_POKE_BALLS * sizeof(struct ItemSlot));
+	Memcpy(gSaveBlock1->registeredItems, sBackupPlayerBag->registeredItems, sizeof(gSaveBlock1->registeredItems));
+	gBagMenuState.pocket = sBackupPlayerBag->pocket;
+	for (i = 0; i < 3; i++)
+	{
+		gBagMenuState.scrollPosition[i] = sBackupPlayerBag->itemsAbove[i];
+		gBagMenuState.cursorPosition[i] = sBackupPlayerBag->cursorPos[i];
+	}
+
+	Free(sBackupPlayerBag);
 }
 
 #define sPokeDudeItemBackupPtr2 (*((struct ItemSlot***) 0x203B11C))

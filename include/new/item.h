@@ -34,6 +34,12 @@ u16 GetExpandedTutorMove(u8 tutorId);
 void CopyTMName(u8* dst, u16 itemId);
 u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor);
 
+bool8 IsItemRegistered(u16 item);
+bool8 CanRegisterNewItem(void);
+void RegisterItem(u16 item);
+void RemoveRegisteredItem(u16 item);
+void CompactRegisteredItems(void);
+
 u16 GetNumItemsInPocket(u8 pocket);
 u16 GetCurrentPocketItemAmount(void);
 bool8 DoesBagHaveBerry(void);
@@ -90,6 +96,7 @@ enum ItemObtainFlags
     FLAG_SET_OBTAINED,
 };
 
+#define REGISTERED_ITEM_COUNT 6
 #define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this
 
 #define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))

@@ -1212,3 +1212,20 @@ RandomizerShowPokepicHook:
 	mov r8, r0
 	ldr r0, =0x809D304 | 1
 	bx r0
+
+.pool
+@0x806C9AC with r0
+FieldGetPlayerInputLButtonHook:
+	mov r0, r5
+	ldrh r1, [sp]
+	bl FieldCheckIfPlayerPressedLButton
+	ldr r0, =0x0806C9BA | 1
+	bx r0
+
+.pool
+@0x806CCFC with r0
+UseRegisteredItemHook:
+	mov r0, r5
+	bl ProcessNewFieldPlayerInput
+	ldr r1, =0x0806CD22 | 1
+	bx r1

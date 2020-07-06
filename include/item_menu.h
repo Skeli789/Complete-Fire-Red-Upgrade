@@ -77,3 +77,4 @@ void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);
 void __attribute__((long_call)) ReturnFromItemToBag(u8 taskId);
 void __attribute__((long_call)) ItemMenu_SetExitCallback(void* callbackFunc);
 void __attribute__((long_call)) PrepareOverworldReturn(void);
+void __attribute__((long_call)) ResetBagCursorPositions(void);

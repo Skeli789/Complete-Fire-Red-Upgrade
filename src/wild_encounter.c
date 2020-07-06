@@ -1058,7 +1058,7 @@ void DoStandardWildBattle(void)
 {
 	ScriptContext2_Enable();
 	FreezeEventObjects();
-	sub_805C780();
+	StopPlayerAvatar();
 	gMain.savedCallback = CB2_EndWildBattle;
 	gBattleTypeFlags = 0;
 

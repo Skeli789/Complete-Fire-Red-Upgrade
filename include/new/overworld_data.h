@@ -26,6 +26,7 @@
 #define EventScript_VSSeeker (const u8*) 0x81A8CED
 #define EventScript_Poison (const u8*) 0x81A8DFD
 #define EventScript_EggHatch (const u8*) 0x81BF546
+#define EventScript_BagItemCanBeRegistered (const u8*) 0x81A77A0
 
 extern const u8 EventScript_SetUpNPCSpotting[];
 extern const u8 Script_TrainerSpottedMulti[];
@@ -35,6 +36,7 @@ extern const u8 EventScript_TryDoTwoOpponentRematchBattle[];
 extern const u8 SystemScript_PoisonSurvial[];
 extern const u8 EventScript_RepelWoreOff[];
 extern const u8 EventScript_BwRepelWoreOff[];
+extern const u8 EventScript_ShowSelectItems[];
 extern const u8 EventScript_LockedDoor[];
 extern const u8 EventScript_PsychicBarrier[];
 extern const u8 EventScript_Ladder[];

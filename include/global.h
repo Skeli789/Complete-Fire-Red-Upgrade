@@ -741,7 +741,7 @@ struct SaveBlock1 //0x202552C
 	/*0x0038*/ struct Pokemon playerParty[PARTY_SIZE];
 	/*0x0290*/ u32 money;
 	/*0x0294*/ u16 coins;
-	/*0x0296*/ u16 registeredItem; // registered for use with SELECT button
+	/*0x0296*/ u16 oldRegisteredItem; // was SELECT button item
 	/*0x0298*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
 	/*0x0310*/ u8 dexSeenFlags[(999 / 8) + 1]; //size = 125
 	/*0x038D*/ u8 dexCaughtFlags[(999 / 8) + 1];
@@ -779,7 +779,7 @@ struct SaveBlock1 //0x202552C
 	/*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
 	/*0x3C98*/ struct DaycareMon route5DayCareMon;
-	/*0x3D24*/ u8 filler_3D24[0x10];
+	/*0x3D24*/ u16 registeredItems[8]; //For use with SELECT - space for up to 8, but CFRU only allows 6
 	/*0x3D34*/ u32 towerChallengeId;
 	/*0x3D38*/ struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 };

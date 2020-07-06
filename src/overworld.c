@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_setup.h"
+#include "../include/bg.h"
 #include "../include/daycare.h"
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
@@ -16,6 +17,7 @@
 #include "../include/fldeff_misc.h"
 #include "../include/item.h"
 #include "../include/link.h"
+#include "../include/list_menu.h"
 #include "../include/m4a.h"
 #include "../include/map_name_popup.h"
 #include "../include/map_scripts.h"
@@ -47,6 +49,7 @@
 #include "../include/new/overworld.h"
 #include "../include/new/overworld_data.h"
 #include "../include/new/party_menu.h"
+#include "../include/new/read_keys.h"
 #include "../include/new/wild_encounter.h"
 
 /*
@@ -82,6 +85,7 @@ static void UpdateJPANStepCounters(void);
 static const u8* GetCustomWalkingScript(void);
 static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
+static bool8 UseRegisteredKeyItemOnField(void);
 
 #ifdef VAR_DEFAULT_WALKING_SCRIPT
 //Table full of pointers to custom walking scripts
@@ -2504,6 +2508,111 @@ u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStru
 		return PLAYER_AVATAR_FLAG_BIKE;
 	else
 		return PLAYER_AVATAR_FLAG_ON_FOOT;
+}
+
+//Stuff to do with pressing buttons in the field//
+void FieldCheckIfPlayerPressedLButton(struct FieldInput* input, u16 newKeys)
+{
+	if (newKeys & L_BUTTON)
+		input->pressedLButton = TRUE;
+}
+
+bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
+{
+	if (input->pressedSelectButton && UseRegisteredKeyItemOnField())
+    {
+        gInputToStoreInQuestLogMaybe.pressedSelectButton = TRUE;
+        return TRUE;
+    }
+
+	if (input->pressedLButton && StartLButtonFunc())
+	{
+		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;
+		return TRUE;
+	}
+
+	if (input->pressedRButton && StartRButtonFunc())
+	{
+		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void UseRegisteredItem(u16 registeredItem)
+{
+	u8 taskId;
+
+	ScriptContext2_Enable();
+	FreezeEventObjects();
+	HandleEnforcedLookDirectionOnPlayerStopMoving();
+	StopPlayerAvatar();
+	Var800E = registeredItem;
+	taskId = CreateTask(ItemId_GetFieldFunc(registeredItem), 8);
+	gTasks[taskId].data[3] = 1;
+}
+
+static bool8 UseRegisteredKeyItemOnField(void)
+{
+	u8 i, numRegisteredItems;
+	u16 registeredItem;
+
+	if (InUnionRoom()
+	#ifdef FLAG_SYS_BAG_HIDE
+	|| FlagGet(FLAG_SYS_BAG_HIDE) //Can't use item with no bag
+	#endif
+	)
+		return FALSE;
+
+	DismissMapNamePopup();
+	ChangeBgY(0, 0, 0);
+
+	for (i = 0, numRegisteredItems = 0, registeredItem = ITEM_NONE; i < REGISTERED_ITEM_COUNT; ++i)
+	{
+		if (gSaveBlock1->registeredItems[i] != ITEM_NONE)
+		{
+			registeredItem = gSaveBlock1->registeredItems[i];
+			if (CheckBagHasItem(registeredItem, 1) == 0)
+				gSaveBlock1->registeredItems[i] = ITEM_NONE; //Don't have item so remove it from list
+			else
+			{
+				gMultiChoice[numRegisteredItems].name = ItemId_GetName(gSaveBlock1->registeredItems[i]);
+				gMultiChoice[numRegisteredItems].id = numRegisteredItems;
+				numRegisteredItems++;
+			}
+
+			CompactRegisteredItems();
+		}
+	}
+
+	if (registeredItem != ITEM_NONE)
+	{
+		if (numRegisteredItems == 1) //Only 1 item registered
+		{
+			if (CheckBagHasItem(registeredItem, 1) > 0)
+			{
+				UseRegisteredItem(registeredItem);
+				return TRUE;
+			}
+
+			RemoveRegisteredItem(registeredItem);
+		}
+		else //Pull up list offering multiple items
+		{
+			Var8004 = numRegisteredItems;
+			ScriptContext1_SetupScript(EventScript_ShowSelectItems);
+			return TRUE;
+		}
+	}
+
+	ScriptContext1_SetupScript(EventScript_BagItemCanBeRegistered);
+	return TRUE;
+}
+
+void UseChosenRegisteredItem(void)
+{
+	UseRegisteredItem(gSaveBlock1->registeredItems[gSpecialVar_LastResult]);
 }
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX

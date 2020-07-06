@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
+#include "../include/field_player_avatar.h"
 #include "../include/overworld.h"
 #include "../include/random.h"
 #include "../include/region_map.h"
@@ -368,7 +369,7 @@ void BattleSetup_StartRoamerBattle(void)
 {
 	ScriptContext2_Enable();
 	FreezeEventObjects();
-	sub_805C780();
+	StopPlayerAvatar();
 	gMain.savedCallback = CB2_EndWildBattle;
 	gBattleTypeFlags = BATTLE_TYPE_ROAMER;
 	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());

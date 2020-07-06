@@ -177,6 +177,8 @@ SetCutGrassMetatile 8097B50 2
 BikeTurboBoostHook 80BD338 0
 GetPlayerSpeed 80BD674 0
 SuctionCupsHook 805D524 0
+FieldGetPlayerInputLButtonHook 806C9AC 0
+UseRegisteredItemHook 806CCFC 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
@@ -553,20 +555,22 @@ CompactItemsInBagPocket 809A584 2
 SortBerriesOrTMHMs 809A720 1
 SanitizeItemId 809A8A4 1
 BerryIdFromItemId 809C8E4 1
+PrintRegisteredItemInBagHook 810872C 0
 AllocateBagItemListBuffers 81083F4 0
 PrintItemDescriptionOnMessageWindow 8108818 1
 OpenBagBugFix1 8108A1C 1
 OpenBagBugFix2 8108A40 0
 OpenBagBugFix3 8108AC0 0
 CountItemsInBag 8108DC8 1
-PokeDudeBackupRegularBagHook 810ADDE 0
 GetSmallestItemAmount 8108E20 0
 BagSorterHook 810900C 1
 SelectItemFromBagCheck 81090B8 0
+RegisteredItemBagActionsHook 8109A44 0
 BagSorterHook2 8109AD4 0
 BagSorterHook3 8109B5C 1
-PokeDudeBackupRegularBagClearHook 810AE78 0
-PokeDudeBackupBagRestoreHook 810AEDA 0
+RegisterItemHook 810A02A 0
+BackupPlayerBag 810ADD8 0
+RestorePlayerBag 810AECC 0
 SelectItemFromTMCaseCheck 81323B0 0
 PokeDudeBackupTMCaseHook 8132E76 1
 PokeDudeClearTMCaseHook 8132EB0 0
