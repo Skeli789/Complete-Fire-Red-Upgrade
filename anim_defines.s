@@ -455,6 +455,7 @@
 .equ AnimTask_AnimateGustTornadoPalette, 0x80b194d
 .equ AnimTask_DragonDanceWaver, 0x80b75e1
 .equ AnimTask_BlendPalInAndOutByTag, 0x8076289
+.equ AnimTask_BlendMonInAndOut, 0x807616D
 .equ AnimTask_UproarDistortion, 0x80AA7C9
 .equ AnimTask_FlailMovement, 0x80E0851
 .equ AnimTask_TraceMonBlended, 0x80bab99
@@ -622,6 +623,7 @@
 .equ CREATE_COTTON_SPORES, 0x81D03B5
 .equ HEALING_ANIM_TARGET, 0x81D5712
 .equ SAND_ATTACK_DIRT, 0x81cdf72
+.equ EMBER_FIRE_HIT, 0x81c7cd5
 
 @supercommands
 

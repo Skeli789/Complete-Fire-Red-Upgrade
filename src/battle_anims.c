@@ -1381,6 +1381,15 @@ static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target)
 	sprite->pos2.y = gBattleAnimArgs[1];
 }
 
+static void InitSpritePosToGivenTargetRespectPicOffsets(struct Sprite* sprite, u8 target)
+{
+	sprite->pos1.x = GetBattlerSpriteCoord2(target, BATTLER_COORD_X_2);
+	sprite->pos1.y = GetBattlerSpriteCoord2(target, BATTLER_COORD_Y_PIC_OFFSET);
+
+	SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+	sprite->pos2.y = gBattleAnimArgs[1];
+}
+
 void SpriteCB_SearingShotRock(struct Sprite* sprite)
 {
 	u8 target = LoadBattleAnimTarget(4);
@@ -2624,7 +2633,7 @@ void AnimTask_TargetedLightning(u8 taskId)
 //Creates the mini Leech Life Needle
 void SpriteCB_LeechLifeNeedle(struct Sprite *sprite)
 {
-	if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
 	{
 		gBattleAnimArgs[1] = -gBattleAnimArgs[1];
 		gBattleAnimArgs[0] = -gBattleAnimArgs[0];
@@ -2640,6 +2649,118 @@ void SpriteCB_LeechLifeNeedle(struct Sprite *sprite)
 
 	sprite->callback = StartAnimLinearTranslation;
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+//Targeted fire in Doubles for Incinerate
+
+//Launches a projectile from the attacker to the target's centre.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: wave amplitude
+//arg 6: target
+void SpriteCB_IncinerateBall(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, 1);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+	if (IS_DOUBLE_BATTLE)
+	{
+		sprite->data[2] = (GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_X_2)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimTarget), BATTLER_COORD_X_2)) / 2;
+		sprite->data[4] = (GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimTarget), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+	}
+	else
+	{
+		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	}
+
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+
+	sprite->callback = SpriteCB_AnimMissileArcStep;
+	sprite->invisible = TRUE;
+}
+
+//Creates fire that moves diagonally down the opponent
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: bank
+//arg 6: respect pic coords
+void SpriteCB_IncinerateFlare(struct Sprite *sprite)
+{
+    bool8 respectPicCoords;
+    u8 coordType;
+	u8 target = LoadBattleAnimTarget(5);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		if (SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget)
+		&& (gBattleAnimAttacker == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)
+		 || gBattleAnimAttacker == GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		{
+			gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+		}
+
+		if (!gBattleAnimArgs[6])
+		{
+			respectPicCoords = TRUE;
+			coordType = BATTLER_COORD_Y_PIC_OFFSET;
+		}
+		else
+		{
+			respectPicCoords = FALSE;
+			coordType = BATTLER_COORD_Y;
+		}
+		
+		if (respectPicCoords)
+			InitSpritePosToGivenTargetRespectPicOffsets(sprite, target);
+		else
+			InitSpritePosToGivenTarget(sprite, target);
+
+		if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+			gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+		sprite->data[0] = gBattleAnimArgs[4];
+		sprite->data[2] = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+		sprite->data[4] = GetBattlerSpriteCoord(target, coordType) + gBattleAnimArgs[3];
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
+//Same as burn chance anim but can be used on multiple targets
+void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
+{
+	u8 target = LoadBattleAnimTarget(5);
+	
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		InitSpritePosToGivenTarget(sprite, target);
+
+		sprite->pos2.y = 0; //Reset from being set in above command
+		sprite->pos1.y += gBattleAnimArgs[1];
+		sprite->data[0] = gBattleAnimArgs[4];
+		sprite->data[1] = gBattleAnimArgs[2];
+		sprite->data[2] = gBattleAnimArgs[3];
+
+		sprite->callback = TranslateSpriteLinearFixedPoint;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
 }
 
 //Creates The Extreme Evoboost Circles

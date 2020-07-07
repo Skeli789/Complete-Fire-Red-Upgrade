@@ -7,6 +7,7 @@
 #include "../include/string_util.h"
 #include "../include/constants/items.h"
 #include "../include/constants/songs.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_battle_scripts.h"
@@ -1429,7 +1430,19 @@ void atk1B_cleareffectsonfaint(void) {
 					return;
 				}
 			#endif
-				break;
+				//Fallthrough
+			case Faint_LastPokemonMusic:
+				#ifdef BGM_BATTLE_GYM_LEADER_LAST_POKEMON
+				if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) == (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE) //Double Gym battle
+				&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
+				&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
+				&& ViableMonCount(gEnemyParty) <= 1)
+				{
+					PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
+				}
+				#endif
+				++gNewBS->faintEffectsState;
+				//Fallthrough
 
 			case Faint_FormsRevert:
 				if (TryFormRevert(mon))

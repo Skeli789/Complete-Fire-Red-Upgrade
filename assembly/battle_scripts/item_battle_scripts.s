@@ -65,7 +65,6 @@ item_battle_scripts.s
 .global BattleScript_WeaknessBerryActivate
 
 .global BattleScript_CheekPouch
-.global BattleScript_MoveMissedCheckBlunderPolicy
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -40,6 +40,7 @@ enum FaintEffectsStates
 	Faint_SwitchInAbilities,
 	Faint_PrimalWeather,
 	Faint_RaidBattle,
+	Faint_LastPokemonMusic,
 	Faint_FormsRevert,
 	Faint_FormsStats,
 	Faint_FormsHP,

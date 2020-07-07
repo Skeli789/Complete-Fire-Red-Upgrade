@@ -896,6 +896,8 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 				else //Regular trainer battle 9
 			#endif
 					TrainerBattleLoadArgs(sContinueLostBattleParams, data);
+			if (FlagGet(FLAG_TWO_OPPONENTS))
+				gTrainerBattleOpponent_B = VarGet(VAR_SECOND_OPPONENT);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_MULTI:
