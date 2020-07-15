@@ -3473,7 +3473,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 			if (sAnimMoveIndex == MOVE_TRANSFORM)
 				goto DEFAULT_CASE;
 			#ifdef DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES
-			if (gBattleMoves[move].target & MOVE_TARGET_USER)
+			if (gBattleMoves[sAnimMoveIndex].target & MOVE_TARGET_USER)
 				goto DEFAULT_CASE;
 			#endif
 			goto HIDE_BOXES;
