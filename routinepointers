@@ -148,6 +148,8 @@ sp0DA_GetDayOfWeek 81600C8
 
 sp0E1_DoesPlayerHaveFollower 81600E4
 sp0E2_IsDexNavCompleteHere 81600E8
+sp0E4_ShowItemSpriteOnFindObtain 81600F0
+sp0E5_ClearItemSpriteAfterFindObtain 81600F4
 
 sp100_CanPlayerUseFlashInCurrentLocation 08160160
 sp101_CanPlayerFlyInCurrentLocation 08160164
@@ -200,6 +202,7 @@ LinkNpcFix 0805efe4
 
 ##Item Functions
 Task_ReturnToItemListAfterItemPurchase 0809BF64
+ItemUseCB_EvolutionStone 080A1768
 
 ##Nicknaming
 KeyboardKeyHandler_Character 083E23D0
@@ -241,4 +244,6 @@ FieldUseFunc_FormChangeItem 887CCAC
 FieldUseFunc_FormChangeItem 887CCD8
 FieldUseFunc_FormChangeItem 887D308
 FieldUseFunc_FormChangeItem 887D334
+FieldUseFunc_AbilityCapsule 8877168
+FieldUseFunc_AbilityCapsule 887CA9C
 #endif

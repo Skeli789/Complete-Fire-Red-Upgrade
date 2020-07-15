@@ -1349,11 +1349,16 @@ void PluckBerryEat(void)
 	gBattlescriptCurrInstr += 5;
 
 	if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
-		gBattlescriptCurrInstr -= 5;
+		gNewBS->doingPluckItemEffect = TRUE;
 	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBankAttacker, TRUE, TRUE))
-		gBattlescriptCurrInstr -= 5;
-	else
-		gBattlescriptCurrInstr -= 5;
+		gNewBS->doingPluckItemEffect = TRUE;
+
+	gBattlescriptCurrInstr -= 5;
+}
+
+void ClearDoingPluckItemEffect(void)
+{
+	gNewBS->doingPluckItemEffect = FALSE;
 }
 
 void BurnUpFunc(void)
@@ -1636,13 +1641,18 @@ void RestoreBanksFromSynchronize(void)
 void TrySetAlternateFlingEffect(void)
 {
 	u8 effect = ItemId_GetHoldEffect(ITEM(gBankAttacker));
+	gBattlescriptCurrInstr += 5;
 
-	switch (effect) {
-		case ITEM_EFFECT_CURE_ATTRACT:
-		case ITEM_EFFECT_RESTORE_STATS:
-			if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, TRUE))
-				gBattlescriptCurrInstr -= 5;
+	if (effect == ITEM_EFFECT_CURE_ATTRACT || effect == ITEM_EFFECT_RESTORE_STATS
+	|| IsBerry(ITEM(gBankAttacker)))
+	{
+		if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, TRUE))
+			gNewBS->doingPluckItemEffect = TRUE;
+		else if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, TRUE))
+			gNewBS->doingPluckItemEffect = TRUE;
 	}
+
+	gBattlescriptCurrInstr -= 5;
 }
 
 void TransferLastUsedItem(void)
@@ -2121,14 +2131,6 @@ void LoadMoodyStatToLower(void)
 void ClearCalculatedSpreadMoveData(void)
 {
 	gNewBS->calculatedSpreadMoveData = FALSE;
-}
-
-void TryActivateDefiantForStickyWeb(void)
-{
-	gBattlescriptCurrInstr += 5; //So this is over if Defiant activates
-
-	DefiantActivation();
-	gBattlescriptCurrInstr -= 5; //Reset either normal script or Defiant script
 }
 
 void ClearScriptingBankDisguisedAs(void)

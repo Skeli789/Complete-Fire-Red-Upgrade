@@ -1,8 +1,11 @@
 #include "../defines.h"
 #include "../defines_battle.h"
 #include "../../include/random.h"
+#include "../../include/constants/items.h"
+#include "../../include/constants/item_effects.h"
 #include "../../include/constants/trainers.h"
 
+#include "../../include/new/ai_advanced.h"
 #include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
 #include "../../include/new/ai_scripts.h"
@@ -210,6 +213,8 @@ static void RunCalcShouldAIDynamax(void);
 static void UpdateStrongestMoves(void);
 static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
+static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
+static bool8 ShouldAIUseItem(void);
 
 void __attribute__((long_call)) RecordLastUsedMoveByTarget(void);
 
@@ -773,7 +778,7 @@ void AI_TrySwitchOrUseItem(void)
 		{
 			//Partner isn't allowed to use items
 		}
-		else if (ShouldUseItem()) //0x803A1F4
+		else if (ShouldAIUseItem())
 			ret = TRUE;
 
 		TryRevertTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
@@ -2628,4 +2633,175 @@ static u32 GetMaxByteIndexInList(const u8 array[], const u32 size)
 	}
 
 	return maxIndex;
+}
+
+static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect) //Fixed from vanilla
+{
+    if (itemId == ITEM_FULL_RESTORE)
+        return AI_ITEM_FULL_RESTORE;
+    else if (itemEffect[4] & ITEM4_HEAL_HP)
+        return AI_ITEM_HEAL_HP;
+    else if (itemEffect[3] & ITEM3_STATUS_ALL)
+        return AI_ITEM_CURE_CONDITION;
+    else if (itemEffect[0] & (ITEM0_HIGH_CRIT | ITEM0_X_ATTACK) || itemEffect[1] != 0 || itemEffect[2] != 0)
+        return AI_ITEM_X_STAT;
+    else if (itemEffect[3] & ITEM3_MIST)
+        return AI_ITEM_GUARD_SPECS;
+    else
+        return AI_ITEM_NOT_RECOGNIZABLE;
+}
+
+static bool8 ShouldAIUseItem(void)
+{
+	u32 i;
+	u8 validMons = 0;
+	bool8 shouldUse = FALSE;
+	
+	if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+		return FALSE;
+
+	struct Pokemon* party;
+	u8 firstId, lastId;
+	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (MON_CAN_BATTLE(&party[i]))
+			++validMons;
+	}
+
+	for (i = 0; i < 4; ++i) //Number of Trainer items
+	{
+		u16 item;
+		const u8 *itemEffects;
+		u8 paramOffset;
+
+		//if (i > 0 && validMons > (BATTLE_HISTORY->itemsNo - i) + 1) //Spread out item usage
+		//	continue;
+		item = BATTLE_HISTORY->trainerItems[i];
+		itemEffects = gItemEffectTable[item - ITEM_POTION];
+
+		if (item == ITEM_NONE || itemEffects == NULL)
+			continue;
+
+		switch (gBattleStruct->AI_itemType[gActiveBattler & BIT_FLANK] = GetAI_ItemType(item, itemEffects))
+		{
+			case AI_ITEM_FULL_RESTORE:
+				if (BATTLER_ALIVE(gActiveBattler) && !BATTLER_MAX_HP(gActiveBattler))
+				{
+					FULL_RESTORE_LOGIC:
+					if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_CHECK_BAD_MOVE) //Dumb AI
+					{
+						if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 4)
+							shouldUse = TRUE;
+					}
+					else //Smart AI
+					{
+						u8 foe = FOE(gActiveBattler);
+						if ((BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
+						|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(foe)) && ShouldRecover(gActiveBattler, PARTNER(foe), 0xFFFF)))
+						{
+							shouldUse = TRUE;
+						}
+					}
+				}
+				break;
+			case AI_ITEM_HEAL_HP:
+				paramOffset = GetItemEffectParamOffset(item, 4, 4);
+				if (paramOffset > 0 && BATTLER_ALIVE(gActiveBattler)  && !BATTLER_MAX_HP(gActiveBattler))
+				{
+					if (gBattleMons[gActiveBattler].maxHP - gBattleMons[gActiveBattler].hp > itemEffects[paramOffset]) //Item won't restore all HP
+						shouldUse = TRUE;
+					goto FULL_RESTORE_LOGIC;
+				}
+				break;
+			case AI_ITEM_CURE_CONDITION: ;
+				u32 status1 = gBattleMons[gActiveBattler].status1;
+				gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] = 0;
+				if (itemEffects[3] & ITEM3_SLEEP && status1 & STATUS1_SLEEP)
+				{
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x20;
+					shouldUse = TRUE;
+				}
+				if (itemEffects[3] & ITEM3_POISON && (status1 & STATUS1_PSN_ANY))
+				{
+					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
+					if (!GoodIdeaToPoisonSelf(gActiveBattler)) //Pokemon shouldn't be poisoned
+					{
+						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x10; //So heal it
+						shouldUse = TRUE;
+					}
+					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
+				}
+				if (itemEffects[3] & ITEM3_BURN && status1 & STATUS1_BURN)
+				{
+					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
+					if (!GoodIdeaToBurnSelf(gActiveBattler)) //Pokemon shouldn't be burned
+					{
+						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x8; //So heal it
+						shouldUse = TRUE;
+					}
+					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
+				}
+				if (itemEffects[3] & ITEM3_FREEZE && status1 & STATUS1_FREEZE)
+				{
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x4;
+					shouldUse = TRUE;
+				}
+				if (itemEffects[3] & ITEM3_PARALYSIS && status1 & STATUS1_PARALYSIS)
+				{
+					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
+					if (!GoodIdeaToParalyzeSelf(gActiveBattler)) //Pokemon shouldn't be paralyzed
+					{
+						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x2; //So heal it
+						shouldUse = TRUE;
+					}
+					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
+				}
+				if (itemEffects[3] & ITEM3_CONFUSION && gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION)
+				{
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x1;
+					shouldUse = TRUE;
+				}
+				break;
+			case AI_ITEM_X_STAT:
+				gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] = 0;
+				if (!gDisableStructs[gActiveBattler].isFirstTurn)
+					break;
+				if (itemEffects[0] & ITEM0_X_ATTACK)
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x1;
+				if (itemEffects[1] & ITEM1_X_DEFEND)
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x2;
+				if (itemEffects[1] & ITEM1_X_SPEED)
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x4;
+				if (itemEffects[2] & ITEM2_X_SPATK)
+				{
+					if (item != ITEM_X_SP_DEF) //Sp. Atk
+						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x8;
+					else //Sp. Def
+						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x10;
+				}
+				if (itemEffects[2] & ITEM2_X_ACCURACY)
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x20;
+				if (itemEffects[0] & ITEM0_HIGH_CRIT)
+					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x80;
+				shouldUse = TRUE;
+				break;
+			case AI_ITEM_GUARD_SPECS:
+				if (gDisableStructs[gActiveBattler].isFirstTurn && gSideTimers[SIDE(gActiveBattler)].mistTimer == 0)
+					shouldUse = TRUE;
+				break;
+			case AI_ITEM_NOT_RECOGNIZABLE:
+				return FALSE;
+		}
+
+		if (shouldUse)
+		{
+			EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
+			gBattleStruct->chosenItem[gActiveBattler & BIT_FLANK] = item;
+			BATTLE_HISTORY->trainerItems[i] = 0;
+			return shouldUse;
+		}
+	}
+	return FALSE;
 }

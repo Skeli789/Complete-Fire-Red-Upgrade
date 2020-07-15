@@ -43,6 +43,7 @@ bool8 IsMaxMoveWithTrapDamageEffect(u16 move);
 bool8 IsMaxMoveWithEffect(u16 move, u8 effect);
 bool8 IsMaxGuardUp(u8 bank);
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move);
+void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset);
 
 bool8 IsRaidBattle(void);
 bool8 IsFrontierRaidBattle(void);

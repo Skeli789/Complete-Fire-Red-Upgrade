@@ -401,7 +401,7 @@ u8 __attribute__((long_call)) sub_80A8364(u8);
 void __attribute__((long_call)) StoreSpriteCallbackInData6(struct Sprite *sprite, void (*spriteCallback)(struct Sprite*));
 void __attribute__((long_call)) SetCallbackToStoredInData6(struct Sprite *sprite);
 void __attribute__((long_call)) oamt_add_pos2_onto_pos1(struct Sprite *sprite);
-u8 __attribute__((long_call)) GetBankSpriteDefault_Y(u8 bank);
+u8 __attribute__((long_call)) GetBattlerSpriteDefault_Y(u8 bank);
 u8 __attribute__((long_call)) sub_80A82E4(u8 bank);
 u8 __attribute__((long_call)) GetSubstituteSpriteDefault_Y(u8 bank);
 void __attribute__((long_call)) SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset);

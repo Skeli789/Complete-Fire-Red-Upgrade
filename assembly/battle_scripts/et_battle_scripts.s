@@ -603,13 +603,21 @@ BattleScript_DynamaxEnd:
 	waitstateatk
 	reloadhealthbar BANK_SCRIPTING
 	callasm SetAndTransferDontRemoveTransformSpecies
+	jumpifsecondarystatus BANK_SCRIPTING STATUS2_TRANSFORMED BattleScript_DynamaxEnd_SpecialTransformAnim
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+BattleScript_DynamaxEnd_Rejoin:
 	waitanimation
 	callasm ClearAndTransferDontRemoveTransformSpecies
 	setword BATTLE_STRING_LOADER gText_DynamaxEnded
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end2
+
+BattleScript_DynamaxEnd_SpecialTransformAnim:
+	copybyte USER_BANK BATTLE_SCRIPTING_BANK
+	copybyte TARGET_BANK BATTLE_SCRIPTING_BANK
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM_ATTACK 0x0
+	goto BattleScript_DynamaxEnd_Rejoin
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

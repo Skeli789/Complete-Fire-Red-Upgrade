@@ -13,6 +13,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/dexnav.h"
+#include "../include/new/item.h"
 #include "../include/new/overworld.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/util.h"
@@ -41,6 +42,7 @@ void InitKeys(void)
 #define gKeyRepeatContinueDelay 5
 #define gKeyRepeatStartDelay 40
 
+extern const u8 EventScript_SecondBagItemCanBeRegisteredToL[];
 extern const u8 SystemScript_EnableAutoRun[];
 extern const u8 SystemScript_DisableAutoRun[];
 extern const u8 SystemScript_EnableBikeTurboBoost[];
@@ -146,7 +148,7 @@ void ReadKeys(void)
 	gMain.heldKeys = gMain.heldKeysRaw;
 
 	// Remap L to A if the L=A option is enabled.
-	if (gSaveBlock2->optionsButtonMode == 2)
+	if (gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
 	{
 		if (gMain.newKeys & L_BUTTON)
 			gMain.newKeys |= A_BUTTON;
@@ -164,48 +166,67 @@ bool8 StartLButtonFunc(void)
 	if (IsDexNavHudActive())
 		return FALSE;
 
-	#ifdef FLAG_BIKE_TURBO_BOOST
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
+	if (gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_SECOND_REGISTERED_ITEM)
 	{
-		ScriptContext2_Enable();
-		DismissMapNamePopup();
+		u16 secondRegisteredItem = gSaveBlock1->registeredItems[1];
+		if (secondRegisteredItem != ITEM_NONE)
+		{
+			if (CheckBagHasItem(secondRegisteredItem, 1))
+			{
+				UseRegisteredItem(secondRegisteredItem);
+				return TRUE;
+			}
+			else 
+				RemoveRegisteredItem(secondRegisteredItem);
+		}
 
-		if (FlagGet(FLAG_BIKE_TURBO_BOOST))
-		{
-			FlagClear(FLAG_BIKE_TURBO_BOOST);
-			ScriptContext1_SetupScript(SystemScript_DisableBikeTurboBoost);
-		}
-		else
-		{
-			FlagSet(FLAG_BIKE_TURBO_BOOST);
-			ScriptContext1_SetupScript(SystemScript_EnableBikeTurboBoost);
-		}
-		
+		ScriptContext1_SetupScript(EventScript_SecondBagItemCanBeRegisteredToL);
 		return TRUE;
 	}
-	else
-	#endif
-	#ifdef FLAG_RUNNING_ENABLED
-	if (FlagGet(FLAG_RUNNING_ENABLED)) //Only toggle auto-run if can run in the first place
-	#endif
+	else if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
 	{
-		#ifdef FLAG_AUTO_RUN
-		ScriptContext2_Enable();
-		DismissMapNamePopup();
-
-		if (FlagGet(FLAG_AUTO_RUN))
+		#ifdef FLAG_BIKE_TURBO_BOOST
+		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
 		{
-			FlagClear(FLAG_AUTO_RUN);
-			ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
+			DismissMapNamePopup();
+
+			if (FlagGet(FLAG_BIKE_TURBO_BOOST))
+			{
+				FlagClear(FLAG_BIKE_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_DisableBikeTurboBoost);
+			}
+			else
+			{
+				FlagSet(FLAG_BIKE_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_EnableBikeTurboBoost);
+			}
+			
+			return TRUE;
 		}
 		else
-		{
-			FlagSet(FLAG_AUTO_RUN);
-			ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
-		}
-
-		return TRUE;
 		#endif
+		#ifdef FLAG_RUNNING_ENABLED
+		if (FlagGet(FLAG_RUNNING_ENABLED)) //Only toggle auto-run if can run in the first place
+		#endif
+		{
+			#ifdef FLAG_AUTO_RUN
+			ScriptContext2_Enable();
+			DismissMapNamePopup();
+
+			if (FlagGet(FLAG_AUTO_RUN))
+			{
+				FlagClear(FLAG_AUTO_RUN);
+				ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
+			}
+			else
+			{
+				FlagSet(FLAG_AUTO_RUN);
+				ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
+			}
+
+			return TRUE;
+			#endif
+		}
 	}
 	
 	return FALSE;
@@ -222,7 +243,7 @@ bool8 StartRButtonFunc(void)
 	if (dexNavSpecies != SPECIES_NONE)
 	{
 		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
-		return TRUE;
+		return FALSE; //Don't enable the script context
 	}
 	#else
 	switch (VarGet(VAR_R_BUTTON_MODE)) {
@@ -230,7 +251,7 @@ bool8 StartRButtonFunc(void)
 			if (dexNavSpecies != SPECIES_NONE && FlagGet(FLAG_SYS_DEXNAV))
 			{
 				InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
-				return TRUE;
+				return FALSE; //Don't enable the script context
 			}
 			break;
 		case OPTIONS_R_BUTTON_MODE_POKEMON_MENU:

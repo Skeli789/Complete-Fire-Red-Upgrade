@@ -121,6 +121,5 @@ void ActivatePerishBody(void);
 void FailClangorousSoulIfLowHP(void);
 void LoadMoodyStatToLower(void);
 void ClearCalculatedSpreadMoveData(void);
-void TryActivateDefiantForStickyWeb(void);
 void ClearScriptingBankDisguisedAs(void);
 void GotoMoveEndIfMoveDidntDamageAtLeastOnce(void);

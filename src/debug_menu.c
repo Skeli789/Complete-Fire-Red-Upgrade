@@ -31,8 +31,9 @@ void DebugMenu_ProcessSetFlag(void)
 			FlagSet(FLAG_SYS_SEVII_MAP_4567);
 			break;
 		case 4: //Custom Flag and Var - Modify this number
-			FlagSet(0x152D);
-			VarSet(0x504E, 5);
+			//FlagSet(0x152D);
+			VarSet(0x500C, 0x28);
+			//FlagClear(0x15AC);
 			break;
 	}
 }

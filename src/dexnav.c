@@ -77,7 +77,7 @@ static void DexNavShowFieldMessage(u8 id);
 static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size);
 static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
-static void DexNavManageHUD(u8 taskId);
+static void Task_ManageDexNavHUD(u8 taskId);
 static u8 GetEncounterLevel(u16 species, u8 environment);
 static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
@@ -814,7 +814,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 }
 
 extern const u8 SystemScript_StartDexNavBattle[];
-static void DexNavManageHUD(u8 taskId)
+static void Task_ManageDexNavHUD(u8 taskId)
 {
 	//Check for out of range
 	if (sDexNavHudPtr->proximity > 20)
@@ -1498,8 +1498,9 @@ void InitDexNavHUD(u16 species, u8 environment)
 	SetHBlankCallback(DexHUDHBlank);*/
 
 	// task update HUD
-	u8 taskId = CreateTask((TaskFunc)DexNavManageHUD, 0x1);
-	gTasks[taskId].data[0] = gSprites[gPlayerAvatar->spriteId].pos1.x;
+	u8 taskId = CreateTask(Task_ManageDexNavHUD, 0x1);
+	if (taskId != 0xFF)
+		gTasks[taskId].data[0] = gSprites[gPlayerAvatar->spriteId].pos1.x;
 
 	IncrementGameStat(GAME_STAT_DEXNAV_SCANNED);
 }
@@ -1517,7 +1518,7 @@ static void ExecDexNavHUD(void)
 
 bool8 IsDexNavHudActive(void)
 {
-	return FuncIsActiveTask(DexNavManageHUD);
+	return FuncIsActiveTask(Task_ManageDexNavHUD);
 }
 
 // ========================================== //

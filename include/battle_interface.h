@@ -77,4 +77,5 @@ void __attribute__((long_call)) UpdateHealthboxAttribute(u8 healthboxSpriteId, s
 s32 __attribute__((long_call)) sub_8074AA0(u8 bank, u8 healthboxSpriteId, u8 whichBar, u8 arg3);
 u8 __attribute__((long_call)) GetScaledHPFraction(s16 hp, s16 maxhp, u8 scale);
 u8 __attribute__((long_call)) GetHPBarLevel(s16 hp, s16 maxhp);
-
+void __attribute__((long_call)) UpdateNickInHealthbox(u8 spriteId, struct Pokemon *mon);
+void __attribute__((long_call)) TryAddPokeballIconToHealthbox(u8 spriteId, u8);

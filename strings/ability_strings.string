@@ -68,7 +68,7 @@ The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 [SCRIPTING_BANK] bounced the\n[CURRENT_MOVE] back!
 
 #org @gText_StartedSchooling
-[SCRIPTING_BANK] formaed\na school!
+[SCRIPTING_BANK] formed\na school!
 
 #org @gText_StoppedSchooling
 [SCRIPTING_BANK] stopped\nschooling!
@@ -90,3 +90,7 @@ Neutralizing Gas fills the area!
 
 #org @gText_NeutralizingGasEnd
 The effects of Neutralizing Gas\nwore off!
+
+#org @gText_PkmnHurtsWith
+[ATTACKER] was hurt!
+

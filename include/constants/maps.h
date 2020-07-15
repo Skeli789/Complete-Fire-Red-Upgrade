@@ -596,6 +596,9 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_FLOWER_PARADISE_B ((1 << 8) | 5)
 #define MAP_FLOWER_PARADISE_C ((1 << 8) | 6)
 
+#define MAP_HIDDEN_GROTTO 			((1 << 8) | 7)
+#define MAP_HIDDEN_GROTTO_WINTER 	((1 << 8) | 8)
+#define MAP_HIDDEN_GROTTO_AUTUMN 	((1 << 8) | 9)
 
 //East Borrius
 #define MAP_POLDER_TOWN			((3 << 8) | 0)

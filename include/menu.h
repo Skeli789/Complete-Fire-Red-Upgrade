@@ -5,6 +5,9 @@
 #include "text.h"
 #include "window.h"
 
+#define MENU_NOTHING_CHOSEN -2
+#define MENU_B_PRESSED -1
+
 struct MenuAction
 {
     const u8 *text;
@@ -43,3 +46,6 @@ u8 __attribute__((long_call)) CreateStartMenuWindow(u8 numItems);
 u8 __attribute__((long_call)) GetStartMenuWindowId(void);
 void __attribute__((long_call)) RemoveStartMenuWindow(void);
 u8 __attribute__((long_call)) Menu_InitCursor(u8 windowId, u8 fontId, u8 left, u8 top, u8 cursorHeight, u8 numChoices, u8 initialCursorPos);
+void __attribute__((long_call)) Menu_LoadStdPalAt(u16 arg0);
+s8 __attribute__((long_call)) Menu_ProcessInputNoWrapClearOnChoose(void);
+void __attribute__((long_call)) Menu_PrintFormatIntlPlayerName(u8 windowId, const u8 * src, u16 x, u16 y);

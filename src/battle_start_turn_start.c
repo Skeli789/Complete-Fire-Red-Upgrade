@@ -1273,10 +1273,7 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 
 		if (gBankAttacker != BANK_RAID_BOSS //Just in case the player KOs the partner and sets the bit
 		|| CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, FOE(gBankAttacker)) == 0) //Don't attack again if no one left to hit
-		{
-			gNewBS->dynamaxData.attackAgain = FALSE;
 			return;
-		}
 
 		moveLimitations = CheckMoveLimitations(gBankAttacker, 0, 0xFF);
 
@@ -1427,7 +1424,7 @@ u16 GetMUS_ForBattle(void)
 
 	#ifdef UNBOUND
 		if (IsRaidBattle())
-			return BGM_BATTLE_GALACTIC_BOSS;
+			return BGM_BATTLE_RAID_BOSS;
 
 		#ifdef VAR_WILD_BGM_OVERRIDE
 			song = VarGet(VAR_WILD_BGM_OVERRIDE);

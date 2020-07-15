@@ -127,9 +127,10 @@ enum
 
 enum
 {
-	OPTIONS_BUTTON_MODE_HELP,
+	OPTIONS_BUTTON_MODE_AUTO_RUN,
 	OPTIONS_BUTTON_MODE_LR,
-	OPTIONS_BUTTON_MODE_L_EQUALS_A
+	OPTIONS_BUTTON_MODE_L_EQUALS_A,
+	OPTIONS_BUTTON_MODE_SECOND_REGISTERED_ITEM,
 };
 
 enum
@@ -779,7 +780,9 @@ struct SaveBlock1 //0x202552C
 	/*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
 	/*0x3C98*/ struct DaycareMon route5DayCareMon;
-	/*0x3D24*/ u16 registeredItems[8]; //For use with SELECT - space for up to 8, but CFRU only allows 6
+	/*0x3D24*/ u16 registeredItems[6]; //For use with SELECT
+	/*0x3D30*/ u8 lastHealingSpot;
+	/*0x3D31*/ u8 filler_3D31[3];
 	/*0x3D34*/ u32 towerChallengeId;
 	/*0x3D38*/ struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 };

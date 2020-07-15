@@ -148,6 +148,14 @@ HiddenAbilityChange4_2:
 MaxLevelChange14:
 	.byte MAX_LEVEL - 1
 
+.org 0x343D4, 0xFF
+TransformedPersonalityOpponentFix:
+	mov r2, r6 @Use current personality
+
+.org 0x34594, 0xFF
+TransformedPersonalityPlayerFix:
+	mov r2, r4 @Use current personality
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ AI Vanilla Item Use Bug Fix
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

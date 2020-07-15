@@ -8,6 +8,13 @@
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global EventScript_SecondBagItemCanBeRegisteredToL
+EventScript_SecondBagItemCanBeRegisteredToL:
+	lockall
+	msgbox gText_SecondBagItemCanBeRegisteredToL MSG_SIGN
+	releaseall
+	end
+
 .global SystemScript_EnableAutoRun
 SystemScript_EnableAutoRun:
 	lockall
@@ -209,12 +216,15 @@ SystemScript_WaitForFollower:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ SPECIAL_SHOW_ITEM_SPRITE_ON_FIND_OBTAIN, 0xE4
+.equ SPECIAL_CLEAR_ITEM_SPRITE_AFTER_FIND_OBTAIN, 0xE5
+
 .global SystemScript_FindItemMessage
 SystemScript_FindItemMessage:
 	textcolor BLACK
 	hidesprite LASTTALKED
 	pause 0x1
-	callasm ShowItemSpriteOnFindObtain
+	special SPECIAL_SHOW_ITEM_SPRITE_ON_FIND_OBTAIN
 	additem 0x8004 0x8005
 	special2 LASTRESULT 0x196
 	copyvar 0x8008 LASTRESULT
@@ -225,7 +235,7 @@ SystemScript_FindItemMessage:
 	waitfanfare
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN 
-	callasm ClearItemSpriteAfterFindObtain
+	special SPECIAL_CLEAR_ITEM_SPRITE_AFTER_FIND_OBTAIN
 	return
 
 SystemScript_FindNormalItem:
@@ -255,7 +265,7 @@ SystemScript_ObtainItem:
 
 .global SystemScript_ObtainItemMessage
 SystemScript_ObtainItemMessage:
-	callasm ShowItemSpriteOnFindObtain
+	special SPECIAL_SHOW_ITEM_SPRITE_ON_FIND_OBTAIN
 	compare 0x8005 1
 	if lessorequal _call ObtainedSingleItemMsg
 	compare 0x8005 1
@@ -264,7 +274,7 @@ SystemScript_ObtainItemMessage:
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
-	callasm ClearItemSpriteAfterFindObtain
+	special SPECIAL_CLEAR_ITEM_SPRITE_AFTER_FIND_OBTAIN
 	return
 
 ObtainedSingleItemMsg:

@@ -212,7 +212,14 @@ PrintRegularItemSelected:
 .align 2
 .BagSortIndicator: .word 0xF9F9
 
-@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+@0x810948A with r0
+PrepRedrawItemDescriptionOnEndMovingItem:
+	mov r9, r4
+	bl ForceRedrawItemDescription
+	pop {r4-r6, pc}
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

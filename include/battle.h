@@ -672,9 +672,9 @@ struct BattleStruct
 	u8 overworldWeatherDone;
 	u8 atkCancellerTracker;
 	u16 usedHeldItems[MAX_BATTLERS_COUNT];
-	u8 chosenItem[MAX_BATTLERS_COUNT]; //Why is this a u8?
-	u8 AI_itemType[2];
-	u8 AI_itemFlags[2];
+	u16 chosenItem[MAX_BATTLERS_COUNT / 2]; //Why is this a u8?
+	u8 AI_itemType[MAX_BATTLERS_COUNT / 2];
+	u8 AI_itemFlags[MAX_BATTLERS_COUNT / 2];
 	u16 choicedMove[MAX_BATTLERS_COUNT];
 	u16 changedItems[MAX_BATTLERS_COUNT];
 	u8 intimidateBank;
@@ -856,6 +856,8 @@ struct NewBattleStruct
 	bool8 calculatedSpreadMoveAccuracy : 1;  //After the accuracy has been calculated for all Pokemon hit by a spread move
 	bool8 breakDisguiseSpecialDmg : 1;
 	bool8 handlingFaintSwitching : 1;
+	bool8 doingPluckItemEffect : 1;
+	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
 
 	//Other
 	u16 LastUsedMove;
@@ -1108,13 +1110,13 @@ struct FlingStruct
 #define B_ANIM_SNATCH_MOVE              0x11
 #define B_ANIM_FUTURE_SIGHT_HIT         0x12
 #define B_ANIM_DOOM_DESIRE_HIT          0x13
-#define B_ANIM_x14                      0x14
+#define B_ANIM_FOCUS_PUNCH_SET_UP       0x14
 #define B_ANIM_INGRAIN_HEAL             0x15
 #define B_ANIM_WISH_HEAL                0x16
 
-#define B_ANIM_ASTONISH_DROPS 0x17
-#define B_ANIM_SCARY_FACE_ASTONISH 0x18
-#define B_ANIM_TRANSFORM_FRONT 0x19
+#define B_ANIM_MON_SCARED 0x17
+#define B_ANIM_GHOST_GET_OUT 0x18
+#define B_ANIM_SILPH_SCOPED 0x19
 #define B_ANIM_TURN_INTO_ROCK 0x1A
 #define B_ANIM_WAITING_WAGGLE 0x1B
 #define B_ANIM_LEVEL_UP_SHINE 0x1C
@@ -1162,8 +1164,10 @@ struct FlingStruct
 #define B_ANIM_DYNAMAX_ENERGY_SWIRL 0x46
 #define B_ANIM_RAID_BATTLE_STORM 0x47
 #define B_ANIM_RAID_BATTLE_ENERGY_BURST 0x48
-#define B_ANIM_G_MAX_WILDFIRE 0x49
-#define B_ANIM_G_MAX_VOLCALITH 0x4A
+#define B_ANIM_G_MAX_VINE_LASH 0x49
+#define B_ANIM_G_MAX_WILDFIRE 0x4A
+#define B_ANIM_G_MAX_CANNONADE 0x4B
+#define B_ANIM_G_MAX_VOLCALITH 0x4C
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

@@ -1298,7 +1298,7 @@ MOVESCR_CHECK_0:
 			|| predictedMove == MOVE_NONE
 			|| MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 				DECREASE_VIABILITY(10);
-			break;
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_ENCORE:
 			if (gDisableStructs[bankDef].encoreTimer == 0

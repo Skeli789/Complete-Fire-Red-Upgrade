@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/evolution_scene.h"
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_effect.h"
@@ -13,12 +14,15 @@
 #include "../include/party_menu.h"
 #include "../include/pokemon_icon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/random.h"
 #include "../include/script.h"
 #include "../include/sound.h"
 #include "../include/start_menu.h"
 #include "../include/string_util.h"
 #include "../include/text.h"
+#include "../include/wild_encounter.h"
 #include "../include/window.h"
+#include "../include/constants/abilities.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
@@ -26,8 +30,11 @@
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/evolution.h"
 #include "../include/new/follow_me.h"
+#include "../include/new/form_change.h"
 #include "../include/new/item.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
@@ -114,6 +121,9 @@ void __attribute__((long_call)) UpdateMonDisplayInfoAfterRareCandy(u8 slot, stru
 void __attribute__((long_call)) PartyMenu_DisplayMonNeedsToReplaceMove(u8 taskId);
 void __attribute__((long_call)) PartyMenu_DisplayMonLearnedMove(u8 taskId, u16 move);
 void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom);
+void __attribute__((long_call)) PartyMenuTryEvolution(u8 taskId);
+void __attribute__((long_call)) FreePartyPointers(void);
+void __attribute__((long_call)) PartyMenuDisplayYesNoMenu(void);
 
 //This file's functions:
 static void OpenSummary(u8 taskId);
@@ -936,8 +946,24 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 		#endif
 		{
 			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
+			++k;
 		}
 	}
+	/*if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
+	{
+		bool8 hasTM = CheckBagHasItem(ITEM_TM29_DIG, 1) > 0;
+		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
+		
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& hasTM
+		&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
+		&& CanMonLearnTMTutor(&mons[slotId], ITEM_TM29_DIG, 0) == CAN_LEARN_MOVE)
+		{
+			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
+			++k;
+		}
+	}*/
 	#endif
 
 	if (!ShouldDisablePartyMenuItemsBattleTower())
@@ -1350,6 +1376,11 @@ static void FormChangeItem_ShowPartyMenuFromField(u8 taskId);
 static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func);
 static void Task_TryLearnPostFormeChangeMove(u8 taskId);
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
+static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func);
+static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
+static void Task_OfferAbilityChange(u8 taskId);
+static void Task_HandleAbilityChangeYesNoInput(u8 taskId);
+static void Task_ChangeAbility(u8 taskId);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
@@ -1521,6 +1552,28 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 		WindowPrint(windowId, 2, 0, i * 15, &textColor, TEXT_SPEED_FF, sLevelUpWindowStatNames[i]);
 		WindowPrint(windowId, 2, 56 + x, i * 15, &textColor, TEXT_SPEED_FF, textbuf);
 	}
+}
+
+void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
+{
+    PlaySE(SE_SELECT);
+	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], 2, gSpecialVar_ItemId);
+
+    if (targetSpecies == SPECIES_NONE)
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = func;
+    }
+    else
+    {
+        FreePartyPointers();
+        gCB2_AfterEvolution = gPartyMenu.exitCallback;
+        BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, 1, gPartyMenu.slotId);
+        DestroyTask(taskId);
+		RemoveBagItem(gSpecialVar_ItemId, 1);
+    }
 }
 
 void FieldUseFunc_EVReducingBerry(u8 taskId)
@@ -2131,6 +2184,155 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
 			Task_ClosePartyMenuAfterText(taskId);
 		}
 	}
+}
+
+void FieldUseFunc_AbilityCapsule(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_AbilityCapsule;
+	SetUpItemUseCallback(taskId);
+}
+
+extern const u8 gText_AbilityCapsuleOfferChange[];
+extern const u8 gText_AbilityCapsuleChangedAbility[];
+static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
+{
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 changeTo = GetAbilityCapsuleNewAbility(mon); //Pick Ability to change to
+
+	PlaySE(SE_SELECT);
+	if (changeTo != ABILITY_NONE) //Ability can be changed
+	{
+		GetMonNickname(mon, gStringVar1);
+		CopyAbilityName(gStringVar2, changeTo);
+		StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleOfferChange);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferAbilityChange;
+	}
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+}
+
+static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
+{
+	u16 item = Var800E;
+	u8 abilityType = ItemId_GetHoldEffectParam(item);
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u8 ability = GetMonAbility(mon);
+	u8 changeTo = ABILITY_NONE;
+
+	if (abilityType != 0) //Hidden Ability Capsule
+	{
+		if (ability != gBaseStats[species].hiddenAbility
+		&& gBaseStats[species].hiddenAbility != ABILITY_NONE)
+			changeTo = gBaseStats[species].hiddenAbility;
+	}
+	else //Regular ability capsule
+	{
+		if (ability == gBaseStats[species].ability1)
+		{
+			if (ability != gBaseStats[species].ability2
+			&& gBaseStats[species].ability2 != ABILITY_NONE)
+				changeTo = gBaseStats[species].ability2;
+		}
+		else if (ability == gBaseStats[species].ability2) //Explicit check just in case the Pokemon has its Hidden Ability
+		{
+			if (gBaseStats[species].ability1 != ABILITY_NONE)
+				changeTo = gBaseStats[species].ability1;
+		}
+	}
+	
+	return changeTo;
+}
+
+static void Task_OfferAbilityChange(u8 taskId)
+{
+    if (IsPartyMenuTextPrinterActive() != TRUE)
+    {
+        PartyMenuDisplayYesNoMenu();
+        gTasks[taskId].func = Task_HandleAbilityChangeYesNoInput;
+    }
+}
+
+static void Task_HandleAbilityChangeYesNoInput(u8 taskId)
+{
+    switch (Menu_ProcessInputNoWrapClearOnChoose())
+    {
+		case 0:
+			gTasks[taskId].func = Task_ChangeAbility;
+			break;
+		case MENU_B_PRESSED:
+			PlaySE(SE_SELECT);
+			// Fallthrough
+		case 1:
+			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+			break;
+    }
+}
+
+static void Task_ChangeAbility(u8 taskId)
+{
+	u16 item = Var800E;
+	u8 abilityType = ItemId_GetHoldEffectParam(item);
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	PlaySE(SE_USE_ITEM);
+	
+	if (abilityType != 0) //Hidden Ability capsule
+	{
+		mon->hiddenAbility = TRUE;
+	}
+	else //Regular Ability capsule
+	{
+		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+		u8 abilityNum = (personality & 1) ^ 1; //Flip ability bit
+
+		u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+		u16 sid = HIHALF(trainerId);
+		u16 tid = LOHALF(trainerId);
+
+		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
+		bool8 isShiny = IsMonShiny(mon);
+		u8 letter = GetUnownLetterFromPersonality(personality);
+		u8 nature = GetNatureFromPersonality(personality);
+		bool8 isMinior = IsMinior(species);
+		u16 miniorCore = GetMiniorCoreFromPersonality(personality);
+
+		//Change the ability while keeping other personality values the same
+		do
+		{
+			personality = Random32();
+
+			if (isShiny)
+			{
+				u8 shinyRange = 1;
+				personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+			}
+
+			personality &= ~(1);
+			personality |= abilityNum; //Either 0 or 1
+
+		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
+		|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
+
+		mon->hiddenAbility = FALSE;
+		SetMonData(mon, MON_DATA_PERSONALITY, &personality);
+		CalculateMonStats(mon);
+	}
+
+	GetMonNickname(mon, gStringVar1);
+	CopyAbilityName(gStringVar2, GetMonAbility(mon));
+	StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleChangedAbility);
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+	RemoveBagItem(item, 1);
 }
 
 #ifdef UNBOUND

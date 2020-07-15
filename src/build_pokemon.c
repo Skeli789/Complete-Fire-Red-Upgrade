@@ -142,7 +142,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerNu
 #if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 static u8 GetPlayerBiasedAverageLevel(u8 maxLevel);
 static bool8 CanTrainerEvolveMon(void);
-static bool8 IsPseudoBossTrainerClassForLevelScaling(u8 trainerClass);
+static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags);
 #endif
 static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId);
 static void ModifySpeciesAndLevelForGenericBattle(u16* species, u8* level, u8 minEnemyTeamLevel, u8 averagePlayerTeamLevel, u8 trainerClass, bool8 shouldEvolve);
@@ -740,8 +740,12 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 			//Assign Trainer information to mon
 			u8 otGender = trainer->gender;
+			const u8* name = TryGetRivalNameByTrainerClass(gTrainers[trainerId].trainerClass);
+			if (name == NULL) //Not Rival or Rival name isn't tied to Trainer class
+				SetMonData(&party[i], MON_DATA_OT_NAME, &trainer->trainerName);
+			else
+				SetMonData(&party[i], MON_DATA_OT_NAME, name);
 			SetMonData(&party[i], MON_DATA_OT_GENDER, &otGender);
-			SetMonData(&party[i], MON_DATA_OT_NAME, &trainer->trainerName);
 
 			//Give custom Poke Ball
 			#ifdef TRAINER_CLASS_POKE_BALLS
@@ -840,7 +844,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 }
 
 //These next few functions are related to scaling a Trainer's team dynamically based the player's strength
-#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
+#if (defined SCALED_TRAINERS && !defined DEBUG_NO_LEVEL_SCALING)
 struct LevelScaler
 {
 	u8 minLevel;
@@ -854,8 +858,8 @@ static const struct LevelScaler sLevelScales[] =
 	[2] = {20, 32},
 	[3] = {25, 36},
 	[4] = {30, 45},
-	[5] = {40, 54},
-	[6] = {50, 58},
+	[5] = {38, 54},
+	[6] = {48, 58},
 	[7] = {55, 65},
 	[8] = {60, 70},
 	[9] = {70,  0},
@@ -897,14 +901,12 @@ static bool8 CanTrainerEvolveMon(void)
 		;
 }
 
-static bool8 IsPseudoBossTrainerClassForLevelScaling(u8 trainerClass)
+static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags)
 {
-	switch (trainerClass) {
-		#ifdef UNBOUND
-		case CLASS_SHADOW_ADMIN:
-		case CLASS_LOR_ADMIN:
-		case CLASS_SUCCESSOR:
-		#endif
+	//If the Trainer has custom moves, then they must be important
+	switch (trainerPartyFlags) {
+		case PARTY_FLAG_CUSTOM_MOVES:
+		case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
 			return TRUE;
 	}
 
@@ -929,7 +931,7 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 	return FALSE;
 }
 
-static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerClass, unusedArg bool8 shouldEvolve)
+static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerPartyFlags, unusedArg bool8 shouldEvolve)
 {
 	#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 	u8 minEnemyLevel, startScalingAtLevel, prevStartScalingAtLevel, levelRange, newLevel, badgeCount, levelSubtractor;
@@ -942,7 +944,7 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	levelRange = *level - minEnemyTeamLevel; //The offset in the team
 	newLevel = minEnemyLevel + levelRange;
 	
-	if (IsPseudoBossTrainerClassForLevelScaling(trainerClass))
+	if (IsPseudoBossTrainerPartyForLevelScaling(trainerPartyFlags))
 	{
 		levelSubtractor = 0; //Allow pseudo bosses to be closer to the player's average level (and maybe even surpass their max)
 	}
@@ -1001,6 +1003,19 @@ static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg
 			EvolveSpeciesByLevel(species, *level);
 	}
 	#endif
+}
+
+u8 GetScaledWildBossLevel(u8 level)
+{
+	#if (defined SCALED_TRAINERS && !defined DEBUG_NO_LEVEL_SCALING)
+	//Scale directly to biased average team level + 1 - allows chance of being stronger than team if all the same level
+	u8 newLevel = GetPlayerBiasedAverageLevel(GetHighestMonLevel(gPlayerParty)) + 1;
+
+	if (level < newLevel)
+		level = newLevel;
+	#endif
+
+	return level;
 }
 
 //Returns the number of Pokemon
@@ -1708,7 +1723,7 @@ const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numS
 	if (index == 0 && multiPartner->owNum == EVENT_OBJ_GFX_RIVAL)
 	{
 		#define VAR_RIVAL_CHOSEN_STARTER 0x5012
-		switch (VAR_RIVAL_CHOSEN_STARTER) {
+		switch (VarGet(VAR_RIVAL_CHOSEN_STARTER)) {
 			case 2: //Chose Larvitar
 				spread = &multiPartner->spreads[numStars][4]; //Rival has Metagross
 				break;

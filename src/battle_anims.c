@@ -1,7 +1,9 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/battle_gfx_sfx_util.h"
 #include "../include/battle_anim.h"
+#include "../include/battle_interface.h"
+#include "../include/battle_gfx_sfx_util.h"
+#include "../include/decompress.h"
 #include "../include/event_data.h"
 #include "../include/gpu_regs.h"
 #include "../include/random.h"
@@ -19,6 +21,10 @@
 battle_anims.c
 	Functions and structures to modify attack animations.
 */
+
+
+#define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
+#define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
 
 extern const u8* sBattleAnimScriptPtr;
 extern u16 sAnimMoveIndex;
@@ -2552,7 +2558,8 @@ void SpriteCB_HorizontalSliceStep(struct Sprite *sprite)
 //arg 4: direction
 void SpriteCB_HorizontalSlice(struct Sprite *sprite)
 {
-	InitSpritePosToAnimTarget(sprite, TRUE);
+	sprite->pos2.x = gBattleAnimArgs[0];
+	sprite->pos2.y = gBattleAnimArgs[1];
 
 	sprite->data[0] = gBattleAnimArgs[2]; //Slice distance
 	sprite->data[1] = gBattleAnimArgs[3]; //Slice speed
@@ -3900,8 +3907,8 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 				case B_ANIM_FUTURE_SIGHT_HIT:
 				case B_ANIM_DOOM_DESIRE_HIT:
 				case B_ANIM_WISH_HEAL:
-				case B_ANIM_ASTONISH_DROPS:
-				case B_ANIM_SCARY_FACE_ASTONISH:
+				case B_ANIM_MON_SCARED:
+				case B_ANIM_GHOST_GET_OUT:
 				case B_ANIM_WISHIWASHI_FISH:
 				case B_ANIM_ZYGARDE_CELL_SWIRL:
 				case B_ANIM_ELECTRIC_SURGE:
@@ -3963,6 +3970,120 @@ u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 	#else
 		return 1;
 	#endif
+}
+
+void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 trasnformType)
+{
+	u8 position;
+	u16 targetSpecies, paletteOffset;
+	u32 personality, otId;
+	const u32 *lzPaletteData;
+
+    if (trasnformType == 0xFF) //Silph Scope
+    {
+		const void* src;
+		void* dst;
+
+		struct Pokemon* monAtk;
+        position = GetBattlerPosition(bankAtk);
+		monAtk = GetBankPartyData(bankAtk);
+        targetSpecies = GetMonData(monAtk, MON_DATA_SPECIES, NULL);
+        personality = GetMonData(monAtk, MON_DATA_PERSONALITY, NULL);
+        otId = GetMonData(monAtk, MON_DATA_OT_ID, NULL);
+
+        HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[targetSpecies], gMonSpritesGfxPtr->sprites[position], targetSpecies, personality);
+        src = gMonSpritesGfxPtr->sprites[position];
+        dst = (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[bankAtk]].oam.tileNum * 32);
+        DmaCopy32(3, src, dst, 0x800);
+        paletteOffset = 0x100 + bankAtk * 16;
+        lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, otId, personality);
+		LZDecompressWram(lzPaletteData, gDecompressionBuffer);
+		LoadPalette(gDecompressionBuffer, paletteOffset, 32);
+        TryFadeBankPaletteForDynamax(bankAtk, paletteOffset);
+		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
+        StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
+        SetMonData(monAtk, MON_DATA_NICKNAME, gSpeciesNames[targetSpecies]);
+        UpdateNickInHealthbox(gHealthboxSpriteIds[bankAtk], monAtk);
+        TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[bankAtk], 1);
+    }
+	else if (trasnformType == 0xFE) //Transforming animation for form change
+	{
+		const void* src;
+		void* dst;
+		struct Pokemon* monAtk;
+		const struct CompressedSpriteSheet* spriteSheet;
+
+		position = GetBattlerPosition(bankAtk);
+		monAtk = GetBankPartyData(bankAtk);
+		targetSpecies = GetMonData(monAtk, MON_DATA_SPECIES, NULL);
+		otId = GetMonData(monAtk, MON_DATA_OT_ID, NULL);
+		personality = GetMonData(monAtk, MON_DATA_PERSONALITY, NULL);
+
+		if (SIDE(bankAtk) == B_SIDE_PLAYER)
+			spriteSheet = &gMonBackPicTable[targetSpecies];
+		else
+			spriteSheet = &gMonFrontPicTable[targetSpecies];
+
+		HandleLoadSpecialPokePic_DontHandleDeoxys(spriteSheet, gMonSpritesGfxPtr->sprites[position], targetSpecies, personality);
+		src = gMonSpritesGfxPtr->sprites[position];
+		dst = (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[bankAtk]].oam.tileNum * 32);
+		DmaCopy32(3, src, dst, 0x800);
+		paletteOffset = 0x100 + bankAtk * 16;
+		lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, otId, personality);
+		LZDecompressWram(lzPaletteData, gDecompressionBuffer);
+		LoadPalette(gDecompressionBuffer, paletteOffset, 32);
+		TryFadeBankPaletteForDynamax(bankAtk, paletteOffset);
+		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
+		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
+	}
+	else if (trasnformType != 0) //Castform
+	{
+		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleSpritesDataPtr->animationData->animArg);
+		paletteOffset = 0x100 + bankAtk * 16;
+		LoadPalette(gBattleStruct->castformPalette[gBattleSpritesDataPtr->animationData->animArg], paletteOffset, 32);
+		gBattleMonForms[bankAtk] = gBattleSpritesDataPtr->animationData->animArg;
+		TryFadeBankPaletteForDynamax(bankAtk, paletteOffset);
+		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
+	}
+	else //Regular attack Transform
+	{
+		const void* src;
+		void* dst;
+		struct Pokemon* monDef;
+		const struct CompressedSpriteSheet* spriteSheet;
+
+		position = GetBattlerPosition(bankAtk);
+		monDef = GetBankPartyData(bankDef);
+		targetSpecies = GetMonData(monDef, MON_DATA_SPECIES, NULL);
+		targetSpecies = TryFixDynamaxTransformSpecies(bankAtk, targetSpecies);
+		otId = GetMonData(GetBankPartyData(bankAtk)/*monDef*/, MON_DATA_OT_ID, NULL); //Must use monAtk, otherwise will be shiny now, and not on screen reload
+
+		if (SIDE(bankAtk) == B_SIDE_PLAYER)
+			spriteSheet = &gMonBackPicTable[targetSpecies];
+		else
+			spriteSheet = &gMonFrontPicTable[targetSpecies];
+
+		HandleLoadSpecialPokePic_DontHandleDeoxys(spriteSheet, gMonSpritesGfxPtr->sprites[position], targetSpecies, gTransformedPersonalities[bankAtk]);
+		src = gMonSpritesGfxPtr->sprites[position];
+		dst = (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[bankAtk]].oam.tileNum * 32);
+		DmaCopy32(3, src, dst, 0x800);
+		paletteOffset = 0x100 + bankAtk * 16;
+		lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, otId, gTransformedPersonalities[bankAtk]);
+		LZDecompressWram(lzPaletteData, gDecompressionBuffer);
+		LoadPalette(gDecompressionBuffer, paletteOffset, 32);
+
+		if (targetSpecies == SPECIES_CASTFORM)
+		{
+			LZDecompressWram(lzPaletteData, gBattleStruct->castformPalette[0]);
+			LoadPalette(gBattleStruct->castformPalette[0] + gBattleMonForms[bankDef] * 16, paletteOffset, 32);
+		}
+
+		TryFadeBankPaletteForDynamax(bankAtk, paletteOffset);
+		gBattleSpritesDataPtr->bankData[bankAtk].transformSpecies = targetSpecies;
+		gBattleMonForms[bankAtk] = gBattleMonForms[bankDef];
+		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
+		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
+	}
 }
 
 #define tBattlerId 	data[0]

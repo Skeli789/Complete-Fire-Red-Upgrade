@@ -10,6 +10,9 @@ WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Cloc
 #org @gText_UsedVar2WildWeaker
 [BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering weak\nwild Pok\emon in this area increased.[FC][09]
 
+#org @gText_SecondBagItemCanBeRegisteredToL
+A second item in the Cube can be\nregistered to [L_BUTTON] for easy use.
+
 #org @gText_AutoRunEnable
 [GREEN]Auto-run[BLACK] has been [GREEN]enabled[BLACK].
 
@@ -54,9 +57,6 @@ Use which item?
 
 #org @gText_ScurriedToNearestHealer
 [PLAYER] scurried to the nearest healer,\nprotecting the exhausted and fainted\nPok\emon from further harm[.]\p
-
-#org @gText_AllJustADream
-It was all just a dream[.]\p
 
 #org @gText_WantToScaleCliff
 The wall is very rocky[.]\nWould you like to use [BUFFER2]?

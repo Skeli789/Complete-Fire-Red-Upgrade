@@ -38,6 +38,8 @@ SpecialBuffers = {
     "LIGHT_GREEN": ["FC", "01", "07"],
     "BLUE": ["FC", "01", "08"],
     "LIGHT_BLUE": ["FC", "01", "09"],
+    "MAIN_COLOUR": ["FC", "01"],
+    "SHADOW_COLOUR": ["FC", "03"],
 
     "ARROW_UP": ["79"],
     "ARROW_DOWN": ["7A"],

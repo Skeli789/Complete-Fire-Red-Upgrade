@@ -150,7 +150,7 @@ const u8* const sStartMenuDescPointers[] =
 static bool8 CanSetUpSecondaryStartMenu(void)
 {
 	#ifdef FLAG_SYS_DEXNAV
-	if (FlagGet(FLAG_SYS_DEXNAV))
+	if (FlagGet(FLAG_SYS_DEXNAV) && FlagGet(FLAG_SYS_POKEDEX_GET))
 		return TRUE;
 	#endif
 
@@ -229,7 +229,7 @@ static void BuildPokeToolsMenu(void)
 	sNumStartMenuItems = 0;
 
 	#ifdef FLAG_SYS_DEXNAV
-	if (FlagGet(FLAG_SYS_DEXNAV))
+	if (FlagGet(FLAG_SYS_DEXNAV) && FlagGet(FLAG_SYS_POKEDEX_GET))
 	#endif
 		AppendToStartMenuItems(STARTMENU_DEXNAV);
 

@@ -14,13 +14,13 @@ It's not very effective on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAM
 It had no effect on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME][.]
 
 #org @gText_CriticalHit
-[FC][01][02]A critical hit!
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]A critical hit!
 
 #org @gText_CriticalHitTarget
-[FC][01][02]A critical hit[FC][01][01] on\n[TARGET]!
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]A critical hit[MAIN_COLOUR][01][SHADOW_COLOUR][06] on\n[TARGET]!
 
 #org @gText_CriticalHitTwoFoes
-[FC][01][02]A critical hit[FC][01][01] on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME]!
+[MAIN_COLOUR][02][SHADOW_COLOUR][09]A critical hit[MAIN_COLOUR][01][SHADOW_COLOUR][06] on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME]!
 
 #org @TrickRoomSetString
 [ATTACKER] twisted\nthe dimensions!

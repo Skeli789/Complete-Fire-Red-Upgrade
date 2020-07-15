@@ -108,3 +108,5 @@ u8 __attribute__((long_call)) GetPlayerFacing(void);
 void __attribute__((long_call)) Overworld_SetEventObjTemplateMovementType(u8 localId, u8 movementType);
 void __attribute__((long_call)) SetContinueGameWarp(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 void __attribute__((long_call)) SetWarpData(struct WarpData *warp, s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
+void __attribute__((long_call)) SetEscapeWarp(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
+const struct MapHeader* __attribute__((long_call)) GetDestinationWarpMapHeader(void);

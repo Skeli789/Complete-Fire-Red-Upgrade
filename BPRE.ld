@@ -25,6 +25,7 @@ sSavedWildDataMapGroup = 0x203E084;
 sSavedWildDataMapNum = 0x203E085;
 gLastDexNavSpecies = 0x203E086;
 gMultiChoice = 0x203E088;
+gPartyPresetTeamIndices = 0x203E0C0;
 ExtensionState = 0x3000F28;
 sRtc = 0x3005E88;
 gClock = 0x3005EA0;
@@ -141,7 +142,7 @@ gBattlerInMenuId = 0x2024004;
 gDoingBattleAnim = 0x2024005;
 gTransformedPersonalities = 0x2024008;
 gBattleSpritesDataPtr = 0x2024018;
-gMonSpritesGfxPtr = 0x2024018;
+gMonSpritesGfxPtr = 0x202401C;
 gBattleMovePower = 0x2024020;
 gMoveToLearn = 0x2024022;
 gBattleMonForms = 0x2024024;
@@ -283,6 +284,7 @@ sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
 
 /* Other RAM */
+sWarpDestination = 0x2031DBC;
 gPSSData = 0x20397B0;
 sItemUseOnFieldCB = 0x2039998;
 sRegionMap = 0x20399D4;
@@ -297,6 +299,7 @@ gLocalLinkPlayerId = 0x300502C;
 gTotalCameraPixelOffsetY = 0x3005068;
 gTotalCameraPixelOffsetX = 0x300506C;
 gInputToStoreInQuestLogMaybe = 0x3005078;
+gCB2_AfterEvolution = 0x300537C;
 gItemUseCB = 0x3005E98;
 
 /*==========================
@@ -340,6 +343,7 @@ sTargetIdentities = 0x8250980;
 gBaseStats = 0x8254784;
 gEvolutionTable = 0x8259754;
 gUnkPokemonTrainerTable = 0x825DF50;
+gXItemEffectToStatId = 0x825DFF0;
 gHealthbarPals = 0x8260260;
 gPokeBallTiles = 0x826056C;
 gPokeBallPals = 0x82605CC;
@@ -416,6 +420,8 @@ GetSpeciesName = 0x8040FD0 | 1;
 CalculatePPWithBonus = 0x804101C | 1;
 RemoveMonPPBonus = 0x8041064 | 1;
 ExecuteTableBasedItemEffect = 0x80413C0 | 1;
+PokemonItemUseNoEffect = 0x8042414 | 1;
+GetItemEffectParamOffset = 0x8042C08 | 1;
 GetNature = 0x8042E9C | 1;
 GetNatureFromPersonality = 0x8042EB4 | 1;
 NationalPokedexNumToSpecies = 0x8043200 | 1; 
@@ -597,6 +603,8 @@ SetHealthboxSpriteVisible = 0x80481D4 | 1;
 HealthbarDrawLevel = 0x8048398 | 1;
 healthbar_draw_hp = 0x8048440 | 1;
 SwapHpBarsWithHpText = 0x8048A4C | 1;
+UpdateNickInHealthbox = 0x80496C0 | 1;
+TryAddPokeballIconToHealthbox = 0x804981C | 1;
 sub_8049D10 = 0x8049D10 | 1;
 UpdateHealthboxAttribute = 0x8049D98 | 1;
 MoveBattleBar = 0x8049FD8 | 1;
@@ -653,6 +661,7 @@ MoveBattlerSpriteToBG = 0x8072E48 | 1;
 sub_807331C = 0x807331C | 1;
 GetBattlerSpriteCoord = 0x8074480 | 1;
 GetBattlerSpriteCoord2 = 0x8074844 | 1;
+GetBattlerSpriteDefault_Y = 0x80748A8 | 1;
 GetBattlerYCoordWithElevation = 0x807492C | 1;
 GetAnimBattlerSpriteId = 0x80749D4 | 1;
 StoreSpriteCallbackInData6 = 0x8074A68 | 1;
@@ -860,7 +869,7 @@ BagDestroyPocketScrollArrowPair = 0x8108978 | 1;
 ResetBagCursorPositions = 0x81089BC | 1;
 SetInitialScrollAndCursorPositions = 0x81089F4 | 1;
 DestroyBagMenuResources = 0x8108B04 | 1;
-ReturnFromItemToBag = 0x8108B50 | 1;
+ItemMenu_StartFadeToExitCallback = 0x8108B50 | 1;
 DisplayItemMessageInBag = 0x8108E70 | 1;
 ItemMenu_SetExitCallback = 0x8108EE0 | 1;
 Task_ItemContextMenuByLocation = 0x81090DC | 1;
@@ -908,7 +917,9 @@ DisableInterrupts = 0x8000B94 | 1;
 Overworld_SetEventObjTemplateMovementType = 0x8055114 | 1;
 SetWarpData = 0x80551DC | 1;
 Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
+GetDestinationWarpMapHeader = 0x08055250 | 1;
 SetWarpDestination = 0x805538C | 1;
+SetEscapeWarp = 0x80555A0 | 1;
 SetContinueGameWarp = 0x80556F8 | 1;
 ResetInitialPlayerAvatarState = 0x80559E4 | 1;
 StoreInitialPlayerAvatarState = 0x8055A08 | 1;
@@ -1031,12 +1042,15 @@ SetupWarp = 0x806DC54 | 1;
 TrySetDiveWarp = 0x806DFB8 | 1;
 FadeScreen = 0x807A818 | 1;
 PlayRainStoppingSoundEffect = 0x807B004 | 1;
+FadeInFromBlack = 0x807DC00 | 1;
 WarpFadeScreen = 0x807DC18 | 1;
 palette_bg_faded_fill_black = 0x807DB38 | 1;
 sub_807DCB0 = 0x807DCB0 | 1;
 FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
+FieldFadeTransitionBackgroundEffectIsFinished = 0x807E418 | 1;
 DoWarp = 0x807E438 | 1;
 DoDiveWarp = 0x807E470 | 1;
+PrintWhiteOutRecoveryMessage = 0x807F3A4 | 1;
 Task_RushInjuredPokemonToCenter = 0x807F45D | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
 ReturnToFieldFromFlyMapSelect = 0x80842C8 | 1;
@@ -1050,6 +1064,9 @@ Task_ItemFinderNoResponse_CleanUp = 0x813ED18 | 1;
 HiddenItemIsWithinRangeOfPlayer = 0x813EE14 | 1;
 GetPlayerDirectionTowardsHiddenItem = 0x813F2F0 | 1;
 sub_8150498 = 0x8150498 | 1;
+
+/* Map Preview Screen */
+MapHasPreviewScreen = 0x80F8110 | 1;
 
 /* Region Map Functions */
 RegionMap_NullVBlankHBlankCallbacks = 0x80C08E0 | 1;
@@ -1067,6 +1084,7 @@ GetMapName = 0x80C4D78 | 1;
 
 /* Script Functions */
 SetupNativeScript = 0x80697F4 | 1;
+StopScript = 0x80697FC | 1;
 ScriptReadHalfword = 0x80698F8 | 1;
 ScriptReadWord = 0x08069910 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
@@ -1103,6 +1121,7 @@ LoadCompressedSpritePaletteOverrideBuffer = 0x800EC5C | 1;
 LZ77UnCompAnyRAM = 0x800EC8C | 1;
 LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
 LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
+HandleLoadSpecialPokePic_DontHandleDeoxys = 0x800F108 | 1;
 sub_080F696C = 0x80F696C | 1;
 malloc_and_LZ77UnComp = 0x80F6AA0 | 1;
 LZ77UnCompVram = 0x81E3B6C | 1;
@@ -1204,6 +1223,7 @@ FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
 FldEffPoison_Start = 0x80A0E48 | 1;
 CheckObjectGraphicsInFrontOfPlayer = 0x80C97A8 | 1;
+MapTransitionIsEnter = 0x80C9D7C | 1;
 CreateWarpArrowSprite = 0x80DB0C4 | 1;
 FldEff_JumpTallGrass = 0x80DB4F4 | 1;
 FldEff_JumpLongGrass = 0x80DB798 | 1;
@@ -1290,6 +1310,7 @@ CheckPartyPokerus = 0x8043A70 | 1;
 ResetVramOamAndBgCntRegs = 0x80BF77C | 1;
 ShiftMoveSlot = 0x80BFAA8 | 1;
 InitPartyMenu = 0x811EA44 | 1;
+FreePartyPointers = 0x811F070 | 1;
 RenderPartyMenuBox = 0x811F124 | 1;
 DisplayPartyPokemonSelectData = 0x811F2FC | 1;
 CreatePartyMonSprites = 0x811F634 | 1;
@@ -1315,6 +1336,7 @@ DisplayPartyPokemonGenderNidoranCheck = 0x8121854 | 1;
 DisplayPartyPokemonOtherText = 0x8121C70 | 1;
 PartyMenuRemoveWindow = 0x8121CE4 | 1;
 DisplayPartyMenuStdMessage = 0x8121D0C | 1;
+PartyMenuDisplayYesNoMenu = 0x812200C | 1;
 UpdatePartyMonHeldItemSprite = 0x81224B4 | 1;
 SetPartyMonAilmentGfx = 0x8122904 | 1;
 CB2_ShowPokemonSummaryScreen = 0x8122D78 | 1;
@@ -1328,12 +1350,17 @@ ExecuteTableBasedItemEffect_ = 0x8125268 | 1;
 Task_DisplayHPRestoredMessage = 0x8125554 | 1;
 ReturnToUseOnWhichMon = 0x81257D4 | 1;
 UpdateMonDisplayInfoAfterRareCandy = 0x8126440 | 1;
+PartyMenuTryEvolution = 0x8126704 | 1;
 PartyMenu_DisplayMonLearnedMove = 0x8126804 | 1;
+PrepareToEvolveMonWithItem = 0x8126BD4 | 1;
 PartyMenu_DisplayMonNeedsToReplaceMove = 0x8126770 | 1;
 GetItemEffectType = 0x8126C68 | 1;
 InitChooseHalfPartyForBattle = 0x81274A8 | 1;
 sub_813A45C = 0x813A45C | 1;
 some_other_kind_of_link_test = 0x80BF748 |1;
+
+/* Evolution Functions */
+BeginEvolutionScene = 0x80CDDA8 | 1;
 
 /* Window Functions */
 InitWindows = 0x8003B24 | 1;
@@ -1379,7 +1406,6 @@ WindowPrint = 0x812E51C | 1;
 TextWindow_SetStdFrame0_WithPal = 0x814FF2C | 1;
 
 /* Text Input Functions */
-FormatNameAndGenderString = 0x80496C0 | 1;
 DoNamingScreen = 0x809D954 | 1;
 MainState_StartPageSwap = 0x809E210 | 1;
 MainState_WaitPageSwap = 0x809E250 | 1;
@@ -1401,10 +1427,12 @@ NameChooserSelectLetter = 0x809F75C | 1;
 
 /* Menu Functions */
 MenuHelpers_LinkSomething = 0x80BF708 | 1;
+Menu_LoadStdPalAt = 0x80F77CC | 1;
 Menu_InitCursor = 0x810F7D8 | 1;
 Menu_MoveCursor = 0x810F904 | 1;
 Menu_MoveCursorNoWrapAround = 0x810F948 | 1;
-
+Menu_ProcessInputNoWrapClearOnChoose = 0x81100C8 | 1;
+Menu_PrintFormatIntlPlayerName = 0x812E6DC | 1;
 
 /* PicBox Functions */
 Task_PokemonPicWindow = 0x809D288 | 1;
@@ -1471,6 +1499,7 @@ DoReadFlashWholeSection = 0x80DA190 | 1;
 CalculateSaveChecksum = 0x80DA1A8 | 1;
 UpdateSaveAddresses = 0x80DA1D4 | 1;
 TrySavingData = 0x80DA364 | 1;
+SaveStatToString = 0x80F7FCC | 1;
 
 /* GPU Regs Functions */
 SetGpuReg = 0x8000A38 | 1;

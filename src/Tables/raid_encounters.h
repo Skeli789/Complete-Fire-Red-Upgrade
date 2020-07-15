@@ -10243,7 +10243,7 @@ static struct Raid sTarmiganTownRaids5Star[] =
 			/*100 %*/ ITEM_SITRUS_BERRY,
 			/* 80 %*/ ITEM_TANGA_BERRY,
 			/* 80 %*/ ITEM_POMEG_BERRY,
-			/* 50 %*/ ITEM_MAX_REVIVE,
+			/* 50 %*/ ITEM_DREAM_MIST,
 			/* 50 %*/ ITEM_BIG_PEARL,
 			/* 30 %*/ ITEM_RARE_CANDY,
 			/* 30 %*/ ITEM_PSYCHIC_GEM,

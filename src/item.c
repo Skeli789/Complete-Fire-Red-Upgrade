@@ -1773,3 +1773,8 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 	}
 }
 #undef tItemIndex
+
+void ForceRedrawItemDescription(void)
+{
+	sItemDescriptionPocket = 0;
+}

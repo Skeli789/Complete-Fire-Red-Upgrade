@@ -1975,9 +1975,18 @@ void atk66_chosenstatusanimation(void) {
 	gBattlescriptCurrInstr += 7;
 }
 
-void atk6A_removeitem(void) {
+void atk6A_removeitem(void)
+{
 	u8 bank = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 oldItemEffect = ITEM_EFFECT(bank);
+	
+	if (gNewBS->doingPluckItemEffect) //This item removal was triggered by using someone else's item
+	{
+		gNewBS->doingPluckItemEffect = FALSE;
+		gBattlescriptCurrInstr += 2;
+		return;
+	}
+	
 	gLastUsedItem = gBattleMons[bank].item;
 
 	if (gLastUsedItem != ITEM_NONE)
@@ -3223,15 +3232,15 @@ void atkA3_disablelastusedattack(void)
 
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		if (gBattleMons[bankDef].moves[i] == gLastUsedMoves[gBankTarget])
+		if (gBattleMons[bankDef].moves[i] == gLastUsedMoves[bankDef])
 			break;
 	}
 
 	if (gDisableStructs[bankDef].disabledMove == 0
 	&& i != MAX_MON_MOVES
 	&& gBattleMons[bankDef].pp[i] != 0
-	&& !IsAnyMaxMove(gLastUsedMoves[gBankTarget])
-	&& !IsZMove(gLastUsedMoves[gBankTarget])
+	&& !IsAnyMaxMove(gLastUsedMoves[bankDef])
+	&& !IsZMove(gLastUsedMoves[bankDef])
 	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0))
 	{
 		PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[bankDef].moves[i])

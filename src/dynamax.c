@@ -1494,7 +1494,9 @@ static u8 GetRaidMapSectionId(void)
 
 	#ifdef UNBOUND
 	if (currRegionMapSecId == MAPSEC_ICY_HOLE
-	||  currRegionMapSecId == MAPSEC_GRIM_WOODS)
+	||  currRegionMapSecId == MAPSEC_GRIM_WOODS
+	||  currRegionMapSecId == MAPSEC_RUINS_OF_VOID
+	||  currRegionMapSecId == MAPSEC_GREAT_DESERT)
 		return currRegionMapSecId - MAPSEC_DYNAMIC;
 
 	return Overworld_GetMapHeaderByGroupAndId((u16) gSaveBlock1->dynamicWarp.mapGroup, (u16) gSaveBlock1->dynamicWarp.mapNum) -> regionMapSectionId - MAPSEC_DYNAMIC;
@@ -1827,8 +1829,10 @@ void sp11C_GiveRaidBattleRewards(void)
 			{
 				for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 				{
-					if (raid->data[i].drops[VarGet(VAR_TEMP_0)] != ITEM_NONE
-					&& Random() % 100 < sRaidBattleDropRates[VarGet(VAR_TEMP_0)])
+					u8 dropNum = VarGet(VAR_TEMP_0);
+
+					if (raid->data[i].drops[dropNum] != ITEM_NONE
+					&& Random32() % 100 < sRaidBattleDropRates[dropNum])
 					{
 						gSpecialVar_LastTalked = 0xFD; //So no event objects disappear
 						Var8000 = raid->data[i].drops[(*(GetVarPointer(VAR_TEMP_0)))++];

@@ -39,6 +39,7 @@ bool8 IsPlayerFacingRockClimbableWall(void);
 void ShouldRockClimbContinue(void);
 void ShouldRockClimbContinueDiagonally(void);
 u8 PartyHasMonWithFieldMovePotential(u16 move, u16 item, u8 surfingType);
+void UseRegisteredItem(u16 registeredItem);
 void TryLoadMiningSpots(void);
 void ChooseMiningSpotToShow(void);
 void IsBestMiningSpotOutOfView(void);

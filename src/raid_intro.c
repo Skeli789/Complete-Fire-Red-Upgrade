@@ -2,6 +2,7 @@
 #include "../include/bg.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_screen_effect.h"
+#include "../include/field_weather.h"
 #include "../include/gpu_regs.h"
 #include "../include/item_menu.h"
 #include "../include/menu.h"
@@ -667,6 +668,7 @@ static void LoadRaidBattleIntroGfx(void)
 	LZDecompressWram(RaidBattleIntroBGMap, sRaidBattleIntroPtr->tilemapPtr);
 	LoadPalette(RaidBattleIntroBGPal, 0, 0x20);
 	LoadMenuElementsPalette(0xC0, 1);
+	Menu_LoadStdPalAt(0xF0);
 }
 
 static void ClearTasksAndGraphicalStructs(void)
@@ -769,5 +771,8 @@ void sp116_StartRaidBattleIntro(void)
 	gSpecialVar_LastResult = FALSE;
 
 	if (GetRaidBattleData())
+	{
+		PlayRainStoppingSoundEffect();
 		SetMainCallback2(CB2_RaidBattleIntro);
+	}
 }

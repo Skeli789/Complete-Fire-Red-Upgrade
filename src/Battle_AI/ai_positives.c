@@ -1849,7 +1849,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 8 || IsClassBatonPass(class))
 					goto AI_ATTACK_PLUS;
-				else
+				else if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Def
 					goto AI_DEFENSE_PLUS;
 			}
 			break;
@@ -1874,10 +1874,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						__attribute__ ((fallthrough));
 
 					default:
-						if ((IsClassBatonPass(class) && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 4)
-						|| STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8)
+						if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8 || IsClassBatonPass(class))
 							goto AI_SPECIAL_ATTACK_PLUS;
-						else
+						else if (STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Sp. Def
 							goto AI_SPECIAL_DEFENSE_PLUS;
 				}
 			}
@@ -2391,6 +2390,9 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		u16 move = TryReplaceMoveWithZMove(bankAtk, bankDef, originalMove);
 		s16 viability = originalViability;
 
+		if (IS_DOUBLE_BATTLE && TARGETING_PARTNER)
+			return AIScript_Partner(bankAtk, data->bankAtkPartner, originalMove, originalViability, data);
+
 		switch (gBattleMoves[move].effect) {
 			case EFFECT_HIT:
 			case EFFECT_SLEEP:
@@ -2461,7 +2463,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_DAMAGE_SET_TERRAIN:
 			case EFFECT_PLEDGE:
 			case EFFECT_FEINT:
-				return AIScript_Positives(bankAtk, data->bankAtkPartner, originalMove, originalViability, data);
+				return AIScript_Positives(bankAtk, bankDef, originalMove, originalViability, data);
 		}
 
 		//Copied from above

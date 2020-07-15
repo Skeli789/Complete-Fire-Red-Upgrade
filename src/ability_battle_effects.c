@@ -1610,23 +1610,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 				case 3: //Flash Fire
 					if (!(gBattleResources->flags->flags[bank] & RESOURCE_FLAG_FLASH_FIRE))
-					{
 						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-						if (gProtectStructs[gBankAttacker].notFirstStrike)
-							gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
-						else
-							gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
-
-						gBattleResources->flags->flags[bank] |= RESOURCE_FLAG_FLASH_FIRE;
-					}
 					else
-					{
 						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-						if (gProtectStructs[gBankAttacker].notFirstStrike)
-							gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
-						else
-							gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
-					}
+
+					if (gProtectStructs[gBankAttacker].notFirstStrike)
+						gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
+					else
+						gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
 			}
 
 			break;
@@ -2454,6 +2445,11 @@ static bool8 AllMainStatsButOneAreMinned(bank_t bank)
 void LoadProperAbilityBattleData(void)
 {
 	gBattleMons[gActiveBattler].ability = GetMonAbility(GetBankPartyData(gActiveBattler));
+}
+
+void ApplyFlashFireBoost(void)
+{
+	gBattleResources->flags->flags[gBattleScripting.bank] |= RESOURCE_FLAG_FLASH_FIRE;
 }
 
 //Illusion Updates////////////////////////////////////////////////////////////////////////////////////

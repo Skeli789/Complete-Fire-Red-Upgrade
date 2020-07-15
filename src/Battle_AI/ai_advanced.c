@@ -660,6 +660,9 @@ bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 {
+	if (move == 0xFFFF) //Item use
+		return gBattleMons[bankAtk].maxHP - gBattleMons[bankAtk].hp; //Assume restores full health
+
 	if (IsHealBlocked(bankAtk))
 		return 0;
 
@@ -810,7 +813,7 @@ bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 
 	//if (IS_SINGLE_BATTLE)
 	//{
-		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
+		if (move == 0xFFFF || MoveWouldHitFirst(move, bankAtk, bankDef)) //Using item or attacker goes first
 		{
 			if (CanKnockOut(bankDef, bankAtk)
 			&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
@@ -1474,10 +1477,10 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 	if (ABILITY(bankDef) == ABILITY_UNAWARE
 	&& !MoveInMoveset(MOVE_STOREDPOWER, bankAtk)
 	&& !MoveInMoveset(MOVE_POWERTRIP, bankAtk))
-		return FALSE;
+		return FALSE; //Don't set up if foe has Unaware
 
 	if (WillFaintFromSecondaryDamage(bankAtk))
-		return TRUE;
+		return FALSE; //Don't set up if you're going to die
 
 	if (IS_SINGLE_BATTLE)
 	{
@@ -1485,7 +1488,7 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 		{
 			if (CanKnockOut(bankDef, bankAtk))
 			{
-				return FALSE;
+				return FALSE; //Don't set up if enemy can KO you
 			}
 			else
 			{

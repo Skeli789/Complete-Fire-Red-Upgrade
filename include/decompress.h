@@ -15,6 +15,7 @@ bool8 __attribute__((long_call)) LoadCompressedSpritePaletteUsingHeap(const stru
 void __attribute__((long_call)) LoadCompressedSpritePaletteOverrideBuffer(const struct CompressedSpritePalette *a, void *buffer);
 void __attribute__((long_call)) LoadCompressedSpriteSheetOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);
 u16 __attribute__((long_call)) LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src);
+void __attribute__((long_call)) HandleLoadSpecialPokePic_DontHandleDeoxys(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality);
 
 /*
 u16 LoadCompressedObjectPic(const struct CompressedSpriteSheet *src);
@@ -31,7 +32,6 @@ void DecompressPicFromTable_DontHandleDeoxys(const struct CompressedSpriteSheet 
 
 void HandleLoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality);
 void HandleLoadSpecialPokePic_2(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality);
-void HandleLoadSpecialPokePic_DontHandleDeoxys(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality);
 
 void LoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality, bool8 isFrontPic);
 void LoadSpecialPokePic_2(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality, bool8 isFrontPic);

@@ -24,6 +24,7 @@ void TryStatusInducer(struct Pokemon* mon);
 u32 CheckShinyMon(struct Pokemon* mon);
 void CalculateMonStatsNew(struct Pokemon *mon);
 u8 GetOpenWorldBadgeCount(void);
+u8 GetScaledWildBossLevel(u8 level);
 void TryRandomizeSpecies(u16* species);
 u8 TryRandomizeAbility(u8 ability, u16 species);
 

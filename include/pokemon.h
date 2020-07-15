@@ -651,7 +651,7 @@ extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern u8 gEnemyPartyCount;
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct BaseStats gBaseStats[];
-extern const u8 *const gItemEffectTable[];
+#define gItemEffectTable ((const u8**) *((u32*) 0x803A2B0)) //extern const u8 *const gItemEffectTable[];
 //extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
@@ -746,6 +746,8 @@ void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);
 u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 selection);
+bool8 __attribute__((long_call)) PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
+u8 __attribute__((long_call)) GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
 
 /*
 void ZeroMonData(struct Pokemon *mon);

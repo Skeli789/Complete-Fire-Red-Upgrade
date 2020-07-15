@@ -459,6 +459,7 @@
 .equ AnimTask_UproarDistortion, 0x80AA7C9
 .equ AnimTask_FlailMovement, 0x80E0851
 .equ AnimTask_TraceMonBlended, 0x80bab99
+.equ AnimTask_SmokescreenImpact, 0x80de34d
 
 @launchtemplate
 
@@ -518,6 +519,7 @@
 .equ Template_TearDrop, 0x83e7998
 .equ Template_ShakeMonOrTerrain, 0x83e7b88
 .equ Template_FallingRock, 0x83e73b4
+.equ Template_BlackSmoke, 0x83fee18
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5

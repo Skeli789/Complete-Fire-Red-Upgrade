@@ -340,6 +340,7 @@ BattleScript_PluckEat:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	callasm PluckBerryEat
+	callasm ClearDoingPluckItemEffect
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

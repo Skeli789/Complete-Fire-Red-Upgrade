@@ -1229,3 +1229,25 @@ UseRegisteredItemHook:
 	bl ProcessNewFieldPlayerInput
 	ldr r1, =0x0806CD22 | 1
 	bx r1
+
+.pool
+@0x8041798 with r0
+XSpDefStatBoostHook:
+	ldr r0, [sp, #0x8] @Item
+	mov r1, r3 @Boost amount
+	bl NewXSpecialBoost
+	mov r1, r0 @retVal
+	ldr r0, =0x80417CA | 1
+	bx r0
+
+.pool
+@0x8016650 with r0
+AIXItemStringHook:
+	bl PrepareStringForAIUsingXItem
+	ldr r0, =gBattlescriptCurrInstr
+	mov r9, r0
+	ldr r0, =gCurrentActionFuncId
+	mov r10, r0
+	ldr r6, =0x81D99E4
+	ldr r0, =0x8016706 | 1
+	bx r0

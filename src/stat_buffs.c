@@ -2,6 +2,8 @@
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
 #include "../include/battle_string_ids.h"
+#include "../include/string_util.h"
+#include "../include/constants/items.h"
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/accuracy_calc.h"
@@ -510,3 +512,78 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 
 	return STAT_CHANGE_WORKED;
 }
+
+bool8 NewXSpecialBoost(u16 item, u8 boostAmount)
+{
+	u8 stat;
+	bool8 retVal = TRUE; //Didn't work by default
+
+	if (item == ITEM_X_SP_DEF) //Not in Gen 3
+		stat = STAT_STAGE_SPDEF;
+	else
+		stat = STAT_STAGE_SPATK;
+
+	if (STAT_STAGE(gActiveBattler, stat) < STAT_STAGE_MAX)
+	{
+		STAT_STAGE(gActiveBattler, stat) += boostAmount;
+		if (STAT_STAGE(gActiveBattler, stat) > STAT_STAGE_MAX)
+			STAT_STAGE(gActiveBattler, stat) = STAT_STAGE_MAX;
+		retVal = FALSE;
+		
+		if (stat == STAT_STAGE_SPDEF)
+			gNewBS->usedXSpDef = TRUE;
+		else
+			gNewBS->usedXSpDef = FALSE;
+	}
+
+	return retVal;
+}
+
+extern const u8 gXItemEffectToStatId[];
+void PrepareStringForUsingXItem(u32 stat)
+{
+	u8 index = 4;
+
+	stat = gXItemEffectToStatId[stat];
+	if (stat == STAT_SPATK && gNewBS->usedXSpDef)
+		stat = STAT_SPDEF;
+
+    gBankTarget = gBattlerInMenuId;
+    StringCopy(gBattleTextBuff1, gStatNamesTable[stat]);
+   
+	gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+	gBattleTextBuff2[1] = B_BUFF_STRING;
+	gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+	gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+	gBattleTextBuff2[index++] = B_BUFF_STRING;
+	gBattleTextBuff2[index++] = STRINGID_STATROSE;
+	gBattleTextBuff2[index++] = STRINGID_STATROSE >> 8;
+	gBattleTextBuff2[index] = B_BUFF_EOS;
+
+    BattleStringExpandPlaceholdersToDisplayedString((void*) 0x83FCB6A); //gText_PkmnsStatChanged2
+}
+
+void PrepareStringForAIUsingXItem(void)
+{
+	u8 index = 4;
+
+	PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
+	gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+	gBattleTextBuff2[1] = B_BUFF_STRING;
+	gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+	gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+	gBattleTextBuff2[index++] = B_BUFF_STRING;
+	gBattleTextBuff2[index++] = STRINGID_STATROSE;
+	gBattleTextBuff2[index++] = STRINGID_STATROSE >> 8;
+	gBattleTextBuff2[index] = B_BUFF_EOS;
+
+	while (!(gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] & 1))
+	{
+		gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] >>= 1;
+		++gBattleTextBuff1[2];
+	}
+
+	gBattleScripting.animArg1 = gBattleTextBuff1[2] + STAT_ANIM_PLUS2 - 1;
+	gBattleScripting.animArg2 = 0;
+}
+

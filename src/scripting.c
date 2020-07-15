@@ -1663,12 +1663,8 @@ u32 GetDaysSinceTimeInValue(u32 value)
 	return GetDayDifference(startYear, startTime->month, startTime->day, gClock.year, gClock.month, gClock.day);
 }
 
-//@Details: Updates the time stored in a pair of vars.
-//@Input: Var 0x8000: A var containing the daily event data.
-//					  The var after this one is used as well.
-void sp0A1_UpdateTimeInVars(void)
+void UpdateTimeInVars(u16 eventVar)
 {
-	u16 eventVar = Var8000; //Var contained in Var8000
 	struct DailyEventVar* data = (struct DailyEventVar*) GetVarPointer(eventVar);
 
 	data->minute = gClock.minute;
@@ -1677,6 +1673,14 @@ void sp0A1_UpdateTimeInVars(void)
 	data->month = gClock.month;
 	data->year = gClock.year % 100;
 	data->century = gClock.year / 100;
+}
+
+//@Details: Updates the time stored in a pair of vars.
+//@Input: Var 0x8000: A var containing the daily event data.
+//					  The var after this one is used as well.
+void sp0A1_UpdateTimeInVars(void)
+{
+	UpdateTimeInVars(Var8000); //Var contained in Var8000
 }
 
 //@Details: Gets the time difference between the data stored in a var and the current time.
@@ -2691,7 +2695,7 @@ static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 	#endif
 }
 
-void ShowItemSpriteOnFindObtain(void)
+void sp0E4_ShowItemSpriteOnFindObtain(void)
 {
 	ShowItemSpriteOnFind(Var8004, (u8*) &Var8006);
 }
@@ -2701,7 +2705,7 @@ void ShowItemSpriteOnFindHidden(void)
 	ShowItemSpriteOnFind(Var8005, (u8*) &Var8007);
 }
 
-void ClearItemSpriteAfterFindObtain(void)
+void sp0E5_ClearItemSpriteAfterFindObtain(void)
 {
 	ClearItemSpriteAfterFind(Var8006);
 }

@@ -70,7 +70,7 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility);
 static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate);
 static bool8 IsAbilityAllowingEncounter(u8 level);
 static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex);
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex);
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount);
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
 
@@ -381,7 +381,7 @@ void sp117_CreateRaidMon(void)
 		{
 			perfectStats[statId] = TRUE;
 			++numPerfectStats;
-			SetMonData(&gPlayerParty[0], MON_DATA_HP_IV + statId, &perfect);
+			SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + statId, &perfect);
 		}
 	}
 }
@@ -477,7 +477,7 @@ static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 
-	if (mapName == gCurrentMapName
+	if (mapName == GetCurrentRegionMapSectionId()
 	&&  Random() % 100 < SWARM_CHANCE)
 	{
 		CreateWildMon(species, level, wildMonIndex, purgeParty);
@@ -489,21 +489,30 @@ static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 
 static bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags)
 {
-	u8 wildMonIndex = 0;
 	u8 level;
+	u8 wildMonIndex = 0;
+	u8 monsCount = 0;
 
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNETPULL, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
-	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex))
-		goto SKIP_INDEX_SEARCH;
+	if (area == WILD_AREA_LAND)
+		monsCount = LAND_WILD_COUNT;
+	else if (area == WILD_AREA_WATER)
+		monsCount = WATER_WILD_COUNT;
+	
+	if (monsCount != 0)
+	{
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNETPULL, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex, monsCount))
+			goto SKIP_INDEX_SEARCH;
+	}
 
 	switch (area) {
 		case WILD_AREA_LAND:
@@ -535,18 +544,21 @@ SKIP_INDEX_SEARCH:
 	{
 		wildMonIndex = 0;
 
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNETPULL, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
-		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex))
-			goto SKIP_INDEX_SEARCH_2;
+		if (monsCount != 0)
+		{
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNETPULL, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+			if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex, monsCount))
+				goto SKIP_INDEX_SEARCH_2;
+		}
 
 		switch (area) {
 			case WILD_AREA_LAND:
@@ -1042,7 +1054,7 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u
 	return TRUE;
 }
 
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex)
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount)
 {
 	if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		return FALSE;
@@ -1051,7 +1063,7 @@ static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildM
 	else if (umodsi(Random(), 2) != 0)
 		return FALSE;
 
-	return TryGetRandomWildMonIndexByType(wildMon, type, LAND_WILD_COUNT, monIndex);
+	return TryGetRandomWildMonIndexByType(wildMon, type, monsCount, monIndex);
 }
 
 void DoStandardWildBattle(void)
@@ -1128,7 +1140,8 @@ void sp156_StartGhostBattle(void)
 
 void sp118_StartRaidBattle(void)
 {
-	HealPlayerParty();
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Only heal in battle facilities
+		HealPlayerParty();
 
 	ScriptContext2_Enable();
 	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
@@ -1180,6 +1193,12 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 			species = ScriptReadHalfword(ctx);
 			level = ScriptReadByte(ctx);
 			item = ScriptReadHalfword(ctx);
+
+			#ifdef FLAG_SCALE_WILD_BOSS_LEVEL
+			if (FlagGet(FLAG_SCALE_WILD_BOSS_LEVEL))
+				level = GetScaledWildBossLevel(level);
+			#endif
+
 			CreateScriptedWildMon(species, level, item, specialMoves, i == 0);
 
 			if (i == 0)
@@ -1193,6 +1212,12 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 		FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Singular mon
 		#endif
 		level = ScriptReadByte(ctx);
+
+		#ifdef FLAG_SCALE_WILD_BOSS_LEVEL
+		if (FlagGet(FLAG_SCALE_WILD_BOSS_LEVEL))
+			level = GetScaledWildBossLevel(level);
+		#endif
+
 		item = ScriptReadHalfword(ctx);
 		CreateScriptedWildMon(species, level, item, specialMoves, TRUE);
 	}

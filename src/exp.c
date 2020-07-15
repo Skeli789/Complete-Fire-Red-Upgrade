@@ -506,7 +506,10 @@ static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
 	if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) >= 220)
 	{
 		#ifdef EXP_AFFECTION_BOOST
-			return TRUE;
+			#ifdef UNBOUND
+			if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY || FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
+			#endif
+				return TRUE;
 		#endif
 	}
 

@@ -125,15 +125,19 @@ u8 BattleSetup_GetTerrainId(void)
 	return terrain;
 }
 
-u8 LoadBattleBG_TerrainID(void) {
+u8 GetBattleTerrainOverride(void)
+{
 	u8 terrain = gBattleTerrain;
+	
+	if (!gMain.inBattle)
+		return BattleSetup_GetTerrainId(); //Mainly for evolution scene
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 	{
 		#ifdef UNBOUND
 			terrain = BATTLE_TERRAIN_INSIDE;
 		#else
-			terrain =  10;
+			terrain = 10;
 		#endif
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
@@ -184,7 +188,6 @@ u8 LoadBattleBG_TerrainID(void) {
 	}
 
 	terrain = TryLoadAlternateAreaTerrain(terrain);
-
 	return terrain;
 }
 
@@ -209,12 +212,12 @@ void DrawBattleEntryBackground(void)
 	}
 	else
 	{
-		u8 terrain = LoadBattleBG_TerrainID();
+		u8 terrain = GetBattleTerrainOverride();
 		LoadBattleBG_EntryOverlay(terrain);
 	}
 }
 
-void LoadBattleBG_Background(u8 terrainId) {
+void LoadBattleTerrainGfx(u8 terrainId) {
 	struct BattleBackground* table = gBattleTerrainTable;
 
 	if (gTerrainType) //A terrain like Electric Terrain is active

@@ -1826,7 +1826,7 @@ const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 		.mcSpreadSize =		NELEMS(gMiddleCupTowerSpread_Skeli),
 		.lcSpreadSize =		NELEMS(gLittleCupTowerSpread_Skeli),
 		.legSpreadSize =	NELEMS(gLegendaryTowerSpread_Skeli),
-		.songId = 			BGM_BATTLE_LOR_BOSS,
+		.songId = 			BGM_BATTLE_LOR_LEADER,
 		.isMonotype = 		FALSE,
 	},
 	{
@@ -1886,7 +1886,7 @@ const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 		.mcSpreadSize =		NELEMS(gMiddleCupTowerSpread_Lixdel),
 		.lcSpreadSize =		NELEMS(gLittleCupTowerSpread_Lixdel),
 		.legSpreadSize =	NELEMS(gLegendaryTowerSpread_Lixdel),
-		.songId = 			BGM_BATTLE_CHAMPION,
+		.songId = 			BGM_BATTLE_JAX,
 		.isMonotype = 		FALSE,
 	},
 	{
@@ -2006,7 +2006,7 @@ const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 		.mcSpreadSize =		NELEMS(gMiddleCupTowerSpread_Giovanni),
 		.lcSpreadSize =		NELEMS(gLittleCupTowerSpread_Giovanni),
 		.legSpreadSize =	NELEMS(gLegendaryTowerSpread_Giovanni),
-		.songId = 			BGM_BATTLE_TEAM_ROCKET_GRUNT,
+		.songId = 			BGM_BATTLE_TERROR_GRANBULL_GOON, //TODO BGM_BATTLE_BLACK_HORIZON_BOSS,
 		.isMonotype = 		TRUE,
 	},
 };

@@ -337,7 +337,10 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 				name = gRaidPartners[partnerId].name;
 			break;
 		default:
-			name = gTrainers[trainerId].trainerName;
+			name = TryGetRivalNameByTrainerClass(gTrainers[trainerId].trainerClass);
+			if (name == NULL) //Rival name isn't tied to a trainer class
+				name = gTrainers[trainerId].trainerName;
+			break;
 	}
 
 	return ReturnEmptyStringIfNull(name);

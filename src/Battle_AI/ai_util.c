@@ -30,6 +30,7 @@ ai_util.c
 
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
+static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 
 bool8 CanKillAFoe(u8 bank)
 {
@@ -187,7 +188,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOutXHits(move, bankAtk, bankDef, numHits))
+			if (CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits)) //Need fresh calculation since data is locked earlier
 			{
 				gBattleMons[bankDef].hp = backupHp;
 				return TRUE;
@@ -903,8 +904,16 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 {
-	u16 predictedMove = GetStrongestMove(bankDef, bankAtk); //Get the strongest move as the predicted move
+	u16 predictedMove;
 	u32 predictedDamage = 0;
+	
+	if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
+		return 0; //These moves are subject to immunities
+
+	if (gNewBS->ai.strongestMove[bankDef][bankAtk] != 0xFFFF) //Don't force calculation here - can cause infinite loop if both Pokemon have a counter move
+		predictedMove = GetStrongestMove(bankDef, bankAtk); //Get the strongest move as the predicted move
+	else
+		predictedMove = IsValidMovePrediction(bankDef, bankAtk);
 
 	if (predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 	{

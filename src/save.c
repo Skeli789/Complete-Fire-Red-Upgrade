@@ -5,6 +5,7 @@
 #include "../include/save.h"
 #include "../include/constants/vars.h"
 
+#include "../include/new/dns.h"
 #include "../include/new/save.h"
 #include "../include/new/ram_locs_battle.h"
 /*
@@ -61,7 +62,6 @@ static void LoadSector30And31();
 static u8 SaveSector30And31();
 static void SaveParasite();
 static void LoadParasite();
-static void CallSomething(u16 arg, EraseFlash func);
 
 /* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
 static void LoadSector30And31()
@@ -231,18 +231,16 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 	return retVal;
 }
 
-static void CallSomething(u16 arg, EraseFlash func)
-{
-	func(arg);
-}
-
-
 u8 HandleSavingData(u8 saveType)
 {
 	u32* backupPtr = gMain.vblankCounter1;
 	//u8 *tempAddr;
 	gMain.vblankCounter1 = NULL;
 	UpdateSaveAddresses();
+	#ifdef VAR_LAST_SAVE
+	UpdateTimeInVars(VAR_LAST_SAVE); //Update last saved
+	#endif
+
 	switch (saveType) {
 		case SAVE_NORMAL: // normal save. also called by overwriting your own save.
 		default:
@@ -271,11 +269,12 @@ u8 HandleSavingData(u8 saveType)
 
 		case SAVE_OVERWRITE_DIFFERENT_FILE:
 		{
+			//Clear old HOF data
 			for (u8 i = SECTOR_ID_HOF_1; i < SECTORS_COUNT; i++)
 			{
 				u32 *t = (u32*)0x03007430;
 				EraseFlash EraseFlashSector = (EraseFlash)(*t);
-				CallSomething(i, EraseFlashSector);
+				EraseFlashSector(i);
 			}
 			SaveSerializedGame();
 			SaveWriteToFlash(0xFFFF, gRamSaveSectionLocations);

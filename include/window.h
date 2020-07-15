@@ -7,7 +7,7 @@
 
 enum
 {
-    WINDOW_PRIORITY,
+    WINDOW_BG,
     WINDOW_TILEMAP_LEFT,
     WINDOW_TILEMAP_TOP,
     WINDOW_WIDTH,
@@ -40,6 +40,10 @@ struct WindowTemplate
     0,                              \
     0,                              \
 }
+
+#define COPYWIN_MAP  1
+#define COPYWIN_GFX  2
+#define COPYWIN_BOTH 3
 
 struct Window
 {

@@ -199,7 +199,7 @@ static u16 GetFollowerSprite(void)
 
 static void TryUpdateFollowerSpriteUnderwater(void)
 {
-	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER && gFollowerState.inProgress)
 	{
 		struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 		SetFollowerSprite(FOLLOWER_SPRITE_INDEX_UNDERWATER);

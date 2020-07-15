@@ -13,6 +13,7 @@
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/cmd49_battle_scripts.h"
+#include "../include/new/end_battle.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
@@ -813,6 +814,7 @@ void atk52_switchineffects(void)
 			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
 			&& !(gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
 			&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
+			&& SIDE(gActiveBattler) == B_SIDE_OPPONENT //So player accepting offer to switching out doesn't trigger this yet
 			&& ViableMonCount(gEnemyParty) <= 1)
 			{
 				PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
@@ -908,7 +910,6 @@ void RestorePPLunarDance(void)
 }
 
 //Ripped from PokeEmerald
-#define MON_CAN_BATTLE(mon) (((GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE && !GetMonData(mon, MON_DATA_IS_EGG, NULL) && GetMonData(mon, MON_DATA_HP, NULL) != 0)))
 void atk8F_forcerandomswitch(void)
 {
 	int i;
@@ -1024,7 +1025,7 @@ static bool8 TryDoForceSwitchOut(void)
 	}
 	
 	//Roar always fails in wild boss battles
-	else if (FlagGet(FLAG_NO_RUNNING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	else if (AreAllKindsOfRunningPrevented())
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;

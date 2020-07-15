@@ -6,8 +6,8 @@ EmitPrintSelectionString 800E3EC 2
 EmitChooseMoveHook 800E524 3
 
 ##Battle Terrain Functions
-LoadBattleBG_TerrainID 800FC2C 0
-LoadBattleBG_Background 800F260 1
+GetBattleTerrainOverride 800FC2C 0
+LoadBattleTerrainGfx 800F260 1
 DrawBattleEntryBackground 800FAE0 0
 
 ##Other Battle Stuff
@@ -47,6 +47,7 @@ HealthBarChangeAmountHook 804A00C 4
 ReshowBattleScreenMonSpriteHook1 8077CD2 0
 ReshowBattleScreenMonSpriteHook2 8077ECA 0
 ReshowBattleScreenHealthboxSpriteHook 8078104 0
+BattleUseFunc_PokeDoll 80A2010 1
 
 HandleInputChooseAction 0802E438 0
 SwitchMoveDataHook 802EF90 0
@@ -61,7 +62,10 @@ AI_TrySwitchOrUseItem 8039C84 0
 LinkOpponentHandleFormChange 0803C318 0
 HandleDataTransfer 0803D200 0
 
-GetMUS_ForBattle 08043FD4 0
+AIXItemStringHook 8016650 0
+XSpDefStatBoostHook 8041798 0
+PrepareStringForUsingXItem 8042D50 1
+GetMUS_ForBattle 8043FD4 0
 LoadProperMusicForLinkBattlesHook 80813B8 0
 DoStandardWildBattle 807F748 0
 BattleSetup_GetTerrainId 807FC5C 0
@@ -118,11 +122,9 @@ CreateShakerHook 804BE80 3
 ObjcShakerHook 804BEDC 2
 
 ##Dynamax Hooks
+HandleSpeciesGfxDataChange 8034BF4 3
 DynamaxPalFadeHook1_LoadOpponentGfx 803443C 0
 DynamaxPalFadeHook2_LoadPlayerGfx 80345FC 0
-DynamaxPalFadeHook3_AlreadyTransformed 8034DE0 0
-DynamaxPalFadeHook4_PostTransform 8034FFC 0
-DynamaxEndTransformedMonHook 8034E98 2
 ClearTemporarySpeciesSpriteData 0803589C 2
 RaidBattleCoordHook1 80744B0 0
 RaidBattleCoordHook2 80744D8 0
@@ -172,6 +174,7 @@ CheckForTrainersWantingBattle 8081B30 0
 CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 ReplaceOWSandstormPaletteHook 807D5F0 0
+WarpFadeOutScreen 0807DC18 1
 Waterfall3_MovePlayer 8084DA4 2
 SetCutGrassMetatile 8097B50 2
 BikeTurboBoostHook 80BD338 0
@@ -565,6 +568,7 @@ CountItemsInBag 8108DC8 1
 GetSmallestItemAmount 8108E20 0
 BagSorterHook 810900C 1
 SelectItemFromBagCheck 81090B8 0
+PrepRedrawItemDescriptionOnEndMovingItem 810948A 0
 RegisteredItemBagActionsHook 8109A44 0
 BagSorterHook2 8109AD4 0
 BagSorterHook3 8109B5C 1

@@ -10,6 +10,7 @@
 
 //Exported Functions
 bool8 IsConsumable(u16 item);
+bool8 AreAllKindsOfRunningPrevented(void);
 
 //Functions Hooked In
 void HandleEndTurn_BattleWon(void);

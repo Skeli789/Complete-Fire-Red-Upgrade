@@ -4866,6 +4866,7 @@ BS_229_Fling:
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
 	callasm TrySetAlternateFlingEffect
+	callasm ClearDoingPluckItemEffect
 	removeitem BANK_ATTACKER
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove

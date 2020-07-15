@@ -54,6 +54,7 @@ gTypeNames 0811977C
 BattleScript_RainDishActivates 0801A4A0
 BattleScript_WildDoubleSwitchFix 081D86AE
 BattleScript_FaintStealthRockHelper 081D87A7
+BattleScript_AIUseXstat 081D99F4
 FieldEffectScript_CaveDust 081D9714
 FieldEffectScript_Sparkles 081D9718
 FieldEffectScript_LavaBubbles 081D9768
@@ -90,6 +91,7 @@ gText_HazardsBlownAway 083FE188
 gText_AbilityPreventsConfusion 083FE234
 gText_FlashFirePowerUp 083FE238
 gText_AbilityPreventsStatLoss 083FE244
+gText_PkmnHurtsWith 083FE248
 gText_CriticalHit 083FE270
 gText_AbilityPreventsSpecificStatLoss 083FE3E0
 gText_ItemPumpedMon 083FE424

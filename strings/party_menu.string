@@ -42,3 +42,9 @@ You have no room to\nseparate the Pok\emon.[PAUSE_UNTIL_PRESS]
 
 #org @gText_CantFuseWithPokemon
 It cannot be fused with\nthat Pok\emon.[PAUSE_UNTIL_PRESS]
+
+#org @gText_AbilityCapsuleOfferChange
+Change [BUFFER1]'s Ability\nto [BUFFER2]?
+
+#org @gText_AbilityCapsuleChangedAbility
+[BUFFER1]'s Ability has been\nchanged to [BUFFER2].[PAUSE_UNTIL_PRESS]

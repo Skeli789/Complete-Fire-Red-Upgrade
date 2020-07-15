@@ -20,6 +20,7 @@
 #include "../include/list_menu.h"
 #include "../include/m4a.h"
 #include "../include/map_name_popup.h"
+#include "../include/map_preview_screen.h"
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -891,13 +892,16 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 		case TRAINER_BATTLE_OAK_TUTORIAL:
 			#ifdef TUTORIAL_BATTLES
-				if (Var8000 != 0xFEFE)
-					TrainerBattleLoadArgs(sOakTutorialParams, data);
-				else //Regular trainer battle 9
+			if (Var8000 != 0xFEFE)
+				TrainerBattleLoadArgs(sOakTutorialParams, data);
+			else //Regular trainer battle 9
 			#endif
-					TrainerBattleLoadArgs(sContinueLostBattleParams, data);
-			if (FlagGet(FLAG_TWO_OPPONENTS))
-				gTrainerBattleOpponent_B = VarGet(VAR_SECOND_OPPONENT);
+			{
+				TrainerBattleLoadArgs(sContinueLostBattleParams, data);
+				gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
+				if (FlagGet(FLAG_TWO_OPPONENTS))
+					gTrainerBattleOpponent_B = VarGet(VAR_SECOND_OPPONENT);
+			}
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_MULTI:
@@ -1560,6 +1564,7 @@ void RunOnTransitionMapScript(void)
 	gCurrentDexNavChain = 0;
 	gFishingStreak = 0;
 	gLastFishingSpecies = 0;
+	gDontFadeWhite = FALSE;
 	ResetMiningSpots();
 	ForceClockUpdate();
 	MapHeaderRunScriptByTag(3);
@@ -1636,15 +1641,7 @@ const u8* LoadProperWhiteoutString(const u8* string)
 		if (gSaveBlock1->location.mapNum != MAP_NUM(PLAYER_HOME)
 		||  gSaveBlock1->location.mapGroup != MAP_GROUP(PLAYER_HOME))
 		{
-			#ifdef FLAG_HEALER_DREAM
-			if (FlagGet(FLAG_HEALER_DREAM))
-			{
-				FlagClear(FLAG_HEALER_DREAM);
-				string = gText_AllJustADream;
-			}
-			else
-			#endif
-				string = gText_ScurriedToNearestHealer;
+			string = gText_ScurriedToNearestHealer;
 		}
 	}
 	#endif
@@ -1932,7 +1929,9 @@ bool8 IsCurrentAreaAutumn(void)
 		return mapSec == MAPSEC_TEHL_TOWN
 			|| mapSec == MAPSEC_ROUTE_9
 			|| mapSec == MAPSEC_ROUTE_10
-			|| mapSec == MAPSEC_AUBURN_WATERWAY;
+			|| mapSec == MAPSEC_AUBURN_WATERWAY
+			|| (mapSec == MAPSEC_HIDDEN_GROTTO
+			 && MAP_IS(HIDDEN_GROTTO_AUTUMN));
 	#else
 		return FALSE;
 	#endif
@@ -1949,7 +1948,9 @@ bool8 IsCurrentAreaWinter(void)
 			|| mapSec == MAPSEC_BLIZZARD_CITY
 			|| mapSec == MAPSEC_FROZEN_FOREST
 			|| (mapSec == MAPSEC_VICTORY_ROAD
-			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE));
+			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
+			|| (mapSec == MAPSEC_HIDDEN_GROTTO
+			 && MAP_IS(HIDDEN_GROTTO_WINTER));
 	#else
 		return FALSE;
 	#endif
@@ -2512,6 +2513,26 @@ u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStru
 		return PLAYER_AVATAR_FLAG_ON_FOOT;
 }
 
+void WarpFadeOutScreen(void)
+{
+    const struct MapHeader *header = GetDestinationWarpMapHeader();
+    if (header->regionMapSectionId != gMapHeader.regionMapSectionId && MapHasPreviewScreen(header->regionMapSectionId, MPS_TYPE_CAVE))
+        FadeScreen(FADE_TO_BLACK, 0);
+    else
+    {
+        switch (MapTransitionIsEnter(GetCurrentMapType(), header->mapType))
+        {
+        case FALSE:
+            FadeScreen(FADE_TO_BLACK, 0);
+            break;
+        case TRUE:
+			gDontFadeWhite = TRUE; //Prevent DNS issues at night
+            FadeScreen(FADE_TO_WHITE, 0);
+            break;
+        }
+    }
+}
+
 //Stuff to do with pressing buttons in the field//
 void FieldCheckIfPlayerPressedLButton(struct FieldInput* input, u16 newKeys)
 {
@@ -2542,7 +2563,7 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 	return FALSE;
 }
 
-static void UseRegisteredItem(u16 registeredItem)
+void UseRegisteredItem(u16 registeredItem)
 {
 	u8 taskId;
 
@@ -2552,7 +2573,8 @@ static void UseRegisteredItem(u16 registeredItem)
 	StopPlayerAvatar();
 	Var800E = registeredItem;
 	taskId = CreateTask(ItemId_GetFieldFunc(registeredItem), 8);
-	gTasks[taskId].data[3] = 1;
+	if (taskId != 0xFF)
+		gTasks[taskId].data[3] = 1;
 }
 
 static bool8 UseRegisteredKeyItemOnField(void)
@@ -2612,9 +2634,18 @@ static bool8 UseRegisteredKeyItemOnField(void)
 	return TRUE;
 }
 
+void Task_UseChosenRegisteredItem(u8 taskId)
+{
+	if (!ScriptContext2_IsEnabled())
+	{
+		UseRegisteredItem(gSaveBlock1->registeredItems[gSpecialVar_LastResult]);
+		DestroyTask(taskId);
+	}
+}
+
 void UseChosenRegisteredItem(void)
 {
-	UseRegisteredItem(gSaveBlock1->registeredItems[gSpecialVar_LastResult]);
+	CreateTask(Task_UseChosenRegisteredItem, 0xFF);
 }
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX

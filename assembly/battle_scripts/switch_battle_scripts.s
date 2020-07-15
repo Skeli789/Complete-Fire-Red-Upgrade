@@ -143,7 +143,6 @@ BattleScript_StickyWebSpeedDrop:
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
-	callasm TryActivateDefiantForStickyWeb @;And Competitive
 BattleScript_StickyWebSpeedDropReturn:
 	bicword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return

@@ -74,7 +74,7 @@ void __attribute__((long_call)) Bag_BuildListMenuTemplate(u8 pocketId);
 void __attribute__((long_call)) BagCreateYesNoMenuBottomRight(u8 a, const struct YesNoFuncTable *funcTable);
 void __attribute__((long_call)) SetInitialScrollAndCursorPositions(u8 pocketId);
 void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);
-void __attribute__((long_call)) ReturnFromItemToBag(u8 taskId);
+void __attribute__((long_call)) ItemMenu_StartFadeToExitCallback(u8 taskId);
 void __attribute__((long_call)) ItemMenu_SetExitCallback(void* callbackFunc);
 void __attribute__((long_call)) PrepareOverworldReturn(void);
 void __attribute__((long_call)) ResetBagCursorPositions(void);
