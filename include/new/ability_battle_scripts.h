@@ -7,8 +7,7 @@
  * \brief Contains declarations for battle scripts of abilities.
  */
 
-#define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
-
+extern const u8 BattleScript_OverworldWeatherStarts[];
 extern const u8 BattleScript_NewWeatherAbilityActivates[];
 extern const u8 BattleScript_NewWeatherAbilityActivatesCall[];
 extern const u8 BattleScript_AirLock[];
