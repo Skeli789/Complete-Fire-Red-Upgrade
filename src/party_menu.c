@@ -2,9 +2,11 @@
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_effect.h"
+#include "../include/field_screen_effect.h"
 #include "../include/field_weather.h"
 #include "../include/fieldmap.h"
 #include "../include/item_use.h"
+#include "../include/item_menu.h"
 #include "../include/menu.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -50,13 +52,13 @@ struct PartyMenuBoxInfoRects
 
 struct PartyMenuBox
 {
-    const struct PartyMenuBoxInfoRects *infoRects;
-    const u8 *spriteCoords;
-    u8 windowId;
-    u8 monSpriteId;
-    u8 itemSpriteId;
-    u8 pokeballSpriteId;
-    u8 statusSpriteId;
+	const struct PartyMenuBoxInfoRects *infoRects;
+	const u8 *spriteCoords;
+	u8 windowId;
+	u8 monSpriteId;
+	u8 itemSpriteId;
+	u8 pokeballSpriteId;
+	u8 statusSpriteId;
 };
 
 struct PartyMenuInternal
@@ -934,7 +936,7 @@ static bool8 SetUpFieldMove_Waterfall(void)
 		return FALSE;
 
 	GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
-	if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) == TRUE && IsPlayerSurfingNorth() == TRUE)
+	if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) == TRUE && IsPlayerSurfingNorthOrSouth() == TRUE)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = (void*) 0x8124ADD;
@@ -962,7 +964,7 @@ static bool8 SetUpFieldMove_Teleport(void)
 
 static void FieldCallback_Dive(void)
 {
-	((u32*) gFieldEffectArguments)[0] = GetCursorSelectionMonId();
+	gFieldEffectArguments[0] = GetCursorSelectionMonId();
 	FieldEffectStart(FLDEFF_USE_DIVE);
 }
 
@@ -971,8 +973,8 @@ static bool8 SetUpFieldMove_Dive(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
 		return FALSE;
 
-	((u32*) gFieldEffectArguments)[1] = TrySetDiveWarp();
-	if (((u32*) gFieldEffectArguments)[1] != 0)
+	gFieldEffectArguments[1] = TrySetDiveWarp();
+	if (gFieldEffectArguments[1] != 0)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = FieldCallback_Dive;
@@ -984,7 +986,7 @@ static bool8 SetUpFieldMove_Dive(void)
 
 static void FieldCallback_RockClimb(void)
 {
-	((u32*) gFieldEffectArguments)[0] = GetCursorSelectionMonId();
+	gFieldEffectArguments[0] = GetCursorSelectionMonId();
 	ScriptContext1_SetupScript(EventScript_RockClimb);
 }
 
@@ -1007,7 +1009,7 @@ static void FieldCallback_Defog(void)
 {
 	u8 monId = GetCursorSelectionMonId();
 
-	((u32*) gFieldEffectArguments)[0] = monId;
+	gFieldEffectArguments[0] = monId;
 	GetMonNickname(&gPlayerParty[monId], gStringVar1);
 	ScriptContext1_SetupScript(EventScript_Defog);
 }
@@ -1096,7 +1098,7 @@ void sp103_IsPlayerFacingClimbableWaterfall(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
 		return;
 
-	gSpecialVar_LastResult = MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) && IsPlayerSurfingNorth();
+	gSpecialVar_LastResult = MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) && IsPlayerSurfingNorthOrSouth();
 }
 
 void sp104_IsPlayerOnDiveableWater(void)
@@ -1286,6 +1288,7 @@ static bool8 IsUsePartyMenuItemHPEVModifier(struct Pokemon* mon, u16 oldHP, u16 
 static void AdjustFriendshipForEVReducingBerry(struct Pokemon* mon);
 static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func);
 static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func);
+static void FormChangeItem_ShowPartyMenuFromField(u8 taskId);
 static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func);
 static void Task_TryLearnPostFormeChangeMove(u8 taskId);
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
@@ -1398,14 +1401,14 @@ void ItemUseCB_MedicineStep(u8 taskId, TaskFunc func)
 
 void Task_DoLearnedMoveFanfareAfterText(u8 taskId)
 {
-    if (!IsPartyMenuTextPrinterActive())
-    {
+	if (!IsPartyMenuTextPrinterActive())
+	{
 		if (gPartyMenu.action == PARTY_ACTION_CHOOSE_MON)
 			gPartyMenu.action = PARTY_ACTION_USE_ITEM;
 
-        PlayFanfare(MUS_FANFA1);
-        gTasks[taskId].func = (void*) (0x8125D2C | 1); //Task_LearnNextMoveOrClosePartyMenu
-    }
+		PlayFanfare(MUS_FANFA1);
+		gTasks[taskId].func = (void*) (0x8125D2C | 1); //Task_LearnNextMoveOrClosePartyMenu
+	}
 }
 
 #define sLevelUpWindowStatNames ((const u8**) 0x8459B48)
@@ -1464,8 +1467,8 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 
 void FieldUseFunc_EVReducingBerry(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_EVReducingBerry;
-    SetUpItemUseCallback(taskId);
+	gItemUseCB = ItemUseCB_EVReducingBerry;
+	SetUpItemUseCallback(taskId);
 }
 
 static void AdjustFriendshipForEVReducingBerry(struct Pokemon* mon)
@@ -1509,13 +1512,13 @@ extern const u8 gText_EVReducingBerryLoweredStat[];
 extern const u8 gText_EVReducingBerryIncreasedFriendship[];
 static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 {
-    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = Var800E;
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 item = Var800E;
 	u8 stat = ItemId_GetHoldEffectParam(item);
 	u8 ev = GetMonData(mon, MON_DATA_HP_EV + stat, NULL);
 	u8 friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
 
-    PlaySE(SE_SELECT);
+	PlaySE(SE_SELECT);
 	if (friendship < MAX_FRIENDSHIP || ev > 0) //Stat can fall or friendship can increase
 	{
 		u16 oldHP = GetMonData(mon, MON_DATA_HP, NULL);
@@ -1577,19 +1580,39 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 		ScheduleBgCopyTilemapToVram(2);
 		gTasks[taskId].func = func;
 	}
-    else //No Effect
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = func;
-    }
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
 }
 
 void FieldUseFunc_FormChangeItem(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_FormChangeItem;
-    SetUpItemUseCallback(taskId);
+	gItemUseCB = ItemUseCB_FormChangeItem;
+
+    if (gTasks[taskId].data[3] == 0) //From Bag
+    {
+		SetUpItemUseCallback(taskId);
+    }
+    else //From Overworld
+    {
+        FadeScreen(FADE_TO_BLACK, 0);
+        gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
+    }
+}
+
+static void FormChangeItem_ShowPartyMenuFromField(u8 taskId)
+{
+    if (!gPaletteFade->active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        PrepareOverworldReturn();
+		InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_USE_ITEM, TRUE, PARTY_MSG_USE_ON_WHICH_MON, Task_HandleChooseMonInput, CB2_ReturnToFieldContinueScript);
+        DestroyTask(taskId);
+    }
 }
 
 void UpdateMonIconSpecies(u8 iconSpriteId, u16 species)
@@ -1616,11 +1639,11 @@ void DoItemFormChange(struct Pokemon* mon, u16 species)
 
 static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 {
-    struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
-    u16 item = Var800E;
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 item = Var800E;
 	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
 
-    PlaySE(SE_SELECT);
+	PlaySE(SE_SELECT);
 	switch (item) {
 		case ITEM_GRACIDEA:
 			#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)

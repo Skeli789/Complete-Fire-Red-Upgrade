@@ -1224,7 +1224,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
 		{
-			if (!CanKnockOutWithoutMove(move, bankAtk, bankDef)) //Can't KO foe otherwise
+			if (!CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE)) //Can't KO foe otherwise
 			{
 				if (CanKnockOut(bankAtk, bankDef))
 				{
@@ -1298,7 +1298,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 			{
 				if (CanKnockOut(bankAtk, bankDef))
 				{
-					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef))
+					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
 						return CAN_TRY_PIVOT; //Use this move to KO if you must
 				}
 				else //Can't KO the foe
@@ -1311,7 +1311,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 			{
 				if (CanKnockOut(bankAtk, bankDef))
 				{
-					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef) //This is the only move that can KO
+					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE) //This is the only move that can KO
 					&&  !hasUsefulStatBoost) //You're not wasting a valuable stat boost
 					{
 						return CAN_TRY_PIVOT;

@@ -647,7 +647,7 @@ MOVESCR_CHECK_0:
 					{
 						//Good to use move
 					}
-					else if (CanKnockOutWithoutMove(move, bankAtk, bankDef))
+					else if (CanKnockOutWithoutMove(move, bankAtk, bankDef, FALSE))
 						DECREASE_VIABILITY(4); //Better to use a different move to knock out
 				}
 				else
@@ -1146,7 +1146,7 @@ MOVESCR_CHECK_0:
 			if (dmg >= gBattleMons[bankAtk].hp //Recoil kills attacker
 			&&  ViableMonCountFromBank(bankDef) > 1) //Foe has more than 1 target left
 			{
-				if (dmg >= gBattleMons[bankDef].hp && !CanKnockOutWithoutMove(move, bankAtk, bankDef))
+				if (dmg >= gBattleMons[bankDef].hp && !CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
 					break; //If it's the only KO move then just use it
 				else
 					DECREASE_VIABILITY(4); //Not as good to use move if you'll faint and not win
@@ -1247,7 +1247,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_RECHARGE:
 			if (data->atkAbility != ABILITY_TRUANT
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
-			&& CanKnockOutWithoutMove(move, bankAtk, bankDef))
+			&& CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
 				DECREASE_VIABILITY(9); //Never use move as finisher if you don't have to
 			break;
 
@@ -1368,7 +1368,7 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_FALSE_SWIPE:
 			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
-			&&  CanKnockOutWithoutMove(move, bankAtk, bankDef))
+			&&  CanKnockOutWithoutMove(move, bankAtk, bankDef, FALSE))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1633,7 +1633,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_BATON_PASS:
-			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
+			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH || move == MOVE_FLIPTURN)
 			{
 				goto AI_STANDARD_DAMAGE;
 			}
@@ -1723,7 +1723,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_FUTURE_SIGHT:
-			if (gWishFutureKnock.futureSightCounter[bankAtk] != 0)
+			if (gWishFutureKnock.futureSightCounter[bankDef] != 0)
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;

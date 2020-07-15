@@ -1442,6 +1442,8 @@ u8 TurnBasedEffects(void)
 				{
 					gNewBS->pickupStack[i] = 0xFF;
 					gNewBS->leftoverHealingDone[i] = FALSE;
+					gNewBS->statRoseThisRound[i] = FALSE;
+					gNewBS->statFellThisRound[i] = FALSE;
 					gNewBS->ai.calculatedAISwitchings[i] = FALSE;
 					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
 					gNewBS->ai.fightingStyle[i] = 0xFF;
@@ -1732,6 +1734,7 @@ bool8 HandleFaintedMonActions(void)
 								{
 									BattleScriptExecute(BattleScript_HandleFaintedMon);
 									gNewBS->doSwitchInEffects |= gBitTable[gBattleStruct->faintedActionsBank];
+									gNewBS->handlingFaintSwitching = TRUE;
 
 									for (i = 0; i < gBattlersCount; ++i)
 									{
@@ -1864,6 +1867,7 @@ bool8 HandleFaintedMonActions(void)
 				break;
 
 			case FAINTED_ACTIONS_MAX_CASE:
+				gNewBS->handlingFaintSwitching = FALSE;
 				break;
 		}
 	} while (gBattleStruct->faintedActionsState != FAINTED_ACTIONS_MAX_CASE);

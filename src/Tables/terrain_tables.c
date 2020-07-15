@@ -410,6 +410,14 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_FROSTBREATH,
 			.burmyForm = SPECIES_BURMY,
 		},
+	[BATTLE_TERRAIN_NIGHTMARE + 4] =
+		{
+			.camouflageType = TYPE_DARK,
+			.secretPowerEffect = MOVE_EFFECT_SLEEP,
+			.secretPowerAnim = MOVE_FEINTATTACK,
+			.naturePowerMove = MOVE_DARKPULSE,
+			.burmyForm = SPECIES_NONE,
+		},
 #endif
 };
 

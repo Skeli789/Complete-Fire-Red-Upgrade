@@ -9,7 +9,7 @@
 
 //Exported Functions
 bool8 TryActivateOWTerrain(void);
-bool8 CanActivateTotemBoost(u8 bank);
+u8 CanActivateTotemBoost(u8 bank);
 u16 GetMUS_ForBattle(void);
 u8 GetTrainerBattleTransition(void);
 u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities);
@@ -28,3 +28,10 @@ void RunTurnActionsFunctions(void);
 void HandleAction_UseMove(void);
 u16 LoadProperMusicForLinkBattles(void);
 
+//Exported Constants
+enum TotemBoostType
+{
+	TOTEM_NO_BOOST,
+	TOTEM_SINGLE_BOOST,
+	TOTEM_OMNIBOOST,
+};

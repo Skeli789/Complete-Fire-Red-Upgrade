@@ -4,7 +4,8 @@
 TagTeamExecutionCompleteHook 802E384
 
 ##Script Commands
-ScrCmd_callstd 815F9D8
+ScrCmd_message 815FB50
+ScrCmd_hidemappopup 815FC78
 CreateSpriteLoadTable 0815fc5c
 
 ##Specials
@@ -172,6 +173,9 @@ sp12C_DoEnterPhraseScreen 08160210
 sp12D_CompareEnteredPhrase 08160214
 
 sp196_TryCopyTMNameToBuffer1 081603B8
+
+##Field Effects
+FldEff_BikeTireTracks 081D98D9
 
 ## Expanded Text Buffers
 LoadTextBuffer07 08231E8C

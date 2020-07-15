@@ -78,7 +78,7 @@ ACCURACY_CHECK_START:
 	else
 	{
 		if (gNewBS->ParentalBondOn == 1
-		||  (gNewBS->MultiHitOn && (move != MOVE_TRIPLEKICK
+		||  (gNewBS->MultiHitOn && (gBattleMoves[move].effect != EFFECT_TRIPLE_KICK
 						 || ABILITY(gBankAttacker) == ABILITY_SKILLLINK)))
 		{
 			//No acc checks for second hit of Parental Bond or multi hit moves

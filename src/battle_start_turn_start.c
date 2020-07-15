@@ -12,6 +12,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_transition.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
@@ -29,7 +30,7 @@
 /*
 battle_start_turn_start.c
 	-handles the logic for determining which pokemon attacks first
-	=also handles setting up battle data
+	-also handles setting up battle data
 */
 
 enum BattleBeginStates
@@ -313,9 +314,17 @@ void BattleBeginFirstTurn(void)
 							continue;
 						#endif
 
-						if (CanActivateTotemBoost(*bank))
+						u8 totemBoostType = CanActivateTotemBoost(*bank);
+						if (totemBoostType == TOTEM_SINGLE_BOOST)
 						{
 							BattleScriptPushCursorAndCallback(BattleScript_Totem);
+							gBankAttacker = gBattleScripting.bank = *bank;
+							++*bank;
+							return;
+						}
+						else if (totemBoostType == TOTEM_OMNIBOOST) //All stats
+						{
+							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							gBankAttacker = gBattleScripting.bank = *bank;
 							++*bank;
 							return;
@@ -365,7 +374,9 @@ void BattleBeginFirstTurn(void)
 				{
 					gBattleMons[i].status2 &= ~8;
 					gNewBS->pickupStack[i] = 0xFF;
+					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisTurn[i] = FALSE;
+					gNewBS->statFellThisRound[i] = FALSE;
 				}
 
 				gBattleStruct->turnEffectsTracker = 0;
@@ -433,26 +444,35 @@ bool8 TryActivateOWTerrain(void)
 	return effect;
 }
 
-bool8 CanActivateTotemBoost(u8 bank)
+u8 CanActivateTotemBoost(u8 bank)
 {
-	u16 stat = VarGet(VAR_TOTEM + bank) & 0x7;
+	u16 val = VarGet(VAR_TOTEM + bank);
+	u16 stat = val & 0x7;
 
 	if (bank < gBattlersCount && stat != 0)
 	{
-		u8 raiseAmount = VarGet(VAR_TOTEM + bank) & ~(0xF);
+		u8 raiseAmount = val & ~(0xF);
 
-		if (stat <= STAT_STAGE_EVASION
+		if (val == 0xFFFF) //Omniboost
+		{
+			if (InBattleSands())
+				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
+
+			return TOTEM_OMNIBOOST;
+		}
+		else if (stat <= STAT_STAGE_EVASION
 		&& ((raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gBattleScripting.statChanger = stat | raiseAmount;
 			if (InBattleSands())
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
-			return TRUE;
+
+			return TOTEM_SINGLE_BOOST;
 		}
 	}
 
-	return FALSE;
+	return TOTEM_NO_BOOST;
 }
 
 static void TryPrepareTotemBoostInBattleSands(void)
@@ -516,7 +536,8 @@ void SetActionsAndBanksTurnOrder(void)
 
 	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
 	{
-		for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+		for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+		{
 			gActionsByTurnOrder[turnOrderId] = gChosenActionByBank[gActiveBattler];
 			gBanksByTurnOrder[turnOrderId] = gActiveBattler;
 			++turnOrderId;
@@ -526,7 +547,8 @@ void SetActionsAndBanksTurnOrder(void)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 		{
-			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+			{
 				if (gChosenActionByBank[gActiveBattler] == ACTION_RUN)
 				{
 					turnOrderId = 5;
@@ -536,14 +558,24 @@ void SetActionsAndBanksTurnOrder(void)
 		}
 		else
 		{
-			if (gChosenActionByBank[0] == ACTION_RUN) {
+			if (gChosenActionByBank[0] == ACTION_RUN)
+			{
 				gActiveBattler = 0;
 				turnOrderId = 5;
 			}
+			else if (gChosenActionByBank[0] == ACTION_USE_ITEM)
+			{
+				gNewBS->playerItemUsedCount = MathMin(gNewBS->playerItemUsedCount + 1, 0xFF);
+			}
 
-			if (gChosenActionByBank[2] == ACTION_RUN) {
+			if (gChosenActionByBank[2] == ACTION_RUN)
+			{
 				gActiveBattler = 2;
 				turnOrderId = 5;
+			}
+			else if (gChosenActionByBank[2] == ACTION_USE_ITEM && !IsTagBattle())
+			{
+				gNewBS->playerItemUsedCount = MathMin(gNewBS->playerItemUsedCount + 1, 0xFF);
 			}
 		}
 
@@ -1301,7 +1333,7 @@ u16 GetMUS_ForBattle(void)
 	{
 		u8 trainerClass;
 
-		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_A))
 		{
 			//If either trainer is special, try to load their music
 			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, BATTLE_FACILITY_TRAINER_A);
@@ -1418,21 +1450,10 @@ u16 LoadProperMusicForLinkBattles(void)
 extern const u8 sBattleTransitionTable_Trainer[][2];
 u8 GetTrainerBattleTransition(void)
 {
-	u8 minPartyCount;
-	u8 transitionType;
-	u8 enemyLevel;
-	u8 playerLevel;
+	u8 minPartyCount, transitionType, enemyLevel, playerLevel;
 
 	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 		return B_TRANSITION_CHAMPION;
-
-	#ifdef TUTORIAL_BATTLES
-	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId != 0)
-		return B_TRANSITION_CHAMPION;
-	#else
-	if (sTrainerEventObjectLocalId != 0) //Used for mugshots
-		return B_TRANSITION_CHAMPION;
-	#endif
 
 	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)
@@ -1440,6 +1461,9 @@ u8 GetTrainerBattleTransition(void)
 
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR)
 	{
+		VarSet(VAR_PRE_BATTLE_MUGSHOT_STYLE, MUGSHOT_TWO_BARS);
+		VarSet(VAR_PRE_BATTLE_MUGSHOT_SPRITE, MUGSHOT_PLAYER);
+
 		if (gTrainerBattleOpponent_A == TRAINER_LORELEI
 		||  gTrainerBattleOpponent_A == TRAINER_LORELEI_REMATCH)
 			return B_TRANSITION_LORELEI;
@@ -1455,6 +1479,35 @@ u8 GetTrainerBattleTransition(void)
 
 		return B_TRANSITION_CHAMPION;
 	}
+	#endif
+
+	#ifdef TUTORIAL_BATTLES
+	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId >= 0x100)
+		return B_TRANSITION_CHAMPION;
+	#else
+	if (sTrainerEventObjectLocalId >= 0x100) //Used for mugshots
+		return B_TRANSITION_CHAMPION;
+	#endif
+
+	#ifdef VAR_BATTLE_TRANSITION_LOGO
+	u16 transitionLogo = VarGet(VAR_BATTLE_TRANSITION_LOGO);
+	if (transitionLogo == 0) //No preset logo
+	{
+		u8 trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0);
+
+		for (u32 i = 0; i < gNumBattleTransitionLogos; ++i)
+		{
+			if (gBattleTransitionLogos[i].trainerClass != 0 //These logos must be set manually
+			&& gBattleTransitionLogos[i].trainerClass == trainerClass)
+			{
+				transitionLogo = i;
+				VarSet(VAR_BATTLE_TRANSITION_LOGO, transitionLogo); //Prep for later
+				return B_TRANSITION_CUSTOM_LOGO;
+			}
+		}
+	}
+	else
+		return B_TRANSITION_CUSTOM_LOGO;
 	#endif
 
 	if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
@@ -1604,6 +1657,9 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 					priority += 3;
 		}
+		
+		if (move == MOVE_GRASSYGLIDE && gTerrainType == GRASSY_TERRAIN && CheckGrounding(bank))
+			++priority;
 	}
 
 	return priority;

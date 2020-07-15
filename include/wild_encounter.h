@@ -43,7 +43,7 @@ u8 __attribute__((long_call)) ChooseWildMonIndex_Land(void);
 u8 __attribute__((long_call)) ChooseWildMonIndex_WaterRock(void);
 u8 __attribute__((long_call)) ChooseWildMonIndex_Fishing(u8 rod);
 bool8 __attribute__((long_call)) CanEncounterUnownInTanobyRuins(void);
-u32 __attribute__((long_call)) GenerateUnownPersonality(u8 letter);
+u32 __attribute__((long_call)) GenerateUnownPersonalityByLetter(u8 letter);
 //bool8 __attribute__((long_call)) DoWildEncounterRateDiceRoll(u16 encounterRate);
 bool8 __attribute__((long_call)) DoGlobalWildEncounterDiceRoll(void);
 bool8 __attribute__((long_call)) IsWildLevelAllowedByRepel(u8 level);

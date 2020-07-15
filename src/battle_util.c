@@ -249,7 +249,7 @@ bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move)
 
 bool8 CheckGrounding(u8 bank)
 {
-	if (gStatuses3[bank] & STATUS3_IN_AIR)
+	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
 
 	if (IsGravityActive()
@@ -270,7 +270,7 @@ bool8 CheckGrounding(u8 bank)
 
 bool8 NonInvasiveCheckGrounding(u8 bank)
 {
-	if (gStatuses3[bank] & STATUS3_IN_AIR)
+	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
 
 	if (IsGravityActive()
@@ -589,6 +589,19 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 	}
 
 	return unusableMoves;
+}
+
+void CancelMultiTurnMoves(u8 battler)
+{
+    gBattleMons[battler].status2 &= ~(STATUS2_MULTIPLETURNS);
+    gBattleMons[battler].status2 &= ~(STATUS2_LOCK_CONFUSE);
+    gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
+    gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
+
+    gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+
+    gDisableStructs[battler].rolloutTimer = 0;
+    gDisableStructs[battler].furyCutterCounter = 0;
 }
 
 bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)

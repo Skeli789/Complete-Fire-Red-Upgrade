@@ -1844,6 +1844,21 @@ bool8 CheckCantMoveThisTurn(void)
 
 bool8 IsBagDisabled(void)
 {
+	#ifdef VAR_GAME_DIFFICULTY
+	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		if (difficulty == OPTIONS_HARD_DIFFICULTY)
+		{
+			if (gNewBS->playerItemUsedCount >= 4) //Max four items can be used
+				return FALSE;
+		}
+		if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
+			return FALSE;
+	}
+	#endif
+
 	return FlagGet(FLAG_DISABLE_BAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
 }
 

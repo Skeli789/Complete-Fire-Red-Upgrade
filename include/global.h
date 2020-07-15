@@ -137,6 +137,8 @@ enum
 	OPTIONS_R_BUTTON_MODE_DEXNAV,
 	OPTIONS_R_BUTTON_MODE_POKEMON_MENU,
 	OPTIONS_R_BUTTON_MODE_BAG,
+	OPTIONS_R_BUTTON_MODE_MINING,
+	OPTIONS_R_BUTTON_MODE_DEBUG,
 };
 
 enum
@@ -397,7 +399,7 @@ struct SaveBlock2 //0x2024588
 			  u16 optionsBattleSceneOff:1; // whether battle animations are disabled
 			  u16 regionMapZoom:1; // whether the map is zoomed in
 	/*0x018*/ struct Pokedex pokedex;
-	/*0x028*/ u8 filler_28[112];
+	/*0x028*/ u8 filler_28[0x70];
 	/*0x098*/ struct Time localTimeOffset;
 	/*0x0A0*/ struct Time lastBerryTreeUpdate;
 	/*0x0A8*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
@@ -758,7 +760,7 @@ struct SaveBlock1 //0x202552C
 	/*0x2CC4*/ u16 easyChatBattleLost[6];
 	/*0x2CD0*/ struct MailStruct mail[MAIL_COUNT];
 	/*0x2F10*/ u8 additionalPhrases[EASY_CHAT_EXTRA_PHRASES_SIZE];
-	/*0x2F18*/ u8 filler_2F18[0x68];
+	/*0x2F18*/ u8 itemObtainedFlags[0x68]; //Can go up to item Id 832
 	/*0x2F80*/ struct DayCare daycare;
 	/*0x309C*/ u8 giftRibbons[52];
 	/*0x30D0*/ struct RoamerOld roamer;
@@ -800,5 +802,19 @@ struct Bitmap           // TODO: Find a better spot for this
 extern u8 gReservedSpritePaletteCount;
 
 #define gText_Cancel ((u8*) 0x84161C1)
+
+struct Clock
+{
+	u16 year;
+	u8 _; //Unused - left in to maintain compatability with old hacks
+	u8 month;
+	u8 day;
+	u8 dayOfWeek;
+	u8 hour;
+	u8 minute;
+	u8 second;
+};
+
+extern struct Clock gClock; //0x3005EA0 - Was 0x300553C - new one doesn't conflict with linking
 
 #endif // GUARD_GLOBAL_H

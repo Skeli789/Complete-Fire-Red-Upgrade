@@ -44,15 +44,6 @@
 #define MENU_STATE_WAIT_FOR_FANFARE 32
 #define MENU_STATE_WAIT_FOR_A_BUTTON 33
 
-
-enum
-{
-    SCROLL_ARROW_LEFT,
-    SCROLL_ARROW_RIGHT,
-    SCROLL_ARROW_UP,
-    SCROLL_ARROW_DOWN
-};
-
 #define sMoveRelearnerMovesListTemplate ((void*) 0x83FFA94)
 
 /*

@@ -4,11 +4,13 @@
 #include "../include/event_data.h"
 #include "../include/m4a.h"
 
+#include "../include/constants/game_stat.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/exp.h"
 #include "../include/new/util.h"
@@ -384,11 +386,15 @@ void atk23_getexp(void)
 				gBattleMons[leveledUpBank].level = gPlayerParty[gBattleStruct->expGetterMonId].level;
 				gBattleMons[leveledUpBank].hp = gPlayerParty[gBattleStruct->expGetterMonId].hp;
 				gBattleMons[leveledUpBank].maxHP = gPlayerParty[gBattleStruct->expGetterMonId].maxHP;
-				gBattleMons[leveledUpBank].attack = gPlayerParty[gBattleStruct->expGetterMonId].attack;
-				gBattleMons[leveledUpBank].defense = gPlayerParty[gBattleStruct->expGetterMonId].defense;
-				gBattleMons[leveledUpBank].speed = gPlayerParty[gBattleStruct->expGetterMonId].speed;
-				gBattleMons[leveledUpBank].spAttack = gPlayerParty[gBattleStruct->expGetterMonId].spAttack;
-				gBattleMons[leveledUpBank].spDefense = gPlayerParty[gBattleStruct->expGetterMonId].spDefense;
+
+				if (!IS_TRANSFORMED(leveledUpBank)) //Don't replace the temp stats
+				{
+					gBattleMons[leveledUpBank].attack = gPlayerParty[gBattleStruct->expGetterMonId].attack;
+					gBattleMons[leveledUpBank].defense = gPlayerParty[gBattleStruct->expGetterMonId].defense;
+					gBattleMons[leveledUpBank].speed = gPlayerParty[gBattleStruct->expGetterMonId].speed;
+					gBattleMons[leveledUpBank].spAttack = gPlayerParty[gBattleStruct->expGetterMonId].spAttack;
+					gBattleMons[leveledUpBank].spDefense = gPlayerParty[gBattleStruct->expGetterMonId].spDefense;
+				}
 			}
 		}
 		else
@@ -537,6 +543,24 @@ static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c)
 #define tExpTask_gainedExp1 data[3]
 #define tExpTask_gainedExp2 data[4]
 #define tExpTask_frames     data[10]
+static void UpdateDailyExpGameStat(u32 gainedExp)
+{
+	if (!IsTimeInVarInFuture(VAR_SWARM_DAILY_EVENT))
+	{
+		u32 totalExpGainedToday = GetGameStat(GAME_STAT_EXP_EARNED_TODAY);
+		u32 remainingPossibleInGameStat = 0xFFFFFFFF - totalExpGainedToday;
+
+		if (gainedExp > remainingPossibleInGameStat)		
+			SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0xFFFFFFFF);
+		else
+			SetGameStat(GAME_STAT_EXP_EARNED_TODAY, totalExpGainedToday + gainedExp);
+	}
+	else
+	{
+		SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
+	}
+}
+
 void PlayerHandleExpBarUpdate(void)
 {
 	u8 monId = gBattleBufferA[gActiveBattler][1];
@@ -552,6 +576,8 @@ void PlayerHandleExpBarUpdate(void)
 
 		load_gfxc_health_bar(1);
 		gainedExp = T1_READ_32(&gBattleBufferA[gActiveBattler][2]);
+		UpdateDailyExpGameStat(gainedExp);
+
 		taskId = CreateTask(Task_GiveExpToMon, 10);
 		gTasks[taskId].tExpTask_monId = monId;
 		gTasks[taskId].tExpTask_battler = gActiveBattler;
@@ -574,19 +600,20 @@ static void Task_GiveExpToMon(u8 taskId)
 	u32 currExp = GetMonData(mon, MON_DATA_EXP, NULL);
 	u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats[species].growthRate);
 
-	if (IS_DOUBLE_BATTLE || monId != gBattlerPartyIndexes[bank])
+	if (IS_DOUBLE_BATTLE || monId != gBattlerPartyIndexes[bank]) //Give exp without moving the expbar.
 	{
 		if (currExp + gainedExp >= nextLvlExp)
 		{
-			u8 savedActiveBank = gActiveBattler;
+			u8 savedActiveBattler = gActiveBattler;
 
 			SetMonData(mon, MON_DATA_EXP, &nextLvlExp);
 			CalculateMonStats(mon);
-			TryBoostDynamaxHPAfterLevelUp(bank);
+			if (monId == gBattlerPartyIndexes[bank]) //Pokemon in battle
+				TryBoostDynamaxHPAfterLevelUp(bank);
 			gainedExp -= (nextLvlExp - currExp);
 			gActiveBattler = bank;
-			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitCmd33, but Cmd34 allows for more data transfer
-			gActiveBattler = savedActiveBank;
+			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitTwoReturnValues, but Cmd34 allows for more data transfer
+			gActiveBattler = savedActiveBattler;
 
 			if (IS_DOUBLE_BATTLE && (monId == gBattlerPartyIndexes[bank] || monId == gBattlerPartyIndexes[bank ^ BIT_FLANK]))
 				gTasks[taskId].func = Task_LaunchLvlUpAnim;

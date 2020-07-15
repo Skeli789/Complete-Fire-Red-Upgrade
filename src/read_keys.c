@@ -6,12 +6,16 @@
 #include "../include/item_menu.h"
 #include "../include/overworld.h"
 #include "../include/map_name_popup.h"
+#include "../include/rtc.h"
 #include "../include/start_menu.h"
 #include "../include/party_menu.h"
+#include "../include/constants/region_map_sections.h"
 
 #include "../include/new/dexnav.h"
+#include "../include/new/overworld.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/util.h"
+
 /*
 read_keys.c
 	emulated JPANs keypad hacks, allowing the designer to force key presses, prevent them, or map functions onto them, among other uses.
@@ -42,6 +46,8 @@ extern const u8 SystemScript_EnableBikeTurboBoost[];
 extern const u8 SystemScript_DisableBikeTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
+extern const u8 SystemScript_MiningScan[];
+extern const u8 SystemScript_DebugMenu[];
 
 static void CB2_PartyMenuFromField(void);
 static void CB2_ItemMenuFromField(void);
@@ -96,6 +102,8 @@ static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys)
 // hook at 080005e8 via r0
 void ReadKeys(void)
 {
+	RtcCalcLocalTime(); //Called here for convenience
+
 	#ifdef SAVE_BLOCK_EXPANSION
 		u16 currKeys = gKeyReg;
 		u8 tryKey = gKeypadSetter->keyFlags;
@@ -206,22 +214,37 @@ void ReadKeys(void)
 		#else
 		switch (VarGet(VAR_R_BUTTON_MODE)) {
 			case OPTIONS_R_BUTTON_MODE_DEXNAV:
-				if (dexNavSpecies != SPECIES_NONE)
+				if (dexNavSpecies != SPECIES_NONE && FlagGet(FLAG_SYS_DEXNAV))
 					InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 				break;
 			case OPTIONS_R_BUTTON_MODE_POKEMON_MENU:
-				if (!gPaletteFade->active)
+				if (!gPaletteFade->active && FlagGet(FLAG_SYS_POKEMON_GET))
 				{
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_PartyMenuFromField);
 				}
 				break;
 			case OPTIONS_R_BUTTON_MODE_BAG:
-				if (!gPaletteFade->active)
+				if (!gPaletteFade->active && !FlagGet(FLAG_SYS_BAG_HIDE))
 				{
 					ScriptContext2_Enable();
 					ScriptContext1_SetupScript(SystemScript_ItemMenuFromField);
 				}
+				break;
+			case OPTIONS_R_BUTTON_MODE_MINING:
+				#ifdef MB_UNDERGROUND_MINING
+				if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY)
+				{
+					TryLoadMiningSpots();
+					ChooseMiningSpotToShow();
+					ScriptContext2_Enable();
+					ScriptContext1_SetupScript(SystemScript_MiningScan);
+				}
+				#endif
+				break;
+			case OPTIONS_R_BUTTON_MODE_DEBUG:
+				ScriptContext2_Enable();
+				ScriptContext1_SetupScript(SystemScript_DebugMenu);
 				break;
 		}
 		#endif
@@ -247,10 +270,10 @@ void InitBagMenuFromField(void)
 
 static void CB2_PartyMenuFromField(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToField);
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldContinueScript);
 }
 
 static void CB2_ItemMenuFromField(void)
 {
-	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToField);
+	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
 }

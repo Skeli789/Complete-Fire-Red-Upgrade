@@ -128,12 +128,17 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 		u8 perfect = 31;
 		bool8 perfectStats[NUM_STATS] = {0};
 
+		//Count pre-existing perfect stats
 		for (int i = 0; i < NUM_STATS; ++i)
 		{
-			u8 randIv = Random() % 32; //Counteract the effects of CREATE_WITH_X_PERFECT_IVS
-			SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + i, &randIv);
+			if (GetMonData(&gEnemyParty[0], MON_DATA_HP_IV + i, NULL) >= 31)
+			{
+				perfectStats[i] = TRUE;
+				++numPerfectStats;
+			}
 		}
 
+		//Add more perfect stats up to max
 		while (numPerfectStats < MathMin(CREATE_ROAMER_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
 		{
 			u8 statId = Random() % NUM_STATS;
@@ -144,6 +149,8 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 				SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + statId, &perfect);
 			}
 		}
+		
+		HealMon(&gEnemyParty[0]);
 	}
 	#endif
 
@@ -369,6 +376,18 @@ void BattleSetup_StartRoamerBattle(void)
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }
 
+
+/*static const union AffineAnimCmd sSpriteAffineAnim_RegionMapRoamer[] =
+{
+	AFFINEANIMCMD_FRAME(-128, -128, 0, 1), //Half size
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_RegionMapRoamer[] =
+{
+	sSpriteAffineAnim_RegionMapRoamer,
+};*/
+
 extern const u16 sMapSectionTopLeftCorners[][2];
 extern const u16 sMapSectionDimensions[][2];
 void CreateTownMapRoamerSprites(void)
@@ -387,10 +406,26 @@ void CreateTownMapRoamerSprites(void)
 			const struct MapHeader* mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
 			u8 regionMapSecId = mapHeader->regionMapSectionId - (MAPSEC_DYNAMIC + 1);
 
-			s16 x = sMapSectionTopLeftCorners[regionMapSecId][0];
-			s16 y = sMapSectionTopLeftCorners[regionMapSecId][1];
+			s16 x = 8 * sMapSectionTopLeftCorners[regionMapSecId][0];
+			s16 y = 8 * sMapSectionTopLeftCorners[regionMapSecId][1];
 
-			gSprites[CreateMonIcon(gRoamers[i].species, SpriteCB_PokeIcon, 8 * x + 36, 8 * y + 36, 0, gRoamers[i].personality, FALSE)].oam.priority = 2;	
+			if (sMapSectionDimensions[regionMapSecId][0] > 1)
+				x += 4 * sMapSectionDimensions[regionMapSecId][0];
+			if (sMapSectionDimensions[regionMapSecId][1] > 1)
+				y += 4 * sMapSectionDimensions[regionMapSecId][1];
+
+			u8 spriteId = CreateMonIcon(gRoamers[i].species, SpriteCB_PokeIcon, x + 36, y + 36 - 8, 0, gRoamers[i].personality, FALSE);
+			if (spriteId < MAX_SPRITES)
+			{
+				struct Sprite* sprite = &gSprites[spriteId];
+			
+				sprite->oam.priority = 2;
+				sprite->invisible = TRUE;
+				/*sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+				sprite->affineAnims = sSpriteAffineAnimTable_RegionMapRoamer;
+				CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+				InitSpriteAffineAnim(sprite);*/
+			}
 		}
 	}
 }
@@ -406,7 +441,28 @@ void DestroyTownMapRoamerSprites(void)
 			if (gRoamers[j].species != SPECIES_NONE
 			&&  (void*) gSprites[i].images == (void*) GetMonIconTiles(gRoamers[j].species, FALSE))
 			{
+				FreeSpriteOamMatrix(&gSprites[i]);
 				DestroyMonIconSprite(&gSprites[i]);
+			}
+		}
+	}
+}
+
+void HideOrShowTownMapRoamerSprites(bool8 invisible)
+{
+	u32 i, j;
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse)
+		{
+			for (j = 0; j < MAX_NUM_ROAMERS; ++j)
+			{
+				if (gRoamers[j].species != SPECIES_NONE
+				&&  (void*) gSprites[i].images == (void*) GetMonIconTiles(gRoamers[j].species, FALSE))
+				{
+					gSprites[i].invisible = invisible;
+				}
 			}
 		}
 	}

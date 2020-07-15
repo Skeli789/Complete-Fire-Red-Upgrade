@@ -3,23 +3,9 @@
 #include "../global.h"
 #include "../list_menu.h"
 
-struct Clock
-{
-	u16 year;
-	u8 _; //For some reason always set to 4
-	u8 month;
-	u8 day;
-	u8 dayOfWeek;
-	u8 hour;
-	u8 minute;
-	u8 second;
-};
-
 //#define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
 //#define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
 //#define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
-
-#define Clock ((struct Clock*) 0x300553C)
 
 //#define gEnemyParty ((struct Pokemon*) 0x202402C)
 //#define gPlayerParty ((struct Pokemon*) 0x2024284)
@@ -30,7 +16,7 @@ struct Clock
 /*u32*/ #define gTrainerId 				*((u32*) 0x2020000)
 
 		#define gWindows ((struct Window*) 0x20204B4)
-/*u8*/  #define gSprites ((struct Sprite*) 0x202063C)
+/*u8*/  //#define gSprites ((struct Sprite*) 0x202063C)
 
 ///*u8*/  #define gStringVar1 ((u8*) 0x2021CD0)
 ///*u8*/  #define gStringVar2 ((u8*) 0x2021CF0)
@@ -55,7 +41,7 @@ struct Clock
 /*u8*/  #define gMultiuseSpriteTemplate ((struct SpriteTemplate*) 0x20244DC)
 
 		extern struct MapHeader gMapHeader;
-		//#define gEventObjects ((struct MapObject*) 0x2036E38)
+		//#define gEventObjects ((struct EventObject*) 0x2036E38)
 /*
 		#define Var8000 (*((u16*) 0x20370B8))
 		#define Var8001 (*((u16*) 0x20370BA))
@@ -157,7 +143,7 @@ struct Clock
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
-#define gMultiChoice ((struct ListMenuItem*) 0x203B774)	// up to 7 pointers, 8 bytes each
+//FREE: 0x203B774
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
@@ -204,5 +190,21 @@ extern bool8 gInShop; //0x203E043
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))
 //#define sStartMenuOpen (*((bool8*) 0x203E054))
+//#define sPrintedRTCWarning (*((bool8*) 0x203E055))
+extern u16 gLastFishingSpecies; //0x203E056
+extern u8 gFishingStreak; //0x203E058
+//#define sLocked (*((bool8*) 0x203E059))
+//#define sRTCErrorStatus (*((u16*) 0x203E05A))
+//#define sRTCSavedIme (*((u16*) 0x203E05C))
+//#define sRTCProbeResult (*((u8*) 0x203E05E))
+extern bool8 gDexNavCooldown; //0x203E05F
+extern struct Coords16 gMiningSpots[8]; //0x203E060
+//#define sSavedWildDataDaytimeHeader (*((const struct WildPokemonHeader**) 0x203E080))
+//#define sSavedWildDataMapGroup (*((u8*) 0x203E084))
+//#define sSavedWildDataMapNum (*((u8*) 0x203E085))
+extern u16 gLastDexNavSpecies; //0x203E086
+//extern struct ListMenuItem[7] gMultiChoice; //0x203E088 - up to 7 pointers, 8 bytes each
+
+//FREE: 0x203E0C0
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

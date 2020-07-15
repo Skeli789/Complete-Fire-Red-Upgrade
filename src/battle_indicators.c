@@ -114,7 +114,7 @@ static const struct OamData sTriggerOam =
 	.objMode = ST_OAM_OBJ_NORMAL,
 	.shape = SPRITE_SHAPE(32x32),
 	.size = SPRITE_SIZE(32x32),
-	.priority = 2, //Same level as healthbox
+	.priority = 1, //Above Pokemon sprites
 };
 
 static const struct OamData sRaidShieldOam =
@@ -322,39 +322,19 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 			self->invisible = FALSE;
 	}
 
-	s16 xshift, yshift;
+	s16 xShift = 0;
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
-		xshift = -6;
-		yshift = -2;
-
-		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
-			xshift -= 8;
-	}
-	else
-	{
-		xshift = -5;
-		yshift = 1;
+		if (GetBattlerPosition(TRIGGER_BANK) == B_POSITION_PLAYER_LEFT)
+			xShift = -48; //X Pos = 16
+		else
+			xShift = 10; //X Pos = 74
 	}
 
-	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
-	struct Sprite* healthbox = &gSprites[id];
-
-	u8 y = healthbox->oam.y;
-
-	if (y)
-	{
-		// Copy the healthbox's position (it has various animations)
-		//self->y = healthbox->y + 20;
-		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
-		self->pos1.y = healthbox->pos1.y + yshift + healthbox->pos2.y;
-	}
-	else
-	{
-		// The box is offscreen, so hide this one as well
-		self->pos1.x = -32;
-	}
+	self->pos1.x = 64 + (32 / 2);
+	self->pos1.y = 80 + (32 / 2);
+	self->pos2.x = xShift;
+	self->pos2.y = self->data[3];
 
 	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
 	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
@@ -371,11 +351,10 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
 		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
-		if (self->data[3] < 24)
+		if (self->data[3] < 32)
 			self->data[3] += 2;
 		else
 		{
-			self->pos1.x = -32;
 			DestroyMegaTriggers();
 			return;
 		}
@@ -561,39 +540,19 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 
 static void SpriteCB_ZTrigger(struct Sprite* self)
 {
-	s16 xshift, yshift;
+	s16 xShift = 0;
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
-		xshift = -6;
-		yshift = -2;
-
-		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
-			xshift -= 8;
-	}
-	else
-	{
-		xshift = -5;
-		yshift = 1;
+		if (GetBattlerPosition(TRIGGER_BANK) == B_POSITION_PLAYER_LEFT)
+			xShift = -48; //X Pos = 16
+		else
+			xShift = 10; //X Pos = 74
 	}
 
-	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
-	struct Sprite* healthbox = &gSprites[id];
-
-	u8 y = healthbox->oam.y;
-
-	if (y)
-	{
-		// Copy the healthbox's position (it has various animations)
-		//self->y = healthbox->y + 20;
-		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
-		self->pos1.y = healthbox->pos1.y + yshift + healthbox->pos2.y;
-	}
-	else
-	{
-		// The box is offscreen, so hide this one as well
-		self->pos1.x = -32;
-	}
+	self->pos1.x = 64 + (32 / 2);
+	self->pos1.y = 80 + (32 / 2);
+	self->pos2.x = xShift;
+	self->pos2.y = self->data[3];
 
 	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
 	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
@@ -610,10 +569,10 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 		}
 		else
 		{
-			if (self->data[3] < 24)
+			if (self->data[3] < 32)
 				self->data[3] += 2;
 			else
-				self->data[3] = 24;
+				self->data[3] = 32;
 		}
 	}
 
@@ -622,11 +581,10 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
 		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
-		if (self->data[3] < 24)
+		if (self->data[3] < 32)
 			self->data[3] += 2;
 		else
 		{
-			self->pos1.x = -32;
 			DestroyZTrigger();
 			return;
 		}
@@ -663,40 +621,19 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 
 static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 {
-	s16 xshift, yshift;
-
+	s16 xShift = 0;
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
-		xshift = -6;
-		yshift = -2;
-
-		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
-			xshift -= 8;
-	}
-	else
-	{
-		xshift = -5;
-		yshift = 1;
+		if (GetBattlerPosition(TRIGGER_BANK) == B_POSITION_PLAYER_LEFT)
+			xShift = -48; //X Pos = 16
+		else
+			xShift = 10; //X Pos = 74
 	}
 
-	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
-	struct Sprite* healthbox = &gSprites[id];
-
-	u8 y = healthbox->oam.y;
-
-	if (y)
-	{
-		// Copy the healthbox's position (it has various animations)
-		//self->y = healthbox->y + 20;
-		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
-		self->pos1.y = healthbox->pos1.y + yshift + healthbox->pos2.y;
-	}
-	else
-	{
-		// The box is offscreen, so hide this one as well
-		self->pos1.x = -32;
-	}
+	self->pos1.x = 64 + (32 / 2);
+	self->pos1.y = 80 + (32 / 2);
+	self->pos2.x = xShift;
+	self->pos2.y = self->data[3];
 
 	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
 	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
@@ -712,10 +649,10 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 		}
 		else
 		{
-			if (self->data[3] < 24)
+			if (self->data[3] < 32)
 				self->data[3] += 2;
 			else
-				self->data[3] = 24;
+				self->data[3] = 32;
 		}
 	}
 
@@ -724,11 +661,10 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
 		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
-		if (self->data[3] < 24)
+		if (self->data[3] < 32)
 			self->data[3] += 2;
 		else
 		{
-			self->pos1.x = -32;
 			DestroyDynamaxTrigger();
 			return;
 		}
@@ -803,11 +739,11 @@ void LoadMegaGraphics(u8 state)
 
 	if (state == 2 || state == 0xFF)
 	{
-		bool8 loadedMegaGfx = IndexOfSpriteTileTag(GFX_TAG_MEGA_INDICATOR) != 0xFF;
-		bool8 loadedAlphaGfx = IndexOfSpriteTileTag(GFX_TAG_ALPHA_INDICATOR) != 0xFF;
-		bool8 loadedOmegaGfx = IndexOfSpriteTileTag(GFX_TAG_OMEGA_INDICATOR) != 0xFF;
-		bool8 loadedUltraGfx = IndexOfSpriteTileTag(GFX_TAG_ULTRA_INDICATOR) != 0xFF;;
-		bool8 loadedDynamaxGfx = IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedMegaGfx = IndexOfSpriteTileTag(GFX_TAG_MEGA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedAlphaGfx = IndexOfSpriteTileTag(GFX_TAG_ALPHA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedOmegaGfx = IndexOfSpriteTileTag(GFX_TAG_OMEGA_INDICATOR) != 0xFF;
+		unusedArg bool8 loadedUltraGfx = IndexOfSpriteTileTag(GFX_TAG_ULTRA_INDICATOR) != 0xFF;;
+		unusedArg bool8 loadedDynamaxGfx = IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_INDICATOR) != 0xFF;
 
 		#if (defined MEGA_EVOLUTION_FEATURE || defined DYNAMAX_FEATURE)
 		LoadSpritePalette(&sMegaIndicatorPalette);
@@ -931,13 +867,13 @@ void TryLoadMegaTriggers(void)
 	LoadCompressedSpriteSheetUsingHeap(&sUltraTriggerSpriteSheet);
 
 	spriteId = CreateSprite(&sMegaTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 24;
-	gSprites[spriteId].pos1.x = -32;
+	gSprites[spriteId].data[3] = 32;
+	gSprites[spriteId].pos1.y = -32;
 	gSprites[spriteId].data[4] = gActiveBattler;
 
 	spriteId = CreateSprite(&sUltraTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 24;
-	gSprites[spriteId].pos1.x = -32;
+	gSprites[spriteId].data[3] = 32;
+	gSprites[spriteId].pos1.y = -32;
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
@@ -969,8 +905,8 @@ void TryLoadZTrigger(void)
 	LoadCompressedSpriteSheetUsingHeap(&sZTriggerSpriteSheet);
 
 	spriteId = CreateSprite(&sZTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 24;
-	gSprites[spriteId].pos1.x = -32;
+	gSprites[spriteId].data[3] = 32;
+	gSprites[spriteId].pos1.y = -32;
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
@@ -1000,8 +936,8 @@ void TryLoadDynamaxTrigger(void)
 	LoadCompressedSpriteSheetUsingHeap(&sDynamaxTriggerSpriteSheet);
 
 	spriteId = CreateSprite(&sDynamaxTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 24;
-	gSprites[spriteId].pos1.x = -32;
+	gSprites[spriteId].data[3] = 32;
+	gSprites[spriteId].pos1.y = -32;
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 

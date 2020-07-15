@@ -31,6 +31,7 @@ HandleEndTurn_RanFromBattle 8015850 0
 HandleAction_UseMove 8015CA0 0
 TryRunFromBattle 8016748 1
 GetBankForBattleScript 8016E24 1
+CancelMultiTurnMoves 80172E8 1
 PrepareStringBattle 80173AC 3
 TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
@@ -151,7 +152,10 @@ MetatileBehavior_IsUnableToEmerge 8059FCC 1
 #MetatileBehavior_IsHorizontalRail 805A21C 1
 DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
+PlayerOnBikeCollide 805C1AC 1
 GetLedgeJumpDirection 80680F8 3
+RunOnTransitionMapScript 8069C44 0
+RunOnResumeMapScript 8069C50 0
 TryRunOnFrameMapScript 8069C74 0
 GetInteractedMetatileScript 806D1F0 3
 GetInteractedWaterScript 806D548 3
@@ -168,9 +172,11 @@ CheckForTrainersWantingBattle 8081B30 0
 CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 ReplaceOWSandstormPaletteHook 807D5F0 0
+Waterfall3_MovePlayer 8084DA4 2
 SetCutGrassMetatile 8097B50 2
 BikeTurboBoostHook 80BD338 0
 GetPlayerSpeed 80BD674 0
+SuctionCupsHook 805D524 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
@@ -258,9 +264,11 @@ GetAbilityEncounterRateModType 8082C58 0
 GetMapBaseEncounterCooldown 0808324C 1
 
 #Roamer Hooks
+DestroyRoamerIconTownMapSwitchHook 80C111C 0
 CreateRoamerIconTownMapPostSwitchMapHook 80C120C 0
-CreateRoamerIconTownMapHook 80C446E 0
-DestroyRoamerIconTownMapHook 80C111C 0
+DestroyRoamerIconTownMapCloseHook 80C2D44 0
+CreateRoamerIconTownMapHook 80C48AC 0
+HideOrShowRoamerIconTownMapHook 80C49F8 0
 ClearRoamersData 8141C54 0
 sp129_InitRoamer 8141D9C 0
 UpdateLocationHistoryForRoamers 8141DAC 0
@@ -277,6 +285,11 @@ NewGameSaveClearHook 8054A60 0
 ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
+##Main Menu Hooks
+MainMenuBadSaveTypeMsgHook 800C61C 0
+MainMenuRTCWarningHook1 800C718 1
+MainMenuRTCWarningHook2 800C7A4 1
+
 ##Other Hooks
 CalculateMonStatsNew 803E47C 1
 SetMonHeldItemHook 8040784 2
@@ -290,9 +303,8 @@ GiveRandomFrontierMonByTier 802883C 3
 
 ##DNS
 TransferPlttBuffer 8070474 0
-RealTimeClock 0800041E 3
-DNSCreateBuyMenuHook 0809AC84 0
-DNSEndBuyMenuHook 0809C078 1
+DNSCreateBuyMenuHook 809AC84 0
+DNSEndBuyMenuHook 809C078 1
 
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0
@@ -333,11 +345,11 @@ GetEventObjectGraphicsInfoByEventObj 801D760 1
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0
-Phase2_Mugshot_Func2 80D28A8 1
+BT_Phase2Mugshot_LoadGfx 80D28A8 1
+BT_Phase2Mugshot_StartSpriteSlide 80D2A54 1
+BT_Phase2Mugshot_WaitForOpponentInPlace 80D2AD0 1
+BT_Phase2Mugshot_StartBlackFade 80D2C8C 1
 Mugshots_CreateOpponentPlayerSprites 80D2EA4 1
-Phase2_Mugshot_Func4 80D2A54 1
-Phase2_Mugshot_Func5 80D2AD0 1
-Phase2_Mugshot_Func8 80D2C8C 1
 ShiftTrainerMugshotSprite 80D3094 1
 
 ##Dynamic Overworld Palettes
@@ -385,6 +397,7 @@ LoadCloudOrSandstormPalette 0807ABC0 1
 ##Whiteout Hack
 DynamicWhiteoutMap 080BFD54 0
 WhiteoutScreenFix 0807F542 0
+FieldCB_RushInjuredPokemonToCenter 0807F5F0 0
 
 ## Summary Screen
 CamomonsSummaryScreenHook 08136168 0
@@ -497,7 +510,6 @@ ReloadMartList 0809BECA 0
 ##Start Menu
 SetUpStartMenu 0806ed54 0
 StartCB_HandleInput 0806F280 0
-#CheckDexNavSelect 0810AD98 1 //Replaced with R-Button
 FixStartMenuSize 080f78f4 0
 
 ##Pokemon Storage System

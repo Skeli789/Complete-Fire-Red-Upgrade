@@ -20,11 +20,13 @@ typedef bool8 IgnoredPalT[16];
 #define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
 //This file's functions:
+#ifdef TIME_ENABLED
 static void FadeDayNightPalettes();
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor);
 static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
 static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, bool8 palFadeActive);
+#endif
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
 
@@ -36,7 +38,9 @@ void TransferPlttBuffer(void)
 		void *dest = (void *)PLTT;
 		DmaCopy16(3, src, dest, PLTT_SIZE);
 
+		#ifdef TIME_ENABLED
 		FadeDayNightPalettes();
+		#endif
 
 		sPlttBufferTransferPending = 0;
 		if (gPaletteFade->mode == HARDWARE_FADE && gPaletteFade->active)
@@ -44,12 +48,12 @@ void TransferPlttBuffer(void)
 	}
 }
 
+#ifdef TIME_ENABLED
 static void FadeDayNightPalettes()
 {
 	u32 palsToFade;
 	bool8 inOverworld, fadePalettes;
 
-	#ifdef TIME_ENABLED
 	switch (gMapHeader.mapType) { //Save time by not calling the function
 		case MAP_TYPE_TOWN: //Try to force a jump table to manually placing these values
 		case MAP_TYPE_CITY:
@@ -63,8 +67,8 @@ static void FadeDayNightPalettes()
 
 			if (fadePalettes)
 			{
-				u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
-				u16 colour = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
+				u8 coeff = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].amount;
+				u16 colour = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].colour;
 				bool8 palFadeActive = gPaletteFade->active || gWeatherPtr->palProcessingState == WEATHER_PAL_STATE_SCREEN_FADING_IN;
 
 				if (inOverworld)
@@ -110,7 +114,6 @@ static void FadeDayNightPalettes()
 			gLastRecordedFadeCoeff = 0;
 			break;
 	}
-	#endif
 }
 
 /*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
@@ -254,6 +257,7 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 		selectedPalettes >>= 1;
 	}
 }
+#endif
 
 void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u16 size)
 {
@@ -284,7 +288,7 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
 	}
 }
 
-#ifdef DNS_IN_BATTLE
+#if (defined TIME_ENABLED && defined DNS_IN_BATTLE)
 void DNSBattleBGPalFade(void)
 {
 	switch (GetCurrentMapType()) {
@@ -296,8 +300,8 @@ void DNSBattleBGPalFade(void)
 	}
 
 	u16 i, palOffset;
-	u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
-	u32 blendColor = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
+	u8 coeff = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].amount;
+	u32 blendColor = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].colour;
 	u8 selectedPalettes = BATTLE_DNS_PAL_FADE & 0x1C;
 
 	for (palOffset = 0; selectedPalettes; palOffset += 16)
@@ -323,29 +327,29 @@ void DNSBattleBGPalFade(void)
 }
 #endif
 
-bool8 IsDayTime()
+bool8 IsDayTime(void)
 {
-	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
+	return gClock.hour >= TIME_MORNING_START && gClock.hour < TIME_NIGHT_START;
 }
 
-bool8 IsOnlyDayTime()
+bool8 IsOnlyDayTime(void)
 {
-	return Clock->hour >= TIME_DAY_START && Clock->hour < TIME_EVENING_START;
+	return gClock.hour >= TIME_DAY_START && gClock.hour < TIME_EVENING_START;
 }
 
-bool8 IsNightTime()
+bool8 IsNightTime(void)
 {
-	return Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START;
+	return gClock.hour >= TIME_NIGHT_START || gClock.hour < TIME_MORNING_START;
 }
 
-bool8 IsMorning()
+bool8 IsMorning(void)
 {
-	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_DAY_START;
+	return gClock.hour >= TIME_MORNING_START && gClock.hour < TIME_DAY_START;
 }
 
-bool8 IsEvening()
+bool8 IsEvening(void)
 {
-	return Clock->hour >= TIME_EVENING_START && Clock->hour < TIME_NIGHT_START;
+	return gClock.hour >= TIME_EVENING_START && gClock.hour < TIME_NIGHT_START;
 }
 
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)

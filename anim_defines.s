@@ -108,6 +108,8 @@
 .equ PAL_OPPONENT2, 0x400
 
 @for sound commands
+.equ SOUND_PAN_ABOVE, 0
+.equ SOUND_PAN_BELOW, 127
 .equ SOUND_PAN_ATTACKER, 0xC0
 .equ SOUND_PAN_TARGET, 0x3F
 
@@ -412,14 +414,16 @@
 .equ AnimTask_SwayMon, 0x8099705
 .equ AnimTask_sprite_transform, 0x80DF9BD
 .equ AnimTask_play_growling_cry, 0x80DD149
-.equ AnimTask_pal_fade_particle, 0x80BAA21
+.equ AnimTask_BlendParticle, 0x80BAA21
 .equ AnimTask_pal_fade, 0x80BA7F9
 .equ AnimTask_pal_fade_complex, 0x80B9BDD
+.equ AnimTask_BlendBackground, 0x80adaa5
 .equ AnimTask_screen_shake, 0x80B94B5
 .equ AnimTask_prepare_moving_psychicBG, 0x80DE6F1
 .equ AnimTask_arg7_is_target_player, 0x80DEAB5
 .equ AnimTask_arg7_is_attacker_opponent, 0x80BB921
 .equ AnimTask_arg7_is_in_contests, 0x80BC02D
+.equ AnimTask_IsTargetSameSide, 0x80BC091
 .equ AnimTask_scroll_background, 0x80BB82D
 .equ AnimTask_steel_sprite, 0x80B86ED
 .equ AnimTask_surf_wave, 0x80AB38D
@@ -430,10 +434,37 @@
 .equ AnimTask_RapidWhackSound, 0x80DD3DD
 .equ AnimTask_SetGrayscaleOrOriginalPalette, 0x80B8A75
 .equ AnimTask_ChargeBalls, 0x80AE541
+.equ AnimTask_DestinyBondWhiteShadow, 0x80B6021
+.equ AnimTask_SnatchOpposingMonMove, 0x80E392D
+.equ AnimTask_SnatchPartnerMove, 0x80F1421
+.equ AnimTask_ScaleMonAndRestore, 0x80998b1
+.equ AnimTask_BlendExcept, 0x80ba83d
+.equ AnimTask_LoadSandstormBackground, 0x80b4811
+.equ AnimTask_RotateMonToSideAndRestore, 0x8099A79
+.equ AnimTask_SetAnimAttackerAndTargetForEffectAtk, 0x80BC0FD
+.equ AnimTask_TargetToEffectBattler, 0x80F1701
+.equ AnimTask_SlideOffScreen, 0x80995fd
+.equ AnimTask_Rollout, 0x80b4bd1
+.equ AnimTask_ShakeTargetBasedOnMovePowerOrDmg, 0x8099bd5
+.equ AnimTask_TranslateMonEllipticalRespectSide, 0x809907D
+.equ AnimTask_AttackerFadeToInvisible, 0x80B78E1
+.equ AnimTask_StretchTargetUp, 0x80A9A21
+.equ AnimTask_StretchAttackerUp, 0x80a9ab1
+.equ AnimTask_PositionFissureBgOnBattler, 0x80b9801
+.equ AnimTask_AnimateGustTornadoPalette, 0x80b194d
+.equ AnimTask_DragonDanceWaver, 0x80b75e1
+.equ AnimTask_BlendPalInAndOutByTag, 0x8076289
+.equ AnimTask_UproarDistortion, 0x80AA7C9
+.equ AnimTask_FlailMovement, 0x80E0851
+.equ AnimTask_TraceMonBlended, 0x80bab99
 
 @launchtemplate
 
 .equ Template_Hit, 0x83E7C08
+.equ Template_FlashingHit, 0x83e7c98
+.equ Template_WaterHit, 0x83E7C38
+.equ Template_HornHit, 0x83e37bc
+.equ Template_SlamHit, 0x83E3148
 .equ Template_Fist, 0x83E6710
 .equ Template_Claws, 0x83E79E8
 .equ Template_Healing_Circle, 0x83E37A4
@@ -446,12 +477,41 @@
 .equ Template_SlideMonToOffset, 0x83d4e9c
 .equ Template_SlideMonToOriginalPos, 0x83d4e84
 .equ Template_HorizontalLunge, 0x83D4E54
+.equ Template_VerticalDip, 0x83d4e6c
 .equ Template_Teeth, 0x83E7930
 .equ Template_FrenzyPlantRoot, 0x83e2ddc
 .equ Template_BellyDrumNote, 0x83e3914
 .equ Template_ElectricSparkPlayer, 0x83e5fc4
 .equ Template_DigMound, 0x83E7AC4
 .equ Template_Lightning, 0x83E5F38
+.equ Template_SmallBubblePair, 0x83e5ab0
+.equ Template_HiddenPowerOrbScatter, 0x83e4294
+.equ Template_RockFragment, 0x83e73cc
+.equ Template_FireSpread, 0x83E5BF8
+.equ Template_WishStar, 0x83ff168
+.equ Template_FireSpiralOutward, 0x83e5dfc
+.equ Template_EndureEnergy, 0x83E3604
+.equ Template_LusterPurgeCircle, 0x83e7148
+.equ Template_OutrageFlame, 0x83e772c
+.equ Template_CuttingSlice, 0x83e3294
+.equ Template_SuperpowerRock, 0x83E687C
+.equ Template_FallingFeather, 0x83e6c00
+.equ Template_BowMon, 0x83e3550
+.equ Template_TrickBag, 0x83e2f60
+.equ Template_ConstrictBinding, 0x83e2d0c
+.equ Template_EllipticalGust, 0x83e6ae8
+.equ Template_JaggedMusicNote, 0x83E4430
+.equ Template_UproarRing, 0x83E4110
+.equ Template_MovementWaves, 0x83E43F8
+.equ Template_RockScatter, 0x83e7560
+.equ Template_GrowingShockWaveOrb, 0x83E6290
+.equ Tempate_RazorLeaf, 0x83e2c08
+.equ Template_Electricity, 0x83E6088
+.equ Template_CurseGhost, 0x83E7698
+.equ Template_KarateChop, 0x83e66e0
+.equ Template_DragonBreathFire, 0x83e77a4
+.equ Template_SweetScentPetal, 0x83FF324
+.equ Template_CentredSparklingStars, 0x83E340C
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -549,6 +609,13 @@
 .equ BUFF_EFFECT, 0x81CB267
 .equ CREATE_GROWLING_PARTICLES, 0x81CDB06
 .equ SANDTOMB_TRAP_PARTICLES, 0x81D2DE3
+.equ MIND_READER_EYE_SPIKE_EFFECT, 0x81CD1EF
+.equ EXPLODING_ATTACKER2, 0x81C8EB2
+.equ OUTRAGE_FLAMES, 0x81c95af
+.equ SPIDER_WEB_THREAD, 0x81d15a5
+.equ FIRE_SPIN_TRAP_PARTICLES, 0x81C885F
+.equ CREATE_COTTON_SPORES, 0x81D03B5
+.equ HEALING_ANIM_TARGET, 0x81D5712
 
 @supercommands
 

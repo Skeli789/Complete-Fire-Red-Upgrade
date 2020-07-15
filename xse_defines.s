@@ -58,7 +58,10 @@
 .equ walk_up_onspot_vfast, 0x2A
 .equ walk_left_onspot_vfast, 0x2B
 .equ walk_right_onspot_vfast, 0x2C
-
+.equ walk_down_onspot_fastest, 0x2D
+.equ walk_up_onspot_fastest, 0x2E
+.equ walk_left_onspot_fastest, 0x2F
+.equ walk_right_onspot_fastest, 0x30
 .equ slide_down_slow, 0x31
 .equ slide_up_slow, 0x32
 .equ slide_left_slow, 0x33
@@ -79,7 +82,7 @@
 .equ slide_left_foot_up, 0x42
 .equ slide_left_foot_left, 0x43
 .equ slide_left_foot_right, 0x44
-
+.equ start_anim_in_direction, 0x45
 .equ jump_special_down, 0x46
 .equ jump_special_up, 0x47
 .equ jump_special_left, 0x48
@@ -100,7 +103,12 @@
 .equ jump_onspot_up_down, 0x57
 .equ jump_onspot_left_right, 0x58
 .equ jump_onspot_right_left, 0x59
-
+.equ face_default, 0x5A
+.equ nurse_bow, 0x5B
+.equ enable_jump_landing_ground_effect, 0x5C
+.equ disable_jump_landing_ground_effect, 0x5D
+.equ disable_anim, 0x5E
+.equ enable_anim, 0x5F
 .equ set_invisible, 0x60
 .equ set_visible, 0x61
 .equ exclaim, 0x62
@@ -108,6 +116,13 @@
 .equ say_cross, 0x64
 .equ say_double_exclaim, 0x65
 .equ say_smile, 0x66
+.equ reveal_trainer, 0x67
+.equ smash_rock, 0x68
+.equ cut_tree, 0x69
+.equ set_fixed_priority, 0x6A
+.equ clear_fixed_priority, 0x6B
+.equ init_affine_anim, 0x6C
+.equ clear_affine_anim, 0x6D
 .equ end_m, 0xFE
 
 .equ EventScript_RevealTrainer, 0x81A4FBA

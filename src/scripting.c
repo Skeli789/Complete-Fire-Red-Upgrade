@@ -1,11 +1,14 @@
 #include "defines.h"
+#include "../include/bike.h"
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
+#include "../include/field_message_box.h"
 #include "../include/hall_of_fame.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
 #include "../include/map_name_popup.h"
+#include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/naming_screen.h"
 #include "../include/overworld.h"
@@ -69,7 +72,9 @@ extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTraine
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
 
+#ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void);
+#endif
 
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1587,6 +1592,23 @@ struct DailyEventVar
 	u32 century : 5; //31 centuries max - starts at 0
 };
 
+bool8 IsTimeInVarInFuture(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u8 hour = timeData->hour;
+	u8 minute = timeData->minute;
+	u8 day = timeData->day;
+	u8 month = timeData->month;
+	u32 year = timeData->year + timeData->century * 100;
+
+	return year > gClock.year
+	|| (year == gClock.year && month > gClock.month)
+	|| (year == gClock.year && month == gClock.month && day > gClock.day)
+	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
+	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+}
+
 //@Details: Runs a daily event.
 //@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.
@@ -1606,23 +1628,23 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 	u8 dailyMonth = dailyData->month;
 	u32 dailyYear = dailyData->year + dailyData->century * 100;
 
-	if (dailyYear > Clock->year
-	|| (dailyYear == Clock->year && dailyMonth > Clock->month)
-	|| (dailyYear == Clock->year && dailyMonth == Clock->month && dailyDay > Clock->day))
+	if (dailyYear > gClock.year
+	|| (dailyYear == gClock.year && dailyMonth > gClock.month)
+	|| (dailyYear == gClock.year && dailyMonth == gClock.month && dailyDay > gClock.day))
 		return FALSE; //Player changed date on their computer.
 
-	if (dailyDay != Clock->day
-	||  dailyMonth != Clock->month
-	||  dailyYear != Clock->year)
+	if (dailyDay != gClock.day
+	||  dailyMonth != gClock.month
+	||  dailyYear != gClock.year)
 	{
 		if (setDailyEventVar)
 		{
-			dailyData->minute = Clock->minute;
-			dailyData->hour = Clock->hour;
-			dailyData->day = Clock->day;
-			dailyData->month = Clock->month;
-			dailyData->year = Clock->year % 100;
-			dailyData->century = Clock->year / 100;
+			dailyData->minute = gClock.minute;
+			dailyData->hour = gClock.hour;
+			dailyData->day = gClock.day;
+			dailyData->month = gClock.month;
+			dailyData->year = gClock.year % 100;
+			dailyData->century = gClock.year / 100;
 		}
 		toReturn = TRUE;
 	}
@@ -1638,7 +1660,7 @@ u32 GetDaysSinceTimeInValue(u32 value)
 	if (startYear < 1900)
 		startYear = 1900;
 
-	return GetDayDifference(startYear, startTime->month, startTime->day, Clock->year, Clock->month, Clock->day);
+	return GetDayDifference(startYear, startTime->month, startTime->day, gClock.year, gClock.month, gClock.day);
 }
 
 //@Details: Updates the time stored in a pair of vars.
@@ -1649,12 +1671,12 @@ void sp0A1_UpdateTimeInVars(void)
 	u16 eventVar = Var8000; //Var contained in Var8000
 	struct DailyEventVar* data = (struct DailyEventVar*) GetVarPointer(eventVar);
 
-	data->minute = Clock->minute;
-	data->hour = Clock->hour;
-	data->day = Clock->day;
-	data->month = Clock->month;
-	data->year = Clock->year % 100;
-	data->century = Clock->year / 100;
+	data->minute = gClock.minute;
+	data->hour = gClock.hour;
+	data->day = gClock.day;
+	data->month = gClock.month;
+	data->year = gClock.year % 100;
+	data->century = gClock.year / 100;
 }
 
 //@Details: Gets the time difference between the data stored in a var and the current time.
@@ -1680,19 +1702,19 @@ u32 sp0A2_GetTimeDifference(void)
 
 	switch (Var8001) {
 		case 0: //Get minute difference
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute);
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute);
 			break;
 		case 1: //Get hour difference
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60;
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute) / 60;
 			break;
 		case 2: //Get day difference.
-			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60 / 24;
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, gClock.year, gClock.month, gClock.day, gClock.hour, gClock.minute) / 60 / 24;
 			break;
 		case 3: //Get month difference.
-			difference = GetMonthDifference(startYear, startMonth, Clock->year, Clock->month);
+			difference = GetMonthDifference(startYear, startMonth, gClock.year, gClock.month);
 			break;
 		case 4: //Get year difference.
-			difference = GetYearDifference(startYear, Clock->year);
+			difference = GetYearDifference(startYear, gClock.year);
 			break;
 	}
 
@@ -1736,14 +1758,14 @@ u8 sp0AD_GetTimeOfDay(void)
 //@Returns: The current hour of the day.
 u8 sp0D9_GetHour(void)
 {
-	return Clock->hour;
+	return gClock.hour;
 }
 
 //@Details: Gets the current day of week.
 //@Returns: The current day of week.
 u8 sp0DA_GetDayOfWeek(void)
 {
-	return Clock->dayOfWeek;
+	return gClock.dayOfWeek;
 }
 
 //@Details: Gets the time of day.
@@ -1757,7 +1779,7 @@ void sp0AE_ClearFlag(void)
 void sp0AF_DismountBicyle(void)
 {
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
-		SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
+		StartTransitionToFlipBikeState(PLAYER_AVATAR_FLAG_ON_FOOT);
 }
 
 //@Details: Stops any sound effects from playing.
@@ -2399,6 +2421,7 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 	return FALSE;
 }
 
+#ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void)
 {
 	u8 i;
@@ -2409,6 +2432,7 @@ static u8 GetTextCaretPosition(void)
 	}
 	return gNamingScreenData->template->maxChars - 1;
 }
+#endif
 
 #define sPlayerNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E245C
 #define sPCBoxNamingTemplate (const struct NamingScreenTemplate*) 0x83E2468
@@ -2529,35 +2553,117 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 
 
 //Item Find Show Picture Special (Really Callasm)
-#define ITEM_TAG 0xFDF3
-void ShowItemSpriteOnFind(void)
-{
+#define ITEM_ICON_X (10 + 16)
+#define ITEM_ICON_Y (8 + 16)
+#define sHeaderBoxWindowId (*((u8*) 0x2039A28)) //Steal coin box Id
 #ifdef ITEM_PICTURE_ACQUIRE
+static void ShowObtainedItemDescription(unusedArg u16 itemId)
+{
+	struct WindowTemplate template;
+	s16 textX, textY, maxWidth, windowHeight, numLines;
+	u8 pocket = GetPocketByItemId(itemId);
+
+	if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE) //Displayed in the middle of the screen
+	{
+		textX = 1;
+		maxWidth = 222;
+	}
+	else
+	{
+		textX = ITEM_ICON_X + 2;
+		maxWidth = 195;
+	}
+
+	Memset(gStringVar4, 0xFF, 500); //Clear enough so GetStringWidth can work properly
+	numLines = ReformatItemDescription(itemId, gStringVar4, maxWidth);
+
+	if (numLines == 1)
+	{
+		textY = 4;
+		windowHeight = 3;
+	}
+	else if (numLines >= 3)
+	{
+		textY = 0;
+		windowHeight = 5;
+	}
+	else
+	{
+		textY = 0;
+		windowHeight = 4;
+	}
+
+	template = SetWindowTemplateFields(0, 1, 1, 28, windowHeight, 14, 0x20);
+	sHeaderBoxWindowId = AddWindow(&template);
+	FillWindowPixelBuffer(sHeaderBoxWindowId, PIXEL_FILL(1));
+	DrawStdFrameWithCustomTileAndPalette(sHeaderBoxWindowId, FALSE, 0x214, 14);
+	PutWindowTilemap(sHeaderBoxWindowId);
+	CopyWindowToVram(sHeaderBoxWindowId, 3);
+
+	AddTextPrinterParameterized(sHeaderBoxWindowId, 0, gStringVar4, textX, textY, 0, NULL);
+	GetSetItemObtained(itemId, FLAG_SET_OBTAINED);
+}
+#endif
+
+#define ITEM_TAG 0xFDF3
+static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
+{
+	#ifdef ITEM_PICTURE_ACQUIRE
+	static const union AffineAnimCmd sSpriteAffineAnim_KeyItemTM[] =
+	{
+		AFFINEANIMCMD_FRAME(0, 0, 128, 1), //Start rotated left
+		AFFINEANIMCMD_FRAME(16, 16, -8, 16), //Double sprite size + rotate right
+		AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at right 24
+		AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+		AFFINEANIMCMD_FRAME(0, 0, -3, 16), //End at right 24
+		AFFINEANIMCMD_FRAME(0, 0, 3, 16), //End at left 24
+		AFFINEANIMCMD_FRAME(0, 0, -3, 8), //End at 0
+		AFFINEANIMCMD_END,
+	};
+	
+	static const union AffineAnimCmd* const sSpriteAffineAnimTable_KeyItemTM[] =
+	{
+		sSpriteAffineAnim_KeyItemTM,
+	};
+
 	s16 x, y;
 	u8 iconSpriteId;
 
-	#ifdef UNBOUND
-		if (Var8004 == ITEM_TM59_DRAGON_PULSE)
-			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
-		else
-	#endif
-			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+	if (itemId == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
+		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+	else
+		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemId);
 
 	if (iconSpriteId != MAX_SPRITES)
 	{
-		u8 pocket = GetPocketByItemId(Var8004);
+		u8 pocket = GetPocketByItemId(itemId);
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
-		{ //Double the size of the item and place it in the centre of the screen
+		{ 	//Double the size of the item and place it in the centre of the screen
 			x = 96 + 16;
 			y = 48 + 16;
 			gSprites[iconSpriteId].oam.affineMode = ST_OAM_AFFINE_DOUBLE;
 			gSprites[iconSpriteId].oam.matrixNum = AllocOamMatrix();
-			SetOamMatrixRotationScaling(gSprites[iconSpriteId].oam.matrixNum, 512, 512, 0);
+			gSprites[iconSpriteId].affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+			StartSpriteAffineAnim(&gSprites[iconSpriteId], 0);
+			
+			if (!GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+				ShowObtainedItemDescription(itemId);
 		}
 		else
-		{ //Place the item in the bottom right hand corner of the textbox
-			x = 197 + 16;
-			y = 124 + 16;
+		{
+			if (GetSetItemObtained(itemId, FLAG_GET_OBTAINED))
+			{
+				//Place the item in the bottom right hand corner of the textbox
+				x = 197 + 16;
+				y = 124 + 16;
+				sHeaderBoxWindowId = 0xFF;
+			}
+			else //Show description
+			{
+				x = ITEM_ICON_X;
+				y = ITEM_ICON_Y;
+				ShowObtainedItemDescription(itemId);
+			}
 		}
 
 		gSprites[iconSpriteId].pos2.x = x;
@@ -2565,18 +2671,44 @@ void ShowItemSpriteOnFind(void)
 		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
 	}
 
-	Var8006 = iconSpriteId;
-#endif
+	*spriteId = iconSpriteId;
+	#endif
 }
 
-void ClearItemSpriteAfterFind(void)
+static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 {
-#ifdef ITEM_PICTURE_ACQUIRE
+	#ifdef ITEM_PICTURE_ACQUIRE
 	FreeSpriteTilesByTag(ITEM_TAG);
 	FreeSpritePaletteByTag(ITEM_TAG);
-	FreeSpriteOamMatrix(&gSprites[Var8006]);
-	DestroySprite(&gSprites[Var8006]);
-#endif
+	FreeSpriteOamMatrix(&gSprites[spriteId]);
+	DestroySprite(&gSprites[spriteId]);
+	
+	if (sHeaderBoxWindowId != 0xFF) //Description was shown
+	{
+		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
+		RemoveWindow(sHeaderBoxWindowId);
+	}
+	#endif
+}
+
+void ShowItemSpriteOnFindObtain(void)
+{
+	ShowItemSpriteOnFind(Var8004, (u8*) &Var8006);
+}
+
+void ShowItemSpriteOnFindHidden(void)
+{
+	ShowItemSpriteOnFind(Var8005, (u8*) &Var8007);
+}
+
+void ClearItemSpriteAfterFindObtain(void)
+{
+	ClearItemSpriteAfterFind(Var8006);
+}
+
+void ClearItemSpriteAfterFindHidden(void)
+{
+	ClearItemSpriteAfterFind(Var8007);
 }
 
 bool8 sp196_TryCopyTMNameToBuffer1(void)
@@ -2630,15 +2762,30 @@ void TryAppendSOntoEndOfItemString(void)
 }
 
 //Map Name Pop-Up Fix
-bool8 ScrCmd_callstd(struct ScriptContext * ctx)
+bool8 ScrCmd_message(struct ScriptContext* ctx)
 {
-	u8 stdIdx = ScriptReadByte(ctx);
-	const u8* const* script = gStdScripts + stdIdx;
-	ChangeBgY(0, 0, 0);
-	DismissMapNamePopup();
+	const u8* msg = (const u8*) ScriptReadWord(ctx);
 
-	if (script < gStdScriptsEnd)
-		ScriptCall(ctx, *script);
+	if (IsMapNamePopupTaskActive())
+	{
+		ChangeBgY(0, 0, 0);
+		DismissMapNamePopup();
+	}
+
+	if (msg == NULL)
+		msg = (const u8*) ctx->data[0];
+
+	ShowFieldMessage(msg);
+	return FALSE;
+}
+
+bool8 ScrCmd_hidemappopup(unusedArg struct ScriptContext * ctx)
+{
+	if (IsMapNamePopupTaskActive())
+	{
+		ChangeBgY(0, 0, 0);
+		DismissMapNamePopup();
+	}
 
 	return FALSE;
 }
@@ -2748,7 +2895,7 @@ void SetCoins(u32 numCoins)
 	#ifdef SAVE_BLOCK_EXPANSION
 		gPlayerCoins = numCoins;
 	#else
-		gSaveBlock1->coins = numCoins;
+		gSaveBlock1->coins = MathMin(numCoins, 0xFFFF);
 	#endif
 }
 

@@ -1,0 +1,44 @@
+#org @gText_DebugMenu_SetFlag
+Set Flag
+
+#org @gText_DebugMenu_GiveItem
+Give Item
+
+#org @gText_DebugMenu_Level100Team
+Level 100 Team
+
+#org @gText_DebugMenu_MaxCoinage
+Max Coinage
+
+#org @gText_DebugMenu_AllBadges
+All Badges
+
+#org @gText_DebugMenu_GameClear
+Game Clear
+
+#org @gText_DebugMenu_CustomFlag
+Custom Flag
+
+#org @gText_DebugMenu_Pokedexes
+Pokedexes
+
+#org @gText_DebugMenu_FlySpots
+Fly Spots
+
+#org @gText_DebugMenu_UsefulKeyItems
+Useful Key Items
+
+#org @gText_DebugMenu_GeneralUsefulItems
+General Useful Items
+
+#org @gText_DebugMenu_PokeBalls
+Pok\e Balls
+
+#org @gText_DebugMenu_Berries
+Berries
+
+#org @gText_DebugMenu_TMs
+TMs and HMs
+
+#org @gText_DebugMenu_AllItems
+All Items

@@ -161,9 +161,9 @@ u8 TMIdFromItemId(u16 itemId)
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
-		return (itemId - ITEM_TM01_FOCUS_PUNCH);
+		return itemId - ITEM_TM01_FOCUS_PUNCH;
 	else
-		return (tmNum-1);
+		return tmNum-1;
 	#else
 		return itemId - ITEM_TM01_FOCUS_PUNCH;
 	#endif
@@ -180,6 +180,84 @@ u8 BerryIdFromItemId(u16 item)
 		return 255;
 
 	return item - ITEM_CHERI_BERRY;
+}
+
+bool8 GetSetItemObtained(u16 item, u8 caseId)
+{
+	u8 index;
+	u8 bit;
+	u8 mask;
+	
+	index = item / 8;
+	bit = item % 8;
+	mask = 1 << bit;
+	switch (caseId)
+	{
+		case FLAG_GET_OBTAINED:
+			return gSaveBlock1->itemObtainedFlags[index] & mask;
+		case FLAG_SET_OBTAINED:
+			gSaveBlock1->itemObtainedFlags[index] |= mask;
+	}
+ 
+	return FALSE;
+}
+
+u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxWidth)
+{
+	//Requires dest be memset to 0xFF before calling!
+	u8 count = 0;
+	u8 k = 0;
+	u8 numLines = 1;
+	u8 buffer[150];
+	u8* desc;
+	u8* lineStart;
+	
+	desc = ItemId_GetDescription(itemId);
+	StringExpandPlaceholders(buffer, desc);
+	lineStart = dest;
+
+	while (buffer[k] != EOS)
+	{
+		if (GetStringWidth(0, lineStart, 0) >= maxWidth)
+		{
+			do
+			{
+				//Go to end of previous word
+				dest--;
+				k--;
+			} while (buffer[k] != CHAR_SPACE && buffer[k] != CHAR_NEWLINE);
+
+			if (buffer[k + 1] != EOS) //String will continue on another line
+			{
+				*dest = CHAR_NEWLINE;
+				numLines++;
+			}
+
+			count = 0;
+			dest++;
+			k++;
+			lineStart = dest;
+			continue;
+		}
+
+		*dest = buffer[k];
+		if (buffer[k] == CHAR_NEWLINE)
+		{
+			if (buffer[k - 1] != CHAR_SPACE) //Don't double space
+				*dest = CHAR_SPACE;
+			else
+				dest--; //Don't change curr position
+		}
+
+		dest++;
+		k++;
+		count++;
+	}
+
+	// finish string
+	*dest = EOS;
+
+	return numLines;
 }
 
 //////////////////////////TM + HMs////////////////////////////////////////////////
@@ -423,7 +501,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2(itemId);
 	#else
-	u8 tmNum = itemId - ITEM_TM01_FOCUS_PUNCH;
+	u8 tmNum = (itemId - ITEM_TM01_FOCUS_PUNCH) + 1;
 	#endif
 
 	StringCopy(gStringVar4, (void*) 0x84166FF);
@@ -448,11 +526,12 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 		else
 			ConvertIntToDecimalStringN(gStringVar1, tmNum, 2, 3);
 	}
+
 	StringAppend(gStringVar4, gStringVar1);
 	StringAppend(gStringVar4, (void*) 0x846317C);
 	StringAppend(gStringVar4, (void*) 0x8416703);
 
-	if (StringLength(gMoveNames[ItemIdToBattleMoveId(itemId)]) == MOVE_NAME_LENGTH && tmNum >= NUM_TMS)
+	if (StringLength(gMoveNames[ItemIdToBattleMoveId(itemId)]) == MOVE_NAME_LENGTH && tmNum > NUM_TMS)
 		StringAppendFullMoveName(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	else
 		StringAppend(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
@@ -464,13 +543,16 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 // Assumes no HMs will be in the mart...
 void LoadTmHmNameInMart(u16 item)
 {
-	u8 tmNum = ItemId_GetMystery2(item);
+	u8 tmNum;
+
 	#ifdef EXPANDED_TMSHMS
+		tmNum = ItemId_GetMystery2(item);
 		if (NUM_TMS < 100)
 			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
 		else
 			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 3);
 	#else
+		tmNum = (item - ITEM_TM01_FOCUS_PUNCH) + 1;
 		ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
 	#endif
 }
@@ -808,7 +890,7 @@ void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
 	{
 		IncrementGameStat(GAME_STAT_SHOPPED);
 		RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
-		PlaySE(SE_RG_SHOP);
+		PlaySE(SE_MONEY);
 		PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
 		RedrawListMenu(tListTaskId);
 		BuyMenuReturnToItemList(taskId);
@@ -1533,7 +1615,7 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 	const u8 *description;
 	FillWindowPixelBuffer(1, PIXEL_FILL(0));
 
-	if (itemIndex != sBagMenuDisplay->nItems[gBagMenuState.pocket]) //Not end of bag
+	if (itemIndex < GetCurrentPocketItemAmount()) //Not end of bag
 	{
 		description = ItemId_GetDescription(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, itemIndex));
 

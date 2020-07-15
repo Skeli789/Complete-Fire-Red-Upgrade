@@ -55,7 +55,7 @@ void CameraObjectReset1(void);
 void FieldObjectSetGraphicsId(struct MapObject *, u8);
 void FieldObjectTurn(struct MapObject *, u8);
 void FieldObjectTurnByLocalIdAndMap(u8, u8, u8, u8);
-const struct MapObjectGraphicsInfo *GetFieldObjectGraphicsInfo(u8);
+const struct EventObjectGraphicsInfo *GetFieldObjectGraphicsInfo(u8);
 void npc_by_local_id_and_map_set_field_1_bit_x20(u8, u8, u8, u8);
 void gpu_pal_allocator_reset__manage_upper_four(void);
 void sub_808E82C(u8, u8, u8, s16, s16);

@@ -29805,7 +29805,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_STURDY
-		.item = ITEM_WHITE_HERB,
+		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
 			MOVE_XSCISSOR,
@@ -41239,7 +41239,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SHELLARMOR
-		.item = ITEM_BINDING_BAND,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_BODYPRESS,

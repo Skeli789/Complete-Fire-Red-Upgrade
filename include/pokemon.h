@@ -612,6 +612,12 @@ enum EvolutionMethods
 	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
 	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
 	EVO_FLAG_SET, //If a certain flag is set. Can be used for touching the Mossy/Icy Rock for Leafeon/Glaceon evolutions
+/*	//Evolution Defines Added in DPE
+	EVO_CRITICAL_HIT, // successfully land 3 critical hits in one battle
+	EVO_NATURE_HIGH, // evolution based on high key nature at a certain level
+	EVO_NATURE_LOW, // evolution based on low key nature at a certain level
+	EVO_DAMAGE_LOCATION // recieve 49+ damage in battle without fainting, walk to specific tile
+*/
 };
 #define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE
@@ -737,6 +743,8 @@ u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
+bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);
+u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 selection);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -840,7 +848,6 @@ void sub_8068AA4(void); // sets stats for deoxys
 bool8 HasTwoFramesAnimation(u16 species);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
-u8 CheckPartyPokerus(struct Pokemon *party, u8 selection);
 void UpdatePartyPokerusTime(u16 days);
 void PartySpreadPokerus(struct Pokemon *party);
 s8 GetMonFlavorRelation(struct Pokemon *mon, u8 a2);
@@ -851,7 +858,6 @@ u16 PlayerGenderToFrontTrainerPicId(u8 playerGender);
 void sub_806A1C0(u16 arg0, u8 bankIdentity);
 void sub_806A12C(u16 trainerSpriteId, u8 bankIdentity);
 u8 GetSecretBaseTrainerPicIndex(void);
-bool8 TryIncrementMonLevel(struct Pokemon *mon);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 battlePartyId, u32 healMask, u8 battlerId);
 

@@ -3,6 +3,7 @@
 #include "../include/event_data.h"
 #include "../include/pokeball.h"
 #include "../include/random.h"
+#include "../include/constants/trainers.h"
 
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
@@ -11,7 +12,9 @@
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
+#include "../include/new/multi.h"
 #include "../include/new/switching.h"
+
 /*
 battle_controller_opponent.c
 	handles the functions responsible for the user moving between battle menus, choosing moves, etc.
@@ -186,21 +189,21 @@ void OpponentHandleDrawTrainerPic(void)
 	}
 
 	DecompressTrainerFrontPic(trainerPicId, gActiveBattler); //0x80346C4
-	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler)); //0x803F864
-	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], //0x8006F8C
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0],
 											   xPos,
 											   (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40,
-											   GetBattlerSpriteSubpriority(gActiveBattler)); //0x807685C
+											   GetBattlerSpriteSubpriority(gActiveBattler));
 
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -240;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 3; //2; //Speed scrolling in
-	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag); //0x80089E8
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag);
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag); //0x8008804
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag);
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
 
-	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBattlerSpriteCallbackDummy; //0x8035AE8
+	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBattlerSpriteCallbackDummy;
 }
 
 void OpponentHandleTrainerSlide(void)
@@ -210,7 +213,7 @@ void OpponentHandleTrainerSlide(void)
 
 	DecompressTrainerFrontPic(trainerPicId, gActiveBattler);
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
-	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 176, (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40, 0x1E);
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 176, (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40, 30);
 
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 96;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos1.x += 32;
@@ -224,9 +227,6 @@ void OpponentHandleTrainerSlide(void)
 	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBankSpriteCallbackDummy2;
 }
 
-extern u32 break_helper(u32 a);
-extern u32 break_helper2(u32 a);
-
 void OpponentHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
@@ -234,7 +234,7 @@ void OpponentHandleChoosePokemon(void)
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
-		pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
 		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
 		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
@@ -282,25 +282,25 @@ void OpponentHandleChoosePokemon(void)
 	TryRechoosePartnerMove(MOVE_NONE);
 }
 
-static u8 LoadCorrectTrainerPicId(void) {
+static u8 LoadCorrectTrainerPicId(void)
+{
 	u8 trainerPicId;
+	u8 position = GetBattlerPosition(gActiveBattler);
 
-	if (gTrainerBattleOpponent_A == 0x400) //Was Secret Base in Ruby
+	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 	{
 		trainerPicId = GetSecretBaseTrainerPicIndex();
 	}
-  /*else if (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN)
-	{
-		trainerPicId = GetFrontierBrainTrainerPicIndex();
-	}*/
-	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+	|| (position == B_POSITION_OPPONENT_LEFT && IsFrontierTrainerId(gTrainerBattleOpponent_A))
+	|| (position == B_POSITION_OPPONENT_RIGHT && IsFrontierTrainerId(gTrainerBattleOpponent_B)))
 	{
 		if (gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TOWER_LINK_MULTI))
 		{
-			if (gActiveBattler == 1)
+			if (position == B_POSITION_OPPONENT_LEFT)
 				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
 			else
-				trainerPicId = GetFrontierTrainerFrontSpriteId(VarGet(VAR_SECOND_OPPONENT), 1);
+				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_B, 1);
 		}
 		else
 		{
@@ -317,10 +317,10 @@ static u8 LoadCorrectTrainerPicId(void) {
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
-		if (gActiveBattler == 1)
+		if (position == 1)
 			trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
 		else
-			trainerPicId = gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerPic;
+			trainerPicId = gTrainers[gTrainerBattleOpponent_B].trainerPic;
 	}
 	else
 	{

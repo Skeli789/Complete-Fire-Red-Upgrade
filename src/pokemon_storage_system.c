@@ -203,7 +203,10 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon* src)
 {
 	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
-		HoopaShayminPCRevertCheck((struct Pokemon*) src, FALSE); //Don't recalc stats for a box mon
+		#ifdef BOX_PRESET_TEAMS
+		if (boxId != BOX_PRESET_TEAMS) //Don't revert in Battle Box
+		#endif
+			HoopaShayminPCRevertCheck((struct Pokemon*) src, FALSE); //Don't recalc stats for a box mon
 
 		struct CompressedPokemon mon;
 		CreateCompressedMonFromBoxMon(src, &mon);

@@ -274,7 +274,8 @@ void atk61_drawpartystatussummary(void)
 	if (gBattleExecBuffer)
 		return;
 
-	RestoreOriginalAttackerAndTarget();
+	if (!gNewBS->handlingFaintSwitching)
+		RestoreOriginalAttackerAndTarget(); //I'm not sure if this function is even necessary anymore, but I'd rather not remove it and cause bugs
 	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
@@ -301,6 +302,7 @@ void atk61_drawpartystatussummary(void)
 			hpStatus[i].status = party[i].condition;
 		}
 	}
+
 	EmitDrawPartyStatusSummary(0, hpStatus, 1);
 	MarkBufferBankForExecution(gActiveBattler);
 	gBattlescriptCurrInstr += 2;
@@ -662,9 +664,7 @@ void atk52_switchineffects(void)
 			if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0
 			&& CheckGrounding(gActiveBattler))
 			{
-				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
+				if (IsOfType(gActiveBattler, TYPE_POISON))
 				{
 					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
 					BattleScriptPushCursor();
@@ -785,11 +785,21 @@ void atk52_switchineffects(void)
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
-		case SwitchIn_TotemPokemon:
-			if (CanActivateTotemBoost(gActiveBattler))
+		case SwitchIn_TotemPokemon: ;
+			u8 totemBoostType = CanActivateTotemBoost(gActiveBattler);
+
+			if (totemBoostType == TOTEM_SINGLE_BOOST)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			else if (totemBoostType == TOTEM_OMNIBOOST)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemOmniboostRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
 				++gNewBS->switchInEffectsState;
 				return;
@@ -917,59 +927,26 @@ void atk8F_forcerandomswitch(void)
 	{
 		party = LoadPartyRange(bankDef, &firstMonId, &lastMonId);
 
-		if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_LINK)
-		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
+		if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
+		||  (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER && SIDE(bankDef) == B_SIDE_PLAYER)
+		||  (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && SIDE(bankDef) == B_SIDE_OPPONENT)
+		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && SIDE(bankDef) == B_SIDE_PLAYER))
 		{
 			monsCount = 3;
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
-		}
-		else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-		{
-			if (SIDE(bankDef) == B_SIDE_PLAYER)
-			{
-				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-				{
-					monsCount = 3;
-				}
-				else //Player Vs. 2 Trainers
-				{
-					monsCount = 6;
-				}
-			}
-			else //B_OPPONENT_SIDE - Player Vs. 2 Trainers
-			{
-				monsCount = 3;
-			}
-
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
-		}
-		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-		{
-			if (SIDE(bankDef) == B_SIDE_PLAYER)
-			{
-				monsCount = 3;
-			}
-			else
-			{
-				monsCount = 6;
-			}
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
+			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler2PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[bankDef];
-			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
+			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler2PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else //Single Battle
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[bankDef]; // there is only one pokemon out in single battles
-			battler1PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[bankDef]; // there is only one pokemon out in single battles
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
 		}
 
 		for (i = firstMonId; i < lastMonId; ++i)

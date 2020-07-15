@@ -25,6 +25,8 @@ bool8 IsGem(u16 item);
 bool8 IsTMHM(u16 item);
 u8 TMIdFromItemId(u16 itemId);
 u8 BerryIdFromItemId(u16 item);
+bool8 GetSetItemObtained(u16 item, u8 caseId);
+u8 ReformatItemDescription(u16 item, u8* dest, u8 maxChars);
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm);
 bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId);
@@ -80,6 +82,12 @@ enum
     CANNOT_LEARN_MOVE,
     ALREADY_KNOWS_MOVE,
     CANNOT_LEARN_MOVE_IS_EGG,
+};
+
+enum ItemObtainFlags
+{
+    FLAG_GET_OBTAINED,
+    FLAG_SET_OBTAINED,
 };
 
 #define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this

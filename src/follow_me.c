@@ -52,9 +52,6 @@ static void CalculateFollowerEscalatorTrajectoryDown(struct Task *task);
 static void SetFollowerSprite(u8 spriteIndex);
 static void TurnNPCIntoFollower(u8 localId, u8 followerFlags);
 
-#undef gFieldEffectArguments
-#define gFieldEffectArguments ((u32*) 0x20386E0)
-
 #define MOVEMENT_INVALID 0xFE
 
 enum
@@ -1405,4 +1402,13 @@ void sp0D3_FaceFollowerSprite(void)
 void sp0E1_DoesPlayerHaveFollower(void)
 {
 	gSpecialVar_LastResult = gFollowerState.inProgress;
+}
+
+bool8 ShouldFollowerIgnoreActiveScript(void)
+{
+	#ifdef FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT
+	return FlagGet(FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT);
+	#else
+	return FALSE;
+	#endif
 }

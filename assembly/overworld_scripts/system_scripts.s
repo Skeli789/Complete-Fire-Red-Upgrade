@@ -58,18 +58,41 @@ SystemScript_DisableBikeTurboBoost:
 
 .global SystemScript_PartyMenuFromField
 SystemScript_PartyMenuFromField:
+	lock
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitPartyMenuFromField
+	release
 	end
 
 .global SystemScript_ItemMenuFromField
 SystemScript_ItemMenuFromField:
+	lock
 	checksound
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitBagMenuFromField
+	release
+	end
+
+.global SystemScript_MiningScan
+SystemScript_MiningScan:
+	lock
+	checksound
+	sound 0xCA @SE_TWINKLE
+	callasm CreateMiningScanRing
+	callasm IsBestMiningSpotOutOfView
+	compare LASTRESULT 0x0 @Out of view
+	if notequal _goto SystemScript_MiningScan_SkipFieldEffect
+	dofieldeffect 54 @FLDEFF_SPARKLE
+	waitfieldeffect 54 @FLDEFF_SPARKLE
+	release
+	end
+
+SystemScript_MiningScan_SkipFieldEffect:
+	pause 50 @Wait for the ring to finish
+	release
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -146,19 +169,27 @@ EndScript:
 
 .global SystemScript_StartDexNavBattle
 SystemScript_StartDexNavBattle:
-	lock
+	lockall
 	call FollowerPositionFixScript
 	checksound
 	sound 0x15 @;Exclaim
 	applymovement PLAYER PlayerExclaim
 	waitmovement 0x0
 	checksound
+	pause 0x10
 	dowildbattle
-	release
+	releaseall
 	end
 
 PlayerExclaim:
 .byte exclaim, end_m
+
+.global SystemScript_DisplayDexnavMsg
+SystemScript_DisplayDexnavMsg:
+	lockall
+	callstd MSG_NORMAL
+	releaseall
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -173,8 +204,10 @@ SystemScript_WaitForFollower:
 
 .global SystemScript_FindItemMessage
 SystemScript_FindItemMessage:
+	textcolor BLACK
 	hidesprite LASTTALKED
-	callasm ShowItemSpriteOnFind
+	pause 0x1
+	callasm ShowItemSpriteOnFindObtain
 	additem 0x8004 0x8005
 	special2 LASTRESULT 0x196
 	copyvar 0x8008 LASTRESULT
@@ -185,7 +218,7 @@ SystemScript_FindItemMessage:
 	waitfanfare
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN 
-	callasm ClearItemSpriteAfterFind
+	callasm ClearItemSpriteAfterFindObtain
 	return
 
 SystemScript_FindNormalItem:
@@ -215,7 +248,7 @@ SystemScript_ObtainItem:
 
 .global SystemScript_ObtainItemMessage
 SystemScript_ObtainItemMessage:
-	callasm ShowItemSpriteOnFind
+	callasm ShowItemSpriteOnFindObtain
 	compare 0x8005 1
 	if lessorequal _call ObtainedSingleItemMsg
 	compare 0x8005 1
@@ -224,7 +257,7 @@ SystemScript_ObtainItemMessage:
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
-	callasm ClearItemSpriteAfterFind
+	callasm ClearItemSpriteAfterFindObtain
 	return
 
 ObtainedSingleItemMsg:
@@ -248,6 +281,27 @@ ObtainedMultipleItemMsg:
 	callasm TryAppendSOntoEndOfItemString
 	preparemsg gText_ObtainedMultipleItems
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ GAME_STAT_FOUND_HIDDEN_ITEM, 20
+
+@Var8005 = Item
+@Var8006 = Quantity
+SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
+	callasm ShowItemSpriteOnFindHidden
+	compare 0x8006 1
+	if equal _call 0x81A68AA @;EventScript_FoundSingleHiddenItem
+	compare 0x8006 1
+	if notequal _call 0x81A68BA @;EventScript_FoundMultipleHiddenItems
+	waitfanfare
+	waitmsg
+	msgbox 0x81A5218 MSG_KEEPOPEN @;gText_PutItemAway
+	callasm ClearItemSpriteAfterFindHidden
+	special 0x96 @;SetHiddenItemFlag
+	incrementgamestat GAME_STAT_FOUND_HIDDEN_ITEM
+	releaseall
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -419,12 +473,14 @@ EventScript_Defog:
 
 .equ SPECIAL_POKEMON_TYPE_IN_PARTY, 0xB2
 .global EventScript_UseLavaSurf
+.global EventScript_UseLavaSurf_Debug
 EventScript_UseLavaSurf:
 	setvar 0x8000 TYPE_FIRE
 	special SPECIAL_POKEMON_TYPE_IN_PARTY
 	compare LASTRESULT PARTY_SIZE
 	if equal _goto EventScript_MagmaGlistens
 	copyvar 0x8004 LASTRESULT
+EventScript_UseLavaSurf_Debug:
 	bufferpartypokemon 0x0 0x8004
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
@@ -617,8 +673,8 @@ EventScript_UseFlash:
 	msgbox 0x81BDFD7 MSG_NORMAL
 	checksound
 	sound 0xC8
-	lighten 0x0
-	darken 0x0
+	animateflash 0x0
+	setflashradius 0x0
 	releaseall
 	end
 
@@ -756,3 +812,116 @@ EventScript_HeadbuttTree_End:
 EventScript_HeadbuttTree_NoUsableMons:
 	msgbox gText_TreeCanBeHeadbutted MSG_NORMAL
 	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_UndergroundMining
+EventScript_UndergroundMining:
+	msgbox gText_StartMining MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_UndergroundMining_End
+	callasm ResetMiningSpots
+	startmining @Right now is not implemented
+	waitstate
+	callasm PrepMiningWarp @Try to go through door if there is one
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UndergroundMining_End
+
+	@Update door tiles
+	sound 0x7C @Rock Smash
+	getplayerpos 0x8004 0x8005
+	subvar 0x8004 1 @1 Left
+	subvar 0x8005 2 @2 Up
+	setmaptile 0x8004 0x8005 0x2D0 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D1 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D2 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2D8 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2D9 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2DA 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2E0 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2E1 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2E2 0x0
+	special 0x8E @Reload tiles
+	checksound
+	applymovement PLAYER m_WalkUp1
+	waitmovement 0x0
+	callasm DoWarp
+	waitstate
+
+EventScript_UndergroundMining_End:
+	release
+	end
+
+m_WalkUp1: .byte walk_up, end_m
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_StopZooming
+SystemScript_StopZooming:
+	lockall
+	msgbox gText_StopZooming MSG_KEEPOPEN
+	pause 0x80
+	releaseall
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_DebugMenu
+SystemScript_DebugMenu:
+	lockall
+	multichoiceoption gText_DebugMenu_SetFlag 0
+	multichoiceoption gText_DebugMenu_GiveItem 1
+	multichoiceoption gText_DebugMenu_Level100Team 2
+	multichoiceoption gText_DebugMenu_MaxCoinage 3
+	multichoice 0x0 0x0 FOUR_MULTICHOICE_OPTIONS 0x0
+	switch LASTRESULT
+	case 0, SystemScript_DebugMenu_SetFlag
+	case 1, SystemScript_DebugMenu_GiveItem
+	case 2, SystemScript_DebugMenu_Level100Team
+	case 3, SystemScript_DebugMenu_MaxCoinage
+SystemScript_DebugMenu_End:
+	releaseall
+	end
+
+SystemScript_DebugMenu_SetFlag:
+	multichoiceoption gText_DebugMenu_AllBadges 0
+	multichoiceoption gText_DebugMenu_GameClear 1
+	multichoiceoption gText_DebugMenu_Pokedexes 2
+	multichoiceoption gText_DebugMenu_FlySpots 3
+	multichoiceoption gText_DebugMenu_CustomFlag 4
+	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x5
+	if greaterorequal _goto SystemScript_DebugMenu_End
+	callasm DebugMenu_ProcessSetFlag
+	goto SystemScript_DebugMenu_SetFlag
+
+SystemScript_DebugMenu_GiveItem:
+	multichoiceoption gText_DebugMenu_UsefulKeyItems 0
+	multichoiceoption gText_DebugMenu_GeneralUsefulItems 1
+	multichoiceoption gText_DebugMenu_PokeBalls 2
+	multichoiceoption gText_DebugMenu_Berries 3
+	multichoiceoption gText_DebugMenu_TMs 4
+	multichoiceoption gText_DebugMenu_AllItems 5
+	multichoice 0x0 0x0 SIX_MULTICHOICE_OPTIONS 0x0
+	compare LASTRESULT 0x6
+	if greaterorequal _goto SystemScript_DebugMenu_End
+	callasm DebugMenu_ProcessGiveItem
+	goto SystemScript_DebugMenu_GiveItem
+
+SystemScript_DebugMenu_Level100Team:
+	callasm DebugMenu_SetTeamToLevel100
+	goto SystemScript_DebugMenu
+
+SystemScript_DebugMenu_MaxCoinage:
+	callasm DebugMenu_MaxMoneyAndCoins
+	goto SystemScript_DebugMenu

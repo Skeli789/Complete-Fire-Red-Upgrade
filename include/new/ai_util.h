@@ -11,7 +11,7 @@ bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef);
 bool8 Can2HKO(u8 bankAtk, u8 bankDef);
 bool8 GetCan2HKO(u8 bankAtk, u8 bankDef);
 bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits);
-bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef);
+bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef, const bool8 ignoreFutureAttacks);
 bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst);
 bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);

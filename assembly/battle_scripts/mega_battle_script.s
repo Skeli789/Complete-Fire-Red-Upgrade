@@ -46,7 +46,6 @@ BattleScript_UltraBurst:
 
 BattleScript_Dynamax:
 	call BS_FLUSH_MESSAGE_BOX
-	call BattleScript_TryRemoveIllusion
 	callasm UpdateHPForDynamax
 	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON
 	waitanimation

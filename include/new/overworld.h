@@ -27,16 +27,23 @@ bool8 IsRunningDisallowed(u8 tile);
 bool8 IsCurrentAreaVolcano(void);
 bool8 IsCurrentAreaAutumn(void);
 bool8 IsCurrentAreaWinter(void);
+bool8 IsCurrentAreaDesert(void);
 bool8 IsCurrentAreaSwamp(void);
 bool8 IsCurrentAreaDarkerCave(void);
 bool8 InTanobyRuins(void);
 void PlayGrassFootstepNoise(void);
 void PlaySandFootstepNoise(void);
 const u8* LoadProperWhiteoutString(const u8* string);
+bool8 IsPlayerSurfingNorthOrSouth(void);
 bool8 IsPlayerFacingRockClimbableWall(void);
 void ShouldRockClimbContinue(void);
 void ShouldRockClimbContinueDiagonally(void);
 u8 PartyHasMonWithFieldMovePotential(u16 move, u16 item, u8 surfingType);
+void TryLoadMiningSpots(void);
+void ChooseMiningSpotToShow(void);
+void IsBestMiningSpotOutOfView(void);
+void ResetMiningSpots(void);
+bool8 IsValidMiningSpot(s16 x, s16 y);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);

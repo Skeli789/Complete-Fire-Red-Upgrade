@@ -7,7 +7,7 @@
 extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[36];
 extern const struct OamData gNewGameBirchOamAttributes;
 
-#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
+#define gFieldEffectArguments ((u32*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
 
 struct  __attribute__((packed)) FieldEffectScript
 {
@@ -37,6 +37,7 @@ void __attribute__((long_call)) BindObj(u8 spriteId, u8 value);
 u8 __attribute__((long_call)) DoBobbingFieldEffect(u8 spriteId);
 bool8 __attribute__((long_call)) CheckObjectGraphicsInFrontOfPlayer(u16 graphicsId);
 void __attribute__((long_call)) FieldEffectScript_LoadFadedPalette(u8 **script);
+void __attribute__((long_call)) ReturnToFieldFromFlyMapSelect(void);
 
 /*
 bool8 FieldEffectActiveListContains(u8 id);

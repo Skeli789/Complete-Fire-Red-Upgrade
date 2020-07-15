@@ -146,6 +146,7 @@ enum
 #define CLASS_DEVELOPER			0x29
 #define CLASS_BOARDER			0x2A
 #define CLASS_COLLECTOR			0x2B
+#define CLASS_BLACK_EMBOAR		0x2D
 #define CLASS_LOR_ADMIN 		0x2E
 #define CLASS_LOR 				0x2F
 #define CLASS_SHADOW_ADMIN 		0x30

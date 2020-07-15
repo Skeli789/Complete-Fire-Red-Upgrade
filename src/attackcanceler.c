@@ -961,16 +961,21 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_MULTIHIT_MOVES:
 			if (CheckTableForMove(gCurrentMove, gTwoToFiveStrikesMoves))
 			{
-				if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
-					gMultiHitCounter = 5;
+				u8 ability = ABILITY(gBankAttacker);
 
-				else if (CheckTableForMove(gCurrentMove, gThreeStrikesMoves))
+				if (gBattleMoves[gCurrentMove].effect == EFFECT_TRIPLE_KICK
+				|| gCurrentMove == MOVE_SURGINGSTRIKES)
+				{
 					gMultiHitCounter = 3;
-
+				}
+				else if (ability == ABILITY_SKILLLINK)
+				{
+					gMultiHitCounter = 5;
+				}
 				#ifdef SPECIES_ASHGRENINJA
-				else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
+				else if (ability == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN
-				&& gBattleMons[gBankAttacker].species == SPECIES_ASHGRENINJA)
+				&& SPECIES(gBankAttacker) == SPECIES_ASHGRENINJA)
 				{
 					gMultiHitCounter = 3;
 				}
@@ -999,7 +1004,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					gBankTarget = PARTNER(gBankTarget);
 				}
 			}
-			else if (CheckTableForMove(gCurrentMove, gThreeStrikesMoves))
+			else if (gBattleMoves[gCurrentMove].effect == EFFECT_TRIPLE_KICK)
 			{
 				gMultiHitCounter = 3;
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)

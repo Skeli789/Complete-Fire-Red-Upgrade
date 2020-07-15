@@ -3,6 +3,7 @@
 #include "../include/menu.h"
 #include "../include/menu_helpers.h"
 #include "../include/new_menu_helpers.h"
+#include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
 #include "../include/start_menu.h"
@@ -29,6 +30,7 @@ enum
 	STARTMENU_RETIRE_SAFARI,
 	STARTMENU_PLAYER_LINK,
 	STARTMENU_DEXNAV,
+	STARTMENU_QUEST_LOG,
 	STARTMENU_EXIT_RIGHT,
 	STARTMENU_EXIT_LEFT,
 	MAX_STARTMENU_ITEMS
@@ -50,6 +52,7 @@ extern const u8 gText_MenuExitRight[];
 extern const u8 gText_MenuExitLeft[];
 extern const u8 gText_MenuRetire[];
 extern const u8 gText_DexNav[];
+extern const u8 gText_MissionLog[];
 extern const u8 gText_MenuBag[];
 extern const u8 gText_MenuCube[];
 #ifdef UNBOUND
@@ -65,7 +68,6 @@ extern const u8 gText_OptionDescription[];
 extern const u8 gText_ExitDescription[];
 extern const u8 gText_RetireDescription[];
 extern const u8 gText_PlayerDescription[];
-extern const u8 gText_ToolsDescription[];
 extern const u8 gText_DexNavDescription[];
 
 extern bool8 (*sStartMenuCallback)(void);
@@ -89,6 +91,7 @@ bool8 __attribute__((long_call)) StartMenuOptionCallback(void);
 bool8 __attribute__((long_call)) StartMenuExitCallback(void);
 bool8 __attribute__((long_call)) StartMenuSafariZoneRetireCallback(void);
 bool8 __attribute__((long_call)) StartMenuLinkModePlayerCallback(void);
+bool8 __attribute__((long_call)) StartMenuQuestLogCallback(void);
 void __attribute__((long_call)) AppendToStartMenuItems(u8 action);
 void __attribute__((long_call)) DestroySafariZoneStatsWindow(void);
 s8 __attribute__((long_call)) PrintStartMenuItems(s8* cursor_p, u8 nitems);
@@ -110,18 +113,21 @@ static bool8 ReloadStartMenuItems(void);
 
 const struct MenuAction sStartMenuActionTable[] =
 {
-	{gText_MenuPokedex,   {.u8_void = StartMenuPokedexCallback}},
-	{gText_MenuPokemon,   {.u8_void = StartMenuPokemonCallback}},
-	{gText_MenuBag,       {.u8_void = StartMenuBagCallback}},
-	{gText_MenuPlayer,    {.u8_void = StartMenuPlayerCallback}},
-	{gText_MenuSave,      {.u8_void = StartMenuSaveCallback}},
-	{gText_MenuOption,    {.u8_void = StartMenuOptionCallback}},
-	{gText_MenuExit,      {.u8_void = StartMenuExitCallback}},
-	{gText_MenuRetire,    {.u8_void = StartMenuSafariZoneRetireCallback}},
-	{gText_MenuPlayer,    {.u8_void = StartMenuLinkModePlayerCallback}},
-	{gText_DexNav,        {.u8_void = StartMenuDexNavCallback}},
-	{gText_MenuExitRight, {.u8_void = StartMenuExitCallback}},
-	{gText_MenuExitLeft,  {.u8_void = StartMenuExitCallback}},
+	[STARTMENU_POKEDEX] = {gText_MenuPokedex, {.u8_void = StartMenuPokedexCallback}},
+	[STARTMENU_POKEMON] = {gText_MenuPokemon, {.u8_void = StartMenuPokemonCallback}},
+	[STARTMENU_BAG] = {gText_MenuBag, {.u8_void = StartMenuBagCallback}},
+	[STARTMENU_PLAYER] = {gText_MenuPlayer, {.u8_void = StartMenuPlayerCallback}},
+	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveCallback}},
+	[STARTMENU_OPTION] = {gText_MenuOption, {.u8_void = StartMenuOptionCallback}},
+	[STARTMENU_EXIT] = {gText_MenuExit, {.u8_void = StartMenuExitCallback}},
+	[STARTMENU_RETIRE_SAFARI] = {gText_MenuRetire, {.u8_void = StartMenuSafariZoneRetireCallback}},
+	[STARTMENU_PLAYER_LINK] = {gText_MenuPlayer, {.u8_void = StartMenuLinkModePlayerCallback}},
+	[STARTMENU_DEXNAV] = {gText_DexNav, {.u8_void = StartMenuDexNavCallback}},
+	#ifdef FLAG_SYS_QUEST_LOG
+	[STARTMENU_QUEST_LOG] = {gText_MissionLog, {.u8_void = (void*) (0x801D768 | 1)}},
+	#endif
+	[STARTMENU_EXIT_RIGHT] = {gText_MenuExitRight, {.u8_void = StartMenuExitCallback}},
+	[STARTMENU_EXIT_LEFT] = {gText_MenuExitLeft, {.u8_void = StartMenuExitCallback}},
 };
 
 const u8* const sStartMenuDescPointers[] =
@@ -135,8 +141,8 @@ const u8* const sStartMenuDescPointers[] =
 	gText_ExitDescription,
 	gText_RetireDescription,
 	gText_PlayerDescription,
-	gText_ToolsDescription,
 	gText_DexNavDescription,
+	NULL,
 	gText_ExitDescription,
 	gText_ExitDescription,
 };
@@ -145,6 +151,11 @@ static bool8 CanSetUpSecondaryStartMenu(void)
 {
 	#ifdef FLAG_SYS_DEXNAV
 	if (FlagGet(FLAG_SYS_DEXNAV))
+		return TRUE;
+	#endif
+
+	#ifdef FLAG_SYS_QUEST_LOG
+	if (FlagGet(FLAG_SYS_QUEST_LOG))
 		return TRUE;
 	#endif
 
@@ -217,7 +228,16 @@ static void BuildPokeToolsMenu(void)
 {
 	sNumStartMenuItems = 0;
 
-	AppendToStartMenuItems(STARTMENU_DEXNAV);
+	#ifdef FLAG_SYS_DEXNAV
+	if (FlagGet(FLAG_SYS_DEXNAV))
+	#endif
+		AppendToStartMenuItems(STARTMENU_DEXNAV);
+
+	#ifdef FLAG_SYS_QUEST_LOG
+	if (FlagGet(FLAG_SYS_QUEST_LOG))
+		AppendToStartMenuItems(STARTMENU_QUEST_LOG);
+	#endif
+
 	AppendToStartMenuItems(STARTMENU_EXIT_LEFT);
 }
 
@@ -239,6 +259,8 @@ void SetUpStartMenu(void)
 
 bool8 StartCB_HandleInput(void)
 {
+	ForceClockUpdate(); //To help with the clock in the start menu routine
+
 	if (JOY_NEW(DPAD_UP))
 	{
 		PlaySE(SE_SELECT);

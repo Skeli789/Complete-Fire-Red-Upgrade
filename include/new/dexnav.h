@@ -12,6 +12,7 @@
 void InitDexNavHUD(u16 species, u8 environment);
 bool8 IsDexNavHudActive(void);
 void TryFreeDexnavState(void);
+u8 GetPlayerDistance(s16 x, s16 y);
 
 //Functions Hooked In
 u8 SelectHookRestore(void);

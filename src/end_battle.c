@@ -70,6 +70,9 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	FLAG_RAID_BATTLE_NO_FORCE_END,
 #endif
+#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+	FLAG_KEEP_CONSUMABLE_ITEMS,
+#endif
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
 	FLAG_HIDDEN_ABILITY,
@@ -406,7 +409,29 @@ bool8 TryRunFromBattle(u8 bank)
 	itemEffect = ITEM_EFFECT(bank);
 	gStringBank = bank;
 
-	if (IsOfType(bank, TYPE_GHOST))
+	#ifdef FLAG_NO_RUNNING
+	if (FlagGet(FLAG_NO_RUNNING))
+	{
+		return FALSE;
+	}
+	else
+	#endif
+	#ifdef FLAG_NO_CATCHING_AND_RUNNING
+	if (FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	{
+		return FALSE;
+	}
+	else
+	#endif
+	if (IsRaidBattle() && !RAID_BATTLE_END)
+	{
+		return FALSE;
+	}
+	else if (IsRaidBattle() && RAID_BATTLE_END)
+	{
+		++effect; //So you can always run at the end of a Raid
+	}
+	else if (IsOfType(bank, TYPE_GHOST))
 	{
 		++effect;
 	}
@@ -495,6 +520,7 @@ void EndOfBattleThings(void)
 		EndBattleFlagClear();
 		HealPokemonInFrontier();
 		gTerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+		CalculatePlayerPartyCount(); //Party size can change after multi battle is over
 
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();
@@ -525,13 +551,19 @@ static void NaturalCureHeal(void)
 static void RestoreNonConsumableItems(void)
 {
 	u16 none = ITEM_NONE;
-	u16* items = gNewBS->itemBackup;;
+	u16* items = gNewBS->itemBackup;
+	#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+	bool8 keepConsumables = FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS);
+	#else
+	bool8 keepConsumables = FALSE;
+	#endif
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+			||  keepConsumables
 			||  items[i] == ITEM_NONE
 			||  !IsConsumable(items[i]))
 			{
@@ -676,6 +708,9 @@ static void EndBattleFlagClear(void)
 	VarSet(VAR_TERRAIN, 0);
 	VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, 0xFFFF);
 	VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, 0xFFFF);
+	#ifdef VAR_BATTLE_TRANSITION_LOGO
+	VarSet(VAR_BATTLE_TRANSITION_LOGO, 0);
+	#endif
 	gFishingByte = FALSE;
 	FREE_AND_SET_NULL(gNewBS);
 

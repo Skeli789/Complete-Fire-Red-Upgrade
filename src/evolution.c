@@ -238,7 +238,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 						u8 startTime = (gEvolutionTable[species][i].unknown >> 8) & 0xFF;	//upper byte
 						u8 endTime = gEvolutionTable[species][i].unknown & 0xFF;	// lower byte
 						if (gEvolutionTable[species][i].param <= level
-						&& (Clock->hour >= startTime && Clock->hour < endTime))
+						&& (gClock.hour >= startTime && gClock.hour < endTime))
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)

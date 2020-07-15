@@ -3,6 +3,7 @@
 .thumb
 
 .include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Game Speed Up
@@ -39,6 +40,19 @@ loop_label:
 
 .org 0x13324, 0xFF
 .word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Vanilla Roamer Bug Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x15BB6, 0xFF
+	mov r8, r8
+	mov r8, r8
+	cmp r1, #0x1
+	beq SetRoamerInactiveCall
+
+.org 0x15BC2, 0xFF
+SetRoamerInactiveCall:	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Ball Count
@@ -155,6 +169,18 @@ MaxLevelChange5:
 	.byte MAX_LEVEL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Roamer IVs Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x40A92, 0xFF
+RoamerIVsFix:
+	ldr r1, [r4]
+	str r1, [r5, #0x4]
+	b RoamerIVsFixEnd
+
+.org 0x40AdD, 0xFF
+RoamerIVsFixEnd:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Summary Screen
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x041318, 0xFF
@@ -216,7 +242,28 @@ MaxLevelChange12:
 .org 0x4A216, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Fix Slow Camera Update
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+/*
+In bytereplacement
+.org 0x56578, 0xFF
+OverworldBasic:
+	push {LR}
+	bl 0x69AA8 @ScriptContext2_RunScript
+	bl 0x77578 @RunTasks
+	bl 0x6B5C @AnimateSprites
+	bl 0x5ABB0 @CameraUpdate
+	bl 0x5AE28 @UpdateCameraPanning
+	bl 0x704D0 @UpdatePaletteFade
+	bl 0x6FFBC @UpdateTilesetAnimations
+	bl 0xF67B8 @DoScheduledBgTilemapCopiesToVram
+	bl 0x6BA8 @BuildOamBuffer
+	pop {pc}
+*/
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -427,9 +474,10 @@ MaxLevelChange1:
 	mov r0, r1
 	bl GetEventObjectGraphicsInfoByEventObj
 
-.org 0xDB8F8, 0xFF
-	mov r0, r1 @UpdateShortGrassFieldEffect
+.org 0xDB8F8, 0xFF @UpdateShortGrassFieldEffect
+	mov r0, r1
 	bl GetEventObjectGraphicsInfoByEventObj
+	mov r8, r0 @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0xDBBBA, 0xFF @FldEff_Splash
 	mov r0, r5
@@ -446,6 +494,7 @@ MaxLevelChange1:
 .org 0xDC7E2, 0xFF @FldEff_SandPile
 	mov r0, r6
 	bl GetEventObjectGraphicsInfoByEventObj
+	mov r5, r0 @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0xDCB06, 0xFF @UpdateDisguiseFieldEffect
 	mov r0, r0
@@ -584,6 +633,19 @@ SummaryScreenExpDisplay2:
 .org 0x1507BE, 0xff	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Losing Trainer Battle 9
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x1D888A, 0xFF
+	printstring 31 @;STRINGID_PLAYERWHITEOUT
+	waitmessage 0x40
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x1d9895, 0xff		@don't load sand palette on healing
 	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4

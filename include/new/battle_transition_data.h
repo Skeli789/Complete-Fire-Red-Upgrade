@@ -8,22 +8,6 @@
  *		  declarations and constants for pre-battle mugshots.
  */
 
-//Don't Modify These Values!
-//VAR_PRE_BATTLE_MUGSHOT_STYLE
-enum
-{
-    MUGSHOT_BIG = 0,
-    MUGSHOT_DP,
-    MUGSHOT_TWO_BARS,
-};
-
-//VAR_PRE_BATTLE_MUGSHOT_SPRITE
-enum
-{
-    MUGSHOT_PLAYER = 0,
-    MUGSHOT_VS_SYMBOL,
-};
-
 //MUGSHOT_BIG tiles
 extern const u16 Big_MugshotTiles[];
 extern const u16 Big_MugshotPal[];

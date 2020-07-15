@@ -496,6 +496,18 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_JudgmentBall[] =
 	sSpriteAffineAnim_JudgmentBall,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_SpiritBreakBall[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+	AFFINEANIMCMD_FRAME(2, 2, 0, 50), //Grow slowly to half size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_SpiritBreakBall[] =
+{
+	sSpriteAffineAnim_SpiritBreakBall,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_HalfSize[] =
 {
 	AFFINEANIMCMD_FRAME(-128, -128, 0, 1), //Half size
@@ -575,6 +587,18 @@ static const union AffineAnimCmd sSpriteAffineAnim_NightSlashRight[] =
 const union AffineAnimCmd* const gSpriteAffineAnimTable_NightSlashRight[] =
 {
 	sSpriteAffineAnim_NightSlashRight,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_PsychoCutOpponent[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 128, 1), //180 degree turn
+	AFFINEANIMCMD_FRAME(4, 4, 0, 64), //Double in size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_PsychoCutOpponent[] =
+{
+	sSpriteAffineAnim_PsychoCutOpponent,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
@@ -886,11 +910,11 @@ bool8 IsAnimMoveOceanicOperretta(void)
 bool8 DoesMoveHaveGeyserOnTarget(void)
 {
 	return sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S
-		 || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P 		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
-		 || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P 		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
-		 || sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
-		 || sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY
-		 || IsAnyMaxMove(sAnimMoveIndex);
+		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P      || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
+		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P         || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
+		|| sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
+		|| sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY
+		|| IsAnyMaxMove(sAnimMoveIndex);
 }
 
 bool8 IsAnimMoveDestinyBond(void)
@@ -2676,20 +2700,19 @@ void SpriteCB_LaunchObjectUpwards(struct Sprite* sprite)
 }
 
 //Launches an object upwards like they were being shot from a geyser
-//arg 0: null
+//arg 0: target
 //arg 1: initial x pixel offset
 //arg 2: initial y pixel offset
 void SpriteCB_Geyser(struct Sprite* sprite)
 {
-	if (DoesMoveHaveGeyserOnTarget())
-	{
-		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
-		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
-	}
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
 	else
 	{
-		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2) + gBattleAnimArgs[1];
-		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3) + gBattleAnimArgs[2];
+		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
+		sprite->pos1.y = GetBattlerSpriteCoord(target, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
 	}
 
 	sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
@@ -3542,8 +3565,9 @@ HIDE_BOXES:
 u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 {
 	#ifdef FASTER_HEALTHBOX_CHANGE
-		u16 amount = gBattleMons[bank].maxHP / 48; //48 pixels on healthbar
-		u16 leftover = gBattleMons[bank].maxHP % 48;
+		u16 maxHP = GetMonData(GetBankPartyData(bank), MON_DATA_MAX_HP, NULL);
+		u16 amount = maxHP / 48; //48 pixels on healthbar
+		u16 leftover = maxHP % 48;
 
 		if (leftover >= 40) //So health like 95 (worst case) is included in next level up
 			amount += 1;

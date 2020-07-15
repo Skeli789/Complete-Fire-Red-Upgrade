@@ -159,7 +159,7 @@ def DoMiddleManAssembly(originalFile: str, assemblyFile: str, flagFile: str, fla
 
     if fileExists \
             and os.path.getmtime(objectFile) > os.path.getmtime(originalFile) \
-            and os.path.getmtime(objectFile) > os.path.getmtime(flagFile):
+            and (flagFile == "" or os.path.getmtime(objectFile) > os.path.getmtime(flagFile)):
         # If the .o file was created after the original and flag file were last modified
         return objectFile
     else:  # The original file or the flag file were modified recently
@@ -291,7 +291,7 @@ def ProcessAudio(audioFile: str) -> str:
             line = file.readline()  # Only needs the first line
             flags = line.strip().split()
     except FileNotFoundError:
-        pass
+        flagFile = ""
 
     cmd = [WAV2AGB, audioFile, assemblyFile] + flags
 

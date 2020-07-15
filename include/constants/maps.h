@@ -7,6 +7,7 @@
 
 #define MAP_GROUP(map) (MAP_##map >> 8)
 #define MAP_NUM(map) (MAP_##map & 0xFF)
+#define MAP_IS(map) (gSaveBlock1->location.mapGroup == MAP_GROUP(map) && gSaveBlock1->location.mapNum == MAP_NUM(map))
 
 #define MAP(map) MAP_GROUP(map), MAP_NUM(map)
 
@@ -540,6 +541,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_GRIM_WOODS			((45 << 8) | 1)
 #define MAP_ROUTE_5				((3 << 8) | 73)
 #define MAP_CRATER_TOWN			((3 << 8) | 74)
+#define MAP_POKEMON_DAY_CARE	((1 << 8) | 94)
 #define MAP_ROUTE_6				((3 << 8) | 75)
 #define MAP_ROUTE_7				((3 << 8) | 76)
 #define MAP_ROUTE_8				((3 << 8) | 77)
@@ -556,6 +558,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_TARMIGAN_TOWN		((3 << 8) | 87)
 #define MAP_ROUTE_12			((3 << 8) | 88)
 #define MAP_DEHARA_CITY			((3 << 8) | 89)
+#define MAP_RUINS_OF_VOID_EXT	((1 << 8) | 109)
 #define MAP_GREAT_DESERT_A		((3 << 8) | 90)
 #define MAP_GREAT_DESERT_B		((3 << 8) | 91)
 #define MAP_GREAT_DESERT_C		((3 << 8) | 92)
@@ -575,6 +578,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_SEAPORT_CITY		((3 << 8) | 105)
 #define MAP_ROUTE_18_A			((3 << 8) | 106)
 #define MAP_ROUTE_18_B			((3 << 8) | 107)
+#define MAP_POKEMON_LEAGUE		((3 << 8) | 108)
 
 #define MAP_ROUTE_13    ((3 << 8) | 67)
 #define MAP_ROUTE_14    ((3 << 8) | 67)
@@ -606,10 +610,65 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 
 
 //Caves
+#define MAP_ICICLE_CAVE_1F			((43 << 8) | 0)
+#define MAP_ICICLE_CAVE_B1F			((43 << 8) | 1)
+#define MAP_ICICLE_CAVE_B2F			((43 << 8) | 2)
+#define MAP_ICICLE_CAVE_B3F			((43 << 8) | 3)
+#define MAP_ICICLE_CAVE_B3F_ALT		((43 << 8) | 4)
+#define MAP_ICICLE_CAVE_1F_BACK		((43 << 8) | 5)
+#define MAP_ICICLE_CAVE_CLEARING	((43 << 8) | 6)
+#define MAP_ICICLE_CAVE_B4F			((43 << 8) | 7)
+#define MAP_ICICLE_CAVE_RAID_DEN	((1 << 8) | 28)
+
 #define MAP_CINDER_VOLCANO_F1			((45 << 8) | 3)
+#define MAP_CINDER_VOLCANO_2F			((45 << 8) | 4)
 #define MAP_CINDER_VOLCANO_SHADOW_F1 	((6 << 8) | 12)
+#define MAP_CINDER_VOLCANO_3F_1			((1 << 8) | 46)
+#define MAP_CINDER_VOLCANO_4F_2			((1 << 8) | 50)
 #define MAP_CINDER_VOLCANO_SHADOW_B1F 	((1 << 8) | 51)
 #define MAP_CINDER_VOLCANO_SHADOW_B2F	((1 << 8) | 52)
+
+#define MAP_VALLEY_CAVE_A	((47 << 8) | 0)
+#define MAP_VALLEY_CAVE_B	((47 << 8) | 1)
+#define MAP_VALLEY_CAVE_C	((47 << 8) | 2)
+#define MAP_VALLEY_CAVE_D	((47 << 8) | 3)
+
+#define MAP_FROST_MOUNTAIN_1F	((50 << 8) | 0)
+#define MAP_FROST_MOUNTAIN_2F	((50 << 8) | 1)
+#define MAP_FROST_MOUNTAIN_3F	((48 << 8) | 1)
+
+#define MAP_LOST_TUNNEL_B1F		((1 << 8) | 121)
+
+#define MAP_THUNDERCAP_MT_WEST_1F	((52 << 8) | 0)
+#define MAP_THUNDERCAP_MT_WEST_2F	((52 << 8) | 1)
+#define MAP_THUNDERCAP_MT_WEST_3F	((52 << 8) | 2)
+
+#define MAP_THUNDERCAP_MT_SUMMIT	((53 << 8) | 0)
+#define MAP_THUNDERCAP_MT_1F		((53 << 8) | 1)
+#define MAP_THUNDERCAP_MT_2F		((53 << 8) | 2)
+#define MAP_THUNDERCAP_MT_3F_3		((53 << 8) | 3)
+#define MAP_THUNDERCAP_MT_3F_2		((53 << 8) | 4)
+#define MAP_THUNDERCAP_MT_3F_1		((53 << 8) | 5)
+#define MAP_THUNDERCAP_MT_3F_1_BACK	((53 << 8) | 6)
+
+#define MAP_RIFT_CAVE_B1F	((1 << 8) | 35)
+
+#define MAP_RUINS_OF_VOID_B3F		((1 << 8) | 114)
+#define MAP_RUINS_OF_VOID_B3F_ALT	((1 << 8) | 107)
+
+#define MAP_TOMB_OF_BORRIUS_1F		((1 << 8) | 83)
+#define MAP_TOMB_OF_BORRIUS_B3F		((1 << 8) | 85)
+#define MAP_TOMB_OF_BORRIUS_1F_BACK	((1 << 8) | 90)
+
+#define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
+#define MAP_VICTORY_ROAD_CAVE_B       ((55 << 8) | 1)
+#define MAP_VICTORY_ROAD_VOLCANO      ((55 << 8) | 2)
+#define MAP_VICTORY_ROAD_CAVE_C       ((55 << 8) | 3)
+#define MAP_VICTORY_ROAD_GRASSY       ((55 << 8) | 4)
+#define MAP_VICTORY_ROAD_CAVE_D       ((55 << 8) | 5)
+#define MAP_VICTORY_ROAD_MOUNTAINSIDE ((55 << 8) | 6)
+#define MAP_VICTORY_ROAD_ICE_CAVE_A   ((55 << 8) | 7)
+#define MAP_VICTORY_ROAD_ICE_CAVE_B   ((55 << 8) | 8)
 
 //Interior
 #define MAP_PLAYER_ROOM 		((4 << 8) | 1)
@@ -618,6 +677,11 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 
 #define MAP_SHADOW_WAREHOUSE	((4 << 8) | 10)
 #define MAP_SHADOW_BASE_B3F		((1 << 8) | 45)
+
+#define MAP_UNDERGROUND_PASS_A	((1 << 8) | 31)
+#define MAP_UNDERGROUND_PASS_B	((1 << 8) | 32)
+
+#define MAP_FALLSHORE_CITY_EVOLUTION_HOUSE_LOWER	((14 << 8) | 2)
 
 #define MAP_VIVILL_TOWN_POKEMON_CENTRE				((44 << 8) | 3)
 #define MAP_VIVILL_TOWN_POKEMON_CENTRE_TOP_FLOOR	((44 << 8) | 4)

@@ -16,7 +16,7 @@ void sp067_GenerateRandomBattleTowerTeam(void);
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void);
 u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType);
 const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numStars);
-void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum, bool8 forceShiny);
+void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool8 forceShiny, bool8 keepGender, bool8 keepLetterCore);
 void CreateFrontierRaidMon(const u16 species);
 bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);

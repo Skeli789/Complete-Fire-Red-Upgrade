@@ -992,6 +992,7 @@ BS_032_Recover:
 	ppreduce
 	jumpifmove MOVE_ROOST RoostBS
 	jumpifmove MOVE_LIFEDEW LifeDewBS
+	jumpifmove MOVE_JUNGLEHEALING LifeDewBS @TODO
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -1162,7 +1163,8 @@ BS_039_RazorWind:
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS TwoTurnMovesSecondTurnBS
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING TwoTurnMovesSecondTurnBS
 	setbyte TWOTURN_STRINGID 0x0
-	call TwoTurnMovesChargingTurnBS
+	call BattleScript_FirstChargingTurn
+	call BattleScript_CheckPowerHerb
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1616,10 +1618,11 @@ BS_075_SkyAttack:
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS TwoTurnMovesSecondTurnBS
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING TwoTurnMovesSecondTurnBS
 	setbyte TWOTURN_STRINGID 0x3
-	call TwoTurnMovesChargingTurnBS
+	call BattleScript_FirstChargingTurn
+	call BattleScript_CheckPowerHerb
 	goto BS_MOVE_END
 
-TwoTurnMovesChargingTurnBS:
+BattleScript_FirstChargingTurn:
 	attackcanceler
 	printstring 0x130 @;Blank String
 	ppreduce
@@ -1629,25 +1632,36 @@ TwoTurnMovesChargingTurnBS:
 	jumpifmove MOVE_ICEBURN PrintIceBurnString
 	jumpifmove MOVE_SHADOWFORCE PrintShadowForceString
 	jumpifmove MOVE_PHANTOMFORCE PrintShadowForceString
+	jumpifmove MOVE_METEORBEAM PrintMeteorBeamString
 	copyarray MULTISTRING_CHOOSER TWOTURN_STRINGID 0x1
 	printfromtable 0x83FE590
-	goto PowerHerbCheckBS
-	
+	return
+
 PrintFreezeShockString:
 	setword BATTLE_STRING_LOADER FreezeShockChargingString
 	printstring 0x184
-	goto PowerHerbCheckBS
+	waitmessage DELAY_1SECOND
+	return
 
 PrintIceBurnString:
 	setword BATTLE_STRING_LOADER IceBurnChargingString
 	printstring 0x184
-	goto PowerHerbCheckBS
+	waitmessage DELAY_1SECOND
+	return
 	
 PrintShadowForceString:
 	setword BATTLE_STRING_LOADER ShadowForceString
 	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
-PowerHerbCheckBS:
+PrintMeteorBeamString:
+	setword BATTLE_STRING_LOADER gText_MeteorBeamCharge
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_CheckPowerHerb:
 	waitmessage DELAY_1SECOND
 	jumpifhelditemeffect BANK_ATTACKER ITEM_EFFECT_POWER_HERB PowerHerbChargeBS
 	jumpifraidboss BANK_ATTACKER TwoTurnMovesRaidBossSkipCharge
@@ -2144,7 +2158,12 @@ BS_104_TripleKick:
 	attackstring
 	ppreduce
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifmove MOVE_TRIPLEAXEL BS_TripleAxel
 	addbyte TRIPLE_KICK_POWER 10
+	goto BS_STANDARD_HIT
+
+BS_TripleAxel:
+	addbyte TRIPLE_KICK_POWER 20
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2760,7 +2779,9 @@ DefogLoweredStat:
 BattleScript_DefogAdditionalEffects:
 	attackanimation @;Should only play after the Second Defog Check
 	waitanimation
+	jumpifweather weather_circus SkipRemoveFogBS
 	jumpifweather weather_fog | weather_permament_fog RemoveFogBS
+SkipRemoveFogBS:
 	breakfree
 	goto BS_MOVE_END
 
@@ -2978,7 +2999,8 @@ BS_145_SkullBash:
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS TwoTurnMovesSecondTurnBS
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING TwoTurnMovesSecondTurnBS
 	setbyte TWOTURN_STRINGID, 0x2
-	call TwoTurnMovesChargingTurnBS
+	call BattleScript_FirstChargingTurn
+	jumpifmove MOVE_METEORBEAM BS_MeteorBeam
 	setstatchanger STAT_DEF | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
@@ -2986,6 +3008,18 @@ BS_145_SkullBash:
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	call BattleScript_CheckPowerHerb
+	goto BS_MOVE_END
+
+BS_MeteorBeam:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	call BattleScript_CheckPowerHerb
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3043,7 +3077,8 @@ BSSolarbeamDecideTurn:
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS TwoTurnMovesSecondTurnBS
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING TwoTurnMovesSecondTurnBS
 	setbyte TWOTURN_STRINGID, 0x1
-	call TwoTurnMovesChargingTurnBS
+	call BattleScript_FirstChargingTurn
+	call BattleScript_CheckPowerHerb
 	goto BS_MOVE_END
 
 BSSolarbeamOnFirstTurn:
@@ -3119,7 +3154,8 @@ BS_FirstTurnDig:
 	setbyte TWOTURN_STRINGID 0x5
 	
 BS_FirstTurnSemiInvulnerable:
-	call TwoTurnMovesChargingTurnBS
+	call BattleScript_FirstChargingTurn
+	call BattleScript_CheckPowerHerb
 	setsemiinvulnerablebit
 	goto BS_MOVE_END
 

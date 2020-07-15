@@ -624,6 +624,15 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Tarmigan House Windows
+		.tilesetPointer = 0x82D4B6C, //Tileset 9
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{15, RGB(31, 31, 14)},
+			TILESET_PAL_FADE_END
+		},
+	},
 	{ //Tarmigan Mansion Windows
 		.tilesetPointer = 0x82D4B6C, //Tileset 9
 		.paletteNumToFade = 8,

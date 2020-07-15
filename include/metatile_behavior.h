@@ -2,7 +2,8 @@
 
 #include "global.h"
 
-bool8 __attribute__((long_call)) MetatileBehavior_IsSandOrDeepSand(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsPokeGrass(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsSandOrShallowFlowingWater(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsSurfableWaterOrUnderwater(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsTallGrass(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsLongGrass(u8 metatileBehavior);

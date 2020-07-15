@@ -21,7 +21,7 @@ void __attribute__((long_call)) CheckFocusPunch_ClearVarsBeforeTurnStarts(void);
 void __attribute__((long_call)) HandleEndTurn_FinishBattle(void);
 //bank_t __attribute__((long_call)) GetBattleBank(u8 caseID);
 void __attribute__((long_call)) MarkBufferBankForExecution(u8 bank);
-void __attribute__((long_call)) CancelMultiTurnMoves(u8 bank);
+//void __attribute__((long_call)) CancelMultiTurnMoves(u8 bank);
 bool8 __attribute__((long_call)) WasUnableToUseMove(u8 bank);
 void __attribute__((long_call)) ResetSentPokesToOpponentValue(void);
 void __attribute__((long_call)) sub_8017434(u8 bank);

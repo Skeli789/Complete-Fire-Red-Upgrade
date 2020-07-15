@@ -45,8 +45,6 @@ static const species_t sBannedBackupSpecies[] =
 };
 
 //This file's functions:
-static bool8 IsMinior(u16 species);
-
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility)
 {
 	u16 backup;
@@ -279,7 +277,7 @@ species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 	return gMiniorCores[mon->personality % (ARRAY_COUNT(gMiniorCores) - 1)];
 }
 
-static bool8 IsMinior(u16 species)
+bool8 IsMinior(u16 species)
 {
 	return
 	#ifdef SPECIES_MINIOR_SHIELD

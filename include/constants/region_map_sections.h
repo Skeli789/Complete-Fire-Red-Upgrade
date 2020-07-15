@@ -129,6 +129,7 @@
 #define MAPSEC_ROUTE_1 						0x65
 #define	MAPSEC_BELLIN_TOWN					0x59
 #define MAPSEC_ICICLE_CAVE					0x8D
+#define MAPSEC_ICY_HOLE						0x9D
 #define MAPSEC_ROUTE_2 						0x66
 #define MAPSEC_DRESCO_TOWN					0x5A
 #define MAPSEC_ROUTE_3						0x67
@@ -139,7 +140,7 @@
 #define MAPSEC_ROUTE_5 						0x69
 #define MAPSEC_POKEMON_DAY_CARE				0x9B
 #define MAPSEC_CRATER_TOWN					0x5B
-#define MAPSEC_SES_EXPRESSWAY				0x86
+#define MAPSEC_KBT_EXPRESSWAY				0x86
 #define MAPSEC_VALLEY_CAVE 					0x83
 #define MAPSEC_ROUTE_6 						0x6A
 #define MAPSEC_ROUTE_7 						0x6B
@@ -147,13 +148,14 @@
 #define MAPSEC_FROST_MOUNTAIN				0x82
 #define MAPSEC_BLIZZARD_CITY				0x5C
 #define MAPSEC_FROZEN_FOREST				0x99
+#define MAPSEC_FROZEN_TOMB					0xC2
 #define MAPSEC_ROUTE_9						0x6D
 #define MAPSEC_TEHL_TOWN					0x5D
 #define MAPSEC_UNDERGROUND_PASS				0x81
 #define MAPSEC_ROUTE_10						0x64
 #define MAPSEC_CAVE_OF_BEING				0x9A
 #define MAPSEC_AUBURN_WATERWAY	            0x8E
-#define MAPSEC_LOST_TUNNEL					0x9c
+#define MAPSEC_LOST_TUNNEL					0x9C
 #define MAPSEC_FALLSHORE_CITY				0x5E
 #define MAPSEC_ROUTE_11						0x6F
 #define MAPSEC_EPIDIMY_TOWN					0x5F
@@ -167,11 +169,12 @@
 #define MAPSEC_DEHARA_DEPT					0xC4
 #define MAPSEC_RIFT_CAVE					0x8B
 #define MAPSEC_RUINS_OF_VOID				0x68
-#define MAPSEC_AFTERLIFE					0x7D
+#define MAPSEC_JUDGMENT_ZONE				0x7D
 #define MAPSEC_ROUTE_13						0x71
 #define MAPSEC_ROUTE_14						0x72
 #define MAPSEC_GREAT_DESERT					0x7B
-#define MAPSEC_TOMB_OF_BORRIUS				0x
+#define MAPSEC_TOMB_OF_BORRIUS				0xC0
+#define MAPSEC_DESERT_RUINS                 0xC1
 #define MAPSEC_GURUN_TOWN					0x7A
 #define MAPSEC_VIVILL_WOODS					0x8C
 #define MAPSEC_VIVILL_TOWN					0x79
@@ -193,7 +196,9 @@
 #define MAPSEC_MAGNOLIA_TOWN				0x91
 #define MAPSEC_REDWOOD_VILLAGE				0x92
 #define MAPSEC_ROUTE_18                     0x76
+#define MAPSEC_ISLAND_CAVE					0xC3
 #define MAPSEC_VICTORY_ROAD                 0x84
+#define MAPSEC_POKEMON_LEAGUE               0x89
 
 #define MAPSEC_HIDDEN_GROTTO				0x80
 #endif

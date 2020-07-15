@@ -105,14 +105,22 @@ EventScript_TryDoTwoOpponentBattle:
 	call EventScript_RevealTrainer
 	callasm HasOneTrainerBeenDefeated + 1
 	compare LASTRESULT 0
-	if notequal _goto EventScript_NoDoubleTrainerBattle
+	if notequal _goto EventScript_TwoOpponent_NoDoubleTrainerBattle
 	special HasEnoughMonsForDoubleBattle
 	compare LASTRESULT 0
-	if notequal _goto EventScript_NotEnoughMonsForDoubleBattle
+	if notequal _goto EventScript_TwoOpponent_NotEnoughMonsForDoubleBattle
 	special SetUpTrainerEncounterMusic
 	special SetUpTrainerMovement
 	setvar 0x8000 0x1
 	goto TwoOpponentBattleShowMessage
+
+EventScript_TwoOpponent_NoDoubleTrainerBattle:
+	callasm ClearTwoOpponentFlag @Otherwise next battle will be double
+	goto EventScript_NoDoubleTrainerBattle
+
+EventScript_TwoOpponent_NotEnoughMonsForDoubleBattle:
+	callasm ClearTwoOpponentFlag @Otherwise next battle will be double
+	goto EventScript_NotEnoughMonsForDoubleBattle
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -13,6 +13,8 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_AirBalloonSub
 .global BattleScript_Totem
 .global BattleScript_TotemRet
+.global BattleScript_TotemOmniboost
+.global BattleScript_TotemOmniboostRet
 .global BattleScript_Primal
 .global BattleScript_PrimalSub
 .global BattleScript_ElectricTerrainBattleBegin
@@ -53,6 +55,10 @@ BattleScript_Totem:
 	call BattleScript_TotemRet
 	end3
 
+BattleScript_TotemOmniboost:
+	call BattleScript_TotemOmniboostRet
+	end3
+
 BattleScript_TotemRet:
 	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0
 	setword BATTLE_STRING_LOADER TotemAuraFlared
@@ -66,7 +72,15 @@ BattleScript_TotemRet:
 	waitmessage DELAY_1SECOND
 TotemEnd:
 	return
-	
+
+BattleScript_TotemOmniboostRet:
+	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0
+	setword BATTLE_STRING_LOADER TotemAuraFlared
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AllStatsUp
+	return
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Primal:

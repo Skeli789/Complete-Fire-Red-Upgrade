@@ -9,10 +9,12 @@
 
 #define BGM_BATTLE_RSE_GYM_LEADER 0x109
 #define BGM_BATTLE_RSE_TRAINER 0x10A
+#define BGM_CYCLING 0x11A
 #define BGM_BATTLE_GYM_LEADER 0x128
 #define BGM_BATTLE_TRAINER 0x129
 #define BGM_BATTLE_WILD 0x12A
 #define BGM_BATTLE_CHAMPION 0x12B
+#define BGM_SURFS_UP 0x131
 #define BGM_BATTLE_DEOXYS 0x153
 #define BGM_BATTLE_LEGENDARY_BIRDS 0x154
 #define BGM_BATTLE_MEWTWO 0x155
@@ -38,11 +40,10 @@
 #define SE_NOT_VERY_EFFECTIVE 0xC
 #define SE_EFFECTIVE 0xD
 #define SE_SUPER_EFFECTIVE 0xE
-#define SE_SWITCH_IN 0xF
-#define SE_FAINT 0x10
+#define SE_POKE_BALL_OPEN 0xF
+#define SE_POKE_BALL_CLOSE 0x10
 #define SE_FLEE 0x11
 #define SE_SLIDING_DOOR_OPEN 0x12
-
 #define SE_BREAK_DOOR_OPEN 0x14
 #define SE_EXCLAIM 0x15
 #define SE_FALSE 0x16
@@ -55,7 +56,6 @@
 #define SE_LOCK 0x1D
 #define SE_UNLOCK 0x1E
 #define SE_LAVARIDGE_GYM_DIG 0x21
-
 #define SE_ICE_BREAK 0x23
 #define SE_ICE_CRACK 0x24
 #define SE_FALL 0x25
@@ -64,7 +64,6 @@
 #define SE_WARP_IN 0x28
 #define SE_SLIDE 0x29
 #define SE_TURN_SWITCH_FLIP 0x2A
-
 #define SE_POKE_BALL_BOUNCE_1 0x32
 #define SE_POKE_BALL_BOUNCE_2 0x32
 #define SE_POKE_BALL_BOUNCE_3 0x33
@@ -88,24 +87,19 @@
 #define SE_YELLOW_BALLOON 0x45
 #define SE_BREAKABLE_DOOR 0x46
 #define SE_MUD_BALL 0x47
-
 #define SE_BT_START 0x61
-
 #define SE_POKENAV_ONE_BEEP 0x65
 #define SE_POKENAV_TWO_BEEPS 0x66
 #define SE_POKENAV_ON 0x67
 #define SE_POKENAV_OFF 0x68
 #define SE_POKENAV_SEARCHING 0x69
-
 #define SE_FLUTE 0x6E
-
+#define SE_CUT 0x79
+#define SE_ROCK_SMASH 0x7C
 #define SE_CHOMP 0x9A
-
 #define SE_MUD_SLAP 0xA1
 #define SE_LEAVES 0xA2
-
 #define SE_GLASS_BREAK 0xBF
-
 #define SE_EARTHQUAKE 0xE3
 
 #define SE_RG_W_DOOR 241        // Door
@@ -115,12 +109,12 @@
 #define SE_RG_BAG1 245          // Bag Scroll
 #define SE_RG_BAG2 246          // Bag Pocket Change
 #define SE_RG_GETTING 247
-#define SE_RG_SHOP 248          // Cash Register
-#define SE_RG_KITEKI 249        // S.S. Anne Horn
-#define SE_RG_HELP_OP 250       // Help Menu Open
-#define SE_RG_HELP_CL 251       // Help Menu Close
-#define SE_RG_HELP_NG 252       // Help Menu Error
-#define SE_RG_DEOMOV 253        // Deoxys Moves
+#define SE_MONEY 248
+#define SE_SHIP_HORN 249
+#define SE_SAND_FOOTSTEP 250
+#define SE_GRASS_FOOTSTEP 251
+#define SE_RG_HELP_MENU_ERROR 252
+#define SE_RG_DEOXYS_MOVE 253
 #define SE_RG_EXCELLENT 254
 
 #define SE_CAUGHT_POKEMON 0x13F
@@ -146,6 +140,7 @@
 #define BGM_EYE_CYNTHIA 0x1B9
 #define BGM_EYE_TWINS 0x1F1
 #define BGM_EYE_BIRD_KEEPER 0x1F2
+#define BGM_EYE_TERROR_GRANBULL 0x20D
 
 #define BGM_BATTLE_FRONTIER_BRAIN 0x109
 #define BGM_BATTLE_PLASMA_GRUNT 0x10A
@@ -171,6 +166,7 @@
 #define BGM_BATTLE_CYNTHIA 0x1F4
 #define BGM_BATTLE_FLARE_GRUNT 0x201
 #define BGM_BATTLE_SKULL_GRUNT 0x1FA
+#define BGM_BATTLE_BLACK_EMBOAR 0x20C
 
 #define BGM_BATTLE_RAIKOU 0x179
 #define BGM_BATTLE_ENTEI 0x19D
@@ -251,6 +247,8 @@
 #define BGM_NEWMOON_ISLAND 0x186
 #define BGM_GAME_CORNER 0x111
 #define BGM_RUINS_OF_VOID 0x196
+#define BGM_RUINS_OF_VOID_POST 0x18B
+#define BGM_TOMB_OF_BORRIUS 0x184
 #define BGM_VIVILL_WAREHOUSE 0x1A6
 #define BGM_DISTORTION_WORLD 0x16C
 #define BGM_ANTISIS_SEWERS 0x18D
@@ -263,6 +261,7 @@
 #define BGM_POKEMON_LEAGUE 0x1D0
 
 #define BGM_POKEMON_CENTRE 0x12F
+#define BGM_POKEMON_CENTRE_NIGHT 0x1E1
 #define BGM_POKE_MART 0x16B
 #define BGM_GYM 0x113
 #define BGM_ROUTE_GATE 0x172

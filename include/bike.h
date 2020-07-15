@@ -1,6 +1,3 @@
-#ifndef GUARD_BIKE_H
-#define GUARD_BIKE_H
+#pragma once
 
-void sub_80BD620(u32 unkC, u32 unk10);
-
-#endif //GUARD_BIKE_H
+void __attribute__((long_call)) StartTransitionToFlipBikeState(u8 flags);

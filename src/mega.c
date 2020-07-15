@@ -42,7 +42,7 @@ static const item_t sKeystoneTable[] =
 #endif
 };
 
-const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
+const struct Evolution* CanMegaEvolve(unusedArg u8 bank, unusedArg bool8 CheckUBInstead)
 {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return NULL;
@@ -94,7 +94,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 }
 
 //Assumes Wish Evolution isn't important
-species_t GetMegaSpecies(u16 species, u16 item, const u16* moves)
+species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg const u16* moves)
 {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return SPECIES_NONE;
@@ -190,17 +190,20 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	u16 item = mon->item;
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i)
+	if (item != ITEM_NONE)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
+		for (u8 i = 0; i < EVOS_PER_MON; ++i)
 		{
-			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE, TRUE);
+			if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
+			{
+				DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE, TRUE);
 
-			switch (caseId) {
-				case 0:
-					return BattleScript_Primal;
-				default:
-					return BattleScript_PrimalSub;
+				switch (caseId) {
+					case 0:
+						return BattleScript_Primal;
+					default:
+						return BattleScript_PrimalSub;
+				}
 			}
 		}
 	}
@@ -244,7 +247,7 @@ static bool8 IsItemKeystone(u16 item)
 
 static item_t FindTrainerKeystone(u16 trainerId)
 {
-	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK) || IsFrontierTrainerId(trainerId))
 		return ITEM_MEGA_RING;
 
 	for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
@@ -521,7 +524,7 @@ const u8* GetTrainerName(u8 bank)
 		if (name == NULL)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-			|| (IsRaidBattle() && trainerId == RAID_BATTLE_MULTI_TRAINER_TID))
+			|| IsFrontierTrainerId(trainerId))
 				return GetFrontierTrainerName(trainerId, battlerNum);
 
 			return gTrainers[trainerId].trainerName;
@@ -531,7 +534,7 @@ const u8* GetTrainerName(u8 bank)
 	}
 }
 
-u8* TryGetRivalNameByTrainerClass(u8 class)
+u8* TryGetRivalNameByTrainerClass(unusedArg u8 class)
 {
 	#ifdef UNBOUND
 		if (class == CLASS_RIVAL|| class == CLASS_RIVAL_2)

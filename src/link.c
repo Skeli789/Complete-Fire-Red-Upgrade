@@ -50,7 +50,7 @@ void HandleDataTransfer(void)
 		size -= 0x1000;
 	}
 
-	if (SIDE(GetBattlerPosition(gActiveBattler)) == B_SIDE_OPPONENT)
+	if (SIDE(gActiveBattler) == B_SIDE_OPPONENT)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 			LinkOpponentBufferExecCompleted();

@@ -6,7 +6,10 @@ FollowMe_SetStateHook:
 	mov r1, r5
 	mov r5, r0
 	mov r0, r4
-	mov r2, #0x0 @;Don't ignore active scripts
+	push {r0-r1}
+	bl ShouldFollowerIgnoreActiveScript
+	mov r2, r0
+	pop {r0-r1}
 	bl FollowMe
 	mov r0, r5
 	pop {r4, r5}
