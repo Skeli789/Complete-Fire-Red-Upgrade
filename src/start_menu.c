@@ -266,7 +266,7 @@ bool8 StartCB_HandleInput(void)
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(-1);
 		#ifndef UNBOUND
-		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}
@@ -277,7 +277,7 @@ bool8 StartCB_HandleInput(void)
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(+1);
 		#ifndef UNBOUND
-		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}
@@ -347,7 +347,7 @@ static bool8 ReloadStartMenuItems(void)
 	{
 		sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
 		#ifndef UNBOUND
-		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE && gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
+		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
 		}

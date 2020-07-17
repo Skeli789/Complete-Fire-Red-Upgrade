@@ -441,7 +441,6 @@ static void FldEff_LavaBubbles(void)
 	}
 }
 
-#ifdef MB_UNDERGROUND_MINING
 static void SpriteCB_MiningScanRing(struct Sprite* sprite)
 {
 	if (sprite->affineAnimEnded)
@@ -452,6 +451,7 @@ static void SpriteCB_MiningScanRing(struct Sprite* sprite)
 	}
 }
 
+#ifdef MB_UNDERGROUND_MINING
 static u8 GetNumMiningSpots(void)
 {
 	u16 width = gMapHeader.mapLayout->width;

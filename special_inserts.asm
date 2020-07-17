@@ -270,6 +270,35 @@ OverworldBasic:
 	bl 0xF67B8 @DoScheduledBgTilemapCopiesToVram
 	bl 0x6BA8 @BuildOamBuffer
 	pop {pc}
+
+.org 0x59F20, 0xFF
+VeryTallGrassFix:
+	mov r8, r8
+	lsl r0, #0x18
+	lsr r0, #0x18
+	cmp r0, #0x16
+	beq 0x59F2E
+	mov r0, #0x0
+	b 0x59F30
+	mov r0, #0x1
+	bx lr
+	mov r8, r8
+
+	mov r8, r8
+	lsl r0, #0x18
+	lsr r0, #0x18
+	cmp r0, #0x2
+	beq 0x59F42
+	cmp r0, #0xD1
+	bne 0x59F46
+	mov r0, #0x1
+	b 0x59F48
+	mov r0, #0x0
+	bx lr
+	mov r8, r8
+
+	cmp r0, #0x3
+	b 0x59F28
 */
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

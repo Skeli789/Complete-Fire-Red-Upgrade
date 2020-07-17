@@ -672,7 +672,7 @@ Yeah! Let's do this again!\n[.]Oops. You're out of Pok\emon!
 Hiyah!\nThere's no holding anything back!
 
 #org @sFrontierText_BattleGirl_PlayerWin_3
-I[.]I concede! I think you're on a\ndifferent level[.]
+I[.] I concede! I think you're on a\ndifferent level[.]
 
 #org @sFrontierText_BattleGirl_PlayerLose_3
 Hiyah! I put you in your place!\nYou better appreciate it!
@@ -1355,16 +1355,16 @@ Even if you lose, never lose your\nlove of Pok\emon.
 Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's see what you can do to\nthe kingpin of Antisis City!
 
 #org @sFrontierText_BigMo_PlayerWin
-Ha ha ha ha!\pThey should start calling you\nBig [PLAYER_NAME]!
+Ha ha ha ha!\pThey should start calling you\nBig [PLAYER]!
 
 #org @sFrontierText_BigMo_PlayerLose
 Ha ha ha ha!\pLooks like I'm bigger an' better!
 
 #org @sFrontierText_Galavan_PreBattle
-Yo, wazzup, [PLAYER]?\pHowzit goin' these days?\pI'm sure ya had no problem makin'\nyour way to this point.\pWell, it's time to fret, 'cause I'm\nabout to end your streak!
+Yo, wazzup, [PLAYER]?\pHowzit goin' these days?\pI'm sure ya had no problem makin'\nyour way to this point.\pWell, it's time to fret, 'cause I'm\nabout to end your streak!\pHa ha ha!
 
 #org @sFrontierText_Galavan_PlayerWin
-Whoa, ya sure showed me how to\nbattle!
+Whoa, ya sure showed me how to\nbattle! Ha ha ha!
 
 #org @sFrontierText_Galavan_PlayerLose
 And you weren't even at any\ndisadvantage! Ha ha ha!
