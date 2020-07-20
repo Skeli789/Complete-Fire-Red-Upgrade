@@ -323,6 +323,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 	u8 statusMoveNum = 0;
 	bool8 boostingMove = FALSE;
 	bool8 healingMove = FALSE;
+	bool8 auroraVeil = FALSE;
 
 	bool8 isSingleBattle;
 	if (bank == 0xFF)
@@ -368,8 +369,21 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 						break;
 
 					case EFFECT_REFLECT:
+						switch (move) {
+							case MOVE_AURORAVEIL:
+								if (!gNewBS->AuroraVeilTimers[SIDE(bank)]) //Don't check Hail b/c being a Screener helps set up Hail
+									auroraVeil = TRUE; //Same as having two screen moves
+								break;
+							default:
+								if (!(gSideStatuses[SIDE(bank)] & SIDE_STATUS_REFLECT))
+									++reflectionNum;
+								break;
+						}
+						break;
+
 					case EFFECT_LIGHT_SCREEN:
-						++reflectionNum;
+						if (!(gSideStatuses[SIDE(bank)] & SIDE_STATUS_LIGHTSCREEN))
+							++reflectionNum;
 						break;
 
 					case EFFECT_TRAP:
@@ -417,7 +431,25 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 					break;
 
 				case EFFECT_SPIKES:
-					++entryHazardNum;
+					//Consider hazards already set up
+					switch (move) {
+						case MOVE_STEALTHROCK:
+							if (gSideTimers[SIDE(FOE(bank))].srAmount == 0)
+								++entryHazardNum;
+							break;
+						case MOVE_TOXICSPIKES:
+							if (gSideTimers[SIDE(FOE(bank))].tspikesAmount < 2)
+								++entryHazardNum;
+							break;
+						case MOVE_STICKYWEB:
+							if (!gSideTimers[SIDE(FOE(bank))].stickyWeb)
+								++entryHazardNum;
+							break;
+						default: //Spikes
+							if (gSideTimers[SIDE(FOE(bank))].spikesAmount < 3)
+								++entryHazardNum;
+							break;
+					}
 					break;
 
 				default:
@@ -428,17 +460,25 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 
 		if (class == FIGHT_CLASS_NONE)
 		{
-			if (reflectionNum >= 2)
+			if (reflectionNum >= 2 || auroraVeil)
 				class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
-			else if (entryHazardNum >= 2)
+			else if (entryHazardNum >= 1)
 				class = FIGHT_CLASS_ENTRY_HAZARDS;
 			else if (attackMoveNum >= 3)
-				class = FIGHT_CLASS_SWEEPER_KILL;
-			else if (attackMoveNum >= 2)
 			{
 				if (boostingMove)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
-				else if (statusMoveNum)
+				else if (statusMoveNum > 0)
+					class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
+				else
+					class = FIGHT_CLASS_SWEEPER_KILL;
+			}
+			else if (attackMoveNum >= 2 && (boostingMove || statusMoveNum > 0))
+			{
+				//A class should always be assigned here because of the conditions to enter this scope
+				if (boostingMove)
+					class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
+				else if (statusMoveNum > 0)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
 			}
 			else if (healingMove)
@@ -1505,6 +1545,9 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 		{
 			if (IsMovePredictionSemiInvulnerable(bankDef, bankAtk))
 				return TRUE;
+
+			if (stat == STAT_STAGE_SPEED && STAT_STAGE(bankAtk, stat) < statLimit)
+				return TRUE; //Opponent goes first now, but maybe boosting speed will make you faster
 
 			if (!Can2HKO(bankDef, bankAtk) && STAT_STAGE(bankAtk, stat) < statLimit)
 				return TRUE;
