@@ -693,6 +693,15 @@ void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare)
 	#endif
 }
 
+bool8 IsEggPending(unusedArg struct DayCare *daycare)
+{
+	#ifdef VAR_DAYCARE_NUM_EGGS
+		return VarGet(VAR_DAYCARE_NUM_EGGS) != 0;
+	#else
+		return FlagGet(FLAG_PENDING_DAYCARE_EGG);
+	#endif
+}
+
 void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 {
 	u16 species;

@@ -84,7 +84,8 @@ GetPokeBallBattleScriptHook:
 	cmp r0, #0x0
 	pop {r3}
 	bne SuccessfullBallBattleScript
-	ldr r0, =0x801649C | 1
+	mov r1, r3
+	ldr r0, =0x801649C | 1 @Check Poke Doll
 	bx r0
 
 SuccessfullBallBattleScript:

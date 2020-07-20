@@ -470,6 +470,7 @@ PokedexScreenStats 08106370 0
 ##Daycare
 GiveEggFromDaycare 080460D4 1
 CreateEgg 08046150 2
+IsEggPending 80463FC 1
 TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
 CreateHatchedMon 08046BFC 2

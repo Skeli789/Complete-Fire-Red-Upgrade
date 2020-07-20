@@ -3835,51 +3835,64 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
-#define RESTORE_HIDDEN_HEALTHBOXES									\
-{																	\
-	for (sprite = 0; sprite < MAX_SPRITES; ++sprite)				\
-		{															\
-			switch (gSprites[sprite].template->tileTag) {			\
-				case TAG_HEALTHBOX_PLAYER1_TILE:					\
-				case TAG_HEALTHBOX_PLAYER2_TILE:					\
-				case TAG_HEALTHBOX_OPPONENT1_TILE:					\
-				case TAG_HEALTHBOX_OPPONENT2_TILE:					\
-				case TAG_HEALTHBAR_PLAYER1_TILE:					\
-				case TAG_HEALTHBAR_OPPONENT1_TILE:					\
-				case TAG_HEALTHBAR_PLAYER2_TILE:					\
-				case TAG_HEALTHBAR_OPPONENT2_TILE:					\
-					switch (priority) {								\
-						case 0:										\
-							if (!gSprites[sprite].invisible)		\
-							{										\
-								gSprites[sprite].data[7] = TRUE;	\
-								gSprites[sprite].invisible = TRUE;	\
-							}										\
-							else									\
-							{										\
-								gSprites[sprite].data[7] = FALSE;	\
-							}										\
-							break;									\
-						default:									\
-							if (gSprites[sprite].data[7])			\
-							{										\
-								if (IsRaidBattle()					\
-								&& GetBankPartyData(BANK_RAID_BOSS)->hp == 0 \
-								&& (gSprites[sprite].template->tileTag == TAG_HEALTHBOX_OPPONENT1_TILE || gSprites[sprite].template->tileTag == TAG_HEALTHBAR_OPPONENT1_TILE)) \
-									continue;						\
-																	\
-								gSprites[sprite].invisible = FALSE;	\
-								gSprites[sprite].data[7] = FALSE;	\
-							}										\
-					}												\
-			}														\
-		}															\
+#define RESTORE_HIDDEN_HEALTHBOXES												\
+{																				\
+	for (spriteId = 0; spriteId < MAX_SPRITES; ++spriteId)						\
+		{																		\
+			switch (gSprites[spriteId].template->tileTag) {						\
+				case TAG_HEALTHBOX_PLAYER1_TILE:								\
+				case TAG_HEALTHBOX_PLAYER2_TILE:								\
+				case TAG_HEALTHBOX_OPPONENT1_TILE:								\
+				case TAG_HEALTHBOX_OPPONENT2_TILE:								\
+				case TAG_HEALTHBAR_PLAYER1_TILE:								\
+				case TAG_HEALTHBAR_OPPONENT1_TILE:								\
+				case TAG_HEALTHBAR_PLAYER2_TILE:								\
+				case TAG_HEALTHBAR_OPPONENT2_TILE:								\
+					switch (priority) {											\
+						case 0:													\
+							if (!gSprites[spriteId].invisible)					\
+								ChangeHealthboxVisibility(spriteId, TRUE);		\
+							else												\
+								ChangeHealthboxVisibility(spriteId, FALSE);		\
+							break;												\
+						default:												\
+							if (IsRaidBattle()									\
+							&& GetBankPartyData(BANK_RAID_BOSS)->hp == 0		\
+							&& (gSprites[spriteId].template->tileTag == TAG_HEALTHBOX_OPPONENT1_TILE || gSprites[spriteId].template->tileTag == TAG_HEALTHBAR_OPPONENT1_TILE)) \
+								continue;										\
+																				\
+							ChangeHealthboxVisibility(spriteId, FALSE);			\
+					}															\
+			}																	\
+		}																		\
+}
+
+static void ChangeHealthboxVisibility(u8 spriteId, bool8 hide)
+{
+	struct Sprite* sprite = &gSprites[spriteId];
+
+	if (hide)
+	{
+		if (!sprite->invisible) //Sprite isn't already hidden
+		{
+			sprite->invisible = TRUE;
+			gNewBS->hiddenHealthboxFlags[spriteId / 8] |= gBitTable[spriteId % 8]; //Set special hidden flag
+		}
+	}
+	else
+	{
+		if (gNewBS->hiddenHealthboxFlags[spriteId / 8] & gBitTable[spriteId % 8]) //Sprite was hidden during animation
+		{
+			sprite->invisible = FALSE;
+			gNewBS->hiddenHealthboxFlags[spriteId / 8] &= ~gBitTable[spriteId % 8]; //Remove special hidden flag
+		}
+	}
 }
 
 #define hMain_HealthBarSpriteId	 data[5]
 void UpdateOamPriorityInAllHealthboxes(u8 priority)
 {
-	u32 i, sprite;
+	u32 i, spriteId;
 
 	#ifndef HIDE_HEALTHBOXES_DURING_ANIMS
 		goto DEFAULT_CASE;

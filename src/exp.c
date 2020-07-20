@@ -168,12 +168,14 @@ void atk23_getexp(void)
 		}
 
 		//Trainer Boost - a
+		trainerBonus = 10;
 		#ifdef TRAINER_EXP_BOOST
-			trainerBonus = 10;
-			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+			#ifdef UNBOUND
+			&& FlagGet(FLAG_SYS_GAME_CLEAR) //Too OP before game end
+			#endif
+			)
 				trainerBonus = 15;
-		#else
-			trainerBonus = 10;
 		#endif
 
 		//Trade Boost - t

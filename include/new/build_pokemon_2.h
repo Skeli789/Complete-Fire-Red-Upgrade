@@ -9,29 +9,29 @@
  *		  several macros and constants for building Pokemon.
  */
 
-#define MAKE_POKEMON(structure)																					\
-{																												\
-	u16 speciesToCreate = structure[i].species;																	\
-	for (j = 0; gSpeciesNames[speciesToCreate][j] != EOS; ++j)													\
-		nameHash += gSpeciesNames[speciesToCreate][j];															\
-																												\
-	personalityValue += nameHash << 8;																			\
-																												\
-	u8 lvl = structure[i].lvl;																					\
-	if (FlagGet(FLAG_SCALE_TRAINER_LEVELS)																		\
-	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))															\
-		lvl = GetHighestMonLevel(gPlayerParty);																	\
-																												\
-	if (levelScaling && (side == B_SIDE_OPPONENT || !firstTrainer))																	\
-	{																																\
-		if (IsBossTrainerClassForLevelScaling(trainerId))																			\
-			ModifySpeciesAndLevelForBossBattle(&speciesToCreate, &lvl, maxPartyLevel, highestPlayerLevel, canEvolveMon);			\
-		else																														\
+#define MAKE_POKEMON(structure)																																\
+{																																							\
+	u16 speciesToCreate = structure[i].species;																												\
+	for (j = 0; gSpeciesNames[speciesToCreate][j] != EOS; ++j)																								\
+		nameHash += gSpeciesNames[speciesToCreate][j];																										\
+																																							\
+	personalityValue += nameHash << 8;																														\
+																																							\
+	u8 lvl = structure[i].lvl;																																\
+	if (FlagGet(FLAG_SCALE_TRAINER_LEVELS)																													\
+	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																										\
+		lvl = GetHighestMonLevel(gPlayerParty);																												\
+																																							\
+	if (levelScaling && (side == B_SIDE_OPPONENT || !firstTrainer))																							\
+	{																																						\
+		if (IsBossTrainerClassForLevelScaling(trainerId))																									\
+			ModifySpeciesAndLevelForBossBattle(&speciesToCreate, &lvl, maxPartyLevel, highestPlayerLevel, canEvolveMon);									\
+		else																																				\
 			ModifySpeciesAndLevelForGenericBattle(&speciesToCreate, &lvl, minPartyLevel, modifiedAveragePlayerLevel, trainer->partyFlags, canEvolveMon);	\
-	}																																\
-																																	\
-	CreateMon(&party[i], speciesToCreate, lvl, baseIV, TRUE, personalityValue, OT_ID_PRESET, otid);									\
-	party[i].metLevel = structure[i].lvl;																							\
+	}																																						\
+																																							\
+	CreateMon(&party[i], speciesToCreate, lvl, baseIV, TRUE, personalityValue, otIdType, otid);																\
+	party[i].metLevel = structure[i].lvl;																													\
 }
 
 #define SET_MOVES(structure)										\

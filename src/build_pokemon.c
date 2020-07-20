@@ -532,7 +532,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 	u32 i, j, nameHash;
 	u8 monsCount, baseIV, setMonGender, trainerNameLengthOddness, minPartyLevel, maxPartyLevel, modifiedAveragePlayerLevel, highestPlayerLevel, canEvolveMon, levelScaling;
 	struct Trainer* trainer;
-	u32 otid = Random32();
+	u32 otid = 0;
+	u8 otIdType = OT_ID_RANDOM_NO_SHINY;
 
 	if (trainerId == TRAINER_SECRET_BASE)
 		return 0;
@@ -567,6 +568,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		if (!firstTrainer && side == B_SIDE_PLAYER && trainer->encounterMusic > 0) //Multi partner with preset Id
 		{
 			otid = gFrontierMultiBattleTrainers[trainer->encounterMusic - 1].otId;
+			otIdType = OT_ID_PRESET;
 			setMonGender = trainer->gender; //So all Pokemon have the same gender every time
 		}
 
@@ -710,7 +712,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 				if (FlagGet(FLAG_SCALE_TRAINER_LEVELS) || (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))
 					openWorldLevel = GetHighestMonLevel(gPlayerParty);
 
-				CreateMon(&party[i], speciesToCreate, openWorldLevel, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);
+				CreateMon(&party[i], speciesToCreate, openWorldLevel, STANDARD_IV, TRUE, personalityValue, otIdType, otid);
 			}
 			else
 			#endif
