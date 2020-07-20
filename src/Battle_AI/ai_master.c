@@ -14,6 +14,7 @@
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/frontier.h"
+#include "../../include/new/end_turn_battle_scripts.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/util.h"
 #include "../../include/new/mega.h"
@@ -193,6 +194,7 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData);
 static void BattleAI_DoAIProcessing(struct AIScript* aiScriptData);
+static void CalculateAIPredictions(void);
 static bool8 ShouldSwitch(void);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
 static bool8 FindMonThatAbsorbsOpponentsMove(void);
@@ -215,6 +217,7 @@ static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
 static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
 static bool8 ShouldAIUseItem(void);
+static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
 
 void __attribute__((long_call)) RecordLastUsedMoveByTarget(void);
 
@@ -692,40 +695,7 @@ void AI_TrySwitchOrUseItem(void)
 		goto DONT_THINK;
 
 	//Calulate everything important now to save as much processing time as possible later
-	if (!gNewBS->calculatedAIPredictions) //Only calculate these things once per turn
-	{
-		//mgba_printf(MGBA_LOG_INFO, "Calculating strongest moves...");
-		UpdateStrongestMoves();
-		//mgba_printf(MGBA_LOG_WARN, "Calculating doubles killing moves...");
-		UpdateBestDoublesKillingMoves(); //Takes long time
-		//mgba_printf(MGBA_LOG_INFO, "Predicting moves..");
-		PredictMovesForBanks(); //Takes long time
-		//mgba_printf(MGBA_LOG_WARN, "Calculating Dynamax mon...");
-		RunCalcShouldAIDynamax(); //Allows move predictions to change outcome
-		//mgba_printf(MGBA_LOG_INFO, "Calculating switching...");
-
-		gNewBS->calculatedAIPredictions = TRUE;
-
-		u8 backupBattler = gActiveBattler;
-		for (int i = 0; i < gBattlersCount; ++i)
-		{
-			if (GetBattlerPosition(i) == B_POSITION_PLAYER_LEFT && !(gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE))
-				continue; //Only calculate for player if player not in control
-
-			if (GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT && !IsTagBattle())
-				continue; //Only calculate for player if player not in control
-
-			if (gNewBS->ai.calculatedAISwitchings[i] && BATTLER_ALIVE(i)) //So Multi Battles still work properly
-			{
-				ResetBestMonToSwitchInto(i);
-				gNewBS->ai.calculatedAISwitchings[gActiveBattler] = FALSE;
-
-				if (!BankSideHasTwoTrainers(gActiveBattler))
-					gNewBS->ai.calculatedAISwitchings[PARTNER(gActiveBattler)] = FALSE;
-			}
-		}
-		gActiveBattler = backupBattler;
-	}
+	CalculateAIPredictions();
 
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
@@ -788,6 +758,44 @@ void AI_TrySwitchOrUseItem(void)
 DONT_THINK:
 	//mgba_printf(MGBA_LOG_INFO, "AI thinking complete.");
 	EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
+}
+
+static void CalculateAIPredictions(void)
+{
+	if (!gNewBS->calculatedAIPredictions) //Only calculate these things once per turn
+	{
+		//mgba_printf(MGBA_LOG_INFO, "Calculating strongest moves...");
+		UpdateStrongestMoves();
+		//mgba_printf(MGBA_LOG_WARN, "Calculating doubles killing moves...");
+		UpdateBestDoublesKillingMoves(); //Takes long time
+		//mgba_printf(MGBA_LOG_INFO, "Predicting moves..");
+		PredictMovesForBanks(); //Takes long time
+		//mgba_printf(MGBA_LOG_WARN, "Calculating Dynamax mon...");
+		RunCalcShouldAIDynamax(); //Allows move predictions to change outcome
+		//mgba_printf(MGBA_LOG_INFO, "Calculating switching...");
+
+		gNewBS->calculatedAIPredictions = TRUE;
+
+		u8 backupBattler = gActiveBattler;
+		for (int i = 0; i < gBattlersCount; ++i)
+		{
+			if (GetBattlerPosition(i) == B_POSITION_PLAYER_LEFT && !(gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE))
+				continue; //Only calculate for player if player not in control
+
+			if (GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT && !IsTagBattle())
+				continue; //Only calculate for player if player not in control
+
+			if (gNewBS->ai.calculatedAISwitchings[i] && BATTLER_ALIVE(i)) //So Multi Battles still work properly
+			{
+				ResetBestMonToSwitchInto(i);
+				gNewBS->ai.calculatedAISwitchings[gActiveBattler] = FALSE;
+
+				if (!BankSideHasTwoTrainers(gActiveBattler))
+					gNewBS->ai.calculatedAISwitchings[PARTNER(gActiveBattler)] = FALSE;
+			}
+		}
+		gActiveBattler = backupBattler;
+	}
 }
 
 static bool8 ShouldSwitch(void)
@@ -2811,4 +2819,45 @@ static bool8 ShouldAIUseItem(void)
 		}
 	}
 	return FALSE;
+}
+
+static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe)
+{
+	if (!CanKnockOut(switchBank, foe) //Current mon out can't KO new mon being switched in
+	&& !WillTakeSignificantDamageFromEntryHazards(switchBank, 2)) //50% health loss
+	{
+		u8 mostSuitableScore = GetMostSuitableMonToSwitchIntoScore();
+
+		if (mostSuitableScore > SWITCHING_INCREASE_KO_FOE) //Potential switch in has at least two advantages
+			return TRUE;
+		
+		if (OnlyBadMovesLeftInMoveset(switchBank, foe)) //AI mon has nothing good against this new foe
+			return TRUE;
+
+		if (CanKnockOut(foe, switchBank) && mostSuitableScore >= SWITCHING_INCREASE_KO_FOE) //New foe can KO current AI mon
+			return TRUE;
+	}
+
+	return FALSE; //Don't switch
+}
+
+void ShouldDoAIShiftSwitch(void)
+{
+	#ifdef VAR_GAME_DIFFICULTY
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+	&& !IS_DOUBLE_BATTLE
+	&& gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SHIFT
+	&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //AI has a mon that can be switched out
+	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+	{
+		gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+		u8 foe = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+
+		CalculateAIPredictions();
+		if (IsGoodIdeaToDoShiftSwitch(gActiveBattler, foe))
+			return; //Continue in script
+	}
+	#endif
+
+	gBattlescriptCurrInstr = BattleScript_FaintedMonChooseAnotherRejoin - 5;
 }

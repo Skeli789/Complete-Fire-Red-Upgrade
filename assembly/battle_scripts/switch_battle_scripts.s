@@ -32,6 +32,7 @@ switch_battle_scripts.s
 .global BattleScript_HandleFaintedMonDoublesInitial
 .global BattleScript_HandleFaintedMonDoublesPart2
 .global BattleScript_HandleFaintedMonDoublesSwitchInEffects
+.global BattleScript_FaintedMonChooseAnotherRejoin
 
 .global BattleScript_EntryHazardsHurtReturn
 
@@ -297,8 +298,8 @@ BattleScript_FaintedMonTryChooseAnother:
 	jumpifbattletype BATTLE_WIRELESS, BattleScript_FaintedMonChooseAnother
 	jumpifbattletype BATTLE_FRONTIER, BattleScript_FaintedMonChooseAnother
 	jumpifbattletype BATTLE_DOUBLE, BattleScript_FaintedMonChooseAnother
-	jumpifword ANDS, HIT_MARKER, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonChooseAnother
 	jumpifbyte EQUALS, BATTLE_STYLE, 1, BattleScript_FaintedMonChooseAnother
+	jumpifword ANDS, HIT_MARKER, HITMARKER_PLAYER_FAINTED, BattleScript_TryDoAIShiftSwitch
 	jumpifcannotswitch BANK_PLAYER_1, BattleScript_FaintedMonChooseAnother
 	printstring 282 @;STRINGID_ENEMYABOUTTOSWITCHPKMN
 	setbyte BATTLE_COMMUNICATION, 0
@@ -325,12 +326,13 @@ BattleScript_FaintedMonTryChooseAnother:
 	hidepartystatussummary BANK_ATTACKER
 	switchinanim BANK_ATTACKER, 0
 	waitstateatk
-	addindicatorforplayerswitchineffects
+	addindicatorforattackerswitchineffects
 	resetsentmonsvalue
 BattleScript_FaintedMonChooseAnother:
 	drawpartystatussummary BANK_FAINTED
 	getswitchedmondata BANK_FAINTED
 	switchindataupdate BANK_FAINTED
+BattleScript_FaintedMonChooseAnotherRejoin:
 	hpthresholds BANK_FAINTED
 	printstring 3 @;STRINGID_SWITCHINMON
 	hidepartystatussummary BANK_FAINTED
@@ -340,6 +342,38 @@ BattleScript_FaintedMonChooseAnother:
 	callasm ClearSwitchInEffectsState
 BattleScript_FaintedMonEnd:
 	end2
+
+BattleScript_TryDoAIShiftSwitch:
+	jumpifcannotswitch BANK_OPPONENT_1, BattleScript_FaintedMonChooseAnother
+	drawpartystatussummary BANK_FAINTED
+	getswitchedmondata BANK_FAINTED @;Load player data first, so AI can work off of it
+	switchindataupdate BANK_FAINTED
+	callasm ShouldDoAIShiftSwitch @;Jumps to BattleScript_FaintedMonChooseAnotherRejoin if fails
+	callasm SetAttackerAndSwitchingBankToOpponent0
+	openpartyscreen BANK_ATTACKER | OPEN_PARTY_ALLOW_CANCEL, BattleScript_FaintedMonChooseAnotherRejoin
+	switchhandleorder BANK_ATTACKER, 2
+	jumpifbyte EQUALS, BATTLE_COMMUNICATION, 6, BattleScript_FaintedMonChooseAnotherRejoin
+	atknameinbuff1
+	resetintimidatetracebits BANK_ATTACKER
+	hpthresholds2 BANK_ATTACKER
+	printstring 2 @;STRINGID_RETURNMON
+	switchoutabilities BANK_ATTACKER
+	waitstateatk
+	returnatktoball
+	waitstateatk
+	drawpartystatussummary BANK_ATTACKER
+	getswitchedmondata BANK_ATTACKER
+	switchindataupdate BANK_ATTACKER
+	hpthresholds BANK_ATTACKER
+	printstring 3 @;STRINGID_SWITCHINMON
+	hidepartystatussummary BANK_ATTACKER
+	switchinanim BANK_ATTACKER, 0
+	waitstateatk
+	addindicatorforattackerswitchineffects
+	resetsentmonsvalue
+	copybyte BATTLE_SCRIPTING_BANK FAINTED_BANK
+	callasm FaintedBankNameInBuff1
+	goto BattleScript_FaintedMonChooseAnotherRejoin
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

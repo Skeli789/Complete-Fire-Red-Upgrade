@@ -142,8 +142,8 @@ void atkFF2B_trysetburn(void);
 //trysetpoison BANK FAIL_ADDRESS
 void atkFF2C_trysetpoison(void);
 
-//addindicatorforplayerswitchineffects
-void atkFF2D_addindicatorforplayerswitchineffects(void);
+//addindicatorforattackerswitchineffects
+void atkFF2D_addindicatorforattackerswitchineffects(void);
 
 //setmoveeffect2
 void atkFF2E_setmoveeffect2(void);

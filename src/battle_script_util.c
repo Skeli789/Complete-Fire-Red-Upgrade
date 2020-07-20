@@ -2149,9 +2149,19 @@ void SetSwitchingBankToPlayer0(void)
 	gBankSwitching = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 }
 
+void SetAttackerAndSwitchingBankToOpponent0(void)
+{
+	gBankAttacker = gBankSwitching = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+}
+
 void SetSwitchingBankSwitchingCooldownTo2(void)
 {
 	gNewBS->ai.sideSwitchedThisRound |= gBitTable[SIDE(gBankSwitching)];
 	if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
 		gNewBS->ai.switchingCooldown[gBankSwitching] = 2;
+}
+
+void FaintedBankNameInBuff1(void)
+{
+    PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gBankFainted, gBattlerPartyIndexes[gBankFainted]);
 }

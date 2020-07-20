@@ -317,7 +317,7 @@ gBattleScriptingCommandsTable2:
 .word atkFF2A_trysetparalysis
 .word atkFF2B_trysetburn
 .word atkFF2C_trysetpoison
-.word atkFF2D_addindicatorforplayerswitchineffects
+.word atkFF2D_addindicatorforattackerswitchineffects
 .word atkFF2E_setmoveeffect2
 .word atkFF2F_setmaxmoveeffect
 .word atkFF30_jumpifdynamaxed

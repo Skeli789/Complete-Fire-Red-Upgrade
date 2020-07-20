@@ -1676,7 +1676,7 @@
 	.4byte \rom_address
 	.endm
 	
-	.macro addindicatorforplayerswitchineffects
+	.macro addindicatorforattackerswitchineffects
 	.byte 0xFF, 0x2D
 	.endm
 	

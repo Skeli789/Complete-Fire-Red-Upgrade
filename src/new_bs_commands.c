@@ -1860,10 +1860,10 @@ void atkFF2C_trysetpoison(void)
 		gBattlescriptCurrInstr += 6;
 }
 
-//addindicatorforplayerswitchineffects
-void atkFF2D_addindicatorforplayerswitchineffects(void) //Used for when the game asks you if you want to switch to counter what the foe is sending in
+//addindicatorforattackerswitchineffects
+void atkFF2D_addindicatorforattackerswitchineffects(void) //Used for when the game asks you if you want to switch to counter what the foe is sending in
 {
-	gNewBS->doSwitchInEffects |= gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
+	gNewBS->doSwitchInEffects |= gBitTable[gBankAttacker];
 	gBattlescriptCurrInstr += 1;
 }
 
