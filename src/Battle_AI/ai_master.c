@@ -917,6 +917,9 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+	
+	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
+		return FALSE;
 
 	if (IS_DOUBLE_BATTLE)
 	{
@@ -1550,6 +1553,9 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 
 static bool8 ShouldSwitchToAvoidDeath(void)
 {
+	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
+		return FALSE;
+
 	if (IS_SINGLE_BATTLE
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
@@ -2695,7 +2701,7 @@ static bool8 ShouldAIUseItem(void)
 						if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 4)
 							shouldUse = TRUE;
 					}
-					else //Smart AI
+					else if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2) //Smart AI should only use at less than half health
 					{
 						u8 foe = FOE(gActiveBattler);
 						if ((BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
@@ -2708,11 +2714,12 @@ static bool8 ShouldAIUseItem(void)
 				break;
 			case AI_ITEM_HEAL_HP:
 				paramOffset = GetItemEffectParamOffset(item, 4, 4);
-				if (paramOffset > 0 && BATTLER_ALIVE(gActiveBattler)  && !BATTLER_MAX_HP(gActiveBattler))
+				if (paramOffset > 0 && BATTLER_ALIVE(gActiveBattler) && !BATTLER_MAX_HP(gActiveBattler))
 				{
 					if (gBattleMons[gActiveBattler].maxHP - gBattleMons[gActiveBattler].hp > itemEffects[paramOffset]) //Item won't restore all HP
 						shouldUse = TRUE;
-					goto FULL_RESTORE_LOGIC;
+					else
+						goto FULL_RESTORE_LOGIC;
 				}
 				break;
 			case AI_ITEM_CURE_CONDITION: ;

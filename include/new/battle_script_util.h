@@ -123,3 +123,5 @@ void LoadMoodyStatToLower(void);
 void ClearCalculatedSpreadMoveData(void);
 void ClearScriptingBankDisguisedAs(void);
 void GotoMoveEndIfMoveDidntDamageAtLeastOnce(void);
+void SetSwitchingBankToPlayer0(void);
+void SetSwitchingBankSwitchingCooldownTo2(void);

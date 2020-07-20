@@ -2601,11 +2601,11 @@ BatonPassSwitchOutBS:
 	switchhandleorder BANK_SWITCHING 0x2
 	returntoball BANK_SWITCHING
 	callasm TryRemovePrimalWeatherSwitchingBank
-	switch1 BANK_SWITCHING
-	switch2 BANK_SWITCHING
+	getswitchedmondata BANK_SWITCHING
+	switchindataupdate BANK_SWITCHING
 	hpthresholds BANK_SWITCHING
 	printstring 0x3
-	switch3 BANK_SWITCHING 0x1
+	switchinanim BANK_SWITCHING 0x1
 	waitstateatk
 	switchineffects BANK_SWITCHING
 	callasm ClearBatonPassSwitchingBit

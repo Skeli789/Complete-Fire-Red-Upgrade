@@ -90,9 +90,9 @@ gBattleScriptingCommandsTable:
 .word atk49_moveend				@cmd49
 .word atk4A_typecalc2			@damagecalc2
 .word 0x8023e89					@returnatktoball
-.word 0x8023ed9					@switch1
-.word atk4D_switchindataupdate	@switch2
-.word 0x80240d5					@switch3
+.word 0x8023ed9					@getswitchedmondata
+.word atk4D_switchindataupdate	@switchindataupdate
+.word 0x80240d5					@switchinanim
 .word atk4F_jumpifcantswitch	@jumpifcannotswitch
 .word 0x80243ed					@openpartyscreen
 .word atk51_switchhandleorder

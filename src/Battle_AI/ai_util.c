@@ -1494,6 +1494,7 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 	u8 defAbility = ABILITY(bankDef);
 
 	return !CanBePutToSleep(bankDef, TRUE)
+		|| gStatuses3[bankDef] & STATUS3_YAWN
 		|| defItemEffect == ITEM_EFFECT_CURE_SLP
 		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
 		|| defAbility == ABILITY_EARLYBIRD

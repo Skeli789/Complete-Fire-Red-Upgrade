@@ -2143,3 +2143,15 @@ void GotoMoveEndIfMoveDidntDamageAtLeastOnce(void)
 	if (!gNewBS->AttackerDidDamageAtLeastOnce)
 		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
 }
+
+void SetSwitchingBankToPlayer0(void)
+{
+	gBankSwitching = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+}
+
+void SetSwitchingBankSwitchingCooldownTo2(void)
+{
+	gNewBS->ai.sideSwitchedThisRound |= gBitTable[SIDE(gBankSwitching)];
+	if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
+		gNewBS->ai.switchingCooldown[gBankSwitching] = 2;
+}

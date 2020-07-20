@@ -30,7 +30,6 @@
 #define BattleScript_SafeguardEnds ((u8*) 0x81D8B43)
 #define BattleScript_PrintUproarOverTurns ((u8*) 0x81D90BC)
 #define BattleScript_GiveExp ((u8*) 0x81D8694)
-#define BattleScript_HandleFaintedMon ((u8*) 0x81D869D)
 
 extern const u8 BattleScript_MysteriousAirCurrentContinues[];
 extern const u8 BattleScript_SandstormHailContinues[];
@@ -71,6 +70,7 @@ extern const u8 BattleScript_ShieldsDownToMeteor[];
 extern const u8 BattleScript_FlowerGift[];
 extern const u8 BattleScript_FlowerGiftEnd2[];
 extern const u8 BattleScript_RaiseStatsItemEnd2[];
+extern const u8 BattleScript_HandleFaintedMonSingles[];
 extern const u8 BattleScript_HandleFaintedMonDoublesInitial[];
 extern const u8 BattleScript_HandleFaintedMonDoublesPart2[];
 extern const u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];

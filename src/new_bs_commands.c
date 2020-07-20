@@ -17,6 +17,7 @@
 #include "../include/new/item.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/util.h"
@@ -1156,9 +1157,10 @@ void atkFF23_faintpokemonaftermove(void)
 		else
 			gBattlescriptCurrInstr = BattleScript_FaintTarget;
 
-		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+		if (SIDE(gActiveBattler) == B_SIDE_PLAYER
+		&& (!IsTagBattle() || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)) //Is player's mon
 		{
-			gHitMarker |= HITMARKER_x400000;
+			gHitMarker |= HITMARKER_PLAYER_FAINTED;
 			if (gBattleResults.playerFaintCounter < 0xFF)
 				gBattleResults.playerFaintCounter++;
 			AdjustFriendshipOnBattleFaint(gActiveBattler);

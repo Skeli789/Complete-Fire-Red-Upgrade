@@ -29,6 +29,7 @@
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/multi.h"
 #include "../include/new/pickup_items.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
@@ -1179,9 +1180,10 @@ void atk19_tryfaintmon(void)
 			gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 			BattleScriptPush(gBattlescriptCurrInstr + 7);
 			gBattlescriptCurrInstr = BS_ptr;
-			if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+			if (SIDE(gActiveBattler) == B_SIDE_PLAYER
+			&& (!IsTagBattle() || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)) //Is player's mon
 			{
-				gHitMarker |= HITMARKER_x400000;
+				gHitMarker |= HITMARKER_PLAYER_FAINTED;
 				if (gBattleResults.playerFaintCounter < 0xFF)
 					gBattleResults.playerFaintCounter++;
 				AdjustFriendshipOnBattleFaint(gActiveBattler);

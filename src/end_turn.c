@@ -154,6 +154,9 @@ u8 TurnBasedEffects(void)
 
 					if (gNewBS->DestinyBondCounters[i])
 						--gNewBS->DestinyBondCounters[i];
+					
+					if (gNewBS->ai.switchingCooldown[i])
+						--gNewBS->ai.switchingCooldown[i];
 
 					gNewBS->synchronizeTarget[i] = 0;
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
@@ -1434,6 +1437,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->batonPassing = FALSE;
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
+				gNewBS->ai.sideSwitchedThisRound = 0;
 
 				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
 					--gNewBS->IonDelugeTimer;
@@ -1732,8 +1736,9 @@ bool8 HandleFaintedMonActions(void)
 								}
 								else
 								{
-									BattleScriptExecute(BattleScript_HandleFaintedMon);
+									BattleScriptExecute(BattleScript_HandleFaintedMonSingles);
 									gNewBS->doSwitchInEffects |= gBitTable[gBattleStruct->faintedActionsBank];
+									gNewBS->ai.switchingCooldown[gBattleStruct->faintedActionsBank] = 1; //AI shouldn't switch out again until after the next time an end turn is reached
 									gNewBS->handlingFaintSwitching = TRUE;
 
 									for (i = 0; i < gBattlersCount; ++i)
@@ -1800,6 +1805,7 @@ bool8 HandleFaintedMonActions(void)
 					{
 						++gBattleStruct->faintedActionsBank;
 						gAbsentBattlerFlags &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
+						gNewBS->ai.switchingCooldown[gBankFainted] = 1; //AI shouldn't switch out again until after the next time an end turn is reached
 						BattleScriptExecute(BattleScript_HandleFaintedMonDoublesPart2);
 						return TRUE;
 					}

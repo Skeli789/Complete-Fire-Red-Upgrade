@@ -809,7 +809,7 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
-	u8 playerItemUsedCount;
+	u8 playerItemUsedCount; //~0x2017A82
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 
@@ -941,6 +941,8 @@ struct NewBattleStruct
 	struct 
 	{
 		u16 zMoveHelper;
+		bool8 sideSwitchedThisRound;
+		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
 		u8 itemEffects[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]

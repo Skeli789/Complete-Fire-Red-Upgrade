@@ -53,18 +53,6 @@
 	typecalc
 	adjustnormaldamage
 	.endm
-	
-	.macro returnopponentmon1toball bank
-	.byte 0x76
-	.byte \bank
-	.byte 0x9
-	.endm
-
-	.macro returnopponentmon2toball bank
-	.byte 0x77
-	.byte \bank
-	.byte 0xA
-	.endm
 
 	.macro forfeityesnobox bank
 	.byte 0x77
@@ -169,12 +157,6 @@
 	.word \battle_type
 	.word \rom_address
 	.endm	
-	
-	.macro getifcantrunfrombattle bank
-	.byte 0x76
-	.byte \bank
-	.byte 0x2
-	.endm
 
 	.macro copybyte destination source
 	.byte 0x31
@@ -610,17 +592,17 @@
 	.byte 0x4b
 	.endm
 
-	.macro switch1 bank
+	.macro getswitchedmondata bank
 	.byte 0x4c
 	.byte \bank
 	.endm
 
-	.macro switch2 bank
+	.macro switchindataupdate bank
 	.byte 0x4d
 	.byte \bank
 	.endm
 
-	.macro switch3 bank, int
+	.macro switchinanim bank, int
 	.byte 0x4e
 	.byte \bank
 	.byte \int
@@ -1738,4 +1720,71 @@
 	.byte 0xFF, 0x35
 	.byte \bank
 	.4byte \rom_address
+	.endm
+
+@ various command changed to more readable macros
+	.equ VARIOUS_CANCEL_MULTI_TURN_MOVES, 0
+	.equ VARIOUS_SET_MAGIC_COAT_TARGET, 1
+	.equ VARIOUS_IS_RUNNING_IMPOSSIBLE, 2
+	.equ VARIOUS_GET_MOVE_TARGET, 3
+	.equ VARIOUS_CASE_4, 4
+	.equ VARIOUS_RESET_INTIMIDATE_TRACE_BITS, 5
+	.equ VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP, 6
+	.equ VARIOUS_RESET_PLAYER_FAINTED_FLAG, 7
+	.equ VARIOUS_CASE_8, 8
+	.equ VARIOUS_RETURN_OPPONENT_MON1, 9
+	.equ VARIOUS_RETURN_OPPONENT_MON2, 10
+	.equ VARIOUS_CHECK_POKEFLUTE, 11
+	.equ VARIOUS_WAIT_FANFARE, 12
+
+	.macro cancelmultiturnmoves battler:req
+	various \battler, VARIOUS_CANCEL_MULTI_TURN_MOVES
+	.endm
+
+	.macro setmagiccoattarget battler:req
+	various \battler, VARIOUS_SET_MAGIC_COAT_TARGET
+	.endm
+
+	.macro getifcantrunfrombattle battler:req
+	various \battler, VARIOUS_IS_RUNNING_IMPOSSIBLE
+	.endm
+
+	.macro getmovetarget battler:req
+	various \battler, VARIOUS_GET_MOVE_TARGET
+	.endm
+
+	.macro various4 battler:req
+	various \battler, 4
+	.endm
+
+	.macro resetintimidatetracebits battler:req
+	various \battler, VARIOUS_RESET_INTIMIDATE_TRACE_BITS
+	.endm
+
+	.macro updatechoicemoveonlvlup battler:req
+	various \battler, VARIOUS_UPDATE_CHOICE_MOVE_ON_LVL_UP
+	.endm
+
+	.macro resetplayerfaintedflag battler:req
+	various \battler, VARIOUS_RESET_PLAYER_FAINTED_FLAG
+	.endm
+
+	.macro various8 battler:req
+	various \battler, 8
+	.endm
+
+	.macro returnopponentmon1toball battler:req
+	various \battler, VARIOUS_RETURN_OPPONENT_MON1
+	.endm
+
+	.macro returnopponentmon2toball battler:req
+	various \battler, VARIOUS_RETURN_OPPONENT_MON2
+	.endm
+
+	.macro checkpokeflute battler:req
+	various \battler, VARIOUS_CHECK_POKEFLUTE
+	.endm
+
+	.macro waitfanfare battler:req
+	various \battler, VARIOUS_WAIT_FANFARE
 	.endm

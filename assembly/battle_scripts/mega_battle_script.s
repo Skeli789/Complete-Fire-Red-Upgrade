@@ -59,7 +59,7 @@ BattleScript_Dynamax_Rejoin:
 	callasm TryDoDynamaxTrainerSlide
 	callasm SetAndTransferDontRemoveTransformSpecies
 	callasm BackupScriptingBankMoveSelectionCursor @;Prevents the move selection cursor from being reset by the switch-in anim
-	switch3 BANK_SCRIPTING 0x1 @;Play the switch-in animation
+	switchinanim BANK_SCRIPTING 0x1 @;Play the switch-in animation
 	waitanimation
 	callasm RestoreScriptingBankMoveSelectionCursor
 	callasm ClearAndTransferDontRemoveTransformSpecies
