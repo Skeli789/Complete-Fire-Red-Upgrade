@@ -242,6 +242,15 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 #org @gText_PerishBodyActivated
 Both Pok\emon will faint in\nthree turns!
 
+#org @gText_SurroundedByGMaxVineLash
+[FD][37] team got trapped\nwith vines!
+
+#org @gText_HurtByGMaxVineLash
+[ATTACKER] is hurt by\nG-Max Vine Lash's ferocious beating!
+
+#org @gText_GMaxVineLashEnded
+The vines around [FD][36]\nteam disappeared!
+
 #org @gText_SurroundedByGMaxWildfire
 [FD][37] team was surrounded\nby fire!
 
@@ -250,6 +259,15 @@ Both Pok\emon will faint in\nthree turns!
 
 #org @gText_GMaxWildfireEnded
 The G-Max Wildfire flames around\n[FD][36] team disappeared!
+
+#org @gText_SurroundedByGMaxCannonade
+[FD][37] team got caught in\nthe vortex of water!
+
+#org @gText_HurtByGMaxCannonade
+[ATTACKER] is hurt by\nG-Max Cannonade's vortex!
+
+#org @gText_GMaxCannonadeEnded
+The vortex of water around\n[FD][36] team disappeared!
 
 #org @gText_SurroundedByGMaxVolcalith
 [FD][37] team was surrounded\nby rocks!

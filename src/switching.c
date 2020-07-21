@@ -116,7 +116,12 @@ void atkE2_switchoutabilities(void)
 			++gNewBS->switchOutAbilitiesState;
 			break;
 
-		case 4: //Done
+		case 4: //Gigantamax reversion
+			TryRevertBankGigantamax(gActiveBattler);
+			++gNewBS->switchOutAbilitiesState;
+			break;
+
+		case 5: //Done
 			gNewBS->switchOutAbilitiesState = 0; //Reset for next time
 			gBattlescriptCurrInstr += 2;
 	}

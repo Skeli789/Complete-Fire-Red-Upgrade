@@ -3141,8 +3141,9 @@ POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_
 ANIM_POWERWHIP:
 	loadparticle ANIM_TAG_UNUSED_VINE_2 @Vine
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x02C0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x1 0x0 0x10 0x0
 	waitanimation
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 25 0x1
 	call POWER_WHIP
 	call POWER_WHIP
 	call POWER_WHIP
@@ -3150,13 +3151,14 @@ ANIM_POWERWHIP:
 	call POWER_WHIP
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x02C0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x1 0x10 0x0 0x0
 	waitanimation
 	endanimation
 
+.global POWER_WHIP
 POWER_WHIP:
 	playsound2 0x94 SOUND_PAN_TARGET
-	launchtemplate POWER_WHIP_VINE 0x82 0x2 0x0 0x0
+	launchtemplate POWER_WHIP_VINE 0x82, 0x2, -10, 0x0
 	pause 0x7
 	return
 
@@ -3979,6 +3981,7 @@ QUIVERDANCE_CIRCLE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+.global ANIM_LEAFTORNADO
 ANIM_LEAFTORNADO:
 	loadparticle ANIM_TAG_GUST @Gust
 	loadparticle ANIM_TAG_LEAF @Leaves
@@ -24246,10 +24249,11 @@ POISON_COLUMN_PLAYER: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN 
 @Credits to Skeli
 ANIM_MAX_GEYSER:
 	loadparticle ANIM_TAG_HYDRO_PUMP
+	loadparticle ANIM_TAG_WATER_IMPACT
+ANIM_MAX_GEYSER_BEGIN:
 	loadparticle ANIM_TAG_SMALL_BUBBLES
 	loadparticle ANIM_TAG_ICE_CRYSTALS
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
-	loadparticle ANIM_TAG_WATER_IMPACT
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	pause 0x5
@@ -25618,20 +25622,26 @@ SMITE_SPARK_LINE: objtemplate ANIM_TAG_SPARK ANIM_TAG_SPARK OAM_DOUBLE_8x32 gDum
 @Credits to Skeli
 ANIM_G_MAX_STEELSURGE:
 	loadparticle ANIM_TAG_LARGE_SPIKE
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x2 0x7 0x7 0x46A0 @;Greenish
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x0 0x7 0x7 0x46A0 @;Greenish
 	goto ANIM_MAX_STEELSPIKE_BEGIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credits to Skeli
 ANIM_G_MAX_MELTDOWN:
+	loadparticle ANIM_TAG_LARGE_SPIKE
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x0 0x7 0x7 0x121C @;Gold orange
 	goto ANIM_MAX_STEELSPIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credits to Skeli
 ANIM_G_MAX_FOAMBURST:
-	goto ANIM_MAX_GEYSER
+	loadparticle ANIM_TAG_HYDRO_PUMP
+	loadparticle ANIM_TAG_WATER_IMPACT
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_HYDRO_PUMP 0x0 0xA 0xA 0x7FFF @;White
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WATER_IMPACT 0x0 0xA 0xA 0x7FFF @;White	
+	goto ANIM_MAX_GEYSER_BEGIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -25642,15 +25652,145 @@ ANIM_G_MAX_CENTIFERNO:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+@Credits to Skeli
 ANIM_G_MAX_VINE_LASH_MOVE:
-	goto ANIM_POWERWHIP
+	loadparticle ANIM_TAG_LEER
+	loadparticle ANIM_TAG_UNUSED_VINE_2
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	launchtask AnimTask_BlendParticle 0xa 0x5 ANIM_TAG_LEER 0x0 0xC 0xC 0x1F @;Red
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x2 0x8 0x8 0x447F @;Reddish - Pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	pause 0x20
+	playsound2 0xca SOUND_PAN_ATTACKER
+	launchtemplate Template_Leer TEMPLATE_ATTACKER | 2, 0x2, -15, -45
+	launchtemplate Template_Leer TEMPLATE_ATTACKER | 2, 0x2 15, -45
+	waitanimation
+	call VINE_LASH
+	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x5 14
+	pause 0x7
+	call VINE_LASH
+	pause 0x7
+	call VINE_LASH
+	pause 0x7
+	call VINE_LASH
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x54DF @;Pink
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x54DF @;From Pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From Black
+	waitanimation
+	endanimation
+
+VINE_LASH:
+	playsound2 0x94 SOUND_PAN_TARGET
+	launchtemplate VINE_LASH_VINE TEMPLATE_TARGET | 2, 0x3, -20, 0, 0
+	launchtemplate VINE_LASH_VINE TEMPLATE_TARGET | 2, 0x3, 20, 0, 1
+	return
+
+.align 2
+VINE_LASH_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 OAM_DOUBLE_32x32 gAnimCmdPowerWhip 0x0 gSpriteAffineAnimTable_VineLash SpriteCB_VineLashWhip
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+@Credits to Skeli
 ANIM_G_MAX_CANNONADE_MOVE:
-	goto ANIM_MAX_GEYSER
+	loadparticle ANIM_TAG_HYDRO_PUMP
+	loadparticle ANIM_TAG_WATER_IMPACT
+	loadparticle ANIM_TAG_SMALL_BUBBLES
+	loadparticle ANIM_TAG_ICE_CRYSTALS
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	pause 0x5
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xa 0xa 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xfff1 0x0 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x14 0xa 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x0 0xfff6 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xfff6 0xf 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x19 0x14 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xffec 0x14 0x19 0x0
+	pause 0x4
+	playsound2 0x87 SOUND_PAN_ATTACKER
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xc 0x0 0x19 0x0
+	waitanimation
+	pokespritetoBG side_target
+	pause 0x10
+	playsoundpanchange 0x9d SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
+	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 67
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x56 0x1
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_CANNONADE_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	launchtemplate GEYSER_EXPLOSION 0x83 0x1 0x1
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	waitanimation
+	pokespritefromBG side_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
+	endanimation
+
+@;The shots are positioned to come out of the DPE's G-Max Blastoise sprite's cannons
+MAX_CANNONADE_SHOT:
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 bank_target MAX_CANNONADE_SHOT_OPPONENT_ATTACK
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, -10, -10, 0, 0, 14, -20
+	pause 0x2
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, 15, -2, 0, 0, 14, -20
+	pause 0x2
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, 17, 5, 0, 0, 14, 10
+	pause 0x2
+	return
+
+MAX_CANNONADE_SHOT_OPPONENT_ATTACK:
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, -18, -20, 0, 0, 14, 20
+	pause 0x2
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, 9, -10, 0, 0, 14, -20
+	pause 0x2
+	launchtemplate CANNONADE_SHOT, TEMPLATE_ATTACKER | 2, 0x6, 12, 9, 0, 0, 14, 5
+	pause 0x2
+	return
+
+.align 2
+CANNONADE_SHOT: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_HydroCannonBall SpriteCB_CannonadeBall
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

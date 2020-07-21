@@ -1824,7 +1824,10 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 		ballType = MathMin(LAST_BALL_INDEX, spread->ball);
 	else
 		ballType = umodsi(Random(), NUM_BALLS);
-	SetMonData(mon, REQ_POKEBALL, &ballType);
+	SetMonData(mon, MON_DATA_POKEBALL, &ballType);
+
+	if (spread->gigantamax)
+		mon->gigantamax = TRUE;
 
 	TryFormRevert(mon); //To fix Minior forms
 	CalculateMonStatsNew(mon);
@@ -2676,8 +2679,9 @@ static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct Bat
 	return GiveMonToPlayer(&mon);
 }
 
-void CreateFrontierRaidMon(unusedArg u16 species)
+void CreateFrontierRaidMon(u16 originalSpecies)
 {
+	u16 species;
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spreadPtr = (const struct BattleTowerSpread*) gPokeBackupPtr;
 
@@ -2688,9 +2692,14 @@ void CreateFrontierRaidMon(unusedArg u16 species)
 	spreadPtr = TryAdjustSpreadForSpecies(spreadPtr); //Update Arceus
 	struct BattleTowerSpread spread = *spreadPtr;
 
-	species = GetMegaSpecies(spread.species, spread.item, spread.moves); //Try Mega Evolve the mon
-	if (species != SPECIES_NONE)
-		spread.species = species;
+	if (IsGigantamaxSpecies(originalSpecies)) //Player was shown Gigantamaxed form
+		spread.species = originalSpecies; //Update with Gigantamax form
+	else
+	{
+		species = GetMegaSpecies(spread.species, spread.item, spread.moves); //Try Mega Evolve the mon
+		if (species != SPECIES_NONE)
+			spread.species = species; //Update with Mega Species
+	}
 
 	CreateFrontierMon(&mon, 50, &spread, 0, 0, 0, TRUE);
 	ZeroEnemyPartyMons();
@@ -3381,11 +3390,21 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 		mon.pokeball = ballType;
 	#endif
 
+	#ifdef FLAG_HIDDEN_ABILITY
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
 	{
 		mon.hiddenAbility = TRUE;
 		FlagClear(FLAG_HIDDEN_ABILITY);
 	}
+	#endif
+
+	#ifdef FLAG_GIGANTAMAXABLE
+	if (FlagGet(FLAG_GIGANTAMAXABLE))
+	{
+		mon.gigantamax = TRUE;
+		FlagClear(FLAG_GIGANTAMAXABLE);
+	}
+	#endif
 
 	#ifdef GIVEPOKEMON_CUSTOM_HACK
 	if (customGivePokemon != 0)
@@ -3557,6 +3576,9 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	value = BALL_TYPE_POKE_BALL;
 	SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
 	SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+
+	if (IsGigantamaxSpecies(species))
+		boxMon->substruct3.gigantamax = TRUE;
 
 	if (fixedIV < 32)
 	{

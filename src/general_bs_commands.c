@@ -1258,7 +1258,7 @@ bool8 TryDoBenjaminButterfree(u8 scriptOffset)
 void atk1B_cleareffectsonfaint(void) {
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 partner = PARTNER(gActiveBattler);
-	pokemon_t* mon = GetBankPartyData(gActiveBattler);
+	struct Pokemon* mon = GetBankPartyData(gActiveBattler);
 
 	if (!gBattleExecBuffer) {
 		switch (gNewBS->faintEffectsState) {
@@ -1459,7 +1459,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 			case Faint_FormsStats:
 				CalculateMonStats(mon);
-				EmitSetRawMonData(0, offsetof(pokemon_t, attack), 2 /*Atk*/ + 2 /*Def*/ + 2 /*Spd*/ + 2 */*Sp Atk*/ + 2 /*Sp Def*/, &mon->attack); //Reload all stats
+				EmitSetRawMonData(0, offsetof(struct Pokemon, attack), 2 /*Atk*/ + 2 /*Def*/ + 2 /*Spd*/ + 2 */*Sp Atk*/ + 2 /*Sp Def*/, &mon->attack); //Reload all stats
 				MarkBufferBankForExecution(gActiveBattler);
 				++gNewBS->faintEffectsState;
 				return;
@@ -1493,7 +1493,7 @@ void atk1D_jumpifstatus2(void) {
 	if (gBattlescriptCurrInstr[1] == BS_GET_TARGET && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
 		flags &= ~(STATUS2_SUBSTITUTE);
 
-	if (gBattleMons[bank].status2 & flags && gBattleMons[bank].hp)
+	if (gBattleMons[bank].status2 & flags && BATTLER_ALIVE(bank))
 		gBattlescriptCurrInstr = jump_loc;
 	else
 		gBattlescriptCurrInstr += 10;

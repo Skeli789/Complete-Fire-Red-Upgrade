@@ -519,6 +519,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 
 	TryFormRevert(mon);
 	TryRevertMega(mon);
+	TryRevertGigantamax(mon);
 
 	SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
 	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);

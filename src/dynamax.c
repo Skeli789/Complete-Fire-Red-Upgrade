@@ -45,9 +45,10 @@ static item_t FindTrainerDynamaxBand(u16 trainerId);
 static item_t FindPlayerDynamaxBand(void);
 static item_t FindBankDynamaxBand(u8 bank);
 static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit);
-static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species);
+static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species, bool8 canGigantamax);
 static u8 GetRaidMapSectionId(void);
 static u32 GetRaidRandomNumber(void);
+static bool8 ShouldTryGigantamaxRaidMon(void);
 
 static const item_t sDynamaxBandTable[] =
 {
@@ -169,23 +170,7 @@ species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 	else //Check Gigantamax
 	{
 		struct Pokemon* mon = GetBankPartyData(bank);
-		const struct Evolution* evolutions = gEvolutionTable[mon->species];
-		int i;
-
-		if (mon->gigantamax) //Mon can Gigantamax
-		{
-			for (i = 0; i < EVOS_PER_MON; ++i)
-			{
-				if (evolutions[i].method == EVO_GIGANTAMAX)
-				{
-					//Ignore reversion information
-					if (evolutions[i].param == 0) continue;
-
-					//Any value other than 0 indicates G-Max potential
-					return evolutions[i].targetSpecies;
-				}
-			}
-		}
+		return GetGigantamaxSpecies(mon->species, mon->gigantamax);
 	}
 
 	return SPECIES_NONE;
@@ -292,7 +277,7 @@ const u8* GetDynamaxScript(u8 bank)
 //gives themselves a Gigantmax to start the battle.
 void GigantamaxRevert(struct Pokemon* party)
 {
-	int i;
+	u32 i;
 
 	for (i = 0; i < PARTY_SIZE; ++i)
 		TryRevertGigantamax(&party[i]);
@@ -308,6 +293,44 @@ void TryRevertGigantamax(struct Pokemon* mon)
 		mon->gigantamax = TRUE; //If encountered in the wild, now can permanently Gigantamax
 		CalculateMonStats(mon);
 	}
+}
+
+void TryRevertBankGigantamax(u8 bank)
+{
+	struct Pokemon* mon = GetBankPartyData(bank);
+	u16 baseSpecies = GetGigantamaxBaseForm(GetMonData(mon, MON_DATA_SPECIES, NULL));
+
+	if (baseSpecies != SPECIES_NONE) //Bank is gigantamaxed - can't check timer because already reset
+	{
+		if (mon->backupSpecies != SPECIES_NONE)
+			baseSpecies = mon->backupSpecies;
+
+		DoFormChange(bank, baseSpecies, FALSE, FALSE, FALSE);
+		mon->gigantamax = TRUE; //If encountered in the wild, now can permanently Gigantamax
+	}
+}
+
+u16 GetGigantamaxSpecies(u16 species, bool8 canGigantamax)
+{
+	u32 i;
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	if (canGigantamax) //Mon can Gigantamax
+	{
+		for (i = 0; i < EVOS_PER_MON; ++i)
+		{
+			if (evolutions[i].method == EVO_GIGANTAMAX)
+			{
+				//Ignore reversion information
+				if (evolutions[i].param == 0) continue;
+
+				//Any value other than 0 indicates G-Max potential
+				return evolutions[i].targetSpecies;
+			}
+		}
+	}
+
+	return SPECIES_NONE;
 }
 
 u16 GetGigantamaxBaseForm(u16 species)
@@ -507,14 +530,23 @@ static u8 GetMaxMoveType(u16 move, u8 bank, struct Pokemon* mon)
 	return moveType;
 }
 
-static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species)
+static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species, bool8 canGigantamax)
 {
-	for (u32 i = 0; i < ARRAY_COUNT(sGMaxMoveTable); ++i)
+	if (canGigantamax)
 	{
-		if (sGMaxMoveTable[i].species == species
-		&&  sGMaxMoveTable[i].moveType == moveType)
+		if (!IsGigantamaxSpecies(species))
+			species = GetGigantamaxSpecies(species, canGigantamax);
+
+		if (species != SPECIES_NONE)
 		{
-			return sGMaxMoveTable[i].gmaxMove + moveSplit;
+			for (u32 i = 0; i < ARRAY_COUNT(sGMaxMoveTable); ++i)
+			{
+				if (sGMaxMoveTable[i].species == species
+				&&  sGMaxMoveTable[i].moveType == moveType)
+				{
+					return sGMaxMoveTable[i].gmaxMove + moveSplit;
+				}
+			}
 		}
 	}
 
@@ -546,7 +578,7 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 		return MOVE_MAX_GUARD;
 
 	u8 moveType = GetMaxMoveType(baseMove, bank, NULL);
-	u16 maxMove = GetGMaxMove(moveType, moveSplit, SPECIES(bank));
+	u16 maxMove = GetGMaxMove(moveType, moveSplit, SPECIES(bank), GetBankPartyData(bank)->gigantamax);
 	if (maxMove != MOVE_NONE)
 		return maxMove;
 
@@ -557,7 +589,7 @@ static move_t GetMonMaxMove(struct Pokemon* mon, u16 baseMove)
 {
 	u8 moveType = GetMaxMoveType(baseMove, 0, mon);
 	u8 moveSplit = CalcMoveSplitFromParty(mon, baseMove);
-	u16 maxMove = GetGMaxMove(moveType, moveSplit, mon->species);
+	u16 maxMove = GetGMaxMove(moveType, moveSplit, mon->species, mon->gigantamax);
 	if (maxMove != MOVE_NONE)
 		return maxMove;
 
@@ -573,7 +605,7 @@ bool8 MonCanUseMaxMoveWithEffect(struct Pokemon* mon, u8 maxEffect)
 	|| IsBannedHeldItemForDynamax(item))
 		return FALSE;
 
-	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
 		if (move == MOVE_NONE)
@@ -879,11 +911,31 @@ void atkFF2F_setmaxmoveeffect(void)
 			gBattlescriptCurrInstr = BattleScript_MaxMoveSetTerrain;
 			break;
 
+		case MAX_EFFECT_VINE_LASH:
+			if (!BankSideHasGMaxVineLash(gBankTarget))
+			{
+				gNewBS->maxVineLashTimers[SIDE(gBankTarget)] = 4;
+				gBattleStringLoader = gText_SurroundedByGMaxVineLash;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			}
+			break;
+
 		case MAX_EFFECT_WILDFIRE:
 			if (!BankSideHasGMaxWildfire(gBankTarget))
 			{
 				gNewBS->maxWildfireTimers[SIDE(gBankTarget)] = 4;
 				gBattleStringLoader = gText_SurroundedByGMaxWildfire;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			}
+			break;
+
+		case MAX_EFFECT_CANNONADE:
+			if (!BankSideHasGMaxCannonade(gBankTarget))
+			{
+				gNewBS->maxCannonadeTimers[SIDE(gBankTarget)] = 4;
+				gBattleStringLoader = gText_SurroundedByGMaxCannonade;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			}
@@ -920,7 +972,8 @@ void atkFF2F_setmaxmoveeffect(void)
 			break;
 
 		case MAX_EFFECT_MEAN_LOOK:
-			if (BATTLER_ALIVE(gBankTarget) && !IsOfType(gBankTarget, TYPE_GHOST) && !(gBattleMons[gBankTarget].status2 & STATUS2_ESCAPE_PREVENTION))
+			if ((BATTLER_ALIVE(gBankTarget) && !IsOfType(gBankTarget, TYPE_GHOST) && !(gBattleMons[gBankTarget].status2 & STATUS2_ESCAPE_PREVENTION))
+			|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget)) && !IsOfType(PARTNER(gBankTarget), TYPE_GHOST) && !(gBattleMons[PARTNER(gBankTarget)].status2 & STATUS2_ESCAPE_PREVENTION)))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveTrap;
@@ -1520,6 +1573,12 @@ static u32 GetRaidRandomNumber(void)
 	return ((hour * (day + month) * lastMapGroup * (lastMapNum + lastWarpId + lastPos)) + ((hour * (day + month)) ^ dayOfWeek)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
 }
 
+static bool8 ShouldTryGigantamaxRaidMon(void)
+{
+	return gRaidBattleStars >= 6 //6-star Raid
+		&& (GetRaidRandomNumber() % 100 >= 95 || GetRaidRandomNumber() % 100 < 20); //25% chance
+}
+
 void DetermineRaidStars(void)
 {
 	u8 numBadges = GetOpenWorldBadgeCount();
@@ -1539,7 +1598,7 @@ void DetermineRaidStars(void)
 //Must call DetermineRaidStars first
 void DetermineRaidSpecies(void)
 {
-	u16 index;
+	u16 index, altSpecies;
 	u8 numStars = gRaidBattleStars;
 	const struct RaidData* raid = &gRaidsByMapSection[GetRaidMapSectionId()][numStars];
 
@@ -1558,11 +1617,19 @@ void DetermineRaidSpecies(void)
 			spread = &gFrontierSpreads[index];
 		}
 
-		u16 megaSpecies = GetMegaSpecies(spread->species, spread->item, spread->moves); //Try Mega Evolve the mon
-		if (megaSpecies != SPECIES_NONE)
-			gRaidBattleSpecies = megaSpecies;
+		gRaidBattleSpecies = spread->species; //Set initial species
+
+		altSpecies = GetMegaSpecies(spread->species, spread->item, spread->moves); //Try Mega Evolve the mon
+		if (altSpecies != SPECIES_NONE)
+			gRaidBattleSpecies = altSpecies; //Update with Mega Evolved form
 		else
-			gRaidBattleSpecies = spread->species;
+		{
+			//Because of the amount of Pokemon that can appear in the Frontier, always Gigantamax
+			//Pokemon that are able to.
+			altSpecies = GetGigantamaxSpecies(spread->species, TRUE);
+			if (altSpecies != SPECIES_NONE)
+				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
+		}
 
 		gPokeBackupPtr = spread; //Save spread pointer for later
 	}
@@ -1570,6 +1637,13 @@ void DetermineRaidSpecies(void)
 	{
 		index = GetRaidRandomNumber() % raid->amount;
 		gRaidBattleSpecies = raid->data[index].species;
+
+		if (ShouldTryGigantamaxRaidMon())
+		{
+			altSpecies = GetGigantamaxSpecies(raid->data[index].species, TRUE);
+			if (altSpecies != SPECIES_NONE)
+				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
+		}
 	}
 	else
 		gRaidBattleSpecies = SPECIES_NONE;
@@ -1665,6 +1739,9 @@ u8 GetRaidSpeciesAbilityNum(u16 species)
 	u32 i = 0;
 	u8 numStars = gRaidBattleStars;
 	const struct RaidData* raid = &gRaidsByMapSection[GetRaidMapSectionId()][numStars];
+
+	if (IsGigantamaxSpecies(species))
+		return RAID_ABILITY_RANDOM_ALL; //Gigantamax Pokemon can have any one of their abilities
 
 	if (raid->data != NULL)
 	{

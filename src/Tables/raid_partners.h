@@ -901,6 +901,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Marlon_Rank56[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_KROOKODILE,
@@ -1090,6 +1091,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Red_Rank6[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_MEWTWO,

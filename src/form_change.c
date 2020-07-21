@@ -182,7 +182,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 		CalculateMonStats(mon);
 		return TRUE;
 	}
-	else if (CheckTableForSpecies(mon->backupSpecies, sBannedBackupSpecies)) //Forms the mon shouldn't revert to
+	else if (IsGigantamaxSpecies(mon->backupSpecies) || CheckTableForSpecies(mon->backupSpecies, sBannedBackupSpecies)) //Forms the mon shouldn't revert to
 	{
 		mon->backupSpecies = SPECIES_NONE;
 	}

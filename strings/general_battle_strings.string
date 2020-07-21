@@ -206,8 +206,14 @@ Recover HP
 #org @gText_HealAllyHP
 Heal Replacement HP
 
+#org @gText_MaxMoveProtect
+Protect Self
+
 #org @gText_MaxMoveRaiseTeamStat
 + Team [BUFFER][0]
+
+#org @gText_MaxMoveFoes
+ Foes
 
 #org @gText_MaxMoveSet
 Set 
@@ -242,20 +248,26 @@ Misty
 #org @gText_MaxMovePsychic
 Psychic
 
+#org @gText_MaxMoveLastingDamage
+Set Lasting Damage Trap
+
 #org @gText_MaxMoveTrapDamage
-Set Damaging Trap
+Trap & Damage Foes
 
 #org @gText_MaxMoveEffectSpore
-Give foes Psn, Par, or Slp
+Give Foes Psn, Par, or Slp
 
 #org @gText_MaxMoveParalyzeFoes
 Paralyze Foes
 
-#org @gText_MaxMovePayDay
-Confuse Foes and Get Money
+#org @gText_MaxMoveConfusePayDay
+Confuse Foes & Get Rich
+
+#org @gText_MaxMoveCritPlus
++ Team Critical Hit Chance
 
 #org @gText_MaxMoveMeanLook
-Trap Foe
+Trap Foes
 
 #org @gText_MaxMoveAuroraVeil
 - Damage to Team
@@ -270,10 +282,10 @@ Recycle Berries
 Poison Foes
 
 #org @gText_MaxMoveStealthRock
-Sets Stealth Rock
+Set Stealth Rock
 
 #org @gText_MaxMoveRemoveScreens
-Remove Foe Screens
+Remove Screens & Hazards
 
 #org @gText_MaxMovePoisonParalyzeFoes
 Poison or Paralyze Foes
@@ -288,9 +300,9 @@ Reduce Last Move PP
 Change Gravity
 
 #org @gText_MaxMoveYawn
-Make Foes Drowsy
+May Make Foes Drowsy
 
-#org @gText_MaxMoveLowerEvasivess
+#org @gText_MaxMoveLowerEvasiveness
 - Evasiveness Foes
 
 #org @gText_MaxMoveAromatherapy

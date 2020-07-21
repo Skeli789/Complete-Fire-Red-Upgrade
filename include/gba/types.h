@@ -35,32 +35,49 @@ typedef u8  item_effect_t;
 typedef u8  bank_t;
 typedef u8  move_effect_t;
 
+struct BgCnt
+{
+    u16 priority:2;
+    u16 charBaseBlock:2;
+    u16 dummy:2;
+    u16 mosaic:1;
+    u16 palettes:1;
+    u16 screenBaseBlock:5;
+    u16 areaOverflowMode:1;
+    u16 screenSize:2;
+};
+typedef volatile struct BgCnt vBgCnt;
+
 struct PlttData
 {
     u16 r:5; // red
     u16 g:5; // green
     u16 b:5; // blue
     u16 unused_15:1;
-} /*__attribute__((packed))*/;
+};
 
 struct OamData
 {
     /*0x00*/ u32 y:8;
-    /*0x01*/ u32 affineMode:2;  // 0x1, 0x2 = 0x3
-             u32 objMode:2;     // 0x4, 0x8 = 0xC
+    /*0x01*/ u32 affineMode:2;  // 0x1, 0x2 -> 0x4
+             u32 objMode:2;     // 0x4, 0x8 -> 0xC
              u32 mosaic:1;      // 0x10
              u32 bpp:1;         // 0x20
-             u32 shape:2;       // 0x40, 0x80
+             u32 shape:2;       // 0x40, 0x80 -> 0xC0
 
     /*0x02*/ u32 x:9;
-             u32 matrixNum:5; // bits 3/4 are h-flip/v-flip if not in affine mode
-             u32 size:2;
+             u32 matrixNum:5;   // bits 3/4 are h-flip/v-flip if not in affine mode
+             u32 size:2;        // 0x4000, 0x8000 -> 0xC000
 
-    /*0x04*/ u16 tileNum:10;
-             u16 priority:2;
+    /*0x04*/ u16 tileNum:10;    // 0x3FF
+             u16 priority:2;    // 0x400, 0x800 -> 0xC00
              u16 paletteNum:4;
     /*0x06*/ u16 affineParam;
 };
+
+#define ST_OAM_HFLIP     0x08
+#define ST_OAM_VFLIP     0x10
+#define ST_OAM_MNUM_FLIP_MASK 0x18
 
 #define ST_OAM_OBJ_NORMAL 0
 #define ST_OAM_OBJ_BLEND  1
@@ -80,23 +97,6 @@ struct OamData
 #define ST_OAM_SQUARE      0
 #define ST_OAM_H_RECTANGLE 1
 #define ST_OAM_V_RECTANGLE 2
-
-#define ST_OAM_OBJ_NORMAL 0
-#define ST_OAM_OBJ_BLEND  1
-#define ST_OAM_OBJ_WINDOW 2
-
-#define ST_OAM_AFFINE_OFF    0
-#define ST_OAM_AFFINE_NORMAL 1
-#define ST_OAM_AFFINE_ERASE  2
-#define ST_OAM_AFFINE_DOUBLE 3
-
-#define ST_OAM_4BPP 0
-#define ST_OAM_8BPP 1
-
-#define ST_OAM_SQUARE      0
-#define ST_OAM_H_RECTANGLE 1
-#define ST_OAM_V_RECTANGLE 2
-
 
 #define ST_OAM_SIZE_0   0
 #define ST_OAM_SIZE_1   1
@@ -172,4 +172,3 @@ struct SioMultiCnt
 #define ST_SIO_38400_BPS  1 //  38400 bps
 #define ST_SIO_57600_BPS  2 //  57600 bps
 #define ST_SIO_115200_BPS 3 // 115200 bps
-

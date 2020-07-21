@@ -1383,7 +1383,9 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
 		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED)
 		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE))
+		||  (BankSideHasGMaxVineLash(bank) && !IsOfType(bank, TYPE_GRASS))
 		||  (BankSideHasGMaxWildfire(bank) && !IsOfType(bank, TYPE_FIRE))
+		||  (BankSideHasGMaxCannonade(bank) && !IsOfType(bank, TYPE_WATER))
 		||  BankSideHasGMaxVolcalith(bank))
 			return TRUE;
 	}
@@ -1419,7 +1421,9 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		+  GetBurnDamage(bank)
 		+  GetCurseDamage(bank)
 		+  GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
+		+  GetGMaxVineLashDamage(bank)
 		+  GetGMaxWildfireDamage(bank)
+		+  GetGMaxCannonadeDamage(bank)
 		+  GetGMaxVolcalithDamage(bank) >= hp)
 			return TRUE;
 	}
@@ -2690,7 +2694,15 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 				moveEffect = EFFECT_SET_TERRAIN;
 			break;
 
+		case MAX_EFFECT_VINE_LASH:
+			//TODO AI
+			break;
+
 		case MAX_EFFECT_WILDFIRE:
+			//TODO AI
+			break;
+
+		case MAX_EFFECT_CANNONADE:
 			//TODO AI
 			break;
 

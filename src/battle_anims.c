@@ -290,6 +290,24 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_StonePillar[] =
 	sSpriteAffineAnim_StonePillarFallRight,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_VineLashLeft[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_VineLashRight[] =
+{
+	AFFINEANIMCMD_FRAME(-256 - 256 - 256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_VineLash[] =
+{
+	sSpriteAffineAnim_VineLashLeft,
+	sSpriteAffineAnim_VineLashRight,
+};
+
 static const union AnimCmd sAnimCmdGrowingMushroom[] =
 {
 	ANIMCMD_FRAME(0, 3),
@@ -3221,6 +3239,52 @@ void SpriteCB_RolloutExplosion(struct Sprite *sprite)
 
 		DestroySprite(sprite);
 	}
+}
+
+//Creates vines to whip the target for G-Max Vine Lash
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: flip horizontal
+void SpriteCB_VineLashWhip(struct Sprite* sprite)
+{
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+		gBattleAnimArgs[0] *= -1;
+
+	StartSpriteAffineAnim(sprite, gBattleAnimArgs[2]);
+	InitSpritePosToAnimTarget(sprite, TRUE);
+	StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+	sprite->callback = RunStoredCallbackWhenAnimEnds;
+}
+
+static void SpriteCB_CustomArc_Step(struct Sprite *sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite))
+		DestroyAnimSprite(sprite);
+}
+
+//Launches a projectile from the attacker's cannons to the target.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: wave amplitude
+void SpriteCB_CannonadeBall(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, 0);
+
+	if (SIDE(gBattleAnimAttacker))
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+
+	sprite->callback = SpriteCB_CustomArc_Step;
 }
 
 //Anim Tasks//

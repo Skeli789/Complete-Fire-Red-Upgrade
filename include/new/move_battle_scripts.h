@@ -209,5 +209,7 @@ extern const u8 BattleScript_StickyWebSpeedDrop[];
 extern const u8 BattleScript_SuccessForceOut[];
 extern const u8 BattleScript_TrainerSlideMsgRet[];
 
+extern const u8 gText_SurroundedByGMaxVineLash[];
 extern const u8 gText_SurroundedByGMaxWildfire[];
+extern const u8 gText_SurroundedByGMaxCannonade[];
 extern const u8 gText_SurroundedByGMaxVolcalith[];

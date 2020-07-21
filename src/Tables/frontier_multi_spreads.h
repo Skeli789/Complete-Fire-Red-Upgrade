@@ -674,6 +674,7 @@ const struct BattleTowerSpread gMultiTowerSpread_Marlon[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 };
 

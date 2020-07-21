@@ -721,7 +721,9 @@ struct NewBattleStruct
 	u8 LuckyChantTimers[NUM_BATTLE_SIDES];
 	u8 TailwindTimers[NUM_BATTLE_SIDES];
 	u8 AuroraVeilTimers[NUM_BATTLE_SIDES];
+	u8 maxVineLashTimers[NUM_BATTLE_SIDES];
 	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
+	u8 maxCannonadeTimers[NUM_BATTLE_SIDES];
 	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
 
 	//Personal Counters

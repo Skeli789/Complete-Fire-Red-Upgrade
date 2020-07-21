@@ -78,9 +78,15 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_KEEP_CONSUMABLE_ITEMS
 	FLAG_KEEP_CONSUMABLE_ITEMS,
 #endif
+#ifdef FLAG_HIDDEN_ABILITY
+	FLAG_HIDDEN_ABILITY,
+#endif
+#ifdef FLAG_GIGANTAMAXABLE
+	FLAG_GIGANTAMAXABLE,
+#endif
+
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
-	FLAG_HIDDEN_ABILITY,
 };
 
 //This file's functions:
@@ -523,6 +529,7 @@ void EndOfBattleThings(void)
 		RevertDynamax();
 		FormsRevert(gPlayerParty);
 		MegaRevert(gPlayerParty);
+		GigantamaxRevert(gPlayerParty);
 		UpdateBurmy();
 		EndPartnerBattlePartyRestore();
 		EndSkyBattlePartyRestore();

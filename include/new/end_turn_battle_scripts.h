@@ -90,7 +90,11 @@ extern const u8 gText_RaidBattleKO3[];
 extern const u8 gText_RaidBattleKO4[];
 
 extern const u8 gText_HurtBySeaOfFire[];
+extern const u8 gText_HurtByGMaxVineLash[];
+extern const u8 gText_GMaxVineLashEnded[];
 extern const u8 gText_HurtByGMaxWildfire[];
 extern const u8 gText_GMaxWildfireEnded[];
+extern const u8 gText_HurtByGMaxCannonade[];
+extern const u8 gText_GMaxCannonadeEnded[];
 extern const u8 gText_HurtByGMaxVolcalith[];
 extern const u8 gText_GMaxVolcalithEnded[];

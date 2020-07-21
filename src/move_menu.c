@@ -299,6 +299,7 @@ void HandleInputChooseMove(void)
 	{
 		gNewBS->zMoveData.viewing = FALSE;
 		gNewBS->zMoveData.viewingDetails = FALSE;
+		gNewBS->dynamaxData.viewing = FALSE;
 		gMoveSelectionCursor[gActiveBattler] = 0;
 		PlaySE(SE_SELECT);
 		EmitTwoReturnValues(1, 10, 0xFFFF);
@@ -912,7 +913,7 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 		gDisplayedStringBattle[0] = EOS;
 		switch (maxEffect) {
 			case MAX_EFFECT_NONE:
-				StringCopy(gDisplayedStringBattle, StringNull);
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveProtect);
 				break;
 
 			case MAX_EFFECT_RAISE_TEAM_ATTACK:
@@ -935,6 +936,7 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 				gDisplayedStringBattle[2] = EOS;
 				PREPARE_STAT_BUFFER(gBattleTextBuff1, maxEffect - MAX_EFFECT_LOWER_ATTACK + 1);
 				ExpandBattleTextBuffPlaceholders(gBattleTextBuff1, gDisplayedStringBattle + 2);
+				StringAppend(gDisplayedStringBattle, gText_MaxMoveFoes);
 				break;
 
 			case MAX_EFFECT_SUN:
@@ -977,6 +979,82 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 				StringCopy(gDisplayedStringBattle, gText_MaxMoveSet);
 				StringAppend(gDisplayedStringBattle, gText_MaxMovePsychic);
 				StringAppend(gDisplayedStringBattle, gText_MaxMoveTerrain);
+				break;
+			case MAX_EFFECT_VINE_LASH:
+			case MAX_EFFECT_WILDFIRE:
+			case MAX_EFFECT_CANNONADE:
+			case MAX_EFFECT_VOLCAITH_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveLastingDamage);
+				break;
+			case MAX_EFFECT_EFFECT_SPORE_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveEffectSpore);
+				break;
+			case MAX_EFFECT_PARALYZE_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveParalyzeFoes);
+				break;
+			case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveConfusePayDay);
+				break;
+			case MAX_EFFECT_CRIT_PLUS:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveCritPlus);
+				break;
+			case MAX_EFFECT_MEAN_LOOK:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveMeanLook);
+				break;
+			case MAX_EFFECT_AURORA_VEIL:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveAuroraVeil);
+				break;
+			case MAX_EFFECT_INFATUATE_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveInfatuate);
+				break;
+			case MAX_EFFECT_RECYCLE_BERRIES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveRecycleBerries);
+				break;
+			case MAX_EFFECT_POISON_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMovePoisonFoes);
+				break;
+			case MAX_EFFECT_STEALTH_ROCK:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveStealthRock);
+				break;
+			case MAX_EFFECT_DEFOG:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveRemoveScreens);
+				break;
+			case MAX_EFFECT_POISON_PARALYZE_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMovePoisonParalyzeFoes);
+				break;
+			case MAX_EFFECT_HEAL_TEAM:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveHealTeam);
+				break;
+			case MAX_EFFECT_SPITE:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveSpite);
+				break;
+			case MAX_EFFECT_GRAVITY:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveGravity);
+				break;
+			case MAX_EFFECT_FIRE_SPIN_FOES:
+			case MAX_EFFECT_SANDBLAST_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveTrapDamage);
+				break;
+			case MAX_EFFECT_YAWN_FOE:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveYawn);
+				break;
+			case MAX_EFFECT_LOWER_EVASIVENESS_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveLowerEvasiveness);
+				break;
+			case MAX_EFFECT_AROMATHERAPY:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveAromatherapy);
+				break;
+			case MAX_EFFECT_CONFUSE_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveConfuseFoes);
+				break;
+			case MAX_EFFECT_STEELSURGE:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveSteelsurge);
+				break;
+			case MAX_EFFECT_TORMENT_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveTormentFoes);
+				break;
+			case MAX_EFFECT_LOWER_SPEED_2_FOES:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveLowerSpeed2);
 				break;
 		}
 

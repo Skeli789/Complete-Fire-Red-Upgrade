@@ -16,6 +16,8 @@ bool8 CanGigantamax(u8 bank);
 const u8* GetDynamaxScript(u8 bank);
 void GigantamaxRevert(struct Pokemon* party);
 void TryRevertGigantamax(struct Pokemon* mon);
+void TryRevertBankGigantamax(u8 bank);
+u16 GetGigantamaxSpecies(u16 species, bool8 canGigantamax);
 u16 GetGigantamaxBaseForm(u16 species);
 bool8 DynamaxEnabled(u8 bank);
 bool8 HasBankDynamaxedAlready(u8 bank);
@@ -96,7 +98,9 @@ enum MaxMoveEffect
 	MAX_EFFECT_GRASSY_TERRAIN,
 	MAX_EFFECT_MISTY_TERRAIN,
 	MAX_EFFECT_PSYCHIC_TERRAIN,
+	MAX_EFFECT_VINE_LASH,
 	MAX_EFFECT_WILDFIRE,
+	MAX_EFFECT_CANNONADE,
 	MAX_EFFECT_EFFECT_SPORE_FOES,
 	MAX_EFFECT_PARALYZE_FOES,
 	MAX_EFFECT_CONFUSE_FOES_PAY_DAY,

@@ -307,6 +307,8 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
 			else if (IsCurrentAreaWinter())
 				terrain = BATTLE_TERRAIN_SNOW_FIELD;
+			else if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
 			break;
 		case BATTLE_TERRAIN_GRASS:
 			if (IsCurrentAreaWinter())

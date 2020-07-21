@@ -20,7 +20,9 @@ u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
 u32 GetSeaOfFireDamage(u8 bank);
+u32 GetGMaxVineLashDamage(u8 bank);
 u32 GetGMaxWildfireDamage(u8 bank);
+u32 GetGMaxCannonadeDamage(u8 bank);
 u32 GetGMaxVolcalithDamage(u8 bank);
 
 //Functions Hooked In

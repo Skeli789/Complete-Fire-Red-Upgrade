@@ -68,7 +68,9 @@ enum EndTurnEffects
 	ET_Rainbow_Timer,
 	ET_Sea_Of_Fire_Timer,
 	ET_Swamp_Timer,
+	ET_G_Max_VineLash_Timer,
 	ET_G_Max_Wildfire_Timer,
+	ET_G_Max_Cannonade_Timer,
 	ET_G_Max_Volcalith_Timer,
 	ET_Aurora_Veil,
 	ET_Trick_Room_Timer,
@@ -88,7 +90,9 @@ enum EndTurnEffects
 enum Block_A
 {
 	ET_Sea_Of_Fire,
+	ET_G_Max_VineLash,
 	ET_G_Max_Wildfire,
+	ET_G_Max_Cannonade,
 	ET_G_Max_Volcalith,
 	ET_Grassy_Terrain,
 	ET_Hydration_ShedSkin_Healer,
@@ -396,6 +400,20 @@ u8 TurnBasedEffects(void)
 						}
 						break;
 
+					case ET_G_Max_VineLash:
+						if (BATTLER_ALIVE(gActiveBattler)
+						&&  BankSideHasGMaxVineLash(gActiveBattler)
+						&&	ABILITY(gActiveBattler) != ABILITY_MAGICGUARD
+						&&	!IsOfType(gActiveBattler, TYPE_GRASS))
+						{
+							gBattleMoveDamage = GetGMaxVineLashDamage(gActiveBattler);
+							gBattleStringLoader = gText_HurtByGMaxVineLash;
+							gBattleScripting.animArg1 = B_ANIM_G_MAX_VINE_LASH;
+							BattleScriptExecute(BattleScript_SeaOfFireDamage);
+							effect++;
+						}
+						break;
+
 					case ET_G_Max_Wildfire:
 						if (BATTLER_ALIVE(gActiveBattler)
 						&&  BankSideHasGMaxWildfire(gActiveBattler)
@@ -405,6 +423,20 @@ u8 TurnBasedEffects(void)
 							gBattleMoveDamage = GetGMaxWildfireDamage(gActiveBattler);
 							gBattleStringLoader = gText_HurtByGMaxWildfire;
 							gBattleScripting.animArg1 = B_ANIM_G_MAX_WILDFIRE;
+							BattleScriptExecute(BattleScript_SeaOfFireDamage);
+							effect++;
+						}
+						break;
+
+					case ET_G_Max_Cannonade:
+						if (BATTLER_ALIVE(gActiveBattler)
+						&&  BankSideHasGMaxCannonade(gActiveBattler)
+						&&	ABILITY(gActiveBattler) != ABILITY_MAGICGUARD
+						&&	!IsOfType(gActiveBattler, TYPE_WATER))
+						{
+							gBattleMoveDamage = GetGMaxCannonadeDamage(gActiveBattler);
+							gBattleStringLoader = gText_HurtByGMaxCannonade;
+							gBattleScripting.animArg1 = B_ANIM_G_MAX_CANNONADE;
 							BattleScriptExecute(BattleScript_SeaOfFireDamage);
 							effect++;
 						}
@@ -1040,6 +1072,24 @@ u8 TurnBasedEffects(void)
 				gBattleStruct->turnEffectsBank = 0;
 
 				__attribute__ ((fallthrough));
+			case ET_G_Max_VineLash_Timer:
+				if (gBattleStruct->turnEffectsBank < 2)
+				{
+					if (gNewBS->maxVineLashTimers[gBattleStruct->turnEffectsBank] > 0
+					&& --gNewBS->maxVineLashTimers[gBattleStruct->turnEffectsBank] == 0)
+					{
+						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
+						gBattleStringLoader = gText_GMaxVineLashEnded;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+						effect++;
+					}
+					break;
+				}
+
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+
+				__attribute__ ((fallthrough));
 			case ET_G_Max_Wildfire_Timer:
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
@@ -1048,6 +1098,24 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						gBattleStringLoader = gText_GMaxWildfireEnded;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+						effect++;
+					}
+					break;
+				}
+
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+
+				__attribute__ ((fallthrough));
+			case ET_G_Max_Cannonade_Timer:
+				if (gBattleStruct->turnEffectsBank < 2)
+				{
+					if (gNewBS->maxCannonadeTimers[gBattleStruct->turnEffectsBank] > 0
+					&& --gNewBS->maxCannonadeTimers[gBattleStruct->turnEffectsBank] == 0)
+					{
+						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
+						gBattleStringLoader = gText_GMaxCannonadeEnded;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						effect++;
 					}
@@ -1655,12 +1723,40 @@ u32 GetSeaOfFireDamage(u8 bank)
 	return damage;
 }
 
+u32 GetGMaxVineLashDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (BankSideHasGMaxVineLash(bank)
+	&& !IsOfType(bank, TYPE_GRASS)
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		damage = MathMax(1, GetBaseMaxHP(bank) / 6);
+	}
+
+	return damage;
+}
+
 u32 GetGMaxWildfireDamage(u8 bank)
 {
 	u32 damage = 0;
 
 	if (BankSideHasGMaxWildfire(bank)
 	&& !IsOfType(bank, TYPE_FIRE)
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		damage = MathMax(1, GetBaseMaxHP(bank) / 6);
+	}
+
+	return damage;
+}
+
+u32 GetGMaxCannonadeDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (BankSideHasGMaxCannonade(bank)
+	&& !IsOfType(bank, TYPE_WATER)
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
 	{
 		damage = MathMax(1, GetBaseMaxHP(bank) / 6);
@@ -1970,7 +2066,7 @@ bool8 HandleDynamaxOnTurnEnd(void)
 		{
 			if (gNewBS->dynamaxData.timer[bank] == -1) //Revert
 			{
-				TryRevertGigantamax(GetBankPartyData(bank));
+				TryRevertBankGigantamax(bank);
 				gNewBS->dynamaxData.timer[bank] = 0;
 				gBattleScripting.bank = bank;
 				BattleScriptExecute(BattleScript_DynamaxEnd);

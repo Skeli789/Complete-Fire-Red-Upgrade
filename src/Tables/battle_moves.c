@@ -13412,7 +13412,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
 		.z_move_power = 0,
-		.z_move_effect = MAX_EFFECT_WILDFIRE, //EFFECT TODO?
+		.z_move_effect = MAX_EFFECT_VINE_LASH,
 	},
 	
 	[MOVE_G_MAX_VINE_LASH_S] =
@@ -13428,7 +13428,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_SPECIAL,
 		.z_move_power = 0,
-		.z_move_effect = MAX_EFFECT_WILDFIRE, //EFFECT TODO?
+		.z_move_effect = MAX_EFFECT_VINE_LASH,
 	},
 	
 	[MOVE_G_MAX_WILDFIRE_P] =
@@ -13476,7 +13476,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
 		.z_move_power = 0,
-		.z_move_effect = MAX_EFFECT_WILDFIRE, //EFFECT TODO?
+		.z_move_effect = MAX_EFFECT_CANNONADE,
 	},
 	
 	[MOVE_G_MAX_CANNONADE_S] =
@@ -13492,7 +13492,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_SPECIAL,
 		.z_move_power = 0,
-		.z_move_effect = MAX_EFFECT_WILDFIRE, //EFFECT TODO?
+		.z_move_effect = MAX_EFFECT_CANNONADE,
 	},
 	
 	[MOVE_G_MAX_BEFUDDLE_P] =

@@ -8313,6 +8313,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Golche[] =
 		.forSingles = TRUE,
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_GENGAR,
@@ -8339,6 +8340,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Golche[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_GENGAR,
@@ -9127,6 +9129,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Golche[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_PIKACHU,
@@ -10098,6 +10101,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Gail[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_BLASTOISE,
@@ -14345,6 +14349,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_PIKACHU_CAP_ORIGINAL,
@@ -14397,6 +14402,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_VENUSAUR,
@@ -14449,6 +14455,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_VENUSAUR,
@@ -14736,6 +14743,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_LAPRAS,
@@ -14762,6 +14770,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = TRUE,
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_LAPRAS,
@@ -14788,6 +14797,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_MEW,
@@ -15317,6 +15327,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Red[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_IVYSAUR,
@@ -15982,6 +15993,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.forSingles = TRUE,
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_MACHAMP,
@@ -16009,6 +16021,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
+		.gigantamax = TRUE,
 	},
 	{
 		.species = SPECIES_HARIYAMA,

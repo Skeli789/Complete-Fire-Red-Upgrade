@@ -1710,9 +1710,19 @@ bool8 SideHasSwamp(u8 side)
 	return gNewBS->SwampTimers[side];
 }
 
+bool8 BankSideHasGMaxVineLash(u8 bank)
+{
+	return gNewBS->maxVineLashTimers[SIDE(bank)] > 0;
+}
+
 bool8 BankSideHasGMaxWildfire(u8 bank)
 {
 	return gNewBS->maxWildfireTimers[SIDE(bank)] > 0;
+}
+
+bool8 BankSideHasGMaxCannonade(u8 bank)
+{
+	return gNewBS->maxCannonadeTimers[SIDE(bank)] > 0;
 }
 
 bool8 BankSideHasGMaxVolcalith(u8 bank)

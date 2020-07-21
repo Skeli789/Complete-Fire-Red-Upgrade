@@ -303,8 +303,15 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 		CreateMonWithNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
 	}
 
+	#ifdef FLAG_HIDDEN_ABILITY
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		gEnemyParty[enemyMonIndex].hiddenAbility = TRUE;
+	#endif
+
+	#ifdef FLAG_GIGANTAMAXABLE
+	if (FlagGet(FLAG_GIGANTAMAXABLE))
+		gEnemyParty[enemyMonIndex].gigantamax = TRUE;
+	#endif
 
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	//Custom moves
@@ -354,7 +361,7 @@ void sp117_CreateRaidMon(void)
 	if (abilityNum == RAID_ABILITY_1 || abilityNum == RAID_ABILITY_2)
 		GiveMonNatureAndAbility(mon, GetNature(mon), abilityNum - RAID_ABILITY_1, IsMonShiny(mon), FALSE, FALSE);
 
-	numEggMoves = GetAllEggMoves(&gEnemyParty[0], eggMoveBuffer, TRUE);
+	numEggMoves = GetAllEggMoves(mon, eggMoveBuffer, TRUE);
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		if (numEggMoves != 0 && Random() % 100 < eggMoveChance)
@@ -381,7 +388,7 @@ void sp117_CreateRaidMon(void)
 		{
 			perfectStats[statId] = TRUE;
 			++numPerfectStats;
-			SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + statId, &perfect);
+			SetMonData(mon, MON_DATA_HP_IV + statId, &perfect);
 		}
 	}
 }
