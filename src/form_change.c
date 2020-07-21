@@ -93,8 +93,6 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 	SetMonData(mon, MON_DATA_SPECIES, &backup); //Backup species is written to by the form change handler
 }
 
-//This function could have been much simpler if I didn't care about stupid people who
-//would give people the below mentioned species before battle.
 void SwitchOutFormsRevert(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);

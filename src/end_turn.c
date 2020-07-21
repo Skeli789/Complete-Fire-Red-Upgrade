@@ -1270,8 +1270,8 @@ u8 TurnBasedEffects(void)
 				if (BATTLER_ALIVE(gActiveBattler) && !IS_TRANSFORMED(gActiveBattler))
 				{
 					struct Pokemon* mon = GetBankPartyData(gActiveBattler);
-					u16 species = mon->species;
-					u16 newSpecies = 0;
+					u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+					u16 newSpecies = SPECIES_NONE;
 					u8 ability = ABILITY(gActiveBattler);
 					u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 					bool8 changedForm = FALSE;
@@ -1286,19 +1286,55 @@ u8 TurnBasedEffects(void)
 								effect++;
 							break;
 
-						#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
 						case ABILITY_ZENMODE:
-							if (species == SPECIES_DARMANITAN
-							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
+							if (gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
 							{
-								newSpecies = SPECIES_DARMANITANZEN;
-								changedForm = TRUE;
-								reloadType = TRUE;
-								reloadStats = TRUE;
-								battleScript = BattleScript_TransformedEnd2;
+								#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
+								if (species == SPECIES_DARMANITAN)
+								{
+									newSpecies = SPECIES_DARMANITANZEN;
+									changedForm = TRUE;
+									reloadType = TRUE;
+									reloadStats = TRUE;
+									battleScript = BattleScript_TransformedEnd2;
+								}
+								#endif
+								#if (defined SPECIES_DARMANITAN_G && defined SPECIES_DARMANITAN_G_ZEN)
+								if (species == SPECIES_DARMANITAN_G)
+								{
+									newSpecies = SPECIES_DARMANITAN_G_ZEN;
+									changedForm = TRUE;
+									reloadType = TRUE;
+									reloadStats = TRUE;
+									battleScript = BattleScript_TransformedEnd2;
+								}
+								#endif
+							}
+							else //gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 2
+							{
+								//Revert if back above half health
+								#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
+								if (species == SPECIES_DARMANITANZEN)
+								{
+									newSpecies = SPECIES_DARMANITAN;
+									changedForm = TRUE;
+									reloadType = TRUE;
+									reloadStats = TRUE;
+									battleScript = BattleScript_TransformedEnd2;
+								}
+								#endif
+								#if (defined SPECIES_DARMANITAN_G && defined SPECIES_DARMANITAN_G_ZEN)
+								if (species == SPECIES_DARMANITAN_G_ZEN)
+								{
+									newSpecies = SPECIES_DARMANITAN_G;
+									changedForm = TRUE;
+									reloadType = TRUE;
+									reloadStats = TRUE;
+									battleScript = BattleScript_TransformedEnd2;
+								}
+								#endif
 							}
 							break;
-						#endif
 
 						#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10 && defined SPECIES_ZYGARDE_COMPLETE)
 						case ABILITY_POWERCONSTRUCT:
