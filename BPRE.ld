@@ -1230,6 +1230,7 @@ FldEff_JumpLongGrass = 0x80DB798 | 1;
 FldEff_SurfBlob = 0x80DC3D0 | 1;
 BindFieldEffectToSprite = 0x80DC44C | 1;
 DoBobbingFieldEffect = 0x80DC6B0 | 1;
+StartSweetScentFieldEffect = 0x80DE134 | 1;
 
 /*Battle Transition Functions*/
 BT_Phase1Task = 0x80D0A8C | 1;
@@ -1270,8 +1271,9 @@ BT_LoadWaveIntoBuffer = 0x80D3E74 | 1;
 BT_GenerateCircle = 0x80D3EF0 | 1;
 
 /*Field Weather Functions*/
-Task_WeatherMain = 0x8079e0c | 1;
+Task_WeatherMain = 0x8079E0C | 1;
 ApplyGammaShift = 0x807A294 | 1;
+SetWeatherScreenFadeOut = 0x807B05C | 1;
 ApplyWeatherGammaShiftToPal = 0x807AB74 | 1;
 LoadCustomWeatherSpritePalette = 0x807ABC0 | 1;
 GetCurrentWeather = 0x807AF98 | 1;

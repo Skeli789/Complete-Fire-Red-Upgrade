@@ -2335,6 +2335,20 @@ static void Task_ChangeAbility(u8 taskId)
 	RemoveBagItem(item, 1);
 }
 
+static void Task_HoneyField(u8 taskId)
+{
+	SetWeatherScreenFadeOut();
+	StartSweetScentFieldEffect();
+	DestroyTask(taskId);	
+}
+
+void FieldUseFunc_Honey(u8 taskId)
+{
+	RemoveBagItem(Var800E, 1);
+	sItemUseOnFieldCB = Task_HoneyField;
+	sub_80A103C(taskId);
+}
+
 #ifdef UNBOUND
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
