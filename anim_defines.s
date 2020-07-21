@@ -460,6 +460,7 @@
 .equ AnimTask_FlailMovement, 0x80E0851
 .equ AnimTask_TraceMonBlended, 0x80bab99
 .equ AnimTask_SmokescreenImpact, 0x80de34d
+.equ AnimTask_AttackerPunchWithTrace, 0x8077031
 
 @launchtemplate
 

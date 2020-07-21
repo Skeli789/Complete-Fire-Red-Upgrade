@@ -18,6 +18,8 @@ fainting_battle_scripts.s
 .global BattleScript_SuccessBallThrow
 .global BattleScript_BenjaminButterfreeDevolution
 
+@Raid Explosion doesn't work on Trainer Dynamax mon because it's KOd
+
 BattleScript_FaintAttacker:
 	pokemonfaintcry BANK_ATTACKER
 	pause 0x30

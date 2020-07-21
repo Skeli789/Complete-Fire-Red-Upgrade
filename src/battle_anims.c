@@ -611,6 +611,18 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_FeintFist[] =
 	sSpriteAffineAnim_FeintFist,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_MachPunchFist[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_FRAME(-32, -32, 4, 8),
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_MachPunchFist[] =
+{
+	sSpriteAffineAnim_MachPunchFist,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_MudBombBall[] =
 {
 	AFFINEANIMCMD_FRAME(0, -8, -4, 4), //Compress Vertically
