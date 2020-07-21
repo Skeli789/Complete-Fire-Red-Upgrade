@@ -1216,7 +1216,7 @@ ANIM_ROCKSMASH:
 	endanimation
 
 .align 2
-SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
+SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDurationUseY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2571,9 +2571,11 @@ ANIM_DRAINPUNCH:
 	pokespritetoBG bank_target
 	setblends 0x80c
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x171D
-	waitanimation
+	launchtemplate DRAIN_FIST TEMPLATE_TARGET | 1, 0x5 bank_target 0x0 0x0 16 0x2C
+	pause 2
+	playsound2 0x84 SOUND_PAN_TARGET
+	pause 6
 	playsound2 0xAD SOUND_PAN_TARGET
-	launchtemplate DRAIN_FIST 0x1 0x5 bank_target 0x0 0x0 0x25 0xA
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x5 0x1A 0x1
 	call ABSORB_ANIM
 	waitanimation
@@ -2585,7 +2587,7 @@ ANIM_DRAINPUNCH:
 	endanimation
 
 .align 2
-DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_SpriteOnMonForDuration
+DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_DrainPunchFist SpriteCB_SpriteOnMonForDurationUseY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5220,7 +5222,6 @@ ANIM_RAZORSHELL:
 
 .align 2
 RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15961,7 +15962,7 @@ ANIM_NO_RETREAT:
 	endanimation
 
 .align 2
-NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
+NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDurationUseY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
