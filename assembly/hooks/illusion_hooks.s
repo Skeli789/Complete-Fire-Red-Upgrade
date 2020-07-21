@@ -79,3 +79,32 @@ UpdateBattlerYDeltaForIllusionHook2:
 	bl GetIllusionPartyData
 	ldr r1, =0x8076586 | 1
 	bx r1
+
+@0x08076B5C with r0
+GetBattlerSpriteCoordAttrPlayerIllusionHook:
+	mov r0, r8
+	bl GetIllusionPartyData
+	mov r5, r0
+	mov r1, #0xB @Species
+	ldr r2, =GetMonData
+	bl bxr2
+	lsl r0, r0, #0x10
+	lsr r7, r0, #0x10
+	mov r0, r5
+	ldr r2, =0x08076B7E | 1
+bxr2:
+	bx r2
+
+@0x08076C1A with r0
+GetBattlerSpriteCoordAttrEnemyIllusionHook:
+	mov r0, r8
+	bl GetIllusionPartyData
+	mov r5, r0
+	mov r1, #0xB @Species
+	ldr r2, =GetMonData
+	bl bxr2
+	lsl r0, r0, #0x10
+	lsr r7, r0, #0x10
+	mov r0, r5
+	ldr r2, =0x08076C3C | 1
+	bx r2
