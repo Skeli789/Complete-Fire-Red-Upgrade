@@ -1300,7 +1300,10 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 	#endif
 
 	if (IsDynamaxed(bank))
+	{
+		gNewBS->ai.zMoveHelper = move; //Store the original move in memory for damage calcs later
 		move = GetMaxMove(bank, i);
+	}
 
 	return move;
 }
@@ -2612,8 +2615,10 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
+	if (IsAnyMaxMove(move))
+		return move;
+
 	if (!gNewBS->zMoveData.used[bankAtk] && SPLIT(move) != SPLIT_STATUS
-	&& !IsAnyMaxMove(move)
 	&& ShouldAIUseZMove(bankAtk, bankDef, move))
 	{
 		u8 moveIndex = FindMovePositionInMoveset(move, bankAtk);
@@ -2634,7 +2639,10 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 		u16 maxMove = GetMaxMoveByMove(bankAtk, move);
 		if (maxMove != MOVE_NONE)
+		{
+			gNewBS->ai.zMoveHelper = move; //Store the original move in memory for damage calcs later
 			move = maxMove;
+		}
 	}
 
 	return move;

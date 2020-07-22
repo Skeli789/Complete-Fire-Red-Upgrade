@@ -1962,6 +1962,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 		if (useMonDef)
 			data->resultFlags = AI_TypeCalc(move, bankAtk, data->monDef);
+		else if (data->specialFlags & FLAG_AI_CALC)
+			data->resultFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef); //Takes into account things like Illusion
 		else
 			data->resultFlags = TypeCalc(move, bankAtk, bankDef, NULL, FALSE);
 	}
