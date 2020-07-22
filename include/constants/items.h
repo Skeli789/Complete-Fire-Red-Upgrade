@@ -740,6 +740,7 @@ enum
 #define ITEM_ABILITY_CAPSULE 0x260
 #define ITEM_DREAM_MIST 0x59
 #define ITEM_WISHING_PIECE 0x58
+#define ITEM_MAX_POWDER 0x3B
 
 //Nectars
 #define ITEM_RED_NECTAR 0x26A

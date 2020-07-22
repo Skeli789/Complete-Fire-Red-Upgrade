@@ -1381,6 +1381,10 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
 static void Task_OfferAbilityChange(u8 taskId);
 static void Task_HandleAbilityChangeYesNoInput(u8 taskId);
 static void Task_ChangeAbility(u8 taskId);
+static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func);
+static void Task_OfferGigantamaxChange(u8 taskId);
+static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId);
+static void Task_ChangeGigantamax(u8 taskId);
 
 void Task_ClosePartyMenuAfterText(u8 taskId)
 {
@@ -2333,6 +2337,90 @@ static void Task_ChangeAbility(u8 taskId)
 	ScheduleBgCopyTilemapToVram(2);
 	gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 	RemoveBagItem(item, 1);
+}
+
+void FieldUseFunc_MaxPowder(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_MaxPowder;
+	SetUpItemUseCallback(taskId);
+}
+
+extern const u8 gText_MaxPowderOfferGive[];
+extern const u8 gText_MaxPowderOfferRevert[];
+extern const u8 gText_MaxPowderAllowsGigantamax[];
+extern const u8 gText_MaxPowderRemovesGigantamax[];
+static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func)
+{
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+
+	PlaySE(SE_SELECT);
+	if (mon->gigantamax) //Can revert
+	{
+		GetMonNickname(mon, gStringVar1);
+		StringExpandPlaceholders(gStringVar4, gText_MaxPowderOfferRevert);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferGigantamaxChange;
+	}
+	else if (GetGigantamaxSpecies(GetMonData(mon, MON_DATA_SPECIES, NULL), TRUE) != SPECIES_NONE) //Has Gigantamax potential
+	{
+		GetMonNickname(mon, gStringVar1);
+		StringExpandPlaceholders(gStringVar4, gText_MaxPowderOfferGive);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferGigantamaxChange;
+	}
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+}
+
+static void Task_OfferGigantamaxChange(u8 taskId)
+{
+    if (IsPartyMenuTextPrinterActive() != TRUE)
+    {
+        PartyMenuDisplayYesNoMenu();
+        gTasks[taskId].func = Task_HandleGigantamaxChangeYesNoInput;
+    }
+}
+
+static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId)
+{
+    switch (Menu_ProcessInputNoWrapClearOnChoose())
+    {
+		case 0:
+			gTasks[taskId].func = Task_ChangeGigantamax;
+			break;
+		case MENU_B_PRESSED:
+			PlaySE(SE_SELECT);
+			// Fallthrough
+		case 1:
+			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+			break;
+    }
+}
+
+static void Task_ChangeGigantamax(u8 taskId)
+{
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+
+	PlaySE(SE_USE_ITEM);	
+	mon->gigantamax ^= TRUE; //Flip bit
+	GetMonNickname(mon, gStringVar1);
+
+	if (mon->gigantamax)
+		StringExpandPlaceholders(gStringVar4, gText_MaxPowderAllowsGigantamax);
+	else
+		StringExpandPlaceholders(gStringVar4, gText_MaxPowderRemovesGigantamax);
+
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+	RemoveBagItem(Var800E, 1);
 }
 
 static void Task_HoneyField(u8 taskId)

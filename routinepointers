@@ -227,6 +227,7 @@ MetatileBehavior_IsMuddySlope 835B7FC
 ForcedMovement_MuddySlope 835B800
 
 #ifdef UNBOUND
+FieldUseFunc_MaxPowder 8876C40
 FieldUseFunc_Honey 8876E7C
 FieldUseFunc_EVReducingBerry 8877C68
 FieldUseFunc_EVReducingBerry 8877C94
