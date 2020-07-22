@@ -801,7 +801,8 @@ void atk0E_effectivenesssound(void)
 	if (IsDoubleSpreadMove())
 	{
 		if (gNewBS->doneDoublesSpreadHit
-		|| !gNewBS->calculatedSpreadMoveData) //The attack animation didn't play yet - only play sound after animation
+		|| !gNewBS->calculatedSpreadMoveData //The attack animation didn't play yet - only play sound after animation
+		|| SPLIT(gCurrentMove) == SPLIT_STATUS) //To handle Dark Void missing basically
 			goto END;
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 	}

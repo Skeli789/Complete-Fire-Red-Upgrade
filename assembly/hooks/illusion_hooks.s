@@ -66,20 +66,6 @@ AltitudeIllusionReturn:
 	ldr r1, =0x80745A0 | 1
 	bx r1
 
-@0x807652E with r0
-UpdateBattlerYDeltaForIllusionHook1:
-	mov r0, r4
-	bl GetIllusionPartyData
-	ldr r1, =0x807653C | 1
-	bx r1
-
-@0x8076578 with r0
-UpdateBattlerYDeltaForIllusionHook2:
-	mov r0, r4
-	bl GetIllusionPartyData
-	ldr r1, =0x8076586 | 1
-	bx r1
-
 @0x08076B5C with r0
 GetBattlerSpriteCoordAttrPlayerIllusionHook:
 	mov r0, r8

@@ -263,7 +263,7 @@ void atkFF1C_handletrainerslidemsg(void)
 
 		case 1:
 			gBattlerSpriteIds[gActiveBattler] = gNewBS->savedObjId;
-			if (gBattleMons[gActiveBattler].hp)
+			if (BATTLER_ALIVE(gActiveBattler))
 				BattleLoadOpponentMonSpriteGfx(GetBankPartyData(gActiveBattler), gActiveBattler);
 	}
 

@@ -636,7 +636,7 @@ struct BattleStruct
 	u8 linkBattleVsSpriteId_V;
 	u8 linkBattleVsSpriteId_S;
 	u8 castformToChangeInto;
-	u8 chosenMovePositions[BATTLE_BANKS_COUNT];
+	u8 chosenMovePositions[BATTLE_BANKS_COUNT]; //0x2000090
 	u8 stateIdAfterSelScript[BATTLE_BANKS_COUNT];
 	u8 field_88;
 	u8 field_89;

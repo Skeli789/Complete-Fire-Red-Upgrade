@@ -459,6 +459,7 @@ void RestorePartyFromTempTeam(u8 firstId, u8 numPokes)
 
 	for (int i = 0; i < numPokes; ++i)
 	{
+		Memset(&gPlayerParty[firstId + i], 0, sizeof(struct Pokemon)); //Wipe old data - mainly for wiping struct data that's not included in Box mon *IMPORTANT
 		CreateBoxMonFromCompressedMon((struct BoxPokemon*) &gPlayerParty[firstId + i], &backup[firstId + i]);
 		CalculateMonStats(&gPlayerParty[firstId + i]);
 	}

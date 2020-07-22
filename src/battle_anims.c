@@ -25,6 +25,8 @@ battle_anims.c
 
 #define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
 #define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
+#define gMonFrontPicCoords ((const struct MonCoords*) *((u32*) 0x8011F4C))
+#define gMonBackPicCoords ((const struct MonCoords*) *((u32*) 0x8074634))
 
 extern const u8* sBattleAnimScriptPtr;
 extern u16 sAnimMoveIndex;
@@ -917,7 +919,7 @@ void AnimTask_GetTimeOfDay(u8 taskId)
 void AnimTask_GetLycanrocForm(u8 taskId)
 {
 	#ifdef SPECIES_LYCANROC_N
-	if (GetBankPartyData(gBattleAnimAttacker)->species == SPECIES_LYCANROC_N)
+	if (GetIllusionPartyData(gBattleAnimAttacker)->species == SPECIES_LYCANROC_N)
 		gBattleAnimArgs[0] = 1;
 	else
 	#endif
@@ -1153,7 +1155,7 @@ void AnimTask_ReloadAttackerSprite(u8 taskId)
 
 void AnimTask_PlayAttackerCry(u8 taskId)
 {
-	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 1);
+	PlayCry3(GetIllusionPartyData(gBattleAnimAttacker)->species, 0, 1);
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -3317,7 +3319,7 @@ void AnimTask_CreateHyperspaceFuryMon(u8 taskId)
 
 	switch (gTasks[taskId].data[0]) {
 		case 0: //Set up sprite
-			monAtk = GetBankPartyData(gBattleAnimAttacker);
+			monAtk = GetIllusionPartyData(gBattleAnimAttacker);
 			personality = GetMonData(monAtk, MON_DATA_PERSONALITY, NULL);
 			otId = GetMonData(monAtk, MON_DATA_OT_ID, NULL);
 			if (gBattleSpritesDataPtr->bankData[gBattleAnimAttacker].transformSpecies == SPECIES_NONE)
@@ -4073,14 +4075,39 @@ u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 	#endif
 }
 
-void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 trasnformType)
+//The original function would run through gBattlerSpriteIds until it found a spriteId
+//that matched. This would cause issues if there was a Pokemon missing from the field who
+//used to have the same spriteId as the current sprite in the animation.
+u16 GetBattlerYDeltaFromSpriteId(u8 spriteId)
+{
+	u16 species;
+    struct BattleSpriteInfo* spriteInfo;
+	struct Pokemon* mon;
+    u8 bank = gSprites[spriteId].data[0];
+
+	mon = GetIllusionPartyData(bank);
+	spriteInfo = gBattleSpritesDataPtr->bankData;
+	if (!spriteInfo[bank].transformSpecies)
+		species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	else
+		species = spriteInfo[bank].transformSpecies;
+
+	if (SIDE(bank) == B_SIDE_PLAYER)
+		return gMonBackPicCoords[species].y_offset;
+	else
+		return gMonFrontPicCoords[species].y_offset;
+
+    return MAX_SPRITES;
+}
+
+void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 {
 	u8 position;
 	u16 targetSpecies, paletteOffset;
 	u32 personality, otId;
 	const u32 *lzPaletteData;
 
-    if (trasnformType == 0xFF) //Silph Scope
+    if (transformType == 0xFF) //Silph Scope
     {
 		const void* src;
 		void* dst;
@@ -4107,7 +4134,7 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 trasnformType)
         UpdateNickInHealthbox(gHealthboxSpriteIds[bankAtk], monAtk);
         TryAddPokeballIconToHealthbox(gHealthboxSpriteIds[bankAtk], 1);
     }
-	else if (trasnformType == 0xFE) //Transforming animation for form change
+	else if (transformType == 0xFE) //Transforming animation for form change
 	{
 		const void* src;
 		void* dst;
@@ -4137,7 +4164,7 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 trasnformType)
 		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
 		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
 	}
-	else if (trasnformType != 0) //Castform
+	else if (transformType != 0) //Castform
 	{
 		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleSpritesDataPtr->animationData->animArg);
 		paletteOffset = 0x100 + bankAtk * 16;
