@@ -30,6 +30,8 @@ move_t GetMaxMove(u8 bank, u8 moveIndex);
 move_t GetMaxMoveByMove(u8 bank, u16 baseMove);
 bool8 MonCanUseMaxMoveWithEffect(struct Pokemon* mon, u8 maxEffect);
 bool8 MonCanDynamax(struct Pokemon* mon);
+bool8 MoveInMonMovesetThatCanChangeByGigantamaxing(struct Pokemon* mon);
+bool8 PlayerHasNoMonsLeftThatCanDynamax(void);
 u8 GetDynamaxHPBoost(u8 bank);
 u8 GetMonDynamaxHPBoost(struct Pokemon* mon);
 u8 GetRaidBattleHPBoost(void);

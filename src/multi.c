@@ -412,7 +412,8 @@ static void PlayerPartnerHandleChooseMove(void)
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 		{
-			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3) //Give the Player a chance to Dynamax first in a Raid battle
+			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3 //Give the Player a chance to Dynamax first in a Raid battle
+			|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
 				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 		}
 	}

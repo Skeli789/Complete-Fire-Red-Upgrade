@@ -2984,7 +2984,8 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (IsRaidBattle() && gNewBS->dynamaxData.raidShieldsUp && SIDE(bankAtk) == B_SIDE_PLAYER && SIDE(bankDef) == B_SIDE_OPPONENT) //Partner AI on Raid Pokemon with shields up
 			{
-				if (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed >= 2)
+				if (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed <= 2 //Less than 3 shields left
+				&& gNewBS->dynamaxData.stormLevel < 3) //The Raid boss hasn't almost won
 					return FALSE; //Don't waste a Z-Move breaking a shield
 
 				u16 bankAtkPartner = PARTNER(bankAtk);
@@ -3102,6 +3103,8 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	2. Weather Boosting Ability
 	3. Choice Item
 	4. Weakness Policy
+	
+	Gigantamax gives +1 to all of the above
 */
 static bool8 MonCanTriggerWeatherAbilityWithMaxMove(struct Pokemon* mon)
 {
@@ -3212,6 +3215,9 @@ void CalcAIDynamaxMon(u8 bank)
 			else if (bestMonStat > 0 //Has an actual attacking move
 			&& itemEffect != ITEM_EFFECT_EJECT_BUTTON && itemEffect != ITEM_EFFECT_EJECT_PACK) //And probably won't be forced out by its item
 				updateScore = 1;
+
+			if (MoveInMonMovesetThatCanChangeByGigantamaxing(mon))
+				++updateScore; //This is even better
 
 			if (updateScore >= bestMonScore)
 			{

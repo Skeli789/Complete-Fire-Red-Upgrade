@@ -639,6 +639,37 @@ bool8 MonCanDynamax(struct Pokemon* mon)
 	return FALSE;
 }
 
+bool8 MoveInMonMovesetThatCanChangeByGigantamaxing(struct Pokemon* mon)
+{
+	if (mon->gigantamax)
+	{
+		for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+
+			if (IsGMaxMove(GetMonMaxMove(mon, move)))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 PlayerHasNoMonsLeftThatCanDynamax(void)
+{
+	u8 i, firstMonId, lastMonId;
+	struct Pokemon* party = LoadPartyRange(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), &firstMonId, &lastMonId);
+
+	for (i = firstMonId; i < lastMonId; ++i)
+	{
+		if (MON_CAN_BATTLE(&party[i])
+		&& MonCanDynamax(&party[i]))
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
 u8 GetDynamaxHPBoost(u8 bank)
 {
 	if (SPECIES(bank) == SPECIES_SHEDINJA)
@@ -1196,6 +1227,7 @@ void SetGMaxMalodorEffect(void)
 
 void SetGMaxChiStrikeEffect(void)
 {
+	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 	if (BATTLER_ALIVE(gBankAttacker) && gNewBS->chiStrikeCritBoosts[gBankAttacker] < 3) //Capped at 3
 		++gNewBS->chiStrikeCritBoosts[gBankAttacker];
 }
