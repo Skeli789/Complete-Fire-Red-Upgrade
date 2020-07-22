@@ -269,4 +269,13 @@ BufferMaxMoveNameBattle:
 	ldr r0, =0x80D86AE | 1
 	bx r0
 
-	
+.pool
+@;0x8139D2C with r3
+CreateSummaryScreenGigantamaxIconHook:
+	mov r0, #0xD
+	neg r0, r0
+	and r0, r2
+	strb r0, [r1, #0x5]
+	bl CreateSummaryScreenGigantamaxIcon
+	ldr r0, =0x8139D34 | 1
+	bx r0

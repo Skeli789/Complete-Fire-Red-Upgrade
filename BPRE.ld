@@ -292,6 +292,7 @@ sMapOpenCloseAnim = 0x20399E0;
 sMapCursor = 0x20399E4;
 sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
+sMonSummaryScreen = 0x203B140;
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
 gSoftResetDisabled = 0x03003530;

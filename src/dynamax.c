@@ -3,6 +3,7 @@
 #include "../include/battle_anim.h"
 #include "../include/overworld.h"
 #include "../include/random.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/constants/items.h"
 #include "../include/constants/region_map_sections.h"
 
@@ -35,6 +36,11 @@ dynamax.c
 #define MAX_RAID_DROPS 12
 
 #define FIRST_RAID_BATTLE_FLAG 0x1800
+
+#define GFX_TAG_GIGANTAMAX_ICON 0x2715 //Some battle tag
+
+extern const u8 GigantamaxSummaryScreenIconTiles[];
+extern const u16 GigantamaxSummaryScreenIconPal[];
 
 //This file's functions:
 static bool8 IsBannedHeldItemForDynamax(u16 item);
@@ -149,6 +155,29 @@ static const u8 sRaidBattleDropRates[MAX_RAID_DROPS] =
 	4,
 	1,
 };
+
+static const struct OamData sGigantamaxIconOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 0, //Above all
+};
+
+static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
+{
+	.tileTag = GFX_TAG_GIGANTAMAX_ICON,
+	.paletteTag = GFX_TAG_GIGANTAMAX_ICON,
+	.oam = &sGigantamaxIconOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+static const struct CompressedSpriteSheet   sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
+static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =	{GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
 
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 {
@@ -1355,6 +1384,41 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 	}
 
 	return FALSE;
+}
+
+void CreateSummaryScreenGigantamaxIcon(void)
+{
+	//Base the position of the icon off of where the Poke Ball sprite is
+	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->caughtBallSpriteId];
+
+	if (sMonSummaryScreen->currentMon.gigantamax)
+	{
+		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenGigantamaxIconSpriteSheet);
+		LoadSpritePalette(&sSummaryScreenGigantamaxIconSpritePalette);
+		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 18, ballSprite->pos1.y, 0);
+	}
+	else
+		ballSprite->data[0] = MAX_SPRITES; //No icon
+}
+
+void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
+{
+	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+
+    gSprites[ballSpriteId].invisible = invisible;
+	if (gigantamaxIconSpriteId != MAX_SPRITES)
+		gSprites[gigantamaxIconSpriteId].invisible = invisible;
+}
+
+void SummaryScreen_DestroyCaughtBallSprite(void)
+{
+	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+
+    DestroySpriteAndFreeResources(&gSprites[ballSpriteId]);
+	if (gigantamaxIconSpriteId != MAX_SPRITES)
+		DestroySpriteAndFreeResources(&gSprites[gigantamaxIconSpriteId]);
 }
 
 //The following functions relate to raid battles:

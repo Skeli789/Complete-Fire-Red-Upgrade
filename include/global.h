@@ -40,6 +40,7 @@
 #define Q_4_12(n)  ((s16)((n) * 4096))
 
 #define POKEMON_SLOTS_NUMBER 412
+#define ITEM_NAME_LENGTH 14
 #define POKEMON_NAME_LENGTH 10
 #define OT_NAME_LENGTH 7
 

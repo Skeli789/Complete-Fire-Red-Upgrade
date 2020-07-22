@@ -133,6 +133,10 @@ HandleDynamaxOnTurnEnd 8018C98 0
 DeadRaidMonSpriteHook 8077CC4 1
 DeadRaidMonSpriteHook2 807524C 2
 
+CreateSummaryScreenGigantamaxIconHook 8139D2C 3
+SummaryScreen_ChangeCaughtBallSpriteVisibility 8139D54 1
+SummaryScreen_DestroyCaughtBallSprite 8139D90 0
+
 BatonPassEffects 08012850 0
 
 GiveMonToPlayer 8040B14 1
