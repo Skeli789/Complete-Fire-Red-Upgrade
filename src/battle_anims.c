@@ -2953,15 +2953,17 @@ const struct OamData sGeyserOam =
 //Launches the fireball for Max Flare
 //arg 0: X pixel offset
 //arg 1: Y pixel offset
+//arg 2: Duration
+//arg 3: Wave Amplitude
 void SpriteCB_MaxFlareBall(struct Sprite* sprite)
 {
 	InitSpritePosToAnimAttacker(sprite, TRUE);
 	StartSpriteAffineAnim(sprite, 1);
 
-	sprite->data[0] = 50;
+	sprite->data[0] = gBattleAnimArgs[2];
 	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2); //Target X
 	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET); //Target Y
-	sprite->data[5] = 5;
+	sprite->data[5] = gBattleAnimArgs[3];
 
 	InitAnimArcTranslation(sprite);
 	sprite->callback = SpriteCB_MaxFlareBallStep;
