@@ -106,6 +106,23 @@ const union AnimCmd *const gAnimCmdTable_QuickGuard[] =
 	sAnimCmdQuickGuardRight,
 };
 
+static const union AnimCmd sAnimCmdDreepyMissilePlayer[] =
+{
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnimCmdDreepyMissileOpponent[] =
+{
+	ANIMCMD_FRAME(16, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_DreepyMissile[] =
+{
+	sAnimCmdDreepyMissilePlayer,
+	sAnimCmdDreepyMissileOpponent,
+};
+
 const struct OamData gPoisonColumnOam =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,
@@ -2812,6 +2829,23 @@ void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
 		sprite->callback = TranslateSpriteLinearFixedPoint;
 		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	}
+}
+
+//Launches the Dreepy Missile
+//arg 0: Target X-Pos
+//arg 1: Target Y-Pos
+//arg 2: Duration
+void SpriteCB_DragonDart(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)
+		StartSpriteAnim(sprite, 1);
+
+	sprite->data[0] = gBattleAnimArgs[2]; //Speed delay
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 //Creates The Extreme Evoboost Circles

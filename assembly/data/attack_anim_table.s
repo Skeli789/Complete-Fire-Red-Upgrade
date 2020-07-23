@@ -16035,7 +16035,7 @@ ANIM_DRAGON_DARTS:
 	loadparticle ANIM_TAG_DREEPY
 	loadparticle ANIM_TAG_EXPLOSION
 	playsound2 0x25 SOUND_PAN_ATTACKER @;Falling sound
-	launchtemplate DREEPY_MISSILE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x19
+	launchtemplate DREEPY_MISSILE TEMPLATE_TARGET | 2, 0x3, 0, 0, 25
 	pause 0x19
 	playsound2 0xAA SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x10 0x1
@@ -16044,7 +16044,7 @@ ANIM_DRAGON_DARTS:
 	endanimation
 
 .align 2
-DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B563D
+DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 gAnimCmdTable_DreepyMissile 0x0 gDummySpriteAffineAnimTable SpriteCB_DragonDart
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
