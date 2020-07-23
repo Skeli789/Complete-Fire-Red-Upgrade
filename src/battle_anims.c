@@ -1986,7 +1986,7 @@ const struct OamData sTransparentFistOAM =
 
 static const union AffineAnimCmd sSpriteAffineAnim_ScaledApple[] =
 {
-	AFFINEANIMCMD_FRAME(64, 64, 0, 10), //Quadruple in size
+	AFFINEANIMCMD_FRAME(32, 32, 0, 10), //Double in size
 	AFFINEANIMCMD_END
 };
 
