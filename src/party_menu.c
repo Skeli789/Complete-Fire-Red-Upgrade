@@ -900,7 +900,7 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 	[FIELD_MOVE_ROCK_CLIMB] = 6,
 	[FIELD_MOVE_WATERFALL] = 7,
 	[FIELD_MOVE_DIVE] = 8,
-	[FIELD_MOVE_FLY] = 0,
+	[FIELD_MOVE_FLY] = 1,
 	[FIELD_MOVE_FLASH] = 0,
 };
 
