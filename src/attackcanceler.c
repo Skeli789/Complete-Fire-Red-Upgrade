@@ -381,6 +381,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				}
 
 				gNewBS->dynamaxData.nullifiedStats = TRUE;
+				gSpecialStatuses[gBankTarget].lightningRodRedirected = 0; //The target will still be changed, but this is the best I can do
 
 				gActiveBattler = gBankAttacker;
 				gBattleMons[gActiveBattler].status1 = 0; //Clear non-volatile status condition
