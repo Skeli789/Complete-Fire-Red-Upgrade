@@ -345,6 +345,7 @@ gBaseStats = 0x8254784;
 gEvolutionTable = 0x8259754;
 gUnkPokemonTrainerTable = 0x825DF50;
 gXItemEffectToStatId = 0x825DFF0;
+gSineTable = 0x825E074;
 gHealthbarPals = 0x8260260;
 gPokeBallTiles = 0x826056C;
 gPokeBallPals = 0x82605CC;
@@ -391,7 +392,6 @@ gPokedexEntries = 0x844E850;
 gUnknown_08459FFC = 0x8459FFC;
 MonHoverShadowPal = 0x8D11B84;
 MonHoverShadowSprite = 0x8E7BAD4;
-
 
 /* Pokemon Function */
 EmitSetMonData = 0x800DFF0 | 1;

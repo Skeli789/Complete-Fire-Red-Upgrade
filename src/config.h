@@ -43,6 +43,7 @@
 #define FLAG_SCALE_WILD_POKEMON_LEVELS 0x90D //If this flag is set, all random wild Pokemon (other than scripted ones) will have their level scaled to the lowest level in the player's party
 #define FLAG_SCALE_TRAINER_LEVELS 0x90E //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
 #define FLAG_HIDDEN_ABILITY 0x90F //If this flag is set, generated wild Pokemon will have their hidden abilities
+#define FLAG_GIGANTAMAXABLE 0x928 //If this flag is set, generated wild and gift Pokemon will have their Gigantamax bit set
 #define FLAG_DOUBLE_WILD_BATTLE 0x910 //If this flag is set, a wild battles will be against two Pokemon
 #define FLAG_NO_RANDOM_WILD_ENCOUNTERS 0x911 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 #define FLAG_REMOVE_EVO_ITEM 0x912  //Flag to toggle item removal after leveling up (set by the engine)
