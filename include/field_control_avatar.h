@@ -21,7 +21,7 @@ struct FieldInput
 	u8 dpadDirection;
 };
 
-struct FieldInput gInputToStoreInQuestLogMaybe;
+extern struct FieldInput gInputToStoreInQuestLogMaybe;
 
 u8 __attribute__((long_call)) TrySetDiveWarp(void);
 void __attribute__((long_call)) GetPlayerPosition(struct MapPosition *);
