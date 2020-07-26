@@ -1615,7 +1615,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_ATTRACT:
-			if (CanBeInfatuated(bankDef, bankAtk)
+			if (!CanBeInfatuated(bankDef, bankAtk)
 			|| PARTNER_MOVE_EFFECT_IS_SAME
 			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_INFATUATE_FOES))
 				DECREASE_VIABILITY(10);
