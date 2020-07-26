@@ -677,6 +677,7 @@ RunStoredCallbackWhenAnimEnds = 0x8074F6C | 1;
 SetAnimSpriteInitialXOffset = 0x8074FF8 | 1;
 InitAnimArcTranslation = 0x8075068 | 1;
 TranslateAnimHorizontalArc = 0x8075094 | 1;
+TranslateAnimVerticalArc = 0x80750C8 | 1;
 InitSpritePosToAnimTarget = 0x8075114 | 1;
 InitSpritePosToAnimAttacker = 0x8075160 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;

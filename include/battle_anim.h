@@ -427,6 +427,7 @@ void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2
 void __attribute__((long_call)) SpriteCB_AnimMissileArcStep(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimArcTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) TranslateAnimHorizontalArc(struct Sprite *sprite);
+bool8 __attribute__((long_call)) TranslateAnimVerticalArc(struct Sprite *sprite);
 void __attribute__((long_call)) PrepareAffineAnimInTaskData(struct Task *task, u8 spriteId, const union AffineAnimCmd *affineAnimCmds);
 bool8 __attribute__((long_call)) RunAffineAnimFromTaskData(struct Task *task);
 s8 __attribute__((long_call)) BattleAnimAdjustPanning(s8 pan);

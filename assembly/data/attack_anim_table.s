@@ -24202,7 +24202,6 @@ HAILSTORM_SINGLE_LARGER_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK_SINGLE ANIM_TAG_
 @Credits to Skeli
 ANIM_MAX_OOZE:
 	loadparticle ANIM_TAG_POISON_BUBBLE
-	loadparticle ANIM_TAG_POISON_COLUMN
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	soundcomplex 0x77 SOUND_PAN_ATTACKER 0xd 0x3
 	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0x0
@@ -24224,6 +24223,8 @@ BG_ON_PLAYER_OOZE:
 FINISH_BG_OOZE:
 	waitbgfadein
 	waitanimation
+	unloadparticle ANIM_TAG_POISON_BUBBLE
+	loadparticle ANIM_TAG_POISON_COLUMN
 	pokespritetobg side_target
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
@@ -25524,8 +25525,6 @@ REPLENISH_BERRY_GEYSER: objtemplate ANIM_TAG_BERRY_NORMAL ANIM_TAG_BERRY_NORMAL 
 @Credits to Skeli
 ANIM_G_MAX_MALODOR:
 	loadparticle ANIM_TAG_POISON_BUBBLE
-	loadparticle ANIM_TAG_POISON_COLUMN
-	loadparticle ANIM_TAG_GARBAGE_COLUMN
 	loadparticle ANIM_TAG_RAZOR_LEAF
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	soundcomplex 0x77 SOUND_PAN_ATTACKER 0xd 0x3
@@ -25548,6 +25547,9 @@ BG_ON_PLAYER_MALODOR:
 FINISH_BG_MALODOR:
 	waitbgfadein
 	waitanimation
+	unloadparticle ANIM_TAG_POISON_BUBBLE
+	unloadparticle ANIM_TAG_RAZOR_LEAF
+	loadparticle ANIM_TAG_GARBAGE_COLUMN
 	pokespritetobg side_target
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
@@ -25580,7 +25582,7 @@ GARBAGE_COLUMNS_ON_PLAYER:
 
 .align 2
 MALODOR_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
-GARBAGE_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_GARBAGE_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
+GARBAGE_COLUMN: objtemplate ANIM_TAG_GARBAGE_COLUMN ANIM_TAG_GARBAGE_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

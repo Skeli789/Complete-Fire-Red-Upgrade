@@ -143,15 +143,14 @@ const struct OamData gPoisonColumnOamPlayer =
 
 static const union AnimCmd sAnimCmdPoisonColumn[] =
 {
-	ANIMCMD_FRAME(0, 3),
+	ANIMCMD_FRAME(0, 6),
 	ANIMCMD_FRAME(32, 3),
 	ANIMCMD_FRAME(64, 3),
 	ANIMCMD_FRAME(96, 3),
 	ANIMCMD_FRAME(128, 3),
 	ANIMCMD_FRAME(160, 3),
 	ANIMCMD_FRAME(192, 3),
-	ANIMCMD_FRAME(224, 3),
-	ANIMCMD_JUMP(4),
+	ANIMCMD_JUMP(3),
 };
 
 const union AnimCmd *const gAnimCmdTable_PoisonColumn[] =
