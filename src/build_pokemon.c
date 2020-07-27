@@ -522,6 +522,7 @@ u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
 //		Var8000: Given Id.
 void sp06B_ReplacePlayerTeamWithMultiTrainerTeam(void)
 {
+	VarSet(VAR_FACILITY_TRAINER_ID_PARTNER, Var8000); //Due to the dumb way I set up CreateFrontierMon this is necessary for trainer data to load properly
 	BackupPartyToTempTeam(0, 3);
 	BuildFrontierMultiParty(Var8000);
 }
