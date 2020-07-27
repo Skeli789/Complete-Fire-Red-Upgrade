@@ -365,9 +365,10 @@ u8 IsRunningFromBattleImpossible(void)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			return ABILITY_PREVENTING_ESCAPE;
 		}
+
 		if (side != SIDE(i)
 		&& ABILITY(i) == ABILITY_ARENATRAP
-		&& !CheckGrounding(gActiveBattler))
+		&& CheckGrounding(gActiveBattler))
 		{
 			gBattleScripting.bank = i;
 			gLastUsedAbility = ABILITY(i);
