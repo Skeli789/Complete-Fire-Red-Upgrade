@@ -41857,7 +41857,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_CLANGINGSCALES,
-			MOVE_FOCUSBLAST,
+			MOVE_AURASPHERE,
 			MOVE_FLASHCANNON,
 			MOVE_AUTOTOMIZE,
 		},
