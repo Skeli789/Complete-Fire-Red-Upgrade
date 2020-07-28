@@ -2155,16 +2155,16 @@ BS_103_PriorityMove:
 .global BS_104_TripleKick
 BS_104_TripleKick:
 	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifmove MOVE_TRIPLEAXEL BS_TripleAxel
 	addbyte TRIPLE_KICK_POWER 10
-	goto BS_STANDARD_HIT
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 BS_TripleAxel:
 	addbyte TRIPLE_KICK_POWER 20
-	goto BS_STANDARD_HIT
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

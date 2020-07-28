@@ -49,8 +49,7 @@ ACCURACY_CHECK_START:
 			}
 		}
 	}
-
-	if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
+	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
 	{
 		JumpIfMoveFailed(7, move);
 		return;
@@ -77,6 +76,9 @@ ACCURACY_CHECK_START:
 	}
 	else
 	{
+		if (move == 0)	//If move isn't 0 its either Future Sight or Doom Desire
+			move = gCurrentMove;
+
 		if (gNewBS->ParentalBondOn == 1
 		||  (gNewBS->MultiHitOn && (gBattleMoves[move].effect != EFFECT_TRIPLE_KICK
 						 || ABILITY(gBankAttacker) == ABILITY_SKILLLINK)))
@@ -89,9 +91,6 @@ ACCURACY_CHECK_START:
 			u8 atkItemEffect = ITEM_EFFECT(gBankAttacker);
 			bool8 calcSpreadMove = IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL) && SPLIT(move) != SPLIT_STATUS;
 			bool8 clearMicleBerryBits = FALSE;
-
-			if (move == 0)	//If move isn't 0 its either Future Sight or Doom Desire
-				move = gCurrentMove;
 
 			for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
