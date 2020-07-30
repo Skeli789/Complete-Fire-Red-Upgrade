@@ -269,6 +269,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
 
+			if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC && IsDynamaxed(gEffectBank))
+				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON; //Toxic becomes regular poison on a Dynamaxed opponent
+
 			if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_SLEEP)
 				gBattleMons[gEffectBank].status1 |= ((Random() % 3) + 2);
 			else
