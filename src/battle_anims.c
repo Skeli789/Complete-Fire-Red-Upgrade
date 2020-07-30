@@ -737,6 +737,23 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_WakeUpSlap[] =
 	sSpriteAffineAnim_WakeUpSlap,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_DoubleSlap[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 64, 1), //Rotate left 90 degrees
+	AFFINEANIMCMD_FRAME(0, 0, 0, 3), //Do Nothing
+	AFFINEANIMCMD_FRAME(0, -28, 0, 8), //Flatten horizontally (on its side)
+	AFFINEANIMCMD_FRAME(0, 0, 0, 11), //Do Nothing
+	AFFINEANIMCMD_FRAME(0, -288, 0, 1), //Unflatten in other direction
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), //Do Nothing
+	AFFINEANIMCMD_FRAME(0, 28, 0, 8), //Flatten horizontally (on its side)
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_DoubleSlap[] =
+{
+	sSpriteAffineAnim_DoubleSlap,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_WingAttackFeather[] =
 {
 	AFFINEANIMCMD_FRAME(0, 0, -1, 14), //Rotate a little right
@@ -2501,28 +2518,10 @@ void SpriteCB_ForcePalm(struct Sprite* sprite)
 	sprite->callback = SpriteCB_ForcePalmStep1;
 }
 
-void SpriteCB_WakeUpSlapStep1(struct Sprite *sprite)
-{
-	sprite->pos2.x += sprite->data[1];
-
-	if (sprite->pos2.x >= sprite->data[0])
-		DestroyAnimSprite(sprite);
-}
-
-void SpriteCB_WakeUpSlapStep0(struct Sprite *sprite)
-{
-	sprite->pos2.x -= sprite->data[1];
-
-	if (sprite->pos2.x <= sprite->data[0])
-	{
-		sprite->data[0] = -sprite->data[0];
-		sprite->callback = SpriteCB_WakeUpSlapStep1;
-	}
-}
-
 //Creates a sprite that moves right then then along the target.
 //arg 0: Swipe distance
 //arg 1: Speed
+//arg 2: Less swipes (for Double Slap)
 void SpriteCB_WakeUpSlap(struct Sprite *sprite)
 {
 	switch (sprite->data[7]) { //State
@@ -2530,6 +2529,7 @@ void SpriteCB_WakeUpSlap(struct Sprite *sprite)
 			sprite->pos2.x = gBattleAnimArgs[0];
 			sprite->data[0] = -gBattleAnimArgs[0]; //Swipe distance
 			sprite->data[1] = gBattleAnimArgs[1]; //Swipe speed
+			sprite->data[6] = gBattleAnimArgs[2]; //Less Slaps
 			++sprite->data[7];
 			break;
 		//Right
@@ -2551,7 +2551,11 @@ void SpriteCB_WakeUpSlap(struct Sprite *sprite)
 			if (sprite->pos2.x <= sprite->data[0])
 			{
 				sprite->data[0] = -sprite->data[0];
-				++sprite->data[7];
+
+				if (sprite->data[6])
+					sprite->data[7] = 5; //Destroy
+				else
+					++sprite->data[7];
 			}
 			break;
 		case 5:

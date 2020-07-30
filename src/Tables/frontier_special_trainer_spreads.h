@@ -6467,7 +6467,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		{
 			MOVE_TAILSLAP,
 			MOVE_ROCKBLAST,
-			MOVE_KNOCKOFF,
+			MOVE_TRIPLEAXEL,
 			MOVE_UTURN,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,
