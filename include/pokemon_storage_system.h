@@ -4,13 +4,13 @@
 #include "pokemon.h"
 
 #define ORIGINAL_TOTAL_BOXES_COUNT 	14
-#define TOTAL_BOXES_COUNT       	24
+#define TOTAL_BOXES_COUNT       	25
 #define IN_BOX_ROWS             	5
 #define IN_BOX_COLUMNS          	6
 #define IN_BOX_COUNT            	(IN_BOX_ROWS * IN_BOX_COLUMNS)
 
 //So bytereplacement can call a constant
-#define TOTAL_BOXES_COUNT_1_LESS	23
+#define TOTAL_BOXES_COUNT_1_LESS	24
 
 /*
             ROWS

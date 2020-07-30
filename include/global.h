@@ -408,9 +408,10 @@ struct SaveBlock2 //0x2024588
 	/*0x0A8*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
 	/*0x0AC*/ u8 field_AC;
 	/*0x0AD*/ u8 field_AD;
-	/*0x0AE*/ u8 filler_AE[0x3E6];
-	/*0x494*/ u32 unkAnnoyingWord;
-	/*0x498*/ u8 filler_548[0x404];
+	/*0x0AE*/ u8 field_AE;
+	/*0x0AF*/ u8 field_AF;
+	/*0x0B0*/ u8 box25[0x6CC];
+	/*0x77C*/ u8 filler_77C[0x11C];
 	/*0x898*/ u16 mapView[0x100];
 	/*0xA98*/ struct LinkBattleRecords linkBattleRecords;
 	/*0xAF0*/ struct BerryCrush berryCrush;
