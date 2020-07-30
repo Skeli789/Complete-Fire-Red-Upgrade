@@ -76,11 +76,12 @@ enum
 	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_2,
 	ATK49_NEXT_TARGET,
 	ATK49_MOVE_RECOIL,
+	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_3,
 	ATK49_EJECT_BUTTON,
 	ATK49_RED_CARD,
 	ATK49_EJECT_PACK,
-	ATK49_SWITCH_OUT_ABILITIES,
 	ATK49_SHELL_BELL_LIFE_ORB_RECOIL,
+	ATK49_SWITCH_OUT_ABILITIES,
 	ATK49_RESTORE_ABILITIES,
 	ATK49_PICKPOCKET,
 	ATK49_RAID_MON_PREP_MORE_ATTACKS,
@@ -530,6 +531,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
 		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_2:
+		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_3:
 			if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, FALSE))
 				effect = TRUE;
 			gBattleScripting.atk49_state++;
@@ -1041,6 +1043,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				else if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION
 				&& !ABILITY_PRESENT(ABILITY_DAMP))
 				{
+					gBattleMoveDamage = 0;
 					BattleScriptPushCursor();
 
 					if (gNewBS->AttackerDidDamageAtLeastOnce)
@@ -1098,6 +1101,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						effect = 1;
 					}
 				}
+				
+				if (effect)
+					gNewBS->selfInflictedDamage += gBattleMoveDamage; //For Emergency Exit
 			}
 			gBattleScripting.atk49_state++;
 			break;
@@ -1198,30 +1204,49 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_SWITCH_OUT_ABILITIES:
 			gBankAttacker = gNewBS->originalAttackerBackup;
-			if (CanDoMoveEndSwitchout(arg1))
+			if (CanDoMoveEndSwitchout(arg1) && !SheerForceCheck())
 			{
 				for (; gNewBS->switchOutBankLooper < gBattlersCount; ++gNewBS->switchOutBankLooper)
 				{
 					u8 bank = gBanksByTurnOrder[gNewBS->switchOutBankLooper];
 
-					if (bank != gBankAttacker
-					&&  !SheerForceCheck()
-					&& (/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
-					&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-					&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
-					&&  BATTLER_ALIVE(bank)
-					&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
-					&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
+					if (bank != gBankAttacker)
 					{
-						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
-							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
+						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
+						&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
+						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
+						&&  BATTLER_ALIVE(bank)
+						&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
+						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
+						{
+							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
+								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
 
-						gActiveBattler = gBattleScripting.bank = gBankSwitching = bank;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_EmergencyExit;
-						effect = 1;
-						break;
+							gActiveBattler = gBattleScripting.bank = gBankSwitching = bank;
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_EmergencyExit;
+							effect = 1;
+							break;
+						}
+					}
+					else //Self inflicted damage
+					{
+						if ((/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
+						&&  BATTLER_ALIVE(bank)
+						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
+						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2) //Fell this turn
+						{
+							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
+								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
+
+							gActiveBattler = gBattleScripting.bank = gBankSwitching = bank;
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_EmergencyExit;
+							effect = 1;
+							break;
+						}
 					}
 				}
 			}
@@ -1337,6 +1362,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 
 			gNewBS->totalDamageGiven = 0;
+			gNewBS->selfInflictedDamage = 0;
+			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 			//Clear spread move things
 			gNewBS->doneDoublesSpreadHit = FALSE;
 			gNewBS->calculatedSpreadMoveData = FALSE;

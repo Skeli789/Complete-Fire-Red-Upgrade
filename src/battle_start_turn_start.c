@@ -966,6 +966,9 @@ void HandleAction_UseMove(void)
 	gBattleCommunication[6] = 0;
 	gCurrMovePos = gChosenMovePos = gBattleStruct->chosenMovePositions[gBankAttacker];
 
+	gNewBS->totalDamageGiven = 0;
+	gNewBS->selfInflictedDamage = 0;
+	gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 	//Clear spread move things
 	gNewBS->doneDoublesSpreadHit = FALSE;
 	gNewBS->calculatedSpreadMoveData = FALSE;

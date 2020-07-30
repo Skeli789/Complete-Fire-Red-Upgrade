@@ -860,11 +860,13 @@ struct NewBattleStruct
 	bool8 handlingFaintSwitching : 1;
 	bool8 doingPluckItemEffect : 1;
 	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
+	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
 
 	//Other
 	u16 LastUsedMove;
 	u16 NewWishHealthSave;
 	u32 totalDamageGiven;
+	u32 selfInflictedDamage; //For Emergency Exit
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
 	item_t SavedConsumedItems[PARTY_SIZE];
@@ -875,10 +877,10 @@ struct NewBattleStruct
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
-	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD0
+	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD4
 
 	//Things for Spread Moves
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC0
+	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC4
 	s32 turnDamageTaken[MAX_BATTLERS_COUNT]; //Specifically for multi-hit moves and Emergency Exit
 	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];

@@ -2977,14 +2977,16 @@ void atk96_weatherdamage(void)
 	gBattleMoveDamage = 0;
 
 	if (gAbsentBattlerFlags & gBitTable[bank])
+	{
 		gBattleMoveDamage = 0;
-
+	}
 	#ifndef NO_GHOST_BATTLES //Ghosts can't take damage from Sand Stream or Snow Warning
 	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST
 	&&  SIDE(bank) == B_SIDE_OPPONENT)
+	{
 		gBattleMoveDamage = 0;
+	}
 	#endif
-
 	else
 	{
 		if (gBattleWeather & WEATHER_SANDSTORM_ANY)
@@ -2997,6 +2999,7 @@ void atk96_weatherdamage(void)
 		}
 	}
 
+	gNewBS->turnDamageTaken[bank] = gBattleMoveDamage; //For Emergency Exit
 	gBattlescriptCurrInstr++;
 }
 

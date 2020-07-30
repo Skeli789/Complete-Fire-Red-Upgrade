@@ -893,6 +893,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& BATTLER_ALIVE(bank)
 					&& !BATTLER_MAX_HP(bank))
 					{
+						if (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2)
+							gNewBS->lessThanHalfHPBeforeShellBell = TRUE; //For Emergency Exit
+
 						gStringBank = bank;
 						gBattleScripting.bank = bank;
 						gBattleMoveDamage = MathMax(1, udivsi(gNewBS->totalDamageGiven, atkQuality)) * - 1;
@@ -913,10 +916,11 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& moveEffect != EFFECT_LEVEL_DAMAGE
 					&& moveEffect != EFFECT_PSYWAVE
 					&& gCurrentMove != MOVE_FINALGAMBIT
-					&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-					&& BATTLER_ALIVE(gBankAttacker))
+					&& ABILITY(bank) != ABILITY_MAGICGUARD
+					&& BATTLER_ALIVE(bank))
 					{
-						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 10);
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 10);
+						gNewBS->selfInflictedDamage += gBattleMoveDamage; //For Emergency Exit
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_LifeOrbDamage;
 						effect++;

@@ -1421,7 +1421,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_SLOWSTART:
-					if (gNewBS->SlowStartTimers[bank] > 0 && BATTLER_ALIVE(bank) && --gNewBS->SlowStartTimers[bank] == 0)
+					if (gNewBS->SlowStartTimers[bank] > 0 && --gNewBS->SlowStartTimers[bank] == 0)
 					{
 						gBattleStringLoader = gText_SlowStartEnd;
 						BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
@@ -1454,6 +1454,20 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						gBattleStruct->castformToChangeInto = effect - 1;
 					}
 					break;
+			
+				//case ABILITY_WIMPOUT:
+				case ABILITY_EMERGENCYEXIT:
+					if (!(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
+					&& gNewBS->turnDamageTaken[bank] > 0
+					&& gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
+					&& gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell from end turn damage
+					{
+						gBattleScripting.bank = gBankSwitching = bank;
+						BattleScriptPushCursorAndCallback(BattleScript_EmergencyExitEnd3);
+						effect = 1;
+					}
+
+					gNewBS->turnDamageTaken[bank] = 0; //Reset to prevent accidental triggering
 				}
 			}
 			break;
