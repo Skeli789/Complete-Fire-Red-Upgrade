@@ -341,20 +341,32 @@ void SetMonMoveSlot(struct Pokemon* mon, u16 move, u8 slot)
 
 struct MoveRelearner
 {
-	u8 state;	//0x0
-	u8 unk[0x19];	//0x1 - 0x19
-	u8 numMenuChoices;		//0x1A
-	u8 numToShowAtOnce;
-	u8 unk2[0x1F - 0x1B];
+    u8 state;
+    u8 unk_01;
+    u8 unk_02;
+    u8 spriteIds[2];
+    u8 filler_05[0x13];
+    u8 unk_18;
+    u8 scrollPositionMaybe;
+    u8 numLearnableMoves;
+    u8 numToShowAtOnce;
+    u8 unk_1C;
+    u8 unk_1D;
+    u8 unk_1E;
 	struct ListMenuItem menuItems[MAX_MOVE_REMINDER_MOVES];	//0x20 - 0x1b8
 	u16 moves[MAX_MOVE_REMINDER_MOVES];
-	u8 unk3[0x25E - 0x21E];
-	bool8 isSwitching;	// 0x25F, loads new gfx, data if set to 1 (upon scrolling)
-	u8 partySlot;		// 0x260
-	u8 moveSlotToOverwrite;	//0x261
-	u8 unk4[0xA66 - 0x261];
+	u8 filler[0x41]; //Recycle old string buffer section
+	bool8 scheduleMoveInfoUpdate;	// 0x25F, loads new gfx, data if set to 1 (upon scrolling)
+	u8 selectedPartyMember;		// 0x260
+	u8 selectedMoveSlot;	//0x261
+	u8 unk_262;
+    u8 listMenuTaskId;
+    u8 bg1TilemapBuffer[BG_SCREEN_SIZE]; // 264
+    u8 textColor[3]; // A64
 	u8 cursorPos; //0xa67
-	u8 unk5[0xA6F - 0xA67];
+    u8 selectedIndex;
+    u16 listMenuScrollPos;
+    u16 listMenuScrollRow;
 	const u8 listMenuNames[MAX_MOVE_REMINDER_MOVES][MOVE_NAME_LENGTH + 1];
 };
 
@@ -393,7 +405,7 @@ u8 GetRelearnableMoves(struct Pokemon* mon)
 {
 	int i = 0;
 	u8 numMoves = GetMoveRelearnerMoves(mon, &gMoveRelearnerStruct->moves[0]);
-	gMoveRelearnerStruct->numMenuChoices = numMoves;
+	gMoveRelearnerStruct->numLearnableMoves = numMoves;
 
 	if (numMoves > 0)
 	{
@@ -409,19 +421,19 @@ u8 GetRelearnableMoves(struct Pokemon* mon)
 	StringCopy((void*) &gMoveRelearnerStruct->listMenuNames[i], &gText_Cancel[0]);
 	gMoveRelearnerStruct->menuItems[i].id = 0xFE;
 	gMoveRelearnerStruct->menuItems[i].name = gText_Cancel;
-	gMoveRelearnerStruct->numMenuChoices++;
+	gMoveRelearnerStruct->numLearnableMoves++;
 
 	//Buffer nickname
 	GetMonData(mon, MON_DATA_NICKNAME, gStringVar1);
 
-	return gMoveRelearnerStruct->numMenuChoices;	//total list count
+	return gMoveRelearnerStruct->numLearnableMoves;	//total list count
 }
 
 
 const u8* CopyMoveReminderMoveName(u8 cursor)
 {
 	StringCopy(gStringVar2, gMoveRelearnerStruct->listMenuNames[cursor]);
-	//GetMonData(&gPlayerParty[gMoveRelearnerStruct->partySlot], MON_DATA_NICKNAME, gStringVar3);
+	//GetMonData(&gPlayerParty[gMoveRelearnerStruct->selectedPartyMember], MON_DATA_NICKNAME, gStringVar3);
 	return gText_MoveRelearnerAskTeach;
 }
 
