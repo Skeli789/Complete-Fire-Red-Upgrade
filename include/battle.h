@@ -877,10 +877,10 @@ struct NewBattleStruct
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
-	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD4
+	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD8
 
 	//Things for Spread Moves
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC4
+	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC8
 	s32 turnDamageTaken[MAX_BATTLERS_COUNT]; //Specifically for multi-hit moves and Emergency Exit
 	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];

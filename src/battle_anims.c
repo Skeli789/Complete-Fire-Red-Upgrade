@@ -3985,7 +3985,10 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 						if (IsRaidBattle()										\
 						&& GetBankPartyData(BANK_RAID_BOSS)->hp == 0			\
 						&& (gSprites[spriteId].template->tileTag == TAG_HEALTHBOX_OPPONENT1_TILE || gSprites[spriteId].template->tileTag == TAG_HEALTHBAR_OPPONENT1_TILE)) \
+						{														\
+							gNewBS->hiddenHealthboxFlags[spriteId / 8] &= ~gBitTable[spriteId % 8]; \
 							continue;											\
+						}														\
 																				\
 						ChangeHealthboxVisibility(spriteId, FALSE);				\
 				}																\
@@ -3996,7 +3999,7 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 static void ChangeHealthboxVisibility(u8 spriteId, bool8 hide)
 {
 	struct Sprite* sprite = &gSprites[spriteId];
-	
+
 	if (gNewBS == NULL) //Battle struct was already freed at end of battle
 		return;
 

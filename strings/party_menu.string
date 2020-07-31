@@ -50,10 +50,10 @@ Change [BUFFER1]'s Ability\nto [BUFFER2]?
 [BUFFER1]'s Ability has been\nchanged to [BUFFER2].[PAUSE_UNTIL_PRESS]
 
 #org @gText_MaxPowderOfferGive
-Give the Giganatamax factor to\n[BUFFER1]?
+Give the Gigantamax factor to\n[BUFFER1]?
 
 #org @gText_MaxPowderOfferRevert
-Remove the Giganatamax factor from\n[BUFFER1]?
+Remove the Gigantamax factor from\n[BUFFER1]?
 
 #org @gText_MaxPowderAllowsGigantamax
 [BUFFER1] can now Gigantamax![PAUSE_UNTIL_PRESS]
