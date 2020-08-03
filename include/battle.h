@@ -783,6 +783,7 @@ struct NewBattleStruct
 	u8 brokeFreeMessage;
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
+	u8 hiddenAnimBattlerSprites;
 
 	//Bit Fields for Party
 	u8 BelchCounters;

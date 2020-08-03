@@ -521,6 +521,7 @@
 .equ Template_ShakeMonOrTerrain, 0x83e7b88
 .equ Template_FallingRock, 0x83e73b4
 .equ Template_BlackSmoke, 0x83fee18
+.equ Template_GustToTarget, 0x83e6b1c
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5

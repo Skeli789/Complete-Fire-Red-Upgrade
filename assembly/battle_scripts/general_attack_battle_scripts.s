@@ -2896,6 +2896,7 @@ FellStingerBS: @;Add in Volt Switch Fix?
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
+	jumpiffainted BANK_ATTACKER BS_MOVE_FAINT
 	jumpiffainted BANK_TARGET FellStingerKill
 	goto BS_MOVE_FAINT
 

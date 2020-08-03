@@ -1733,7 +1733,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_ENTRAINMENT:
 					if (gAbilityRatings[defAbility] >= 5
 					||  gAbilityRatings[atkAbility] <= 0)
-						INCREASE_STATUS_VIABILITY(2);
+					{
+						if (defAbility != atkAbility
+						&& !IsAbilitySuppressed(bankDef))
+							INCREASE_STATUS_VIABILITY(2);
+					}						
 					break;
 
 				case MOVE_SKILLSWAP:

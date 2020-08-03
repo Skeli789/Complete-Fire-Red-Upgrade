@@ -452,7 +452,7 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		case GFX_TAG_DYNAMAX_INDICATOR:
-			if (!IsDynamaxed(INDICATOR_BANK))
+			if (gNewBS == NULL || !IsDynamaxed(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
 				return;

@@ -215,6 +215,21 @@ Aurora Veil protects [FD][36] team\nagainst physical and special moves!
 #org @gText_TauntWoreOff
 [SCRIPTING_BANK]'s Taunt\nwore off!
 
+#org @gText_TailwindWoreOff
+[BUFFER][38] team's tailwind\npetered out!
+
+#org @gText_LuckyChantWoreOff
+[BUFFER][38] team's Lucky Chant wore off!
+
+#org @gText_RainbowDisappeared
+The rainbow on [FD][36] team's\nside disappeared!
+
+#org @gText_SeaOfFireDisappeared
+The sea of fire disappeared from\naround [FD][36] team!
+
+#org @gText_SwampDisappeared
+The swamp around [FD][36] team\ndisappeared!
+
 #org @gText_WhiteHerbFling
 The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 

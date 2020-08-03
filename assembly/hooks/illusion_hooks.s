@@ -43,11 +43,32 @@ UpdatePokeBallForIllusionHook:
 	ldr r1, =0x804AA1E | 1
 	bx r1
 
-@0x804B2DC with r1
-UpdateCryForIllusionHook:
+@0x804B2E6 with r0
+UpdateCryForOpponentIllusionHook:
+	mov r0, r5
+	bl IsDynamaxed
+	cmp r0, #0x0
+	bne SkipUpdateCryIllusion
+	mov r0, r5
 	bl GetIllusionPartyData
 	mov r7, r0
 	ldr r0, =0x804B2F6 | 1
+	bx r0
+
+SkipUpdateCryIllusion:
+	ldr r0, =0x804B420 | 1
+	bx r0
+
+@0x804B310 with r0
+UpdateCryForPlayerIllusionHook:
+	mov r0, r5
+	bl IsDynamaxed
+	cmp r0, #0x0
+	bne SkipUpdateCryIllusion
+	mov r0, r5
+	bl GetIllusionPartyData
+	mov r7, r0
+	ldr r0, =0x804B320 | 1
 	bx r0
 
 @0x8074598 with r2

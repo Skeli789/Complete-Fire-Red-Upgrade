@@ -1186,10 +1186,26 @@ void AnimTask_ReloadAttackerSprite(u8 taskId)
 	}
 }
 
+static void AnimTask_WaitAttackerCry(u8 taskId)
+{
+	if (!IsCryPlaying())
+	{
+		ClearPokemonCrySongs(); //Reset memory state
+		DestroyAnimVisualTask(taskId);
+	}
+}
+
 void AnimTask_PlayAttackerCry(u8 taskId)
 {
-	PlayCry3(GetIllusionPartyData(gBattleAnimAttacker)->species, 0, 1);
-	DestroyAnimVisualTask(taskId);
+	s8 pan;
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+		pan = -25;
+	else
+		pan = 25;
+
+	PlayCry3(GetIllusionPartyData(gBattleAnimAttacker)->species, pan, 0);
+	gTasks[taskId].func = AnimTask_WaitAttackerCry;	
 }
 
 u8 ModifyMegaCries(u16 species, u8 mode)
@@ -3427,6 +3443,7 @@ void AnimTask_CreateHyperspaceFuryMon(u8 taskId)
 			break;
 		case 3: //Destroy sprite
 			spriteId = gTasks[taskId].data[1];
+			ClearPokemonCrySongs();
 			DestroySpriteAndFreeResources(&gSprites[spriteId]);
 			DestroyAnimVisualTask(taskId);
 			break;
@@ -3927,7 +3944,9 @@ void AnimTask_AllBanksInvisible(u8 taskId)
 	{
 		u8 spriteId = gBattlerSpriteIds[i];
 
-		if (spriteId != 0xFF)
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i)) //Pokemon that are already hidden
+			gNewBS->hiddenAnimBattlerSprites |= gBitTable[i]; //Set bit to keep hidden after animation
+		else
 			gSprites[spriteId].invisible = TRUE;
 	}
 
@@ -3940,7 +3959,9 @@ void AnimTask_AllBanksVisible(u8 taskId)
 	{
 		u8 spriteId = gBattlerSpriteIds[i];
 
-		if (spriteId != 0xFF)
+		if (spriteId == 0xFF || gNewBS->hiddenAnimBattlerSprites & gBitTable[i]) //Pokemon that are already hidden
+			gNewBS->hiddenAnimBattlerSprites &= ~gBitTable[i]; //Clear bit to keep hidden after animation
+		else
 			gSprites[spriteId].invisible = FALSE;
 	}
 
@@ -3957,7 +3978,9 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 		||  spriteId == GetAnimBattlerSpriteId(ANIM_BANK_TARGET))
 			continue;
 
-		if (spriteId != 0xFF)
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i)) //Pokemon that are already hidden
+			gNewBS->hiddenAnimBattlerSprites |= gBitTable[i]; //Set bit to keep hidden after animation
+		else
 			gSprites[spriteId].invisible = TRUE;
 	}
 
@@ -3966,6 +3989,8 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 
 #define RESTORE_HIDDEN_HEALTHBOXES												\
 {																				\
+	if (priority == 0)															\
+		Memset(gNewBS->hiddenHealthboxFlags, 0, sizeof(gNewBS->hiddenHealthboxFlags)); \
 	for (spriteId = 0; spriteId < MAX_SPRITES; ++spriteId)						\
 	{																			\
 		switch (gSprites[spriteId].template->tileTag) {							\

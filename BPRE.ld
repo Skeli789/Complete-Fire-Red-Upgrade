@@ -1722,6 +1722,7 @@ SetHBlankCallback = 0x8000700 | 1;
 SetMainCallback1 = 0x80565E0 | 1;
 
 /* Audio Functions */
+ClearPokemonCrySongs = 0x8000944 | 1;
 HandleLowHpMusicChange = 0x8035244 | 1;
 BattleStopLowHpSound = 0x8035314 | 1;
 GetTrainerEncounterMusicId = 0x804367C | 1;

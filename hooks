@@ -254,7 +254,8 @@ BattleLoadOpponentMonSpriteGfxHook 803432C 2
 BattleLoadPlayerMonSpriteGfxHook 80344A4 2
 UpdateNickForIllusionHook 80496C8 2
 UpdatePokeBallForIllusionHook 804A9E0 1
-UpdateCryForIllusionHook 804B2DC 1
+UpdateCryForOpponentIllusionHook 804B2E6 0
+UpdateCryForPlayerIllusionHook 804B310 0
 UpdateAltitudeForIllusionHook 8074598 2
 GetBattlerYDeltaFromSpriteId 80764EC 1
 GetBattlerSpriteCoordAttrPlayerIllusionHook 8076B5C 0
