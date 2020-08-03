@@ -1355,7 +1355,7 @@ Even if you lose, never lose your\nlove of Pok\emon.
 Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's see what you can do to\nthe kingpin of Antisis City!
 
 #org @sFrontierText_BigMo_PlayerWin
-Ha ha ha ha!\pThey should start calling you\nBig [PLAYER]!
+Ha ha ha ha!\pThey should start calling you\nBig [PLAYER_NAME]!
 
 #org @sFrontierText_BigMo_PlayerLose
 Ha ha ha ha!\pLooks like I'm bigger an' better!

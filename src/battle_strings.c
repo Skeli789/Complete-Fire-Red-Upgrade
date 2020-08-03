@@ -809,7 +809,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_B))
 				{
 					CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, VarGet(VAR_SECOND_OPPONENT), 1);
-					toCpy = gStringVar4;
+					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);
+					toCpy = gStringVar3;
 				}
 				else
 				{
@@ -820,7 +821,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_B))
 				{
 					CopyFrontierTrainerText(FRONTIER_PLAYER_LOST_TEXT, VarGet(VAR_SECOND_OPPONENT), 1);
-					toCpy = gStringVar4;
+					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);
+					toCpy = gStringVar3;
 				}
 				break;
 			case B_TXT_PARTNER_CLASS:
