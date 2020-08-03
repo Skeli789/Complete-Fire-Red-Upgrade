@@ -1526,7 +1526,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_FOLLOW_ME:
 			if (IS_DOUBLE_BATTLE
+			&& move != MOVE_SPOTLIGHT
 			&& !IsBankIncapacitated(bankDef)
+			&& (move != MOVE_RAGEPOWDER || IsAffectedByPowder(bankDef)) //Rage Powder doesn't affect powder immunities
 			&& BATTLER_ALIVE(data->bankAtkPartner))
 			{
 				u16 predictedMoveOnPartner = IsValidMovePrediction(bankDef, data->bankAtkPartner);

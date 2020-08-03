@@ -1582,6 +1582,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->calculatedAIPredictions = FALSE;
 				gNewBS->batonPassing = FALSE;
 				gNewBS->NoMoreMovingThisTurn = 0; //May be set during end turn Emergency Exit
+				gNewBS->ragePowdered = 0;
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
 				gNewBS->ai.sideSwitchedThisRound = 0;

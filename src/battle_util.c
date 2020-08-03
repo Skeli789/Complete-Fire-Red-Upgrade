@@ -604,6 +604,18 @@ void CancelMultiTurnMoves(u8 battler)
     gDisableStructs[battler].furyCutterCounter = 0;
 }
 
+bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
+{	
+	if (SIDE(bankAtk) == SIDE(gSideTimers[defSide].followmeTarget)
+	|| IsMoveRedirectionPrevented(move, ABILITY(bankAtk))
+	|| gSideTimers[defSide].followmeTimer == 0
+	|| !BATTLER_ALIVE(gSideTimers[defSide].followmeTarget)
+	|| (gNewBS->ragePowdered & gBitTable[defSide] && !IsAffectedByPowder(bankAtk)))
+		return FALSE;
+
+	return TRUE;
+}
+
 bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
 {
 	return move == MOVE_SKYDROP
@@ -629,9 +641,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 	switch (moveTarget) {
 	case MOVE_TARGET_SELECTED:
 		defSide = SIDE(bankAtk) ^ BIT_SIDE;
-		if (gSideTimers[defSide].followmeTimer
-		&&  BATTLER_ALIVE(gSideTimers[defSide].followmeTarget)
-		&&  !IsMoveRedirectionPrevented(move, atkAbility))
+		if (IsMoveRedirectedByFollowMe(move, bankAtk, defSide))
 		{
 			bankDef = gSideTimers[defSide].followmeTarget;
 		}
@@ -724,9 +734,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 
 	case MOVE_TARGET_RANDOM:
 		defSide = SIDE(bankAtk) ^ BIT_SIDE;
-		if (gSideTimers[defSide].followmeTimer
-		&& BATTLER_ALIVE(gSideTimers[defSide].followmeTarget)
-		&& !IsMoveRedirectionPrevented(move, atkAbility))
+		if (IsMoveRedirectedByFollowMe(move, bankAtk, defSide))
 		{
 			bankDef = gSideTimers[defSide].followmeTarget;
 		}

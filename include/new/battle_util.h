@@ -50,6 +50,7 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffect, u16 choicedMove);
 u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check);
 void CancelMultiTurnMoves(u8 bank);
+bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide);
 bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility);
 u8 GetMoveTarget(u16 move, u8 useMoveTarget);
 bool8 IsBattlerAlive(u8 bank);

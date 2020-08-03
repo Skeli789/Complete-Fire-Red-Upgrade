@@ -725,6 +725,7 @@ struct NewBattleStruct
 	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
 	u8 maxCannonadeTimers[NUM_BATTLE_SIDES];
 	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
+	u8 ragePowdered;
 
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
