@@ -63,6 +63,8 @@ extern const u8 BattleScript_SideStatusWoreOffRet[];
 extern const u8 RecoverBS[];
 extern const u8 BattleScript_LifeDewFail[];
 extern const u8 BattleScript_CouldntFullyProtect[];
+extern const u8 BattleScript_TeleportSwitch[];
+extern const u8 BattleScript_TeleportFlee[];
 
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];

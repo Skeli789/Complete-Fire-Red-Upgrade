@@ -2165,3 +2165,18 @@ void FaintedBankNameInBuff1(void)
 {
     PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gBankFainted, gBattlerPartyIndexes[gBankFainted]);
 }
+
+void SetCorrectTeleportBattleScript(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		gBattlescriptCurrInstr = BattleScript_TeleportSwitch - 5;
+	}
+	else //Wild Battle
+	{
+		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+			gBattlescriptCurrInstr = BattleScript_TeleportSwitch - 5;
+		else
+			gBattlescriptCurrInstr = BattleScript_TeleportFlee - 5;
+	}
+}

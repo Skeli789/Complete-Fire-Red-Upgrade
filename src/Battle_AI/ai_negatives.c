@@ -704,7 +704,24 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_TELEPORT:
-			DECREASE_VIABILITY(10);
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+			{
+				if (!BankHasMonToSwitchTo(bankAtk))
+					DECREASE_VIABILITY(10);
+			}
+			else //Wild Battle
+			{
+				if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+				{
+					if (!BankHasMonToSwitchTo(bankAtk))
+						DECREASE_VIABILITY(10);
+				}
+				else //Wild Enemy
+				{
+					if (IS_DOUBLE_BATTLE || IsTrapped(bankAtk, FALSE))
+						DECREASE_VIABILITY(10);
+				}
+			}
 			break;
 
 		case EFFECT_ATTACK_UP:
@@ -1013,20 +1030,10 @@ MOVESCR_CHECK_0:
 					goto AI_STANDARD_DAMAGE;
 
 				default:
-					if (IS_DOUBLE_BATTLE)
-					{
-						if (ViableMonCountFromBankLoadPartyRange(bankDef) <= 2
-						||  data->defAbility == ABILITY_SUCTIONCUPS
-						||  data->defStatus3 & STATUS3_ROOTED)
-							DECREASE_VIABILITY(10);
-					}
-					else
-					{
-						if (ViableMonCountFromBankLoadPartyRange(bankDef) <= 1
-						||  data->defAbility == ABILITY_SUCTIONCUPS
-						||  data->defStatus3 & STATUS3_ROOTED)
-							DECREASE_VIABILITY(10);
-					}
+					if (!BankHasMonToSwitchTo(bankDef)
+					||  data->defAbility == ABILITY_SUCTIONCUPS
+					||  data->defStatus3 & STATUS3_ROOTED)
+						DECREASE_VIABILITY(10);
 			}
 			break;
 
@@ -1637,7 +1644,7 @@ MOVESCR_CHECK_0:
 			{
 				goto AI_STANDARD_DAMAGE;
 			}
-			else if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1)
+			else if (!BankHasMonToSwitchTo(bankAtk))
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -1759,16 +1766,8 @@ MOVESCR_CHECK_0:
 				if ((data->atkItemEffect == ITEM_EFFECT_CHOICE_BAND || data->atkAbility == ABILITY_GORILLATACTICS)
 				&& (ViableMonCountFromBank(bankDef) >= 2 || !MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1)))
 				{
-					if (IS_DOUBLE_BATTLE)
-					{
-						if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 2)
-							DECREASE_VIABILITY(10); //Don't lock the attacker into Fake Out if they can't switch out afterwards.
-					}
-					else //Single Battle
-					{
-						if (ViableMonCountFromBank(bankAtk) <= 1)
-							DECREASE_VIABILITY(10); //Don't lock the attacker into Fake Out if they can't switch out afterwards.
-					}
+					if (!BankHasMonToSwitchTo(bankAtk))
+						DECREASE_VIABILITY(10); //Don't lock the attacker into Fake Out if they can't switch out afterwards.
 				}
 			}
 
@@ -1830,7 +1829,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_MEMENTO:
-			if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1
+			if (!BankHasMonToSwitchTo(bankAtk)
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				DECREASE_VIABILITY(10);

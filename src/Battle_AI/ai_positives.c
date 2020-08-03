@@ -672,6 +672,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (IsTypeZCrystal(data->atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->zMoveData.used[bankAtk])
 				INCREASE_VIABILITY(9); //Z-Splash!
 			break;
+		
+		case EFFECT_TELEPORT:
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || SIDE(gBankAttacker) == B_SIDE_PLAYER)
+				goto PIVOT_CHECK;
+			break;
 
 		case EFFECT_DISABLE:
 			if (gDisableStructs[bankDef].disableTimer1 == 0
@@ -1193,7 +1198,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					else //Double Battle
 					{
-						if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 2)
+						if (!BankHasMonToSwitchTo(bankAtk))
 							break; //Can't switch
 
 						if (GetMonAbility(GetBankPartyData(bankAtk)) == ABILITY_INTIMIDATE

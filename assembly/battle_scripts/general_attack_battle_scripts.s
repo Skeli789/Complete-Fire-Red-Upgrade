@@ -3102,9 +3102,14 @@ BS_152_Thunder:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_153_Teleport
+.global BattleScript_TeleportFlee
+.global BattleScript_TeleportSwitch
 BS_153_Teleport:
 	attackcanceler
-	jumpifbattletype BATTLE_TRAINER | BATTLE_DOUBLE, FAILED_PRE
+	callasm SetCorrectTeleportBattleScript
+
+BattleScript_TeleportFlee:
+	jumpifbattletype BATTLE_DOUBLE, FAILED_PRE
 	callasm SetTeleportBit
 	getifcantrunfrombattle BANK_ATTACKER
 	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 FAILED_PRE
@@ -3117,6 +3122,15 @@ BS_153_Teleport:
 	waitmessage DELAY_1SECOND
 	setbyte BATTLE_OUTCOME 0x5 @;Teleported
 	goto BS_MOVE_END
+
+BattleScript_TeleportSwitch:
+	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES, FAILED_PRE
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	copybyte SWITCHING_BANK USER_BANK
+	goto BatonPassSwitchOutBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

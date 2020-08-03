@@ -1368,6 +1368,46 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 	return FALSE;
 }
 
+bool8 BankHasMonToSwitchTo(u8 bank)
+{
+	if (IS_SINGLE_BATTLE)
+	{
+		if (ViableMonCountFromBank(bank) <= 1)
+			return FALSE;
+	}
+	else //Double
+	{
+		if (SIDE(bank) == B_SIDE_PLAYER)
+		{
+			if (IsTagBattle())
+			{
+				if (ViableMonCountFromBankLoadPartyRange(bank) <= 1)
+					return FALSE;
+			}
+			else //Regular Double Battle
+			{
+				if (ViableMonCountFromBankLoadPartyRange(bank) <= 2)
+					return FALSE;
+			}
+		}
+		else //Opponent
+		{
+			if (IsTwoOpponentBattle())
+			{
+				if (ViableMonCountFromBankLoadPartyRange(bank) <= 1)
+					return FALSE;
+			}
+			else //Regular Double Battle
+			{
+				if (ViableMonCountFromBankLoadPartyRange(bank) <= 2)
+					return FALSE;
+			}
+		}
+	}
+
+	return TRUE;
+}
+
 bool8 IsTakingSecondaryDamage(u8 bank)
 {
 	u8 ability = ABILITY(bank);
