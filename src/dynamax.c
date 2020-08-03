@@ -1520,7 +1520,9 @@ void CreateRaidShieldSprites(void)
 	u8 bank = BANK_RAID_BOSS;
 	u16 baseStatTotal = GetBaseStatsTotal(SPECIES(bank));
 
+	#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	if (!FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END)) //Less shields for battle that ends in 10 turns
+	#endif
 	{
 		switch (baseStatTotal) {
 			case 0 ... 349:
@@ -1536,6 +1538,7 @@ void CreateRaidShieldSprites(void)
 				numShields = 4;
 		}
 	}
+	#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	else
 	{
 		switch (baseStatTotal) {
@@ -1555,6 +1558,7 @@ void CreateRaidShieldSprites(void)
 				numShields = MAX_NUM_RAID_SHIELDS;
 		}
 	}
+	#endif
 
 	gNewBS->dynamaxData.shieldCount = numShields;
 	LoadRaidShieldGfx();
