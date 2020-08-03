@@ -788,6 +788,28 @@ void HandleDeadRaidMonAndDeadPlayer(void)
 		gBattleStruct->field_91 &= ~gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]; //So the player can still catch even if they have no Pokemon left
 }
 
+#define HEALTHBOX_GFX_HP_BAR_GREEN 3
+#define HEALTHBOX_GFX_HP_BAR_YELLOW 47
+#define HEALTHBOX_GFX_HP_BAR_RED 56
+#define B_HEALTHBAR_PIXELS 48
+u8 GetBattleHealthbarColour(u8 filledPixelsCount, u8 bank)
+{
+	if (IsRaidBattle() && bank == BANK_RAID_BOSS)
+	{
+		//Raid Boss always has their HP bar red
+		return HEALTHBOX_GFX_HP_BAR_RED;
+	}
+	else
+	{
+		if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 50 / 100)) // more than 50 % hp
+			return HEALTHBOX_GFX_HP_BAR_GREEN;
+		else if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 20 / 100)) // more than 20% hp
+			return HEALTHBOX_GFX_HP_BAR_YELLOW;
+		else
+			return HEALTHBOX_GFX_HP_BAR_RED; // 20 % or less
+	}
+}
+
 //Called from Battle Script
 void UpdateHPForDynamax(void)
 {

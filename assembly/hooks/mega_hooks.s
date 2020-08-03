@@ -261,6 +261,16 @@ DeadRaidMonSpriteHook2:
 	bx r1
 
 .pool
+@;0x804A116 with r1
+RaidBossHPColourHook:
+	mov r7, r5
+	mov r1, r6 @Bank
+	bl GetBattleHealthbarColour
+	mov r9, r0
+	ldr r0, =0x804A12C | 1
+	bx r0
+
+.pool
 @;0x80D84F6 with r0
 BufferMaxMoveNameBattle:
 	mov r0, r1

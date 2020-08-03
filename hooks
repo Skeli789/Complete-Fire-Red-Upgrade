@@ -129,6 +129,7 @@ ClearTemporarySpeciesSpriteData 0803589C 2
 RaidBattleCoordHook1 80744B0 0
 RaidBattleCoordHook2 80744D8 0
 LoadAndCreateEnemyShadowSprites 8035538 0
+RaidBossHPColourHook 804A116 1
 HandleDynamaxOnTurnEnd 8018C98 0
 DeadRaidMonSpriteHook 8077CC4 1
 DeadRaidMonSpriteHook2 807524C 2
