@@ -3624,6 +3624,7 @@ BestowBS:
 	attackstringnoprotean
 	ppreduce
 	callasm BestowItem
+	callasm TransferLastUsedItem
 	tryactivateprotean
 	attackanimation
 	waitanimation

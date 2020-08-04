@@ -100,6 +100,7 @@ BattleScript_MoveEffectWrap:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_KnockedOff:
+	callasm TransferLastUsedItem
 	playanimation BANK_TARGET ANIM_KNOCK_OFF_ITEM 0x0
 	printstring 0xB7 @;STRINGID_PKMNKNOCKEDOFF
 	waitmessage DELAY_1SECOND
