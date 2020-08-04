@@ -122,12 +122,12 @@ gEventObjectImageAnim_RunEast 083A34CC
 EventScript_TrainerSpottedInitiate 08080374
 
 ##Battle Scripts
-ThiefStealBS 08020E74
-PoisonedByBS 08250634
-BurnedByBS 08250638
+BattleScript_ItemSteal 08020E74
+BattleScript_PoisonedBy 08250634
+BattleScript_BurnedBy 08250638
 BattleScript_WasFrozen 0825063C
 BattleScript_MoveEffectWrap 08250660
-BadPoisonedByBS 08250644
+BattleScript_BadPoisonedBy 08250644
 BattleScript_ActionSwitch 0801640C
 
 ##Battle Transitions

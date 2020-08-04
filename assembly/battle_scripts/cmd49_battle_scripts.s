@@ -201,7 +201,7 @@ BattleScript_Pickpocket:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-PoisonedByBS:
+BattleScript_PoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x1 PoisonTouchPSN
 	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesPSN
@@ -236,7 +236,7 @@ BanefulBunkerPSN:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BadPoisonedByBS:
+BattleScript_BadPoisonedBy:
 	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x1 PoisonTouchPSN
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesBadPSN
@@ -262,7 +262,7 @@ ToxicOrbBadPSN:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BurnedByBS:
+BattleScript_BurnedBy:
 	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x1 BeakBlastBurnBS
 	jumpifbyte EQUALS POISONED_BY 0x3 FlameOrbBurnBS
