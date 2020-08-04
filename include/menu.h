@@ -24,6 +24,11 @@ struct MoveMenuInfoIcon
     u16 offset;
 };
 
+u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
+void __attribute__((long_call)) AddTextPrinterParameterized3(u8 windowId, u8 fontId, u8 x, u8 y, const u8 * color, s8 speed, const u8 * str);
+void __attribute__((long_call)) AddTextPrinterParameterized4(u8 windowId, u8 fontId, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, const u8 *color, s8 speed, const u8 *str);
+void __attribute__((long_call)) AddTextPrinterParameterized5(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 letterSpacing, u8 lineSpacing);
+
 void __attribute__((long_call)) clear_scheduled_bg_copies_to_vram(void);
 int __attribute__((long_call)) decompress_and_copy_tile_data_to_vram(u8 bg_id, const void *src, int size, u16 offset, u8 mode);
 bool8 __attribute__((long_call)) free_temp_tile_data_buffers_if_possible(void);
@@ -37,7 +42,6 @@ void __attribute__((long_call)) ClearStdWindowAndFrame(u8 windowId, bool8 copyTo
 void __attribute__((long_call)) DrawStdWindowFrame(u8 windowId, bool8 CopyToVram);
 u16 __attribute__((long_call)) CreateWindowTemplate(u8 bg, u8 left, u8 top, u8 width, u8 height, u8 paletteNum, u16 baseBlock);
 void __attribute__((long_call)) AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress);
-u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
 u8 __attribute__((long_call)) GetPlayerTextSpeedDelay(void);
 u16 __attribute__((long_call)) RunTextPrintersAndIsPrinter0Active(void);
 u8 __attribute__((long_call)) Menu_MoveCursor(s8 cursorDelta);

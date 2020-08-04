@@ -173,6 +173,9 @@ The rest of your team gained Exp.\nPoints thanks to the Exp. Share!
 #org @gText_Power
 Power: 
 
+#org @gText_OHKO
+OHKO
+
 #org @gText_Acc
 Acc: 
 

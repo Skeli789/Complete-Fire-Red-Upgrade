@@ -3,6 +3,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
 #include "../include/field_message_box.h"
+#include "../include/field_weather.h"
 #include "../include/hall_of_fame.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
@@ -1817,6 +1818,8 @@ void sp0B0_LoadPartyPokemonTypes(void)
 //@Returns: Var 0x800E: The item the player chose. 0 if they chose nothing.
 void sp0B1_ChooseItemFromBag(void)
 {
+	PlayRainStoppingSoundEffect();
+
 	switch (Var8000) {
 		case 0:
 		case 1:

@@ -27,6 +27,7 @@ extern const u8 StringNull[];
 extern const u8 gText_Power[];
 extern const u8 gText_Acc[];
 extern const u8 gText_NoMiss[];
+extern const u8 gText_OHKO[];
 extern const u8 gText_Physical[];
 extern const u8 gText_Special[];
 extern const u8 gText_Status[];

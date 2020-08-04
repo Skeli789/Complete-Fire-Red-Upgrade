@@ -1211,20 +1211,27 @@ static void MoveSelectionDisplayDetails(void)
 	BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 1); //Slot of Move 2
 
 //Display Move Power
-	u16 power;
-	txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
-	#ifdef DISPLAY_REAL_POWER_ON_MENU
-		if (moveInfo->dynamaxed)
-			power = moveInfo->maxMovePowers[gMoveSelectionCursor[gActiveBattler]];
-		else
-			power = moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]];
-	#else
-		if (moveInfo->dynamaxed)
-			power = gDynamaxMovePowers[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]];
-		else
-			power = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].power;
-	#endif
-	ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	if (!moveInfo->dynamaxed && gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].effect == EFFECT_0HKO)
+	{
+		StringCopy(gDisplayedStringBattle, gText_OHKO);
+	}
+	else
+	{
+		u16 power;
+		txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
+		#ifdef DISPLAY_REAL_POWER_ON_MENU
+			if (moveInfo->dynamaxed)
+				power = moveInfo->maxMovePowers[gMoveSelectionCursor[gActiveBattler]];
+			else
+				power = moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]];
+		#else
+			if (moveInfo->dynamaxed)
+				power = gDynamaxMovePowers[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]];
+			else
+				power = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].power;
+		#endif
+		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	}
 	BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3
 
 //Display Move Split
