@@ -105,6 +105,19 @@ void HandleNewBattleRamClearBeforeBattle(void)
 		gNewBS->dynamaxData.backupRaidMonItem = GetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, NULL); //For Frontier
 	}
 
+	if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE)
+	{
+		#ifdef VAR_RING_CHALLENGE_BANNED_TYPE_1
+		gNewBS->ringChallengeBannedTypes[0] = VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_1);
+		#endif
+		#ifdef VAR_RING_CHALLENGE_BANNED_TYPE_2
+		gNewBS->ringChallengeBannedTypes[1] = VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_2);
+		#endif
+		#ifdef VAR_RING_CHALLENGE_BANNED_TYPE_3
+		gNewBS->ringChallengeBannedTypes[2] = VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_3);
+		#endif
+	}
+
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
 
@@ -1674,9 +1687,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 
 s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 {
-	u8 priority = 0;
-
-	priority = gBattleMoves[move].priority;
+	u8 priority = gBattleMoves[move].priority;
 
 	switch (GetMonAbility(mon)) {
 		case ABILITY_PRANKSTER:

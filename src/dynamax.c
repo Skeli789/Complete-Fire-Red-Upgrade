@@ -1417,7 +1417,7 @@ void CreateSummaryScreenGigantamaxIcon(void)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenGigantamaxIconSpriteSheet);
 		LoadSpritePalette(&sSummaryScreenGigantamaxIconSpritePalette);
-		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 18, ballSprite->pos1.y, 0);
+		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 32, ballSprite->pos1.y, 0);
 	}
 	else
 		ballSprite->data[0] = MAX_SPRITES; //No icon

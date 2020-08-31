@@ -128,3 +128,4 @@ void SetAttackerAndSwitchingBankToOpponent0(void);
 void SetSwitchingBankSwitchingCooldownTo2(void);
 void FaintedBankNameInBuff1(void);
 void SetCorrectTeleportBattleScript(void);
+void TrySetBurningJealousyMoveEffect(void);

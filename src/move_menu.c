@@ -1623,6 +1623,9 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	if (RAID_BATTLE_END) //Fix bug where partner would be forced to use a move with 0 PP and cause the game to crash
 		return FALSE;
 
+	if (gNewBS->NoMoreMovingThisTurn & gBitTable[gActiveBattler]) //Fix a bug where partner is forced to use a move they can't in wild doubles
+		return FALSE;
+
 	if (IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.toBeUsed[gActiveBattler])
 		move = gCurrentMove = GetMaxMove(gActiveBattler, gBattleBufferB[gActiveBattler][2]);
 
@@ -1686,6 +1689,12 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		++limitations;
 	}
 	#endif
+	else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallenge(move, gActiveBattler))
+	{
+		PREPARE_TYPE_BUFFER(gBattleTextBuff1, GetMoveTypeSpecial(gActiveBattler, move));
+		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedRingChallenge;
+		++limitations;
+	}
 	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;

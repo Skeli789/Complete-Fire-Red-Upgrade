@@ -158,9 +158,14 @@ BattleScript_AbsorbLiquidOoze:
 
 .global BS_004_SetBurnChance
 BS_004_SetBurnChance:
+	jumpifmove MOVE_BURNINGJEALOUSY BS_BurningJealousy
 	setmoveeffect MOVE_EFFECT_BURN
 	goto BS_STANDARD_HIT
-	
+
+BS_BurningJealousy:
+	callasm TrySetBurningJealousyMoveEffect
+	goto BS_STANDARD_HIT
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_005_SetFreezeChance
@@ -2890,15 +2895,16 @@ BS_139_AttackerRaiseAtk1Chance:
 	setmoveeffect MOVE_EFFECT_ATK_PLUS_1 | MOVE_EFFECT_AFFECTS_USER
 	goto BS_STANDARD_HIT
 
-FellStingerBS: @;Add in Volt Switch Fix?
+FellStingerBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
-	jumpiffainted BANK_ATTACKER BS_MOVE_FAINT
+	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
+	jumpiffainted BANK_ATTACKER BS_MOVE_END
 	jumpiffainted BANK_TARGET FellStingerKill
-	goto BS_MOVE_FAINT
+	goto BS_MOVE_END
 
 FellStingerKill:
 	setbyte STAT_ANIM_PLAYED 0x0
@@ -4745,6 +4751,7 @@ BS_223_RelicSong:
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
 	callasm GotoMoveEndIfMoveDidntDamageAtLeastOnce
+	jumpifability BANK_ATTACKER ABILITY_SHEERFORCE BS_MOVE_END
 	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
 	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA TransformToPirouetteBS
 	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE TransformToAriaBS

@@ -431,25 +431,10 @@ LoadMaxNumPokemonChooseBattleTowerStringHook:
 .pool
 @0x805BA30 with r0
 AutoRunHook:
-	mov r0, #0x2 @B-Button
-	and r5, r0
-	cmp r5, #0x0
-	bne CheckIfRunningAllowed
-	bl IsAutoRunEnabled
+	mov r0, r5
+	bl ShouldPlayerRun
 	cmp r0, #0x0
 	beq NoRunning
-
-CheckIfRunningAllowed:
-	ldr r2, =gEventObjects
-	ldrb r1, [r6, #0x5] @NPC Id
-	lsl r0, r1, #0x3
-	add r0, r1
-	lsl r0, #0x2
-	add r0, r2
-	ldrb r0, [r0, #0x1E]
-	bl IsRunningDisallowed
-	cmp r0, #0x0
-	bne NoRunning
 	ldr r0, =0x805BA5A | 1
 	bx r0
 

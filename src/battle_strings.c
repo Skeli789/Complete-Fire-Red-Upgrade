@@ -7,6 +7,7 @@
 #include "../include/text.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_strings_2.h"
@@ -95,7 +96,7 @@ void BufferStringBattle(u16 stringID)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 			{
-				if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+				if (IS_TOWER_LINK_MULTI_BATTLE)
 					stringPtr = BattleText_TwoTrainersWantToBattle; //NEED DATA
 
 				else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
@@ -181,7 +182,7 @@ void BufferStringBattle(u16 stringID)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 					stringPtr = BattleText_TwoTrainersSentPkmn; //NEED DATA
-				else if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+				else if (IS_TOWER_LINK_MULTI_BATTLE)
 					stringPtr = BattleText_TwoTrainersSentPkmn; //NEED DATA
 				else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
 					stringPtr = BattleText_TwoLinkTrainersSentOutPkmn; //0x83FD41E
@@ -256,7 +257,7 @@ void BufferStringBattle(u16 stringID)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 			{
-				if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+				if (IS_TOWER_LINK_MULTI_BATTLE)
 				{
 					if (GetBattlerPosition(gBattleScripting.bank) == B_POSITION_OPPONENT_LEFT)
 						stringPtr = BattleText_Trainer1SentOutPkmn2; //0x83FD3E4
@@ -333,7 +334,7 @@ void BufferStringBattle(u16 stringID)
 				switch (gBattleTextBuff1[0])
 				{
 				case B_OUTCOME_WON:
-					if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+					if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 						stringPtr = BattleText_TwoInGameTrainersDefeated; //NEED DATA
 					else
 						stringPtr = BattleText_TwoLinkTrainersDefeated; //0x83FCCF8
@@ -592,7 +593,24 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_A))
 					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0)];
 				else
-					toCpy = gTrainerClassNames[gTrainers[gTrainerBattleOpponent_A].trainerClass];
+				{
+					u8 class = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+					#ifdef UNBOUND
+					if (class == CLASS_BLACK_EMBOAR)
+					{
+						if (VarGet(VAR_SQ_BLACK_EMBOAR) >= 4) //Black Emboar changed name
+						{
+							StringCopy(text, gText_BlackPlayerPrefix);
+							StringAppend(text, gSaveBlock2->playerName);
+							toCpy = text;
+						}
+						else
+							toCpy = gTrainerClassNames[class];
+					}
+					else
+					#endif
+						toCpy = gTrainerClassNames[class];
+				}
 
 				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
 					toCpy = T1_READ_PTR(toCpy);

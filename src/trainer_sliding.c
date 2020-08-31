@@ -49,6 +49,10 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2DB, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DC, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DD, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x1A3, NULL, sText_BigMoLastSwitchIn, NULL},
+	{0x2E1, NULL, sText_BigMoLastSwitchIn, NULL},
+	{0x2E2, NULL, sText_BigMoLastSwitchIn, NULL},
+	{0x2E3, NULL, sText_BigMoLastSwitchIn, NULL},
 	{0x1A1, NULL, sText_TessyLastSwitchIn, NULL},
 	{0x2DE, NULL, sText_TessyLastSwitchIn, NULL},
 	{0x2DF, NULL, sText_TessyLastSwitchIn, NULL},
@@ -62,6 +66,12 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2B7, NULL, NULL, sText_Zeph2LowHP},
 	{0x2B8, NULL, NULL, sText_Zeph2LowHP},
 	{0x2B9, NULL, NULL, sText_Zeph2LowHP},
+
+	{0x180, NULL, NULL, sText_Aklove1LowHP},
+	{0x2BA, NULL, NULL, sText_Aklove1LowHP},
+	{0x2BB, NULL, NULL, sText_Aklove1LowHP},
+	{0x2BC, NULL, NULL, sText_Aklove1LowHP},
+	{0x2F, NULL, NULL, sText_Aklove2LowHP},
 
 	{0x19, NULL, sText_MaximaLastSwitchIn, NULL},
 	{0x2BD, NULL, sText_MaximaLastSwitchIn, NULL},

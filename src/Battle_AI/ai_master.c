@@ -323,9 +323,11 @@ u32 GetAIFlags(void)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 	else if (IsRaidBattle())
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Make partner smart
+	else if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART; //Shadow Warrior is pretty smart
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
-	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)
+	else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY_FRLG)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 	else
 	{
@@ -2693,8 +2695,8 @@ static bool8 ShouldAIUseItem(void)
 		const u8 *itemEffects;
 		u8 paramOffset;
 
-		//if (i > 0 && validMons > (BATTLE_HISTORY->itemsNo - i) + 1) //Spread out item usage
-		//	continue;
+		if (i > 0 && validMons > 1 && validMons > (BATTLE_HISTORY->itemsNo - i) + 1) //Spread out item usage
+			continue;
 		item = BATTLE_HISTORY->trainerItems[i];
 		itemEffects = gItemEffectTable[item - ITEM_POTION];
 

@@ -104,7 +104,7 @@ The door is locked.
 There appears to be some sort of\nPsychic barrier in the way.
 
 #org @gText_ClimbLadder
-Would you like to climb the\nladder?
+Climb the ladder?
 
 #org @gText_CantReachLadder
 You can't reach the ladder from\nhere!

@@ -341,3 +341,5 @@ Would you like to forfeit the match\nand quit now?
 #org @sText_PlayerForfeitedMatch
 [PLAYER_NAME] forfeited the match!
 
+#org @gText_BlackPlayerPrefix
+Black 

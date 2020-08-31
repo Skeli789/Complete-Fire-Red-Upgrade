@@ -23,6 +23,7 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/build_pokemon_2.h"
 #include "../include/new/catching.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
@@ -189,23 +190,26 @@ void BuildTrainerPartySetup(void)
 	u8 towerTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	gDontFadeWhite = FALSE;
 
-	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI))
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
 		BuildFrontierParty(&gEnemyParty[3], VarGet(VAR_SECOND_OPPONENT), towerTier, FALSE, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+		if (!(gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE) /*&& !IsBattleFactoryBattle()*/) //Team should be pregenerated in these facilities
 		{
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
-			BuildFrontierParty(&gEnemyParty[3], SECOND_OPPONENT, towerTier, FALSE, FALSE, B_SIDE_OPPONENT);
-		}
-		else
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
+				BuildFrontierParty(&gEnemyParty[3], SECOND_OPPONENT, towerTier, FALSE, FALSE, B_SIDE_OPPONENT);
+			}
+			else
+				BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
 
-		if (IsRandomBattleTowerBattle())
-			BuildFrontierParty(gPlayerParty, 0, towerTier, TRUE, TRUE + 1, B_SIDE_PLAYER);
+			if (IsRandomBattleTowerBattle())
+				BuildFrontierParty(gPlayerParty, 0, towerTier, TRUE, TRUE + 1, B_SIDE_PLAYER);
+		}
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
@@ -444,6 +448,14 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 {
 	return GiveRandomFrontierMonByTier(B_SIDE_PLAYER, Var8000, Var8001);
+}
+
+//@Details: Creates the opposing team for a Frontier battle in the overworld.
+//@Inputs:
+//		Var8000: Trainer Id	
+void sp0E7_CreateFrontierOpponentTeamBeforeBattle(void)
+{
+	BuildFrontierParty(&gEnemyParty[0], Var8000, VarGet(VAR_BATTLE_FACILITY_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
 }
 
 u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType)
@@ -2391,7 +2403,7 @@ bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier)
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
 {
 	u16 streak = GetCurrentBattleTowerStreak();
-	bool8 megasZMovesBannedInTier = AreMegasZMovesBannedInTier(tier);
+	bool8 megasZMovesBannedInTier = AreMegasZMovesBannedInTier(tier) || BATTLE_FACILITY_NUM == IN_RING_CHALLENGE;
 
 	if (!forPlayer && trainerId == BATTLE_TOWER_TID
 	&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
@@ -2466,6 +2478,11 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 			if (IsMegaStone(item)) //Special trainers aren't allowed to Mega Evolve
 				return TRUE;	   //before the player has beaten Palmer in the 20th battle.
 		}
+	}
+	else if (trainerId == FRONTIER_BRAIN_TID)
+	{
+		if (BATTLE_FACILITY_NUM == IN_RING_CHALLENGE)
+			return IsZCrystal(item) || IsMegaStone(item); //Don't give the frontier Brain Pokemon with bad items
 	}
 
 	return FALSE;

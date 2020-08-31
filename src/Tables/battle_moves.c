@@ -11399,7 +11399,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_SPIRITBREAK] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_SPECIAL_ATTACK_DOWN_HIT,
 		.power = 75,
 		.type = TYPE_FAIRY,
@@ -11511,7 +11511,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_STEELBEAM] =
-	{	//ANIM TODO
+	{
 		.effect = 0,
 		.power = 140,
 		.type = TYPE_STEEL,
@@ -11528,7 +11528,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_EXPANDINGFORCE] =
 	{	//ANIM TODO
-		.effect = EFFECT_HIT, //EFFECT TODO
+		.effect = EFFECT_HIT,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 100,
@@ -11671,7 +11671,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_SKITTERSMACK] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_SPECIAL_ATTACK_DOWN_HIT,
 		.power = 70,
 		.type = TYPE_BUG,
@@ -11687,13 +11687,13 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_BURNINGJEALOUSY] =
-	{	//ANIM TODO
-		.effect = EFFECT_BURN_HIT, //EFFECT TODO
+	{
+		.effect = EFFECT_BURN_HIT,
 		.power = 70,
 		.type = TYPE_FIRE,
 		.accuracy = 100,
 		.pp = 5,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_BOTH,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -11783,7 +11783,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_TRIPLEAXEL] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_TRIPLE_KICK,
 		.power = 20,
 		.type = TYPE_ICE,
@@ -11799,7 +11799,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_DUALWINGBEAT] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_DOUBLE_HIT,
 		.power = 40,
 		.type = TYPE_FLYING,
@@ -11815,7 +11815,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_SCORCHINGSANDS] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_BURN_HIT,
 		.power = 70,
 		.type = TYPE_GROUND,

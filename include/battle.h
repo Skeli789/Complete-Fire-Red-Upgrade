@@ -151,6 +151,10 @@
 #define BATTLE_TERRAIN_AUTUMN_PLAIN			0x24
 #define BATTLE_TERRAIN_SNOW_GRASS			0x25
 #define BATTLE_TERRAIN_NIGHTMARE			0x26
+#define BATTLE_TERRAIN_ANTISIS_CITY			0x27
+#define BATTLE_TERRAIN_ANTISIS_SEWERS		0x28
+#define BATTLE_TERRAIN_ANTISIS_SEWERS_WATER	0x29
+#define BATTLE_TERRAIN_SKY_BATTLE			0x2A
 
 #define BATTLE_TERRAIN_RANDOM				0xFF
 #endif
@@ -880,6 +884,7 @@ struct NewBattleStruct
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
 	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD8
+	u8 ringChallengeBannedTypes[3];
 
 	//Things for Spread Moves
 	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC8

@@ -543,7 +543,7 @@ SKIP_INDEX_SEARCH:
 	else if (flags & WILD_CHECK_KEEN_EYE && !IsAbilityAllowingEncounter(level))
 		return FALSE;
 
-	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+	else if (area != WILD_AREA_LAND || !TryGenerateSwarmMon(level, wildMonIndex, TRUE)) //Swarms can only appear on land
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
 
 	#ifdef FLAG_DOUBLE_WILD_BATTLE
@@ -581,7 +581,7 @@ SKIP_INDEX_SEARCH:
 
 		SKIP_INDEX_SEARCH_2:
 		level = ChooseWildMonLevel(&wildMonInfo->wildPokemon[wildMonIndex]);
-		if (!TryGenerateSwarmMon(level, wildMonIndex, FALSE))
+		if (area != WILD_AREA_LAND || !TryGenerateSwarmMon(level, wildMonIndex, FALSE))
 			CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, FALSE);
 	}
 	#endif
@@ -1101,7 +1101,7 @@ void sp138_StartLegendaryBattle(void)
 	ScriptContext2_Enable();
 	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
 
-	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3;
+	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_LEGENDARY_FRLG;
 
 	#ifdef FLAG_DOUBLE_WILD_BATTLE
 	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE)
@@ -1153,7 +1153,7 @@ void sp118_StartRaidBattle(void)
 	ScriptContext2_Enable();
 	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
 
-	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3 | BATTLE_TYPE_DYNAMAX;
+	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_DYNAMAX;
 
 	#ifdef FLAG_RAID_BATTLE
 	FlagSet(FLAG_RAID_BATTLE);
@@ -1240,7 +1240,7 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 		ZeroEnemyPartyMons();
 
 	CreateMon(&gEnemyParty[index], species, level, 0x20, 0, 0, 0, 0);
-	if (item)
+	if (item != ITEM_NONE)
 		SetMonData(&gEnemyParty[index], MON_DATA_HELD_ITEM, &item);
 
 	#ifdef FLAG_WILD_CUSTOM_MOVES
@@ -1257,6 +1257,18 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		gEnemyParty[index].hiddenAbility = TRUE;
+
+	#ifdef UNBOUND
+	if (species == SPECIES_SHADOW_WARRIOR)
+	{
+		//Shadow Warriors have preset natures and can't be shiny
+		u32 shadowWarriorPersonalities[] = {0xCC94DC29, 0xEB9752E1}; //Either Adamant or Jolly
+		u32 shadowWarriorOtId = 0x0;
+
+		SetMonData(&gEnemyParty[index], MON_DATA_PERSONALITY, &shadowWarriorPersonalities[Random() & 1]); //Randomly set one of the above natures
+		SetMonData(&gEnemyParty[index], MON_DATA_OT_ID, &shadowWarriorOtId);
+	}
+	#endif
 }
 
 void TrySetWildDoubleBattleTypeScripted()

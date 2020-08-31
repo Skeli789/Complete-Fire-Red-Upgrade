@@ -316,6 +316,12 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 #org @gText_CamomonsTypeRevealDualType
 [SCRIPTING_BANK] appears as the\n[BUFFER][00]- and [BUFFER][01]-type!
 
+#org @gText_RingChallengeAttackCancel
+But the attack's type can't be used\nin this round of the Ring Challenge!
+
+#org @gText_RingChallengeBanMoveMenu
+[BUFFER][00]-type moves can't be used\nin this round of the Ring Challenge!\p
+
 #org @gText_DynamaxUsable
 Dynamax Energy gathered\naround you!
 

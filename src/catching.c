@@ -249,6 +249,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_LOVE_BALL:
+					ballMultiplier = 10;
 					if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies))
 					{
 						u8 atkGender = GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[gBankAttacker].personality);
@@ -256,11 +257,7 @@ void atkEF_handleballthrow(void)
 
 						if (atkGender != 0xFF && defGender != 0xFF && atkGender != defGender)
 							ballMultiplier = 80;
-						else
-							ballMultiplier = 10;
 					}
-					else
-						ballMultiplier = 10;
 					break;
 
 				//Heavy Ball modifies the catch rate itself, not the multiplier
@@ -286,6 +283,8 @@ void atkEF_handleballthrow(void)
 				case BALL_TYPE_FAST_BALL:
 					if (gBaseStats[defSpecies].baseSpeed >= 100)
 						ballMultiplier = 40;
+					else
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_SPORT_BALL:
@@ -295,11 +294,12 @@ void atkEF_handleballthrow(void)
 				case BALL_TYPE_DUSK_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
 						ballMultiplier = DUSK_BALL_MULTIPLIER;
-
 					#ifdef TIME_ENABLED
 					else if (IsNightTime())
 						ballMultiplier = DUSK_BALL_MULTIPLIER;
 					#endif
+					else
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_QUICK_BALL:
@@ -312,6 +312,8 @@ void atkEF_handleballthrow(void)
 				case BALL_TYPE_DREAM_BALL:
 					if (gBattleMons[gBankTarget].status1 & STATUS1_SLEEP)
 						ballMultiplier = 30;
+					else
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_BEAST_BALL:

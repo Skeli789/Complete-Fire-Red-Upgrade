@@ -3065,6 +3065,9 @@ void atk9B_transformdataexecution(void)
 	else if (gBattleMons[gBankTarget].status2 & STATUS2_TRANSFORMED
 	|| gStatuses3[gBankTarget] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION)
 	|| gSideStatuses[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD
+	#ifdef UNBOUND
+	|| SPECIES(gBankTarget) == SPECIES_SHADOW_WARRIOR
+	#endif
 	|| (IsDynamaxed(gBankAttacker) && IsBannedDynamaxSpecies(SPECIES(gBankTarget)))
 	|| (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
 	{
@@ -4761,27 +4764,30 @@ void atkE4_getsecretpowereffect(void) {
 	gBattlescriptCurrInstr++;
 }
 
-void atkE5_pickupitemcalculation(void) {
-	u16 item = 0;
-	u8 chance = 0;
-
-	for (int i = 0; i < 6; ++i)
+void atkE5_pickupitemcalculation(void)
+{
+	for (u32 i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (gPlayerParty[i].species == SPECIES_NONE) break;
-		if (gPlayerParty[i].item != ITEM_NONE) continue;
-		if (GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) continue;
+		u16 item, level, chance;
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+		
+		if (species == SPECIES_NONE || species == SPECIES_EGG
+		|| GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL) != ITEM_NONE)
+			continue;
 
-		u8 level = gPlayerParty[i].level;
+		level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
 
 		switch (GetMonAbility(&gPlayerParty[i])) {
 			case ABILITY_PICKUP:
 				chance = 10; // ~10% chance of pickup to activate
 				item = ChoosePickupItem(level);
 				break;
-
 			case ABILITY_HONEYGATHER:
-				chance = 5 + 5 * udivsi((level - 1), 10);
+				chance = 5 + 5 * ((level - 1) / 10);
 				item = ITEM_HONEY;
+				break;
+			default:
+				continue;
 		}
 
 		if (Random() % 100 < chance)

@@ -16,6 +16,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
@@ -826,7 +827,16 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 				effect = 1;
 			}
+			else
 		#endif
+			if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallenge(gCurrentMove, gBankAttacker))
+			{
+				gBattleScripting.bank = gBankAttacker;
+				CancelMultiTurnMoves(gBankAttacker);
+				gBattlescriptCurrInstr = BattleScript_MoveUsedRingChallengePrevents;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
+			}
 			gBattleStruct->atkCancellerTracker++;
 			break;
 

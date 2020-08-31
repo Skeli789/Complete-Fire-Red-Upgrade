@@ -52,7 +52,7 @@
 #define FLDEFF_POP_OUT_OF_ASH            49
 #define FLDEFF_LAVARIDGE_GYM_WARP        50
 #define FLDEFF_SWEET_SCENT               51
-#define FLDEFF_NULL_52               	 52
+#define FLDEFF_EXPLOSION               	 52 //NEW!
 #define FLDEFF_BUBBLES                   53
 #define FLDEFF_SPARKLE                   54
 #define FLDEFF_NULL_55         	 		 55

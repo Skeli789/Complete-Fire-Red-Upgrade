@@ -57,6 +57,7 @@ FieldEffectScript_CaveDust 081D9714
 FieldEffectScript_Sparkles 081D9718
 FieldEffectScript_LavaBubbles 081D9768
 FieldEffectScript_MiningScanRing 081D976C
+FieldEffectScript_Explosion 081D977C
 SystemScript_FindItemMessage 081A67DD
 SystemScript_ObtainItem 08160450
 SystemScript_ObtainItemMessage 081A66AC

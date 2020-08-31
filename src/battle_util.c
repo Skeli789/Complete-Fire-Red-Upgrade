@@ -552,6 +552,8 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 		return TRUE;
 	#endif
+	else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallenge(move, bank))
+		return TRUE;
 	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 		return TRUE;
 	else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
@@ -582,6 +584,8 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
 		#endif
+		else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallengeByMon(move, mon))
+			unusableMoves |= gBitTable[i];
 		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
 		else if (IsRaidBattle() && CheckTableForMove(move, gRaidBattleBannedMoves))
@@ -803,7 +807,7 @@ struct Pokemon* LoadPartyRange(u8 bank, u8* firstMonId, u8* lastMonId)
 	else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
 	{
 		//Two Human Trainers vs Two AI Trainers
-		if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
+		if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
 			if (SIDE(bank) == B_SIDE_PLAYER)
 			{

@@ -1179,7 +1179,7 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 		.owNum = 			EVENT_OBJ_GFX_CRUSH_GIRL,
 		.trainerClass = 	CLASS_CRUSH_GIRL,
 		.trainerSprite = 	TRAINER_PIC_CRUSH_GIRL,
-		.gender = 			BATTLE_FACILITY_MALE,
+		.gender = 			BATTLE_FACILITY_FEMALE,
 		.preBattleText = 	sFrontierText_BattleGirl_PreBattle_1,
 		.playerWinText = 	sFrontierText_BattleGirl_PlayerWin_1,
 		.playerLoseText = 	sFrontierText_BattleGirl_PlayerLose_1,
@@ -2152,6 +2152,48 @@ const struct SpecialBattleFrontierTrainer gFrontierBrains[] =
 			.legSpreadSize =	NELEMS(gLegendaryTowerSpread_Paula2),
 			.mcSpreadSize =	  	NELEMS(gMiddleCupTowerSpread_Paula2),
 			.lcSpreadSize =		NELEMS(gLittleCupTowerSpread_Paula2),
+		},
+	[8] =
+		{
+			.owNum = 			EVENT_OBJ_GFX_BIG_MO,
+			.trainerClass = 	CLASS_LEADER,
+			.trainerSprite = 	TRAINER_PIC_BIG_MO,
+			.gender = 			BATTLE_FACILITY_MALE,
+			.name =				sTrainerName_BigMo,
+			.playerWinText = 	sFrontierText_BigMo_PlayerWin,
+			.playerLoseText = 	sFrontierText_BigMo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_BigMo,
+			.regSpreadSize = 	NELEMS(gSpecialTowerSpread_BigMo),
+			.songId = 			BGM_BATTLE_GYM_LEADER,
+			.isMonotype = 		TRUE,
+		},
+	[9] =
+		{
+			.owNum = 			EVENT_OBJ_GFX_BIG_MO,
+			.trainerClass = 	CLASS_LEADER,
+			.trainerSprite = 	TRAINER_PIC_BIG_MO,
+			.gender = 			BATTLE_FACILITY_MALE,
+			.name =				sTrainerName_BigMo,
+			.playerWinText = 	sFrontierText_BigMo_PlayerWin,
+			.playerLoseText = 	sFrontierText_BigMo_PlayerLose,
+			.regularSpreads =	gLegendaryTowerSpread_BigMo, //Uses legal legendary Pokemon in second battle
+			.regSpreadSize = 	NELEMS(gLegendaryTowerSpread_BigMo),
+			.songId = 			BGM_BATTLE_GYM_LEADER,
+			.isMonotype = 		TRUE,
+		},
+	[10] =
+		{
+			.owNum = 			EVENT_OBJ_GFX_BIG_MO,
+			.trainerClass = 	CLASS_LEADER,
+			.trainerSprite = 	TRAINER_PIC_BIG_MO,
+			.gender = 			BATTLE_FACILITY_MALE,
+			.name =				sTrainerName_BigMo,
+			.playerWinText = 	sFrontierText_BigMo_PlayerWin,
+			.playerLoseText = 	sFrontierText_BigMo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_BigMo3,
+			.regSpreadSize = 	NELEMS(gSpecialTowerSpread_BigMo3),
+			.songId = 			BGM_BATTLE_GYM_LEADER,
+			.isMonotype = 		TRUE,
 		},
 };
 

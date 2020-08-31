@@ -25,6 +25,7 @@ extern const u8 BattleScript_ZMoveActivateStatus[];
 extern const u8 BattleScript_ZMoveActivateDamaging[];
 extern const u8 BattleScript_DarkTypePreventsPrankster[];
 extern const u8 BattleScript_MoveUsedSkyBattlePrevents[];
+extern const u8 BattleScript_MoveUsedRingChallengePrevents[];
 extern const u8 BattleScript_CantUseSignatureMove[];
 extern const u8 BattleScript_HoopaCantUseHyperspaceFury[];
 extern const u8 BattleScript_MoveUsedDynamaxPrevents[];

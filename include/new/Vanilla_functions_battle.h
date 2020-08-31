@@ -80,7 +80,7 @@ void __attribute__((long_call)) OpponentBufferExecCompleted(void);
 bool8 __attribute__((long_call)) ShouldSwitchIfPerishSong(void);
 bool8 __attribute__((long_call)) AreStatsRaised(void);
 //void __attribute__((long_call)) AI_TrySwitchOrUseItem(void);
-void __attribute__((long_call)) ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8 *var);
+//void __attribute__((long_call)) ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8 *var);
 void __attribute__((long_call)) LinkOpponentBufferExecCompleted(void);
 bool8 __attribute__((long_call)) ShouldUseItem(void);
 u8 __attribute__((long_call)) CountAliveMons(u8 caseId);

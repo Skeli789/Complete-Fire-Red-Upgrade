@@ -979,13 +979,17 @@ map \map
 .endm
 
 @ Sets the specified Object's position to somewhere off the screen
-.macro moveoffscreen localId:req
+.macro forceupdatepos localId:req
 .byte 0x64
 .2byte \localId
 .endm
 
+.macro moveoffscreen localId:req
+	forceupdatepos \localId
+.endm
+
 .macro moveobjectoffscreen localId:req
-	moveoffscreen \localId
+	forceupdatepos \localId
 .endm
 
 @ Sets the specified Object's movement behaviour

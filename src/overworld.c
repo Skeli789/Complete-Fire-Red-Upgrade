@@ -1004,7 +1004,6 @@ void BattleSetup_StartTrainerBattle(void)
 	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
-
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_SANDS:
 				gBattleTypeFlags |= (BATTLE_TYPE_BATTLE_SANDS | BATTLE_TYPE_MOCK_BATTLE);
@@ -1015,6 +1014,9 @@ void BattleSetup_StartTrainerBattle(void)
 			case IN_BATTLE_CIRCUS:
 				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_CIRCUS;
 				break;
+			case IN_RING_CHALLENGE:
+				gBattleTypeFlags |= BATTLE_TYPE_RING_CHALLENGE;
+				//Fallthrough
 			default:
 				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_TOWER;
 				break;
@@ -1086,6 +1088,11 @@ void BattleSetup_StartTrainerBattle(void)
 		#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
 		if (FlagGet(FLAG_BENJAMIN_BUTTERFREE_BATTLE))
 			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
+		#endif
+
+		#ifdef FLAG_RING_CHALLENGE_BATTLE
+		if (FlagGet(FLAG_RING_CHALLENGE_BATTLE))
+			gBattleTypeFlags |= BATTLE_TYPE_RING_CHALLENGE;
 		#endif
 	}
 
@@ -1649,13 +1656,27 @@ const u8* LoadProperWhiteoutString(const u8* string)
 	return string;
 }
 
-bool8 IsAutoRunEnabled(void)
+bool8 ShouldPlayerRun(u16 heldKeys)
 {
-	#ifdef FLAG_AUTO_RUN
-		return FlagGet(FLAG_AUTO_RUN);
-	#else
+	if (IsRunningDisallowed(gEventObjects[gPlayerAvatar->eventObjectId].currentMetatileBehavior))
 		return FALSE;
+
+	#ifdef FLAG_AUTO_RUN
+	if (FlagGet(FLAG_AUTO_RUN))
+	{
+		if (heldKeys & B_BUTTON)
+			return FALSE; //Walk when holding B while auto-run is on
+		else
+			return TRUE;
+	}
+	else
 	#endif
+	{
+		if (heldKeys & B_BUTTON)
+			return TRUE;
+		else
+			return FALSE;
+	}
 }
 
 static bool8 IsRunningDisabledByFlag(void)
@@ -2081,6 +2102,13 @@ const u8* GetInteractedMetatileScript(unusedArg struct MapPosition* position, u8
 				return sMetatileInteractionScripts[metatileBehavior];
 			}
 			break;
+		#ifdef MB_CLIMBABLE_LADDER
+		case MB_CLIMBABLE_LADDER:
+			//Only use ladder if player is at bottom of it, or the player is on higher elevation
+			if (direction != DIR_SOUTH || gEventObjects[GetPlayerMapObjId()].currentElevation != 3)
+				return sMetatileInteractionScripts[metatileBehavior];
+			break;
+		#endif
 		#ifdef MB_UNDERGROUND_MINING
 		case MB_UNDERGROUND_MINING:
 			if (IsValidMiningSpot(position->x, position->y))

@@ -79,6 +79,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* flags);
 void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 move, u8 moveType, u8* flags);
+void ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8* var);
 u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 u8 GetMoveTypeSpecialPreAbility(u16 move, u8 bankAtk, struct Pokemon* monAtk);
 u8 GetMoveTypeSpecialPostAbility(u16 move, u8 atkAbility, bool8 zMoveActive);

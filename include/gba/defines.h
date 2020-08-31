@@ -3,11 +3,19 @@
 
 #include <stddef.h>
 
-#define TRUE 1
+#define TRUE  1
 #define FALSE 0
 
+#define BSS_DATA   __attribute__((section(".bss")))
 #define IWRAM_DATA __attribute__((section("iwram_data")))
 #define EWRAM_DATA __attribute__((section("ewram_data")))
+#define UNUSED __attribute__((unused))
+
+#if MODERN
+#define NOINLINE __attribute__((noinline))
+#else
+#define NOINLINE
+#endif
 
 #define ALIGNED(n) __attribute__((aligned(n)))
 
@@ -36,16 +44,18 @@
 #define BG_VRAM_SIZE      0x10000
 #define BG_CHAR_SIZE      0x4000
 #define BG_SCREEN_SIZE    0x800
-#define BG_CHAR_ADDR(n)   (void *)(BG_VRAM + (BG_CHAR_SIZE * (n)))
-#define BG_SCREEN_ADDR(n) (void *)(BG_VRAM + (BG_SCREEN_SIZE * (n)))
-#define BG_TILE_ADDR(n)   (void *)(BG_VRAM + (0x80 * (n)))
+#define BG_CHAR_ADDR(n)   (BG_VRAM + (BG_CHAR_SIZE * (n)))
+#define BG_SCREEN_ADDR(n) (BG_VRAM + (BG_SCREEN_SIZE * (n)))
+
+#define BG_TILE_H_FLIP(n) (0x400 + (n))
+#define BG_TILE_V_FLIP(n) (0x800 + (n))
 
 // text-mode BG
-#define OBJ_VRAM0      (void *)(VRAM + 0x10000)
+#define OBJ_VRAM0      (VRAM + 0x10000)
 #define OBJ_VRAM0_SIZE 0x8000
 
 // bitmap-mode BG
-#define OBJ_VRAM1      (void *)(VRAM + 0x14000)
+#define OBJ_VRAM1      (VRAM + 0x14000)
 #define OBJ_VRAM1_SIZE 0x4000
 
 #define OAM      0x7000000
@@ -59,18 +69,17 @@
 #define TILE_SIZE_4BPP 32
 #define TILE_SIZE_8BPP 64
 
-#define TOTAL_OBJ_TILE_COUNT 1024
-
 #define RGB(r, g, b) ((r) | ((g) << 5) | ((b) << 10))
 #define RGB2(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 #define _RGB(r, g, b) ((((b) & 0x1F) << 10) + (((g) & 0x1F) << 5) + ((r) & 0x1F))
+#define TILE_OFFSET_4BPP(n) ((n) * TILE_SIZE_4BPP)
+#define TILE_OFFSET_8BPP(n) ((n) * TILE_SIZE_8BPP)
 
 #define RGB_BLACK RGB(0, 0, 0)
 #define RGB_WHITE RGB(31, 31, 31)
 
 #define WIN_RANGE(a, b) (((a) << 8) | (b))
 
-#define NAKED __attribute__((naked))
-#define UNUSED __attribute__((unused))
+#define TOTAL_OBJ_TILE_COUNT 1024
 
 #endif // GUARD_GBA_DEFINES

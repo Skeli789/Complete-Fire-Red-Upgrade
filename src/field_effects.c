@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/battle_anim.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
 #include "../include/field_effect_helpers.h"
@@ -7,6 +8,7 @@
 #include "../include/overworld.h"
 #include "../include/random.h"
 #include "../include/sound.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
@@ -18,7 +20,6 @@
 #define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)
 
 #define SMOKE_TAG 0x2710
-#define TAG_MINING_SCAN_RING 0x27DB //ANIM_TAG_THIN_RING
 
 extern const u8 gInterfaceGfx_caveSmokeTiles[];
 extern const u16 gInterfaceGfx_caveSmokePal[];
@@ -26,7 +27,9 @@ extern const u8 gInterfaceGfx_SparklesTiles[];
 extern const u16 gInterfaceGfx_SparklesPal[];
 extern const u8 gInterfaceGfx_LavaBubblesTiles[];
 extern const u16 gInterfaceGfx_LavaBubblesPal[];
+extern const struct CompressedSpriteSheet gExplosionSpriteSheet;
 extern const struct CompressedSpriteSheet gThinRingSpriteSheet;
+extern const struct CompressedSpritePalette gExplosionSpritePalette;
 extern const struct CompressedSpritePalette gThinRingSpritePalette;
 
 //This file's functions
@@ -42,11 +45,14 @@ static void FldEff_Sparkles(void);
 static void FldEff_LavaBubbles(void);
 static void FldEff_MiningScanRing(void);
 static void SpriteCB_MiningScanRing(struct Sprite* sprite);
+static void FldEff_Explosion(void);
+static void SpriteCB_DestroyExplosion(struct Sprite* sprite);
 
 #ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
-#define AUTUMN_GRASS_PALETTE_TAG 0x1215
 static u16 sAutumnGrassObjectPalette[] = {0x741F, 0x3E9B, 0x3E9B, 0x1993, 0x1570, 0x0167, 0x76AC, 0x62AC, 0x7B31, 0x7F92, 0x0, 0x0, 0x3A7A, 0x2E38, 0x2E38, 0x1DD6};
 static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {sAutumnGrassObjectPalette, 0x1005};
+static u16 sWinterGrassObjectPalette[] = {0x741F, RGB(22,28,20), RGB(19,25,17), RGB(11,15,11), RGB(7,11,0), RGB(7,11,0), 0x76AC, 0x62AC, 0x7B31, 0x7F92, 0x0, 0x0, RGB(16,21,16), RGB(10,14,10), RGB(14,19,14), RGB(13,17,13)};
+static const struct SpritePalette sWinterGrassObjectPaletteInfo = {sWinterGrassObjectPalette, 0x1005};
 
 extern const u8 gFieldEffectObjectPic_SwampLongGrassTiles[];
 extern const u16 gFieldEffectObjectPic_SwampLongGrassPal[];
@@ -71,7 +77,7 @@ static const struct SpriteTemplate sFieldEffectObjectTemplate_ShakingSwampLongGr
 
 #endif
 
-static const struct OamData sMiningScanRing =
+static const struct OamData sMiningScanRingOam =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,
 	.objMode = ST_OAM_OBJ_NORMAL,
@@ -169,13 +175,24 @@ static const struct SpriteTemplate sSpriteTemplateLavaBubbles =
 
 static const struct SpriteTemplate sMiningScanRingSpriteTemplate =
 {
-	.tileTag = TAG_MINING_SCAN_RING, 
-	.paletteTag = TAG_MINING_SCAN_RING,
-	.oam = &sMiningScanRing,
+	.tileTag = ANIM_TAG_THIN_RING, 
+	.paletteTag = ANIM_TAG_THIN_RING,
+	.oam = &sMiningScanRingOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = sMiningScanRingAffineAnimTable,
 	.callback = SpriteCB_MiningScanRing,
+};
+
+static const struct SpriteTemplate sExplosionSpriteTemplate =
+{
+	.tileTag = ANIM_TAG_EXPLOSION, 
+	.paletteTag = ANIM_TAG_EXPLOSION,
+	.oam = (void*) 0x83AC9D8, //OAM_OFF_32x32
+	.anims = (void*) 0x83E3F90,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_DestroyExplosion,
 };
 
 static const struct SpritePalette sCaveSmokeSpritePalette = {gInterfaceGfx_caveSmokePal, SMOKE_TAG};
@@ -192,6 +209,17 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = &sAutumnGrassObjectPaletteInfo;
 			break;
+		case MAPSEC_ROUTE_1:
+		case MAPSEC_ROUTE_8:
+		case MAPSEC_FROZEN_FOREST:
+		WINTER:
+			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
+			*spritePalette = &sWinterGrassObjectPaletteInfo;
+			break;
+		case MAPSEC_VICTORY_ROAD:
+			if (MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
+				goto WINTER;
+			goto DEFAULT;
 		//case MAPSEC_POLDER_TOWN:
 		case MAPSEC_COOTES_BOG:
 			if (fieldEffectTemplateArg == 15 || fieldEffectTemplateArg == 18) //Long Grass and Shaking Long Grass
@@ -204,6 +232,7 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 			break;
 	#endif
 		default:
+		DEFAULT:
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = gFieldEffectObjectPaletteInfo1;
 			break;
@@ -580,10 +609,41 @@ static void FldEff_MiningScanRing(void)
 		//Blend the palette a light blue
 		if (gFieldEffectArguments[2])
 		{
-			u16 paletteOffset = IndexOfSpritePaletteTag(TAG_MINING_SCAN_RING) * 16 + 16 * 16;
+			u16 paletteOffset = IndexOfSpritePaletteTag(ANIM_TAG_THIN_RING) * 16 + 16 * 16;
 			BlendPalette(paletteOffset, 16, 0x10, 0x5F72); //Light greenish
 			CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
 		}
+	}
+}
+
+static void FldEff_Explosion(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	x = gFieldEffectArguments[0] + 7;
+	y = gFieldEffectArguments[1] + 7;
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	LoadCompressedSpriteSheetUsingHeap(&gExplosionSpriteSheet);
+	LoadCompressedSpritePaletteUsingHeap(&gExplosionSpritePalette);
+	spriteId = CreateSpriteAtEnd(&sExplosionSpriteTemplate, x, y, 0);
+	if (spriteId != MAX_SPRITES)
+	{
+		struct Sprite* sprite = &gSprites[spriteId];
+		sprite->oam.priority = 1; //Above NPCs
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->data[0] = FLDEFF_EXPLOSION;
+		PlaySE(SE_EXPLOSION);
+	}
+}
+
+static void SpriteCB_DestroyExplosion(struct Sprite* sprite)
+{
+	if (sprite->animEnded)
+	{
+		FreeSpriteOamMatrix(sprite);
+		FieldEffectFreeGraphicsResources(sprite);
+		FieldEffectActiveListRemove(FLDEFF_EXPLOSION);
 	}
 }
 
@@ -644,5 +704,11 @@ const struct FieldEffectScript2 FieldEffectScript_LavaBubbles =
 const struct FieldEffectScript FieldEffectScript_MiningScanRing =
 {
 	FLDEFF_CALLASM, FldEff_MiningScanRing,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript FieldEffectScript_Explosion =
+{
+	FLDEFF_CALLASM, FldEff_Explosion,
 	FLDEFF_END,
 };

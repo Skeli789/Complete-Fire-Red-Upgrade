@@ -144,6 +144,7 @@ GiveMonToPlayer 8040B14 1
 ScriptGiveMon 80A011C 3
 
 ItemId_GetName 809A8BC 1
+ItemId_GetHoldEffect 809A924 1
 
 ##Overworld Hooks
 GetAdjustedInitialTransitionFlags 8055ACC 3

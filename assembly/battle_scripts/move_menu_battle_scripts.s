@@ -13,6 +13,7 @@ move_menu_battle_scripts.s
 .global BattleScript_SelectingNotAllowedMoveChoiceAbility
 .global BattleScript_SelectingNotAllowedMoveAssaultVest
 .global BattleScript_SelectingNotAllowedSkyBattle
+.global BattleScript_SelectingNotAllowedRingChallenge
 .global BattleScript_SelectingNotAllowedGravity
 .global BattleScript_SelectingNotAllowedThroatChop
 .global BattleScript_SelectingNotAllowedHealBlock
@@ -34,6 +35,11 @@ BattleScript_SelectingNotAllowedMoveAssaultVest:
 
 BattleScript_SelectingNotAllowedSkyBattle:
 	setword BATTLE_STRING_LOADER SkyBattleMoveMenuString
+	printselectionstring 0x184
+	endselectionscript
+
+BattleScript_SelectingNotAllowedRingChallenge:
+	setword BATTLE_STRING_LOADER gText_RingChallengeBanMoveMenu
 	printselectionstring 0x184
 	endselectionscript
 

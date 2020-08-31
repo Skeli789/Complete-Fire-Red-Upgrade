@@ -1233,6 +1233,27 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	}
 }
 
+void ModulateByTypeEffectiveness(u8 moveType, u8 defType1, u8 defType2, u8* var)
+{
+	u8 multiplier1 = gTypeEffectiveness[moveType][defType1];
+	u8 multiplier2 = gTypeEffectiveness[moveType][defType2];
+
+	//Fix multiplier 1 calculation
+	if (multiplier1 == TYPE_MUL_NO_DATA)
+		multiplier1 = TYPE_MUL_NORMAL;
+	else if (multiplier1 == TYPE_MUL_NO_EFFECT)
+		multiplier1 = 0;
+
+	//Fix multiplier 2 calculation
+	if (multiplier2 == TYPE_MUL_NO_DATA)
+		multiplier2 = TYPE_MUL_NORMAL;
+	else if (multiplier2 == TYPE_MUL_NO_EFFECT)
+		multiplier2 = 0;
+
+	*var = (*var * multiplier1) / 10;
+	*var = (*var * multiplier2) / 10;
+}
+
 u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 {
 	u8 atkAbility = ABILITY(bankAtk);

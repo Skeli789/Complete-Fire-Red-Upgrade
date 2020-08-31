@@ -271,13 +271,12 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 			if (blockProperties & targetBehaviour)
 			{
 				//Caves and water need to have their encounter values scaled higher
-				u8 weight = 0;
+				bool8 weight = 0;
 				if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
 					//Water
 					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
-					u8 elevDiff = (IsZCoordMismatchAt((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
-						| gEventObjects[gPlayerAvatar->spriteId].currentElevation), topX, topY));
+					u8 elevDiff = IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX, topY);
 
 					weight = (Random() % scale <= 1) && elevDiff && !MapGridIsImpassableAt(topX, topY);
 				}
@@ -294,7 +293,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 					weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX, topY);
 				}
 
-				if (weight > 0)
+				if (weight)
 				{
 					*xBuff = topX;
 					*yBuff = topY;

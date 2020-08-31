@@ -29,6 +29,7 @@ extern const u8 TheOpposingString[];
 extern const u8 TheShadowString[];
 extern const u8 TheWildString[];
 extern const u8 sText_thewild[];
+extern const u8 gText_BlackPlayerPrefix[];
 
 //Rewritten Strings
 extern const u8 BattleText_TwoLinkTrainersWantToBattle[];

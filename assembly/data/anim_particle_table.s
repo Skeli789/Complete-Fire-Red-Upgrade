@@ -5,6 +5,9 @@
 .global gBattleAnimPaletteTable
 .global gThinRingSpriteSheet
 .global gThinRingSpritePalette
+.global gExplosionSpriteSheet
+.global gExplosionSpritePalette
+
 /*
 anim_particle_table.s
 	tables for animation particles
@@ -212,6 +215,7 @@ animparticle 0x8d20e20,	0x800,	ANIM_TAG_MOON
 animparticle 0x8d21180,	0x200,	ANIM_TAG_GREEN_SPARKLE
 animparticle 0x8d20a64,	0x800,	ANIM_TAG_SPIRAL
 animparticle 0x8d21258,	0x200,	ANIM_TAG_SNORE_Z
+gExplosionSpriteSheet:
 animparticle 0x8d213f0,	0x800,	ANIM_TAG_EXPLOSION
 animparticle NAIL_IMG,	0x400,	ANIM_TAG_NAIL
 animparticle 0x8d218ec,	0x200,	ANIM_TAG_GHOSTLY_SPIRIT
@@ -583,6 +587,7 @@ animparticlepal 0x8d21158,	ANIM_TAG_MOON
 animparticlepal 0x8d21238,	ANIM_TAG_GREEN_SPARKLE
 animparticlepal 0x8d20e08,	ANIM_TAG_SPIRAL
 animparticlepal 0x8d213c8,	ANIM_TAG_SNORE_Z
+gExplosionSpritePalette:
 animparticlepal 0x8d217e0,	ANIM_TAG_EXPLOSION
 animparticlepal NAIL_PAL,	ANIM_TAG_NAIL
 animparticlepal 0x8d21a2c,	ANIM_TAG_GHOSTLY_SPIRIT

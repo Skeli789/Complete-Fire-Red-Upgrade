@@ -671,6 +671,7 @@ EventScript_UseDive_Ask:
 	setanimation 0x0 0x8004
 	setanimation 0x1 1
 	doanimation FLDEFF_USE_DIVE
+	waitanimation FLDEFF_USE_DIVE
 	goto EventScript_EndDive
 
 .global EventScript_CantDive
@@ -684,15 +685,24 @@ EventScript_UseDive_SkipAsk:
 	lockall
 	call FollowerIntoPlayerScript
 	callasm HideFollower
+	msgbox 0x81BDFD7 MSG_NORMAL
 	setanimation 0x0 0x8004
 	setanimation 0x1 1
 	doanimation FLDEFF_USE_DIVE
+	waitanimation FLDEFF_USE_DIVE
 	goto EventScript_EndDive	
 
 .global EventScript_UseDiveUnderwater
 EventScript_UseDiveUnderwater:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_DIVE
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseDiveUnderwater_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseDiveUnderwater_SkipAsk
+
+EventScript_UseDiveUnderwater_Ask:
 	msgbox gText_WantToSurface MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_EndSurface
@@ -703,9 +713,21 @@ EventScript_UseDiveUnderwater:
 	setanimation 0x0 0x8004
 	setanimation 0x1 1
 	doanimation FLDEFF_USE_DIVE
+	waitanimation FLDEFF_USE_DIVE
 	callasm FollowMe_SetIndicatorToRecreateSurfBlob
 	goto EventScript_EndSurface
-	end
+
+EventScript_UseDiveUnderwater_SkipAsk:
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	msgbox 0x81BDFD7 MSG_NORMAL
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
+	doanimation FLDEFF_USE_DIVE
+	waitanimation FLDEFF_USE_DIVE
+	callasm FollowMe_SetIndicatorToRecreateSurfBlob
+	goto EventScript_EndSurface
 
 .global EventScript_CantSurface
 EventScript_CantSurface:

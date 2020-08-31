@@ -149,12 +149,14 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 				break;
 		}
 
+		#ifndef UNBOUND
 		if (spriteId > 239 && tableId == 0)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
 			spriteId = (newId & 0xFF);		// lower byte
 		}
+		#endif
 	}
 
 	NPCPtr spriteAddr;

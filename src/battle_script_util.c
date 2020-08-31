@@ -2180,3 +2180,9 @@ void SetCorrectTeleportBattleScript(void)
 			gBattlescriptCurrInstr = BattleScript_TeleportFlee - 5;
 	}
 }
+
+void TrySetBurningJealousyMoveEffect(void)
+{
+	if (gNewBS->statRoseThisRound[gBankTarget])
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
+}

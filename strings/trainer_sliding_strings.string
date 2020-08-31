@@ -26,8 +26,11 @@ Fight like the roaring waterfall\nbehind us, [FD][06]!\p
 #org @sText_GalavanLastSwitchIn
 Ha ha ha ha!\nIt ain't over yet!\p 
 
+#org @sText_BigMoLastSwitchIn
+Show 'em how tough we really are,\n[FD][06]!\p 
+
 #org @sText_TessyLastSwitchIn
-It's tahm for the real fight,\nI reckon'!\p
+It's time for the real fight,\nI reckon'!\p
 
 #org @sText_Zeph1LowHP
 Impossible[.]\p 
@@ -37,5 +40,11 @@ No!\nI can't lose again!\p
 
 #org @sText_MaximaLastSwitchIn
 The power of Mega Evolution[.]\nCan you feel it within your reach?\p 
+
+#org @sText_Aklove1LowHP
+Tch[.] such a waste[.]\p 
+
+#org @sText_Aklove2LowHP
+No!\nI won't concede, yet!\p 
 
 #endif

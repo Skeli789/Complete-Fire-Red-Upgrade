@@ -39,8 +39,11 @@ bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 AreMegasZMovesBannedInTier(u8 tier);
 bool8 IsMegaZMoveBannedBattle(void);
+bool8 IsMoveBannedInRingChallenge(u16 move, u8 bank);
+bool8 IsMoveBannedInRingChallengeByMon(u16 move, struct Pokemon* mon);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetBattleMineStreak(u8 type, u8 tier);
+u16 GetRingChallengeSteak(u8 type);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
 
@@ -77,6 +80,8 @@ enum BattleFacilities
 	IN_BATTLE_SANDS,
 	IN_BATTLE_MINE,
 	IN_BATTLE_CIRCUS,
+	IN_BATTLE_FACTORY,
+	IN_RING_CHALLENGE,
 	IN_ISLE_CHALLENGE,
 	NUM_BATTLE_FACILITIES,
 };
@@ -302,10 +307,20 @@ struct BattleSandsStreak
 	/*0x8*/ u16 streakLength;
 }; /*SIZE = 0xA*/
 
-extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
+struct RingChallengeStreak
+{
+	/*0x0*/ u16 streakLength;
+	/*0x2*/ u16 species1;
+	/*0x4*/ u16 species2;
+	/*0x6*/ u16 species3;
+}; /*SIZE = 0x8*/
+
+extern struct BattleSandsStreak gBattleSandsStreaks[/*PREVIOUS_OR_MAX*/ 2]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
 extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50 - sizeof(1) = 0x70
+extern struct RingChallengeStreak gRingChallengeStreaks[/*CURRENT_OR_MAX*/ 2]; //0x2028FC0
+
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 //FREE SPACE POST CIRCUS - 0x2027170: 0x2C4 bytes
 

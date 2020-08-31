@@ -28,6 +28,7 @@ attackcanceler_battle_scripts.s
 .global BattleScript_ZMoveActivateDamaging
 .global BattleScript_DarkTypePreventsPrankster
 .global BattleScript_MoveUsedSkyBattlePrevents
+.global BattleScript_MoveUsedRingChallengePrevents
 .global BattleScript_CantUseSignatureMove
 .global BattleScript_HoopaCantUseHyperspaceFury
 .global BattleScript_MoveUsedDynamaxPrevents
@@ -266,6 +267,17 @@ BattleScript_DarkTypePreventsPrankster:
 BattleScript_MoveUsedSkyBattlePrevents:
 	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER SkyBattleAttackCancelString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedRingChallengePrevents:
+	attackstring
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_RingChallengeAttackCancel
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END

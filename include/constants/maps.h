@@ -659,6 +659,12 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_RUINS_OF_VOID_B3F		((1 << 8) | 114)
 #define MAP_RUINS_OF_VOID_B3F_ALT	((1 << 8) | 107)
 
+#define MAP_DISTORTION_WORLD_1		((1 << 8) | 63)
+#define MAP_DISTORTION_WORLD_2		((1 << 8) | 64)
+#define MAP_DISTORTION_WORLD_3		((1 << 8) | 65)
+#define MAP_DISTORTION_WORLD_4		((1 << 8) | 66)
+#define MAP_DISTORTION_WORLD_5		((1 << 8) | 67)
+
 #define MAP_TOMB_OF_BORRIUS_1F		((1 << 8) | 83)
 #define MAP_TOMB_OF_BORRIUS_B3F		((1 << 8) | 85)
 #define MAP_TOMB_OF_BORRIUS_1F_BACK	((1 << 8) | 90)
@@ -696,6 +702,12 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_VIVILL_WAREHOUSE_B2F					((1 << 8) | 103)
 #define MAP_VIVILL_WAREHOUSE_B3F					((1 << 8) | 104)
 #define MAP_VIVILL_WAREHOUSE_COMMAND_ROOM 			((1 << 8) | 105)
+
+#define MAP_ANTISIS_SEWERS_NORTH		((1 << 8) | 68)
+#define MAP_ANTISIS_SEWERS_SOUTH		((1 << 8) | 69)
+#define MAP_ANTISIS_SEWERS_WEST_TUNNEL	((1 << 8) | 70)
+#define MAP_ANTISIS_SEWERS_EAST_TUNNEL	((1 << 8) | 71)
+#define MAP_ANTISIS_SEWERS_ROOM			((1 << 8) | 72)
 
 #define MAP_HISTORY_CUTSCENE						((31 << 8) | 5)
 

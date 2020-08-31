@@ -8,6 +8,7 @@
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
 #include "../include/constants/metatile_behaviors.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_terrain.h"
@@ -294,6 +295,9 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 			case BATTLE_TERRAIN_SNOW_CAVE:
 				terrain = BATTLE_TERRAIN_WATER_IN_SNOW_CAVE;
 				break;
+			case BATTLE_TERRAIN_ANTISIS_SEWERS:
+				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;
+				break;
 		}
 	}
 
@@ -309,6 +313,8 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				terrain = BATTLE_TERRAIN_SNOW_FIELD;
 			else if (IsCurrentAreaDesert())
 				terrain = BATTLE_TERRAIN_DESERT;
+			else if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_CITY)
+				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
 			break;
 		case BATTLE_TERRAIN_GRASS:
 			if (IsCurrentAreaWinter())

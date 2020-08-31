@@ -78,6 +78,7 @@ void __attribute__((long_call)) npc_apply_direction(struct EventObject *eventObj
 bool8 __attribute__((long_call)) npc_obj_ministep_stop_on_arrival(struct EventObject *eventObject, struct Sprite *sprite);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
+u8 __attribute__((long_call)) GetEventObjectIdByXY(s16 x, s16 y);
 void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, struct Sprite *sprite, u8 direction);
 u8 __attribute__((long_call)) GetOppositeDirection(u8 direction);
 u8 __attribute__((long_call)) CreateVirtualSprite(u8 graphicsId, u8 a1, s16 x, s16 y, u8 z, u8 direction);
@@ -117,6 +118,11 @@ void __attribute__((long_call)) OverrideMovementTypeForEventObject(const struct 
 void __attribute__((long_call)) TryOverrideTemplateCoordsForEventObject(const struct EventObject* eventObject, u8 movementType);
 void __attribute__((long_call)) OverrideTemplateCoordsForEventObject(const struct EventObject* eventObject);
 u8 __attribute__((long_call)) GetTrainerFacingDirectionMovementType(u8 direction);
+bool8 __attribute__((long_call)) EventObjectSetHeldMovement(struct EventObject *eventObject, u8 specialAnimId);
+void __attribute__((long_call)) EventObjectForceSetHeldMovement(struct EventObject *eventObject, u8 movementActionId);
+bool8 __attribute__((long_call)) EventObjectIsMovementOverridden(struct EventObject *eventObject);
+u8 __attribute__((long_call)) EventObjectCheckHeldMovementStatus(struct EventObject *eventObject);
+u8 __attribute__((long_call)) EventObjectGetHeldMovementActionId(struct EventObject *eventObject);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -128,7 +134,6 @@ extern const u8 gReflectionEffectPaletteMap[];
 void ResetEventObjects(void);
 u8 GetEventObjectIdByLocalIdAndMap(u8, u8, u8);
 bool8 TryGetEventObjectIdByLocalIdAndMap(u8, u8, u8, u8 *);
-u8 GetEventObjectIdByXY(s16, s16);
 void SetEventObjectDirection(struct EventObject *, u8);
 u8 GetFirstInactiveEventObjectId(void);
 void RemoveEventObjectByLocalIdAndMap(u8, u8, u8);
@@ -187,11 +192,6 @@ u8 GetFishingDirectionAnimNum(u8 direction);
 u8 GetAcroWheelieDirectionAnimNum(u8 direction);
 u8 GetFishingBiteDirectionAnimNum(u8 direction);
 u8 GetFishingNoCatchDirectionAnimNum(u8 direction);
-bool8 EventObjectSetHeldMovement(struct EventObject *eventObject, u8 specialAnimId);
-void EventObjectForceSetHeldMovement(struct EventObject *eventObject, u8 movementActionId);
-bool8 EventObjectIsMovementOverridden(struct EventObject *eventObject);
-u8 EventObjectCheckHeldMovementStatus(struct EventObject *eventObject);
-u8 EventObjectGetHeldMovementActionId(struct EventObject *eventObject);
 void TryOverrideTemplateCoordsForEventObject(const struct EventObject *eventObject, u8 movementType);
 void OverrideTemplateCoordsForEventObject(const struct EventObject *eventObject);
 void ShiftStillEventObjectCoords(struct EventObject *pObject);

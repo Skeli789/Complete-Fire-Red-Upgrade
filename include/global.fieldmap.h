@@ -247,7 +247,7 @@ struct EventObject
 	/*0x09*/ u8 mapNum;
 	/*0x0A*/ u8 mapGroup;
 	/*0x0B*/ u8 currentElevation:4;
-			 u8 elevation:4;
+			 u8 previousElevation:4;
 	/*0x0C*/ struct Coords16 initialCoords;
 	/*0x10*/ struct Coords16 currentCoords;
 	/*0x14*/ struct Coords16 previousCoords;
