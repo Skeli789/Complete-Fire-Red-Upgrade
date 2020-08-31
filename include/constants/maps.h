@@ -627,6 +627,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAP_CINDER_VOLCANO_2F			((45 << 8) | 4)
 #define MAP_CINDER_VOLCANO_SHADOW_F1 	((6 << 8) | 12)
 #define MAP_CINDER_VOLCANO_3F_1			((1 << 8) | 46)
+#define MAP_CINDER_VOLCANO_PEAK			((1 << 8) | 47)
 #define MAP_CINDER_VOLCANO_4F_2			((1 << 8) | 50)
 #define MAP_CINDER_VOLCANO_SHADOW_B1F 	((1 << 8) | 51)
 #define MAP_CINDER_VOLCANO_SHADOW_B2F	((1 << 8) | 52)

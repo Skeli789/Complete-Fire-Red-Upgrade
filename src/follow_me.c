@@ -160,6 +160,8 @@ void FollowMe_TryRemoveFollowerOnWhiteOut(void)
 	{
 		if (gFollowerState.flags & FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
 			gFollowerState.inProgress = FALSE;
+		else
+			FollowMe_WarpSetEnd();
 	}
 }
 

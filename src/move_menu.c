@@ -291,7 +291,7 @@ void HandleInputChooseMove(void)
 			else
 				gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
-			gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+			gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 			MoveSelectionDisplayMoveType();
 		}
 	}
@@ -1443,7 +1443,7 @@ void HandleInputChooseTarget(void)
 	if (JOY_NEW(A_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 		CloseZMoveDetails();
@@ -1454,7 +1454,7 @@ void HandleInputChooseTarget(void)
 	else if (JOY_NEW(B_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 		gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseMove;
 		DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
 		DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
@@ -1469,7 +1469,7 @@ void HandleInputChooseTarget(void)
 	else if (JOY_NEW(DPAD_LEFT | DPAD_UP))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 
 		do
 		{
@@ -1482,7 +1482,7 @@ void HandleInputChooseTarget(void)
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
 					}
-					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 					return;
 
 				case MOVE_POLLENPUFF:
@@ -1490,7 +1490,7 @@ void HandleInputChooseTarget(void)
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
-						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 						return;
 					}
 			}
@@ -1532,13 +1532,13 @@ void HandleInputChooseTarget(void)
 
 		} while (i == 0);
 
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 		MoveSelectionDisplayMoveType();
 	}
 	else if (JOY_NEW(DPAD_RIGHT | DPAD_DOWN))
 	{
 		PlaySE(SE_SELECT);
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
 
 		do
 		{
@@ -1551,7 +1551,7 @@ void HandleInputChooseTarget(void)
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
 					}
-					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+					gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 					return;
 
 				case MOVE_POLLENPUFF:
@@ -1559,7 +1559,7 @@ void HandleInputChooseTarget(void)
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
-						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+						gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 						return;
 					}
 			}
@@ -1600,7 +1600,7 @@ void HandleInputChooseTarget(void)
 
 		} while (i == 0);
 
-		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 		MoveSelectionDisplayMoveType();
 	}
 }

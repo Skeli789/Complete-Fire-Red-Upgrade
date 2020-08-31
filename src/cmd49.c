@@ -69,6 +69,7 @@ enum
 	ATK49_MIRROR_MOVE,
 	ATK49_MULTI_HIT_MOVES,
 	ATK49_RAID_SHIELD_BREAK,
+	ATK49_ITEM_EFFECTS_END_TURN_TARGET_2,
 	ATK49_DEFROST,
 	ATK49_SECOND_MOVE_EFFECT,
 	ATK49_MAGICIAN_MOXIE_BATTLEBOND,
@@ -509,6 +510,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
+		case ATK49_ITEM_EFFECTS_END_TURN_TARGET_2:
 			if ((ABILITY(gBankTarget) == ABILITY_STICKYHOLD && BATTLER_ALIVE(gBankTarget))
 			||  !BATTLER_ALIVE(gBankAttacker)
 			||  !CanKnockOffItem(gBankTarget)
