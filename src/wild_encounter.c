@@ -951,7 +951,9 @@ bool8 SweetScentWildEncounter(void)
 		}
 
 		#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
-		if (Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
+		if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set
+		&& Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE
+		&& ViableMonCount(gPlayerParty) >= 2) //Player has two Pokeon that can battle on their own
 			FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
 		#endif
 		TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
