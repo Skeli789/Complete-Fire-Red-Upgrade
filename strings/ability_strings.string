@@ -74,7 +74,7 @@ The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 [SCRIPTING_BANK] stopped\nschooling!
 
 #org @gText_GorillaTacticsMoveMenuBlockage
-[CURRENT_MOVE] can't be selected\nbecause of [LAST_ABILITY]!\p
+[LAST_ABILITY] allows only\n[CURRENT_MOVE] to be used!\p
 
 #org @gText_IceFaceTookDamage
 The Ice Face took damage for\n[TARGET]!
