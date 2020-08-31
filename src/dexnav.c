@@ -113,7 +113,7 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter);
 static void DexNavPopulateEncounterList(void);
 static void PrintGUISpeciesName(u16 species);
 static void PrintGUISearchLevel(u16 species);
-static void PrintGUILevelBonus(u16 species);
+static void PrintGUIChainLength(u16 species);
 static void PrintGUIHiddenAbility(u16 species);
 static void DexNavDisplaySpeciesData(void);
 static void DexNavLoadAreaNamesAndInstructions(void);
@@ -174,26 +174,32 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 		}
 	}
 
-	//Create standard wild
+	//Create standard wild Pokemon
 	CreateWildMon(species, level, FindHeaderIndexWithLetter(species, sDexNavHudPtr->unownLetter - 1), TRUE);
 
 	//Pick potential ivs to set to 31
-	u8 iv[3];
-	for (i = 0; i < NELEMS(iv); ++i)
-		iv[i] = Random() % 6;
-
-	if ((iv[0] != iv[1]) && (iv[0] != iv[2]) && (iv[1] != iv[2]))
+	u8 numPerfectStats = 0;
+	u8 perfect = 31;
+	bool8 perfectStats[NUM_STATS] = {0};
+	
+	for (i = 0; i < NUM_STATS; ++i) //Count how many stats are already perfect
 	{
-		u8 perfectIv = 0x1F;
-		if (potential > 2)
-			SetMonData(mon, MON_DATA_HP_IV + iv[2], &perfectIv);
-		else if (potential > 1)
-			SetMonData(mon, MON_DATA_HP_IV + iv[1], &perfectIv);
-		else if (potential)
-			SetMonData(mon, MON_DATA_HP_IV + iv[0], &perfectIv);
+		if (GetMonData(mon, MON_DATA_HP_IV + i, NULL) >= 31)
+			perfectStats[i] = TRUE;
 	}
 
-	//Set ability
+	while (numPerfectStats < potential) //Assign the rest of the prefect stats
+	{
+		u8 statId = Random() % NUM_STATS;
+		if (!perfectStats[statId]) //Must be unique
+		{
+			perfectStats[statId] = TRUE;
+			++numPerfectStats;
+			SetMonData(mon, MON_DATA_HP_IV + statId, &perfect);
+		}
+	}
+
+	//Set Ability
 	if (gBaseStats[species].hiddenAbility == ability)
 		mon->hiddenAbility = TRUE;
 	else if (gBaseStats[species].ability2 != ABILITY_NONE) //Helps fix a bug where Unown would crash the game in the below function
@@ -205,6 +211,9 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 		mon->moves[i] = sDexNavHudPtr->moveId[i];
 		mon->pp[i] = gBattleMoves[moves[i]].pp;
 	}
+	
+	//Set item
+	SetMonData(mon, MON_DATA_HELD_ITEM, &sDexNavHudPtr->heldItem);
 
 	CalculateMonStats(mon);
 }
@@ -1040,8 +1049,6 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel)
 	// if both are distinct item1 = 50% + srclvl/2; item2 = 5% + srchlvl/2
 	if (randVal < (50 + searchLevelInfluence + 5 + searchLevel))
 		return (randVal > 5 + searchLevelInfluence) ? item1 : item2;
-	else
-		return ITEM_NONE;
 
 	return ITEM_NONE;
 }
@@ -1208,73 +1215,77 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc)
 {
-	bool8 genMove = FALSE;
+	u32 i;
 	u16 randVal = Random() % 100;
+	bool8 genMove = FALSE;
 
 	//Evaluate if Pokemon should get an egg move in first slot
 	if (searchLevel < 5)
 	{
 		#if (SEARCHLEVEL0_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL0_MOVECHANCE)
-			genMove = TRUE;
+		genMove = randVal < SEARCHLEVEL0_MOVECHANCE;
 		#endif
 	}
 	else if (searchLevel < 10)
 	{
 		#if (SEARCHLEVEL5_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL5_MOVECHANCE)
-			genMove = TRUE;
+		genMove = randVal < SEARCHLEVEL5_MOVECHANCE;
 		#endif
 	}
 	else if (searchLevel < 25)
 	{
 		#if (SEARCHLEVEL10_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL10_MOVECHANCE)
-			genMove = TRUE;
+		genMove = randVal < SEARCHLEVEL10_MOVECHANCE;
 		#endif
 	}
 	else if (searchLevel < 50)
 	{
 		#if (SEARCHLEVEL25_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL25_MOVECHANCE)
-			genMove = TRUE;
+		genMove = randVal < SEARCHLEVEL25_MOVECHANCE;
 		#endif
 	}
 	else if (searchLevel < 100)
 	{
 		#if (SEARCHLEVEL50_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL50_MOVECHANCE)
-			genMove = TRUE;
+		genMove = randVal < SEARCHLEVEL50_MOVECHANCE;
 		#endif
 	}
 	else
 	{
 		#if (SEARCHLEVEL100_MOVECHANCE != 0)
-		if (randVal < SEARCHLEVEL100_MOVECHANCE)
-			genMove = TRUE;
+		genMove =randVal < SEARCHLEVEL100_MOVECHANCE;
 		#endif
 	}
 
 	//Generate a wild mon and copy moveset
 	CreateWildMon(species, encounterLevel, FindHeaderIndexWithLetter(species, sDexNavHudPtr->unownLetter - 1), TRUE);
 
-	//Store generated mon moves into Dex Nav Struct
-	for (int i = 0; i < MAX_MON_MOVES; ++i)
-	{
-		moveLoc[i] = gEnemyParty[0].moves[i];
-	}
-
-	// set first move slot to a random egg move if search level is good enough
+	//Set first move slot to a random Egg Move if search level is good enough
 	if (genMove == TRUE)
 	{
 		u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
 		u8 numEggMoves = GetEggMoves(&gEnemyParty[0], &eggMoveBuffer);
-		if (numEggMoves != 0)
+
+		if (numEggMoves > 0)
 		{
-			u8 index = RandRange(0, numEggMoves);
-			moveLoc[0] = eggMoveBuffer[index];
+			u8 counter = 0;
+
+			//Try 255 times to give the mon a move it doesn't already know
+			do
+			{
+				u8 index = RandRange(0, numEggMoves);
+				if (!MoveInMonMoveset(eggMoveBuffer[index], &gEnemyParty[0]))
+				{
+					SetMonData(&gEnemyParty[0], MON_DATA_MOVE1, &eggMoveBuffer[index]);
+					break;
+				}
+			} while (++counter < 255);
 		}
 	}
+
+	//Store generated mon moves into Dex Nav Struct
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+		moveLoc[i] = GetMonData(&gEnemyParty[0], MON_DATA_MOVE1 + i, NULL);
 }
 
 static void DexNavDrawBlackBars(u8 spriteIdAddr[2])
@@ -2031,28 +2042,21 @@ static void PrintGUISearchLevel(u16 species)
 	CommitWindow(WIN_SEARCH_LEVEL);
 }
 
-static void PrintGUILevelBonus(u16 species)
+static void PrintGUIChainLength(u16 species)
 {
 	const u8* text;
-	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	CleanWindow(WIN_LEVEL_BONUS);
+	CleanWindow(WIN_CHAIN_LENGTH);
 
 	if (species == SPECIES_NONE)
 		text = gText_DexNav_NoInfo;
 	else
 	{
-		u8 searchLevelBonus = 0;
-		if ((sSearchLevels[dexNum] >> 2) > 20)
-			searchLevelBonus = 20;
-		else
-			searchLevelBonus = (sSearchLevels[dexNum] >> 2);
-
-		ConvertIntToDecimalStringN(gStringVar4, searchLevelBonus, 0, 4);
+		ConvertIntToDecimalStringN(gStringVar4, gCurrentDexNavChain, 0, 3);
 		text = gStringVar4;
 	}
 
-	WindowPrint(WIN_LEVEL_BONUS, 0, 0, 4, &sDexNav_BlackText, 0, text);
-	CommitWindow(WIN_LEVEL_BONUS);
+	WindowPrint(WIN_CHAIN_LENGTH, 0, 0, 4, &sDexNav_BlackText, 0, text);
+	CommitWindow(WIN_CHAIN_LENGTH);
 }
 
 static void PrintGUIHiddenAbility(u16 species)
@@ -2083,7 +2087,7 @@ static void DexNavDisplaySpeciesData(void)
 
 	PrintGUISpeciesName(species);
 	PrintGUISearchLevel(species);
-	PrintGUILevelBonus(species);
+	PrintGUIChainLength(species);
 	PrintGUIHiddenAbility(species);
 }
 

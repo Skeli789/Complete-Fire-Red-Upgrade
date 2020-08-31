@@ -144,7 +144,7 @@ enum
 {
 	WIN_SPECIES,
 	WIN_SEARCH_LEVEL,
-	WIN_LEVEL_BONUS,
+	WIN_CHAIN_LENGTH,
 	WIN_HIDDEN_ABILITY,
 	WIN_MESSAGE,
 	WIN_WATER,
@@ -176,7 +176,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .paletteNum = 15,
         .baseBlock = 19,
     },
-	[WIN_LEVEL_BONUS] =
+	[WIN_CHAIN_LENGTH] =
     {
         .bg = BG_TEXT,
         .tilemapLeft = 21,
