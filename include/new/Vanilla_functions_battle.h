@@ -62,7 +62,6 @@ void __attribute__((long_call)) MoveSelectionDestroyCursorAt(u8 cursorPos);
 void __attribute__((long_call)) ActionSelectionCreateCursorAt(u8 cursorPos, u8 arg1);
 void __attribute__((long_call)) ActionSelectionDestroyCursorAt(u8 cursorPosition);
 void __attribute__((long_call)) HandleChooseActionAfterDma3(void);
-void __attribute__((long_call)) sub_8033AC8(void);
 void __attribute__((long_call)) sub_8033EEC(struct Sprite *sprite);
 void __attribute__((long_call)) BattleLoadOpponentMonSpriteGfx(struct Pokemon* mon, u8 bank);
 void __attribute__((long_call)) BattleLoadPlayerMonSpriteGfx(struct Pokemon* mon, u8 bank);

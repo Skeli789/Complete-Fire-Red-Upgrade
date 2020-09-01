@@ -62,6 +62,7 @@ static void MoveSelectionDisplayDetails(void);
 static void ReloadMoveNamesIfNecessary(void);
 static void CloseZMoveDetails(void);
 static void CloseMaxMoveDetails(void);
+static void HighlightPossibleTargets(void);
 static void TryLoadTypeIcons(void);
 static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
 
@@ -218,7 +219,7 @@ void HandleInputChooseMove(void)
 	gNewBS->zMoveData.partyIndex[SIDE(gActiveBattler)] = moveInfo->zPartyIndex;
 	gNewBS->dynamaxData.partyIndex[SIDE(gActiveBattler)] = moveInfo->dynamaxPartyIndex;
 
-	sub_8033AC8();
+	HighlightPossibleTargets();
 
 	if (gMain.newKeys & A_BUTTON)
 	{
@@ -1602,6 +1603,124 @@ void HandleInputChooseTarget(void)
 
 		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_ShowAsMoveTarget;
 		MoveSelectionDisplayMoveType();
+	}
+}
+
+static void HighlightPossibleTargets(void)
+{
+	u32 bitMask = 0;
+	u8 startY = 0;
+
+	if (IS_DOUBLE_BATTLE)
+	{
+		u8 moveTarget;
+		struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+		u16 chosenMove = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+
+		if (chosenMove == MOVE_CURSE)
+		{
+			if (moveInfo->monType1 != TYPE_GHOST && moveInfo->monType2 != TYPE_GHOST && moveInfo->monType3 != TYPE_GHOST)
+				moveTarget = MOVE_TARGET_USER;
+			else
+				moveTarget = MOVE_TARGET_SELECTED;
+		}
+		else
+			moveTarget = gBattleMoves[chosenMove].target;
+
+		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
+			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
+
+		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)
+			moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;
+
+		switch (moveTarget)
+		{
+			case MOVE_TARGET_SELECTED:
+			case MOVE_TARGET_DEPENDS:
+			case MOVE_TARGET_USER_OR_PARTNER:
+			case MOVE_TARGET_RANDOM:
+				bitMask = 0xF0000;
+				startY = 0;
+				break;
+			case MOVE_TARGET_BOTH:
+			case MOVE_TARGET_OPPONENTS_FIELD:
+				bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] 
+						 | gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16; 
+				startY = 8;
+				break;
+			case MOVE_TARGET_USER:
+				switch (chosenMove)
+				{
+					//Moves that affect the whole field
+					case MOVE_HAZE:
+					case MOVE_SANDSTORM:
+					case MOVE_PERISHSONG:
+					case MOVE_RAINDANCE:
+					case MOVE_SUNNYDAY:
+					case MOVE_HAIL:
+					case MOVE_MUDSPORT:
+					case MOVE_WATERSPORT:
+					case MOVE_FLOWERSHIELD:
+					case MOVE_ROTOTILLER:
+					case MOVE_ELECTRICTERRAIN:
+					case MOVE_GRASSYTERRAIN:
+					case MOVE_MISTYTERRAIN:
+					case MOVE_PSYCHICTERRAIN:
+					case MOVE_TRICKROOM:
+					case MOVE_MAGICROOM:
+					case MOVE_WONDERROOM:
+					case MOVE_GRAVITY:
+					case MOVE_IONDELUGE:
+					case MOVE_FAIRYLOCK:
+					case MOVE_TEATIME:
+					case MOVE_COURTCHANGE:
+						bitMask = 0xF0000;
+						break;
+
+					//Moves that affect the user's side
+					case MOVE_HOWL:
+					case MOVE_SAFEGUARD:
+					case MOVE_REFLECT:
+					case MOVE_LIGHTSCREEN:
+					case MOVE_MIST:
+					case MOVE_AURORAVEIL:
+					case MOVE_HEALBELL:
+					case MOVE_AROMATHERAPY:
+					case MOVE_TAILWIND:
+					case MOVE_LUCKYCHANT:
+					case MOVE_CRAFTYSHIELD:
+					case MOVE_MATBLOCK:
+					case MOVE_QUICKGUARD:
+					case MOVE_WIDEGUARD:
+					case MOVE_GEARUP:
+					case MOVE_MAGNETICFLUX:
+					case MOVE_LIFEDEW:
+					case MOVE_JUNGLEHEALING:
+						bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] 
+								 | gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)]) << 16; 
+						break;
+
+					//Moves the affect the user's partner
+					case MOVE_HELPINGHAND:
+					case MOVE_AROMATICMIST:
+					case MOVE_COACHING:
+						bitMask = (gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)]) << 16;
+						break;
+					default:
+						bitMask = (gBitTable[gActiveBattler]) << 16;
+						break;
+				}
+				startY = 8;
+				break;
+			case MOVE_TARGET_FOES_AND_ALLY:
+				bitMask = (gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] 
+						 | gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)] 
+						 | gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)]) << 16;
+				startY = 8;
+				break;
+		}
+
+		BeginNormalPaletteFade(bitMask, 8, startY, 0, RGB_WHITE);
 	}
 }
 
