@@ -416,7 +416,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.camouflageType = TYPE_DARK,
 			.secretPowerEffect = MOVE_EFFECT_SLEEP,
 			.secretPowerAnim = MOVE_FEINTATTACK,
-			.naturePowerMove = MOVE_DARKPULSE,
+			.naturePowerMove = MOVE_NIGHTDAZE,
 			.burmyForm = SPECIES_NONE,
 		},
 
@@ -452,7 +452,25 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.camouflageType = TYPE_FLYING,
 			.secretPowerEffect = MOVE_EFFECT_FLINCH,
 			.secretPowerAnim = MOVE_WINGATTACK,
-			.naturePowerMove = MOVE_AEROBLAST,
+			.naturePowerMove = MOVE_AIRSLASH,
+			.burmyForm = SPECIES_NONE,
+		},
+
+	[BATTLE_TERRAIN_BOG + 4] =
+		{
+			.camouflageType = TYPE_GROUND,
+			.secretPowerEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.secretPowerAnim = MOVE_MUDSHOT,
+			.naturePowerMove = MOVE_MUDBOMB,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_BOG_WATER + 4] =
+		{
+			.camouflageType = TYPE_GROUND,
+			.secretPowerEffect = MOVE_EFFECT_ACC_MINUS_1,
+			.secretPowerAnim = MOVE_MUDSLAP,
+			.naturePowerMove = MOVE_MUDDYWATER,
 			.burmyForm = SPECIES_NONE,
 		},
 #endif

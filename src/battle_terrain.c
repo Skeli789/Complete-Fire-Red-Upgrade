@@ -273,9 +273,45 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 #ifdef UNBOUND
 	u16 tileBehavior;
 	s16 x, y;
+	u8 mapSec = GetCurrentRegionMapSectionId();
 
 	PlayerGetDestCoords(&x, &y);
 	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+
+	switch (terrain) {
+		case BATTLE_TERRAIN_SNOW_CAVE:
+			if (MetatileBehavior_IsIce(tileBehavior))
+				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
+			break;
+		case BATTLE_TERRAIN_PLAIN:
+			if (IsCurrentAreaAutumn())
+				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
+			else if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_FIELD;
+			else if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
+			else if (mapSec == MAPSEC_ANTISIS_CITY)
+				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
+			else if (IsCurrentAreaSwamp())
+				terrain = BATTLE_TERRAIN_BOG;
+			break;
+		case BATTLE_TERRAIN_GRASS:
+			if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_POND:
+			if (IsCurrentAreaSwamp())
+				terrain = BATTLE_TERRAIN_BOG_WATER;
+			break;
+		case BATTLE_TERRAIN_SNOW_FIELD:
+			if (MetatileBehavior_IsTallGrass(tileBehavior))
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_SAND:
+			if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
+			break;
+	}
 
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 	{
@@ -298,36 +334,10 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 			case BATTLE_TERRAIN_ANTISIS_SEWERS:
 				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;
 				break;
+			case BATTLE_TERRAIN_BOG:
+				terrain = BATTLE_TERRAIN_BOG_WATER;
+				break;
 		}
-	}
-
-	switch (terrain) {
-		case BATTLE_TERRAIN_SNOW_CAVE:
-			if (MetatileBehavior_IsIce(tileBehavior))
-				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
-			break;
-		case BATTLE_TERRAIN_PLAIN:
-			if (IsCurrentAreaAutumn())
-				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
-			else if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_FIELD;
-			else if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			else if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_CITY)
-				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
-			break;
-		case BATTLE_TERRAIN_GRASS:
-			if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
-			break;
-		case BATTLE_TERRAIN_SNOW_FIELD:
-			if (MetatileBehavior_IsTallGrass(tileBehavior))
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
-			break;
-		case BATTLE_TERRAIN_SAND:
-			if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			break;
 	}
 #endif
 

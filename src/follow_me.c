@@ -124,7 +124,7 @@ void HideFollower(void)
 
 	if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_ON || gFollowerState.createSurfBlob == SURF_BLOB_STATE_GET_OFF)
 	{
-		BindFieldEffectToSprite(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
+		SetSurfBobState(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
 		DestroySprite(&gSprites[gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId]);
 		gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId = 0; //Unbind
 		gFollowerState.createSurfBlob = SURF_BLOB_STATE_HIDDEN_ON;
@@ -253,7 +253,7 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 			gFollowerState.createSurfBlob = SURF_BLOB_STATE_ON; //Get rid of hidden
 			SetUpSurfBlobFieldEffect(follower);
 			follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
-			BindFieldEffectToSprite(follower->fieldEffectSpriteId, 1);
+			SetSurfBobState(follower->fieldEffectSpriteId, 1);
 		}
 		else
 			TryUpdateFollowerSpriteUnderwater();
@@ -774,7 +774,7 @@ void FollowMe_BindToSurbBlobOnReloadScreen(void)
 	//Spawn surfhead under follower
 	SetUpSurfBlobFieldEffect(follower);
 	follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
-	BindFieldEffectToSprite(follower->fieldEffectSpriteId, 1);
+	SetSurfBobState(follower->fieldEffectSpriteId, 1);
 }
 
 static void SetSurfJump(void)
@@ -826,7 +826,7 @@ static void Task_BindSurfBlobToFollower(u8 taskId)
 		return;
 
 	//Bind objs
-	BindFieldEffectToSprite(npc->fieldEffectSpriteId, 0x1);
+	SetSurfBobState(npc->fieldEffectSpriteId, 0x1);
 	UnfreezeEventObjects();
 	DestroyTask(taskId);
 	gPlayerAvatar->preventStep = FALSE; //Player can move again
@@ -862,7 +862,7 @@ static void SetSurfDismount(void)
 	//Unbind and destroy Surf Blob
 	u8 task = CreateTask(Task_FinishSurfDismount, 1);
 	gTasks[task].data[0] = follower->fieldEffectSpriteId;
-	BindFieldEffectToSprite(follower->fieldEffectSpriteId, 2);
+	SetSurfBobState(follower->fieldEffectSpriteId, 2);
 	follower->fieldEffectSpriteId = 0; //Unbind
 	FollowMe_HandleSprite();
 

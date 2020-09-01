@@ -55,8 +55,8 @@
 #define FLDEFF_EXPLOSION               	 52 //NEW!
 #define FLDEFF_BUBBLES                   53
 #define FLDEFF_SPARKLE                   54
-#define FLDEFF_NULL_55         	 		 55
-#define FLDEFF_NULL_56        			 56
+#define FLDEFF_USE_ROCK_CLIMB         	 55 //NEW!
+#define FLDEFF_ROCK_CLIMB_DUST           56 //NEW!
 #define FLDEFF_NULL_57       			 57
 #define FLDEFF_CUT_GRASS                 58
 #define FLDEFF_FIELD_MOVE_SHOW_MON_INIT  59

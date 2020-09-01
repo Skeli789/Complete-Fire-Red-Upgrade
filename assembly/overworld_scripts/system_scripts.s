@@ -360,6 +360,8 @@ EventScript_ChooseSelectItem:
 
 .equ FLAG_AUTO_HMS, 0x902 @For Unbound
 .equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
+.equ FLDEFF_USE_ROCK_CLIMB, 55
+
 .global EventScript_UseRockClimb
 EventScript_UseRockClimb:
 	bufferpartypokemon 0x0 0x8004
@@ -377,7 +379,7 @@ EventScript_UseRockClimb_Ask:
 	msgbox 0x81BDFD7 MSG_NORMAL @;[BUFFER1] used [BUFFER2]!
 
 EventScript_UseRockClimb_SkipAsk:
-	setanimation 0x0 0x8004
+	setfieldeffectarg 0, 0x8004
 	goto EventScript_RockClimb
 
 .global EventScript_JustRockWall
@@ -394,117 +396,11 @@ EventScript_RockClimb:
 	call FollowerIntoPlayerScript
 	callasm HideFollower
 	special SPECIAL_DISMOUNT_BICYCLE
-	doanimation 0x25
-	waitstate
-	callasm StopPlayerMotion
-	callasm sp09A_StopSounds
-	special2 PLAYERFACING SPECIAL_GET_PLAYER_FACING
-	compare PLAYERFACING DOWN
-	if equal _goto EventScript_RockClimbDown
-	compare PLAYERFACING LEFT
-	if equal _goto EventScript_RockClimbLeft
-	compare PLAYERFACING RIGHT
-	if equal _goto EventScript_RockClimbRight
-
-EventScript_RockClimbUp:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbUp
-	waitmovement PLAYER
-	callasm ShouldRockClimbContinue
-	compare LASTRESULT 0
-	if equal _goto EventScript_RockClimbUpFinish
-	goto EventScript_RockClimbUp
-
-EventScript_RockClimbDown:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbDown
-	waitmovement PLAYER
-	callasm ShouldRockClimbContinue
-	compare LASTRESULT 0
-	if equal _goto EventScript_RockClimbDownFinish
-	goto EventScript_RockClimbDown
-
-EventScript_RockClimbLeft:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbLeft
-EventScript_RockClimbLeftWaitmovement:
-	waitmovement PLAYER
-	callasm ShouldRockClimbContinueDiagonally
-	compare LASTRESULT 1
-	if equal _goto EventScript_RockClimbLeftUp
-	compare LASTRESULT 2
-	if equal _goto EventScript_RockClimbLeftDown
-	callasm ShouldRockClimbContinue
-	compare LASTRESULT 0
-	if equal _goto EventScript_RockClimbLeftFinish
-	goto EventScript_RockClimbLeft
-	
-EventScript_RockClimbLeftUp:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbLeftUp
-	goto EventScript_RockClimbLeftWaitmovement
-
-EventScript_RockClimbLeftDown:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbLeftDown
-	goto EventScript_RockClimbLeftWaitmovement
-
-EventScript_RockClimbRight:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbRight
-EventScript_RockClimbRightWaitmovement:
-	waitmovement PLAYER
-	callasm ShouldRockClimbContinueDiagonally
-	compare LASTRESULT 1
-	if equal _goto EventScript_RockClimbRightUp
-	compare LASTRESULT 2
-	if equal _goto EventScript_RockClimbRightDown
-	callasm ShouldRockClimbContinue
-	compare LASTRESULT 0
-	if equal _goto EventScript_RockClimbRightFinish
-	goto EventScript_RockClimbRight
-	
-EventScript_RockClimbRightUp:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbRightUp
-	goto EventScript_RockClimbRightWaitmovement
-
-EventScript_RockClimbRightDown:
-	sound 0x7C @Rock Smash
-	applymovement PLAYER m_RockClimbRightDown
-	goto EventScript_RockClimbRightWaitmovement
-
-EventScript_RockClimbDownFinish:
-	applymovement PLAYER m_RockClimbDown
-	goto EventScript_RockClimbFinish
-
-EventScript_RockClimbUpFinish:
-	applymovement PLAYER m_RockClimbUp
-	goto EventScript_RockClimbFinish
-
-EventScript_RockClimbLeftFinish:
-	applymovement PLAYER m_RockClimbLeft
-	goto EventScript_RockClimbFinish
-
-EventScript_RockClimbRightFinish:
-	applymovement PLAYER m_RockClimbRight
-	
-EventScript_RockClimbFinish:
-	waitmovement PLAYER
-	callasm StartPlayerMotion
+	dofieldeffect FLDEFF_USE_ROCK_CLIMB
+	waitfieldeffect FLDEFF_USE_ROCK_CLIMB
 	callasm FollowMe_WarpSetEnd
 	releaseall
 	end
-
-m_RockClimbDown: .byte run_down, end_m
-m_RockClimbUp: .byte run_up, end_m
-m_RockClimbLeft: .byte run_left, end_m
-m_RockClimbRight: .byte run_right, end_m
-
-m_RockClimbLeftUp: .byte 0xE0, end_m
-m_RockClimbLeftDown: .byte 0xDC, end_m
-m_RockClimbRightUp: .byte 0xE1, end_m
-m_RockClimbRightDown: .byte 0xDD, end_m
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -805,15 +701,21 @@ EventScript_LadderDown:
 
 EventScript_LadderUpFinish:
 	applymovement PLAYER m_LadderClimbUp
-	goto EventScript_RockClimbFinish
+	goto EventScript_LadderFinish
 
 EventScript_LadderDownFinish:
 	applymovement PLAYER m_LadderClimbDown
-	goto EventScript_RockClimbFinish
+	goto EventScript_LadderFinish
 
 EventScript_FacingLadderSideways:
 	msgbox gText_CantReachLadder MSG_NORMAL
 EventScript_LadderEnd:
+	releaseall
+	end
+
+EventScript_LadderFinish:
+	waitmovement PLAYER
+	callasm FollowMe_WarpSetEnd
 	releaseall
 	end
 

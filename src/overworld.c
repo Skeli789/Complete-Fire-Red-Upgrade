@@ -2207,11 +2207,6 @@ void IsUnboundToVar(void)
 	#endif
 }
 
-static bool8 MetatileBehavior_IsRockClimbableWall(u8 behaviour)
-{
-	return behaviour == MB_ROCK_CLIMB_WALL;
-}
-
 bool8 IsPlayerFacingRockClimbableWall(void)
 {
 	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
@@ -2222,39 +2217,9 @@ bool8 IsPlayerFacingRockClimbableWall(void)
 	return MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y));
 }
 
-void ShouldRockClimbContinue(void)
+bool8 MetatileBehavior_IsRockClimbableWall(u8 behaviour)
 {
-	gSpecialVar_LastResult = IsPlayerFacingRockClimbableWall();
-}
-
-void ShouldRockClimbContinueDiagonally(void)
-{
-	#ifdef UNBOUND
-	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
-	s16 x = playerEventObj->currentCoords.x;
-	s16 y = playerEventObj->currentCoords.y;
-
-	MoveCoords(playerEventObj->facingDirection, &x, &y);
-
-	if (MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y + 1)))
-		gSpecialVar_LastResult = 2; //Move diagonal up
-	else if (y != 0 && MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y - 1)))
-		gSpecialVar_LastResult = 1; //Move diagonal down
-	else
-	#endif
-		gSpecialVar_LastResult = 0;
-}
-
-void StopPlayerMotion(void)
-{
-	gEventObjects[gPlayerAvatar->eventObjectId].disableAnim = TRUE;
-	gEventObjects[gPlayerAvatar->eventObjectId].inanimate = TRUE;
-}
-
-void StartPlayerMotion(void)
-{
-	gEventObjects[gPlayerAvatar->eventObjectId].disableAnim = FALSE;
-	gEventObjects[gPlayerAvatar->eventObjectId].inanimate = FALSE;
+	return behaviour == MB_ROCK_CLIMB_WALL;
 }
 
 u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingType)
