@@ -327,3 +327,42 @@ static void CB2_ItemMenuFromField(void)
 {
 	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
 }
+
+u8 GetLRKeysState(void)
+{
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_NEW(L_BUTTON))
+			return 1;
+		if (JOY_NEW(R_BUTTON))
+			return 2;
+	}
+
+	return 0;
+}
+
+u8 GetLRKeysPressedAndHeld(void)
+{
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_REPT(L_BUTTON))
+			return 1;
+		if (JOY_REPT(R_BUTTON))
+			return 2;
+	}
+
+	return 0;
+}
+
+s32 sub_8104284(void)
+{
+    if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+    {
+        if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_LEFT))
+            return 1;
+        else if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_RIGHT))
+            return 2;
+    }
+
+	return 0;
+}

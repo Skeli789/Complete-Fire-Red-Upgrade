@@ -338,6 +338,9 @@ pcSelect_SwapDecision 0808ed8c 1
 ReadKeys 080005E8 0
 DiveCheckEmergeHook 806CB30 0
 DiveCheckDownHook 806CCCC 0
+GetLRKeysState 80BF630 0
+GetLRKeysPressedAndHeld 80BF66C 0
+sub_8104284 8104284 0
 
 ##Character Customization
 GetEventObjectGraphicsInfo 805F2C8 1

@@ -486,6 +486,29 @@ VeryTallGrassFix:
 	lsr r1, #0x10
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ LR Button Mode Fixes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/*.org 0x941CA, 0xFF
+	cmp r0, #0x2
+	beq 0x0941F2
+
+.org 0x9445A, 0xFF
+	cmp r0, #0x2
+	beq 0x094482
+
+.org 0x94714, 0xFF
+	cmp r0, #0x2
+	beq 0x09473A
+
+.org 0x1347FE, 0xFF
+	cmp r0, #0x2
+	beq 0x134830
+
+.org 0x134822, 0xFF
+	cmp r0, #0x2
+	beq 0x134830*/
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ GetBagItemQuanity
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x99DA0, 0xFF
