@@ -1198,7 +1198,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					else //Double Battle
 					{
-						if (!BankHasMonToSwitchTo(bankAtk))
+						if (!HasMonToSwitchTo(bankAtk))
 							break; //Can't switch
 
 						if (GetMonAbility(GetBankPartyData(bankAtk)) == ABILITY_INTIMIDATE

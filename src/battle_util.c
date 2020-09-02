@@ -5,6 +5,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
 
+#include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
@@ -325,6 +326,29 @@ u8 ViableMonCountFromBankLoadPartyRange(u8 bank)
 	}
 
 	return count;
+}
+
+bool8 HasMonToSwitchTo(u8 bank)
+{
+	u8 i, firstMonId, lastMonId;
+	u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
+	struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+
+	for (i = firstMonId; i < lastMonId; ++i)
+	{
+		u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, 0);
+
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& GetMonData(&party[i], MON_DATA_HP, 0) > 0
+		&& i != gBattlerPartyIndexes[battlerIn1]
+		&& i != gBattlerPartyIndexes[battlerIn2])
+			break;
+	}
+
+	return i != lastMonId;
 }
 
 bool8 CheckContact(u16 move, u8 bank)

@@ -427,14 +427,7 @@ void TryReactivateCentifernoSandblast(u32* status2)
 
 void atk4F_jumpifcantswitch(void)
 {
-	int i;
-	u8 firstMonId, lastMonId;
-	u8 battlerIn1, battlerIn2;
-	u8 foe1, foe2;
-
 	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
-	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
-	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
@@ -445,17 +438,7 @@ void atk4F_jumpifcantswitch(void)
 	}
 	else
 	{
-		for (i = firstMonId; i < lastMonId; ++i)
-		{
-			if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			&& i != gBattlerPartyIndexes[battlerIn1]
-			&& i != gBattlerPartyIndexes[battlerIn2])
-				break;
-		}
-
-		if (i == lastMonId)
+		if (!HasMonToSwitchTo(gActiveBattler))
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 		else
 			gBattlescriptCurrInstr += 6;

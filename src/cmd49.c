@@ -1120,16 +1120,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				for (i = 0; i < gBattlersCount; ++i)
 				{
 					if (banks[i] != gBankAttacker
-					&&  gBattleMons[banks[i]].hp
+					&&  BATTLER_ALIVE(banks[i])
 					&&  !SheerForceCheck()
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_EJECT_BUTTON
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
-					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER)) //Wilds can't activate
+					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER) //Wild's can't activate
+					&&  HasMonToSwitchTo(banks[i]))
 					{
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
-							gBattlescriptCurrInstr = BattleScript_MoveEnd; //Cancel switchout for U-Turn & Volt Switch
+							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
 
 						gNewBS->NoSymbiosisByte = TRUE;
 						gActiveBattler = gBankSwitching = gBattleScripting.bank = banks[i];
@@ -1220,7 +1221,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
-						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
+						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2 //Fell this turn
+						&&  HasMonToSwitchTo(bank))
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
@@ -1238,7 +1240,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
 						&&  BATTLER_ALIVE(bank)
 						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
-						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2) //Fell this turn
+						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2 //Fell this turn
+						&&  HasMonToSwitchTo(bank))
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
