@@ -2644,12 +2644,13 @@ void atk90_tryconversiontypechange(void)
 			//If target has no main types, but has a third type
 			if ((IS_BLANK_TYPE(defType1))
 			&&  (IS_BLANK_TYPE(defType2))
-			&& !(IS_BLANK_TYPE(defType3))) {
+			&& !(IS_BLANK_TYPE(defType3)))
+			{
 				defType1 = TYPE_NORMAL;
 				defType2 = TYPE_NORMAL;
 			}
-
-			else { //Target Has Main Type
+			else //Target Has Main Type
+			{
 				if (IS_BLANK_TYPE(defType1))
 					defType1 = defType2;
 				else if (IS_BLANK_TYPE(defType2))
@@ -4102,7 +4103,9 @@ void atkBE_rapidspinfree(void)
 		}
 		else
 		{
-			if (gCurrentMove == MOVE_RAPIDSPIN && ABILITY(bankAtk) != ABILITY_SHEERFORCE) //From Gen 8
+			if (gCurrentMove == MOVE_RAPIDSPIN //From Gen 8
+			&& ABILITY(bankAtk) != ABILITY_SHEERFORCE
+			&& STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
 			{
 				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SPD_PLUS_1 | MOVE_EFFECT_AFFECTS_USER;
 				SetMoveEffect(TRUE, TRUE); //Automatically increments gBattlescriptCurrInstr

@@ -393,7 +393,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_CONVERSION:
-			if (!IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type)
+			if (move != MOVE_REFLECTTYPE
+			&& !IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type)
 			&& IsClassSweeper(class))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
@@ -2237,7 +2238,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_CELEBRATE:
 				case MOVE_HOLDHANDS:
 				case MOVE_HAPPYHOUR:
-					if (IsTypeZCrystal(data->atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->zMoveData.used[bankAtk])
+					if (!gNewBS->zMoveData.used[bankAtk] && IsTypeZCrystal(data->atkItem, moveType) && !IsMegaZMoveBannedBattle())
 						INCREASE_VIABILITY(9); //Z-Happy Hour! / Z-Celebrate
 					break;
 			}

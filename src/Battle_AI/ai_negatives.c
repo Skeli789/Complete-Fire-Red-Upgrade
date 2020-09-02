@@ -1038,9 +1038,56 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_CONVERSION:
-			//Check first move type
-			if (IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type))
-				DECREASE_VIABILITY(10);
+			if (move == MOVE_REFLECTTYPE)
+			{
+				u8 defType1 = gBattleMons[bankDef].type1;
+				u8 defType2 = gBattleMons[bankDef].type2;
+				u8 defType3 = gBattleMons[bankDef].type3;
+
+				//If target has no type
+				if((IS_BLANK_TYPE(defType1))
+				&& (IS_BLANK_TYPE(defType2))
+				&& (IS_BLANK_TYPE(defType3)))
+				{
+					DECREASE_VIABILITY(10);
+				}
+				else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
+				{
+					DECREASE_VIABILITY(10);
+				}
+				else
+				{
+					//If target has no main types, but has a third type
+					if ((IS_BLANK_TYPE(defType1))
+					&&  (IS_BLANK_TYPE(defType2))
+					&& !(IS_BLANK_TYPE(defType3)))
+					{
+						defType1 = TYPE_NORMAL;
+						defType2 = TYPE_NORMAL;
+					}
+					else //Target Has Main Type
+					{
+						if (IS_BLANK_TYPE(defType1))
+							defType1 = defType2;
+						else if (IS_BLANK_TYPE(defType2))
+							defType2 = defType1;
+
+						if (IS_BLANK_TYPE(defType3)) //Just in case it has a burned out Fire type
+							defType3 = TYPE_BLANK;
+					}
+
+					if (gBattleMons[bankAtk].type1 == defType1
+					&&  gBattleMons[bankAtk].type2 == defType2
+					&&  gBattleMons[bankAtk].type3 == defType3)
+						DECREASE_VIABILITY(10);	//All types already match
+				}
+			}
+			else
+			{
+				//Check first move type
+				if (IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type))
+					DECREASE_VIABILITY(10);
+			}
 			break;
 
 		case EFFECT_RESTORE_HP:
@@ -1268,7 +1315,8 @@ MOVESCR_CHECK_0:
 			}
 			else if (predictedMove == MOVE_NONE)
 				DECREASE_VIABILITY(10);
-			goto AI_SUBSTITUTE_CHECK;
+			else
+				goto AI_SUBSTITUTE_CHECK;
 
 		case EFFECT_METRONOME:
 			break;
@@ -1279,6 +1327,8 @@ MOVESCR_CHECK_0:
 			|| data->defAbility == ABILITY_LIQUIDOOZE
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_SUBSTITUTE_CHECK;
 			break;
 
 		case EFFECT_DISABLE:
@@ -1358,13 +1408,16 @@ MOVESCR_CHECK_0:
 					|| data->defAbility == ABILITY_NOGUARD
 					|| PARTNER_MOVE_EFFECT_IS_SAME)
 						DECREASE_VIABILITY(10);
-					break;
+					else
+						goto AI_SUBSTITUTE_CHECK;
 			}
 			break;
 
 		case EFFECT_SKETCH:
 			if (gLastUsedMoves[bankDef] == MOVE_NONE)
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_SUBSTITUTE_CHECK;
 			break;
 
 		case EFFECT_DESTINY_BOND:
@@ -1835,6 +1888,7 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 				break;
 			}
+
 			switch (move) {
 				case MOVE_HEALINGWISH:
 				case MOVE_LUNARDANCE:
@@ -1854,7 +1908,8 @@ MOVESCR_CHECK_0:
 					{
 						DECREASE_VIABILITY(10);
 					}
-					break;
+					else
+						goto AI_SUBSTITUTE_CHECK;
 			}
 			break;
 
@@ -1894,7 +1949,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_TAUNT:
 			if (IsTaunted(bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
-				DECREASE_VIABILITY(1);
+				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_FOLLOW_ME:
@@ -1907,12 +1962,14 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			break;
 
-		case EFFECT_TRICK:
+		case EFFECT_TRICK:	
 			switch (move) {
 				case MOVE_BESTOW:
 					if (data->atkItem == ITEM_NONE
 					|| !CanTransferItem(data->atkSpecies, data->atkItem))
 						DECREASE_VIABILITY(10);
+					else
+						goto AI_SUBSTITUTE_CHECK;
 					break;
 
 				default: //Trick
@@ -1923,18 +1980,19 @@ MOVESCR_CHECK_0:
 					|| !CanTransferItem(data->defSpecies, data->defItem)
 					|| (data->defAbility == ABILITY_STICKYHOLD))
 						DECREASE_VIABILITY(10);
-					break;
+					else
+						goto AI_SUBSTITUTE_CHECK;
 			}
 			break;
 
-		case EFFECT_ROLE_PLAY:
-			data->atkAbility = *GetAbilityLocation(bankAtk);
-			data->defAbility = *GetAbilityLocation(bankDef);
+		case EFFECT_ROLE_PLAY: ;
+			u8 atkAbility = *GetAbilityLocation(bankAtk);
+			u8 defAbility = *GetAbilityLocation(bankDef);
 
-			if (data->atkAbility == data->defAbility
-			||  data->defAbility == ABILITY_NONE
-			||  CheckTableForAbility(data->atkAbility, gRolePlayAttackerBannedAbilities)
-			||  CheckTableForAbility(data->defAbility, gRolePlayBannedAbilities))
+			if (atkAbility == defAbility
+			||  defAbility == ABILITY_NONE
+			||  CheckTableForAbility(atkAbility, gRolePlayAttackerBannedAbilities)
+			||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1977,8 +2035,6 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			break;
 
-			break;
-
 		case EFFECT_MAGIC_COAT:
 			if (!MagicCoatableMovesInMoveset(bankDef))
 				DECREASE_VIABILITY(10);
@@ -2013,30 +2069,34 @@ MOVESCR_CHECK_0:
 			}
 			break;
 
-		case EFFECT_SKILL_SWAP:
-			data->atkAbility = *GetAbilityLocation(bankAtk); //Get actual abilities
-			data->defAbility = *GetAbilityLocation(bankDef);
+		case EFFECT_SKILL_SWAP: ;
+			u8 atkAbility2 = *GetAbilityLocation(bankAtk); //Get actual abilities
+			u8 defAbility2 = *GetAbilityLocation(bankDef);
 
 			switch (move) {
 				case MOVE_WORRYSEED:
-					if (data->defAbility == ABILITY_INSOMNIA
-					|| CheckTableForAbility(data->defAbility, gWorrySeedBannedAbilities)
+					if (defAbility2 == ABILITY_INSOMNIA
+					|| CheckTableForAbility(defAbility2, gWorrySeedBannedAbilities)
 					|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
+					else
+						goto AI_SUBSTITUTE_CHECK;
 					break;
 
 				case MOVE_GASTROACID:
 					if (IsAbilitySuppressed(bankDef)
-					||  CheckTableForAbility(data->defAbility, gGastroAcidBannedAbilities)
+					||  CheckTableForAbility(defAbility2, gGastroAcidBannedAbilities)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
+					else
+						goto AI_SUBSTITUTE_CHECK;
 					break;
 
 				case MOVE_ENTRAINMENT:
-					if (data->atkAbility == ABILITY_NONE
+					if (atkAbility2 == ABILITY_NONE
 					||  IsDynamaxed(bankDef)
-					||  CheckTableForAbility(data->atkAbility, gEntrainmentBannedAbilitiesAttacker)
-					||  CheckTableForAbility(data->defAbility, gEntrainmentBannedAbilitiesTarget)
+					||  CheckTableForAbility(atkAbility2, gEntrainmentBannedAbilitiesAttacker)
+					||  CheckTableForAbility(defAbility2, gEntrainmentBannedAbilitiesTarget)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					else
@@ -2047,19 +2107,23 @@ MOVESCR_CHECK_0:
 					goto AI_STANDARD_DAMAGE;
 
 				case MOVE_SIMPLEBEAM:
-					if (data->defAbility == ABILITY_SIMPLE
-					||  CheckTableForAbility(data->defAbility, gSimpleBeamBannedAbilities)
+					if (defAbility2 == ABILITY_SIMPLE
+					||  CheckTableForAbility(defAbility2, gSimpleBeamBannedAbilities)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
+					else
+						goto AI_SUBSTITUTE_CHECK;
 					break;
 
 				default: //Skill Swap
-					if (data->atkAbility == ABILITY_NONE || data->defAbility == ABILITY_NONE
+					if (atkAbility2 == ABILITY_NONE || defAbility2 == ABILITY_NONE
 					|| IsDynamaxed(bankAtk)
 					|| IsDynamaxed(bankDef)
-					|| CheckTableForAbility(data->atkAbility, gSkillSwapBannedAbilities)
-					|| CheckTableForAbility(data->defAbility, gSkillSwapBannedAbilities))
+					|| CheckTableForAbility(atkAbility2, gSkillSwapBannedAbilities)
+					|| CheckTableForAbility(defAbility2, gSkillSwapBannedAbilities))
 						DECREASE_VIABILITY(10);
+					else
+						goto AI_SUBSTITUTE_CHECK;
 			}
 			break;
 
@@ -2561,6 +2625,9 @@ MOVESCR_CHECK_0:
 
 						else if (targetNegativeStages < targetPositiveStages)
 							DECREASE_VIABILITY(5); //More stages would be made positive than negative
+						
+						else
+							goto AI_SUBSTITUTE_CHECK;
 					}
 			}
 			break;
@@ -2579,11 +2646,18 @@ MOVESCR_CHECK_0:
 											| BATTLE_TYPE_FRONTIER
 											| BATTLE_TYPE_TRAINER_TOWER))
 					|| !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) //Wild battle
-					|| SIDE(bankAtk) != B_SIDE_PLAYER //Only increase money amount if will benefit player
-					|| gNewBS->HappyHourByte != 0) //Already used Happy Hour
+					|| SIDE(bankAtk) != B_SIDE_PLAYER) //Only increase money amount if will benefit player
 					{
 						if (!IsTypeZCrystal(data->atkItem, moveType) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
 							DECREASE_VIABILITY(10);
+					}
+					else //Normal battle
+					{
+						if (!IsTypeZCrystal(data->atkItem, moveType) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
+						{
+							if (gNewBS->HappyHourByte != 0) //Already used Happy Hour
+								DECREASE_VIABILITY(10);
+						}
 					}
 					break;
 
