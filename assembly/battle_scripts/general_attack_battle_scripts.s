@@ -927,9 +927,9 @@ BS_030_Conversion:
 	jumpifmove MOVE_REFLECTTYPE ReflectTypeBS
 	
 ConversionBS:
-	changetypestoenemyattacktype FAILED_PRE
 	attackstring
 	ppreduce
+	changetypestoenemyattacktype FAILED
 	attackanimation
 	waitanimation
 	printstring 0x49 @;STRINGID_PKMNCHANGEDTYPE
