@@ -89,6 +89,7 @@ gBattleAnims_General:
 .word ANIM_DYNAMAX_ENERGY_SWIRL
 .word ANIM_RAID_BATTLE_STORM
 .word ANIM_RAID_BATTLE_ENERGY_BURST
+.word ANIM_RAID_BATTLE_BLOW_AWAY
 .word ANIM_G_MAX_VINE_LASH
 .word ANIM_G_MAX_WILDFIRE
 .word ANIM_G_MAX_CANNONADE
@@ -692,7 +693,7 @@ BATON_PASS_ANIM:
 .pool
 DRAGON_TAIL_BLOW_AWAY_ANIM:
 	playsound2 0x7a SOUND_PAN_TARGET
-	launchtask AnimTask_SlideOffScreen 0x5 0x2 0x1 0x8
+	launchtask AnimTask_SlideOffScreen 0x5 0x2 bank_target 0x8
 	waitanimation
 	endanimation
 
@@ -1010,6 +1011,15 @@ ANIM_RAID_BATTLE_ENERGY_BURST:
 	launchtemplate Template_HiddenPowerOrbScatter 0x82 0x1 0xa0
 	launchtemplate Template_HiddenPowerOrbScatter 0x82 0x1 0xc0
 	launchtemplate Template_HiddenPowerOrbScatter 0x82 0x1 0xe0
+	waitanimation
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_RAID_BATTLE_BLOW_AWAY:
+	playsound2 0x7a SOUND_PAN_TARGET
+	launchtask AnimTask_SlideOffScreen 0x5 0x2 bank_target 0x8
+	launchtask AnimTask_SlideOffScreen 0x5 0x2 target_partner 0x8
 	waitanimation
 	endanimation
 

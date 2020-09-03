@@ -112,7 +112,6 @@ void ClearTempIgnoreAnimations(void);
 void FailIfTrappedByNoRetreat(void);
 void FinishTurn(void);
 void ClearPlayerRechargeMultipleTurns(void);
-void SetScriptingBankToItsPartner(void);
 void TryFailLifeDew(void);
 void ChooseTargetForMirrorArmorStickyWeb(void);
 const u8* TryActivateMimicryForBank(u8 bank);

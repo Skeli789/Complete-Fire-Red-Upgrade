@@ -574,9 +574,7 @@ BattleScript_DynamaxEnd_SpecialTransformAnim:
 
 BattleScript_LoseRaidBattle:
 	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_STORM 0x0
-	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
-	callasm SetScriptingBankToItsPartner
-	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_BLOW_AWAY 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	setbyte BATTLE_OUTCOME 0x5 @;Teleported

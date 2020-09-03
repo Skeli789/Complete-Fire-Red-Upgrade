@@ -858,30 +858,32 @@ static void AnimTask_DynamaxGrowthStep(u8 taskId);
 bank_t LoadBattleAnimTarget(u8 arg)
 {
 	u8 battler;
+
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		switch (gBattleAnimArgs[arg]) {
-			case 0:
+			case ANIM_ATTACKER:
 				battler = gBattleAnimAttacker;
 				break;
 			default:
 				battler = gBattleAnimTarget;
 				break;
-			case 2:
+			case ANIM_ATK_PARTNER:
 				battler = PARTNER(gBattleAnimAttacker);
 				break;
-			case 3:
+			case ANIM_DEF_PARTNER:
 				battler = PARTNER(gBattleAnimTarget);
 				break;
 		}
 	}
 	else
 	{
-		if (gBattleAnimArgs[arg] == 0)
+		if (gBattleAnimArgs[arg] == ANIM_ATTACKER)
 			battler = gBattleAnimAttacker;
 		else
 			battler = gBattleAnimTarget;
 	}
+
 	return battler;
 }
 
@@ -3385,7 +3387,6 @@ void AnimTask_CreateHyperspaceFuryMon(u8 taskId)
 
 			if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
 			{
-				
 				subpriority = gSprites[GetAnimBattlerSpriteId(ANIM_TARGET)].subpriority + 1;
 				isBackPic = 0;
 				x = 272;
@@ -4096,6 +4097,52 @@ void AnimTask_TwinkleTackleLaunch(u8 taskId)
 #undef tSide
 #undef tAnimLengthTime
 
+// To move a mon off-screen when pushed out by Roar/Whirlwind
+void AnimTask_SlideOffScreen(u8 taskId)
+{
+	u8 bank, spriteId;
+
+	bank = LoadBattleAnimTarget(0);
+	spriteId = GetAnimBattlerSpriteId(bank);
+
+	if (spriteId < MAX_SPRITES)
+	{
+		gTasks[taskId].data[0] = spriteId;
+		if (SIDE(bank) != B_SIDE_PLAYER)
+			gTasks[taskId].data[1] = gBattleAnimArgs[1];
+		else
+			gTasks[taskId].data[1] = -gBattleAnimArgs[1];
+
+		gTasks[taskId].func = (void*) (0x80996B8 | 1); //AnimTask_SlideOffScreen_Step
+	}
+	else
+		DestroyAnimVisualTask(taskId);
+}
+
+// Shakes a mon bg horizontally and moves it downward linearly.
+// arg 0: battler
+// arg 1: x offset
+// arg 2: frame delay between each movement
+// arg 3: downward speed (subpixel)
+// arg 4: duration
+void AnimTask_ShakeAndSinkMon(u8 taskId)
+{
+	u8 spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+	if (spriteId < MAX_SPRITES)
+	{	
+		gSprites[spriteId].pos2.x = gBattleAnimArgs[1];
+		gTasks[taskId].data[0] = spriteId;
+		gTasks[taskId].data[1] = gBattleAnimArgs[1];
+		gTasks[taskId].data[2] = gBattleAnimArgs[2];
+		gTasks[taskId].data[3] = gBattleAnimArgs[3];
+		gTasks[taskId].data[4] = gBattleAnimArgs[4];
+		gTasks[taskId].func = (void*) (0x8098EF0 | 1); //AnimTask_ShakeAndSinkMon_Step
+		gTasks[taskId].func(taskId);
+	}
+	else
+		DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_AllBanksInvisible(u8 taskId)
 {
 	for (int i = 0; i < gBattlersCount; ++i)
@@ -4562,10 +4609,10 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 		case B_ANIM_GRASSY_SURGE:
 		case B_ANIM_MISTY_SURGE:
 		case B_ANIM_PSYCHIC_SURGE:
-		case B_ELECTRIC_TERRAIN_ACTIVE_ANIM:
-		case B_GRASSY_TERRAIN_ACTIVE_ANIM:
-		case B_MISTY_TERRAIN_ACTIVE_ANIM:
-		case B_PSYCHIC_TERRAIN_ACTIVE_ANIM:
+		case B_ANIM_ELECTRIC_TERRAIN_ACTIVE:
+		case B_ANIM_GRASSY_TERRAIN_ACTIVE:
+		case B_ANIM_MISTY_TERRAIN_ACTIVE:
+		case B_ANIM_PSYCHIC_TERRAIN_ACTIVE:
 		case B_ANIM_LOAD_DEFAULT_BG:
 		case B_ANIM_TOTEM_BOOST:
 		case B_ANIM_DYNAMAX_START:
@@ -4588,13 +4635,14 @@ static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId)
 		case B_ANIM_POWDER_EXPLOSION:
 		case B_ANIM_BEAK_BLAST_WARM_UP:
 		case B_ANIM_SHELL_TRAP_SET:
-		case B_BATON_PASS_ANIM:
-		case B_DRAGON_TAIL_BLOW_AWAY_ANIM:
+		case B_ANIM_BATON_PASS:
+		case B_ANIM_DRAGON_TAIL_BLOW_AWAY:
 		case B_ANIM_ZMOVE_ACTIVATE:
 		case B_ANIM_MEGA_EVOLUTION:
 		case B_ANIM_ULTRA_BURST:
 		case B_ANIM_DYNAMAX_START:
 		case B_ANIM_RAID_BATTLE_ENERGY_BURST:
+		case B_ANIM_RAID_BATTLE_BLOW_AWAY:
 			return TRUE;
 		default:
 			return FALSE;
