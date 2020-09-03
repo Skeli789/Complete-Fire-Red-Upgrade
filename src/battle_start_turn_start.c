@@ -20,6 +20,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_battle_scripts.h"
@@ -985,10 +986,7 @@ void HandleAction_UseMove(void)
 	gNewBS->totalDamageGiven = 0;
 	gNewBS->selfInflictedDamage = 0;
 	gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
-	//Clear spread move things
-	gNewBS->doneDoublesSpreadHit = FALSE;
-	gNewBS->calculatedSpreadMoveData = FALSE;
-	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+	ResetDoublesSpreadMoveCalcs(); //Clear spread move things
 
 	for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 	{

@@ -1396,6 +1396,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->bypassSubstitute = FALSE;
 			gNewBS->preFaintEffectsState = 0;
 			gNewBS->MeFirstByte = FALSE;
+			gNewBS->GemHelper = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
