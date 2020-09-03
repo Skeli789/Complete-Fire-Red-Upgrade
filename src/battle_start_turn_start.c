@@ -1724,7 +1724,7 @@ s32 BracketCalc(u8 bank)
 	{
 		switch (itemEffect) {
 			case ITEM_EFFECT_QUICK_CLAW:
-				if (gRandomTurnNumber % 100 < itemQuality)
+				if (gRandomTurnNumber < (0xFFFF * itemQuality) / 100)
 				{
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
