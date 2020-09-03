@@ -3811,6 +3811,9 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 			currentHP += newMaxHP - oldMaxHP;
 		else
 			return;
+
+		if (!gMain.inBattle && currentHP > newMaxHP)
+			currentHP = newMaxHP;
 	}
 
 	SetMonData(mon, MON_DATA_HP, &currentHP);

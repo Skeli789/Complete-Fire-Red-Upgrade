@@ -3482,7 +3482,7 @@ void AnimTask_SkitterBehindOpposingMon(u8 taskId)
 		}
 		break;
 	case 1:
-		mon = GetBankPartyData(gBattleAnimAttacker);
+		mon = GetIllusionPartyData(gBattleAnimAttacker);
 		personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 		otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
 		if (gBattleSpritesDataPtr->bankData[gBattleAnimAttacker].transformSpecies == SPECIES_NONE)
@@ -4367,7 +4367,7 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 		const struct CompressedSpriteSheet* spriteSheet;
 
 		position = GetBattlerPosition(bankAtk);
-		monAtk = GetBankPartyData(bankAtk);
+		monAtk = GetIllusionPartyData(bankAtk);
 		targetSpecies = GetMonData(monAtk, MON_DATA_SPECIES, NULL);
 		otId = GetMonData(monAtk, MON_DATA_OT_ID, NULL);
 		personality = GetMonData(monAtk, MON_DATA_PERSONALITY, NULL);
