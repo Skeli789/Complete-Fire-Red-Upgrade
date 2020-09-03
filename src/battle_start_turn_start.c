@@ -651,6 +651,7 @@ void SetActionsAndBanksTurnOrder(void)
 
 	gBattleMainFunc = CheckFocusPunch_ClearVarsBeforeTurnStarts;
 	gBattleStruct->focusPunchBank = 0;
+	gCurrentMove = 0;
 }
 
 enum MegaStates
