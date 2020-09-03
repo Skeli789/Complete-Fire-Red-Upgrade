@@ -452,7 +452,10 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		case GFX_TAG_DYNAMAX_INDICATOR:
-			if (gNewBS == NULL || !IsDynamaxed(INDICATOR_BANK))
+			if (gNewBS == NULL)
+				return;
+
+			if (!HasDynamaxSymbol(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
 				return;
@@ -806,7 +809,7 @@ void LoadMegaGraphics(u8 state)
 			}
 			else
 			#endif
-				if (IsDynamaxed(bank))
+				if (HasDynamaxSymbol(bank))
 			{
 				if (!loadedDynamaxGfx)
 				{

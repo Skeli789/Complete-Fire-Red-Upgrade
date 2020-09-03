@@ -3111,21 +3111,20 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 	gDisableStructs[bankAtk].transformedMonPersonality = gBattleMons[bankDef].personality;
 	gDisableStructs[bankAtk].mimickedMoves = 0;
 
+	battleMonAttacker = (u8*)(&gBattleMons[bankAtk]);
+	battleMonTarget = (u8*)(&gBattleMons[bankDef]);
+
+	for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
+		battleMonAttacker[i] = battleMonTarget[i];
+
 	if (IsGigantamaxed(bankDef))
 		species = GetGigantamaxBaseForm(SPECIES(bankDef));
 
 	if (species == SPECIES_NONE)
 		species = SPECIES(bankDef);
 
+	gBattleMons[bankAtk].species = species; //Overrite the species with the potentially non-Gigantamaxed species
 	PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species)
-
-	battleMonAttacker = (u8*)(&gBattleMons[bankAtk]);
-	battleMonTarget = (u8*)(&gBattleMons[bankDef]);
-
-	for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
-	{
-		battleMonAttacker[i] = battleMonTarget[i];
-	}
 
 	if (IS_BLANK_TYPE(gBattleMons[bankDef].type1)
 	&&  IS_BLANK_TYPE(gBattleMons[bankDef].type2))

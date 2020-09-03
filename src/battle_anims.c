@@ -4408,6 +4408,10 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 		position = GetBattlerPosition(bankAtk);
 		monDef = GetBankPartyData(bankDef);
 		targetSpecies = GetMonData(monDef, MON_DATA_SPECIES, NULL);
+		
+		if (IsGigantamaxSpecies(targetSpecies))
+			targetSpecies = GetGigantamaxBaseForm(targetSpecies);
+		
 		targetSpecies = TryFixDynamaxTransformSpecies(bankAtk, targetSpecies);
 		otId = GetMonData(GetBankPartyData(bankAtk)/*monDef*/, MON_DATA_OT_ID, NULL); //Must use monAtk, otherwise will be shiny now, and not on screen reload
 

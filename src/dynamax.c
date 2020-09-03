@@ -494,7 +494,7 @@ bool8 IsGigantamaxSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == FALSE)
 			return TRUE;
 	}
 
@@ -508,7 +508,7 @@ bool8 IsDynamaxed(u8 bank)
 
 bool8 IsGigantamaxed(u8 bank)
 {
-	return IsGigantamaxSpecies(SPECIES(bank));
+	return IsGigantamaxSpecies(GetBankPartyData(bank)->species);
 }
 
 bool8 HasDynamaxSymbol(u8 bank)
