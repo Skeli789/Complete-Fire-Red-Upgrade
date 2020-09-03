@@ -18185,8 +18185,9 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	pause 0xa
 	launchtask AnimTask_pal_fade 0xa 0x5 0x4 0x2 0x0 0x10 0x40c0		@ fade to purple
 	playsound2 0xab SOUND_PAN_TARGET
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	unloadparticle ANIM_TAG_THIN_RING
+	unloadparticle ANIM_TAG_FOCUS_ENERGY
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x580A @;Purple
 	call NEN_GEYSER
 	playsound2 0x8e SOUND_PAN_TARGET
@@ -24179,14 +24180,11 @@ ANIM_MAX_PHANTASM:
 	loadparticle ANIM_TAG_ANCHOR
 	loadparticle ANIM_TAG_CHAIN_LINK
 	loadparticle ANIM_TAG_RAZOR_SHELL
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
-	loadparticle ANIM_TAG_VERTICAL_HEX
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ROCKS 0x0 0xA 0xA 0x7CBF @;Pink
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ASSURANCE_HAND 0x0 0xA 0xA 0x7CBF @;Pink
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WOOD 0x0 0xA 0xA 0x7CBF @;Pink
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_CHAIN_LINK 0x0 0xA 0xA 0x7CBF @;Pink
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_RAZOR_SHELL 0x0 0xA 0xA 0x7CBF @;Pink
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x5C05 @;Royal Blue
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	launchtemplate PHANTASM_OBJ_1 TEMPLATE_ATTACKER | 2, 0x5, -30, -40,  30, -10, 40 @;Top left - Top Right
@@ -24197,6 +24195,14 @@ ANIM_MAX_PHANTASM:
 	playsoundpanchange 0x72 SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
 	pause 0x48
 	waitanimation
+	unloadparticle ANIM_TAG_ROCKS
+	unloadparticle ANIM_TAG_ASSURANCE_HAND
+	unloadparticle ANIM_TAG_WOOD
+	unloadparticle ANIM_TAG_ANCHOR
+	unloadparticle ANIM_TAG_CHAIN_LINK
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x5C05 @;Royal Blue
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x5C05 @;Royal Blue
 	call NEN_GEYSER
