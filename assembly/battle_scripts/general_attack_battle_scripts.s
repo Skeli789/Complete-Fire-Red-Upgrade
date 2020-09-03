@@ -258,7 +258,7 @@ HoneClawsBS:
 	attackstring
 	ppreduce
 	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX HoneClaws_Atk
-	jumpifstat BANK_TARGET EQUALS STAT_ACC STAT_MAX 0x81D85E7
+	jumpifstat BANK_TARGET EQUALS STAT_ACC STAT_MAX BattleScript_CantRaiseMultipleStats
 
 HoneClaws_Atk:
 	attackanimation
@@ -276,6 +276,24 @@ HoneClaws_Acc:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_CantRaiseMultipleStats:
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	jumpifability BANK_ATTACKER ABILITY_CONTRARY BattleScript_CantLowerMultipleStatsPrintString
+BattleScript_CantRaiseMultipleStatsPrintString:
+	printstring 0x19 @;STRINGID_STATSWONTINCREASE2
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_CantLowerMultipleStats:
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	jumpifability BANK_TARGET ABILITY_CONTRARY BattleScript_CantRaiseMultipleStatsPrintString
+BattleScript_CantLowerMultipleStatsPrintString:
+	printstring 0x15D @;STRINGID_STATSWONTDECREASE2
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -465,7 +483,7 @@ BS_013_RaiseUserSpAtk1:
 
 GrowthBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX Growth_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
 
 Growth_RaiseAtk:
 	attackanimation
@@ -492,7 +510,7 @@ Growth_RaiseSpAtk:
 
 WorkUpBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX WorkUp_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
 
 WorkUp_RaiseAtk:
 	attackanimation
@@ -4201,7 +4219,7 @@ BS_206_CosmicPower:
 	attackstring
 	ppreduce
 	jumpifstat BANK_TARGET LESSTHAN STAT_DEF STAT_MAX CosmicPower_Def
-	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
+	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 CosmicPower_Def:
 	attackanimation
@@ -4235,7 +4253,7 @@ BS_207_ExtremeEvoBoost:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX ExtremeEvoboost_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ExtremeEvoboost_Atk:
 	attackanimation
@@ -4285,7 +4303,7 @@ ClangorousSoulBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ClangorusSoul_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ClangorusSoul_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX ClangorusSoul_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ClangorusSoul_Atk:
 	attackanimation
@@ -4327,7 +4345,7 @@ BS_208_BulkUp:
 	
 BulkUpBS:
 	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX BulkUp_Atk
-	jumpifstat BANK_TARGET EQUALS STAT_DEF STAT_MAX 0x81D85E7
+	jumpifstat BANK_TARGET EQUALS STAT_DEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 BulkUp_Atk:
 	attackanimation
@@ -4353,7 +4371,7 @@ BulkUp_Def:
 CoilBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX Coil_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX Coil_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_ACC STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_ACC STAT_MAX BattleScript_CantRaiseMultipleStats
 
 Coil_Atk:
 	attackanimation
@@ -4400,7 +4418,7 @@ CalmMindBS:
 	attackstring
 	ppreduce
 	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX CalmMind_SpAtk
-	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
+	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 CalmMind_SpAtk:
 	attackanimation
@@ -4428,7 +4446,7 @@ QuiverDanceBS:
 	ppreduce
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX QuiverDance_RaiseSpAtk1
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPDEF STAT_MAX QuiverDance_RaiseSpAtk1
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 QuiverDance_RaiseSpAtk1:
 	attackanimation
@@ -4488,7 +4506,7 @@ Geomancy_PowerHerbSkip:
 	attackstring
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX Geomancy_RaiseSpAtk2
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPDEF STAT_MAX Geomancy_RaiseSpAtk2
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 Geomancy_RaiseSpAtk2:
 	attackanimation
@@ -4541,7 +4559,7 @@ BS_212_DragonDance:
 
 DragonDanceBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX DragonDance_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 DragonDance_Atk:
 	attackanimation
@@ -4566,7 +4584,7 @@ DragonDance_Spd:
 
 ShiftGearBS:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ShiftGear_Atk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ShiftGear_Atk:
 	attackanimation
@@ -4615,7 +4633,7 @@ ShellSmash_DropSpDef:
 ShellSmash_BoostStats:
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ShellSmash_SharpAtk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX ShellSmash_SharpAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX 0x81D85E7
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
 ShellSmash_SharpAtk:
 	attackanimation
