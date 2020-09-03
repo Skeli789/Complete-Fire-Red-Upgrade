@@ -14,7 +14,7 @@
 #include "../include/new/daycare.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
-#include "../include/new/util.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/learn_move.h"
@@ -22,6 +22,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
+#include "../include/new/util.h"
 
 /*
 battle_script_util.c
@@ -1128,6 +1129,7 @@ void InitiateInstruct(void)
 
 	gBattleScripting.animTargetsHit = 0;
 	gBattleStruct->atkCancellerTracker = 0;
+	ResetDoublesSpreadMoveCalcs();
 	MoveValuesCleanUp();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);

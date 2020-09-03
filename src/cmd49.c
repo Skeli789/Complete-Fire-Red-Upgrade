@@ -14,6 +14,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
@@ -1369,10 +1370,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->totalDamageGiven = 0;
 			gNewBS->selfInflictedDamage = 0;
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
-			//Clear spread move things
-			gNewBS->doneDoublesSpreadHit = FALSE;
-			gNewBS->calculatedSpreadMoveData = FALSE;
-			gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+			ResetDoublesSpreadMoveCalcs();
 
 			switch (gCurrentMove) {
 				case MOVE_FUSIONFLARE:

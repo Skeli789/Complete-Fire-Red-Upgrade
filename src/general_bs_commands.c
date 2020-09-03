@@ -1924,13 +1924,18 @@ void atk5C_hitanimation(void)
 	gBattlescriptCurrInstr += 2;
 }
 
+void ResetDoublesSpreadMoveCalcs(void)
+{
+	gNewBS->doneDoublesSpreadHit = FALSE;
+	gNewBS->calculatedSpreadMoveData = FALSE;
+	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+}
+
 static void UpdateMoveStartValuesForCalledMove(void)
 {
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
-	gNewBS->doneDoublesSpreadHit = FALSE;
-	gNewBS->calculatedSpreadMoveData = FALSE;
-	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+	ResetDoublesSpreadMoveCalcs();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
 	if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER)

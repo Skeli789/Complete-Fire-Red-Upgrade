@@ -27,6 +27,7 @@ u16 GetNaturePowerMove(void);
 void RecycleItem(u8 bank);
 u8 GetCamouflageType(void);
 void BufferAttackerItem(void);
+void ResetDoublesSpreadMoveCalcs(void);
 void MoveValuesCleanUp(void);
 
 //Exported Constants
