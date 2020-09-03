@@ -103,6 +103,7 @@ BattleScript_BenjaminButterfreeDevolution:
 	waitmessage DELAY_1SECOND
 	callasm SetSkipCertainSwitchInAbilities  @;Skip certain abilities if you fainted from recoil and KO'd the Foe
 	tryactivateswitchinability BANK_EFFECT
+	callasm RestoreOriginalAttackerAndTarget
 	return
 
 .align 2

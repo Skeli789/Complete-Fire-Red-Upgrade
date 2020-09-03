@@ -801,7 +801,7 @@ void atkFF1A_jumpifabilitypresentattackerfield(void)
 		gBattlescriptCurrInstr += 6;
 }
 
-//tryactivateswitchinability
+//tryactivateswitchinability BANK
 void atkFF1B_tryactivateswitchinability(void)
 {
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);

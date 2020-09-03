@@ -2428,7 +2428,6 @@ static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 
 static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 {
-
 	if (gBattleMons[bank].status1 & status)
 	{
 		StringCopy(gBattleTextBuff1, string);
@@ -2441,6 +2440,7 @@ static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 		MarkBufferBankForExecution(gActiveBattler);
 		return TRUE;
 	}
+
 	return FALSE;
 }
 

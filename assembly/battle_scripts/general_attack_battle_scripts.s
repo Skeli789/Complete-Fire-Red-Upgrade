@@ -3665,6 +3665,7 @@ BS_178_RolePlay:
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_ATTACKER
+	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3927,10 +3928,9 @@ SkillSwapBS:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstringnoprotean
+	attackstring
 	ppreduce
 	abilityswap FAILED
-	tryactivateprotean
 	attackanimation
 	waitanimation
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
@@ -3946,7 +3946,9 @@ SkillSwapBS:
 	printstring 0xB8
 	waitmessage DELAY_1SECOND
 	tryactivateswitchinability BANK_ATTACKER
+	callasm RestoreOriginalAttackerAndTarget
 	tryactivateswitchinability BANK_TARGET
+	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
 
 GastroAcidBS:
@@ -3994,6 +3996,7 @@ SimpleBeamBS:
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_TARGET
+	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
 
 CoreEnforcerBS:
