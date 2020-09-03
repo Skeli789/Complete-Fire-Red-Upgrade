@@ -591,6 +591,7 @@ void atkF1_trysetcaughtmondexflags(void)
 {
 	struct Pokemon* mon = LoadTargetPartyData();
 	TryRevertMega(mon); //Megas aren't set in the habitat table
+	TryRevertGigantamax(mon); //Gigantamaxes aren't set in the habitat table
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);

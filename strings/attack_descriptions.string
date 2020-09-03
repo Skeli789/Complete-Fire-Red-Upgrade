@@ -458,7 +458,7 @@ An odd psychic wave\nattacks the target.\nThis attack does\nphysical damage.
 The user attacks\nwith a song. Others\ncan join in, doing\nmore damage.
 
 #org @DESC_TAILSLAP
-The use attacks by\nhitting the target\nwith its hard tail.\nIt hits two to five\ntimes in a row.
+The user attacks by\nhitting the target\nwith its hard tail.\nIt hits two to five\ntimes in a row.
 
 #org @DESC_GEARGRIND
 The user attacks by\nthrowing two steel\ngears at it target.\nThis attack hits\ntwice in a row.
@@ -785,7 +785,7 @@ In this two-turn move,\nthe user gathers\nlight and fills a\nblade with light's\
 The user bursts into\nsong, emitting\nbubbles. Any burnt\nPok\emon will be\nhealed.
 
 #org @DESC_SPECTRALTHIEF
-The user hides in\nthe target's shadow,\nsteals the target's\nstat boosts,and\nthen attacks.
+The user hides in\nthe target's shadow,\nsteals the target's\nstat boosts, and\nthen attacks.
 
 #org @DESC_SPEEDSWAP
 The user exchanges\nSpeed stats with\nthe target.
