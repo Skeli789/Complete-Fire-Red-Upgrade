@@ -1632,52 +1632,62 @@ void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
 		gBattlescriptCurrInstr += 7;
 }
 
+#define CASE_PLUS(by, stat) case (STAT_ANIM_PLUS##by + stat - 1): value = STAT_ANIM_MINUS##by + stat - 1; break;
+#define CASE_MINUS(by, stat) case (STAT_ANIM_MINUS##by + stat - 1): value = STAT_ANIM_PLUS##by + stat - 1; break;
+#define CASE_MULTIPLE_PLUS(by) case (STAT_ANIM_MULTIPLE_PLUS##by): value = STAT_ANIM_MINUS##by; break;
+#define CASE_MULTIPLE_MINUS(by) case (STAT_ANIM_MULTIPLE_MINUS##by): value = STAT_ANIM_PLUS##by; break;
 static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
 {
 	if (ABILITY(bank) == ABILITY_CONTRARY)
 	{
 		u8 value = 0;
-		switch (GET_STAT_BUFF_VALUE_WITH_SIGN(gBattleScripting.statChanger)) {
-			case SET_STAT_BUFF_VALUE(1): // +1
-				value = STAT_ANIM_MINUS1;
-				break;
-			case SET_STAT_BUFF_VALUE(2): // +2
-				value = STAT_ANIM_MINUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(3): // +3
-				value = STAT_ANIM_MINUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(4): // +4
-				value = STAT_ANIM_MINUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(5): // +5
-				value = STAT_ANIM_MINUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(6): // +6
-				value = STAT_ANIM_MINUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE: // -1
-				value = STAT_ANIM_PLUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE: // -2
-				value = STAT_ANIM_PLUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(3) | STAT_BUFF_NEGATIVE: // -3
-				value = STAT_ANIM_PLUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(4) | STAT_BUFF_NEGATIVE: // -1
-				value = STAT_ANIM_PLUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(5) | STAT_BUFF_NEGATIVE: // -2
-				value = STAT_ANIM_PLUS2;
-				break;
-			case SET_STAT_BUFF_VALUE(6) | STAT_BUFF_NEGATIVE: // -3
-				value = STAT_ANIM_PLUS2;
-				break;
+		switch (*argumentPtr)
+		{
+			CASE_PLUS(1,  STAT_ATK)
+			CASE_PLUS(1,  STAT_DEF)
+			CASE_PLUS(1,  STAT_SPEED)
+			CASE_PLUS(1,  STAT_SPATK)
+			CASE_PLUS(1,  STAT_SPDEF)
+			CASE_PLUS(1,  STAT_ACC)
+			CASE_PLUS(1,  STAT_EVASION)
+
+			CASE_MINUS(1, STAT_ATK)
+			CASE_MINUS(1, STAT_DEF)
+			CASE_MINUS(1, STAT_SPEED)
+			CASE_MINUS(1, STAT_SPATK)
+			CASE_MINUS(1, STAT_SPDEF)
+			CASE_MINUS(1, STAT_ACC)
+			CASE_MINUS(1, STAT_EVASION)
+
+			CASE_PLUS(2,  STAT_ATK)
+			CASE_PLUS(2,  STAT_DEF)
+			CASE_PLUS(2,  STAT_SPEED)
+			CASE_PLUS(2,  STAT_SPATK)
+			CASE_PLUS(2,  STAT_SPDEF)
+			CASE_PLUS(2,  STAT_ACC)
+			CASE_PLUS(2,  STAT_EVASION)
+
+			CASE_MINUS(2, STAT_ATK)
+			CASE_MINUS(2, STAT_DEF)
+			CASE_MINUS(2, STAT_SPEED)
+			CASE_MINUS(2, STAT_SPATK)
+			CASE_MINUS(2, STAT_SPDEF)
+			CASE_MINUS(2, STAT_ACC)
+			CASE_MINUS(2, STAT_EVASION)
+
+			CASE_MULTIPLE_PLUS(1)
+			CASE_MULTIPLE_PLUS(2)
+			CASE_MULTIPLE_MINUS(1)
+			CASE_MULTIPLE_MINUS(2)
 		}
-		*argumentPtr = GET_STAT_BUFF_ID(gBattleScripting.statChanger) + value - 1;
+
+		*argumentPtr = value;
 	}
 }
+#undef CASE_PLUS
+#undef CASE_MINUS
+#undef CASE_MULTIPLE_PLUS
+#undef CASE_MULTIPLE_MINUS
 
 void atk45_playanimation(void)
 {
