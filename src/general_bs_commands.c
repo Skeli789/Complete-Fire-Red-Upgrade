@@ -1448,13 +1448,16 @@ void atk1B_cleareffectsonfaint(void) {
 				//Fallthrough
 
 			case Faint_FormsRevert:
-				if (TryFormRevert(mon))
+				if (!IsRaidBattle() || gActiveBattler != BANK_RAID_BOSS) //Raid Boss doesn't revert until later
 				{
-					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->species);
-					MarkBufferBankForExecution(gActiveBattler);
-					mon->backupSpecies = SPECIES_NONE;
-					++gNewBS->faintEffectsState;
-					return;
+					if (TryFormRevert(mon))
+					{
+						EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->species);
+						MarkBufferBankForExecution(gActiveBattler);
+						mon->backupSpecies = SPECIES_NONE;
+						++gNewBS->faintEffectsState;
+						return;
+					}
 				}
 				break; //No form change means skip the next two states
 
