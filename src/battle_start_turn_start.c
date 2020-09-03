@@ -682,17 +682,19 @@ void RunTurnActionsFunctions(void)
 			{
 				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
 
-				if (gActionsByTurnOrder[i] != ACTION_USE_ITEM)
-				{
-					gBattleScripting.bank = i;
-					gLastUsedItem = ITEM(i);
-					if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
-						RecordItemEffectBattle(i, ITEM_EFFECT(i));
+				if (gActionsByTurnOrder[i] == ACTION_USE_ITEM)
+					continue;
+				else if (gActionsByTurnOrder[i] == ACTION_SWITCH && ITEM_EFFECT(i) == ITEM_EFFECT_CUSTAP_BERRY) //Only Quick Claw activates on the switch
+					continue;
 
-					BattleScriptExecute(BattleScript_QuickClaw);
-					gCurrentActionFuncId = savedActionFuncId;
-					return;
-				}
+				gBattleScripting.bank = i;
+				gLastUsedItem = ITEM(i);
+				if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
+					RecordItemEffectBattle(i, ITEM_EFFECT(i));
+
+				BattleScriptExecute(BattleScript_QuickClaw);
+				gCurrentActionFuncId = savedActionFuncId;
+				return;
 			}
 		}
 	}
