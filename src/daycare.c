@@ -672,6 +672,8 @@ void GiveEggFromDaycare(struct DayCare* daycare)
 
 	isEgg = TRUE;
 	SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
+	CalculateMonStats(&egg);
+	HealMon(&egg);
 
 	//gPlayerParty[PARTY_SIZE - 1] = egg;
 	Memcpy(&gPlayerParty[5], &egg, 100);
