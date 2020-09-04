@@ -2487,12 +2487,12 @@ u8 UpdatePokeBallForIllusion(u8 bank)
 	return GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, NULL);
 }
 
-species_t TryUpdateIllusionAltitude(u8 bank)
+species_t TryUpdateIllusionYDelta(u8 bank)
 {
-	if (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
-		return SPECIES_NONE;
+	if (gStatuses3[bank] & STATUS3_ILLUSION) //So to not interfere with Transform
+		return GetIllusionPartyData(bank)->species;
 
-	return GetIllusionPartyData(bank)->species;
+	return SPECIES_NONE;
 }
 
 //Ability Pop-Up//////////////////////////////////////////////////////////////////////////////////////

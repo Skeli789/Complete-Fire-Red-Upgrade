@@ -72,19 +72,51 @@ UpdateCryForPlayerIllusionHook:
 	bx r0
 
 @0x8074598 with r2
-UpdateAltitudeForIllusionHook:
+UpdateYDeltaForIllusionHook:
 	lsl r1, r1, #0x10
 	lsr r4, r1, #0x10
 	mov r0, r5
-	bl TryUpdateIllusionAltitude
+	bl TryUpdateIllusionYDelta
 	cmp r0, #0x0
-	beq AltitudeIllusionReturn
+	beq YDeltaIllusionReturn
 	mov r4, r0 @;Update Species
 
-AltitudeIllusionReturn:
+YDeltaIllusionReturn:
 	mov r7, r4
 	mov r0, r5
 	ldr r1, =0x80745A0 | 1
+	bx r1
+
+@0x8074750 with r2
+UpdateElevationForIllusionHook:
+	lsr r6, r0, #0x18
+	lsl r1, r1, #0x10
+	lsr r4, r1, #0x10
+	mov r0, r6
+	bl TryUpdateIllusionYDelta
+	cmp r0, #0x0
+	beq ElevationIllusionReturn
+	mov r4, r0 @;Update Species
+
+ElevationIllusionReturn:
+	mov r7, r4
+	ldr r1, =0x08074758 | 1
+	bx r1
+
+@0x803570C with r2
+ShadowIllusionHook:
+	lsr r4, r0, #0x18
+	mov r6, r4
+	lsl r1, r1, #0x10
+	lsr r5, r1, #0x10
+	mov r0, r6
+	bl TryUpdateIllusionYDelta
+	cmp r0, #0x0
+	beq ShadowIllusionReturn
+	mov r5, r0 @;Update Species
+
+ShadowIllusionReturn:
+	ldr r1, =0x08035714 | 1
 	bx r1
 
 @0x08076B5C with r0

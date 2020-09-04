@@ -393,21 +393,19 @@ void atk4D_switchindataupdate(void)
 		TryReactivateCentifernoSandblast(backupStatus2);
 	}
 
+	//Transfer new Illusion status
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION)
 	{
 		gStatuses3[gActiveBattler] |= STATUS3_ILLUSION;
 
-		if (GetIllusionPartyData(gActiveBattler) != GetBankPartyData(gActiveBattler))
-		{
-			EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
-			MarkBufferBankForExecution(gActiveBattler);
-		}
-		else
+		if (GetIllusionPartyData(gActiveBattler) == GetBankPartyData(gActiveBattler)) //No one to disguise as
 			gStatuses3[gActiveBattler] &= ~STATUS3_ILLUSION;
 	}
 
-	gBattleScripting.bank = gActiveBattler;
+	EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]); //Necessary to overrite old Illusion data
+	MarkBufferBankForExecution(gActiveBattler);
 
+	gBattleScripting.bank = gActiveBattler;
 	PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, GetIllusionPartyNumber(gActiveBattler));
 
 	gBattleMons[gActiveBattler].type3 = TYPE_BLANK;

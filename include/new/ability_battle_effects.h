@@ -21,4 +21,4 @@ void TransferAbilityPopUp(u8 bank, u8 ability);
 //Functions Hooked In
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon);
 u8 UpdatePokeBallForIllusion(u8 bank);
-species_t TryUpdateIllusionAltitude(u8 bank);
+species_t TryUpdateIllusionYDelta(u8 bank);

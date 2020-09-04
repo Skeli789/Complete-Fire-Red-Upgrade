@@ -4240,9 +4240,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 	#endif
 
 	switch (gBattleBufferA[gBattleAnimAttacker][0]) {
-		case CONTROLLER_MOVEANIMATION: ;
-			if (sAnimMoveIndex == MOVE_TRANSFORM)
-				goto DEFAULT_CASE;
+		case CONTROLLER_MOVEANIMATION:
 			#ifdef DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES
 			if (gBattleMoves[sAnimMoveIndex].target & MOVE_TARGET_USER)
 				goto DEFAULT_CASE;
@@ -4287,7 +4285,9 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 			}
 		//Fallthrough
 		default:
+		#if (defined DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES || !defined HIDE_HEALTHBOXES_DURING_ANIMS)
 		DEFAULT_CASE:
+		#endif
 			for (i = 0; i < gBattlersCount; i++)
 			{
 				u8 healthboxLeftSpriteId = gHealthboxSpriteIds[i];
