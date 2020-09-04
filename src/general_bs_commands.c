@@ -4410,10 +4410,9 @@ void atkCA_setforcedtarget(void) //Follow me
 	gBattlescriptCurrInstr++;
 }
 
-void atkCC_callterrainattack(void) { //nature power
+void atkCC_callterrainattack(void) //nature power
+{
 	gCurrentMove = GetNaturePowerMove();
-
-	gBankTarget = GetMoveTarget(gCurrentMove, 0);
 	TryUpdateCalledMoveWithZMove();
 	UpdateMoveStartValuesForCalledMove();
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
