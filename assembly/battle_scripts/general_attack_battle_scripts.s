@@ -1255,6 +1255,7 @@ HighJumpKickMiss:
 	pause DELAY_HALFSECOND
 	resultmessage
 	waitmessage DELAY_1SECOND
+	prefaintmoveendeffects 0x0
 	printstring 0x60
 	waitmessage DELAY_1SECOND
 	bicbyte OUTCOME OUTCOME_MISSED
