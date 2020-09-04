@@ -905,10 +905,10 @@ void ScriptCmd_loadspritegfx(void)
 void LoadShinyStarsSpriteTiles(void)
 {
 	if (GetSpriteTileStartByTag(ANIM_TAG_GOLD_STARS) == 0xFFFF)
-	{
 		LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
+
+	if (IndexOfSpritePaletteTag(ANIM_TAG_GOLD_STARS) == 0xFF)
 		LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
-	}
 }
 
 void TryStartShinyAnimation(u8 battler, unusedArg struct Pokemon* mon)
