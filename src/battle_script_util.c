@@ -1697,7 +1697,7 @@ void UpdatePrimalAbility(void)
 
 void ClearAttackerDidDamageOnce(void)
 {
-	gNewBS->AttackerDidDamageAtLeastOnce = 0;
+	gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
 }
 
 void TryRemovePrimalWeatherOnPivot(void)

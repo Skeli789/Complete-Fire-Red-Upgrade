@@ -524,7 +524,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ITEM_EFFECTS_KINGS_ROCK:
-			if (arg1 != ARG_IN_FUTURE_ATTACK && ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_FLINCH) //King's Rock Only
+			if (arg1 != ARG_IN_FUTURE_ATTACK && arg1 != ARG_PARTING_SHOT
+			&& ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_FLINCH) //King's Rock Only
 			{
 				if (ItemBattleEffects(ItemEffects_ContactAttacker, gBankAttacker, TRUE, FALSE))
 					effect = TRUE;
@@ -1264,6 +1265,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			u8 itemEffect = ITEM_EFFECT(gBankAttacker);
 
 			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&& arg1 != ARG_PARTING_SHOT
 			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
 			&& (itemEffect == ITEM_EFFECT_LIFE_ORB
 			 || itemEffect == ITEM_EFFECT_SHELL_BELL

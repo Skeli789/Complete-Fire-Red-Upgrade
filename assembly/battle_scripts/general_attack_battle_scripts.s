@@ -2750,6 +2750,8 @@ PartingShot_LowerSpAtk:
 	
 CheckPartingShotFail:
 	jumpifbyte EQUALS ANIM_TARGETS_HIT 0x0 BS_MOVE_END @;Anim didn't play means no stats were lowered
+	setbyte CMD49_STATE 0x0
+	cmd49 BANK_TARGET 0x0
 	goto UTurnCheckSwitchBS
 
 PartingShotEndBS:
