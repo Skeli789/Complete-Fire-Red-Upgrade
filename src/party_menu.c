@@ -1560,24 +1560,24 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
 {
-    PlaySE(SE_SELECT);
+	PlaySE(SE_SELECT);
 	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], 2, gSpecialVar_ItemId);
 
-    if (targetSpecies == SPECIES_NONE)
-    {
-        gPartyMenuUseExitCallback = FALSE;
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
-        ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = func;
-    }
-    else
-    {
-        FreePartyPointers();
-        gCB2_AfterEvolution = gPartyMenu.exitCallback;
-        BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, 1, gPartyMenu.slotId);
-        DestroyTask(taskId);
+	if (targetSpecies == SPECIES_NONE)
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+	else
+	{
+		FreePartyPointers();
+		gCB2_AfterEvolution = gPartyMenu.exitCallback;
+		BeginEvolutionScene(&gPlayerParty[gPartyMenu.slotId], targetSpecies, FALSE, gPartyMenu.slotId);
+		DestroyTask(taskId);
 		RemoveBagItem(gSpecialVar_ItemId, 1);
-    }
+	}
 }
 
 void FieldUseFunc_EVReducingBerry(u8 taskId)
@@ -1708,26 +1708,26 @@ void FieldUseFunc_FormChangeItem(u8 taskId)
 {
 	gItemUseCB = ItemUseCB_FormChangeItem;
 
-    if (gTasks[taskId].data[3] == 0) //From Bag
-    {
+	if (gTasks[taskId].data[3] == 0) //From Bag
+	{
 		SetUpItemUseCallback(taskId);
-    }
-    else //From Overworld
-    {
-        FadeScreen(FADE_TO_BLACK, 0);
-        gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
-    }
+	}
+	else //From Overworld
+	{
+		FadeScreen(FADE_TO_BLACK, 0);
+		gTasks[taskId].func = FormChangeItem_ShowPartyMenuFromField;
+	}
 }
 
 static void FormChangeItem_ShowPartyMenuFromField(u8 taskId)
 {
-    if (!gPaletteFade->active)
-    {
-        CleanupOverworldWindowsAndTilemaps();
-        PrepareOverworldReturn();
+	if (!gPaletteFade->active)
+	{
+		CleanupOverworldWindowsAndTilemaps();
+		PrepareOverworldReturn();
 		InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_USE_ITEM, TRUE, PARTY_MSG_USE_ON_WHICH_MON, Task_HandleChooseMonInput, CB2_ReturnToFieldContinueScript);
-        DestroyTask(taskId);
-    }
+		DestroyTask(taskId);
+	}
 }
 
 void UpdateMonIconSpecies(u8 iconSpriteId, u16 species)
@@ -2256,17 +2256,17 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 
 static void Task_OfferAbilityChange(u8 taskId)
 {
-    if (IsPartyMenuTextPrinterActive() != TRUE)
-    {
-        PartyMenuDisplayYesNoMenu();
-        gTasks[taskId].func = Task_HandleAbilityChangeYesNoInput;
-    }
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		PartyMenuDisplayYesNoMenu();
+		gTasks[taskId].func = Task_HandleAbilityChangeYesNoInput;
+	}
 }
 
 static void Task_HandleAbilityChangeYesNoInput(u8 taskId)
 {
-    switch (Menu_ProcessInputNoWrapClearOnChoose())
-    {
+	switch (Menu_ProcessInputNoWrapClearOnChoose())
+	{
 		case 0:
 			gTasks[taskId].func = Task_ChangeAbility;
 			break;
@@ -2276,7 +2276,7 @@ static void Task_HandleAbilityChangeYesNoInput(u8 taskId)
 		case 1:
 			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 			break;
-    }
+	}
 }
 
 static void Task_ChangeAbility(u8 taskId)
@@ -2381,17 +2381,17 @@ static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func)
 
 static void Task_OfferGigantamaxChange(u8 taskId)
 {
-    if (IsPartyMenuTextPrinterActive() != TRUE)
-    {
-        PartyMenuDisplayYesNoMenu();
-        gTasks[taskId].func = Task_HandleGigantamaxChangeYesNoInput;
-    }
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		PartyMenuDisplayYesNoMenu();
+		gTasks[taskId].func = Task_HandleGigantamaxChangeYesNoInput;
+	}
 }
 
 static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId)
 {
-    switch (Menu_ProcessInputNoWrapClearOnChoose())
-    {
+	switch (Menu_ProcessInputNoWrapClearOnChoose())
+	{
 		case 0:
 			gTasks[taskId].func = Task_ChangeGigantamax;
 			break;
@@ -2401,7 +2401,7 @@ static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId)
 		case 1:
 			gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 			break;
-    }
+	}
 }
 
 static void Task_ChangeGigantamax(u8 taskId)
@@ -2442,18 +2442,18 @@ void FieldUseFunc_VsSeeker(u8 taskId)
 {
 	u8 mapSec = GetCurrentRegionMapSectionId();
 
-    if ((gMapHeader.mapType != MAP_TYPE_ROUTE
-      && gMapHeader.mapType != MAP_TYPE_TOWN
-      && gMapHeader.mapType != MAP_TYPE_CITY)
-    || mapSec == MAPSEC_GRIM_WOODS
+	if ((gMapHeader.mapType != MAP_TYPE_ROUTE
+	  && gMapHeader.mapType != MAP_TYPE_TOWN
+	  && gMapHeader.mapType != MAP_TYPE_CITY)
+	|| mapSec == MAPSEC_GRIM_WOODS
 	|| mapSec == MAPSEC_VIVILL_WOODS)
-    {
-        PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
-    }
-    else
-    {
-        sItemUseOnFieldCB = (void*) (0x810C670 | 1); //Task_VsSeeker_0
-        sub_80A103C(taskId);
-    }
+	{
+		PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
+	}
+	else
+	{
+		sItemUseOnFieldCB = (void*) (0x810C670 | 1); //Task_VsSeeker_0
+		sub_80A103C(taskId);
+	}
 }
 #endif
