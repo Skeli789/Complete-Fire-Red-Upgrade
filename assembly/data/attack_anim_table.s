@@ -24964,6 +24964,10 @@ ANIM_MAX_QUAKE:
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
+	pause 0x1
+	pokespritetoBG2 bank_attacker
+	pause 0x1
+	pokespritefromBG2 bank_attacker
 	endanimation
 
 DIRT_GEYSER:
