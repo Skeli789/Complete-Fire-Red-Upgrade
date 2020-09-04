@@ -145,22 +145,24 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 
 			//Move category checks
 			case ABILITY_CONTRARY:
-				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects))
+				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
 
 			case ABILITY_DEFIANT:
-				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				if (moveEffect != EFFECT_ATTACK_DOWN_2 //Useless to trigger then
+				&& CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
+				&& STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
 			case ABILITY_COMPETITIVE:
-				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				if (moveEffect != EFFECT_SPECIAL_ATTACK_DOWN_2 //Useless to trigger then
+				&& CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
+				&& STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}

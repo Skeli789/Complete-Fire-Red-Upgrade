@@ -36,7 +36,7 @@ u16 RandRange(u16 min, u16 max)
 	return (Random() % (max - min)) + min;
 }
 
-bool8 CheckTableForMove(move_t move, const u16 table[])
+bool8 CheckTableForMove(u16 move, const u16 table[])
 {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i)
 	{
@@ -47,7 +47,7 @@ bool8 CheckTableForMove(move_t move, const u16 table[])
 	return FALSE;
 }
 
-bool8 CheckTableForMoveEffect(move_t move, const u8 table[])
+bool8 CheckTableForMovesEffect(u16 move, const u8 table[])
 {
 	for (u32 i = 0; table[i] != MOVE_EFFECT_TABLES_TERMIN; ++i)
 	{
