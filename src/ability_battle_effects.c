@@ -675,22 +675,22 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			u8 target2;
 			side = (GetBattlerPosition(bank) ^ BIT_SIDE) & BIT_SIDE; // side of the opposing pokemon
 			target1 = GetBattlerAtPosition(side);
-			target2 = GetBattlerAtPosition(side + BIT_FLANK);
+			target2 = GetBattlerAtPosition(side | BIT_FLANK);
 			if (IS_DOUBLE_BATTLE)
 			{
-				if (*GetAbilityLocation(target1) != ABILITY_NONE && gBattleMons[target1].hp != 0
-				&& *GetAbilityLocation(target2) != ABILITY_NONE && gBattleMons[target2].hp != 0)
+				if (*GetAbilityLocation(target1) != ABILITY_NONE && BATTLER_ALIVE(target1)
+				&& *GetAbilityLocation(target2) != ABILITY_NONE && BATTLER_ALIVE(target2))
 				{
 					gActiveBattler = GetBattlerAtPosition(((Random() & 1) * 2) | side);
 					effect++;
 				}
-				else if (*GetAbilityLocation(target1) != ABILITY_NONE && gBattleMons[target1].hp != 0)
+				else if (*GetAbilityLocation(target1) != ABILITY_NONE && BATTLER_ALIVE(target1) != 0)
 				{
 					gActiveBattler = target1;
 
 					effect++;
 				}
-				else if (*GetAbilityLocation(target2) != ABILITY_NONE && gBattleMons[target2].hp != 0)
+				else if (*GetAbilityLocation(target2) != ABILITY_NONE && BATTLER_ALIVE(target2) != 0)
 				{
 					gActiveBattler = target2;
 					effect++;
@@ -698,7 +698,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			}
 			else //Single Battle
 			{
-				if (*GetAbilityLocation(target1) && gBattleMons[target1].hp)
+				if (*GetAbilityLocation(target1) && BATTLER_ALIVE(target1))
 				{
 					gActiveBattler = target1;
 					effect++;
@@ -718,7 +718,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					PREPARE_ABILITY_BUFFER(gBattleTextBuff2, gLastUsedAbility)
 				}
 				else
-					--effect;
+				{
+					gActiveBattler = bank;
+					effect = FALSE;
+				}
 			}
 			break;
 
