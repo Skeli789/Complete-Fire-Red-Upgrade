@@ -314,7 +314,10 @@ void ChooseProperPartnerController(void)
 	gBattlersCount = 4;
 
 	if (IsRaidBattle())
+	{
 		gBattlersCount = 3;
+		gBattlerPositions[3] = 0xFF;
+	}
 
 	gBattlerControllerFuncs[0] = SetControllerToPlayer;
 	gBattlerControllerFuncs[1] = SetControllerToOpponent;
