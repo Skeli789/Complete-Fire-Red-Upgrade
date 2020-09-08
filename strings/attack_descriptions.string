@@ -815,7 +815,7 @@ The user attacks the\nfoe's throat to\nprevent it from\nusing moves that emit\ns
 The user shoots\npoisonous threads to\npoison the target\nand lower the\ntarget's Speed stat.
 
 #org @DESC_TROPKICK
-The user lands an\nintense kick of\ntropical origins on\nthe target. It\nlowers Attack.
+The user lands a\ntropical kick on the\nfoe. It also lowers\nthe foe's Attack.
 
 #org @DESC_ZINGZAP
 A strong electric\nblast crashes down\non the target. This\nmay make the target\nflinch.
@@ -1046,7 +1046,7 @@ The user becomes a\nshield and strikes.\nDouble damage on\nDynamaxed targets.
 Morpeko raises its\nSpeed and attacks.\nThe move's Type is\nbased on its form.
 
 #org @DESC_BREAKING_SWIPE
-The user attacks\nby swinging its\ntail, lowering the\nboth targets' Attack.
+The user attacks the\nfoes by swinging its\ntail wildly, lowering\ntheir Attack.
 
 #org @DESC_BRANCH_POKE
 The user attacks\nthe target by\npoking it with a\npointed branch.

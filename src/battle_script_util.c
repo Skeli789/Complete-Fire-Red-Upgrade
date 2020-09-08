@@ -328,37 +328,43 @@ void TryActivatePartnerSapSipper(void)
 
 void RoundBSFunction(void)
 {
-	int i;
-	u8 j = 0;
-	u8 k = 0;
-	u8 index = 0;
-	u8 rounders[3] = {0xFF, 0xFF, 0xFF};
-	u8 nonRounders[3] = {0xFF, 0xFF, 0xFF};
+	u32 i, j, k, index;
+	u8 rounders[4] = {0xFF, 0xFF, 0xFF, 0xFF}; //Last slot is always 0xFF
+	u8 nonRounders[4] = {0xFF, 0xFF, 0xFF, 0xFF};
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
-		for (i = 0; i < gBattlersCount; ++i) {
-			if (gBanksByTurnOrder[i] == gBankAttacker) {
+	if (IS_DOUBLE_BATTLE)
+	{
+		for (i = 0, index = 0; i < gBattlersCount; ++i)
+		{
+			if (gBanksByTurnOrder[i] == gBankAttacker)
+			{
 				index = i + 1; //Index after attacker; index to start swapping data
 				break;
 			}
 		}
 
-		for (i = index; i < gBattlersCount; ++i) {
+		for (i = index, j = 0, k = 0; i < gBattlersCount; ++i)
+		{
 			if (gChosenMovesByBanks[gBanksByTurnOrder[i]] == MOVE_ROUND)
 				rounders[j++] = gBanksByTurnOrder[i];
 			else
 				nonRounders[k++] = gBanksByTurnOrder[i];
 		}
 
-		for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+		if (rounders[0] != 0xFF)
 		{
-			gBanksByTurnOrder[index++] = rounders[i];
-			gNewBS->quashed |= gBitTable[rounders[i]]; //So their turn order can't be changed
+			for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+			{
+				gBanksByTurnOrder[index++] = rounders[i];
+				gNewBS->turnOrderLocked |= gBitTable[rounders[i]]; //So their turn order can't be changed
+			}
 		}
 
-		for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
-			gBanksByTurnOrder[index++] = nonRounders[i];
-
+		if (nonRounders[0] != 0xFF)
+		{
+			for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
+				gBanksByTurnOrder[index++] = nonRounders[i];
+		}
 	}
 }
 
@@ -1049,6 +1055,8 @@ void AfterYouFunc(void)
 
 		if (newTurnOrder[1] != 0xFF)
 			gBanksByTurnOrder[index] = newTurnOrder[1];
+
+		gNewBS->turnOrderLocked |= gBitTable[gBankTarget]; //So their turn order isn't changed
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1081,7 +1089,7 @@ void QuashFunc(void)
 				gBanksByTurnOrder[i] = newTurnOrder[i];
 		}
 
-		gNewBS->quashed |= gBitTable[gBankTarget];
+		gNewBS->turnOrderLocked |= gBitTable[gBankTarget];
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;

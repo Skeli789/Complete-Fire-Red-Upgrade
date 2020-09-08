@@ -779,7 +779,7 @@ struct NewBattleStruct
 	u8 CustapQuickClawIndicator; //0x2017632
 	u8 HealingWishLoc;
 	u8 PowderByte;
-	u8 quashed;
+	u8 turnOrderLocked;
 	u8 tarShotBits;
 	u8 trappedByOctolock;
 	u8 trappedByNoRetreat;

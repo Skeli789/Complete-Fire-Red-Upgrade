@@ -1147,7 +1147,7 @@ void ClearSwitchBytes(u8 bank)
 void ClearSwitchBits(u8 bank)
 {
 	gNewBS->PowderByte &= ~(gBitTable[bank]);
-	gNewBS->quashed &= ~(gBitTable[bank]);
+	gNewBS->turnOrderLocked &= ~(gBitTable[bank]);
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
 	gNewBS->tarShotBits &= ~(gBitTable[bank]);
 	gNewBS->trappedByOctolock &= ~(gBitTable[bank]);

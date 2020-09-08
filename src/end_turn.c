@@ -175,7 +175,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->PledgeHelper = FALSE;
 				gNewBS->PowderByte = 0;
 				gNewBS->BeakBlastByte = 0;
-				gNewBS->quashed = 0;
+				gNewBS->turnOrderLocked = 0;
 				gNewBS->playedFocusPunchMessage = 0;
 				gNewBS->playedShellTrapMessage = 0;
 				gNewBS->CustapQuickClawIndicator = 0;

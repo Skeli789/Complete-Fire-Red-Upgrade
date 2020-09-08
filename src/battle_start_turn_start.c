@@ -946,8 +946,8 @@ void HandleAction_UseMove(void)
 					&& gActionsByTurnOrder[j] != ACTION_SWITCH
 					&& gActionsByTurnOrder[i] != ACTION_FINISHED
 					&& gActionsByTurnOrder[j] != ACTION_FINISHED
-					&& !(gBitTable[bank1] & gNewBS->quashed)
-					&& !(gBitTable[bank2] & gNewBS->quashed))
+					&& !(gBitTable[bank1] & gNewBS->turnOrderLocked)
+					&& !(gBitTable[bank2] & gNewBS->turnOrderLocked))
 				{
 					if (GetWhoStrikesFirstUseLastBracketCalc(bank1, bank2))
 						SwapTurnOrder(i, j);
