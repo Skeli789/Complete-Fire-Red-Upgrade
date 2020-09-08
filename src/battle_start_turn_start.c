@@ -1104,8 +1104,8 @@ void HandleAction_UseMove(void)
 		if (IsRaidBattle() && gBankAttacker == BANK_RAID_BOSS)
 		{
 			u8 split = SPLIT(gCurrentMove);
-			bool8 isBannedMove = CheckTableForMove(gCurrentMove, gRaidBattleBannedRaidMonMoves)
-							  || CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves)
+			bool8 isBannedMove = gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedRaidMonMoves
+							  || gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedMoves
 							  || IsUnusableMove(gCurrentMove, gBankAttacker, 0xFF, 1, ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), CHOICED_MOVE(gBankAttacker));
 
 			if (isBannedMove && split != SPLIT_STATUS) //Use banned status move - don't use Max Guard

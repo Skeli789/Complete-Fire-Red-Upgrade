@@ -480,7 +480,7 @@ void CopycatFunc(void)
 	|| gNewBS->LastUsedMove == 0xFFFF
 	|| IsZMove(gNewBS->LastUsedMove)
 	|| IsAnyMaxMove(gNewBS->LastUsedMove)
-	|| CheckTableForMove(gNewBS->LastUsedMove, gCopycatBannedMoves))
+	|| gSpecialMoveFlags[gNewBS->LastUsedMove].gCopycatBannedMoves)
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 1 - 5;	//From PP Reduce
 	}
@@ -549,8 +549,8 @@ void MeFirstFunc(void)
 
 	if (SPLIT(move) == SPLIT_STATUS
 	|| GetBattlerTurnOrderNum(gBankTarget) < gCurrentTurnActionNumber
-	|| CheckTableForMove(move, gMeFirstBannedMoves)
-	|| CheckTableForMove(move, gMovesThatCallOtherMoves))
+	|| gSpecialMoveFlags[move].gMeFirstBannedMoves
+	|| gSpecialMoveFlags[move].gMovesThatCallOtherMoves)
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 1; //Start from PP Reduce
 	}
@@ -1091,9 +1091,9 @@ void TryExecuteInstruct(void)
 {
 	u16 move = gLastPrintedMoves[gBankTarget];
 
-	if (CheckTableForMove(move, gInstructBannedMoves)
-	||  CheckTableForMove(move, gMovesThatRequireRecharging)
-	||  CheckTableForMove(move, gMovesThatCallOtherMoves)
+	if (gSpecialMoveFlags[move].gInstructBannedMoves
+	||  gSpecialMoveFlags[move].gMovesThatRequireRecharging
+	||  gSpecialMoveFlags[move].gMovesThatCallOtherMoves
 	|| IsZMove(move)
 	|| IsAnyMaxMove(move)
 	|| IsDynamaxed(gBankTarget)

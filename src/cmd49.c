@@ -743,7 +743,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&&  gBankAttacker != bankDef
 			&&  MOVE_HAD_EFFECT
 			&&  TOOK_DAMAGE(bankDef)
-			&& (moveType == TYPE_FIRE || CheckTableForMove(gCurrentMove, gMovesCanUnfreezeTarget)))
+			&& (moveType == TYPE_FIRE || gSpecialMoveFlags[gCurrentMove].gMovesCanUnfreezeTarget))
 			{
 				gBattleMons[bankDef].status1 &= ~(STATUS1_FREEZE);
 				gActiveBattler = bankDef;
@@ -982,7 +982,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							}
 						}
 					}
-					else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL && !CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
+					else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL && !gSpecialMoveFlags[gCurrentMove].gSpecialWholeFieldMoves)
 					{
 						if (gNewBS->OriginalAttackerTargetCount < 3)
 						{ //Get Next Target
@@ -1062,42 +1062,42 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&& gNewBS->AttackerDidDamageAtLeastOnce
 				&& BATTLER_ALIVE(gBankAttacker))
 				{
-					if (CheckTableForMove(gCurrentMove, gPercent25RecoilMoves))
+					if (gSpecialMoveFlags[gCurrentMove].gPercent25RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven / 4);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent33RecoilMoves))
+					else if (gSpecialMoveFlags[gCurrentMove].gPercent33RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven / 3);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent50RecoilMoves))
+					else if (gSpecialMoveFlags[gCurrentMove].gPercent50RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven / 2);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent66RecoilMoves))
+					else if (gSpecialMoveFlags[gCurrentMove].gPercent66RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 2) / 3);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent75RecoilMoves))
+					else if (gSpecialMoveFlags[gCurrentMove].gPercent75RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 3) / 4);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;
 					}
-					else if (CheckTableForMove(gCurrentMove, gPercent100RecoilMoves))
+					else if (gSpecialMoveFlags[gCurrentMove].gPercent100RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven);
 						BattleScriptPushCursor();
@@ -1425,7 +1425,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& ABILITY_PRESENT(ABILITY_DANCER)
 			&& gNewBS->attackAnimationPlayed
 			&& !gNewBS->moveWasBouncedThisTurn
-			&& CheckTableForMove(gCurrentMove, gDanceMoves))
+			&& gSpecialMoveFlags[gCurrentMove].gDanceMoves)
 			{
 				gNewBS->DancerInProgress = TRUE;
 				gNewBS->CurrentTurnAttacker = gBankAttacker;

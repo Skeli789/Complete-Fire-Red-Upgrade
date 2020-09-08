@@ -1717,7 +1717,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CheckTableForMove(move, gMoldBreakerMoves))
+			if (gSpecialMoveFlags[move].gMoldBreakerMoves)
 				return FALSE;
 
 			if (SPLIT(move) != SPLIT_STATUS)

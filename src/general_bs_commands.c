@@ -138,7 +138,7 @@ void atk02_attackstring(void)
 			if (IsAnyMaxMove(gCurrentMove))
 				gNewBS->LastUsedMove = gChosenMove;
 
-			if (!CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
+			if (!gSpecialMoveFlags[gCurrentMove].gMovesThatCallOtherMoves)
 			{
 				u8 chargingBonus = 20 * gNewBS->metronomeItemBonus[gBankAttacker];
 				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
@@ -154,7 +154,7 @@ void atk02_attackstring(void)
 
 			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
 			&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
-			&& !CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
+			&& !gSpecialMoveFlags[gCurrentMove].gMovesThatCallOtherMoves)
 			{
 				if (gBattleMons[gBankAttacker].type1 != moveType
 				||  gBattleMons[gBankAttacker].type2 != moveType
@@ -3163,7 +3163,7 @@ void atk9D_mimicattackcopy(void)
 	if (gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED
 	|| gLastUsedMoves[gBankTarget] == 0
 	|| gLastUsedMoves[gBankTarget] == 0xFFFF
-	|| CheckTableForMove(gLastUsedMoves[gBankTarget], gMimicBannedMoves)
+	|| gSpecialMoveFlags[gLastUsedMoves[gBankTarget]].gMimicBannedMoves
 	|| IsZMove(gLastUsedMoves[gBankTarget])
 	|| IsAnyMaxMove(gLastUsedMoves[gBankTarget]))
 	{
@@ -3202,7 +3202,7 @@ void atk9E_metronome(void)
 	{
 		gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
 	} while (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove)
-		|| CheckTableForMove(gCurrentMove, gMetronomeBannedMoves));
+		|| gSpecialMoveFlags[gCurrentMove].gMetronomeBannedMoves);
 
 	TryUpdateCalledMoveWithZMove();
 	UpdateMoveStartValuesForCalledMove();
@@ -3308,7 +3308,7 @@ void atkA4_trysetencore(void)
 	if (gLastUsedMoves[gBankTarget] == MOVE_STRUGGLE
 	||  gLastUsedMoves[gBankTarget] == MOVE_ENCORE
 	||  gNewBS->playedShellTrapMessage & gBitTable[gBankTarget]
-	||  CheckTableForMove(gLastUsedMoves[gBankTarget], gMovesThatCallOtherMoves)
+	||  gSpecialMoveFlags[gLastUsedMoves[gBankTarget]].gMovesThatCallOtherMoves
 	||  IsZMove(gLastUsedMoves[gBankTarget])
 	||  IsAnyMaxMove(gLastUsedMoves[gBankTarget])
 	||  IsDynamaxed(gBankTarget))
@@ -3499,27 +3499,32 @@ void atkA8_copymovepermanently(void) // sketch
 	}
 }
 
-void atkA9_trychoosesleeptalkmove(void) {
-	u8 unusable_moves = 0;
-	int i;
+void atkA9_trychoosesleeptalkmove(void)
+{
+	u32 i;
+	u8 unusableMoves = 0;
 
-	for (i = 0; i < 4; ++i) {
-		if (CheckTableForMove(gBattleMons[gBankAttacker].moves[i], gSleepTalkBannedMoves))
-			unusable_moves |= gBitTable[i];
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (gSpecialMoveFlags[gBattleMons[gBankAttacker].moves[i]].gSleepTalkBannedMoves)
+			unusableMoves |= gBitTable[i];
 	}
 
-	unusable_moves = CheckMoveLimitations(gBankAttacker, unusable_moves, 0xFF ^ MOVE_LIMITATION_PP ^ MOVE_LIMITATION_DISABLED ^ MOVE_LIMITATION_CHOICE);
-	if (unusable_moves == 0xF) //all 4 moves cannot be chosen
+	unusableMoves = CheckMoveLimitations(gBankAttacker, unusableMoves, 0xFF ^ MOVE_LIMITATION_PP ^ MOVE_LIMITATION_DISABLED ^ MOVE_LIMITATION_CHOICE);
+	if (unusableMoves == 0xF) //All 4 moves cannot be chosen
+	{
 		gBattlescriptCurrInstr += 5;
+	}
+	else //At least one move can be chosen
+	{
+		u32 randomPos;
+		do
+		{
+			randomPos = Random() & 3;
+		} while ((gBitTable[randomPos] & unusableMoves));
 
-	else { //at least one move can be chosen
-		u32 random_pos;
-		do {
-			random_pos = Random() & 3;
-		} while ((gBitTable[random_pos] & unusable_moves));
-
-		gCalledMove = gBattleMons[gBankAttacker].moves[random_pos];
-		gCurrMovePos = random_pos;
+		gCalledMove = gBattleMons[gBankAttacker].moves[randomPos];
+		gCurrMovePos = randomPos;
 		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 		gBankTarget = GetMoveTarget(gCalledMove, 0);
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -4718,7 +4723,7 @@ void atkDE_asistattackselect(void)
 		{
 			u16 move = party[monId].moves[moveId];
 
-			if (CheckTableForMove(move, gAssistBannedMoves))
+			if (gSpecialMoveFlags[move].gAssistBannedMoves)
 				continue;
 
 			if (move == MOVE_NONE)

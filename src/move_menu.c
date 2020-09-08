@@ -1802,7 +1802,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		++limitations;
 	}
 	#ifdef FLAG_SKY_BATTLE
-	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+	else if (FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
 		++limitations;
@@ -1814,7 +1814,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedRingChallenge;
 		++limitations;
 	}
-	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+	else if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;
 		++limitations;

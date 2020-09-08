@@ -719,7 +719,17 @@ u8 GetMonDynamaxHPBoost(unusedArg struct Pokemon* mon)
 
 u8 GetRaidBattleHPBoost(void)
 {
-	return 4;
+	switch (gRaidBattleStars)
+	{
+		case 1:
+		case 2:
+			return 2;
+		case 3:
+		case 4:
+			return 3:
+		default:
+			return 4;
+	}
 }
 
 bool8 IsAnyMaxMove(u16 move)
@@ -1399,7 +1409,7 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
 			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;
 
-		if (gBattleMoves[move].target & MOVE_TARGET_ALL && CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
+		if (gBattleMoves[move].target & MOVE_TARGET_ALL && gSpecialMoveFlags[gCurrentMove].gSpecialWholeFieldMoves)
 			return FALSE;
 
 		return TRUE;

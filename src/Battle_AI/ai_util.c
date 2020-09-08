@@ -1075,17 +1075,17 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 	||  (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
 		return TRUE;
 
-	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
-	||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
-	||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
+	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !gSpecialMoveFlags[move].gIgnoreInAirMoves)
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !gSpecialMoveFlags[move].gIgnoreUndergoundMoves)
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !gSpecialMoveFlags[move].gIgnoreUnderwaterMoves)
 	||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		return FALSE;
 
 	if ((move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
-	||  (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
+	||  (gSpecialMoveFlags[move].gAlwaysHitWhenMinimizedMoves && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||  gBattleMoves[move].accuracy == 0
-	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves))
+	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 	||  IsZMove(move)
 	||  IsAnyMaxMove(move))
 		return TRUE;
@@ -2394,7 +2394,7 @@ bool8 UnfreezingMoveInMoveset(u8 bank)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CheckTableForMove(move, gMovesCanUnfreezeAttacker))
+			if (gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)
 				return TRUE;
 		}
 	}

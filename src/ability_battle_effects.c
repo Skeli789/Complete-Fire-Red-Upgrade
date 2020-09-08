@@ -1488,12 +1488,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						break;
 
 					case ABILITY_BULLETPROOF:
-						if (CheckTableForMove(move, gBallBombMoves))
+						if (gSpecialMoveFlags[move].gBallBombMoves)
 							effect = 1;
 						break;
 
 					case ABILITY_OVERCOAT:
-						if (CheckTableForMove(move, gPowderMoves))
+						if (gSpecialMoveFlags[move].gPowderMoves)
 							effect = 1;
 						break;
 

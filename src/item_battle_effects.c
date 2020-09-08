@@ -876,7 +876,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				&& TOOK_DAMAGE(gBankTarget)
 				&& MOVE_HAD_EFFECT
 				&& (umodsi(Random(), 100)) < bankQuality
-				&& !CheckTableForMove(gCurrentMove, gFlinchChanceMoves)
+				&& !gSpecialMoveFlags[gCurrentMove].gFlinchChanceMoves
 				&& BATTLER_ALIVE(gBankTarget)
 				&& !SheerForceCheck())
 				{

@@ -42,7 +42,7 @@ defines_battle.h
 #define REALLY_SMART_AI //The vanilla FR AI memory system sucks so this should always be defined
 
 #define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
-#define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !CheckTableForMove(move, gMoldBreakerMoves))
+#define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !gSpecialMoveFlags[move].gMoldBreakerMoves)
 #define IS_BLANK_TYPE(type) (type == TYPE_MYSTERY || type == TYPE_ROOSTLESS || type == TYPE_BLANK)
 #define IS_TRANSFORMED(bank) (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
 #define IS_BEHIND_SUBSTITUTE(bank) (gBattleMons[bank].status2 & STATUS2_SUBSTITUTE)

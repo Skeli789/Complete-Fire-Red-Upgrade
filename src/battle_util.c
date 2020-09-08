@@ -378,12 +378,12 @@ bool8 CheckHealingMove(move_t move)
 
 bool8 CheckSoundMove(move_t move)
 {
-	return CheckTableForMove(move, gSoundMoves);
+	return gSpecialMoveFlags[move].gSoundMoves;
 }
 
 bool8 SheerForceCheck(void)
 {
-	return ABILITY(gBankAttacker) == ABILITY_SHEERFORCE && CheckTableForMove(gCurrentMove, gSheerForceBoostedMoves);
+	return ABILITY(gBankAttacker) == ABILITY_SHEERFORCE && gSpecialMoveFlags[gCurrentMove].gSheerForceBoostedMoves;
 }
 
 bool8 IsOfType(u8 bank, u8 type)
@@ -573,18 +573,18 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 		return TRUE;
 	#ifdef FLAG_SKY_BATTLE
-	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+	else if (FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
 		return TRUE;
 	#endif
 	else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallenge(move, bank))
 		return TRUE;
-	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+	else if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 		return TRUE;
 	else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
 		return TRUE;
 	else if (IsHealBlocked(bank) && CheckHealingMove(move))
 		return TRUE;
-	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves))
+	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && gSpecialMoveFlags[move].gRaidBattleBannedMoves)
 		return TRUE;
 
 	return FALSE;
@@ -605,14 +605,14 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
 		#ifdef FLAG_SKY_BATTLE
-		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+		else if (FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
 			unusableMoves |= gBitTable[i];
 		#endif
 		else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallengeByMon(move, mon))
 			unusableMoves |= gBitTable[i];
-		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+		else if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 			unusableMoves |= gBitTable[i];
-		else if (IsRaidBattle() && CheckTableForMove(move, gRaidBattleBannedMoves))
+		else if (IsRaidBattle() && gSpecialMoveFlags[move].gRaidBattleBannedMoves)
 			unusableMoves |= gBitTable[i];
 	}
 
@@ -1147,7 +1147,7 @@ bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
 {
 	return CheckSoundMove(move)
 		|| (atkAbility == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM && move != MOVE_SKYDROP)
-		|| CheckTableForMove(move, gSubstituteBypassMoves);
+		|| gSpecialMoveFlags[move].gSubstituteBypassMoves;
 }
 
 bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef)
@@ -1169,7 +1169,7 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 {
 	if (SPLIT(move) != SPLIT_STATUS
 	&& !IsAnyMaxMove(move)
-	&& !CheckTableForMove(move, gParentalBondBannedMoves)
+	&& !gSpecialMoveFlags[move].gParentalBondBannedMoves
 	&& !IsTwoTurnsMove(move)
 	&& gBattleMoves[move].effect != EFFECT_0HKO
 	&& gBattleMoves[move].effect != EFFECT_MULTI_HIT
@@ -1198,7 +1198,7 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 
 u8 CalcMoveSplit(u8 bank, u16 move)
 {
-	if (CheckTableForMove(move, gMovesThatChangePhysicality)
+	if (gSpecialMoveFlags[move].gMovesThatChangePhysicality
 	&&  SPLIT(move) != SPLIT_STATUS)
 	{
 		u32 attack = gBattleMons[bank].attack;
@@ -1228,7 +1228,7 @@ u8 CalcMoveSplit(u8 bank, u16 move)
 
 u8 CalcMoveSplitFromParty(struct Pokemon* mon, u16 move)
 {
-	if (CheckTableForMove(move, gMovesThatChangePhysicality))
+	if (gSpecialMoveFlags[move].gMovesThatChangePhysicality)
 	{
 		if (mon->spAttack >= mon->attack)
 			return SPLIT_SPECIAL;

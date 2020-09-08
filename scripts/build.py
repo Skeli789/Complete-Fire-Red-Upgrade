@@ -4,6 +4,7 @@ from datetime import datetime
 from glob import glob
 import hashlib
 import itertools
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -228,6 +229,57 @@ def ProcessC(cFile: str) -> str:
     return objectFile
 
 
+def ProcessSpecialFlagFile(flagFile: str) -> str:
+    objectFile, regenerateObjectFile = MakeGeneralOutputFile(flagFile)
+    if regenerateObjectFile is False:
+        return objectFile  # No point in recreating and recompiling file
+
+    # The flag files are predetermined
+    cFile = flagFile.split('.json')[0] + '.c'
+    if "move_tables" in cFile:
+        includes = '#include "../../include/constants/moves.h"\n#include "../../include/new/move_tables.h"\n\n'
+        tableHeader = "const struct SpecialMoveFlags gSpecialMoveFlags[MOVES_COUNT] =\n{\n"
+    elif "species_tables" in cFile:
+        includes = '#include "../../include/constants/species.h"\n#include "../../include/new/species_tables.h"\n\n'
+        tableHeader = "const struct SpecialSpeciesFlags gSpecialSpeciesFlags[SPECIES_COUNT] =\n{\n"
+    elif "ability_tables" in cFile:
+        includes = '#include "../../include/constants/abilities.h"\n#include "../../include/new/ability_tables.h"\n\n'
+        tableHeader = "const struct SpecialAbilityFlags gSpecialAbilityFlags[SPECIES_COUNT] =\n{\n"
+    else:
+        print("Error! Can't compile JSON file \"{}\"".format(flagFile))
+        sys.exit(1)
+
+    # Create a dict of entries with their corresponding flags
+    with open(flagFile, "r") as file:
+        flags = dict()
+        tables = json.load(file)
+        for table in tables:
+            for move in tables[table]:
+                if move in flags:
+                    flags[move].append(table)
+                else:
+                    flags[move] = [table]
+
+    # Convert the flag list to a C file
+    with open(cFile, "w") as output:
+        outputString = '#include "../../src/defines.h"\n'
+        outputString += includes
+        outputString += tableHeader
+
+        for move in flags:
+            outputString += "\t[{}] =\n".format(move)
+            outputString += "\t{\n"
+            for flag in flags[move]:
+                outputString += "\t\t.{} = TRUE,\n".format(flag)
+            outputString += "\t},\n"
+        outputString += "};\n"
+        output.write(outputString)
+
+    objectFile = ProcessC(cFile)
+    os.remove(cFile)  # Remove the generated C file
+    return objectFile
+
+
 def ProcessString(stringFile: str) -> str:
     """Build and assemble strings."""
     assemblyFile = stringFile.split('.string')[0] + '.s'
@@ -337,7 +389,7 @@ def RunGlob(globString: str, fn) -> map:
     """Glob recursively and run the processor function on each file in result."""
     if globString == '**/*.png' or globString == '**/*.bmp':  # Search the GRAPHICS location
         directory = GRAPHICS
-    elif globString == '**/*.s':
+    elif globString == '**/*.s' or globString == '**/*.json':
         directory = ASSEMBLY
     elif globString == '**/*.string':
         directory = STRINGS
@@ -365,6 +417,7 @@ def main():
     globs = {
             '**/*.s': ProcessAssembly,
             '**/*.c': ProcessC,
+            '**/*.json': ProcessSpecialFlagFile,
             '**/*.string': ProcessString,
             '**/*.png': ProcessImage,
             '**/*.bmp': ProcessImage,

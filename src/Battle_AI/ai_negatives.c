@@ -172,7 +172,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	#endif
 
 	// Gravity Table Prevention Check
-	if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+	if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 		return 0; //Can't select this move period
 
 	// Ungrounded check
@@ -180,11 +180,11 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		return 0;
 
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
-	if (CheckTableForMove(move, gPowderMoves) && !IsAffectedByPowder(bankDef))
+	if (gSpecialMoveFlags[move].gPowderMoves && !IsAffectedByPowder(bankDef))
 		DECREASE_VIABILITY(10); //No return b/c could be reduced further by absorb abilities
 
 	//Dynamax Check
-	if (IsDynamaxed(bankDef) && CheckTableForMove(move, gDynamaxBannedMoves))
+	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves)
 	{
 		DECREASE_VIABILITY(10);
 		return viability; //Move Fails
@@ -293,7 +293,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_BULLETPROOF:
-				if (CheckTableForMove(move, gBallBombMoves))
+				if (gSpecialMoveFlags[move].gBallBombMoves)
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
@@ -310,7 +310,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_AROMAVEIL:
-				if (CheckTableForMove(move, gAromaVeilProtectedMoves))
+				if (gSpecialMoveFlags[move].gAromaVeilProtectedMoves)
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
@@ -481,7 +481,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case ABILITY_AROMAVEIL:
-					if (CheckTableForMove(move, gAromaVeilProtectedMoves))
+					if (gSpecialMoveFlags[move].gAromaVeilProtectedMoves)
 					{
 						DECREASE_VIABILITY(10);
 						return viability;
@@ -555,10 +555,10 @@ MOVESCR_CHECK_0:
 	//Raid Battle Check
 	if (IsRaidBattle())
 	{
-		if (CheckTableForMove(move, gRaidBattleBannedMoves))
+		if (gSpecialMoveFlags[move].gRaidBattleBannedMoves)
 			return 0; //This move won't work at all.
 
-		if (GetBattlerPosition(bankAtk) == B_POSITION_OPPONENT_LEFT && CheckTableForMove(move, gRaidBattleBannedRaidMonMoves))
+		if (GetBattlerPosition(bankAtk) == B_POSITION_OPPONENT_LEFT && gSpecialMoveFlags[move].gRaidBattleBannedRaidMonMoves)
 			return 0; //This move really shouldn't be used
 
 		if (bankAtk != bankDef
@@ -671,7 +671,7 @@ MOVESCR_CHECK_0:
 					COPYCAT_CHECK_LAST_MOVE:
 						if (gNewBS->LastUsedMove == MOVE_NONE
 						|| gNewBS->LastUsedMove == 0xFFFF
-						|| CheckTableForMove(gNewBS->LastUsedMove, gCopycatBannedMoves)
+						|| gSpecialMoveFlags[gNewBS->LastUsedMove].gCopycatBannedMoves
 						|| FindMovePositionInMoveset(gNewBS->LastUsedMove, bankAtk) < 4) //If you have the move, use it directly
 							DECREASE_VIABILITY(10);
 						else
@@ -681,7 +681,7 @@ MOVESCR_CHECK_0:
 					{
 						if (predictedMove == MOVE_NONE)
 							goto COPYCAT_CHECK_LAST_MOVE;
-						else if (CheckTableForMove(predictedMove, gCopycatBannedMoves)
+						else if (gSpecialMoveFlags[predictedMove].gCopycatBannedMoves
 							 || FindMovePositionInMoveset(predictedMove, bankAtk) < 4)
 						{
 							DECREASE_VIABILITY(10);
@@ -1174,17 +1174,17 @@ MOVESCR_CHECK_0:
 
 			u32 dmg = GetFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
 
-			if (CheckTableForMove(move, gPercent25RecoilMoves))
+			if (gSpecialMoveFlags[move].gPercent25RecoilMoves)
 				dmg = MathMax(1, dmg / 4);
-			else if (CheckTableForMove(move, gPercent33RecoilMoves))
+			else if (gSpecialMoveFlags[move].gPercent33RecoilMoves)
 				dmg = MathMax(1, dmg / 3);
-			else if (CheckTableForMove(move, gPercent50RecoilMoves))
+			else if (gSpecialMoveFlags[move].gPercent50RecoilMoves)
 				dmg = MathMax(1, dmg / 2);
-			else if (CheckTableForMove(move, gPercent66RecoilMoves))
+			else if (gSpecialMoveFlags[move].gPercent66RecoilMoves)
 				dmg = MathMax(1, (dmg * 2) / 3);
-			else if (CheckTableForMove(move, gPercent75RecoilMoves))
+			else if (gSpecialMoveFlags[move].gPercent75RecoilMoves)
 				dmg = MathMax(1, (dmg * 3) / 4);
-			else if (CheckTableForMove(move, gPercent100RecoilMoves))
+			else if (gSpecialMoveFlags[move].gPercent100RecoilMoves)
 				dmg = MathMax(1, dmg);
 			else if (move == MOVE_MINDBLOWN || move == MOVE_STEELBEAM)
 			{
@@ -2683,9 +2683,9 @@ MOVESCR_CHECK_0:
 
 					if (instructedMove == MOVE_NONE
 					||  IsDynamaxed(bankDef)
-					||  CheckTableForMove(instructedMove, gInstructBannedMoves)
-					||  CheckTableForMove(instructedMove, gMovesThatRequireRecharging)
-					||  CheckTableForMove(instructedMove, gMovesThatCallOtherMoves)
+					||  gSpecialMoveFlags[instructedMove].gInstructBannedMoves
+					||  gSpecialMoveFlags[instructedMove].gMovesThatRequireRecharging
+					||  gSpecialMoveFlags[instructedMove].gMovesThatCallOtherMoves
 					|| (IsZMove(instructedMove))
 					|| (gLockedMoves[bankDef] != 0 && gLockedMoves[bankDef] != 0xFFFF)
 					||  gBattleMons[bankDef].status2 & STATUS2_MULTIPLETURNS

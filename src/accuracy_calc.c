@@ -281,7 +281,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 	u8 split = SPLIT(atkMove);
 	u8 target = gBattleMoves[atkMove].target;
 
-	if (!CheckTableForMove(atkMove, gMovesThatLiftProtectTable))
+	if (!gSpecialMoveFlags[atkMove].gMovesThatLiftProtectTable)
 	{
 		switch (protectMove) {
 			case MOVE_PROTECT:
@@ -314,9 +314,9 @@ bool8 MissesDueToSemiInvulnerability(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (!CanHitSemiInvulnerableTarget(bankAtk, bankDef, move))
 	{
-		if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
-		||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
-		||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
+		if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !gSpecialMoveFlags[move].gIgnoreInAirMoves)
+		||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !gSpecialMoveFlags[move].gIgnoreUndergoundMoves)
+		||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !gSpecialMoveFlags[move].gIgnoreUnderwaterMoves)
 		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		{
 			return TRUE;
@@ -347,7 +347,7 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	if (((gStatuses3[bankDef] & STATUS3_ALWAYS_HITS) && gDisableStructs[bankDef].bankWithSureHit == gBankAttacker)
 	||   (ABILITY(gBankAttacker) == ABILITY_NOGUARD) || (ABILITY(bankDef) == ABILITY_NOGUARD)
 	||   (move == MOVE_TOXIC && IsOfType(gBankAttacker, TYPE_POISON))
-	||   (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
+	||   (gSpecialMoveFlags[move].gAlwaysHitWhenMinimizedMoves && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	||  ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||	 gBattleMoves[move].accuracy == 0)
 	{
@@ -356,7 +356,7 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	}
 	else if (WEATHER_HAS_EFFECT)
 	{
-		if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves) && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
 		{
 			//JumpIfMoveFailed(7, move);
@@ -396,7 +396,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	||  (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED)
 	||   atkAbility == ABILITY_UNAWARE
 	||   atkAbility == ABILITY_KEENEYE
-	||   CheckTableForMove(move, gIgnoreStatChangesMoves))
+	||   gSpecialMoveFlags[move].gIgnoreStatChangesMoves)
 	{
 		buff = acc;
 	}
@@ -414,7 +414,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	if (WEATHER_HAS_EFFECT
 	&& (gBattleWeather & WEATHER_SUN_ANY)
 	&& defEffect != ITEM_EFFECT_UTILITY_UMBRELLA
-	&& CheckTableForMove(move, gAlwaysHitInRainMoves))
+	&& gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		moveAcc = 50;
 
 	//Check Wonder Skin for Status moves
@@ -520,7 +520,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	//Check Thunder + Hurricane in sunny weather
 	if (WEATHER_HAS_EFFECT
 	&& (gBattleWeather & WEATHER_SUN_ANY)
-	&& CheckTableForMove(move, gAlwaysHitInRainMoves))
+	&& gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		moveAcc = 50;
 
 	calc = gAccuracyStageRatios[acc].dividend * moveAcc;
@@ -567,7 +567,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 
 	if (WEATHER_HAS_EFFECT)
 	{
-		if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves))
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
 			calc = 0; //No Miss
 	}
