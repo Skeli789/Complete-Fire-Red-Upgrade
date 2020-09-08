@@ -422,7 +422,8 @@ FieldCB_RushInjuredPokemonToCenter 0807F5F0 0
 
 ## Summary Screen
 CamomonsSummaryScreenHook 08136168 0
-ChangeSummaryScreenMonSinglesDoubles 0813b20c 1
+ChangeSummaryScreenMonSinglesDoubles 0813B20C 1
+ChangeSummaryScreenMonMulti 0813B38C 1
 
 ## Hall of Fame Fix
 CB2_DoHallOfFameScreen 080F1EFC 3

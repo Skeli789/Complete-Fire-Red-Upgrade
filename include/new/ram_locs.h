@@ -95,8 +95,7 @@
 /*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
 		//#define sPartyMenuInternal ((struct PartyMenuViewing*) 0x203B09C)
 		//#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
-		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
-		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
+		#define sLastViewedMonIndex (*(u8*) 0x203B16C)
 
 /*u8*/  #define gBattlePartyCurrentOrder ((u8*) 0x203B0DC)
 

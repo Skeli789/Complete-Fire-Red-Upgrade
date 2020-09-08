@@ -455,27 +455,59 @@ static void OpenSummary(u8 taskId)
 
 u8 ChangeSummaryScreenMonSinglesDoubles(u8 delta)
 {
-	u8 numMons = gSummaryScreenData->maxPartyIndex + 1;
+	u8 numMons = sMonSummaryScreen->lastIndex + 1;
 	delta += numMons;
 
-	// guarantees result will be in range [0, numMons)
-	u8 result = umodsi(gCurrentPartyIndex + delta, numMons);
+	//Guarantees result will be in range [0, numMons)
+	u8 result = (sLastViewedMonIndex + delta) % numMons;
 
-	// skip over eggs on other pages
-	if (gSummaryScreenData->currentPage != PAGE_INFO)
+	//Skip over eggs on other pages
+	if (sMonSummaryScreen->currentPage != PAGE_INFO)
 	{
-		while (GetMonData(gSummaryScreenData->partyData+result, MON_DATA_IS_EGG, NULL))
-		{
-			result = umodsi(result + delta, numMons);
-		}
+		while (GetMonData(sMonSummaryScreen->partyData+result, MON_DATA_IS_EGG, NULL))
+			result = (result + delta) % numMons;
 	}
 
 	// necessary to gracefully handle parties of 1 Pokemon
-	if (result == gCurrentPartyIndex)
+	if (result == sLastViewedMonIndex)
 		return -1;
 
 	return result;
 };
+
+#define sMultiPokemonPartyMenuOrder ((u8*) 0x8463FB8)
+s8 ChangeSummaryScreenMonMulti(s8 delta)
+{
+	u8 i;
+	u8 listPos = 0;
+	u8 numMons = PARTY_SIZE;
+	delta += numMons;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (sMultiPokemonPartyMenuOrder[i] == sLastViewedMonIndex)
+		{
+			listPos = i;
+			break;
+		}
+	}
+
+	//Guarantees result will be in range [0, numMons)
+	u8 result = (listPos + delta) % numMons;
+
+	//Skip over eggs on other pages
+	if (sMonSummaryScreen->currentPage != PAGE_INFO)
+	{
+		while (GetMonData(&gPlayerParty[sMultiPokemonPartyMenuOrder[result]], MON_DATA_IS_EGG, NULL))
+			result = (result + delta) % numMons;
+	}
+
+	//Skip over empty slots
+	while (GetMonData(&gPlayerParty[sMultiPokemonPartyMenuOrder[result]], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+		result = (result + delta) % numMons;
+
+	return sMultiPokemonPartyMenuOrder[result];
+}
 
 //Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

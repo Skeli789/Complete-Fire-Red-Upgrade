@@ -215,7 +215,10 @@ def ProcessC(cFile: str) -> str:
     objectFile, regenerateObjectFile = MakeGeneralOutputFile(cFile)
     if regenerateObjectFile is False:
         return objectFile  # No point in recompiling file
+    return ProcessCToObjectFile(cFile, objectFile)
 
+
+def ProcessCToObjectFile(cFile: str, objectFile: str) -> str:
     try:
         print('Compiling %s' % cFile)
         cmd = [CC] + CFLAGS + ['-c', cFile, '-o', objectFile]
@@ -275,7 +278,7 @@ def ProcessSpecialFlagFile(flagFile: str) -> str:
         outputString += "};\n"
         output.write(outputString)
 
-    objectFile = ProcessC(cFile)
+    objectFile = ProcessCToObjectFile(cFile, objectFile)
     os.remove(cFile)  # Remove the generated C file
     return objectFile
 
