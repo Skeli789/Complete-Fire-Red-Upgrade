@@ -726,7 +726,7 @@ u8 GetRaidBattleHPBoost(void)
 			return 2;
 		case 3:
 		case 4:
-			return 3:
+			return 3;
 		default:
 			return 4;
 	}

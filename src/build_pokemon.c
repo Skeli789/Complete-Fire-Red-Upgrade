@@ -33,6 +33,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/species_tables.h"
 #include "../include/new/util.h"
 
 #include "Tables/battle_tower_spreads.h"
@@ -2059,7 +2060,7 @@ static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize
 	u8 legendCount = 0;
 	bool8 isMulti = IsFrontierMulti(VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE));
 
-	if (!CheckTableForSpecies(species, gGSCup_LegendarySpeciesList))
+	if (!gSpecialSpeciesFlags[species].gsCupLegendaries)
 		return FALSE; //Allowed normally so we don't care
 
 	for (int i = 0; i < partySize; ++i)
@@ -2067,7 +2068,7 @@ static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize
 		if (speciesArray[i] == SPECIES_NONE)
 			continue;
 
-		if (CheckTableForSpecies(speciesArray[i], gGSCup_LegendarySpeciesList))
+		if (gSpecialSpeciesFlags[speciesArray[i]].gsCupLegendaries)
 			++legendCount;
 
 		if (isMulti && legendCount >= 1) //1 legendary per multi trainer
@@ -2095,7 +2096,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 		case BATTLE_FACILITY_STANDARD:
 		case BATTLE_FACILITY_MEGA_BRAWL:
 		case BATTLE_FACILITY_DYNAMAX_STANDARD:
-			if (CheckTableForSpecies(species, gBattleTowerStandardSpeciesBanList)
+			if (gSpecialSpeciesFlags[species].battleTowerStandardBan
 			||  CheckTableForItem(item, gBattleTowerStandard_ItemBanList))
 				return TRUE;
 			break;
@@ -2120,13 +2121,13 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			{
 				if (tier == BATTLE_FACILITY_NATIONAL_DEX_OU)
 				{
-					if (CheckTableForSpecies(species, gSmogonNationalDexOU_SpeciesBanList)
+					if (gSpecialSpeciesFlags[species].smogonNationalDexOUBan
 					||  CheckTableForItem(item, gSmogonNationalDexOU_ItemBanList))
 						return TRUE;
 				}
 				else //Gen 7 OU
 				{
-					if (CheckTableForSpecies(species, gSmogonOU_SpeciesBanList)
+					if (gSpecialSpeciesFlags[species].smogonOUBan
 					||  CheckTableForItem(item, gSmogonOU_ItemBanList))
 						return TRUE;
 				}
@@ -2150,7 +2151,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				bool8 knowsFling = FALSE;
 				bool8 knowsHealingMove = FALSE;
 
-				if (CheckTableForSpecies(species, gSmogonOUDoubles_SpeciesBanList)
+				if (gSpecialSpeciesFlags[species].smogonOUDoublesBan
 				||  CheckTableForItem(item, gSmogonOUDoubles_ItemBanList))
 					return TRUE;
 
@@ -2219,7 +2220,8 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				return 1;
 
 			//Check Banned Moves
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList))
 					return TRUE;
 			}
@@ -2227,7 +2229,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 		case BATTLE_FACILITY_LITTLE_CUP:
 		case BATTLE_FACILITY_LC_CAMOMONS:
-			if (!CheckTableForSpecies(species, gSmogonLittleCup_SpeciesList)
+			if (!gSpecialSpeciesFlags[species].smogonLittleCup
 			||  CheckTableForItem(item, gSmogonLittleCup_ItemBanList))
 				return TRUE; //Banned
 
@@ -2236,7 +2238,8 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			else
 				moveLoc = mon->moves;
 
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogonLittleCup_MoveBanList))
 					return TRUE;
 			}
@@ -2246,19 +2249,17 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 		case BATTLE_FACILITY_MC_CAMOMONS:
 			if (IsFrontierSingles(battleFormat)) //Middle Cup in Singles
 			{
-				if (!CheckTableForSpecies(species, gMiddleCup_SpeciesList)
+				if (!gSpecialSpeciesFlags[species].middleCup
 				||   CheckTableForItem(item, gMiddleCup_ItemBanList))
 					return TRUE; //Banned
 
 				//Load correct ability and moves
 				switch (checkFromLocationType) {
 					case CHECK_BATTLE_TOWER_SPREADS:
-						moveLoc = spread->moves;
 						LOAD_TIER_CHECKING_ABILITY;
 						break;
 
 					default:
-						moveLoc = mon->moves;
 						ability = GetMonAbility(mon);
 				}
 
@@ -2271,15 +2272,15 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				if (CheckTableForItem(item, gBattleTowerStandard_ItemBanList))
 					return TRUE;
 
-				if (CheckTableForSpecies(species, gBattleTowerStandardSpeciesBanList)
-				&& !CheckTableForSpecies(species, gGSCup_LegendarySpeciesList))
+				if (gSpecialSpeciesFlags[species].battleTowerStandardBan
+				&& !gSpecialSpeciesFlags[species].gsCupLegendaries)
 					return TRUE;
 			}
 			break;
 
 		case BATTLE_FACILITY_MONOTYPE:
 		//For Monotype, there's a species, item, ability, and move ban list
-			if (CheckTableForSpecies(species, gSmogonMonotype_SpeciesBanList)
+			if (gSpecialSpeciesFlags[species].smogonMonotypeBan
 			||  CheckTableForItem(item, gSmogonMonotype_ItemBanList))
 				return TRUE;
 
@@ -2300,7 +2301,8 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				return TRUE;
 
 			//Check Banned Moves
-			for (i = 0; i < MAX_MON_MOVES; ++i) {
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
 				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList)
 				|| moveLoc[i] == MOVE_BATONPASS
 				|| moveLoc[i] == MOVE_SWAGGER)
@@ -2309,25 +2311,23 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_FACILITY_CAMOMONS:
-			if (CheckTableForSpecies(species, gSmogonCamomons_SpeciesBanList))
+			if (gSpecialSpeciesFlags[species].smogonCamomonsBan)
 				return TRUE;
 
 			goto STANDARD_OU_CHECK;
 
 		case BATTLE_FACILITY_SCALEMONS:
-			if (CheckTableForSpecies(species, gSmogonScalemons_SpeciesBanList)
+			if (gSpecialSpeciesFlags[species].smogonScalemonsBan
 			||  CheckTableForItem(item, gSmogonScalemons_ItemBanList))
 				return TRUE;
 
 			//Load correct ability and moves
 			switch (checkFromLocationType) {
 				case CHECK_BATTLE_TOWER_SPREADS:
-					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
 
 				default:
-					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
 			}
 
@@ -2338,19 +2338,17 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			goto STANDARD_UBER_CHECK;
 
 		case BATTLE_FACILITY_350_CUP:
-			if (CheckTableForSpecies(species, gSmogon350Cup_SpeciesBanList)
+			if (gSpecialSpeciesFlags[species].smogon350CupBan
 			||  CheckTableForItem(item, gSmogon350Cup_ItemBanList))
 				return TRUE;
 
 			//Load correct ability and moves
 			switch (checkFromLocationType) {
 				case CHECK_BATTLE_TOWER_SPREADS:
-					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
 
 				default:
-					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
 			}
 
@@ -2361,19 +2359,17 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			goto STANDARD_UBER_CHECK;
 
 		case BATTLE_FACILITY_AVERAGE_MONS:
-			if (CheckTableForSpecies(species, gSmogonAverageMons_SpeciesBanList)
+			if (gSpecialSpeciesFlags[species].smogonAverageMonsBan
 			||  CheckTableForItem(item, gSmogonAverageMons_ItemBanList))
 				return TRUE;
 
 			//Load correct ability and moves
 			switch (checkFromLocationType) {
 				case CHECK_BATTLE_TOWER_SPREADS:
-					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
 
 				default:
-					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
 			}
 
@@ -2383,7 +2379,69 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_FACILITY_BENJAMIN_BUTTERFREE:
-			if (CheckTableForSpecies(species, gSmogonBenjaminButterfree_SpeciesBanList))
+			if (gSpecialSpeciesFlags[species].smogonBenjaminButterfreeBan)
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+		
+		case BATTLE_FACILITY_UU:
+			if (gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonUU_AbilityBanList))
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+
+		case BATTLE_FACILITY_RU:
+			if (gSpecialSpeciesFlags[species].smogonRUBan
+			||  gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonRU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonRU_AbilityBanList))
+				return TRUE;
+
+			//Check Banned Moves
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (moveLoc[i] == MOVE_AURORAVEIL)
+					return TRUE;
+			}
+
+			goto STANDARD_OU_CHECK;
+	
+		case BATTLE_FACILITY_NU:
+			if (gSpecialSpeciesFlags[species].smogonNUBan
+			||  gSpecialSpeciesFlags[species].smogonRUBan
+			||  gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonNU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonRU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
 				return TRUE;
 
 			goto STANDARD_OU_CHECK;
@@ -3533,7 +3591,7 @@ void TryRandomizeSpecies(unusedArg u16* species)
 		{
 			newSpecies *= id;
 			newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
-		} while (CheckTableForSpecies(newSpecies, gRandomizerSpeciesBanList));
+		} while (gSpecialSpeciesFlags[newSpecies].randomizerBan);
 		
 		*species = newSpecies;
 	}
@@ -3626,7 +3684,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 
 		#ifdef CREATE_WITH_X_PERFECT_IVS
 		{
-			if (CheckTableForSpecies(species, gSetPerfectXIvList))
+			if (gSpecialSpeciesFlags[species].setPerfectXIVs)
 			{
 				u8 numPerfectStats = 0;
 				u8 perfect = 31;

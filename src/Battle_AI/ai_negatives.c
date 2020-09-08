@@ -19,6 +19,7 @@
 #include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/species_tables.h"
 #include "../../include/new/util.h"
 
 /*
@@ -85,7 +86,6 @@ ai_negatives.c
 extern move_effect_t gSetStatusMoveEffects[];
 extern move_effect_t gStatLoweringMoveEffects[];
 extern move_effect_t gConfusionMoveEffects[];
-extern species_t gTelekinesisBanList[];
 extern const struct FlingStruct gFlingTable[];
 
 //This file's functions:
@@ -2526,7 +2526,7 @@ MOVESCR_CHECK_0:
 					if (data->defStatus3 & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 					||  IsGravityActive()
 					||  data->defItemEffect == ITEM_EFFECT_IRON_BALL
-					||  CheckTableForSpecies(data->defSpecies, gTelekinesisBanList)
+					||  gSpecialSpeciesFlags[data->defSpecies].telekinesisBan
 					|| PARTNER_MOVE_IS_SAME)
 						DECREASE_VIABILITY(10);
 					else

@@ -128,6 +128,9 @@ enum BattleTowerFormats
 	BATTLE_FACILITY_MEGA_BRAWL,
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
+	BATTLE_FACILITY_UU,
+	BATTLE_FACILITY_RU,
+	BATTLE_FACILITY_NU,
 	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
 	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
 	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
@@ -334,19 +337,9 @@ extern const u8 gNumBattleCircusTiers;
 #define gNumBattleSandsTiers gNumBattleTowerTiers
 extern const u8* const gBattleFrontierTierNames[NUM_TIERS];
 
-extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];
-extern const species_t gSmogonOU_SpeciesBanList[];
-extern const species_t gSmogonNationalDexOU_SpeciesBanList[];
-extern const species_t gSmogonOUDoubles_SpeciesBanList[];
 extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
-extern const species_t gSmogonMonotype_SpeciesBanList[];
-extern const species_t gSmogonCamomons_SpeciesBanList[];
-extern const species_t gSmogonAverageMons_SpeciesBanList[];
-extern const species_t gSmogon350Cup_SpeciesBanList[];
-extern const species_t gSmogonScalemons_SpeciesBanList[];
-extern const species_t gSmogonBenjaminButterfree_SpeciesBanList[];
 extern const ability_t gSmogonOU_AbilityBanList[];
 extern const ability_t gSmogonOUDoubles_AbilityBanList[];
 extern const ability_t gSmogonMonotype_AbilityBanList[];
@@ -354,6 +347,8 @@ extern const ability_t gMiddleCup_AbilityBanList[];
 extern const ability_t gSmogonAverageMons_AbilityBanList[];
 extern const ability_t gSmogon350Cup_AbilityBanList[];
 extern const ability_t gSmogonScalemons_AbilityBanList[];
+extern const ability_t gSmogonUU_AbilityBanList[];
+extern const ability_t gSmogonRU_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
 extern const item_t gSmogonNationalDexOU_ItemBanList[];
@@ -364,6 +359,9 @@ extern const item_t gMiddleCup_ItemBanList[];
 extern const item_t gSmogonAverageMons_ItemBanList[];
 extern const item_t gSmogon350Cup_ItemBanList[];
 extern const item_t gSmogonScalemons_ItemBanList[];
+extern const item_t gSmogonUU_ItemBanList[];
+extern const item_t gSmogonRU_ItemBanList[];
+extern const item_t gSmogonNU_ItemBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];

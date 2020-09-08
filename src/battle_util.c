@@ -1420,7 +1420,10 @@ bool8 DoesSleepClausePrevent(u8 bank)
 			case BATTLE_FACILITY_350_CUP:
 			case BATTLE_FACILITY_AVERAGE_MONS:
 			case BATTLE_FACILITY_BENJAMIN_BUTTERFREE:
-			case BATTLE_FACILITY_NATIONAL_DEX_OU: ;
+			case BATTLE_FACILITY_NATIONAL_DEX_OU:
+			case BATTLE_FACILITY_UU:
+			case BATTLE_FACILITY_RU:
+			case BATTLE_FACILITY_NU: ;
 				u8 firstId, lastId;
 				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 

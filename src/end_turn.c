@@ -1484,16 +1484,16 @@ u8 TurnBasedEffects(void)
 
 						#ifdef SPECIES_MINIOR_SHIELD
 						case ABILITY_SHIELDSDOWN:
-							if (species == SPECIES_MINIOR_SHIELD
-							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
+							if (gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
+							&& species == SPECIES_MINIOR_SHIELD)
 							{
 								newSpecies = GetMiniorCoreSpecies(mon);
 								changedForm = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_ShieldsDownToCore;
 							}
-							else if (CheckTableForSpecies(species, gMiniorCores)
-							&& gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2))
+							else if (gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)
+							&& CheckTableForSpecies(species, gMiniorCores))
 							{
 								newSpecies = SPECIES_MINIOR_SHIELD;
 								changedForm = TRUE;
