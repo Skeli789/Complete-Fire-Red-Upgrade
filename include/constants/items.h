@@ -466,6 +466,7 @@ enum
 #define ITEM_POWDER_JAR 372
 #define ITEM_RUBY 373
 #define ITEM_SAPPHIRE 374
+#define ITEM_N_A 375
 
 //New Sellable Items
 #define ITEM_RARE_BONE 0x72

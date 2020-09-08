@@ -2305,7 +2305,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	#endif
 
 //Sandstorm Sp. Def Increase
-	if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SANDSTORM_ANY)
+	if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT
 	&& ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK))))
 		data->spDefense = (15 * data->spDefense) / 10;
 

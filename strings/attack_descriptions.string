@@ -767,7 +767,7 @@ The user heals the\ntarget's status\ncondition. If the move\nsucceeds, it also\n
 The user attacks the\ntarget by dancing\nvery hard. The user's\ntype determines this\nmove's type.
 
 #org @DESC_SHADOWBONE
-The user attacks by\nbeating the foe with\na bone that has a\nspirit. It may lower\nDefense.
+The user attacks the\nfoe with a bone of\nspirit. It may lower\nthe foe's Defense.
 
 #org @DESC_SHELLTRAP
 The user sets a\nshell trap. If the\nuser is hit by a\nphysical move, the\ntrap will explode.
