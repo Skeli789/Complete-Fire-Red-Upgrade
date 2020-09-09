@@ -1902,29 +1902,32 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 	secondBestMonId = PARTY_SIZE;
 	for (i = firstId; i < lastId; ++i)
 	{
-		if (party[i].species != SPECIES_NONE
-		&& party[i].hp > 0
-		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
+		struct Pokemon* consideredMon = &party[i];
+	
+		if (consideredMon->species != SPECIES_NONE
+		&& consideredMon->hp > 0
+		&& !GetMonData(consideredMon, MON_DATA_IS_EGG, NULL)
 		&& i != gBattlerPartyIndexes[battlerIn1]
 		&& i != gBattlerPartyIndexes[battlerIn2]
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn2])
 		{
 			u8 foes[] = {foe1, foe2};
-			u8 moveLimitations = CheckMoveLimitationsFromParty(&party[i], 0, 0xFF);
+			u8 moveLimitations = CheckMoveLimitationsFromParty(consideredMon, 0, 0xFF);
+			u8 ability = GetMonAbility(consideredMon);
 			secondLastValidMon = lastValidMon;
 			lastValidMon = i;
 
-			u16 species = GetMonData(&party[i], MON_DATA_SPECIES, NULL);
-			canNegateToxicSpikes[i] = CheckGroundingFromPartyData(&party[i])
+			u16 species = GetMonData(consideredMon, MON_DATA_SPECIES, NULL);
+			canNegateToxicSpikes[i] = CheckGroundingFromPartyData(consideredMon)
 									&& (gBaseStats[species].type1 == TYPE_POISON || gBaseStats[species].type2 == TYPE_POISON);
 
-			if (WillFaintFromEntryHazards(&party[i], SIDE(gActiveBattler)))
+			if (WillFaintFromEntryHazards(consideredMon, SIDE(gActiveBattler)))
 				continue; //Don't switch in the mon if it'll faint on reentry
 
 			struct DamageCalc damageData = {0};
 			damageData.bankAtk = gActiveBattler;
-			damageData.monAtk = &party[i];
+			damageData.monAtk = consideredMon;
 			PopulateDamageCalcStructWithBaseAttackerData(&damageData);
 
 			for (j = 0; j < gBattlersCount / 2; ++j) //Loop through all enemies on field
@@ -1935,7 +1938,6 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 				&& (j == 0 || foes[0] != foes[j])) //Don't check same opponent twice
 				{
 					u8 typeEffectiveness = 0;
-					u8 ability = GetMonAbility(&party[i]);
 					bool8 isWeakToMove = FALSE;
 					bool8 isNormalEffectiveness = FALSE;
 
@@ -1943,7 +1945,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					PopulateDamageCalcStructWithBaseDefenderData(&damageData);
 
 					//Check Offensive Capabilities
-					if (CanKnockOutFromParty(&party[i], foe, &damageData))
+					if (CanKnockOutFromParty(consideredMon, foe, &damageData))
 					{
 						scores[i] += SWITCHING_INCREASE_KO_FOE;
 
@@ -1955,7 +1957,10 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						{
 							for (k = 0; k < MAX_MON_MOVES; ++k)
 							{
-								move = GetMonData(&party[i], MON_DATA_MOVE1 + k, 0);
+								if (gBitTable[k] & moveLimitations)
+									continue;
+
+								move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
 
 								if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 								&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
@@ -1966,18 +1971,17 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards
 								}
 
-								if (move == MOVE_FELLSTINGER
-								&&  !(gBitTable[k] & moveLimitations))
+								if (move == MOVE_FELLSTINGER)
 								{
-									if (MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1, &damageData))
+									if (MoveKnocksOutXHitsFromParty(move, consideredMon, foe, 1, &damageData))
 									{
 										scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
 										break;
 									}
 								}
 								else if (SPLIT(move) != SPLIT_STATUS
-								&& PriorityCalcMon(&party[i], move) > 0
-								&& MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1, &damageData))
+								&& PriorityCalcMon(consideredMon, move) > 0
+								&& MoveKnocksOutXHitsFromParty(move, consideredMon, foe, 1, &damageData))
 								{
 									//Priority move that KOs
 									scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
@@ -1988,9 +1992,15 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					}
 					else //This mon can't KO the foe
 					{
+						bool8 hasUsableMove = FALSE;
+
 						for (k = 0; k < MAX_MON_MOVES; ++k)
 						{
-							move = GetMonData(&party[i], MON_DATA_MOVE1 + k, 0);
+							if (gBitTable[k] & moveLimitations)
+								continue;
+
+							move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
+							hasUsableMove = TRUE;
 
 							if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 							&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
@@ -2003,12 +2013,17 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 							if (move != MOVE_NONE
 							&& SPLIT(move) != SPLIT_STATUS
-							&& !(gBitTable[k] & moveLimitations)
-							&& TypeCalc(move, gActiveBattler, foe, &party[i], TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
+							&& TypeCalc(move, gActiveBattler, foe, consideredMon, TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
 							{
 								scores[i] += SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE; //Only checked if can't KO
 								break;
 							}
+						}
+
+						if (!hasUsableMove)
+						{
+							scores[i] = -1; //Bad idea to switch to this mon
+							goto CHECK_NEXT_MON;
 						}
 					}
 
@@ -2019,7 +2034,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					struct DamageCalc foeDamageData = {0};
 					foeDamageData.bankAtk = foe;
 					foeDamageData.bankDef = gActiveBattler; //For the side
-					foeDamageData.monDef = &party[i];
+					foeDamageData.monDef = consideredMon;
 					PopulateDamageCalcStructWithBaseAttackerData(&foeDamageData);
 					PopulateDamageCalcStructWithBaseDefenderData(&foeDamageData);
 
@@ -2045,7 +2060,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 						if (!(gBitTable[k] & foeMoveLimitations))
 						{
-							typeEffectiveness = AI_TypeCalc(move, foe, &party[i]);
+							typeEffectiveness = AI_TypeCalc(move, foe, consideredMon);
 
 							if (typeEffectiveness & MOVE_RESULT_SUPER_EFFECTIVE)
 							{
@@ -2057,7 +2072,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (!isNormalEffectiveness && IS_SINGLE_BATTLE) //Only need 1 check to pass and don't waste extra time in doubles
 								{
 									//This function takes time for each move for each Pokemon so we try to call it as little as possible
-									u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, &party[i], &foeDamageData);
+									u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData);
 									if (dmg >= party[i].hp / 2) //Move does half of over half of the health remaining
 										isNormalEffectiveness = TRUE;
 								}
@@ -2079,9 +2094,9 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						APPLY_STAT_MOD(attack, &gBattleMons[foe], gBattleMons[foe].attack, STAT_STAGE_ATK);
 						APPLY_STAT_MOD(spAttack, &gBattleMons[foe], gBattleMons[foe].spAttack, STAT_STAGE_SPATK);
 
-						if (physMoveInMoveset && GetMonData(&party[i], MON_DATA_DEF, NULL) <= attack)
+						if (physMoveInMoveset && GetMonData(consideredMon, MON_DATA_DEF, NULL) <= attack)
 							cantWall = TRUE;
-						else if (specMoveInMoveset && GetMonData(&party[i], MON_DATA_SPDEF, NULL) <= spAttack)
+						else if (specMoveInMoveset && GetMonData(consideredMon, MON_DATA_SPDEF, NULL) <= spAttack)
 							cantWall = TRUE;
 
 						if (!cantWall)
@@ -2145,6 +2160,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			else if (IS_DOUBLE_BATTLE && secondBestMonId == PARTY_SIZE)
 				secondBestMonId = i;
 		}
+
+		CHECK_NEXT_MON: ;
 	}
 
 	if (bestMonId != PARTY_SIZE)
