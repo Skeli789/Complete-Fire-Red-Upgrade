@@ -5267,8 +5267,8 @@ BS_242_LastResortSkyDrop:
 	ppreduce
 	attackanimation
 	waitanimation
-	setsemiinvulnerablebit
 	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
+	setsemiinvulnerablebit
 	setword BATTLE_STRING_LOADER SkyDropUpString
 	printstring 0x184
 	waitmessage DELAY_1SECOND

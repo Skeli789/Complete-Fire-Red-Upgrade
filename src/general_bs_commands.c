@@ -1362,6 +1362,70 @@ void atk1B_cleareffectsonfaint(void) {
 				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
+			case Faint_SkyDrop:
+				++gNewBS->faintEffectsState;
+				u32 status3;
+				u8 bankToFree;
+
+				//Determine if this mon was active in a Sky Drop
+				for (bankToFree = 0, status3 = 0; bankToFree < gBattlersCount; ++bankToFree)
+				{
+					if (gStatuses3[bankToFree] & STATUS3_SKY_DROP_ATTACKER)
+					{
+						if (gNewBS->skyDropAttackersTarget[bankToFree] == gActiveBattler)
+						{
+							status3 = STATUS3_SKY_DROP_TARGET; //The fainted bank was a target of Sky Drop
+							break;
+						}
+					}
+					else if (gStatuses3[bankToFree] & STATUS3_SKY_DROP_TARGET)
+					{
+						if (gNewBS->skyDropTargetsAttacker[bankToFree] == gActiveBattler)
+						{
+							status3 = STATUS3_SKY_DROP_ATTACKER; //The fainted bank was a user of Sky Drop
+							break;
+						}
+					}
+				}
+
+				if (status3 & STATUS3_SKY_DROP_ANY) //The fainted bank was active in a Sky Drop
+				{
+					if (status3 & STATUS3_SKY_DROP_ATTACKER) //The fainted bank was the user of a Sky Drop
+					{
+						//So free the Pokemon it had held up in the air
+						gNewBS->skyDropAttackersTarget[gActiveBattler] = 0;
+						gNewBS->skyDropTargetsAttacker[bankToFree] = 0;
+
+						//A message is only printed when the target is freed.
+						gBattleScripting.bank = bankToFree;
+						gBattleStringLoader = FreedFromSkyDropString;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+
+						gActiveBattler = bankToFree;
+						EmitSpriteInvisibility(0, FALSE);
+						MarkBufferBankForExecution(gActiveBattler);
+					}
+					else if (status3 & STATUS3_SKY_DROP_TARGET) //The fainted bank was the target of a Sky Drop
+					{
+						//So free the Pokemon that was holding it in the air
+						CancelMultiTurnMoves(bankToFree);
+						gNewBS->skyDropAttackersTarget[bankToFree] = 0;
+						gNewBS->skyDropTargetsAttacker[gActiveBattler] = 0;
+						gActiveBattler = bankToFree;
+						EmitSpriteInvisibility(0, FALSE);
+						MarkBufferBankForExecution(gActiveBattler);
+					}
+					else
+						goto END_SKY_DROP_CHECK;
+
+					gStatuses3[gActiveBattler] &= ~(STATUS3_SKY_DROP_ANY | STATUS3_IN_AIR);
+					gStatuses3[bankToFree] &= ~(STATUS3_SKY_DROP_ANY | STATUS3_IN_AIR);
+					return;
+				}
+				END_SKY_DROP_CHECK: ;
+			__attribute__ ((fallthrough));
+
 			case Faint_RaidBattle:
 				++gNewBS->faintEffectsState;
 			#ifdef FLAG_RAID_BATTLE
@@ -4285,7 +4349,8 @@ void atkC3_trysetfutureattack(void) {
 	}
 }
 
-void atkC5_setsemiinvulnerablebit(void) {
+void atkC5_setsemiinvulnerablebit(void)
+{
 	switch (gCurrentMove) {
 		case MOVE_FLY:
 		case MOVE_BOUNCE:
@@ -4311,6 +4376,7 @@ void atkC5_setsemiinvulnerablebit(void) {
 
 			gNewBS->skyDropAttackersTarget[gBankAttacker] = gBankTarget;
 			gNewBS->skyDropTargetsAttacker[gBankTarget] = gBankAttacker;
+			gNewBS->NoMoreMovingThisTurn |= gBitTable[gBankTarget]; //The target can't attack anymore even if it's freed from the Sky Drop this turn
 
 			if (gSideTimers[SIDE(gBankTarget)].followmeTarget == gBankTarget) //Removes Follow Me's effect
 			{
@@ -4318,6 +4384,7 @@ void atkC5_setsemiinvulnerablebit(void) {
 				gNewBS->ragePowdered &= ~gBitTable[SIDE(gBankTarget)];
 			}
 	}
+
 	gBattlescriptCurrInstr++;
 }
 

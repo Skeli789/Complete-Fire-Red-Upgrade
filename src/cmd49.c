@@ -54,7 +54,6 @@ enum
 //They are done here if they didn't activate before.
 
 	ATK49_UNDO_SKY_DROP,
-	ATK49_UNDO_SKY_DROP_2,
 	ATK49_ATTACKER_INVISIBLE,
 	ATK49_TARGET_INVISIBLE,
 	ATK49_ATTACKER_VISIBLE,
@@ -322,53 +321,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting.atk49_state++;
 			break;
 
-
 //From here on are always done in CMD49
-
-		case ATK49_UNDO_SKY_DROP: ; //One of the mons in the air died
-			u8 bankToFree;
-
-			for (i = 0; i < gBattlersCount; ++i)
-			{
-				if (gBattleMons[i].hp == 0)
-				{
-					if (gStatuses3[gNewBS->skyDropAttackersTarget[gBankTarget]] & STATUS3_SKY_DROP_TARGET
-					&&  gNewBS->skyDropTargetsAttacker[gNewBS->skyDropAttackersTarget[gBankTarget]] == gBankTarget)
-					{
-						bankToFree = gNewBS->skyDropAttackersTarget[i];
-						gNewBS->skyDropAttackersTarget[i] = 0;
-						gNewBS->skyDropTargetsAttacker[bankToFree] = 0;
-
-						//A message is only printed when the target is freed.
-						gBattleScripting.bank = bankToFree;
-						gBattleStringLoader = FreedFromSkyDropString;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
-						effect = TRUE;
-
-						gActiveBattler = bankToFree;
-						EmitSpriteInvisibility(0, FALSE);
-						MarkBufferBankForExecution(gActiveBattler);
-					}
-					else
-						continue;
-
-					gStatuses3[i] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
-					gStatuses3[bankToFree] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
-					break;
-				}
-			}
-
-			gBattleScripting.atk49_state++;
-			break;
-
-		case ATK49_UNDO_SKY_DROP_2: //The attacker can no longer attack while in the air due to paralysis etc.
+		case ATK49_UNDO_SKY_DROP: //The attacker can no longer attack while in the air due to paralysis etc.
 			if (gCurrentMove == MOVE_SKYDROP
 			&& gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE
 			&& gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
 			{
 				gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
 				gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
+				gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
+				gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
 				gBattleScripting.bank = gBankTarget;
 				gBattleStringLoader = FreedFromSkyDropString;
 				BattleScriptPushCursor();
