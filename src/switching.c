@@ -350,6 +350,7 @@ void atk4D_switchindataupdate(void)
 
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
+	gNewBS->AttackerDidDamageAtLeastOnce = FALSE; //Helps with Throat Spray
 
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
@@ -1136,8 +1137,6 @@ void ClearSwitchBytes(u8 bank)
 	gProtectStructs[bank].BanefulBunker = 0;
 	gProtectStructs[bank].obstruct = 0;
 	gProtectStructs[bank].enduredSturdy = 0;
-
-	gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
 	
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
