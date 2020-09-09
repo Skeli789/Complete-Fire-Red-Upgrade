@@ -1249,3 +1249,35 @@ AIXItemStringHook:
 	ldr r6, =0x81D99E4
 	ldr r0, =0x8016706 | 1
 	bx r0
+
+.pool
+@0x8136270 with 3
+SummaryScreenOTGenderColour:
+	add r2, #0x3
+	ldr r3, =GetMonData
+	bl bxr3
+	ldr r0, [r6]
+	add r0, r5
+	mov r1, #0x31 @OT Gender
+	ldr r3, =GetMonData
+	bl bxr3
+	mov r1, #0xFC
+	mov r2, sp
+	strb r1, [r2]
+	mov r1, #0x1
+	strb r1, [r2, #0x1]
+	mov r1, #0x7
+	cmp r0, #0x0
+	beq GetOtGender_Cont
+	mov r1, #0x1
+GetOtGender_Cont:
+	strb r1, [r2, #0x2]
+	ldr r0, [r6]
+	mov r4, #0xC1
+	lsl r4, #0x6 @0x3040
+	add r0, r4
+	mov r1, sp
+	mov r2, #10
+	ldr r3, =0x8136280 | 1
+	bx r3
+ 

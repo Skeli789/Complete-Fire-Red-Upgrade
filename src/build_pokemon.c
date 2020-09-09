@@ -1848,7 +1848,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 
 		CopyFrontierTrainerName(gStringVar1, trainerId, trainerNum);
 		SetMonData(mon, MON_DATA_OT_NAME, gStringVar1);
-		mon->otGender = trainerGender;
+		SetMonData(mon, MON_DATA_OT_GENDER, &trainerGender);
 	}
 
 	#ifdef UNBOUND
