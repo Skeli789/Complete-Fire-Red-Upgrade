@@ -464,6 +464,7 @@
 .equ AnimTask_WindUpLunge, 0x809949D
 .equ AnimTask_RotateMonSpriteToSide, 0x8099981
 .equ AnimTask_RockMonBackAndForth, 0x80e0559
+.equ AnimTask_FrozenIceCube, 0x80783FD
 
 @launchtemplate
 
@@ -525,6 +526,10 @@
 .equ Template_FallingRock, 0x83e73b4
 .equ Template_BlackSmoke, 0x83fee18
 .equ Template_GustToTarget, 0x83e6b1c
+.equ Template_SmallDriftingBubbles, 0x83e5ac8
+.equ Template_LargeFlameScatter,  0x83e5c88
+.equ Template_IceCrystalSpiralInwardSmall, 0x83E6360
+.equ Template_IceCrystalSpiralInwardLarge, 0x83E6348
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -625,6 +630,7 @@
 .equ MIND_READER_EYE_SPIKE_EFFECT, 0x81CD1EF
 .equ EXPLODING_ATTACKER2, 0x81C8EB2
 .equ OUTRAGE_FLAMES, 0x81c95af
+.equ STRING_SHOT_THREAD, 0x81d1504
 .equ SPIDER_WEB_THREAD, 0x81d15a5
 .equ FIRE_SPIN_TRAP_PARTICLES, 0x81C885F
 .equ CREATE_COTTON_SPORES, 0x81D03B5

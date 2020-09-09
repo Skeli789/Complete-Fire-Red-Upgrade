@@ -655,30 +655,18 @@ ANIM_FOG_CONTINUES:
 .pool
 ANIM_AQUA_RING_HEAL:
 	loadparticle ANIM_TAG_GUARD_RING
-	loadparticle ANIM_TAG_WATER_ORB
+	loadparticle ANIM_TAG_WATER_ORB @Blue colour
 	loadparticle ANIM_TAG_SMALL_BUBBLES
-	loadparticle ANIM_TAG_BLUE_STAR
+	loadparticle ANIM_TAG_BLUE_STAR @Healing star
 	pokespritetoBG bank_attacker
 	setblends 0x808
-	playsound2 0xda SOUND_PAN_ATTACKER
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x0 0x2 0x0 0xa 0x7f6e
-	launchtemplate AQUARING_RING 0x2 0x0
-	launchtemplate AQUA_RING_BUBBLES 0x2 0x4 0x0 0xfff6 0x19 0x0
-	pause 0x4
-	launchtemplate AQUARING_RING 0x2 0x0
-	launchtemplate AQUA_RING_BUBBLES 0x2 0x4 0xfff1 0x0 0x19 0x0
-	pause 0x4
-	launchtemplate AQUARING_RING 0x2 0x0
-	launchtemplate AQUA_RING_BUBBLES 0x2 0x4 0x14 0xa 0x19 0x0
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x2 0x0 0xa 0x7F6E
+	call AQUA_RING_BUBBLE_RING
 	waitanimation
 	call HEALING_ANIM
 	pokespritefromBG bank_attacker
 	resetblends
 	endanimation
-
-.align 2
-AQUARING_RING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_WATER_ORB 0x83ACBE0 gDummySpriteAnimTable 0x0 0x83E44D4 0x80AAAE5
-AQUA_RING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES 0x83ACB50 0x83E5A78 0x0 gDummySpriteAffineAnimTable 0x80AB309
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
