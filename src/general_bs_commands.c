@@ -4287,6 +4287,8 @@ void atkC0_recoverbasedonsunlight(void) {
 		{
 			if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 				gBattleMoveDamage = (2 * GetBaseMaxHP(gBankAttacker)) / 3;
+			else
+				gBattleMoveDamage = GetBaseMaxHP(gBankAttacker) / 2;
 		}
 		else if (gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		{
