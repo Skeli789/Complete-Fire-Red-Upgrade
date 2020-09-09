@@ -1017,16 +1017,6 @@ void HandleAction_UseMove(void)
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 	{
 		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
-
-		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == MAX_MON_MOVES) //The Pokemon doesn't know the move it's locked into
-		{
-			CancelMultiTurnMoves(gBankAttacker);
-			gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
-			gBankTarget = gBattleStruct->moveTarget[gBankAttacker];
-			gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
-			gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
-			return;
-		}
 	}
 	// Encore forces you to use the same move
 	else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE

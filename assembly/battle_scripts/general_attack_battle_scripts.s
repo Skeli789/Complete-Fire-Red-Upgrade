@@ -1721,7 +1721,7 @@ PowerHerbSkipBS:
 	jumpifmove MOVE_FREEZESHOCK FreezeShockEffectBS
 	jumpifmove MOVE_ICEBURN IceBurnEffectBS
 	goto 0x81D6927
-	
+
 RazorWindEffectBS:
 	setmoveeffect MOVE_EFFECT_FLINCH
 	goto 0x81D6927
