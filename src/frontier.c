@@ -62,6 +62,7 @@ extern const u8 gText_SmogonBenjaminButterfree[];
 extern const u8 gText_MegaBrawl[];
 extern const u8 gText_DynamaxStandard[];
 extern const u8 gText_NationalDexOU[];
+extern const u8 gText_SmogonMetronome[];
 extern const u8 gText_SmogonGen7UU[];
 extern const u8 gText_SmogonGen7RU[];
 extern const u8 gText_SmogonGen7NU[];
@@ -193,6 +194,7 @@ const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 	[BATTLE_FACILITY_MEGA_BRAWL] = gText_MegaBrawl,
 	[BATTLE_FACILITY_DYNAMAX_STANDARD] = gText_DynamaxStandard,
 	[BATTLE_FACILITY_NATIONAL_DEX_OU] = gText_NationalDexOU,
+	[BATTLE_FACILITY_METRONOME] = gText_SmogonMetronome,
 	[BATTLE_FACILITY_UU] = gText_SmogonGen7UU,
 	[BATTLE_FACILITY_NU] = gText_SmogonGen7RU,
 	[BATTLE_FACILITY_RU] = gText_SmogonGen7NU,

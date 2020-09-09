@@ -128,6 +128,7 @@ enum BattleTowerFormats
 	BATTLE_FACILITY_MEGA_BRAWL,
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
+	BATTLE_FACILITY_METRONOME,
 	BATTLE_FACILITY_UU,
 	BATTLE_FACILITY_RU,
 	BATTLE_FACILITY_NU,
@@ -347,6 +348,7 @@ extern const ability_t gMiddleCup_AbilityBanList[];
 extern const ability_t gSmogonAverageMons_AbilityBanList[];
 extern const ability_t gSmogon350Cup_AbilityBanList[];
 extern const ability_t gSmogonScalemons_AbilityBanList[];
+extern const ability_t gSmogonMetronome_AbilityBanList[];
 extern const ability_t gSmogonUU_AbilityBanList[];
 extern const ability_t gSmogonRU_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
@@ -359,6 +361,7 @@ extern const item_t gMiddleCup_ItemBanList[];
 extern const item_t gSmogonAverageMons_ItemBanList[];
 extern const item_t gSmogon350Cup_ItemBanList[];
 extern const item_t gSmogonScalemons_ItemBanList[];
+extern const item_t gSmogonMetronome_ItemBanList[];
 extern const item_t gSmogonUU_ItemBanList[];
 extern const item_t gSmogonRU_ItemBanList[];
 extern const item_t gSmogonNU_ItemBanList[];

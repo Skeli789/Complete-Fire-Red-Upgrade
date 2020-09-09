@@ -140,6 +140,7 @@ extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
 //This file's functions:
+static void TryGiveMonOnlyMetronome(struct Pokemon* mon);
 static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
 #if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 static u8 GetPlayerBiasedAverageLevel(u8 maxLevel);
@@ -188,9 +189,11 @@ u8 GetOpenWorldBadgeCount(void);
 
 void BuildTrainerPartySetup(void)
 {
+	u32 i;
 	u8 towerTier = VarGet(VAR_BATTLE_FACILITY_TIER);
-	gDontFadeWhite = FALSE;
+	gDontFadeWhite = FALSE; //Set if mugshot battle transition was used
 
+	//Build opponent's team
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
@@ -237,6 +240,7 @@ void BuildTrainerPartySetup(void)
 		}
 	}
 
+	//Format player's team for a Sky Battle
 	#ifdef FLAG_SKY_BATTLE
 	if (FlagGet(FLAG_SKY_BATTLE))
 	{
@@ -245,9 +249,8 @@ void BuildTrainerPartySetup(void)
 			ExtensionState.skyBattlePartyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
 			if (ExtensionState.skyBattlePartyBackup != NULL)
 			{
-				u8 counter = 0;
-				u8 j = 0;
-				for (int i = 0; i < PARTY_SIZE; ++i)
+				u32 j, counter;
+				for (i = 0, j = 0, counter = 0; i < PARTY_SIZE; ++i)
 				{
 					if (!CanMonParticipateInASkyBattle(&gPlayerParty[i]))
 					{
@@ -267,6 +270,7 @@ void BuildTrainerPartySetup(void)
 	}
 	#endif
 
+	//Build multi partner's team
 	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && (ViableMonCount(gEnemyParty) > 1 || IsRaidBattle()))
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -289,10 +293,12 @@ void BuildTrainerPartySetup(void)
 				u8 mon1 = gSelectedOrderFromParty[0];
 				u8 mon2 = gSelectedOrderFromParty[1];
 				u8 mon3 = gSelectedOrderFromParty[2];
-				for (int i = 0; i < PARTY_SIZE; ++i) {
+				for (int i = 0; i < PARTY_SIZE; ++i)
+				{
 					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
 						Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
 				}
+
 				ReducePartyToThree(); //Well...sometimes can be less than 3
 			}
 			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
@@ -303,7 +309,8 @@ void BuildTrainerPartySetup(void)
 				CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
 		}
 	}
-	
+
+	//Try swapping a Pokemon in the Battle Circus
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TRADE_MON)
 	{
 		//Swap a random Pokemon on each side of the field
@@ -325,8 +332,44 @@ void BuildTrainerPartySetup(void)
 		gEnemyParty[enemyMonId] = temp;
 	}
 
+	//Give every Pokemon only Metronome in a Metronome battle
+	if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_METRONOME)
+	#ifdef FLAG_METRONOME_BATTLE
+	|| FlagGet(FLAG_METRONOME_BATTLE)
+	#endif
+	)
+	{
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			TryGiveMonOnlyMetronome(&gPlayerParty[i]);
+			TryGiveMonOnlyMetronome(&gEnemyParty[i]);
+		}
+	}
+
 	if (ViableMonCount(gEnemyParty) <= 1 && !IsRaidBattle()) //Error prevention
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
+}
+
+static void TryGiveMonOnlyMetronome(struct Pokemon* mon)
+{
+	u32 j;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+	
+	if (species != SPECIES_NONE && species != SPECIES_EGG)
+	{
+		u16 move = MOVE_METRONOME;
+		u8 bonus = 3;
+		u8 pp = CalculatePPWithBonus(MOVE_METRONOME, bonus, 0);
+		SetMonData(mon, MON_DATA_MOVE1, &move);
+		SetMonData(mon, MON_DATA_PP1, &pp);
+		SetMonData(mon, MON_DATA_PP_BONUSES, &bonus);
+		
+		for (j = 1, move = MOVE_NONE, pp = 0; j < MAX_MON_MOVES; ++j)
+		{
+			SetMonData(mon, MON_DATA_MOVE1 + j, &move);
+			SetMonData(mon, MON_DATA_PP1 + j, &pp);
+		}
+	}
 }
 
 extern void SortItemsInBag(u8 pocket, u8 type);
@@ -1340,6 +1383,10 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_NATIONAL_DEX_OU:
 						case BATTLE_FACILITY_MONOTYPE:
 						case BATTLE_FACILITY_CAMOMONS:
+						case BATTLE_FACILITY_METRONOME:
+						case BATTLE_FACILITY_UU:
+						case BATTLE_FACILITY_RU:
+						case BATTLE_FACILITY_NU:
 							//25% chance of trying to use a legend allowed in these tiers
 							if ((Random() & 3) == 0)
 								goto REGULAR_LEGENDARY_SPREADS;
@@ -1438,6 +1485,10 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_NATIONAL_DEX_OU:
 						case BATTLE_FACILITY_MONOTYPE:
 						case BATTLE_FACILITY_CAMOMONS:
+						case BATTLE_FACILITY_METRONOME:
+						case BATTLE_FACILITY_UU:
+						case BATTLE_FACILITY_RU:
+						case BATTLE_FACILITY_NU:
 							//25% chance of trying to use a legend allowed in these tiers
 							if ((Random() & 3) == 0)
 								goto REGULAR_LEGENDARY_SPREADS;
@@ -2111,7 +2162,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
@@ -2209,7 +2259,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
@@ -2258,7 +2307,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 					case CHECK_BATTLE_TOWER_SPREADS:
 						LOAD_TIER_CHECKING_ABILITY;
 						break;
-
 					default:
 						ability = GetMonAbility(mon);
 				}
@@ -2290,7 +2338,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
@@ -2326,7 +2373,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				case CHECK_BATTLE_TOWER_SPREADS:
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					ability = GetMonAbility(mon);
 			}
@@ -2347,7 +2393,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				case CHECK_BATTLE_TOWER_SPREADS:
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					ability = GetMonAbility(mon);
 			}
@@ -2368,7 +2413,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				case CHECK_BATTLE_TOWER_SPREADS:
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
-
 				default:
 					ability = GetMonAbility(mon);
 			}
@@ -2383,7 +2427,49 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 				return TRUE;
 
 			goto STANDARD_OU_CHECK;
-		
+
+		case BATTLE_FACILITY_METRONOME:
+			//No Steel Types, Pokemon with BST > 625 (including Megas), and banned items or abilities
+			if (gBaseStats[species].type1 == TYPE_STEEL
+			||  gBaseStats[species].type2 == TYPE_STEEL
+			||  GetBaseStatsTotal(species) > 625)
+				return TRUE;
+
+			//Check banned items
+			if (CheckTableForItem(item, gSmogonMetronome_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check if can Mega Evolve and if that species should be banned
+			u16 megaSpecies = GetMegaSpecies(species, item, moveLoc);
+			if (megaSpecies != SPECIES_NONE)
+			{
+				if (gBaseStats[megaSpecies].type1 == TYPE_STEEL
+				||  gBaseStats[megaSpecies].type2 == TYPE_STEEL
+				||  GetBaseStatsTotal(megaSpecies) > 625)
+					return TRUE;
+			}
+
+			//Check banned abilities
+			if (CheckTableForAbility(ability, gSmogonMetronome_AbilityBanList))
+				return TRUE;
+
+			//Check specific item-ability combination
+			if (ability == ABILITY_HARVEST
+			&& (item == ITEM_JABOCA_BERRY || item == ITEM_ROWAP_BERRY))
+				return TRUE;
+			break;
+
 		case BATTLE_FACILITY_UU:
 			if (gSpecialSpeciesFlags[species].smogonUUBan
 			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
