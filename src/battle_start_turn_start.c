@@ -1018,7 +1018,7 @@ void HandleAction_UseMove(void)
 	{
 		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
 
-		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
+		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == MAX_MON_MOVES) //The Pokemon doesn't know the move it's locked into
 		{
 			CancelMultiTurnMoves(gBankAttacker);
 			gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
@@ -1260,16 +1260,17 @@ void HandleAction_UseMove(void)
 
 	// choose battlescript
 	if (gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER
-	&& gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0)
+	&& !BATTLER_ALIVE(gNewBS->skyDropAttackersTarget[gBankAttacker]))
 	{
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
 		gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
 		gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	}
-	else if (gBattleMons[gBankTarget].hp == 0
-	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
-	&&  !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)) //Moves like Stealth Rock can still be used
+	else if (!BATTLER_ALIVE(gBankTarget)
+	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
+	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
+	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && gBattleMoves[gCurrentMove].target & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	else
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
