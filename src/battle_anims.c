@@ -4239,6 +4239,9 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 		goto DEFAULT_CASE;
 	#endif
 
+	if (priority > 0) //Restore boxes
+		goto HIDE_OR_SHOW_BOXES; //Always try to reshow hidden boxes
+
 	switch (gBattleBufferA[gBattleAnimAttacker][0]) {
 		case CONTROLLER_MOVEANIMATION:
 			#ifdef DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES
