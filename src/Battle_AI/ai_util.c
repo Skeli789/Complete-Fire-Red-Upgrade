@@ -1312,7 +1312,7 @@ u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u8 ability = ABILITY_NONE;
 
-	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move))
+	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move, TRUE))
 		ability = GetBankMegaFormAbility(bankAtk);
 
 	if (ability == ABILITY_NONE)
@@ -1458,10 +1458,15 @@ u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	return acc;
 }
 
-bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 megaAbility = GetBankMegaFormAbility(bankAtk);
+	u8 atkAbility, megaAbility;
+	
+	if (optimizeAndLookAtMegaPotential && gNewBS->ai.megaPotential[bankAtk] == NULL)
+		return TRUE; //This bank can't Mega Evolve
+
+	atkAbility = ABILITY(bankAtk);
+	megaAbility = GetBankMegaFormAbility(bankAtk);
 
 	if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 		return TRUE; //Can't Mega Evolve this turn
@@ -1493,6 +1498,22 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 	}
 
 	return FALSE;
+}
+
+bool8 ShouldPredictBankToMegaEvolve(u8 bank)
+{
+	if (SIDE(bank) != B_SIDE_PLAYER
+	|| (IsTagBattle() && GetBattlerPosition(bank) == B_POSITION_PLAYER_RIGHT))
+		return TRUE; //Always predict the AI to Mega Evolve
+
+	if (!(gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_MOCK_BATTLE)) && !IsFrontierRaidBattle())
+		return FALSE; //Don't predict player to Mega Evolve outside of the Frontier or when the AI is in control
+
+	if (SPECIES(bank) == SPECIES_NECROZMA_DUSK_MANE
+	||  SPECIES(bank) == SPECIES_NECROZMA_DAWN_WINGS)
+		return FALSE; //Don't predict player to Ultra Burst
+
+	return TRUE;
 }
 
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
@@ -1825,6 +1846,15 @@ bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move)
 	}
 
 	return FALSE;
+}
+
+bool8 MoveInMovesetAndUsable(u16 move, u8 bank)
+{
+	u8 movePos = FindMovePositionInMoveset(move, bank);
+	if (movePos >= MAX_MON_MOVES)
+		return FALSE;
+
+	return !(gBitTable[movePos] & CheckMoveLimitations(bank, 0, 0xFF));
 }
 
 bool8 DamagingMoveInMoveset(u8 bank)
@@ -2865,7 +2895,7 @@ bool8 AnyStatIsRaised(u8 bank)
 
 bool8 AnyUsefulStatIsRaised(u8 bank)
 {
-	bool8 storedPowerInMoveset = MoveInMoveset(MOVE_STOREDPOWER, bank) || MoveInMoveset(MOVE_STOREDPOWER, bank);
+	bool8 storedPowerInMoveset = MoveInMovesetAndUsable(MOVE_STOREDPOWER, bank) || MoveInMovesetAndUsable(MOVE_POWERTRIP, bank);
 
 	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
 	{

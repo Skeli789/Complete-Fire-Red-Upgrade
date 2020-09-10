@@ -1952,6 +1952,15 @@ static void DexNavPopulateEncounterList(void)
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	
+	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD)
+	{
+		//Wipe data so Giratina doesn't show up in DexNav
+		landMonsInfo = NULL;
+		waterMonsInfo = NULL;
+	}
+	#endif
 
 	sDexNavGuiPtr->hiddenSpecies[0] = SPECIES_TABLES_TERMIN;
 

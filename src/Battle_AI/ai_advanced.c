@@ -375,15 +375,13 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 									auroraVeil = TRUE; //Same as having two screen moves
 								break;
 							default:
-								if (!(gSideStatuses[SIDE(bank)] & SIDE_STATUS_REFLECT))
-									++reflectionNum;
+								++reflectionNum;
 								break;
 						}
 						break;
 
 					case EFFECT_LIGHT_SCREEN:
-						if (!(gSideStatuses[SIDE(bank)] & SIDE_STATUS_LIGHTSCREEN))
-							++reflectionNum;
+						++reflectionNum;
 						break;
 
 					case EFFECT_TRAP:
@@ -944,6 +942,12 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 		return USE_PROTECT;
 	}
 
+	if (gStatuses3[bankDef] & STATUS3_YAWN //Foe is about to fall asleep
+	&& !CanKnockOut(bankAtk, bankDef) //Foe can't be KOd this turn
+	&& CanKnockOut(bankDef, bankAtk) //But foe can KO attacker this turn
+	&& ViableMonCountFromBank(bankAtk) == 1) //And attacker is the last mon
+		return USE_PROTECT; //Protect and force the opponent to sleep
+
 	if (IS_SINGLE_BATTLE)
 	{
 		u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
@@ -1163,37 +1167,54 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (!gNewBS->AuroraVeilTimers[SIDE(bankAtk)])
 	{
-		if (move == MOVE_AURORAVEIL
-		&& gBattleWeather & WEATHER_HAIL_ANY
+		if (gBattleWeather & WEATHER_HAIL_ANY
+		&& (move == MOVE_AURORAVEIL || move == MOVE_G_MAX_RESONANCE_P || move == MOVE_G_MAX_RESONANCE_S)
 		&& !((gSideStatuses[bankAtk] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)) == (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)))
 			return TRUE;
 		else
 		{
+			u16 defPrediction = IsValidMovePrediction(bankDef, bankAtk); //Move foe is probably going to use
 			bool8 defPhysicalMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_PHYSICAL);
 			bool8 defSpecialMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_SPECIAL);
 
 			switch (gBattleMoves[move].effect) {
 				case EFFECT_REFLECT:
-					if (MoveSplitOnTeam(bankDef, SPLIT_PHYSICAL))
+					if (defPhysicalMoveInMoveset || MoveSplitOnTeam(bankDef, SPLIT_PHYSICAL)) //Team could be hit by a physical move at some point
 					{
-						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset)
-							return TRUE; //Target has no attacking moves so no point in doing Light Screen check
+						bool8 hasLightScreen = !(gSideStatuses[bankAtk] & SIDE_STATUS_LIGHTSCREEN) //Light Screen isn't already up
+											&& MoveInMovesetAndUsable(MOVE_LIGHTSCREEN, bankAtk); //Attacker could also use Light Screen
 
-						if (defPhysicalMoveInMoveset
-						|| !MoveInMoveset(MOVE_LIGHTSCREEN, bankAtk) || !defSpecialMoveInMoveset)
-							return TRUE;
+						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset) //Target has no attacking moves
+							return TRUE; //But opposing team does so just use Reflect now
+
+						if (defPhysicalMoveInMoveset && defSpecialMoveInMoveset //Foe has both physical and special moves
+						&& hasLightScreen //Attacker could also use Light Screen instead
+						&& CalcMoveSplit(bankDef, defPrediction) == SPLIT_SPECIAL) //Foe is probably going to hit with a special move
+							return FALSE; //Use Light Screen to survive longer
+
+						if (defPhysicalMoveInMoveset //Foe just has a physical move
+						|| !hasLightScreen || !defSpecialMoveInMoveset) //No chance of using Light Screen
+							return TRUE; //Use Reflect
 					}
 					break;
 
 				case EFFECT_LIGHT_SCREEN:
-					if (MoveSplitOnTeam(bankDef, SPLIT_SPECIAL))
+					if (defSpecialMoveInMoveset || MoveSplitOnTeam(bankDef, SPLIT_SPECIAL))
 					{
-						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset)
-							return TRUE; //Target has no attacking moves so no point in doing Light Screen check
+						bool8 hasReflect = !(gSideStatuses[bankAtk] & SIDE_STATUS_REFLECT) //Reflect isn't already up
+											&& MoveInMovesetAndUsable(MOVE_REFLECT, bankAtk); //Attacker could also use Reflect
 
-						if (defSpecialMoveInMoveset
-						|| !MoveInMoveset(MOVE_REFLECT, bankAtk) || !defPhysicalMoveInMoveset)
-							return TRUE;
+						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset) //Target has no attacking moves
+							return TRUE; //But opposing team does so just use Light Screen now
+
+						if (defPhysicalMoveInMoveset && defSpecialMoveInMoveset //Foe has both physical and special moves
+						&& hasReflect //Attacker could also use Reflect instead
+						&& CalcMoveSplit(bankDef, defPrediction) == SPLIT_PHYSICAL) //Foe is probably going to hit with a physcial move
+							return FALSE; //Use Reflect to survive longer
+
+						if (defSpecialMoveInMoveset //Foe just has a special move
+						|| !hasReflect || !defPhysicalMoveInMoveset) //No chance of using Reflect
+							return TRUE; //Use Light Screen
 					}
 					break;
 			}
@@ -1518,8 +1539,8 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit)
 {
 	if (ABILITY(bankDef) == ABILITY_UNAWARE
-	&& !MoveInMoveset(MOVE_STOREDPOWER, bankAtk)
-	&& !MoveInMoveset(MOVE_POWERTRIP, bankAtk))
+	&& !MoveInMovesetAndUsable(MOVE_STOREDPOWER, bankAtk)
+	&& !MoveInMovesetAndUsable(MOVE_POWERTRIP, bankAtk))
 		return FALSE; //Don't set up if foe has Unaware
 
 	if (WillFaintFromSecondaryDamage(bankAtk))
@@ -1756,6 +1777,27 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 						 && BATTLER_ALIVE(PARTNER(bankDef))
 						 && !MoveBlockedBySubstitute(move, bankAtk, PARTNER(bankDef))
 						 && !BadIdeaToPutToSleep(PARTNER(bankDef), bankAtk);
+
+	//Check if Yawn shouldn't be used
+	if (gBattleMoves[move].effect == EFFECT_YAWN
+	&& ABILITY(bankDef) != ABILITY_TRUANT
+	&& ViableMonCountFromBank(bankAtk) == 1 //Yawner is the last mon
+	&& !HasProtectionMoveInMoveset(bankAtk, CHECK_NO_SPECIAL_PROTECTION)) //Can't protect from the follow up attack after Yawn
+	{
+		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Yawn would go first
+		{
+			if (CanKnockOut(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
+				return; //Don't waste your last turn alive using Yawn
+
+			if (Can2HKO(bankDef, bankAtk) && !HealingMoveInMoveset(bankAtk)) //Opponent can KO before Yawn takes effect and attacker can't stall until it does
+				return; //Don't waste your second last turn alive using Yawn
+		}
+		else //Yawn would go second
+		{
+			if (Can2HKO(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
+				return; //Don't waste your last turn alive using Yawn
+		}
+	}
 
 	switch (class) {
 		case FIGHT_CLASS_SWEEPER_KILL:

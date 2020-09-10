@@ -128,7 +128,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (gNewBS->LastUsedMove != MOVE_NONE
 						&& gNewBS->LastUsedMove != 0xFFFF
 						&& !gSpecialMoveFlags[gNewBS->LastUsedMove].gCopycatBannedMoves
-						&& !MoveInMoveset(gNewBS->LastUsedMove, bankAtk)) //If you have the move, use it directly
+						&& !MoveInMovesetAndUsable(gNewBS->LastUsedMove, bankAtk)) //If you have the move, use it directly
 							return AIScript_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
 					}
 					else
@@ -136,7 +136,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (predictedMove == MOVE_NONE)
 							goto COPYCAT_CHECK_LAST_MOVE;
 						else if (!gSpecialMoveFlags[predictedMove].gCopycatBannedMoves
-							 &&  !MoveInMoveset(predictedMove, bankAtk))
+							 &&  !MoveInMovesetAndUsable(predictedMove, bankAtk))
 						{
 							return AIScript_Positives(bankAtk, bankDef, predictedMove, originalViability, data);
 						}
@@ -1448,7 +1448,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_HAIL:
-			if (MoveInMoveset(MOVE_AURORAVEIL, bankAtk))
+			if (MoveInMovesetAndUsable(MOVE_AURORAVEIL, bankAtk))
 			{
 				if (IsClassScreener(class))
 				{
@@ -2360,7 +2360,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
-			&& (!MoveInMoveset(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				INCREASE_VIABILITY(9);
 			}
@@ -2501,7 +2501,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
-			&& (!MoveInMoveset(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				INCREASE_VIABILITY(9);
 			}

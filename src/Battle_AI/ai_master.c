@@ -1433,6 +1433,14 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 		u16 atkMove = IsValidMovePrediction(gActiveBattler, FOE(gActiveBattler));
 		u16 defMove = IsValidMovePrediction(FOE(gActiveBattler), gActiveBattler);
 
+		if (gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS
+		&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 3)
+		{
+			u8 ability = ABILITY(gActiveBattler);
+			if (ability != ABILITY_QUICKFEET && ability != ABILITY_NATURALCURE)
+				return FALSE; //Don't switch out a paralyzed Pokemon that'll probably be KO'd when it switches back in
+		}
+
 		if (defMove != MOVE_NONE //Foe going to attack
 		&& (atkMove == MOVE_NONE || !MoveWouldHitFirst(atkMove, gActiveBattler, FOE(gActiveBattler))) //Attacker wouldn't go first
 		&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || !MoveBlockedBySubstitute(defMove, FOE(gActiveBattler), gActiveBattler))
@@ -1445,7 +1453,7 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), &party[bestMon]);
 
 			if ((resultFlags & MOVE_RESULT_NO_EFFECT && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE) //Has some sort of followup
-			||  (PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler)) && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE))
+			||  (GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE && PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler))))
 			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -2446,7 +2454,8 @@ static void UpdateStrongestMoves(void)
 		if (!IS_TRANSFORMED(bankAtk)
 		&& !BankMegaEvolved(bankAtk, FALSE)
 		&&  MegaEvolutionEnabled(bankAtk)
-		&& !DoesZMoveUsageStopMegaEvolution(bankAtk))
+		&& !DoesZMoveUsageStopMegaEvolution(bankAtk)
+		&& ShouldPredictBankToMegaEvolve(bankAtk))
 		{
 			gNewBS->ai.megaPotential[bankAtk] = CanMegaEvolve(bankAtk, FALSE);
 

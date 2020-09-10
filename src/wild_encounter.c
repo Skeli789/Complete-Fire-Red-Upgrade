@@ -1290,6 +1290,11 @@ species_t GetLocalWildMon(bool8* isWaterMon)
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 	*isWaterMon = FALSE;
 
+	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD && FlagGet(FLAG_HIDE_GIRATINA))
+		return SPECIES_NONE; //No cries if Giratina isn't around
+	#endif
+
 	// Neither
 	if (landMonsInfo == NULL && waterMonsInfo == NULL)
 		return SPECIES_NONE;

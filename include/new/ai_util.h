@@ -49,7 +49,8 @@ bool8 IsTakingSecondaryDamage(u8 bank);
 bool8 WillFaintFromSecondaryDamage(u8 bank);
 u16 CalcSecondaryEffectChance(u8 bank, u16 move);
 u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef);
-bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move);
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential);
+bool8 ShouldPredictBankToMegaEvolve(u8 bank);
 
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk);
 bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk);
@@ -78,6 +79,7 @@ bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef);
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move);
 
+bool8 MoveInMovesetAndUsable(u16 move, u8 bank);
 bool8 DamagingMoveInMoveset(u8 bank);
 bool8 PhysicalMoveInMoveset(u8 bank);
 bool8 SpecialMoveInMoveset(u8 bank);

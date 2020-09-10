@@ -463,6 +463,9 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 			break;
 
 		default: //GFX_TAG_MEGA_INDICATOR
+			if (gNewBS == NULL)
+				return;
+
 			if (!IsMega(INDICATOR_BANK))
 			{
 				self->invisible = TRUE;
