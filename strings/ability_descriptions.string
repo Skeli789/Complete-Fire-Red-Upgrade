@@ -88,7 +88,7 @@ Restores HP if poisoned.
 Slight HP recovery in hail.
 
 #org @DESC_MOODY
-Raises one stat and lowers another.
+Ups one stat and downs another.
 
 #org @DESC_HYDRATION
 Heals status problems in rain.

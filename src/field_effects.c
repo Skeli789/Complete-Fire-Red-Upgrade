@@ -583,9 +583,16 @@ static void SpriteCB_MiningScanRing(struct Sprite* sprite)
 #ifdef MB_UNDERGROUND_MINING
 static u8 GetNumMiningSpots(void)
 {
-	u16 width = gMapHeader.mapLayout->width;
-	u16 height = gMapHeader.mapLayout->height;
-	return MathMax(1, (width * height) / 1000); //One possible tile per every 1000sq blocks
+	u16 width, height, divisor;
+	width = gMapHeader.mapLayout->width;
+	height = gMapHeader.mapLayout->height;
+
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		divisor = 500; //Harder to find spots underwater so increase chance
+	else
+		divisor = 1000;
+
+	return MathMax(1, MathMin((width * height) / divisor, 8)); //One possible tile per every 500sq or 1000sq blocks - max 8
 }
 
 void TryLoadMiningSpots(void)

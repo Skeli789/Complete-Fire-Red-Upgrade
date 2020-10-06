@@ -209,7 +209,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
-			// Water
+			//Water
 			case ABILITY_WATERABSORB:
 			case ABILITY_DRYSKIN:
 			case ABILITY_STORMDRAIN:
@@ -228,7 +228,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			//		return viability - 10;
 			//	break;
 
-			// Fire
+			//Fire
 			case ABILITY_FLASHFIRE:
 				if (moveType == TYPE_FIRE)
 				{
@@ -240,13 +240,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
-			//case ABILITY_HEATPROOF:
-			//case ABILITY_WATERBUBBLE: //Handled by damage calc
-			//	if (moveType == TYPE_FIRE) // && (moveSplit != SPLIT_STATUS))
-			//		return viability - 10;
-			//	break;
-
-			// Grass
+			//Grass
 			case ABILITY_SAPSIPPER:
 				if (moveType == TYPE_GRASS)
 				{
@@ -258,27 +252,53 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
-			// Dark
+			//Dark
 			case ABILITY_JUSTIFIED:
 				if (moveType == TYPE_DARK && moveSplit != SPLIT_STATUS)
 				{
-					if (!TARGETING_PARTNER) //Good idea to attack partner
+					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
+					&& AI_STAT_CAN_RISE(bankDef, STAT_ATK) //Ability can activate
+					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 2) //This attack won't KO in a couple hits
+					&& PhysicalMoveInMoveset(bankDef))
 					{
-						DECREASE_VIABILITY(9);
-						return viability;
+						DECREASE_VIABILITY(4); //Don't risk raising enemy stats
+						//Don't return because could get worse from here
 					}
 				}
 				break;
 
 			//Multiple move types
 			case ABILITY_RATTLED:
-				if ((moveSplit != SPLIT_STATUS)
+				if (moveSplit != SPLIT_STATUS
 				&& (moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG))
 				{
-					if (!TARGETING_PARTNER) //Good idea to attack partner
+					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
+					&& AI_STAT_CAN_RISE(bankDef, STAT_SPEED) //Ability can activate
+					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //This attack won't KO yet
+					&& SpeedCalc(bankAtk) > SpeedCalc(bankDef)) //The attacker is currently faster
 					{
-						DECREASE_VIABILITY(9);
-						return viability;
+						if (MoveKnocksOutXHits(move, bankAtk, bankDef, 2))
+							DECREASE_VIABILITY(1); //Risk it, but not best choice because foe might outspeed and strike back harder
+						else
+							DECREASE_VIABILITY(9); //Don't risk raising enemy stats
+						//Don't return because could get worse from here
+					}
+				}
+				break;
+			case ABILITY_STEAMENGINE:
+				if (moveSplit != SPLIT_STATUS
+				&& (moveType == TYPE_WATER || moveType == TYPE_FIRE))
+				{
+					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
+					&& AI_STAT_CAN_RISE(bankDef, STAT_SPEED) //Ability can activate
+					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //This attack won't KO yet
+					&& SpeedCalc(bankAtk) > SpeedCalc(bankDef)) //The attacker is currently faster
+					{
+						if (MoveKnocksOutXHits(move, bankAtk, bankDef, 2))
+							DECREASE_VIABILITY(5); //Not best choice because foe might outspeed and strike back harder
+						else
+							DECREASE_VIABILITY(9); //Don't risk raising enemy stats
+						//Don't return because could get worse from here
 					}
 				}
 				break;
@@ -391,10 +411,24 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_DEFIANT:
-			case ABILITY_COMPETITIVE:
-				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects))
+				if (moveSplit == SPLIT_STATUS && CheckTableForMovesEffect(move, gStatLoweringMoveEffects))
 				{
-					if (!TARGETING_PARTNER) //Good idea to attack partner
+					if (!TARGETING_PARTNER //Good idea to attack partner
+					&& AI_STAT_CAN_RISE(bankDef, STAT_ATK) //Ability can activate
+					&& PhysicalMoveInMoveset(bankDef)) //Target has a move that the ability will affect
+					{
+						DECREASE_VIABILITY(8); //Not 10 b/c move still works, just not recommended
+						return viability;
+					}
+				}
+				break;
+
+			case ABILITY_COMPETITIVE:
+				if (moveSplit == SPLIT_STATUS && CheckTableForMovesEffect(move, gStatLoweringMoveEffects)) //Status moves
+				{
+					if (!TARGETING_PARTNER //Good idea to attack partner
+					&& AI_STAT_CAN_RISE(bankDef, STAT_SPATK) //Ability can activate
+					&& SpecialMoveInMoveset(bankDef)) //Target has a move that the ability will affect
 					{
 						DECREASE_VIABILITY(8); //Not 10 b/c move still works, just not recommended
 						return viability;
@@ -611,7 +645,7 @@ MOVESCR_CHECK_0:
 			{
 				if (data->defAbility == ABILITY_CONTRARY)
 					DECREASE_VIABILITY(10);
-				else if (!STAT_CAN_FALL(bankDef, STAT_STAGE_ATK))
+				else if (!AI_STAT_CAN_FALL(bankDef, STAT_STAGE_ATK))
 					DECREASE_VIABILITY(10);
 				break;
 			}
@@ -771,8 +805,10 @@ MOVESCR_CHECK_0:
 
 				case MOVE_AROMATICMIST:
 					if (!IS_DOUBLE_BATTLE
-					|| gBattleMons[bankAtkPartner].hp == 0
-					|| !STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF))
+					|| bankDef != bankAtkPartner
+					|| !BATTLER_ALIVE(bankAtkPartner)
+					|| data->atkPartnerAbility == ABILITY_CONTRARY
+					|| !AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF))
 						DECREASE_VIABILITY(10);
 					break;
 
@@ -782,14 +818,14 @@ MOVESCR_CHECK_0:
 					break;
 
 				default:
-					if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
+					if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
 						DECREASE_VIABILITY(10);
 			}
 			break;
 
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
-			if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
+			if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -799,9 +835,9 @@ MOVESCR_CHECK_0:
 				case MOVE_GROWTH:
 				case MOVE_WORKUP:
 				AI_WORK_UP_CHECK: ;
-					if (((!STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK)|| !PhysicalMoveInMoveset(bankAtk))
-					  && (!STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk)))
-					|| data->atkAbility == ABILITY_CONTRARY)
+					if (data->atkAbility == ABILITY_CONTRARY
+					|| ((!AI_STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK)|| !PhysicalMoveInMoveset(bankAtk))
+					 && (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))))
 						DECREASE_VIABILITY(10);
 					break;
 
@@ -811,11 +847,11 @@ MOVESCR_CHECK_0:
 						if (!(IsOfType(bankAtk, TYPE_GRASS)
 							  && CheckGrounding(bankAtk)
 							  && data->atkAbility != ABILITY_CONTRARY
-							  && (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)))
+							  && (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)))
 						&&  !(IsOfType(bankAtkPartner, TYPE_GRASS)
 							  && CheckGrounding(bankAtkPartner)
 							  && data->atkPartnerAbility != ABILITY_CONTRARY
-							  && (STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))))
+							  && (AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))))
 						{
 							DECREASE_VIABILITY(10);
 						}
@@ -823,7 +859,7 @@ MOVESCR_CHECK_0:
 					else if (!(IsOfType(bankAtk, TYPE_GRASS)
 						    && CheckGrounding(bankAtk)
 						    && data->atkAbility != ABILITY_CONTRARY
-						    && (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK))))
+						    && (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK))))
 					{
 						DECREASE_VIABILITY(10);
 					}
@@ -837,15 +873,15 @@ MOVESCR_CHECK_0:
 					{
 						if (data->atkPartnerAbility == ABILITY_PLUS || data->atkPartnerAbility == ABILITY_MINUS)
 						{
-							if ((!STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || !PhysicalMoveInMoveset(bankAtk))
-							&&  (!STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk)))
+							if ((!AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || !PhysicalMoveInMoveset(bankAtk))
+							&&  (!AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk)))
 								DECREASE_VIABILITY(10);
 						}
 					}
 					break;
 
 				default:
-					if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+					if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
 						DECREASE_VIABILITY(10);
 			}
 			break;
@@ -853,13 +889,13 @@ MOVESCR_CHECK_0:
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_RAISE_1: ;
-			if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+			if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
 				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
-			if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC))
+			if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -873,7 +909,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				default:
-					if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+					if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
 						DECREASE_VIABILITY(10);
 			}
 			break;
@@ -1478,10 +1514,20 @@ MOVESCR_CHECK_0:
 			}
 			else //Regular Curse
 			{
-				if (!STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
-				&& !STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF)
-				&& !STAT_CAN_FALL(bankAtk, STAT_STAGE_SPEED))
-					DECREASE_VIABILITY(10);
+				if (data->atkAbility == ABILITY_CONTRARY)
+				{
+					if (!AI_STAT_CAN_FALL(bankAtk, STAT_STAGE_ATK)
+					&& !AI_STAT_CAN_FALL(bankAtk, STAT_STAGE_DEF)
+					&& !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
+						DECREASE_VIABILITY(10);
+				}
+				else
+				{
+					if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
+					&& !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF)
+					&& !AI_STAT_CAN_FALL(bankAtk, STAT_STAGE_SPEED))
+						DECREASE_VIABILITY(10);
+				}
 			}
 			break;
 
@@ -2053,7 +2099,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_YAWN:
-			if (data->defStatus3 & STATUS3_YAWN)
+			if (data->defStatus3 & STATUS3_YAWN || data->defStatus1 & STATUS_SLEEP)
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_CHECK_SLEEP;

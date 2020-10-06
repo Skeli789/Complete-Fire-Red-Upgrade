@@ -83,6 +83,9 @@ static const struct TrainerSlide sTrainerSlides[] =
 static const struct DynamaxTrainerSlide sDynamaxTrainerSlides[] =
 {
 	{0x17, gText_TestTrainerDynamaxMsg}, //Test data
+	#ifdef UNBOUND
+	{0x1D5, sText_RogueElectivire_DynamaxMsg},
+	#endif
 };
 
 //This file's functions:

@@ -29,7 +29,7 @@ u8 GetBankFromPartyData(struct Pokemon* mon);
 bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move);
 bool8 CheckGrounding(u8 bank);
 bool8 NonInvasiveCheckGrounding(u8 bank);
-bool8 CheckGroundingFromPartyData(struct Pokemon* mon);
+bool8 CheckMonGrounding(struct Pokemon* mon);
 u8 ViableMonCountFromBank(u8 bank);
 u8 ViableMonCountFromBankLoadPartyRange(u8 bank);
 bool8 HasMonToSwitchTo(u8 bank);

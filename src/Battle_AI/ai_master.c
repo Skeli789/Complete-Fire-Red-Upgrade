@@ -3,6 +3,7 @@
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 #include "../../include/constants/item_effects.h"
+#include "../../include/constants/region_map_sections.h"
 #include "../../include/constants/trainers.h"
 
 #include "../../include/new/ai_advanced.h"
@@ -962,6 +963,22 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 		case ABILITY_NATURALCURE:
 			if (WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4))
 				return FALSE; //Don't switch out if you'll take a lot of damage of switch in
+
+			//Don't switch out if you're poisoned and just going to get poisoned again on switch in
+			if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0
+			&& gBattleMons[gActiveBattler].status1 & STATUS_PSN_ANY
+			&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+			&& !IsOfType(gActiveBattler, TYPE_POISON)
+			&& CheckGrounding(gActiveBattler))
+			{
+				//Check if Pokemon that will be sent out will negate Toxic Spikes
+				u8 firstId, lastId, bestMonId;
+				struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+				bestMonId = GetMostSuitableMonToSwitchInto();
+
+				if (!IsMonOfType(&party[bestMonId], TYPE_POISON) || !CheckMonGrounding(&party[bestMonId])) //Can't negate Toxic Spikes
+					return FALSE;
+			}
 
 			if (gBattleMons[gActiveBattler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
 				break;
@@ -1925,10 +1942,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			u8 ability = GetMonAbility(consideredMon);
 			secondLastValidMon = lastValidMon;
 			lastValidMon = i;
-
-			u16 species = GetMonData(consideredMon, MON_DATA_SPECIES, NULL);
-			canNegateToxicSpikes[i] = CheckGroundingFromPartyData(consideredMon)
-									&& (gBaseStats[species].type1 == TYPE_POISON || gBaseStats[species].type2 == TYPE_POISON);
+			canNegateToxicSpikes[i] = CheckMonGrounding(consideredMon) && IsMonOfType(consideredMon, TYPE_POISON);
 
 			if (WillFaintFromEntryHazards(consideredMon, SIDE(gActiveBattler)))
 				continue; //Don't switch in the mon if it'll faint on reentry
@@ -2737,7 +2751,11 @@ void ShouldDoAIShiftSwitch(void)
 	&& !IS_DOUBLE_BATTLE
 	&& gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SHIFT
 	&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //AI has a mon that can be switched out
-	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+	&& (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY
+	#ifdef UNBOUND
+	|| GetCurrentRegionMapSectionId() == MAPSEC_SS_MARINE
+	#endif
+	))
 	{
 		gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		u8 foe = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);

@@ -270,6 +270,21 @@ RaidBossHPColourHook:
 	ldr r0, =0x804A12C | 1
 	bx r0
 
+@;0x803493C with r0
+RaidHealthbarSpriteSheetFix:
+	cmp r5, #0x9
+	bne RaidHealthbarSpriteSheetFixReturnTrue
+	ldr r0, =gBattlerPositions
+	ldrb r0, [r0, #0x3]
+	cmp r0, #0x4
+	bcs RaidHealthbarSpriteSheetFixReturnTrue
+	ldr r1, =0x08034944 | 1
+	bx r1
+
+RaidHealthbarSpriteSheetFixReturnTrue:
+	ldr r0, =0x8034958 | 1
+	bx r0
+
 .pool
 @;0x80D84F6 with r0
 BufferMaxMoveNameBattle:

@@ -167,6 +167,8 @@ sp10A_CanUseCutOnTree 8160188
 sp10B_CanUseRockSmashOnRock 816018C
 sp10C_CanUseStrengthOnBoulder 8160190
 
+sp112_BufferNaturalGiftPowerAndType 81601A8
+
 sp115_RaidBattleAvailable 081601B4
 sp116_StartRaidBattleIntro 081601B8
 sp117_CreateRaidMon 081601BC

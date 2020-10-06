@@ -414,6 +414,7 @@ VeryTallGrassFix:
 .org 0x668DA, 0xFF @MovementAction_RestoreAnimation_Step0
 	mov r0, r4
 	bl GetEventObjectGraphicsInfoByEventObj
+	ldrb r1, [r0, #0xC] @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0x67A12, 0xFF @npc_offscreen_culling
 	mov r5, r0
@@ -445,6 +446,30 @@ VeryTallGrassFix:
 .org 0x69310, 0xFF @DoRippleFieldEffect
 	mov r0, r0
 	bl GetEventObjectGraphicsInfoByEventObj
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Add/Delete Item Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x6A638, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A684, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A6C8, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A70C, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes & More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x79c18, 0xff	@don't load rain palette on entering map
 	.byte 0x0, 0x25, 0xe, 0xe0

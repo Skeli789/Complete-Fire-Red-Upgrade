@@ -1361,20 +1361,15 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 
 	//Choose Battle Format
 	switch (streak) {
-		case 0 ... 29:
+		case 0 ... 44:
 			format = BATTLE_FACILITY_SINGLE + (Random() & 1);
 			break;
-		default: ; //Random Battles become available after battle 30
-			u8 randomOption = Random() & 3;
-			switch (randomOption) {
-				case 0:
-				case 1:
-					format = BATTLE_FACILITY_SINGLE + (randomOption & 1);
-					break;
-				case 2:
-				default:
-					format = BATTLE_FACILITY_SINGLE_RANDOM + (randomOption & 1);
-			}
+		default: ; //Random Battles become available starting battle 45
+			u8 randomOption = Random() % 10;
+			if (randomOption == 0) //10 % chance of getting random option
+				format = BATTLE_FACILITY_SINGLE_RANDOM + (randomOption & 1);
+			else
+				format = BATTLE_FACILITY_SINGLE + (randomOption & 1);
 	}
 
 	//Choose Tier

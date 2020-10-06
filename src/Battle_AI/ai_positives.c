@@ -984,7 +984,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 								&&  ItemId_GetHoldEffect(GetMonData(&defParty[j], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 								&&  j != gBattlerPartyIndexes[data->foe1]
 								&&  j != gBattlerPartyIndexes[data->foe2]
-								&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
+								&&  CheckMonGrounding(&defParty[j]) == GROUNDED //Affected by Sticky Web
 								&&  SpeedCalcMon(SIDE(bankAtk), &atkParty[i]) < SpeedCalcMon(SIDE(bankDef), &defParty[j]))
 								{
 									IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
@@ -1024,7 +1024,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
-						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
+						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)
 						{
 							u8 type1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 0) : gBaseStats[defParty[i].species].type1;
 							u8 type2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 1) : gBaseStats[defParty[i].species].type2;
@@ -1049,7 +1049,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
-						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
+						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)
 						{
 							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
 							break; //Can hurt at least one mon
@@ -1492,7 +1492,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_TORMENT:
-			INCREASE_STATUS_VIABILITY(0);
+			if (data->defItemEffect == ITEM_EFFECT_CHOICE_BAND)
+				INCREASE_STATUS_VIABILITY(2);
+			else
+				INCREASE_STATUS_VIABILITY(0);
 			break;
 
 		case EFFECT_WILL_O_WISP:
@@ -1522,7 +1525,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_MEMENTO:
-			//TODO
+			if (move == MOVE_MEMENTO)
+				DECREASE_VIABILITY(5); //Bad move
 			break;
 
 		case EFFECT_FOLLOW_ME:
@@ -2461,6 +2465,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_FAKE_OUT:
 			case EFFECT_STOCKPILE:
 			case EFFECT_WILL_O_WISP:
+			case EFFECT_MEMENTO:
 			case EFFECT_FOLLOW_ME:
 			case EFFECT_NATURE_POWER:
 			case EFFECT_WISH:

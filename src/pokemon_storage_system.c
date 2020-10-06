@@ -482,7 +482,7 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
     }
     else
     {
-		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES);
+		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES2);
 	
 		#if (defined SPECIES_HOOPA || defined SPECIES_SHAYMIN)
 		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC

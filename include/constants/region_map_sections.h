@@ -2,6 +2,8 @@
 
 #define MAPSEC_DYNAMIC                      0x57
 
+u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
+
 #ifndef UNBOUND //Modify this section
 #define MAPSEC_PALLET_TOWN                  0x58
 #define MAPSEC_VIRIDIAN_CITY                0x59
@@ -186,6 +188,7 @@
 #define MAPSEC_FERROTHORN_TURF				0xBF
 #define MAPSEC_ROUTE_17						0x75
 #define MAPSEC_SEAPORT_CITY					0x77
+#define MAPSEC_SS_MARINE					0xBE
 #define MAPSEC_BATTLE_FRONTIER	            0xA7
 #define MAPSEC_BATTLE_TOWER					0xB3
 #define MAPSEC_BATTLE_MINE					0xB2
@@ -200,6 +203,7 @@
 #define MAPSEC_ISLAND_CAVE					0xC3
 #define MAPSEC_VICTORY_ROAD                 0x84
 #define MAPSEC_POKEMON_LEAGUE               0x89
+#define MAPSEC_UNDERWATER					0xBD
 
 #define MAPSEC_HIDDEN_GROTTO				0x80
 #endif

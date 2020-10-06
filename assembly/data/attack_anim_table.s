@@ -17190,8 +17190,69 @@ ANIM_JUNGLE_HEALING:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_WICKED_BLOW:
-	goto 0x81cff92 @MOVE_DYNAMICPUNCH
+	loadparticle ANIM_TAG_FOCUS_ENERGY
+	loadparticle ANIM_TAG_HANDS_AND_FEET
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_PAIN_SPLIT
+	loadparticle ANIM_TAG_SPARKLE_4
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_PAIN_SPLIT 0x0 0x9 0x9 0x1F @;Red
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_FOCUS_ENERGY 0x0 0x8 0x8 0x1F @;Red
+	playsound2 0xa4 SOUND_PAN_ATTACKER
+	call WICKED_BLOW_BUFF
+	pause 0x8
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x2 0x2 0x0 0xb 0x0
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1
+	call WICKED_BLOW_BUFF
+	pause 0x8
+	call WICKED_BLOW_BUFF
+	waitanimation
+	loadBG1 BG_DARK
+	waitbgfadeout
+	playsound2 136 SOUND_PAN_ATTACKER
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x1c 0x0 0x0 0x5
+	pause 0x5
+	launchtemplate WICKED_BLOW_FIST TEMPLATE_TARGET | 4, 0x5 bank_target 0 0 16 32
+	pause 6
+	soundcomplex 207 SOUND_PAN_TARGET 0x4 0x6
+	launchtemplate Template_Hit TEMPLATE_TARGET | 3, 0x4 0x0 0x0 0x1 0x1
+	launchtemplate WICKED_BLOW_STARS_BLACK TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xfe80 0xffe1
+	launchtemplate WICKED_BLOW_STARS_RED TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xff00 0xffd8
+	launchtemplate WICKED_BLOW_STARS_BLACK TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xff80 0xffea
+	launchtemplate WICKED_BLOW_STARS_RED TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0x80 0xfff0
+	launchtemplate WICKED_BLOW_STARS_BLACK TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0xa0 0xffe0
+	launchtemplate WICKED_BLOW_STARS_RED TEMPLATE_TARGET | 2, 0x4 0xfff0 0xfff8 0x1a0 0xffda
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0xA 0x1
+	pause 20
+	launchtask AnimTask_TwinkleTackleLaunch 0x2 0x1 50
+	pause 50
+	playsound2 0xca SOUND_PAN_TARGET
+	launchtemplate TWINKLE_TARGET TEMPLATE_TARGET | 0xd, 0x3, 0x0 0x0 bank_target @detect star
+	waitanimation
+	resetblends
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x6
+	loaddefaultbg
+	waitbgfadeout
+	makebankvisible bank_target
+	waitanimation
+	waitbgfadein
 	endanimation
+
+WICKED_BLOW_BUFF:
+	launchtemplate BLACKFOCUSENERGY 0x2 0x4 0x0 0xffe8 0x1a 0x2
+	pause 0x4
+	launchtemplate BLACKFOCUSENERGY 0x2 0x4 0x0 0xe 0x1c 0x1
+	pause 0x4
+	launchtemplate BLACKFOCUSENERGY 0x2 0x4 0x0 0xfffb 0xa 0x2
+	pause 0x4
+	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0x1c 0x1a 0x3
+	pause 0x4
+	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0xfff4 0x0 0x1
+	return
+
+.align 2
+WICKED_BLOW_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_DrainPunchFist SpriteCB_SpriteOnMonForDurationUseY
+WICKED_BLOW_STARS_BLACK: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
+WICKED_BLOW_STARS_RED: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_PAIN_SPLIT OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -25262,6 +25323,7 @@ gMaxSteelspikeCurvedSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LA
 .pool
 @Credits to Skeli
 ANIM_G_MAX_WILDFIRE_MOVE:
+	loadparticle ANIM_TAG_BIRD
 	loadparticle ANIM_TAG_SMALL_EMBER
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	loadparticle ANIM_TAG_FLASH_CANNON_BALL
@@ -25269,6 +25331,7 @@ ANIM_G_MAX_WILDFIRE_MOVE:
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @;Extra colour
 	playsound2 0x85 SOUND_PAN_ATTACKER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_BIRD 0x0 0xF 0xF 0x057C @;Red
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_FLASH_CANNON_BALL 0x0 0xF 0xF 0x057C @;Red
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x0 0xF 0xF 0x01DD @;Orange
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ACUPRESSURE_FINGER 0x0 0xF 0xF 0x063C @;Yellow
@@ -25280,7 +25343,7 @@ ANIM_G_MAX_WILDFIRE_MOVE:
 	launchtask AnimTask_scroll_background 0x5 0x4 0xfb00 0x0 0x0 0xFFFF
 	waitbgfadein
 	soundcomplex 0x8A SOUND_PAN_ATTACKER 0xa 0x4
-	launchtemplate MAX_FLARE_BALL_LAUNCH_RED TEMPLATE_ATTACKER | 2, 0x4, 0, 0, 50, -35
+	launchtemplate WILDFIRE_BIRD TEMPLATE_ATTACKER | 2, 0x6 0, 0, 0, 0, 50, -35
 	pause 0x4
 	launchtemplate MAX_FLARE_BALL_LAUNCH_RED TEMPLATE_ATTACKER | 2, 0x4, 0, 0, 50, -35
 	pause 0x4
@@ -25302,6 +25365,9 @@ ANIM_G_MAX_WILDFIRE_MOVE:
 	call UNSET_SCROLLING_BG
 	waitanimation
 	endanimation
+
+.align 2
+WILDFIRE_BIRD: objtemplate ANIM_TAG_BIRD ANIM_TAG_BIRD OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

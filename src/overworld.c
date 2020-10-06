@@ -2175,7 +2175,11 @@ void PrepMiningWarp(void)
 	{
 		StoreInitialPlayerAvatarState();
 		SetupWarp(&gMapHeader, warpEventId, &position);
-		gSpecialVar_LastResult = TRUE;
+
+		if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+			gSpecialVar_LastResult = 0xFF;
+		else
+			gSpecialVar_LastResult = TRUE;
 	}
 }
 

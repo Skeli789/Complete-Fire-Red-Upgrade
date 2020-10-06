@@ -595,7 +595,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 	if (trainerId == TRAINER_SECRET_BASE)
 		return 0;
 	else if (IsFrontierTrainerId(trainerId))
-		return BuildFrontierParty(party, trainerId, BATTLE_FACILITY_STANDARD, firstTrainer, FALSE, side);
+		return BuildFrontierParty(party, trainerId, VarGet(VAR_BATTLE_FACILITY_TIER), firstTrainer, FALSE, side);
 
 	//Check if can build team
 	if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
@@ -918,7 +918,7 @@ static const struct LevelScaler sLevelScales[] =
 	[3] = {25, 36},
 	[4] = {30, 45},
 	[5] = {38, 54},
-	[6] = {48, 58},
+	[6] = {47, 58},
 	[7] = {55, 65},
 	[8] = {60, 70},
 	[9] = {70,  0},

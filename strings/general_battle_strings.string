@@ -329,6 +329,9 @@ It's no good! It's impossible to aim\nwhen there are two Pok\emon![FC][09]
 #org @gText_CantAimAtSemiInvulnerableTarget
 It's no good! It's impossible to aim\nat a Pok\emon that's not in sight![FC][09]
 
+#org @gText_CantUseAMoveAndABall
+It's no good! The Ball must be\nthrown from your first Pok\emon![FC][09]
+
 #org @gText_CantCatchPokemonYet
 You can't throw a Pok\e Ball yet![FC][09]
 

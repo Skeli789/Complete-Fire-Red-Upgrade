@@ -79,7 +79,9 @@ BattleScript_BerryConfuseHealRet:
 	printstring 0x144
 	waitmessage DELAY_1SECOND
 	setmoveeffect MOVE_EFFECT_CONFUSION
+	copyhword BACKUP_HWORD BATTLE_SCRIPTING_BANK @;Backup scripting bank
 	seteffectprimaryscriptingbank
+	copyhword BATTLE_SCRIPTING_BANK BACKUP_HWORD @;Restore scripting bank
 	call BattleScript_CheekPouch
 	return
 

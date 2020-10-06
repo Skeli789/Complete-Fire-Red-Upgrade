@@ -66,7 +66,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_MOTORDRIVE:
 				if (moveType == TYPE_ELECTRIC
 				&&  SpecialMoveInMoveset(bankAtkPartner)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -74,7 +74,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_LIGHTNINGROD:
 				if (moveType == TYPE_ELECTRIC
 				&&  SpecialMoveInMoveset(bankAtkPartner)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -89,7 +89,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_STORMDRAIN:
 				if (moveType == TYPE_WATER
 				&&  SpecialMoveInMoveset(bankAtkPartner)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -114,7 +114,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_SAPSIPPER:
 				if (moveType == TYPE_GRASS
 				&&  PhysicalMoveInMoveset(bankAtkPartner)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -125,7 +125,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				if (moveType == TYPE_DARK
 				&&  moveSplit != SPLIT_STATUS
 				&&  PhysicalMoveInMoveset(bankAtkPartner)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
 					IncreaseHelpingHandViability(&viability, class);
@@ -136,8 +136,19 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_RATTLED:
 				if (moveSplit != SPLIT_STATUS
 				&& (moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG)
-				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&& !IsTrickRoomActive()
+				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
 				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+			case ABILITY_STEAMENGINE:
+				if (moveSplit != SPLIT_STATUS
+				&& (moveType == TYPE_WATER || moveType == TYPE_FIRE)
+				&& !IsTrickRoomActive()
+				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -154,7 +165,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_DEFIANT:
 				if (moveEffect != EFFECT_ATTACK_DOWN_2 //Useless to trigger then
 				&& CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
-				&& STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -162,7 +173,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_COMPETITIVE:
 				if (moveEffect != EFFECT_SPECIAL_ATTACK_DOWN_2 //Useless to trigger then
 				&& CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
-				&& STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -363,7 +374,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			&&  moveType == TYPE_DARK
 			&&  moveSplit != SPLIT_STATUS
 			&&  PhysicalMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
+			&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				INCREASE_VIABILITY(1); //1 past the previous boost
 			break;

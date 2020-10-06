@@ -15880,8 +15880,8 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_SUPERPOWER,
-			MOVE_KNOCKOFF,
+			MOVE_WICKEDBLOW,
+			MOVE_CLOSECOMBAT,
 			MOVE_GUNKSHOT,
 			MOVE_ICEPUNCH,
 		},
@@ -15906,9 +15906,9 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_HAMMERARM,
-			MOVE_KNOCKOFF,
-			MOVE_DRAINPUNCH,
+			MOVE_WICKEDBLOW,
+			MOVE_CLOSECOMBAT,
+			MOVE_THUNDERPUNCH,
 			MOVE_BULLETPUNCH,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
@@ -15932,8 +15932,8 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.item = ITEM_MUSCLE_BAND,
 		.moves =
 		{
-			MOVE_SKYUPPERCUT,
-			MOVE_CRUNCH,
+			MOVE_WICKEDBLOW,
+			MOVE_CLOSECOMBAT,
 			MOVE_EARTHQUAKE,
 			MOVE_ROCKSLIDE,
 		},

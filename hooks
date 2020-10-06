@@ -125,6 +125,7 @@ ObjcShakerHook 804BEDC 2
 HandleSpeciesGfxDataChange 8034BF4 3
 DynamaxPalFadeHook1_LoadOpponentGfx 803443C 0
 DynamaxPalFadeHook2_LoadPlayerGfx 80345FC 0
+RaidHealthbarSpriteSheetFix 803493C 0
 ClearTemporarySpeciesSpriteData 0803589C 2
 RaidBattleCoordHook1 80744B0 0
 RaidBattleCoordHook2 80744D8 0

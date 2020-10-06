@@ -801,8 +801,9 @@ EventScript_UndergroundMining:
 	startmining @Right now is not implemented
 	waitstate
 	callasm PrepMiningWarp @Try to go through door if there is one
-	compare LASTRESULT 0x0
-	if equal _goto EventScript_UndergroundMining_End
+	switch LASTRESULT
+	case 0, EventScript_UndergroundMining_End
+	case 0xFF, EventScript_UnderwaterMining_Door
 
 	@Update door tiles
 	sound 0x7C @Rock Smash
@@ -818,7 +819,7 @@ EventScript_UndergroundMining:
 	addvar 0x8005 1 @1 Down
 	setmaptile 0x8004 0x8005 0x2D8 0x1
 	addvar 0x8004 1 @1 Right
-	setmaptile 0x8004 0x8005 0x2D9 0x1
+	setmaptile 0x8004 0x8005 0x2D9 0x0
 	addvar 0x8004 1 @1 Right
 	setmaptile 0x8004 0x8005 0x2DA 0x1
 	subvar 0x8004 2 @2 Left
@@ -828,6 +829,7 @@ EventScript_UndergroundMining:
 	setmaptile 0x8004 0x8005 0x2E1 0x0
 	addvar 0x8004 1 @1 Right
 	setmaptile 0x8004 0x8005 0x2E2 0x0
+EventScript_UndergroundMining_ReloadDoorTiles:
 	special 0x8E @Reload tiles
 	checksound
 	applymovement PLAYER m_WalkUp1
@@ -836,8 +838,35 @@ EventScript_UndergroundMining:
 	waitstate
 
 EventScript_UndergroundMining_End:
-	release
+	releaseall
 	end
+
+EventScript_UnderwaterMining_Door:
+	@Update door tiles
+	sound 0x7C @Rock Smash
+	getplayerpos 0x8004 0x8005
+	subvar 0x8004 1 @1 Left
+	subvar 0x8005 2 @2 Up
+	setmaptile 0x8004 0x8005 0x2B8 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2B9 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2BA 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2C0 0x1
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2C1 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2C2 0x1
+	subvar 0x8004 2 @2 Left
+	addvar 0x8005 1 @1 Down
+	setmaptile 0x8004 0x8005 0x2C8 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2C9 0x0
+	addvar 0x8004 1 @1 Right
+	setmaptile 0x8004 0x8005 0x2CA 0x0
+	goto EventScript_UndergroundMining_ReloadDoorTiles
 
 m_WalkUp1: .byte walk_up, end_m
 

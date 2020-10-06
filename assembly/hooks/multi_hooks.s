@@ -131,9 +131,6 @@ NewFixForMultiSendIn:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 PartnerSetupHook:
-        bl ChooseProperPartnerController
-        ldr r0, =0x800D478 | 1
-        bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+	bl ChooseProperPartnerController
+	ldr r0, =0x800D478 | 1
+	bx r0

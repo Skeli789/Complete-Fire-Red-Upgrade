@@ -11,8 +11,6 @@
 
 #define MAP(map) MAP_GROUP(map), MAP_NUM(map)
 
-u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
-
 #ifndef UNBOUND //For FireRed
 
 // Map Group 0

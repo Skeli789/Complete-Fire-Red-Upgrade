@@ -232,7 +232,7 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY && !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
 	{
 		if ((resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(bank) == gBattleStruct->dynamicMoveType && !DoesBankNegateDamage(bank, gCurrentMove))
-		||  (ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
+		||  (SPLIT(gCurrentMove) != SPLIT_STATUS && ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
 		{
 			gLastUsedItem = ITEM(bank);
 			gBattleScripting.bank = bank;
@@ -2167,6 +2167,7 @@ void atk77_setprotect(void) {
 		case MOVE_MATBLOCK:
 		case MOVE_QUICKGUARD:
 		case MOVE_WIDEGUARD:
+		case MOVE_OBSTRUCT:
 		case MOVE_MAX_GUARD:
 			break;
 		default:
@@ -4927,38 +4928,44 @@ void atkE7_trycastformdatachange(void)
 
 	gBattlescriptCurrInstr++;
 
-	switch (SPECIES(bank)) { //Not ability b/c you can lose ability
-		#ifdef SPECIES_CASTFORM
-		case SPECIES_CASTFORM:
-			form = CastformDataTypeChange(bank);
-			if (form)
-			{
-				BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-				gBattleStruct->castformToChangeInto = form - 1;
-			}
-			return;
-		#endif
+	if (BATTLER_ALIVE(bank))
+	{
+		switch (SPECIES(bank)) { //Not ability b/c you can lose ability
+			#ifdef SPECIES_CASTFORM
+			case SPECIES_CASTFORM:
+				form = CastformDataTypeChange(bank);
+				if (form)
+				{
+					BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
+					gBattleStruct->castformToChangeInto = form - 1;
+				}
+				return;
+			#endif
 
-		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
-		case SPECIES_CHERRIM:
-			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
-			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY
-			&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
-			{
-				DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
-				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
-			}
-			break;
+			#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
+			case SPECIES_CHERRIM:
+				if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
+				&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY
+				&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				{
+					DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
+					BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
+				}
+				break;
 
-		case SPECIES_CHERRIM_SUN:
-			if (ABILITY(bank) != ABILITY_FLOWERGIFT
-			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)
-			|| ITEM_EFFECT(bank) == ITEM_EFFECT_UTILITY_UMBRELLA)
-			{
-				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
-				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
-			}
-		#endif
+			case SPECIES_CHERRIM_SUN:
+				if (ABILITY(bank) != ABILITY_FLOWERGIFT
+				|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)
+				|| ITEM_EFFECT(bank) == ITEM_EFFECT_UTILITY_UMBRELLA)
+				{
+					if (!IS_TRANSFORMED(bank))
+					{
+						DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
+						BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
+					}
+				}
+			#endif
+		}
 	}
 }
 

@@ -284,7 +284,8 @@ bool8 StartRButtonFunc(void)
 			break;
 		case OPTIONS_R_BUTTON_MODE_MINING:
 			#ifdef MB_UNDERGROUND_MINING
-			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY)
+			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY
+			|| gMapHeader.mapType == MAP_TYPE_UNDERWATER)
 			{
 				TryLoadMiningSpots();
 				ChooseMiningSpotToShow();

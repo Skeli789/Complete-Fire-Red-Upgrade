@@ -3085,46 +3085,46 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case Z_EFFECT_ATK_UP_1:
 				case Z_EFFECT_ATK_UP_2:
 				case Z_EFFECT_ATK_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
 					&& MoveSplitInMoveset(bankAtk, SPLIT_PHYSICAL))
 						return TRUE;
 					break;
 				case Z_EFFECT_DEF_UP_1:
 				case Z_EFFECT_DEF_UP_2:
 				case Z_EFFECT_DEF_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
 						return TRUE;
 					break;
 				case Z_EFFECT_SPATK_UP_1:
 				case Z_EFFECT_SPATK_UP_2:
 				case Z_EFFECT_SPATK_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)
 					&& MoveSplitInMoveset(bankAtk, SPLIT_SPECIAL))
 						return TRUE;
 					break;
 				case Z_EFFECT_SPDEF_UP_1:
 				case Z_EFFECT_SPDEF_UP_2:
 				case Z_EFFECT_SPDEF_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
 						return TRUE;
 					break;
 				case Z_EFFECT_SPD_UP_1:
 				case Z_EFFECT_SPD_UP_2:
 				case Z_EFFECT_SPD_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
 						return TRUE;
 					break;
 				case Z_EFFECT_ACC_UP_1:
 				case Z_EFFECT_ACC_UP_2:
 				case Z_EFFECT_ACC_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
 					&&  MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, FALSE))
 						return TRUE;
 					break;
 				case Z_EFFECT_EVSN_UP_1:
 				case Z_EFFECT_EVSN_UP_2:
 				case Z_EFFECT_EVSN_UP_3:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
 						return TRUE;
 					break;
 				default: //Recover HP

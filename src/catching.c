@@ -46,6 +46,7 @@ extern const struct SpriteTemplate gBallSpriteTemplates[];
 
 extern const u8 gText_CantAimAtTwoTargets[];
 extern const u8 gText_CantAimAtSemiInvulnerableTarget[];
+extern const u8 gText_CantUseAMoveAndABall[];
 extern const u8 gText_CantCatchPokemonYet[];
 extern const u8 gText_CantCatchPokemonRightNow[];
 
@@ -740,6 +741,13 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 		||	   (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
 		{
 			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, Task_ReturnToBagFromContextMenu);
+			effect = TRUE;
+		}
+		else if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_USE_ITEM
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_NOTHING_FAINTED)
+		{
+			DisplayItemMessageInBag(taskId, 2, gText_CantUseAMoveAndABall, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 	}

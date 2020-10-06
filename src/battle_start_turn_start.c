@@ -219,6 +219,15 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case RaidBattleReveal:
+				#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
+				if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
+				{
+					//Don't play the storm animation in a Raid Battle that isn't 10 turns long
+					++*state;
+					break;
+				}
+				#endif
+
 				if (IsRaidBattle())
 				{
 					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without

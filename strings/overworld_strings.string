@@ -14,16 +14,16 @@ WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Cloc
 A second item in the Cube can be\nregistered to [L_BUTTON] for easy use.
 
 #org @gText_AutoRunEnable
-[GREEN]Auto-run[BLACK] has been [GREEN]enabled[BLACK].
+Auto-run has been [GREEN]enabled[BLACK].
 
 #org @gText_AutoRunDisable
-[GREEN]Auto-run[BLACK] has been [GREEN]disabled[BLACK].
+Auto-run has been [GREEN]disabled[BLACK].
 
 #org @gText_BikeTurboBoostEnable
-[GREEN]Turbo boost[BLACK] has been [GREEN]activated[BLACK].
+Turbo boost has been [GREEN]activated[BLACK].
 
 #org @gText_BikeTurboBoostDisable
-[GREEN]Turbo boost[BLACK] has been [GREEN]deactivated[BLACK].
+Turbo boost has been [GREEN]deactivated[BLACK].
 
 #org @gText_PoisonSurvial
 [BUFFER][02] survived the Poison.\nThe Poison faded away!

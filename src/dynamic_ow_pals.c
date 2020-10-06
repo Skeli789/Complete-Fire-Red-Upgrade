@@ -144,9 +144,14 @@ u8 PaletteNeedsFogBrightening(u8 palSlot) // hook at 0x7A748
 
 static u8 GetPalTypeByPalTag(u16 palTag)
 {
-	if (palTag >= 0x1000 && palTag <= 0x1010)
+	if (palTag >= 0x1000 && palTag <= 0x1012)
 		return PalTypeAnimation;
 
+	#ifdef UNBOUND
+	if (palTag == 0x1115) //For the boat
+		return PalTypeNPC; 
+	#endif
+	
 	if (palTag == 0x1200)
 		return PalTypeWeather;
 
@@ -247,7 +252,11 @@ u8 FindOrLoadPalette(struct SpritePalette* pal) //Hook at 0x8928 via r1
 	u8 palSlot;
 	u16 palTag = pal->tag;
 
-	if (OverworldIsActive || palTag == 0x1200) //0x1200 is for weather sprites
+	if (OverworldIsActive
+	#ifdef UNBOUND
+	|| palTag == 0x1115 //For the black boat
+	#endif
+	|| palTag == 0x1200) //0x1200 is for weather sprites
 	{
 		palSlot = FindPalRef(GetPalTypeByPalTag(palTag), palTag);
 		if (palSlot != 0xFF)

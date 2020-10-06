@@ -29,10 +29,12 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/catching.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/dns.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
@@ -1231,7 +1233,7 @@ void sp046_StartTimer(void)
 void sp047_HaltTimer(void)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
-		gTimerValue = gGbaTimer->timerVal;
+	gTimerValue = gGbaTimer->timerVal;
 	#endif
 	gGbaTimer->timerOn ^= 0x80;
 	gGbaTimer->timerFlags ^= 0x80;
@@ -1242,7 +1244,7 @@ void sp047_HaltTimer(void)
 void sp048_ResumeTimer(void)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
-		gGbaTimer->timerVal = gTimerValue;
+	gGbaTimer->timerVal = gTimerValue;
 	#endif
 	gGbaTimer->timerOn |= 0x80;
 	gGbaTimer->timerFlags |= 0x80;
@@ -1255,7 +1257,6 @@ u16 sp049_StopTimer(void)
 	gGbaTimer->timerOn ^= 0x80;
 	gGbaTimer->timerFlags ^= 0x80;
 	return gGbaTimer->timerVal;
-
 }
 
 //@Returns: The time on the timer.
@@ -1263,7 +1264,6 @@ u16 sp04A_GetTimerValue(void)
 {
 	return gGbaTimer->timerVal;
 }
-
 
 
 void sp04C_UpdatePlaytime(void)
@@ -2811,6 +2811,27 @@ bool8 ScrCmd_hidemappopup(unusedArg struct ScriptContext * ctx)
 	}
 
 	return FALSE;
+}
+
+//More Specials
+//@Details: Buffers the Natural Gift move type and power for a specific item.
+//@Input: Var 0x800E: The item to check.
+//@Returns: LastResult: 1 if the item can be used with Natural Gift. 0 otherwise.
+//			gStringVar2: The name of move type.
+//			gStringVar3: The power of the move.
+extern const u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
+void sp112_BufferNaturalGiftPowerAndType(void)
+{
+	u8 type = GetNaturalGiftMoveType(gSpecialVar_ItemId);
+	u8 power = GetNaturalGiftMovePower(gSpecialVar_ItemId);
+	gSpecialVar_LastResult = FALSE;
+
+	if (power != 0)
+	{
+		gSpecialVar_LastResult = TRUE;
+		StringCopy(gStringVar2, gTypeNames[type]);
+		ConvertIntToDecimalStringN(gStringVar3, power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	}
 }
 
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////

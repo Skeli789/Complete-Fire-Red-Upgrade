@@ -28,3 +28,4 @@ extern const u8 sText_Zeph2LowHP[];
 extern const u8 sText_Aklove1LowHP[];
 extern const u8 sText_Aklove2LowHP[];
 extern const u8 sText_MaximaLastSwitchIn[];
+extern const u8 sText_RogueElectivire_DynamaxMsg[];

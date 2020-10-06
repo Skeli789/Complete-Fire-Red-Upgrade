@@ -72,6 +72,7 @@ static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 //static void DexHUDHBlank(void);
 static void DexNavProximityUpdate(void);
 static void NullSubHBlank(void);
+static void StopDexNavFieldEffect(void);
 static void DexNavFreeHUD(void);
 static void DexNavShowFieldMessage(u8 id);
 static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size);
@@ -150,7 +151,11 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	if (searchLevel > 200)
 	{
-		otherValue += searchLevel - 200;
+		if (searchLevel == 255) //Max Search Level
+			otherValue += 999 - 200; //Reward the player for hitting this level by bumping the bonus to 999 (max ORAS num)
+		else
+			otherValue += searchLevel - 200;
+
 		searchLevel = 200;
 	}
 
@@ -181,11 +186,14 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 	u8 numPerfectStats = 0;
 	u8 perfect = 31;
 	bool8 perfectStats[NUM_STATS] = {0};
-	
+
 	for (i = 0; i < NUM_STATS; ++i) //Count how many stats are already perfect
 	{
 		if (GetMonData(mon, MON_DATA_HP_IV + i, NULL) >= 31)
+		{
 			perfectStats[i] = TRUE;
+			++numPerfectStats;
+		}
 	}
 
 	while (numPerfectStats < potential) //Assign the rest of the prefect stats
@@ -207,15 +215,13 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	//Set moves
 	for (i = 0; i < MAX_MON_MOVES; ++i)
-	{
-		mon->moves[i] = sDexNavHudPtr->moveId[i];
-		mon->pp[i] = gBattleMoves[moves[i]].pp;
-	}
-	
+		SetMonData(mon, MON_DATA_MOVE1 + i, &moves[i]);
+
 	//Set item
 	SetMonData(mon, MON_DATA_HELD_ITEM, &sDexNavHudPtr->heldItem);
 
 	CalculateMonStats(mon);
+	HealMon(mon); //Restore PP and fix HP if IV changed
 }
 
 
@@ -438,80 +444,65 @@ static void NullSubHBlank(void)
 {
 };
 
-static void DexNavFreeHUD(void)
+static void StopDexNavFieldEffect(void)
 {
-	switch (sDexNavHudPtr->environment)
+	switch(sDexNavHudPtr->environment)
 	{
-		case 0:
-			if (!IsMapTypeOutdoors(GetCurrentMapType()))
-				FieldEffectStop(&gSprites[sDexNavHudPtr->spriteIdShakingGrass], 0x1A); //cave
-			else
-				FieldEffectStop(&gSprites[sDexNavHudPtr->spriteIdShakingGrass], 0x13);
+		case ENCOUNTER_TYPE_LAND:
+			FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
+			FieldEffectActiveListRemove(FLDEFF_CAVE_DUST);
+			FieldEffectActiveListRemove(FLDEFF_REPEATING_SPARKLES);
+			FieldEffectActiveListRemove(FLDEFF_SHAKING_GRASS);
+			FieldEffectActiveListRemove(FLDEFF_SHAKING_LONG_GRASS);
+			FieldEffectActiveListRemove(FLDEFF_SAND_HOLE);
 			break;
-		case 1:
-			FieldEffectStop(&gSprites[sDexNavHudPtr->spriteIdShakingGrass], 0x13);
+		case ENCOUNTER_TYPE_WATER:
+			FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
+			FieldEffectActiveListRemove(FLDEFF_SPLASHING_WATER);
+			FieldEffectActiveListRemove(FLDEFF_LAVA_BUBBLES);
 			break;
 	}
+}
+
+static void DexNavFreeHUD(void)
+{
+	StopDexNavFieldEffect();
 
 	//Clear mon icon sprite
 	SafeFreeMonIconPalette(sDexNavHudPtr->species);
 	DestroyMonIconSprite(&gSprites[sDexNavHudPtr->spriteIdSpecies]);
 
 	//Clear black bars
-	FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
 	FreeSpriteOamMatrix(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
 	FreeSpriteOamMatrix(&gSprites[sDexNavHudPtr->spriteIdBlackBar[1]]);
-	DestroySprite(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
-	DestroySprite(&gSprites[sDexNavHudPtr->spriteIdBlackBar[1]]);
+	FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
+	FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBlackBar[1]]);
 
 	if (sDexNavHudPtr->spriteIdSight < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdSight]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdSight]);
-	}
 
 	if (sDexNavHudPtr->spriteIdBButton < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBButton]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdBButton]);
-	}
 
 	if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdAbility]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdAbility]);
-	}
 
 	if (sDexNavHudPtr->spriteIdMove < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdMove]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdMove]);
-	}
 
 	if (sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdItem]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdItem]);
-	}
 
 	if (sDexNavHudPtr->spriteIdPotential[0] < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdPotential[0]]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdPotential[0]]);
-	}
 
 	if (sDexNavHudPtr->spriteIdPotential[1] < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdPotential[1]]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdPotential[1]]);
-	}
 
 	if (sDexNavHudPtr->spriteIdPotential[2] < MAX_SPRITES)
-	{
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdPotential[2]]);
-		DestroySprite(&gSprites[sDexNavHudPtr->spriteIdPotential[2]]);
-	}
 
+	//Idk what FBI used these tags for
 	//FreeSpriteTilesByTag(0x4736);
 	FreeSpriteTilesByTag(0x61);
 	FreeSpriteTilesByTag(0x2613);
@@ -879,25 +870,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	&& sDexNavHudPtr->proximity < 2
 	&& sDexNavHudPtr->movementTimes < 2)
 	{
-		switch(sDexNavHudPtr->environment)
-		{
-			case ENCOUNTER_TYPE_LAND:
-				FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
-				FieldEffectActiveListRemove(FLDEFF_CAVE_DUST);
-				FieldEffectActiveListRemove(FLDEFF_REPEATING_SPARKLES);
-				FieldEffectActiveListRemove(FLDEFF_SHAKING_GRASS);
-				FieldEffectActiveListRemove(FLDEFF_SHAKING_LONG_GRASS);
-				FieldEffectActiveListRemove(FLDEFF_SAND_HOLE);
-				break;
-			case ENCOUNTER_TYPE_WATER:
-				FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdShakingGrass]);
-				FieldEffectActiveListRemove(FLDEFF_SPLASHING_WATER);
-				FieldEffectActiveListRemove(FLDEFF_LAVA_BUBBLES);
-				break;
-			default:
-				break;
-		};
-
+		StopDexNavFieldEffect();
 		while(!ShakingGrass(sDexNavHudPtr->environment, 8, 8, 1));
 		sDexNavHudPtr->movementTimes += 1;
 	}

@@ -460,6 +460,42 @@ extern const u8 sFrontierText_Rancher_PlayerLose_5[];
 extern const u8 sFrontierText_Rancher_PreBattle_6[];
 extern const u8 sFrontierText_Rancher_PlayerWin_6[];
 extern const u8 sFrontierText_Rancher_PlayerLose_6[];
+extern const u8 sFrontierText_ExpertM_PreBattle_1[];
+extern const u8 sFrontierText_ExpertM_PlayerWin_1[];
+extern const u8 sFrontierText_ExpertM_PlayerLose_1[];
+extern const u8 sFrontierText_ExpertM_PreBattle_2[];
+extern const u8 sFrontierText_ExpertM_PlayerWin_2[];
+extern const u8 sFrontierText_ExpertM_PlayerLose_2[];
+extern const u8 sFrontierText_ExpertM_PreBattle_3[];
+extern const u8 sFrontierText_ExpertM_PlayerWin_3[];
+extern const u8 sFrontierText_ExpertM_PlayerLose_3[];
+extern const u8 sFrontierText_ExpertF_PreBattle_1[];
+extern const u8 sFrontierText_ExpertF_PlayerWin_1[];
+extern const u8 sFrontierText_ExpertF_PlayerLose_1[];
+extern const u8 sFrontierText_ExpertF_PreBattle_2[];
+extern const u8 sFrontierText_ExpertF_PlayerWin_2[];
+extern const u8 sFrontierText_ExpertF_PlayerLose_2[];
+extern const u8 sFrontierText_ExpertF_PreBattle_3[];
+extern const u8 sFrontierText_ExpertF_PlayerWin_3[];
+extern const u8 sFrontierText_ExpertF_PlayerLose_3[];
+extern const u8 sFrontierText_PokefanM_PreBattle_1[];
+extern const u8 sFrontierText_PokefanM_PlayerWin_1[];
+extern const u8 sFrontierText_PokefanM_PlayerLose_1[];
+extern const u8 sFrontierText_PokefanM_PreBattle_2[];
+extern const u8 sFrontierText_PokefanM_PlayerWin_2[];
+extern const u8 sFrontierText_PokefanM_PlayerLose_2[];
+extern const u8 sFrontierText_PokefanM_PreBattle_3[];
+extern const u8 sFrontierText_PokefanM_PlayerWin_3[];
+extern const u8 sFrontierText_PokefanM_PlayerLose_3[];
+extern const u8 sFrontierText_Nurse_PreBattle_1[];
+extern const u8 sFrontierText_Nurse_PlayerWin_1[];
+extern const u8 sFrontierText_Nurse_PlayerLose_1[];
+extern const u8 sFrontierText_Nurse_PreBattle_2[];
+extern const u8 sFrontierText_Nurse_PlayerWin_2[];
+extern const u8 sFrontierText_Nurse_PlayerLose_2[];
+extern const u8 sFrontierText_Nurse_PreBattle_3[];
+extern const u8 sFrontierText_Nurse_PlayerWin_3[];
+extern const u8 sFrontierText_Nurse_PlayerLose_3[];
 
 extern const u8 sTrainerName_Palmer[];
 extern const u8 sTrainerName_Pat[];
@@ -1804,6 +1840,114 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 		.preBattleText = 	sFrontierText_Rancher_PreBattle_6,
 		.playerWinText = 	sFrontierText_Rancher_PlayerWin_6,
 		.playerLoseText = 	sFrontierText_Rancher_PlayerLose_6,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_M,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_ExpertM_PreBattle_1,
+		.playerWinText = 	sFrontierText_ExpertM_PlayerWin_1,
+		.playerLoseText = 	sFrontierText_ExpertM_PlayerLose_1,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_M,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_ExpertM_PreBattle_2,
+		.playerWinText = 	sFrontierText_ExpertM_PlayerWin_2,
+		.playerLoseText = 	sFrontierText_ExpertM_PlayerLose_2,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_M,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_ExpertM_PreBattle_3,
+		.playerWinText = 	sFrontierText_ExpertM_PlayerWin_3,
+		.playerLoseText = 	sFrontierText_ExpertM_PlayerLose_3,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_F,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_F,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_ExpertF_PreBattle_1,
+		.playerWinText = 	sFrontierText_ExpertF_PlayerWin_1,
+		.playerLoseText = 	sFrontierText_ExpertF_PlayerLose_1,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_F,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_F,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_ExpertF_PreBattle_2,
+		.playerWinText = 	sFrontierText_ExpertF_PlayerWin_2,
+		.playerLoseText = 	sFrontierText_ExpertF_PlayerLose_2,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_EXPERT_F,
+		.trainerClass = 	CLASS_EXPERT,
+		.trainerSprite = 	TRAINER_PIC_EXPERT_F,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_ExpertF_PreBattle_3,
+		.playerWinText = 	sFrontierText_ExpertF_PlayerWin_3,
+		.playerLoseText = 	sFrontierText_ExpertF_PlayerLose_3,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_POKEFAN_M,
+		.trainerClass = 	CLASS_POKEFAN,
+		.trainerSprite = 	TRAINER_PIC_POKEFAN_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_PokefanM_PreBattle_1,
+		.playerWinText = 	sFrontierText_PokefanM_PlayerWin_1,
+		.playerLoseText = 	sFrontierText_PokefanM_PlayerLose_1,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_POKEFAN_M,
+		.trainerClass = 	CLASS_POKEFAN,
+		.trainerSprite = 	TRAINER_PIC_POKEFAN_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_PokefanM_PreBattle_2,
+		.playerWinText = 	sFrontierText_PokefanM_PlayerWin_2,
+		.playerLoseText = 	sFrontierText_PokefanM_PlayerLose_2,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_POKEFAN_M,
+		.trainerClass = 	CLASS_POKEFAN,
+		.trainerSprite = 	TRAINER_PIC_POKEFAN_M,
+		.gender = 			BATTLE_FACILITY_MALE,
+		.preBattleText = 	sFrontierText_PokefanM_PreBattle_3,
+		.playerWinText = 	sFrontierText_PokefanM_PlayerWin_3,
+		.playerLoseText = 	sFrontierText_PokefanM_PlayerLose_3,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_MEDIC_FEMALE,
+		.trainerClass = 	CLASS_NURSE,
+		.trainerSprite = 	TRAINER_PIC_NURSE,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_Nurse_PreBattle_1,
+		.playerWinText = 	sFrontierText_Nurse_PlayerWin_1,
+		.playerLoseText = 	sFrontierText_Nurse_PlayerLose_1,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_MEDIC_FEMALE,
+		.trainerClass = 	CLASS_NURSE,
+		.trainerSprite = 	TRAINER_PIC_NURSE,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_Nurse_PreBattle_2,
+		.playerWinText = 	sFrontierText_Nurse_PlayerWin_2,
+		.playerLoseText = 	sFrontierText_Nurse_PlayerLose_2,
+	},
+	{
+		.owNum = 			EVENT_OBJ_GFX_MEDIC_FEMALE,
+		.trainerClass = 	CLASS_NURSE,
+		.trainerSprite = 	TRAINER_PIC_NURSE,
+		.gender = 			BATTLE_FACILITY_FEMALE,
+		.preBattleText = 	sFrontierText_Nurse_PreBattle_3,
+		.playerWinText = 	sFrontierText_Nurse_PlayerWin_3,
+		.playerLoseText = 	sFrontierText_Nurse_PlayerLose_3,
 	},
 };
 

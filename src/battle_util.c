@@ -259,12 +259,12 @@ bool8 CheckGrounding(u8 bank)
 		return GROUNDED;
 
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
-		   || ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
-		   || ABILITY(bank) == ABILITY_LEVITATE
-		   || gBattleMons[bank].type3 == TYPE_FLYING
-		   || gBattleMons[bank].type1 == TYPE_FLYING
-		   || gBattleMons[bank].type2 == TYPE_FLYING)
-				return IN_AIR;
+	|| ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
+	|| ABILITY(bank) == ABILITY_LEVITATE
+	|| gBattleMons[bank].type3 == TYPE_FLYING
+	|| gBattleMons[bank].type1 == TYPE_FLYING
+	|| gBattleMons[bank].type2 == TYPE_FLYING)
+		return IN_AIR;
 
 	return GROUNDED;
 }
@@ -280,17 +280,17 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 		return GROUNDED;
 
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
-		   || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
-		   || GetRecordedAbility(bank) == ABILITY_LEVITATE
-		   || gBattleMons[bank].type3 == TYPE_FLYING
-		   || gBattleMons[bank].type1 == TYPE_FLYING
-		   || gBattleMons[bank].type2 == TYPE_FLYING)
-				return IN_AIR;
+   || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
+   || GetRecordedAbility(bank) == ABILITY_LEVITATE
+   || gBattleMons[bank].type3 == TYPE_FLYING
+   || gBattleMons[bank].type1 == TYPE_FLYING
+   || gBattleMons[bank].type2 == TYPE_FLYING)
+		return IN_AIR;
 
 	return GROUNDED;
 }
 
-bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
+bool8 CheckMonGrounding(struct Pokemon* mon)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
@@ -299,10 +299,11 @@ bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
 	|| (ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL && GetMonAbility(mon) != ABILITY_KLUTZ))
 		return GROUNDED;
 
-	else if  (GetMonAbility(mon) == ABILITY_LEVITATE
-		|| gBaseStats[species].type1 == TYPE_FLYING
-		|| gBaseStats[species].type2 == TYPE_FLYING)
-			return IN_AIR;
+	else if (GetMonAbility(mon) == ABILITY_LEVITATE
+	|| gBaseStats[species].type1 == TYPE_FLYING
+	|| gBaseStats[species].type2 == TYPE_FLYING)
+		return IN_AIR;
+
 	return GROUNDED;
 }
 
@@ -621,15 +622,15 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 
 void CancelMultiTurnMoves(u8 battler)
 {
-    gBattleMons[battler].status2 &= ~(STATUS2_MULTIPLETURNS);
-    gBattleMons[battler].status2 &= ~(STATUS2_LOCK_CONFUSE);
-    gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
-    gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
+	gBattleMons[battler].status2 &= ~(STATUS2_MULTIPLETURNS);
+	gBattleMons[battler].status2 &= ~(STATUS2_LOCK_CONFUSE);
+	gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
+	gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
 
-    gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+	gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
 
-    gDisableStructs[battler].rolloutTimer = 0;
-    gDisableStructs[battler].furyCutterCounter = 0;
+	gDisableStructs[battler].rolloutTimer = 0;
+	gDisableStructs[battler].furyCutterCounter = 0;
 }
 
 bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
