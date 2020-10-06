@@ -643,6 +643,7 @@ FixSafariZoneBattleWindow 08049D1A 1
 CustomScrollingMultichoiceHook 080CB94C 0
 ScrollingMultiSizeHook 080CB82A 0
 #endif
+ScrollingMultiLeftRightHook 80CBAC8 1
 
 #ifdef CRITICAL_CAPTURE
 CriticalCaptureAnimHook 080EFEE4 0
