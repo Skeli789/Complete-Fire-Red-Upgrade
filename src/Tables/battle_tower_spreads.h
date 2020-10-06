@@ -18331,6 +18331,32 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_TROPIUS,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HARVEST
+		.item = ITEM_PETAYA_BERRY,
+		.moves =
+		{
+			MOVE_LEAFSTORM,
+			MOVE_HURRICANE,
+			MOVE_ENDURE,
+			MOVE_TAILWIND,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_TROPIUS,
 		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
@@ -18349,32 +18375,6 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 			MOVE_LEECHSEED,
 			MOVE_SUBSTITUTE,
 			MOVE_PROTECT,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_TROPIUS,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 4,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HARVEST
-		.item = ITEM_SITRUS_BERRY,
-		.moves =
-		{
-			MOVE_TOXIC,
-			MOVE_LEECHSEED,
-			MOVE_SWAGGER,
-			MOVE_ROOST,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -24203,7 +24203,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_SCALD,
 			MOVE_ICEBEAM,
-			MOVE_UTURN,
+			MOVE_FLIPTURN,
 			MOVE_TAILWIND,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -24228,7 +24228,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_SCALD,
-			MOVE_UTURN,
+			MOVE_FLIPTURN,
 			MOVE_TOXIC,
 			MOVE_DEFOG,
 		},
@@ -24254,7 +24254,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_SCALD,
-			MOVE_UTURN,
+			MOVE_FLIPTURN,
 			MOVE_DEFOG,
 			MOVE_TAILWIND,
 		},
@@ -28074,11 +28074,11 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SAPSIPPER
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
 			MOVE_WILDCHARGE,
-			MOVE_FLAMECHARGE,
+			MOVE_FLAREBLITZ,
 			MOVE_LEECHFANG,
 			MOVE_LOWKICK,
 		},

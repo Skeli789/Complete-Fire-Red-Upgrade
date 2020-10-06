@@ -70,6 +70,19 @@ bxr1:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@0x810852E with r0
+BagLRScroll:
+	ldrb r0, [r3, #0x16]
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r3, #0x16]
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 AllocateBerryPouchSpace:
 	push {r4,lr}
 	bl AllocateBerryPouchListBuffers
