@@ -128,3 +128,4 @@ void SetSwitchingBankSwitchingCooldownTo2(void);
 void FaintedBankNameInBuff1(void);
 void SetCorrectTeleportBattleScript(void);
 void TrySetBurningJealousyMoveEffect(void);
+void TryFailPoltergeist(void);

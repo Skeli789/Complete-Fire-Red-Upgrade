@@ -766,6 +766,18 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_WingAttackFeather[] =
 	sSpriteAffineAnim_WingAttackFeather,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_PoltergeistItem[] =
+{
+	AFFINEANIMCMD_FRAME(-4, -4, 0, 16), //Pulsate slowly
+	AFFINEANIMCMD_FRAME(4, 4, 0, 16),
+	AFFINEANIMCMD_JUMP(0),
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_PoltergeistItem[] =
+{
+	sSpriteAffineAnim_PoltergeistItem,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
 {
 	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
@@ -845,6 +857,7 @@ static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respec
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target);
 static void SpriteCB_MoveSpriteUpwardsForDurationStep(struct Sprite* sprite);
+static void SpriteCB_PoltergeistItem(struct Sprite* sprite);
 static void AnimMindBlownBallStep(struct Sprite *sprite);
 static u8 GetProperCentredCoord(u8 bank, u8 coordType);
 static void Task_HandleSpecialBattleAnimation(u8 taskId);
@@ -1045,6 +1058,7 @@ bool8 ShadowSneakAnimHelper(void)
 		case MOVE_SHADOWSNEAK:
 		case MOVE_HYPERSPACEHOLE:
 		case MOVE_SPECTRALTHIEF:
+		case MOVE_POLTERGEIST:
 		case MOVE_PULVERIZING_PANCAKE:
 			return TRUE;
 	}
@@ -1632,6 +1646,7 @@ void AnimTask_CreateStealItem(u8 taskId)
 		InitSpriteAffineAnim(sprite);
 		++gAnimVisualTaskCount;
 	}
+
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -1654,6 +1669,7 @@ void AnimTask_CreateKnockOffItem(u8 taskId)
 		InitSpriteAffineAnim(sprite);
 		++gAnimVisualTaskCount;
 	}
+
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -1667,6 +1683,30 @@ void AnimTask_CreateBestowItem(u8 taskId)
 		gSprites[iconSpriteId].callback = (void*) 0x8075E81;
 		++gAnimVisualTaskCount;
 	}
+
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_CreatePoltergeistItem(u8 taskId)
+{
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, gLastUsedItem);
+
+	if (iconSpriteId != MAX_SPRITES)
+	{
+		struct Sprite* sprite = &gSprites[iconSpriteId];
+
+		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+		sprite->oam.priority = 1;
+		sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+		sprite->affineAnims = gSpriteAffineAnimTable_PoltergeistItem;
+		sprite->callback = SpriteCB_PoltergeistItem;
+
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+		InitSpriteAffineAnim(sprite);
+		++gAnimVisualTaskCount;
+	}
+
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -2868,6 +2908,114 @@ void SpriteCB_DragonDart(struct Sprite* sprite)
 	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
 	sprite->callback = StartAnimLinearTranslation;
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+static void CombineSpritePositions(struct Sprite* sprite)
+{
+	sprite->pos1.x += sprite->pos2.x; //Combine positions
+	sprite->pos1.y += sprite->pos2.y;
+	sprite->pos2.x = 0; //Reset offsets
+	sprite->pos2.y = 0;
+}
+
+static void SpriteCB_PoltergeistItem_Step6(struct Sprite* sprite)
+{
+	if (TranslateAnimVerticalArc(sprite))
+		DestroyAnimSprite(sprite);
+}
+
+static void SpriteCB_PoltergeistItem_Step5(struct Sprite* sprite)
+{
+	if (TranslateAnimHorizontalArc(sprite))
+	{
+		//Move sprite in a right arc to attack the target
+		CombineSpritePositions(sprite); //Clear movement offset
+		sprite->data[2] = sprite->pos1.x - 40; //TARGET_X_PIXEL_OFFSET
+		sprite->data[4] = sprite->pos1.y + 25; //TARGET_Y_PIXEL_OFFSET
+		sprite->data[0] = 15; //DURATION
+		sprite->data[5] = 20; //AMPLITUDE
+		InitAnimArcTranslation(sprite);
+		sprite->callback = SpriteCB_PoltergeistItem_Step6;
+	}
+}
+
+static void SpriteCB_PoltergeistItem_Step4(struct Sprite* sprite)
+{
+	//Move sprite in a upwards arc across the top of the target
+	CombineSpritePositions(sprite); //Clear movement offset
+	sprite->data[2] = sprite->pos1.x + 60; //TARGET_X_PIXEL_OFFSET
+	sprite->data[4] = sprite->pos1.y; //TARGET_Y_PIXEL_OFFSET
+	sprite->data[0] = 25; //DURATION
+	sprite->data[5] = -10; //AMPLITUDE
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PoltergeistItem_Step5;
+}
+
+static void SpriteCB_PoltergeistItem_Step3(struct Sprite* sprite)
+{
+	if (TranslateAnimVerticalArc(sprite))
+	{
+		//Move sprite in a line to the top left of the target
+		CombineSpritePositions(sprite); //Clear movement offset
+		sprite->data[0] = 25; //Speed delay
+		sprite->data[2] = sprite->pos1.x - 40;
+		sprite->data[4] = sprite->pos1.y - 35;
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, SpriteCB_PoltergeistItem_Step4);
+	}
+}
+
+static void SpriteCB_PoltergeistItem_Step2(struct Sprite* sprite)
+{
+	if (TranslateAnimVerticalArc(sprite))
+	{
+		//Move sprite in a small arc like its turning
+		CombineSpritePositions(sprite); //Clear movement offset
+		sprite->data[2] = sprite->pos1.x; //TARGET_X_PIXEL_OFFSET
+		sprite->data[4] = sprite->pos1.y - 5; //TARGET_Y_PIXEL_OFFSET
+		sprite->data[0] = 20; //DURATION
+		sprite->data[5] = 5; //AMPLITUDE
+		InitAnimArcTranslation(sprite);
+		sprite->callback = SpriteCB_PoltergeistItem_Step3;
+	}
+}
+
+static void SpriteCB_PoltergeistItem_Step1(struct Sprite* sprite)
+{
+	if (TranslateAnimHorizontalArc(sprite))
+	{
+		//Move sprite in an left arc to slightly right of the lower middle of the target
+		CombineSpritePositions(sprite); //Clear movement offset
+		sprite->data[2] = sprite->pos1.x + 20; //TARGET_X_PIXEL_OFFSET
+		sprite->data[4] = sprite->pos1.y + 35; //TARGET_Y_PIXEL_OFFSET
+		sprite->data[0] = 40; //DURATION
+		sprite->data[5] = -30; //AMPLITUDE
+		InitAnimArcTranslation(sprite);
+		sprite->callback = SpriteCB_PoltergeistItem_Step2;
+	}
+}
+
+static void SpriteCB_PoltergeistItem_Step0(struct Sprite* sprite)
+{
+	//Move sprite in an upwards arc to indicate turning
+	sprite->data[2] = sprite->pos1.x - 5;
+	sprite->data[4] = sprite->pos1.y;
+	sprite->data[0] = 20; //DURATION
+	sprite->data[5] = -5; //AMPLITUDE
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PoltergeistItem_Step1;
+}
+
+static void SpriteCB_PoltergeistItem(struct Sprite* sprite)
+{
+	//Move sprite upwards
+	if (++sprite->data[0] >= 10)
+	{
+		sprite->data[0] = 0;
+		sprite->callback = SpriteCB_PoltergeistItem_Step0;
+	}
+	else
+		sprite->pos1.y -= 2;
 }
 
 //Creates The Extreme Evoboost Circles

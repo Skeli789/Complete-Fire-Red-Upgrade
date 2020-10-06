@@ -842,6 +842,11 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 				return 0;
 			break;
 
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
+				return 0;
+			break;
+
 		case EFFECT_0HKO:
 			if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
 				return 0;
@@ -891,8 +896,17 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 				return 0;
 			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 				return 0;
-
 			return gBattleMons[bankDef].hp;
+
+		case EFFECT_BURN_UP:
+			if (!IsMonOfType(monAtk, TYPE_FIRE))
+				return 0;
+			break;
+
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
+				return 0;
+			break;
 
 		case EFFECT_COUNTER: //Includes Metal Burst
 		case EFFECT_MIRROR_COAT:

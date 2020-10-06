@@ -153,6 +153,9 @@ Neither Pok\emon can run away!
 #org @gText_MeteorBeamCharge
 [ATTACKER] is\noverflowing with space power!
 
+#org @gText_PoltergeistWarn
+[TARGET] is about to\nto be attacked by its [LAST_ITEM]!
+
 //Status Strings
 
 #org @gText_TargetStaysAwake

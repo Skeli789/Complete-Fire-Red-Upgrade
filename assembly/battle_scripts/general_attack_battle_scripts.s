@@ -5328,21 +5328,31 @@ BattleScript_SetTerrainReturn:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_244_Blank
-BS_244_Blank:
+.global BS_244_Teatime
+BS_244_Teatime:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_245_Blank
-BS_245_Blank:
+.global BS_245_Decorate
+BS_245_Decorate:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_246_Blank
-BS_246_Blank:
-	goto BS_STANDARD_HIT
+.global BS_246_Poltergeist
+BS_246_Poltergeist:
+	attackcanceler
+	callasm TryFailPoltergeist
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
+	callasm TransferLastUsedItem
+	setword BATTLE_STRING_LOADER gText_PoltergeistWarn
+	printstring 0x184
+	waitmessage DELAY_HALFSECOND
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

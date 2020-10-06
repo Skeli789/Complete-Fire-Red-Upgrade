@@ -2191,3 +2191,16 @@ void TrySetBurningJealousyMoveEffect(void)
 	if (gNewBS->statRoseThisRound[gBankTarget])
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
 }
+
+void TryFailPoltergeist(void)
+{
+	u16 item = ITEM(gBankTarget);
+
+	if (WillPoltergeistFail(item, ABILITY(gBankTarget)))
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+	else
+	{
+		gLastUsedItem = item;
+		RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
+	}
+}

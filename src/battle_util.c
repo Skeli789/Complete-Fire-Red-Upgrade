@@ -1389,6 +1389,13 @@ void RemoveScreensFromSide(const u8 side)
 	gNewBS->AuroraVeilTimers[side] = 0;
 }
 
+bool8 WillPoltergeistFail(u16 item, u8 ability)
+{
+	return item == ITEM_NONE
+		|| ability == ABILITY_KLUTZ
+		|| IsMagicRoomActive();
+}
+
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))

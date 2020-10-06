@@ -15045,8 +15045,8 @@ ANIM_PHOTONGEYSER:
 	setblends 0x80C
 	launchtemplate GEYSER_CHARGE 0x2 0x1 0x0
 	call GEYSER_SPARKS1
-	launchtemplate 0x83E2A58 0x2 0x3 0xffd8 0xffd8 0x10
-	launchtemplate 0x83E2A58 0x2 0x3 0x0 0x28 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0xffd8 0xffd8 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0x0 0x28 0x10
 	pause 0xA
 	call GEYSER_SPARKS2
 	pause 0xA
@@ -15055,8 +15055,8 @@ ANIM_PHOTONGEYSER:
 	call GEYSER_SPARKS2
 	pause 0xA
 	call GEYSER_SPARKS1
-	launchtemplate 0x83E2A58 0x2 0x3 0x0 0xffd8 0x10
-	launchtemplate 0x83E2A58 0x2 0x3 0x28 0x14 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0x0 0xffd8 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0x28 0x14 0x10
 	pause 0xA
 	call GEYSER_SPARKS2
 	pause 0xA
@@ -15065,8 +15065,8 @@ ANIM_PHOTONGEYSER:
 	call GEYSER_SPARKS2
 	pause 0xA
 	call GEYSER_SPARKS1
-	launchtemplate 0x83E2A58 0x2 0x3 0xffd8 0x0 0x10
-	launchtemplate 0x83E2A58 0x2 0x3 0x28 0x0 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0xffd8 0x0 0x10
+	launchtemplate Template_PowerAbsorptionOrb 0x2 0x3 0x28 0x0 0x10
 	pause 0xA
 	call GEYSER_SPARKS2
 	pause 0xA
@@ -17018,8 +17018,50 @@ ANIM_LASH_OUT:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_POLTERGEIST:
-	goto 0x81d4a0f @MOVE_KNOCKOFF
+	loadparticle ANIM_TAG_GHOSTLY_SPIRIT
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_WHITE_SHADOW
+	loadparticle ANIM_TAG_QUICK_GUARD_HAND @Black Colour
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ORBS 0x0 0xA 0xA 0x7D74 @;Pinkish Purple
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xA 0x4022 @;To Purple
+	playsound2 0x72 SOUND_PAN_ATTACKER
+	call GHOST_SWIRL
+	call RECOVER_LOAD_PARTICLES
+	call GHOST_SWIRL
+	call RECOVER_LOAD_PARTICLES
+	pause 0x7
+	launchtask AnimTask_DestinyBondWhiteShadow 0x5 0x2 0x0 0x30
+	pause 0x30
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x2 0x0 0xA 0x1
+	pause 0x8
+	soundcomplex 0xb6 SOUND_PAN_TARGET 0x1A 0x6
+	launchtask AnimTask_CreatePoltergeistItem 0x2 0x0
+	waitanimation
+	unloadparticle ANIM_TAG_GHOSTLY_SPIRIT
+	unloadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_HANDS_AND_FEET
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x19 0x1
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 0, 0, 0x0
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 5, 10, 0x0
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, -10, 5, 0x0
+	playsound2 0x7f SOUND_PAN_TARGET
+	pause 0x4
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xA 0x0 0x4022 @;From Purple
+	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
 	endanimation
+
+GHOST_SWIRL:
+	launchtemplate POLTERGEIST_GHOST 0x2 0x4 0x0 0xffe8 0x8 0x30
+	return
+
+.align 2
+POLTERGEIST_GHOST: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PoltergeistItem 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

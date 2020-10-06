@@ -2849,8 +2849,13 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			break;
 
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(data->defItem, data->defAbility))
+				DECREASE_VIABILITY(10);
+			goto AI_STANDARD_DAMAGE;
+
 		default:
-		AI_STANDARD_DAMAGE: ;
+		AI_STANDARD_DAMAGE:
 			if (moveSplit != SPLIT_STATUS && !TARGETING_PARTNER)
 			{
 				if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))

@@ -2480,6 +2480,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_DAMAGE_SET_TERRAIN:
 			case EFFECT_PLEDGE:
 			case EFFECT_FEINT:
+			case EFFECT_POLTERGEIST:
 				return AIScript_Positives(bankAtk, bankDef, originalMove, originalViability, data);
 		}
 

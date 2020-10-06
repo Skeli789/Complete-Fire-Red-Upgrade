@@ -5472,7 +5472,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
-			MOVE_SHADOWBONE,
+			MOVE_POLTERGEIST,
 			MOVE_BONEMERANG,
 			MOVE_SWORDSDANCE,
 		},
@@ -5550,7 +5550,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
-			MOVE_SHADOWBONE,
+			MOVE_POLTERGEIST,
 			MOVE_BONEMERANG,
 			MOVE_PROTECT,
 		},
@@ -14781,7 +14781,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_XSCISSOR,
-			MOVE_SHADOWSNEAK,
+			MOVE_POLTERGEIST,
 			MOVE_WILLOWISP,
 			MOVE_SWORDSDANCE,
 		},
@@ -14830,7 +14830,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_SHADOWCLAW,
+			MOVE_POLTERGEIST,
 			MOVE_DOUBLETEAM,
 			MOVE_SWORDSDANCE,
 			MOVE_BATONPASS,
@@ -18839,7 +18839,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_SHADOWCLAW,
+			MOVE_POLTERGEIST,
 			MOVE_SUCKERPUNCH,
 			MOVE_KNOCKOFF,
 			MOVE_WILLOWISP,
@@ -18891,7 +18891,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_BANETTITE,
 		.moves =
 		{
-			MOVE_SHADOWCLAW,
+			MOVE_POLTERGEIST,
 			MOVE_GUNKSHOT,
 			MOVE_DESTINYBOND,
 			MOVE_TAUNT,
@@ -26083,7 +26083,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
-			MOVE_SHADOWSNEAK,
+			MOVE_POLTERGEIST,
 			MOVE_ICEPUNCH,
 			MOVE_EARTHQUAKE,
 			MOVE_SUCKERPUNCH,
@@ -26135,7 +26135,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_MENTAL_HERB,
 		.moves =
 		{
-			MOVE_SHADOWSNEAK,
+			MOVE_POLTERGEIST,
 			MOVE_WILLOWISP,
 			MOVE_TRICKROOM,
 			MOVE_HELPINGHAND,
@@ -33154,7 +33154,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_COLBUR_BERRY,
 		.moves =
 		{
-			MOVE_SHADOWPUNCH,
+			MOVE_POLTERGEIST,
 			MOVE_EARTHQUAKE,
 			MOVE_ICEPUNCH,
 			MOVE_STEALTHROCK,
@@ -33180,7 +33180,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_PHANTOMFORCE,
+			MOVE_POLTERGEIST,
 			MOVE_EARTHQUAKE,
 			MOVE_DYNAMICPUNCH,
 			MOVE_ICEPUNCH,
@@ -33215,7 +33215,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
 	},
-		{
+	{
 		.species = SPECIES_GOLURK,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
@@ -33231,9 +33231,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_KINGS_ROCK,
 		.moves =
 		{
-			MOVE_CLOSECOMBAT,
+			MOVE_POLTERGEIST,
+			MOVE_HIGHHORSEPOWER,
 			MOVE_ROCKSLIDE,
-			MOVE_EARTHQUAKE,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -37903,19 +37903,19 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_FRISK
+		.ability = FRONTIER_ABILITY_1, //ABILITY_NATURALCURE
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_HORNLEECH,
-			MOVE_SHADOWCLAW,
+			MOVE_WOODHAMMER,
+			MOVE_POLTERGEIST,
 			MOVE_EARTHQUAKE,
-			MOVE_XSCISSOR,
+			MOVE_SUCKERPUNCH,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_TREVENANT,
@@ -37996,8 +37996,60 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.modifyMovesDoubles = FALSE,
 	},
 	{
+		.species = SPECIES_GOURGEIST,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.atkEv = 252,
+		.defEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_FRISK
+		.item = ITEM_CHOICE_SCARF,
+		.moves =
+		{
+			MOVE_POWERWHIP,
+			MOVE_POLTERGEIST,
+			MOVE_EXPLOSION,
+			MOVE_TRICK,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
+		.species = SPECIES_GOURGEIST_S,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.atkEv = 252,
+		.defEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INSOMNIA
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_POWERWHIP,
+			MOVE_POLTERGEIST,
+			MOVE_ROCKSLIDE,
+			MOVE_SYNTHESIS,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
 		.species = SPECIES_GOURGEIST_XL,
-		.nature = NATURE_BRAVE,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -38007,14 +38059,14 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INSOMNIA
-		.item = ITEM_IRON_BALL,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_FRISK
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_SEEDBOMB,
-			MOVE_GYROBALL,
-			MOVE_EXPLOSION,
-			MOVE_TRICKROOM,
+			MOVE_POWERWHIP,
+			MOVE_POLTERGEIST,
+			MOVE_SHADOWSNEAK,
+			MOVE_TRICK,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -38022,30 +38074,30 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.modifyMovesDoubles = TRUE,
 	},
 	{
-		.species = SPECIES_GOURGEIST,
-		.nature = NATURE_CALM,
+		.species = SPECIES_GOURGEIST_XL,
+		.nature = NATURE_IMPISH,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 136,
-		.spDefEv = 252,
-		.spdEv = 120,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_FRISK
-		.item = ITEM_LIECHI_BERRY,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INSOMNIA
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_SEEDBOMB,
-			MOVE_FLAMECHARGE,
+			MOVE_FOULPLAY,
+			MOVE_LEECHSEED,
 			MOVE_WILLOWISP,
-			MOVE_SUBSTITUTE,
+			MOVE_SYNTHESIS,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_GOURGEIST_XL,
@@ -38059,7 +38111,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INSOMNIA
+		.ability = FRONTIER_ABILITY_1, //ABILITY_PICKUP
 		.item = ITEM_ROOM_SERVICE,
 		.moves =
 		{
@@ -38072,58 +38124,6 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
-	},
-	{
-		.species = SPECIES_GOURGEIST,
-		.nature = NATURE_JOLLY,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 152,
-		.defEv = 104,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_FRISK
-		.item = ITEM_BIG_ROOT,
-		.moves =
-		{
-			MOVE_ROCKSLIDE,
-			MOVE_LEECHSEED,
-			MOVE_WILLOWISP,
-			MOVE_SUBSTITUTE,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_GOURGEIST,
-		.nature = NATURE_ADAMANT,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 96,
-		.atkEv = 252,
-		.spdEv = 160,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INSOMNIA
-		.item = ITEM_GHOSTIUM_Z,
-		.moves =
-		{
-			MOVE_SEEDBOMB,
-			MOVE_PHANTOMFORCE,
-			MOVE_SHADOWSNEAK,
-			MOVE_TRICKORTREAT,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_AVALUGG,
@@ -38334,22 +38334,22 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_DECIDUEYE,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 32,
-		.atkEv = 224,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LONGREACH
-		.item = ITEM_DECIDIUM_Z,
+		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
 			MOVE_LEAFBLADE,
-			MOVE_SPIRITSHACKLE,
+			MOVE_POLTERGEIST,
 			MOVE_SUCKERPUNCH,
 			MOVE_SWORDSDANCE,
 		},
@@ -41728,7 +41728,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_SPOOKY_PLATE,
 		.moves =
 		{
-			MOVE_SHADOWCLAW,
+			MOVE_POLTERGEIST,
 			MOVE_POWERWHIP,
 			MOVE_ANCHORSHOT,
 			MOVE_RAPIDSPIN,
@@ -41754,7 +41754,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_FLOAT_STONE,
 		.moves =
 		{
-			MOVE_SHADOWCLAW,
+			MOVE_POLTERGEIST,
 			MOVE_POWERWHIP,
 			MOVE_HEAVYSLAM,
 			MOVE_SWITCHEROO,
@@ -41776,7 +41776,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_STEELWORKER
-		.item = ITEM_BINDING_BAND,
+		.item = ITEM_BRIGHT_POWDER,
 		.moves =
 		{
 			MOVE_KNOCKOFF,
@@ -44686,7 +44686,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.item = ITEM_GRISEOUS_ORB,
 		.moves =
 		{
-			MOVE_SHADOWFORCE,
+			MOVE_POLTERGEIST,
 			MOVE_DRAGONTAIL,
 			MOVE_EARTHQUAKE,
 			MOVE_DEFOG,
@@ -53855,7 +53855,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_SHADOWSNEAK,
+			MOVE_POLTERGEIST,
 			MOVE_WILLOWISP,
 			MOVE_PAINSPLIT,
 			MOVE_SUBSTITUTE,
@@ -54537,7 +54537,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
-			MOVE_SHADOWPUNCH,
+			MOVE_POLTERGEIST,
 			MOVE_DRAINPUNCH,
 			MOVE_STEALTHROCK,
 		},
@@ -56879,7 +56879,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.moves =
 		{
 			MOVE_SEEDBOMB,
-			MOVE_TOXIC,
+			MOVE_POLTERGEIST,
 			MOVE_LEECHSEED,
 			MOVE_PAINSPLIT,
 		},
@@ -57744,7 +57744,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_SHADOWSNEAK,
+			MOVE_POLTERGEIST,
 			MOVE_KNOCKOFF,
 			MOVE_DESTINYBOND,
 			MOVE_TRICKROOM,

@@ -280,12 +280,12 @@
 .byte \anim1BArg6
 .endm
 
-.macro soundcomplex anim1Carg1 anim1Carg2 anim1Carg3 anim1Carg4
+.macro soundcomplex songId panning lengthOfOne numTimes
 .byte 0x1C
-.hword \anim1Carg1
-.byte \anim1Carg2
-.byte \anim1Carg3
-.byte \anim1Carg4
+.hword \songId
+.byte \panning
+.byte \lengthOfOne
+.byte \numTimes
 .endm
 
 .macro playsoundwait anim1Darg1 anim1Darg2 anim1Darg3
@@ -530,6 +530,7 @@
 .equ Template_LargeFlameScatter,  0x83e5c88
 .equ Template_IceCrystalSpiralInwardSmall, 0x83E6360
 .equ Template_IceCrystalSpiralInwardLarge, 0x83E6348
+.equ Template_PowerAbsorptionOrb, 0x83E2A58
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5

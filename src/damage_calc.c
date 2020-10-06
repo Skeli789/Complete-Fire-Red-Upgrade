@@ -515,6 +515,14 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 			if (finalHp >= monDef->hp)
 				return 0;
 			return monDef->hp - finalHp;
+		case EFFECT_BURN_UP:
+			if (!IsOfType(bankAtk, TYPE_FIRE))
+				return 0;
+			break;
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(monDef->item, GetMonAbility(monDef)))
+				return 0;
+			break;
 	}
 
 	u32 damage = 0;

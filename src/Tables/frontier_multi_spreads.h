@@ -561,7 +561,7 @@ const struct BattleTowerSpread gMultiTowerSpread_Marlon[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_SHADOWPUNCH,
+			MOVE_POLTERGEIST,
 			MOVE_WILLOWISP,
 			MOVE_HELPINGHAND,
 			MOVE_TRICKROOM,
@@ -1554,12 +1554,12 @@ const struct BattleTowerSpread gMultiTowerSpread_Jax[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_IRONFIST
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_NOGUARD
 		.item = ITEM_GROUNDIUM_Z,
 		.moves =
 		{
 			MOVE_HIGHHORSEPOWER,
-			MOVE_SHADOWPUNCH,
+			MOVE_POLTERGEIST,
 			MOVE_HEAVYSLAM,
 			MOVE_STEALTHROCK,
 		},
@@ -1883,12 +1883,12 @@ const struct BattleTowerSpread gMultiLittleCupTowerSpread_Jax[] =
 		.atkEv = 244,
 		.defEv = 36,
 		.spDefEv = 196,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_IRONFIST
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_NOGUARD
 		.item = ITEM_SNOWBALL,
 		.moves =
 		{
 			MOVE_STOMPINGTANTRUM,
-			MOVE_SHADOWPUNCH,
+			MOVE_POLTERGEIST,
 			MOVE_FLING,
 			MOVE_STEALTHROCK,
 		},
