@@ -348,7 +348,9 @@ u16 GetGigantamaxSpecies(u16 species, bool8 canGigantamax)
 	{
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if (evolutions[i].method == EVO_GIGANTAMAX)
+			if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+				break; //Break now to save time
+			else if (evolutions[i].method == EVO_GIGANTAMAX)
 			{
 				//Ignore reversion information
 				if (evolutions[i].param == 0) continue;
@@ -368,7 +370,9 @@ u16 GetGigantamaxBaseForm(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
 			return evolutions[i].targetSpecies;
 	}
 
@@ -494,7 +498,9 @@ bool8 IsGigantamaxSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == FALSE)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == FALSE)
 			return TRUE;
 	}
 

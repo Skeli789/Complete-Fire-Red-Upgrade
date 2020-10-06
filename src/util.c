@@ -183,7 +183,9 @@ bool8 CanEvolve(struct Pokemon* mon)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != EVO_GIGANTAMAX && evolutions[i].method != 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != EVO_GIGANTAMAX)
 			return TRUE;
 	}
 
@@ -197,7 +199,9 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (IsLevelUpEvolutionMethod(evolutions[i].method) && mon->level >= evolutions[i].param)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (IsLevelUpEvolutionMethod(evolutions[i].method) && mon->level >= evolutions[i].param)
 			return TRUE;
 	}
 
@@ -213,7 +217,9 @@ void EvolveSpeciesByLevel(u16* species, u8 level)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
 		||  (IsOtherEvolutionMethod(evolutions[i].method) && level >= 40)
 		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 50)
 		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 60))

@@ -1043,7 +1043,9 @@ bool8 CanTransferItem(u16 species, u16 item)
 		case ITEM_EFFECT_MEGA_STONE:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{
-				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
+				if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+					break; //Break now to save time
+				else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
 				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == 0)) //Is Mega
 					return FALSE;
 			}
@@ -1052,7 +1054,9 @@ bool8 CanTransferItem(u16 species, u16 item)
 		case ITEM_EFFECT_PRIMAL_ORB:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{
-				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
+				if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+					break; //Break now to save time
+				else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
 				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == 0)) //Is Primal
 					return FALSE;
 			}

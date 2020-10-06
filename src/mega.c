@@ -61,7 +61,9 @@ const struct Evolution* CanMegaEvolve(unusedArg u8 bank, unusedArg bool8 CheckUB
 
 	for (i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
@@ -103,8 +105,11 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	const struct Evolution* evolutions = gEvolutionTable[species];
 	int i, j;
 
-	for (i = 0; i < EVOS_PER_MON; ++i) {
-		if (evolutions[i].method == EVO_MEGA)
+	for (i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
@@ -207,13 +212,14 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 			}
 		}
 	}
+
 	return NULL;
 }
 
 //In theory, this function will do nothing as the regular forms revert should
 //should take care of the reversion. This is to prevent bugs if the player
 //gives themselves a Mega or Primal to start the battle.
-void MegaRevert(pokemon_t* party)
+void MegaRevert(struct Pokemon* party)
 {
 	int i;
 
@@ -221,13 +227,15 @@ void MegaRevert(pokemon_t* party)
 		TryRevertMega(&party[i]);
 }
 
-void TryRevertMega(pokemon_t* mon)
+void TryRevertMega(struct Pokemon* mon)
 {
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
 		{
 			mon->species = evolutions[i].targetSpecies;
 			CalculateMonStats(mon);
@@ -377,7 +385,9 @@ bool8 IsMegaSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA
 		&& (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_WISH)
 		&& evolutions[i].param == 0)
 			return TRUE;
@@ -431,7 +441,9 @@ bool8 IsUltraNecrozmaSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
 			return TRUE;
 	}
 
