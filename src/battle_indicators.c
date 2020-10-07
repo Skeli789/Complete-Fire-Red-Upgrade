@@ -11,6 +11,16 @@
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
 
+/*
+move_menu.c
+	Functions for handling various battle UI add-ons
+
+tables:
+	sTypeIconPositions
+	sTypeIconPicTable
+	sIgnoredTriggerColours
+*/
+
 extern const u8 Mega_IndicatorTiles[];
 extern const u8 Alpha_IndicatorTiles[];
 extern const u8 Omega_IndicatorTiles[];
@@ -26,6 +36,10 @@ extern const u8 Dynamax_TriggerTiles[]; //For some reason this doesn't work
 extern const u8 Dynamax_Trigger_WorkingTiles[]; //This is used as the image until the bug is fixed
 extern const u16 Dynamax_TriggerPal[];
 extern const u8 Raid_ShieldTiles[];
+extern const u8 CamomonsTypeIconsTiles[];
+extern const u8 CamomonsTypeIcons2Tiles[];
+extern const u16 CamomonsTypeIconsPal[];
+extern const u16 CamomonsTypeIcons2Pal[];
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
 static struct Sprite* GetHealthboxSprite(u8 bank);
@@ -36,9 +50,11 @@ static void SpriteCB_MegaIndicator(struct Sprite* self);
 static void SpriteCB_ZTrigger(struct Sprite* self);
 static void SpriteCB_DynamaxTrigger(struct Sprite* self);
 static void SpriteCB_RaidShield(struct Sprite* sprite);
-static void DestroyMegaTriggers(void);
-static void DestroyZTrigger(void);
-static void DestroyDynamaxTrigger(void);
+static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
+static void DestroyMegaTriggers(struct Sprite* sprite);
+static void DestroyZTrigger(struct Sprite* sprite);
+static void DestroyDynamaxTrigger(struct Sprite* sprite);
+static void DestroyTypeIcon(struct Sprite* sprite);
 
 enum MegaGraphicsTags
 {
@@ -62,6 +78,49 @@ enum
 	MegaTriggerGrayscale,
 };
 
+static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
+{
+#ifndef UNBOUND //MODIFY THIS
+	[B_POSITION_PLAYER_LEFT] =
+	{
+		[TRUE] = {221, 86}, 	//Single Battle
+		[FALSE] = {144, 70},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_LEFT] =
+	{
+		[TRUE] = {20, 26}, 		//Single Battle
+		[FALSE] = {97, 14},		//Double Battle
+	},
+	[B_POSITION_PLAYER_RIGHT] =
+	{
+		[FALSE] = {156, 96},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_RIGHT] =
+	{
+		[FALSE] = {85, 39},		//Double Battle
+	},
+#else //For Pokemon Unbound
+	[B_POSITION_PLAYER_LEFT] =
+	{
+		[TRUE] = {225, 86}, 	//Single Battle
+		[FALSE] = {142, 70},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_LEFT] =
+	{
+		[TRUE] = {18, 26}, 		//Single Battle
+		[FALSE] = {99, 15},		//Double Battle
+	},
+	[B_POSITION_PLAYER_RIGHT] =
+	{
+		[FALSE] = {154, 96},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_RIGHT] =
+	{
+		[FALSE] = {87, 40},		//Double Battle
+	},
+#endif
+};
+
 static const struct CompressedSpriteSheet sMegaIndicatorSpriteSheet = {Mega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_MEGA_INDICATOR};
 static const struct CompressedSpriteSheet sAlphaIndicatorSpriteSheet = {Alpha_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ALPHA_INDICATOR};
 static const struct CompressedSpriteSheet sOmegaIndicatorSpriteSheet = {Omega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_OMEGA_INDICATOR};
@@ -80,6 +139,9 @@ static const struct CompressedSpriteSheet sDynamaxTriggerSpriteSheet = {Dynamax_
 static const struct SpritePalette sDynamaxTriggerPalette = {Dynamax_TriggerPal, GFX_TAG_DYNAMAX_TRIGGER};
 static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldTiles, (16 * 8) / 2, GFX_TAG_RAID_SHIELD};
 
+static const struct SpritePalette sTypeIconPalTemplate = {CamomonsTypeIconsPal, TYPE_ICON_TAG};
+static const struct SpritePalette sTypeIconPalTemplate2 = {CamomonsTypeIcons2Pal, TYPE_ICON_TAG_2};
+
 static const struct OamData sIndicatorOam =
 {
 	.affineMode = ST_OAM_AFFINE_OFF,
@@ -87,6 +149,63 @@ static const struct OamData sIndicatorOam =
 	.shape = SPRITE_SHAPE(8x8),
 	.size = SPRITE_SIZE(8x8),
 	.priority = 0, //Above sprites
+};
+
+static const struct OamData sTriggerOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x32),
+	.size = SPRITE_SIZE(32x32),
+	.priority = 1, //Above Pokemon sprites
+};
+
+static const struct OamData sRaidShieldOam =
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x8),
+	.size = SPRITE_SIZE(16x8),
+	.priority = 0, //Above health bar
+};
+
+static const struct OamData sTypeIconOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x16),
+	.size = SPRITE_SIZE(8x16),
+	.priority = 1, //Same level as health bar
+};
+
+
+#define type_icon_frame(ptr, frame) {.data = (u8 *)ptr + (1 * 2 * frame * 32), .size = 1 * 2 * 32}
+static const struct SpriteFrameImage sTypeIconPicTable[] =
+{
+	[TYPE_NORMAL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_NORMAL),
+	[TYPE_FIGHTING] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIGHTING),
+	[TYPE_FLYING] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_FLYING),
+	[TYPE_POISON] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_POISON),
+	[TYPE_GROUND] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_GROUND),
+	[TYPE_ROCK] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_ROCK),
+	[TYPE_BUG] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_BUG),
+	[TYPE_GHOST] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_GHOST),
+	[TYPE_STEEL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_STEEL),
+	[TYPE_MYSTERY] =	type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_FIRE] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIRE),
+	[TYPE_WATER] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_WATER),
+	[TYPE_GRASS] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_GRASS),
+	[TYPE_ELECTRIC] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_ELECTRIC),
+	[TYPE_PSYCHIC] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_PSYCHIC),
+	[TYPE_ICE] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_ICE),
+	[TYPE_DRAGON] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_DRAGON),
+	[TYPE_DARK] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_DARK),
+	[0x12] =			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_ROOSTLESS] = 	type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_BLANK] = 		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[0x15] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[0x16] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_FAIRY] = 		type_icon_frame(CamomonsTypeIconsTiles, TYPE_FAIRY),
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_RaidShieldCreate[] =
@@ -106,24 +225,6 @@ static const union AffineAnimCmd* const sSpriteAffineAnimTable_RaidShield[] =
 {
 	sSpriteAffineAnim_RaidShieldCreate,
 	sSpriteAffineAnim_RaidShieldDestroy,
-};
-
-static const struct OamData sTriggerOam =
-{
-	.affineMode = ST_OAM_AFFINE_OFF,
-	.objMode = ST_OAM_OBJ_NORMAL,
-	.shape = SPRITE_SHAPE(32x32),
-	.size = SPRITE_SIZE(32x32),
-	.priority = 1, //Above Pokemon sprites
-};
-
-static const struct OamData sRaidShieldOam =
-{
-	.affineMode = ST_OAM_AFFINE_DOUBLE,
-	.objMode = ST_OAM_OBJ_NORMAL,
-	.shape = SPRITE_SHAPE(16x8),
-	.size = SPRITE_SIZE(16x8),
-	.priority = 0, //Above health bar
 };
 
 static const struct SpriteTemplate sMegaIndicatorSpriteTemplate =
@@ -236,6 +337,28 @@ const struct SpriteTemplate gRaidShieldSpriteTemplate =
 	.callback = SpriteCB_RaidShield,
 };
 
+static struct SpriteTemplate sTypeIconSpriteTemplate =
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = TYPE_ICON_TAG,
+	.oam = &sTypeIconOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = sTypeIconPicTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_CamomonsTypeIcon,
+};
+
+static struct SpriteTemplate sTypeIconSpriteTemplate2 =
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = TYPE_ICON_TAG_2,
+	.oam = &sTypeIconOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = sTypeIconPicTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_CamomonsTypeIcon,
+};
+
 /* Declare the colours the trigger button doesn't light up */
 static const u16 sIgnoredTriggerColours[] =
 {
@@ -250,7 +373,6 @@ static const u16 sIgnoredTriggerColours[] =
 	RGB(0, 0, 0),
 };
 
-/* Easy match function */
 static bool8 IsIgnoredTriggerColour(u16 colour)
 {
 	for (u32 i = 0; i < ARRAY_COUNT(sIgnoredTriggerColours); ++i)
@@ -355,7 +477,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyMegaTriggers();
+			DestroyMegaTriggers(self);
 			return;
 		}
 	}
@@ -591,7 +713,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyZTrigger();
+			DestroyZTrigger(self);
 			return;
 		}
 	}
@@ -671,7 +793,7 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 			self->data[3] += 2;
 		else
 		{
-			DestroyDynamaxTrigger();
+			DestroyDynamaxTrigger(self);
 			return;
 		}
 	}
@@ -732,6 +854,94 @@ static void SpriteCB_RaidShield(struct Sprite* sprite)
 	}
 }
 
+static bool8 ShouldHideTypeIconSprite(u8 bank)
+{
+	return gBattlerControllerFuncs[bank] != (void*) (0x08032C90 | 1) //PlayerHandleChooseMove
+		&& gBattlerControllerFuncs[bank] != (void*) (0x0802EA10 | 1) //HandleInputChooseMove
+		&& gBattlerControllerFuncs[bank] != (void*) (0x08032C4C | 1) //HandleChooseMoveAfterDma3
+		&& gBattlerControllerFuncs[bank] != HandleInputChooseMove
+		&& gBattlerControllerFuncs[bank] != HandleInputChooseTarget
+		&& gBattlerControllerFuncs[bank] != HandleMoveSwitching
+		&& gBattlerControllerFuncs[bank] != HandleInputChooseMove;
+}
+
+static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite)
+{
+	u8 position = sprite->data[0];
+	u8 bank = sprite->data[1];
+
+	if (sprite->data[2] == 10)
+	{
+		DestroyTypeIcon(sprite);
+		return;
+	}
+
+	//Type icons should prepare to destroy themselves if the Player is not choosing an action
+	if (ShouldHideTypeIconSprite(bank))
+	{
+		if (IS_SINGLE_BATTLE)
+		{
+			switch (position) {
+				case B_POSITION_PLAYER_LEFT:
+					sprite->pos1.x -= 1;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+					sprite->pos1.x += 1;
+					break;
+			}
+		}
+		else //Double Battle
+		{
+			switch (position) {
+				case B_POSITION_PLAYER_LEFT:
+				case B_POSITION_PLAYER_RIGHT:
+					sprite->pos1.x += 1;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+				case B_POSITION_OPPONENT_RIGHT:
+					sprite->pos1.x -= 1;
+					break;
+			}
+		}
+
+		++sprite->data[2];
+		return;
+	}
+
+	if (IS_SINGLE_BATTLE)
+	{
+		switch (position) {
+			case B_POSITION_PLAYER_LEFT:
+				if (sprite->pos1.x < sTypeIconPositions[position][TRUE].x + 10)
+					sprite->pos1.x += 1;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+				if (sprite->pos1.x > sTypeIconPositions[position][TRUE].x - 10)
+					sprite->pos1.x -= 1;
+				break;
+		}
+	}
+	else //Double Battle
+	{
+		switch (position) {
+			case B_POSITION_PLAYER_LEFT:
+			case B_POSITION_PLAYER_RIGHT:
+				if (sprite->pos1.x > sTypeIconPositions[position][FALSE].x - 10)
+					sprite->pos1.x -= 1;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+			case B_POSITION_OPPONENT_RIGHT:
+				if (sprite->pos1.x < sTypeIconPositions[position][FALSE].x + 10)
+					sprite->pos1.x += 1;
+				break;
+		}
+	}
+
+	//Deal with bouncing player healthbox
+	s16 originalY = sprite->data[3];
+	struct Sprite* healthbox = &gSprites[gHealthboxSpriteIds[GetBattlerAtPosition(position)]];
+	sprite->pos1.y = originalY + healthbox->pos2.y;
+}
 
 void LoadRaidShieldGfx(void)
 {
@@ -863,52 +1073,93 @@ void DestroyMegaIndicator(u8 bank)
 
 void TryLoadMegaTriggers(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
+	bool8 noNewMegaTrigger = FALSE;
+	bool8 noNewUltraTrigger = FALSE;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 
-	LoadSpritePalette(&sMegaTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sMegaTriggerSpriteSheet);
-	LoadCompressedSpriteSheetUsingHeap(&sUltraTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sMegaTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sMegaTriggerSpriteSheet);
+	if (IndexOfSpriteTileTag(GFX_TAG_ULTRA_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sUltraTriggerSpriteSheet);
 
-	spriteId = CreateSprite(&sMegaTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 32;
-	gSprites[spriteId].pos1.y = -32;
-	gSprites[spriteId].data[4] = gActiveBattler;
+	//See if there are old triggers that haven't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (!gSprites[i].inUse)
+			continue;
 
-	spriteId = CreateSprite(&sUltraTriggerSpriteTemplate, 130, 90, 1);
-	gSprites[spriteId].data[3] = 32;
-	gSprites[spriteId].pos1.y = -32;
-	gSprites[spriteId].data[4] = gActiveBattler;
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			noNewMegaTrigger = TRUE;
+		
+		if (gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			noNewUltraTrigger = TRUE;
+	}
+
+	if (!noNewMegaTrigger) //No old Mega Trigger exists
+	{
+		spriteId = CreateSprite(&sMegaTriggerSpriteTemplate, 130, 90, 1);
+		gSprites[spriteId].data[3] = 32;
+		gSprites[spriteId].pos1.y = -32;
+		gSprites[spriteId].data[4] = gActiveBattler;
+	}
+
+	if (!noNewUltraTrigger) //No old Ultra Trigger exists
+	{
+		spriteId = CreateSprite(&sUltraTriggerSpriteTemplate, 130, 90, 1);
+		gSprites[spriteId].data[3] = 32;
+		gSprites[spriteId].pos1.y = -32;
+		gSprites[spriteId].data[4] = gActiveBattler;
+	}
 }
 
-static void DestroyMegaTriggers(void)
+static void DestroyMegaTriggers(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (!gSprites[i].inUse)
+			continue;
+	
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_MEGA_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_MEGA_TRIGGER);
 	FreeSpritePaletteByTag(GFX_TAG_ULTRA_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_ULTRA_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
-		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
-		{
-			DestroySprite(&gSprites[i]);
-		}
-	}
 }
 
 void TryLoadZTrigger(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 
-	LoadSpritePalette(&sZTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sZTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_Z_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sZTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_Z_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sZTriggerSpriteSheet);
+
+	//See if there's an old trigger that hasn't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			return; //Don't create a new trigger
+	}
 
 	spriteId = CreateSprite(&sZTriggerSpriteTemplate, 130, 90, 1);
 	gSprites[spriteId].data[3] = 32;
@@ -916,21 +1167,24 @@ void TryLoadZTrigger(void)
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
-static void DestroyZTrigger(void)
+static void DestroyZTrigger(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_Z_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_Z_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_Z_TRIGGER)
-			DestroySprite(&gSprites[i]);
-	}
 }
 
 void TryLoadDynamaxTrigger(void)
 {
-	u8 spriteId;
+	u8 spriteId, i;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
@@ -938,8 +1192,19 @@ void TryLoadDynamaxTrigger(void)
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DYNAMAX))
 		return;
 
-	LoadSpritePalette(&sDynamaxTriggerPalette);
-	LoadCompressedSpriteSheetUsingHeap(&sDynamaxTriggerSpriteSheet);
+	if (IndexOfSpritePaletteTag(GFX_TAG_DYNAMAX_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sDynamaxTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_DYNAMAX_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sDynamaxTriggerSpriteSheet);
+
+	//See if there's an old trigger that hasn't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER
+		&& gSprites[i].data[4] == gActiveBattler)
+			return; //Don't create a new trigger
+	}
 
 	spriteId = CreateSprite(&sDynamaxTriggerSpriteTemplate, 130, 90, 1);
 	gSprites[spriteId].data[3] = 32;
@@ -947,16 +1212,19 @@ void TryLoadDynamaxTrigger(void)
 	gSprites[spriteId].data[4] = gActiveBattler;
 }
 
-static void DestroyDynamaxTrigger(void)
+static void DestroyDynamaxTrigger(struct Sprite* sprite)
 {
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
 	FreeSpritePaletteByTag(GFX_TAG_DYNAMAX_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_DYNAMAX_TRIGGER);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_DYNAMAX_TRIGGER)
-			DestroySprite(&gSprites[i]);
-	}
 }
 
 static void DestroyRaidShieldSpriteAndMatrix(struct Sprite *sprite)
@@ -995,3 +1263,96 @@ void DestroyRaidShieldSprite(void)
 	}
 }
 
+
+void TryLoadTypeIcons(void)
+{
+	if (
+	#ifndef HEALTHBAR_TYPE_ICONS
+	((gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+	 #ifdef FLAG_HEALTHBAR_TYPE_ICONS
+	 || FlagGet(FLAG_HEALTHBAR_TYPE_ICONS)
+	 #endif
+	) &&
+	#endif
+	!(gBattleTypeFlags & BATTLE_TYPE_LINK))
+	{
+		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) == 0xFF)
+		{
+			LoadSpritePalette(&sTypeIconPalTemplate);
+			LoadSpritePalette(&sTypeIconPalTemplate2);
+		}
+
+		for (u8 position = 0; position < gBattlersCount; ++position)
+		{
+			if (!BATTLER_ALIVE(GetBattlerAtPosition(position)))
+				continue;
+
+			for (u8 typeNum = 0; typeNum < 2; ++typeNum) //Load each type
+			{
+				u8 spriteId;
+				s16 x = sTypeIconPositions[position][IS_SINGLE_BATTLE].x;
+				s16 y = sTypeIconPositions[position][IS_SINGLE_BATTLE].y + (11 * typeNum); //2nd type is 13px below
+
+				u8* type1Ptr;
+				if (gStatuses3[GetBattlerAtPosition(position)] & STATUS3_ILLUSION && !(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS))
+					type1Ptr = &gBaseStats[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
+				else
+					type1Ptr = &gBattleMons[GetBattlerAtPosition(position)].type1;
+
+				u8 type = *(type1Ptr + typeNum);
+
+				switch (type) { //Certain types have a different palette
+					case TYPE_FLYING:
+					case TYPE_POISON:
+					case TYPE_GROUND:
+					case TYPE_DRAGON:
+					case TYPE_MYSTERY:
+					case TYPE_ROOSTLESS:
+					case TYPE_BLANK:
+						spriteId = CreateSpriteAtEnd(&sTypeIconSpriteTemplate2, x, y, 0xFF);
+						break;
+					default:
+						spriteId = CreateSpriteAtEnd(&sTypeIconSpriteTemplate, x, y, 0xFF);
+				}
+
+				if (spriteId != MAX_SPRITES)
+				{
+					struct Sprite* sprite = &gSprites[spriteId];
+					sprite->data[0] = position;
+					sprite->data[1] = gActiveBattler;
+					sprite->data[3] = y; //Save original y-value for bouncing
+
+					if (IS_SINGLE_BATTLE)
+					{
+						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_PLAYER)
+							SetSpriteOamFlipBits(sprite, TRUE, FALSE); //Flip horizontally
+					}
+					else //Double Battle
+					{
+						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_OPPONENT)
+							SetSpriteOamFlipBits(sprite, TRUE, FALSE); //Flip horizontally
+					}
+
+					RequestSpriteFrameImageCopy(type, sprite->oam.tileNum, sprite->images);
+				}
+			}
+		}
+	}
+}
+
+void DestroyTypeIcon(struct Sprite* sprite)
+{
+	u32 i;
+	DestroySprite(sprite);
+
+	//Check if any more type icons are still on the screen
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->paletteTag == TYPE_ICON_TAG)
+			return;
+	}
+
+	//Free palette if no type icons are left
+	FreeSpritePaletteByTag(TYPE_ICON_TAG);
+	FreeSpritePaletteByTag(TYPE_ICON_TAG_2);
+}
