@@ -4,6 +4,7 @@
 #include "../include/fieldmap.h"
 #include "../include/field_message_box.h"
 #include "../include/field_weather.h"
+#include "../include/gpu_regs.h"
 #include "../include/hall_of_fame.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
@@ -2641,16 +2642,31 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 	};
 
 	s16 x, y;
+	u16 itemPicId;
 	u8 iconSpriteId;
+	u8 iconSpriteId2 = MAX_SPRITES;
+	bool8 handleFlash = Overworld_GetFlashLevel() != 0;
 
+	if (handleFlash) //Sprites don't show up normally when the room is dark, so prep the fix here
+	{
+		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+	}
+
+	//Fix the item that replaced the close bag arrow sprite
 	if (itemId == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
-		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+		itemPicId = ITEM_TM02_DRAGON_CLAW; //Replace the close bag arrow with a Dragon TM sprite
 	else
-		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemId);
+		itemPicId = itemId;
 
-	if (iconSpriteId != MAX_SPRITES)
+	iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemPicId);
+	if (handleFlash) //Create a second sprite over the first one in dark rooms
+		iconSpriteId2 = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemPicId);
+
+	if (iconSpriteId < MAX_SPRITES)
 	{
 		u8 pocket = GetPocketByItemId(itemId);
+
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
 		{ 	//Double the size of the item and place it in the centre of the screen
 			x = 96 + 16;
@@ -2692,7 +2708,19 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 		gSprites[iconSpriteId].pos2.x = x;
 		gSprites[iconSpriteId].pos2.y = y;
 		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
+
+		//Adjust the second sprite in dark rooms
+		if (iconSpriteId2 < MAX_SPRITES)
+		{
+			gSprites[iconSpriteId].data[7] = iconSpriteId2; //Store the spriteId for destruction later
+			gSprites[iconSpriteId2].pos2.x = x;
+			gSprites[iconSpriteId2].pos2.y = y;
+			gSprites[iconSpriteId2].oam.priority = 0;
+			gSprites[iconSpriteId2].oam.objMode = ST_OAM_OBJ_WINDOW; //VERY IMPORTANT
+		}
 	}
+	else if (iconSpriteId2 < MAX_SPRITES) //Shouldn't be reached...
+		DestroySprite(&gSprites[iconSpriteId2]);
 
 	*spriteId = iconSpriteId;
 	#endif
@@ -2703,9 +2731,17 @@ static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 	#ifdef ITEM_PICTURE_ACQUIRE
 	FreeSpriteTilesByTag(ITEM_TAG);
 	FreeSpritePaletteByTag(ITEM_TAG);
+
+	if (Overworld_GetFlashLevel() != 0) //Handle dark rooms
+	{
+		u8 spriteId2 = gSprites[spriteId].data[7];
+		FreeSpriteOamMatrix(&gSprites[spriteId2]);
+		DestroySprite(&gSprites[spriteId2]);
+	}
+
 	FreeSpriteOamMatrix(&gSprites[spriteId]);
 	DestroySprite(&gSprites[spriteId]);
-	
+
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
 		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
