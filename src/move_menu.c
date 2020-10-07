@@ -1802,7 +1802,8 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		++limitations;
 	}
 	#ifdef FLAG_SKY_BATTLE
-	else if (FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
+	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use status Z-Moves even during Sky Battle
+	&& FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
 		++limitations;
@@ -1814,17 +1815,20 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedRingChallenge;
 		++limitations;
 	}
-	else if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
+	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use status Z-Moves even during Gravity - they'll just fail after
+	&& IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;
 		++limitations;
 	}
-	else if (CantUseSoundMoves(gActiveBattler) && CheckSoundMove(move))
+	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use sound Z-Moves even if Throat Chopped
+	&& CantUseSoundMoves(gActiveBattler) && CheckSoundMove(move))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedThroatChop;
 		++limitations;
 	}
-	else if (IsHealBlocked(gActiveBattler) && CheckHealingMove(move))
+	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use status Z-Moves even if Heal Blocked
+	&& IsHealBlocked(gActiveBattler) && CheckHealingMove(move))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedHealBlock;
 		++limitations;

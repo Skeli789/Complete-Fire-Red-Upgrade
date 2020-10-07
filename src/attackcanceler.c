@@ -949,7 +949,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_EXPLODING_DAMP:
-			if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
+			if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION || gCurrentMove == MOVE_MINDBLOWN)
 			{
 				u8 bank;
 
