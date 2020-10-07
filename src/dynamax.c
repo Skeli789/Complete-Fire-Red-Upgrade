@@ -38,9 +38,12 @@ dynamax.c
 #define FIRST_RAID_BATTLE_FLAG 0x1800
 
 #define GFX_TAG_GIGANTAMAX_ICON 0x2715 //Some battle tag
+#define GFX_TAG_MAX_FRIENDSHIP_ICON 0x2716 //Some battle tag
 
 extern const u8 GigantamaxSummaryScreenIconTiles[];
 extern const u16 GigantamaxSummaryScreenIconPal[];
+extern const u8 MaxFriendshipSummaryScreenIconTiles[];
+extern const u16 MaxFriendshipSummaryScreenIconPal[];
 
 //This file's functions:
 static bool8 IsBannedHeldItemForDynamax(u16 item);
@@ -165,6 +168,17 @@ static const struct OamData sGigantamaxIconOam =
 	.priority = 0, //Above all
 };
 
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct OamData sMaxFriendshipIconOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x8),
+	.size = SPRITE_SIZE(8x8),
+	.priority = 0, //Above all
+};
+#endif
+
 static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 {
 	.tileTag = GFX_TAG_GIGANTAMAX_ICON,
@@ -176,8 +190,25 @@ static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static const struct CompressedSpriteSheet   sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
-static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =	{GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
+{
+	.tileTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.paletteTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.oam = &sMaxFriendshipIconOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+#endif
+
+static const struct CompressedSpriteSheet sSummaryScreenGigantamaxIconSpriteSheet =    {GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
+static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =          {GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
+static const struct SpritePalette sSummaryScreenMaxFriendshipIconSpritePalette =       {MaxFriendshipSummaryScreenIconPal, GFX_TAG_MAX_FRIENDSHIP_ICON};
+#endif
 
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 {
@@ -1437,26 +1468,49 @@ void CreateSummaryScreenGigantamaxIcon(void)
 	}
 	else
 		ballSprite->data[0] = MAX_SPRITES; //No icon
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL) >= 255)
+	{
+		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
+		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
+		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, ballSprite->pos1.x - 78, ballSprite->pos1.y - 12, 0);
+	}
+	else
+		ballSprite->data[1] = MAX_SPRITES; //No icon
+	#endif
 }
 
 void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
 {
 	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
 	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[1];
 
     gSprites[ballSpriteId].invisible = invisible;
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		gSprites[gigantamaxIconSpriteId].invisible = invisible;
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		gSprites[maxFriendshipIconSpriteId].invisible = invisible;
+	#endif
 }
 
 void SummaryScreen_DestroyCaughtBallSprite(void)
 {
 	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
 	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[1];
 
     DestroySpriteAndFreeResources(&gSprites[ballSpriteId]);
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		DestroySpriteAndFreeResources(&gSprites[gigantamaxIconSpriteId]);
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		DestroySpriteAndFreeResources(&gSprites[maxFriendshipIconSpriteId]);
+	#endif
 }
 
 //The following functions relate to raid battles:
