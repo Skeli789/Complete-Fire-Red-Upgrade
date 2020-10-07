@@ -519,7 +519,11 @@ void atk52_switchineffects(void)
 			if (SIDE(gActiveBattler) == B_SIDE_PLAYER) //Player switched in a Pokemon
 			{
 				//If the player switches out their Pokemon, allow the AI to immediately switch out if it wants to
-				gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+				if (gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] != 3)
+					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+				else
+					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 1; //AI just decided not to shift switch
+
 				if (IS_DOUBLE_BATTLE)
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
 			}

@@ -307,6 +307,9 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 
 //Other Battle Features
 
+#org @gText_SemiSwitchOffer
+[TRAINER1_CLASS] [TRAINER1_NAME] is\nabout to send out a new Pok\emon.\pWill [PLAYER_NAME] change\nPok\emon?
+
 #org @gText_Devolved
 [EFFECT_BANK] has devolved\ninto [BUFFER][00]!
 

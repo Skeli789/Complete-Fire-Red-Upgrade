@@ -2749,11 +2749,11 @@ void ShouldDoAIShiftSwitch(void)
 	#ifdef VAR_GAME_DIFFICULTY
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
 	&& !IS_DOUBLE_BATTLE
-	&& gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SHIFT
 	&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //AI has a mon that can be switched out
-	&& (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY
+	&& ((gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SHIFT && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY)
+	 || (gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SEMI_SHIFT && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
 	#ifdef UNBOUND
-	|| GetCurrentRegionMapSectionId() == MAPSEC_SS_MARINE
+	 || GetCurrentRegionMapSectionId() == MAPSEC_SS_MARINE
 	#endif
 	))
 	{
@@ -2763,6 +2763,8 @@ void ShouldDoAIShiftSwitch(void)
 		CalculateAIPredictions();
 		if (IsGoodIdeaToDoShiftSwitch(gActiveBattler, foe))
 			return; //Continue in script
+		else
+			gNewBS->ai.switchingCooldown[gActiveBattler] = 3; //AI just decided not to switch out
 	}
 	#endif
 

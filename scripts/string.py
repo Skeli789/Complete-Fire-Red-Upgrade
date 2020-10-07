@@ -19,6 +19,8 @@ SpecialBuffers = {
     "ATTACKER_ABILITY": ["FD", "18"],
     "TARGET_ABILITY": ["FD", "19"],
     "SCRIPTING_BANK_ABILITY": ["FD", "1A"],
+    "TRAINER1_CLASS": ["FD", "1C"],
+    "TRAINER1_NAME": ["FD", "1D"],
     "PLAYER_NAME": ["FD", "23"],
     "TARGET_NAME": ["FD", "3B"],
     "TARGET_PARTNER_NAME": ["FD", "3C"],

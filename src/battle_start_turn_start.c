@@ -138,6 +138,10 @@ void BattleBeginFirstTurn(void)
 	{
 		switch(*state) {
 			case BackupPartyItems:
+				#ifdef FLAG_SEMI_SHIFT
+				if (FlagGet(FLAG_SEMI_SHIFT))
+					gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SEMI_SHIFT;
+				#endif
 				SavePartyItems();
 				++*state;
 				break;
