@@ -500,8 +500,16 @@ u32 VisualAccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 defEffect  = GetRecordedItemEffect(bankDef);
 	u8 defAbility = GetRecordedAbility(bankDef);
+	u32 acc = AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
 
-	return AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
+	if (WEATHER_HAS_EFFECT)
+	{
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && defEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
+			acc = 0xFFFF; //No Miss
+	}
+
+	return acc;
 }
 
 u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
@@ -569,7 +577,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	{
 		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
-			calc = 0; //No Miss
+			calc = 0xFFFF; //No Miss
 	}
 
 	if (gBattleMoves[move].accuracy == 0) //Always hit
