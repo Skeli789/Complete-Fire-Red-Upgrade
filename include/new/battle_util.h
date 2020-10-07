@@ -59,6 +59,7 @@ struct Pokemon* LoadPartyRange(u8 bank, u8* firstMonId, u8* lastMonId);
 bool8 UproarWakeUpCheck(unusedArg u8 bank);
 bool8 IsUproarBeingMade(void);
 u8 GetIllusionPartyNumber(u8 bank);
+u8 GetIllusionPartyNumberForShiftSwitch(struct Pokemon* party, u8 monId, u8 firstId, u8 lastId);
 struct Pokemon* GetIllusionPartyData(u8 bank);
 bool8 BankMovedBefore(u8 bank1, u8 bank2);
 bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2);
@@ -128,6 +129,7 @@ bool8 IsHealBlocked(u8 bank);
 bool8 CantUseSoundMoves(u8 bank);
 bool8 IsLaserFocused(u8 bank);
 bool8 IsAbilitySuppressed(u8 bank);
+bool8 AreAbilitiesSuppressed(void);
 bool8 CantScoreACrit(u8 bank, struct Pokemon* mon);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);

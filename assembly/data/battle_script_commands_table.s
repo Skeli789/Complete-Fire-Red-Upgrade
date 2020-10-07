@@ -121,7 +121,7 @@ gBattleScriptingCommandsTable:
 .word 0x8025fa9					@cancelallactions
 .word atk69_adjustsetdamage
 .word atk6A_removeitem
-.word 0x80261cd					@atknameinbuff1
+.word atk6B_atknameinbuff1
 .word 0x8026209					@drawlvlupbox
 .word 0x80267d9					@resetsentmonsvalue
 .word 0x80267f1					@setatktoplayer0

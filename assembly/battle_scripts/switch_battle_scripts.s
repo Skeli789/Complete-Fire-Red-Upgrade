@@ -306,6 +306,7 @@ BattleScript_FaintedMonTryChooseAnother:
 	jumpifword ANDS, HIT_MARKER, HITMARKER_PLAYER_FAINTED, BattleScript_TryDoAIShiftSwitch
 	jumpifcannotswitch BANK_PLAYER_1, BattleScript_FaintedMonChooseAnother
 	jumpifbyte EQUALS, BATTLE_STYLE, BATTLE_STYLE_SEMI_SHIFT, BattleScript_FaintedMonChooseAnother_SemiSwitchString
+	callasm HandleIllusionShiftSwitch @;Disguises the Pokemon's name if they have Illusion
 	printstring 282 @;STRINGID_ENEMYABOUTTOSWITCHPKMN
 BattleScript_FaintedMonChooseAnother_PostOfferString:
 	setbyte BATTLE_COMMUNICATION, 0

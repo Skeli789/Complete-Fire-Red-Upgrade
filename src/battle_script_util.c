@@ -2220,3 +2220,16 @@ void WakeUpSleepingPokemon(void)
 		}
 	}
 }
+
+void HandleIllusionShiftSwitch(void)
+{
+	u8 monId, firstMonId, lastMonId;
+	struct Pokemon* party = LoadPartyRange(gBankFainted, &firstMonId, &lastMonId);
+	monId = gBattleBufferB[gActiveBattler][1];
+
+	if (!AreAbilitiesSuppressed() && GetMonAbility(&party[monId]) == ABILITY_ILLUSION)
+	{
+		monId = GetIllusionPartyNumberForShiftSwitch(party, monId, firstMonId, lastMonId);
+		PREPARE_MON_NICK_BUFFER(gBattleTextBuff2, gBankFainted, monId);
+	}
+}

@@ -390,7 +390,15 @@ void atk4D_switchindataupdate(void)
 		}
 	}
 	else
+	{
 		ClearBehindSubstituteBit(gActiveBattler);
+
+		if (AreAbilitiesSuppressed()) //Most likely circus
+		{
+			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
+			gBattleMons[gActiveBattler].ability = 0;
+		}
+	}
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
 		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;

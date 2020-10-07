@@ -118,12 +118,16 @@ void TrainerSlideOutScriptingBank(void)
 //sliding in anyway. They allow expanded Battle Backgrounds.
 void HandleIntroSlide(u8 terrain)
 {
-	u8 taskId;
+	u8 taskId, bank;
 
-	for (int bank = 0; bank < gBattlersCount; ++bank)
+	if (!AreAbilitiesSuppressed())
 	{
-		if (GetMonAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
-			gStatuses3[bank] |= STATUS3_ILLUSION;
+		for (bank = 0; bank < gBattlersCount; ++bank)
+		{
+			if (((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) == B_SIDE_PLAYER) //Wild Pokemon can't be hidden
+			&& GetMonAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
+				gStatuses3[bank] |= STATUS3_ILLUSION;
+		}
 	}
 
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)

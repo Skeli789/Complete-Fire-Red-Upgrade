@@ -935,7 +935,7 @@ u8 GetIllusionPartyNumber(u8 bank)
 
 		for (u32 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
 		{
-			if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
+			if (i == gBattlerPartyIndexes[bank]) //Finished checking mons after
 				return gBattlerPartyIndexes[bank];
 
 			if (party[i].species == SPECIES_NONE
@@ -949,6 +949,24 @@ u8 GetIllusionPartyNumber(u8 bank)
 	}
 
 	return gBattlerPartyIndexes[bank];
+}
+
+u8 GetIllusionPartyNumberForShiftSwitch(struct Pokemon* party, u8 monId, u8 firstMonId, u8 lastMonId)
+{
+	for (u32 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
+	{
+		if (i == monId) //Finished checking mons after
+			return monId;
+
+		if (party[i].species == SPECIES_NONE
+		|| party[i].hp == 0
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
+
+		return i;
+	}
+	
+	return monId;
 }
 
 struct Pokemon* GetIllusionPartyData(u8 bank)
@@ -1827,7 +1845,12 @@ bool8 IsLaserFocused(u8 bank)
 bool8 IsAbilitySuppressed(u8 bank)
 {
 	return (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS) != 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION);
+		|| AreAbilitiesSuppressed();
+}
+
+bool8 AreAbilitiesSuppressed(void)
+{
+	return IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION;
 }
 
 bool8 CantScoreACrit(u8 bank, struct Pokemon* mon)

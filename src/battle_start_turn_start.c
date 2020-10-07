@@ -196,6 +196,12 @@ void BattleBeginFirstTurn(void)
 				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
 
+					if (AreAbilitiesSuppressed()) //Most likely Circus
+					{
+						gNewBS->SuppressedAbilities[*bank] = gBattleMons[*bank].ability;
+						gBattleMons[*bank].ability = 0;
+					}
+
 					if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
 					{
 						#ifndef NO_GHOST_BATTLES
