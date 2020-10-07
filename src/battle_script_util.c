@@ -2204,3 +2204,19 @@ void TryFailPoltergeist(void)
 		RecordItemEffectBattle(gBankTarget, ITEM_EFFECT(gBankTarget));
 	}
 }
+
+void WakeUpSleepingPokemon(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (gBattleMons[i].status1 & STATUS1_SLEEP)
+		{
+			gBattleScripting.bank = i;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_UproarWokeUp - 5;
+			return;
+		}
+	}
+}
