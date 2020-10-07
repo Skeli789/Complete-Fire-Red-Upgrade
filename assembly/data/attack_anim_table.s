@@ -7501,7 +7501,6 @@ ANIM_PRECIPICEBLADES:
 	loadparticle ANIM_TAG_FIRE_PLUME
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x0 0xA 0xA 0x159F @;Blood orange
 	pokespritetoBG side_target
-	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
 	loadBG1 0x15
 	waitbgfadeout
@@ -23889,6 +23888,8 @@ ANIM_MAX_FLARE:
 	loadparticle ANIM_TAG_FLASH_CANNON_BALL
 	loadparticle ANIM_TAG_SHARP_TEETH @;Extra colour
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @;Extra colour
+	pokespritetobg bank_target
+	leftbankBG_over_partnerBG bank_target
 	playsound2 0x85 SOUND_PAN_ATTACKER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_FLASH_CANNON_BALL 0x0 0xF 0xF 0x057C @;Red
@@ -23923,6 +23924,7 @@ ANIM_MAX_FLARE:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0 @;Black
 	call UNSET_SCROLLING_BG
 	waitanimation
+	pokespritefrombg bank_target
 	endanimation
 
 MAX_FLARE_GEYSER:
@@ -23979,10 +23981,10 @@ MAX_FLARE_GEYSER:
 	return
 
 .align 2
-MAX_FLARE_BALL_ATTACKER: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBallOnAttacker
-MAX_FLARE_BALL_LAUNCH_RED: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
-MAX_FLARE_BALL_LAUNCH_ORANGE: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_SHARP_TEETH sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
-MAX_FLARE_BALL_LAUNCH_YELLOW: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_ACUPRESSURE_FINGER sAppleOAM gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_ATTACKER: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBallOnAttacker
+MAX_FLARE_BALL_LAUNCH_RED: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_ORANGE: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_SHARP_TEETH OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_YELLOW: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_ACUPRESSURE_FINGER OAM_DOUBLE_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
 MAX_FLARE_GEYSER_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sGeyserOam 0x83E7764 0x0 gDummySpriteAffineAnimTable SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -25371,6 +25373,8 @@ ANIM_G_MAX_WILDFIRE_MOVE:
 	loadparticle ANIM_TAG_FLASH_CANNON_BALL
 	loadparticle ANIM_TAG_SHARP_TEETH @;Extra colour
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @;Extra colour
+	pokespritetobg bank_target
+	leftbankBG_over_partnerBG bank_target
 	playsound2 0x85 SOUND_PAN_ATTACKER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_BIRD 0x0 0xF 0xF 0x057C @;Red
@@ -25406,6 +25410,7 @@ ANIM_G_MAX_WILDFIRE_MOVE:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0 @;Black
 	call UNSET_SCROLLING_BG
 	waitanimation
+	pokespritefrombg bank_target
 	endanimation
 
 .align 2

@@ -443,6 +443,7 @@ void __attribute__((long_call)) CompleteOnSpecialAnimDone(void);
 bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 taskId);
 u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpic, u8 a3, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, u32 a10);
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
+void __attribute__((long_call)) TranslateMonSpriteLinearFixedPoint(struct Sprite *sprite);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

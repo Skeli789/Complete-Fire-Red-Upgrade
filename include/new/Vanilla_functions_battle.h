@@ -105,7 +105,6 @@ void __attribute__((long_call)) WaitAnimFrameCount(void);
 void __attribute__((long_call)) sub_807331C(u8 taskId);
 void __attribute__((long_call)) CreateBattleStartTask(u8 transition, u16 song);
 void __attribute__((long_call)) StoreSpriteCallbackInData6(struct Sprite *sprite, void (*callback)(struct Sprite*));
-void __attribute__((long_call)) sub_8074E14(struct Sprite *sprite);
 u8 __attribute__((long_call)) GetBattlerSide(u8 bank);
 u8 __attribute__((long_call)) GetBattlerPosition(u8 slot);
 u8 __attribute__((long_call)) GetBattlerAtPosition(u8);

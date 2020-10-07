@@ -4291,6 +4291,85 @@ void AnimTask_ShakeAndSinkMon(u8 taskId)
 		DestroyAnimVisualTask(taskId);
 }
 
+// Linearly translates a mon to a target offset. The horizontal offset
+// is mirrored for the opponent's pokemon, and the vertical offset
+// is only mirrored if arg 3 is set to 1.
+// arg 0: 0 = attacker, 1 = target
+// arg 1: target x pixel offset
+// arg 2: target y pixel offset
+// arg 3: mirror vertical translation for opposite battle side
+// arg 4: duration
+void SlideMonToOffset(struct Sprite *sprite)
+{
+	u8 battler;
+	u8 monSpriteId;
+	battler = LoadBattleAnimTarget(0);
+	if (!IsBattlerSpriteVisible(battler))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		monSpriteId = gBattlerSpriteIds[battler];
+		if (SIDE(battler) != B_SIDE_PLAYER)
+		{
+			gBattleAnimArgs[1] = -gBattleAnimArgs[1];
+			if (gBattleAnimArgs[3] == 1)
+				gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+		}
+
+		sprite->data[0] = gBattleAnimArgs[4];
+		sprite->data[1] = gSprites[monSpriteId].pos1.x;
+		sprite->data[2] = gSprites[monSpriteId].pos1.x + gBattleAnimArgs[1];
+		sprite->data[3] = gSprites[monSpriteId].pos1.y;
+		sprite->data[4] = gSprites[monSpriteId].pos1.y + gBattleAnimArgs[2];
+		InitSpriteDataForLinearTranslation(sprite);
+		sprite->data[3] = 0;
+		sprite->data[4] = 0;
+		sprite->data[5] = monSpriteId;
+		sprite->invisible = TRUE;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+		sprite->callback = TranslateMonSpriteLinearFixedPoint;
+	}
+}
+
+// Linearly slides a mon's bg picture back to its original sprite position.
+// The sprite parameter is a dummy sprite used for facilitating the movement with its callback.
+// arg 0: 1 = target or 0 = attacker
+// arg 1: direction (0 = horizontal and vertical, 1 = horizontal only, 2 = vertical only)
+// arg 2: duration
+void SlideMonToOriginalPos(struct Sprite *sprite)
+{
+	u8 battler,  monSpriteId;
+	battler = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(battler))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		monSpriteId = gBattlerSpriteIds[battler];
+
+		sprite->data[0] = gBattleAnimArgs[2];
+		sprite->data[1] = gSprites[monSpriteId].pos1.x + gSprites[monSpriteId].pos2.x;
+		sprite->data[2] = gSprites[monSpriteId].pos1.x;
+		sprite->data[3] = gSprites[monSpriteId].pos1.y + gSprites[monSpriteId].pos2.y;
+		sprite->data[4] = gSprites[monSpriteId].pos1.y;
+		InitSpriteDataForLinearTranslation(sprite);
+		sprite->data[3] = 0;
+		sprite->data[4] = 0;
+		sprite->data[5] = gSprites[monSpriteId].pos2.x;
+		sprite->data[6] = gSprites[monSpriteId].pos2.y;
+		sprite->invisible = TRUE;
+
+		if (gBattleAnimArgs[1] == 1)
+			sprite->data[2] = 0;
+		else if (gBattleAnimArgs[1] == 2)
+			sprite->data[1] = 0;
+
+		sprite->data[7] = gBattleAnimArgs[1];
+		sprite->data[7] |= monSpriteId << 8;
+		sprite->callback = (void*) (0x8099270 | 1); //SlideMonToOriginalPos_Step
+	}
+}
+
 void AnimTask_AllBanksInvisible(u8 taskId)
 {
 	for (int i = 0; i < gBattlersCount; ++i)
