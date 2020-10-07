@@ -2079,6 +2079,8 @@ void atk66_chosenstatusanimation(void) {
 
 void atk6A_removeitem(void)
 {
+	if (gBattleExecBuffer) return;
+
 	u8 bank = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 oldItemEffect = ITEM_EFFECT(bank);
 	
@@ -2122,15 +2124,18 @@ void atk6A_removeitem(void)
 		gBattleMons[partner].item = 0;
 		HandleUnburdenBoost(bank); //Remove the Unburden boost it may have gained
 
-		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[bank].item);
-		MarkBufferBankForExecution(bank);
+		gActiveBattler = bank;
+		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+		MarkBufferBankForExecution(gActiveBattler);
 
-		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[partner].item);
-		MarkBufferBankForExecution(partner);
+		gActiveBattler = partner;
+		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+		MarkBufferBankForExecution(gActiveBattler);
 
 		gEffectBank = bank;
 		gBattleScripting.bank = partner;
 
+		gLastUsedItem = partnerItem;
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_Symbiosis;
 	}
@@ -2145,13 +2150,15 @@ void atk6A_removeitem(void)
 	gWishFutureKnock.knockedOffPokes[SIDE(bank)] &= ~(gBitTable[gBattlerPartyIndexes[bank]]);
 }
 
-void atk70_recordlastability(void) {
+void atk70_recordlastability(void)
+{
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
 	gBattlescriptCurrInstr += 2;
 }
 
-void atk77_setprotect(void) {
+void atk77_setprotect(void)
+{
 	bool8 notLastTurn = TRUE;
 	u16 rate = 0xFFFF;
 	u16 divisor = 1;

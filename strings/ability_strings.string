@@ -94,3 +94,5 @@ The effects of Neutralizing Gas\nwore off!
 #org @gText_PkmnHurtsWith
 [ATTACKER] was hurt!
 
+#org @gText_SymbiosisTransfer
+[SCRIPTING_BANK] shared its\n[LAST_ITEM] with [EFFECT_BANK]!
