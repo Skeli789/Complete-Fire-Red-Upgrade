@@ -190,6 +190,9 @@ ForceSwitch:
 	goto BS_MOVE_END
 
 RedCardForceSwitch:
+	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	callasm ClearAttackerDidDamageOnce
+	callasm TryRemovePrimalWeatherOnPivot
 	switchoutabilities BANK_SWITCHING
 	returntoball BANK_SWITCHING
 	waitstateatk

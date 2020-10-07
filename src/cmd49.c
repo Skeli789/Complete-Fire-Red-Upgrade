@@ -1129,7 +1129,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
-					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)) //Wild attackers can't activate
+					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || IsRaidBattle() || SIDE(banks[i]) == B_SIDE_PLAYER)) //Normal wild attackers can't activate
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
 						gForceSwitchHelper = Force_Switch_Red_Card;

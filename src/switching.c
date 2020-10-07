@@ -1067,12 +1067,14 @@ static bool8 TryDoForceSwitchOut(void)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
 	}
-	
-	//Roar always fails in wild boss battles
-	else if (AreAllKindsOfRunningPrevented())
+
+	//Roar always switches the target out when used by a wild Boss
+	else if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
 	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
+		gBankSwitching = bankDef;
+		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
+		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
+		return TRUE;
 	}	
 
 	gBankSwitching = bankDef;

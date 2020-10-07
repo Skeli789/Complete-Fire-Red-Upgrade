@@ -508,9 +508,6 @@ BattleScript_RedCard:
 	jumpifdynamaxed BANK_ATTACKER RedCard_Dynamax
 	jumpifspecialstatusflag BANK_ATTACKER STATUS3_ROOTED 0x0 RedCard_Ingrain
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
-	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
-	callasm ClearAttackerDidDamageOnce
-	callasm TryRemovePrimalWeatherOnPivot	
 	forcerandomswitch BANK_ATTACKER BANK_TARGET RedCardEnd
 
 RedCardEnd:
