@@ -414,11 +414,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	else if (moveInfo->possibleMaxMoves[chosenMoveId])
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
-		{
-			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3 //Give the Player a chance to Dynamax first in a Raid battle
-			|| PlayerHasNoMonsLeftThatCanDynamax()) //Doesn't matter if they have no mons left
-				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
-		}
+			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.

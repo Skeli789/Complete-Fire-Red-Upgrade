@@ -3,8 +3,6 @@
 #include "global.h"
 
 #define MAX_SPRITES 64
-#define MAX_NPCS 16
-
 
 struct SpriteSheet
 {

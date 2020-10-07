@@ -85,7 +85,7 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
-static void DexNavDrawBlackBars(u8* spriteIdAddr);
+static void DexNavDrawBlackBar(u8* spriteIdAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
 static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
@@ -250,7 +250,7 @@ u8 GetPlayerDistance(s16 x, s16 y)
 
 static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan)
 {
-	// area of map to cover starting from camera position {-7, -7}
+	// area of map to cover starting from camera position {-7, 7}
 	s16 topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
 	s16 topY = gSaveBlock1->pos.y - SCANSTART_Y + (smallScan * 5);
 	s16 botX = topX + areaX;
@@ -259,16 +259,22 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 	// loop through every tile in area and evaluate
 	while (topY < botY)
 	{
+		if (topY - 7 < 0
+		|| topY >= gMapHeader.mapLayout->height + 7)
+			break; //Off map
+
 		while (topX < botX)
 		{
+			if (topX - 7 < 0
+			|| topX >= gMapHeader.mapLayout->width + 7)
+				break; //Off map
+
 			u32 tileBehaviour = MapGridGetMetatileField(topX, topY, 0xFF);
 			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 
-			Var8005 = tileBehaviour;	//020370c2
-
 			//Check NPCs on tile
 			bool8 goNext = FALSE;
-			for (u8 i = 0; i < MAX_NPCS; ++i)
+			for (u8 i = 0; i < EVENT_OBJECTS_COUNT; ++i)
 			{
 				if (gEventObjects[i].currentCoords.x == topX && gEventObjects[i].currentCoords.y == topY)
 				{
@@ -276,6 +282,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 					break;
 				}
 			}
+
 			if (goNext)
 			{
 				topX += 1;
@@ -293,7 +300,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
 					u8 elevDiff = IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX, topY);
 
-					weight = (Random() % scale <= 1) && elevDiff && !MapGridIsImpassableAt(topX, topY);
+					weight = (Random() % scale <= 1) && !elevDiff && !MapGridIsImpassableAt(topX, topY);
 				}
 				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
@@ -315,8 +322,10 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 					return TRUE;
 				}
 			}
+
 			topX += 1;
 		}
+
 		topY += 1;
 		topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
 	}
@@ -328,7 +337,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 {
 	//Pick a specific tile based on environment
-	u8 targetBehaviour = 0;
+	u8 targetBehaviour;
 	switch (environment)
 	{
 		case ENCOUNTER_TYPE_LAND:
@@ -358,33 +367,31 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 		switch (environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
+				if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
-					if (!IsMapTypeOutdoors(GetCurrentMapType()))
-					{
-						if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
-							FieldEffectStart(FLDEFF_SHAKING_GRASS);
-						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
-							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
-						else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour))
-							FieldEffectStart(FLDEFF_SAND_HOLE);
-						else
-							FieldEffectStart(FLDEFF_CAVE_DUST); //Default in caves is dust
-					}
+					if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
+						FieldEffectStart(FLDEFF_SHAKING_GRASS);
+					else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+						FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+					else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour))
+						FieldEffectStart(FLDEFF_SAND_HOLE);
 					else
-					{
-						if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Regular grass
-							FieldEffectStart(FLDEFF_SHAKING_GRASS);
-						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
-							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
-						else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour)) //Desert Sand
-							FieldEffectStart(FLDEFF_SAND_HOLE);
-						else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
-							FieldEffectStart(FLDEFF_CAVE_DUST);
-						else //Flowers, etc.
-							FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //Default on land is sparkles
-					}
-					break;
+						FieldEffectStart(FLDEFF_CAVE_DUST); //Default in caves is dust
 				}
+				else
+				{
+					if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Regular grass
+						FieldEffectStart(FLDEFF_SHAKING_GRASS);
+					else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+						FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+					else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour)) //Desert Sand
+						FieldEffectStart(FLDEFF_SAND_HOLE);
+					else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
+						FieldEffectStart(FLDEFF_CAVE_DUST);
+					else //Flowers, etc.
+						FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //Default on land is sparkles
+				}
+				break;
 			case ENCOUNTER_TYPE_WATER:
 				#ifdef UNBOUND
 				if (GetCurrentRegionMapSectionId() == MAPSEC_FLOWER_PARADISE)
@@ -399,7 +406,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 			default:
 				FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //So the game doesn't crash on something useless
 				break;
-		};
+		}
 
 		//Get spriteId of shaking grass
 		for (u32 i = 0; i < MAX_SPRITES; ++i)
@@ -437,12 +444,12 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 static void DexNavProximityUpdate(void)
 {
 	sDexNavHudPtr->proximity = GetPlayerDistance(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY);
-};
+}
 
 
 static void NullSubHBlank(void)
 {
-};
+}
 
 static void StopDexNavFieldEffect(void)
 {
@@ -472,11 +479,10 @@ static void DexNavFreeHUD(void)
 	SafeFreeMonIconPalette(sDexNavHudPtr->species);
 	DestroyMonIconSprite(&gSprites[sDexNavHudPtr->spriteIdSpecies]);
 
-	//Clear black bars
-	FreeSpriteOamMatrix(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
-	FreeSpriteOamMatrix(&gSprites[sDexNavHudPtr->spriteIdBlackBar[1]]);
-	FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBlackBar[0]]);
-	FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBlackBar[1]]);
+	//Clear black bar
+	CleanWindow(sDexNavHudPtr->blackBarWindowId);
+	CopyWindowToVram(sDexNavHudPtr->blackBarWindowId, COPYWIN_BOTH);
+	RemoveWindow(sDexNavHudPtr->blackBarWindowId);
 
 	if (sDexNavHudPtr->spriteIdSight < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdSight]);
@@ -816,7 +822,8 @@ extern const u8 SystemScript_StartDexNavBattle[];
 static void Task_ManageDexNavHUD(u8 taskId)
 {
 	//Check for out of range
-	if (sDexNavHudPtr->proximity > 20)
+	if (sDexNavHudPtr->proximity > 20
+	|| IsMapNamePopupTaskActive())
 	{
 		DestroyTask(taskId);
 		DexNavFreeHUD();
@@ -878,34 +885,30 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	// check for encounter start
 	if (sDexNavHudPtr-> proximity < 1)
 	{
+		u16 species = sDexNavHudPtr->species;
+
 		DexNavGetMon(sDexNavHudPtr->species, sDexNavHudPtr->potential, sDexNavHudPtr->pokemonLevel,
 					sDexNavHudPtr->ability, sDexNavHudPtr->moveId, sDexNavHudPtr->searchLevel, gCurrentDexNavChain);
 		DestroyTask(taskId);
 
-		// increment the search level
-		u16 dexNum = SpeciesToNationalPokedexNum(sDexNavHudPtr->species);
+		TryRandomizeSpecies(&species);
+
+		//Increment the search level
+		u16 dexNum = SpeciesToNationalPokedexNum(species);
 		if (sSearchLevels[dexNum] < 255)
 			sSearchLevels[dexNum] += 1;
 
-		// Freeing only the state, objects and hblank cleared on battle start.
+		//Freeing only the state, objects and hblank cleared on battle start.
 		Free(sDexNavHudPtr);
 
 		gDexNavStartedBattle = TRUE;
 		DismissMapNamePopup();
 		ScriptContext1_SetupScript(SystemScript_StartDexNavBattle);
-/*
-		// exclamation point animation over the player
-		PlaySE(SE_EXCLAIM);
-		MakeExclamationMark(gEventObjects, &gSprites[gPlayerAvatar->spriteId]);
-		FieldEffectStart(0x0);
-
-		// do battle
-		DoStandardWildBattle();*/
 	};
 
-	// HUD needs updating iff player has moved
+	//HUD needs updating iff player has moved
 	DexNavProximityUpdate();
-	if (!(gTasks[taskId].data[0] == sDexNavHudPtr->proximity))
+	if (gTasks[taskId].data[0] != sDexNavHudPtr->proximity)
 	{
 		DexNavIconsVisionUpdate(sDexNavHudPtr->proximity, sDexNavHudPtr->searchLevel);
 		gTasks[taskId].data[0] = sDexNavHudPtr->proximity;
@@ -927,7 +930,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 	switch (environment)
 	{
-		case 0:	// grass
+		case ENCOUNTER_TYPE_LAND:
 			if (landMonsInfo == NULL)
 				return MAX_LEVEL + 1; //Hidden pokemon should only appear on walkable tiles or surf tiles
 
@@ -946,7 +949,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 				return MAX_LEVEL + 1;
 			break;
 
-		case 1:	//water
+		case ENCOUNTER_TYPE_WATER:
 			if (waterMonsInfo == NULL)
 				return MAX_LEVEL + 1; //Hidden pokemon should only appear on walkable tiles or surf tiles
 
@@ -1031,7 +1034,6 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 {
 	bool8 genAbility = FALSE;
 	u16 randVal = Random() % 100;
-	TryRandomizeSpecies(&species);
 
 	if (searchLevel < 5)
 	{
@@ -1237,22 +1239,12 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 	if (genMove == TRUE)
 	{
 		u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
-		u8 numEggMoves = GetEggMoves(&gEnemyParty[0], &eggMoveBuffer);
+		u8 numEggMoves = GetAllEggMoves(&gEnemyParty[0], eggMoveBuffer, TRUE);
 
 		if (numEggMoves > 0)
 		{
-			u8 counter = 0;
-
-			//Try 255 times to give the mon a move it doesn't already know
-			do
-			{
-				u8 index = RandRange(0, numEggMoves);
-				if (!MoveInMonMoveset(eggMoveBuffer[index], &gEnemyParty[0]))
-				{
-					SetMonData(&gEnemyParty[0], MON_DATA_MOVE1, &eggMoveBuffer[index]);
-					break;
-				}
-			} while (++counter < 255);
+			u8 index = RandRange(0, numEggMoves);
+			SetMonData(&gEnemyParty[0], MON_DATA_MOVE1, &eggMoveBuffer[index]);
 		}
 	}
 
@@ -1261,12 +1253,20 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 		moveLoc[i] = GetMonData(&gEnemyParty[0], MON_DATA_MOVE1 + i, NULL);
 }
 
-static void DexNavDrawBlackBars(u8 spriteIdAddr[2])
+
+static void DexNavDrawBlackBar(u8* windowId)
 {
-	LoadCompressedSpriteSheetUsingHeap(&sBlackBarTiles);
-	LoadSpritePalette(&sHeldItemSpritePalette);
-	spriteIdAddr[0] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 16, ICONY - 2, 0x0);
-	spriteIdAddr[1] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 144, ICONY - 2, 0x0);
+	struct WindowTemplate template;
+	static const u16 blackBarPal[] = {RGB(7, 25, 13), RGB(4, 4, 4)};
+
+	LoadPalette(blackBarPal, 0xD0, 0x4);
+	PreservePaletteInWeather(13);
+	template = SetWindowTemplateFields(0, 0, 16, 30, 4, 13, 0x20);
+	*windowId = AddWindow(&template);
+	PutWindowTilemap(*windowId);
+	FillWindowPixelBuffer(*windowId, PIXEL_FILL(0)); //Clean tiles
+	FillWindowPixelRect(*windowId, PIXEL_FILL(1), 0, 4, 240, 28); //Black bar
+	CopyWindowToVram(*windowId, COPYWIN_BOTH);
 }
 
 static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
@@ -1389,6 +1389,8 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 	//Create the icon
 	u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 	*spriteIdAddr = spriteId;
+	if (spriteId < MAX_SPRITES)
+		gSprites[spriteId].oam.priority = 0;
 }
 
 void DexNavDrawHeldItem(u8* spriteIdAddr)
@@ -1403,7 +1405,7 @@ void DexNavDrawHeldItem(u8* spriteIdAddr)
 static void DexNavDrawIcons(void)
 {
 	u8 searchLevel = sDexNavHudPtr->searchLevel;
-	DexNavDrawBlackBars(sDexNavHudPtr->spriteIdBlackBar);
+	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
 	DexNavDrawSight(sDexNavHudPtr->proximity, &sDexNavHudPtr->spriteIdSight);
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
 	DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
@@ -1419,6 +1421,9 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDexNavHudPtr = Calloc(sizeof(struct DexnavHudData));
 	// assign non-objects to struct
 	sDexNavHudPtr->species = species;
+	TryRandomizeSpecies(&species);
+	//Species now refers to the potentially randomized species,
+	//while sDexNavHudPtr->species refers to the original species
 
 	if (species != gLastDexNavSpecies)
 	{
@@ -1437,7 +1442,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDexNavHudPtr->environment = environment;
 	u8 searchLevel = sSearchLevels[SpeciesToNationalPokedexNum(species)];
 	sDexNavHudPtr->searchLevel = searchLevel;
-	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(species, gCurrentDexNavChain, environment);
+	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment);
 
 	if (Overworld_GetFlashLevel() > 0)
 	{
@@ -1464,7 +1469,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	}
 
 	//Populate sDexNavHudPtr objects
-	DexNavGenerateMoveset(species, searchLevel, sDexNavHudPtr->pokemonLevel, &sDexNavHudPtr->moveId[0]);
+	DexNavGenerateMoveset(sDexNavHudPtr->species, searchLevel, sDexNavHudPtr->pokemonLevel, &sDexNavHudPtr->moveId[0]);
 	sDexNavHudPtr->heldItem = DexNavGenerateHeldItem(species, searchLevel);
 	sDexNavHudPtr->ability = DexNavGenerateHiddenAbility(species, searchLevel);
 	sDexNavHudPtr->potential = DexNavGeneratePotential(searchLevel);
@@ -1481,7 +1486,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	SetHBlankCallback(DexHUDHBlank);*/
 
 	// task update HUD
-	u8 taskId = CreateTask(Task_ManageDexNavHUD, 0x1);
+	u8 taskId = CreateTask(Task_ManageDexNavHUD, 1);
 	if (taskId != 0xFF)
 		gTasks[taskId].data[0] = gSprites[gPlayerAvatar->spriteId].pos1.x;
 

@@ -414,7 +414,6 @@ struct DexnavHudData
     s16 tileX; // position of shaking grass
     s16 tileY;
     u8 spriteIdSpecies;
-    u8 spriteIdBlackBar[4];
     u8 spriteIdSight;
     u8 spriteIdBButton;
     u8 spriteIdAbility;
@@ -422,6 +421,7 @@ struct DexnavHudData
     u8 spriteIdItem;
     u8 spriteIdShakingGrass;
     u8 spriteIdPotential[3];
+    u8 blackBarWindowId;
     u8 movementTimes;
 };
 
@@ -433,16 +433,6 @@ enum FieldMessages
 	FIELD_MSG_GOT_AWAY,
 	FIELD_MSG_LOST_SIGNAL,
 	FIELD_MSG_SNEAK_NEXT_TIME,
-};
-
-//64x32 oam with second highest priority
-static const struct OamData sBlackBarOAM =
-{
-	.affineMode = ST_OAM_AFFINE_DOUBLE,
-	.objMode = ST_OAM_OBJ_NORMAL,
-	.shape = SPRITE_SHAPE(64x32),
-	.size = SPRITE_SIZE(64x32),
-	.priority = 1, //Above almost everything
 };
 
 static const struct OamData sSightOam =
@@ -517,17 +507,6 @@ static const union AffineAnimCmd sSpriteAffineAnim_DexNavBar[] =
 static const union AffineAnimCmd* const sSpriteAffineAnimTable_DexNavBar[] =
 {
 	sSpriteAffineAnim_DexNavBar,
-};
-
-static const struct SpriteTemplate sBlackBarTemplate =
-{
-	.tileTag = 0xFDF1,
-	.paletteTag = 0x8472,
-	.oam = &sBlackBarOAM,
-	.anims = gDummySpriteAnimTable,
-	.images = NULL,
-	.affineAnims = sSpriteAffineAnimTable_DexNavBar,
-	.callback = SpriteCallbackDummy,
 };
 
 static const struct SpriteTemplate sSightTemplate =
@@ -607,7 +586,6 @@ static const struct SpriteTemplate sHeldItemTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static const struct CompressedSpriteSheet sBlackBarTiles = {DexNavBarTiles, (64 * 32) / 2, 0xFDF1};
 static const struct CompressedSpriteSheet sSightSpriteSheet = {DexNavSightTiles, (16 * 8 * 3) / 2, 0x5424};
 static const struct CompressedSpriteSheet sBButtonSpriteSheet = {DexNavBButtonTiles, (32 * 8) / 2, 0x5425};
 static const struct CompressedSpriteSheet sMoveCanvasSpriteSheet = {(u8*) gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x4736};

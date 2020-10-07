@@ -587,7 +587,7 @@ void sp06B_ReplacePlayerTeamWithMultiTrainerTeam(void)
 static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {
 	u32 i, j, nameHash;
-	u8 monsCount, baseIV, setMonGender, trainerNameLengthOddness, minPartyLevel, maxPartyLevel, modifiedAveragePlayerLevel, highestPlayerLevel, canEvolveMon, levelScaling;
+	u8 monsCount, baseIV, setMonGender, trainerNameLengthOddness, minPartyLevel, maxPartyLevel, modifiedAveragePlayerLevel, highestPlayerLevel, canEvolveMon, levelScaling, setCustomMoves;
 	struct Trainer* trainer;
 	u32 otid = 0;
 	u8 otIdType = OT_ID_RANDOM_NO_SHINY;
@@ -718,6 +718,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		highestPlayerLevel = 0;
 		canEvolveMon = FALSE;
 		#endif
+		setCustomMoves = !FlagGet(FLAG_POKEMON_RANDOMIZER) || FlagGet(FLAG_BATTLE_FACILITY); //Don't set custom moves when species are randomized
 
 		//Create each Pokemon
 		for (i = 0, trainerNameLengthOddness = StringLength(trainer->trainerName) & 1, nameHash = 0; i < monsCount; ++i)
@@ -781,7 +782,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 					case PARTY_FLAG_CUSTOM_MOVES:
 						MAKE_POKEMON(trainer->party.NoItemCustomMoves);
-						SET_MOVES(trainer->party.NoItemCustomMoves);
+						if (setCustomMoves)
+							SET_MOVES(trainer->party.NoItemCustomMoves);
 						break;
 
 					case PARTY_FLAG_HAS_ITEM:
@@ -791,7 +793,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 					case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
 						MAKE_POKEMON(trainer->party.ItemCustomMoves);
-						SET_MOVES(trainer->party.ItemCustomMoves);
+						if (setCustomMoves)
+							SET_MOVES(trainer->party.ItemCustomMoves);
 						SetMonData(&party[i], MON_DATA_HELD_ITEM, &trainer->party.ItemCustomMoves[i].heldItem);
 						break;
 				}
@@ -1821,6 +1824,12 @@ static void BuildRaidMultiParty(void)
 		const struct BattleTowerSpread* spread = GetRaidMultiSpread(multiId, i, numStars);
 		CreateFrontierMon(&gPlayerParty[i + 3], GetRandomRaidLevel(), spread, RAID_BATTLE_MULTI_TRAINER_TID, 2, gRaidPartners[multiId].gender, FALSE);
 		SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &zero); //So they don't say "Battle Frontier"
+
+		if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
+		{
+			Memset(gPlayerParty[i + 3].moves, 0, sizeof(gPlayerParty[i + 3].moves));
+			GiveBoxMonInitialMoveset((void*) &gPlayerParty[i + 3]); //Give the randomized Pokemon moves it would normally have
+		}
 	}
 }
 

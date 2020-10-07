@@ -1,14 +1,15 @@
 #include "defines.h"
+#include "../include/bg.h"
 #include "../include/link.h"
-#include "../include/script.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
-#include "../include/overworld.h"
 #include "../include/map_name_popup.h"
-#include "../include/rtc.h"
-#include "../include/start_menu.h"
+#include "../include/overworld.h"
 #include "../include/party_menu.h"
+#include "../include/rtc.h"
+#include "../include/script.h"
+#include "../include/start_menu.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
@@ -242,6 +243,8 @@ bool8 StartRButtonFunc(void)
 	#ifndef VAR_R_BUTTON_MODE
 	if (dexNavSpecies != SPECIES_NONE)
 	{
+		DismissMapNamePopup();
+		ChangeBgY(0, 0);
 		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 		return FALSE; //Don't enable the script context
 	}
@@ -250,6 +253,8 @@ bool8 StartRButtonFunc(void)
 		case OPTIONS_R_BUTTON_MODE_DEXNAV:
 			if (dexNavSpecies != SPECIES_NONE && FlagGet(FLAG_SYS_DEXNAV))
 			{
+				DismissMapNamePopup();
+				ChangeBgY(0, 0, 0);
 				InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 				return FALSE; //Don't enable the script context
 			}

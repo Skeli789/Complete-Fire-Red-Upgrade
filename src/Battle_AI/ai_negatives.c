@@ -94,7 +94,6 @@ static void AI_Watch(void);
 
 u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
-	
 	s16 viability = originalViability;
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
 	u8 decreased;
@@ -2851,7 +2850,10 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_POLTERGEIST:
 			if (WillPoltergeistFail(data->defItem, data->defAbility))
+			{
 				DECREASE_VIABILITY(10);
+				break;
+			}
 			goto AI_STANDARD_DAMAGE;
 
 		default:

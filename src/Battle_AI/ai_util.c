@@ -3316,6 +3316,10 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 			{
 				if (GetBattlerPosition(bankAtk) == B_POSITION_PLAYER_LEFT)
 					return; //Never predict that the player will Dynamax
+				else if (IsRaidBattle()
+				&& gBattleResults.battleTurnCounter <= 3 //First three turns
+				&& !PlayerHasNoMonsLeftThatCanDynamax()) //Player still can Dynamax one of their mons
+					return; //Give the Player a chance to Dynamax first in a Raid battle
 			}
 			else //Player is in control
 				return; //Never predict that the player will Dynamax

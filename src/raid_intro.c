@@ -233,6 +233,8 @@ static bool8 GetRaidBattleData(void)
 	if (gRaidBattleSpecies == SPECIES_NONE)
 		return FALSE;
 
+	TryRandomizeSpecies(&sRaidBattleIntroPtr->species);
+
 	for (i = 0; i < gNumRaidPartners; ++i)
 		checkedPartners[i] = FALSE;
 
@@ -427,8 +429,8 @@ static void Task_RaidBattleIntroWaitForKeyPress(u8 taskId)
 			name = gRaidPartners[id].name;
 		StringCopy(gStringVar1, name);
 		StringCopy(gStringVar7, name);
-		GetSpeciesName(gStringVar2, gRaidBattleSpecies);
-		GetSpeciesName(gStringVar8, gRaidBattleSpecies);
+		GetSpeciesName(gStringVar2, sRaidBattleIntroPtr->species);
+		GetSpeciesName(gStringVar8, sRaidBattleIntroPtr->species);
 
 		PlaySE(SE_CORRECT);
 		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
@@ -596,6 +598,7 @@ static void ShowPartnerTeams(void)
 			for (j = 0; j < MAX_TEAM_SIZE; ++j)
 			{
 				u16 species = sRaidBattleIntroPtr->partners[i].team[j];
+				TryRandomizeSpecies(&species);
 				if (species != SPECIES_NONE)
 				{
 					LoadMonIconPalette(species);
