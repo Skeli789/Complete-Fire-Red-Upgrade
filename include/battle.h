@@ -822,6 +822,7 @@ struct NewBattleStruct
 	u8 playerItemUsedCount; //~0x2017A82
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
+	u8 backupBattlerPosition : 2; //For Neutralizing Gas
 
 	//Booleans
 	bool8 MoveBounceInProgress : 2;

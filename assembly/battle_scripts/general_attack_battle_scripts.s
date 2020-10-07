@@ -4925,7 +4925,7 @@ BS_229_Fling:
 	printstring 0x184
 	accuracycheck FlingMissBS 0x0
 	callasm TransferLastUsedItem
-	call STANDARD_DAMAGE
+	call STANDARD_DAMAGE + 2
 	seteffectwithchancetarget
 	callasm TrySetAlternateFlingEffect
 	callasm ClearDoingPluckItemEffect

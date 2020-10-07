@@ -27,7 +27,7 @@ defines_battle.h
 #define SIDE(bank) GetBattlerSide(bank)
 #define PARTNER(bank) (bank ^ BIT_FLANK)
 #define FOE(bank) ((bank ^ BIT_SIDE) & BIT_SIDE)
-#define ABILITY(bank) GetBankAbility(bank)
+#define ABILITY(bank) gBattleMons[bank].ability
 #define SPECIES(bank) gBattleMons[bank].species
 #define ITEM(bank) gBattleMons[bank].item
 #define ITEM_EFFECT(bank) GetBankItemEffect(bank)

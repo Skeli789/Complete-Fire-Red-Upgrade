@@ -78,7 +78,7 @@ u8 GetBankForBattleScript(u8 caseId)
 }
 
 
-ability_t GetBankAbility(u8 bank)
+ability_t GetBankAbility(u8 bank) //Not actually used anymore
 {
 	if (IsAbilitySuppressed(bank))
 		return ABILITY_NONE;

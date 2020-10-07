@@ -6,6 +6,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ability_tables.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_script_util.h"
@@ -36,6 +37,7 @@ enum SwitchInStates
 {
 	SwitchIn_HandleAICooldown,
 	SwitchIn_CamomonsReveal,
+	SwitchIn_NeutralizingGasRemoveAbility,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -59,7 +61,7 @@ enum SwitchInStates
 
 //This file's functions:
 static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
-static bool8 TryRemoveNeutralizingGas(u8 ability);
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
@@ -130,7 +132,7 @@ void atkE2_switchoutabilities(void)
 bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
 {
 	return TryRemovePrimalWeather(bank, ability)
-		|| TryRemoveNeutralizingGas(ability)
+		|| TryRemoveNeutralizingGas(bank, ability)
 		|| TryRemoveUnnerve(bank)
 		|| TryActivateFlowerGift(bank);
 }
@@ -175,7 +177,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-static bool8 TryRemoveNeutralizingGas(u8 ability)
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
 {
 	if (ability == ABILITY_NEUTRALIZINGGAS)
 	{
@@ -185,6 +187,8 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 			gBattleStringLoader = gText_NeutralizingGasEnd;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			gNewBS->printedNeutralizingGasOverMsg = TRUE;
+			gNewBS->backupBattlerPosition = gBattlerPositions[bank];
+			gBattlerPositions[bank] = 0xFF; //So there are no issues with animations like Drought - will still cause problem in Link Battles
 			return TRUE;
 		}
 
@@ -216,7 +220,12 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 		}
 	}
 
-	gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	if (gNewBS->printedNeutralizingGasOverMsg)
+	{
+		gBattlerPositions[bank] = gNewBS->backupBattlerPosition;
+		gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	}
+
 	return FALSE;
 }
 
@@ -550,6 +559,20 @@ void atk52_switchineffects(void)
 					gBattleStringLoader = gText_CamomonsTypeRevealDualType;
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
 				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+			}
+			++gNewBS->switchInEffectsState;
+			break;
+
+		case SwitchIn_NeutralizingGasRemoveAbility:
+			if (!IsAbilitySuppressed(gActiveBattler) //Gastro Acid has higher priority
+			&& ABILITY(gActiveBattler) != ABILITY_NONE
+			&& !CheckTableForAbility(ABILITY(gActiveBattler), gNeutralizingGasBannedAbilities)
+			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0))
+			{
+				u8* abilityLoc = GetAbilityLocation(gActiveBattler);
+				gNewBS->neutralizingGasBlockedAbilities[gActiveBattler] = *abilityLoc;
+				*abilityLoc = 0;
+				gNewBS->SlowStartTimers[gActiveBattler] = 0;
 			}
 			++gNewBS->switchInEffectsState;
 			break;
