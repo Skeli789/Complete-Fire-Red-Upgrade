@@ -15876,7 +15876,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SCRAPPY
+		.ability = FRONTIER_ABILITY_1, //ABILITY_IRONFIST
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
