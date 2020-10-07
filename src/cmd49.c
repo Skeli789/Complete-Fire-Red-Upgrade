@@ -985,7 +985,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& BATTLER_ALIVE(gBankAttacker))
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& !(gMoveResultFlags & MOVE_RESULT_FAILED)) //From no targets
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 
@@ -999,7 +1000,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					effect = 1;
 				}
 				else if (gCurrentMove == MOVE_STRUGGLE
-				&& BATTLER_ALIVE(gBankAttacker))
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& gNewBS->AttackerDidDamageAtLeastOnce)
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 4);
 					BattleScriptPushCursor();

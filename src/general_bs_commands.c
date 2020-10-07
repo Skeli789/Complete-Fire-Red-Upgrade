@@ -150,8 +150,6 @@ void atk02_attackstring(void)
 
 		if (gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 		{
-			TryActivateGemBattlescript();
-
 			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
 			&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 			&& !gSpecialMoveFlags[gCurrentMove].gMovesThatCallOtherMoves)
@@ -173,6 +171,9 @@ void atk02_attackstring(void)
 		gBattlescriptCurrInstr++;
 		gBattleCommunication[MSG_DISPLAY] = 0;
 	}
+
+	if (gCurrentMove != MOVE_STRUGGLE && !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
+		TryActivateGemBattlescript();
 }
 
 void BufferAttackerItem(void)
