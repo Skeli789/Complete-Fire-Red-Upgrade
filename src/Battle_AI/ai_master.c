@@ -2613,10 +2613,19 @@ static bool8 ShouldAIUseItem(void)
 					else if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2) //Smart AI should only use at less than half health
 					{
 						u8 foe = FOE(gActiveBattler);
-						if ((BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
-						|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(foe)) && ShouldRecover(gActiveBattler, PARTNER(foe), 0xFFFF)))
+						if (IS_SINGLE_BATTLE)
 						{
-							shouldUse = TRUE;
+							if (BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
+							{
+								if (!HasMoveThatGoesFirstAndKnocksOut(gActiveBattler, foe))
+									shouldUse = TRUE;
+							}
+						}
+						else //Doubles
+						{
+							if ((BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
+							|| (BATTLER_ALIVE(PARTNER(foe)) && ShouldRecover(gActiveBattler, PARTNER(foe), 0xFFFF)))
+								shouldUse = TRUE;
 						}
 					}
 				}

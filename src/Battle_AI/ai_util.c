@@ -255,10 +255,10 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 		{
 			currAcc = CalcAIAccuracy(currMove, bankAtk, bankDef);
 
-			if ((!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef))
-			&& MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1))
+			if (MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
+			&& (!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef)))
 			{
-				if (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc)
+				if (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc || bestMoveIndex == 0xFF)
 				{
 					bestAcc = currAcc;
 					bestMoveIndex = i;
@@ -277,6 +277,30 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 
 	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
 		return TRUE;
+
+	return FALSE;
+}
+
+bool8 HasMoveThatGoesFirstAndKnocksOut(u8 bankAtk, u8 bankDef)
+{
+	u16 currMove;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		currMove = GetBattleMonMove(bankAtk, i);
+		if (currMove == MOVE_NONE)
+			break;
+
+		//currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove); //Z-Moves don't usually go first
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
+			&& MoveWouldHitFirst(currMove, bankAtk, bankDef))
+				return TRUE;
+		}
+	}
 
 	return FALSE;
 }
@@ -312,6 +336,11 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		&& moveEffect != EFFECT_MIRROR_COAT
 		&& moveEffect != EFFECT_BURN_UP
 		&& moveEffect != EFFECT_FAKE_OUT
+		&& moveEffect != EFFECT_SOLARBEAM
+		&& moveEffect != EFFECT_SEMI_INVULNERABLE
+		&& moveEffect != EFFECT_SKY_ATTACK
+		&& moveEffect != EFFECT_RAZOR_WIND
+		&& moveEffect != EFFECT_SKULL_BASH
 		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
 		{
 			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
@@ -358,6 +387,9 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove);
+		
+		if (AttacksThisTurn(bankAtk, currMove) == 1) //Has to charge first
+			continue;
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
@@ -721,23 +753,6 @@ bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
 
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
-	u8 ability = ABILITY(bankDef);
-	u16 species = SPECIES(bankDef);
-	bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), move);
-
-	if (MoveBlockedBySubstitute(move, bankAtk, bankDef)
-	#ifdef SPECIES_MIMIKYU
-	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
-	#endif
-	#ifdef SPECIES_EISCUE
-	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && noMoldBreakers)
-	#endif
-	)
-	{
-		if (numHits > 0)
-			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
-	}
-
 	if (GetFinalAIMoveDamage(move, bankAtk, bankDef, numHits, NULL) >= gBattleMons[bankDef].hp)
 		return TRUE;
 
@@ -747,8 +762,33 @@ static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 nu
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
 	u8 movePos;
+	u16 species = SPECIES(bankDef);
+	u8 ability = ABILITY(bankDef);
+
+	if (MoveBlockedBySubstitute(move, bankAtk, bankDef)
+	#ifdef SPECIES_MIMIKYU
+	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+	#endif
+	#ifdef SPECIES_EISCUE
+	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+	#endif
+	)
+	{
+		if (numHits > 0)
+			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
+	}
+
+	if (AttacksThisTurn(bankAtk, move) == 1) //Has to charge first
+	{
+		if (numHits > 0)
+			numHits -= 1; //Takes at least a turn to charge
+	}
 
 	switch (numHits) {
+		case 0:
+			return FALSE;
+
+		//Most common two cases are 1 hit and 2 hits
 		case 1:
 			if (gBattleMoves[move].effect == EFFECT_FUTURE_SIGHT)
 				return FALSE; //Really always 3 hits
@@ -774,6 +814,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			return gNewBS->ai.moveKnocksOut2Hits[bankAtk][bankDef][movePos] = CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, 2);
 	}
 
+	//Unlikely this will ever even be reached
 	return CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits);
 }
 
@@ -1497,6 +1538,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move, boo
 				case MOVE_DETECT:
 				case MOVE_SPIKYSHIELD:
 				case MOVE_KINGSSHIELD:
+				case MOVE_OBSTRUCT:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
@@ -2038,6 +2080,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 					case MOVE_PROTECT:
 					case MOVE_SPIKYSHIELD:
 					case MOVE_KINGSSHIELD:
+					case MOVE_OBSTRUCT:
 						return TRUE;
 
 					case MOVE_QUICKGUARD:
@@ -3060,7 +3103,8 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 					return TRUE;
 			}
 
-			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
+			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move
 
 			return TRUE;

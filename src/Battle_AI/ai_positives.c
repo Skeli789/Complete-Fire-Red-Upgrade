@@ -1719,17 +1719,17 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_KNOCK_OFF:
-			if (CanKnockOffItem(bankDef))
-			{
-				switch (data->defItemEffect) {
-					case ITEM_EFFECT_IRON_BALL:
-					case ITEM_EFFECT_LAGGING_TAIL:
-					case ITEM_EFFECT_STICKY_BARB:
-						break;
+			switch (data->defItemEffect) {
+				case ITEM_EFFECT_IRON_BALL:
+				case ITEM_EFFECT_LAGGING_TAIL:
+				case ITEM_EFFECT_STICKY_BARB:
+					break;
 
-					default:
+				default:
+					if (CanKnockOffItem(bankDef)
+					&& !MoveEffectInMoveset(EFFECT_POLTERGEIST, bankAtk)
+					&& !CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
 						INCREASE_VIABILITY(3); //Increase past strongest move
-				}
 			}
 			break;
 

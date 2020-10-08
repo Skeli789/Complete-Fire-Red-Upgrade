@@ -1288,7 +1288,6 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
 {
 	u8 moveEffect = gBattleMoves[move].effect;
 
-	// first argument is unused
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_POWER_HERB)
 		return 2;
 

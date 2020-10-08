@@ -108,9 +108,10 @@ u8 ViableMonCount(struct Pokemon* party)
 
 	for (u32 i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
-		&&  GetMonData(&party[i], MON_DATA_HP, NULL) > 0)
+		//Don't use GetMonData because time saving is important
+		if (party[i].species != SPECIES_NONE
+		&&  party[i].hp > 0
+		&& !party[i].isEgg)
 			++count;
 	}
 

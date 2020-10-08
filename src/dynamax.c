@@ -2012,7 +2012,40 @@ u16 GetRaidRewardAmount(u16 item)
 		return Random() % 5 + 1; //1 - 5
 
 	if (IsBerry(item))
-		return Random() % 5 + 1; //1 - 5
+	{
+		switch (ItemId_GetHoldEffect(item))
+		{
+			case ITEM_EFFECT_CURE_STATUS:
+			case ITEM_EFFECT_RESTORE_PP:
+			case ITEM_EFFECT_CONFUSE_SPICY:
+			case ITEM_EFFECT_CONFUSE_DRY:
+			case ITEM_EFFECT_CONFUSE_SWEET:
+			case ITEM_EFFECT_CONFUSE_BITTER:
+			case ITEM_EFFECT_CONFUSE_SOUR:
+				return Random() % 3 + 1; //1 - 3
+
+			case ITEM_EFFECT_ATTACK_UP:
+			case ITEM_EFFECT_DEFENSE_UP:
+			case ITEM_EFFECT_SPEED_UP:
+			case ITEM_EFFECT_SP_ATTACK_UP:
+			case ITEM_EFFECT_SP_DEFENSE_UP:
+			case ITEM_EFFECT_WEAKNESS_BERRY:
+				return Random() % 2 + 1; //1 - 2
+
+			case ITEM_EFFECT_CRITICAL_UP:
+			case ITEM_EFFECT_RANDOM_STAT_UP:
+			case ITEM_EFFECT_MICLE_BERRY:
+			case ITEM_EFFECT_ENIGMA_BERRY:
+			case ITEM_EFFECT_JABOCA_ROWAP_BERRY:
+			case ITEM_EFFECT_CUSTAP_BERRY:
+			case ITEM_EFFECT_KEE_BERRY:
+			case ITEM_EFFECT_MARANGA_BERRY:
+				return 1;
+
+			default: //ITEM_EFFECT_RESTORE_HP - ITEM_EFFECT_CURE_CONFUSION
+				return Random() % 4 + 1; //1 - 4
+		}	
+	}
 
 	switch (gItemsByType[item]) {
 		case ITEM_TYPE_HEALTH_RECOVERY:

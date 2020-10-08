@@ -660,7 +660,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Mahina_Rank456[] =
 static const struct BattleTowerSpread sRaidPartnerSpread_Alford_Rank456[] =
 {
 	{
-		.species = SPECIES_EMPOLEON,
+		.species = SPECIES_HEATRAN,
 		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
@@ -669,16 +669,16 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Alford_Rank456[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.spAtkEv = 4,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_LEFTOVERS,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_FLASHFIRE
+		.item = ITEM_AIR_BALLOON,
 		.moves =
 		{
-			MOVE_WATERPLEDGE,
+			MOVE_FLAMETHROWER,
 			MOVE_FLASHCANNON,
-			MOVE_ICEBEAM,
-			MOVE_SWAGGER,
+			MOVE_EARTHPOWER,
+			MOVE_ATTRACT,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,
 		.forSingles = TRUE,
