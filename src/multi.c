@@ -25,7 +25,7 @@ multi.c
 
 //This file's functions:
 static void BattleIntroOpponent2SendsOutMonAnimation(void);
-static u32 CalcMultiMoneyForTrainer(u16 trainerId);
+static u32 CalcPrizeiMoneyForTrainer(u16 trainerId);
 static void PlayerPartnerBufferExecComplete(void);
 static void PlayerPartnerBufferRunCommand(void);
 static void PlayerPartnerHandleChooseMove(void);
@@ -182,40 +182,55 @@ u8* GetTrainerBLoseText(void)
 
 u32 MultiMoneyCalc(void)
 {
-	u32 money = CalcMultiMoneyForTrainer(gTrainerBattleOpponent_A);
+	u32 money = CalcPrizeiMoneyForTrainer(gTrainerBattleOpponent_A);
 
-	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
-		money += CalcMultiMoneyForTrainer(VarGet(VAR_SECOND_OPPONENT));
-	}
+	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+		money += CalcPrizeiMoneyForTrainer(VarGet(VAR_SECOND_OPPONENT));
 
 	return money;
 }
 
 #define gTrainerMoneyTable ((struct TrainerMoney*) *((u32*) 0x80259CC))
-static u32 CalcMultiMoneyForTrainer(u16 trainerId)
+static u32 CalcPrizeiMoneyForTrainer(u16 trainerId)
 {
-	int i;
-	struct Trainer trainer = gTrainers[trainerId];
-	u8 rate = 0;
+	u8 i, firstMonId, lastMonId, level, rate;
+	struct Trainer* trainer = &gTrainers[trainerId];
 
-	/* Find level of the last Pokemon in trainer's party */
-	u8 lastMon = trainer.partySize - 1;
-	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && lastMon > 3)
-		lastMon = 3;
-
-	u8 level = 0;
-	#ifdef OPEN_WORLD_TRAINERS
-		level = gOpenWorldLevelRanges[GetOpenWorldBadgeCount()][1];
-	#else
-		if (trainer.partyFlags & PARTY_FLAG_CUSTOM_MOVES)
-			level = trainer.party.ItemCustomMoves[lastMon].lvl;
-		else
-			level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
-	#endif
-
-	for (i = 0; i < NUM_TRAINER_CLASSES; ++i)
+	//Get the party range to search through for the given trainer
+	if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
-		if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass)
+		if (gTrainerBattleOpponent_A == trainerId)
+		{
+			firstMonId = 0;
+			lastMonId = 3;
+		}
+		else
+		{
+			firstMonId = 3;
+			lastMonId = 6;
+		}
+	}
+	else
+	{
+		firstMonId = 0;
+		lastMonId = 6;
+	}
+
+	//Scan through the party backwards until the last mon
+	for (i = lastMonId - 1, level = 0; i >= firstMonId; --i)
+	{
+		u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			level = GetMonData(&gEnemyParty[i], MON_DATA_LEVEL, NULL); //The level of the last mon
+			break;
+		}
+	}
+
+	//Get the money rate
+	for (i = 0, rate = 0; i < NUM_TRAINER_CLASSES; ++i)
+	{
+		if (gTrainerMoneyTable[i].trainerClass == trainer->trainerClass)
 		{
 			rate = gTrainerMoneyTable[i].money;
 			break;
@@ -228,9 +243,10 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 		}
 	}
 
+	//Final calc
 	u32 money = (rate * 4) * level * gBattleStruct->moneyMultiplier;
 
-	if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)))
+	if (IS_DOUBLE_BATTLE && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
 		money *= 2;
 
 	return money;

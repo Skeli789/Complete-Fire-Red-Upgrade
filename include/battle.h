@@ -836,7 +836,8 @@ struct NewBattleStruct
 	bool8 fusionFlareUsedPrior : 1;
 	bool8 fusionBoltUsedPrior : 1;
 	bool8 endTurnDone : 1;
-	bool8 HappyHourByte : 1;
+	bool8 usedAmuletCoin : 1;
+	bool8 usedHappyHour : 1;
 	bool8 attackAnimationPlayed : 1;
 	bool8 DancerInProgress : 1;
 	bool8 DancerByte : 1;

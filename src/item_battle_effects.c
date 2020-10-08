@@ -104,7 +104,11 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	case ItemEffects_SwitchIn:
 		switch (bankHoldEffect) {
 			case ITEM_EFFECT_DOUBLE_PRIZE:
-				gBattleStruct->moneyMultiplier *= 2;
+				if (!gNewBS->usedAmuletCoin && SIDE(bank) == B_SIDE_PLAYER)
+				{
+					gNewBS->usedAmuletCoin = TRUE;
+					gBattleStruct->moneyMultiplier *= 2;
+				}
 				break;
 
 			case ITEM_EFFECT_RESTORE_STATS:

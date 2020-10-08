@@ -985,9 +985,9 @@ void DoFairyLockHappyHourFunc(void)
 			break;
 
 		case MOVE_HAPPYHOUR:
-			if (!gNewBS->HappyHourByte)
+			if (!gNewBS->usedHappyHour)
 			{
-				gNewBS->HappyHourByte = TRUE;
+				gNewBS->usedHappyHour = TRUE;
 				gBattleStruct->moneyMultiplier *= 2;
 			}
 			gBattleStringLoader = HappyHourString;
