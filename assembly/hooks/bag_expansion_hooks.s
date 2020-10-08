@@ -81,6 +81,28 @@ BagLRScroll:
 	mov r8, r3
 	pop {r4-r7, pc}
 
+@0x8131D1C with r0
+TMCaseLRScroll:
+	ldrb r0, [r2, #0x16]
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r2, #0x16]
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
+
+@0x813D306 with r0
+BerryPouchLRScroll:
+	ldrb r0, [r5, #0x16]
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r5, #0x16]
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 AllocateBerryPouchSpace:
