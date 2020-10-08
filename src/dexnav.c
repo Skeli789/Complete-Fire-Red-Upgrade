@@ -181,31 +181,7 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	//Create standard wild Pokemon
 	CreateWildMon(species, level, FindHeaderIndexWithLetter(species, sDexNavHudPtr->unownLetter - 1), TRUE);
-
-	//Pick potential ivs to set to 31
-	u8 numPerfectStats = 0;
-	u8 perfect = 31;
-	bool8 perfectStats[NUM_STATS] = {0};
-
-	for (i = 0; i < NUM_STATS; ++i) //Count how many stats are already perfect
-	{
-		if (GetMonData(mon, MON_DATA_HP_IV + i, NULL) >= 31)
-		{
-			perfectStats[i] = TRUE;
-			++numPerfectStats;
-		}
-	}
-
-	while (numPerfectStats < potential) //Assign the rest of the prefect stats
-	{
-		u8 statId = Random() % NUM_STATS;
-		if (!perfectStats[statId]) //Must be unique
-		{
-			perfectStats[statId] = TRUE;
-			++numPerfectStats;
-			SetMonData(mon, MON_DATA_HP_IV + statId, &perfect);
-		}
-	}
+	GiveMonXPerfectIVs(mon, potential);
 
 	//Set Ability
 	if (gBaseStats[species].hiddenAbility == ability)

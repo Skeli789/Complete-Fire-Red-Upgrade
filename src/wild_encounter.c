@@ -377,20 +377,7 @@ void sp117_CreateRaidMon(void)
 	}
 
 	//Give perfect IVs based on the number of Raid stars
-	u8 numPerfectStats = 0;
-	u8 perfect = 31;
-	bool8 perfectStats[NUM_STATS] = {0};
-
-	while (numPerfectStats < MathMin(gRaidBattleStars, NUM_STATS)) //Error prevention
-	{
-		u8 statId = Random() % NUM_STATS;
-		if (!perfectStats[statId]) //Must be unique
-		{
-			perfectStats[statId] = TRUE;
-			++numPerfectStats;
-			SetMonData(mon, MON_DATA_HP_IV + statId, &perfect);
-		}
-	}
+	GiveMonXPerfectIVs(mon, MathMin(gRaidBattleStars - 1, NUM_STATS)); //Max 5 perfect IVs for 6-star raid
 }
 
 #ifdef UNBOUND

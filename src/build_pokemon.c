@@ -1987,6 +1987,35 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 	mon->personality = personality;
 }
 
+
+void GiveMonXPerfectIVs(struct Pokemon* mon, u8 totalPerfectStats)
+{
+	//Pick potential ivs to set to 31
+	u8 i, numPerfectStats;
+	u8 perfect = 31;
+	bool8 perfectStats[NUM_STATS] = {0};
+
+	for (i = 0, numPerfectStats = 0; i < NUM_STATS; ++i) //Count how many stats are already perfect
+	{
+		if (GetMonData(mon, MON_DATA_HP_IV + i, NULL) >= 31)
+		{
+			perfectStats[i] = TRUE;
+			++numPerfectStats;
+		}
+	}
+
+	while (numPerfectStats < totalPerfectStats) //Assign the rest of the prefect stats
+	{
+		u8 statId = Random() % NUM_STATS;
+		if (!perfectStats[statId]) //Must be unique
+		{
+			perfectStats[statId] = TRUE;
+			++numPerfectStats;
+			SetMonData(mon, MON_DATA_HP_IV + statId, &perfect);
+		}
+	}
+}
+
 static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species)
 {
 	u8 ability = ABILITY_NONE;
