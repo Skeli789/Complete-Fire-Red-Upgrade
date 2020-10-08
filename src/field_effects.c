@@ -309,6 +309,7 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 			break;
 		case MAPSEC_ROUTE_1:
 		case MAPSEC_ROUTE_8:
+		case MAPSEC_ICICLE_CAVE:
 		case MAPSEC_FROZEN_FOREST:
 		WINTER:
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];

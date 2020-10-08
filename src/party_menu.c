@@ -27,6 +27,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
@@ -2265,7 +2266,11 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 	if (abilityType != 0) //Hidden Ability Capsule
 	{
 		if (ability != gBaseStats[species].hiddenAbility
-		&& gBaseStats[species].hiddenAbility != ABILITY_NONE)
+		&& gBaseStats[species].hiddenAbility != ABILITY_NONE
+		#ifdef UNBOUND
+		&& SpeciesToNationalPokedexNum(species) != NATIONAL_DEX_ZYGARDE //Must be given with Power Construct
+		#endif
+		)
 			changeTo = gBaseStats[species].hiddenAbility;
 	}
 	else //Regular ability capsule

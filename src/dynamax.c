@@ -1277,12 +1277,14 @@ void SetMaxMoveStatRaiseEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_RAISE_TEAM_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = (MOVE_EFFECT_ATK_PLUS_1 + statId) | MOVE_EFFECT_AFFECTS_USER;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void SetMaxMoveStatLowerEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_MINUS_1 + statId;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void PickRandomGMaxBefuddleEffect(void)

@@ -133,6 +133,7 @@ BattleScript_MaxMoveRaiseStatTeam:
 	jumpiffainted BANK_ATTACKER BattleScript_MaxMoveRaiseStatTeam_CheckPartner
 	callasm SetMaxMoveStatRaiseEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 
 BattleScript_MaxMoveRaiseStatTeam_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
@@ -140,6 +141,7 @@ BattleScript_MaxMoveRaiseStatTeam_CheckPartner:
 	jumpiffainted BANK_ATTACKER BattleScript_MaxMoveSetAttackerBackAndReturn
 	callasm SetMaxMoveStatRaiseEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 BattleScript_MaxMoveSetAttackerBackAndReturn:
 	callasm SetAttackerPartner
 	return
@@ -150,6 +152,7 @@ BattleScript_MaxMoveLowerStatFoes:
 	jumpiffainted BANK_TARGET BattleScript_MaxMoveLowerStatFoes_CheckPartner
 	callasm SetMaxMoveStatLowerEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 
 BattleScript_MaxMoveLowerStatFoes_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
@@ -157,6 +160,7 @@ BattleScript_MaxMoveLowerStatFoes_CheckPartner:
 	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetMaxMoveStatLowerEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 BattleScript_MaxMoveSetTargetBackAndReturn:
 	callasm SetTargetFoePartner
 	return

@@ -2233,3 +2233,8 @@ void HandleIllusionShiftSwitch(void)
 		PREPARE_MON_NICK_BUFFER(gBattleTextBuff2, gBankFainted, monId);
 	}
 }
+
+void ClearStatBuffEffectNotProtectAffected(void)
+{
+	gNewBS->statBuffEffectNotProtectAffected = FALSE;
+}
