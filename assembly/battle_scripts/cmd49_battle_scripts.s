@@ -349,8 +349,7 @@ BattleScript_BrokenRaidBarrier:
 BattleScript_BrokenRaidBarrier_Def:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_DEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintDefMsg
-BattleScript_BrokenRaidBarrierPrintDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_BrokenRaidBarrierEnd
 	printfromtable 0x83FE588
@@ -359,8 +358,7 @@ BattleScript_BrokenRaidBarrierPrintDefMsg:
 BattleScript_BrokenRaidBarrier_SpDef:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_SPDEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintSpDefMsg
-BattleScript_BrokenRaidBarrierPrintSpDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierEnd
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_BrokenRaidBarrierEnd
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
