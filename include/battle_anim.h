@@ -392,7 +392,7 @@ u8 __attribute__((long_call)) GetBattlerSpriteCoord2(u8 battlerId, u8 coordType)
 
 u8 __attribute__((long_call)) GetBankPosition(u8 bank, u8 attributeId);
 
-bool8 __attribute__((long_call)) IsBankSpritePresent(u8 bank);
+bool8 __attribute__((long_call)) IsBattlerSpritePresent(u8 bank);
 void __attribute__((long_call)) sub_80A6C68(u8 arg0);
 u8 __attribute__((long_call)) GetAnimBankSpriteId(u8 wantedBank);
 bool8 __attribute__((long_call)) IsDoubleBattle(void);
@@ -444,6 +444,7 @@ bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 
 u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpic, u8 a3, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, u32 a10);
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
 void __attribute__((long_call)) TranslateMonSpriteLinearFixedPoint(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

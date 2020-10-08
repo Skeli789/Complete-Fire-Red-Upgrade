@@ -208,6 +208,7 @@ DrawLevelUpWindowPg2Hook 811E950 4
 
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 803401E 4
+SpriteCB_EnemyShadow 8035624 1
 UpdateOamPriorityInAllHealthboxes 804828C 1
 ModifyMegaCryHook 8071F8E 1
 ScriptCmd_loadspritegfx 08072868 0

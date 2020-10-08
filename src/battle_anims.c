@@ -16,6 +16,7 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
+#include "../include/new/end_turn.h"
 #include "../include/new/mega.h"
 /*
 battle_anims.c
@@ -27,6 +28,7 @@ battle_anims.c
 #define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
 #define gMonFrontPicCoords ((const struct MonCoords*) *((u32*) 0x8011F4C))
 #define gMonBackPicCoords ((const struct MonCoords*) *((u32*) 0x8074634))
+#define gEnemyMonElevation ((const u8*) *((u32*) 0x80356F8))
 
 extern const u8* sBattleAnimScriptPtr;
 extern u16 sAnimMoveIndex;
@@ -4973,4 +4975,32 @@ void SpriteCB_InitThrownBallBouncing(struct Sprite *sprite)
 		else
 			sprite->callback = SpriteCB_ThrowBallMovement;
 	}
+}
+
+void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
+{
+	bool8 invisible = FALSE;
+	u8 battlerId = shadowSprite->tBattlerId;
+	struct Sprite* battlerSprite = &gSprites[gBattlerSpriteIds[battlerId]];
+
+	if (!battlerSprite->inUse || !IsBattlerSpritePresent(battlerId))
+	{
+		shadowSprite->callback = SpriteCB_SetInvisible;
+		return;
+	}
+
+	if (IsInMiddleOfEndTurnSwitchIn(battlerId))
+		invisible = TRUE;
+	else if (gAnimScriptActive || battlerSprite->invisible)
+		invisible = TRUE;
+	else if (gBattleSpritesDataPtr->bankData[battlerId].transformSpecies != SPECIES_NONE
+	&& gEnemyMonElevation[gBattleSpritesDataPtr->bankData[battlerId].transformSpecies] == 0)
+		invisible = TRUE;
+
+	if (gBattleSpritesDataPtr->bankData[battlerId].behindSubstitute)
+		invisible = TRUE;
+
+	shadowSprite->pos1.x = battlerSprite->pos1.x;
+	shadowSprite->pos2.x = battlerSprite->pos2.x;
+	shadowSprite->invisible = invisible;
 }
