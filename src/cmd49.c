@@ -728,9 +728,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_MAGICIAN_MOXIE_BATTLEBOND:
 			switch (ABILITY(gBankAttacker)) {
 				case ABILITY_MAGICIAN:
-					if (ITEM(gBankAttacker) == ITEM_NONE
+					if (arg1 != ARG_IN_FUTURE_ATTACK
+					&& ITEM(gBankAttacker) == ITEM_NONE
 					&& ITEM(bankDef) != ITEM_NONE
 					&& BATTLER_ALIVE(gBankAttacker)
+					&& gBattleMoves[gCurrentMove].effect != EFFECT_FLING
+					&& gBattleMoves[gCurrentMove].effect != EFFECT_NATURAL_GIFT
+					&& !gNewBS->consumedGem //Can use Gem and steal item right away
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
@@ -1362,7 +1366,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->bypassSubstitute = FALSE;
 			gNewBS->preFaintEffectsState = 0;
 			gNewBS->MeFirstByte = FALSE;
-			gNewBS->GemHelper = FALSE;
+			gNewBS->consumedGem = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gBattleScripting.atk49_state++;
 			break;

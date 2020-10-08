@@ -832,7 +832,7 @@ struct NewBattleStruct
 	bool8 ParentalBondOn : 2;
 	bool8 MeFirstByte : 1;
 	bool8 ReceiverActivated : 1;
-	bool8 GemHelper : 1;
+	bool8 consumedGem : 1;
 	bool8 fusionFlareUsedPrior : 1;
 	bool8 fusionBoltUsedPrior : 1;
 	bool8 endTurnDone : 1;

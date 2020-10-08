@@ -3342,9 +3342,9 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		#endif
 
 		case ITEM_EFFECT_GEM: //This check is specifically meant for the AI, as the Gem would usually be consumed by now
-							  //If the gNewBS->GemHelper is active and the user still has a gem, that means it received another through Symbiosis which is ignored
+							  //If the gNewBS->consumedGem is active and the user still has a gem, that means it received another through Symbiosis which is ignored
 		//1.3x / 1.5x Boost
-			if (data->moveType == data->atkItemQuality && !gNewBS->GemHelper)
+			if (data->moveType == data->atkItemQuality && !gNewBS->consumedGem)
 			{
 				#ifdef OLD_GEM_BOOST
 					power = (power * 15) / 10;
@@ -3370,7 +3370,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 	}
 
 	//Gem activated at runtime
-	if (gNewBS->GemHelper)
+	if (gNewBS->consumedGem)
 	{
 		//1.3x / 1.5x Boost
 		#ifdef OLD_GEM_BOOST

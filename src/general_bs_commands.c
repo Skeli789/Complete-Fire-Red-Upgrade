@@ -99,7 +99,7 @@ bool8 TryActivateGemBattlescript(void)
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2)
 	{
 		gLastUsedItem = ITEM(gBankAttacker);
-		gNewBS->GemHelper = TRUE;
+		gNewBS->consumedGem = TRUE;
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_Gems;
 		return TRUE;
