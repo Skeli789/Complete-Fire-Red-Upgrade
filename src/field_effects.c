@@ -907,6 +907,7 @@ static bool8 RockClimb_JumpOnRockClimbBlob(struct Task *task, struct EventObject
 {
 	if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
 	{
+		PlaySE(SE_HOP);
 		EventObjectSetGraphicsId(eventObject, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_SURFING));
 		EventObjectClearHeldMovementIfFinished(eventObject);
 		EventObjectSetHeldMovement(eventObject, GetJumpSpecialMovementAction(eventObject->movementDirection));
@@ -1008,6 +1009,7 @@ static bool8 RockClimb_StopRockClimbInit(struct Task *task, struct EventObject *
 			return FALSE;
 	}
 
+	PlaySE(SE_ROCK_SMASH);
 	RockClimbDust(eventObject, task->tMovementDir); //Dust on final spot
 	EventObjectSetHeldMovement(eventObject, GetJumpSpecialMovementAction(sRockClimbMovement[eventObject->movementDirection].jumpDir));
 	SetSurfBobState(eventObject->fieldEffectSpriteId, 0);
