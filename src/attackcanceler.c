@@ -76,6 +76,7 @@ void atk00_attackcanceler(void)
 		return;
 	else if (!BATTLER_ALIVE(gBankTarget)
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
+	&& gBattleMoves[gCurrentMove].effect != EFFECT_EXPLOSION //Exploding moves still KO the attacker
 	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
 	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && gBattleMoves[gCurrentMove].target & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 	{

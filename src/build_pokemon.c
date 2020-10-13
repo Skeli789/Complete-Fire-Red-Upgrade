@@ -4027,9 +4027,17 @@ u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
 	if (FlagGet(FLAG_ABILITY_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean Pokemon wouldn't have ability
+		u32 attempt = 0;
 
 		do
 		{
+			if (++attempt > 20)
+			{
+				//Entered infinite loop
+				newAbility = ABILITY_ILLUMINATE; //An Ability that has no beneficial effect
+				break;
+			}
+
 			newAbility = newAbility * id * species;
 			newAbility = MathMax(1, newAbility % ABILITIES_COUNT);
 		}

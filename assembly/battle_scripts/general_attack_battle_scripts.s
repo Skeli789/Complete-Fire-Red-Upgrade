@@ -190,9 +190,14 @@ BS_007_Explode:
 	faintifabilitynotdamp
 	setuserhptozero
 	waitstateatk
+	jumpiffainted BANK_TARGET ExplodeDeadTarget
 	accuracycheck BS_MOVE_MISSED 0x0
 	goto BS_HIT_FROM_DAMAGE_CALC
-	
+
+ExplodeDeadTarget:
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	goto BS_MOVE_END
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_008_DreamEater

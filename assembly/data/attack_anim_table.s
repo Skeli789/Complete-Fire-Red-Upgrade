@@ -15160,16 +15160,19 @@ GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL OAM_DOUBLE
 @Credits to Lixdel
 ANIM_PLASMAFISTS:
 	loadparticle ANIM_TAG_SHOCK_3 @charge
-	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
 	loadparticle ANIM_TAG_SPARK @shock wave
-	loadparticle ANIM_TAG_IMPACT @thunder punch
-	loadparticle ANIM_TAG_HANDS_AND_FEET @thunder punch
+	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
 	loadparticle ANIM_TAG_LIGHTNING @thunder punch
-	pokespritetoBG bank_attacker
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_HANDS_AND_FEET @fist
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPARK 0x0 0xC 0xC 0x7E40 @;Blue Electricity
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPARK_2 0x0 0xC 0xC 0x7E40 @;Blue Electricity
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SHOCK_3 0x0 0xC 0xC 0x7FA0 @;Blue Electricity
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_HANDS_AND_FEET 0x0 0x8 0x8 0x079D @;Yellow
 	setblends 0x80C
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
-	launchtemplate PFISTS_CHARGE 0x2 0x1 0x0
+	launchtemplate PFISTS_CHARGE TEMPLATE_ATTACKER | 2, 0x1 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x3 0x5c 0x1
 	call PFISTS_SPARKS1
 	pause 0xA
@@ -15195,7 +15198,6 @@ ANIM_PLASMAFISTS:
 	pause 0xA
 	call PFISTS_SPARKS2
 	waitanimation
-	pokespritefromBG bank_attacker
 	launchtask 0x80AECE1 0x5 0x0
 	waitanimation
 	pokespritetoBG bank_target
@@ -15210,18 +15212,18 @@ ANIM_PLASMAFISTS:
 PFISTS_SPARKS1:
 	playsound2 0xce SOUND_PAN_ATTACKER
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x2 0x0 0xb 0x5bff
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x20 0x18 0xbe 0xc bank_attacker 0x1 0x0
 	pause 0x0
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x50 0x18 0x16 0xc bank_attacker 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x9c 0x18 0x79 0xd bank_attacker 0x1 0x0
 	return
 
 PFISTS_SPARKS2:
 	playsound2 0xce SOUND_PAN_ATTACKER
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0x64 0x18 0x3c 0xa bank_attacker 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0xaa 0x18 0x2a 0xb bank_attacker 0x1 0x0
 	pause 0x0
-	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer TEMPLATE_ATTACKER | 2, 0x7 0xee 0x18 0xa5 0xa bank_attacker 0x1 0x0
 	return
 
 PFISTS_STRIKE:
