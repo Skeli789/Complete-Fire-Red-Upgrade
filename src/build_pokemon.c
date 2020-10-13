@@ -675,12 +675,12 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		
 		//Get details for level scaling
 		#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
-		#ifdef VAR_GAME_DIFFICUTY
+		#ifdef VAR_GAME_DIFFICULTY
 		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY; //Don't scale Trainers on easy mode
 		#else
 		levelScaling = TRUE;
 		#endif
-		
+
 		minPartyLevel = MAX_LEVEL;
 		maxPartyLevel = 0;
 		highestPlayerLevel = GetHighestMonLevel(gPlayerParty);
@@ -1013,9 +1013,9 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	else
 	{
 		#ifdef VAR_GAME_DIFFICULTY
-		levelSubtractor = (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) ? 0 : 5; //In Expert mode, Trainers always scale to your average level, other the average level - 5 at minimum
+		levelSubtractor = (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) ? 0 : 6; //In Expert mode, Trainers scale closer to your average level, other the average level - 6 at minimum
 		#else
-		levelSubtractor = 5;
+		levelSubtractor = 6;
 		#endif
 	}
 
@@ -3710,13 +3710,31 @@ void TryRandomizeSpecies(unusedArg u16* species)
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
 		u32 newSpecies = *species;
+		u32 prevNewSpecies = SPECIES_NONE; //Helps prevent infinite loop
+		u32 offset = 1; //Used in case of an infinite loop
+		u32 attempts = 0; //Really help prevent infinite loop
 
 		do
 		{
+			++attempts;
+			if (attempts > 20)
+			{
+				newSpecies = SPECIES_DITTO;
+				break;
+			}
+
 			newSpecies *= id;
 			newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
+
+			while (newSpecies == prevNewSpecies) //Entered into an infinite loop
+			{
+				newSpecies = (newSpecies + offset++) * id; //Offset the new species by an increasing number to fix problem
+				newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
+			}
+
+			prevNewSpecies = newSpecies; //Record the current attempted species in case of infinite loop
 		} while (gSpecialSpeciesFlags[newSpecies].randomizerBan);
-		
+
 		*species = newSpecies;
 	}
 	#endif

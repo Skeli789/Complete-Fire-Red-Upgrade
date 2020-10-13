@@ -993,11 +993,22 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				else
 				#endif
 				{
-					gMultiHitCounter = Random() & 3;
-					if (gMultiHitCounter > 1)
-						gMultiHitCounter = (Random() & 3) + 2;
-					else
-						gMultiHitCounter += 2;
+					gMultiHitCounter = Random() % 3; //Split into groups of 3
+					switch (gMultiHitCounter)
+					{
+						case 0: //33 %
+							gMultiHitCounter = 2;
+							break;
+						case 1: //33 %
+							gMultiHitCounter = 3;
+							break;
+						case 2: //33 %
+							if ((Random() & 1) == 0) //16.7 %
+								gMultiHitCounter = 4;
+							else //16.7 %
+								gMultiHitCounter = 5;
+							break;
+					}
 				}
 
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)

@@ -1095,7 +1095,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_EJECT_BUTTON
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->turnDamageTaken[banks[i]] != 0
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(i) == B_SIDE_PLAYER) //Wild's can't activate
 					&&  HasMonToSwitchTo(banks[i]))
 					{

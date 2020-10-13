@@ -1654,7 +1654,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& !IsOfType(bank, moveType)
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
-				&& !SheerForceCheck())
+				&& !SheerForceCheck()
+				&& gMultiHitCounter <= 1)
 				{
 					SET_BATTLER_TYPE(bank, moveType);
 					PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);

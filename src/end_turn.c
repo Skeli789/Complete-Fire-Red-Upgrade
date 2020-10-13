@@ -638,7 +638,8 @@ u8 TurnBasedEffects(void)
 			case ET_Nightmare:
 				if (gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
 				{
-					if (gBattleMons[gActiveBattler].status1 & STATUS_SLEEP)
+					if (gBattleMons[gActiveBattler].status1 & STATUS_SLEEP
+					||  ABILITY(gActiveBattler) == ABILITY_COMATOSE)
 					{
 						if (BATTLER_ALIVE(gActiveBattler)
 						&&  ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)

@@ -3366,8 +3366,10 @@ void atkA3_disablelastusedattack(void)
 	if (i < MAX_MON_MOVES
 	&& gDisableStructs[bankDef].disabledMove == 0
 	&& gBattleMons[bankDef].pp[i] != 0
-	&& !IsAnyMaxMove(gLastUsedMoves[bankDef])
 	&& !IsZMove(gLastUsedMoves[bankDef])
+	&& !IsAnyMaxMove(gLastUsedMoves[bankDef])
+	&& !IsZMove(gLastPrintedMoves[bankDef])
+	&& !IsAnyMaxMove(gLastPrintedMoves[bankDef])
 	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0))
 	{
 		PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[bankDef].moves[i])

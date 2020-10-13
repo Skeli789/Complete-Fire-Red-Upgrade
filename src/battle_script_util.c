@@ -1126,7 +1126,8 @@ void InitiateInstruct(void)
 
 	gBankAttacker = gBankTarget;
 
-	if (gAbsentBattlerFlags & gBitTable[gNewBS->lastTargeted[gBankAttacker]])
+	if (gAbsentBattlerFlags & gBitTable[gNewBS->lastTargeted[gBankAttacker]]
+	|| gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Spread move
 		gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
 	else
 		gBankTarget = gNewBS->lastTargeted[gBankAttacker];
