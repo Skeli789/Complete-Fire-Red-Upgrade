@@ -1341,7 +1341,6 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SPITE:
-		case EFFECT_MIMIC:
 			if (MoveWouldHitFirst(move, bankAtk, bankDef))
 			{
 				if (gLastUsedMoves[bankDef] == MOVE_NONE
@@ -1352,6 +1351,23 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_SUBSTITUTE_CHECK;
+			break;
+
+		case EFFECT_MIMIC:
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+			{
+				if (gLastUsedMoves[bankDef] == MOVE_NONE
+				||  gLastUsedMoves[bankDef] == 0xFFFF
+				||  gSpecialMoveFlags[gLastUsedMoves[bankDef]].gMimicBannedMoves
+				||  IsZMove(gLastPrintedMoves[bankDef])
+				||  IsAnyMaxMove(gLastPrintedMoves[bankDef]))
+					DECREASE_VIABILITY(10);
+			}
+			else if (predictedMove == MOVE_NONE)
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_SUBSTITUTE_CHECK;
+			break;
 
 		case EFFECT_METRONOME:
 			break;
@@ -1395,12 +1411,16 @@ MOVESCR_CHECK_0:
 		case EFFECT_ENCORE:
 			if (gDisableStructs[bankDef].encoreTimer == 0
 			&&  data->defItemEffect != ITEM_EFFECT_CURE_ATTRACT
+			&& !IsDynamaxed(bankDef)
 			&& !PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				if (MoveWouldHitFirst(move, bankAtk, bankDef))
 				{
 					if (gLastUsedMoves[bankDef] == MOVE_NONE
-					|| gLastUsedMoves[bankDef] == 0xFFFF)
+					|| gLastUsedMoves[bankDef] == 0xFFFF
+					|| gSpecialMoveFlags[gLastUsedMoves[bankDef]].gMovesThatCallOtherMoves
+					|| IsZMove(gLastPrintedMoves[bankDef])
+					|| IsAnyMaxMove(gLastPrintedMoves[bankDef]))
 						DECREASE_VIABILITY(10);
 				}
 				else if (predictedMove == MOVE_NONE)
@@ -1793,13 +1813,8 @@ MOVESCR_CHECK_0:
 
 				goto AI_LOWER_EVASION;
 			}
-			else if ((data->atkStatus2 & STATUS2_WRAPPED) || (data->atkStatus3 & STATUS3_LEECHSEED))
-				goto AI_STANDARD_DAMAGE;
 
-			//Spin checks
-			if (!(gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_SPIKES))
-				DECREASE_VIABILITY(6);
-			break;
+			goto AI_STANDARD_DAMAGE; //Rapid Spin
 
 		case EFFECT_RAIN_DANCE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)

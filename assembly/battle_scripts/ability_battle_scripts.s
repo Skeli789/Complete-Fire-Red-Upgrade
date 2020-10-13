@@ -562,6 +562,7 @@ BattleScript_FlashFireBoost:
 	printfromtable gFlashFireStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -578,20 +579,20 @@ BattleScript_MoveHPDrain:
 	datahpupdate BANK_TARGET
 	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
 	waitmessage DELAY_1SECOND
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
 BattleScript_MonMadeMoveUseless_PPLoss:
 	ppreduce
 BattleScript_MonMadeMoveUseless:
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	attackstring
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

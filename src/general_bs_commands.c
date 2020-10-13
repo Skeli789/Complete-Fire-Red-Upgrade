@@ -3245,7 +3245,9 @@ void atk9D_mimicattackcopy(void)
 	|| gLastUsedMoves[gBankTarget] == 0xFFFF
 	|| gSpecialMoveFlags[gLastUsedMoves[gBankTarget]].gMimicBannedMoves
 	|| IsZMove(gLastUsedMoves[gBankTarget])
-	|| IsAnyMaxMove(gLastUsedMoves[gBankTarget]))
+	|| IsAnyMaxMove(gLastUsedMoves[gBankTarget])
+	|| IsZMove(gLastPrintedMoves[gBankTarget])
+	|| IsAnyMaxMove(gLastPrintedMoves[gBankTarget]))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	}
@@ -3391,6 +3393,8 @@ void atkA4_trysetencore(void)
 	||  gSpecialMoveFlags[gLastUsedMoves[gBankTarget]].gMovesThatCallOtherMoves
 	||  IsZMove(gLastUsedMoves[gBankTarget])
 	||  IsAnyMaxMove(gLastUsedMoves[gBankTarget])
+	||  IsZMove(gLastPrintedMoves[gBankTarget])
+	||  IsAnyMaxMove(gLastPrintedMoves[gBankTarget])
 	||  IsDynamaxed(gBankTarget))
 	{
 		i = MAX_MON_MOVES;

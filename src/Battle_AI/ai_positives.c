@@ -219,8 +219,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}*/
 
 			//Continue defense check
-			if (BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_PHYSICAL && atkAbility != ABILITY_CONTRARY)
+			if ((BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_PHYSICAL && atkAbility != ABILITY_CONTRARY))
 				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 10, 1);
+			else if (MoveInMoveset(MOVE_BODYPRESS, bankAtk))
+				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 8, 1);
 			break;
 
 		case EFFECT_SPEED_UP:
@@ -228,7 +230,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_SPEED_PLUS:
 			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
 				break;
-			if (atkAbility != ABILITY_CONTRARY)
+			if (!IsTrickRoomActive() && atkAbility != ABILITY_CONTRARY)
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3);
 			break;
 
@@ -1270,9 +1272,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			else //Rapid Spin
 			{
-				if (data->atkStatus3 & STATUS3_LEECHSEED
-				|| data->atkStatus2 & STATUS2_WRAPPED)
-					INCREASE_STATUS_VIABILITY(3);
+				if (!(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_DOESNT_AFFECT_FOE))
+				{
+					if (data->atkStatus3 & STATUS3_LEECHSEED
+					|| data->atkStatus2 & STATUS2_WRAPPED)
+						INCREASE_STATUS_VIABILITY(3);
+				}
 			}
 			break;
 
@@ -1562,7 +1567,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			goto AI_SPECIAL_DEFENSE_PLUS;
 
 		case EFFECT_TAUNT:
-			if (SPLIT(predictedMove) == SPLIT_STATUS)
+			if (SPLIT(predictedMove) == SPLIT_STATUS
+			|| IsClassGoodToTaunt(GetBankFightingStyle(bankDef)))
 				INCREASE_STATUS_VIABILITY(3);
 			else if (StatusMoveInMoveset(bankDef))
 				INCREASE_STATUS_VIABILITY(2);
@@ -1885,6 +1891,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						__attribute__ ((fallthrough));
 
 					case MOVE_QUIVERDANCE:
+						if (defAbility == ABILITY_DANCER)
+							break; //Bad Idea
 						if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						__attribute__ ((fallthrough));
@@ -1915,6 +1923,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						__attribute__ ((fallthrough));
 
 					default: //Dragon Dance + Shift Gear
+						if (move == MOVE_DRAGONDANCE && defAbility == ABILITY_DANCER)
+							break; //Bad Idea
 						if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						else

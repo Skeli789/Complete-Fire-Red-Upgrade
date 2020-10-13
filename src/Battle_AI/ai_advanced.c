@@ -285,7 +285,19 @@ bool8 IsClassDoublesAttacker(u8 class)
 
 bool8 IsClassDamager(u8 class)
 {
-	return IsClassSweeper(class) ||  IsClassDoublesAttacker(class);
+	return IsClassSweeper(class) || IsClassDoublesAttacker(class);
+}
+
+bool8 IsClassGoodToTaunt(u8 class)
+{
+	return class == FIGHT_CLASS_STALL
+		|| class == FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS
+		|| class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC
+		|| class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS
+		|| class == FIGHT_CLASS_ENTRY_HAZARDS
+		|| class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP
+		|| class == FIGHT_CLASS_DOUBLES_UTILITY
+		|| class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
 }
 
 u8 GetBankFightingStyle(u8 bank)

@@ -30,6 +30,7 @@ bool8 IsClassDoublesTeamSupport(u8 class);
 bool8 IsClassDoublesSpecific(u8 class);
 bool8 IsClassDoublesAttacker(u8 class);
 bool8 IsClassDamager(u8 class);
+bool8 IsClassGoodToTaunt(u8 class);
 u8 PredictBankFightingStyle(u8 bank);
 u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemEffect, const u8 bank);
 
