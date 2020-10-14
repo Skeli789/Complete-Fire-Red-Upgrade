@@ -531,6 +531,9 @@
 .equ Template_IceCrystalSpiralInwardSmall, 0x83E6360
 .equ Template_IceCrystalSpiralInwardLarge, 0x83E6348
 .equ Template_PowerAbsorptionOrb, 0x83E2A58
+.equ Template_GoldRing, 0x83E6EEC
+.equ Template_ComplexPaletteBlend, 0x83e7b3c
+.equ Template_KnockOffStrike, 0x83ff764
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -638,6 +641,7 @@
 .equ HEALING_ANIM_TARGET, 0x81D5712
 .equ SAND_ATTACK_DIRT, 0x81cdf72
 .equ EMBER_FIRE_HIT, 0x81c7cd5
+.equ PSYBEAM_RINGS, 0x81d0dd4
 
 @supercommands
 

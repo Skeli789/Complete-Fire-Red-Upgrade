@@ -680,7 +680,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 			if (effect)
 			{
 				if (GetPocketByItemId(gLastUsedItem) == POCKET_BERRY_POUCH)
-					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+					gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 
 				gBattleScripting.bank = bank;
 				gStringBank = bank;
@@ -854,7 +854,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		}
 
 		if (effect && GetPocketByItemId(gLastUsedItem)== POCKET_BERRY_POUCH)
-			gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+			gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 
 		if (effect == REQUEST_HP_BATTLE)
 		{

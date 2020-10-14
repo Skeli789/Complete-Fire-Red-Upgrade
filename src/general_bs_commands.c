@@ -2115,7 +2115,7 @@ void atk6A_removeitem(void)
 	&& gNewBS->NoSymbiosisByte == FALSE
 	&& ABILITY(partner) == ABILITY_SYMBIOSIS
 	&& (!gNewBS->IncinerateCounters[bank] || oldItemEffect == ITEM_EFFECT_AIR_BALLOON) //Air Balloons can't be restored by Recycle, but they trigger Symbiosis
-	&& !(gWishFutureKnock.knockedOffPokes[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	&& !(gNewBS->corrodedItems[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
 	&& partnerItem != ITEM_NONE
 	&& CanTransferItem(SPECIES(bank), partnerItem)
 	&& CanTransferItem(SPECIES(partner), partnerItem))
@@ -2147,7 +2147,7 @@ void atk6A_removeitem(void)
 
 	gNewBS->NoSymbiosisByte = FALSE;
 	gNewBS->IncinerateCounters[bank] = 0;
-	gWishFutureKnock.knockedOffPokes[SIDE(bank)] &= ~(gBitTable[gBattlerPartyIndexes[bank]]);
+	gNewBS->corrodedItems[SIDE(bank)] &= ~(gBitTable[gBattlerPartyIndexes[bank]]);
 }
 
 void atk6B_atknameinbuff1(void)
@@ -4599,7 +4599,8 @@ void atkD0_settaunt(void)
 	}
 }
 
-void atkD2_tryswapitems(void) { //Trick
+void atkD2_tryswapitems(void) //Trick
+{
 	// Wild Pokemon can't swap items with player
 	if ((SIDE(gBankAttacker) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER)))
 	|| IsRaidBattle())
@@ -4614,18 +4615,19 @@ void atkD2_tryswapitems(void) { //Trick
 		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankAttacker].item)
 		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankTarget].item)
 		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankTarget].item)
-		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankAttacker].item))
+		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankAttacker].item)
+		|| (gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]])
+		|| (gNewBS->corrodedItems[SIDE(gBankTarget)] & gBitTable[gBattlerPartyIndexes[gBankTarget]]))
+		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
-		// check if ability prevents swapping
-		else if (ABILITY(gBankTarget) == ABILITY_STICKYHOLD)  {
+		}
+		else if (ABILITY(gBankTarget) == ABILITY_STICKYHOLD) //Check if ability prevents swapping
+		{
 			gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
 			gLastUsedAbility = ABILITY(gBankTarget);
 			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 		}
-
-		//Took a while, but all checks passed and items can be safely swapped
-		else
+		else //Took a while, but all checks passed and items can be safely swapped
 		{
 			u16 oldItemAtk, *newItemAtk;
 

@@ -132,3 +132,6 @@ void TryFailPoltergeist(void);
 void WakeUpSleepingPokemon(void);
 void HandleIllusionShiftSwitch(void);
 void ClearStatBuffEffectNotProtectAffected(void);
+void TryFailCorrosiveGas(void);
+void CorrodeItem(void);
+void TryFailSteelRoller(void);

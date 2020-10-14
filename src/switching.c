@@ -364,7 +364,8 @@ void atk4D_switchindataupdate(void)
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
 
-	//Former Knock Off Check was here
+	if (gNewBS->corrodedItems[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]])
+		gBattleMons[gActiveBattler].item = 0;
 
 	if (gCurrentMove == MOVE_BATONPASS)
 	{

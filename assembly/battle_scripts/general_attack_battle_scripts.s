@@ -3929,8 +3929,27 @@ BS_187_Yawn:
 
 .global BS_188_KnockOff
 BS_188_KnockOff:
+	jumpifmove MOVE_CORROSIVEGAS CorrosiveGasBS
 	setmoveeffect MOVE_EFFECT_KNOCK_OFF
 	goto BS_STANDARD_HIT
+
+CorrosiveGasBS:
+	attackcanceler
+	attackstringnoprotean
+	ppreduce
+	jumpifbehindsubstitute BANK_TARGET NOEFFECT
+	jumpifability BANK_TARGET ABILITY_STICKYHOLD BattleScript_ProtectedByAbility
+	tryactivateprotean
+	callasm TryFailCorrosiveGas
+	accuracycheck BS_MOVE_MISSED + 2 0x0
+	attackanimation
+	waitanimation
+	callasm CorrodeItem
+	setword BATTLE_STRING_LOADER gText_CorrodedItem
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5322,6 +5341,7 @@ LastResortBS:
 .global BS_243_DamageSetTerrain
 BS_243_DamageSetTerrain:
 	attackcanceler
+	callasm TryFailSteelRoller
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT

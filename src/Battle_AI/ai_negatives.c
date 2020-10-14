@@ -2103,7 +2103,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_RECYCLE:
 			if (move == MOVE_BELCH)
 			{
-				if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[bankAtk]]))
+				if (!(gNewBS->canBelch[SIDE(bankAtk)] & gBitTable[gBattlerPartyIndexes[bankAtk]]))
 					DECREASE_VIABILITY(10);
 				else
 					goto AI_STANDARD_DAMAGE;
@@ -2126,6 +2126,15 @@ MOVESCR_CHECK_0:
 				if (GetStrongestMove(bankDef, bankAtk) == MOVE_NONE
 				|| AI_SpecialTypeCalc(GetStrongestMove(bankDef, bankAtk), bankDef, bankAtk) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
 					DECREASE_VIABILITY(9); //Don't use Knock Off is the enemy's only moves don't affect the AI
+			}
+			
+			if (move == MOVE_CORROSIVEGAS)
+			{
+				if (data->defAbility == ABILITY_STICKYHOLD
+				|| !CanKnockOffItem(bankDef))
+					DECREASE_VIABILITY(10);
+				else
+					goto AI_SUBSTITUTE_CHECK;
 			}
 			break;
 
@@ -2850,6 +2859,13 @@ MOVESCR_CHECK_0:
 				else
 					goto AI_STANDARD_DAMAGE;
 			}
+			break;
+
+		case EFFECT_DAMAGE_SET_TERRAIN:
+			if (move == MOVE_STEELROLLER && gTerrainType == 0)
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_SYNCHRONOISE:

@@ -439,7 +439,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
 			&& (!BATTLER_ALIVE(gBankTarget) || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
 			{
-				gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
+				gNewBS->canBelch[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
 
 				gLastUsedItem = gBattleMons[gBankTarget].item;
 				gBattleMons[gBankTarget].item = 0;
@@ -460,7 +460,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_STICKYHOLD:
 			if (MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
-			&& (gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF || gBattleMoves[gCurrentMove].effect == EFFECT_THIEF)
+			&& ((gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF && gCurrentMove != MOVE_CORROSIVEGAS)
+			 || gBattleMoves[gCurrentMove].effect == EFFECT_THIEF)
 			&& CanKnockOffItem(gBankTarget)
 			&& ABILITY(gBankTarget) == ABILITY_STICKYHOLD
 			&& BATTLER_ALIVE(gBankTarget))
@@ -740,6 +741,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& MOVE_HAD_EFFECT
 					&& CanTransferItem(SPECIES(bankDef), ITEM(bankDef))
 					&& CanTransferItem(SPECIES(gBankAttacker), ITEM(bankDef))
+					&& !(gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]])
 					&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || !BATTLER_ALIVE(bankDef)))
 					{
 						gBattleScripting.bank = gBankAttacker;

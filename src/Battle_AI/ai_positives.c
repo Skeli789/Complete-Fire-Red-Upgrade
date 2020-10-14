@@ -775,6 +775,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			&&  data->defItem != ITEM_NONE
 			&& CanTransferItem(SPECIES(bankDef), data->defItem)
 			&& CanTransferItem(SPECIES(bankAtk), data->defItem)
+			&& !(gNewBS->corrodedItems[SIDE(bankAtk)] & gBitTable[gBattlerPartyIndexes[bankAtk]])
 			&& !MoveInMoveset(MOVE_ACROBATICS, bankAtk)
 			&& defAbility != ABILITY_STICKYHOLD
 			&& IsClassSweeper(class))
@@ -1733,9 +1734,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 				default:
 					if (CanKnockOffItem(bankDef)
-					&& !MoveEffectInMoveset(EFFECT_POLTERGEIST, bankAtk)
-					&& !CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
-						INCREASE_VIABILITY(3); //Increase past strongest move
+					&& !MoveEffectInMoveset(EFFECT_POLTERGEIST, bankAtk))
+					{
+						if (move == MOVE_CORROSIVEGAS)
+						{
+							INCREASE_STATUS_VIABILITY(2);
+						}
+						else //Regular Knock Off
+						{
+							if (!CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
+								INCREASE_VIABILITY(3); //Increase past strongest move
+						}
+					}
 			}
 			break;
 

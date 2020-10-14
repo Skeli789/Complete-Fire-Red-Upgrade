@@ -1720,7 +1720,9 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 							if (CanTransferItem(atkSpecies, ITEM(bankAtk))
 							&& CanTransferItem(atkSpecies, ITEM(bankDef))
 							&& CanTransferItem(defSpecies, ITEM(bankAtk))
-							&& CanTransferItem(defSpecies, ITEM(bankDef)))
+							&& CanTransferItem(defSpecies, ITEM(bankDef))
+							&& !(gNewBS->corrodedItems[SIDE(bankAtk)] & gBitTable[gBattlerPartyIndexes[bankAtk]])
+							&& !(gNewBS->corrodedItems[SIDE(bankDef)] & gBitTable[gBattlerPartyIndexes[bankDef]]))
 							{
 								switch (ITEM_EFFECT(bankAtk)) {
 									case ITEM_EFFECT_TOXIC_ORB:

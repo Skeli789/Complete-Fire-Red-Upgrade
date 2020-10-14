@@ -952,6 +952,12 @@ void AnimTask_TechnoBlast(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_TerrainPulse(u8 taskId)
+{
+	gBattleAnimArgs[0] = gTerrainType;
+	DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_GetTimeOfDay(u8 taskId)
 {
 	gBattleAnimArgs[0] = 0; //Daytime
@@ -2107,7 +2113,7 @@ static void SpriteCB_FallingObjectStep(struct Sprite *sprite)
 			sprite->data[1] = 0;
 			sprite->invisible ^= 1;
 			if (++sprite->data[2] == 10)
-				DestroySpriteAndMatrix(sprite);
+				SetCallbackToStoredInData6(sprite);
 		}
 		break;
 	}
@@ -2141,6 +2147,7 @@ void SpriteCB_FallingObject(struct Sprite *sprite)
 
 		sprite->data[3] = gBattleAnimArgs[2]; //Speed
 		sprite->callback = SpriteCB_FallingObjectStep;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	}
 }
 
@@ -2219,6 +2226,7 @@ void SpriteCB_FallingObjectOnTargetCentre(struct Sprite *sprite)
 
 	sprite->data[3] = gBattleAnimArgs[2]; //Speed
 	sprite->callback = SpriteCB_FallingObjectStep;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 //Throws acid at a single target.
@@ -3008,6 +3016,7 @@ static void SpriteCB_PoltergeistItem_Step0(struct Sprite* sprite)
 	sprite->callback = SpriteCB_PoltergeistItem_Step1;
 }
 
+//Creates the moving item for Poltergeist
 static void SpriteCB_PoltergeistItem(struct Sprite* sprite)
 {
 	//Move sprite upwards
@@ -3018,6 +3027,73 @@ static void SpriteCB_PoltergeistItem(struct Sprite* sprite)
 	}
 	else
 		sprite->pos1.y -= 2;
+}
+
+//Creates the slam hit for LashOut
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: flip
+void SpriteCB_LashOutStrike(struct Sprite* sprite)
+{
+	bool8 flip = SIDE(gBattleAnimTarget) == B_SIDE_PLAYER;
+	
+	if (gBattleAnimArgs[2])
+		flip ^= 1;
+
+	sprite->data[0] = 11;
+
+    if (flip)
+    {
+        sprite->pos1.x -= gBattleAnimArgs[0];
+        sprite->data[0] *= -1;
+        StartSpriteAffineAnim(sprite, 1);
+    }
+    else
+    {
+        sprite->pos1.x += gBattleAnimArgs[0];
+    }
+
+	sprite->pos1.y += gBattleAnimArgs[1];
+	sprite->data[1] = 192;
+    sprite->callback = (void*) (0x80E42DC | 1); //AnimKnockOffStrike_Step
+}
+
+void SpriteCB_SteelRoller_LeftRight(struct Sprite* sprite)
+{
+	sprite->data[0] = -sprite->data[4]; //Slice distance
+	sprite->data[1] = sprite->data[5]; //Slice speed
+	sprite->callback = SpriteCB_LeftRightSliceStep0;
+}
+
+static void SpriteCB_SteelRoller_Down(struct Sprite *sprite)
+{
+	sprite->pos2.y += sprite->data[3];
+	if (sprite->pos2.y >= 0)
+	{
+		sprite->pos2.y = 0;
+		sprite->callback = SpriteCB_SteelRoller_LeftRight;
+	}
+}
+
+//Creates the moving Steel Wheel for Steel Roller
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: falling speed
+//arg 3: horizontal distance
+//arg 4: horizontal speed
+void SpriteCB_SteelRoller(struct Sprite* sprite)
+{
+	sprite->pos1.x = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_X);
+	sprite->pos1.y = GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y);
+
+	sprite->pos2.x = gBattleAnimArgs[0];
+	sprite->pos2.y += gBattleAnimArgs[1];
+	
+	sprite->data[4] = gBattleAnimArgs[3]; //Left/Right distance
+	sprite->data[5] = gBattleAnimArgs[4]; //Left/Right speed
+
+	sprite->data[3] = gBattleAnimArgs[2]; //Falling Speed
+	sprite->callback = SpriteCB_SteelRoller_Down;
 }
 
 //Creates The Extreme Evoboost Circles

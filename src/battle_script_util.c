@@ -413,10 +413,11 @@ void ClearBeakBlastBit(void)
 
 void BestowItem(void)
 {
-	if (ITEM(gBankTarget) == 0
-	&& ITEM(gBankAttacker) != 0
+	if (ITEM(gBankTarget) == ITEM_NONE
+	&& ITEM(gBankAttacker) != ITEM_NONE
 	&& CanTransferItem(SPECIES(gBankTarget), ITEM(gBankAttacker))
-	&& CanTransferItem(SPECIES(gBankAttacker), ITEM(gBankAttacker)))
+	&& CanTransferItem(SPECIES(gBankAttacker), ITEM(gBankAttacker))
+	&& !(gNewBS->corrodedItems[SIDE(gBankTarget)] & gBitTable[gBattlerPartyIndexes[gBankTarget]]))
 	{
 		gLastUsedItem = gBattleMons[gBankTarget].item = ITEM(gBankAttacker);
 		gBattleMons[gBankAttacker].item = 0;
@@ -440,7 +441,7 @@ void BelchFunction(void)
 	if (IsRaidBattle() && gBankAttacker == BANK_RAID_BOSS)
 		return; //Raid bosses can always use Belch
 
-	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
+	if (!(gNewBS->canBelch[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 }
 
@@ -2238,4 +2239,23 @@ void HandleIllusionShiftSwitch(void)
 void ClearStatBuffEffectNotProtectAffected(void)
 {
 	gNewBS->statBuffEffectNotProtectAffected = FALSE;
+}
+
+void TryFailCorrosiveGas(void)
+{
+	if (!CanKnockOffItem(gBankTarget))
+		gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
+}
+
+void CorrodeItem(void)
+{
+	gNewBS->corrodedItems[SIDE(gBankTarget)] |= gBitTable[gBattlerPartyIndexes[gBankTarget]];
+	gLastUsedItem = ITEM(gBankTarget);
+	gBattleMons[gBankTarget].item = ITEM_NONE; //Inaccessible while on the field (but still on party menu)
+}
+
+void TryFailSteelRoller(void)
+{
+	if (gCurrentMove == MOVE_STEELROLLER && gTerrainType == 0)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
 }

@@ -11527,7 +11527,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_EXPANDINGFORCE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
@@ -11543,7 +11543,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_STEELROLLER] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_DAMAGE_SET_TERRAIN,
 		.power = 130,
 		.type = TYPE_STEEL,
@@ -11607,7 +11607,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_MISTYEXPLOSION] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_EXPLOSION,
 		.power = 100,
 		.type = TYPE_FAIRY,
@@ -11623,7 +11623,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_GRASSYGLIDE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 70,
 		.type = TYPE_GRASS,
@@ -11639,7 +11639,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_RISINGVOLTAGE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 70,
 		.type = TYPE_ELECTRIC,
@@ -11655,7 +11655,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_TERRAINPULSE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 50,
 		.type = TYPE_NORMAL,
@@ -11703,7 +11703,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_LASHOUT] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 75,
 		.type = TYPE_DARK,
@@ -11735,8 +11735,8 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_CORROSIVEGAS] =
-	{	//ANIM TODO
-		.effect = EFFECT_KNOCK_OFF, //EFFECT TODO
+	{
+		.effect = EFFECT_KNOCK_OFF,
 		.power = 0,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -11767,7 +11767,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_FLIPTURN] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_BATON_PASS,
 		.power = 60,
 		.type = TYPE_WATER,
@@ -11849,7 +11849,11 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_WICKEDBLOW] =
 	{
 		.effect = EFFECT_HIT,
+		#ifdef UNBOUND
+		.power = 70,
+		#else
 		.power = 80,
+		#endif
 		.type = TYPE_DARK,
 		.accuracy = 100,
 		.pp = 5,

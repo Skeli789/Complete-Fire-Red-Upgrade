@@ -2247,10 +2247,10 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat1[] =
 		.spDefEv = 96,
 		.spdEv = 96,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_PSYCHICSURGE
-		.item = ITEM_PSYCHIUM_Z,
+		.item = ITEM_FAIRIUM_Z,
 		.moves =
 		{
-			MOVE_PSYCHIC,
+			MOVE_EXPANDINGFORCE,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_ENERGYBALL,
 			MOVE_PROTECT,
@@ -2334,7 +2334,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat2[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_THUNDERBOLT,
+			MOVE_RISINGVOLTAGE,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_HIDDENPOWER, //TYPE_DRAGON
 			MOVE_VOLTSWITCH,
@@ -2360,7 +2360,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat2[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_THUNDER,
+			MOVE_RISINGVOLTAGE,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_GRASSKNOT,
 			MOVE_PROTECT,
@@ -4394,10 +4394,10 @@ const struct BattleTowerSpread gSpecialTowerSpread_Paula2[] =
 		.item = ITEM_NONE,
 		.moves =
 		{
+			MOVE_EXPANDINGFORCE,
 			MOVE_MOONBLAST,
 			MOVE_THUNDERBOLT,
 			MOVE_FOCUSBLAST,
-			MOVE_PSYSHOCK,
 		},
 		.ball = BALL_TYPE_PREMIER_BALL,
 		.shiny = TRUE,
@@ -4421,7 +4421,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Paula2[] =
 		.item = ITEM_NONE,
 		.moves =
 		{
-			MOVE_MOONBLAST,
+			MOVE_EXPANDINGFORCE,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_FOCUSBLAST,
 			MOVE_ENERGYBALL,
@@ -18179,10 +18179,10 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.spAtkEv = 248,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_ELECTRICSURGE
-		.item = ITEM_ELECTRIUM_Z,
+		.item = ITEM_TAPUNIUM_Z,
 		.moves =
 		{
-			MOVE_THUNDER,
+			MOVE_RISINGVOLTAGE,
 			MOVE_NATURESMADNESS,
 			MOVE_UTURN,
 			MOVE_TAUNT,
@@ -18234,7 +18234,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.item = ITEM_ELECTRIC_GEM,
 		.moves =
 		{
-			MOVE_DISCHARGE,
+			MOVE_RISINGVOLTAGE,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_GRASSKNOT,
 			MOVE_VOLTSWITCH,

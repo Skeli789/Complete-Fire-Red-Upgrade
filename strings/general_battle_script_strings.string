@@ -159,6 +159,9 @@ Neither Pok\emon can run away!
 #org @gText_WokenByUproar
 [SCRIPTING_BANK] was woken up\nby the Uproar!
 
+#org @gText_CorrodedItem
+[ATTACKER] corroded\n[TARGET]'s [LAST_ITEM]!
+
 //Status Strings
 
 #org @gText_TargetStaysAwake

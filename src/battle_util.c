@@ -1117,7 +1117,8 @@ bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank)
 	||  ITEM(receiverBank) != ITEM_NONE
 	||  ITEM(giverBank) == ITEM_NONE
 	|| !CanTransferItem(gBattleMons[giverBank].species, item)
-	|| !CanTransferItem(gBattleMons[receiverBank].species, item))
+	|| !CanTransferItem(gBattleMons[receiverBank].species, item)
+	|| (gNewBS->corrodedItems[SIDE(receiverBank)] & gBitTable[gBattlerPartyIndexes[receiverBank]]))
 		return FALSE;
 
 	return TRUE;
