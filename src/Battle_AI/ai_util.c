@@ -733,7 +733,7 @@ void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
 		u16 partnerKillingMove = gNewBS->ai.bestDoublesKillingMoves[partner][bankDef];
 
 		if (!(bankAtk & BIT_FLANK) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
-		&& !IsBankIncapacitated(bankAtk) //Not actually going to hit a target this turn
+		&& !IsBankIncapacitated(bankAtk) //Actually going to hit a target this turn
 		&& SIDE(bankAtk) != SIDE(bankDef) //No scores are calculated for hitting partners
 		&& (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //Two targets that can be hit on enemy side
 		 || MoveWouldHitFirst(chosenMove, bankAtk, bankDef) //This mon is going to hit the enemy before it can attack
@@ -995,6 +995,11 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return predictedDamage;
 }
 
+static void ClearDamageByMove(u8 bankAtk, u8 bankDef, u8 movePos)
+{
+	gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = 0xFFFFFFFF;
+}
+
 move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
 	u16 move;
@@ -1115,6 +1120,45 @@ static void ClearStrongestMoveAndCanKnockOut(const u8 bankAtk, const u8 bankDef)
 	gNewBS->ai.strongestMove[bankAtk][bankDef] = 0xFFFF;
 	gNewBS->ai.canKnockOut[bankAtk][bankDef] = 0xFF;
 	gNewBS->ai.can2HKO[bankAtk][bankDef] = 0xFF;
+}
+
+void ForceSpecificDamageRecalculation(const u8 bankAtk, const u8 bankDef, const u8 movePos)
+{
+	ClearStrongestMoveAndCanKnockOut(bankAtk, bankDef);
+	ClearDamageByMove(bankAtk, bankDef, movePos);
+
+	if (IS_DOUBLE_BATTLE)
+	{
+		u8 bankDefPartner = PARTNER(bankDef);
+		ClearStrongestMoveAndCanKnockOut(bankAtk, bankDefPartner);
+		ClearDamageByMove(bankAtk, bankDefPartner, movePos);
+		RemoveDoublesKillingScore(bankAtk, bankDef);
+		RemoveDoublesKillingScore(bankAtk, bankDefPartner);
+	}
+}
+
+void ForceCompleteDamageRecalculation(const u8 bankAtk)
+{
+	u8 foe1 = FOE(bankAtk);
+	u8 foe2 = PARTNER(foe1);
+	bool8 isDoubles = IS_DOUBLE_BATTLE != 0;
+
+	ClearStrongestMoveAndCanKnockOut(bankAtk, foe1);
+	if (isDoubles)
+		ClearStrongestMoveAndCanKnockOut(bankAtk, foe2);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		ClearDamageByMove(bankAtk, foe1, i);
+		if (isDoubles)
+			ClearDamageByMove(bankAtk, foe2, i);
+	}
+
+	if (isDoubles)
+	{
+		RemoveDoublesKillingScore(bankAtk, foe1);
+		RemoveDoublesKillingScore(bankAtk, foe2);
+	}
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)

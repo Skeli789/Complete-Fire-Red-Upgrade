@@ -163,11 +163,32 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 
 					u8 backup = gActiveBattler;
 					gActiveBattler = PARTNER(gActiveBattler);
+					ForceCompleteDamageRecalculation(gActiveBattler);
 					EmitChooseMove(0, (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) != 0, FALSE, &moveInfo); //Rechoose partner move
 					MarkBufferBankForExecution(gActiveBattler);
 					gActiveBattler = backup;
 				}
 				break;
+		}
+	}
+	else if (!IsBankIncapacitated(gActiveBattler) //The first Pokemon will actually attack
+	&& (chosenMove == MOVE_FUSIONFLARE || chosenMove == MOVE_FUSIONBOLT)) //The first Pokemon chose one of these moves
+	{
+		u8 partner = PARTNER(gActiveBattler);
+		u8 foe1 = FOE(gActiveBattler);
+
+		//Force recalculation since Fusion moves are now twice as strong
+		if (chosenMove == MOVE_FUSIONFLARE)
+		{
+			u8 movePos = FindMovePositionInMoveset(MOVE_FUSIONBOLT, partner);
+			if (movePos < MAX_MON_MOVES)
+				ForceSpecificDamageRecalculation(partner, foe1, movePos);
+		}
+		else //Fusion Bolt
+		{
+			u8 movePos = FindMovePositionInMoveset(MOVE_FUSIONFLARE, partner);
+			if (movePos < MAX_MON_MOVES)
+				ForceSpecificDamageRecalculation(partner, foe1, movePos);
 		}
 	}
 }

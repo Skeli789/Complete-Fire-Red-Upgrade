@@ -159,7 +159,6 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE)) //Check going first
 					INCREASE_VIABILITY(7);
-
 				else if (IsStrongestMove(move, bankAtk, bankDef))
 					INCREASE_VIABILITY(2);
 			}
@@ -648,6 +647,8 @@ MOVESCR_CHECK_0:
 					DECREASE_VIABILITY(10);
 				break;
 			}
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_EXPLOSION:
@@ -686,6 +687,8 @@ MOVESCR_CHECK_0:
 				else
 					DECREASE_VIABILITY(4);
 			}
+
+			goto AI_STANDARD_DAMAGE;
 		#else
 			DECREASE_VIABILITY(10);
 		#endif
@@ -694,6 +697,8 @@ MOVESCR_CHECK_0:
 		case EFFECT_DREAM_EATER:
 			if (data->defAbility != ABILITY_COMATOSE && !(data->defStatus1 & STATUS1_SLEEP))
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs?
@@ -1040,6 +1045,8 @@ MOVESCR_CHECK_0:
 			||  GetHealthPercentage(bankAtk) < 30 //Close to death
 			||  data->defStatus1 & (STATUS1_SLEEP | STATUS1_FREEZE)) //No point in biding if can't take damage
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_ROAR:
@@ -1185,11 +1192,9 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_RECOIL_IF_MISS:
-			if (data->atkAbility == ABILITY_MAGICGUARD)
-				goto AI_STANDARD_DAMAGE;
-			else if (moveAcc < 75)
+			if (data->atkAbility != ABILITY_MAGICGUARD && moveAcc < 75)
 				DECREASE_VIABILITY(6);
-			break;
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_MIST:
 			if (BankSideHasMist(bankAtk)
@@ -1226,7 +1231,7 @@ MOVESCR_CHECK_0:
 				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				{
 					DECREASE_VIABILITY(9);
-					break; //Don't use Mind Blown to break a Substitute
+					goto AI_STANDARD_DAMAGE; //Don't use Mind Blown to break a Substitute
 				}
 
 				dmg = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
@@ -1236,7 +1241,7 @@ MOVESCR_CHECK_0:
 			&&  ViableMonCountFromBank(bankDef) > 1) //Foe has more than 1 target left
 			{
 				if (dmg >= gBattleMons[bankDef].hp && !CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
-					break; //If it's the only KO move then just use it
+					goto AI_STANDARD_DAMAGE; //If it's the only KO move then just use it
 				else
 					DECREASE_VIABILITY(4); //Not as good to use move if you'll faint and not win
 			}
@@ -1338,7 +1343,7 @@ MOVESCR_CHECK_0:
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
 			&& CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
 				DECREASE_VIABILITY(9); //Never use move as finisher if you don't have to
-			break;
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_SPITE:
 			if (MoveWouldHitFirst(move, bankAtk, bankDef))
@@ -1431,12 +1436,25 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_ENDEAVOR:
+			if (gBattleMons[bankAtk].hp > (gBattleMons[bankAtk].hp + gBattleMons[bankDef].hp) / 2)
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
+
 		case EFFECT_PAIN_SPLIT:
 			if (gBattleMons[bankAtk].hp > (gBattleMons[bankAtk].hp + gBattleMons[bankDef].hp) / 2)
 				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_SNORE:
+			if (((data->atkStatus1 & STATUS_SLEEP) == 1 || !(data->atkStatus1 & STATUS_SLEEP))
+			&& data->atkAbility != ABILITY_COMATOSE)
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
+
 		case EFFECT_SLEEP_TALK:
 			if (((data->atkStatus1 & STATUS_SLEEP) == 1 || !(data->atkStatus1 & STATUS_SLEEP))
 			&& data->atkAbility != ABILITY_COMATOSE)
@@ -1485,6 +1503,8 @@ MOVESCR_CHECK_0:
 			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
 			&&  CanKnockOutWithoutMove(move, bankAtk, bankDef, FALSE))
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_HEAL_BELL:
@@ -1737,7 +1757,7 @@ MOVESCR_CHECK_0:
 			}
 			else
 				goto AI_CONFUSE;
-			break;
+			goto AI_SUBSTITUTE_CHECK;
 
 		case EFFECT_ATTRACT:
 			if (!CanBeInfatuated(bankDef, bankAtk)
@@ -1755,6 +1775,8 @@ MOVESCR_CHECK_0:
 		case EFFECT_BURN_UP:
 			if (!IsOfType(bankAtk, TYPE_FIRE))
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_BATON_PASS:
@@ -1931,7 +1953,7 @@ MOVESCR_CHECK_0:
 			}
 			else
 				goto AI_CONFUSE;
-			break;
+			goto AI_SUBSTITUTE_CHECK;
 
 		case EFFECT_WILL_O_WISP:
 		AI_BURN_CHECK: ;
@@ -1958,7 +1980,7 @@ MOVESCR_CHECK_0:
 
 				case MOVE_FINALGAMBIT:
 					//Just the viablemonfromcount check, but not stat check
-					break;
+					goto AI_STANDARD_DAMAGE;
 
 				default: //Memento
 					if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
@@ -1978,10 +2000,12 @@ MOVESCR_CHECK_0:
 				case MOVE_SHELLTRAP: ;
 					if (!CheckContact(predictedMove, bankDef))
 						DECREASE_VIABILITY(10); //Probably better not to use it
+					else
+						goto AI_STANDARD_DAMAGE;
 					break;
 
 				case MOVE_BEAKBLAST:
-					break;
+					goto AI_STANDARD_DAMAGE;
 
 				default:
 					if (predictedMove != MOVE_NONE
@@ -1989,6 +2013,8 @@ MOVESCR_CHECK_0:
 					&& SPLIT(predictedMove) != SPLIT_STATUS
 					&& gBattleMoves[predictedMove].power != 0)
 						DECREASE_VIABILITY(10); //Probably better not to use it
+					else
+						goto AI_STANDARD_DAMAGE;
 			}
 			break;
 
@@ -2093,6 +2119,8 @@ MOVESCR_CHECK_0:
 		case EFFECT_SUPERPOWER:
 			if (move == MOVE_HYPERSPACEFURY && data->atkSpecies != SPECIES_HOOPA_UNBOUND)
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_MAGIC_COAT:
@@ -2136,6 +2164,8 @@ MOVESCR_CHECK_0:
 				else
 					goto AI_SUBSTITUTE_CHECK;
 			}
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_SKILL_SWAP: ;
@@ -2450,6 +2480,8 @@ MOVESCR_CHECK_0:
 			|| IsMagicRoomActive()
 			|| GetPocketByItemId(data->atkItem) != POCKET_BERRIES)
 				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_SET_TERRAIN:
@@ -2493,7 +2525,7 @@ MOVESCR_CHECK_0:
 						DECREASE_VIABILITY(10); //Don't use combo move if your partner will cause failure
 				}
 			}
-			break;
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_FIELD_EFFECTS:
 			switch (move) {
@@ -2654,13 +2686,15 @@ MOVESCR_CHECK_0:
 				case MOVE_POLLENPUFF:
 					if (!TARGETING_PARTNER)
 						goto AI_STANDARD_DAMAGE;
+					else
+						goto AI_HEAL_TARGET;
 
-				__attribute__ ((fallthrough));
 				default:
 					if (!TARGETING_PARTNER) //Don't heal enemies
 						DECREASE_VIABILITY(10);
 					else
 					{
+						AI_HEAL_TARGET:
 						if (BATTLER_MAX_HP(bankDef))
 							DECREASE_VIABILITY(10);
 						if (gBattleMons[bankDef].hp > gBattleMons[bankDef].maxHP / 2)
@@ -2881,11 +2915,10 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_POLTERGEIST:
 			if (WillPoltergeistFail(data->defItem, data->defAbility))
-			{
 				DECREASE_VIABILITY(10);
-				break;
-			}
-			goto AI_STANDARD_DAMAGE;
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
 
 		default:
 		AI_STANDARD_DAMAGE:

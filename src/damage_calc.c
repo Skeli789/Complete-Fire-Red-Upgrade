@@ -2691,7 +2691,16 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_FUSIONBOLT:
-			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
+			if (data->specialFlags & FLAG_AI_CALC)
+			{
+				u8 partner = PARTNER(bankAtk);
+				if (IS_DOUBLE_BATTLE
+				&& BATTLER_ALIVE(partner)
+				&& gChosenMovesByBanks[partner] == MOVE_FUSIONFLARE
+				&& GetWhoStrikesFirst(partner, bankAtk, FALSE) == 0)
+					power *= 2; //Fusion Flare will be used first
+			}
+			else if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
 			&& !useMonAtk
 			&& gNewBS->fusionFlareUsedPrior
 			&& !IsFirstAttacker(bankAtk))
@@ -2699,7 +2708,16 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_FUSIONFLARE:
-			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
+			if (data->specialFlags & FLAG_AI_CALC)
+			{
+				u8 partner = PARTNER(bankAtk);
+				if (IS_DOUBLE_BATTLE
+				&& BATTLER_ALIVE(partner)
+				&& gChosenMovesByBanks[partner] == MOVE_FUSIONBOLT
+				&& GetWhoStrikesFirst(partner, bankAtk, FALSE) == 0)
+					power *= 2; //Fusion Bolt will be used first
+			}
+			else if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
 			&& !useMonAtk
 			&& gNewBS->fusionBoltUsedPrior
 			&& !IsFirstAttacker(bankAtk))
