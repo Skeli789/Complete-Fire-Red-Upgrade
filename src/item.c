@@ -426,10 +426,12 @@ u8 TryHandleExcuseForDracoMeteorTutor(unusedArg struct Pokemon* mon)
 
 	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
 	{
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
 		Var8005 = 1;
 
-		if (gBaseStats[species].type1 != TYPE_DRAGON
+		if (species == SPECIES_EGG)
+			Var8005 = 6;
+		else if (gBaseStats[species].type1 != TYPE_DRAGON
 		&&  gBaseStats[species].type2 != TYPE_DRAGON)
 			Var8005 = 3;
 		else if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < MAX_FRIENDSHIP) //Dragon-type not at max friendship
