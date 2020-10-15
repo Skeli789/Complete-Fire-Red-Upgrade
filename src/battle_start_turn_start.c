@@ -1115,10 +1115,16 @@ void HandleAction_UseMove(void)
 			u8 split = SPLIT(gCurrentMove);
 			bool8 isBannedMove = gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedRaidMonMoves
 							  || gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedMoves
+							  || gBattleMoves[gCurrentMove].effect == EFFECT_BIDE //Bide should always be executed as Max Strike
 							  || IsUnusableMove(gCurrentMove, gBankAttacker, 0xFF, 1, ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), CHOICED_MOVE(gBankAttacker));
 
 			if (isBannedMove && split != SPLIT_STATUS) //Use banned status move - don't use Max Guard
+			{
+				if (gBattleMoves[gCurrentMove].effect == EFFECT_BIDE)
+					gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(GetMaxMove(gBankAttacker, gCurrMovePos), FALSE); //Fix self-targeting
+
 				goto TURN_MOVE_INTO_MAX_MOVE;
+			}
 			else if (IsRaidBossUsingRegularMove(gBankAttacker, gCurrentMove))
 			{
 				//Samll chance to use regular damaging move
