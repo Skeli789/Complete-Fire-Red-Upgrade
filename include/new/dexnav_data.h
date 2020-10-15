@@ -63,6 +63,10 @@ extern const u8 gText_DexNav_Invalid[];
 extern const u8 gText_DexNav_NoDataForSlot[];
 extern const u8 gText_DexNav_Locked[];
 extern const u8 gText_DexNav_TooDark[];
+extern const u8 gText_DexNav_UpArrow[];
+extern const u8 gText_DexNav_DownArrow[];
+extern const u8 gText_DexNav_LeftArrow[];
+extern const u8 gText_DexNav_RightArrow[];
 
 // DEFINES
 #define sSearchLevels ((u8*) 0x203C75C)
@@ -408,7 +412,9 @@ struct DexnavHudData
     u8 searchLevel;
     u8 pokemonLevel;
     u8 moveNameLength;
-    u8 proximity;
+    u8 xProximity;
+    u8 yProximity;
+    u8 totalProximity;
     u8 environment;
 	u8 unownLetter;
     s16 tileX; // position of shaking grass
@@ -422,6 +428,7 @@ struct DexnavHudData
     u8 spriteIdShakingGrass;
     u8 spriteIdPotential[3];
     u8 blackBarWindowId;
+	u8 arrowWindowId;
     u8 movementTimes;
 };
 

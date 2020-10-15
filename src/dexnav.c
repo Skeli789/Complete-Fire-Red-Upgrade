@@ -66,6 +66,7 @@ dexnav.c
 //This file's functions:
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
+static void UpdatePlayerDistances(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
@@ -85,7 +86,8 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
-static void DexNavDrawBlackBar(u8* spriteIdAddr);
+static void DexNavDrawBlackBar(u8* windowId);
+static void DexNavDrawDirectionalArrow(u8* windowId);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
 static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
@@ -223,6 +225,11 @@ u8 GetPlayerDistance(s16 x, s16 y)
 	return deltaX + deltaY;
 }
 
+static void UpdatePlayerDistances(s16 x, s16 y)
+{
+	sDexNavHudPtr->xProximity = abs(x - (gSaveBlock1->pos.x + 7));
+	sDexNavHudPtr->yProximity = abs(y - (gSaveBlock1->pos.y + 7));
+}
 
 static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan)
 {
@@ -247,6 +254,13 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 
 			u32 tileBehaviour = MapGridGetMetatileField(topX, topY, 0xFF);
 			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
+			
+			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(topX, topY)))
+			{
+				//Fix a bug where dust clouds would act weird in caves on sideways stairs
+				topX += 1;
+				continue;
+			}
 
 			//Check NPCs on tile
 			bool8 goNext = FALSE;
@@ -419,7 +433,8 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 
 static void DexNavProximityUpdate(void)
 {
-	sDexNavHudPtr->proximity = GetPlayerDistance(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY);
+	sDexNavHudPtr->totalProximity = GetPlayerDistance(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY);
+	UpdatePlayerDistances(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY); //Used by the directional arrow
 }
 
 
@@ -459,6 +474,11 @@ static void DexNavFreeHUD(void)
 	CleanWindow(sDexNavHudPtr->blackBarWindowId);
 	CopyWindowToVram(sDexNavHudPtr->blackBarWindowId, COPYWIN_BOTH);
 	RemoveWindow(sDexNavHudPtr->blackBarWindowId);
+
+	//Clean arrow
+	CleanWindow(sDexNavHudPtr->arrowWindowId);
+	CopyWindowToVram(sDexNavHudPtr->arrowWindowId, COPYWIN_BOTH);
+	RemoveWindow(sDexNavHudPtr->arrowWindowId);
 
 	if (sDexNavHudPtr->spriteIdSight < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdSight]);
@@ -792,13 +812,46 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 		DexNavSightUpdate(1); // Sneaking is required flag
 	else
 		DexNavSightUpdate(2); // Sneaking is not required
+
+	//Draw directional arrow
+	if (sDexNavHudPtr->xProximity == 0 && sDexNavHudPtr->yProximity == 0) //On spot
+	{
+		FillWindowPixelBuffer(sDexNavHudPtr->arrowWindowId, PIXEL_FILL(1)); //Clean tiles with black
+	}
+	else
+	{
+		const u8* arrowString;
+		const struct TextColor arrowColour =
+		{
+			.bgColor = 1, //Black
+			.fgColor = 2, //White
+			.shadowColor = 3, //Gray
+		};
+
+		if (sDexNavHudPtr->xProximity > sDexNavHudPtr->yProximity) //Player is farther horizontally
+		{
+			if (gSaveBlock1->pos.x + 7 < sDexNavHudPtr->tileX) //Player is on the left of tile
+				arrowString = gText_DexNav_RightArrow;
+			else //Player is on the right of tile
+				arrowString = gText_DexNav_LeftArrow;
+		}
+		else //Player is closer vertically
+		{
+			if (gSaveBlock1->pos.y + 7 < sDexNavHudPtr->tileY) //Player is above tile
+				arrowString = gText_DexNav_DownArrow;
+			else //Player is below tile
+				arrowString = gText_DexNav_UpArrow;
+		}
+
+		WindowPrint(sDexNavHudPtr->arrowWindowId, 0, 4, 0, &arrowColour, 0, arrowString);
+	}
 }
 
 extern const u8 SystemScript_StartDexNavBattle[];
 static void Task_ManageDexNavHUD(u8 taskId)
 {
 	//Check for out of range
-	if (sDexNavHudPtr->proximity > 20
+	if (sDexNavHudPtr->totalProximity > 20
 	|| IsMapNamePopupTaskActive())
 	{
 		DestroyTask(taskId);
@@ -818,7 +871,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 		return;
 	}
 
-	if (sDexNavHudPtr->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_BIKE)) //If player is close and running then the Pokemon should flee
+	if (sDexNavHudPtr->totalProximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_BIKE)) //If player is close and running then the Pokemon should flee
 	{
 		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
 		DestroyTask(taskId);
@@ -850,7 +903,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	#ifdef UNBOUND
 	&& GetCurrentRegionMapSectionId() != MAPSEC_FLOWER_PARADISE
 	#endif
-	&& sDexNavHudPtr->proximity < 2
+	&& sDexNavHudPtr->totalProximity < 2
 	&& sDexNavHudPtr->movementTimes < 2)
 	{
 		StopDexNavFieldEffect();
@@ -859,7 +912,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	}
 
 	// check for encounter start
-	if (sDexNavHudPtr-> proximity < 1)
+	if (sDexNavHudPtr->totalProximity < 1)
 	{
 		u16 species = sDexNavHudPtr->species;
 
@@ -884,10 +937,10 @@ static void Task_ManageDexNavHUD(u8 taskId)
 
 	//HUD needs updating iff player has moved
 	DexNavProximityUpdate();
-	if (gTasks[taskId].data[0] != sDexNavHudPtr->proximity)
+	if (gTasks[taskId].data[0] != sDexNavHudPtr->totalProximity)
 	{
-		DexNavIconsVisionUpdate(sDexNavHudPtr->proximity, sDexNavHudPtr->searchLevel);
-		gTasks[taskId].data[0] = sDexNavHudPtr->proximity;
+		DexNavIconsVisionUpdate(sDexNavHudPtr->totalProximity, sDexNavHudPtr->searchLevel);
+		gTasks[taskId].data[0] = sDexNavHudPtr->totalProximity;
 	}
 }
 
@@ -1233,11 +1286,12 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 static void DexNavDrawBlackBar(u8* windowId)
 {
 	struct WindowTemplate template;
-	static const u16 blackBarPal[] = {RGB(7, 25, 13), RGB(4, 4, 4)};
+	static const u16 blackBarPal[] = {RGB(7, 25, 13), RGB(4, 4, 4),
+									  RGB(31, 31, 31), RGB(12, 12, 12)}; //For arrow
 
-	LoadPalette(blackBarPal, 0xD0, 0x4);
+	LoadPalette(blackBarPal, 0xD0, 0x8);
 	PreservePaletteInWeather(13);
-	template = SetWindowTemplateFields(0, 0, 16, 30, 4, 13, 0x20);
+	template = SetWindowTemplateFields(0, 0, 16, 30, 4, 13, 0x24);
 	*windowId = AddWindow(&template);
 	PutWindowTilemap(*windowId);
 	FillWindowPixelBuffer(*windowId, PIXEL_FILL(0)); //Clean tiles
@@ -1245,11 +1299,22 @@ static void DexNavDrawBlackBar(u8* windowId)
 	CopyWindowToVram(*windowId, COPYWIN_BOTH);
 }
 
+static void DexNavDrawDirectionalArrow(u8* windowId)
+{
+	struct WindowTemplate template;
+
+	template = SetWindowTemplateFields(0, 24, 18, 2, 2, 13, 0x20);
+	*windowId = AddWindow(&template);
+	PutWindowTilemap(*windowId);
+	FillWindowPixelBuffer(*windowId, PIXEL_FILL(1)); //Clean tiles with black
+	CopyWindowToVram(*windowId, COPYWIN_BOTH);
+}
+
 static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sSightSpriteSheet);
 	LoadSpritePalette(&sHeldItemSpritePalette);
-	u8 spriteId = CreateSprite(&sSightTemplate, 176 + (16 / 2), 148 + (8 / 2), 0);
+	u8 spriteId = CreateSprite(&sSightTemplate, 175 + (16 / 2), 148 + (8 / 2), 0);
 	*spriteIdAddr = spriteId; //Must go before DexNavSightUpdate!
 	if (spriteId < MAX_SPRITES)
 		DexNavSightUpdate(sightLevel);
@@ -1382,7 +1447,8 @@ static void DexNavDrawIcons(void)
 {
 	u8 searchLevel = sDexNavHudPtr->searchLevel;
 	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
-	DexNavDrawSight(sDexNavHudPtr->proximity, &sDexNavHudPtr->spriteIdSight);
+	DexNavDrawDirectionalArrow(&sDexNavHudPtr->arrowWindowId);
+	DexNavDrawSight(sDexNavHudPtr->totalProximity, &sDexNavHudPtr->spriteIdSight);
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
 	DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
 	DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
@@ -1455,7 +1521,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	DexNavDrawIcons();
 
 	//Hide icons based on proximity and search level
-	DexNavIconsVisionUpdate(sDexNavHudPtr->proximity, searchLevel);
+	DexNavIconsVisionUpdate(sDexNavHudPtr->totalProximity, searchLevel);
 
 	//Enable Hblank interrupt
 	/*EnableInterrupts(2);

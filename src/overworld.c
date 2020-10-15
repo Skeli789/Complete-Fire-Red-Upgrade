@@ -2046,6 +2046,15 @@ bool8 InTanobyRuins(void)
 	return FALSE;
 }
 
+bool8 MetatileBehavior_IsStairs(u8 behaviour)
+{
+	return behaviour == MB_ROCK_STAIRS
+		|| behaviour == MB_SIDEWAYS_STAIRS_LEFT_UP_1
+		|| behaviour == MB_SIDEWAYS_STAIRS_LEFT_UP_2
+		|| behaviour == MB_SIDEWAYS_STAIRS_RIGHT_UP_1
+		|| behaviour == MB_SIDEWAYS_STAIRS_RIGHT_UP_2;
+}
+
 void PlayGrassFootstepNoise(void)
 {
 	if (IsFanfareTaskInactive()) //Sound interrupts fanfare

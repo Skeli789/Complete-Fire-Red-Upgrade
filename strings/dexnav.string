@@ -88,5 +88,17 @@ Pok\emon searchable via [R_BUTTON]!
 #org @gText_DexNav_TooDark
 It's too dark to search for a Pok\emon!
 
+#org @gText_DexNav_UpArrow
+[ARROW_UP]
+
+#org @gText_DexNav_DownArrow
+[ARROW_DOWN]
+
+#org @gText_DexNav_LeftArrow
+[ARROW_LEFT]
+
+#org @gText_DexNav_RightArrow
+[ARROW_RIGHT]
+
 #org @gText_MenuCube
 Cube
