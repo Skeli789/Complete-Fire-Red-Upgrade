@@ -187,6 +187,11 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 target = gBattleMoves[move].target;
 	u8 defSide = SIDE(bankDef);
 
+	#ifdef ABILITY_UNSEENFIST
+	if (protectFlag && contact && ABILITY(bankAtk) == ABILITY_UNSEENFIST)
+		protectFlag = FALSE;
+	#endif
+
 	if (ProtectedByMaxGuard(bankDef, move))
 	{
 		effect = 1;

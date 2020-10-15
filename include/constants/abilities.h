@@ -257,3 +257,15 @@
 #define ABILITY_PASTELVEIL 0xFE
 
 #define ABILITIES_COUNT (ABILITY_PASTELVEIL + 1)
+
+//There isn't enough space for the following abilities, so if you want to use any,
+//you'll need to replace old ones (replacing clone abilities like Air Lock & Cloud Nine
+//is the easiest).
+
+//#define ABILITY_UNSEENFIST 0x
+
+//TODO
+//#define ABILITY_QUICKDRAW 0x
+//#define ABILITY_CURIOUSMEDICINE 0x
+//#define ABILITY_TRANSISTOR 0x
+//#define ABILITY_DRAGONSMAW 0x
