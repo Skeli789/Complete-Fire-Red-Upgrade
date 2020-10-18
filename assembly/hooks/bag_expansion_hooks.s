@@ -73,6 +73,9 @@ bxr1:
 @0x810852E with r0
 BagLRScroll:
 	ldrb r0, [r3, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
 	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
 	lsl r1, #0x6
 	orr r0, r1
@@ -84,6 +87,9 @@ BagLRScroll:
 @0x8131D1C with r0
 TMCaseLRScroll:
 	ldrb r0, [r2, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
 	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
 	lsl r1, #0x6
 	orr r0, r1
@@ -95,6 +101,9 @@ TMCaseLRScroll:
 @0x813D306 with r0
 BerryPouchLRScroll:
 	ldrb r0, [r5, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
 	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
 	lsl r1, #0x6
 	orr r0, r1

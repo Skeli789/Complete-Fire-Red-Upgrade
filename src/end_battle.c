@@ -580,7 +580,7 @@ static void RestoreNonConsumableItems(void)
 	bool8 keepConsumables = FALSE;
 	#endif
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle())
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{

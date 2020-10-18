@@ -2680,12 +2680,13 @@ ANIM_FOCUSBLAST:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_SPARK_2 @yellow
 	pokespritetoBG bank_target
+	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
 	loadBG1 BG_FOCUS_BLAST
 	waitbgfadeout
 	launchtask AnimTask_scroll_background 0x5 0x4 0xF000 0x0 0x0 0xFFFF
 	waitbgfadein
-	launchtemplate 0x83E6864 TEMPLATE_TARGET | 2 0x1 0x0
+	launchtemplate 0x83E6864 TEMPLATE_ATTACKER | 2 0x1 0x0
 	soundcomplex 0x85 SOUND_PAN_ATTACKER 0x20 0x4
 	waitanimation
 	playsound2 0x8A SOUND_PAN_TARGET
@@ -2711,7 +2712,7 @@ ANIM_FORCEPALM:
 	loadparticle ANIM_TAG_IMPACT  @Hit
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER  @Palm Colour
 	pokespritetoBG bank_target
-	leftbankBG_over_partnerBG 0x1
+	leftbankBG_over_partnerBG bank_target
 	setblends 0x80C
 	launchtemplate FORCE_PALM TEMPLATE_TARGET | 2, 0x6 0, 0, 40, 0, 8, 0x20
 	pause 0x20
