@@ -199,7 +199,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
 #define DNS_IN_BATTLE //Comment this line to disable the Day/Night system from working in battle
 #define OVERWRITE_RIVAL //Comment this line to disable to loading of your rival's name into trainer classes 0x51, 0x59, and 0x5A
-#define TRAINER_CLASS_POKE_BALLS //Comment this line to disable creating Trainer's pokemon with Poke Balls specific to their trainer class
+//#define TRAINER_CLASS_POKE_BALLS //Comment this line to disable creating Trainer's pokemon with Poke Balls specific to their trainer class
 //#define TRAINERS_WITH_EVS //Uncomment this line to enable the Trainers with EVs hack, (only avaible with custom moveset and held item)
 //#define CONTINUE_LOST_BATTLES //Uncommenting this line will allow using trainerbattle 0x9 to continue lost battles if var 0x8000 is set to 0xFEFE
 #define DISPLAY_REAL_MOVE_TYPE_ON_MENU //If this line remains uncommented, the "true" move type will be displayed (such as Hidden Power, Weather Ball in Weather, etc.)
