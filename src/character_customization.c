@@ -95,7 +95,7 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 	// create 255 OW tables
 	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[255] =
 	{
-		(NPCPtr*) 0x839FDB0,
+		(NPCPtr*) 0x8A00000,
 		(NPCPtr*) 0x0,
 		// etc...
 		// please note that this method makes compatability with OW Manager challenging
