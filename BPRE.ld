@@ -8,6 +8,7 @@ gBattleMineStreaks = 0x2026B40;
 gBattleCircusStreaks = 0x2026B50;
 gRingChallengeStreaks = 0x2028FC0;
 gFollowerState = 0x203B818;
+gDontFadeWhite = 0x203C756;
 gNewBS = 0x203E038;
 gInShop = 0x203E043;
 sItemDescriptionPocket = 0x203E053;
@@ -304,9 +305,10 @@ sMapCursor = 0x20399E4;
 sMapIcons = 0x20399EC;
 sCreditsMgr = 0x203AB40;
 sMonSummaryScreen = 0x203B140;
-gKeypadInitialCountdown = 0x030030e0;
-gKeypadFollowUpCountdown = 0x0300352c;
-gSoftResetDisabled = 0x03003530;
+sSpritePaletteTags = 0x3000DE8;
+gKeypadInitialCountdown = 0x30030e0;
+gKeypadFollowUpCountdown = 0x300352c;
+gSoftResetDisabled = 0x3003530;
 gLocalLinkPlayerId = 0x300502C;
 gTotalCameraPixelOffsetY = 0x3005068;
 gTotalCameraPixelOffsetX = 0x300506C;
@@ -1110,6 +1112,10 @@ RegionMap_CreateFlyIconSprite = 0x80C450C | 1;
 RegionMap_CreateFlyIcons = 0x80C4750 | 1;
 RegionMap_CreateDungeonIcons = 0x80C47F0 | 1;
 GetMapName = 0x80C4D78 | 1;
+GetMapSecIdFromWildMonHeader = 0x813CC44 | 1;
+PokemonInAnyEncounterTableInMap = 0x813CBD0 | 1;
+TryGetMapSecPokedexAreaEntry = 0x813CC58 | 1;
+SetAreaSubsprite = 0x81344A4 | 1;
 
 /* Script Functions */
 SetupNativeScript = 0x80697F4 | 1;
@@ -1120,6 +1126,7 @@ ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext2_Disable = 0x806994C | 1;
 ScriptContext2_IsEnabled = 0x8069958 | 1;
 SetTextboxSignpostDesign = 0x8069A20 | 1;
+ScriptContext1_IsScriptSetUp = 0x8069A64 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 GetVarPointer = 0x806E454 | 1;
@@ -1708,6 +1715,7 @@ GetMoveDirectionAnimNum = 0x8063440 | 1;
 GetMoveDirectionFastAnimNum = 0x8063450 | 1;
 FreezeEventObjects = 0x8068974 | 1;
 VarGetEventObjectGraphicsId = 0x806e5a4 | 1;
+DoShadowFieldEffect = 0x80692F0 | 1;
 
 
 /* BG Functions */

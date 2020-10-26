@@ -1037,6 +1037,9 @@ void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 		case MOVE_OCTOLOCK:
 			gBattleAnimArgs[0] = 8;
 			break;
+		case MOVE_THUNDERCAGE:
+			gBattleAnimArgs[0] = 9;
+			break;
 		default:
 			gBattleAnimArgs[0] = 0;
 	}

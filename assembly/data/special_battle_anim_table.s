@@ -145,6 +145,7 @@ ANIM_WRAPPED_END_TURN:
 	jumpifargmatches 0x0 0x6 ANIM_INFESTATION
 	jumpifargmatches 0x0 0x7 ANIM_SNAP_TRAP
 	jumpifargmatches 0x0 0x8 ANIM_OCTOLOCK
+	jumpifargmatches 0x0 0x9 ANIM_THUNDER_CAGE
 	goto 0x81d5c8b
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

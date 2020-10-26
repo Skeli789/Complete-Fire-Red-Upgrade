@@ -134,6 +134,7 @@ RaidBossHPColourHook 804A116 1
 HandleDynamaxOnTurnEnd 8018C98 0
 DeadRaidMonSpriteHook 8077CC4 1
 DeadRaidMonSpriteHook2 807524C 2
+RaidCapturedSentToBoxStringHook 802DF74 1
 
 CreateSummaryScreenGigantamaxIconHook 8139D2C 3
 SummaryScreen_ChangeCaughtBallSpriteVisibility 8139D54 1

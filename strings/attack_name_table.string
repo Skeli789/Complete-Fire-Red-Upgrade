@@ -1881,7 +1881,7 @@ Zing Zap
 Elec Terrain
 
 #org @NAME_GRAS_TERRAIN
-Gras Terrain
+GrassTerrain
 
 #org @NAME_MIST_TERRAIN
 Mist Terrain
@@ -2070,7 +2070,7 @@ Octolock
 Bolt Beak
 
 #org @NAME_FISHIOUS_REND
-Fishy Rend
+FishiousRend
 
 #org @NAME_COURT_CHANGE
 Court Change
@@ -2216,11 +2216,20 @@ Thunder Kick
 #org @NAME_FIERY_WRATH
 Fiery Wrath
 
+#org @NAME_EERIE_SPEELL
+Eerie Spell
+
 #org @NAME_THUNDER_CAGE
 Thunder Cage
 
 #org @NAME_DRAGON_ENERGY
 DragonEnergy
+
+#org @NAME_ASTRAL_BARRAGE
+Astral Storm
+
+#org @NAME_GLACIAL_LANCE
+GlacialLance
 
 #org @Z_Move_1
 Z-Move 1

@@ -17,13 +17,14 @@
 #include "../../include/new/frontier.h"
 #include "../../include/new/end_turn_battle_scripts.h"
 #include "../../include/new/general_bs_commands.h"
-#include "../../include/new/util.h"
+#include "../../include/new/move_menu.h"
 #include "../../include/new/mega.h"
 #include "../../include/new/multi.h"
 #include "../../include/new/move_tables.h"
 #include "../../include/new/species_tables.h"
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
+#include "../../include/new/util.h"
 
 /*
 ai_master.c
@@ -95,7 +96,8 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
 	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT
-		&& !IsFrontierTrainerId(gTrainerBattleOpponent_A))
+		&& !IsFrontierTrainerId(gTrainerBattleOpponent_A)
+		&& !IsBagDisabled()) //If the player's bag is disabled, the AI's should also be
 	{
 		for (i = 0; i < 4; i++)
 		{
@@ -1982,6 +1984,18 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						scores[i] += SWITCHING_INCREASE_KO_FOE;
 
 						if (ability == ABILITY_MOXIE
+						#ifdef ABILITY_GRIMNEIGH
+						||  ability == ABILITY_GRIMNEIGH
+						#endif
+						#ifdef ABILITY_CHILLINGNEIGH
+						||  ability == ABILITY_CHILLINGNEIGH
+						#endif
+						#ifdef ABILITY_ASONE_GRIM
+						||  ability == ASONE_GRIM
+						#endif
+						#ifdef ABILITY_ASONE_CHILLING
+						||  ability == ASONE_CHILLING
+						#endif
 						||  ability == ABILITY_SOULHEART
 						||  ability == ABILITY_BEASTBOOST)
 							scores[i] += SWITCHING_INCREASE_REVENGE_KILL;

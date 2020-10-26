@@ -182,7 +182,7 @@ static const struct OamData sTypeIconOAM =
 #define type_icon_frame(ptr, frame) {.data = (u8 *)ptr + (1 * 2 * frame * 32), .size = 1 * 2 * 32}
 static const struct SpriteFrameImage sTypeIconPicTable[] =
 {
-	[TYPE_NORMAL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_NORMAL),
+	[TYPE_NORMAL] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_NORMAL),
 	[TYPE_FIGHTING] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIGHTING),
 	[TYPE_FLYING] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_FLYING),
 	[TYPE_POISON] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_POISON),
@@ -1302,6 +1302,7 @@ void TryLoadTypeIcons(void)
 				u8 type = *(type1Ptr + typeNum);
 
 				switch (type) { //Certain types have a different palette
+					case TYPE_NORMAL:
 					case TYPE_FLYING:
 					case TYPE_POISON:
 					case TYPE_GROUND:

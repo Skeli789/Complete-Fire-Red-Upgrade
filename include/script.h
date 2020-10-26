@@ -49,6 +49,7 @@ void __attribute__((long_call)) EnableBothScriptContexts(void);
 bool8 __attribute__((long_call)) ScriptContext2_IsEnabled(void);
 void __attribute__((long_call)) ScriptContext2_Enable(void);
 void __attribute__((long_call)) ScriptContext2_Disable(void);
+bool8 __attribute__((long_call)) ScriptContext1_IsScriptSetUp(void);
 void __attribute__((long_call)) ScriptContext1_Stop(void);
 void __attribute__((long_call)) SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void));
 

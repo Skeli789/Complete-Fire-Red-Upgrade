@@ -3746,7 +3746,7 @@ static struct Raid sRoute8Raids2Star[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_BLUE,
+		.species = SPECIES_MINIOR_SHIELD,
 		.ability = RAID_ABILITY_RANDOM_1_2,
 		.drops =
 		{
@@ -3883,7 +3883,7 @@ static struct Raid sRoute8Raids3Star[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_BLUE,
+		.species = SPECIES_MINIOR_SHIELD,
 		.ability = RAID_ABILITY_HIDDEN,
 		.drops =
 		{
@@ -4020,7 +4020,7 @@ static struct Raid sRoute8Raids4Star[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_BLUE,
+		.species = SPECIES_MINIOR_SHIELD,
 		.ability = RAID_ABILITY_HIDDEN,
 		.drops =
 		{
@@ -4176,7 +4176,7 @@ static struct Raid sRoute8Raids5Star[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_BLUE,
+		.species = SPECIES_MINIOR_SHIELD,
 		.ability = RAID_ABILITY_HIDDEN,
 		.drops =
 		{

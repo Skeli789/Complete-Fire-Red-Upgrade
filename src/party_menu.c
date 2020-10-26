@@ -1846,6 +1846,12 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 				DoItemFormChange(mon, species);
 				gTasks[taskId].func = func;
 			}
+			else if (species == SPECIES_HOOPA_UNBOUND)
+			{
+				species = SPECIES_HOOPA;
+				DoItemFormChange(mon, species);
+				gTasks[taskId].func = func;
+			}
 			else
 			#endif
 				goto NO_EFFECT;

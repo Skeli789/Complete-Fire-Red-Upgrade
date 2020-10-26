@@ -1159,11 +1159,20 @@ The user delivers\na fierce kick that\nlower's the target's\ndefense stat.
 #org @DESC_FIERY_WRATH
 The user attacks\nwith intense, dark flames.\nIt may also make\nthe foe flinch.
 
+#org @DESC_EERIE_SPELL
+The user attacks with\npsychic power that\nremoves 3 PP from the\ntarget's last move.
+
 #org @DESC_THUNDER_CAGE
 A cage made of\nelectricity that traps\nthe target for four\nto five turns.
 
 #org @DESC_DRAGON_ENERGY
 The higher the\nuser's HP, the\nmore powerful this\nattack becomes.
+
+#org @DESC_ASTRAL_BARRAGE
+A frightful amount of\nsmall ghosts are sent\nto attack opposing\nPok\emon.
+
+#org @DESC_GLACIAL_LANCE
+The user attacks by\nhurling a blizzard-\ncloaked icicle lance\nat opposing Pok\emon.
 
 #org @DESC_MAX_GUARD
 Enables the user to\nevade all attacks.\nIt may fail if used\nin succession.

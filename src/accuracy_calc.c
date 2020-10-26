@@ -84,6 +84,7 @@ ACCURACY_CHECK_START:
 						 || ABILITY(gBankAttacker) == ABILITY_SKILLLINK)))
 		{
 			//No acc checks for second hit of Parental Bond or multi hit moves
+			TrySetDestinyBondToHappen();
 			gBattlescriptCurrInstr += 7;
 		}
 		else

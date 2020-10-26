@@ -29,6 +29,7 @@ void FollowMe_HandleBike(void);
 void FollowMe_HandleSprite(void);
 void FollowMe_WarpSetEnd(void);
 void CreateFollowerAvatar(void);
+void TryAttachFollowerToPlayer(void);
 
 //Functions Hooked In
 void PlayerGoThroughDoor(u8 taskId);

@@ -2250,7 +2250,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat1[] =
 		.item = ITEM_FAIRIUM_Z,
 		.moves =
 		{
-			MOVE_EXPANDINGFORCE,
+			MOVE_PSYCHIC,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_ENERGYBALL,
 			MOVE_PROTECT,
@@ -2334,7 +2334,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat2[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_RISINGVOLTAGE,
+			MOVE_THUNDERBOLT,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_HIDDENPOWER, //TYPE_DRAGON
 			MOVE_VOLTSWITCH,
@@ -2360,7 +2360,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Pat2[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_RISINGVOLTAGE,
+			MOVE_THUNDERBOLT,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_GRASSKNOT,
 			MOVE_PROTECT,
@@ -4394,7 +4394,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Paula2[] =
 		.item = ITEM_NONE,
 		.moves =
 		{
-			MOVE_EXPANDINGFORCE,
+			MOVE_PSYCHIC,
 			MOVE_MOONBLAST,
 			MOVE_THUNDERBOLT,
 			MOVE_FOCUSBLAST,
@@ -4421,7 +4421,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Paula2[] =
 		.item = ITEM_NONE,
 		.moves =
 		{
-			MOVE_EXPANDINGFORCE,
+			MOVE_PSYCHIC,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_FOCUSBLAST,
 			MOVE_ENERGYBALL,
@@ -16710,15 +16710,15 @@ const struct BattleTowerSpread gLegendaryTowerSpread_BigMo[] =
 	},
 	{
 		.species = SPECIES_PHEROMOSA,
-		.nature = NATURE_HASTY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 252,
-		.spAtkEv = 4,
+		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BEASTBOOST
 		.item = ITEM_WIDE_LENS,
@@ -16726,7 +16726,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_BigMo[] =
 		{
 			MOVE_UTURN,
 			MOVE_HIGHJUMPKICK,
-			MOVE_BLIZZARD,
+			MOVE_TRIPLEAXEL,
 			MOVE_POISONJAB,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
@@ -18182,7 +18182,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.item = ITEM_TAPUNIUM_Z,
 		.moves =
 		{
-			MOVE_RISINGVOLTAGE,
+			MOVE_THUNDERBOLT,
 			MOVE_NATURESMADNESS,
 			MOVE_UTURN,
 			MOVE_TAUNT,
@@ -18234,7 +18234,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.item = ITEM_ELECTRIC_GEM,
 		.moves =
 		{
-			MOVE_RISINGVOLTAGE,
+			MOVE_THUNDERBOLT,
 			MOVE_DAZZLINGGLEAM,
 			MOVE_GRASSKNOT,
 			MOVE_VOLTSWITCH,

@@ -752,6 +752,12 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					break;
 
 				case ABILITY_MOXIE:
+				#ifdef ABILITY_CHILLINGNEIGH
+				case ABILITY_CHILLINGNEIGH:
+				#endif
+				#ifdef ABILITY_ASONE_CHILLING
+				case ABILITY_ASONE_CHILLING:
+				#endif
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
 					&& gBattleMons[bankDef].hp == 0
 					&& BATTLER_ALIVE(gBankAttacker)
@@ -773,6 +779,36 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						effect = 1;
 					}
 					break;
+
+				#if (defined ABILITY_GRIMNEIGH || defined ABILITY_ASONE_GRIM)
+				#ifdef ABILITY_GRIMNEIGH
+				case ABILITY_GRIMNEIGH:
+				#endif
+				#ifdef ABILITY_ASONE_GRIM
+				case ABILITY_ASONE_GRIM:
+				#endif
+					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
+					&& gBattleMons[bankDef].hp == 0
+					&& BATTLER_ALIVE(gBankAttacker)
+					&& TOOK_DAMAGE(bankDef)
+					&& MOVE_HAD_EFFECT
+					&& STAT_CAN_RISE(gBankAttacker, STAT_STAGE_SPATK)
+					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
+					{
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
+
+						gEffectBank = gBankAttacker;
+						gBattleScripting.bank = gBankAttacker;
+						gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPATK;
+						gBattleScripting.animArg1 = 0xE + STAT_STAGE_SPATK;
+						gBattleScripting.animArg2 = 0;
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_Moxie;
+						effect = 1;
+					}
+					break;
+				#endif
 
 				case ABILITY_BEASTBOOST: ;
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
@@ -1370,6 +1406,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->MeFirstByte = FALSE;
 			gNewBS->consumedGem = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
+			gNewBS->rolloutFinalHit = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
 

@@ -460,3 +460,12 @@ void LoadPaletteForOverworldSandstorm(void)
 	else
         LoadCustomWeatherSpritePalette(gSandstormWeatherPalette);
 }
+
+u8 LoadPaletteForEmotionBubbles(void)
+{
+	#ifdef UNBOUND
+	return FindOrLoadNPCPalette(0x11A2);
+	#else
+	return FindOrLoadNPCPalette(0x1100);
+	#endif
+}

@@ -230,7 +230,15 @@ void atk03_ppreduce(void) {
 
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY && !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY
+	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+	#ifdef ABILITY_ASONE_GRIM
+	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_GRIM, 0, 0)
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_CHILLING, 0, 0)
+	#endif
+	)
 	{
 		if ((resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(bank) == gBattleStruct->dynamicMoveType && !DoesBankNegateDamage(bank, gCurrentMove))
 		||  (SPLIT(gCurrentMove) != SPLIT_STATUS && ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
@@ -1504,7 +1512,7 @@ void atk1B_cleareffectsonfaint(void) {
 				if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) == (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE) //Double Gym battle
 				&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
 				&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
-				&& ViableMonCount(gEnemyParty) <= 1)
+				&& ViableMonCount(gEnemyParty) == 1) //1 left exactly
 				{
 					PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
 				}
@@ -3631,7 +3639,9 @@ void atkAA_setdestinybond(void) {
 
 void atkAD_tryspiteppreduce(void)
 {
-	if (TrySpitePPReduce(gBankTarget, 4))
+	u8 toLose = (gCurrentMove == MOVE_EERIESPELL) ? 3 : 4;
+
+	if (TrySpitePPReduce(gBankTarget, toLose))
 		gBattlescriptCurrInstr += 5;
 	else
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3910,6 +3920,7 @@ void atkB3_rolloutdamagecalculation(void)
 		if (--gDisableStructs[gBankAttacker].rolloutTimer == 0) // last hit
 		{
 			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_MULTIPLETURNS);
+			gNewBS->rolloutFinalHit = TRUE;
 		}
 
 		gBattlescriptCurrInstr++;

@@ -784,7 +784,13 @@ void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 	if (IsDynamaxed(bank)
 	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
 	{
-		BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+		#if (defined SPECIES_CALYREX || defined SPECIES_CALYREX_ICE_RIDER || defined SPECIES_CALYREX_SHADOW_RIDER)
+		if (SPECIES(bank) == SPECIES_CALYREX || SPECIES(bank) == SPECIES_CALYREX_ICE_RIDER || SPECIES(bank) == SPECIES_CALYREX_SHADOW_RIDER)
+			BlendPalette(paletteOffset, 16, 4, RGB(0, 5, 35)); //Dynamax Blue
+		else
+		#endif
+			BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+
 		CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
 	}
 }

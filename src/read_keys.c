@@ -10,6 +10,7 @@
 #include "../include/rtc.h"
 #include "../include/script.h"
 #include "../include/start_menu.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
@@ -290,6 +291,7 @@ bool8 StartRButtonFunc(void)
 		case OPTIONS_R_BUTTON_MODE_MINING:
 			#ifdef MB_UNDERGROUND_MINING
 			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY
+			|| MAP_IS(CRYSTAL_PEAK_1F_LEFT_ROOM)
 			|| gMapHeader.mapType == MAP_TYPE_UNDERWATER)
 			{
 				TryLoadMiningSpots();

@@ -583,6 +583,7 @@ void atkF0_givecaughtmon(void)
 		IncrementGameStat(GAME_STAT_CAUGHT_TODAY);
 	else
 		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
+
 	gBattleResults.caughtMonSpecies = SPECIES(gBankTarget);
 	GetMonData(mon, MON_DATA_NICKNAME, gBattleResults.caughtMonNick);
 	++gBattlescriptCurrInstr;

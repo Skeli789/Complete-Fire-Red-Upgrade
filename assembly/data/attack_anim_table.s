@@ -775,8 +775,11 @@ gMoveAnimations:
 .word ANIM_FREEZING_GLARE
 .word ANIM_THUNDEROUS_KICK
 .word ANIM_FIERY_WRATH
+.word ANIM_EERIE_SPELL
 .word ANIM_THUNDER_CAGE
 .word ANIM_DRAGON_ENERGY
+.word ANIM_ASTRAL_BARRAGE
+.word ANIM_GLACIAL_LANCE
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_ALL_OUT_PUMMELING
@@ -4760,22 +4763,21 @@ DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit WesleyFG
+@Credits to Skeli
 ANIM_DOUBLEHIT:
 	loadparticle ANIM_TAG_IMPACT
-	loadparticle ANIM_TAG_POISON_BUBBLE
 	pokespritetoBG bank_target
 	setblends 0x80c
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x4
 	pause 0x6
-	launchtemplate DUALCHOP_HIT 0x2 0x4 0xFFFA 0x5 0x1 0x1
+	launchtemplate Template_Hit 0x2 0x4 0xFFFA 0x5 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	playsound2 0x84 SOUND_PAN_TARGET
 	pause 0x8
 	waitanimation
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x4
 	pause 0x6
-	launchtemplate DUALCHOP_HIT 0x2 0x4 0x0 0x0 0x1 0x1
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	playsound2 0x84 SOUND_PAN_TARGET
 	pause 0x8
@@ -5417,7 +5419,7 @@ ANIM_BABYDOLLEYES:
 	setblends 0x808
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xA 0x7FFF
 	waitanimation
-	launchtemplate 0x83FEE5C 0x5 0x4 0x0 0x0 0x1 0x0
+	launchtemplate 0x83FEE5C TEMPLATE_TARGET | 2, 0x4 0x0 0x0 0x1 0x0
 	pause 0x20
 	playsound2 0xb9 SOUND_PAN_ATTACKER
 	launchtask AnimTask_ScaleMonAndRestore 0x5 0x5 0xfffb 0xfffb 0xa bank_attacker 0x1
@@ -17562,7 +17564,7 @@ ANIM_FREEZING_GLARE:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_THUNDEROUS_KICK:
-	goto 0x81c7dc7 @MOVE_MEGAKICK
+	goto 0x81cfe02 @MOVE_HIGHJUMPKICK
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -17573,6 +17575,13 @@ ANIM_FIERY_WRATH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+ANIM_EERIE_SPELL:
+	goto 0x81ccbd1 @MOVE_EXTRASENSORY
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+.global ANIM_THUNDER_CAGE
 ANIM_THUNDER_CAGE:
 	goto 0x81c8160 @MOVE_THUNDERWAVE
 	endanimation
@@ -17581,6 +17590,18 @@ ANIM_THUNDER_CAGE:
 .pool
 ANIM_DRAGON_ENERGY:
 	goto ANIM_DRAGONPULSE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_ASTRAL_BARRAGE:
+	goto 0x81d129d	@MOVE_SHADOWBALL
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_GLACIAL_LANCE:
+	goto 0x81c77c1 @MOVE_ICICLESPEAR
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -182,8 +182,7 @@ SetPalMisc_DoNotSet:
 @ hook at 0x82664 via r3
 SetPalEmotionBubble:
 	push {r0-r2}
-	ldr r0, .PalTagEmotionBubble
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	lsl r1, r0, #4
 	pop {r0}
 	ldrb r3, [r0,#5]
@@ -206,8 +205,7 @@ SetPalEmotionBubble:
 @ hook at 0xDB1AC via r3
 SetPalWarpArrow:
 	push {r2}
-	ldr r0, .PalTagEmotionBubble
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	pop {r2}
 	lsl r0, #4
 	ldrb r3, [r2,#5]
@@ -229,8 +227,7 @@ SetPalWarpArrow:
 .pool
 @ hook at 0x13F434 via r0
 SetPalItemfinderArrow:
-	ldr r0, .PalTagEmotionBubble
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	lsl r0, #4
 	ldrb r1, [r4,#5]
 	mov r2, #0xF
@@ -240,9 +237,6 @@ SetPalItemfinderArrow:
 	mov r0, r4
 	ldr r1, =0x813F43C+1
 	bx r1
-
-.align 2
-.PalTagEmotionBubble: .word 0x1100
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
@@ -344,8 +338,7 @@ SetPalReflection:
 SetPalSurf:
 	push {r1}
 	strb r0, [r3]
-	ldr r0, .BlobPalette
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	pop {r1}
 	lsl r0, #4
 	ldrb r3, [r1,#5]
@@ -361,9 +354,8 @@ SetPalSurf:
 @ hook at 0x87188 via r1
 SetPalFly:
 	push {r0}
-	ldr r0, .BlobPalette
 	push {r2}
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	pop {r2}
 	lsl r0, #4
 	ldrb r3, [r2,#5]
@@ -383,8 +375,7 @@ SetPalFly:
 @ hook at 0x86D58 via r0
 SetPalFly2:
 	push {r2}
-	ldrh r0, .BlobPalette
-	bl FindOrLoadNPCPalette
+	bl LoadPaletteForEmotionBubbles
 	pop {r2}
 	lsl r0, #4
 	ldrb r1, [r2,#5]
@@ -405,7 +396,7 @@ SetPalFly2:
 @ hook at 0xDB260 via r0
 SetPalShadow:
 	push {r2}
-	ldr r0, .BlobPalette
+	ldr r0, .ShadowPalette
 	bl FindOrLoadNPCPalette
 	pop {r2}
 	lsl r0, #4
@@ -419,7 +410,7 @@ SetPalShadow:
 
 .pool
 .align 2
-.BlobPalette: .word 0x00001100
+.ShadowPalette: .word 0x00001100
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2

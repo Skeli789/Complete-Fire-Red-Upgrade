@@ -376,6 +376,9 @@ void PlayerHandleDrawTrainerPic(void)
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], xPos, yPos, GetBattlerSpriteSubpriority(gActiveBattler));
 
+	if (IS_DOUBLE_BATTLE)
+		gSprites[gBattlerSpriteIds[gActiveBattler]].oam.priority = 0; //So it appears above enemy healthbars
+
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -3; //-2; //Speed scrolling in
@@ -391,6 +394,9 @@ void PlayerHandleTrainerSlide(void)
 	LoadTrainerBackPal(trainerPicId, gActiveBattler);
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 80, (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80, 30);
+
+	if (IS_DOUBLE_BATTLE)
+		gSprites[gBattlerSpriteIds[gActiveBattler]].oam.priority = 0;
 
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;

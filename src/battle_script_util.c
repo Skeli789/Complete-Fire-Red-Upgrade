@@ -1963,7 +1963,14 @@ void FailIfAttackerIsntHoldingEdibleBerry(void)
 	u16 item = ITEM(gBankAttacker);
 
 	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
-	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0))
+	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0)
+	#ifdef ABILITY_ASONE_GRIM
+	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_ASONE_GRIM, 0, 0)
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_ASONE_CHILLING, 0, 0)
+	#endif
+	)
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 }
 

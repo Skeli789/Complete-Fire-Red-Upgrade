@@ -1414,3 +1414,14 @@ bool8 ShouldFollowerIgnoreActiveScript(void)
 	return FALSE;
 	#endif
 }
+
+void TryAttachFollowerToPlayer(void)
+{
+	if (gFollowerState.inProgress)
+	{
+		//Keep the follow close by while its hidden to prevent it from going too far out of view
+		struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
+		struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
+		MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
+	}
+}

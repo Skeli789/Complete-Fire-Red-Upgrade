@@ -1155,11 +1155,12 @@ void HandleAction_UseMove(void)
 	{
 		gBankTarget = gSideTimers[side].followmeTarget;
 	}
-	else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-		  &&  gSideTimers[side].followmeTimer == 0
+	else if (IS_DOUBLE_BATTLE
+		  && gSideTimers[side].followmeTimer == 0
 		  && !IsMoveRedirectionPrevented(gCurrentMove, atkAbility)
 		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
-		  && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH)))
+		  && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
+		  && NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove))
 	{ //Try Ability Redirection
 		switch (moveType) {
 			case TYPE_WATER:
@@ -1751,6 +1752,12 @@ s32 BracketCalc(u8 bank)
 
 			case ITEM_EFFECT_CUSTAP_BERRY:
 				if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+				#ifdef ABILITY_ASONE_GRIM
+				&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_GRIM, 0, 0)
+				#endif
+				#ifdef ABILITY_ASONE_CHILLING
+				&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_CHILLING, 0, 0)
+				#endif
 				&& PINCH_BERRY_CHECK(bank))
 				{
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];

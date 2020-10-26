@@ -669,6 +669,8 @@
 #define MAP_TOMB_OF_BORRIUS_B3F		((1 << 8) | 85)
 #define MAP_TOMB_OF_BORRIUS_1F_BACK	((1 << 8) | 90)
 
+#define MAP_CRYSTAL_PEAK_1F_LEFT_ROOM ((56 << 8) | 3)
+
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
 #define MAP_VICTORY_ROAD_CAVE_B       ((55 << 8) | 1)
 #define MAP_VICTORY_ROAD_VOLCANO      ((55 << 8) | 2)

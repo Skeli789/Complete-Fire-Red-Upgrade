@@ -580,7 +580,7 @@ static void RestoreNonConsumableItems(void)
 	bool8 keepConsumables = FALSE;
 	#endif
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle())
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle() || keepConsumables)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
@@ -635,7 +635,7 @@ static void EndPartnerBattlePartyRestore(void)
 {
 	int i;
 	u8 counter = 0;
-	pokemon_t* backup = ExtensionState.partyBackup;
+	struct Pokemon* backup = ExtensionState.partyBackup;
 
 	if (ExtensionState.partyBackup != NULL)
 	{
@@ -645,24 +645,32 @@ static void EndPartnerBattlePartyRestore(void)
 		}
 		else
 		{ 	//Special 0x2F was used
-			pokemon_t* foughtMons = Calloc(sizeof(struct Pokemon) * 3);
-			if (foughtMons != NULL)
+			struct Pokemon foughtMons[3];
+			u8 newLeveledUpInBattle = 0;
+			Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
+			Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * PARTY_SIZE);
+
+			for (i = 0; i < 3; ++i)
 			{
-				Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
-				Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * 6);
-				for (i = 0; i < 3; ++i)
+				if (gSelectedOrderFromParty[i] != 0) //Pokemon was chosen for battle
 				{
-					if (gSelectedOrderFromParty[i] != 0)
-						Memcpy(&gPlayerParty[gSelectedOrderFromParty[i] - 1], &foughtMons[i], sizeof(struct Pokemon));
+					u8 correctSlotId = gSelectedOrderFromParty[i] - 1;
+					Memcpy(&gPlayerParty[correctSlotId], &foughtMons[i], sizeof(struct Pokemon));
+					if (gLeveledUpInBattle & gBitTable[i])
+						newLeveledUpInBattle |= gBitTable[correctSlotId]; //Move to correct index
 				}
 			}
+
+			//Pokemon that leveled up may move around after battle.
+			//This is necessary so proper evolutions can happen after battle.
+			gLeveledUpInBattle = newLeveledUpInBattle;
 
 			for (i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (!FlagGet(FLAG_BATTLE_FACILITY))
 					gSelectedOrderFromParty[i] = 0; //Reset for next battle
 
-				if (gPlayerParty[i].species == 0)
+				if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}
@@ -680,16 +688,22 @@ static void EndSkyBattlePartyRestore(void)
 
 	if (backup != NULL)
 	{
+		u8 newLeveledUpInBattle = 0;
 		struct Pokemon tempTeam[PARTY_SIZE] = {0};
 
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (gSelectedOrderFromParty[i] != 0)
 			{
-				tempTeam[gSelectedOrderFromParty[i] - 1] = gPlayerParty[i];
+				u8 correctSlotId = gSelectedOrderFromParty[i] - 1;
+				tempTeam[correctSlotId] = gPlayerParty[i];
 				gSelectedOrderFromParty[i] = 0;
+				if (gLeveledUpInBattle & gBitTable[i])
+					newLeveledUpInBattle |= gBitTable[correctSlotId]; //Move to correct index
 			}
 		}
+
+		gLeveledUpInBattle = newLeveledUpInBattle; //Same logic as in above function
 
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{

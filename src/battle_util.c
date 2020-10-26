@@ -1102,6 +1102,12 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 	|| itemEffect == ITEM_EFFECT_GEM
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
 	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_UNNERVE, 0, 0))
+	#ifdef ABILITY_ASONE_GRIM
+	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_ASONE_GRIM, 0, 0))
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_ASONE_CHILLING, 0, 0))
+	#endif
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
 

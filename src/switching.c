@@ -206,6 +206,12 @@ static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
 				//Some abilities don't reactivate
 				switch (ability) {
 					case ABILITY_UNNERVE:
+					#ifdef ABILITY_ASONE_GRIM
+					case ABILITY_ASONE_GRIM:
+					#endif
+					#ifdef ABILITY_ASONE_CHILLING
+					case ABILITY_ASONE_CHILLING:
+					#endif
 						break;
 					case ABILITY_IMPOSTER: //Never gets another chance
 						gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
@@ -233,8 +239,16 @@ static bool8 TryRemoveUnnerve(u8 bank)
 {
 	u8 side = SIDE(bank);
 	bool8 ret = FALSE;
+	u8 ability = ABILITY(bank);
 
-	if (ABILITY(bank) == ABILITY_UNNERVE)
+	if (ability == ABILITY_UNNERVE
+	#ifdef ABILITY_ASONE_GRIM
+	|| ability == ABILITY_ASONE_GRIM
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	|| ability == ABILITY_ASONE_CHILLING
+	#endif
+	)
 	{
 		*GetAbilityLocation(bank) = ABILITY_NONE; //Temporarily remove Unnerve so Berries can activate
 
@@ -254,7 +268,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 			}
 		}
 
-		*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+		*GetAbilityLocation(bank) = ability; //Restore Unnerve so loop can continue when we return to this function
 	}
 
 	return ret;

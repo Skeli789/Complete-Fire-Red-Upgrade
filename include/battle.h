@@ -873,6 +873,7 @@ struct NewBattleStruct
 	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
 	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
 	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
+	bool8 rolloutFinalHit : 1; //Helps with Rollout 5th hit damage calc
 
 	//Other
 	u16 LastUsedMove;

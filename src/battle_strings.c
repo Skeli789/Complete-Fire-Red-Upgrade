@@ -145,7 +145,14 @@ void BufferStringBattle(u16 stringID)
 			#endif
 
 			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !IsRaidBattle())
-				stringPtr = BattleText_TwoWildPkmnAppeared; //0x83FD2BF
+			{
+				#ifdef FLAG_TWO_WILD_POKEMON_ATTACKED_STRING
+				if (FlagGet(FLAG_TWO_WILD_POKEMON_ATTACKED_STRING))
+					stringPtr = BattleText_TwoWildAttacked;
+				else
+				#endif
+					stringPtr = BattleText_TwoWildPkmnAppeared; //0x83FD2BF
+			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN)
 				stringPtr = BattleText_WildPkmnAppearedPause; //0x83FD2AA
 			else

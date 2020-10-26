@@ -155,6 +155,18 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_MOODY] = 10,
 	[ABILITY_MOTORDRIVE] = 6,
 	[ABILITY_MOXIE] = 7,
+	#ifdef ABILITY_GRIMNEIGH
+	[ABILITY_GRIMNEIGH] = 7,
+	#endif
+	#ifdef ABILITY_CHILLINGNEIGH
+	[ABILITY_CHILLINGNEIGH] = 7,
+	#endif
+	#ifdef ABILITY_ASONE_GRIM
+	[ABILITY_ASONE_GRIM] = 7,
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	[ABILITY_ASONE_CHILLING] = 7,
+	#endif
 	[ABILITY_MULTISCALE] = 8,
 	[ABILITY_MULTITYPE] = 8,
 	[ABILITY_MUMMY] = 5,
@@ -459,6 +471,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				case ABILITY_FOREWARN:
 				case ABILITY_FRISK:
 				case ABILITY_IMPOSTER:
+				#ifdef ABILITY_ASONE_GRIM
+				case ABILITY_ASONE_GRIM:
+				#endif
+				#ifdef ABILITY_ASONE_CHILLING
+				case ABILITY_ASONE_CHILLING:
+				#endif
 					return FALSE;
 			}
 		}
@@ -764,6 +782,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_UNNERVE:
+		#ifdef ABILITY_ASONE_GRIM
+		case ABILITY_ASONE_GRIM:
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		case ABILITY_ASONE_CHILLING:
+		#endif
 			gBankAttacker = bank;
 			gBattleStringLoader = gText_UnnerveActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);

@@ -257,6 +257,9 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 #org @gText_TargetWasCaughtInSnapTrap
 [TARGET] got trapped\nby a snap trap!
 
+#org @gText_TargetWasTrappedByAttacker
+[TARGET] was trapped\nby [ATTACKER]!
+
 #org @gText_HurtBySeaOfFire
 [ATTACKER] is hurt\nby the sea of fire!
 
@@ -390,4 +393,3 @@ The storm is getting too strong to\nwithstand!
 
 #org @gText_RaidMonRanAway
 [PLAY_SE][11][00][FD][06] disappeared\nsomewhere[.]\p
-

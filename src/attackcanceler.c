@@ -371,7 +371,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 
 		case CANCELLER_RAID_BATTLE_NULLIFICATION:
 			if (IsRaidBattle()
-			&& GetBattlerPosition(gBankAttacker) == B_POSITION_OPPONENT_LEFT
+			&& gBankAttacker == BANK_RAID_BOSS
 			&& Random() % 100 < GetRaidBattleStatNullificationChance(gBankAttacker))
 			{
 				for (i = 0; i < gBattlersCount; ++i)

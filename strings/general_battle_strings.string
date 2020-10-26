@@ -65,6 +65,9 @@ A wild [FD][06] appeared!\p
 #org @BattleText_TwoWildPkmnAppeared
 A wild [FD][06] and\na wild [FD][08] appeared!\p
 
+#org @BattleText_TwoWildAttacked
+[FD][06] and [FD][08] attacked!\p
+
 #org @BattleText_WildPkmnAppearedPause
 A wild [FD][06] appeared![FC][08][7F]
 

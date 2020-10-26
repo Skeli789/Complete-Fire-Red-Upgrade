@@ -123,6 +123,7 @@ void __attribute__((long_call)) EventObjectForceSetHeldMovement(struct EventObje
 bool8 __attribute__((long_call)) EventObjectIsMovementOverridden(struct EventObject *eventObject);
 u8 __attribute__((long_call)) EventObjectCheckHeldMovementStatus(struct EventObject *eventObject);
 u8 __attribute__((long_call)) EventObjectGetHeldMovementActionId(struct EventObject *eventObject);
+void __attribute__((long_call)) DoShadowFieldEffect(struct EventObject *);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -209,7 +210,6 @@ bool8 obj_npc_ministep(struct Sprite *sprite);
 bool8 sub_80976EC(struct Sprite *sprite);
 void sub_80976DC(struct Sprite *, u8);
 void sub_809783C(struct Sprite *, u8, u8, u8);
-void DoShadowFieldEffect(struct EventObject *);
 u8 sub_809785C(struct Sprite *);
 u8 sub_80978E4(struct Sprite *);
 void SetAndStartSpriteAnim(struct Sprite *, u8, u8);

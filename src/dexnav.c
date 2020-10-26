@@ -174,7 +174,8 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	for (i = 0; i < numChecks; ++i)
 	{
-		if (Random() % 10000 < otherValue)
+		u32 check = Random32() % 10000;
+		if (check < otherValue)
 		{
 			FlagSet(FLAG_SHINY_CREATION);
 			break;
@@ -792,7 +793,8 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 			if (sDexNavHudPtr->heldItem)
 			{
 				// toggle item view
-				if (sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
+				if (sDexNavHudPtr->heldItem != ITEM_NONE
+				&& sDexNavHudPtr->spriteIdItem < MAX_SPRITES)
 					gSprites[sDexNavHudPtr->spriteIdItem].invisible = FALSE;
 			}
 		}
