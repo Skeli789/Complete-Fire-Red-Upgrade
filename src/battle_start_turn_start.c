@@ -41,6 +41,8 @@ enum BattleBeginStates
 	ThirdTypeRemoval,
 	RaidBattleReveal,
 	DynamaxUsableIndicator,
+	RainbowBattleMessage,
+	TormentBattleMessage,
 	NeutralizingGas,
 	SwitchInAbilities,
 	Intimidate,
@@ -249,14 +251,36 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case DynamaxUsableIndicator:
-			#ifdef DYNAMAX_FEATURE
+				#ifdef DYNAMAX_FEATURE
 				gBattleScripting.bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 				if (DynamaxEnabled(gBattleScripting.bank))
 				{
 					gBattleStringLoader = gText_DynamaxUsable;
 					BattleScriptPushCursorAndCallback(BattleScript_DynamaxEnergySwirl);
 				}
-			#endif
+				#endif
+				++*state;
+				break;
+
+			case RainbowBattleMessage:
+				#ifdef FLAG_RAINBOW_BATTLE
+				if (FlagGet(FLAG_RAINBOW_BATTLE))
+				{
+					gBattleStringLoader = gText_RainbowBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
+				++*state;
+				break;
+
+			case TormentBattleMessage:
+				#ifdef FLAG_TORMENT_BATTLE
+				if (FlagGet(FLAG_TORMENT_BATTLE))
+				{
+					gBattleStringLoader = gText_TormentBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
 				++*state;
 				break;
 

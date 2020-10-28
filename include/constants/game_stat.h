@@ -40,7 +40,7 @@
 #define GAME_STAT_EXP_EARNED_TODAY          34 //NEW!
 #define GAME_STAT_SOLD_ITEM_TO_MANIAC       35 //NEW!
 #define GAME_STAT_REVIVED_FOSSIL            36 //NEW!
-#define GAME_STAT_WON_CONTEST               37 //Unused
+#define GAME_STAT_HEADBUTT_WILD_ENCOUNTERS  37 //NEW!
 #define GAME_STAT_SHOPPED                   38
 #define GAME_STAT_USED_ITEMFINDER           39
 #define GAME_STAT_GOT_RAINED_ON             40

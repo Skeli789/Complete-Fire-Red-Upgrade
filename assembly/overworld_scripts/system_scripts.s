@@ -749,6 +749,7 @@ EventScript_HiddenGrottoForest_Nowhere:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .equ SE_HEADBUTT, 0x74
+.equ GAME_STAT_HEADBUTT_WILD_ENCOUNTERS, 37
 
 .global EventScript_HeadbuttTree
 EventScript_HeadbuttTree:
@@ -781,6 +782,7 @@ EventScript_HeadbuttTree_SkipAsk:
 	compare LASTRESULT 0x0 @No data for this area
 	if equal _goto EventScript_HeadbuttTree_End
 	waitstate
+	incrementgamestat GAME_STAT_HEADBUTT_WILD_ENCOUNTERS
 
 EventScript_HeadbuttTree_End:
 	releaseall

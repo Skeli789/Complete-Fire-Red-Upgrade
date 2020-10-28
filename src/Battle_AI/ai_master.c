@@ -2356,7 +2356,7 @@ void PopulateAIScriptStructWithBaseAttackerData(struct AIScript* data, u8 bankAt
 
 	data->atkAttack = gBattleMons[bankAtk].attack;
 	data->atkDefense = gBattleMons[bankAtk].defense;
-	data->atkSpeed = gBattleMons[bankAtk].speed;
+	data->atkSpeed = SpeedCalc(bankAtk);
 	data->atkSpAtk = gBattleMons[bankAtk].spAttack;
 	data->atkSpDef = gBattleMons[bankAtk].spDefense;
 
@@ -2382,7 +2382,7 @@ void PopulateAIScriptStructWithBaseDefenderData(struct AIScript* data, u8 bankDe
 
 	data->defAttack = gBattleMons[bankDef].attack;
 	data->defDefense = gBattleMons[bankDef].defense;
-	data->defSpeed = gBattleMons[bankDef].speed;
+	data->defSpeed = SpeedCalc(bankDef);
 	data->defSpAtk = gBattleMons[bankDef].spAttack;
 	data->defSpDef = gBattleMons[bankDef].spDefense;
 
@@ -2500,6 +2500,8 @@ static void UpdateStrongestMoves(void)
 			if (gNewBS->ai.megaPotential[bankAtk] == NULL)
 				gNewBS->ai.megaPotential[bankAtk] = CanMegaEvolve(bankAtk, TRUE); //Check Ultra Burst
 		}
+
+		gNewBS->ai.suckerPunchOkay[bankAtk] = Random() & 1; //Randomly choose if turn is okay for a revealed Sucker Punch
 
 		if (IS_SINGLE_BATTLE) //There's a high chance these values will be used in singles so calc now.
 		{

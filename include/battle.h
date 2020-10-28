@@ -960,7 +960,8 @@ struct NewBattleStruct
 	{
 		u16 zMoveHelper;
 		bool8 sideSwitchedThisRound;
-		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
+		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B6C
+		bool8 suckerPunchOkay[MAX_BATTLERS_COUNT]; //~0x2017B70
 		u8 itemEffects[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]

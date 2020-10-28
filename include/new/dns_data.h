@@ -929,7 +929,6 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			{2,  RGB(31, 31, 14)},
 			{3,  RGB(31, 30, 1)},
 
-			{6,  RGB(31, 30, 1)},
 			{11,  RGB(31, 31, 14)},
 
 			{8,  RGB(31, 31, 14)},

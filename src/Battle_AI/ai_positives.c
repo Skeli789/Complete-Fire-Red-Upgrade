@@ -326,9 +326,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SPEED_DOWN:
+			if (GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 1))
+				INCREASE_STATUS_VIABILITY(2);
+			break;
+
 		case EFFECT_SPEED_DOWN_2:
-		AI_SPEED_MINUS:
-			if (GoodIdeaToLowerSpeed(bankDef, bankAtk, move))
+			if (GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 2))
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 
@@ -498,6 +501,17 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_FOCUS_ENERGY:
 		AI_FOCUS_ENERGY:
+			if (data->atkSpeed > data->defSpeed) //Attacker could follow up first
+			{
+				if (CanKnockOut(bankDef, bankAtk)) //Attacker won't get a chance to follow up
+					break;
+			}
+			else //Enemy Attack -> AI Laser Focus -> Enemy Attack KO
+			{
+				if (Can2HKO(bankDef, bankAtk)) //Attacker won't get a chance to follow up
+					break;
+			}
+
 			if (atkAbility == ABILITY_SUPERLUCK
 			|| atkAbility == ABILITY_SNIPER
 			|| data->atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
@@ -561,13 +575,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_PARALYZE_CHECKS:
 			if (!BadIdeaToParalyze(bankDef, bankAtk))
 			{
-				u8 atkSpeedCalc = SpeedCalc(bankAtk);
-				u8 defSpeedCalc = SpeedCalc(bankDef);
-
 				if (IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef))
 					break;
 
-				else if ((defSpeedCalc >= atkSpeedCalc && defSpeedCalc / 2 < atkSpeedCalc) //You'll go first after paralyzing foe
+				else if ((data->defSpeed >= data->atkSpeed && data->defSpeed / 2 < data->atkSpeed) //You'll go first after paralyzing foe
 				|| MoveInMoveset(MOVE_HEX, bankAtk)
 				|| FlinchingMoveInMoveset(bankAtk)
 				|| data->defStatus2 & STATUS2_INFATUATION
@@ -593,7 +604,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (CalcSecondaryEffectChance(bankAtk, move) >= 50)
 			{
 				if (IS_SINGLE_BATTLE)
-					goto AI_SPEED_MINUS;
+				{
+					if (GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 1))
+						INCREASE_VIABILITY(3); //Increase past strongest move
+				}
 				else //Double Battle
 				{
 					if (defAbility != ABILITY_CONTRARY
@@ -1903,7 +1917,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					case MOVE_QUIVERDANCE:
 						if (defAbility == ABILITY_DANCER)
 							break; //Bad Idea
-						if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
+						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						__attribute__ ((fallthrough));
 
@@ -1923,7 +1937,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					case MOVE_SHELLSMASH:
 						if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
 							INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, STAT_STAGE_MAX, 3);
-						else if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
+						else if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						else if ((IsClassBatonPass(class) && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 10)
 						|| (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8 && (SpecialMoveInMoveset(bankAtk))))
@@ -1935,7 +1949,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					default: //Dragon Dance + Shift Gear
 						if (move == MOVE_DRAGONDANCE && defAbility == ABILITY_DANCER)
 							break; //Bad Idea
-						if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
+						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						else
 							goto AI_ATTACK_PLUS;

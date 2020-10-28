@@ -585,7 +585,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_SPEED_DOWN_HIT:
-									if (CALC && GoodIdeaToLowerSpeed(currTarget, bankAtk, move))
+									if (CALC && GoodIdeaToLowerSpeed(currTarget, bankAtk, move, 1))
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_ACCURACY_DOWN_HIT:
@@ -872,28 +872,12 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 	if (move == MOVE_NONE || numHits == 0 || gBattleMoves[move].power == 0)
 		return 0;
 
-	switch (gBattleMoves[move].effect) {
-		case EFFECT_FAKE_OUT:
-			if (!gDisableStructs[bankAtk].isFirstTurn)
-				return 0;
-			break;
+	if (SPLIT(move) != SPLIT_STATUS && IsDamagingMoveUnusable(move, bankAtk, bankDef))
+		return 0;
 
-		case EFFECT_BURN_UP:
-			if (!IsOfType(bankAtk, TYPE_FIRE))
-				return 0;
-			break;
-
-		case EFFECT_POLTERGEIST:
-			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
-				return 0;
-			break;
-
+	switch (gBattleMoves[move].effect)
+	{
 		case EFFECT_0HKO:
-			if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
-				return 0;
-			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
-				return 0;
-
 			return gBattleMons[bankDef].hp;
 
 		case EFFECT_COUNTER: //Includes Metal Burst
@@ -931,29 +915,15 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
 		return 0;
 
-	switch (gBattleMoves[move].effect) {
+	if (IsDamagingMoveUnusableByMon(move, monAtk, bankDef))
+		return 0;
+
+	switch (gBattleMoves[move].effect) 
+	{
 		case EFFECT_0HKO:
-			if (GetMonData(monAtk, MON_DATA_LEVEL, NULL) <= gBattleMons[bankDef].level)
-				return 0;
-			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
-				return 0;
 			return gBattleMons[bankDef].hp;
-
-		case EFFECT_BURN_UP:
-			if (!IsMonOfType(monAtk, TYPE_FIRE))
-				return 0;
-			break;
-
-		case EFFECT_POLTERGEIST:
-			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
-				return 0;
-			break;
-
-		case EFFECT_COUNTER: //Includes Metal Burst
-		case EFFECT_MIRROR_COAT:
-			return 0;
 	}
-
+	
 	return MathMin(AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData) * numHits, gBattleMons[bankDef].maxHP);
 }
 
@@ -1379,6 +1349,21 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank)
 	return (speed1 + speed2) / numBattlersAlive;
 }
 
+bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy)
+{
+	u8 oldSpeedStage = STAT_STAGE(bankDef, STAT_STAGE_SPEED); //Backup current stat stage before modification
+	
+	//Emulate speed drop
+	if (reduceBy > STAT_STAGE(bankDef, STAT_STAGE_SPEED))
+		STAT_STAGE(bankDef, STAT_STAGE_SPEED) = 0;
+	else
+		STAT_STAGE(bankDef, STAT_STAGE_SPEED) -= reduceBy;
+
+	bool8 faster = SpeedCalc(bankAtk) <= SpeedCalc(bankDef); //Check speeds now
+	STAT_STAGE(bankDef, STAT_STAGE_SPEED) = oldSpeedStage; //Restore speed from backup
+	return faster;
+}
+
 u16 GetBattleMonMove(u8 bank, u8 i)
 {
 	u16 move;
@@ -1427,6 +1412,238 @@ u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
 		return GetAIAbility(bankAtk, bankDef, predictedUserMove);
 	else
 		return ABILITY(bankAtk);
+}
+
+//Basically a bunch of checks handled in the Negatives but still needed for damage calcs to work properly
+//These by default are not handled in IsUnusableMove
+bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
+{
+	if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+	{
+		switch (ABILITY(bankDef))
+		{
+			//Electric
+			case ABILITY_VOLTABSORB:
+			case ABILITY_MOTORDRIVE:
+			case ABILITY_LIGHTNINGROD:
+				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_ELECTRIC)
+					return TRUE;
+				break;
+
+			//Water
+			case ABILITY_WATERABSORB:
+			case ABILITY_DRYSKIN:
+			case ABILITY_STORMDRAIN:
+				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_WATER)
+					return TRUE;
+				break;
+
+			//Fire
+			case ABILITY_FLASHFIRE:
+				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_FIRE)
+					return TRUE;
+				break;
+
+			//Grass
+			case ABILITY_SAPSIPPER:
+				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_GRASS)
+					return TRUE;
+				break;
+
+			//Move category checks
+			case ABILITY_SOUNDPROOF:
+				if (CheckSoundMove(move))
+					return TRUE;
+				break;
+
+			case ABILITY_BULLETPROOF:
+				if (gSpecialMoveFlags[move].gBallBombMoves)
+					return TRUE;
+				break;
+
+			case ABILITY_DAZZLING:
+			case ABILITY_QUEENLYMAJESTY:
+				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
+					return TRUE;
+				break;
+		}
+	}
+
+	switch (gBattleMoves[move].effect) {
+		case EFFECT_FAKE_OUT:
+			if (!gDisableStructs[bankAtk].isFirstTurn)
+				return TRUE;
+			break;
+		case EFFECT_BURN_UP:
+			if (!IsOfType(bankAtk, TYPE_FIRE))
+				return TRUE;
+			break;
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
+				return TRUE;
+			break;
+		case EFFECT_0HKO:
+			if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
+				return TRUE;
+			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
+				return TRUE;
+			break;
+		case EFFECT_SUCKER_PUNCH:
+			if (!IsSuckerPunchOkayToUseThisRound(move, bankAtk, bankDef))
+				return TRUE;
+			break;
+	}
+
+	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves)
+		return TRUE;
+
+	//Raid Battle Check
+	if (IsRaidBattle())
+	{
+		if (bankAtk == BANK_RAID_BOSS && gSpecialMoveFlags[move].gRaidBattleBannedRaidMonMoves)
+			return TRUE;
+	}
+
+	//Primal Weather Check
+	if ((gBattleWeather & WEATHER_SUN_PRIMAL && GetMoveTypeSpecial(bankAtk, move) == TYPE_WATER)
+	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && GetMoveTypeSpecial(bankAtk, move) == TYPE_FIRE))
+		return TRUE;
+
+	//Terrain Check
+	if (CheckGrounding(bankDef) == GROUNDED)
+	{
+		switch (gTerrainType) {
+			case PSYCHIC_TERRAIN:
+				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
+					return TRUE;
+				break;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
+{
+	if (NO_MOLD_BREAKERS(GetMonAbility(monAtk), move))
+	{
+		switch (ABILITY(bankDef))
+		{
+			//Electric
+			case ABILITY_VOLTABSORB:
+			case ABILITY_MOTORDRIVE:
+			case ABILITY_LIGHTNINGROD:
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC)
+					return TRUE;
+				break;
+
+			//Water
+			case ABILITY_WATERABSORB:
+			case ABILITY_DRYSKIN:
+			case ABILITY_STORMDRAIN:
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_WATER)
+					return TRUE;
+				break;
+
+			//Fire
+			case ABILITY_FLASHFIRE:
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_FIRE)
+					return TRUE;
+				break;
+
+			//Grass
+			case ABILITY_SAPSIPPER:
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_GRASS)
+					return TRUE;
+				break;
+
+			//Move category checks
+			case ABILITY_SOUNDPROOF:
+				if (CheckSoundMove(move))
+					return TRUE;
+				break;
+
+			case ABILITY_BULLETPROOF:
+				if (gSpecialMoveFlags[move].gBallBombMoves)
+					return TRUE;
+				break;
+
+			case ABILITY_DAZZLING:
+			case ABILITY_QUEENLYMAJESTY:
+				if (PriorityCalcMon(monAtk, move) > 0) //Check if right num
+					return TRUE;
+				break;
+		}
+	}
+
+	switch (gBattleMoves[move].effect)
+	{
+		case EFFECT_BURN_UP:
+			if (!IsMonOfType(monAtk, TYPE_FIRE))
+				return TRUE;
+			break;
+		case EFFECT_POLTERGEIST:
+			if (WillPoltergeistFail(ITEM(bankDef), ABILITY(bankDef)))
+				return TRUE;
+			break;
+		case EFFECT_0HKO:
+			if (GetMonData(monAtk, MON_DATA_LEVEL, NULL) <= gBattleMons[bankDef].level)
+				return TRUE;
+			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
+				return TRUE;
+			break;
+		case EFFECT_COUNTER: //Includes Metal Burst
+		case EFFECT_MIRROR_COAT:
+			return TRUE;
+	}
+
+	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves)
+		return TRUE;
+
+	//Primal Weather Check
+	if ((gBattleWeather & WEATHER_SUN_PRIMAL && GetMonMoveTypeSpecial(monAtk, move) == TYPE_WATER)
+	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && GetMonMoveTypeSpecial(monAtk, move) == TYPE_FIRE))
+		return TRUE;
+
+	//Terrain Check
+	if (CheckGrounding(bankDef) == GROUNDED)
+	{
+		switch (gTerrainType) {
+			case PSYCHIC_TERRAIN:
+				if (PriorityCalcMon(monAtk, move) > 0)
+					return TRUE;
+				break;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
+
+	if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_SEMI_SMART //Only smart AI
+	&& movePos < MAX_MON_MOVES //Mon actually knows Sucker Punch (and isn't just copying it from somewhere)
+	&& SIDE(bankAtk) == B_SIDE_OPPONENT //AI side is attacker
+	&& gBattleMons[bankAtk].pp[movePos] < CalculatePPWithBonus(move, gBattleMons[bankAtk].ppBonuses, movePos) //Mon has revealed Sucker Punch
+	&& StatusMoveInMoveset(bankDef)) //Player can cheese AI with status move spam
+	{
+		if (!gNewBS->ai.suckerPunchOkay[bankAtk]) //This turn wasn't randomly chosen to be okay for Sucker Punch
+			return FALSE;
+	}
+	else //Regular Sucker Punch logic
+	{
+		u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+		if (predictedMove != MOVE_NONE)
+		{
+			if (SPLIT(predictedMove) == SPLIT_STATUS
+			|| !MoveWouldHitFirst(move, bankAtk, bankDef))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
@@ -1812,7 +2029,7 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_WHITESMOKE;
 }
 
-bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move)
+bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
 {
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
@@ -1823,7 +2040,8 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE;
+		&& defAbility != ABILITY_WHITESMOKE
+		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy));
 }
 
 bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)

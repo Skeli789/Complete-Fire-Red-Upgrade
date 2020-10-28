@@ -1652,6 +1652,10 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 
 	switch (class) {
 		case FIGHT_CLASS_SWEEPER_KILL:
+			if (stat == STAT_STAGE_ATK //For moves like Power-Up Punch
+			|| stat == STAT_STAGE_SPATK
+			|| ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_VIABILITY(3 + boost);
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:

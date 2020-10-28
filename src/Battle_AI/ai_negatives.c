@@ -173,9 +173,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	if (IsGravityActive() && gSpecialMoveFlags[move].gGravityBannedMoves)
 		return 0; //Can't select this move period
 
-	// Ungrounded check
-	if (CheckGrounding(bankDef) == IN_AIR && moveType == TYPE_GROUND)
-		return 0;
+	// Ungrounded check - Handled in Type Calc
+	//if (CheckGrounding(bankDef) == IN_AIR && moveType == TYPE_GROUND)
+	//	return 0;
 
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
 	if (gSpecialMoveFlags[move].gPowderMoves && !IsAffectedByPowder(bankDef))
@@ -191,8 +191,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	//Target Ability Checks
 	if (NO_MOLD_BREAKERS(data->atkAbility, move))
 	{
-		switch (data->defAbility) { //Type-specific ability checks - primordial weather handled separately
-
+		switch (data->defAbility) //Type-specific ability checks - primordial weather handled separately
+		{
 			//Electric
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
@@ -273,7 +273,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
 					&& AI_STAT_CAN_RISE(bankDef, STAT_SPEED) //Ability can activate
 					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //This attack won't KO yet
-					&& SpeedCalc(bankAtk) > SpeedCalc(bankDef)) //The attacker is currently faster
+					&& data->atkSpeed > data->defSpeed) //The attacker is currently faster
 					{
 						if (MoveKnocksOutXHits(move, bankAtk, bankDef, 2))
 							DECREASE_VIABILITY(1); //Risk it, but not best choice because foe might outspeed and strike back harder
@@ -290,7 +290,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
 					&& AI_STAT_CAN_RISE(bankDef, STAT_SPEED) //Ability can activate
 					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //This attack won't KO yet
-					&& SpeedCalc(bankAtk) > SpeedCalc(bankDef)) //The attacker is currently faster
+					&& data->atkSpeed > data->defSpeed) //The attacker is currently faster
 					{
 						if (MoveKnocksOutXHits(move, bankAtk, bankDef, 2))
 							DECREASE_VIABILITY(5); //Not best choice because foe might outspeed and strike back harder
@@ -598,11 +598,11 @@ MOVESCR_CHECK_0:
 		if (gSpecialMoveFlags[move].gRaidBattleBannedMoves)
 			return 0; //This move won't work at all.
 
-		if (GetBattlerPosition(bankAtk) == B_POSITION_OPPONENT_LEFT && gSpecialMoveFlags[move].gRaidBattleBannedRaidMonMoves)
+		if (bankAtk == BANK_RAID_BOSS && gSpecialMoveFlags[move].gRaidBattleBannedRaidMonMoves)
 			return 0; //This move really shouldn't be used
 
 		if (bankAtk != bankDef
-		&& GetBattlerPosition(bankDef) == B_POSITION_OPPONENT_LEFT
+		&& bankDef == BANK_RAID_BOSS
 		&& gNewBS->dynamaxData.raidShieldsUp
 		&& moveSplit == SPLIT_STATUS) //Status moves can't be used while Raid Shields are up
 		{
@@ -2851,26 +2851,12 @@ MOVESCR_CHECK_0:
 			}
 			break;
 
-		case EFFECT_SUCKER_PUNCH: ;
-			//TODO: MAKE SURE LOGIC IS ALSO HANDLED IN AI BEST MOVE CALC
-			//		If AI is dumb AI or semi-smart use regular logic
-			//		If AI hasn't used Sucker Punch yet, regular logic
-			//		If Bank is controlled by Player use regular logic
-			//		If AI has revealed Sucker Punch (maybe check PP?)
-			//			If foe can use a status move
-			//				50% chance to pick Sucker Punch
-			if (predictedMove != MOVE_NONE)
-			{
-				if (SPLIT(predictedMove) == SPLIT_STATUS
-				|| !MoveWouldHitFirst(move, bankAtk, bankDef))
-				{
-					DECREASE_VIABILITY(10);
-					break;
-				}
-			}
-
-			//If the foe has move prediction, assume damage move for now.
-			goto AI_STANDARD_DAMAGE;
+		case EFFECT_SUCKER_PUNCH:
+			if (!IsSuckerPunchOkayToUseThisRound(move, bankAtk, bankDef))
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
 
 		case EFFECT_TEAM_EFFECTS:
 			switch (move) {
