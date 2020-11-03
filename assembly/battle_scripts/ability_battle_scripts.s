@@ -540,7 +540,7 @@ BattleScript_EmergencyExitEnd3:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AttackerCantUseMove:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
@@ -555,7 +555,7 @@ BattleScript_AttackerCantUseMove:
 BattleScript_FlashFireBoost_PPLoss:
 	ppreduce
 BattleScript_FlashFireBoost:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	callasm ApplyFlashFireBoost
@@ -565,12 +565,19 @@ BattleScript_FlashFireBoost:
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	goto BS_MOVE_END
 
+.global BattleScript_AttackstringBackupScriptingBank
+BattleScript_AttackstringBackupScriptingBank:
+	copybyte FORM_COUNTER, BATTLE_SCRIPTING_BANK @;Backup in case of Protean
+	attackstring
+	copybyte BATTLE_SCRIPTING_BANK, FORM_COUNTER
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveHPDrain_PPLoss:
 	ppreduce
 BattleScript_MoveHPDrain:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	playanimation BANK_TARGET ANIM_HEALING_SPARKLES 0x0
@@ -586,7 +593,7 @@ BattleScript_MoveHPDrain:
 BattleScript_MonMadeMoveUseless_PPLoss:
 	ppreduce
 BattleScript_MonMadeMoveUseless:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
@@ -601,7 +608,7 @@ BattleScript_MoveStatDrain_PPLoss:
 	ppreduce
 BattleScript_MoveStatDrain:
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause DELAY_HALFSECOND
 	call BattleScript_TargetAbilityStatRaise
 	goto BS_MOVE_END
@@ -1164,7 +1171,7 @@ BattleScript_StickyHoldActivates:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DampStopsExplosion:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
@@ -1177,7 +1184,7 @@ BattleScript_DampStopsExplosion:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_TookAttack:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	pause 0x10
 	call BattleScript_AbilityPopUp
 	printstring 0x14E @;STRINGID_PKMNSXTOOKATTACK

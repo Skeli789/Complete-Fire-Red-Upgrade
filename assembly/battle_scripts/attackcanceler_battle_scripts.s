@@ -48,7 +48,7 @@ BattleScript_PrintCustomString:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MagicBounce:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	ppreduce
 	pause 0x10
 	call BattleScript_AbilityPopUp
