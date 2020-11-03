@@ -4087,3 +4087,7 @@
 .equ NATURE_SASSY, 22
 .equ NATURE_CAREFUL, 23
 .equ NATURE_QUIRKY, 24
+
+@ Instant text
+.equ sTempTextPrinter, 0x2020010
+.equ sTextPrinters, 0x2020034
