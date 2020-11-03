@@ -112,7 +112,7 @@ void HandleInputChooseMove(void)
 		else if (chosenMove == MOVE_ACUPRESSURE && !(IS_DOUBLE_BATTLE))
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
 		else
-			moveTarget = gBattleMoves[chosenMove].target;
+			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
 
 		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
@@ -332,6 +332,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->monType2 = gBattleMons[gActiveBattler].type2;
 	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
 	tempMoveStruct->ability = ABILITY(gActiveBattler);
+	tempMoveStruct->atkIsGrounded = CheckGrounding(gActiveBattler);
 
 	//Fix Transformed Move PP
 	if (IS_TRANSFORMED(gActiveBattler))
@@ -1390,7 +1391,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
 					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
@@ -1459,7 +1460,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
+					else if (GetBaseMoveTargetByGrounding(move, moveInfo->atkIsGrounded) & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 
 					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
@@ -1500,7 +1501,7 @@ static void HighlightPossibleTargets(void)
 				moveTarget = MOVE_TARGET_SELECTED;
 		}
 		else
-			moveTarget = gBattleMoves[chosenMove].target;
+			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
 
 		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;

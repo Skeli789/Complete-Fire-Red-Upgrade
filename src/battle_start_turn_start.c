@@ -1170,7 +1170,7 @@ void HandleAction_UseMove(void)
 
 //Get Move Target
 	u8 atkAbility = ABILITY(gBankAttacker);
-	u8 moveTarget = gBattleMoves[gCurrentMove].target;
+	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 	side = SIDE(gBankAttacker) ^ BIT_SIDE;
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
 
@@ -1182,8 +1182,8 @@ void HandleAction_UseMove(void)
 	else if (IS_DOUBLE_BATTLE
 		  && gSideTimers[side].followmeTimer == 0
 		  && !IsMoveRedirectionPrevented(gCurrentMove, atkAbility)
-		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
-		  && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
+		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || moveTarget != MOVE_TARGET_USER)
+		  && !(moveTarget & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
 		  && NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove))
 	{ //Try Ability Redirection
 		switch (moveType) {
@@ -1233,7 +1233,7 @@ void HandleAction_UseMove(void)
 
 		if (!gSpecialStatuses[gBankTarget].lightningRodRedirected)
 		{
-			if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
+			if (moveTarget & MOVE_TARGET_RANDOM
 			&& !IsAnyMaxMove(gCurrentMove))
 				goto CHOOSE_RANDOM_TARGET_DOUBLES;
 			else
@@ -1241,7 +1241,7 @@ void HandleAction_UseMove(void)
 		}
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-		  && gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
+		  && moveTarget & MOVE_TARGET_RANDOM
 		  && !IsAnyMaxMove(gCurrentMove))
 	{
 	CHOOSE_RANDOM_TARGET_DOUBLES:
@@ -1267,7 +1267,7 @@ void HandleAction_UseMove(void)
 		}
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-		 && gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+		 && moveTarget & MOVE_TARGET_ALL)
 	{
 		while ((gBankTarget = GetNextMultiTarget()) != 0xFF && gBattleMons[gBankTarget].hp == 0)
 		{
@@ -1310,8 +1310,8 @@ void HandleAction_UseMove(void)
 	else if (!BATTLER_ALIVE(gBankTarget)
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_EXPLOSION //Exploding moves still KO the attacker
-	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
-	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && gBattleMoves[gCurrentMove].target & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
+	&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
+	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	else
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];

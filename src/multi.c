@@ -387,24 +387,25 @@ static void PlayerPartnerBufferRunCommand(void)
 
 static void PlayerPartnerHandleChooseMove(void)
 {
-	u8 chosenMoveId;
+	u8 chosenMoveId, moveTarget;
 	u16 chosenMove;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	BattleAI_SetupAIData(0xF);
 	chosenMoveId = BattleAI_ChooseMoveOrAction();
 	chosenMove = moveInfo->moves[chosenMoveId];
+	moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
-	if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER)
+	if (moveTarget & MOVE_TARGET_USER)
 	{
 		gBankTarget = gActiveBattler;
 	}
-	else if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER_OR_PARTNER)
+	else if (moveTarget & MOVE_TARGET_USER_OR_PARTNER)
 	{
 		if (SIDE(gBankTarget) != SIDE(gActiveBattler))
 			gBankTarget = gActiveBattler;
 	}
-	else if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
+	else if (moveTarget & MOVE_TARGET_BOTH)
 	{
 		gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])

@@ -1008,8 +1008,8 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 				if (partnerMove != MOVE_NONE
 				&& !isAtkDynamaxed
-				&&  gBattleMoves[partnerMove].target & MOVE_TARGET_ALL
 				&&  ABILITY(bankAtk) != ABILITY_TELEPATHY
+				&&  GetBaseMoveTarget(partnerMove, partner) & MOVE_TARGET_ALL
 				&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT))
 				{
 					return PROTECT_FROM_ALLIES; //Protect if partner is going to use a move that damages the whole field
@@ -1800,11 +1800,11 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 	if (BadIdeaToPutToSleep(bankDef, bankAtk))
 		return;
 
-	bool8 spreadSleep = gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
-						 && IS_DOUBLE_BATTLE
-						 && BATTLER_ALIVE(PARTNER(bankDef))
-						 && !MoveBlockedBySubstitute(move, bankAtk, PARTNER(bankDef))
-						 && !BadIdeaToPutToSleep(PARTNER(bankDef), bankAtk);
+	bool8 spreadSleep = IS_DOUBLE_BATTLE
+					 && BATTLER_ALIVE(PARTNER(bankDef))
+					 && GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+					 && !MoveBlockedBySubstitute(move, bankAtk, PARTNER(bankDef))
+					 && !BadIdeaToPutToSleep(PARTNER(bankDef), bankAtk);
 
 	//Check if Yawn shouldn't be used
 	if (gBattleMoves[move].effect == EFFECT_YAWN

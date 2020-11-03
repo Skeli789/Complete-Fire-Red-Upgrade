@@ -109,7 +109,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveSplit = CalcMoveSplit(bankAtk, move);
-	u8 moveTarget = gBattleMoves[move].target;
+	u8 moveTarget = GetBaseMoveTarget(move, bankAtk);
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 	u8 moveFlags = gBattleMoves[move].flags;
 	u16 moveAcc = AccuracyCalc(move, bankAtk, bankDef);
@@ -2821,12 +2821,12 @@ MOVESCR_CHECK_0:
 					}
 					else
 					{
-						if (gBattleMoves[instructedMove].target & (MOVE_TARGET_SELECTED
-																 | MOVE_TARGET_DEPENDS
-																 | MOVE_TARGET_RANDOM
-																 | MOVE_TARGET_BOTH
-																 | MOVE_TARGET_ALL
-																 | MOVE_TARGET_OPPONENTS_FIELD)
+						if (GetBaseMoveTarget(instructedMove, bankDef) & (MOVE_TARGET_SELECTED
+																		| MOVE_TARGET_DEPENDS
+																		| MOVE_TARGET_RANDOM
+																		| MOVE_TARGET_BOTH
+																		| MOVE_TARGET_ALL
+																		| MOVE_TARGET_OPPONENTS_FIELD)
 						&& instructedMove != MOVE_MINDBLOWN && instructedMove != MOVE_STEELBEAM)
 							DECREASE_VIABILITY(10); //Don't force the enemy to attack you again unless it can kill itself with Mind Blown
 						else if (instructedMove != MOVE_MINDBLOWN)

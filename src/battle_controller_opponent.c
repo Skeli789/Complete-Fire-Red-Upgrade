@@ -67,17 +67,18 @@ void OpponentHandleChooseMove(void)
 
 			default: ;
 				u16 chosenMove = moveInfo->moves[chosenMoveId];
+				u8 moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
-				if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER)
+				if (moveTarget & MOVE_TARGET_USER)
 				{
 					gBankTarget = gActiveBattler;
 				}
-				else if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER_OR_PARTNER)
+				else if (moveTarget & MOVE_TARGET_USER_OR_PARTNER)
 				{
 					if (SIDE(gBankTarget) != SIDE(gActiveBattler))
 						gBankTarget = gActiveBattler;
 				}
-				else if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
+				else if (moveTarget & MOVE_TARGET_BOTH)
 				{
 					if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 					{
@@ -138,7 +139,7 @@ void OpponentHandleChooseMove(void)
 			move = moveInfo->moves[chosenMoveId];
 		} while (move == MOVE_NONE);
 
-		if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
+		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
 			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE);
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);

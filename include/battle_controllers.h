@@ -123,6 +123,7 @@ struct ChooseMoveStruct
 	bool8 ultraDone : 1;
 	bool8 dynamaxDone : 1;
 	bool8 dynamaxed : 1;
+	bool8 atkIsGrounded : 1;
 	bool8 bank;
 	u8 zPartyIndex;
 	u16 possibleZMoves[MAX_MON_MOVES];

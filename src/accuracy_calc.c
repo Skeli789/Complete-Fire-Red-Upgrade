@@ -90,7 +90,8 @@ ACCURACY_CHECK_START:
 		else
 		{
 			u8 atkItemEffect = ITEM_EFFECT(gBankAttacker);
-			bool8 calcSpreadMove = IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL) && SPLIT(move) != SPLIT_STATUS;
+			u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
+			bool8 calcSpreadMove = IS_DOUBLE_BATTLE && moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL) && SPLIT(move) != SPLIT_STATUS;
 			bool8 clearMicleBerryBits = FALSE;
 
 			for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
@@ -106,7 +107,7 @@ ACCURACY_CHECK_START:
 					break; //Already calculated accuracy miss
 				}
 				else if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
-				|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+				|| (bankDef == PARTNER(gBankAttacker) && !(moveTarget & MOVE_TARGET_ALL))
 				|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
 					continue; //Don't bother with this target
 
@@ -185,7 +186,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 protectFlag = gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED;
 	u8 split = SPLIT(move);
 	u8 contact = CheckContact(move, bankAtk);
-	u8 target = gBattleMoves[move].target;
+	u8 target = GetBaseMoveTarget(move, bankAtk);
 	u8 defSide = SIDE(bankDef);
 
 	#ifdef ABILITY_UNSEENFIST
@@ -285,7 +286,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 {
 	u8 protectFlag = gBattleMoves[atkMove].flags & FLAG_PROTECT_AFFECTED;
 	u8 split = SPLIT(atkMove);
-	u8 target = gBattleMoves[atkMove].target;
+	u8 target = GetBaseMoveTarget(atkMove, bankAtk);
 
 	if (!gSpecialMoveFlags[atkMove].gMovesThatLiftProtectTable)
 	{

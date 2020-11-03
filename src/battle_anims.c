@@ -874,7 +874,7 @@ bank_t LoadBattleAnimTarget(u8 arg)
 {
 	u8 battler;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		switch (gBattleAnimArgs[arg]) {
 			case ANIM_ATTACKER:
@@ -1419,14 +1419,14 @@ void SpriteCB_SpriteToCentreOfSide(struct Sprite* sprite)
 
 		if (gBattleAnimArgs[2] == 0) //Attacker
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			if (IS_DOUBLE_BATTLE)
 				InitSpritePosToAnimAttackersCentre(sprite, var);
 			else
 				InitSpritePosToAnimAttacker(sprite, var);
 		}
 		else
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			if (IS_DOUBLE_BATTLE)
 				InitSpritePosToAnimTargetsCentre(sprite, var);
 			else
 				InitSpritePosToAnimTarget(sprite, var);
@@ -1449,14 +1449,14 @@ void SpriteCB_RandomCentredHits(struct Sprite* sprite)
 
 	if (gBattleAnimArgs[0] == 0)
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		if (IS_DOUBLE_BATTLE)
 			InitSpritePosToAnimAttackersCentre(sprite, FALSE);
 		else
 			InitSpritePosToAnimAttacker(sprite, FALSE);
 	}
 	else
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		if (IS_DOUBLE_BATTLE)
 			InitSpritePosToAnimTargetsCentre(sprite, FALSE);
 		else
 			InitSpritePosToAnimTarget(sprite, FALSE);
@@ -1471,7 +1471,7 @@ void SpriteCB_RandomCentredHits(struct Sprite* sprite)
 
 void SpriteCB_CentredElectricity(struct Sprite* sprite)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
 	else
 		InitSpritePosToAnimTarget(sprite, FALSE);
@@ -1490,7 +1490,7 @@ void SpriteCB_CentredElectricity(struct Sprite* sprite)
 
 void SpriteCB_CentredSpiderWeb(struct Sprite* sprite)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
 	else
 		InitSpritePosToAnimTarget(sprite, FALSE);
@@ -1540,14 +1540,14 @@ void SpriteCB_CoreEnforcerHits(struct Sprite* sprite)
 
 	if (gBattleAnimArgs[2] == 0)
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		if (IS_DOUBLE_BATTLE)
 			InitSpritePosToAnimAttackersCentre(sprite, FALSE);
 		else
 			InitSpritePosToAnimAttacker(sprite, FALSE);
 	}
 	else
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		if (IS_DOUBLE_BATTLE)
 			InitSpritePosToAnimTargetsCentre(sprite, FALSE);
 		else
 			InitSpritePosToAnimTarget(sprite, FALSE);
@@ -1559,7 +1559,7 @@ void SpriteCB_CoreEnforcerHits(struct Sprite* sprite)
 
 void SpriteCB_CoreEnforcerBeam(struct Sprite* sprite)
 {
-	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+	if (!(IS_DOUBLE_BATTLE))
 		SpriteCB_AnimSolarbeamBigOrb(sprite);
 	else
 	{
@@ -1775,7 +1775,7 @@ void SpriteCB_MindBlownBall(struct Sprite *sprite)
 
 static u8 GetProperCentredCoord(u8 bank, u8 coordType)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		return (GetBattlerSpriteCoord2(bank, coordType)
 			  +  GetBattlerSpriteCoord2(PARTNER(bank), coordType)) / 2;
@@ -2456,6 +2456,50 @@ void SpriteCB_SpriteOnMonForDurationUseY(struct Sprite *sprite)
 	}
 }
 
+void SpriteCB_SpriteOnMonUntilAffineAnimEnds(struct Sprite* sprite)
+{
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2);
+		sprite->pos1.y = GetBattlerSpriteCoord(target, BATTLER_COORD_Y_PIC_OFFSET);
+		StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+		sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
+	}
+}
+
+void SpriteCB_AnimSpriteOnTargetSideCentre(struct Sprite *sprite)
+{
+	u8 target = LoadBattleAnimTarget(2);
+
+	if (!sprite->data[0])
+	{
+		if (SIDE(gBattleAnimAttacker) == SIDE(target))
+		{
+			if (IS_DOUBLE_BATTLE)
+				InitSpritePosToAnimAttackersCentre(sprite, FALSE);
+			else
+				InitSpritePosToAnimAttacker(sprite, FALSE);
+		}
+		else
+		{
+			if (IS_DOUBLE_BATTLE)
+				InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+			else
+				InitSpritePosToAnimTarget(sprite, FALSE);
+		}
+
+		sprite->data[0]++;
+	}
+	else if (sprite->animEnded || sprite->affineAnimEnded)
+	{
+		DestroySpriteAndMatrix(sprite);
+	}
+}
+
 const struct OamData sFishiousRendTeethOam =
 {
 	.affineMode = ST_OAM_AFFINE_OFF,
@@ -3045,20 +3089,20 @@ void SpriteCB_LashOutStrike(struct Sprite* sprite)
 
 	sprite->data[0] = 11;
 
-    if (flip)
-    {
-        sprite->pos1.x -= gBattleAnimArgs[0];
-        sprite->data[0] *= -1;
-        StartSpriteAffineAnim(sprite, 1);
-    }
-    else
-    {
-        sprite->pos1.x += gBattleAnimArgs[0];
-    }
+	if (flip)
+	{
+		sprite->pos1.x -= gBattleAnimArgs[0];
+		sprite->data[0] *= -1;
+		StartSpriteAffineAnim(sprite, 1);
+	}
+	else
+	{
+		sprite->pos1.x += gBattleAnimArgs[0];
+	}
 
 	sprite->pos1.y += gBattleAnimArgs[1];
 	sprite->data[1] = 192;
-    sprite->callback = (void*) (0x80E42DC | 1); //AnimKnockOffStrike_Step
+	sprite->callback = (void*) (0x80E42DC | 1); //AnimKnockOffStrike_Step
 }
 
 void SpriteCB_SteelRoller_LeftRight(struct Sprite* sprite)

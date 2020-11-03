@@ -16675,7 +16675,7 @@ ANIM_SPIRIT_BREAK:
 	endanimation
 	
 .align 2
-SPIRIT_BREAK_CHARGE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_SpiritBreakBall 0x80AE71D
+SPIRIT_BREAK_CHARGE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_SpiritBreakBall SpriteCB_SpriteOnMonUntilAffineAnimEnds
 Template_UnusedExplosion2: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -16898,10 +16898,13 @@ ANIM_EXPANDING_FORCE:
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0xA 0xA 0x7DDE @;Pink
 	pokespritetoBG side_target
 	call SET_PSYCHIC_BG
-	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0xa 0x1 
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x0 0x2 0x0 0x8 0x2ff 
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_attacker 0x1 0x0 0xa 0x1 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 PAL_ATK 0x2 0x0 0x8 0x2ff @;Orange
 	waitanimation
 	playsound2 0x85 SOUND_PAN_TARGET
+	choosetwoturnanim EXPANDING_FORCE_SINGLE_TARGET EXPANDING_FORCE_BOTH_TARGETS
+
+EXPANDING_FORCE_SINGLE_TARGET:
 	launchtemplate SPIRIT_BREAK_CHARGE_BALL TEMPLATE_TARGET | 1, 0x1, bank_target
 	waitanimation
 	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x18 0x1 0x0
@@ -16910,6 +16913,58 @@ ANIM_EXPANDING_FORCE:
 	call UNSET_SCROLLING_BG
 	pokespritefromBG side_target
 	endanimation
+
+EXPANDING_FORCE_BOTH_TARGETS:
+	launchtemplate SPIRIT_BREAK_CHARGE_BALL TEMPLATE_TARGET | 1, 0x1, bank_target
+	launchtemplate SPIRIT_BREAK_CHARGE_BALL TEMPLATE_TARGET | 1, 0x1, target_partner
+	waitanimation
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x5 0x0 0x18 0x1 @;High power
+	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x5 0x0 0x18 0x1
+	call CENTRED_EXPLOSION_GEYSER
+	waitanimation
+	call UNSET_SCROLLING_BG
+	pokespritefromBG side_target
+	endanimation
+
+CENTRED_EXPLOSION_GEYSER:
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0003 0x0005 bank_target
+	playsound2 0xaa SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfff5 0xfff1 bank_target
+	playsound2 0xaa SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0008 0xfffb bank_target
+	playsound2 0xaa SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfffa 0x0012 bank_target
+	playsound2 0xaa SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0000 0x0005 bank_target
+	playsound2 0xaa SOUND_PAN_TARGET
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0003 0xfff5 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfff5 0xffe1 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0008 0xffeb bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfffa 0x0002 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0000 0xfff5 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0003 0xffe5 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfff5 0xffd1 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0008 0xffdb bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0xfffa 0xfff2 bank_target
+	pause 0x0
+	launchtemplate CENTRED_LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x3, 0x0000 0xffe5 bank_target
+	return
+
+.align 2
+CENTRED_LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 sGeyserOam 0x83E3F90 0x0 gDummySpriteAffineAnimTable SpriteCB_AnimSpriteOnTargetSideCentre
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

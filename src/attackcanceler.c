@@ -35,7 +35,7 @@ static bool8 DoesTargetHaveAbilityImmunity(void);
 
 void atk00_attackcanceler(void)
 {
-	int i;
+	u32 i, moveTarget;
 
 	if (gBattleOutcome != 0)
 	{
@@ -74,11 +74,13 @@ void atk00_attackcanceler(void)
 
 	if (AtkCanceller_UnableToUseMove())
 		return;
-	else if (!BATTLER_ALIVE(gBankTarget)
+
+	moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
+	if (!BATTLER_ALIVE(gBankTarget)
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_EXPLOSION //Exploding moves still KO the attacker
-	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
-	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && gBattleMoves[gCurrentMove].target & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
+	&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
+	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 		return;
@@ -137,9 +139,9 @@ void atk00_attackcanceler(void)
 
 	if (!gNewBS->MoveBounceInProgress
 	&& gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED
-	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)) //Safety measure; no default moves allow this
+	&& !(moveTarget & MOVE_TARGET_ALL)) //Safety measure; no default moves allow this
 	{
-		if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_OPPONENTS_FIELD)
+		if (moveTarget == MOVE_TARGET_OPPONENTS_FIELD)
 		{
 			if (gProtectStructs[SIDE(gBankAttacker) ^ BIT_SIDE].bounceMove)
 			{
@@ -919,7 +921,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
 			{
-				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
+				if (IS_SINGLE_BATTLE || !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
 					CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_MoveUsedPsychicTerrainPrevents;
 				effect = 1;
@@ -927,19 +929,20 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			gBattleStruct->atkCancellerTracker++;
 			break;
 
-		case CANCELLER_PRANKSTER:
+		case CANCELLER_PRANKSTER: ;
 			#ifndef OLD_PRANKSTER
+			u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 			if (ABILITY(gBankAttacker) == ABILITY_PRANKSTER
 			&& SPLIT(gCurrentMove) == SPLIT_STATUS
 			&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
-			&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)
+			&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD)
 			&& gBankAttacker != gBankTarget
 			&& IsOfType(gBankTarget, TYPE_DARK)
 			&& gCurrentMove != MOVE_GRAVITY
 			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
 			{
-				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
+				if (IS_SINGLE_BATTLE || !(moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
 					CancelMultiTurnMoves(gBankAttacker);
 				gBattleScripting.bank = gBankTarget;
 				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
@@ -1061,8 +1064,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (IS_DOUBLE_BATTLE)
 			{
 				const u8* backupScript = gBattlescriptCurrInstr; //Script can get overwritten by ability blocking
+				u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
 
-				if (gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+				if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
 				&& !gSpecialMoveFlags[gCurrentMove].gSpecialWholeFieldMoves)
 				{
 					u8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove);
@@ -1070,7 +1074,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					for (i = 0; i < gBattlersCount; ++i)
 					{
 						if (i != gBankAttacker && BATTLER_ALIVE(i)
-						&& ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL) || i != PARTNER(gBankAttacker)) //Skip partner when not all-hitting move
+						&& ((moveTarget & MOVE_TARGET_ALL) || i != PARTNER(gBankAttacker)) //Skip partner when not all-hitting move
 						&& !ProtectAffects(gCurrentMove, gBankAttacker, i, FALSE)
 						&& !MissesDueToSemiInvulnerability(gBankAttacker, i, gCurrentMove))
 						{
