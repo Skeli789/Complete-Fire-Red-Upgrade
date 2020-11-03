@@ -263,3 +263,10 @@ DESC_NATURALGIFT 0887abfc
 DESC_QUASH 0887ac28
 DESC_ROCKCLIMB 0887ae64
 #endif
+
+#ifdef INSTANT_TEXT
+gUnknown_841F428 080f78dc
+gText_TextSpeedMid 083cc330
+gText_TextSpeedFast 083cc334
+gText_TextSpeedInstant 083cc338
+#endif

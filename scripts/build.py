@@ -10,6 +10,9 @@ import subprocess
 import sys
 from string import StringFileConverter
 from make import ChangeFileLine
+import platform
+
+on_wsl = "microsoft" in platform.uname()[3].lower()
 
 if sys.platform.startswith('win'):
     PathVar = os.environ.get('Path')
@@ -42,9 +45,15 @@ else:  # Linux, OSX, etc.
     AS = PREFIX + 'as'
     CC = PREFIX + 'gcc'
     LD = PREFIX + 'ld'
-    GR = "grit"
-    WAV2AGB = 'wav2agb'
-    MID2AGB = 'mid2agb'
+    if on_wsl:
+        WAV2AGB = 'deps/wav2agb.exe'
+        MID2AGB = 'deps/mid2agb.exe'
+        GR = "deps/grit.exe"
+    else:
+        WAV2AGB = 'wav2agb'
+        MID2AGB = 'mid2agb'
+        GR = "grit"
+
     OBJCOPY = PREFIX + 'objcopy'
 
 SRC = './src'

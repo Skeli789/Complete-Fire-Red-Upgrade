@@ -638,3 +638,8 @@ PlayerHandleBallThrowAnim 080327B0 0
 #endif
 
 ActivateMGBAPrint 81E381C 0
+
+#ifdef INSTANT_TEXT
+FixInstantTextOptionSpeed 08002D10 0
+RunTextPrintersForInstantTextHook 08002DEE 0
+#endif
