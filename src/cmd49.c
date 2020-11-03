@@ -739,6 +739,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
+					&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER) //Wild mons can't activate
 					&& CanTransferItem(SPECIES(bankDef), ITEM(bankDef))
 					&& CanTransferItem(SPECIES(gBankAttacker), ITEM(bankDef))
 					&& !(gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]])
@@ -1309,6 +1310,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&&  ABILITY(bank) == ABILITY_PICKPOCKET
 				&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
 				&&  TOOK_DAMAGE(bank)
+				&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) == B_SIDE_PLAYER) //Wild mons can't activate
 				&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&&  gBattleMons[bank].hp != 0
 				&&  CheckContact(gCurrentMove, gBankAttacker)

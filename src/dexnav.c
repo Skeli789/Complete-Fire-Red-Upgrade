@@ -80,6 +80,7 @@ static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size);
 static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
 static void Task_ManageDexNavHUD(u8 taskId);
+static u8 GetTotalEncounterChance(u16 species, u8 environment);
 static u8 GetEncounterLevel(u16 species, u8 environment);
 static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
@@ -121,6 +122,7 @@ static void PrintGUIHiddenAbility(u16 species);
 static void DexNavDisplaySpeciesData(void);
 static void DexNavLoadAreaNamesAndInstructions(void);
 static void CreateNoDataIcon(s16 x, s16 y);
+static void CreateGrayscaleMonIconPalettes(void);
 static void DexNavLoadMonIcons(void);
 static void CreateCursor(void);
 static void DexNavLoadCapturedAllSymbol(void);
@@ -243,20 +245,30 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 	// loop through every tile in area and evaluate
 	while (topY < botY)
 	{
-		if (topY - 7 < 0
-		|| topY >= gMapHeader.mapLayout->height + 7)
-			break; //Off map
+		if (topY < 0) //Off map upwards
+		{
+			topY += 1; //Check 1 lower
+			continue;
+		}
+		
+		if (topY >= gMapHeader.mapLayout->height)
+			break; //Off map on bottom
 
 		while (topX < botX)
 		{
-			if (topX - 7 < 0
-			|| topX >= gMapHeader.mapLayout->width + 7)
-				break; //Off map
+			if (topX < 0) //Off map on left
+			{
+				topX += 1; //Check 1 to the right
+				continue;
+			}
 
-			u32 tileBehaviour = MapGridGetMetatileField(topX, topY, 0xFF);
+			if (topX >= gMapHeader.mapLayout->width)
+				break; //Off map on right
+
+			u32 tileBehaviour = MapGridGetMetatileField(topX + 7, topY + 7, 0xFF);
 			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 			
-			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(topX, topY)))
+			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(topX + 7, topY + 7)))
 			{
 				//Fix a bug where dust clouds would act weird in caves on sideways stairs
 				topX += 1;
@@ -267,7 +279,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 			bool8 goNext = FALSE;
 			for (u8 i = 0; i < EVENT_OBJECTS_COUNT; ++i)
 			{
-				if (gEventObjects[i].currentCoords.x == topX && gEventObjects[i].currentCoords.y == topY)
+				if (gEventObjects[i].currentCoords.x == topX + 7 && gEventObjects[i].currentCoords.y == topY + 7)
 				{
 					goNext = TRUE;
 					break;
@@ -288,28 +300,28 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 				if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
 					//Water
-					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
-					u8 elevDiff = IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX, topY);
+					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2);
+					u8 elevDiff = IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX + 7, topY + 7);
 
-					weight = (Random() % scale <= 1) && !elevDiff && !MapGridIsImpassableAt(topX, topY);
+					weight = (Random() % scale <= 1) && !elevDiff && !MapGridIsImpassableAt(topX + 7, topY + 7);
 				}
 				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
 					//Cave basically needs another check to see if the tile is passable
-					u8 scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
+					u8 scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
 					Var8002 = scale;
-					weight = ((Random() % scale) < 1) && !MapGridIsImpassableAt(topX, topY);
+					weight = ((Random() % scale) < 1) && !MapGridIsImpassableAt(topX + 7, topY + 7);
 				}
 				else //Grass land
 				{
-					u8 scale = 100 - (GetPlayerDistance(topX, topY) * 2);
-					weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX, topY);
+					u8 scale = 100 - (GetPlayerDistance(topX + 7, topY + 7) * 2);
+					weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX + 7, topY + 7);
 				}
 
 				if (weight)
 				{
-					*xBuff = topX;
-					*yBuff = topY;
+					*xBuff = topX + 7;
+					*yBuff = topY + 7;
 					return TRUE;
 				}
 			}
@@ -338,10 +350,7 @@ static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 			targetBehaviour = TILE_FLAG_SURFABLE; // cave, water
 			break;
 	}
-	//Tile pick chance is 5% + 1/5 search level
 
-	//u8 searchLevel = sDexNavHudPtr->searchLevel / 5;
-	//u8 chance = searchLevel + 1;
 	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, smallScan);
 }
 
@@ -950,6 +959,45 @@ static void Task_ManageDexNavHUD(u8 taskId)
 // ===================================== //
 // ================ HUD ================ //
 // ===================================== //
+static const u8 sLandEncounterRates[] = {20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1};
+static const u8 sWaterEncounterRates[] = {60, 30, 5, 4, 1};
+static u8 GetTotalEncounterChance(u16 species, u8 environment)
+{
+	u32 i;
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	u8 chance = 0;
+
+	switch (environment)
+	{
+		case ENCOUNTER_TYPE_LAND:
+			if (landMonsInfo == NULL)
+				break; //Hidden pokemon should only appear on walkable tiles or surf tiles
+
+			for (i = 0; i < NUM_LAND_MONS; ++i)
+			{
+				const struct WildPokemon* monData = &landMonsInfo->wildPokemon[i];
+				if (monData->species == species)
+					chance += sLandEncounterRates[i];
+			}
+			break;
+
+		case ENCOUNTER_TYPE_WATER:
+			if (waterMonsInfo == NULL)
+				break; //Hidden pokemon should only appear on walkable tiles or surf tiles
+
+			for (i = 0; i < NUM_WATER_MONS; ++i)
+			{
+				const struct WildPokemon* monData = &waterMonsInfo->wildPokemon[i];
+				if (monData->species == species)
+					chance += sWaterEncounterRates[i];
+			}
+			break;
+	}
+
+	return chance;
+}
+
 static u8 GetEncounterLevel(u16 species, u8 environment)
 {
 	u32 i;
@@ -967,11 +1015,11 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 			for (i = 0; i < NUM_LAND_MONS; ++i)
 			{
-				struct WildPokemon monData = landMonsInfo->wildPokemon[i];
-				if (monData.species == species)
+				const struct WildPokemon* monData = &landMonsInfo->wildPokemon[i];
+				if (monData->species == species)
 				{
-					min = (min < monData.minLevel) ? min : monData.minLevel;
-					max = (max > monData.maxLevel) ? max : monData.maxLevel;
+					min = (min < monData->minLevel) ? min : monData->minLevel;
+					max = (max > monData->maxLevel) ? max : monData->maxLevel;
 					break;
 				}
 			}
@@ -986,11 +1034,11 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 			for (i = 0; i < NUM_WATER_MONS; ++i)
 			{
-				struct WildPokemon monData = waterMonsInfo->wildPokemon[i];
-				if (monData.species == species)
+				const struct WildPokemon* monData = &waterMonsInfo->wildPokemon[i];
+				if (monData->species == species)
 				{
-					min = (min < monData.minLevel) ? min : monData.minLevel;
-					max = (max > monData.maxLevel) ? max : monData.maxLevel;
+					min = (min < monData->minLevel) ? min : monData->minLevel;
+					max = (max > monData->maxLevel) ? max : monData->maxLevel;
 					break;
 				}
 			}
@@ -1484,7 +1532,8 @@ void InitDexNavHUD(u16 species, u8 environment)
 		sDexNavHudPtr->unownLetter = 1;
 
 	sDexNavHudPtr->environment = environment;
-	u8 searchLevel = sSearchLevels[SpeciesToNationalPokedexNum(species)];
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	u8 searchLevel = sSearchLevels[dexNum];
 	sDexNavHudPtr->searchLevel = searchLevel;
 	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment);
 
@@ -1502,9 +1551,12 @@ void InitDexNavHUD(u16 species, u8 environment)
 		return;
 	}
 
-	// draw shaking grass
-	//extern u8 ShakingGrass(u8, u8, u8, bool8);
-	if (gDexNavCooldown || !ShakingGrass(environment, 12, 12, 0))
+	u8 totalEncounterChance = GetTotalEncounterChance(sDexNavHudPtr->species, environment);
+	u8 randVal = (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) ? 0 : Random() % 100; //Pokemon already caught are easy to catch again
+	//*((u8*) 0x2023D70) = randVal; //For debugging
+	if (randVal >= totalEncounterChance * 2 //Harder Pokemon to find in the area are half as hard to find with the DexNav
+	|| gDexNavCooldown
+	|| !ShakingGrass(environment, 12, 12, 0)) //Draw shaking tile
 	{
 		Free(sDexNavHudPtr);
 		gDexNavCooldown = TRUE; //A Pokemon can't be found until the player takes at least one step or searches for another Pokemon manually
@@ -1705,7 +1757,7 @@ static void Task_DexNavFadeOutToScan(u8 taskId)
 	if (!gPaletteFade->active)
 	{
 		SetMainCallback1(CB1_OpenDexNavScan);
-		SetMainCallback2(CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
+		SetMainCallback2(CB2_ReturnToFieldFromDiploma); //Needed so followers don't get messed up
 		Free(sDexNavGuiPtr->tilemapPtr);
 		Free(sDexNavGuiPtr);
 		FreeAllWindowBuffers();
@@ -2187,6 +2239,22 @@ static void CreateNoDataIcon(s16 x, s16 y)
 	CreateSprite(&sNoDataIconTemplate, x, y, 0); //No data in spot
 }
 
+static void CreateGrayscaleMonIconPalettes(void)
+{
+	u8 index = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG);
+	u8 finalIndex = index + 3;
+
+	for (; index < finalIndex; ++index)
+	{
+		//Make a copy of each mon icon palette in the garbage slots usually loaded after the normal 3
+		Memcpy(&gPlttBufferUnfaded2[(index + 3) * 16], &gPlttBufferUnfaded2[index * 16], 0x20);
+		Memcpy(&gPlttBufferFaded2[(index + 3) * 16], &gPlttBufferFaded2[index * 16], 0x20);
+		//Grayscale that copy
+		TintPalette_GrayScale(&gPlttBufferUnfaded2[(index + 3) * 16], 16);
+		TintPalette_GrayScale(&gPlttBufferFaded2[(index + 3) * 16], 16);
+	}
+}
+
 static void DexNavLoadMonIcons(void)
 {
 	s16 x, y;
@@ -2197,6 +2265,7 @@ static void DexNavLoadMonIcons(void)
 
 	LoadCompressedSpriteSheetUsingHeap(&sNoDataIconSpriteSheet);
 	LoadMonIconPalettes();
+	CreateGrayscaleMonIconPalettes(); //For mons that haven't been caught yet
 
 	for (u8 i = 0; i < NUM_LAND_MONS; ++i)
 	{
@@ -2220,7 +2289,11 @@ static void DexNavLoadMonIcons(void)
 			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
 		TryRandomizeSpecies(&species);
-		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
+		u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
+		if (spriteId < MAX_SPRITES
+		&& species != SPECIES_NONE
+		&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+			gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
 	}
 
 	for (u8 i = 0; i < NUM_WATER_MONS; ++i)
@@ -2245,7 +2318,11 @@ static void DexNavLoadMonIcons(void)
 			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
 		TryRandomizeSpecies(&species);
-		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
+		u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
+		if (spriteId < MAX_SPRITES
+		&& species != SPECIES_NONE
+		&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+			gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
 	}
 }
 

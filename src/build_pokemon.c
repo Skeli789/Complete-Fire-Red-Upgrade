@@ -281,26 +281,34 @@ void BuildTrainerPartySetup(void)
 		}
 		else
 		{
+			u32 k;
 			ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
 			if (ExtensionState.partyBackup == NULL)
 				return;
 
-			if (gSelectedOrderFromParty[0] == 0)
-				Memcpy(ExtensionState.partyBackup, &gPlayerParty[3], sizeof(struct Pokemon) * 3); //Special 0x2F was not used
-			else //Special 0x2F was used
+			if (gSelectedOrderFromParty[0] == 0) //Special 0x2F was not used
 			{
-				u8 counter = 0;
-				u8 mon1 = gSelectedOrderFromParty[0];
-				u8 mon2 = gSelectedOrderFromParty[1];
-				u8 mon3 = gSelectedOrderFromParty[2];
-				for (int i = 0; i < PARTY_SIZE; ++i)
+				//Choose first three viable Pokemon on team to fight
+				for (i = 0, k = 0; i < PARTY_SIZE && k < 3; ++i)
 				{
-					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
-						Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
+					u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+					if (species != SPECIES_NONE && species != SPECIES_EGG
+					&& GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL) > 0)
+						gSelectedOrderFromParty[k++] = i + 1;
 				}
-
-				ReducePartyToThree(); //Well...sometimes can be less than 3
 			}
+
+			u8 counter = 0;
+			u8 mon1 = gSelectedOrderFromParty[0];
+			u8 mon2 = gSelectedOrderFromParty[1];
+			u8 mon3 = gSelectedOrderFromParty[2];
+			for (i = 0; i < PARTY_SIZE; ++i)
+			{
+				if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
+					Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
+			}
+
+			ReducePartyToThree(); //Well...sometimes can be less than 3
 			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
 
 			if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
@@ -910,7 +918,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 struct LevelScaler
 {
 	u8 minLevel;
-	u8 startScalingAtLevel;
+	u8 startScalingAtLevel; //Usually highest level of next Gym Leader + 1
 };
 
 static const struct LevelScaler sLevelScales[] =
@@ -922,7 +930,7 @@ static const struct LevelScaler sLevelScales[] =
 	[4] = {30, 45},
 	[5] = {38, 54},
 	[6] = {47, 58},
-	[7] = {55, 65},
+	[7] = {51, 65},
 	[8] = {60, 70},
 	[9] = {70,  0},
 };
@@ -3420,14 +3428,14 @@ static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 train
 
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
 {
+	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
+		return FALSE;
+
 	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		u16 species = mon->species;
 		u16 item = mon->item;
 		u16 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
-
-		if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
-			return FALSE;
 
 		if (PokemonTierBan(species, item, NULL, mon, tier, CHECK_PARTY_OFFSET))
 			return FALSE;
@@ -3455,7 +3463,7 @@ bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
 				return FALSE;
 		}
 	}
-	else if (mon->hp == 0) //Regular multi battle probably
+	else if (GetMonData(mon, MON_DATA_HP, NULL) == 0) //Regular multi battle probably
 		return FALSE;
 
 	return TRUE;

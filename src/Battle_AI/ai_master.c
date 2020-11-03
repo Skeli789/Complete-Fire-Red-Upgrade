@@ -2636,7 +2636,9 @@ static bool8 ShouldAIUseItem(void)
 						if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 4)
 							shouldUse = TRUE;
 					}
-					else if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2) //Smart AI should only use at less than half health
+					else if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2 //Smart AI should only use at less than half health
+					&& !IsLaserFocused(gActiveBattler) //Don't waste these statuses with a heal turn
+					&& !(gStatuses3[gActiveBattler] & STATUS3_LOCKON))
 					{
 						u8 foe = FOE(gActiveBattler);
 						if (IS_SINGLE_BATTLE)

@@ -314,6 +314,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x22A, METATILE_General_PlainGrass, Tileset_General},
 	{0x22B, METATILE_General_LandEdgeMiddle, Tileset_General},
 	{0x321, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
+	{0x323, METATILE_General_LandEdgeLeft, Tileset_DrescoTown},
 	{0x329, METATILE_General_TreeSideRight, Tileset_DrescoTown},
 	{0x32B, METATILE_General_TreeSideRight, Tileset_DrescoTown},
 	{0x32C, METATILE_General_TreeTopLeft, Tileset_DrescoTown},

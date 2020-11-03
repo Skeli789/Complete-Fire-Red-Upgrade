@@ -1779,7 +1779,11 @@ bool8 BankSideHasSeaOfFire(u8 bank)
 bool8 BankSideHasRainbow(u8 bank)
 {
 	return gNewBS->RainbowTimers[SIDE(bank)]
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_RAINBOW);
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_RAINBOW)
+		#ifdef FLAG_RAINBOW_BATTLE
+		|| FlagGet(FLAG_RAINBOW_BATTLE)
+		#endif
+		;
 }
 
 bool8 BankSideHasSwamp(u8 bank)
@@ -1827,7 +1831,11 @@ bool8 IsTaunted(u8 bank)
 bool8 IsTormented(u8 bank)
 {
 	return (gBattleMons[bank].status2 & STATUS2_TORMENT) != 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TORMENT);
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TORMENT)
+		#ifdef FLAG_TORMENT_BATTLE
+		|| FlagGet(FLAG_TORMENT_BATTLE)
+		#endif
+		;
 }
 
 bool8 IsHealBlocked(u8 bank)

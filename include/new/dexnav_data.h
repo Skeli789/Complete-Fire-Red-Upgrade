@@ -81,8 +81,8 @@ extern const u8 gText_DexNav_RightArrow[];
 #define CPUFSSET 1
 #define CPUModeFS(size, mode) ((size >> 2) | (mode << 24))
 
-#define SCANSTART_X 0
-#define SCANSTART_Y 0
+#define SCANSTART_X 7
+#define SCANSTART_Y 5
 #define SCANSIZE_X 12
 #define SCANSIZE_Y 12
 

@@ -500,18 +500,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_FOCUS_ENERGY:
-		AI_FOCUS_ENERGY:
-			if (data->atkSpeed > data->defSpeed) //Attacker could follow up first
-			{
-				if (CanKnockOut(bankDef, bankAtk)) //Attacker won't get a chance to follow up
-					break;
-			}
-			else //Enemy Attack -> AI Laser Focus -> Enemy Attack KO
-			{
-				if (Can2HKO(bankDef, bankAtk)) //Attacker won't get a chance to follow up
-					break;
-			}
-
 			if (atkAbility == ABILITY_SUPERLUCK
 			|| atkAbility == ABILITY_SNIPER
 			|| data->atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
@@ -751,7 +739,20 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_LOCK_ON:
 			switch (move) {
 				case MOVE_LASERFOCUS:
-					goto AI_FOCUS_ENERGY;
+					if (CanKnockOut(bankAtk, bankDef))
+						break; //Just KO the target
+					if (data->atkSpeed > data->defSpeed) //Attacker could follow up first
+					{
+						if (CanKnockOut(bankDef, bankAtk)) //Attacker won't get a chance to follow up
+							break;
+					}
+					else //Enemy Attack -> AI Laser Focus -> Enemy Attack KO
+					{
+						if (Can2HKO(bankDef, bankAtk)) //Attacker won't get a chance to follow up
+							break;
+					}
+					INCREASE_STATUS_VIABILITY(1);
+					break;
 
 				default:
 					if (MoveEffectInMoveset(EFFECT_0HKO, bankAtk))

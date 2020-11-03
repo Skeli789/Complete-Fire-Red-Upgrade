@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/bg.h"
+#include "../include/event_object_movement.h"
 #include "../include/link.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
@@ -328,12 +329,14 @@ void InitBagMenuFromField(void)
 
 static void CB2_PartyMenuFromField(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldContinueScript);
+	FreezeEventObjects();
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldFromDiploma);
 }
 
 static void CB2_ItemMenuFromField(void)
 {
-	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
+	FreezeEventObjects();
+	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldFromDiploma); //Continue script is needed so followers don't get messed up
 }
 
 u8 GetLRKeysState(void)
