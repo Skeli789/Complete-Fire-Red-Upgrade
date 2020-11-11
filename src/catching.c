@@ -71,6 +71,7 @@ void atkEF_handleballthrow(void)
 	u8 defLevel = gBattleMons[gBankTarget].level;
 
 	u8 ballType = ItemId_GetType(gLastUsedItem);
+	gLastUsedBall = gLastUsedItem;
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
@@ -716,49 +717,99 @@ u16 GetBattlerPokeballItemId(u8 bank)
 	return ballId;
 }
 
+static bool8 CantCatchBecauseRaid(void)
+{
+	return IsRaidBattle() && !RAID_BATTLE_END;
+}
+
+static bool8 CantCatchBecauseFlag(void)
+{
+	return FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING);
+}
+
+static bool8 CantCatchBecauseTwoAlive(void)
+{
+	return BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT));
+}
+
+static bool8 CantCatchBecauseSemiInvulnerable(u8 pos)
+{
+	return BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(pos));
+}
+
+static bool8 CantCatchBecauseSemiInvulnerableDoubles(void)
+{
+	return (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && CantCatchBecauseSemiInvulnerable(B_POSITION_OPPONENT_LEFT))
+		|| (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && CantCatchBecauseSemiInvulnerable(B_POSITION_OPPONENT_RIGHT));
+}
+
+static bool8 CantCatchBecauseSecondMon(void)
+{
+	return BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_USE_ITEM
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_NOTHING_FAINTED;
+}
+
 bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 {
 	bool8 effect = FALSE;
 
-	if (IsRaidBattle() && !RAID_BATTLE_END)
+	if (CantCatchBecauseRaid())
 	{
 		DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonYet, Task_ReturnToBagFromContextMenu);
 		effect = TRUE;
 	}
-	else if (FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+	else if (CantCatchBecauseFlag())
 	{
 		DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonRightNow, Task_ReturnToBagFromContextMenu);
 		effect = TRUE;
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
-		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
-		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		if (CantCatchBecauseTwoAlive())
 		{
 			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtTwoTargets, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
-		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-		||	   (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
+		else if (CantCatchBecauseSemiInvulnerableDoubles())
 		{
 			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
-		else if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
-		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_USE_ITEM
-		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != ACTION_NOTHING_FAINTED)
+		else if (CantCatchBecauseSecondMon())
 		{
 			DisplayItemMessageInBag(taskId, 2, gText_CantUseAMoveAndABall, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 	}
-	else if (BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+	else if (CantCatchBecauseSemiInvulnerable(B_POSITION_OPPONENT_LEFT))
 	{
 		DisplayItemMessageInBag(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, Task_ReturnToBagFromContextMenu);
 		effect = TRUE;
 	}
 
 	return effect;
+}
+
+bool8 CantCatchPokemonRightNow(void)
+{
+	if (CantCatchBecauseRaid() || CantCatchBecauseFlag())
+		return TRUE;
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		if (CantCatchBecauseTwoAlive()
+		|| CantCatchBecauseSemiInvulnerableDoubles()
+		|| (IS_DOUBLE_BATTLE
+		 && BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
+		 && gActiveBattler == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT))) //Only Pokemon on left can throw ball
+			return TRUE;
+	}
+	else if (CantCatchBecauseSemiInvulnerable(B_POSITION_OPPONENT_LEFT))
+		return TRUE;
+
+	return FALSE;
 }
 
 struct Pokemon* LoadTargetPartyData(void)

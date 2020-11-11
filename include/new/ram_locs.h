@@ -89,7 +89,7 @@
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
-		#define sHofFadingRelated (*((u32*) 0x0203AB34))
+		#define sHofSelectedPaletteIndices (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
 /*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
@@ -141,8 +141,10 @@
 
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
+extern u16 gLastUsedBall; //0x203B774
 
-//FREE: 0x203B774
+//FREE: 0x203B776
+
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)

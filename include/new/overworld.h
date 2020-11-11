@@ -45,6 +45,7 @@ void IsBestMiningSpotOutOfView(void);
 void ResetMiningSpots(void);
 bool8 IsValidMiningSpot(s16 x, s16 y);
 bool8 MetatileBehavior_IsStairs(u8 behaviour);
+bool8 CanUseEscapeRopeOnCurrMap(void);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);

@@ -874,6 +874,7 @@ struct NewBattleStruct
 	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
 	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
 	bool8 rolloutFinalHit : 1; //Helps with Rollout 5th hit damage calc
+	bool8 usedLastBall : 1; //Helps prevent the bag from opening
 
 	//Other
 	u16 LastUsedMove;
