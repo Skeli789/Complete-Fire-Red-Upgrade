@@ -9,6 +9,7 @@
 #include "../include/constants/pokemon.h"
 #include "../include/constants/species.h"
 
+#include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
 /*
@@ -440,4 +441,46 @@ u16 GetMonDevolution(struct Pokemon* mon)
 	}
 
 	return SPECIES_NONE;
+}
+
+void CreateShedinja(u16 preEvoSpecies, struct Pokemon* mon)
+{
+	u32 data = 0;
+	if (gEvolutionTable[preEvoSpecies][0].method == EVO_LEVEL_NINJASK
+	&& gPlayerPartyCount < PARTY_SIZE
+	&& CheckBagHasItem(ITEM_POKE_BALL, 1)) //Must have a standard Poke Ball in the Bag
+	{
+		s32 i;
+		const struct Evolution *evos;
+		const struct Evolution *evos2;
+		u8 ball = BALL_TYPE_POKE_BALL;
+
+		CopyMon(&gPlayerParty[gPlayerPartyCount], mon, sizeof(struct Pokemon));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_SPECIES, (&gEvolutionTable[preEvoSpecies][1].targetSpecies));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_NICKNAME, (gSpeciesNames[gEvolutionTable[preEvoSpecies][1].targetSpecies]));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_HELD_ITEM, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MARKINGS, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_ENCRYPT_SEPARATOR, (&data));
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_POKEBALL, &ball);
+
+		for (i = MON_DATA_COOL_RIBBON; i < MON_DATA_COOL_RIBBON + 5; i++)
+			SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
+		for (i = MON_DATA_CHAMPION_RIBBON; i <= MON_DATA_FATEFUL_ENCOUNTER; i++)
+			SetMonData(&gPlayerParty[gPlayerPartyCount], i, (&data));
+
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_STATUS, (&data));
+		data = 0xFF;
+		SetMonData(&gPlayerParty[gPlayerPartyCount], MON_DATA_MAIL, (&data));
+
+		CalculateMonStats(&gPlayerParty[gPlayerPartyCount]);
+		CalculatePlayerPartyCount();
+
+		// can't match it otherwise, ehh
+		evos2 = gEvolutionTable[0];
+		evos = evos2 + EVOS_PER_MON * preEvoSpecies;
+
+		GetSetPokedexFlag(SpeciesToNationalPokedexNum(evos[1].targetSpecies), FLAG_SET_SEEN);
+		GetSetPokedexFlag(SpeciesToNationalPokedexNum(evos[1].targetSpecies), FLAG_SET_CAUGHT);
+		RemoveBagItem(ITEM_POKE_BALL, 1);
+	}
 }

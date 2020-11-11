@@ -450,6 +450,7 @@ DisplayTypeHook 081368CC 1
 
 ## Evolution Methods
 GetEvolutionTargetSpecies 08042EC4 3
+CreateShedinja 080CE748 2
 RemoveEvoItem 080CED5C 0
 EvolutionMovesHook 080CEDD4 1
 
