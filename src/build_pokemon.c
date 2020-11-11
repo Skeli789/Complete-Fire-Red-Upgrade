@@ -283,38 +283,38 @@ void BuildTrainerPartySetup(void)
 		{
 			u32 k;
 			ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
-			if (ExtensionState.partyBackup == NULL)
-				return;
-
-			if (gSelectedOrderFromParty[0] == 0) //Special 0x2F was not used
+			if (ExtensionState.partyBackup != NULL)
 			{
-				//Choose first three viable Pokemon on team to fight
-				for (i = 0, k = 0; i < PARTY_SIZE && k < 3; ++i)
+				if (gSelectedOrderFromParty[0] == 0) //Special 0x2F was not used
 				{
-					u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
-					if (species != SPECIES_NONE && species != SPECIES_EGG
-					&& GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL) > 0)
-						gSelectedOrderFromParty[k++] = i + 1;
+					//Choose first three viable Pokemon on team to fight
+					for (i = 0, k = 0; i < PARTY_SIZE && k < 3; ++i)
+					{
+						u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+						if (species != SPECIES_NONE && species != SPECIES_EGG
+						&& GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL) > 0)
+							gSelectedOrderFromParty[k++] = i + 1;
+					}
 				}
+
+				u8 counter = 0;
+				u8 mon1 = gSelectedOrderFromParty[0];
+				u8 mon2 = gSelectedOrderFromParty[1];
+				u8 mon3 = gSelectedOrderFromParty[2];
+				for (i = 0; i < PARTY_SIZE; ++i)
+				{
+					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
+						Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
+				}
+
+				ReducePartyToThree(); //Well...sometimes can be less than 3
+				Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
+
+				if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
+					BuildRaidMultiParty();
+				else
+					CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
 			}
-
-			u8 counter = 0;
-			u8 mon1 = gSelectedOrderFromParty[0];
-			u8 mon2 = gSelectedOrderFromParty[1];
-			u8 mon3 = gSelectedOrderFromParty[2];
-			for (i = 0; i < PARTY_SIZE; ++i)
-			{
-				if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
-					Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
-			}
-
-			ReducePartyToThree(); //Well...sometimes can be less than 3
-			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
-
-			if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
-				BuildRaidMultiParty();
-			else
-				CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
 		}
 	}
 
@@ -930,8 +930,8 @@ static const struct LevelScaler sLevelScales[] =
 	[4] = {30, 45},
 	[5] = {38, 54},
 	[6] = {47, 58},
-	[7] = {51, 65},
-	[8] = {60, 70},
+	[7] = {51, 63},
+	[8] = {58, 70},
 	[9] = {70,  0},
 };
 

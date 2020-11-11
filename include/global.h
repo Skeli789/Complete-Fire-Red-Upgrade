@@ -721,6 +721,7 @@ struct TrainerNameRecord
 
 #define EVENT_OBJECTS_COUNT 16
 #define MAP_OBJECTS_COUNT  16
+#define EVENT_OBJECT_TEMPLATES_COUNT 64
 #define BERRY_TREES_COUNT  128
 #define FLAGS_COUNT        288 // 300
 #define VARS_COUNT         256

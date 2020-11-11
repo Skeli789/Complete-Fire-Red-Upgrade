@@ -48,6 +48,7 @@ ReshowBattleScreenMonSpriteHook1 8077CD2 0
 ReshowBattleScreenMonSpriteHook2 8077ECA 0
 ReshowBattleScreenHealthboxSpriteHook 8078104 0
 BattleUseFunc_PokeDoll 80A2010 1
+LastUsedBallOverrideHook 8032CEC 0
 
 HandleInputChooseAction 0802E438 0
 SwitchMoveDataHook 802EF90 0
@@ -435,7 +436,7 @@ SummaryScreenOTGenderColour 08136270 3
 CB2_DoHallOfFameScreen 080F1EFC 3
 Task_Hof_InitTeamSaveData 080F2114 3
 Task_Hof_DisplayMon 080F22B0 3
-Task_Hof_PrintMonInfoAfterAnimating 080F23A0 3
+Task_Hof_PlayMonCryAndPrintInfo 080F23A0 3
 Task_Hof_TryDisplayAnotherMon 080F2424 3
 Task_HofPC_CopySaveData 080F2AA4 3
 Task_HofPC_DrawSpritesPrintText 080F2B6C 3

@@ -92,7 +92,7 @@ struct EventObjectTemplate
 {
 	/*0x00*/ u8 localId;
 	/*0x01*/ u8 graphicsIdLowerByte;
-	/*0x02*/ u8 unk2;
+	/*0x02*/ u8 inConnection;
 	/*0x03*/ u8 graphicsIdUpperByte;
 	/*0x04*/ s16 x;
 	/*0x06*/ s16 y;

@@ -1853,11 +1853,7 @@ bool8 IsTaunted(u8 bank)
 bool8 IsTormented(u8 bank)
 {
 	return (gBattleMons[bank].status2 & STATUS2_TORMENT) != 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TORMENT)
-		#ifdef FLAG_TORMENT_BATTLE
-		|| FlagGet(FLAG_TORMENT_BATTLE)
-		#endif
-		;
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TORMENT);
 }
 
 bool8 IsHealBlocked(u8 bank)

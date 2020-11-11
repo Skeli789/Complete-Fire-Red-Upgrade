@@ -99,7 +99,7 @@ u16 __attribute__((long_call)) CalculateSaveChecksum(void* data, u16 size);
 u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
 u8 SaveWriteToFlash(u16 chunkId, const struct SaveBlockChunk *chunks);
 u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
-u8 __attribute__((long_call)) SaveLoadGameData(u8 a1);
+u8 __attribute__((long_call)) Save_LoadGameData(u8 a1);
 u8 __attribute__((long_call)) TrySavingData(u8 saveType);
 u8 __attribute__((long_call)) HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
 

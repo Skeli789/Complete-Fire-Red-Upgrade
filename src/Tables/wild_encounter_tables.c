@@ -353,6 +353,24 @@ static const struct WildPokemon sCootesBog_LandMonsNight[] =
 
 static const struct WildPokemonInfo sCootesBog_LandMonsInfoNight = {20, sCootesBog_LandMonsNight};
 
+static const struct WildPokemon sMagnoliaFields_LandMonsNight[] =
+{
+	{49, 53, SPECIES_NOCTOWL},
+	{49, 53, SPECIES_FURFROU},
+	{49, 53, SPECIES_TRANQUILL},
+	{49, 53, SPECIES_MUDSDALE},
+	{49, 53, SPECIES_MUDSDALE},
+	{49, 53, SPECIES_GOGOAT},
+	{49, 53, SPECIES_FURFROU},
+	{49, 53, SPECIES_GOGOAT},
+	{50, 53, SPECIES_MILTANK},
+	{50, 53, SPECIES_MILTANK},
+	{50, 53, SPECIES_MILTANK},
+	{50, 53, SPECIES_TAUROS},
+};
+
+static const struct WildPokemonInfo sMagnoliaFields_LandMonsInfoNight = {20, sMagnoliaFields_LandMonsNight};
+
 static const struct WildPokemon sRoute18_LandMonsNight[] =
 {
 	{53, 57, SPECIES_NOCTOWL},
@@ -542,6 +560,14 @@ const struct WildPokemonHeader gWildMonNightHeaders[] =
 		.fishingMonsInfo = NULL,
 	},
 	{
+		.mapGroup = MAP_GROUP(MAGNOLIA_FIELDS),
+		.mapNum = MAP_NUM(MAGNOLIA_FIELDS),
+		.landMonsInfo = &sMagnoliaFields_LandMonsInfoNight,
+		.waterMonsInfo = NULL,
+		.rockSmashMonsInfo = NULL,
+		.fishingMonsInfo = NULL,
+	},
+	{
 		.mapGroup = 0xFF,
 		.mapNum = 0xFF,
 		.landMonsInfo = NULL,
@@ -656,6 +682,10 @@ const struct SwarmData gSwarmTable[] =
 	{
 		.mapName = MAPSEC_COOTES_BOG,
 		.species = SPECIES_CROCONAW,
+	},
+	{
+		.mapName = MAPSEC_MAGNOLIA_FIELDS,
+		.species = SPECIES_QUILAVA,
 	},
 	{
 		.mapName = MAPSEC_ROUTE_18,

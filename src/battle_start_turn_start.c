@@ -3,6 +3,7 @@
 #include "../include/battle_transition.h"
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
+#include "../include/load_save.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -42,7 +43,7 @@ enum BattleBeginStates
 	RaidBattleReveal,
 	DynamaxUsableIndicator,
 	RainbowBattleMessage,
-	TormentBattleMessage,
+	ShadowShieldBattleMessage,
 	NeutralizingGas,
 	SwitchInAbilities,
 	Intimidate,
@@ -120,6 +121,11 @@ void HandleNewBattleRamClearBeforeBattle(void)
 		gNewBS->ringChallengeBannedTypes[2] = VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_3);
 		#endif
 	}
+
+	#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
+	if (FlagGet(FLAG_BENJAMIN_BUTTERFREE_BATTLE))
+		SavePlayerParty(); //Backup party to be restored after the battle
+	#endif
 
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
@@ -273,11 +279,11 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case TormentBattleMessage:
-				#ifdef FLAG_TORMENT_BATTLE
-				if (FlagGet(FLAG_TORMENT_BATTLE))
+			case ShadowShieldBattleMessage:
+				#ifdef FLAG_SHADOW_SHIELD_BATTLE
+				if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE))
 				{
-					gBattleStringLoader = gText_TormentBattleStart;
+					gBattleStringLoader = gText_ShadowShieldBattleStart;
 					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
 				}
 				#endif

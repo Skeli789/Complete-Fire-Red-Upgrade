@@ -602,6 +602,7 @@
 #define MAP_POLDER_TOWN			((3 << 8) | 0)
 #define MAP_COOTES_BOG			((3 << 8) | 1)
 #define MAP_MAGNOLIA_TOWN       ((3 << 8) | 2)
+#define MAP_MAGNOLIA_FIELDS     ((3 << 8) | 4)
 #define MAP_REDWOOD_VILLAGE     ((3 << 8) | 5)
 
 #define MAP_FULLMOON_ISLAND_A	((1 << 8) | 0)

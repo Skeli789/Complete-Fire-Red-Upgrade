@@ -2397,9 +2397,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				INCREASE_VIABILITY(8); //Use the killing move with the best accuracy
 			}
-			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
+			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //The use the strongest fast move
 			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				INCREASE_VIABILITY(9);

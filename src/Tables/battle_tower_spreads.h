@@ -6620,9 +6620,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_ROCKCLIMB,
+			MOVE_CLOSECOMBAT,
+			MOVE_THROATCHOP,
 			MOVE_EARTHQUAKE,
-			MOVE_ZENHEADBUTT,
-			MOVE_ROCKSLIDE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -6646,8 +6646,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_GIGAIMPACT,
-			MOVE_EARTHQUAKE,
-			MOVE_PAYBACK,
+			MOVE_CLOSECOMBAT,
+			MOVE_THROATCHOP,
 			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,

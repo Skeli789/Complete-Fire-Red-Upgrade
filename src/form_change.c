@@ -41,6 +41,10 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_WISHIWASHI_S,
 	SPECIES_MIMIKYU_BUSTED,
 	SPECIES_MINIOR_SHIELD,
+	SPECIES_MORPEKO_HANGRY,
+	SPECIES_EISCUE_NOICE,
+	SPECIES_CRAMORANT_GULPING,
+	SPECIES_CRAMORANT_GORGING,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -157,6 +161,34 @@ void SwitchOutFormsRevert(u8 bank)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE, FALSE);
+			break;
+		#endif
+
+		#if (defined SPECIES_MORPEKO && defined SPECIES_MORPEKO_HANGRY)
+		case SPECIES_MORPEKO_HANGRY:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
+			else
+				DoFormChange(bank, SPECIES_MORPEKO, FALSE, TRUE, FALSE);
+			break;
+		#endif
+
+		#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
+		case SPECIES_EISCUE_NOICE:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
+			else
+				DoFormChange(bank, SPECIES_EISCUE, FALSE, TRUE, FALSE);
+			break;
+		#endif
+
+		#if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GULPING && defined SPECIES_CRAMORANT_GORGING)
+		case SPECIES_CRAMORANT_GULPING:
+		case SPECIES_CRAMORANT_GORGING:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
+			else
+				DoFormChange(bank, SPECIES_CRAMORANT, FALSE, TRUE, FALSE);
 			break;
 		#endif
 	}

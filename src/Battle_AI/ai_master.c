@@ -780,6 +780,11 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 	u16 defMove = IsValidMovePrediction(foe, activeBattler);
 	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
 
+	if (gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE
+	&&  predictedDmg > 0 //Predicted move does any damage at all
+	&&  gBattleMons[gActiveBattler].moves[0] == MOVE_NONE) //Mon to be switched out has no moves left
+		return FALSE; //Don't switch out and just struggle until you die
+
 	if (predictedDmg == 0)
 		return TRUE;
 
@@ -1480,7 +1485,9 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), &party[bestMon]);
 
 			if ((resultFlags & MOVE_RESULT_NO_EFFECT && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE) //Has some sort of followup
-			||  (GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE && PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler))))
+			||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
+				&& GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE
+				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler))))
 			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -2651,9 +2658,12 @@ static bool8 ShouldAIUseItem(void)
 						}
 						else //Doubles
 						{
-							if ((BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
-							|| (BATTLER_ALIVE(PARTNER(foe)) && ShouldRecover(gActiveBattler, PARTNER(foe), 0xFFFF)))
-								shouldUse = TRUE;
+							//Only use recovery item if good idea against both foes
+							shouldUse = TRUE;
+							if (BATTLER_ALIVE(foe) && !ShouldRecover(gActiveBattler, foe, 0xFFFF))
+								shouldUse = FALSE;
+							else if (BATTLER_ALIVE(PARTNER(foe)) && !ShouldRecover(gActiveBattler, PARTNER(foe), 0xFFFF))
+								shouldUse = FALSE;
 						}
 					}
 				}

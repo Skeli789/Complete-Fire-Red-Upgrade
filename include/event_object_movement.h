@@ -88,6 +88,7 @@ u8 __attribute__((long_call)) MovementAction_EmoteExclamationMark_Step0(struct E
 bool8 __attribute__((long_call)) IsZCoordMismatchAt(u8, s16, s16);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
 void __attribute__((long_call)) RemoveEventObject(struct EventObject *eventObject);
+u8 __attribute__((long_call)) GetCollisionInDirection(struct EventObject*, u8);
 u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 u8 __attribute__((long_call)) SpawnSpecialEventObject(struct EventObjectTemplate *);

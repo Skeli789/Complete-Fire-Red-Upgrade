@@ -198,6 +198,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAPSEC_COOTES_BOG					0xB5
 #define MAPSEC_CRYSTAL_PEAK					0x9E
 #define MAPSEC_MAGNOLIA_TOWN				0x91
+#define MAPSEC_MAGNOLIA_FIELDS				0xB6
 #define MAPSEC_REDWOOD_VILLAGE				0x92
 #define MAPSEC_ROUTE_18                     0x76
 #define MAPSEC_ISLAND_CAVE					0xC3

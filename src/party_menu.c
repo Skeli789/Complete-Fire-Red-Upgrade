@@ -967,36 +967,41 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 	if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
 	{
-		#ifndef DEBUG_HMS
-		bool8 hasHM = CheckBagHasItem(ITEM_HM02_FLY, 1) > 0;
 		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
 		
 		if (species != SPECIES_NONE
 		&& species != SPECIES_EGG
-		&& hasHM
+		&& Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) //Only add if usable
+		#ifndef DEBUG_HMS
 		&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
-		&& CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE)
+		&& CheckBagHasItem(ITEM_HM02_FLY, 1) > 0
+		&& CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE
 		#endif
+		)
 		{
 			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
 			++k;
 		}
 	}
-	/*if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
+
+	if (k < MAX_MON_MOVES) //Doesn't know 4 field moves
 	{
-		bool8 hasTM = CheckBagHasItem(ITEM_TM29_DIG, 1) > 0;
 		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
-		
+
 		if (species != SPECIES_NONE
 		&& species != SPECIES_EGG
-		&& hasTM
+		&& CanUseEscapeRopeOnCurrMap() //Only add if usable
+		#ifndef DEBUG_HMS
 		&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
-		&& CanMonLearnTMTutor(&mons[slotId], ITEM_TM29_DIG, 0) == CAN_LEARN_MOVE)
+		&& CheckBagHasItem(ITEM_TM28_DIG, 1) > 0
+		&& CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE
+		#endif
+		)
 		{
 			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
 			++k;
 		}
-	}*/
+	}
 	#endif
 
 	if (!ShouldDisablePartyMenuItemsBattleTower())

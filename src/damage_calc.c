@@ -2624,6 +2624,16 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		else if (moveTarget & MOVE_TARGET_FOES_AND_ALLY && CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, bankAtk, bankDef) >= 2)
 			damage = (damage * 75) / 100;
 	}
+	
+	//Shadow Shield Battle
+	#ifdef FLAG_SHADOW_SHIELD_BATTLE
+	//Ghosts get Shadow Shields (halve damage when at max health)
+	if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE)
+	&& data->defHP >= data->defMaxHP
+	&& ((!useMonDef && IsOfType(bankDef, TYPE_GHOST))
+	 || (useMonDef && IsMonOfType(data->monDef, TYPE_GHOST))))
+		damage /= 2;
+	#endif
 
 	if (damage == 0)
 		damage = 1;

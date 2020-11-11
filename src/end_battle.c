@@ -4,6 +4,7 @@
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
 #include "../include/item_use.h"
+#include "../include/load_save.h"
 #include "../include/malloc.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
@@ -63,11 +64,14 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_CAMOMONS_BATTLE
 	FLAG_CAMOMONS_BATTLE,
 #endif
-#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
-	FLAG_BENJAMIN_BUTTERFREE_BATTLE,
-#endif
 #ifdef FLAG_RING_CHALLENGE_BATTLE
 	FLAG_RING_CHALLENGE_BATTLE,
+#endif
+#ifdef FLAG_SHADOW_SHIELD_BATTLE
+	FLAG_SHADOW_SHIELD_BATTLE,
+#endif
+#ifdef FLAG_RAINBOW_BATTLE
+	FLAG_RAINBOW_BATTLE,
 #endif
 #ifdef FLAG_DYNAMAX_BATTLE
 	FLAG_DYNAMAX_BATTLE,
@@ -100,6 +104,7 @@ static void RecalcAllStats(void);
 static void BringBackTheDead(void);
 static void EndPartnerBattlePartyRestore(void);
 static void EndSkyBattlePartyRestore(void);
+static void EndBenjaminButterfreeBattleRestore(void);
 static void EndBattleFlagClear(void);
 static void HealPokemonInFrontier(void);
 
@@ -537,6 +542,7 @@ void EndOfBattleThings(void)
 		UpdateBurmy();
 		EndPartnerBattlePartyRestore();
 		EndSkyBattlePartyRestore();
+		EndBenjaminButterfreeBattleRestore();
 		RecalcAllStats();
 		BringBackTheDead();
 		EndBattleFlagClear();
@@ -678,8 +684,6 @@ static void EndPartnerBattlePartyRestore(void)
 	}
 }
 
-
-//TO DO, restore party order like above
 static void EndSkyBattlePartyRestore(void)
 {
 	int i;
@@ -714,6 +718,14 @@ static void EndSkyBattlePartyRestore(void)
 		Memcpy(gPlayerParty, tempTeam, sizeof(struct Pokemon) * PARTY_SIZE);
 		Free(backup);
 	}
+}
+
+static void EndBenjaminButterfreeBattleRestore(void)
+{
+	#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
+	if (FlagGet(FLAG_BENJAMIN_BUTTERFREE_BATTLE))
+		LoadPlayerParty(); //Backed up before the battle
+	#endif
 }
 
 static void EndBattleFlagClear(void)

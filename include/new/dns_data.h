@@ -989,6 +989,17 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Pokemon League Fire
+		.tilesetPointer = 0x82D4B84, //Tileset 10
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{12, RGB(30, 30, 25)},
+			{13, RGB(30, 29, 21)},
+			{14, RGB(28, 25, 11)},
+			TILESET_PAL_FADE_END
+		},
+	},
 };
 
 #endif
