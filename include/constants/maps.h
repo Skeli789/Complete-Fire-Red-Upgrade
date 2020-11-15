@@ -672,6 +672,7 @@
 
 #define MAP_CRYSTAL_PEAK_1F_MAIN_ROOM  ((56 << 8) | 2)
 #define MAP_CRYSTAL_PEAK_1F_LEFT_ROOM  ((56 << 8) | 3)
+#define MAP_CRYSTAL_PEAK_CLIFFSIDE     ((56 << 8) | 7)
 #define MAP_CRYSTAL_PEAK_SUMMIT        ((56 << 8) | 12)
 
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)

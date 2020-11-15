@@ -52,6 +52,7 @@ enum SwitchInStates
 	SwitchIn_Items,
 	SwitchIn_AirBalloon,
 	SwitchIn_TotemPokemon,
+	SwitchIn_PixieBoost,
 	SwitchIn_LastPokemonMusic,
 	SwitchIn_TrainerMessage,
 	SwitchIn_PreEnd,
@@ -864,6 +865,28 @@ void atk52_switchineffects(void)
 				++gNewBS->switchInEffectsState;
 				return;
 			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_PixieBoost:
+			#ifdef FLAG_PIXIE_BATTLE
+			if (FlagGet(FLAG_PIXIE_BATTLE))
+			{
+				if (IsOfType(gActiveBattler, TYPE_FAIRY))
+				{
+					if (gBattleMons[gActiveBattler].defense < gBattleMons[gActiveBattler].spDefense)
+						gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
+					else
+						gBattleScripting.statChanger = STAT_STAGE_SPDEF | INCREASE_1;
+
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_PixieBoostRet;
+					gBankAttacker = gBattleScripting.bank = gActiveBattler;
+					++gNewBS->switchInEffectsState;
+					return;
+				}
+			}
+			#endif
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 

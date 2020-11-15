@@ -745,6 +745,9 @@ extern const u8 TerrorGranbullBattleLogoMap[];
 extern const u8 BlackFerrothornBattleLogoTiles[];
 extern const u16 BlackFerrothornBattleLogoPal[];
 extern const u8 BlackFerrothornBattleLogoMap[];
+extern const u8 ScienceSocietyBattleLogoTiles[];
+extern const u16 ScienceSocietyBattleLogoPal[];
+extern const u8 ScienceSocietyBattleLogoMap[];
 
 const struct BattleTransitionLogo gBattleTransitionLogos[] =
 {
@@ -756,6 +759,7 @@ const struct BattleTransitionLogo gBattleTransitionLogos[] =
 	{CLASS_TERROR_GRANBULL, TerrorGranbullBattleLogoTiles, TerrorGranbullBattleLogoPal, TerrorGranbullBattleLogoMap},
 	{CLASS_BLACK_FERROTHORN, BlackFerrothornBattleLogoTiles, BlackFerrothornBattleLogoPal, BlackFerrothornBattleLogoMap},
 	{CLASS_BLACK_EMBOAR, BlackEmboarBattleLogoTiles, BlackEmboarBattleLogoPal, BlackEmboarBattleLogoMap},
+	{CLASS_SCIENCE_SOCIETY, ScienceSocietyBattleLogoTiles, ScienceSocietyBattleLogoPal, ScienceSocietyBattleLogoMap},
 	#endif
 };
 

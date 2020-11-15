@@ -20,6 +20,7 @@
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
 
+#define gFieldEffectObjectPaletteInfo0 (void*) 0x83A5340
 #define gFieldEffectObjectPaletteInfo1 (void*) 0x83A5348
 #define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)
 
@@ -49,6 +50,8 @@ static void FldEff_LongGrass(void);
 static void FldEff_JumpLongGrassLoadPalette(void);
 static void FldEff_ShakingLongGrass(void);
 static void FldEff_ShortGrass(void);
+static void FldEff_SandFootprints(void);
+static void FldEff_BikeTireTracks(void);
 static void FldEff_CaveDust(void);
 static void FldEff_Sparkles(void);
 static u32 FldEff_LavaBubbles(void);
@@ -74,9 +77,11 @@ extern const u16 gFieldEffectObjectPic_AutumnGrassPal[];
 extern const u16 gFieldEffectObjectPic_WinterGrassPal[];
 extern const u8 gFieldEffectObjectPic_SwampLongGrassTiles[];
 extern const u16 gFieldEffectObjectPic_SwampLongGrassPal[];
+extern const u16 gFieldEffectObjectPic_WinterFootprintPal[];
 static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {gFieldEffectObjectPic_AutumnGrassPal, 0x1005};
 static const struct SpritePalette sWinterGrassObjectPaletteInfo = {gFieldEffectObjectPic_WinterGrassPal, 0x1005};
 static const struct SpritePalette sSwampGrassObjectPaletteInfo = {gFieldEffectObjectPic_SwampLongGrassPal, 0x1005};
+static const struct SpritePalette sWinterFootprintPaletteInfo = {gFieldEffectObjectPic_WinterFootprintPal, 0x1004};
 
 static const struct SpriteFrameImage sFieldEffectObjectPicTable_SwampLongGrass[] = {
 	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
@@ -340,6 +345,22 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 	}
 }
 
+static void GetSpriteTemplateAndPaletteForFootprintFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette, u8 fieldEffectTemplateArg)
+{
+	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
+	if (IsCurrentAreaWinter())
+	{
+		*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
+		*spritePalette = &sWinterFootprintPaletteInfo;
+	}
+	else
+	#endif
+	{
+		*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
+		*spritePalette = gFieldEffectObjectPaletteInfo0;
+	}
+}
+
 static void FldEff_TallGrass(void)
 {
 	s32 x, y;
@@ -523,15 +544,51 @@ void FldEff_ShortGrass(void)
 	}
 }
 
-u32 FldEff_BikeTireTracks(void)
+void FldEff_SandFootprints(void)
 {
 	s32 x, y;
 	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
-	spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[27], x, y, gFieldEffectArguments[2]);
+	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 11);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, gFieldEffectArguments[2]);
+	if (spriteId != MAX_SPRITES)
+	{
+		struct Sprite* sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = gFieldEffectArguments[3];
+		sprite->data[7] = FLDEFF_SAND_FOOTPRINTS;
+		StartSpriteAnim(sprite, gFieldEffectArguments[4]);
+	}
+
+	if (IsFanfareTaskInactive()) //Sound interrupts fanfare
+		PlaySE(SE_SAND_FOOTSTEP);
+}
+
+void FldEff_BikeTireTracks(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 27);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, gFieldEffectArguments[2]);
 	if (spriteId != MAX_SPRITES)
 	{
 		struct Sprite* sprite = &gSprites[spriteId];
@@ -540,9 +597,9 @@ u32 FldEff_BikeTireTracks(void)
 		sprite->data[7] = FLDEFF_BIKE_TIRE_TRACKS;
 		StartSpriteAnim(sprite, gFieldEffectArguments[4]);
 	}
-	
-	PlaySE(SE_MUD_SLAP); //Different sound on bike
-	return spriteId;
+
+	if (IsFanfareTaskInactive()) //Sound interrupts fanfare
+		PlaySE(SE_MUD_SLAP); //Different sound on bike
 }
 
 static void FldEff_CaveDust(void)
@@ -1083,45 +1140,57 @@ bool8 IsRockClimbActive(void)
 
 //Scripts
 
-const struct FieldEffectScript gFieldEffectScript_TallGrass =
+const struct FieldEffectScript FieldEffectScript_TallGrass =
 {
 	FLDEFF_CALLASM, FldEff_TallGrass,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_JumpTallGrass =
+const struct FieldEffectScript FieldEffectScript_JumpTallGrass =
 {
 	FLDEFF_CALLASM, FldEff_JumpTallGrassLoadPalette,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_ShakingTallGrass =
+const struct FieldEffectScript FieldEffectScript_ShakingTallGrass =
 {
 	FLDEFF_CALLASM, FldEff_ShakingTallGrass,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_LongGrass =
+const struct FieldEffectScript FieldEffectScript_LongGrass =
 {
 	FLDEFF_CALLASM, FldEff_LongGrass,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_JumpLongGrass =
+const struct FieldEffectScript FieldEffectScript_JumpLongGrass =
 {
 	FLDEFF_CALLASM, FldEff_JumpLongGrassLoadPalette,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_ShakingLongGrass =
+const struct FieldEffectScript FieldEffectScript_ShakingLongGrass =
 {
 	FLDEFF_CALLASM, FldEff_ShakingLongGrass,
 	FLDEFF_END,
 };
 
-const struct FieldEffectScript gFieldEffectScript_ShortGrass =
+const struct FieldEffectScript FieldEffectScript_ShortGrass =
 {
 	FLDEFF_CALLASM, FldEff_ShortGrass,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript FieldEffectScript_SandFootprints =
+{
+	FLDEFF_CALLASM, FldEff_SandFootprints,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript FieldEffectScript_BikeTireTracks =
+{
+	FLDEFF_CALLASM, FldEff_BikeTireTracks,
 	FLDEFF_END,
 };
 

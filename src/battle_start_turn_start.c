@@ -42,8 +42,10 @@ enum BattleBeginStates
 	ThirdTypeRemoval,
 	RaidBattleReveal,
 	DynamaxUsableIndicator,
-	RainbowBattleMessage,
 	ShadowShieldBattleMessage,
+	PixieBattleMessage,
+	PixieBattleBuffs,
+	RainbowBattleMessage,
 	NeutralizingGas,
 	SwitchInAbilities,
 	Intimidate,
@@ -268,22 +270,58 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case RainbowBattleMessage:
-				#ifdef FLAG_RAINBOW_BATTLE
-				if (FlagGet(FLAG_RAINBOW_BATTLE))
+			case ShadowShieldBattleMessage:
+				#ifdef FLAG_SHADOW_SHIELD_BATTLE
+				if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE))
 				{
-					gBattleStringLoader = gText_RainbowBattleStart;
+					gBattleStringLoader = gText_ShadowShieldBattleStart;
 					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
 				}
 				#endif
 				++*state;
 				break;
 
-			case ShadowShieldBattleMessage:
-				#ifdef FLAG_SHADOW_SHIELD_BATTLE
-				if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE))
+			case PixieBattleMessage:
+				#ifdef FLAG_PIXIE_BATTLE
+				if (FlagGet(FLAG_PIXIE_BATTLE))
 				{
-					gBattleStringLoader = gText_ShadowShieldBattleStart;
+					gBattleStringLoader = gText_PixieBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
+				*bank = 0; //Reset Bank for next loop
+				++*state;
+				break;
+
+			case PixieBattleBuffs:
+				#ifdef FLAG_PIXIE_BATTLE
+				if (FlagGet(FLAG_PIXIE_BATTLE))
+				{
+					for (; *bank < gBattlersCount; ++*bank)
+					{
+						if (IsOfType(*bank, TYPE_FAIRY))
+						{
+							if (gBattleMons[*bank].defense < gBattleMons[*bank].spDefense)
+								gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
+							else
+								gBattleScripting.statChanger = STAT_STAGE_SPDEF | INCREASE_1;
+
+							BattleScriptPushCursorAndCallback(BattleScript_PixieBoost);
+							gBankAttacker = gBattleScripting.bank = *bank;
+							++*bank;
+							return;
+						}
+					}
+				}
+				#endif
+				++*state;
+				break;
+
+			case RainbowBattleMessage:
+				#ifdef FLAG_RAINBOW_BATTLE
+				if (FlagGet(FLAG_RAINBOW_BATTLE))
+				{
+					gBattleStringLoader = gText_RainbowBattleStart;
 					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
 				}
 				#endif

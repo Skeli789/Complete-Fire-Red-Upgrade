@@ -3083,7 +3083,12 @@ u32 GetSandstormDamage(u8 bank)
 	u32 damage = 0;
 
 	if (TakesDamageFromSandstorm(bank))
-		damage = MathMax(1, GetBaseMaxHP(bank) / 16);
+	{
+		if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL)
+			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
+		else
+			damage = MathMax(1, GetBaseMaxHP(bank) / 16);
+	}
 
 	return damage;
 }
@@ -3119,6 +3124,12 @@ void atk96_weatherdamage(void)
 		if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 		{
 			gBattleMoveDamage = GetSandstormDamage(bank);
+
+			if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL)
+			{
+				gBattleStringLoader = gText_BuffetedByViciousSandstorm;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			}
 		}
 		else if (gBattleWeather & WEATHER_HAIL_ANY)
 		{
@@ -4807,11 +4818,12 @@ void atkDA_tryswapabilities(void) //Skill Swap
 	}
 }
 
-void atkDB_tryimprision(void) {
+void atkDB_tryimprision(void)
+{
 	if ((gStatuses3[gBankAttacker] & STATUS3_IMPRISONED))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
-	else {
+	else
+	{
 		PressurePPLoseOnUsingImprision(gBankAttacker);
 		gStatuses3[gBankAttacker] |= STATUS3_IMPRISONED;
 		gBattlescriptCurrInstr += 5;
@@ -4885,7 +4897,8 @@ void atkE1_trygetintimidatetarget(void)
 		gBattlescriptCurrInstr += 5;
 }
 
-void atkE4_getsecretpowereffect(void) {
+void atkE4_getsecretpowereffect(void)
+{
 	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[0].secretPowerEffect;

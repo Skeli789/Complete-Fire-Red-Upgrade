@@ -288,7 +288,11 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 	u8 split = SPLIT(atkMove);
 	u8 target = GetBaseMoveTarget(atkMove, bankAtk);
 
-	if (!gSpecialMoveFlags[atkMove].gMovesThatLiftProtectTable)
+	if (!gSpecialMoveFlags[atkMove].gMovesThatLiftProtectTable
+	#ifdef ABILITY_UNSEENFIST
+	&& ABILITY(bankAtk) != ABILITY_UNSEENFIST
+	#endif
+	)
 	{
 		switch (protectMove) {
 			case MOVE_PROTECT:

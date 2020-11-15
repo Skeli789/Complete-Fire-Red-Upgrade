@@ -2294,14 +2294,21 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	#endif
 
 //Sandstorm Sp. Def Increase
-	if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT
-	&& ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK))))
-		data->spDefense = (15 * data->spDefense) / 10;
+	if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT)
+	{
+		if ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK)))
+			data->spDefense = (15 * data->spDefense) / 10;
+		else if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL
+		&& ((!useMonDef && IsOfType(bankDef, TYPE_GROUND)) || (useMonDef && IsMonOfType(data->monDef, TYPE_GROUND))))
+			data->spDefense = (15 * data->spDefense) / 10; //Ground types get a Sp. Def boost in a "Vicious Sandstorm"
+	}
 
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
 		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
 			data->defense /= 2;
+		else if (move == MOVE_MISTYEXPLOSION)
+			data->spDefense /= 2;
 	#endif
 
 //Stat Buffs - Attacker

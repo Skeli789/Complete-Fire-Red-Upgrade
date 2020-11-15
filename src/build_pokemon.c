@@ -684,7 +684,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		//Get details for level scaling
 		#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 		#ifdef VAR_GAME_DIFFICULTY
-		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY; //Don't scale Trainers on easy mode
+		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY //Don't scale Trainers on easy mode
+					|| trainer->trainerClass == CLASS_ELITE_4 || trainer->trainerClass == CLASS_CHAMPION; //Unless you're facing the final bosses
 		#else
 		levelScaling = TRUE;
 		#endif
@@ -973,6 +974,11 @@ static bool8 CanTrainerEvolveMon(void)
 
 static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags)
 {
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY)
+		return FALSE; //No pseudo bosses in easy mode
+	#endif
+
 	//If the Trainer has custom moves, then they must be important
 	switch (trainerPartyFlags) {
 		case PARTY_FLAG_CUSTOM_MOVES:
@@ -987,6 +993,11 @@ static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags)
 
 static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 {
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY)
+		return FALSE; //No bosses in easy mode
+	#endif
+
 	switch (gTrainers[trainerId].trainerClass) {
 		case CLASS_LEADER:
 		case CLASS_ELITE_4:

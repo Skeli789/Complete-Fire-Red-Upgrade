@@ -27,6 +27,7 @@ cmd49_battle_scripts.s
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
 .global BattleScript_MultiHitPrintStrings
+.global BattleScript_ScaleShotBuff
 .global BattleScript_PluckEat
 .global BattleScript_RaidShields
 .global BattleScript_BrokenRaidBarrier
@@ -143,14 +144,14 @@ BattleScript_Magician:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Moxie:
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MoxieReturnPostBuff
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
 	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
-MoxieReturnPostBuff:
+.LReturn:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -307,6 +308,31 @@ BattleScript_DancerActivated:
 BattleScript_MultiHitPrintStrings:
 	copyarray 0x2022AB8 MULTIHIT_STRING 0x6
 	printstring 0x22
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ScaleShotBuff:
+	jumpifstat BANK_ATTACKER GREATERTHAN STAT_DEF STAT_MIN ScaleShot_Def
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX .LReturn
+
+ScaleShot_Def:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES 
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN, ScaleShot_Spd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ScaleShot_Spd
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+ScaleShot_Spd:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN, .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
+	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	return
 

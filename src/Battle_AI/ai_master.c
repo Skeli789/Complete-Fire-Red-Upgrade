@@ -67,6 +67,7 @@ static bool8 RunAllSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 oppos
 static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLockedMoves);
 static bool8 CanStopLockedMove(void);
 static bool8 IsYawned(void);
+static bool8 ShouldSwitchWhileAsleep(void);
 static bool8 IsTakingAnnoyingSecondaryDamage(void);
 static bool8 ShouldSwitchToAvoidDeath(void);
 static bool8 ShouldSwitchIfWonderGuard(void);
@@ -734,6 +735,8 @@ static bool8 ShouldSwitch(void)
 		return TRUE;
 	if (IsYawned())
 		return TRUE;
+	if (ShouldSwitchWhileAsleep())
+		return TRUE;
 	if (IsTakingAnnoyingSecondaryDamage())
 		return TRUE;
 	if (ShouldSwitchToAvoidDeath())
@@ -1337,6 +1340,7 @@ static bool8 IsYawned(void)
 {
 	if (ABILITY(gActiveBattler) != ABILITY_NATURALCURE
 	&& gStatuses3[gActiveBattler] & STATUS3_YAWN
+	&& (!IsDynamaxed(gActiveBattler) || Random() & 1) //50% chance to switch out if Dynamaxed
 	&& CanBePutToSleep(gActiveBattler, FALSE) //Could have been yawned and then afflicted with another status condition
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
 	{
@@ -1430,6 +1434,30 @@ static bool8 IsYawned(void)
 	return FALSE;
 }
 
+static bool8 ShouldSwitchWhileAsleep(void)
+{
+	if (IsBankAsleep(gActiveBattler)
+	&& (!IsDynamaxed(gActiveBattler) //Not Dynamaxed
+	 || (s8) (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) <= gNewBS->dynamaxData.timer[gActiveBattler])) //Or will wake up before the Dynamax ends
+	{
+		u8 ability = ABILITY(gActiveBattler);
+
+		if (ability == ABILITY_SHEDSKIN
+		|| ability == ABILITY_EARLYBIRD
+		|| (ability == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
+		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gActiveBattler)) && ABILITY(PARTNER(gActiveBattler)) == ABILITY_HEALER)
+		|| MoveEffectInMoveset(EFFECT_SLEEP_TALK, gActiveBattler)
+		|| MoveEffectInMoveset(EFFECT_SNORE, gActiveBattler))
+			return FALSE; //Don't switch
+
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 IsTakingAnnoyingSecondaryDamage(void)
 {
 	if (GetPredictedAIAbility(gActiveBattler, FOE(gActiveBattler)) != ABILITY_MAGICGUARD
@@ -1442,7 +1470,7 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 		||  gBattleMons[gActiveBattler].status2 & (STATUS2_CURSED)
 		||  (gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) > 0x600) //Been sitting with toxic for 6 turns
 		{
-			if (!WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage of switch in
+			if (!WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage on switch in
 			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -1477,7 +1505,8 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 		&& (atkMove == MOVE_NONE || !MoveWouldHitFirst(atkMove, gActiveBattler, FOE(gActiveBattler))) //Attacker wouldn't go first
 		&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || !MoveBlockedBySubstitute(defMove, FOE(gActiveBattler), gActiveBattler))
 		&&  MoveKnocksOutXHits(defMove, FOE(gActiveBattler), gActiveBattler, 1) //Foe will kill
-		&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 2)) //50% health loss
+		&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 3) //33% health loss
+		&& GetHealthPercentage(gActiveBattler) > 20) //Don't switch out mons that are super close to death
 		{
 			u8 firstId, lastId;
 			struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);

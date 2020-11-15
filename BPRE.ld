@@ -524,7 +524,7 @@ EmitHitAnimation = 0x800E984 | 1;
 EmitPlaySE = 0x800E9C4 | 1;
 EmitDrawPartyStatusSummary = 0x800EA7C | 1;
 EmitResetActionMoveSelection = 0x800EB74 | 1;
-LoadBattleBG_SpecialTerrainID = 0x800F238 | 1;
+GetBattleTerrainByMapScene = 0x800F238 | 1;
 load_battle_screen_elements2 = 0x800F2AC | 1;
 //LoadBattleBG_TerrainID = 0x800FC2C | 1;
 SpriteCb_ShowAsMoveTarget = 0x8012044 | 1;
@@ -1097,6 +1097,7 @@ IsMapNamePopupTaskActive = 0x8098320 | 1;
 StartTransitionToFlipBikeState = 0x80BD5C8 | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 UpdateJumpImpactEffect = 0x80DCCE0 | 1;
+CB2_Credits = 0x80F39E8 | 1;
 Task_ItemFinderNoResponse_CleanUp = 0x813ED18 | 1;
 HiddenItemIsWithinRangeOfPlayer = 0x813EE14 | 1;
 GetPlayerDirectionTowardsHiddenItem = 0x813F2F0 | 1;
@@ -1408,6 +1409,7 @@ sub_813A45C = 0x813A45C | 1;
 some_other_kind_of_link_test = 0x80BF748 |1;
 
 /* Evolution Functions */
+CB2_BeginEvolutionScene = 0x80CDD18 | 1;
 BeginEvolutionScene = 0x80CDDA8 | 1;
 
 /* Window Functions */

@@ -331,11 +331,26 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 #org @gText_CamomonsTypeRevealDualType
 [SCRIPTING_BANK] appears as the\n[BUFFER][00]- and [BUFFER][01]-type!
 
-#org @gText_RainbowBattleStart
-A rainbow appeared in the sky above\nthe entire battlefield!\pThe chance of secondary move\neffects has been doubled!
+#org @gText_ViciousSandstormBrewed
+A vicious sandstorm brewed!
+
+#org @gText_ViciousSandstormContinues
+A vicious sandstorm is raging.
+
+#org @gText_BuffetedByViciousSandstorm
+[ATTACKER] is buffeted\nby the vicious sandstorm!
 
 #org @gText_ShadowShieldBattleStart
 A shadowy veil is covering\nthe field!\pGhost-type Pok\emon will take half\ndamage when at full health!
+
+#org @gText_PixieBattleStart
+Pixies are flying around the field!
+
+#org @gText_PixieBattleBuff
+The Pixies in the air increased\n[SCRIPTING_BANK]'s [BUFFER][00]!
+
+#org @gText_RainbowBattleStart
+A rainbow appeared in the sky above\nthe entire battlefield!\pThe chance of secondary move\neffects has been doubled!
 
 #org @gText_RingChallengeAttackCancel
 But the attack's type can't be used\nin this round of the Ring Challenge!

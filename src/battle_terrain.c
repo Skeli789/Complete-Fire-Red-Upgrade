@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/bg.h"
 #include "../include/event_data.h"
+#include "../include/evolution_scene.h"
 #include "../include/gpu_regs.h"
 #include "../include/fieldmap.h"
 #include "../include/field_player_avatar.h"
@@ -130,15 +131,18 @@ u8 GetBattleTerrainOverride(void)
 {
 	u8 terrain = gBattleTerrain;
 	
-	if (!gMain.inBattle)
-		return BattleSetup_GetTerrainId(); //Mainly for evolution scene
+	if (gMain.callback2 == CB2_BeginEvolutionScene)
+	{
+		gBattleTypeFlags = 0;
+		gBattleTerrain = BattleSetup_GetTerrainId();
+	}
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 	{
 		#ifdef UNBOUND
 			terrain = BATTLE_TERRAIN_INSIDE;
 		#else
-			terrain = 10;
+			terrain = BATTLE_TERRAIN_INSIDE_2;
 		#endif
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
@@ -159,22 +163,26 @@ u8 GetBattleTerrainOverride(void)
 			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
 			if (trainerClass == CLASS_LEADER || trainerClassB == CLASS_LEADER)
 			{
-				terrain = 12;
+				terrain = BATTLE_TERRAIN_INSIDE_4;
 			}
 			else if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
 			{
-				terrain = 19;
+				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
-			else if (GetCurrentMapBattleScene() != 0)
+			else
+		#elif (defined UNBOUND)
+			u8 trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0);
+			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
+			if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
 			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
-		#else
+			else
+		#endif
 			if (GetCurrentMapBattleScene() != 0)
 			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+				terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 			}
-		#endif
 			else
 				terrain = gBattleTerrain;
 	}
@@ -182,7 +190,7 @@ u8 GetBattleTerrainOverride(void)
 	{
 		if (GetCurrentMapBattleScene() != 0)
 		{
-			terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+			terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 		}
 		else
 			terrain = gBattleTerrain;
@@ -218,7 +226,8 @@ void DrawBattleEntryBackground(void)
 	}
 }
 
-void LoadBattleTerrainGfx(u8 terrainId) {
+void LoadBattleTerrainGfx(u8 terrainId)
+{
 	struct BattleBackground* table = gBattleTerrainTable;
 
 	if (gTerrainType) //A terrain like Electric Terrain is active
@@ -310,6 +319,10 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		case BATTLE_TERRAIN_SAND:
 			if (IsCurrentAreaDesert())
 				terrain = BATTLE_TERRAIN_DESERT;
+			break;
+		case BATTLE_TERRAIN_ANTISIS_SEWERS:
+			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS)
+				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
 			break;
 	}
 

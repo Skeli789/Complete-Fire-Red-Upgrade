@@ -104,7 +104,7 @@ BattleScript_MysteriousAirCurrentContinues:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SandstormHailContinues:
-	printfromtable 0x83FE534 @;gSandStormHailContinuesStringIds
+	printfromtable gSandstormHailContinuesStringIds
 	waitmessage DELAY_1SECOND
 	playanimation2 BANK_ATTACKER, ANIM_ARG_1, 0x0
 	end2
@@ -112,7 +112,7 @@ BattleScript_SandstormHailContinues:
 BattleScript_WeatherDamage:
 	weatherdamage
 	jumpifword EQUALS DAMAGE_LOC 0x0 BattleScript_WeatherDamage_End
-	printfromtable 0x83FE538 @;gSandStormHailDmgStringIds
+	printfromtable gSandstormHailDmgStringIds
 	waitmessage DELAY_1SECOND
 	orword HIT_MARKER, HITMARKER_x20 | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG | HITMARKER_GRUDGE
 	effectivenesssound

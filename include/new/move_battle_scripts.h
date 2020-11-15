@@ -199,6 +199,8 @@ extern const u8 RoastedBerryString[];
 extern const u8 gText_TargetWasInfested[];
 extern const u8 gText_TargetWasCaughtInSnapTrap[];
 extern const u8 gText_TargetWasTrappedByAttacker[];
+extern const u8 gText_BuffetedByViciousSandstorm[];
+extern const u8 gText_ViciousSandstormContinues[];
 
 extern const u8 BattleScript_HealingWishHeal[];
 extern const u8 BattleScript_LunarDanceHeal[];

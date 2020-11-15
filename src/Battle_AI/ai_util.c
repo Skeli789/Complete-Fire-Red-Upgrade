@@ -1051,7 +1051,8 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 					u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
 					u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
 
-					if (currAcc > bestMoveAcc)
+					if (currAcc > bestMoveAcc //This move has a better chance of hitting
+					|| (currAcc >= 100 && Random() & 1)) //Both moves have a perfect chance of hitting, so pick one at random
 					{
 						strongestMove = move;
 						highestDamage = predictedDamage;
@@ -1907,7 +1908,8 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 	   || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 	   ||  MoveInMoveset(MOVE_FACADE, bankDef)
-	   ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+	   ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef)
+	   ||  MoveInMoveset(MOVE_REST, bankDef);
 }
 
 bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
@@ -1983,7 +1985,9 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_WHITESMOKE
 		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_HYPERCUTTER;
+		&& defAbility != ABILITY_HYPERCUTTER
+		&& defAbility != ABILITY_DEFIANT
+		&& defAbility != ABILITY_COMPETITIVE;
 }
 
 bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
@@ -1999,7 +2003,9 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_WHITESMOKE
 		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_BIGPECKS;
+		&& defAbility != ABILITY_BIGPECKS
+		&& defAbility != ABILITY_DEFIANT
+		&& defAbility != ABILITY_COMPETITIVE;
 }
 
 bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
@@ -2013,7 +2019,9 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE;
+		&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_DEFIANT
+		&& defAbility != ABILITY_COMPETITIVE;
 }
 
 bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
@@ -2027,7 +2035,9 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE;
+		&& defAbility != ABILITY_WHITESMOKE
+		&& defAbility != ABILITY_DEFIANT
+		&& defAbility != ABILITY_COMPETITIVE;
 }
 
 bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
@@ -3230,7 +3240,8 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 						return TRUE;
 					break;
 				case STAT_STAGE_DEF:
-					if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL))
+					if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL)
+					|| MoveInMoveset(MOVE_BODYPRESS, bank))
 						return TRUE;
 					break;
 				case STAT_STAGE_SPATK:
@@ -3367,6 +3378,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			}
 
 			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
+			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move
 

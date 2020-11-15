@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_string_ids.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
@@ -117,6 +118,20 @@ enum Block_B
 };
 
 #define TURNBASED_MAX_CASE ET_End
+
+const u16 gSandstormHailContinuesStringIds[] =
+{
+	STRINGID_SANDSTORMRAGES,
+	STRINGID_HAILCONTINUES,
+	STRINGID_CUSTOMSTRING,
+};
+
+const u16 gSandstormHailDmgStringIds[] =
+{
+	STRINGID_PKMNBUFFETEDBYSANDSTORM,
+	STRINGID_PKMNPELTEDBYHAIL,
+	STRINGID_CUSTOMSTRING,
+};
 
 u8 TurnBasedEffects(void)
 {
@@ -265,7 +280,17 @@ u8 TurnBasedEffects(void)
 					}
 
 					gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
-					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+					
+					if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL)
+					{
+						gBattleStringLoader = gText_ViciousSandstormContinues;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					}
+					else
+					{
+						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+					}
+
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}

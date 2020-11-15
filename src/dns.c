@@ -62,7 +62,9 @@ static void FadeDayNightPalettes()
 		case MAP_TYPE_6:
 		case MAP_TYPE_7:
 		default:
-			inOverworld = FuncIsActiveTask(Task_WeatherMain);
+			inOverworld = gMain.callback2 == CB2_Overworld
+						|| gMain.callback2 == CB2_OverworldBasic
+						|| gMain.callback2 == CB2_Credits; //Quicker than checking if Task_WeatherMain is active
 			fadePalettes = inOverworld || gInShop;
 
 			if (fadePalettes)

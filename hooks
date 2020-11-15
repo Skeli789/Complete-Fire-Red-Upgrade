@@ -626,11 +626,6 @@ FixWindowTemplates 080E46B4 0
 ##Triple Layer Blocks
 DrawBlockHook 0805A9B8 1
 
-##Footstep Sounds
-#GrassFootstepNoiseHook 80DB3C8 1
-VeryTallGrassFootstepNoiseHook 80DB678 1
-SandFootstepNoiseHook 80DB9C4 1
-
 ##Expand Coins
 GetCoins 080D0554 0
 SetCoins 080D057C 1

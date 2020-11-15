@@ -174,7 +174,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
-			MOVE_DRAGONRUSH,
+			MOVE_SCALESHOT,
 			MOVE_ROCKSLIDE,
 			MOVE_DRAGONDANCE,
 		},
@@ -33077,7 +33077,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_SCOPE_LENS,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_SCALESHOT,
 			MOVE_NIGHTSLASH,
 			MOVE_DUALWINGBEAT,
 			MOVE_HONECLAWS,
@@ -37103,13 +37103,13 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_STRONGJAW
-		.item = ITEM_MUSCLE_BAND,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_STONEEDGE,
+			MOVE_SCALESHOT,
 			MOVE_CRUNCH,
 			MOVE_POISONFANG,
-			MOVE_DRAGONDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,

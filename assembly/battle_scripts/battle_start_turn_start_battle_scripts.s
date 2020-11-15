@@ -21,6 +21,8 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_GrassyTerrainBattleBegin
 .global BattleScript_MistyTerrainBattleBegin
 .global BattleScript_PsychicTerrainBattleBegin
+.global BattleScript_PixieBoost
+.global BattleScript_PixieBoostRet
 .global BattleScript_QuickClaw
 .global BattleScript_FocusPunchSetUp
 .global BattleScript_BeakBlastSetUp
@@ -64,13 +66,13 @@ BattleScript_TotemRet:
 	setword BATTLE_STRING_LOADER TotemAuraFlared
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR TotemEnd
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 TotemEnd
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
 	setgraphicalstatchangevalues
-	playanimation BANK_ATTACKER 0x1 0x2023FD4
+	playanimation BANK_ATTACKER 0x1 ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
-TotemEnd:
+.LReturn:
 	return
 
 BattleScript_TotemOmniboostRet:
@@ -135,6 +137,22 @@ BattleScript_PsychicTerrainBattleBegin:
 	printstring 0x184
 	playanimation 0x0 PSYCHIC_TERRAIN_ACTIVE_ANIM 0x0
 	end3
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_PixieBoost:
+	call BattleScript_PixieBoostRet
+	end3
+
+BattleScript_PixieBoostRet:
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER 0x1 ANIM_ARG_1
+	setword BATTLE_STRING_LOADER gText_PixieBattleBuff
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

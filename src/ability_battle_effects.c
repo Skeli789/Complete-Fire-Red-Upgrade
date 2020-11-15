@@ -49,6 +49,12 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_ANTICIPATION] = 2,
 	[ABILITY_ARENATRAP] = 9,
 	[ABILITY_AROMAVEIL] = 3,
+	#ifdef ABILITY_ASONE_GRIM
+	[ABILITY_ASONE_GRIM] = 7,
+	#endif
+	#ifdef ABILITY_ASONE_CHILLING
+	[ABILITY_ASONE_CHILLING] = 7,
+	#endif
 	[ABILITY_AURABREAK] = 3,
 	[ABILITY_BADDREAMS] = 4,
 	[ABILITY_BATTERY] = 0,
@@ -81,6 +87,9 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_DESOLATELAND] = 10,
 	[ABILITY_DISGUISE] = 8,
 	[ABILITY_DOWNLOAD] = 7,
+	#ifdef ABILITY_DRAGONSMAW
+	[ABILITY_DRAGONSMAW] = 6,
+	#endif
 	[ABILITY_DRIZZLE] = 9,
 	[ABILITY_DROUGHT] = 9,
 	[ABILITY_DRYSKIN] = 6,
@@ -267,6 +276,9 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_TOXICBOOST] = 6,
 	[ABILITY_TOUGHCLAWS] = 7,
 	[ABILITY_TRACE] = 6,
+	#ifdef ABILITY_TRANSISTOR
+	[ABILITY_TRANSISTOR] = 6,
+	#endif
 	[ABILITY_TRIAGE] = 7,
 	[ABILITY_TRUANT] = -2,
 	[ABILITY_TURBOBLAZE] = 7,
@@ -401,7 +413,8 @@ const u16 gWeatherContinuesStringIds[] =
 	STRINGID_SUNLIGHTSTRONG, 	//Drought
 	STRINGID_DOWNPOURSTARTED, 	//Downpour
 	STRINGID_CUSTOMSTRING, 		//Underwater Mist
-	STRINGID_ITISRAINING		//???
+	STRINGID_ITISRAINING,		//???
+	STRINGID_CUSTOMSTRING, 		//Vicious Sandstorm
 };
 
 const u16 gFlashFireStringIds[] =
@@ -535,6 +548,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					{
 						gBattleWeather = (WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY);
 						gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
+
+						#ifdef FLAG_VICIOUS_SANDSTORM_BATTLE
+						if (FlagGet(FLAG_VICIOUS_SANDSTORM_BATTLE))
+							gBattleWeather |= WEATHER_SANDSTORM_PRIMAL;
+						#endif
+
 						effect++;
 					}
 					break;
@@ -586,7 +605,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_WEATHER)
 					gBattleWeather |= WEATHER_CIRCUS; //Can't be removed
 
-				gBattleCommunication[MULTISTRING_CHOOSER] = GetCurrentWeather();
+				if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL)
+				{
+					gBattleStringLoader = gText_ViciousSandstormBrewed;
+					gBattleCommunication[MULTISTRING_CHOOSER] = NELEMS(gWeatherContinuesStringIds) - 1;
+				}
+				else
+					gBattleCommunication[MULTISTRING_CHOOSER] = GetCurrentWeather();
+
 				BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
 			}
 			break;

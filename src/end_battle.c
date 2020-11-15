@@ -67,8 +67,14 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_RING_CHALLENGE_BATTLE
 	FLAG_RING_CHALLENGE_BATTLE,
 #endif
+#ifdef FLAG_VICIOUS_SANDSTORM_BATTLE
+	FLAG_VICIOUS_SANDSTORM_BATTLE,
+#endif
 #ifdef FLAG_SHADOW_SHIELD_BATTLE
 	FLAG_SHADOW_SHIELD_BATTLE,
+#endif
+#ifdef FLAG_PIXIE_BATTLE
+	FLAG_PIXIE_BATTLE,
 #endif
 #ifdef FLAG_RAINBOW_BATTLE
 	FLAG_RAINBOW_BATTLE,
@@ -760,6 +766,7 @@ static void EndBattleFlagClear(void)
 	VarSet(VAR_BATTLE_TRANSITION_LOGO, 0);
 	#endif
 	gFishingByte = FALSE;
+	gLastUsedBall = FALSE; //Don't allow between battles
 	FREE_AND_SET_NULL(gNewBS);
 
 	//Handle DexNav Chain

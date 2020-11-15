@@ -4936,7 +4936,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_POISONFANG] =
 	{
-		.effect = EFFECT_POISON_HIT,
+		.effect = EFFECT_BAD_POISON_HIT,
 		.power = 50,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -5540,7 +5540,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_POISONTAIL] =
 	{
-		.effect = EFFECT_BAD_POISON_HIT,
+		.effect = EFFECT_POISON_HIT,
 		.power = 50,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -11576,7 +11576,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_METEORBEAM] =
 	{	//ANIM TODO
-		.effect = EFFECT_SKULL_BASH, //EFFECT TODO
+		.effect = EFFECT_SKULL_BASH,
 		.power = 120,
 		.type = TYPE_ROCK,
 		.accuracy = 90,
