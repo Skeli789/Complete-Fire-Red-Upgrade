@@ -1383,7 +1383,7 @@ u8 TurnBasedEffects(void)
 					u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 					u16 newSpecies = SPECIES_NONE;
 					u8 ability = ABILITY(gActiveBattler);
-					u8 itemEffect = ITEM_EFFECT(gActiveBattler);
+					//u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 					bool8 changedForm = FALSE;
 					bool8 reloadType = FALSE;
 					bool8 reloadStats = FALSE;

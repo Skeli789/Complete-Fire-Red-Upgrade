@@ -2762,74 +2762,11 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 
 static u16 TryAdjustAestheticSpecies(u16 species)
 {
-	u16 nationalDexNum = SpeciesToNationalPokedexNum(species);
+	u16 nationalDexNum = SpeciesToNationalPokedexNum(species); // def something to look into
 
 	switch (nationalDexNum) {
-		#ifdef NATIONAL_DEX_SHELLOS
-		case NATIONAL_DEX_SHELLOS:
-			if ((Random() & 1) == 0)
-				species = SPECIES_SHELLOS;
-			else
-				species = SPECIES_SHELLOS_EAST;
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_GASTRODON
-		case NATIONAL_DEX_GASTRODON:
-			if ((Random() & 1) == 0)
-				species = SPECIES_GASTRODON;
-			else
-				species = SPECIES_GASTRODON_EAST;
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_DEERLING
-		case NATIONAL_DEX_DEERLING:
-			species = gDeerlingForms[Random() % gNumDeerlingForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_SAWSBUCK
-		case NATIONAL_DEX_SAWSBUCK:
-			species = gSawsbuckForms[Random() % gNumSawsbuckForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_VIVILLON
-		case NATIONAL_DEX_VIVILLON:
-			species = gVivillonForms[Random() % gNumVivillonForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_FLABEBE
-		case NATIONAL_DEX_FLABEBE:
-			species = gFlabebeForms[Random() % gNumFlabebeForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_FLOETTE
-		case NATIONAL_DEX_FLOETTE:
-			#ifdef SPECIES_FLOETTE_ETERNAL
-			if (species != SPECIES_FLOETTE_ETERNAL) //Floette Eternal gets its own spreads
-			#endif
-				species = gFloetteForms[Random() % gNumFloetteForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_FLORGES
-		case NATIONAL_DEX_FLORGES:
-			species = gFlorgesForms[Random() % gNumFlorgesForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_FURFROU
-		case NATIONAL_DEX_FURFROU:
-			species = gFurfrouForms[Random() % gNumFurfrouForms];
-			break;
-		#endif
-		#ifdef NATIONAL_DEX_ALCREMIE
-		case NATIONAL_DEX_ALCREMIE:
-			species = gAlcremieForms[Random() % gNumAlcremieForms];
-			break;
-		#endif
-		default:
-			#ifdef SPECIES_PIKACHU_CAP_ORIGINAL
-			if (species == SPECIES_PIKACHU_CAP_ORIGINAL)
-				species = gPikachuCapForms[Random() % gNumPikachuCapForms];
-			#endif
-			break;
+	default:
+		break;
 	}
 
 	return species;

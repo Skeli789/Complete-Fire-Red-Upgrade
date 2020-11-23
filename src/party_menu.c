@@ -1949,25 +1949,13 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 	bool8 alreadyFused = FALSE;
 	
 	switch (baseSpecies) {
-		case SPECIES_KYUREM:
-			switch (fuseSpecies) {
-				case SPECIES_RESHIRAM:
-					if (GetMonData(&gSaveBlock1->fusedReshiram, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
-						alreadyFused = TRUE;
-					break;
-				case SPECIES_ZEKROM:
-					if (GetMonData(&gSaveBlock1->fusedZekrom, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
-						alreadyFused = TRUE;
-					break;
-			}
-			break;
 		case SPECIES_NECROZMA:
 			switch (fuseSpecies) {
 				case SPECIES_SOLGALEO:
 					if (GetMonData(&gSaveBlock1->fusedSolgaleo, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
-				case SPECIES_ZEKROM:
+				case SPECIES_LUNALA:
 					if (GetMonData(&gSaveBlock1->fusedLunala, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 						alreadyFused = TRUE;
 					break;
@@ -1991,13 +1979,6 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 static bool8 DoBaseAndFuseSpeciesMatch(u16 baseSpecies, u16 fuseSpecies)
 {
 	switch (baseSpecies) {
-		case SPECIES_KYUREM:
-			switch (fuseSpecies) {
-				case SPECIES_RESHIRAM:
-				case SPECIES_ZEKROM:
-					return TRUE;
-			}
-			break;
 		case SPECIES_NECROZMA:
 			switch (fuseSpecies) {
 				case SPECIES_SOLGALEO:
@@ -2043,12 +2024,6 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 				//Get Proper Form
 				struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
 				switch (fuseSpecies) {
-					case SPECIES_RESHIRAM:
-						baseSpecies = SPECIES_KYUREM_WHITE;
-						break;
-					case SPECIES_ZEKROM:
-						baseSpecies = SPECIES_KYUREM_BLACK;
-						break;
 					case SPECIES_SOLGALEO:
 						baseSpecies = SPECIES_NECROZMA_DUSK_MANE;
 						break;
