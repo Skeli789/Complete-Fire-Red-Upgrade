@@ -11993,7 +11993,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_RELICPOWER] =
 	{
-		.effect = EFFECT_RELIC_POWER,
+		.effect = EFFECT_HIT,
 		.power = 1,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -12009,7 +12009,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_PCDUMP] =
 	{
-		.effect = EFFECT_PC_DUMP,
+		.effect = EFFECT_HIT,
 		.power = 1,
 		.type = TYPE_MYSTERY,
 		.accuracy = 100,
