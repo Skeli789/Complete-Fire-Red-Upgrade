@@ -137,22 +137,6 @@ void atkEF_handleballthrow(void)
 						ballMultiplier = 10;
 					break;
 
-
-				case BALL_TYPE_ROSE_BALL:
-					if (IsOfType(gBankTarget, TYPE_GRASS) || IsOfType(gBankTarget, TYPE_FAIRY))
-						ballMultiplier = 35;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_MAGNET_BALL:
-					if (IsOfType(gBankTarget, TYPE_STEEL) || IsOfType(gBankTarget, TYPE_ELECTRIC))
-						ballMultiplier = 35;
-					else
-						ballMultiplier = 10;
-					break;
-
-
 				case BALL_TYPE_DIVE_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
 					|| gFishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))

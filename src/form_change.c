@@ -320,7 +320,7 @@ static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_BUG] =		SPECIES_ARCEUS_BUG,
 	[TYPE_GHOST] =		SPECIES_ARCEUS_GHOST,
 	[TYPE_STEEL] =		SPECIES_ARCEUS_STEEL,
-	[TYPE_MYSTERY] =	SPECIES_ARCEUS_MYSTERY,
+	[TYPE_MYSTERY] =	0,
 	[TYPE_FIRE] =		SPECIES_ARCEUS_FIRE,
 	[TYPE_WATER] =		SPECIES_ARCEUS_WATER,
 	[TYPE_GRASS] =		SPECIES_ARCEUS_GRASS,
@@ -380,18 +380,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 				targetSpecies = SPECIES_GIRATINA;
 			break;
 		#endif
-		
-		#if (defined SPECIES_MAGNEZONE && defined SPECIES_MAGNEZONE_SPACESHIP)
-		case SPECIES_MAGNEZONE:
-			if (itemEffect == ITEM_EFFECT_MAGNET_CUBE)
-				targetSpecies = SPECIES_MAGNEZONE_SPACESHIP;
-			break;
-
-		case SPECIES_MAGNEZONE_SPACESHIP:
-			if (itemEffect != ITEM_EFFECT_MAGNET_CUBE)
-				targetSpecies = SPECIES_MAGNEZONE;
-			break;
-		#endif
 
 		#ifdef SPECIES_GENESECT
 		case SPECIES_GENESECT:
@@ -399,10 +387,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 		case SPECIES_GENESECT_CHILL:
 		case SPECIES_GENESECT_DOUSE:
 		case SPECIES_GENESECT_SHOCK:
-		case SPECIES_GENESECT_LEAFY:
-		case SPECIES_GENESECT_SHADY:
-		case SPECIES_GENESECT_FABLE:
-		case SPECIES_GENESECT_STONE:
 			if (itemEffect == ITEM_EFFECT_DRIVE)
 			{
 				switch (type) {
@@ -417,18 +401,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 						break;
 					case TYPE_ELECTRIC:
 						targetSpecies = SPECIES_GENESECT_SHOCK;
-						break;
-					case TYPE_GRASS:
-						targetSpecies = SPECIES_GENESECT_LEAFY;
-						break;
-					case TYPE_DARK:
-						targetSpecies = SPECIES_GENESECT_SHADY;
-						break;
-					case TYPE_FAIRY:
-						targetSpecies = SPECIES_GENESECT_FABLE;
-						break;
-					case TYPE_ROCK:
-						targetSpecies = SPECIES_GENESECT_STONE;
 						break;
 				}
 			}
@@ -448,7 +420,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 		case SPECIES_ARCEUS_BUG:
 		case SPECIES_ARCEUS_GHOST:
 		case SPECIES_ARCEUS_STEEL:
-		case SPECIES_ARCEUS_MYSTERY:
 		case SPECIES_ARCEUS_FIRE:
 		case SPECIES_ARCEUS_WATER:
 		case SPECIES_ARCEUS_GRASS:

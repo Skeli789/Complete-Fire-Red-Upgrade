@@ -745,192 +745,169 @@
 #define MOVE_THUNDERCAGE 0x2E2
 #define MOVE_DRAGONENERGY 0x2E3
 
-//New Moves for Rose
-#define MOVE_DIAMONDCUT 0x2E4  //DIAMONDCUT        Crystal Onix, Carbyne Steelix, Dialga
-#define MOVE_ROCKETRUSH 0x2E5  //ROCKETRUSH        Tutor move: all Rocket's Pokemon (make list)
-#define MOVE_RELICPOWER 0x2E6  //RELICPOWER   //Type, power, and effect based on held Relic item     Claydol, Golurk, Bronzong, Sigilyph, Regi family
-#define MOVE_PCDUMP 0x2E7  //PCDUMP        Glitch Porygon family, Glitch pokemon (if in)
-#define MOVE_DRAGONROAR 0x2E8  //DRAGONROAR        Rayquaza
-#define MOVE_ARCANEBOLT 0x2E9  //ARCANEBOLT  Arcane Bolts  //Sets Electric Terrain, 90 BP, 30% chance of paralysis    
-#define MOVE_ARCANEFLARE 0x2EA  //ARCANEFLARE  Arcane Flare  //Sets Sunny weather, 90 BP, 30% chance of burn    
-#define MOVE_ARCANEFROST 0x2EB  //ARCANEFROST  Arcane Frost  //Sets Hail weather, 90 BP, 30% chance of freeze    
-#define MOVE_NEWMOVE09 0x2EC  //Emerald Power        
-#define MOVE_NEWMOVE10 0x2ED  //Emerald Beam        
-#define MOVE_NEWMOVE11 0x2EE  //Emerald Wall        
-#define MOVE_NEWMOVE12 0x2EF  //Emerald Condition        
-#define MOVE_NEWMOVE13 0x2F0  //Emerald Blast        
-#define MOVE_NEWMOVE14 0x2F1  //Emerald Shatter        
-#define MOVE_NEWMOVE15 0x2F2  //EMERALDEND   //100% KOs  Deoxys, Rayquaza   
-#define MOVE_NEWMOVE16 0x2F3  //EMERALDFIRE   //100% burns  Entei, Moltres, Ho-oh   
-#define MOVE_NEWMOVE17 0x2F4  //EMERALDBOLT   //100% paralyzes  Deoxys, Raikou, Zapdos   
-#define MOVE_NEWMOVE18 0x2F5  //EMERALDICE   //100% freezes  Deoxys, Articuno   
-#define MOVE_NEWMOVE19 0x2F6  //EMERALDSEA   //100% sleep  Suicune   
-#define MOVE_NEWMOVE20 0x2F7  //EMERALDMIND   //100% confuses  Deoxys, Lugia   
-
 //Z-Moves
-#define MOVE_BREAKNECK_BLITZ_P 0x2F8          
-#define MOVE_BREAKNECK_BLITZ_S 0x2F9          
-#define MOVE_ALL_OUT_PUMMELING_P 0x2FA          
-#define MOVE_ALL_OUT_PUMMELING_S 0x2FB          
-#define MOVE_SUPERSONIC_SKYSTRIKE_P 0x2FC          
-#define MOVE_SUPERSONIC_SKYSTRIKE_S 0x2FD          
-#define MOVE_ACID_DOWNPOUR_P 0x2FE          
-#define MOVE_ACID_DOWNPOUR_S 0x2FF          
-#define MOVE_TECTONIC_RAGE_P 0x300          
-#define MOVE_TECTONIC_RAGE_S 0x301          
-#define MOVE_CONTINENTAL_CRUSH_P 0x302          
-#define MOVE_CONTINENTAL_CRUSH_S 0x303          
-#define MOVE_SAVAGE_SPIN_OUT_P 0x304          
-#define MOVE_SAVAGE_SPIN_OUT_S 0x305          
-#define MOVE_NEVER_ENDING_NIGHTMARE_P 0x306          
-#define MOVE_NEVER_ENDING_NIGHTMARE_S 0x307          
-#define MOVE_CORKSCREW_CRASH_P 0x308          
-#define MOVE_CORKSCREW_CRASH_S 0x309          
-#define MOVE_INFERNO_OVERDRIVE_P 0x30A          
-#define MOVE_INFERNO_OVERDRIVE_S 0x30B          
-#define MOVE_HYDRO_VORTEX_P 0x30C          
-#define MOVE_HYDRO_VORTEX_S 0x30D          
-#define MOVE_BLOOM_DOOM_P 0x30E          
-#define MOVE_BLOOM_DOOM_S 0x30F          
-#define MOVE_GIGAVOLT_HAVOC_P 0x310          
-#define MOVE_GIGAVOLT_HAVOC_S 0x311          
-#define MOVE_SHATTERED_PSYCHE_P 0x312          
-#define MOVE_SHATTERED_PSYCHE_S 0x313          
-#define MOVE_SUBZERO_SLAMMER_P 0x314 //Paralyze Target         
-#define MOVE_SUBZERO_SLAMMER_S 0x315 //Double Ancient Power         
-#define MOVE_DEVASTATING_DRAKE_P 0x316          
-#define MOVE_DEVASTATING_DRAKE_S 0x317 //Sets up Psychic Terrain         
-#define MOVE_BLACK_HOLE_ECLIPSE_P 0x318          
-#define MOVE_BLACK_HOLE_ECLIPSE_S 0x319          
-#define MOVE_TWINKLE_TACKLE_P 0x31A          
-#define MOVE_TWINKLE_TACKLE_S 0x31B          
+#define MOVE_BREAKNECK_BLITZ_P 0x2E4
+#define MOVE_BREAKNECK_BLITZ_S 0x2E5
+#define MOVE_ALL_OUT_PUMMELING_P 0x2E6
+#define MOVE_ALL_OUT_PUMMELING_S 0x2E7
+#define MOVE_SUPERSONIC_SKYSTRIKE_P 0x2E8
+#define MOVE_SUPERSONIC_SKYSTRIKE_S 0x2E9
+#define MOVE_ACID_DOWNPOUR_P 0x2EA
+#define MOVE_ACID_DOWNPOUR_S 0x2EB
+#define MOVE_TECTONIC_RAGE_P 0x2EC
+#define MOVE_TECTONIC_RAGE_S 0x2ED
+#define MOVE_CONTINENTAL_CRUSH_P 0x2EE
+#define MOVE_CONTINENTAL_CRUSH_S 0x2EF
+#define MOVE_SAVAGE_SPIN_OUT_P 0x2F0
+#define MOVE_SAVAGE_SPIN_OUT_S 0x2F1
+#define MOVE_NEVER_ENDING_NIGHTMARE_P 0x2F2
+#define MOVE_NEVER_ENDING_NIGHTMARE_S 0x2F3
+#define MOVE_CORKSCREW_CRASH_P 0x2F4
+#define MOVE_CORKSCREW_CRASH_S 0x2F5
+#define MOVE_INFERNO_OVERDRIVE_P 0x2F6
+#define MOVE_INFERNO_OVERDRIVE_S 0x2F7
+#define MOVE_HYDRO_VORTEX_P 0x2F8
+#define MOVE_HYDRO_VORTEX_S 0x2F9
+#define MOVE_BLOOM_DOOM_P 0x2FA
+#define MOVE_BLOOM_DOOM_S 0x2FB
+#define MOVE_GIGAVOLT_HAVOC_P 0x2FC
+#define MOVE_GIGAVOLT_HAVOC_S 0x2FD
+#define MOVE_SHATTERED_PSYCHE_P 0x2FE
+#define MOVE_SHATTERED_PSYCHE_S 0x2FF
+#define MOVE_SUBZERO_SLAMMER_P 0x300
+#define MOVE_SUBZERO_SLAMMER_S 0x301
+#define MOVE_DEVASTATING_DRAKE_P 0x302
+#define MOVE_DEVASTATING_DRAKE_S 0x303
+#define MOVE_BLACK_HOLE_ECLIPSE_P 0x304
+#define MOVE_BLACK_HOLE_ECLIPSE_S 0x305
+#define MOVE_TWINKLE_TACKLE_P 0x306
+#define MOVE_TWINKLE_TACKLE_S 0x307
 
-#define MOVE_CATASTROPIKA 0x31C //Ancient Power         
-#define MOVE_10000000_VOLT_THUNDERBOLT 0x31D          
-#define MOVE_STOKED_SPARKSURFER 0x31E          
-#define MOVE_EXTREME_EVOBOOST 0x31F          
-#define MOVE_PULVERIZING_PANCAKE 0x320          
-#define MOVE_GENESIS_SUPERNOVA 0x321          
-#define MOVE_SINISTER_ARROW_RAID 0x322          
-#define MOVE_MALICIOUS_MOONSAULT 0x323 MOVE_BREAKNECK_BLITZ_P         
-#define MOVE_OCEANIC_OPERETTA 0x324 MOVE_SOUL_STEALING_7_STAR_STRIKE         
-#define MOVE_SPLINTERED_STORMSHARDS 0x325          
-#define MOVE_LETS_SNUGGLE_FOREVER 0x326          
-#define MOVE_CLANGOROUS_SOULBLAZE 0x327          
-#define MOVE_GUARDIAN_OF_ALOLA 0x328          
-#define MOVE_SEARING_SUNRAZE_SMASH 0x329          
-#define MOVE_MENACING_MOONRAZE_MAELSTROM 0x32A          
-#define MOVE_LIGHT_THAT_BURNS_THE_SKY 0x32B          
-#define MOVE_SOUL_STEALING_7_STAR_STRIKE 0x32C          
+#define MOVE_CATASTROPIKA 0x308
+#define MOVE_10000000_VOLT_THUNDERBOLT 0x309
+#define MOVE_STOKED_SPARKSURFER 0x30A			//Paralyze Target
+#define MOVE_EXTREME_EVOBOOST 0x30B				//Double Ancient Power
+#define MOVE_PULVERIZING_PANCAKE 0x30C
+#define MOVE_GENESIS_SUPERNOVA 0x30D			//Sets up Psychic Terrain
+#define MOVE_SINISTER_ARROW_RAID 0x30E
+#define MOVE_MALICIOUS_MOONSAULT 0x30F
+#define MOVE_OCEANIC_OPERETTA 0x310
+#define MOVE_SPLINTERED_STORMSHARDS 0x311		//Removes Terrain
+#define MOVE_LETS_SNUGGLE_FOREVER 0x312
+#define MOVE_CLANGOROUS_SOULBLAZE 0x313			//Ancient Power
+#define MOVE_GUARDIAN_OF_ALOLA 0x314
+#define MOVE_SEARING_SUNRAZE_SMASH 0x315
+#define MOVE_MENACING_MOONRAZE_MAELSTROM 0x316
+#define MOVE_LIGHT_THAT_BURNS_THE_SKY 0x317
+#define MOVE_SOUL_STEALING_7_STAR_STRIKE 0x318
 
-#define FIRST_Z_MOVE           
-#define LAST_Z_MOVE           
+#define FIRST_Z_MOVE        MOVE_BREAKNECK_BLITZ_P
+#define LAST_Z_MOVE         MOVE_SOUL_STEALING_7_STAR_STRIKE
 
-//Max Moves           
-#define MOVE_MAX_GUARD 0x32D          
-#define MOVE_MAX_STRIKE_P 0x32E          
-#define MOVE_MAX_STRIKE_S 0x32F          
-#define MOVE_MAX_KNUCKLE_P 0x330          
-#define MOVE_MAX_KNUCKLE_S 0x331          
-#define MOVE_MAX_AIRSTREAM_P 0x332          
-#define MOVE_MAX_AIRSTREAM_S 0x333          
-#define MOVE_MAX_OOZE_P 0x334          
-#define MOVE_MAX_OOZE_S 0x335          
-#define MOVE_MAX_QUAKE_P 0x336          
-#define MOVE_MAX_QUAKE_S 0x337          
-#define MOVE_MAX_ROCKFALL_P 0x338          
-#define MOVE_MAX_ROCKFALL_S 0x339          
-#define MOVE_MAX_FLUTTERBY_P 0x33A          
-#define MOVE_MAX_FLUTTERBY_S 0x33B          
-#define MOVE_MAX_PHANTASM_P 0x33C          
-#define MOVE_MAX_PHANTASM_S 0x33D          
-#define MOVE_MAX_STEELSPIKE_P 0x33E          
-#define MOVE_MAX_STEELSPIKE_S 0x33F          
-#define MOVE_MAX_FLARE_P 0x340          
-#define MOVE_MAX_FLARE_S 0x341          
-#define MOVE_MAX_GEYSER_P 0x342          
-#define MOVE_MAX_GEYSER_S 0x343          
-#define MOVE_MAX_OVERGROWTH_P 0x344          
-#define MOVE_MAX_OVERGROWTH_S 0x345          
-#define MOVE_MAX_LIGHTNING_P 0x346          
-#define MOVE_MAX_LIGHTNING_S 0x347          
-#define MOVE_MAX_MINDSTORM_P 0x348          
-#define MOVE_MAX_MINDSTORM_S 0x349          
-#define MOVE_MAX_HAILSTORM_P 0x34A          
-#define MOVE_MAX_HAILSTORM_S 0x34B          
-#define MOVE_MAX_WYRMWIND_P 0x34C          
-#define MOVE_MAX_WYRMWIND_S 0x34D          
-#define MOVE_MAX_DARKNESS_P 0x34E          
-#define MOVE_MAX_DARKNESS_S 0x34F          
-#define MOVE_MAX_STARFALL_P 0x350          
-#define MOVE_MAX_STARFALL_S 0x351          
-#define MOVE_G_MAX_VINE_LASH_P 0x352          
-#define MOVE_G_MAX_VINE_LASH_S 0x353          
-#define MOVE_G_MAX_WILDFIRE_P 0x354          
-#define MOVE_G_MAX_WILDFIRE_S 0x355          
-#define MOVE_G_MAX_CANNONADE_P 0x356          
-#define MOVE_G_MAX_CANNONADE_S 0x357          
-#define MOVE_G_MAX_BEFUDDLE_P 0x358          
-#define MOVE_G_MAX_BEFUDDLE_S 0x359          
-#define MOVE_G_MAX_VOLT_CRASH_P 0x35A          
-#define MOVE_G_MAX_VOLT_CRASH_S 0x35B          
-#define MOVE_G_MAX_GOLD_RUSH_P 0x35C          
-#define MOVE_G_MAX_GOLD_RUSH_S 0x35D          
-#define MOVE_G_MAX_CHI_STRIKE_P 0x35E          
-#define MOVE_G_MAX_CHI_STRIKE_S 0x35F          
-#define MOVE_G_MAX_TERROR_P 0x360          
-#define MOVE_G_MAX_TERROR_S 0x361          
-#define MOVE_G_MAX_FOAM_BURST_P 0x362          
-#define MOVE_G_MAX_FOAM_BURST_S 0x363          
-#define MOVE_G_MAX_RESONANCE_P 0x364          
-#define MOVE_G_MAX_RESONANCE_S 0x365          
-#define MOVE_G_MAX_CUDDLE_P 0x366          
-#define MOVE_G_MAX_CUDDLE_S 0x367          
-#define MOVE_G_MAX_REPLENISH_P 0x368          
-#define MOVE_G_MAX_REPLENISH_S 0x369          
-#define MOVE_G_MAX_MALODOR_P 0x36A          
-#define MOVE_G_MAX_MALODOR_S 0x36B          
-#define MOVE_G_MAX_MELTDOWN_P 0x36C          
-#define MOVE_G_MAX_MELTDOWN_S 0x36D          
-#define MOVE_G_MAX_DRUM_SOLO_P 0x36E          
-#define MOVE_G_MAX_DRUM_SOLO_S 0x36F          
-#define MOVE_G_MAX_FIREBALL_P 0x370          
-#define MOVE_G_MAX_FIREBALL_S 0x371          
-#define MOVE_G_MAX_HYDROSNIPE_P 0x372          
-#define MOVE_G_MAX_HYDROSNIPE_S 0x373          
-#define MOVE_G_MAX_WIND_RAGE_P 0x374          
-#define MOVE_G_MAX_WIND_RAGE_S 0x375          
-#define MOVE_G_MAX_GRAVITAS_P 0x376          
-#define MOVE_G_MAX_GRAVITAS_S 0x377          
-#define MOVE_G_MAX_STONESURGE_P 0x378          
-#define MOVE_G_MAX_STONESURGE_S 0x379          
-#define MOVE_G_MAX_VOLCALITH_P 0x37A          
-#define MOVE_G_MAX_VOLCALITH_S 0x37B          
-#define MOVE_G_MAX_TARTNESS_P 0x37C          
-#define MOVE_G_MAX_TARTNESS_S 0x37D          
-#define MOVE_G_MAX_SWEETNESS_P 0x37E          
-#define MOVE_G_MAX_SWEETNESS_S 0x37F          
-#define MOVE_G_MAX_SANDBLAST_P 0x380          
-#define MOVE_G_MAX_SANDBLAST_S 0x381          
-#define MOVE_G_MAX_STUN_SHOCK_P 0x382          
-#define MOVE_G_MAX_STUN_SHOCK_S 0x383          
-#define MOVE_G_MAX_CENTIFERNO_P 0x384          
-#define MOVE_G_MAX_CENTIFERNO_S 0x385          
-#define MOVE_G_MAX_SMITE_P 0x386          
-#define MOVE_G_MAX_SMITE_S 0x387          
-#define MOVE_G_MAX_SNOOZE_P 0x388          
-#define MOVE_G_MAX_SNOOZE_S 0x389          
-#define MOVE_G_MAX_FINALE_P 0x38A          
-#define MOVE_G_MAX_FINALE_S 0x38B          
-#define MOVE_G_MAX_STEELSURGE_P 0x38C          
-#define MOVE_G_MAX_STEELSURGE_S 0x38D          
-#define MOVE_G_MAX_DEPLETION_P 0x38E          
-#define MOVE_G_MAX_DEPLETION_S 0x38F          
-#define MOVE_G_MAX_ONE_BLOW_P 0x390          
-#define MOVE_G_MAX_ONE_BLOW_S 0x391          
-#define MOVE_G_MAX_RAPID_FLOW_P 0x392          
-#define MOVE_G_MAX_RAPID_FLOW_S 0x393          
-
+//Max Moves
+#define MOVE_MAX_GUARD 0x319
+#define MOVE_MAX_STRIKE_P 0x31A
+#define MOVE_MAX_STRIKE_S 0x31B
+#define MOVE_MAX_KNUCKLE_P 0x31C
+#define MOVE_MAX_KNUCKLE_S 0x31D
+#define MOVE_MAX_AIRSTREAM_P 0x31E
+#define MOVE_MAX_AIRSTREAM_S 0x31F
+#define MOVE_MAX_OOZE_P 0x320
+#define MOVE_MAX_OOZE_S 0x321
+#define MOVE_MAX_QUAKE_P 0x322
+#define MOVE_MAX_QUAKE_S 0x323
+#define MOVE_MAX_ROCKFALL_P 0x324
+#define MOVE_MAX_ROCKFALL_S 0x325
+#define MOVE_MAX_FLUTTERBY_P 0x326
+#define MOVE_MAX_FLUTTERBY_S 0x327
+#define MOVE_MAX_PHANTASM_P 0x328
+#define MOVE_MAX_PHANTASM_S 0x329
+#define MOVE_MAX_STEELSPIKE_P 0x32A
+#define MOVE_MAX_STEELSPIKE_S 0x32B
+#define MOVE_MAX_FLARE_P 0x32C
+#define MOVE_MAX_FLARE_S 0x32D
+#define MOVE_MAX_GEYSER_P 0x32E
+#define MOVE_MAX_GEYSER_S 0x32F
+#define MOVE_MAX_OVERGROWTH_P 0x330
+#define MOVE_MAX_OVERGROWTH_S 0x331
+#define MOVE_MAX_LIGHTNING_P 0x332
+#define MOVE_MAX_LIGHTNING_S 0x333
+#define MOVE_MAX_MINDSTORM_P 0x334
+#define MOVE_MAX_MINDSTORM_S 0x335
+#define MOVE_MAX_HAILSTORM_P 0x336
+#define MOVE_MAX_HAILSTORM_S 0x337
+#define MOVE_MAX_WYRMWIND_P 0x338
+#define MOVE_MAX_WYRMWIND_S 0x339
+#define MOVE_MAX_DARKNESS_P 0x33A
+#define MOVE_MAX_DARKNESS_S 0x33B
+#define MOVE_MAX_STARFALL_P 0x33C
+#define MOVE_MAX_STARFALL_S 0x33D
+#define MOVE_G_MAX_VINE_LASH_P 0x33E
+#define MOVE_G_MAX_VINE_LASH_S 0x33F
+#define MOVE_G_MAX_WILDFIRE_P 0x340
+#define MOVE_G_MAX_WILDFIRE_S 0x341
+#define MOVE_G_MAX_CANNONADE_P 0x342
+#define MOVE_G_MAX_CANNONADE_S 0x343
+#define MOVE_G_MAX_BEFUDDLE_P 0x344
+#define MOVE_G_MAX_BEFUDDLE_S 0x345
+#define MOVE_G_MAX_VOLT_CRASH_P 0x346
+#define MOVE_G_MAX_VOLT_CRASH_S 0x347
+#define MOVE_G_MAX_GOLD_RUSH_P 0x348
+#define MOVE_G_MAX_GOLD_RUSH_S 0x349
+#define MOVE_G_MAX_CHI_STRIKE_P 0x34A
+#define MOVE_G_MAX_CHI_STRIKE_S 0x34B
+#define MOVE_G_MAX_TERROR_P 0x34C
+#define MOVE_G_MAX_TERROR_S 0x34D
+#define MOVE_G_MAX_FOAM_BURST_P 0x34E
+#define MOVE_G_MAX_FOAM_BURST_S 0x34F
+#define MOVE_G_MAX_RESONANCE_P 0x350
+#define MOVE_G_MAX_RESONANCE_S 0x351
+#define MOVE_G_MAX_CUDDLE_P 0x352
+#define MOVE_G_MAX_CUDDLE_S 0x353
+#define MOVE_G_MAX_REPLENISH_P 0x354
+#define MOVE_G_MAX_REPLENISH_S 0x355
+#define MOVE_G_MAX_MALODOR_P 0x356
+#define MOVE_G_MAX_MALODOR_S 0x357
+#define MOVE_G_MAX_MELTDOWN_P 0x358
+#define MOVE_G_MAX_MELTDOWN_S 0x359
+#define MOVE_G_MAX_DRUM_SOLO_P 0x35A
+#define MOVE_G_MAX_DRUM_SOLO_S 0x35B
+#define MOVE_G_MAX_FIREBALL_P 0x35C
+#define MOVE_G_MAX_FIREBALL_S 0x35D
+#define MOVE_G_MAX_HYDROSNIPE_P 0x35E
+#define MOVE_G_MAX_HYDROSNIPE_S 0x35F
+#define MOVE_G_MAX_WIND_RAGE_P 0x360
+#define MOVE_G_MAX_WIND_RAGE_S 0x361
+#define MOVE_G_MAX_GRAVITAS_P 0x362
+#define MOVE_G_MAX_GRAVITAS_S 0x363
+#define MOVE_G_MAX_STONESURGE_P 0x364
+#define MOVE_G_MAX_STONESURGE_S 0x365
+#define MOVE_G_MAX_VOLCALITH_P 0x366
+#define MOVE_G_MAX_VOLCALITH_S 0x367
+#define MOVE_G_MAX_TARTNESS_P 0x368
+#define MOVE_G_MAX_TARTNESS_S 0x369
+#define MOVE_G_MAX_SWEETNESS_P 0x36A
+#define MOVE_G_MAX_SWEETNESS_S 0x36B
+#define MOVE_G_MAX_SANDBLAST_P 0x36C
+#define MOVE_G_MAX_SANDBLAST_S 0x36D
+#define MOVE_G_MAX_STUN_SHOCK_P 0x36E
+#define MOVE_G_MAX_STUN_SHOCK_S 0x36F
+#define MOVE_G_MAX_CENTIFERNO_P 0x370
+#define MOVE_G_MAX_CENTIFERNO_S 0x371
+#define MOVE_G_MAX_SMITE_P 0x372
+#define MOVE_G_MAX_SMITE_S 0x373
+#define MOVE_G_MAX_SNOOZE_P 0x374
+#define MOVE_G_MAX_SNOOZE_S 0x375
+#define MOVE_G_MAX_FINALE_P 0x376
+#define MOVE_G_MAX_FINALE_S 0x377
+#define MOVE_G_MAX_STEELSURGE_P 0x378
+#define MOVE_G_MAX_STEELSURGE_S 0x379
+#define MOVE_G_MAX_DEPLETION_P 0x37A
+#define MOVE_G_MAX_DEPLETION_S 0x37B
+#define MOVE_G_MAX_ONE_BLOW_P 0x37C
+#define MOVE_G_MAX_ONE_BLOW_S 0x37D
+#define MOVE_G_MAX_RAPID_FLOW_P 0x37E
+#define MOVE_G_MAX_RAPID_FLOW_S 0x37F
 
 #define FIRST_MAX_MOVE      MOVE_MAX_GUARD
 #define LAST_MAX_MOVE       MOVE_MAX_STARFALL_S
@@ -939,4 +916,4 @@
 
 #define LAST_MOVE_INDEX     MOVE_G_MAX_RAPID_FLOW_S
 #define MOVES_COUNT        (MOVE_G_MAX_RAPID_FLOW_S + 1)
-#define NON_Z_MOVE_COUNT   (MOVE_ARCANEFROST + 1)
+#define NON_Z_MOVE_COUNT   (MOVE_DRAGONENERGY + 1)

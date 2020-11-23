@@ -17,7 +17,6 @@
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
-#include "../include/new/pokemon_storage_system.h"
 
 #include "Tables/type_tables.h"
 
@@ -1173,9 +1172,6 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	}
 
 	if (move == MOVE_FREEZEDRY && defType == TYPE_WATER) //Always Super-Effective, even in Inverse Battles
-		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
-	
-	if (move == MOVE_DIAMONDCUT && defType == TYPE_STEEL) //Always Super-Effective, even in Inverse Battles
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
 	if (moveType == TYPE_FIRE && gNewBS->tarShotBits & gBitTable[bankDef]) //Fire always Super-Effective if covered in tar
@@ -2998,27 +2994,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 				}
 			}
 			break;
-			
-//New move for Rose
-    case PC_DUMP:
-        if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
-        || IsFrontierRaidBattle())
-            power = 50;
-        else
-            {
-				int boxPos;
-				int numMons = 0;
-
-				for (boxPos = 0; boxPos < 30; boxPos++)
-			{
-				struct CompressedPokemon* checkingMon = GetCompressedMonPtr(StorageGetCurrentBox(), boxPos);
-				if (checkingMon->substruct0.species != 0)
-				numMons++; // by not breaking here, we ensure that all thirty slots in the box are checked
-			}
-
-				power = 5 * numMons;
-			}
-        break;
 
 		case MOVE_PURSUIT:
 			if (data->specialFlags & FLAG_AI_CALC)
@@ -3361,15 +3336,6 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		//1.2x Boost
 			if ((data->atkSpecies == SPECIES_GIRATINA || data->atkSpecies == SPECIES_GIRATINA_ORIGIN)
 			&& (data->moveType == TYPE_GHOST || data->moveType == TYPE_DRAGON))
-				power = (power * 12) / 10;
-			break;
-		#endif
-		
-		#if (defined SPECIES_MAGNEZONE && defined SPECIES_MAGNEZONE_SPACESHIP)
-		case ITEM_EFFECT_MAGNET_CUBE:
-		//1.2x Boost
-			if ((data->atkSpecies == SPECIES_MAGNEZONE || data->atkSpecies == SPECIES_MAGNEZONE_SPACESHIP)
-			&& (data->moveType == TYPE_STEEL || data->moveType == TYPE_ELECTRIC))
 				power = (power * 12) / 10;
 			break;
 		#endif
