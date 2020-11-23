@@ -777,18 +777,6 @@ gMoveAnimations:
 .word ANIM_FIERY_WRATH
 .word ANIM_THUNDER_CAGE
 .word ANIM_DRAGON_ENERGY
-
-.word ANIM_DIAMOND_CUT
-.word ANIM_ROCKET_RUSH
-.word ANIM_RELIC_POWER
-.word ANIM_PC_DUMP
-.word ANIM_DRAGON_ROAR
-.word ANIM_ARCANE_BOLT
-.word ANIM_ARCANE_FLARE
-.word ANIM_ARCANE_FROST
-.word ANIM_EMERALD_END
-
-
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_BREAKNECK_BLITZ
 .word ANIM_ALL_OUT_PUMMELING
@@ -17179,64 +17167,6 @@ ANIM_THUNDER_CAGE:
 ANIM_DRAGON_ENERGY:
 	goto ANIM_DRAGONPULSE
 	endanimation
-
-
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_DIAMOND_CUT:
-	goto 0x81d1128 @MOVE_METALCLAW
-	endanimation
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_ROCKET_RUSH:
-	goto 0x81c7886 @MOVE_TAKEDOWN
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_RELIC_POWER:
-	goto 0x81c835c @MOVE_HIDDENPOWER
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_PC_DUMP:
-	goto 0x81c7492 @MOVE_TACKLE
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_DRAGON_ROAR:
-	goto 0x81d2d0d @MOVE_HYPERVOICE
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_ARCANE_BOLT:
-	goto 0x81cd009 @MOVE_SHOCKWAVE
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_ARCANE_FLARE:
-	goto ANIM_MYSTICALFIRE
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_ARCANE_FROST:
-	goto ANIM_GLACIATE
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_EMERALD_END:
-	goto 0x81d29a7 @MOVE_HYPERBEAM
-	endanimation
-
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -751,7 +751,7 @@
 #define MOVE_RELICPOWER 0x2E6  //RELICPOWER   //Type, power, and effect based on held Relic item     Claydol, Golurk, Bronzong, Sigilyph, Regi family
 #define MOVE_PCDUMP 0x2E7  //PCDUMP        Glitch Porygon family, Glitch pokemon (if in)
 #define MOVE_DRAGONROAR 0x2E8  //DRAGONROAR        Rayquaza
-#define MOVE_ARCANEBOLT 0x2E9  //ARCANEBOLT  Arcane Bolt  //Sets Electric Terrain, 90 BP, 30% chance of paralysis    
+#define MOVE_ARCANEBOLT 0x2E9  //ARCANEBOLT  Arcane Bolts  //Sets Electric Terrain, 90 BP, 30% chance of paralysis    
 #define MOVE_ARCANEFLARE 0x2EA  //ARCANEFLARE  Arcane Flare  //Sets Sunny weather, 90 BP, 30% chance of burn    
 #define MOVE_ARCANEFROST 0x2EB  //ARCANEFROST  Arcane Frost  //Sets Hail weather, 90 BP, 30% chance of freeze    
 #define MOVE_NEWMOVE09 0x2EC  //Emerald Power        
