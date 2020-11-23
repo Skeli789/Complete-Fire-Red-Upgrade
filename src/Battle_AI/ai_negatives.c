@@ -1972,10 +1972,10 @@ MOVESCR_CHECK_0:
 			}
 			break;
 
-/*		case EFFECT_SUPERPOWER:
+		case EFFECT_SUPERPOWER:
 			if (move == MOVE_HYPERSPACEFURY && data->atkSpecies != SPECIES_HOOPA_UNBOUND)
 				DECREASE_VIABILITY(10);
-			break;*/
+			break;
 
 			break;
 

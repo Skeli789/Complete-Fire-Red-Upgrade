@@ -149,7 +149,7 @@ u8* const sPokemonBoxWallpaperPtrs[TOTAL_BOXES_COUNT] =
 //This file's functions:
 void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedPokemon* compMon);
 void CreateCompressedMonFromBoxMon(struct BoxPokemon* boxMon, struct CompressedPokemon* compMon);
-//struct CompressedPokemon* GetCompressedMonPtr(u8 boxId, u8 boxPosition);
+struct CompressedPokemon* GetCompressedMonPtr(u8 boxId, u8 boxPosition);
 
 u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request)
 {
@@ -486,7 +486,7 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
 	
 		#if (defined SPECIES_HOOPA || defined SPECIES_SHAYMIN)
 		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC
-		if (/*species == SPECIES_HOOPA || */species == SPECIES_SHAYMIN)
+		if (species == SPECIES_HOOPA || species == SPECIES_SHAYMIN)
 		{
 			u16 tileNum = sub_80911D4(species); //Gets the tile number of the mon icon
 			if (tileNum != 0xFFFF)

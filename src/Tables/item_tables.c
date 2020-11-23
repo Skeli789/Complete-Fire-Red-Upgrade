@@ -84,7 +84,7 @@ const u32 pickup_rare_item_ceilings[PU_RARE_PER_ROW] =
 
 
 //Any values not listed default to BP 30
-/*const struct RelicStruct gRelicTable[ITEMS_COUNT] =
+const struct RelicStruct gRelicTable[ITEMS_COUNT] =
 {
 	[ITEM_RELIC_COPPER] = {60, MOVE_EFFECT_BURN},
 	[ITEM_RELIC_SILVER] = {60, MOVE_EFFECT_POISON},
@@ -93,7 +93,7 @@ const u32 pickup_rare_item_ceilings[PU_RARE_PER_ROW] =
 	[ITEM_RELIC_BAND] = {80, 0},
 	[ITEM_RELIC_STATUE] = {100, 0},
 	[ITEM_RELIC_CROWN] = {100, 0},
-};*/
+};
 
 
 //Any values not listed default to BP 30

@@ -1948,7 +1948,7 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 {
 	bool8 alreadyFused = FALSE;
 	
-	/*switch (baseSpecies) {
+	switch (baseSpecies) {
 		case SPECIES_KYUREM:
 			switch (fuseSpecies) {
 				case SPECIES_RESHIRAM:
@@ -1983,14 +1983,14 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
 		StringExpandPlaceholders(gStringVar4, gText_AlreadyHaveFused);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);
 		ScheduleBgCopyTilemapToVram(2);
-	}*/
+	}
 	
 	return alreadyFused;
 }
 
 static bool8 DoBaseAndFuseSpeciesMatch(u16 baseSpecies, u16 fuseSpecies)
 {
-	/*switch (baseSpecies) {
+	switch (baseSpecies) {
 		case SPECIES_KYUREM:
 			switch (fuseSpecies) {
 				case SPECIES_RESHIRAM:
@@ -2005,7 +2005,7 @@ static bool8 DoBaseAndFuseSpeciesMatch(u16 baseSpecies, u16 fuseSpecies)
 					return TRUE;
 			}
 			break;
-	}*/
+	}
 	
 	return FALSE;
 }
@@ -2043,12 +2043,12 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 				//Get Proper Form
 				struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
 				switch (fuseSpecies) {
-/*					case SPECIES_RESHIRAM:
+					case SPECIES_RESHIRAM:
 						baseSpecies = SPECIES_KYUREM_WHITE;
 						break;
 					case SPECIES_ZEKROM:
 						baseSpecies = SPECIES_KYUREM_BLACK;
-						break;*/
+						break;
 					case SPECIES_SOLGALEO:
 						baseSpecies = SPECIES_NECROZMA_DUSK_MANE;
 						break;

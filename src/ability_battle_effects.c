@@ -1093,7 +1093,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 			if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 			{
-/*				switch(SPECIES(bank)) {
+				switch(SPECIES(bank)) {
 					case SPECIES_CHERRIM:
 						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
 						&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
@@ -1112,7 +1112,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
-				}*/
+				}
 			}
 			#endif
 			break;

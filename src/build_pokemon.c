@@ -2752,8 +2752,8 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 																	 //so they're held seperately to keep things fresh.
 		#endif
 		#ifdef SPECIES_ORICORIO
-//		case SPECIES_ORICORIO:
-//			return &gOricorioSpreads[Random() % TOTAL_ORICORIO_SPREADS];
+		case SPECIES_ORICORIO:
+			return &gOricorioSpreads[Random() % TOTAL_ORICORIO_SPREADS];
 		#endif
 	}
 

@@ -20,19 +20,19 @@ tables to edit:
 
 const species_t gMiniorCores[] =
 {
-/*	SPECIES_MINIOR_RED,
+	SPECIES_MINIOR_RED,
 	SPECIES_MINIOR_BLUE,
 	SPECIES_MINIOR_ORANGE,
 	SPECIES_MINIOR_YELLOW,
 	SPECIES_MINIOR_INDIGO,
 	SPECIES_MINIOR_GREEN,
 	SPECIES_MINIOR_VIOLET,
-	SPECIES_TABLES_TERMIN*/
+	SPECIES_TABLES_TERMIN
 };
 
 static const species_t sBannedBackupSpecies[] =
 {
-/*	SPECIES_CHERRIM_SUN,
+	SPECIES_CHERRIM_SUN,
 	SPECIES_SHAYMIN_SKY,
 	SPECIES_DARMANITANZEN,
 	SPECIES_KELDEO_RESOLUTE,
@@ -41,7 +41,7 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_WISHIWASHI_S,
 	SPECIES_MIMIKYU_BUSTED,
 	SPECIES_MINIOR_SHIELD,
-	SPECIES_TABLES_TERMIN*/
+	SPECIES_TABLES_TERMIN
 };
 
 //This file's functions:
@@ -95,7 +95,7 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 
 void SwitchOutFormsRevert(u8 bank)
 {
-/*	struct Pokemon* mon = GetBankPartyData(bank);
+	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
 
 	switch (gBattleMons[bank].species) {
@@ -159,7 +159,7 @@ void SwitchOutFormsRevert(u8 bank)
 				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE, FALSE);
 			break;
 		#endif
-	}*/
+	}
 }
 
 void FormsRevert(pokemon_t* party)
@@ -336,7 +336,7 @@ static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 
 static u16 sTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
 {
-/*	[TYPE_NORMAL] = 	0,
+	[TYPE_NORMAL] = 	0,
 	[TYPE_FIGHTING] = 	SPECIES_SILVALLY_FIGHT,
 	[TYPE_FLYING] = 	SPECIES_SILVALLY_FLYING,
 	[TYPE_POISON] = 	SPECIES_SILVALLY_POISON,
@@ -356,7 +356,7 @@ static u16 sTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_DARK] =		SPECIES_SILVALLY_DARK,
 	[TYPE_ROOSTLESS] =	SPECIES_SILVALLY_FLYING, //This Silvally should stay in the proper form
 
-	[TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY*/
+	[TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY
 };
 
 void HoldItemFormChange(struct Pokemon* mon, u16 item)
@@ -472,7 +472,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 
 		#ifdef SPECIES_SILVALLY
 		case SPECIES_SILVALLY:
-		/*case SPECIES_SILVALLY_FIGHT:
+		case SPECIES_SILVALLY_FIGHT:
 		case SPECIES_SILVALLY_FLYING:
 		case SPECIES_SILVALLY_POISON:
 		case SPECIES_SILVALLY_GROUND:
@@ -488,7 +488,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 		case SPECIES_SILVALLY_ICE:
 		case SPECIES_SILVALLY_DRAGON:
 		case SPECIES_SILVALLY_DARK:
-		case SPECIES_SILVALLY_FAIRY:*/
+		case SPECIES_SILVALLY_FAIRY:
 			if (ability == ABILITY_RKS_SYSTEM) //Only transform if set with proper ability
 			{
 				if (itemEffect == ITEM_EFFECT_MEMORY)
