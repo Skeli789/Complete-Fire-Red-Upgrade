@@ -1818,6 +1818,10 @@ GetEreaderTrainerFrontSpriteId = 0x80E7420 | 1;
 GetEreaderTrainerClassId = 0x80E7440 | 1;
 GetEreaderTrainerName = 0x80E7460 | 1;
 
+/* Instant Text */
+RenderFont = 0x8002E7C | 1;
+sTextPrinters = 0x2020034;
+GetTextSpeedSetting = 0x80f78a8 | 1;
 
 /* IO */
 BG3HOFS = 0x400001C;
