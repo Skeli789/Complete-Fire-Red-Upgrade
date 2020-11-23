@@ -13,36 +13,9 @@ form_change.c
 	functions/structures/arrays that handle species that change form
 
 tables to edit:
-	gMiniorCores
 	sBannedBackupSpecies
 
 */
-
-const species_t gMiniorCores[] =
-{
-	SPECIES_MINIOR_RED,
-	SPECIES_MINIOR_BLUE,
-	SPECIES_MINIOR_ORANGE,
-	SPECIES_MINIOR_YELLOW,
-	SPECIES_MINIOR_INDIGO,
-	SPECIES_MINIOR_GREEN,
-	SPECIES_MINIOR_VIOLET,
-	SPECIES_TABLES_TERMIN
-};
-
-static const species_t sBannedBackupSpecies[] =
-{
-	SPECIES_CHERRIM_SUN,
-	SPECIES_SHAYMIN_SKY,
-	SPECIES_DARMANITANZEN,
-	SPECIES_KELDEO_RESOLUTE,
-	SPECIES_MELOETTA_PIROUETTE,
-	SPECIES_AEGISLASH_BLADE,
-	SPECIES_WISHIWASHI_S,
-	SPECIES_MIMIKYU_BUSTED,
-	SPECIES_MINIOR_SHIELD,
-	SPECIES_TABLES_TERMIN
-};
 
 //This file's functions:
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility)
@@ -182,7 +155,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 		CalculateMonStats(mon);
 		return TRUE;
 	}
-	else if (IsGigantamaxSpecies(mon->backupSpecies) || CheckTableForSpecies(mon->backupSpecies, sBannedBackupSpecies)) //Forms the mon shouldn't revert to
+	else if (IsGigantamaxSpecies(mon->backupSpecies)) //Forms the mon shouldn't revert to
 	{
 		mon->backupSpecies = SPECIES_NONE;
 	}
@@ -272,7 +245,7 @@ void UpdateBurmy(void)
 
 species_t GetMiniorCoreFromPersonality(u32 personality)
 {
-	return gMiniorCores[personality % (NELEMS(gMiniorCores) - 1)];
+	return 0;
 }
 
 species_t GetMiniorCoreSpecies(struct Pokemon* mon)
@@ -282,11 +255,7 @@ species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 
 bool8 IsMinior(u16 species)
 {
-	return
-	#ifdef SPECIES_MINIOR_SHIELD
-	species == SPECIES_MINIOR_SHIELD ||
-	#endif
-	CheckTableForSpecies(species, gMiniorCores);
+	return 0;
 }
 
 void HandleFormChange(void)
@@ -332,31 +301,6 @@ static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_ROOSTLESS] =	SPECIES_ARCEUS_FLYING, //This Arceus should stay in the proper form
 
 	[TYPE_FAIRY] =		SPECIES_ARCEUS_FAIRY
-};
-
-static u16 sTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
-{
-	[TYPE_NORMAL] = 	0,
-	[TYPE_FIGHTING] = 	SPECIES_SILVALLY_FIGHT,
-	[TYPE_FLYING] = 	SPECIES_SILVALLY_FLYING,
-	[TYPE_POISON] = 	SPECIES_SILVALLY_POISON,
-	[TYPE_GROUND] = 	SPECIES_SILVALLY_GROUND,
-	[TYPE_ROCK] = 		SPECIES_SILVALLY_ROCK,
-	[TYPE_BUG] = 		SPECIES_SILVALLY_BUG,
-	[TYPE_GHOST] =		SPECIES_SILVALLY_GHOST,
-	[TYPE_STEEL] =		SPECIES_SILVALLY_STEEL,
-	[TYPE_MYSTERY] = 	0,
-	[TYPE_FIRE] = 		SPECIES_SILVALLY_FIRE,
-	[TYPE_WATER] =		SPECIES_SILVALLY_WATER,
-	[TYPE_GRASS] =		SPECIES_SILVALLY_GRASS,
-	[TYPE_ELECTRIC] = 	SPECIES_SILVALLY_ELECTRIC,
-	[TYPE_PSYCHIC] = 	SPECIES_SILVALLY_PSYCHIC,
-	[TYPE_ICE] = 		SPECIES_SILVALLY_ICE,
-	[TYPE_DRAGON] = 	SPECIES_SILVALLY_DRAGON,
-	[TYPE_DARK] =		SPECIES_SILVALLY_DARK,
-	[TYPE_ROOSTLESS] =	SPECIES_SILVALLY_FLYING, //This Silvally should stay in the proper form
-
-	[TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY
 };
 
 void HoldItemFormChange(struct Pokemon* mon, u16 item)
@@ -437,36 +381,6 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 
 				if (targetSpecies == SPECIES_NONE)
 					targetSpecies = SPECIES_ARCEUS;
-			}
-			break;
-		#endif
-
-		#ifdef SPECIES_SILVALLY
-		case SPECIES_SILVALLY:
-		case SPECIES_SILVALLY_FIGHT:
-		case SPECIES_SILVALLY_FLYING:
-		case SPECIES_SILVALLY_POISON:
-		case SPECIES_SILVALLY_GROUND:
-		case SPECIES_SILVALLY_ROCK:
-		case SPECIES_SILVALLY_BUG:
-		case SPECIES_SILVALLY_GHOST:
-		case SPECIES_SILVALLY_STEEL:
-		case SPECIES_SILVALLY_FIRE:
-		case SPECIES_SILVALLY_WATER:
-		case SPECIES_SILVALLY_GRASS:
-		case SPECIES_SILVALLY_ELECTRIC:
-		case SPECIES_SILVALLY_PSYCHIC:
-		case SPECIES_SILVALLY_ICE:
-		case SPECIES_SILVALLY_DRAGON:
-		case SPECIES_SILVALLY_DARK:
-		case SPECIES_SILVALLY_FAIRY:
-			if (ability == ABILITY_RKS_SYSTEM) //Only transform if set with proper ability
-			{
-				if (itemEffect == ITEM_EFFECT_MEMORY)
-					targetSpecies = sTypeToSilvallyForm[type];
-
-				if (targetSpecies == SPECIES_NONE)
-					targetSpecies = SPECIES_SILVALLY;
 			}
 			break;
 		#endif

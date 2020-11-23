@@ -484,9 +484,9 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
     {
 		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES);
 	
-		#if (defined SPECIES_HOOPA || defined SPECIES_SHAYMIN)
+		#if (defined SPECIES_SHAYMIN)
 		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC
-		if (species == SPECIES_HOOPA || species == SPECIES_SHAYMIN)
+		if (species == SPECIES_SHAYMIN)
 		{
 			u16 tileNum = sub_80911D4(species); //Gets the tile number of the mon icon
 			if (tileNum != 0xFFFF)

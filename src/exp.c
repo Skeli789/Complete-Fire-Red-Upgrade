@@ -184,11 +184,7 @@ void atk23_getexp(void)
 			tradeBonus = 15;
 
 		//Base Experience - b
-		#ifdef GEN_7_BASE_EXP_YIELD
-			baseExp = gBaseExpBySpecies[gBattleMons[gBankFainted].species];
-		#else
-			baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
-		#endif
+		baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
 
 		//Lucky Egg Boost - e
 		eggBoost = 10;

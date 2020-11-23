@@ -411,12 +411,6 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_SHIELDSDOWN:
-				if (GetBankPartyData(bankDef)->species == SPECIES_MINIOR_SHIELD
-				&&  CheckTableForMoveEffect(move, gSetStatusMoveEffects))
-				{
-					DECREASE_VIABILITY(10);
-					return viability;
-				}
 				break;
 
 			case ABILITY_WONDERSKIN:
@@ -1973,8 +1967,6 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SUPERPOWER:
-			if (move == MOVE_HYPERSPACEFURY && data->atkSpecies != SPECIES_HOOPA_UNBOUND)
-				DECREASE_VIABILITY(10);
 			break;
 
 			break;
