@@ -17,6 +17,7 @@
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/pokemon_storage_system.h"
 
 #include "Tables/type_tables.h"
 
@@ -2997,6 +2998,27 @@ static u16 GetBasePower(struct DamageCalc* data)
 				}
 			}
 			break;
+			
+//New move for Rose
+    case PC_DUMP:
+        if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
+        || IsFrontierRaidBattle())
+            power = 50;
+        else
+            {
+				int boxPos;
+				int numMons = 0;
+
+				for (boxPos = 0; boxPos < 30; boxPos++)
+			{
+				struct CompressedPokemon* checkingMon = GetCompressedMonPtr(StorageGetCurrentBox(), boxPos);
+				if (checkingMon->substruct0.species != 0)
+				numMons++; // by not breaking here, we ensure that all thirty slots in the box are checked
+			}
+
+				power = 5 * numMons;
+			}
+        break;
 
 		case MOVE_PURSUIT:
 			if (data->specialFlags & FLAG_AI_CALC)
