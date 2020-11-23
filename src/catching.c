@@ -256,7 +256,7 @@ void atkEF_handleballthrow(void)
 						case SPECIES_MUNNA:
 						#endif
 						#ifdef SPECIES_MUSHARNA
-						case SPECIES_MUSHARNA:
+//						case SPECIES_MUSHARNA:
 						#endif
 							ballMultiplier = 40;
 							break;

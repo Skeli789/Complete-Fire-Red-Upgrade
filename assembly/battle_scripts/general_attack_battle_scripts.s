@@ -4746,22 +4746,22 @@ BS_223_RelicSong:
 	faintpokemonaftermove
 	callasm GotoMoveEndIfMoveDidntDamageAtLeastOnce
 	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
-	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA TransformToPirouetteBS
-	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE TransformToAriaBS
+	@jumpifspecies BANK_ATTACKER SPECIES_MELOETTA TransformToPirouetteBS
+	@jumpifspecies BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE TransformToAriaBS
 	goto BS_MOVE_END
 	
 TransformToPirouetteBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER SPECIES_MELOETTA SPECIES_MELOETTA_PIROUETTE TRUE TRUE FALSE RelicSongEndBS
+	@formchange BANK_ATTACKER SPECIES_MELOETTA SPECIES_MELOETTA_PIROUETTE TRUE TRUE FALSE RelicSongEndBS
 	goto MeloettaTransformAnim
 
 TransformToAriaBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE SPECIES_MELOETTA TRUE TRUE FALSE RelicSongEndBS
+	@formchange BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE SPECIES_MELOETTA TRUE TRUE FALSE RelicSongEndBS
 	
 MeloettaTransformAnim:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0

@@ -42,3 +42,4 @@ u8 __attribute__((long_call)) StorageGetCurrentBox(void);
 void __attribute__((long_call)) CompactPartySlots(void);
 u16 __attribute__((long_call)) GetPCBoxToSendMon(void);
 void __attribute__((long_call)) SetPCBoxToSendMon(u8 id);
+struct CompressedPokemon* __attribute__((long_call)) GetCompressedMonPtr(u8 boxId, u8 boxPosition);

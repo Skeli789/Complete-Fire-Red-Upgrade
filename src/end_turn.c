@@ -1516,7 +1516,7 @@ u8 TurnBasedEffects(void)
 										battleScript = BattleScript_FlowerGiftEnd2;
 									}
 									break;
-								case SPECIES_CHERRIM_SUN:
+								//case SPECIES_CHERRIM_SUN:
 									if (!WEATHER_HAS_EFFECT
 									|| !(gBattleWeather & WEATHER_SUN_ANY)
 									//|| ability != ABILITY_FLOWERGIFT //Not neccessary

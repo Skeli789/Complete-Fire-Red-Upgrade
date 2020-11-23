@@ -4832,7 +4832,7 @@ void atkE7_trycastformdatachange(void)
 			return;
 		#endif
 
-		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
+		/*#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 		case SPECIES_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY
@@ -4851,7 +4851,7 @@ void atkE7_trycastformdatachange(void)
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
-		#endif
+		#endif*/
 	}
 }
 

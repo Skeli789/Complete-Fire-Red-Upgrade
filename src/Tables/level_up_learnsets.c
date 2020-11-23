@@ -19165,62 +19165,51 @@ static const struct LevelUpMove sFroslassVLevelUpLearnset[] = {
 
 
 static const struct LevelUpMove sBanetteCDLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sBanetteLCLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sBanetteDJLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sMurkrow97LevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 
 // Can learn Volt Tackle
 static const struct LevelUpMove sPorygonPikaLevelUpLearnset[] = { 
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };	
 
 
 static const struct LevelUpMove sParasectIceLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 // Give physical Steel moves
 static const struct LevelUpMove sGarbodorScrapLevelUpLearnset[] = {	
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 
 static const struct LevelUpMove sPidgeyRLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sPidgeottoRLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sPidgeotRLevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
 static const struct LevelUpMove sDeoxysELevelUpLearnset[] = {
-	LEVEL_UP_MOVE(
 	LEVEL_UP_END,
 };
 
@@ -19235,7 +19224,7 @@ static const struct LevelUpMove sRocketLevelUpLearnset[] = {
 
 
 
-*/
+
 
 const struct LevelUpMove* const gLevelUpLearnsets[] =
 {
@@ -19798,15 +19787,14 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_HEATRAN] = sHeatranLevelUpLearnset,
 	[SPECIES_REGIGIGAS] = sRegigigasLevelUpLearnset,
 	[SPECIES_GIRATINA] = sGiratinaLevelUpLearnset,
-	[SPECIES_CRESSELIA] = sCresseliaLevelUpLearnset,
-/*	
+/*	[SPECIES_CRESSELIA] = sCresseliaLevelUpLearnset,	
 	[SPECIES_PHIONE] = sPhioneLevelUpLearnset,
 	[SPECIES_MANAPHY] = sManaphyLevelUpLearnset,
 */	
-	[SPECIES_DARKRAI] = sDarkraiLevelUpLearnset,
+//	[SPECIES_DARKRAI] = sDarkraiLevelUpLearnset,
 	[SPECIES_SHAYMIN] = sShayminLevelUpLearnset,
 	[SPECIES_ARCEUS] = sArceusLevelUpLearnset,
-	[SPECIES_VICTINI] = sVictiniLevelUpLearnset,
+//	[SPECIES_VICTINI] = sVictiniLevelUpLearnset,
 /*	
 	[SPECIES_SNIVY] = sSnivyLevelUpLearnset,
 	[SPECIES_SERVINE] = sServineLevelUpLearnset,
@@ -19975,7 +19963,7 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 */	
 	[SPECIES_TORNADUS] = sTornadusLevelUpLearnset,
 	[SPECIES_THUNDURUS] = sThundurusLevelUpLearnset,
-	[SPECIES_RESHIRAM] = sReshiramLevelUpLearnset,
+//	[SPECIES_RESHIRAM] = sReshiramLevelUpLearnset,
 /*	
 	[SPECIES_ZEKROM] = sZekromLevelUpLearnset,
 	[SPECIES_LANDORUS] = sLandorusLevelUpLearnset,
@@ -20527,8 +20515,8 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 //	[SPECIES_UNKNOWN_MYTHICAL] = sUnknownMythicalLevelUpLearnset,
 //	[SPECIES_CALYREX] = sCalyrexLevelUpLearnset, 
 */
-	[SPECIES_REGIELEKI] = sRegielekiLevelUpLearnset,
-	[SPECIES_REGIDRAGO] = sRegidragoLevelUpLearnset,
+//	[SPECIES_REGIELEKI] = sRegielekiLevelUpLearnset,
+//	[SPECIES_REGIDRAGO] = sRegidragoLevelUpLearnset,
 /*
 	[SPECIES_CRAMORANT_GULPING] = sCramorantLevelUpLearnset,
 	[SPECIES_CRAMORANT_GORGING] = sCramorantLevelUpLearnset,
@@ -20547,7 +20535,7 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_ZACIAN_CROWNED] = sZacianLevelUpLearnset,
 	[SPECIES_ZAMAZENTA_CROWNED] = sZamazentaLevelUpLearnset,
 */	
-	[SPECIES_ETERNATUS_ETERNAMAX] = sEternatusLevelUpLearnset,
+//	[SPECIES_ETERNATUS_ETERNAMAX] = sEternatusLevelUpLearnset,
 /*	
 	[SPECIES_URSHIFU_RAPID] = sUrshifuRapidLevelUpLearnset,
 	[SPECIES_MEOWTH_G] = sMeowthGLevelUpLearnset,
@@ -20611,168 +20599,166 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_URSHIFU_SINGLE_GIGA] = sUrshifuLevelUpLearnset,
 	[SPECIES_URSHIFU_RAPID_GIGA] = sUrshifuRapidLevelUpLearnset,
 */
-	[SPECIES_ROTOM_TANK] = sRotomLevelUpLearnset // 237 // NEW FORM
-	[SPECIES_ROTOM_DRONE] = sRotomLevelUpLearnset // 238 // NEW FORM
-	[SPECIES_ROTOM_NEWFORM] = sRotomLevelUpLearnset // 239 // NEW FORM
-	[SPECIES_RAIKOU_CRYSTAL] = sRaikouLevelUpLearnset // 23E // NEW FORM
-	[SPECIES_ENTEI_CRYSTAL] = sEnteiLevelUpLearnset // 23F // NEW FORM
-	[SPECIES_SUICUNE_CRYSTAL] = sSuicineLevelUpLearnset // 240 // NEW FORM
-	[SPECIES_PIKACHU_NARCIS] = sPikachuLevelUpLearnset // 243 // NEW FORM FOR ROSE 2
-	[SPECIES_PIKACHU_NARCIS_SURF] = sPikachuLevelUpLearnset // 244 // NEW FORM FOR ROSE 2
-	[SPECIES_PIKACHU_NARCIS_FLY] = sPikachuLevelUpLearnset // 245 // NEW FORM FOR ROSE 2
-	[SPECIES_ONIX_CRYSTAL] = sCrystalOnixLevelUpLearnset // 246 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_STEELIX_CARBYNE] = sCarbyneSteelixLevelUpLearnset // 247 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PORYGON_GLITCH] = sGlitchPorygonLevelUpLearnset // 248 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PORYGON2_GLITCH] = sGlitchPorygon2LevelUpLearnset // 249 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PORYGON_Z_GLITCH] = sGlitchPorygonZLevelUpLearnset // 24A // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_MAGNEZONE_SPACESHIP] = sMagnezoneLevelUpLearnset // 24B // NEW FORM
-	[SPECIES_DIANCIE_SOLSTICE] = sDiancieLevelUpLearnset // 252 // NEW FORM FOR ROSE 2
-	[SPECIES_SABLEYE_SOLSTICE] = sSableyeLevelUpLearnset // 253 // NEW FORM FOR ROSE 2
-	[SPECIES_SPIRITOMB_SOLSTICE] = sSpiritombLevelUpLearnset // 254 // NEW FORM FOR ROSE 2
-	[SPECIES_LUGIATWO] = sLugiaLevelUpLearnset // 255 // PLACEHOLDER
-	[SPECIES_ROCKRUFF_OWNTEMPO] = sRockruffLevelUpLearnset // 259 // NEW FORM FOR DUSK LYCANROC EVOLUTION
-	[SPECIES_SNORUNT_VOLCANO] = sSnoruntVLevelUpLearnset // 25E // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_GLALIE_VOLCANO] = sGlalieVLevelUpLearnset // 25F // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_FROSLASS_VOLCANO] = sFroslassVLevelUpLearnset // 260 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_BANETTE_CLEFAIRYDOLL] = sBanetteCDLevelUpLearnset // 263 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_BANETTE_LCDOLL] = sBanetteLCLevelUpLearnset // 264 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_BANETTE_DJDOLL] = sBanetteDJLevelUpLearnset // 265 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_MURKROW_GSBETA] = sMurkrow97LevelUpLearnset // 266 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PORYGON_PIKACHUCONVERSION] = sPorygonPikaLevelUpLearnset // 267 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_EXEGGUTOR_RAINBOW] = sExeggutorLevelUpLearnset // 268 // NEW FORM PLACEHOLDER
-	[SPECIES_DRATINI_ROSE] = sDratiniLevelUpLearnset // 269 // NEW FORM PLACEHOLDER
-	[SPECIES_DRAGONAIR_ROSE] = sDragonairLevelUpLearnset // 26A // NEW FORM PLACEHOLDER
-	[SPECIES_DRAGONITE_ROSE] = sDragoniteLevelUpLearnset // 26B // NEW FORM PLACEHOLDER
-	[SPECIES_ROSELIA_ROSE] = sRoseliaLevelUpLearnset // 26C // NEW FORM PLACEHOLDER
-	[SPECIES_ROSERADE_ROSE] = sRoseradeLevelUpLearnset // 26D // NEW FORM PLACEHOLDER
-	[SPECIES_ARCANINE_ROSE] = sArcanineLevelUpLearnset // 26E // NEW FORM PLACEHOLDER
-	[SPECIES_LEDIAN_ROSE] = sLedianLevelUpLearnset // 26F // NEW FORM PLACEHOLDER
-	[SPECIES_NEWFORM1_ROSE] = sLedianLevelUpLearnset // 270 // NEW FORM PLACEHOLDER
-	[SPECIES_NEWFORM2_ROSE] = sLedianLevelUpLearnset // 271 // NEW FORM PLACEHOLDER
-	[SPECIES_FLABEBE_ROSE] = sFlabebeLevelUpLearnset // 272 // NEW FORM PLACEHOLDER
-	[SPECIES_FLOETTE_ROSE] = sFloetteLevelUpLearnset // 273 // NEW FORM PLACEHOLDER
-	[SPECIES_FLORGES_ROSE] = sFlorgesLevelUpLearnset // 274 // NEW FORM PLACEHOLDER
-	[SPECIES_TOGEPI_ROSE] = sTogepiLevelUpLearnset // 275 // NEW FORM PLACEHOLDER
-	[SPECIES_TOGETIC_ROSE] = sTogeticLevelUpLearnset // 276 // NEW FORM PLACEHOLDER
-	[SPECIES_TOGEKISS_ROSE] = sTogekissLevelUpLearnset // 277 // NEW FORM PLACEHOLDER
-	[SPECIES_DEOXYS_EMERALD] = sDeoxysELevelUpLearnset // 278 // FINAL BOSS - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_RAYQUAZA_EMERALD] = sDeoxysELevelUpLearnset // 279 // FOR ROSE 2
-	[SPECIES_ARTICUNO_EMERALD] = sDeoxysELevelUpLearnset // 27A // FOR ROSE 2
-	[SPECIES_ZAPDOS_EMERALD] = sDeoxysELevelUpLearnset // 27B // FOR ROSE 2
-	[SPECIES_MOLTRES_EMERALD] = sDeoxysELevelUpLearnset // 27C // FOR ROSE 2
-	[SPECIES_RAIKOU_EMERALD] = sDeoxysELevelUpLearnset // 27D // FOR ROSE 2
-	[SPECIES_ENTEI_EMERALD] = sDeoxysELevelUpLearnset // 27E // FOR ROSE 2
-	[SPECIES_SUICUNE_EMERALD] = sDeoxysELevelUpLearnset // 27F // FOR ROSE 2
-	[SPECIES_LUGIA_EMERALD] = sDeoxysELevelUpLearnset // 280 // FOR ROSE 2
-	[SPECIES_HO_OH_EMERALD] = sDeoxysELevelUpLearnset // 281 // FOR ROSE 2
-	[SPECIES_ARCEUS_MYSTERY] = sDeoxysELevelUpLearnset // 293 // NEW FORM
+	[SPECIES_ROTOM_TANK] = sRotomLevelUpLearnset, // 237 // NEW FORM
+	[SPECIES_ROTOM_DRONE] = sRotomLevelUpLearnset, // 238 // NEW FORM
+	[SPECIES_ROTOM_NEWFORM] = sRotomLevelUpLearnset, // 239 // NEW FORM
+	[SPECIES_RAIKOU_CRYSTAL] = sRaikouLevelUpLearnset, // 23E // NEW FORM
+	[SPECIES_ENTEI_CRYSTAL] = sEnteiLevelUpLearnset, // 23F // NEW FORM
+	[SPECIES_SUICUNE_CRYSTAL] = sSuicuneLevelUpLearnset, // 240 // NEW FORM
+	[SPECIES_PIKACHU_NARCIS] = sPikachuLevelUpLearnset, // 243 // NEW FORM FOR ROSE 2
+	[SPECIES_PIKACHU_NARCIS_SURF] = sPikachuLevelUpLearnset, // 244 // NEW FORM FOR ROSE 2
+	[SPECIES_PIKACHU_NARCIS_FLY] = sPikachuLevelUpLearnset, // 245 // NEW FORM FOR ROSE 2
+	[SPECIES_ONIX_CRYSTAL] = sCrystalOnixLevelUpLearnset, // 246 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_STEELIX_CARBYNE] = sCarbyneSteelixLevelUpLearnset, // 247 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PORYGON_GLITCH] = sGlitchPorygonLevelUpLearnset, // 248 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PORYGON2_GLITCH] = sGlitchPorygon2LevelUpLearnset, // 249 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PORYGON_Z_GLITCH] = sGlitchPorygonZLevelUpLearnset, // 24A // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_MAGNEZONE_SPACESHIP] = sMagnezoneLevelUpLearnset, // 24B // NEW FORM
+	[SPECIES_DIANCIE_SOLSTICE] = sDiancieLevelUpLearnset, // 252 // NEW FORM FOR ROSE 2
+	[SPECIES_SABLEYE_SOLSTICE] = sSableyeLevelUpLearnset, // 253 // NEW FORM FOR ROSE 2
+	[SPECIES_SPIRITOMB_SOLSTICE] = sSpiritombLevelUpLearnset, // 254 // NEW FORM FOR ROSE 2
+	[SPECIES_LUGIATWO] = sLugiaLevelUpLearnset, // 255 // PLACEHOLDER
+	[SPECIES_ROCKRUFF_OWNTEMPO] = sRockruffLevelUpLearnset, // 259 // NEW FORM FOR DUSK LYCANROC EVOLUTION
+	[SPECIES_SNORUNT_VOLCANO] = sSnoruntVLevelUpLearnset, // 25E // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_GLALIE_VOLCANO] = sGlalieVLevelUpLearnset, // 25F // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_FROSLASS_VOLCANO] = sFroslassVLevelUpLearnset, // 260 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_BANETTE_CLEFAIRYDOLL] = sBanetteCDLevelUpLearnset, // 263 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_BANETTE_LCDOLL] = sBanetteLCLevelUpLearnset, // 264 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_BANETTE_DJDOLL] = sBanetteDJLevelUpLearnset, // 265 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_MURKROW_GSBETA] = sMurkrow97LevelUpLearnset, // 266 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PORYGON_PIKACHUCONVERSION] = sPorygonPikaLevelUpLearnset, // 267 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_EXEGGUTOR_RAINBOW] = sExeggutorLevelUpLearnset, // 268 // NEW FORM PLACEHOLDER
+	[SPECIES_DRATINI_ROSE] = sDratiniLevelUpLearnset, // 269 // NEW FORM PLACEHOLDER
+	[SPECIES_DRAGONAIR_ROSE] = sDragonairLevelUpLearnset, // 26A // NEW FORM PLACEHOLDER
+	[SPECIES_DRAGONITE_ROSE] = sDragoniteLevelUpLearnset, // 26B // NEW FORM PLACEHOLDER
+	[SPECIES_ROSELIA_ROSE] = sRoseliaLevelUpLearnset, // 26C // NEW FORM PLACEHOLDER
+	[SPECIES_ROSERADE_ROSE] = sRoseradeLevelUpLearnset, // 26D // NEW FORM PLACEHOLDER
+	[SPECIES_ARCANINE_ROSE] = sArcanineLevelUpLearnset, // 26E // NEW FORM PLACEHOLDER
+	[SPECIES_LEDIAN_ROSE] = sLedianLevelUpLearnset, // 26F // NEW FORM PLACEHOLDER
+	[SPECIES_NEWFORM1_ROSE] = sLedianLevelUpLearnset, // 270 // NEW FORM PLACEHOLDER
+	[SPECIES_NEWFORM2_ROSE] = sLedianLevelUpLearnset, // 271 // NEW FORM PLACEHOLDER
+	[SPECIES_FLABEBE_ROSE] = sFlabebeLevelUpLearnset, // 272 // NEW FORM PLACEHOLDER
+	[SPECIES_FLOETTE_ROSE] = sFloetteLevelUpLearnset, // 273 // NEW FORM PLACEHOLDER
+	[SPECIES_FLORGES_ROSE] = sFlorgesLevelUpLearnset, // 274 // NEW FORM PLACEHOLDER
+	[SPECIES_TOGEPI_ROSE] = sTogepiLevelUpLearnset, // 275 // NEW FORM PLACEHOLDER
+	[SPECIES_TOGETIC_ROSE] = sTogeticLevelUpLearnset, // 276 // NEW FORM PLACEHOLDER
+	[SPECIES_TOGEKISS_ROSE] = sTogekissLevelUpLearnset, // 277 // NEW FORM PLACEHOLDER
+	[SPECIES_DEOXYS_EMERALD] = sDeoxysELevelUpLearnset, // 278 // FINAL BOSS - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_RAYQUAZA_EMERALD] = sDeoxysELevelUpLearnset, // 279 // FOR ROSE 2
+	[SPECIES_ARTICUNO_EMERALD] = sDeoxysELevelUpLearnset, // 27A // FOR ROSE 2
+	[SPECIES_ZAPDOS_EMERALD] = sDeoxysELevelUpLearnset, // 27B // FOR ROSE 2
+	[SPECIES_MOLTRES_EMERALD] = sDeoxysELevelUpLearnset, // 27C // FOR ROSE 2
+	[SPECIES_RAIKOU_EMERALD] = sDeoxysELevelUpLearnset, // 27D // FOR ROSE 2
+	[SPECIES_ENTEI_EMERALD] = sDeoxysELevelUpLearnset, // 27E // FOR ROSE 2
+	[SPECIES_SUICUNE_EMERALD] = sDeoxysELevelUpLearnset, // 27F // FOR ROSE 2
+	[SPECIES_LUGIA_EMERALD] = sDeoxysELevelUpLearnset, // 280 // FOR ROSE 2
+	[SPECIES_HO_OH_EMERALD] = sDeoxysELevelUpLearnset, // 281 // FOR ROSE 2
+	[SPECIES_ARCEUS_MYSTERY] = sDeoxysELevelUpLearnset, // 293 // NEW FORM
 
-	[SPECIES_DITTO_BULBASAUR] = sDittoLevelUpLearnset // 29C // NEW FORM
-	[SPECIES_DITTO_CHARMANDER] = sDittoLevelUpLearnset // 29D // NEW FORM
-	[SPECIES_DITTO_SQUIRTLE] = sDittoLevelUpLearnset // 29E // NEW FORM
-	[SPECIES_DITTO_CHIKORITA] = sDittoLevelUpLearnset // 29F // NEW FORM
-	[SPECIES_DITTO_CYNDAQUIL] = sDittoLevelUpLearnset // 2A0 // NEW FORM
-	[SPECIES_DITTO_TOTODILE] = sDittoLevelUpLearnset // 2A1 // NEW FORM
-	[SPECIES_DITTO_TREECKO] = sDittoLevelUpLearnset // 2A2 // NEW FORM
-	[SPECIES_DITTO_TORCHIC] = sDittoLevelUpLearnset // 2A3 // NEW FORM
-	[SPECIES_DITTO_MUDKIP] = sDittoLevelUpLearnset // 2A4 // NEW FORM
-	[SPECIES_DITTO_TURTWIG] = sDittoLevelUpLearnset // 2A5 // NEW FORM
-	[SPECIES_DITTO_CHIMCHAR] = sDittoLevelUpLearnset // 2A6 // NEW FORM
-	[SPECIES_DITTO_PIPLUP] = sDittoLevelUpLearnset // 2A7 // NEW FORM
-	[SPECIES_DITTO_PIKACHU] = sDittoLevelUpLearnset // 2A8 // NEW FORM
-	[SPECIES_DITTO_MEOWTH] = sDittoLevelUpLearnset // 2A9 // NEW FORM
-	[SPECIES_DITTO_SNEASEL] = sDittoLevelUpLearnset // 2AA // NEW FORM
-	[SPECIES_DITTO_SABLEYE] = sDittoLevelUpLearnset // 2AB // NEW FORM
-	[SPECIES_DITTO_KOFFING] = sDittoLevelUpLearnset // 2AC // NEW FORM
-	[SPECIES_DITTO_CLEFAIRY] = sDittoLevelUpLearnset // 2AD // NEW FORM
-	[SPECIES_DITTO_WOBBUFFET] = sDittoLevelUpLearnset // 2AE // NEW FORM
-	[SPECIES_DITTO_GENGAR] = sDittoLevelUpLearnset // 2AF // NEW FORM
-	[SPECIES_DITTO_SCIZOR] = sDittoLevelUpLearnset // 2B0 // NEW FORM
-	[SPECIES_DITTO_LUCARIO] = sDittoLevelUpLearnset // 2B1 // NEW FORM
-	[SPECIES_DITTO_ABSOL] = sDittoLevelUpLearnset // 2B2 // NEW FORM
-	[SPECIES_DITTO_EXEGGUTOR] = sDittoLevelUpLearnset // 2B3 // NEW FORM
-	[SPECIES_DITTO_DEOXYS] = sDittoLevelUpLearnset // 2B4 // NEW FORM
+	[SPECIES_DITTO_BULBASAUR] = sDittoLevelUpLearnset, // 29C // NEW FORM
+	[SPECIES_DITTO_CHARMANDER] = sDittoLevelUpLearnset, // 29D // NEW FORM
+	[SPECIES_DITTO_SQUIRTLE] = sDittoLevelUpLearnset, // 29E // NEW FORM
+	[SPECIES_DITTO_CHIKORITA] = sDittoLevelUpLearnset, // 29F // NEW FORM
+	[SPECIES_DITTO_CYNDAQUIL] = sDittoLevelUpLearnset, // 2A0 // NEW FORM
+	[SPECIES_DITTO_TOTODILE] = sDittoLevelUpLearnset, // 2A1 // NEW FORM
+	[SPECIES_DITTO_TREECKO] = sDittoLevelUpLearnset, // 2A2 // NEW FORM
+	[SPECIES_DITTO_TORCHIC] = sDittoLevelUpLearnset, // 2A3 // NEW FORM
+	[SPECIES_DITTO_MUDKIP] = sDittoLevelUpLearnset, // 2A4 // NEW FORM
+	[SPECIES_DITTO_TURTWIG] = sDittoLevelUpLearnset, // 2A5 // NEW FORM
+	[SPECIES_DITTO_CHIMCHAR] = sDittoLevelUpLearnset, // 2A6 // NEW FORM
+	[SPECIES_DITTO_PIPLUP] = sDittoLevelUpLearnset, // 2A7 // NEW FORM
+	[SPECIES_DITTO_PIKACHU] = sDittoLevelUpLearnset, // 2A8 // NEW FORM
+	[SPECIES_DITTO_MEOWTH] = sDittoLevelUpLearnset, // 2A9 // NEW FORM
+	[SPECIES_DITTO_SNEASEL] = sDittoLevelUpLearnset, // 2AA // NEW FORM
+	[SPECIES_DITTO_SABLEYE] = sDittoLevelUpLearnset, // 2AB // NEW FORM
+	[SPECIES_DITTO_KOFFING] = sDittoLevelUpLearnset, // 2AC // NEW FORM
+	[SPECIES_DITTO_CLEFAIRY] = sDittoLevelUpLearnset, // 2AD // NEW FORM
+	[SPECIES_DITTO_WOBBUFFET] = sDittoLevelUpLearnset, // 2AE // NEW FORM
+	[SPECIES_DITTO_GENGAR] = sDittoLevelUpLearnset, // 2AF // NEW FORM
+	[SPECIES_DITTO_SCIZOR] = sDittoLevelUpLearnset, // 2B0 // NEW FORM
+	[SPECIES_DITTO_LUCARIO] = sDittoLevelUpLearnset, // 2B1 // NEW FORM
+	[SPECIES_DITTO_ABSOL] = sDittoLevelUpLearnset, // 2B2 // NEW FORM
+	[SPECIES_DITTO_EXEGGUTOR] = sDittoLevelUpLearnset, // 2B3 // NEW FORM
+	[SPECIES_DITTO_DEOXYS] = sDittoLevelUpLearnset, // 2B4 // NEW FORM
 
-	[SPECIES_PARASECT_ICE] = sParasectIceLevelUpLearnset // 2B5 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_GARBODOR_SCRAP] = sGarbodorScrapLevelUpLearnset // 2B6 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PIDGEY_RED] = sPidgeyRLevelUpLearnset // 2B7 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PIDGEOTTO_RED] = sPidgeottoRLevelUpLearnset // 2B8 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_PIDGEOT_RED] = sPidgeotRLevelUpLearnset // 2B9 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_DUSKULL_SOLSTICE] = sDuskullLevelUpLearnset // 2BA // NEW FORM
-	[SPECIES_DUSCLOPS_SOLSTICE] = sDusclopsLevelUpLearnset // 2BB // NEW FORM
-	[SPECIES_DUSKNOIR_SOLSTICE] = sDusknoirLevelUpLearnset // 2BC // NEW FORM
+	[SPECIES_PARASECT_ICE] = sParasectIceLevelUpLearnset, // 2B5 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_GARBODOR_SCRAP] = sGarbodorScrapLevelUpLearnset, // 2B6 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PIDGEY_RED] = sPidgeyRLevelUpLearnset, // 2B7 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PIDGEOTTO_RED] = sPidgeottoRLevelUpLearnset, // 2B8 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_PIDGEOT_RED] = sPidgeotRLevelUpLearnset, // 2B9 // NEW FORM - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_DUSKULL_SOLSTICE] = sDuskullLevelUpLearnset, // 2BA // NEW FORM
+	[SPECIES_DUSCLOPS_SOLSTICE] = sDusclopsLevelUpLearnset, // 2BB // NEW FORM
+	[SPECIES_DUSKNOIR_SOLSTICE] = sDusknoirLevelUpLearnset, // 2BC // NEW FORM
 
-	[SPECIES_RSM_RADIO] = sRocketLevelUpLearnset // 2BD // ROCKET'S SECRET MACHINE - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
-	[SPECIES_RSM_TICKLE] = sRocketLevelUpLearnset // 2BE // ROCKET'S SECRET MACHINE - BOSS ONLY
-	[SPECIES_RSM_SLEEP] = sRocketLevelUpLearnset // 2BF // ROCKET'S SECRET MACHINE - BOSS ONLY
-	[SPECIES_RSM_DIGGER] = sRocketLevelUpLearnset // 2C0 // ROCKET'S SECRET MACHINE - BOSS ONLY
-	[SPECIES_RSM_ERROR] = sRocketLevelUpLearnset // 2C1 // ROCKET'S SECRET MACHINE - BOSS ONLY
+	[SPECIES_RSM_RADIO] = sRocketLevelUpLearnset, // 2BD // ROCKET'S SECRET MACHINE - NEW MOVESET HERE XXXXXXXXXXXXXXXXX
+	[SPECIES_RSM_TICKLE] = sRocketLevelUpLearnset, // 2BE // ROCKET'S SECRET MACHINE - BOSS ONLY
+	[SPECIES_RSM_SLEEP] = sRocketLevelUpLearnset, // 2BF // ROCKET'S SECRET MACHINE - BOSS ONLY
+	[SPECIES_RSM_DIGGER] = sRocketLevelUpLearnset, // 2C0 // ROCKET'S SECRET MACHINE - BOSS ONLY
+	[SPECIES_RSM_ERROR] = sRocketLevelUpLearnset, // 2C1 // ROCKET'S SECRET MACHINE - BOSS ONLY
 
-	[SPECIES_NEW_SLOT_15] = sNewSlotLevelUpLearnset // 2D0 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_16] = sNewSlotLevelUpLearnset // 2D1 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_17] = sNewSlotLevelUpLearnset // 2D2 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_18] = sNewSlotLevelUpLearnset // 2D3 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_19] = sNewSlotLevelUpLearnset // 2D4 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_20] = sNewSlotLevelUpLearnset // 2D5 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_21] = sNewSlotLevelUpLearnset // 2D6 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_22] = sNewSlotLevelUpLearnset // 2D7 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_23] = sNewSlotLevelUpLearnset // 2D8 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_24] = sNewSlotLevelUpLearnset // 2D9 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_25] = sNewSlotLevelUpLearnset // 2DA // EMPTY SLOT
-	[SPECIES_NEW_SLOT_26] = sNewSlotLevelUpLearnset // 2DB // EMPTY SLOT
-	[SPECIES_NEW_SLOT_27] = sNewSlotLevelUpLearnset // 2DC // EMPTY SLOT
-	[SPECIES_NEW_SLOT_28] = sNewSlotLevelUpLearnset // 2DD // EMPTY SLOT
-	[SPECIES_NEW_SLOT_29] = sNewSlotLevelUpLearnset // 2DE // EMPTY SLOT
-	[SPECIES_NEW_SLOT_30] = sNewSlotLevelUpLearnset // 2DF // EMPTY SLOT
-	[SPECIES_NEW_SLOT_31] = sNewSlotLevelUpLearnset // 2E0 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_32] = sNewSlotLevelUpLearnset // 2E1 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_33] = sNewSlotLevelUpLearnset // 2E2 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_34] = sNewSlotLevelUpLearnset // 2E3 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_35] = sNewSlotLevelUpLearnset // 2E4 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_36] = sNewSlotLevelUpLearnset // 2E5 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_37] = sNewSlotLevelUpLearnset // 2E6 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_38] = sNewSlotLevelUpLearnset // 2E7 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_39] = sNewSlotLevelUpLearnset // 2E8 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_40] = sNewSlotLevelUpLearnset // 2E9 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_41] = sNewSlotLevelUpLearnset // 2EA // EMPTY SLOT
-	[SPECIES_NEW_SLOT_42] = sNewSlotLevelUpLearnset // 2EB // EMPTY SLOT
-	[SPECIES_NEW_SLOT_43] = sNewSlotLevelUpLearnset // 2EC // EMPTY SLOT
-	[SPECIES_NEW_SLOT_44] = sNewSlotLevelUpLearnset // 2ED // EMPTY SLOT
-	[SPECIES_NEW_SLOT_45] = sNewSlotLevelUpLearnset // 2EE // EMPTY SLOT
-	[SPECIES_NEW_SLOT_46] = sNewSlotLevelUpLearnset // 2EF // EMPTY SLOT
-	[SPECIES_NEW_SLOT_47] = sNewSlotLevelUpLearnset // 2F0 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_48] = sNewSlotLevelUpLearnset // 2F1 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_49] = sNewSlotLevelUpLearnset // 2F2 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_50] = sNewSlotLevelUpLearnset // 2F3 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_51] = sNewSlotLevelUpLearnset // 2F4 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_52] = sNewSlotLevelUpLearnset // 2F5 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_53] = sNewSlotLevelUpLearnset // 2F6 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_54] = sNewSlotLevelUpLearnset // 2F7 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_55] = sNewSlotLevelUpLearnset // 2F8 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_56] = sNewSlotLevelUpLearnset // 2F9 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_57] = sNewSlotLevelUpLearnset // 2FA // EMPTY SLOT
-	[SPECIES_NEW_SLOT_58] = sNewSlotLevelUpLearnset // 2FB // EMPTY SLOT
-	[SPECIES_NEW_SLOT_59] = sNewSlotLevelUpLearnset // 2FC // EMPTY SLOT
-	[SPECIES_NEW_SLOT_60] = sNewSlotLevelUpLearnset // 2FD // EMPTY SLOT
-	[SPECIES_NEW_SLOT_61] = sNewSlotLevelUpLearnset // 2FE // EMPTY SLOT
-	[SPECIES_NEW_SLOT_62] = sNewSlotLevelUpLearnset // 2FF // EMPTY SLOT
-	[SPECIES_NEW_SLOT_63] = sNewSlotLevelUpLearnset // 300 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_64] = sNewSlotLevelUpLearnset // 301 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_65] = sNewSlotLevelUpLearnset // 302 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_66] = sNewSlotLevelUpLearnset // 303 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_67] = sNewSlotLevelUpLearnset // 304 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_68] = sNewSlotLevelUpLearnset // 305 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_69] = sNewSlotLevelUpLearnset // 306 // EMPTY SLOT
-	[SPECIES_NEW_SLOT_70] = sNewSlotLevelUpLearnset // 307 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_15] = sEmptyMoveset, // 2D0 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_16] = sEmptyMoveset, // 2D1 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_17] = sEmptyMoveset, // 2D2 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_18] = sEmptyMoveset, // 2D3 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_19] = sEmptyMoveset, // 2D4 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_20] = sEmptyMoveset, // 2D5 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_21] = sEmptyMoveset, // 2D6 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_22] = sEmptyMoveset, // 2D7 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_23] = sEmptyMoveset, // 2D8 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_24] = sEmptyMoveset, // 2D9 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_25] = sEmptyMoveset, // 2DA // EMPTY SLOT
+	[SPECIES_NEW_SLOT_26] = sEmptyMoveset, // 2DB // EMPTY SLOT
+	[SPECIES_NEW_SLOT_27] = sEmptyMoveset, // 2DC // EMPTY SLOT
+	[SPECIES_NEW_SLOT_28] = sEmptyMoveset, // 2DD // EMPTY SLOT
+	[SPECIES_NEW_SLOT_29] = sEmptyMoveset, // 2DE // EMPTY SLOT
+	[SPECIES_NEW_SLOT_30] = sEmptyMoveset, // 2DF // EMPTY SLOT
+	[SPECIES_NEW_SLOT_31] = sEmptyMoveset, // 2E0 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_32] = sEmptyMoveset, // 2E1 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_33] = sEmptyMoveset, // 2E2 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_34] = sEmptyMoveset, // 2E3 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_35] = sEmptyMoveset, // 2E4 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_36] = sEmptyMoveset, // 2E5 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_37] = sEmptyMoveset, // 2E6 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_38] = sEmptyMoveset, // 2E7 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_39] = sEmptyMoveset, // 2E8 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_40] = sEmptyMoveset, // 2E9 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_41] = sEmptyMoveset, // 2EA // EMPTY SLOT
+	[SPECIES_NEW_SLOT_42] = sEmptyMoveset, // 2EB // EMPTY SLOT
+	[SPECIES_NEW_SLOT_43] = sEmptyMoveset, // 2EC // EMPTY SLOT
+	[SPECIES_NEW_SLOT_44] = sEmptyMoveset, // 2ED // EMPTY SLOT
+	[SPECIES_NEW_SLOT_45] = sEmptyMoveset, // 2EE // EMPTY SLOT
+	[SPECIES_NEW_SLOT_46] = sEmptyMoveset, // 2EF // EMPTY SLOT
+	[SPECIES_NEW_SLOT_47] = sEmptyMoveset, // 2F0 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_48] = sEmptyMoveset, // 2F1 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_49] = sEmptyMoveset, // 2F2 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_50] = sEmptyMoveset, // 2F3 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_51] = sEmptyMoveset, // 2F4 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_52] = sEmptyMoveset, // 2F5 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_53] = sEmptyMoveset, // 2F6 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_54] = sEmptyMoveset, // 2F7 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_55] = sEmptyMoveset, // 2F8 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_56] = sEmptyMoveset, // 2F9 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_57] = sEmptyMoveset, // 2FA // EMPTY SLOT
+	[SPECIES_NEW_SLOT_58] = sEmptyMoveset, // 2FB // EMPTY SLOT
+	[SPECIES_NEW_SLOT_59] = sEmptyMoveset, // 2FC // EMPTY SLOT
+	[SPECIES_NEW_SLOT_60] = sEmptyMoveset, // 2FD // EMPTY SLOT
+	[SPECIES_NEW_SLOT_61] = sEmptyMoveset, // 2FE // EMPTY SLOT
+	[SPECIES_NEW_SLOT_62] = sEmptyMoveset, // 2FF // EMPTY SLOT
+	[SPECIES_NEW_SLOT_63] = sEmptyMoveset, // 300 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_64] = sEmptyMoveset, // 301 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_65] = sEmptyMoveset, // 302 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_66] = sEmptyMoveset, // 303 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_67] = sEmptyMoveset, // 304 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_68] = sEmptyMoveset, // 305 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_69] = sEmptyMoveset, // 306 // EMPTY SLOT
+	[SPECIES_NEW_SLOT_70] = sEmptyMoveset, // 307 // EMPTY SLOT
 
-	[SPECIES_NECROZMA_PLACEHOLDER] = sNecrozmaLevelUpLearnset // 313 // PLACEHOLDER SLOT
-	[SPECIES_KYUREM_ORIGINAL] = sKyuremLevelUpLearnset // 31A // NEW FORM - BOSS ONLY
-	[SPECIES_MEWTWO_ARMOR] = sMewtwoLevelUpLearnset // 31E // NEW FORM - BOSS ONLY
-	[SPECIES_LUGIA_SHADOW] = sLugiaLevelUpLearnset // 31F // NEW FORM - BOSS ONLY
-	[SPECIES_ARCEUS_FINAL] = sArceusLevelUpLearnset // 320 // NEW FORM - BOSS ONLY
+	[SPECIES_NECROZMA_PLACEHOLDER] = sNecrozmaLevelUpLearnset, // 313 // PLACEHOLDER SLOT
+	[SPECIES_KYUREM_ORIGINAL] = sKyuremLevelUpLearnset, // 31A // NEW FORM - BOSS ONLY
+	[SPECIES_MEWTWO_ARMOR] = sMewtwoLevelUpLearnset, // 31E // NEW FORM - BOSS ONLY
+	[SPECIES_LUGIA_SHADOW] = sLugiaLevelUpLearnset, // 31F // NEW FORM - BOSS ONLY
+	[SPECIES_ARCEUS_FINAL] = sArceusLevelUpLearnset, // 320 // NEW FORM - BOSS ONLY
 
-};
-*/
 };
 
 #endif

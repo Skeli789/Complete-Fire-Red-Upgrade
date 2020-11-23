@@ -52,7 +52,7 @@ BattleScript_Dynamax:
 	pause DELAY_1SECOND
 	pause DELAY_HALFSECOND
 	returntoball BANK_SCRIPTING
-	call BattleScript_TryRevertCramorant
+	@call BattleScript_TryRevertCramorant
 
 BattleScript_Dynamax_Rejoin:
 	waitstateatk
@@ -74,9 +74,9 @@ BattleScript_Dynamax_Rejoin:
 	end3
 
 BattleScript_TryRevertCramorant:
-	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GULPING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_TryRevertGorgingCramorant
+@	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GULPING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_TryRevertGorgingCramorant
 BattleScript_TryRevertGorgingCramorant:
-	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GORGING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_Dynamax_Rejoin
+@	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GORGING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_Dynamax_Rejoin
 	goto BattleScript_Dynamax_Rejoin
 
 .align 2
