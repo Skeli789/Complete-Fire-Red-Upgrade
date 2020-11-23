@@ -88,8 +88,6 @@ BattleScript_Primal:
 	end3
 
 BattleScript_PrimalSub:
-	jumpifspecies BANK_ATTACKER SPECIES_GROUDON_PRIMAL PGroudonAnim
-	jumpifspecies BANK_ATTACKER SPECIES_KYOGRE_PRIMAL PKyogreAnim
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 
 RegularPrimalAnim:
