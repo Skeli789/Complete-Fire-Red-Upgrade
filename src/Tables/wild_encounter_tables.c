@@ -389,6 +389,24 @@ static const struct WildPokemon sRoute18_LandMonsNight[] =
 
 static const struct WildPokemonInfo sRoute18_LandMonsInfoNight = {20, sRoute18_LandMonsNight};
 
+static const struct WildPokemon sRedwoodForest_LandMonsNight[] =
+{
+	{55, 65, SPECIES_ARIADOS},
+	{55, 65, SPECIES_VIGOROTH},
+	{55, 65, SPECIES_ARIADOS},
+	{55, 65, SPECIES_VIGOROTH},
+	{55, 65, SPECIES_URSARING},
+	{55, 65, SPECIES_URSARING},
+	{60, 65, SPECIES_HERACROSS},
+	{60, 65, SPECIES_KOMALA},
+	{60, 65, SPECIES_KOMALA},
+	{60, 65, SPECIES_KOMALA},
+	{60, 65, SPECIES_PASSIMIAN},
+	{60, 65, SPECIES_ORANGURU},
+};
+
+static const struct WildPokemonInfo sRedwoodForest_LandMonsInfoNight = {20, sRedwoodForest_LandMonsNight};
+
 const struct WildPokemonHeader gWildMonMorningHeaders[] =
 {
 	{
@@ -568,6 +586,14 @@ const struct WildPokemonHeader gWildMonNightHeaders[] =
 		.fishingMonsInfo = NULL,
 	},
 	{
+		.mapGroup = MAP_GROUP(REDWOOD_FOREST),
+		.mapNum = MAP_NUM(REDWOOD_FOREST),
+		.landMonsInfo = &sRedwoodForest_LandMonsInfoNight,
+		.waterMonsInfo = NULL,
+		.rockSmashMonsInfo = NULL,
+		.fishingMonsInfo = NULL,
+	},
+	{
 		.mapGroup = 0xFF,
 		.mapNum = 0xFF,
 		.landMonsInfo = NULL,
@@ -580,11 +606,11 @@ const struct WildPokemonHeader gWildMonNightHeaders[] =
 const struct SwarmData gSwarmTable[] =
 {
 	{
-		.mapName = MAPSEC_ROUTE_1,
-		.species = SPECIES_SNEASEL,
+		.mapName = MAPSEC_ROUTE_2,
+		.species = SPECIES_POOCHYENA,
 	},
 	{
-		.mapName = MAPSEC_ROUTE_2,
+		.mapName = MAPSEC_ROUTE_3,
 		.species = SPECIES_BURMY,
 	},
 	{

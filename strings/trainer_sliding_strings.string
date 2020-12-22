@@ -21,7 +21,7 @@ Prepare yourself for my trump card.\p
 It's time for you to fly high,\n[FD][06]!\p 
 
 #org @sText_MelLastSwitchIn
-Fight like the roaring waterfall\nbehind us, [FD][06]!\p 
+Show 'em how good we look and\nfight, [FD][06]!\p 
 
 #org @sText_GalavanLastSwitchIn
 Ha ha ha ha!\nIt ain't over yet!\p 
@@ -30,25 +30,25 @@ Ha ha ha ha!\nIt ain't over yet!\p
 Show 'em how tough we really are,\n[FD][06]!\p 
 
 #org @sText_TessyLastSwitchIn
-It's time for the real fight,\nI reckon'!\p
+It's time for the real fight,\nI reckon'!\p 
 
 #org @sText_BenjaminLastSwitchIn
-Time is running out!\pLet's make the most of it,\nmy Pok\emon!
+Time is running out!\pLet's make the most of it,\nmy Pok\emon!\p 
 
-#org @sText_MolemanLastSwitchIn
-The mole-people never give in!\nFeel our wrath, surface dweller!
+#org @sText_MolemanLastLowHP
+The mole-people never give in!\nFeel our wrath, surface dweller!\p 
 
 #org @sText_EliasLastSwitchIn
-Oh, great, one Pok\emon left[.]
+Oh, great, one Pok\emon left[.]\p 
 
 #org @sText_AnabelleLastSwitchIn
-Tee hee!\nWe're not done fighting yet!
+Tee hee!\nWe're not done fighting yet!\p 
 
-#org @sText_PennyLastSwitchIn
-Wroooooar!
+#org @sText_PennyLastLowHP
+Wroooooar!\p 
 
-#org @sText_JaxLastSwitchIn
-Let's do this, you guys!\nWe can still come out on top!\p
+#org @sText_JaxLastLowHP
+Let's do this!\nWe can still come out on top!\p 
 
 #org @sText_Zeph1LowHP
 Impossible[.]\p 
@@ -57,7 +57,7 @@ Impossible[.]\p
 No!\nI can't lose again!\p 
 
 #org @sText_Zeph3LowHP
-One Pok\emon left[.]\pNow is the time when I show my son\nhow to truly battle!\p
+One Pok\emon left[.]\pNow is the time when I show my son\nhow to truly battle!\p 
 
 #org @sText_MaximaLastSwitchIn
 The power of Mega Evolution[.]\nCan you feel it within your reach?\p 

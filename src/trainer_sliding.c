@@ -33,6 +33,7 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2CF, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x2D0, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x2D1, sText_MirskleFirstMonDown, NULL, NULL},
+	{0x33, sText_MirskleFirstMonDown, NULL, NULL}, //Post Game
 	{0x19F, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D2, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D3, NULL, sText_VegaLastSwitchIn, NULL},
@@ -61,10 +62,10 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2E4, NULL, sText_BenjaminLastSwitchIn, NULL},
 	{0x2E5, NULL, sText_BenjaminLastSwitchIn, NULL},
 	{0x2E6, NULL, sText_BenjaminLastSwitchIn, NULL},
-	{0x19A, NULL, sText_MolemanLastSwitchIn, NULL},
-	{0x2C0, NULL, sText_MolemanLastSwitchIn, NULL},
-	{0x2C1, NULL, sText_MolemanLastSwitchIn, NULL},
-	{0x2C2, NULL, sText_MolemanLastSwitchIn, NULL},
+	{0x19A, NULL, NULL, sText_MolemanLastLowHP},
+	{0x2C0, NULL, NULL, sText_MolemanLastLowHP},
+	{0x2C1, NULL, NULL, sText_MolemanLastLowHP},
+	{0x2C2, NULL, NULL, sText_MolemanLastLowHP},
 	{0x19B, NULL, sText_EliasLastSwitchIn, NULL},
 	{0x2C3, NULL, sText_EliasLastSwitchIn, NULL},
 	{0x2C4, NULL, sText_EliasLastSwitchIn, NULL},
@@ -73,14 +74,14 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2C6, NULL, sText_AnabelleLastSwitchIn, NULL},
 	{0x2C7, NULL, sText_AnabelleLastSwitchIn, NULL},
 	{0x2C8, NULL, sText_AnabelleLastSwitchIn, NULL},
-	{0x19D, NULL, sText_PennyLastSwitchIn, NULL},
-	{0x2C9, NULL, sText_PennyLastSwitchIn, NULL},
-	{0x2CA, NULL, sText_PennyLastSwitchIn, NULL},
-	{0x2CB, NULL, sText_PennyLastSwitchIn, NULL},
-	{0x19E, NULL, sText_JaxLastSwitchIn, NULL},
-	{0x2CC, NULL, sText_JaxLastSwitchIn, NULL},
-	{0x2CD, NULL, sText_JaxLastSwitchIn, NULL},
-	{0x2CE, NULL, sText_JaxLastSwitchIn, NULL},
+	{0x19D, NULL, NULL, sText_PennyLastLowHP},
+	{0x2C9, NULL, NULL, sText_PennyLastLowHP},
+	{0x2CA, NULL, NULL, sText_PennyLastLowHP},
+	{0x2CB, NULL, NULL, sText_PennyLastLowHP},
+	{0x19E, NULL, NULL, sText_JaxLastLowHP},
+	{0x2CC, NULL, NULL, sText_JaxLastLowHP},
+	{0x2CD, NULL, NULL, sText_JaxLastLowHP},
+	{0x2CE, NULL, NULL, sText_JaxLastLowHP},
 
 	{0x15C, NULL, NULL, sText_Zeph1LowHP},
 	{0x2AB, NULL, NULL, sText_Zeph1LowHP},
@@ -162,12 +163,7 @@ void HandleIntroSlide(u8 terrain)
 	{
 		taskId = CreateTask(BattleIntroSlide3, 0);
 	}
-	else if ((gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON) && gGameVersion != VERSION_RUBY) //Why?
-	{
-		terrain = BATTLE_TERRAIN_UNDERWATER;
-		taskId = CreateTask(BattleIntroSlide2, 0);
-	}
-	else if (terrain > 0x13) //Terrain Champion
+	else if (terrain > BATTLE_TERRAIN_CHAMPION)
 	{
 		taskId = CreateTask(BattleIntroSlide3, 0);
 	}
@@ -220,7 +216,9 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 			gBattleScripting.bank = bank;
 			switch (caseId) {
 				case TRAINER_SLIDE_LAST_SWITCHIN:
-					if (sTrainerSlides[i].msgLastSwitchIn != NULL && GetEnemyMonCount(TRUE) == 1)
+					if (sTrainerSlides[i].msgLastSwitchIn != NULL
+					&& ((IS_SINGLE_BATTLE && GetEnemyMonCount(TRUE) == 1)
+					 || (IS_DOUBLE_BATTLE && GetEnemyMonCount(TRUE) <= 2)))
 					{
 						gBattleStringLoader = sTrainerSlides[i].msgLastSwitchIn;
 						return TRUE;

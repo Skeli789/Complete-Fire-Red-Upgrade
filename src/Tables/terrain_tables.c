@@ -376,6 +376,15 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
 
+	[BATTLE_TERRAIN_DISTORTION_WORLD_FULL + 4] =
+		{
+			.camouflageType = TYPE_GHOST,
+			.secretPowerEffect = MOVE_EFFECT_DEF_MINUS_1,
+			.secretPowerAnim = MOVE_SHADOWSNEAK,
+			.naturePowerMove = MOVE_SHADOWBALL,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
 	[BATTLE_TERRAIN_GRASS_GYM + 4] =
 		{
 			.camouflageType = TYPE_GRASS,
