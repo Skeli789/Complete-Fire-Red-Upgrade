@@ -978,7 +978,7 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 		 #ifdef FLAG_BOUGHT_ADM
 		 FlagGet(FLAG_BOUGHT_ADM) ||
 		 #endif
-		 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE)))
+		 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE))
 		#endif
 		)
 		{
@@ -1024,6 +1024,12 @@ static bool8 SetUpFieldMove_Fly(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
 		return FALSE;
+
+	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_NEWMOON_ISLAND
+	&& VarGet(VAR_DARKRAI_EVENT) < 3)
+		return FALSE; //Can't fly while dreaming
+	#endif
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
 		return TRUE;
@@ -1875,6 +1881,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -1887,6 +1894,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO_Y;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -1899,6 +1907,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			{
 				species = SPECIES_ORICORIO_P;
 				DoItemFormChange(mon, species);
+				RemoveBagItem(Var800E, 1);
 				gTasks[taskId].func = func;
 			}
 			else
@@ -2502,7 +2511,8 @@ void FieldUseFunc_VsSeeker(u8 taskId)
 	  && gMapHeader.mapType != MAP_TYPE_TOWN
 	  && gMapHeader.mapType != MAP_TYPE_CITY)
 	|| mapSec == MAPSEC_GRIM_WOODS
-	|| mapSec == MAPSEC_VIVILL_WOODS)
+	|| mapSec == MAPSEC_VIVILL_WOODS
+	|| mapSec == MAPSEC_REDWOOD_FOREST)
 	{
 		PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
 	}

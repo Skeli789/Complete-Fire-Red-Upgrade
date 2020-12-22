@@ -8,6 +8,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainer_classes.h"
@@ -171,9 +172,7 @@ u8 GetBattleTerrainOverride(void)
 			}
 			else
 		#elif (defined UNBOUND)
-			u8 trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0);
-			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
-			if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
+			if (MAP_IS(POKEMON_LEAGUE_CHAMPIONS_ROOM))
 			{
 				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
@@ -320,7 +319,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 			if (IsCurrentAreaDesert())
 				terrain = BATTLE_TERRAIN_DESERT;
 			break;
-		case BATTLE_TERRAIN_ANTISIS_SEWERS:
+		case BATTLE_TERRAIN_INSIDE:
 			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS)
 				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
 			break;

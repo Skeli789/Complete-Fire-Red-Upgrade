@@ -1425,10 +1425,20 @@ BS_057_Transform:
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ILLUSION 0x0 FAILED_PRE
 	attackstring
 	ppreduce
+	callasm FailTransformIfAura
 	transformdataexecution
 	attackanimation
 	waitanimation
 	printfromtable 0x83FE5B4
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+.global BattleScript_TransformFailedOnAura
+BattleScript_TransformFailedOnAura:
+	pause 0x20
+	orbyte OUTCOME, OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_TransformFailsOnWildBosses
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -4959,6 +4969,8 @@ BS_228_FieldEffects:
 	
 GravityBringDownBS:
 	callasm BringDownMons
+	setbyte BATTLE_COMMUNICATION 0
+	callasm PrintElectromagnetismFloatingStrings
 	goto BS_MOVE_END
 	
 PlasmaFistsBS:

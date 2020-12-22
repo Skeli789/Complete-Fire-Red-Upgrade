@@ -154,7 +154,7 @@ void HandleInputChooseMove(void)
 		{
 			CloseZMoveDetails();
 			CloseMaxMoveDetails();
-			TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, chosenMove);
+			TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, chosenMove, FALSE);
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 			PlayerBufferExecCompleted();
 		}
@@ -1331,7 +1331,7 @@ void HandleInputChooseTarget(void)
 	{
 		PlaySE(SE_SELECT);
 		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
-		TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+		TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], FALSE);
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 		CloseZMoveDetails();
 		CloseMaxMoveDetails();
@@ -1992,10 +1992,10 @@ bool8 IsBagDisabled(void)
 		if (difficulty == OPTIONS_HARD_DIFFICULTY)
 		{
 			if (gNewBS->playerItemUsedCount >= 4) //Max four items can be used
-				return FALSE;
+				return TRUE;
 		}
 		if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
-			return FALSE;
+			return TRUE;
 	}
 	#endif
 

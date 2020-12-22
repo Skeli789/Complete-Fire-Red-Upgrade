@@ -7837,7 +7837,7 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_PUNISHMENT] =
 	{
 		.effect = EFFECT_HIT,
-		.power = 1,
+		.power = 60, //Starts at 60 so best to show it to the player
 		.type = TYPE_DARK,
 		.accuracy = 100,
 		.pp = 5,
@@ -11867,7 +11867,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_SURGINGSTRIKES] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_MULTI_HIT,
 		.power = 25,
 		.type = TYPE_WATER,
@@ -11948,7 +11948,7 @@ const struct BattleMove gBattleMoves[] =
 	
 	[MOVE_THUNDERCAGE] =
 	{	//ANIM TODO
-		.effect = EFFECT_TRAP, //EFFECT TODO?
+		.effect = EFFECT_TRAP,
 		.power = 80,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 90,
@@ -13452,7 +13452,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_G_MAX_VINE_LASH_P] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
@@ -13468,7 +13468,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 	
 	[MOVE_G_MAX_VINE_LASH_S] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
@@ -13516,7 +13516,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 	
 	[MOVE_G_MAX_CANNONADE_P] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_WATER,

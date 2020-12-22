@@ -19,6 +19,7 @@ et_battle_scripts.s
 .global BattleScript_AquaRing
 .global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
+.global BattleScript_BadThoughtsTurnDmg
 .global BattleScript_YawnMakesAsleep
 .global BattleScript_MagnetRiseEnd
 .global BattleScript_TelekinesisEnd
@@ -215,6 +216,15 @@ BattleScript_PoisonHeal:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_BadThoughtsTurnDmg:
+	playanimation BANK_ATTACKER ANIM_WAITING_WAGGLE 0x0
+	setword BATTLE_STRING_LOADER gText_TormentedByBadThoughts
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BattleScript_DoTurnDmg
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_YawnMakesAsleep:
 	statusanimation BANK_EFFECT
 	printstring 0x23 @;STRINGID_PKMNFELLASLEEP
@@ -316,8 +326,11 @@ BattleScript_MagicRoomEnd:
 
 BattleScript_GravityEnd:
 	setword BATTLE_STRING_LOADER GravityEndString
-	goto PrintTimerString
-
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_COMMUNICATION 0
+	callasm PrintElectromagnetismFloatingStrings
+	end2
 
 BattleScript_TerrainEnd:
 	setbyte TERRAIN_BYTE 0x0

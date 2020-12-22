@@ -293,7 +293,10 @@ bool8 StartRButtonFunc(void)
 			#ifdef MB_UNDERGROUND_MINING
 			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY
 			|| MAP_IS(CRYSTAL_PEAK_1F_LEFT_ROOM)
-			|| gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+			|| (gMapHeader.mapType == MAP_TYPE_UNDERWATER
+			 && !MAP_IS(MIRSKLE_LAB_UNDERWATER_1)
+			 && !MAP_IS(MIRSKLE_LAB_UNDERWATER_2)
+			 && !MAP_IS(VIVILL_WAREHOUSE_UNDERWATER)))
 			{
 				TryLoadMiningSpots();
 				ChooseMiningSpotToShow();

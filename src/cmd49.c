@@ -67,8 +67,8 @@ enum
 	ATK49_STATUS_IMMUNITY_ABILITIES,
 	ATK49_UPDATE_LAST_MOVES,
 	ATK49_MIRROR_MOVE,
-	ATK49_MULTI_HIT_MOVES,
 	ATK49_RAID_SHIELD_BREAK,
+	ATK49_MULTI_HIT_MOVES,
 	ATK49_ITEM_EFFECTS_END_TURN_TARGET_2,
 	ATK49_DEFROST,
 	ATK49_SECOND_MOVE_EFFECT,
@@ -551,6 +551,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				{
 					gLastUsedMoves[gBankAttacker] = gChosenMove;
 					gLastResultingMoves[gBankAttacker] = gCurrentMove;
+					RecordLastUsedMoveByAttacker(gCurrentMove);
 				}
 				else
 				{
@@ -566,6 +567,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					if (gChosenMove == 0xFFFF)
 					{
 						gLastLandedMoves[bankDef] = gChosenMove;
+					RecordLastUsedMoveByAttacker(gCurrentMove);
 					}
 					else
 					{
@@ -608,6 +610,45 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			gBattleScripting.atk49_state++;
 			gSeedHelper[0] = 0; //Reset Seed Helper for Soul Heart
+			break;
+
+		case ATK49_RAID_SHIELD_BREAK: //Here b/c multi-hit moves only break one shield
+		#ifdef FLAG_RAID_BATTLE
+			if (IsRaidBattle()
+			&& GetBattlerPosition(gBankTarget) == B_POSITION_OPPONENT_LEFT
+			&& MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gNewBS->dynamaxData.raidShieldsUp
+			&& (gMultiHitCounter <= 1 //Multi-Hit moves break the shield on the last strik
+				|| !BATTLER_ALIVE(gBankAttacker) //Or if the attacker fainted early
+				|| gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed == 1)) //Or immediately if there's only one shield left
+			{
+				DestroyRaidShieldSprite();
+				if (IsAnyMaxMove(gCurrentMove)
+				|| IsZMove(gCurrentMove)
+				|| gBattleMoves[gCurrentMove].effect == EFFECT_0HKO
+				|| gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK) //Unofficial addition
+					DestroyRaidShieldSprite();
+				if (IsZMove(gCurrentMove))
+					DestroyRaidShieldSprite(); //Z-Moves destroy 3 shields
+
+				if (gNewBS->dynamaxData.shieldsDestroyed >= gNewBS->dynamaxData.shieldCount)
+				{
+					gNewBS->dynamaxData.raidShieldsUp = FALSE;
+					gBattleScripting.bank = gBankTarget;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BrokenRaidBarrier;
+
+					//Do some residual damage after the shattering
+					gBattleMoveDamage = gBattleMons[gBankTarget].maxHP / 6;
+					if (gNewBS->dynamaxData.shieldsDestroyed > gNewBS->dynamaxData.shieldCount)
+						gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+					gNewBS->dynamaxData.turnStartHP = gBattleMons[gBankTarget].hp - gBattleMoveDamage; //No reactivating barrier yet
+					effect = TRUE;
+				}
+			}
+		#endif
+			gBattleScripting.atk49_state++;
 			break;
 
 		case ATK49_MULTI_HIT_MOVES:
@@ -687,42 +728,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gMultiHitCounter = 0;
 			gNewBS->ParentalBondOn = 0;
 			gNewBS->MultiHitOn = FALSE;
-			break;
-
-		case ATK49_RAID_SHIELD_BREAK: //Here b/c multi-hit moves only break one shield
-		#ifdef FLAG_RAID_BATTLE
-			if (IsRaidBattle()
-			&& GetBattlerPosition(gBankTarget) == B_POSITION_OPPONENT_LEFT
-			&& MOVE_HAD_EFFECT
-			&& TOOK_DAMAGE(gBankTarget)
-			&& gNewBS->dynamaxData.raidShieldsUp)
-			{
-				DestroyRaidShieldSprite();
-				if (IsAnyMaxMove(gCurrentMove)
-				|| IsZMove(gCurrentMove)
-				|| gBattleMoves[gCurrentMove].effect == EFFECT_0HKO
-				|| gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK) //Unofficial addition
-					DestroyRaidShieldSprite();
-				if (IsZMove(gCurrentMove))
-					DestroyRaidShieldSprite(); //Z-Moves destroy 3 shields
-
-				if (gNewBS->dynamaxData.shieldsDestroyed >= gNewBS->dynamaxData.shieldCount)
-				{
-					gNewBS->dynamaxData.raidShieldsUp = FALSE;
-					gBattleScripting.bank = gBankTarget;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_BrokenRaidBarrier;
-
-					//Do some residual damage after the shattering
-					gBattleMoveDamage = gBattleMons[gBankTarget].maxHP / 6;
-					if (gNewBS->dynamaxData.shieldsDestroyed > gNewBS->dynamaxData.shieldCount)
-						gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
-					gNewBS->dynamaxData.turnStartHP = gBattleMons[gBankTarget].hp - gBattleMoveDamage; //No reactivating barrier yet
-					effect = TRUE;
-				}
-			}
-		#endif
-			gBattleScripting.atk49_state++;
 			break;
 
 		case ATK49_DEFROST: // defrosting check

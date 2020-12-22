@@ -292,7 +292,12 @@
 #define TRAINER_BACK_PIC_ABIMBOLA       13
 #define TRAINER_BACK_PIC_MAHINA         14
 #define TRAINER_BACK_PIC_ALFORD         15
-#define TRAINER_BACK_PIC_TESSY          16
+#define TRAINER_BACK_PIC_VEGA           16
+#define TRAINER_BACK_PIC_ALICE          17
+#define TRAINER_BACK_PIC_MEL            18
+#define TRAINER_BACK_PIC_GALAVAN        19
+#define TRAINER_BACK_PIC_BIG_MO         20
+#define TRAINER_BACK_PIC_TESSY          21
 
 #endif
 

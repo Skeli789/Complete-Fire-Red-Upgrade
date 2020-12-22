@@ -83,8 +83,6 @@ static bool8 ShouldAIUseItem(void);
 static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
 #endif
 
-void __attribute__((long_call)) RecordLastUsedMoveByTarget(void);
-
 void BattleAI_HandleItemUseBeforeAISetup(void)
 {
 	u32 i;
@@ -313,7 +311,6 @@ static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData)
 	s32 i;
 	u32 flags = AI_THINKING_STRUCT->aiFlags;
 
-	RecordLastUsedMoveByTarget();
 	PopulateAIScriptStructWithBaseDefenderData(aiScriptData, gBankTarget);
 
 	while (flags != 0)
@@ -370,11 +367,10 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 	u8 actionOrMoveIndex[4];
 	u8 mostViableMovesScores[4];
 	u8 mostViableMovesIndices[4];
-	s32 mostViableTargetsNo;
-	s32 mostViableMovesNo;
-	s16 mostMovePoints;
+	s32 mostViableTargetsNo, mostViableMovesNo, mostMovePoints;
 
-	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+	//Get best moves for each potential target
+	for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
 	{
 		if (i == gBankAttacker || !BATTLER_ALIVE(i))
 		{
@@ -385,9 +381,6 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 		{
 			BattleAI_SetupAIData(0xF);
 			PopulateAIScriptStructWithBaseDefenderData(aiScriptData, gBankTarget = i);
-
-			if ((i & BIT_SIDE) != (gBankAttacker & BIT_SIDE))
-				RecordLastUsedMoveByTarget();
 
 			AI_THINKING_STRUCT->aiLogicId = 0;
 			AI_THINKING_STRUCT->movesetIndex = 0;
@@ -449,55 +442,137 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 		}
 	}
 
-	mostMovePoints = bestMovePointsForTarget[0];
+	/*
+	Choose best potential targets. If targets have the same score, the better target is determined by:
+	1. Move that can knock out target.
+		- KOing both targets then chooses foe that can KO (poses bigger threat)
+	2. Move that does the most damage.
+	*/
+	mostMovePoints = bestMovePointsForTarget[0]; //Start with first target
 	mostViableTargetsArray[0] = 0;
 	mostViableTargetsNo = 1;
 
-	bool8 statusMoveOption = FALSE;
-	u32 mostDamage = (actionOrMoveIndex[0] < MAX_MON_MOVES && SPLIT(actionOrMoveIndex[0]) != SPLIT_STATUS) ?
-		GetFinalAIMoveDamage(actionOrMoveIndex[0], gBankAttacker, mostViableTargetsArray[0], 1, NULL) : 0;
+	u16 firstMove = actionOrMoveIndex[0];
+	u32 mostDamage = 0; //The most damage AI could do to any target
+	u32 mostDmgTarget = 0; //The bank the most damage could be done to
+	bool8 mostDmgKnocksOut = FALSE; //Whether or not the strongest move also KOs
+	bool8 statusMoveOption = FALSE; //Whether or not a status move will potentially be used
 
-	struct DamageCalc damageData = {0};
-	damageData.bankAtk = gBankAttacker;
-	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
-	for (i = 1; i < MAX_BATTLERS_COUNT; i++)
+	if (firstMove < MAX_MON_MOVES) //A move was chosen against the first target
 	{
-		if (bestMovePointsForTarget[i] == mostMovePoints)
+		if (SPLIT(firstMove) != SPLIT_STATUS) //Move against first target isn't status move
+		{
+			//Calculate important data for later
+			mostDmgTarget = mostViableTargetsArray[0]; //First target
+			mostDmgKnocksOut = MoveKnocksOutXHits(firstMove, gBankAttacker, mostDmgTarget, 1);
+			mostDamage = GetFinalAIMoveDamage(firstMove, gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+		}
+		else
+			statusMoveOption = TRUE;
+	}
+
+	for (i = 1; i < MAX_BATTLERS_COUNT; ++i) //Start by looping through the rest of the targets
+	{
+		if (bestMovePointsForTarget[i] == mostMovePoints) //This target is as good to hit as the other one
 		{
 			u16 move = actionOrMoveIndex[i];
-			u16 pastMove = actionOrMoveIndex[i - 1];
-			u32 thisDamage = 0;
-			statusMoveOption = move < MAX_MON_MOVES && SPLIT(move) == SPLIT_STATUS;
+			statusMoveOption = statusMoveOption || (move < MAX_MON_MOVES && SPLIT(move) == SPLIT_STATUS); //Update if status move can potentially be used
 
-			if (move < MAX_MON_MOVES //Move was chosen
-			&&  pastMove < MAX_MON_MOVES
-			&&  SPLIT(move) != SPLIT_STATUS
-			&&  SPLIT(pastMove) != SPLIT_STATUS)
+			if (SIDE(i) != SIDE(gBankAttacker) //Don't do damage calcs for mons on the same side
+			&& move < MAX_MON_MOVES //Move was chosen
+			&& SPLIT(move) != SPLIT_STATUS) //And this move isn't a status move
 			{
-				//Choose the target which the most damage can be done to
-				damageData.bankDef = i;
-				PopulateDamageCalcStructWithBaseDefenderData(&damageData);
-				thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, &damageData);
-				if (thisDamage <= mostDamage)
-					continue; //Don't store this target if less damage can be done to it
+				//Try choosing the target which the most damage can be done to
+				bool8 thisDmgKnocksOut = MoveKnocksOutXHits(move, gBankAttacker, i, 1);
+				u32 thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, NULL); //Assumes damage has already been cached
 
-				if (!statusMoveOption)
+				if (!thisDmgKnocksOut && mostDmgKnocksOut)
 				{
-					mostViableTargetsArray[0] = i;
+					//Best move KOs a target but this target can't be KOd so skip this move
+					continue;
+				}
+				else if (thisDmgKnocksOut && !mostDmgKnocksOut)
+				{
+					//This move KOs a target making it better than even the move that could do a higher damage number to another target
+					//Fallthrough and replace the most damaging move
+				}
+				else if (thisDmgKnocksOut && mostDmgKnocksOut)
+				{
+					//Both targets can be KOd so they're both viable
+					//But the better target is the one that poses a bigger threat
+					bool8 thisFoeCanKOAI = CanKnockOut(i, gBankAttacker);
+					bool8 bestFoeCanKOAI = CanKnockOut(mostDmgTarget, gBankAttacker);
+
+					if (!thisFoeCanKOAI && bestFoeCanKOAI)
+						continue; //Prioritize foe that can KO the AI
+					else if (thisFoeCanKOAI && bestFoeCanKOAI)
+						goto ADD_TARGET_AS_MOST_VIABLE; //Both foes can KO the AI, so both are good targets
+					else if (!thisFoeCanKOAI && !bestFoeCanKOAI)
+						goto ADD_TARGET_AS_MOST_VIABLE; //Neither foe can KO the AI, so both are good targets
+					//else if (thisFoeCanKOAI && !bestFoeCanKOAI) //Inferred
+						//Fallthrough and replace best damaging moves
+				}
+				else //if (!thisDmgKnocksOut && !mostDmgKnocksOut) //Inferred
+				{
+					//Neither target can be knocked out
+
+					if (thisDamage == mostDamage) //Both moves do the same damage to multiple targets
+						goto ADD_TARGET_AS_MOST_VIABLE;
+					else if (thisDamage < mostDamage)
+						continue; //Don't store this target if less damage can be done to it
+				}
+
+				if (!statusMoveOption) //Only replace all moves if no status moves can potentially be used
+				{
 					mostViableTargetsNo = 1;
+					mostViableTargetsArray[0] = mostDmgTarget = i;
+					mostDmgKnocksOut = thisDmgKnocksOut;
 					mostDamage = thisDamage;
+					continue;
+				}
+				else //Replace all non status moves with this best one
+				{
+					mostDmgTarget = i;
+					mostDmgKnocksOut = thisDmgKnocksOut;
+					mostDamage = thisDamage;
+
+					for (j = 0; j < mostViableTargetsNo; ++j)
+					{
+						u8 bankDef = mostViableTargetsArray[j];
+						u16 move = actionOrMoveIndex[bankDef];
+						
+						if (move < MAX_MON_MOVES && SPLIT(move) != SPLIT_STATUS)
+							mostViableTargetsArray[j] = mostDmgTarget;
+					}
+
+					//TODO: Filter out duplicates
 					continue;
 				}
 			}
 
-			mostViableTargetsArray[mostViableTargetsNo] = i;
-			mostViableTargetsNo++;
+			ADD_TARGET_AS_MOST_VIABLE:
+			mostViableTargetsArray[mostViableTargetsNo++] = i;
 		}
-		else if (bestMovePointsForTarget[i] > mostMovePoints)
+		else if (bestMovePointsForTarget[i] > mostMovePoints) //This target is the best one so far
 		{
-			mostMovePoints = bestMovePointsForTarget[i];
-			mostViableTargetsArray[0] = i;
+			//Make target new best and only target
 			mostViableTargetsNo = 1;
+			mostViableTargetsArray[0] = i;
+			mostMovePoints = bestMovePointsForTarget[i];
+
+			if (i + 1 < MAX_BATTLERS_COUNT) //Don't waste time if loop is about to end
+			{
+				if (SPLIT(actionOrMoveIndex[i]) != SPLIT_STATUS) //Move against target isn't status move
+				{
+					//Calculate important data for later
+					statusMoveOption = FALSE;
+					mostDmgTarget = mostViableTargetsArray[0]; //New target
+					mostDmgKnocksOut = MoveKnocksOutXHits(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1);
+					mostDamage = GetFinalAIMoveDamage(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+				}
+				else
+					statusMoveOption = TRUE;
+			}
 		}
 	}
 
@@ -1436,11 +1511,24 @@ static bool8 IsYawned(void)
 
 static bool8 ShouldSwitchWhileAsleep(void)
 {
+	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
+		return FALSE;
+
 	if (IsBankAsleep(gActiveBattler)
+	&& Random() & 1 //50 % chance of switching out here
 	&& (!IsDynamaxed(gActiveBattler) //Not Dynamaxed
-	 || (s8) (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) <= gNewBS->dynamaxData.timer[gActiveBattler])) //Or will wake up before the Dynamax ends
+	 || (s8) (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > gNewBS->dynamaxData.timer[gActiveBattler])) //Or will wake up after the Dynamax ends
 	{
 		u8 ability = ABILITY(gActiveBattler);
+
+		if (STAT_STAGE(gActiveBattler, STAT_STAGE_ATK) >= 8
+		||  STAT_STAGE(gActiveBattler, STAT_STAGE_SPATK) >= 8
+		||  STAT_STAGE(gActiveBattler, STAT_STAGE_SPEED) >= 8
+		||  STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 8)
+		{
+			if (Random() & 1) //50 % chance of not switching out here
+				return FALSE; //Lower chance of switching out if AI has some good stat boosted
+		}
 
 		if (ability == ABILITY_SHEDSKIN
 		|| ability == ABILITY_EARLYBIRD
@@ -1490,8 +1578,9 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 	if (IS_SINGLE_BATTLE
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
-		u16 atkMove = IsValidMovePrediction(gActiveBattler, FOE(gActiveBattler));
-		u16 defMove = IsValidMovePrediction(FOE(gActiveBattler), gActiveBattler);
+		u8 bankDef = FOE(gActiveBattler);
+		u16 atkMove = IsValidMovePrediction(gActiveBattler, bankDef);
+		u16 defMove = IsValidMovePrediction(bankDef, gActiveBattler);
 
 		if (gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS
 		&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 3)
@@ -1501,22 +1590,32 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 				return FALSE; //Don't switch out a paralyzed Pokemon that'll probably be KO'd when it switches back in
 		}
 
+		if ((SPECIES(gActiveBattler) == SPECIES_AEGISLASH || SPECIES(gActiveBattler) == SPECIES_AEGISLASH_BLADE) //Mon to be switched is Aegislash
+		&& gDisableStructs[gActiveBattler].protectUses == 0 //And it didn't use King's Shield last
+		&& defMove != MOVE_NONE //Aegislash would be hit
+		&& CheckContact(defMove, bankDef) //With a contact move
+		&& PhysicalMoveInMoveset(bankDef) //That's probably physical
+		&& ABILITY(gActiveBattler) == ABILITY_STANCECHANGE
+		&& MoveInMoveset(MOVE_KINGSSHIELD, gActiveBattler))
+			return FALSE; //Don't switch and use King's Shield instead
+
 		if (defMove != MOVE_NONE //Foe going to attack
-		&& (atkMove == MOVE_NONE || !MoveWouldHitFirst(atkMove, gActiveBattler, FOE(gActiveBattler))) //Attacker wouldn't go first
-		&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || !MoveBlockedBySubstitute(defMove, FOE(gActiveBattler), gActiveBattler))
-		&&  MoveKnocksOutXHits(defMove, FOE(gActiveBattler), gActiveBattler, 1) //Foe will kill
+		&& (atkMove == MOVE_NONE || !MoveWouldHitFirst(atkMove, gActiveBattler, bankDef)) //Attacker wouldn't go first
+		&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || !MoveBlockedBySubstitute(defMove, bankDef, gActiveBattler))
+		&&  MoveKnocksOutXHits(defMove, bankDef, gActiveBattler, 1) //Foe will kill
 		&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 3) //33% health loss
-		&& GetHealthPercentage(gActiveBattler) > 20) //Don't switch out mons that are super close to death
+		&& (GetHealthPercentage(gActiveBattler) > 20 //Don't switch out mons that are super close to death
+		 || GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_SCORE_MAX)) //Unless its a really good switch
 		{
 			u8 firstId, lastId;
 			struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 			u8 bestMon = GetMostSuitableMonToSwitchInto();
-			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), &party[bestMon]);
+			u32 resultFlags = AI_TypeCalc(defMove, bankDef, &party[bestMon]);
 
 			if ((resultFlags & MOVE_RESULT_NO_EFFECT && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE) //Has some sort of followup
 			||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
 				&& GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE
-				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], FOE(gActiveBattler))))
+				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], bankDef)))
 			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -1801,7 +1900,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 					case EFFECT_TEAM_EFFECTS:
 						switch (move) {
 							case MOVE_TAILWIND:
-								if (gNewBS->TailwindTimers[SIDE(bankAtk)] == 0)
+								if (BankSideHasTailwind(bankAtk))
 									return FALSE;
 								break;
 							case MOVE_LUCKYCHANT:
@@ -1980,6 +2079,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 		if (consideredMon->species != SPECIES_NONE
 		&& consideredMon->hp > 0
 		&& !GetMonData(consideredMon, MON_DATA_IS_EGG, NULL)
+		&& (!(consideredMon->condition & (STATUS1_SLEEP | STATUS1_FREEZE)) || consideredMon->condition == 1) //Not asleep or is about to wake up
 		&& i != gBattlerPartyIndexes[battlerIn1]
 		&& i != gBattlerPartyIndexes[battlerIn2]
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]
@@ -2368,7 +2468,11 @@ u32 WildMonIsSmart(unusedArg u8 bank)
 		if (IsMegaSpecies(species)
 		|| IsRedPrimalSpecies(species)
 		|| IsBluePrimalSpecies(species)
-		|| IsUltraNecrozmaSpecies(species))
+		|| IsUltraNecrozmaSpecies(species)
+		#ifdef SPECIES_HOOPA_UNBOUND
+		|| species == SPECIES_HOOPA_UNBOUND
+		#endif
+		)
 			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 
 		if (gSpecialSpeciesFlags[species].smartWild)
@@ -2570,10 +2674,12 @@ static void UpdateBestDoublesKillingMoves(void)
 {
 	if (IS_DOUBLE_BATTLE)
 	{
-		u8 bankAtk, bankDef;
+		u8 i, bankAtk, bankDef;
 
-		for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+		for (i = 0; i < gBattlersCount; ++i)
 		{
+			bankAtk = gBanksByTurnOrder[i]; //Calculate in order of speed so AI can processes team combos better
+
 			//mgba_printf(MGBA_LOG_INFO, "");
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
@@ -2674,7 +2780,11 @@ static bool8 ShouldAIUseItem(void)
 					}
 					else if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2 //Smart AI should only use at less than half health
 					&& !IsLaserFocused(gActiveBattler) //Don't waste these statuses with a heal turn
-					&& !(gStatuses3[gActiveBattler] & STATUS3_LOCKON))
+					&& !(gStatuses3[gActiveBattler] & STATUS3_LOCKON)
+					#ifdef SPECIES_AEGISLASH_BLADE
+					&& !(SPECIES(gActiveBattler) == SPECIES_AEGISLASH_BLADE && MoveInMoveset(MOVE_KINGSSHIELD, gActiveBattler)) //Should revert before having item used on it
+					#endif
+					)
 					{
 						u8 foe = FOE(gActiveBattler);
 						if (IS_SINGLE_BATTLE)
@@ -2792,6 +2902,7 @@ static bool8 ShouldAIUseItem(void)
 			EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
 			gBattleStruct->chosenItem[gActiveBattler & BIT_FLANK] = item;
 			BATTLE_HISTORY->trainerItems[i] = 0;
+			gDisableStructs[gActiveBattler].protectUses = 0; //Reset's protect uses
 			return shouldUse;
 		}
 	}

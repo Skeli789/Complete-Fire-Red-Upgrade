@@ -380,6 +380,18 @@ u16 GetMonDevolution(struct Pokemon* mon)
 	bool8 found;
 	bool8 checkingBackupSpecies = FALSE;
 	u16 originalSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 dexNum = SpeciesToNationalPokedexNum(originalSpecies);
+
+	switch(dexNum) {
+		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
+		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
+			return SPECIES_PICHU;
+		#endif
+		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
+		case NATIONAL_DEX_VIVILLON:
+			return SPECIES_SCATTERBUG;
+		#endif
+	}
 
 	SEARCH_START: ;
 	u16 species = originalSpecies;
@@ -414,20 +426,6 @@ u16 GetMonDevolution(struct Pokemon* mon)
 
 		if (found)
 			break;
-	}
-
-	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	switch(dexNum) {
-		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
-		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
-			species = SPECIES_PICHU;
-			break;
-		#endif
-		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
-		case NATIONAL_DEX_VIVILLON:
-			species = SPECIES_SCATTERBUG;
-			break;
-		#endif
 	}
 
 	if (species != originalSpecies)

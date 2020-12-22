@@ -315,7 +315,7 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	//Custom moves
-	if (FlagSet(FLAG_WILD_CUSTOM_MOVES))
+	if (FlagGet(FLAG_WILD_CUSTOM_MOVES))
 	{
 		u16* moves = (enemyMonIndex == 0) ? &Var8000 : &Var8004;
 		for (int i = 0; i < MAX_MON_MOVES; ++i)
@@ -452,6 +452,10 @@ void TryUpdateSwarm(void)
 	{
 		u16 index = Random() % gSwarmTableLength;
 		VarSet(VAR_SWARM_INDEX, index);
+
+		#ifdef VAR_RAID_PARTNER_RANDOM_NUM
+		VarSet(VAR_RAID_PARTNER_RANDOM_NUM, Random()); //Changes daily to help vary the partners
+		#endif
 
 		u32 daysSince = GetDaysSinceTimeInValue(backupVar);
 		UpdatePartyPokerusTime(daysSince);
@@ -906,6 +910,22 @@ void RockSmashWildEncounter(void)
 		gSpecialVar_LastResult = FALSE;
 }
 
+void HeadbuttWildEncounter(void)
+{
+	const struct WildPokemonInfo* wildPokemonInfo = LoadProperMonsData(ROCK_SMASH_MONS_HEADER);
+
+	if (wildPokemonInfo == NULL)
+		gSpecialVar_LastResult = FALSE;
+	else if (DoWildEncounterRateTest(wildPokemonInfo->encounterRate, 1) == TRUE
+		  && TryGenerateWildMon(wildPokemonInfo, 2, 0) == TRUE)
+	{
+		BattleSetup_StartWildBattle();
+		gSpecialVar_LastResult = TRUE;
+	}
+	else
+		gSpecialVar_LastResult = FALSE;
+}
+
 bool8 SweetScentWildEncounter(void)
 {
 	s16 x, y;
@@ -1148,6 +1168,9 @@ void sp118_StartRaidBattle(void)
 	FlagSet(FLAG_RAID_BATTLE);
 	#endif
 
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE) && ViableMonCount(gPlayerParty) >= 2)
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+
 	if (FlagGet(FLAG_TAG_BATTLE))
 		gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
 
@@ -1224,11 +1247,16 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, bool8 firstMon)
 {
 	u8 index = firstMon ? 0 : 1;
+	bool8 customMoves = FlagGet(FLAG_WILD_CUSTOM_MOVES); //Backup flag status
 
 	if (firstMon)
 		ZeroEnemyPartyMons();
 
-	CreateMon(&gEnemyParty[index], species, level, 0x20, 0, 0, 0, 0);
+	FlagClear(FLAG_WILD_CUSTOM_MOVES); //Make sure custom moves aren't set in next function
+	CreateWildMon(species, level, 0, firstMon);
+	if (customMoves)
+		FlagSet(FLAG_WILD_CUSTOM_MOVES); //Reset custom move state if necessary
+
 	if (item != ITEM_NONE)
 		SetMonData(&gEnemyParty[index], MON_DATA_HELD_ITEM, &item);
 

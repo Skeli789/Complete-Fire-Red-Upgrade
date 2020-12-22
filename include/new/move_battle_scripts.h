@@ -66,6 +66,7 @@ extern const u8 BattleScript_CouldntFullyProtect[];
 extern const u8 BattleScript_TeleportSwitch[];
 extern const u8 BattleScript_TeleportFlee[];
 extern const u8 BattleScript_UproarWokeUp[];
+extern const u8 BattleScript_TransformFailedOnAura[];
 
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];
@@ -186,6 +187,7 @@ extern const u8 gText_TargetWrappedInElectricTerrain[];
 extern const u8 gText_FlowerVeilProtects[];
 extern const u8 gText_SweetVeilProtects[];
 extern const u8 gText_SleepClausePrevents[];
+extern const u8 gText_TransformFailsOnWildBosses[];
 #define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
 
 #define gText_TargetAlreadyParalyzed (u8*) 0x83FB78A

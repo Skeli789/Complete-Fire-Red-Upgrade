@@ -360,7 +360,10 @@ void atk09_attackanimation(void)
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 
-	if (((gHitMarker & HITMARKER_NO_ANIMATIONS) && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
+	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
+	 && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE
+	  && gCurrentMove != MOVE_ELECTRICTERRAIN && gCurrentMove != MOVE_PSYCHICTERRAIN
+	  && gCurrentMove != MOVE_MISTYTERRAIN && gCurrentMove != MOVE_GRASSYTERRAIN)) //Terrain animations always need to play and reload BG
 	|| gNewBS->tempIgnoreAnimations)
 	{
 		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -1447,7 +1450,7 @@ void atk1B_cleareffectsonfaint(void) {
 			case Faint_RaidBattle:
 				++gNewBS->faintEffectsState;
 			#ifdef FLAG_RAID_BATTLE
-				if (IsRaidBattle() && SIDE(gActiveBattler) == B_SIDE_PLAYER)
+				if (IsRaidBattle() && SIDE(gActiveBattler) == B_SIDE_PLAYER && BATTLER_ALIVE(BANK_RAID_BOSS))
 				{
 					u8 raidBank = BANK_RAID_BOSS;
 					const u8* stormString = NULL;
@@ -1521,6 +1524,7 @@ void atk1B_cleareffectsonfaint(void) {
 				if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) == (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE) //Double Gym battle
 				&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
 				&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
+				&& SIDE(gActiveBattler) == B_SIDE_OPPONENT //Enemy mon fainted
 				&& ViableMonCount(gEnemyParty) == 1) //1 left exactly
 				{
 					PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
@@ -2665,12 +2669,12 @@ void atk87_stockpiletohpheal(void)
 
 void atk88_negativedamage(void) {
 	if (gCurrentMove == MOVE_OBLIVIONWING || MOVE_DRAININGKISS)
-		gBattleMoveDamage = udivsi(75 * gHpDealt, 100);
+		gBattleMoveDamage = (75 * gHpDealt) / 100;
 	else
 		gBattleMoveDamage = (gHpDealt / 2);
 
 	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BIG_ROOT)
-		gBattleMoveDamage = udivsi(130 * gHpDealt, 100);
+		gBattleMoveDamage = (13 * gBattleMoveDamage) / 10;
 
 	gBattleMoveDamage *= -1;
 

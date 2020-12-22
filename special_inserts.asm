@@ -540,6 +540,9 @@ VeryTallGrassFix:
 	ldrh r0, [r0]
 	bx lr
 
+.org 0x9A816, 0xFF
+	ldrh r0, [r3, #0x4]
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Triple Layer Blocks
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

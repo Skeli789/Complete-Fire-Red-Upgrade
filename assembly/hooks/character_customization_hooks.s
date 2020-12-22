@@ -174,3 +174,38 @@ NPCMartFix:
 	pop {r0-r3}
 	ldr r2, =0x809BA80 | 1
 	bx r2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@0x810C2AC with r4
+CreateTrainerPicSpriteHook:
+	ldr r4, [sp, #0x24]
+	str r1, [sp]
+	str r4, [sp, #0x4]
+	mov r1, r5
+	bl CreateTrainerPicSprite
+	add sp, #0x14
+	pop {r4-r5,pc}
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@0x80F4A3C with r3
+CreditsPlayerPaletteHook:
+	ldr r3, =LoadPalette
+	bl bxr3
+	mov r0, #0x1F
+	lsl r0, #0x4 @0x1F0
+	bl ChangeTrainerPicPal
+	ldr r0, =0x80F4A6C | 1
+	bx r0
+
+bxr3:
+	bx r3
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@0x80C42F4 with r0
+RegionMapPlayerIconHook:
+	bl TryUpdateRegionMapIconPal
+	add sp, #0x40
+	pop {r4-r6,pc}

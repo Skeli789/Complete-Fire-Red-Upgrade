@@ -6,6 +6,7 @@
 #include "../include/pokemon_summary_screen.h"
 #include "../include/constants/items.h"
 #include "../include/constants/region_map_sections.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
@@ -128,7 +129,7 @@ const u8 gRaidBattleLevelRanges[RAID_STAR_COUNT][2] =
 	[TWO_STAR_RAID]   = {25, 30},
 	[THREE_STAR_RAID] = {35, 40},
 	[FOUR_STAR_RAID]  = {50, 55},
-	[FIVE_STAR_RAID]  = {60, 65},
+	[FIVE_STAR_RAID]  = {55, 62},
 	[SIX_STAR_RAID]   = {75, 90},
 };
 
@@ -1604,6 +1605,9 @@ u16 GetNextRaidShieldHP(u8 bank)
 		if (i == healthRatio)
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
 
+		if (gBattleMons[bank].hp == cutOff && !BATTLER_MAX_HP(bank)) //Fix multi-hit moves
+			return cutOff;
+
 		if (gBattleMons[bank].hp > prevCutOff && gBattleMons[bank].hp <= cutOff)
 			return prevCutOff;
 	}
@@ -1749,7 +1753,8 @@ static u8 GetRaidMapSectionId(void)
 	if (currRegionMapSecId == MAPSEC_ICY_HOLE
 	||  currRegionMapSecId == MAPSEC_GRIM_WOODS
 	||  currRegionMapSecId == MAPSEC_RUINS_OF_VOID
-	||  currRegionMapSecId == MAPSEC_GREAT_DESERT)
+	||  currRegionMapSecId == MAPSEC_GREAT_DESERT
+	||  currRegionMapSecId == MAPSEC_UNDERWATER)
 		return currRegionMapSecId - MAPSEC_DYNAMIC;
 
 	return Overworld_GetMapHeaderByGroupAndId((u16) gSaveBlock1->dynamicWarp.mapGroup, (u16) gSaveBlock1->dynamicWarp.mapNum) -> regionMapSectionId - MAPSEC_DYNAMIC;
@@ -1903,19 +1908,30 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners)
 	u16 numViable = 0;
 	u32 randomNum = GetRaidRandomNumber();
 
-	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; ++i)
+	#ifdef VAR_RAID_PARTNER_RANDOM_NUM
+	randomNum += VarGet(VAR_RAID_PARTNER_RANDOM_NUM); //Helps give more varied results
+	#endif
+
+	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; i += 3)
 	{
 		if (randomNum == 0) //0 causes an infinite loop
 			randomNum = 0xFFFFFFFF;
 
-		randomNum ^= i;
+		randomNum *= i;
 		index = randomNum % gNumRaidPartners;
 
 		if (checkedPartners[index] == 0)
 		{
 			++numMarked;
 
-			if (gRaidPartners[index].spreads[numStars] != NULL)
+			if (gRaidPartners[index].spreads[numStars] != NULL
+			#ifdef UNBOUND
+			&& (FlagGet(FLAG_SYS_GAME_CLEAR)
+			 || (gRaidPartners[index].trainerClass != CLASS_SHADOW_ADMIN
+			  && gRaidPartners[index].trainerClass != CLASS_RIVAL
+			  && gRaidPartners[index].trainerClass != CLASS_LEADER)) //These don't show up until the game is cleared
+			#endif
+			)
 			{
 				checkedPartners[index] = TRUE;
 				++numViable;
@@ -2067,6 +2083,10 @@ u16 GetRaidRewardAmount(u16 item)
 			return Random() % 5 + 1; //1 - 5
 		case ITEM_TYPE_PP_RECOVERY:
 		case ITEM_TYPE_STAT_BOOST_DRINK:
+			#if (defined ITEM_ABILITY_CAPSULE || defined ITEM_DREAM_MIST)
+			if (item == ITEM_ABILITY_CAPSULE || item == ITEM_DREAM_MIST)
+				return 1;
+			#endif
 			return Random() % 3 + 1; //1 - 3
 		case ITEM_TYPE_STAT_BOOST_WING:
 			return Random() % 21 + 10; //10 - 30

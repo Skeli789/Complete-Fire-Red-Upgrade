@@ -29,6 +29,20 @@ EmitChooseMoveHook:
 	pop {r4-r6,pc}
 
 .pool
+@0x80140C8 with r0
+AIEmitChooseActionHook:
+	mov r0, r5
+	bl ShouldAIChooseAction
+	cmp r0, #0x0
+	beq SkipChooseAction
+	ldr r0, =0x8014114 | 1
+	bx r0
+
+SkipChooseAction:
+	ldr r0, =0x8014C4E | 1
+	bx r0
+
+.pool
 @0x802EF90 with r0
 SwitchMoveDataHook:
 	bl HandleMoveSwitchingUpdate
@@ -162,10 +176,9 @@ bxr3:
 DoubleWildDexHook1:
 	push {r4-r5,lr}
 	sub sp, #0x18
-	bl LoadTargetPartyData
-	mov r1, #0xB
-	ldr r2, =0x802D9E0 | 1
-	bx r2
+	bl LoadTargetPokedexSpecies
+	ldr r1, =0x0802D9E6 | 1
+	bx r1
 
 .pool
 @0x802DAEC with r0
@@ -942,6 +955,15 @@ MoveFasterOnWater:
 	ldr r0, =0x805BA24 | 1
 	bx r0
 
+/*
+	@For x4 movement speed
+	mov r0, r4 @direction
+	ldr r1, =PlayerGoSpeed4
+	bl bxr1
+	ldr r0, =0x805BAA4 | 1
+	bx r0
+*/
+
 .pool
 @0x80570D0 with r3
 InitPlayerAvatarHook:
@@ -1217,6 +1239,7 @@ GetOtGender_Cont:
 	ldr r3, =0x8136280 | 1
 	bx r3
 
+.pool
 @0x8032CEC with r0
 LastUsedBallOverrideHook:
 	push {r4-r5, lr}
@@ -1231,4 +1254,76 @@ LastUsedBallOverrideHook:
 
 LastUsedBallOverrideHook_SkipBag: @Skips the palette fade to bag
 	ldr r0, =0x8032D30 | 1
+	bx r0
+
+.pool
+@0x8140F44 with r1
+SlotMachineExpandedCoinsDisplayFix:
+	lsl r0, #0x10
+	lsr r0, #0x10
+	mov r8, r0
+
+	mov r0, r9 @Coins
+	ldr r1, .OldMaxCoins
+	cmp r0, r1
+	blt SkipCoinsDisplayFix
+	mov r0, #0x0
+	mov r9, r1 @Coins
+	mov r8, r0 @0 Payout
+
+SkipCoinsDisplayFix:
+	mov r6, #0xFA
+	lsl r6, #0x2
+	ldr r0, =0x8140F4E | 1
+	bx r0
+
+.align 2
+.OldMaxCoins: .word 9999
+
+.pool
+@0x8058E28 with r0
+RemoveWalkThroughWallCheat:
+	ldr r0, .3FF
+	cmp r1, r0
+	beq NotPassable
+	mov r0, #0xC0
+	lsl r0, #0x4
+	ldr r2, =0x08058E32 | 1
+	bx r2
+
+NotPassable:
+	mov r0, #0x1
+	pop {r4-r7, pc}
+
+.align 2
+.3FF: .word 0x3FF
+
+.pool
+@0x809B18E with r0
+@Swap order of mallocs so memory is moved around
+RemoveShopModifierCheats:
+	ldr r5, =sShopMenuItemStrings
+	ldrh r0, [r4, #0x10]
+	add r0, #0x1
+	mov r1, #0xD
+	mul r0, r1
+	ldr r1, =malloc
+	bl bxr1
+	str r0, [r5] @sShopMenuItemStrings
+	cmp r0, #0x0
+	beq FreeShopMemoryReturn
+
+	ldrh r0, [r4, #0x10]
+	add r0, #0x1
+	lsl r0, #0x3
+	ldr r1, =malloc
+	bl bxr1
+	str r0, [r7] @sShopMenuListMenu
+	cmp r0, #0x0
+	beq FreeShopMemoryReturn
+	ldr r0, =0x809B1CC | 1
+	bx r0
+
+FreeShopMemoryReturn:
+	ldr r0, =0x809B1B2 | 1
 	bx r0

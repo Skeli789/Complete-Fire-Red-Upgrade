@@ -1028,8 +1028,9 @@ bool8 SetMoveEffect2(void)
 
 			if (IsOfType(gEffectBank, TYPE_FLYING)
 			||  ABILITY(gEffectBank) == ABILITY_LEVITATE
-			||  (gStatuses3[gEffectBank] & (STATUS3_IN_AIR | STATUS3_LEVITATING | STATUS3_TELEKINESIS))
-			||  (ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_AIR_BALLOON))
+			|| (gStatuses3[gEffectBank] & (STATUS3_IN_AIR | STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+			|| (ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_AIR_BALLOON)
+			||  IsFloatingWithMagnetism(gEffectBank))
 			{
 			SMACK_TGT_DOWN:
 				gStatuses3[gEffectBank] |= STATUS3_SMACKED_DOWN;

@@ -71,7 +71,9 @@ void atkEF_handleballthrow(void)
 	u8 defLevel = gBattleMons[gBankTarget].level;
 
 	u8 ballType = ItemId_GetType(gLastUsedItem);
-	gLastUsedBall = gLastUsedItem;
+	gNewBS->threwBall = TRUE;
+	if (ballType != BALL_TYPE_QUICK_BALL) //Useless to offer to player after initial use
+		gLastUsedBall = gLastUsedItem;
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
@@ -548,7 +550,10 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 
 	if (i >= PARTY_SIZE
 	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
+	{
+		TryRevertGiratinaOrigin(mon, TRUE);
 		return SendMonToPC(mon);
+	}
 
 	CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
 	gPlayerPartyCount = i + 1;
@@ -815,6 +820,23 @@ bool8 CantCatchPokemonRightNow(void)
 struct Pokemon* LoadTargetPartyData(void)
 {
 	return GetBankPartyData(gBankTarget);
+}
+
+u16 LoadTargetPokedexSpecies(void)
+{
+	u16 species = GetMonData(LoadTargetPartyData(), MON_DATA_SPECIES, NULL);
+
+	#ifdef  SPECIES_MINIOR_SHIELD
+	if (IsMinior(species))
+		return SPECIES_MINIOR_SHIELD;
+	#endif
+
+	#if (defined NATIONAL_POKEDEX_PIKACHU && defined SPECIES_PIKACHU)
+	if (SpeciesToNationalPokedexNum(species) == NATIONAL_POKEDEX_PIKACHU)
+		return SPECIES_PIKACHU;
+	#endif
+
+	return species;
 }
 
 #define BattleScript_BallThrow (const u8*) 0x81D9A14

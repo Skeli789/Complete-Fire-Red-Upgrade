@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/constants/region_map_sections.h"
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/battle_util.h"
@@ -275,6 +276,12 @@ bool8 TryFormRevert(pokemon_t* mon)
 		}
 	}
 	#endif
+	#ifdef SPECIES_GIRATINA_ORIGIN
+	else if (mon->species == SPECIES_GIRATINA_ORIGIN)
+	{
+		TryRevertGiratinaOrigin(mon, FALSE);
+	}
+	#endif
 
 	return FALSE;
 }
@@ -297,6 +304,27 @@ void UpdateBurmy(void)
 				gPlayerParty[i].species = form;
 				CalculateMonStats(&gPlayerParty[i]);
 			}
+		}
+	}
+	#endif
+}
+
+void TryRevertGiratinaOrigin(unusedArg struct Pokemon* mon, unusedArg bool8 ignoreDistortionWorld)
+{
+	#ifdef SPECIES_GIRATINA_ORIGIN
+	if (GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_GIRATINA_ORIGIN)
+	{
+		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+		u8 itemEffect = ItemId_GetHoldEffect(item);
+
+		if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB
+		#ifdef MAPSEC_DISTORTION_WORLD
+		&& (ignoreDistortionWorld || GetCurrentRegionMapSectionId() != MAPSEC_DISTORTION_WORLD)
+		#endif
+		)
+		{
+			u16 targetSpecies = SPECIES_GIRATINA;
+			SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
 		}
 	}
 	#endif
@@ -408,7 +436,11 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			break;
 
 		case SPECIES_GIRATINA_ORIGIN:
-			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB)
+			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB
+			#ifdef MAPSEC_DISTORTION_WORLD
+			&& GetCurrentRegionMapSectionId() != MAPSEC_DISTORTION_WORLD
+			#endif
+			)
 				targetSpecies = SPECIES_GIRATINA;
 			break;
 		#endif

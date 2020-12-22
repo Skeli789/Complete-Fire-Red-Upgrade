@@ -63,6 +63,8 @@ dexnav.c
 
 #define IS_NEWER_UNOWN_LETTER(species) (species >= SPECIES_UNOWN_B && species <= SPECIES_UNOWN_QUESTION)
 
+extern const struct SwarmData gSwarmTable[];
+
 //This file's functions:
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
@@ -101,7 +103,9 @@ static void ExecDexNavHUD(void);
 
 //GUI Functions
 static void CleanWindow(u8 windowId);
+static void CleanWindows(void);
 static void CommitWindow(u8 windowId);
+static void CommitWindows(void);
 static void PrintDexNavMessage(u8 messageId);
 static void PrintDexNavError(void);
 static bool8 CapturedAllLandBasedPokemon(void);
@@ -970,9 +974,18 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 
 	switch (environment)
 	{
-		case ENCOUNTER_TYPE_LAND:
+		case ENCOUNTER_TYPE_LAND: ;
 			if (landMonsInfo == NULL)
 				break; //Hidden pokemon should only appear on walkable tiles or surf tiles
+
+			//Check swarming mon first
+			u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+			if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+			&& species == gSwarmTable[swarmIndex].species)
+			{
+				chance += SWARM_CHANCE;
+				break;
+			}
 
 			for (i = 0; i < NUM_LAND_MONS; ++i)
 			{
@@ -1001,6 +1014,7 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 static u8 GetEncounterLevel(u16 species, u8 environment)
 {
 	u32 i;
+	const struct WildPokemon* monData;
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 
@@ -1015,7 +1029,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 			for (i = 0; i < NUM_LAND_MONS; ++i)
 			{
-				const struct WildPokemon* monData = &landMonsInfo->wildPokemon[i];
+				monData = &landMonsInfo->wildPokemon[i];
 				if (monData->species == species)
 				{
 					min = (min < monData->minLevel) ? min : monData->minLevel;
@@ -1025,7 +1039,22 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			}
 
 			if (i >= NUM_LAND_MONS) //Pokemon not found here
+			{
+				//Check swarming mon
+				u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+				if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+				&& species == gSwarmTable[swarmIndex].species)
+				{
+					//Pick index at random and choose min and max from there
+					i = RandRange(0, NELEMS(landMonsInfo->wildPokemon));
+					monData = &landMonsInfo->wildPokemon[i];
+					min = monData->minLevel;
+					max = monData->maxLevel;
+					break;
+				}
+				
 				return MAX_LEVEL + 1;
+			}
 			break;
 
 		case ENCOUNTER_TYPE_WATER:
@@ -1034,7 +1063,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 			for (i = 0; i < NUM_WATER_MONS; ++i)
 			{
-				const struct WildPokemon* monData = &waterMonsInfo->wildPokemon[i];
+				monData = &waterMonsInfo->wildPokemon[i];
 				if (monData->species == species)
 				{
 					min = (min < monData->minLevel) ? min : monData->minLevel;
@@ -1617,11 +1646,23 @@ static void CleanWindow(u8 windowId)
 	FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
 }
 
+static void CleanWindows(void)
+{
+	for (int i = 0; i < WINDOW_COUNT; ++i)
+		CleanWindow(i);
+}
+
 //Display commited windows
 static void CommitWindow(u8 windowId)
 {
 	CopyWindowToVram(windowId, 3);
 	PutWindowTilemap(windowId);
+}
+
+static void CommitWindows(void)
+{
+	for (u8 i = 0; i < WINDOW_COUNT; ++i)
+		CommitWindow(i);
 }
 
 static void PrintDexNavMessage(u8 messageId)
@@ -1697,6 +1738,14 @@ static bool8 CapturedAllLandBasedPokemon(void)
 				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
 					break;
 			}
+		}
+
+		//Check swarming mon
+		u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName)
+		{
+			if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(gSwarmTable[swarmIndex].species), FLAG_GET_CAUGHT))
+				return FALSE;
 		}
 
 		if (i >= NUM_LAND_MONS && num > 0) //All land mons caught and there were land mons to catch
@@ -2054,6 +2103,16 @@ static void DexNavPopulateEncounterList(void)
 				}
 			}
 		}
+
+		//Add swarming mon
+		u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+		u16 swarmSpecies = gSwarmTable[swarmIndex].species;
+		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+		&& grassIndex < NELEMS(sDexNavGuiPtr->grassSpecies)
+		&& !SpeciesInArray(swarmSpecies, NUM_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
+		{
+			sDexNavGuiPtr->grassSpecies[grassIndex++] = swarmSpecies;
+		}
 	}
 
 	sDexNavGuiPtr->hiddenSpecies[0] = SPECIES_TABLES_TERMIN;
@@ -2346,6 +2405,9 @@ static void DexNavLoadCapturedAllSymbol(void)
 
 static void InitDexNavGui(void)
 {
+	CleanWindows(); //Prevents black bar bug
+	CommitWindows();
+
 	DexNavPopulateEncounterList();
 	DexNavDisplaySpeciesData();
 	DexNavLoadAreaNamesAndInstructions();

@@ -251,10 +251,8 @@ ZYGARDE_CELL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES 0x83AC9D
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DELTA_STREAM:
-	loadparticle ANIM_TAG_FLYING_DIRT
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_FLYING_DIRT 0x0 0x6 0x6 0x7fff
 	launchtask AnimTask_LoadSandstormBackground 0x5 0x1 0x1
-	launchtask AnimTask_BlendBackground 0x6 0x2 0x6 0x7fff
+	launchtask AnimTask_BlendBackground 0x6 0x2 0x6 0x6FF7 @White with an emerald tint
 	playsound2 0x7d SOUND_PAN_ABOVE
 	pause 0x44
 	playsound2 0x7e SOUND_PAN_ABOVE

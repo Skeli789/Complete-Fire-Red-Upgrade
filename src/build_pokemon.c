@@ -154,6 +154,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, 
 static void BuildFrontierMultiParty(u8 multiId);
 static void BuildRaidMultiParty(void);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
+static void TryFixMiniorForm(struct Pokemon* mon);
 static void SetWildMonHeldItem(void);
 static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
 static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
@@ -174,6 +175,9 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder);
 static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const struct Pokemon* const party);
+#ifdef UNBOUND
+static u8 GetEVSpreadNumForUnboundRivalChallenge(struct Pokemon* mon, u32 aiFlags);
+#endif
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -685,7 +689,11 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 		#ifdef VAR_GAME_DIFFICULTY
 		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY //Don't scale Trainers on easy mode
-					|| trainer->trainerClass == CLASS_ELITE_4 || trainer->trainerClass == CLASS_CHAMPION; //Unless you're facing the final bosses
+					|| trainer->trainerClass == CLASS_ELITE_4 || trainer->trainerClass == CLASS_CHAMPION || trainer->trainerClass == CLASS_RIVAL_2 //Unless you're facing the final bosses
+					#ifdef UNBOUND
+					|| trainerId == 0x223 //Auburn Waterway Hiker needs to scale to confirm you're prepared to face the wild mons below
+					#endif
+					|| (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && FlagGet(FLAG_SCALE_WILD_BOSS_LEVEL)); //Scale the partner up against a scaled wild boss
 		#else
 		levelScaling = TRUE;
 		#endif
@@ -826,6 +834,14 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			//Give EVs
 			#ifdef TRAINERS_WITH_EVS
 			u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
+
+			#ifdef UNBOUND
+			if ((gTrainers[trainerId].trainerClass == CLASS_RIVAL
+			  || gTrainers[trainerId].trainerClass == CLASS_RIVAL_2)
+			&& gameDifficulty >= OPTIONS_HARD_DIFFICULTY)
+				spreadNum = GetEVSpreadNumForUnboundRivalChallenge(&party[i], trainer->aiFlags);
+			#endif
+
 			if (gTrainers[trainerId].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
 			&& trainer->aiFlags > 1
 			#ifdef VAR_GAME_DIFFICULTY
@@ -1025,7 +1041,11 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	levelRange = *level - minEnemyTeamLevel; //The offset in the team
 	newLevel = minEnemyLevel + levelRange;
 	
-	if (IsPseudoBossTrainerPartyForLevelScaling(trainerPartyFlags))
+	if (IsPseudoBossTrainerPartyForLevelScaling(trainerPartyFlags)
+	#ifdef VAR_GAME_DIFFICULTY //Scale partners well in wild boss battles on easy
+	|| (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY && (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && FlagGet(FLAG_SCALE_WILD_BOSS_LEVEL)))
+	#endif
+	)
 	{
 		levelSubtractor = 0; //Allow pseudo bosses to be closer to the player's average level (and maybe even surpass their max)
 	}
@@ -1094,6 +1114,9 @@ u8 GetScaledWildBossLevel(u8 level)
 
 	if (level < newLevel)
 		level = newLevel;
+		
+	if (level > MAX_LEVEL)
+		level = MAX_LEVEL;
 	#endif
 
 	return level;
@@ -1792,7 +1815,28 @@ static void BuildFrontierMultiParty(u8 multiId)
 				break;
 			default:
 				if (multiPartner->regularSpreads != NULL && i < multiPartner->regSpreadSize)
-					spread = &multiPartner->regularSpreads[i];
+				{
+					#ifdef UNBOUND
+					if (multiPartner->trainerClass == CLASS_RIVAL && i >= 4)
+					{
+						#define VAR_RIVAL_CHOSEN_STARTER 0x5012
+						extern const struct BattleTowerSpread gMultiTowerSpread_RivalV2[];
+						extern const struct BattleTowerSpread gMultiTowerSpread_RivalV3[];
+						switch (VarGet(VAR_RIVAL_CHOSEN_STARTER)) {
+							case 2: //Chose Larvitar
+								spread = &gMultiTowerSpread_RivalV3[i - 4]; //Rival has Metagross & Haxorus
+								break;
+							case 3: //Chose Beldum
+								spread = &multiPartner->regularSpreads[i]; //Rival has Garchomp & Aggron
+								break;
+							default: //Chose Gible
+								spread = &gMultiTowerSpread_RivalV2[i - 4]; //Rival has Tyranitar & Haxorus
+						}
+					}
+					else
+					#endif
+						spread = &multiPartner->regularSpreads[i];
+				}
 				else
 					return; //No Pokemon data to load
 		}
@@ -1809,9 +1853,8 @@ const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numS
 	const struct MultiRaidTrainer* multiPartner = &gRaidPartners[multiId];
 
 	#ifdef UNBOUND
-	if (index == 0 && multiPartner->owNum == EVENT_OBJ_GFX_RIVAL)
+	if (index == 0 && multiPartner->trainerClass == CLASS_RIVAL)
 	{
-		#define VAR_RIVAL_CHOSEN_STARTER 0x5012
 		switch (VarGet(VAR_RIVAL_CHOSEN_STARTER)) {
 			case 2: //Chose Larvitar
 				spread = &multiPartner->spreads[numStars][4]; //Rival has Metagross
@@ -1879,12 +1922,13 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 		SetMonData(mon, MON_DATA_OT_GENDER, &trainerGender);
 	}
 
+/*
 	#ifdef UNBOUND
 		mon->metLocation = MAPSEC_BATTLE_FRONTIER;
 	#else
 		mon->metLocation = MAPSEC_TRAINER_TOWER;
 	#endif
-
+*/
 	mon->metLevel = level;
 	mon->obedient = TRUE;
 	mon->friendship = 255;
@@ -1925,6 +1969,17 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	TryFormRevert(mon); //To fix Minior forms
 	CalculateMonStatsNew(mon);
 	HealMon(mon);
+}
+
+static void TryFixMiniorForm(struct Pokemon* mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+	if (species != SPECIES_NONE && species != SPECIES_EGG)
+	{
+		u16 dexNum = SpeciesToNationalPokedexNum(species);
+		if (dexNum == NATIONAL_DEX_MINIOR)
+			TryFormRevert(mon); //To fix form
+	}
 }
 
 static void SetWildMonHeldItem(void)
@@ -3597,7 +3652,7 @@ u8 GetOpenWorldBadgeCount(void)
 }
 
 //unused1 is used to hook in so don't use it for anything
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 customGivePokemon, u8 ballType)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedArg u32 customGivePokemon, unusedArg u8 ballType)
 {
 	u8 sentToPc;
 	struct Pokemon mon;
@@ -3648,7 +3703,8 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 			nature = Random() % NUM_NATURES;
 
 		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny, FALSE, FALSE);
-		MonRestorePP(&mon);
+		HealMon(&mon);
+		CalculateMonStats(&mon);
 	}
 	#endif
 
@@ -3660,8 +3716,6 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 			SetMonPokedexFlags(&mon);
 			break;
 	}
-
-	unused1 += customGivePokemon + ballType; //So the compiler doesn't complain
 
 	return sentToPc;
 }
@@ -3826,33 +3880,77 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	else
 	{
 		u32 iv;
+		u8 numPerfectStats = 0;
+		bool8 perfectStats[NUM_STATS] = {0};
+
+		//HP, Attack, Defense
 		value = Random();
 
+		//HP IV
 		iv = value & 0x1F;
 		SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_HP] = TRUE;
+		}
+
+		//Attack IV
 		iv = (value & 0x3E0) >> 5;
 		SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_ATK] = TRUE;
+		}
+
+		//Defense IV
 		iv = (value & 0x7C00) >> 10;
 		SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_DEF] = TRUE;
+		}
 
+		//Speed, Sp. Atk, Sp. Def
 		value = Random();
 
+		//Speed IV
 		iv = value & 0x1F;
 		SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPEED] = TRUE;
+		}
+
+		//Sp. Atk IV
 		iv = (value & 0x3E0) >> 5;
 		SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPATK] = TRUE;
+		}
+
+		//Sp. Def IV
 		iv = (value & 0x7C00) >> 10;
 		SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+		if (iv >= 31)
+		{
+			++numPerfectStats;
+			perfectStats[STAT_SPDEF] = TRUE;
+		}
 
 		#ifdef CREATE_WITH_X_PERFECT_IVS
 		{
 			if (gSpecialSpeciesFlags[species].setPerfectXIVs)
 			{
-				u8 numPerfectStats = 0;
 				u8 perfect = 31;
-				bool8 perfectStats[NUM_STATS] = {0};
+				u8 perfectStatCount = MathMin(CREATE_WITH_X_PERFECT_IVS, NUM_STATS); //Error prevention
 
-				while (numPerfectStats < MathMin(CREATE_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
+				while (numPerfectStats < perfectStatCount) //Harder to get more than 3 perfect since perfect stats from before are already taken into account
 				{
 					u8 statId = Random() % NUM_STATS;
 					if (!perfectStats[statId]) //Must be unique
@@ -4188,3 +4286,135 @@ void PartySpreadPokerus(struct Pokemon *party)
 		}
 	}
 }
+
+#ifdef UNBOUND
+static const u16 sExpertMoves_Mamoswine[MAX_MON_MOVES] = {MOVE_ICICLECRASH, MOVE_EARTHQUAKE, MOVE_ICESHARD, MOVE_STEALTHROCK};
+static const u16 sExpertMoves_Toucannon[MAX_MON_MOVES] = {MOVE_BRAVEBIRD, MOVE_STEELWING, MOVE_ROCKBLAST, MOVE_BULLETSEED};
+static const u16 sExpertMoves_Vaporeon[MAX_MON_MOVES] = {MOVE_SCALD, MOVE_HAZE, MOVE_WISH, MOVE_PROTECT};
+static const u16 sExpertMoves_Haxorus[MAX_MON_MOVES] = {MOVE_OUTRAGE, MOVE_EARTHQUAKE, MOVE_CRUNCH, MOVE_DRAGONDANCE};
+static const u16 sExpertMoves_Aggron[MAX_MON_MOVES] = {MOVE_STONEEDGE, MOVE_IRONHEAD, MOVE_BODYPRESS, MOVE_METALBURST};
+static const u16 sExpertMoves_Gabite[MAX_MON_MOVES] = {MOVE_DRAGONCLAW, MOVE_EARTHQUAKE, MOVE_FIREBLAST, MOVE_ROAR};
+static const u16 sExpertMoves_Garchomp[MAX_MON_MOVES] = {MOVE_DRAGONCLAW, MOVE_EARTHQUAKE, MOVE_FIREBLAST, MOVE_SWORDSDANCE};
+static const u16 sExpertMoves_Tyranitar[MAX_MON_MOVES] = {MOVE_STONEEDGE, MOVE_CRUNCH, MOVE_EARTHQUAKE, MOVE_DRAGONDANCE};
+static const u16 sExpertMoves_Metagross[MAX_MON_MOVES] = {MOVE_METEORMASH, MOVE_ZENHEADBUTT, MOVE_EARTHQUAKE, MOVE_ICEPUNCH};
+
+static u8 GetEVSpreadNumForUnboundRivalChallenge(struct Pokemon* mon, u32 aiFlags)
+{
+	u8 spreadNum = 0;
+	bool8 isExpert = VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EXPERT_DIFFICULTY && aiFlags > 3; //First and Second Rival battles are normal
+	const u16* moves = NULL;
+	u16 item = ITEM_NONE;
+
+	switch (GetMonData(mon, MON_DATA_SPECIES, NULL))
+	{
+		case SPECIES_SWINUB:
+		case SPECIES_PILOSWINE:
+		case SPECIES_MAMOSWINE:
+			spreadNum = 91; //Physical Sweeper - Adamant - Thick Fat
+			if (isExpert)
+			{
+				moves = sExpertMoves_Mamoswine;
+				item = ITEM_FOCUS_SASH;
+			}
+			break;
+		case SPECIES_TRUMBEAK:
+		case SPECIES_TOUCANNON:
+			spreadNum = 62; //Physical Sweeper - Jolly - Skill Link
+			if (isExpert)
+			{
+				moves = sExpertMoves_Toucannon;
+				item = ITEM_KINGS_ROCK;
+			}
+			break;
+		case SPECIES_VAPOREON:
+			spreadNum = 11; //Physical Wall
+			if (isExpert)
+			{
+				moves = sExpertMoves_Vaporeon;
+				item = ITEM_LEFTOVERS;
+			}
+			break;
+		case SPECIES_AGGRON:
+			spreadNum = 37; //Bulky Physical Attacker - Sp. Def - Sturdy
+			if (isExpert)
+			{
+				moves = sExpertMoves_Aggron;
+				item = ITEM_CUSTAP_BERRY;
+			}
+			break;
+		case SPECIES_HAXORUS:
+			spreadNum = 62; //Physical Sweeper - Jolly - Mold Breaker
+			if (isExpert)
+			{
+				moves = sExpertMoves_Haxorus;
+				item = ITEM_FOCUS_SASH;
+			}
+			break;
+		case SPECIES_GIBLE:
+		case SPECIES_GABITE:
+			spreadNum = 92; //Physical Sweeper - Jolly - Rough Skin
+			if (isExpert)
+			{
+				moves = sExpertMoves_Gabite;
+				item = ITEM_LIFE_ORB;
+			}
+			break;
+		case SPECIES_GARCHOMP:
+			spreadNum = 92; //Physical Sweeper - Jolly - Rough Skin
+			if (isExpert)
+			{
+				moves = sExpertMoves_Garchomp;
+				item = ITEM_GARCHOMPITE;
+			}
+			break;
+		case SPECIES_LARVITAR:
+		case SPECIES_PUPITAR:
+			spreadNum = 7; //Bulky Physical Attacker - Sp. Def
+			if (isExpert)
+			{
+				moves = sExpertMoves_Tyranitar;
+				item = ITEM_LIFE_ORB;
+			}
+			break;
+		case SPECIES_TYRANITAR:
+			spreadNum = 7; //Bulky Physical Attacker - Sp. Def
+			if (isExpert)
+			{
+				moves = sExpertMoves_Tyranitar;
+				item = ITEM_TYRANITARITE;
+			}
+			break;
+		//case SPECIES_BELDUM: //Not possible
+		case SPECIES_METANG:
+			spreadNum = 2; //Physical Sweeper - Jolly
+			if (isExpert)
+			{
+				moves = sExpertMoves_Metagross;
+				item = ITEM_LIFE_ORB;
+			}
+			break;
+		case SPECIES_METAGROSS:
+			spreadNum = 2; //Physical Sweeper - Jolly
+			if (isExpert)
+			{
+				moves = sExpertMoves_Metagross;
+				item = ITEM_METAGROSSITE;
+			}
+			break;	
+	}
+
+	if (!FlagGet(FLAG_TAG_BATTLE)) //Don't change moves during team up
+	{
+		if (moves != NULL)
+		{
+			for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+				SetMonData(mon, MON_DATA_MOVE1 + i, &moves[i]);
+		}
+	}
+
+	if (item != ITEM_NONE)
+		SetMonData(mon, MON_DATA_HELD_ITEM, &item);
+
+	return spreadNum;
+}
+#endif

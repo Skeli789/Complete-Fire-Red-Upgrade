@@ -42,6 +42,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/dexnav.h"
+#include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/item.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/frontier.h"
@@ -86,9 +87,10 @@ static void UpdateJPANStepCounters(void);
 static const u8* GetCustomWalkingScript(void);
 static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
+static bool8 IsPlayerFacingSea(void);
 static bool8 UseRegisteredKeyItemOnField(void);
 
-#ifdef VAR_DEFAULT_WALKING_SCRIPT
+#if (defined VAR_DEFAULT_WALKING_SCRIPT && !defined UNBOUND)
 //Table full of pointers to custom walking scripts
 static const u8* const sDefaultWalkingScripts[] =
 {
@@ -129,7 +131,11 @@ static const u8* const sMetatileInteractionScripts[] =
 	[MB_BURGLARY] = (void*) 0x81A7645,
 	[MB_TRAINER_TOWER_RECORD] = (void*) 0x81C549C,
 
+#ifdef UNBOUND
+	[MB_TELEVISION] = EventScript_TVSwarm, //Relates info on the daily swarm
+#else
 	[MB_TELEVISION] = (void*) 0x81A764E,
+#endif
 	[MB_BERRY_CRUSH_RECORDS] = (void*) 0x81BBFD8,
 	[MB_BATTLE_RECORDS] = (void*) 0x81BB8A7,
 
@@ -1523,7 +1529,7 @@ static void UpdateJPANStepCounters(void)
 
 static const u8* GetCustomWalkingScript(void)
 {
-	#ifdef VAR_DEFAULT_WALKING_SCRIPT
+	#if (defined VAR_DEFAULT_WALKING_SCRIPT && !defined UNBOUND)
 	if (gWalkingScript >= (u8*) 0x8000000) //A real script
 		return gWalkingScript;
 
@@ -1617,6 +1623,7 @@ void FieldCB_RushInjuredPokemonToCenter(void)
 
     ScriptContext2_Enable();
     palette_bg_faded_fill_black();
+	gPaletteFade->active = TRUE; //So the DNS doesn't get messed up at night
 	DismissMapNamePopup();
     taskId = CreateTask(Task_RushInjuredPokemonToCenter, 10);
     gTasks[taskId].data[0] = 0;
@@ -1972,6 +1979,8 @@ bool8 IsCurrentAreaWinter(void)
 			|| mapSec == MAPSEC_ROUTE_8
 			|| mapSec == MAPSEC_BLIZZARD_CITY
 			|| mapSec == MAPSEC_FROZEN_FOREST
+			|| mapSec == MAPSEC_JUDGMENT_ZONE
+			|| mapSec == MAPSEC_POKEMON_LEAGUE
 			|| (mapSec == MAPSEC_VICTORY_ROAD
 			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
 			|| (mapSec == MAPSEC_HIDDEN_GROTTO
@@ -2003,9 +2012,14 @@ bool8 IsCurrentAreaSwamp(void)
 	#endif
 }
 
-void IsCurrentAreaSwampToVar(void)
+static bool8 IsPlayerFacingMurkyBrownWater(void)
 {
-	gSpecialVar_LastResult = IsCurrentAreaSwamp();
+	return IsCurrentAreaSwamp() && !IsPlayerFacingSea();
+}
+
+void IsPlayerFacingMurkyBrownWaterToVar(void)
+{
+	gSpecialVar_LastResult = IsPlayerFacingMurkyBrownWater();
 }
 
 bool8 IsCurrentAreaDarkerCave(void)
@@ -2116,6 +2130,15 @@ const u8* GetInteractedMetatileScript(unusedArg struct MapPosition* position, u8
 				return sMetatileInteractionScripts[metatileBehavior];
 			break;
 		#endif
+		#ifdef MB_HEADBUTT_TREE
+		case MB_HEADBUTT_TREE: ;
+			#ifdef UNBOUND
+			u8 mapSec = GetCurrentRegionMapSectionId();
+			if (mapSec != MAPSEC_GRIM_WOODS && mapSec != MAPSEC_VIVILL_WOODS) //Can't headbutt in these places
+				return sMetatileInteractionScripts[metatileBehavior];
+			#endif
+			break;
+		#endif
 		#ifdef MB_UNDERGROUND_MINING
 		case MB_UNDERGROUND_MINING:
 			if (IsValidMiningSpot(position->x, position->y))
@@ -2178,13 +2201,18 @@ void PrepMiningWarp(void)
 	gSpecialVar_LastResult = FALSE;
 	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);
 
-	if (warpEventId != -1)
+	if (GetPlayerFacing() == DIR_NORTH && warpEventId != -1) //Collapsed doorways are always to north - prevents issues with standing on other warps
 	{
 		StoreInitialPlayerAvatarState();
 		SetupWarp(&gMapHeader, warpEventId, &position);
 
 		if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
-			gSpecialVar_LastResult = 0xFF;
+		{
+			if (MAP_IS(UNDERWATER_VIVILL_TOWN))
+				gSpecialVar_LastResult = 0xFE;
+			else
+				gSpecialVar_LastResult = 0xFF;
+		}
 		else
 			gSpecialVar_LastResult = TRUE;
 	}
@@ -2252,11 +2280,12 @@ u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingTyp
 			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
 			&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
 			{
-				if (MonKnowsMove(mon, move))
-					return i;
-
 				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
-				if (hasHM && CanMonLearnTMTutor(mon, item, 0) == CAN_LEARN_MOVE)
+				if (hasHM //Must have HM to prevent softlocks
+				&& (MonKnowsMove(mon, move) || CanMonLearnTMTutor(mon, item, 0) == CAN_LEARN_MOVE))
+					return i;
+				#else
+				if (MonKnowsMove(mon, move))
 					return i;
 				#endif
 			}
@@ -2299,6 +2328,16 @@ static bool8 IsPlayerFacingSurfableLava(void)
 }
 #endif
 
+static bool8 IsPlayerFacingSea(void)
+{
+	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = playerEventObj->currentCoords.x;
+	s16 y = playerEventObj->currentCoords.y;
+
+	MoveCoords(playerEventObj->facingDirection, &x, &y);
+	return MapGridGetMetatileBehaviorAt(x, y) == MB_SPLASHING_WATER;
+}
+
 extern const u8 EventScript_UseLavaSurf_Debug[];
 const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
 {
@@ -2307,7 +2346,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	#ifndef UNBOUND
 	if (MetatileBehavior_IsFastCurrent(metatileBehavior))
 	{
-		if (PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
+		if (
+		#ifdef FLAG_BOUGHT_ADM
+		FlagGet(FLAG_BOUGHT_ADM) ||
+		#endif
+		PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
 			return EventScript_CurrentTooFast;
 	}
 	else 
@@ -2341,6 +2384,13 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			#endif
 
 			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING);
+
+			#ifdef FLAG_BOUGHT_ADM
+			if (FlagGet(FLAG_BOUGHT_ADM)
+			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
+				return EventScript_UseADMSurf;
+			#endif
+
 			if (partyId < PARTY_SIZE
 			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 			{
@@ -2348,7 +2398,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				return EventScript_UseSurf;
 			}
 
-			if (IsCurrentAreaSwamp())
+			if (IsPlayerFacingMurkyBrownWater())
 				return EventScript_WaterMurkyBrown;
 			else
 				return EventScript_WaterDyedBlue;
@@ -2362,6 +2412,12 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			{
 				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				item = ITEM_HM07_WATERFALL;
+				#endif
+
+				#ifdef FLAG_BOUGHT_ADM
+				if (FlagGet(FLAG_BOUGHT_ADM)
+				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
+					return EventScript_UseADMWaterfall;
 				#endif
 
 				u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_WATERFALL, item, SHOULD_BE_SURFING);
@@ -2387,6 +2443,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			item = ITEM_HM08_ROCK_CLIMB;
 			#endif
 
+			#ifdef FLAG_BOUGHT_ADM
+			if (FlagGet(FLAG_BOUGHT_ADM))
+				return EventScript_UseADMRockClimb;
+			#endif
+
 			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_ROCKCLIMB, item, 0);
 			if (partyId < PARTY_SIZE)
 			{
@@ -2400,6 +2461,41 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	return NULL;
 }
 
+void GetFirstNonEggIn8004(void)
+{
+	u32 i;
+	Var8004 = 0;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			Var8004 = i;
+			return;
+		}
+	}
+}
+
+extern void Task_UseWaterfall(u8 taskId);
+void DoWaterfallWithNoShowMon(void)
+{
+	u8 taskId = CreateTask(Task_UseWaterfall, 0xFF);
+	if (taskId != 0xFF)
+	{
+		ScriptContext2_Enable();
+		gPlayerAvatar->preventStep = TRUE;
+		gTasks[taskId].data[0] = 3;
+	}
+}
+
+void DoDiveWarpSkipShowMon(void)
+{
+	struct MapPosition mapPosition;
+	PlayerGetDestCoords(&mapPosition.x, &mapPosition.y);
+	dive_warp(&mapPosition, gEventObjects[gPlayerAvatar->eventObjectId].currentMetatileBehavior);
+}
+
 bool8 Waterfall3_MovePlayer(struct Task* task, struct EventObject* playerObj)
 {
 	EventObjectSetHeldMovement(playerObj, GetWalkNormalMovementAction(GetPlayerMovementDirection()));
@@ -2407,10 +2503,6 @@ bool8 Waterfall3_MovePlayer(struct Task* task, struct EventObject* playerObj)
 	return FALSE;
 }
 
-extern const u8 EventScript_UseDive[];
-extern const u8 EventScript_CantDive[];
-extern const u8 EventScript_UseDiveUnderwater[];
-extern const u8 EventScript_CantSurface[];
 bool8 TrySetupDiveDownScript(void)
 {
 	if (HasBadgeToUseDive()
@@ -2423,6 +2515,14 @@ bool8 TrySetupDiveDownScript(void)
 		u16 item = ITEM_NONE;
 		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		item = ITEM_HM05_DIVE;
+		#endif
+
+		#ifdef FLAG_BOUGHT_ADM
+		if (FlagGet(FLAG_BOUGHT_ADM))
+		{
+			ScriptContext1_SetupScript(EventScript_UseADMDive);
+			return TRUE;
+		}
 		#endif
 
 		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, SHOULD_BE_SURFING);
@@ -2450,6 +2550,14 @@ bool8 TrySetupDiveEmergeScript(void)
 		u16 item = ITEM_NONE;
 		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		item = ITEM_HM05_DIVE;
+		#endif
+
+		#ifdef FLAG_BOUGHT_ADM
+		if (FlagGet(FLAG_BOUGHT_ADM))
+		{
+			ScriptContext1_SetupScript(EventScript_UseADMDiveUnderwater);
+			return TRUE;
+		}
 		#endif
 
 		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, 0);
@@ -2491,6 +2599,14 @@ void PlayerAvatarTransition_HandleUnderwater(void)
 	EventObjectSetGraphicsId(player, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_UNDERWATER));
 	EventObjectTurn(player, player->movementDirection);
 	SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_UNDERWATER);
+	
+	#ifdef EVENT_OBJ_PAL_TAG_DIVE
+	FindOrLoadNPCPalette(EVENT_OBJ_PAL_TAG_DIVE);
+	
+	u8 palSlot = FindPalRef(PalTypeNPC, EVENT_OBJ_PAL_TAG_DIVE);
+	if (palSlot != 0xFF)
+		gSprites[player->spriteId].oam.paletteNum = palSlot;
+	#endif
 
 	player->fieldEffectSpriteId = DoBobbingFieldEffect(player->spriteId);
 }

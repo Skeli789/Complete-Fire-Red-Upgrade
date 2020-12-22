@@ -15,6 +15,7 @@
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
@@ -66,6 +67,24 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_RING_CHALLENGE_BATTLE
 	FLAG_RING_CHALLENGE_BATTLE,
+#endif
+#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+	FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST,
+#endif
+#ifdef FLAG_BAD_THOUGHTS_BATTLE
+	FLAG_BAD_THOUGHTS_BATTLE,
+#endif
+#ifdef FLAG_TAILWIND_BATTLE
+	FLAG_TAILWIND_BATTLE,
+#endif
+#ifdef FLAG_DELTA_STREAM_BATTLE
+	FLAG_DELTA_STREAM_BATTLE,
+#endif
+#ifdef FLAG_MAGNET_RISE_BATTLE
+	FLAG_MAGNET_RISE_BATTLE,
+#endif
+#ifdef FLAG_PRIMORDIAL_SEA_BATTLE
+	FLAG_PRIMORDIAL_SEA_BATTLE,
 #endif
 #ifdef FLAG_VICIOUS_SANDSTORM_BATTLE
 	FLAG_VICIOUS_SANDSTORM_BATTLE,
@@ -143,6 +162,12 @@ void HandleEndTurn_BattleWon(void)
 		u8 specialMus = FALSE;
 		u8 loop = FALSE;
 
+		if (IsFrontierTrainerId(id))
+		{
+			PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
+			goto SKIP_MUSIC_SELECTION;
+		}
+
 	VICTORY_MUSIC_SELECTION:
 		switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
@@ -190,7 +215,9 @@ void HandleEndTurn_BattleWon(void)
 		#endif
 		}
 
-		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop) {
+	SKIP_MUSIC_SELECTION:
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop)
+		{
 			id = VarGet(VAR_SECOND_OPPONENT);
 			loop = TRUE;
 			goto VICTORY_MUSIC_SELECTION;
@@ -356,6 +383,8 @@ u8 IsRunningFromBattleImpossible(void)
 	gStringBank = gActiveBattler;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+		return FALSE;
+	else if (RAID_BATTLE_END)
 		return FALSE;
 	else if (AreAllKindsOfRunningPrevented())
 		return TRUE;
@@ -766,7 +795,6 @@ static void EndBattleFlagClear(void)
 	VarSet(VAR_BATTLE_TRANSITION_LOGO, 0);
 	#endif
 	gFishingByte = FALSE;
-	gLastUsedBall = FALSE; //Don't allow between battles
 	FREE_AND_SET_NULL(gNewBS);
 
 	//Handle DexNav Chain

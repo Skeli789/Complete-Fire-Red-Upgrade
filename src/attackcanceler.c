@@ -1245,6 +1245,7 @@ static u8 IsMonDisobedient(void)
 		calc = CheckMoveLimitations(gBankAttacker, gBitTable[gCurrMovePos], 0xFF);
 		if (calc == 0xF) // all moves cannot be used
 		{
+			gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 			gBattleCommunication[MULTISTRING_CHOOSER] = Random() & 3;
 			gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
 			return 1;
@@ -1286,14 +1287,15 @@ static u8 IsMonDisobedient(void)
 		calc -= obedienceLevel;
 		if (calc < obedienceLevel)
 		{
+			gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 			gBattleMoveDamage = ConfusionDamageCalc();
 			gBankTarget = gBankAttacker;
 			gBattlescriptCurrInstr = BattleScript_IgnoresAndHitsItself;
-			gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 			return 2;
 		}
 		else
 		{
+			gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 			gBattleCommunication[MULTISTRING_CHOOSER] = Random() & 3;
 			gBattlescriptCurrInstr = BattleScript_MoveUsedLoafingAround;
 			return 1;

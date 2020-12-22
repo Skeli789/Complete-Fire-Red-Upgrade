@@ -161,6 +161,7 @@
 #define BATTLE_TERRAIN_SKY_BATTLE			0x2A
 #define BATTLE_TERRAIN_BOG					0x2B
 #define BATTLE_TERRAIN_BOG_WATER			0x2C
+#define BATTLE_TERRAIN_DISTORTION_WORLD_FULL 0x2D
 
 #define BATTLE_TERRAIN_RANDOM				0xFF
 #endif
@@ -502,7 +503,7 @@ extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 
 struct BattleHistory //0x20003D0
 {
-    /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
+    /*0x00*/ u16 usedMoves[MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // 0xFFFF means move not used (confuse self hit, etc)
     /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT/* / 2*/];
     /*0x22*/ //u8 itemEffects[MAX_BATTLERS_COUNT / 2]; //Moved to gNewBS
     /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT]; //0x20003F4
@@ -879,6 +880,8 @@ struct NewBattleStruct
 	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
 	bool8 rolloutFinalHit : 1; //Helps with Rollout 5th hit damage calc
 	bool8 usedLastBall : 1; //Helps prevent the bag from opening
+	bool8 threwBall : 1; //Last Used Ball only appears once a ball has been thrown once
+	bool8 totemOmniboostActive : 1; //Allows Contrary mons to get the correct animation
 
 	//Other
 	u16 LastUsedMove;

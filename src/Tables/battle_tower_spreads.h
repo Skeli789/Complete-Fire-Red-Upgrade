@@ -3179,7 +3179,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_SHELL_BELL,
 		.moves =
 		{
-			MOVE_WATERFALL,
+			MOVE_SURGINGSTRIKES,
 			MOVE_FOCUSPUNCH,
 			MOVE_EARTHQUAKE,
 			MOVE_SUBSTITUTE,
@@ -3204,7 +3204,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
-			MOVE_WATERFALL,
+			MOVE_SURGINGSTRIKES,
 			MOVE_CLOSECOMBAT,
 			MOVE_HYPNOSIS,
 			MOVE_BELLYDRUM,
@@ -19983,18 +19983,18 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MOXIE
-		.item = ITEM_FLYINIUM_Z,
+		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
-			MOVE_FLY,
-			MOVE_FIREFANG,
+			MOVE_OUTRAGE,
+			MOVE_DUALWINGBEAT,
+			MOVE_EARTHQUAKE,
 			MOVE_DRAGONDANCE,
-			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_SALAMENCE,
@@ -22718,7 +22718,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_RETURN,
 			MOVE_HIGHJUMPKICK,
-			MOVE_ICEPUNCH,
+			MOVE_TRIPLEAXEL,
 			MOVE_QUICKATTACK,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -22770,7 +22770,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_RETURN,
 			MOVE_CLOSECOMBAT,
-			MOVE_ICEPUNCH,
+			MOVE_PLAYROUGH,
 			MOVE_POWERUPPUNCH,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -24361,7 +24361,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_BLIZZARD,
 			MOVE_GIGADRAIN,
-			MOVE_ICESHARD,
+			MOVE_AURORAVEIL,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -35286,7 +35286,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 8,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GALEWINGS
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
@@ -35369,8 +35369,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_BRAVEBIRD,
 			MOVE_OVERHEAT,
+			MOVE_TAILWIND,
 			MOVE_TAUNT,
-			MOVE_QUICKGUARD,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -37160,7 +37160,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_HEADSMASH,
 			MOVE_ROCKSLIDE,
-			MOVE_EARTHQUAKE,
+			MOVE_CLOSECOMBAT,
 			MOVE_STEALTHROCK,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -37211,9 +37211,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_BLIZZARD,
+			MOVE_EARTHPOWER,
 			MOVE_THUNDERWAVE,
-			MOVE_LIGHTSCREEN,
-			MOVE_REFLECT,
+			MOVE_AURORAVEIL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -37237,7 +37237,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_FREEZEDRY,
 			MOVE_THUNDERWAVE,
-			MOVE_STEALTHROCK,
+			MOVE_AURORAVEIL,
 			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -37263,8 +37263,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_ICYWIND,
 			MOVE_DISCHARGE,
-			MOVE_REFLECT,
-			MOVE_LIGHTSCREEN,
+			MOVE_AURORAVEIL,
+			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,

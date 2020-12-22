@@ -8,6 +8,7 @@
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_controller_opponent.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
@@ -120,7 +121,7 @@ void OpponentHandleChooseMove(void)
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
-				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
+				TryRemovePartnerDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove, TRUE);
 
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
@@ -153,7 +154,11 @@ void OpponentHandleChooseMove(void)
 #define STATE_BEFORE_ACTION_CHOSEN 0
 static void TryRechoosePartnerMove(u16 chosenMove)
 {
-	if (GetBattlerPosition(gActiveBattler) & BIT_FLANK) //Second to choose action on either side
+	u32 speedCalcBank = SpeedCalc(gActiveBattler);
+	u32 speedCalcPartner = SpeedCalc(PARTNER(gActiveBattler));
+
+	if (speedCalcBank < speedCalcPartner //Second to choose action on either side
+	|| (speedCalcBank == speedCalcPartner && (GetBattlerPosition(gActiveBattler) & BIT_FLANK) == B_FLANK_RIGHT)) //Same speed and second mon on side
 	{
 		switch (gChosenMovesByBanks[PARTNER(gActiveBattler)]) {
 			case MOVE_HELPINGHAND:
@@ -192,6 +197,37 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 				ForceSpecificDamageRecalculation(partner, foe1, movePos);
 		}
 	}
+}
+
+#define STATE_WAIT_ACTION_CONFIRMED 4
+bool8 ShouldAIChooseAction(u8 position)
+{
+	//Try prioritizing AI mons in order from fastest to slowest (gets better calcs)
+	u8 bank = GetBattlerAtPosition(position);
+	u8 partner = GetBattlerAtPosition(BATTLE_PARTNER(position));
+
+	if (gBattleTypeFlags & BATTLE_TYPE_MULTI
+	|| gBattleStruct->field_91 & gBitTable[partner] //Only mon on side
+	|| gBattleCommunication[partner] == STATE_WAIT_ACTION_CONFIRMED) //Partner already chose action
+		return TRUE;
+
+	if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) //Vs AI
+	&& IS_DOUBLE_BATTLE
+	&& (SIDE(bank) == B_SIDE_OPPONENT || IsMockBattle())) //AI controlled side
+	{
+		u32 speedCalcBank = SpeedCalc(bank);
+		u32 speedCalcPartner = SpeedCalc(partner);
+
+		if (speedCalcBank > speedCalcPartner) //This mon would probably hit before partner
+			return TRUE;
+		else if (speedCalcBank == speedCalcPartner //Speed tie
+		&& (position & BIT_FLANK) == B_FLANK_LEFT) //Then assume left slot would move first
+			return TRUE;
+	}
+	else if ((position & BIT_FLANK) == B_FLANK_LEFT) //Left slot
+		return TRUE;
+
+	return FALSE;
 }
 
 void OpponentHandleDrawTrainerPic(void)

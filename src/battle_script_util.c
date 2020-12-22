@@ -203,6 +203,11 @@ void ToggleSpectralThiefByte(void)
 	gNewBS->SpectralThiefActive ^= TRUE;
 }
 
+void ToggleTotemOmniboostByte(void)
+{
+	gNewBS->totemOmniboostActive ^= TRUE;
+}
+
 void CheeckPouchFunc(void)
 {
 	u8 bank = gBattleScripting.bank;
@@ -1152,6 +1157,7 @@ void TrySetMagnetRise(void)
 {
 	if (IsGravityActive()
 	|| gNewBS->MagnetRiseTimers[gBankAttacker] != 0
+	|| IsFloatingWithMagnetism(gBankAttacker)
 	|| gStatuses3[gBankAttacker] & (STATUS3_LEVITATING | STATUS3_SMACKED_DOWN | STATUS3_ROOTED)
 	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_IRON_BALL)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1166,7 +1172,7 @@ void TailwindLuckyChantFunc(void)
 {
 	switch (gCurrentMove) {
 		case MOVE_TAILWIND:
-			if (gNewBS->TailwindTimers[SIDE(gBankAttacker)])
+			if (BankSideHasTailwind(gBankAttacker))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
 			{
@@ -1515,6 +1521,12 @@ void ClearAndTransferDontRemoveTransformSpecies(void)
 	}
 
 	TransferDontRemoveTransformSpecies(FALSE);
+}
+
+void FailTransformIfAura(void)
+{
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && VarGet(VAR_TOTEM + gBankTarget) != 0) //Wild boss
+		gBattlescriptCurrInstr = BattleScript_TransformFailedOnAura - 5;
 }
 
 void BackupScriptingBankMoveSelectionCursor(void)
@@ -1895,8 +1907,13 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 	}
 
 	//Check if chosen move is still in moveset
-	u8 originalMovePos = FindMovePositionInMoveset(gChosenMovesByBanks[gEffectBank], gEffectBank);
-	if (gChosenMovesByBanks[gEffectBank] != MOVE_NONE && originalMovePos < MAX_MON_MOVES)
+	u16 chosenMove = gChosenMovesByBanks[gEffectBank];
+	if (gBattleMons[gEffectBank].status2 & STATUS2_MULTIPLETURNS)
+		chosenMove = gLockedMoves[gEffectBank]; //Like locked into Outrage
+
+	u8 originalMovePos = FindMovePositionInMoveset(chosenMove, gEffectBank);
+
+	if (chosenMove != MOVE_NONE && originalMovePos < MAX_MON_MOVES)
 	{
 		gBattleStruct->chosenMovePositions[gEffectBank] = originalMovePos;
 		gMoveSelectionCursor[gEffectBank] = originalMovePos;
@@ -2265,4 +2282,26 @@ void TryFailSteelRoller(void)
 {
 	if (gCurrentMove == MOVE_STEELROLLER && gTerrainType == 0)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+}
+
+void PrintElectromagnetismFloatingStrings(void)
+{
+	#ifdef FLAG_MAGNET_RISE_BATTLE
+	if (FlagGet(FLAG_MAGNET_RISE_BATTLE))
+	{
+		for (; gBattleCommunication[0] < gBattlersCount; ++gBattleCommunication[0])
+		{
+			if (IsFloatingWithMagnetism(gBattleCommunication[0])
+			&& CheckGrounding(gBattleCommunication[0]) == IN_AIR)
+			{
+				BattleScriptPushCursor();
+				gBattleStringLoader = gText_MagnetRiseBattleStart;
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
+				gBattleScripting.bank = gBattleCommunication[0];
+				++gBattleCommunication[0];
+				return;
+			}
+		}
+	}
+	#endif
 }

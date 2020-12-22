@@ -6,6 +6,7 @@
 #include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/constants/flags.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -156,7 +157,14 @@ void BufferStringBattle(u16 stringID)
 			else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN)
 				stringPtr = BattleText_WildPkmnAppearedPause; //0x83FD2AA
 			else
+			{
+				#ifdef MAPSEC_DISTORTION_WORLD
+				if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD)
+					stringPtr = BattleText_DistortionWorldMonAttacked;
+				else
+				#endif
 				stringPtr = BattleText_WildPkmnAppeared; //0x83FD284
+			}
 		}
 		break;
 
@@ -619,7 +627,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 						toCpy = gTrainerClassNames[class];
 				}
 
-				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Trainer Class Names
 					toCpy = T1_READ_PTR(toCpy);
 				break;
 			case B_TXT_TRAINER1_NAME: // trainer1 name
@@ -699,7 +707,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = gStringVar4;
 				}
 				else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-				|| (IsFrontierTrainerId(gTrainerBattleOpponent_A) && GetTrainerALoseText() == NULL))
+				|| (IsFrontierTrainerId(gTrainerBattleOpponent_A)
+				 && (GetTrainerALoseText() == NULL || GetTrainerALoseText()[0] == EOS)))
 				{
 					CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, gTrainerBattleOpponent_A, 0);
 					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);
@@ -791,7 +800,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = gTrainerClassNames[gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass];
 
 
-				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Trainer Class Names
 					toCpy = T1_READ_PTR(toCpy);
 
 				break;
@@ -834,7 +843,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				break;
 			case B_TXT_TRAINER2_LOSE_TEXT:
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-				|| (IsFrontierTrainerId(gTrainerBattleOpponent_B) && GetTrainerBLoseText() == NULL))
+				|| (IsFrontierTrainerId(gTrainerBattleOpponent_B)
+				 && (GetTrainerBLoseText() == NULL || GetTrainerBLoseText()[0] == EOS)))
 				{
 					CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, VarGet(VAR_SECOND_OPPONENT), 1);
 					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);

@@ -341,7 +341,7 @@ Reverses stat changes.
 Stops the foe from eating Berries.
 
 #org @DESC_WEAKARMOR
-Hits raise Speed but drop Defense.
+Hits up Speed but drop Defense.
 
 #org @DESC_HEAVYMETAL
 Doubles weight.

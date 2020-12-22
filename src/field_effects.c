@@ -110,6 +110,20 @@ static const struct OamData sMiningScanRingOam =
 	.priority = 0, //Above all
 };
 
+const union AnimCmd gFieldEffectObjectImageAnim_ShakingGrass[] =
+{
+    ANIMCMD_FRAME(0, 8),
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_FRAME(2, 8),
+    ANIMCMD_FRAME(3, 8),
+    ANIMCMD_FRAME(4, 8),
+    ANIMCMD_FRAME(5, 8),
+    ANIMCMD_FRAME(6, 8),
+    ANIMCMD_FRAME(7, 8),
+    ANIMCMD_FRAME(8, 8),
+    ANIMCMD_JUMP(0),
+};
+
 static const union AnimCmd sFieldEffectObjectImageAnim_Sparkles[] =
 {
 	ANIMCMD_FRAME(0, 8),
@@ -960,6 +974,7 @@ static void Task_UseRockClimb(u8 taskId)
 	while (sRockClimbFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gEventObjects[gPlayerAvatar->eventObjectId]));
 }
 
+extern void sp09A_StopSounds(void);
 static bool8 RockClimb_Init(struct Task *task, struct EventObject* eventObject)
 {
 	ScriptContext2_Enable();
@@ -967,7 +982,17 @@ static bool8 RockClimb_Init(struct Task *task, struct EventObject* eventObject)
 	gPlayerAvatar->preventStep = TRUE;
 	PlayerGetDestCoords(&task->tDestX, &task->tDestY);
 	MoveCoords(eventObject->movementDirection, &task->tDestX, &task->tDestY);
-	task->tState++;
+
+	#ifdef FLAG_BOUGHT_ADM
+	if (FlagGet(FLAG_BOUGHT_ADM))
+	{
+		task->tState = STATE_ROCK_CLIMB_JUMP_ON;
+		sp09A_StopSounds();
+	}
+	else
+	#endif
+		task->tState++;
+
 	return FALSE;
 }
 

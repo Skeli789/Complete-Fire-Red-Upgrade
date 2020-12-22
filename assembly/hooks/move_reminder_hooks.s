@@ -127,8 +127,9 @@ FixLoadMoveId4:
 	mov r0, r1
 	bl GetMoveIdFromRelearnerStruct
 	mov r1, r0
-	ldr r2, =(0x080E4E2E +1)
-	bx r2
+	mov r2, r9
+	ldr r3, =(0x080E4E30 +1)
+	bx r3
 
 .align 2
 .pool

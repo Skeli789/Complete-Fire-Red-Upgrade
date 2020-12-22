@@ -46,13 +46,16 @@ enum EndTurnEffects
 	ET_Nightmare,
 	ET_Item_Effects5,
 	ET_Switch_Out_Abilities5,
-	ET_Curse,
+	ET_BadThoughts,
 	ET_Item_Effects6,
 	ET_Switch_Out_Abilities6,
-	ET_Trap_Damage,
-	ET_Octolock,
+	ET_Curse,
 	ET_Item_Effects7,
 	ET_Switch_Out_Abilities7,
+	ET_Trap_Damage,
+	ET_Octolock,
+	ET_Item_Effects8,
+	ET_Switch_Out_Abilities8,
 	ET_Taunt_Timer,
 	ET_Encore_Timer,
 	ET_Disable_Timer,
@@ -63,7 +66,7 @@ enum EndTurnEffects
 	ET_Heal_Block_Timer,
 	ET_Embargo_Timer,
 	ET_Yawn,
-	ET_Item_Effects8,
+	ET_Item_Effects9,
 	ET_Perish_Song,
 	ET_Roost,
 	ET_Reflect,
@@ -91,6 +94,7 @@ enum EndTurnEffects
 	ET_Block_B,
 	ET_Form_Change,
 	ET_Reactivate_Overworld_Weather,
+	ET_Reactivate_Overworld_Terrain,
 	ET_End
 };
 
@@ -592,6 +596,7 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects6:
 			case ET_Item_Effects7:
 			case ET_Item_Effects8:
+			case ET_Item_Effects9:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
@@ -606,6 +611,7 @@ u8 TurnBasedEffects(void)
 			case ET_Switch_Out_Abilities5:
 			case ET_Switch_Out_Abilities6:
 			case ET_Switch_Out_Abilities7:
+			case ET_Switch_Out_Abilities8:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					switch(ABILITY(gActiveBattler)) {
@@ -677,6 +683,21 @@ u8 TurnBasedEffects(void)
 					else
 						gBattleMons[gActiveBattler].status2 &= ~STATUS2_NIGHTMARE;
 				}
+				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
+				break;
+
+			case ET_BadThoughts:
+				#ifdef FLAG_BAD_THOUGHTS_BATTLE
+				if (BATTLER_ALIVE(gActiveBattler))
+				{
+					gBattleMoveDamage = GetBadThoughtsDamage(gActiveBattler);
+					if (gBattleMoveDamage != 0)
+					{
+						BattleScriptExecute(BattleScript_BadThoughtsTurnDmg);
+						effect++;
+					}
+				}
+				#endif
 				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 				break;
 
@@ -1592,7 +1613,10 @@ u8 TurnBasedEffects(void)
 					++effect;
 					return effect;
 				}
+				break;
 
+			case ET_Reactivate_Overworld_Terrain:
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				if (gTerrainType == 0 && TryActivateOWTerrain())
 				{
 					++effect;
@@ -1790,6 +1814,62 @@ u32 GetSeaOfFireDamage(u8 bank)
 	{
 		damage = MathMax(1, GetBaseMaxHP(bank) / 8);
 	}
+
+	return damage;
+}
+
+u32 GetBadDreamsDamage(u8 bank) //Not actually used in calculation - mainly used for AI
+{
+	u32 damage = 0;
+
+	if (gBattleMons[bank].status1 & STATUS1_SLEEP
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		damage = MathMax(1, GetBaseMaxHP(bank) / 8);
+		damage *= AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, bank, ABILITY_BADDREAMS, 0, 0);
+	}
+
+	return damage;
+}
+
+u32 GetBadThoughtsDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	#ifdef FLAG_BAD_THOUGHTS_BATTLE
+	u8 divisor;
+	u8 ability = ABILITY(bank);
+
+	if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE)
+	&& !IsOfType(bank, TYPE_DARK)
+	&& !IsOfType(bank, TYPE_GHOST)
+	&& ability != ABILITY_MAGICGUARD
+	&& ability != ABILITY_OBLIVIOUS
+	&& ability != ABILITY_UNAWARE)
+	{
+		#ifdef VAR_GAME_DIFFICULTY
+		switch (VarGet(VAR_GAME_DIFFICULTY)) {
+			case OPTIONS_EASY_DIFFICULTY:
+				divisor = 16; //1/16 of HP
+				break;
+			case OPTIONS_NORMAL_DIFFICULTY:
+				divisor = 13; //1/13 of HP
+				break;
+			case OPTIONS_HARD_DIFFICULTY:
+				divisor = 10; //1/10 of HP
+				break;
+			case OPTIONS_EXPERT_DIFFICULTY:
+			default:
+				divisor = 7; //1/7 of HP
+				break;
+		}
+		#else
+			divisor = 16; //1/16 of HP
+		#endif
+
+		damage = MathMax(1, GetBaseMaxHP(bank) / divisor);
+	}
+	#endif
 
 	return damage;
 }

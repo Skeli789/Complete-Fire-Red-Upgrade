@@ -230,8 +230,9 @@ void atkFF06_setterrain(void)
 			case MOVE_DEFOG:
 			case MOVE_STEELROLLER:
 			REMOVE_TERRAIN:
+				if (gCurrentMove != MOVE_DEFOG)
+					gNewBS->terrainForcefullyRemoved = TRUE;
 				type = 0;
-				gNewBS->terrainForcefullyRemoved = TRUE;
 				gBattleScripting.animArg1 = B_ANIM_LOAD_DEFAULT_BG;
 				gBattleStringLoader = TerrainEndString;
 				break;

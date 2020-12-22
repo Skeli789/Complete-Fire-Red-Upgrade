@@ -270,6 +270,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	}
 	else if (IsRaidBattle()
 	&& split == SPLIT_STATUS
+	&& !gSpecialMoveFlags[move].gMovesThatCallOtherMoves //Moves like Nature Power are still allowed
 	&& gBankAttacker != bankDef
 	&& bankDef == BANK_RAID_BOSS
 	&& gNewBS->dynamaxData.raidShieldsUp)
@@ -468,7 +469,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 		if (gBattleWeather & WEATHER_FOG_ANY)
 		{
 			#ifdef UNBOUND
-			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
+			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 			#endif
 				calc = udivsi((calc * 60), 100); // 0.6 Fog loss
 		}
@@ -565,7 +566,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
 	{
 		#ifdef UNBOUND
-		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
+		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 		#endif
 			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
 	}

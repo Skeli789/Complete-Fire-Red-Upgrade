@@ -116,6 +116,23 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					INCREASE_VIABILITY(4); //Counteract the negative check
 				}
+				else if (!CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE)) //Explosion is the only move that can knock out or no moves can knock out
+				{
+					if (data->atkSpeed >= data->defSpeed) //Attacker is faster
+					{
+						if (Can2HKO(bankAtk, bankDef) //Attacker will KO by next turn
+						&& !CanKnockOut(bankDef, bankAtk)) //Attacker just needs to sponge a hit before it can take the foe out
+							break; //Don't explode
+					}
+					else //Attacker is slower
+					{
+						if (Can2HKO(bankAtk, bankDef) //Attacker will KO by next turn
+						&& !Can2HKO(bankDef, bankAtk)) //Attacker just needs to sponge two hits before it can take the foe out
+							break; //Don't explode
+					}
+
+					INCREASE_VIABILITY(4); //Counteract the negative check
+				}
 			}
 			break;
 
@@ -768,8 +785,16 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_DESTINY_BOND:
-			if (MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankDef, bankAtk))
-				INCREASE_STATUS_VIABILITY(3);
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+			{
+				if (CanKnockOut(bankDef, bankAtk))
+					INCREASE_STATUS_VIABILITY(3);
+			}
+			else
+			{
+				if (Can2HKO(bankDef, bankAtk))
+					INCREASE_STATUS_VIABILITY(3);
+			}
 			break;
 
 		case EFFECT_SPITE: ;
@@ -859,6 +884,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			else
 			{
 				if (atkAbility == ABILITY_CONTRARY || defAbility == ABILITY_MAGICGUARD)
+					break;
+				else if (IsMovePredictionPhazingMove(bankDef, bankAtk))
 					break;
 				else if (MoveInMoveset(MOVE_GYROBALL, bankAtk))
 					INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, STAT_STAGE_MAX, 4); //Go until Gyro Ball can kill in 1 hit
@@ -955,16 +982,36 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_KINGSSHIELD:
 					#if (defined SPECIES_AEGISLASH && defined SPECIES_AEGISLASH_BLADE)
 					if (atkAbility == ABILITY_STANCECHANGE //Special logic for Aegislash
-					&&  data->atkSpecies == SPECIES_AEGISLASH_BLADE
-					&&  !IsBankIncapacitated(bankDef)
-					&&  Random() & 1) //50% of being a good idea
+					&&  !IsBankIncapacitated(bankDef))
 					{
-						if (IsClassStall(class))
-							INCREASE_VIABILITY(3);
-						else if (IS_DOUBLE_BATTLE)
-							INCREASE_VIABILITY(19);
-						else
-							INCREASE_STATUS_VIABILITY(3);
+						if (data->atkSpecies == SPECIES_AEGISLASH_BLADE //In blade form
+						|| (IS_DOUBLE_BATTLE && Random() % 100 < 80) //80% chance of spamming in doubles
+						|| IsClassStall(class) //Best to protect always if you're stalling
+						|| (predictedMove != MOVE_NONE 
+						 && CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
+						 && PhysicalMoveInMoveset(bankDef))) //The contact move is also physical
+						{
+							if (IsClassStall(class))
+							{
+								if (!BATTLER_MAX_HP(bankAtk) && data->atkItemEffect == ITEM_EFFECT_LEFTOVERS)
+									INCREASE_VIABILITY(8);
+								else if (predictedMove != MOVE_NONE 
+								&& CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
+								&& PhysicalMoveInMoveset(bankDef)) //The contact move is also physical
+									INCREASE_VIABILITY(8);
+								else
+									INCREASE_VIABILITY(3);
+							}
+							else if (IS_DOUBLE_BATTLE)
+								INCREASE_VIABILITY(19);
+							else
+							{
+								INCREASE_STATUS_VIABILITY(3);
+
+								if (IsClassSetupSweeper(class) && Can2HKO(bankDef, bankAtk)) //Means King's Shield wouldn't have been set by the above function
+									INCREASE_VIABILITY(3);
+							}
+						}
 						break;
 					}
 					#endif
@@ -1394,6 +1441,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_BELLY_DRUM:
 			if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 			{
+				if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+					break;
+
 				if (IsTypeZCrystal(data->atkItem, moveType) && !IsMegaZMoveBannedBattle())
 					INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, STAT_STAGE_MAX, 5);
 				else
@@ -1444,7 +1494,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						INCREASE_VIABILITY(3); //Past strongest move
 				}
 				else if (gBattleMoves[predictedMove].effect == EFFECT_SEMI_INVULNERABLE
-				&& !BATTLER_SEMI_INVULNERABLE(bankDef))
+				&& !(data->defStatus3 & STATUS3_SEMI_INVULNERABLE))
 					INCREASE_VIABILITY(3); //Past strongest move
 			}
 			break;
@@ -1452,6 +1502,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_DEFENSE_CURL:
 			if (MoveEffectInMoveset(EFFECT_ROLLOUT, bankAtk) && !(data->atkStatus2 & STATUS2_DEFENSE_CURL))
 				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, STAT_STAGE_MAX, 5);
+			else if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			else
 				goto AI_DEFENSE_PLUS;
 			break;
@@ -1590,6 +1642,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (SPLIT(predictedMove) == SPLIT_STATUS
 			|| IsClassGoodToTaunt(GetBankFightingStyle(bankDef)))
 				INCREASE_STATUS_VIABILITY(3);
+			else if (IsClassDoublesUtility(class) && HasProtectionMoveInMoveset(bankDef, CHECK_QUICK_GUARD | CHECK_WIDE_GUARD))
+				INCREASE_VIABILITY(15); //Taunt the Wide Guard user
+			else if (IsClassDoublesTeamSupport(class) && HasProtectionMoveInMoveset(bankDef, CHECK_QUICK_GUARD | CHECK_WIDE_GUARD))
+				INCREASE_VIABILITY(13); //Taunt the Wide Guard user
 			else if (StatusMoveInMoveset(bankDef))
 				INCREASE_STATUS_VIABILITY(2);
 			break;
@@ -1854,7 +1910,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_EXTREME_EVOBOOST: ;
 			u8 oldViability = viability;
-			
+
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
+
 			switch (move) {
 				case MOVE_EXTREME_EVOBOOST:
 					for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
@@ -1872,7 +1931,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break; //Will be able to KO after the HP cut
 					//Fallthrough
 				case MOVE_NORETREAT:
-					if (IsMovePredictionPhazingMove(bankDef, bankAtk) || atkAbility == ABILITY_CONTRARY)
+					if (atkAbility == ABILITY_CONTRARY)
 						break;
 
 					//Try to boost either Attack, Sp. Attack, or Speed
@@ -1911,7 +1970,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_CALM_MIND:
-			if (atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY && !IsMovePredictionPhazingMove(bankDef, bankAtk))
 			{
 				switch (move) {
 					case MOVE_GEOMANCY:
@@ -1936,7 +1995,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_DRAGON_DANCE:
-			if (atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY && !IsMovePredictionPhazingMove(bankDef, bankAtk))
 			{
 				switch (move) {
 					case MOVE_SHELLSMASH:
@@ -1995,6 +2054,25 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 				case MOVE_HEARTSWAP: ;
 					bool8 hasHigherStat = FALSE;
+
+					//Use if the attacker has no buffs and the target has +2 in anything
+					//Basically to prevent set ups
+					for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
+					{
+						if (STAT_STAGE(bankAtk, i) > 7) //Attacker has seriously invested at all
+							break;
+
+						if (STAT_STAGE(bankDef, i) >= 6 + 2) //Target is at a +2 set-up
+							hasHigherStat = TRUE;
+					}	
+
+					if (hasHigherStat && i == BATTLE_STATS_NO) //Attacker has no buffs and target has at least one +2 buff
+					{
+						INCREASE_STATUS_VIABILITY(2); //Steal their buff
+						break;
+					}
+
+					hasHigherStat = FALSE;
 
 					//Only use if all target stats are >= attacker stats to prevent infinite loop
 					for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
@@ -2135,10 +2213,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					{
 						if (SleepMoveInMovesetWithLowAccuracy(bankAtk, bankDef)) //Has Gravity for a move like Hypnosis
 							IncreaseSleepViability(&viability, class, bankAtk, bankDef, move);
-						else if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, FALSE))
-							INCREASE_STATUS_VIABILITY(2);
-						else
-							INCREASE_STATUS_VIABILITY(1);
+						else if (atkAbility != ABILITY_LEVITATE && !IsFloatingWithMagnetism(bankAtk)) //Would have Gravity to revert the Gravity
+						{
+							if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, FALSE))
+								INCREASE_STATUS_VIABILITY(2);
+							else
+								INCREASE_STATUS_VIABILITY(1);
+						}
+					}
+					else //Gravity active
+					{
+						if (atkAbility == ABILITY_LEVITATE || IsFloatingWithMagnetism(bankAtk))
+							INCREASE_STATUS_VIABILITY(2); //Undo the Gravity
 					}
 					break;
 
@@ -2395,7 +2481,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
 			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //The use the strongest fast move
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
 			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				INCREASE_VIABILITY(9);

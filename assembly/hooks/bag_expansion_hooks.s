@@ -80,6 +80,7 @@ BagLRScroll:
 	lsl r1, #0x6
 	orr r0, r1
 	strb r0, [r3, #0x16]
+	bl FixCubeCursorDefaultColour
 	pop {r3}
 	mov r8, r3
 	pop {r4-r7, pc}

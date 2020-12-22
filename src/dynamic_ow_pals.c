@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../include/field_weather.h"
 
+#include "../include/new/character_customization.h"
 #include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/util.h"
 
@@ -14,7 +15,7 @@ Credit to Navenatox
 #define Green(Color)	((Color >> 5) & 31)
 #define Blue(Color)		((Color >> 10) & 31)
 
-#define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8))0x805F538+1)(PalTag, PalSlot)
+#define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8)) (0x805F538 | 1))(PalTag, PalSlot)
 #define TintOBJPalette(PalSlot) ((void(*)(u8))0x8083598+1)(PalSlot)
 
 #define OverworldIsActive FuncIsActiveTask(Task_WeatherMain)
@@ -25,6 +26,7 @@ Credit to Navenatox
 
 #define FOG_FADE_COLOUR TintColor(RGB(28, 31, 28))
 #define FOG_BRIGHTEN_INTENSITY 12
+#define EVENT_OBJ_PAL_TAG_DEFAULT 0x1100
 
 struct PalRef
 {
@@ -329,6 +331,10 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 		return PalRefIncreaseCount(0);
 
 	LoadNPCPalette(palTag, palSlot);
+	#ifdef UNBOUND
+	if (palTag == EVENT_OBJ_PAL_TAG_DEFAULT)
+		ChangeEventObjPal(0x100 + palSlot * 16);
+	#endif
 	FogBrightenPalettes(FOG_BRIGHTEN_INTENSITY);
 	MaskPaletteIfFadingIn(palSlot);
 	return PalRefIncreaseCount(palSlot);
@@ -346,6 +352,10 @@ u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
 		return PalRefIncreaseCount(0);
 
 	LoadNPCPalette(palTag, palSlot);
+	#ifdef UNBOUND
+	if (palTag == EVENT_OBJ_PAL_TAG_DEFAULT)
+		ChangeEventObjPal(0x100 + palSlot * 16);
+	#endif
 	BlendPalettes(gBitTable[(palSlot + 16)], 6, RGB(12, 20, 27)); //Make it blueish
 	BrightenReflection(palSlot); //And a little brighter
 	TintOBJPalette(palSlot);
@@ -468,4 +478,17 @@ u8 LoadPaletteForEmotionBubbles(void)
 	#else
 	return FindOrLoadNPCPalette(0x1100);
 	#endif
+}
+
+u8 sub_805F510(const struct SpritePalette *spritePalette)
+{
+	if (IndexOfSpritePaletteTag(spritePalette->tag) != 0xFF)
+		return 0xFF;
+
+	u8 palSlot = LoadSpritePalette(spritePalette);
+	#ifdef UNBOUND
+	if (palSlot != 0xFF && spritePalette->tag == EVENT_OBJ_PAL_TAG_DEFAULT)
+		ChangeEventObjPal(0x100 + palSlot * 16);
+	#endif
+	return palSlot;
 }

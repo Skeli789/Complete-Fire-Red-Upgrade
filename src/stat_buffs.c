@@ -228,6 +228,11 @@ void atk48_playstatchangeanimation(void)
 			changeableStatsCount = 0xFF;
 		}
 	}
+	else if (gNewBS->totemOmniboostActive)
+	{
+		statAnimId = STAT_ANIM_MULTIPLE_PLUS1;
+		changeableStatsCount = 0xFF;
+	}
 
 	if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount < 2)
 	|| (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_TRIPLE && changeableStatsCount < 3))

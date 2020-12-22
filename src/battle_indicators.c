@@ -571,6 +571,19 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 
 static void SpriteCB_MegaIndicator(struct Sprite* self)
 {
+	struct Sprite* healthbox = GetHealthboxSprite(INDICATOR_BANK);
+
+	//Hide if the healthbox its attached to is hidden
+	if (healthbox->invisible)
+	{
+		self->invisible = TRUE;
+		return;
+	}
+	else
+	{
+		self->invisible = FALSE;
+	}
+
 	switch(TAG) {
 		case GFX_TAG_ALPHA_INDICATOR:
 			if (!IsBluePrimal(INDICATOR_BANK))
@@ -616,18 +629,6 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 				self->invisible = TRUE;
 				return;
 			}
-	}
-
-	struct Sprite* healthbox = GetHealthboxSprite(INDICATOR_BANK);
-
-	if (healthbox->invisible)
-	{
-		self->invisible = TRUE;
-		return;
-	}
-	else
-	{
-		self->invisible = FALSE;
 	}
 
 	u8 y = healthbox->oam.y;
@@ -1420,6 +1421,7 @@ bool8 CantLoadLastBallTrigger(void)
 {
 	return (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		|| CantCatchPokemonRightNow()
+		|| !gNewBS->threwBall
 		|| GetPocketByItemId(gLastUsedBall) != POCKET_POKEBALLS
 		|| !CheckBagHasItem(gLastUsedBall, 1);
 }

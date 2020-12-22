@@ -315,9 +315,16 @@ u8 PredictBankFightingStyle(u8 bank)
 
 	if (IsDynamaxed(bank))
 	{
+		bool8 isRaidBoss = IsRaidBattle() && bank == BANK_RAID_BOSS;
 		u16 moves[MAX_MON_MOVES] = {0};
+
 		for (u8 i = 0; i < MAX_MON_MOVES; ++i)
-			moves[i] = GetMaxMove(bank, i);
+		{
+			if (isRaidBoss && SPLIT(gBattleMons[bank].moves[i]) == SPLIT_STATUS)
+				moves[i] = gBattleMons[bank].moves[i]; //Raid Boss can't use Max Guard
+			else
+				moves[i] = GetMaxMove(bank, i);
+		}
 
 		return PredictFightingStyle(moves, ability, itemEffect, bank);
 	}
@@ -1009,8 +1016,9 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 				if (partnerMove != MOVE_NONE
 				&& !isAtkDynamaxed
 				&&  ABILITY(bankAtk) != ABILITY_TELEPATHY
-				&&  GetBaseMoveTarget(partnerMove, partner) & MOVE_TARGET_ALL
-				&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT))
+				&&  GetBaseMoveTarget(partnerMove, partner) & MOVE_TARGET_ALL //Partner using move that hits everyone
+				&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT) //It affects this mon
+				&& !IsDamagingMoveUnusable(partnerMove, partner, bankAtk)) //And it will work against this mon (considers Volt Absorb, Storm Drain, etc.)
 				{
 					return PROTECT_FROM_ALLIES; //Protect if partner is going to use a move that damages the whole field
 				}

@@ -17609,8 +17609,52 @@ WICKED_BLOW_STARS_RED: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_PAIN_SPLIT OAM_O
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_SURGING_STRIKES:
-	goto ANIM_AQUATAIL
+	loadparticle ANIM_TAG_UNUSED_IMPACT_2
+	loadparticle ANIM_TAG_WATER_IMPACT
+	jumpifmoveturn 1 SURGING_STRIKES_1
+	jumpifmoveturn 2 SURGING_STRIKES_2
+	
+SURGING_STRIKES_0:
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, -40, -20, 0, 0, 10, -20 @Top left
+	pause 5
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, 40, 20, 0, 0, 10, 20 @Bottom right
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, -5, -5, bank_target 0x1
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
+	pause 5
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, 5, 5, bank_target 0x1
+	waitanimation
 	endanimation
+
+SURGING_STRIKES_1:
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, 40, -20, 0, 0, 10, -20 @Top Right
+	pause 5
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, -40, 20, 0, 0, 10, 20 @Bottom left
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, 5, -5, bank_target 0x1
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
+	pause 5
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, -5, 5, bank_target 0x1
+	waitanimation
+	endanimation
+
+SURGING_STRIKES_2:
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, -40, -20, 0, 0, 10, -20 @Top left
+	pause 5
+	playsound2 0xC0 SOUND_PAN_TARGET
+	launchtemplate SURGING_STRIKE TEMPLATE_TARGET | 2, 0x6, 40, -20, 0, 0, 10, -20 @Top Right
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, -5, -5, bank_target 0x1
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x0 0x4 0x8 0x1
+	pause 5
+	launchtemplate Template_WaterHit TEMPLATE_TARGET | 1, 0x4, 5, -5, bank_target 0x1
+	waitanimation
+	endanimation
+
+.align 2
+SURGING_STRIKE: objtemplate ANIM_TAG_UNUSED_IMPACT_2 ANIM_TAG_UNUSED_IMPACT_2 OAM_NORMAL_32x32 gAnimCmdTable_SurgingStrike 0x0 gDummySpriteAffineAnimTable SpriteCB_SurgingStrikes
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -26777,3 +26821,12 @@ DoHeartSwap:
 SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
 POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
 HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 0x83E7104 0x80B3A35
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x8076DA8 with r2
+SetAverageBattlerPositionsHook:
+	mov r2, r9
+	bl SetAverageBattlerPositions
+	ldr r0, =0x8076E26 | 1
+	bx r0

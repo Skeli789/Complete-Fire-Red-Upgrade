@@ -42,6 +42,9 @@ enum BattleBeginStates
 	ThirdTypeRemoval,
 	RaidBattleReveal,
 	DynamaxUsableIndicator,
+	BadThoughtsBattleMessage,
+	TailwindBattleMessage,
+	MagnetRiseBattleMessage,
 	ShadowShieldBattleMessage,
 	PixieBattleMessage,
 	PixieBattleBuffs,
@@ -270,6 +273,50 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case BadThoughtsBattleMessage:
+				#ifdef FLAG_BAD_THOUGHTS_BATTLE
+				if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE))
+				{
+					gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					gBattleStringLoader = gText_BadThoughtsBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
+				++*state;
+				break;
+
+			case TailwindBattleMessage:
+				#ifdef FLAG_TAILWIND_BATTLE
+				if (FlagGet(FLAG_TAILWIND_BATTLE))
+				{
+					gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					gBattleStringLoader = gText_TailwindBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
+				++*state;
+				break;
+
+			case MagnetRiseBattleMessage:
+				#ifdef FLAG_MAGNET_RISE_BATTLE
+				if (FlagGet(FLAG_MAGNET_RISE_BATTLE))
+				{
+					for (; *bank < gBattlersCount; ++*bank)
+					{
+						if (IsFloatingWithMagnetism(*bank))
+						{
+							gBankAttacker = gBattleScripting.bank = *bank;
+							gBattleStringLoader = gText_MagnetRiseBattleStart;
+							BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+							++*bank;
+							return;
+						}
+					}
+				}
+				#endif
+				++*state;
+				break;
+
 			case ShadowShieldBattleMessage:
 				#ifdef FLAG_SHADOW_SHIELD_BATTLE
 				if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE))
@@ -423,10 +470,17 @@ void BattleBeginFirstTurn(void)
 							++*bank;
 							return;
 						}
-						else if (totemBoostType == TOTEM_OMNIBOOST) //All stats
+						else if (totemBoostType == TOTEM_OMNIBOOST) //All main stats
 						{
-							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							gBankAttacker = gBattleScripting.bank = *bank;
+	
+							for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
+							{
+								if (STAT_STAGE(gBankAttacker, i) < STAT_STAGE_MAX)
+									++STAT_STAGE(gBankAttacker, i);
+							}
+
+							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							++*bank;
 							return;
 						}
@@ -556,7 +610,11 @@ u8 CanActivateTotemBoost(u8 bank)
 
 		if (val == 0xFFFF) //Omniboost
 		{
-			if (InBattleSands())
+			if (InBattleSands()
+			#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+			|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+			#endif
+			)
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
 
 			return TOTEM_OMNIBOOST;
@@ -566,7 +624,11 @@ u8 CanActivateTotemBoost(u8 bank)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gBattleScripting.statChanger = stat | raiseAmount;
-			if (InBattleSands())
+			if (InBattleSands()
+			#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+			|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+			#endif
+			)
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
 
 			return TOTEM_SINGLE_BOOST;
@@ -594,15 +656,15 @@ static void TryPrepareTotemBoostInBattleSands(void)
 
 		//The farther the "player" gets, the higher chance a stat will be raised more than 1
 		u8 currStreak = GetCurrentBattleTowerStreak();
-		if (currStreak < 10)
+		if (currStreak < 35)
 			increaseMax = 1;
-		else if (currStreak < 20)
-			increaseMax = 2;
-		else if (currStreak < 30)
-			increaseMax = 3;
-		else if (currStreak < 60)
-			increaseMax = 4;
 		else if (currStreak < 50)
+			increaseMax = 2;
+		else if (currStreak < 65)
+			increaseMax = 3;
+		else if (currStreak < 80)
+			increaseMax = 4;
+		else if (currStreak < 100)
 			increaseMax = 5;
 		else
 			increaseMax = 6;
@@ -1487,6 +1549,11 @@ u16 GetMUS_ForBattle(void)
 
 			if (gClassBasedBattleBGM[trainerClass])
 				return gClassBasedBattleBGM[trainerClass];
+			
+			#ifdef UNBOUND
+			if (gTrainerBattleOpponent_A == TRAINER_NEX)
+				return BGM_BATTLE_SINNOH_TRAINER;
+			#endif
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
@@ -1683,7 +1750,10 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 	else if (bank1Spd < bank2Spd)
 		return SecondMon;
 
-	return SpeedTie;
+	if (Random() & 1)
+		return SpeedTie; //Second mon goes first because it won the speed tie
+
+	return FirstMon;
 }
 
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2)
@@ -1925,7 +1995,7 @@ u32 SpeedCalc(u8 bank)
 
 	speed = BoostSpeedByItemEffect(itemEffect, itemQuality, SPECIES(bank), speed, IsDynamaxed(bank));
 
-	if (gNewBS->TailwindTimers[SIDE(bank)])
+	if (BankSideHasTailwind(bank))
 		speed *= 2;
 	if (BankSideHasSwamp(bank))
 		speed /= 4;
@@ -1936,11 +2006,13 @@ u32 SpeedCalc(u8 bank)
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bank) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent_A != 0x400)
-			speed = (speed * 110) / 100;
+			speed = (speed * 11) / 10; //1.1x
 	#endif
 
 	if (gBattleMons[bank].status1 & STATUS_ANY && ability == ABILITY_QUICKFEET)
-		speed *= 2;
+	{
+		speed = (speed * 15) / 10; //1.5x
+	}
 	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
 	{
 		#ifndef OLD_PARALYSIS_SPD_DROP
@@ -1986,7 +2058,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 	speed = BoostSpeedByItemEffect(itemEffect, itemQuality, mon->species, speed, FALSE);
 
 	//Check other things that alter speed
-	if (gNewBS->TailwindTimers[side])
+	if (SideHasTailwind(side))
 		speed *= 2;
 	if (SideHasSwamp(side))
 		speed /= 4;

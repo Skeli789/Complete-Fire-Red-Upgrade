@@ -395,11 +395,24 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 		{
 			currDmg = GetFinalAIMoveDamage(currMove, bankAtk, bankDef, 1, &damageData);
 
-			if (MoveWouldHitFirst(currMove, bankAtk, bankDef)
-			&& currDmg > bestDmg)
+			if (MoveWouldHitFirst(currMove, bankAtk, bankDef))
 			{
-				bestDmg = currDmg;
-				bestMoveIndex = i;
+				if (currDmg > bestDmg)
+				{
+					bestDmg = currDmg;
+					bestMoveIndex = i;
+				}
+				else if (currDmg == bestDmg) //Two moves do the same (probably both KO)
+				{
+					//Try choosing the one with higher priority
+					u8 currPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove);
+					u8 bestPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, gBattleMons[bankAtk].moves[bestMoveIndex]); //Priority of the best move so far
+					
+					if (currPriority > bestPriority) //This new move has a higher priority
+						bestMoveIndex = i; //So pick it since it does the most damage and has a higher chance of going first
+					else if (currPriority == bestPriority && Random() & 1) //If the two moves have the same priority
+						bestMoveIndex = i; //Pick this new one 50% of the time
+				}
 			}
 		}
 	}
@@ -459,7 +472,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc
 void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove)
 {
 	//mgba_printf(MGBA_LOG_ERROR, "");
-	int i, j;
+	s32 i, j;
 	u8 currTarget;
 	u16 move;
 	s8 moveScores[MAX_MON_MOVES][MAX_BATTLERS_COUNT] = {0};
@@ -471,7 +484,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 		partnerMove = GetAIChosenMove(bankAtkPartner, partnerTarget);
 
 	bool8 partnerIncapacitated = IsBankIncapacitated(bankAtkPartner);
-	bool8 partnerKnocksOut = partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
+	bool8 partnerKnocksOut = partnerMove != MOVE_NONE && partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 	
@@ -479,8 +492,23 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	bool8 foeAlive[2] = {BATTLER_ALIVE(bankDef), BATTLER_ALIVE(bankDefPartner)};
 	bool8 partnerHandling[2] = {FALSE, FALSE};
 	bool8 foesAlive = CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef);
-	
-	if (partnerMove != MOVE_NONE && !partnerIncapacitated && partnerKnocksOut && foesAlive >= 2) //More than 1 target left
+
+	//Check if any foe has Wide Guard
+	bool8 foeHasWideGuard = FALSE;
+	if (Random() % 100 < 75) //75 % chance the AI will care about wide guard this round
+	{
+		for (j = 0; j < (s32) NELEMS(foes); ++j)
+		{
+			if (foeAlive[j] && HasProtectionMoveInMoveset(foes[j], CHECK_WIDE_GUARD) && !IsBankIncapacitated(foes[j]))
+			{
+				foeHasWideGuard = TRUE;
+				break;
+			}
+		}
+	}
+
+	//Check targets partner is already prepared to deal with
+	if (!partnerIncapacitated && partnerKnocksOut && foesAlive >= 2) //More than 1 target left
 	{
 		for (j = 0; j < gBattlersCount / 2; ++j)
 		{
@@ -522,6 +550,10 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			u8 moveTarget = GetBaseMoveTarget(move, bankAtk);
+			if (foeHasWideGuard //Enemy side has mon who can use Wide Guard
+			&& moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //This move is a spread move
+				goto MOVE_LOOP_END;//Pretend this move sucks
+
 			for (j = 0; j < gBattlersCount / 2; ++j)
 			{
 				//mgba_printf(MGBA_LOG_WARN, "");
@@ -530,7 +562,9 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				if (foeAlive[j] && (j == 0 || moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
 				&& !partnerHandling[j]) //Don't count the target if the partner is already taking care of it
 				{
-					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT)) //Move has effect on current target
+					u32 dmg = GetFinalAIMoveDamage(move, bankAtk, currTarget, 1, &damageDatas[j]);
+
+					if (dmg > 0) //Move will do damage/hit enemy
 					{
 						moveScores[i][currTarget] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
 
@@ -611,7 +645,6 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 								DEFAULT_CHECK:
 									if (foesAlive >= 2) //If there's only 1 target we rely on the strongest move check
 									{
-										u32 dmg = GetFinalAIMoveDamage(move, bankAtk, currTarget, 1, &damageDatas[j]);
 										if (dmg < gBattleMons[currTarget].maxHP / 4)
 											moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
 										else if (dmg < gBattleMons[currTarget].maxHP / 3)
@@ -659,6 +692,8 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 					moveScores[i][bankAtkPartner] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
 			}
 		}
+
+		MOVE_LOOP_END:;
 	}
 
 	u8 bestIndex = 0;
@@ -725,7 +760,7 @@ static void RemoveDoublesKillingScore(u8 bankAtk, u8 bankDef)
 	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 }
 
-void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
+void TryRemovePartnerDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove, bool8 doSpeedCalc)
 {
 	u8 partner = PARTNER(bankAtk);
 
@@ -733,7 +768,7 @@ void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
 	{
 		u16 partnerKillingMove = gNewBS->ai.bestDoublesKillingMoves[partner][bankDef];
 
-		if (!(bankAtk & BIT_FLANK) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
+		if (((!doSpeedCalc && !(bankAtk & BIT_FLANK)) || (doSpeedCalc && SpeedCalc(bankAtk) >= SpeedCalc(partner))) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
 		&& !IsBankIncapacitated(bankAtk) //Actually going to hit a target this turn
 		&& SIDE(bankAtk) != SIDE(bankDef) //No scores are calculated for hitting partners
 		&& (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //Two targets that can be hit on enemy side
@@ -783,6 +818,22 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a turn to charge
+	}
+
+	if (gBattleMoves[move].effect == EFFECT_EXPLOSION)
+	{
+		if (numHits > 0)
+			numHits = 1; //Only can be used once before fainting
+	}
+
+	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS
+	&& gNewBS->dynamaxData.raidShieldsUp)
+	{
+		u8 shieldsUp = gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed;
+		if (shieldsUp >= numHits)
+			numHits = 0;
+		else
+			numHits -= shieldsUp;
 	}
 
 	switch (numHits) {
@@ -1699,14 +1750,16 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  TakesDamageFromHail(bank)
 		||  gWishFutureKnock.futureSightCounter[bank] == 1
 		||  gStatuses3[bank] & STATUS3_LEECHSEED
-		||  (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
+		|| (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
-		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
+		|| ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1
+		 && ((gBattleMons[bank].status2 & STATUS2_NIGHTMARE) || AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_BADDREAMS, 0, 0)))
 		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED)
-		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE))
-		||  (BankSideHasGMaxVineLash(bank) && !IsOfType(bank, TYPE_GRASS))
-		||  (BankSideHasGMaxWildfire(bank) && !IsOfType(bank, TYPE_FIRE))
-		||  (BankSideHasGMaxCannonade(bank) && !IsOfType(bank, TYPE_WATER))
+		||  GetBadThoughtsDamage(bank) > 0
+		|| (BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE))
+		|| (BankSideHasGMaxVineLash(bank) && !IsOfType(bank, TYPE_GRASS))
+		|| (BankSideHasGMaxWildfire(bank) && !IsOfType(bank, TYPE_FIRE))
+		|| (BankSideHasGMaxCannonade(bank) && !IsOfType(bank, TYPE_WATER))
 		||  BankSideHasGMaxVolcalith(bank))
 			return TRUE;
 	}
@@ -1742,6 +1795,8 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		+  GetBurnDamage(bank)
 		+  GetCurseDamage(bank)
 		+  GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
+		+  GetBadDreamsDamage(bank)
+		+  GetBadThoughtsDamage(bank)
 		+  GetGMaxVineLashDamage(bank)
 		+  GetGMaxWildfireDamage(bank)
 		+  GetGMaxCannonadeDamage(bank)
@@ -1842,8 +1897,8 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 
 	return !CanBePutToSleep(bankDef, TRUE)
 		|| gStatuses3[bankDef] & STATUS3_YAWN
-		|| defItemEffect == ITEM_EFFECT_CURE_SLP
-		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
+		|| (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_SLP) //Don't use this logic in general battles
+		|| (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		|| defAbility == ABILITY_EARLYBIRD
 		|| defAbility == ABILITY_SHEDSKIN
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
@@ -1858,8 +1913,8 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 	u8 atkAbility = ABILITY(bankAtk);
 
 	return !CanBePoisoned(bankDef, bankAtk, TRUE)
-		||  defItemEffect == ITEM_EFFECT_CURE_PSN
-		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_PSN) //Don't use this logic in general battles
+		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		||  defAbility == ABILITY_SHEDSKIN
 		||  defAbility == ABILITY_POISONHEAL
 		||  defAbility == ABILITY_MAGICGUARD
@@ -1897,8 +1952,8 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	u8 defAbility = ABILITY(bankDef);
 
 	return !CanBeParalyzed(bankDef, TRUE)
-	   ||  defItemEffect == ITEM_EFFECT_CURE_PAR
-	   ||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+	   ||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_PAR) //Don't use this logic in general battles
+	   ||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 	   ||  defAbility == ABILITY_SHEDSKIN
 	   ||  defAbility == ABILITY_QUICKFEET
 	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
@@ -1930,8 +1985,8 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 	u8 defAbility = ABILITY(bankDef);
 
 	return !CanBeBurned(bankDef, TRUE)
-		||  defItemEffect == ITEM_EFFECT_CURE_BRN
-		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_BRN) //Don't use this logic in general battles
+		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		||  defAbility == ABILITY_SHEDSKIN
 		||  defAbility == ABILITY_MAGICGUARD
 		||  defAbility == ABILITY_QUICKFEET
@@ -1966,7 +2021,7 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 
 	return !CanBeFrozen(bankDef, TRUE)
-		|| defItemEffect != ITEM_EFFECT_CURE_FRZ
+		|| defItemEffect != ITEM_EFFECT_CURE_FRZ //Use this logic in general battles because Freezing is caused only by Flinging a one-time use item, so don't waste it
 		|| defItemEffect != ITEM_EFFECT_CURE_STATUS
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
@@ -2783,6 +2838,38 @@ bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+bool8 HasUsedMove(u8 bank, u16 move)
+{
+    u32 i;
+
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (BATTLE_HISTORY->usedMoves[bank][i] == move)
+			return TRUE;
+
+		if (BATTLE_HISTORY->usedMoves[bank][i] == MOVE_NONE)
+			break; //Speed optimization since no blank move slots are left
+	}
+
+	return FALSE;
+}
+
+bool8 HasUsedMoveWithEffect(u8 bank, u8 effect)
+{
+    u32 i;
+
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (gBattleMoves[BATTLE_HISTORY->usedMoves[bank][i]].effect == effect)
+			return TRUE;
+
+		if (BATTLE_HISTORY->usedMoves[bank][i] == MOVE_NONE)
+			break; //Speed optimization since no blank move slots are left
+	}
+
+	return FALSE;
+}
+
 static bool8 WallsFoe(u8 bankAtk, u8 bankDef)
 {
 	u32 attack, spAttack;
@@ -3196,19 +3283,20 @@ bool8 GetHealthPercentage(u8 bank)
 bool8 TeamFullyHealedMinusBank(u8 bank)
 {
 	u8 firstId, lastId;
-
 	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 
-	for (int i = firstId; i < lastId; ++i)
+	for (u32 i = firstId; i < lastId; ++i)
 	{
 		if (party[i].species == SPECIES_NONE
-		|| GetMonData(&party[i], REQ_EGG, NULL)
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
 		|| i == gBattlerPartyIndexes[bank])
 			continue;
 
-		if (party[i].hp < party[i].maxHP)
+		if (party[i].hp > 0 //Alive
+		&& party[i].hp < party[i].maxHP) //Not max HP
 			return FALSE;
 	}
+
 	return TRUE;
 }
 
@@ -3377,7 +3465,9 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 					return TRUE;
 			}
 
-			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
+			if (gBattleMoves[move].effect != EFFECT_OVERHEAT //Base move won't lower user stats
+			&& gBattleMoves[move].effect != EFFECT_SUPERPOWER
+			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
 			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move

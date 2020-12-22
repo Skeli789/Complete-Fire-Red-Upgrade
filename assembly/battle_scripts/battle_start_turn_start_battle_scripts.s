@@ -80,7 +80,12 @@ BattleScript_TotemOmniboostRet:
 	setword BATTLE_STRING_LOADER TotemAuraFlared
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call BattleScript_AllStatsUp
+	callasm ToggleTotemOmniboostByte
+	playstatchangeanimation BANK_ATTACKER, 0xFF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	callasm ToggleTotemOmniboostByte
+	setword BATTLE_STRING_LOADER gText_TotemOmniboostStatsRose
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

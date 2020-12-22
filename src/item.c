@@ -84,7 +84,7 @@ const u8* ItemId_GetName(u16 itemId)
 {
 	u8* name = gItems[SanitizeItemId(itemId)].name;
 
-	if (name[3] == 0x8) //Expanded Item Names
+	if (name[3] == 0x8 || name[3] == 0x9) //Expanded Item Names
 		name = T1_READ_PTR(name);
 
 	return name;
@@ -775,7 +775,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 		else
 		{
 			u32 price = ItemId_GetPrice(item);
-			gShopDataPtr->itemPrice = price;
+			gShopData.itemPrice = price;
 			if (IsEnoughMoney(&gSaveBlock1->money, price))
 				return FALSE;
 			else
@@ -786,7 +786,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 		}
 	#else
 		u32 price = ItemId_GetPrice(item);
-		gShopDataPtr->itemPrice = price;
+		gShopData.itemPrice = price;
 		if (IsEnoughMoney(&gSaveBlock1->money, price))
 			return FALSE;
 		else
@@ -806,7 +806,11 @@ void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_CASE && CheckBagHasItem(item, 1))
 		{
+			#ifdef UNBOUND
+			BuyMenuPrint(windowId, 0, gText_Purchased, 0x58, y, 0, 0, 0xFF, 0);
+			#else
 			BuyMenuPrint(windowId, 0, gText_Purchased, 0x58, y, 0, 0, 0xFF, 1);
+			#endif
 			return;
 		}
 	#endif
@@ -818,7 +822,11 @@ void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 		*loc++ = 0;
 	
 	StringExpandPlaceholders(loc, (void*) 0x841697A);
+	#ifdef UNBOUND
+	BuyMenuPrint(windowId, 0, gStringVar4, 0x66, y, 0, 0, 0xFF, 0);
+	#else
 	BuyMenuPrint(windowId, 0, gStringVar4, 0x66, y, 0, 0, 0xFF, 1);
+	#endif
 }
 
 u8 CheckSingleBagTm(unusedArg u16 item)
@@ -891,7 +899,7 @@ void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
 	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
 	{
 		IncrementGameStat(GAME_STAT_SHOPPED);
-		RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
+		RemoveMoney(&gSaveBlock1->money, gShopData.itemPrice);
 		PlaySE(SE_MONEY);
 		PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
 		RedrawListMenu(tListTaskId);
@@ -1624,7 +1632,11 @@ static void BagMenu_CancelSort(u8 taskId)
 	HideBagWindow(6);
 	PutWindowTilemap(1);
 	ScheduleBgCopyTilemapToVram(0);
+	#ifdef UNBOUND
+	BagMenu_PrintCursor_(data[0], 0);
+	#else
 	BagMenu_PrintCursor_(data[0], 1);
+	#endif
 	Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 }
 
@@ -1658,7 +1670,11 @@ static void Task_SortFinish(u8 taskId)
 		HideBagWindow(6);
 		PutWindowTilemap(1);
 		ScheduleBgCopyTilemapToVram(0);
+		#ifdef UNBOUND
+		BagMenu_PrintCursor_(data[0], 0);
+		#else
 		BagMenu_PrintCursor_(data[0], 1);
+		#endif
 		Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 	}
 }
@@ -1779,4 +1795,12 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 void ForceRedrawItemDescription(void)
 {
 	sItemDescriptionPocket = 0;
+}
+
+void FixCubeCursorDefaultColour(void)
+{
+	#ifdef UNBOUND
+	gMultiuseListMenuTemplate->cursorPal = 1;
+	gMultiuseListMenuTemplate->cursorShadowPal = 2;
+	#endif
 }

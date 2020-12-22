@@ -2278,6 +2278,47 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId)
 	gTasks[taskId].func = Task_HofPC_PrintMonInfo;
 }
 
+#define gText_WelcomeToHOF (const u8*) 0x8416008
+extern const u8 gText_CasualDifficult[];
+extern const u8 gText_Expert[];
+extern const u8 gText_Insane[];
+extern const u8 gText_PostGame[];
+extern const u8 gText_Difficulty[];
+extern const struct TextColor sHOFTextColors[];
+void HallOfFame_PrintWelcomeText(void)
+{
+	u8 x = (0xD0 - GetStringWidth(2, gText_WelcomeToHOF, 0)) / 2;
+	FillWindowPixelBuffer(0, PIXEL_FILL(0));
+	PutWindowTilemap(0);
+	WindowPrint(0, 2, x, 1, &sHOFTextColors[0], 0, gText_WelcomeToHOF);
+
+	#ifdef VAR_GAME_DIFFICULTY
+	const u8* difficultyString = NULL;
+	switch (VarGet(VAR_GAME_DIFFICULTY))
+	{
+		case OPTIONS_HARD_DIFFICULTY:
+			difficultyString = gText_Expert;
+			break;
+		case OPTIONS_EXPERT_DIFFICULTY:
+			difficultyString = gText_Insane;
+			break;
+		default:
+			difficultyString = gText_CasualDifficult;
+			break;
+	}
+
+	StringCopy(gStringVar4, difficultyString);
+	if (GetGameStat(GAME_STAT_ENTERED_HOF) > 1) //Second time or more in HOF
+		StringAppend(gStringVar4, gText_PostGame);
+	StringAppend(gStringVar4, gText_Difficulty);
+
+	x = (0xD0 - GetStringWidth(2, gStringVar4, 0)) / 2;
+	WindowPrint(0, 2, x, 17, &sHOFTextColors[0], 0, gStringVar4);
+	#endif
+
+	CopyWindowToVram(0, COPYWIN_BOTH);
+}
+
 void Task_HofPC_PrintMonInfo(u8 taskId)
 {
 	struct HallofFameTeam* savedTeams = sHofMonPtr;

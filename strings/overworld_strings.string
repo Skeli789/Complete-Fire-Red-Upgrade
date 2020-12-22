@@ -61,11 +61,17 @@ Use which item?
 #org @gText_WantToScaleCliff
 The wall is very rocky[.]\nWould you like to use [BUFFER2]?
 
+#org @gText_WantToScaleCliffWithADM
+The wall is very rocky[.]\nWould you like to use the ADM?
+
 #org @gText_RockIsRocky
 The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 
 #org @gText_DefogBlewAwayFog
 [BUFFER1] blew away the fog!
+
+#org @gText_OfferADMWaterfall
+It's a large waterfall.\nWould you like to use the ADM?
 
 #org @gText_WaterDyed
 The water is dyed a deep blue[.]
@@ -75,6 +81,15 @@ The water is a murky brown[.]
 
 #org @gText_WaterMurkyBrownUseSurf
 The water is a murky brown[.]\nWould you like to Surf?
+
+#org @gText_OfferSurfWithADM
+The water is dyed a deep blue[.]\nWould you like to use the ADM?
+
+#org @gText_WaterMurkyBrownUseADMSurf
+The water is a murky brown[.]\nWould you like to use the ADM?
+
+#org @gText_ADMBlewUpInflatablePokemon
+The ADM attached to [BUFFER1]\nas a floating device!
 
 #org @gText_LikeToLavaSurf
 The magma glistens a crimson red[.]\nWould you like to surf on it?
@@ -88,14 +103,29 @@ The magma glistens a crimson red[.]
 #org @gText_WantToDive
 The sea is deep here.\nWould you like to use [BUFFER2]?
 
+#org @gText_WantToADMDive
+The sea is deep here.\nWould you like to use the ADM?
+
+#org @gText_UsedADMDive
+The ADM allowed you to go\nunderwater!
+
 #org @gText_WantToSurface
 Light is filtering down from above.\nWould you like to use [BUFFER2]?
+
+#org @gText_WantToADMSurface
+Light is filtering down from above.\nWould you like to use the ADM?
+
+#org @gText_UsedADMDiveResurface
+The ADM allowed you to resurface!
 
 #org @gText_CantDive
 The sea is deep here. A Pok\emon\nmay be able to go underwater.
 
 #org @gText_CantSurface
 Light is filtering down from above.\nA Pok\emon may be able to surface.
+
+#org @gText_TVSwarm
+Calling all Trainers!\pA swarm of [GREEN][BUFFER2][BLACK] have appeared\naround [GREEN][BUFFER1][BLACK]!\pThis is a rare opportunity to get\nyour hands on a [BUFFER2], so\ldon't pass this chance up!\p[.]\pThis message is sponsored by\nCube Corp.
 
 #org @gText_DoorIsLocked
 The door is locked.
@@ -219,3 +249,18 @@ Purchased
 
 #org @gText_StopZooming
 Stop zooming!
+
+#org @gText_CasualDifficult
+Casual/Difficult 
+
+#org @gText_Expert
+Expert 
+
+#org @gText_Insane
+Insane 
+
+#org @gText_Difficulty
+Difficulty
+
+#org @gText_PostGame
+Post-Game 

@@ -206,6 +206,9 @@ The sleep clause prevents more\nPok\emon from being put to sleep!
 #org @gText_AbilityBlocksHealBell
 [SCRIPTING_BANK] blocks\n[CURRENT_MOVE]!
 
+#org @gText_TransformFailsOnWildBosses
+But [TARGET]'s aura\nprevents transformation!
+
 #org @gText_DefogRemovedSideStatus
 [FD][37] team's [BUFFER][00]\nwore off!
 
@@ -313,6 +316,9 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 
 //Other Battle Features
 
+#org @gText_TotemOmniboostStatsRose
+[ATTACKER]'s stats rose!
+
 #org @gText_SemiSwitchOffer
 [TRAINER1_CLASS] [TRAINER1_NAME] is\nabout to send out a new Pok\emon.\pWill [PLAYER_NAME] change\nPok\emon?
 
@@ -330,6 +336,18 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 
 #org @gText_CamomonsTypeRevealDualType
 [SCRIPTING_BANK] appears as the\n[BUFFER][00]- and [BUFFER][01]-type!
+
+#org @gText_BadThoughtsBattleStart
+Negative emotions fill the air!
+
+#org @gText_TormentedByBadThoughts
+[ATTACKER] is\ntormented by the negative emotions!
+
+#org @gText_TailwindBattleStart
+A tailwind blew from behind\n[FD][36] team!
+
+#org @gText_MagnetRiseBattleStart
+[SCRIPTING_BANK] is\nlevitating with electromagnetism!
 
 #org @gText_ViciousSandstormBrewed
 A vicious sandstorm brewed!

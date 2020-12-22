@@ -100,6 +100,7 @@ TagTeamBackspritePalHook 8033530 0
 
 ##AI Hooks
 AIHandleItemUseHook 800D2CC 0
+AIEmitChooseActionHook 80140C8 0
 OpponentHandleDrawTrainerPic 08037CD0 0
 OpponentHandleTrainerSlide 08037EA4 0
 OpponentHandleChooseMove 80385B0 0
@@ -191,6 +192,7 @@ GetPlayerSpeed 80BD674 0
 SuctionCupsHook 805D524 0
 FieldGetPlayerInputLButtonHook 806C9AC 0
 UseRegisteredItemHook 806CCFC 0
+RemoveWalkThroughWallCheat 8058E28 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
@@ -214,6 +216,7 @@ SpriteCB_EnemyShadow 8035624 1
 UpdateOamPriorityInAllHealthboxes 804828C 1
 ModifyMegaCryHook 8071F8E 1
 ScriptCmd_loadspritegfx 08072868 0
+SetAverageBattlerPositionsHook 8076DA8 2
 TryStartShinyAnimation 080F1720 2
 ShinyAnimFixHook 080F187C 2
 SlideMonToOriginalPos 80991B4 1
@@ -330,7 +333,10 @@ RandomizerShowPokepicHook 809D2FC 3
 
 ##DNS
 TransferPlttBuffer 8070474 0
+
+#Shop
 DNSCreateBuyMenuHook 809AC84 0
+RemoveShopModifierCheats 809B18E 0
 DNSEndBuyMenuHook 809C078 1
 
 ##Select-From-PC
@@ -369,6 +375,10 @@ GetPlayerAvatarGraphicsIdByCurrentState 805C9C8 0
 GetPlayerAvatarGenderByGraphicsId 805C824 1
 PlayerFishingFix 805D3AC 1
 GetEventObjectGraphicsInfoByEventObj 801D760 1
+CreateTrainerPicSpriteHook 810C2AC 4
+CreditsPlayerPaletteHook 80F4A3C 3
+sub_805F510 805F510 1
+RegionMapPlayerIconHook 80C42F4 0
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0
@@ -442,6 +452,7 @@ Task_HofPC_CopySaveData 080F2AA4 3
 Task_HofPC_DrawSpritesPrintText 080F2B6C 3
 Task_HofPC_PrintMonInfo 080F2D60 3
 Task_Hof_InitMonData 080F1F74 3
+HallOfFame_PrintWelcomeText 080F313C 0
 HallOfFame_PrintMonInfo 080F3194 3
 
 ## Unhidden Power
@@ -632,6 +643,7 @@ SetCoins 080D057C 1
 GiveCoins 080D05A4 1
 TakeCoins 080D05E4 1
 ExpandCoinIntConversion 080D06D6 2
+SlotMachineExpandedCoinsDisplayFix 08140F44 1
 
 ##Safari Zone
 SetInitialSafariZoneParams 080A0ED0 1

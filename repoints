@@ -207,6 +207,10 @@ FieldEffectScript_RockClimbDust 081D978C
 Wav_grass_footstep_sample 0848EE14
 Wav_sand_footstep_sample 0848EE20
 
+#ifdef UNBOUND
+gFieldEffectObjectImageAnim_ShakingGrass 83A5A2C
+#endif
+
 #ifdef CRITICAL_CAPTURE
 gBattleAnims_Special 08034238
 #endif
@@ -219,9 +223,9 @@ sStartMenuDescPointers 0806F138
 sStartMenuDescPointers 0806F368
 
 #ifdef UNBOUND
-TestScript 08B7AD70
 TestScript 08B7ADA0
 TestScript 087D67B0
+gWildMonNightHeaders 0801D778
 
 DESC_ROOST 08879c58
 DESC_FOCUSBLAST 08879c84

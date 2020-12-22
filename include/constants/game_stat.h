@@ -24,7 +24,7 @@
 #define GAME_STAT_USED_CUT                  18
 #define GAME_STAT_USED_ROCK_SMASH           19
 #define GAME_STAT_FOUND_HIDDEN_ITEM         20 //NEW!
-#define GAME_STAT_POKEMON_TRADES            21
+#define GAME_STAT_POKEMON_TRADES            21 //0x2026780
 #define GAME_STAT_CHECKED_TRASH             22 //NEW!
 #define GAME_STAT_LINK_BATTLE_WINS          23
 #define GAME_STAT_LINK_BATTLE_LOSSES        24

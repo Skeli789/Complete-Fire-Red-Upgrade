@@ -56,7 +56,7 @@ static const u16 sCriticalHitChances[] =
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3);
 static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, u8* flags, struct Pokemon* monDef, bool8 checkMonDef);
-static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 checkIonDeluge, bool8 zMoveActive);
+static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 zMoveActive);
 static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
 static u16 AdjustBasePower(struct DamageCalc* data, u16 power);
@@ -357,12 +357,12 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 
 	damage = (damage * 93) / 100; //Roll 93% damage - about halfway between min & max damage
 
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK)
+	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
 	{
 		damage *= 5;
 		return damage;
 	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
+	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -453,12 +453,12 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && GetMonAbility(monAtk) == ABILITY_SKILLLINK)
+	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && GetMonAbility(monAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
 	{
 		damage *= 5;
 		return damage;
 	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
+	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -554,12 +554,12 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK)
+	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
 	{
 		damage *= 5;
 		return damage;
 	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves || gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Three hits on average
+	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
 	{
 		damage *= 3;
 		return damage;
@@ -647,7 +647,8 @@ void atk06_typecalc(void)
 					gLastHitByType[bankDef] = 0;
 					RecordItemEffectBattle(bankDef, defEffect);
 				}
-				else if (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+				else if ((gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+				|| IsFloatingWithMagnetism(bankDef))
 				{
 					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 					gLastLandedMoves[bankDef] = 0;
@@ -752,7 +753,8 @@ void atk4A_typecalc2(void)
 			gLastLandedMoves[gBankTarget] = 0;
 			RecordItemEffectBattle(gBankTarget, defEffect);
 		}
-		else if (gStatuses3[gBankTarget] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+		else if ((gStatuses3[gBankTarget] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+		|| IsFloatingWithMagnetism(gBankTarget))
 		{
 			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
@@ -858,7 +860,10 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
 	&& !CheckGrounding(bankDef)
-	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || defEffect == ITEM_EFFECT_AIR_BALLOON || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)))
+	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
+	 || defEffect == ITEM_EFFECT_AIR_BALLOON
+	 || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+	 || IsFloatingWithMagnetism(bankDef))
 	&& move != MOVE_THOUSANDARROWS)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -924,7 +929,9 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
 	&& !CheckMonGrounding(monDef)
-	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || (defEffect == ITEM_EFFECT_AIR_BALLOON && defAbility != ABILITY_KLUTZ))
+	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
+	 || (defEffect == ITEM_EFFECT_AIR_BALLOON && defAbility != ABILITY_KLUTZ)
+	 || IsMonFloatingWithMagnetism(monDef))
 	&& move != MOVE_THOUSANDARROWS)
 	{
 		flags = MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -1001,7 +1008,10 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
 	&& !CheckGrounding(bankDef)
-	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || defEffect == ITEM_EFFECT_AIR_BALLOON || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)))
+	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
+	 || defEffect == ITEM_EFFECT_AIR_BALLOON
+	 || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+	 || IsFloatingWithMagnetism(bankDef))
 	&& move != MOVE_THOUSANDARROWS)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1067,7 +1077,10 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
 	&& !NonInvasiveCheckGrounding(bankDef)
-	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || defEffect == ITEM_EFFECT_AIR_BALLOON || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)))
+	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
+	 || defEffect == ITEM_EFFECT_AIR_BALLOON
+	 || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+	 || IsFloatingWithMagnetism(bankDef))
 	&& move != MOVE_THOUSANDARROWS)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1291,7 +1304,8 @@ u8 GetMoveTypeSpecialPreAbility(u16 move, u8 bankAtk, struct Pokemon* monAtk)
 			return GetExceptionMoveType(bankAtk, move);
 	}
 
-	if (moveType == TYPE_NORMAL && monAtk == NULL && IsIonDelugeActive())
+	if (moveType == TYPE_NORMAL && monAtk == NULL && IsIonDelugeActive()
+	&& !AbilityCanChangeTypeAndBoost(move, ABILITY(bankAtk), gNewBS->ElectrifyTimers[bankAtk], FALSE)) //Type-change abilities override Ion Deluge
 		return TYPE_ELECTRIC;
 
 	return 0xFF;
@@ -1343,7 +1357,7 @@ u8 GetMonMoveTypeSpecial(struct Pokemon* mon, u16 move)
 	return GetMoveTypeSpecialPostAbility(move, atkAbility, FALSE);
 }
 
-static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 checkIonDeluge, bool8 zMoveActive)
+static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 zMoveActive)
 {
 	u8 moveType = gBattleMoves[move].type;
 	bool8 moveTypeCanBeChanged = !zMoveActive || SPLIT(move) == SPLIT_STATUS;
@@ -1356,9 +1370,6 @@ static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyT
 	//Check Normal-type Moves
 	if (moveType == TYPE_NORMAL)
 	{
-		if (checkIonDeluge && IsIonDelugeActive())
-			return FALSE;
-
 		if (moveTypeCanBeChanged)
 		{
 			switch (atkAbility) {
@@ -3157,7 +3168,15 @@ static u16 GetBasePower(struct DamageCalc* data)
 		default:
 			if (gBattleMoves[move].effect == EFFECT_TRIPLE_KICK)
 			{
-				if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
+				if (data->specialFlags & FLAG_AI_CALC) //Pretend as if it'll hit three times
+				{
+					//Generalized base power considering accuracy and missing
+					if (move == MOVE_TRIPLEAXEL)
+						power = 100;
+					else
+						power = 50;
+				}
+				else if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU)) && !useMonAtk)
 					power = gBattleScripting.tripleKickPower;
 			}
 			break;
@@ -3253,8 +3272,8 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_GALVANIZE:
 		case ABILITY_NORMALIZE:
 		//1.2x / 1.3x Boost
-			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, gNewBS->ElectrifyTimers[bankAtk], TRUE, (gNewBS->zMoveData.active || gNewBS->zMoveData.viewing)))
-			||   (useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, 0, FALSE, FALSE)))
+			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, gNewBS->ElectrifyTimers[bankAtk], (gNewBS->zMoveData.active || gNewBS->zMoveData.viewing)))
+			||   (useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, 0, FALSE)))
 			{
 				#ifdef OLD_ATE_BOOST
 					power = (power * 13) / 10;

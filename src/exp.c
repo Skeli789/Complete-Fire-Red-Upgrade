@@ -46,6 +46,7 @@ extern u8 String_TeamExpGain[];
 //This file's functions:
 static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s);
 static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
+static bool8 SomeoneOnTeamGetsExpFromExpShare(u8 bank, u8 sentIn);
 static bool8 MonGetsAffectionBoost(struct Pokemon* mon);
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c);
 static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
@@ -108,7 +109,6 @@ void atk23_getexp(void)
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
-
 		#ifndef FLAG_EXP_SHARE
 		else if (holdEffect != ITEM_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
 		{
@@ -411,14 +411,16 @@ void atk23_getexp(void)
 		else
 		{
 			gBattleStruct->expGetterMonId++;
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
-				if (gBattleStruct->expGetterMonId < 3)
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
+				if (gBattleStruct->expGetterMonId < PARTY_SIZE / 2)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
 					gBattleScripting.expStateTracker = GetExp_End; // we're done
 			}
-			else {
-				if (gBattleStruct->expGetterMonId < 6)
+			else
+			{
+				if (gBattleStruct->expGetterMonId < PARTY_SIZE)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
 					gBattleScripting.expStateTracker = GetExp_End; // we're done
@@ -430,19 +432,23 @@ void atk23_getexp(void)
 		if (gBattleExecBuffer) break;
 
 		#ifdef FLAG_EXP_SHARE
-			if (FlagGet(FLAG_EXP_SHARE) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) {
+			if (FlagGet(FLAG_EXP_SHARE) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup))
+			{
 				*expGiveType = GiveExpViaExpShare;
 				gBattleStruct->expGetterMonId = 0;
 				gBattleMoveDamage = 0;
 				gBattleStruct->sentInPokes = gNewBS->SentInBackup;
 				gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
-				gBattleStringLoader = String_TeamExpGain;
-				PrepareStringBattle(0x184, 0);
+				if (SomeoneOnTeamGetsExpFromExpShare(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) //Still give EVs, but don't print message if no Exp gained
+				{
+					gBattleStringLoader = String_TeamExpGain;
+					PrepareStringBattle(0x184, 0);
+				}
 			}
 			else
 		#endif
 			{
-			END_EXP_GIVE:
+				END_EXP_GIVE:
 				gBattleMons[gBankFainted].item = 0;
 				gBattleMons[gBankFainted].ability = 0;
 				gBattlescriptCurrInstr += 2;
@@ -483,24 +489,47 @@ static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f
 	return MathMin(1640000, calculatedExp);
 }
 
-static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
+static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn)
+{
 	u8 start, end;
 	int i;
 
-	pokemon_t* party = LoadPartyRange(bank, &start, &end);
+	struct Pokemon* party = LoadPartyRange(bank, &start, &end);
 
 	for (i = start; i < end; ++i) {
 		if (party[i].species == 0)
 			return TRUE;
 
-		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) || party[i].level >= MAX_LEVEL)
+		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) /*|| party[i].level >= MAX_LEVEL*/) //Pokemon can still gain EVs at Max Level so don't check this
 			continue;
 
-		if (!(sentIn & (1 << i)))
+		if (!(sentIn & gBitTable[i]))
 			return FALSE;
 	}
 
 	return TRUE;
+}
+
+static bool8 SomeoneOnTeamGetsExpFromExpShare(u8 bank, u8 sentIn)
+{
+	u8 start, end;
+	int i;
+
+	struct Pokemon* party = LoadPartyRange(bank, &start, &end);
+
+	for (i = start; i < end; ++i)
+	{
+		if (party[i].species == 0)
+			continue;
+
+		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) || party[i].level >= MAX_LEVEL)
+			continue;
+
+		if (!(sentIn & gBitTable[i]))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 static bool8 MonGetsAffectionBoost(struct Pokemon* mon)

@@ -193,6 +193,7 @@ void SetBoxMonNickAt(u8 boxId, u8 boxPosition, const u8* nick)
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
 		SetBoxMonData(&mon, MON_DATA_NICKNAME, nick);
+		CreateCompressedMonFromBoxMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Copy new data back
 	}
 }
 

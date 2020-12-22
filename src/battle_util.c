@@ -189,6 +189,31 @@ void ClearBattlerItemEffectHistory(u8 bank)
 	gNewBS->ai.itemEffects[bank] = 0;
 }
 
+void RecordLastUsedMoveByAttacker(u16 move)
+{
+	u32 i;
+
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (BATTLE_HISTORY->usedMoves[gBankAttacker][i] == move) //Move already recorded
+			break; //Don't record again
+
+		if (BATTLE_HISTORY->usedMoves[gBankAttacker][i] == MOVE_NONE) //Move hasn't been used yet
+		{
+			BATTLE_HISTORY->usedMoves[gBankAttacker][i] = move; //Record move
+			return;
+		}
+	}
+}
+
+void ClearBattlerMoveHistory(u8 bank)
+{
+	u32 i;
+
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		BATTLE_HISTORY->usedMoves[bank][i] = MOVE_NONE;
+}
+
 struct Pokemon* GetBankPartyData(u8 bank)
 {
 	u8 index = gBattlerPartyIndexes[bank];
@@ -261,6 +286,7 @@ bool8 CheckGrounding(u8 bank)
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
 	|| ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
 	|| ABILITY(bank) == ABILITY_LEVITATE
+	|| IsFloatingWithMagnetism(bank)
 	|| gBattleMons[bank].type3 == TYPE_FLYING
 	|| gBattleMons[bank].type1 == TYPE_FLYING
 	|| gBattleMons[bank].type2 == TYPE_FLYING)
@@ -282,6 +308,7 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
    || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
    || GetRecordedAbility(bank) == ABILITY_LEVITATE
+   || IsFloatingWithMagnetism(bank)
    || gBattleMons[bank].type3 == TYPE_FLYING
    || gBattleMons[bank].type1 == TYPE_FLYING
    || gBattleMons[bank].type2 == TYPE_FLYING)
@@ -300,11 +327,30 @@ bool8 CheckMonGrounding(struct Pokemon* mon)
 		return GROUNDED;
 
 	else if (GetMonAbility(mon) == ABILITY_LEVITATE
+	|| IsMonFloatingWithMagnetism(mon)
 	|| gBaseStats[species].type1 == TYPE_FLYING
 	|| gBaseStats[species].type2 == TYPE_FLYING)
 		return IN_AIR;
 
 	return GROUNDED;
+}
+
+bool8 IsFloatingWithMagnetism(unusedArg u8 bank)
+{
+	#ifdef FLAG_MAGNET_RISE_BATTLE
+	return FlagGet(FLAG_MAGNET_RISE_BATTLE) && (IsOfType(bank, TYPE_ELECTRIC) || IsOfType(bank, TYPE_STEEL));
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsMonFloatingWithMagnetism(unusedArg struct Pokemon* mon)
+{
+	#ifdef FLAG_MAGNET_RISE_BATTLE
+	return FlagGet(FLAG_MAGNET_RISE_BATTLE) && (IsMonOfType(mon, TYPE_ELECTRIC) || IsMonOfType(mon, TYPE_STEEL));
+	#else
+	return FALSE;
+	#endif
 }
 
 u8 ViableMonCountFromBank(u8 bank)
@@ -1790,6 +1836,20 @@ bool8 BankSideHasMist(u8 bank)
 {
 	return gSideStatuses[SIDE(bank)] & SIDE_STATUS_MIST
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
+}
+
+bool8 BankSideHasTailwind(u8 bank)
+{
+	return SideHasTailwind(SIDE(bank));
+}
+
+bool8 SideHasTailwind(u8 side)
+{
+	return gNewBS->TailwindTimers[side]
+		#ifdef FLAG_TAILWIND_BATTLE
+		|| (FlagGet(FLAG_TAILWIND_BATTLE) && side == B_SIDE_OPPONENT)
+		#endif
+		;
 }
 
 bool8 BankSideHasSeaOfFire(u8 bank)

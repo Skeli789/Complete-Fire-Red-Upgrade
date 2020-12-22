@@ -55,7 +55,7 @@ Utility:
 +18 - 12: Hit 2 Foes, KO 2 Foes
 +17 - Sleep
 +16 - Redirection/Pivot for Intimidate
-+15 - Heal Partner
++15 - Heal Partner/Taunt Wide Guard
 +14 - Protect from Allies
 +13 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
 +12 - Wide Guard/Quick Guard/Mat Block
@@ -101,7 +101,7 @@ General Team Support:
 +16 - 12: Hit 2 Foes, KO 2 Foes
 +15 - Reflect/Light Screen
 +14 - Protect from Allies
-+13 - Heal Partner
++13 - Heal Partner/Taunt Wide Guard
 +12 - Wide Guard/Quick Guard
 +11 - Speed Control/Will-o-Wisp
 +10 - Helping Hand/Acupressure/After You/Rapid Spin/Defog

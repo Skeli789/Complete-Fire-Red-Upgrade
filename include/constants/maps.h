@@ -604,6 +604,7 @@
 #define MAP_MAGNOLIA_TOWN       ((3 << 8) | 2)
 #define MAP_MAGNOLIA_FIELDS     ((3 << 8) | 4)
 #define MAP_REDWOOD_VILLAGE     ((3 << 8) | 5)
+#define MAP_REDWOOD_FOREST      ((1 << 8) | 98)
 
 #define MAP_FULLMOON_ISLAND_A	((1 << 8) | 0)
 #define MAP_FULLMOON_ISLAND_B	((1 << 8) | 1)
@@ -670,8 +671,11 @@
 #define MAP_TOMB_OF_BORRIUS_B3F		((1 << 8) | 85)
 #define MAP_TOMB_OF_BORRIUS_1F_BACK	((1 << 8) | 90)
 
+#define MAP_CRYSTAL_PEAK_BOG_ENTRANCE  ((56 << 8) | 0)
+#define MAP_CRYSTAL_PEAK_B1F_LEFT      ((56 << 8) | 1)
 #define MAP_CRYSTAL_PEAK_1F_MAIN_ROOM  ((56 << 8) | 2)
 #define MAP_CRYSTAL_PEAK_1F_LEFT_ROOM  ((56 << 8) | 3)
+#define MAP_CRYSTAL_PEAK_CUBE_ENTRANCE ((56 << 8) | 6)
 #define MAP_CRYSTAL_PEAK_CLIFFSIDE     ((56 << 8) | 7)
 #define MAP_CRYSTAL_PEAK_SUMMIT        ((56 << 8) | 12)
 
@@ -685,10 +689,15 @@
 #define MAP_VICTORY_ROAD_ICE_CAVE_A   ((55 << 8) | 7)
 #define MAP_VICTORY_ROAD_ICE_CAVE_B   ((55 << 8) | 8)
 
+#define MAP_UNDERWATER_VIVILL_TOWN    ((32 << 8) | 4)
+
 //Interior
 #define MAP_PLAYER_ROOM 		((4 << 8) | 1)
 #define MAP_BELLIN_TOWN_MART	((5 << 8) | 3)
 #define MAP_ROUTE_9_HOUSE_2 	((51 << 8) | 1)
+
+#define MAP_MIRSKLE_LAB_UNDERWATER_1 ((7 << 8) | 10)
+#define MAP_MIRSKLE_LAB_UNDERWATER_2 ((7 << 8) | 11)
 
 #define MAP_SHADOW_WAREHOUSE	((4 << 8) | 10)
 #define MAP_SHADOW_BASE_B3F		((1 << 8) | 45)
@@ -708,6 +717,7 @@
 #define MAP_VIVILL_WAREHOUSE_B2F					((1 << 8) | 103)
 #define MAP_VIVILL_WAREHOUSE_B3F					((1 << 8) | 104)
 #define MAP_VIVILL_WAREHOUSE_COMMAND_ROOM 			((1 << 8) | 105)
+#define MAP_VIVILL_WAREHOUSE_UNDERWATER 			((1 << 8) | 106)
 
 #define MAP_ANTISIS_SEWERS_NORTH		((1 << 8) | 68)
 #define MAP_ANTISIS_SEWERS_SOUTH		((1 << 8) | 69)
@@ -715,6 +725,8 @@
 #define MAP_ANTISIS_SEWERS_EAST_TUNNEL	((1 << 8) | 71)
 #define MAP_ANTISIS_SEWERS_ROOM			((1 << 8) | 72)
 
-#define MAP_HISTORY_CUTSCENE						((31 << 8) | 5)
+#define MAP_HISTORY_CUTSCENE			((31 << 8) | 5)
+
+#define MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM (79 | (1 << 8))
 
 #endif

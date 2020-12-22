@@ -9,6 +9,7 @@
 #include "../include/random.h"
 #include "../include/sound.h"
 
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_anims.h"
@@ -369,6 +370,20 @@ static const union AnimCmd sAnimCmdSnipeShot[] =
 const union AnimCmd *const gAnimCmdTable_SnipeShot[] =
 {
 	sAnimCmdSnipeShot,
+};
+
+static const union AnimCmd sAnimCmdSurgingStrike[] =
+{
+	//Onlyt the first three frames of the animation
+	ANIMCMD_FRAME(64, 4),
+	ANIMCMD_FRAME(48, 4),
+	ANIMCMD_FRAME(32, 4),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_SurgingStrike[] =
+{
+	sAnimCmdSurgingStrike,
 };
 
 static const union AnimCmd sAnimCmdSmallRock[] =
@@ -3143,6 +3158,24 @@ void SpriteCB_SteelRoller(struct Sprite* sprite)
 	sprite->callback = SpriteCB_SteelRoller_Down;
 }
 
+//Creates arc impacts for Surging Strikes
+//arg 0: initial x pixel offset (from target)
+//arg 1: initial y pixel offset (from target)
+//arg 2: target x pixel offset (from target)
+//arg 3: target y pixel offset (from target)
+//arg 4: duration
+//arg 5: wave amplitude
+void SpriteCB_SurgingStrikes(struct Sprite* sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_AnimMissileArcStep;
+}
+
 //Creates The Extreme Evoboost Circles
 void SpriteCB_ExtremeEvoboostCircle(struct Sprite *sprite)
 {
@@ -4495,6 +4528,41 @@ void SlideMonToOriginalPos(struct Sprite *sprite)
 	}
 }
 
+void SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16 *x, s16 *y)
+{
+	u8 xCoordType, yCoordType;
+	s16 battlerX, battlerY;
+	s16 partnerX, partnerY;
+
+	if (!respectMonPicOffsets)
+	{
+		xCoordType = BATTLER_COORD_X;
+		yCoordType = BATTLER_COORD_Y;
+	}
+	else
+	{
+		xCoordType = BATTLER_COORD_X_2;
+		yCoordType = BATTLER_COORD_Y_PIC_OFFSET;
+	}
+
+	battlerX = GetBattlerSpriteCoord(battlerId, xCoordType);
+	battlerY = GetBattlerSpriteCoord(battlerId, yCoordType);
+	if (IsDoubleBattle() && (!IsRaidBattle() || SIDE(battlerId) == B_SIDE_PLAYER))
+	{
+		partnerX = GetBattlerSpriteCoord(BATTLE_PARTNER(battlerId), xCoordType);
+		partnerY = GetBattlerSpriteCoord(BATTLE_PARTNER(battlerId), yCoordType);
+	}
+	else
+	{
+		partnerX = battlerX;
+		partnerY = battlerY;
+	}
+
+	*x = (battlerX + partnerX) / 2;
+	*y = (battlerY + partnerY) / 2;
+}
+
+
 void AnimTask_AllBanksInvisible(u8 taskId)
 {
 	for (int i = 0; i < gBattlersCount; ++i)
@@ -4603,6 +4671,8 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 			break;
 
 		case CONTROLLER_BALLTHROWANIM:
+			if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN)
+				goto DEFAULT_CASE; //Because the game thinks the old man's a healthbox for some reason
 			break;
 
 		case CONTROLLER_BATTLEANIMATION:
@@ -4640,9 +4710,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 			}
 		//Fallthrough
 		default:
-		#if (defined DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES || !defined HIDE_HEALTHBOXES_DURING_ANIMS)
 		DEFAULT_CASE:
-		#endif
 			for (i = 0; i < gBattlersCount; i++)
 			{
 				u8 healthboxLeftSpriteId = gHealthboxSpriteIds[i];
@@ -5109,6 +5177,11 @@ void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
 	if (!battlerSprite->inUse || !IsBattlerSpritePresent(battlerId)
 	#ifdef FLAG_SKY_BATTLE
 	|| FlagGet(FLAG_SKY_BATTLE) //Doesn't make sense to use Shadows in Sky Battle
+	#endif
+	#ifdef MAPSEC_DISTORTION_WORLD
+	|| (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD
+	 && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	 && SIDE(battlerId) == B_SIDE_OPPONENT) //Fighting Giratina
 	#endif
 	)
 	{

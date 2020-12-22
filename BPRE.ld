@@ -288,6 +288,9 @@ sBagContextMenuItemsPtr = 0x203AD24;
 sBagContextMenuNumItems = 0x203AD28;
 sBackupPlayerBag = 0x203AD2C;
 sBerryPouchListMenuItems = 0x203F37C;
+gShopData = 0x2039934;
+gShopTilemapBuffer1 = 0x2039954;
+sShopMenuItemStrings = 0x2039968;
 
 /* Start Menu RAM */
 sStartMenuCallback = 0x20370F0;
@@ -356,6 +359,7 @@ sEndTurnFuncsTable = 0x8250070;
 gAccuracyStageRatios = 0x82504FC;
 sTargetIdentities = 0x8250980;
 //gItemEffectTable = 0x82528BC;
+gNatureStatTable = 0x8252b48;
 gBaseStats = 0x8254784;
 gEvolutionTable = 0x8259754;
 gUnkPokemonTrainerTable = 0x825DF50;
@@ -385,6 +389,7 @@ sMapSectionTopLeftCorners = 0x83F1E60;
 sMapSectionDimensions = 0x83F2178;
 sMugshotsOpponentRotationScales = 0x83FA49A;
 sMugshotsOpponentCoords = 0x83FA4AE;
+sHOFTextColors = 0x840C23C;
 sHallOfFame_MonFullTeamPositions = 0x840C268;
 sHallOfFame_MonHalfTeamPositions = 0x840C298;
 gText_MenuPokemon = 0x8415a66;
@@ -714,7 +719,7 @@ GetBattlerSpriteSubpriority = 0x807685C | 1;
 GetBattlerSpriteBGPriority = 0x8076884 | 1;
 CreateMonPicBattleAnim = 0x80768D0 | 1;
 GetBattlerSpriteCoordAttr = 0x8076B2C | 1;
-SetAverageBattlerPositions = 0x8076D9C | 1;
+//SetAverageBattlerPositions = 0x8076D9C | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
 CreateShockWaveLightning = 0x80AF058 | 1;
 AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
@@ -729,7 +734,7 @@ uns_builder_assign_animtable1 = 0x810BD80 | 1;
 /* Battle AI Functions */
 //AI_TrySwitchOrUseItem = 0x8039C84 | 1;
 //BattleAI_SetupAIData = 0x80C6DA0 | 1;
-RecordLastUsedMoveByTarget = 0x80C7164 | 1;
+//RecordLastUsedMoveByTarget = 0x80C7164 | 1;
 
 /* Secret Base Functions */
 GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;
@@ -767,6 +772,7 @@ FreeBallTiles = 0x80F1198 | 1;
 
 
 /* Daycare */
+GetNumLevelsGainedForDaycareMon = 0x80457B4 | 1;
 GetEggSpecies = 0x8045970 | 1;
 RemoveIVIndexFromList = 0x8045A78 | 1;
 RemoveEggFromDayCare = 0x8045F70 | 1;
@@ -877,6 +883,7 @@ GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
 ItemId_GetFieldFunc = 0x809AA20 | 1;
 sub_80A103C = 0x80A103C | 1;
+DisplayItemMessageInCurrentContext = 0x80A10C4 | 1;
 PrintNotTheTimeToUseThat = 0x80A1110 | 1;
 PrepareOverworldReturn = 0x80A1184 | 1;
 SetUpItemUseCallback = 0x80A16D0 | 1;
@@ -909,6 +916,7 @@ GoToTMMenu = 0x81317F8 | 1;
 AddScrollIndicatorArrowPairParameterized = 0x8133B40 | 1;
 RemoveScrollIndicatorArrowPair = 0x8133C30 | 1;
 GoToBerryMenu = 0x813CD50 | 1;
+BerryPouchPrint = 0x813E9A0 | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
 
 /* Money Functions */
@@ -1075,6 +1083,7 @@ GetWarpEventAtMapPosition = 0x806DC30 | 1;
 SetupWarp = 0x806DC54 | 1;
 HandleBoulderFallThroughHole = 0x806DE28 | 1;
 HandleBoulderActivateVictoryRoadSwitch = 0x806DE70 | 1;
+dive_warp = 0x806DF3C | 1;
 TrySetDiveWarp = 0x806DFB8 | 1;
 AppendTilesetAnimToBuffer = 0x806FF04 | 1;
 FadeScreen = 0x807A818 | 1;
@@ -1091,6 +1100,7 @@ PrintWhiteOutRecoveryMessage = 0x807F3A4 | 1;
 Task_RushInjuredPokemonToCenter = 0x807F45D | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
 ReturnToFieldFromFlyMapSelect = 0x80842C8 | 1;
+Task_UseWaterfall = 0x8084CD8 | 1;
 ShowMapNamePopup = 0x8098110 | 1;
 DismissMapNamePopup = 0x80982EC | 1;
 IsMapNamePopupTaskActive = 0x8098320 | 1;
@@ -1827,10 +1837,11 @@ sub_8112450 = 0x8112450 | 1;
 
 /* Pokemon/Trainer Sprite Functions */
 ResetAllPicSprites = 0x810BB8C | 1;
+CreatePicSprite_HandleDeoxys = 0x810BF44 | 1;
 CreateMonPicSprite_HandleDeoxys = 0x810C1CC | 1;
 FreeAndDestroyMonPicSprite = 0x810C214 | 1;
 CreateTrainerCardMonIconSprite = 0x810C25C | 1;
-CreateTrainerPicSprite = 0x810C2A4 | 1;
+//CreateTrainerPicSprite = 0x810C2A4 | 1;
 FreeAndDestroyTrainerPicSprite = 0x810C2E8 | 1;
 CreateTrainerCardTrainerPicSprite = 0x810C330 | 1;
 
