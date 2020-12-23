@@ -19631,7 +19631,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Candice[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SNOWWARNING
-		.item = ITEM_LIGHT_CLAY
+		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
 			MOVE_ICYWIND,

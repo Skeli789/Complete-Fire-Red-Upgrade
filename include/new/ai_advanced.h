@@ -53,6 +53,7 @@ void IncreaseSubstituteViability(s16* viability, u8 class, u8 bankAtk, u8 bankDe
 void IncreaseEntryHazardsViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseFakeOutViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreasePivotViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
+void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseFoeProtectionViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseAllyProtectionViability(s16* viability, u8 class);
 void IncreaseTeamProtectionViability(s16* viability, u8 class);

@@ -1302,7 +1302,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 	u8 backupBattler = gActiveBattler;
 	gActiveBattler = bankAtk;
-	u8 switchScore = GetMostSuitableMonToSwitchIntoScore();
+	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
 	gActiveBattler = backupBattler;
 
 	u8 defAbility = ABILITY(bankDef);
@@ -1334,8 +1334,8 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 						return PIVOT;
 
 					if (IsClassDamager(class)
-					&& SPLIT(move) != SPLIT_STATUS //Damaging move
-					&& (switchScore >= SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_KO_FOE //Or remove hazards
+					&& SPLIT(move) != SPLIT_STATUS //Damaging pivot move
+					&& ((switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES && switchFlags & (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_CAN_REMOVE_HAZARDS)) //Resists all moves and can KO or remove hazards
 					 || (BATTLER_MAX_HP(bankDef)
 					    && (IsBankHoldingFocusSash(bankDef) || defAbility == ABILITY_STURDY || defAbility == ABILITY_MULTISCALE || defAbility == ABILITY_SHADOWSHIELD)))) //Pivot to break the sash/sturdy/multiscale
 						return PIVOT;
@@ -1344,42 +1344,42 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 				{
 					if (IsClassDamager(class)
 					&& BATTLER_MAX_HP(bankDef)
-					&& SPLIT(move) != SPLIT_STATUS //Damaging move
+					&& SPLIT(move) != SPLIT_STATUS //Damaging pivot move
 					&& (IsBankHoldingFocusSash(bankDef) || defAbility == ABILITY_STURDY || defAbility == ABILITY_MULTISCALE || defAbility == ABILITY_SHADOWSHIELD)) //Pivot to break the sash/sturdy/multiscale
 						return PIVOT;
 
-					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
-						return PIVOT;
-
-					if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+					if (switchFlags & (SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //Switched in mon won't take too much damage
+					{
+						if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchFlags & SWITCHING_FLAG_CAN_REMOVE_HAZARDS)
 							return PIVOT;
 
-					if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
-						return PIVOT;
+						if (WillFaintFromSecondaryDamage(bankAtk))
+							return PIVOT;
 
-					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
-					{
-						bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
-						bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
+						if (IsClassDamager(class))
+						{
+							bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
+							bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
 
-						//Pivot if attacking stats are bad
-						if (physMoveInMoveset && !specMoveInMoveset)
-						{
-							if (STAT_STAGE_ATK < 6)
-								return PIVOT;
-						}
-						else if (!physMoveInMoveset && specMoveInMoveset)
-						{
-							if (STAT_STAGE_SPATK < 6)
-								return PIVOT;
-						}
-						else if (physMoveInMoveset && specMoveInMoveset)
-						{
-							if (STAT_STAGE_ATK < 6 && STAT_STAGE_SPATK < 6)
-								return PIVOT;
-						}
+							//Pivot if attacking stats are bad
+							if (physMoveInMoveset && !specMoveInMoveset)
+							{
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM)
+									return PIVOT;
+							}
+							else if (!physMoveInMoveset && specMoveInMoveset)
+							{
+								if (STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+									return PIVOT;
+							}
+							else if (physMoveInMoveset && specMoveInMoveset)
+							{
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+									return PIVOT;
+							}
 
-						return CAN_TRY_PIVOT;
+							return CAN_TRY_PIVOT;
+						}
 					}
 				}
 			}
@@ -1402,7 +1402,9 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 				}
 				else //Can't KO the foe
 				{
-					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
+					if (IsClassDamager(class)
+					&& switchFlags & SWITCHING_FLAG_KO_FOE //New mon can KO the foe
+					&& switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //New mon will go first or survive a hit
 						return PIVOT;
 				}
 			}
@@ -1418,28 +1420,34 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 				}
 				else if (Can2HKO(bankAtk, bankDef))
 				{
-					if (IsClassDamager(class)
-					&& SPLIT(move) != SPLIT_STATUS //Damaging move
-					&& (switchScore >= SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_KO_FOE //remove hazards
-					 || (IsBankHoldingFocusSash(bankDef) && BATTLER_MAX_HP(bankDef)))) //Pivot to break the sash
-						return PIVOT;
+					if (IsClassDamager(class) && SPLIT(move) != SPLIT_STATUS) //Damaging move
+					{
+						if ((switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //New mon will go first and KO or survive a hit
+						 || (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES && switchFlags & SWITCHING_FLAG_CAN_REMOVE_HAZARDS) //Resists all moves and can remove hazards
+						 || (BATTLER_MAX_HP(bankDef)
+						  && (IsBankHoldingFocusSash(bankDef) || defAbility == ABILITY_STURDY || defAbility == ABILITY_MULTISCALE || defAbility == ABILITY_SHADOWSHIELD))) //Pivot to break the sash
+							return PIVOT;
+					}
 
 					//Otherwise try to get foe hp down to where the CanKnockOut check is reached
 				}
 				else
 				{
-					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_KO_FOE)
+					if (IsClassDamager(class)
+					&& switchFlags & SWITCHING_FLAG_KO_FOE
+					&& switchFlags & SWITCHING_FLAG_OUTSPEEDS)
 						return PIVOT; //Only switch if way better matchup
 
-					if (!hasUsefulStatBoost)
+					if (!hasUsefulStatBoost
+					&& (switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES))) //New mon will either go first or be able to take a hit
 					{
-						if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+						if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchFlags & SWITCHING_FLAG_CAN_REMOVE_HAZARDS)
 							return PIVOT;
 
-						if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+						if (WillFaintFromSecondaryDamage(bankAtk))
 							return PIVOT;
 
-						if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+						if (IsClassDamager(class))
 						{
 							bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
 							bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
@@ -1447,17 +1455,17 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 							//Pivot if attacking stats are bad
 							if (physMoveInMoveset && !specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK < 6)
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (!physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_SPATK < 6)
+								if (STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK < 6 && STAT_STAGE_SPATK < 6)
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 						}
@@ -2298,6 +2306,67 @@ void IncreasePivotViability(s16* originalViability, u8 class, u8 bankAtk, unused
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
 			INCREASE_VIABILITY(15);
+			break;
+	}
+
+	*originalViability = MathMin(viability, 255);
+}
+
+//Only for single battles
+void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
+{
+	s16 viability = *originalViability;
+
+	if (class == 0xFF) //Dumb AI
+		class = FIGHT_CLASS_SWEEPER_KILL;
+
+	switch (class) {
+		case FIGHT_CLASS_SWEEPER_KILL:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
+			INCREASE_VIABILITY(6);
+			break;
+
+		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_STALL:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
+			if (!Can2HKO(bankDef, bankAtk))
+				INCREASE_VIABILITY(3);
+			else
+				INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
+			if (!Can2HKO(bankDef, bankAtk))
+				INCREASE_VIABILITY(6);
+			else
+				INCREASE_VIABILITY(7);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+			if (!Can2HKO(bankDef, bankAtk))
+				INCREASE_VIABILITY(6); //Get the screens up first
+			else
+				INCREASE_VIABILITY(9); //KO now before you die
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_ENTRY_HAZARDS:
+			if (!Can2HKO(bankDef, bankAtk))
+				INCREASE_VIABILITY(3);
+			else
+				INCREASE_VIABILITY(6);
 			break;
 	}
 

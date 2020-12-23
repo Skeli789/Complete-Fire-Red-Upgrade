@@ -2473,10 +2473,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-			&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
+			//&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
 			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
 			{
-				INCREASE_VIABILITY(8); //Use the killing move with the best accuracy
+				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
 			}
 			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
 			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect

@@ -2041,6 +2041,12 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 
 	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
 
+	//Calculate adjusted speed stat if Sticky Web is present
+	if (gSideTimers[side].stickyWeb
+	&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+	&&  CheckMonGrounding(mon))
+		speed = (speed * gStatStageRatios[6 - 1][0]) / gStatStageRatios[6 - 1][1];
+
 	//Check for abilities that alter speed
 	speed = BoostSpeedInWeather(ability, itemEffect, speed);
 

@@ -13,7 +13,8 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves);
 u32 GetAIFlags(void);
 u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);
-s8 GetMostSuitableMonToSwitchIntoScore(void);
+s16 GetMostSuitableMonToSwitchIntoScore(void);
+u8 GetMostSuitableMonToSwitchIntoFlags(void);
 u8 CalcMostSuitableMonToSwitchInto(void);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);
@@ -41,13 +42,25 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
 #define AI_ACTION_UNK7          0x0040
 #define AI_ACTION_UNK8          0x0080
 
-#define SWITCHING_INCREASE_KO_FOE 4
-#define SWITCHING_INCREASE_RESIST_ALL_MOVES 4
-#define SWITCHING_INCREASE_REVENGE_KILL 2 //Can only happen if can KO in the first place
+#define OFFENSIVE_STAT_MIN_NUM 3 //Switch when ffensive stat is -3 or less
+
+//These numbers were painstakingly calculated using Python - DON'T MODIFY! If you do, you will break something.
+#define SWITCHING_INCREASE_KO_FOE 31
+#define SWITCHING_INCREASE_RESIST_ALL_MOVES 17
+#define SWITCHING_INCREASE_REVENGE_KILL 8 //Can only happen if can KO in the first place
 #define SWITCHING_INCREASE_WALLS_FOE 2 //Can only wall if no Super-Effective moves against foe
 #define SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE 1
-#define SWITCHING_INCREASE_CAN_REMOVE_HAZARDS 10
+#define SWITCHING_INCREASE_CAN_REMOVE_HAZARDS (SWITCHING_SCORE_MAX + 1)
+#define SWITCHING_INCREASE_OUTSPEEDS 14
 
 #define SWITCHING_DECREASE_WEAK_TO_MOVE 1
 
-#define SWITCHING_SCORE_MAX (SWITCHING_INCREASE_KO_FOE + SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_REVENGE_KILL)
+#define SWITCHING_SCORE_MAX (SWITCHING_INCREASE_KO_FOE + SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_REVENGE_KILL + SWITCHING_INCREASE_OUTSPEEDS)
+
+#define SWITCHING_FLAG_KO_FOE                   (0 << 1)
+#define SWITCHING_FLAG_RESIST_ALL_MOVES         (1 << 1)
+#define SWITCHING_FLAG_REVENGE_KILL             (2 << 1)
+#define SWITCHING_FLAG_WALLS_FOE                (3 << 1)
+#define SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE (4 << 1)
+#define SWITCHING_FLAG_CAN_REMOVE_HAZARDS       (5 << 1)
+#define SWITCHING_FLAG_OUTSPEEDS                (6 << 1)
