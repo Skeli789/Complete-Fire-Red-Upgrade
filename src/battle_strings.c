@@ -145,6 +145,11 @@ void BufferStringBattle(u16 stringID)
 				stringPtr = BattleText_WildPkmnAppeared6; //0x83FD297
 			#endif
 
+			#ifdef FLAG_WORST_NIGHTMARE_STRING
+			else if (FlagGet(FLAG_WORST_NIGHTMARE_STRING))
+				stringPtr = BattleText_WorstNightmare;
+			#endif
+
 			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !IsRaidBattle())
 			{
 				#ifdef FLAG_TWO_WILD_POKEMON_ATTACKED_STRING
@@ -163,6 +168,12 @@ void BufferStringBattle(u16 stringID)
 					stringPtr = BattleText_DistortionWorldMonAttacked;
 				else
 				#endif
+				#ifdef FLAG_LEGENDARY_APPEARED_STRING
+				if (FlagGet(FLAG_LEGENDARY_APPEARED_STRING))
+					stringPtr = BattleText_LegendaryAppeared;
+				else
+				#endif
+
 				stringPtr = BattleText_WildPkmnAppeared; //0x83FD284
 			}
 		}

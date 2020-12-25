@@ -1923,7 +1923,11 @@ bool8 UpdateRepelCounter(void)
 
 	if (steps != 0)
 	{
-		steps--;
+		--steps;
+		
+		if (steps == 0 && IsDexNavHudActive())
+			steps = 1; //Keep steps at 1 while DexNav is active so the pop-up doesn't interrupt the search
+
 		VarSet(VAR_REPEL_STEP_COUNT, steps);
 		if (steps == 0)
 		{

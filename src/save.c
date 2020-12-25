@@ -3,6 +3,7 @@
 #include "../include/menu_helpers.h"
 #include "../include/rtc.h"
 #include "../include/save.h"
+#include "../include/string_util.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/dns.h"
@@ -353,16 +354,29 @@ void PrintChangeSaveTypeErrorStatus(u8 taskId, const u8* str)
 }
 
 extern const u8 gText_MainMenuEnableRTC[];
+extern const u8 gText_MainMenuTimeSetInFuture[];
 extern bool8 sPrintedRTCWarning;
 bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 {
 	#ifdef TIME_ENABLED
-	if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK && !sPrintedRTCWarning)
+	if (!sPrintedRTCWarning)
 	{
-		sPrintedRTCWarning = TRUE;
-		PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
-		gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
-		return TRUE;
+		if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK)
+		{
+			sPrintedRTCWarning = TRUE;
+			PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
+			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
+			return TRUE;
+		}
+		else if (IsTimeInVarInFuture(VAR_SWARM_DAILY_EVENT)) //If the player tampered with their system time to access more daily events
+		{
+			sPrintedRTCWarning = TRUE;
+			BufferYearMonthDayFromVar(VAR_SWARM_DAILY_EVENT);
+			StringExpandPlaceholders(gStringVarC, gText_MainMenuTimeSetInFuture);
+			PrintSaveErrorStatus(taskId, gStringVarC);
+			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
+			return TRUE;
+		}
 	}
 	#endif
 

@@ -300,8 +300,6 @@ void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedP
 	Memcpy(&boxMon->substruct2, &compMon->hpEv, NUM_STATS); //Copy EVs
 	Memcpy(&boxMon->substruct3, &compMon->pokerus, 8); //Copy some of substruct misc
 
-	boxMon->substruct3.obedient = TRUE;
-
 	boxMon->substruct1.moves[0] = compMon->move1;
 	boxMon->substruct1.moves[1] = compMon->move2;
 	boxMon->substruct1.moves[2] = compMon->move3;

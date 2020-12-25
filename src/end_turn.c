@@ -200,7 +200,6 @@ u8 TurnBasedEffects(void)
 				gNewBS->CustapQuickClawIndicator = 0;
 				gNewBS->activatedCustapQuickClaw = 0;
 				gNewBS->criticalCapture = 0;
-				gNewBS->devolveForgotMove = 0;
 
 				if (gNewBS->RetaliateCounters[0])
 					--gNewBS->RetaliateCounters[0];
@@ -1636,6 +1635,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
 				gNewBS->ai.sideSwitchedThisRound = 0;
+				gNewBS->devolveForgotMove = 0;
 
 				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
 					--gNewBS->IonDelugeTimer;

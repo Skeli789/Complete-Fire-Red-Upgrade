@@ -3964,10 +3964,13 @@ void atkB4_jumpifconfusedandstatmaxed(void)
 
 void atkB5_furycuttercalc(void)
 {
-	if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT
-	|| gLastPrintedMoves[gBankAttacker] != gChosenMove)
+	if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
 		gDisableStructs[gBankAttacker].furyCutterCounter = 0;
+	}
+	else if (gLastPrintedMoves[gBankAttacker] != gChosenMove)
+	{
+		gDisableStructs[gBankAttacker].furyCutterCounter = 1; //Used once now
 	}
 	else
 	{
@@ -4079,7 +4082,8 @@ void atkB9_magnitudedamagecalculation(void)
 
 
 //In this function, the target attacks the attacker
-void atkBA_jumpifnopursuitswitchdmg(void) {
+void atkBA_jumpifnopursuitswitchdmg(void)
+{
 	int i;
 
 	switch (gMultiHitCounter) {
@@ -4098,11 +4102,16 @@ void atkBA_jumpifnopursuitswitchdmg(void) {
 	}
 
 	u8 toDoAction = 0;
-	for (i = 0; i < gBattlersCount; i++)
+	for (i = gBattlersCount - 1; i >= 0; --i) //Go backwards - Can't rely on gActionsByTurnOrder for mons that already finished attacking
 	{
 		if (gBanksByTurnOrder[i] == gBankTarget)
 		{
 			toDoAction = gActionsByTurnOrder[i];
+			break;
+		}
+		else if (gBanksByTurnOrder[i] == gBankAttacker) //If the attacker is reached it means the Pursuiter already atatcked
+		{
+			toDoAction = ACTION_FINISHED;
 			break;
 		}
 	}
@@ -4115,7 +4124,7 @@ void atkBA_jumpifnopursuitswitchdmg(void) {
 	&& BATTLER_ALIVE(gBankAttacker)
 	&& !gDisableStructs[gBankTarget].truantCounter)
 	{
-		for (i = 0; i < gBattlersCount; i++)
+		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (gBanksByTurnOrder[i] == gBankTarget)
 				gActionsByTurnOrder[i] = ACTION_TRY_FINISH;

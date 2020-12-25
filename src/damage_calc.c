@@ -1435,9 +1435,12 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_MULTIATTACK:
-			if (effect == ITEM_EFFECT_MEMORY)
+			#ifdef NATIONAL_DEX_SILVALLY
+			if (effect == ITEM_EFFECT_MEMORY
+			&& SpeciesToNationalPokedexNum(SPECIES(bankAtk)) == NATIONAL_DEX_SILVALLY)
 				moveType = quality;
 			else
+			#endif
 				moveType = TYPE_NORMAL;
 			break;
 
@@ -1556,9 +1559,12 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			break;
 
 		case MOVE_MULTIATTACK:
-			if (effect == ITEM_EFFECT_MEMORY && ability != ABILITY_KLUTZ)
+			#ifdef NATIONAL_DEX_SILVALLY
+			if (effect == ITEM_EFFECT_MEMORY && ability != ABILITY_KLUTZ
+			&& SpeciesToNationalPokedexNum(mon->species) == NATIONAL_DEX_SILVALLY)
 				moveType = quality;
 			else
+			#endif
 				moveType = TYPE_NORMAL;
 			break;
 
@@ -2730,6 +2736,9 @@ static u16 GetBasePower(struct DamageCalc* data)
 			{
 				for (i = 0; i < gDisableStructs[bankAtk].furyCutterCounter; ++i)
 					power *= 2;
+
+				if (power > 160)
+					power = 160; //Max base power
 			}
 			break;
 

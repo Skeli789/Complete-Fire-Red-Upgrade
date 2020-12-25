@@ -471,7 +471,16 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 			#ifdef UNBOUND
 			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 			#endif
-				calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+			{
+				#ifdef VAR_GAME_DIFFICULTY
+				if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY
+				&& !FlagGet(FLAG_SYS_GAME_CLEAR)
+				&& !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+					calc = (calc * 8) / 10; // 0.8 Fog loss
+				else
+				#endif
+					calc = (calc * 6) / 10; // 0.6 Fog loss
+			}
 		}
 	}
 
@@ -514,7 +523,13 @@ u32 VisualAccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 	u8 defAbility = GetRecordedAbility(bankDef);
 	u32 acc = AccuracyCalcPassDefAbilityItemEffect(move, bankAtk, bankDef, defAbility, defEffect);
 
-	if (WEATHER_HAS_EFFECT)
+	if (ABILITY(bankAtk) == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD
+	|| (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk)
+	|| (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
+	|| (gSpecialMoveFlags[move].gAlwaysHitWhenMinimizedMoves && gStatuses3[bankDef] & STATUS3_MINIMIZED)
+	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO))
+		acc = 0xFFFF; //No Miss
+	else if (WEATHER_HAS_EFFECT)
 	{
 		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && defEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
@@ -563,12 +578,21 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
 		calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 
-	if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_FOG_ANY)
 	{
 		#ifdef UNBOUND
 		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 		#endif
-			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+		{
+			#ifdef VAR_GAME_DIFFICULTY
+			if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY
+			&& !FlagGet(FLAG_SYS_GAME_CLEAR)
+			&& !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+				calc = (calc * 8) / 10; // 0.8 Fog loss
+			else
+			#endif
+				calc = (calc * 6) / 10; // 0.6 Fog loss
+		}
 	}
 
 	if (atkEffect == ITEM_EFFECT_WIDE_LENS)
@@ -585,7 +609,10 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 			calc = (calc * 12) / 10; // 1.2 Micle Berry Boost
 	}
 
-	if (WEATHER_HAS_EFFECT)
+	if (atkAbility == ABILITY_NOGUARD
+	|| (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON)))
+		calc = 0xFFFF; //No Miss
+	else if (WEATHER_HAS_EFFECT)
 	{
 		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))

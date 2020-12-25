@@ -52,7 +52,7 @@ static u8 CheckPowerItem(u16 item);
 static void InheritIVs(struct Pokemon* egg, struct DayCare* daycare);
 static void AlterEggSpeciesWithIncenseItem(u16* species, struct DayCare* daycare);
 static void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem);
-static void InheritPokeBall(struct Pokemon* egg, struct DayCare* daycare);
+static void InheritPokeBall(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
 static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* mother);
 static bool8 DetermineEggHiddenAbility(struct BoxPokemon* father, struct BoxPokemon* mother);
 static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality);
@@ -306,6 +306,11 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 			if (personality & 0x8000)
 				eggSpecies = SPECIES_VOLBEAT;
 			break;
+
+		case NATIONAL_DEX_VOLBEAT:
+			if (!(personality & 0x8000))
+				eggSpecies = SPECIES_ILLUMISE;
+			break;
 		#endif
 
 		#if (defined NATIONAL_DEX_MANAPHY && defined SPECIES_PHIONE)
@@ -535,25 +540,25 @@ static void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fathe
 	}
 }
 
-static void InheritPokeBall(struct Pokemon* egg, struct DayCare* daycare)
+static void InheritPokeBall(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother)
 {
-	u8 parent = DAYCARE_MOTHER;	// mother by default
+	struct BoxPokemon* parent = mother;	// mother by default
 	u8 parentBall;
 
-	u16 motherSpecies = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_SPECIES, NULL);
-	u16 fatherSpecies = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_SPECIES, NULL);
+	u16 motherSpecies = GetBoxMonData(mother, MON_DATA_SPECIES, NULL);
+	u16 fatherSpecies = GetBoxMonData(father, MON_DATA_SPECIES, NULL);
 
 	// gen 7 same species checks
 	#ifdef SPECIES_DITTO
 	if (motherSpecies == SPECIES_DITTO)
-		parent = DAYCARE_FATHER;	// gen 7 ditto check -> male or non-gendered mon with ditto (mother) makes pokemon inherit from father
+		parent = father;	// gen 7 ditto check -> male or non-gendered mon with ditto (mother) makes pokemon inherit from father
 	else
 	#endif
-	if (motherSpecies == fatherSpecies)
-		parent = Random() % 2;	// same parent species -> pokeball inherited randomly
+	if (motherSpecies == fatherSpecies && Random() & 1)
+		parent = father;	// same parent species -> pokeball inherited randomly
 
 	// get poke ball ID
-	parentBall = GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_POKEBALL, NULL);
+	parentBall = GetBoxMonData(parent, MON_DATA_POKEBALL, NULL);
 
 	// master ball and cherish ball become poke ball
 	#ifndef INHERIT_MASTER_CHERISH_BALL
@@ -650,6 +655,7 @@ void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the give
 	SetMonData(mon, MON_DATA_MET_LOCATION, &metLocation);
 	SetMonData(mon, MON_DATA_LANGUAGE, &language);
 	SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
+	HealMon(mon);
 }
 
 //Decide features to inherit
@@ -667,13 +673,12 @@ void GiveEggFromDaycare(struct DayCare* daycare)
 	AlterEggSpeciesWithIncenseItem(&species, daycare);
 	SetInitialEggData(&egg, species, personality);	// sets base data (ball, met level, lang, etc)
 	InheritIVs(&egg, daycare);	// destiny knot check
-	InheritPokeBall(&egg, daycare);
+	InheritPokeBall(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 	BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 
 	isEgg = TRUE;
 	SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
 	CalculateMonStats(&egg);
-	HealMon(&egg);
 
 	//gPlayerParty[PARTY_SIZE - 1] = egg;
 	Memcpy(&gPlayerParty[5], &egg, 100);
@@ -760,6 +765,7 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 
 	//SetMonData(temp, MON_DATA_OBEDIENCE, &obedience);
 	temp->hiddenAbility = hidden;
+	HealMon(temp); //Fixes a bug where new Pokemon could hatch with more HP
 
 	*egg = *temp;
 }

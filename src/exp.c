@@ -727,7 +727,7 @@ static u32 GetExpToLevel(u8 toLevel, u8 growthRate)
 //////////////////// POWER ITEMS ////////////////////////////////
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 {
-	u8 multiplier;
+	u8 pkrsMultiplier;
 	u16 evIncrease;
 
 	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
@@ -743,7 +743,7 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 			continue;
 
 		evIncrease = 0;
-		multiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
+		pkrsMultiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
 
 		//Get EV yield
 		switch (stat)
@@ -769,7 +769,7 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 		}
 
 		//Pokerus
-		evIncrease *= multiplier;
+		evIncrease *= pkrsMultiplier;
 
 		//Check Macho Brace
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
@@ -778,7 +778,7 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 		AddEVs(mon, stat, evIncrease);
 
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
-			AddEVs(mon, stat, POWER_ITEM_EV_YIELD); //Power items always add to requested stat
+			AddEVs(mon, stat, POWER_ITEM_EV_YIELD * pkrsMultiplier); //Power items always add to requested stat
 	}
 }
 

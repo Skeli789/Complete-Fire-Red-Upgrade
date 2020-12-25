@@ -1598,6 +1598,19 @@ bool8 IsTimeInVarInFuture(u16 var)
 	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
 }
 
+void BufferYearMonthDayFromVar(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u32 year = timeData->year + timeData->century * 100;
+	u8 month = timeData->month;
+	u8 day = timeData->day;
+
+	ConvertIntToDecimalStringN(gStringVar1, year, STR_CONV_MODE_LEFT_ALIGN, 4);
+	ConvertIntToDecimalStringN(gStringVar2, month, STR_CONV_MODE_LEFT_ALIGN, 2);
+	ConvertIntToDecimalStringN(gStringVar3, day, STR_CONV_MODE_LEFT_ALIGN, 2);
+}
+
 //@Details: Runs a daily event.
 //@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.
@@ -2810,11 +2823,13 @@ static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 	FreeSpriteOamMatrix(&gSprites[spriteId]);
 	DestroySprite(&gSprites[spriteId]);
 
+	#ifdef ITEM_DESCRIPTION_ACQUIRE
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
 		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
 		RemoveWindow(sHeaderBoxWindowId);
 	}
+	#endif
 	#endif
 }
 

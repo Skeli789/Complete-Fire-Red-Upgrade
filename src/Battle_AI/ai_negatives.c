@@ -2083,6 +2083,7 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_TAUNT:
 			if (IsTaunted(bankDef)
+			|| data->defAbility == ABILITY_OBLIVIOUS
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 				DECREASE_VIABILITY(10);
 			break;

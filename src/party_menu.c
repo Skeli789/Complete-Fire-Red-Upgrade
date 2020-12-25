@@ -136,6 +136,7 @@ static bool8 SetUpFieldMove_Waterfall(void);
 static bool8 SetUpFieldMove_Teleport(void);
 static void FieldCallback_Dive(void);
 static bool8 SetUpFieldMove_Dive(void);
+static bool8 SetUpFieldMove_SweetScent(void);
 static void FieldCallback_RockClimb(void);
 static bool8 SetUpFieldMove_RockClimb(void);
 static void FieldCallback_Defog(void);
@@ -861,7 +862,7 @@ struct
 	[FIELD_MOVE_DIG] = {(void*) 0x80C9A79, 0x0d},
 	[FIELD_MOVE_MILK_DRINK] = {(void*) 0x80E5685, 0x10},
 	[FIELD_MOVE_SOFT_BOILED] = {(void*) 0x80E5685, 0x10},
-	[FIELD_MOVE_SWEET_SCENT] = {(void*) 0x80DE0C9, 0x0d},
+	[FIELD_MOVE_SWEET_SCENT] = {(void*) SetUpFieldMove_SweetScent, 0x0d},
 	[FIELD_MOVE_ROCK_CLIMB] = {(void*) SetUpFieldMove_RockClimb, 0x0d},
 	[FIELD_MOVE_DEFOG] = {(void*) SetUpFieldMove_Defog, 0x0d},
 	[FIELD_MOVE_DIVE] = {SetUpFieldMove_Dive, 0x0d},
@@ -1043,6 +1044,9 @@ static bool8 SetUpFieldMove_Surf(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 		return FALSE;
 
+	if (IsCurrentAreaVolcano())
+		return FALSE;
+
 	u16 item = ITEM_NONE;
 	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 	item = ITEM_HM03_SURF;
@@ -1118,6 +1122,16 @@ static bool8 SetUpFieldMove_Dive(void)
 	}
 
 	return FALSE;
+}
+
+static bool8 SetUpFieldMove_SweetScent(void)
+{
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		return FALSE; //Sweet Scent glitches out sprites underwater
+
+	gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+	gPostMenuFieldCallback = FieldCallback_SweetScent;
+	return TRUE;
 }
 
 static void FieldCallback_RockClimb(void)

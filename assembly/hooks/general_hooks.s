@@ -1095,7 +1095,17 @@ OpenPartyScreenBatonPassExplosionFix:
 	strb r3, [r4]
 
 OpenPartyScreenBatonPassExplosionFixReturn:
+	ldr r0, =gActiveBattler
+	ldrb r0, [r0]
+	ldr r1, =gBattlersCount
+	ldrb r1, [r1]
+	cmp r0, r1
+	bge OpenPartyScreenBatonPassExplosionFixNoStandbyMsg @Likely in Raid battles
 	ldr r0, =0x8024C20 | 1
+	bx r0
+
+OpenPartyScreenBatonPassExplosionFixNoStandbyMsg:
+	ldr r0, =0x8024C2E | 1
 	bx r0
 
 .pool
@@ -1255,6 +1265,24 @@ LastUsedBallOverrideHook:
 LastUsedBallOverrideHook_SkipBag: @Skips the palette fade to bag
 	ldr r0, =0x8032D30 | 1
 	bx r0
+
+.pool
+@0x8041C94 with r1
+SitrusBerryOverworldEffectUpdate:
+	ldr r1, [sp, #0x8] @Item Index
+	cmp r1, #0x8E @Sitrus Berry
+	bne NotSitrusBerry
+	lsr r0, #0x1 @Reduce to 1/4
+
+NotSitrusBerry:  
+	cmp r0, #0x0
+	bne SitrusBerryOverworldReturn
+	mov r0, #0x1 @Restore at least 1 HP
+
+SitrusBerryOverworldReturn:
+	str r0, [sp] @HP to recover
+	ldr r1, =0x8041CA6 | 1
+	bx r1
 
 .pool
 @0x8140F44 with r1

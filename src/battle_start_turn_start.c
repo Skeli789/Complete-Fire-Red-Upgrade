@@ -673,9 +673,8 @@ static void TryPrepareTotemBoostInBattleSands(void)
 		u8 contraryShiftPlayer = (ABILITY(playerId) == ABILITY_CONTRARY) ? 0x80 : 0;
 		u8 contraryShiftEnemy = (ABILITY(enemyId) == ABILITY_CONTRARY) ? 0x80 : 0;
 
-		increase = (Random() % increaseMax) + 1;
+		increase = (Random() % increaseMax) + 1; //Player and enemy get the same amount of boost
 		VarSet(VAR_TOTEM + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
-		increase = (Random() % increaseMax) + 1;
 		VarSet(VAR_TOTEM + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
 	}
 }
@@ -828,19 +827,22 @@ void RunTurnActionsFunctions(void)
 	{
 		for (i = 0; i < gBattlersCount; ++i) //Loop through all battlers and play Quick Claw anim for each
 		{
-			if (gNewBS->CustapQuickClawIndicator & gBitTable[i])
+			u8 bank = gBanksByTurnOrder[i];
+			u8 action = gActionsByTurnOrder[i];
+
+			if (gNewBS->CustapQuickClawIndicator & gBitTable[bank])
 			{
-				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
+				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
 
-				if (gActionsByTurnOrder[i] == ACTION_USE_ITEM)
+				if (action == ACTION_USE_ITEM)
 					continue;
-				else if (gActionsByTurnOrder[i] == ACTION_SWITCH && ITEM_EFFECT(i) == ITEM_EFFECT_CUSTAP_BERRY) //Only Quick Claw activates on the switch
+				else if (action == ACTION_SWITCH && ITEM_EFFECT(bank) == ITEM_EFFECT_CUSTAP_BERRY) //Only Quick Claw activates on the switch
 					continue;
 
-				gBattleScripting.bank = i;
-				gLastUsedItem = ITEM(i);
-				if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
-					RecordItemEffectBattle(i, ITEM_EFFECT(i));
+				gBattleScripting.bank = bank;
+				gLastUsedItem = ITEM(bank);
+				if (ITEM_EFFECT(bank) != ITEM_EFFECT_CUSTAP_BERRY)
+					RecordItemEffectBattle(bank, ITEM_EFFECT(bank));
 
 				BattleScriptExecute(BattleScript_QuickClaw);
 				gCurrentActionFuncId = savedActionFuncId;
@@ -2044,8 +2046,16 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 	//Calculate adjusted speed stat if Sticky Web is present
 	if (gSideTimers[side].stickyWeb
 	&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
-	&&  CheckMonGrounding(mon))
-		speed = (speed * gStatStageRatios[6 - 1][0]) / gStatStageRatios[6 - 1][1];
+	&& CheckMonGrounding(mon))
+	{
+		u8 statVal = 6 - 1;
+		if (ability == ABILITY_CONTRARY) //Gets a speed boost
+			statVal = 6 + 1;
+		else if (ability == ABILITY_SIMPLE) //Gets extra speed decrement
+			statVal = 6 - 2;
+
+		speed = (speed * gStatStageRatios[statVal][0]) / gStatStageRatios[statVal][1];
+	}
 
 	//Check for abilities that alter speed
 	speed = BoostSpeedInWeather(ability, itemEffect, speed);

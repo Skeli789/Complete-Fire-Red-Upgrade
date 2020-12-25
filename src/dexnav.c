@@ -300,27 +300,31 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 			if (blockProperties & targetBehaviour)
 			{
 				//Caves and water need to have their encounter values scaled higher
-				bool8 weight = 0;
+				u8 weight, scaleMax;
+				s8 scale;
+
 				if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
 					//Water
-					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2);
-					u8 elevDiff = IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX + 7, topY + 7);
-
-					weight = (Random() % scale <= 1) && !elevDiff && !MapGridIsImpassableAt(topX + 7, topY + 7);
+					scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2);
+					scaleMax = 1;
 				}
 				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
 					//Cave basically needs another check to see if the tile is passable
-					u8 scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
-					Var8002 = scale;
-					weight = ((Random() % scale) < 1) && !MapGridIsImpassableAt(topX + 7, topY + 7);
+					scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
+					if (scale < 1) scale = 1;
+					scaleMax = 3;
 				}
 				else //Grass land
 				{
-					u8 scale = 100 - (GetPlayerDistance(topX + 7, topY + 7) * 2);
-					weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX + 7, topY + 7);
+					scale = 100 - (GetPlayerDistance(topX + 7, topY + 7) * 2);
+					scaleMax = 5;
 				}
+
+				weight = Random() % scale <= scaleMax
+					&& !IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX + 7, topY + 7) //Must be on same elevation
+					&& !MapGridIsImpassableAt(topX + 7, topY + 7); //Can walk on tile
 
 				if (weight)
 				{
@@ -1585,6 +1589,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	//*((u8*) 0x2023D70) = randVal; //For debugging
 	if (randVal >= totalEncounterChance * 2 //Harder Pokemon to find in the area are half as hard to find with the DexNav
 	|| gDexNavCooldown
+	|| VarGet(VAR_REPEL_STEP_COUNT) == 1 //1 step remaining on the repel - player takes a step, repel wears off and they can search again
 	|| !ShakingGrass(environment, 12, 12, 0)) //Draw shaking tile
 	{
 		Free(sDexNavHudPtr);
@@ -1625,7 +1630,7 @@ static void ExecDexNavHUD(void)
 	if (!gPaletteFade->active && !ScriptContext2_IsEnabled() && gMain.callback2 == CB2_Overworld)
 	{
 		SetMainCallback1(CB1_Overworld);
-		InitDexNavHUD(Var8000, Var8001);
+		InitDexNavHUD(Var8008, Var8009);
 	}
 }
 
@@ -1847,8 +1852,8 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 			}
 
 			//Species was valid, save and enter OW HUD mode
-			Var8000 = species;
-			Var8001 = sDexNavGuiPtr->selectedArr;
+			Var8008 = species;
+			Var8009 = sDexNavGuiPtr->selectedArr;
 			PlaySE(SE_POKENAV_SEARCHING);
 			BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
 			gTasks[taskId].func = Task_DexNavFadeOutToScan;

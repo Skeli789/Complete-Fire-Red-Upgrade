@@ -382,18 +382,16 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 			for (j = 0; j < gBattlersCount; ++j)
 			{
+				if (j == gActiveBattler || j == PARTNER(gActiveBattler))
+				{
+					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
+					continue;
+				}
+
 				if (SPLIT(move) != SPLIT_STATUS
 				|| move == MOVE_THUNDERWAVE || gSpecialMoveFlags[move].gPowderMoves) //These status moves have immunities
 				{
-					u8 moveResult;
-
-					if (j == gActiveBattler || j == PARTNER(gActiveBattler))
-					{
-						tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
-						continue;
-					}
-
-					moveResult = VisualTypeCalc(move, gActiveBattler, j);
+					u8 moveResult = VisualTypeCalc(move, gActiveBattler, j);
 
 					if (!(moveResult & MOVE_RESULT_NO_EFFECT)
 					&& (CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance)
@@ -405,6 +403,13 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 				}
 				else
 					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
+
+				//Special type-based status immunities
+				if (gBattleMoves[move].effect == EFFECT_PARALYZE && IsOfType(j, TYPE_ELECTRIC))
+					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
+
+				if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && IsOfType(j, TYPE_GRASS))
+					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
 			}
 		}
 		else //Single Battle or single target
@@ -435,6 +440,13 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			}
 			else
 				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = 0;
+
+			//Special type-based status immunities
+			if (gBattleMoves[move].effect == EFFECT_PARALYZE && IsOfType(foe, TYPE_ELECTRIC))
+				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
+
+			if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && IsOfType(foe, TYPE_GRASS))
+				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
 		}
 	}
 

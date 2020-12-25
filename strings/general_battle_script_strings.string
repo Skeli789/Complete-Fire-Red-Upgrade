@@ -401,6 +401,9 @@ The item was blocked by the\npower of Dynamax!
 A storm started brewing above you.
 
 #org @gText_RaidPokemonGettingDesperate
+[SCRIPTING_BANK] is getting\ndesperate!
+
+#org @gText_RaidPokemonGettingDesperateAttacks
 [SCRIPTING_BANK] is getting\ndesperate!\pIts attacks are growing more\naggressive!
 
 #org @gText_RaidShield
@@ -416,7 +419,7 @@ The mysterious barrier that was\nprotecting [SCRIPTING_BANK]\ldisappeared!
 [SCRIPTING_BANK]'s [BUFFER][00]\n[BUFFER][01]
 
 #org @gText_RaidBattleStatNullification
-[SCRIPTING_BANK] nullifed the\nstat changes of and is ignoring\lthe Abilities of other Pok\emon!
+[SCRIPTING_BANK] nullifed the\nstat changes and Abilities of\lother Pok\emon!
 
 #org @gText_RaidBattleKO1
 The storm raging above you is\ngrowing stronger!

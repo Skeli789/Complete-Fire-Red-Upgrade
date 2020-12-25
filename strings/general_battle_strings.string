@@ -71,6 +71,12 @@ A wild [FD][06] and\na wild [FD][08] appeared!\p
 #org @BattleText_DistortionWorldMonAttacked
 The Distortion World's [FD][06]\nappeared!\p
 
+#org @BattleText_WorstNightmare
+It's your worst nightmare!\p
+
+#org @BattleText_LegendaryAppeared
+[FD][06] appeared!\p
+
 #org @BattleText_WildPkmnAppearedPause
 A wild [FD][06] appeared![FC][08][7F]
 

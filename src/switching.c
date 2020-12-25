@@ -1279,21 +1279,23 @@ void PartyMenuSwitchingUpdate(void)
 	}
 	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
 		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
-		 ||  ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_MAGNETPULL, 0, 0))
-				 && IsOfType(gActiveBattler, TYPE_STEEL)))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsOfType(gActiveBattler, TYPE_STEEL)))
 	{
 		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
 	}
 	else
 	{
 	SKIP_SWITCH_BLOCKING_CHECK:
-		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gChosenActionByBank[0] == ACTION_SWITCH)
+		if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
-		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gChosenActionByBank[1] == ACTION_SWITCH)
+		else if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 		else
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}
+
 	MarkBufferBankForExecution(gActiveBattler);
 }
 

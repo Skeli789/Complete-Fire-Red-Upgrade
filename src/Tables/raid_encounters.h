@@ -8847,6 +8847,143 @@ static struct Raid sGrimWoodsRaids5Star[] =
 	},
 };
 
+static struct Raid sCinderVolcanoRaids2Star[] =
+{
+	{
+		.species = SPECIES_SLUGMA,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_RAWST_BERRY,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_SUPER_POTION,
+			/* 30 %*/ ITEM_SUPER_POTION,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_STARDUST,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_SALANDIT,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_RAWST_BERRY,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_REVIVE,
+			/* 30 %*/ ITEM_REVIVE,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_PEARL,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_GRAVELER,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_BERRY_JUICE,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_REVIVE,
+			/* 30 %*/ ITEM_SUPER_POTION,
+			/* 30 %*/ ITEM_SUPER_POTION,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_STARDUST,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_NUMEL,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_RAWST_BERRY,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_REVIVE,
+			/* 30 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_ELIXIR,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_NONE,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_DRILBUR,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_BERRY_JUICE,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_REVIVE,
+			/* 30 %*/ ITEM_REVIVE,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_NONE,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_HEATMOR,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_RAWST_BERRY,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_REVIVE,
+			/* 30 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_ELIXIR,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_PEARL,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+	{
+		.species = SPECIES_MAGBY,
+		.ability = RAID_ABILITY_RANDOM_1_2,
+		.drops =
+		{
+			/*100 %*/ ITEM_RAWST_BERRY,
+			/* 80 %*/ ITEM_SITRUS_BERRY,
+			/* 80 %*/ ITEM_ORAN_BERRY,
+			/* 50 %*/ ITEM_NONE,
+			/* 50 %*/ ITEM_MAGMARIZER,
+			/* 30 %*/ ITEM_ETHER,
+			/* 30 %*/ ITEM_ELIXIR,
+			/* 25 %*/ ITEM_NONE,
+			/* 25 %*/ ITEM_NONE,
+			/*  5 %*/ ITEM_RARE_CANDY,
+			/*  4 %*/ ITEM_NONE,
+			/*  1 %*/ ITEM_NONE,
+		},
+	},
+};
+
 static struct Raid sCinderVolcanoRaids3Star[] =
 {
 	{
@@ -13855,6 +13992,7 @@ const struct RaidData gRaidsByMapSection[KANTO_MAPSEC_COUNT][RAID_STAR_COUNT] =
 	},
 	[MAPSEC_CINDER_VOLCANO -  MAPSEC_DYNAMIC] =
 	{
+		[TWO_STAR_RAID] = {sCinderVolcanoRaids2Star, NELEMS(sCinderVolcanoRaids2Star)},
 		[THREE_STAR_RAID] = {sCinderVolcanoRaids3Star, NELEMS(sCinderVolcanoRaids3Star)},
 		[FOUR_STAR_RAID] = {sCinderVolcanoRaids4Star, NELEMS(sCinderVolcanoRaids4Star)},
 		[FIVE_STAR_RAID] = {sCinderVolcanoRaids5Star, NELEMS(sCinderVolcanoRaids5Star)},

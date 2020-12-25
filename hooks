@@ -151,6 +151,7 @@ ItemId_GetName 809A8BC 1
 ItemId_GetHoldEffect 809A924 1
 
 ##Overworld Hooks
+SitrusBerryOverworldEffectUpdate 8041C94 1
 GetAdjustedInitialTransitionFlags 8055ACC 3
 Overworld_IsBikingAllowed 8055C9C 0
 apply_map_tileset_palette 80599C8 3

@@ -44,6 +44,7 @@ void __attribute__((long_call)) FieldEffectScript_LoadFadedPalette(u8 **script);
 void __attribute__((long_call)) ReturnToFieldFromFlyMapSelect(void);
 u8 __attribute__((long_call)) MapTransitionIsExit(u8 lightLevel, u8 mapType);
 u8 __attribute__((long_call)) MapTransitionIsEnter(u8 mapType1, u8 mapType2);
+void __attribute__((long_call)) FieldCallback_SweetScent(void);
 void __attribute__((long_call)) StartSweetScentFieldEffect(void);
 
 /*

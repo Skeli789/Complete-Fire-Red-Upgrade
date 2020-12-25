@@ -1287,6 +1287,7 @@ FldEff_SurfBlob = 0x80DC3D0 | 1;
 SetSurfBobState = 0x80DC44C | 1;
 DoBobbingFieldEffect = 0x80DC6B0 | 1;
 WaitFieldEffectSpriteAnim = 0x80DCD1C | 1;
+FieldCallback_SweetScent = 0x80DE0E8 | 1;
 StartSweetScentFieldEffect = 0x80DE134 | 1;
 
 /*Battle Transition Functions*/

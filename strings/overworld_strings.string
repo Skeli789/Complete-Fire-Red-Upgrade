@@ -4,6 +4,9 @@ WRONG SAVE TYPE!\nPlease change to Flash 128k.
 #org @gText_MainMenuEnableRTC
 WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.
 
+#org @gText_MainMenuTimeSetInFuture
+WARNING!\pRTC tampering has been detected\nin your save file!\pThe current ingame date is set to\n[BUFFER1]/[BUFFER2]/[BUFFER3].\pAll daily events such as Swarms\nand Raids may cease to function\lproperly until the day after.\pPlease refrain from tampering\nwith the RTC again.
+
 #org @gText_UsedVar2WildStronger
 [BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]
 
@@ -260,7 +263,7 @@ Expert
 Insane 
 
 #org @gText_Difficulty
-Difficulty
+Mode
 
 #org @gText_PostGame
 Post-Game 

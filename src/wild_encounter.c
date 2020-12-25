@@ -476,6 +476,7 @@ static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 	u16 species = gSwarmTable[index].species;
 
 	if (mapName == GetCurrentRegionMapSectionId()
+	&& gMapHeader.mapType != MAP_TYPE_UNDERWATER //No swarms underwater
 	&&  Random() % 100 < SWARM_CHANCE)
 	{
 		CreateWildMon(species, level, wildMonIndex, purgeParty);
