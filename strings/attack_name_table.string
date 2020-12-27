@@ -6,442 +6,442 @@ FILL_FF=True
 -
 
 #org @NAME_POUND
-Pound
+Ecras'Face
 
 #org @NAME_KARATE_CHOP
-Karate Chop
+Poing Karat\e
 
 #org @NAME_DOUBLESLAP
-Double Slap
+Torgnoles
 
 #org @NAME_COMET_PUNCH
-Comet Punch
+Poing Com\ete
 
 #org @NAME_MEGA_PUNCH
-Mega Punch
+Ultimapoing
 
 #org @NAME_PAY_DAY
-Pay Day
+Jackpot
 
 #org @NAME_FIRE_PUNCH
-Fire Punch
+Poing Feu
 
 #org @NAME_ICE_PUNCH
-Ice Punch
+Poing Glace
 
 #org @NAME_THUNDERPUNCH
-ThunderPunch
+Poing Eclair
 
 #org @NAME_SCRATCH
-Scratch
+Griffe
 
 #org @NAME_VISE_GRIP
-Vise Grip
+Force Poigne
 
 #org @NAME_GUILLOTINE
 Guillotine
 
 #org @NAME_RAZOR_WIND
-Razor Wind
+Coupe-Vent
 
 #org @NAME_SWORDS_DANCE
-Swords Dance
+Danse Lames
 
 #org @NAME_CUT
-Cut
+Coupe
 
 #org @NAME_GUST
-Gust
+Tornade
 
 #org @NAME_WING_ATTACK
-Wing Attack
+Cru-Ailes
 
 #org @NAME_WHIRLWIND
-Whirlwind
+Cyclone
 
 #org @NAME_FLY
-Fly
+Vol
 
 #org @NAME_BIND
-Bind
+Etreinte
 
 #org @NAME_SLAM
-Slam
+Souplesse
 
 #org @NAME_VINE_WHIP
-Vine Whip
+Fouet Lianes
 
 #org @NAME_STOMP
-Stomp
+Ecrasement
 
 #org @NAME_DOUBLE_KICK
-Double Kick
+Double Pied
 
 #org @NAME_MEGA_KICK
-Mega Kick
+Ultimawashi
 
 #org @NAME_JUMP_KICK
-Jump Kick
+Pied Saut\e
 
 #org @NAME_ROLLING_KICK
-Rolling Kick
+Mawashi Geri
 
 #org @NAME_SAND_ATTACK
-Sand Attack
+Jet de Sable
 
 #org @NAME_HEADBUTT
-Headbutt
+Coup d'Boule
 
 #org @NAME_HORN_ATTACK
-Horn Attack
+Koud'Korne
 
 #org @NAME_FURY_ATTACK
-Fury Attack
+Furie
 
 #org @NAME_HORN_DRILL
-Horn Drill
+Empal'Korne
 
 #org @NAME_TACKLE
-Tackle
+Charge
 
 #org @NAME_BODY_SLAM
-Body Slam
+Plaquage
 
 #org @NAME_WRAP
-Wrap
+Ligotage
 
 #org @NAME_TAKE_DOWN
-Take Down
+B\elier
 
 #org @NAME_THRASH
-Thrash
+Mania
 
 #org @NAME_DOUBLE_EDGE
-Double-Edge
+Damocl\es
 
 #org @NAME_TAIL_WHIP
-Tail Whip
+Mimi-Queue
 
 #org @NAME_POISON_STING
-Poison Sting
+Dard-Venin
 
 #org @NAME_TWINEEDLE
-Twineedle
+Double-Dard
 
 #org @NAME_PIN_MISSILE
-Pin Missile
+Dard-Nu\ee
 
 #org @NAME_LEER
-Leer
+Groz'Yeux
 
 #org @NAME_BITE
-Bite
+Morsure
 
 #org @NAME_GROWL
-Growl
+Rugissement
 
 #org @NAME_ROAR
-Roar
+Hurlement
 
 #org @NAME_SING
-Sing
+Berceuse
 
 #org @NAME_SUPERSONIC
-Supersonic
+Ultrason
 
 #org @NAME_SONIC_BOOM
 Sonic Boom
 
 #org @NAME_DISABLE
-Disable
+Entrave
 
 #org @NAME_ACID
-Acid
+Acide
 
 #org @NAME_EMBER
-Ember
+Flamm\eche
 
 #org @NAME_FLAMETHROWER
-Flamethrower
+Lance-Flamme
 
 #org @NAME_MIST
-Mist
+Brume
 
 #org @NAME_WATER_GUN
-Water Gun
+Pistolet \a O
 
 #org @NAME_HYDRO_PUMP
-Hydro Pump
+Hydrocanon
 
 #org @NAME_SURF
 Surf
 
 #org @NAME_ICE_BEAM
-Ice Beam
+Laser Glace
 
 #org @NAME_BLIZZARD
 Blizzard
 
 #org @NAME_PSYBEAM
-Psybeam
+Rafale Psy
 
 #org @NAME_BUBBLE_BEAM
-Bubble Beam
+Bulles d'O
 
 #org @NAME_AURORA_BEAM
-Aurora Beam
+Onde Bor\eale
 
 #org @NAME_HYPER_BEAM
-Hyper Beam
+Ultralaser
 
 #org @NAME_PECK
-Peck
+Picpic
 
 #org @NAME_DRILL_PECK
-Drill Peck
+Bec Vrille
 
 #org @NAME_SUBMISSION
-Submission
+Sacrifice
 
 #org @NAME_LOW_KICK
-Low Kick
+Balayage
 
 #org @NAME_COUNTER
-Counter
+Riposte
 
 #org @NAME_SEISMIC_TOSS
-Seismic Toss
+Frappe Atlas
 
 #org @NAME_STRENGTH
-Strength
+Force
 
 #org @NAME_ABSORB
-Absorb
+Vole-Vie
 
 #org @NAME_MEGA_DRAIN
-Mega Drain
+M\ega-Sangsue
 
 #org @NAME_LEECH_SEED
-Leech Seed
+Vampigraine
 
 #org @NAME_GROWTH
-Growth
+Croissance
 
 #org @NAME_RAZOR_LEAF
-Razor Leaf
+Tranch'Herbe
 
 #org @NAME_SOLAR_BEAM
-Solar Beam
+Lance-Soleil
 
 #org @NAME_POISONPOWDER
-PoisonPowder
+Poudre Toxik
 
 #org @NAME_STUN_SPORE
-Stun Spore
+Para-Spore
 
 #org @NAME_SLEEP_POWDER
-Sleep Powder
+Poudre Dodo
 
 #org @NAME_PETAL_DANCE
-Petal Dance
+Danse Fleurs
 
 #org @NAME_STRING_SHOT
-String Shot
+S\ecr\etion
 
 #org @NAME_DRAGON_RAGE
-Dragon Rage
+Draco-Rage
 
 #org @NAME_FIRE_SPIN
-Fire Spin
+Danse Flamme
 
 #org @NAME_THUNDERSHOCK
-ThunderShock
+\eclair
 
 #org @NAME_THUNDERBOLT
-Thunderbolt
+Tonnerre
 
 #org @NAME_THUNDER_WAVE
-Thunder Wave
+Cage \eclair
 
 #org @NAME_THUNDER
-Thunder
+Fatal-Foudre
 
 #org @NAME_ROCK_THROW
-Rock Throw
+Jet-Pierres
 
 #org @NAME_EARTHQUAKE
-Earthquake
+S\eisme
 
 #org @NAME_FISSURE
-Fissure
+Ab<ime
 
 #org @NAME_DIG
-Dig
+Tunnel
 
 #org @NAME_TOXIC
-Toxic
+Toxik
 
 #org @NAME_CONFUSION
-Confusion
+Choc Mental
 
 #org @NAME_PSYCHIC
-Psychic
+Psycko
 
 #org @NAME_HYPNOSIS
-Hypnosis
+Hypnose
 
 #org @NAME_MEDITATE
-Meditate
+Yoga
 
 #org @NAME_AGILITY
-Agility
+Hâte
 
 #org @NAME_QUICK_ATTACK
-Quick Attack
+Vive-Attaque
 
 #org @NAME_RAGE
-Rage
+Fr\en\esie
 
 #org @NAME_TELEPORT
-Teleport
+T\el\eport
 
 #org @NAME_NIGHT_SHADE
-Night Shade
+T/en\ebres
 
 #org @NAME_MIMIC
-Mimic
+Copie
 
 #org @NAME_SCREECH
-Screech
+Grincement
 
 #org @NAME_DOUBLE_TEAM
-Double Team
+Reflet
 
 #org @NAME_RECOVER
-Recover
+Soin
 
 #org @NAME_HARDEN
-Harden
+Armure
 
 #org @NAME_MINIMIZE
-Minimize
+Lilliput
 
 #org @NAME_SMOKESCREEN
-Smokescreen
+Brouillard
 
 #org @NAME_CONFUSE_RAY
-Confuse Ray
+Onde Folie
 
 #org @NAME_WITHDRAW
-Withdraw
+Repli
 
 #org @NAME_DEFENSE_CURL
-Defense Curl
+Boul'Armure
 
 #org @NAME_BARRIER
-Barrier
+Bouclier
 
 #org @NAME_LIGHT_SCREEN
-Light Screen
+Mur Lumi\ere
 
 #org @NAME_HAZE
-Haze
+Bu\ee Noire
 
 #org @NAME_REFLECT
-Reflect
+Protection
 
 #org @NAME_FOCUS_ENERGY
-Focus Energy
+Puissance
 
 #org @NAME_BIDE
-Bide
+Patience
 
 #org @NAME_METRONOME
-Metronome
+M\etronome
 
 #org @NAME_MIRROR_MOVE
-Mirror Move
+Mimique
 
 #org @NAME_SELFDESTRUCT
-Selfdestruct
+Destruction
 
 #org @NAME_EGG_BOMB
-Egg Bomb
+Bombe Oeuf
 
 #org @NAME_LICK
-Lick
+L\echouille
 
 #org @NAME_SMOG
-Smog
+Pur\edpois
 
 #org @NAME_SLUDGE
-Sludge
+D\etritus
 
 #org @NAME_BONE_CLUB
-Bone Club
+Massd'Os
 
 #org @NAME_FIRE_BLAST
-Fire Blast
+D\eflagration
 
 #org @NAME_WATERFALL
-Waterfall
+Cascade
 
 #org @NAME_CLAMP
-Clamp
+Claquoir
 
 #org @NAME_SWIFT
-Swift
+M\et\eores
 
 #org @NAME_SKULL_BASH
-Skull Bash
+Coud'Krâne
 
 #org @NAME_SPIKE_CANNON
-Spike Cannon
+Picanon
 
 #org @NAME_CONSTRICT
-Constrict
+Constriction
 
 #org @NAME_AMNESIA
-Amnesia
+Amn\esie
 
 #org @NAME_KINESIS
-Kinesis
+T\el\ekin\esie
 
 #org @NAME_SOFT_BOILED
-Soft-Boiled
+E-Coque
 
 #org @NAME_HI_JUMP_KICK
-Hi Jump Kick
+Pied Voltige
 
 #org @NAME_GLARE
-Glare
+Intimidation
 
 #org @NAME_DREAM_EATER
-Dream Eater
+D\evor<eve
 
 #org @NAME_POISON_GAS
-Poison Gas
+Gaz Toxik
 
 #org @NAME_BARRAGE
-Barrage
+Pilonnage
 
 #org @NAME_LEECH_LIFE
-Leech Life
+Vampirisme
 
 #org @NAME_LOVELY_KISS
-Lovely Kiss
+Grobisou
 
 #org @NAME_SKY_ATTACK
-Sky Attack
+Piqu\e
 
 #org @NAME_TRANSFORM
-Transform
+Morphing
 
 #org @NAME_BUBBLE
-Bubble
+\Ecume
 
 #org @NAME_DIZZY_PUNCH
-Dizzy Punch
+Uppercut
 
 #org @NAME_SPORE
 Spore
@@ -450,619 +450,619 @@ Spore
 Flash
 
 #org @NAME_PSYWAVE
-Psywave
+Vague Psy
 
 #org @NAME_SPLASH
-Splash
+Trempette
 
 #org @NAME_ACID_ARMOR
-Acid Armor
+Acidarmure
 
 #org @NAME_CRABHAMMER
-Crabhammer
+Pince-Masse
 
 #org @NAME_EXPLOSION
-Explosion
+\Explosion
 
 #org @NAME_FURY_SWIPES
-Fury Swipes
+Combo-Griffe
 
 #org @NAME_BONEMERANG
-Bonemerang
+Osmerang
 
 #org @NAME_REST
-Rest
+Repos
 
 #org @NAME_ROCK_SLIDE
 Rock Slide
 
 #org @NAME_HYPER_FANG
-Hyper Fang
+Croc de Mort
 
 #org @NAME_SHARPEN
-Sharpen
+Aff<utage
 
 #org @NAME_CONVERSION
 Conversion
 
 #org @NAME_TRI_ATTACK
-Tri Attack
+Triplattaque
 
 #org @NAME_SUPER_FANG
-Super Fang
+Croc Fatal
 
 #org @NAME_SLASH
-Slash
+Tranche
 
 #org @NAME_SUBSTITUTE
-Substitute
+Clonage
 
 #org @NAME_STRUGGLE
-Struggle
+Lutte
 
 #org @NAME_SKETCH
-Sketch
+Gribouille
 
 #org @NAME_TRIPLE_KICK
-Triple Kick
+Triple Pied
 
 #org @NAME_THIEF
-Thief
+Larcin
 
 #org @NAME_SPIDER_WEB
-Spider Web
+Toile
 
 #org @NAME_MIND_READER
-Mind Reader
+Lire-Esprit
 
 #org @NAME_NIGHTMARE
-Nightmare
+Cauchemar
 
 #org @NAME_FLAME_WHEEL
-Flame Wheel
+Roue de Feu
 
 #org @NAME_SNORE
-Snore
+Ronflement
 
 #org @NAME_CURSE
-Curse
+Mal\ediction
 
 #org @NAME_FLAIL
-Flail
+Gigotage
 
 #org @NAME_CONVERSION_2
 Conversion 2
 
 #org @NAME_AEROBLAST
-Aeroblast
+A\eroblast
 
 #org @NAME_COTTON_SPORE
-Cotton Spore
+Spore Coton
 
 #org @NAME_REVERSAL
-Reversal
+Contre
 
 #org @NAME_SPITE
-Spite
+D\epit
 
 #org @NAME_POWDER_SNOW
-Powder Snow
+Poudreuse
 
 #org @NAME_PROTECT
-Protect
+Abri
 
 #org @NAME_MACH_PUNCH
 Mach Punch
 
 #org @NAME_SCARY_FACE
-Scary Face
+Grimace
 
 #org @NAME_FEINT_ATTACK
-Feint Attack
+Feinte
 
 #org @NAME_SWEET_KISS
-Sweet Kiss
+Doux Baiser
 
 #org @NAME_BELLY_DRUM
-Belly Drum
+Cognobidon
 
 #org @NAME_SLUDGE_BOMB
-Sludge Bomb
+Bombe Beurk
 
 #org @NAME_MUD_SLAP
-Mud-Slap
+Coud'Boue
 
 #org @NAME_OCTAZOOKA
 Octazooka
 
 #org @NAME_SPIKES
-Spikes
+Picots
 
 #org @NAME_ZAP_CANNON
-Zap Cannon
+\Elecanon
 
 #org @NAME_FORESIGHT
-Foresight
+Clairvoyance
 
 #org @NAME_DESTINY_BOND
-Destiny Bond
+Prlvt Destin
 
 #org @NAME_PERISH_SONG
-Perish Song
+Requiem
 
 #org @NAME_ICY_WIND
-Icy Wind
+Vent Glace
 
 #org @NAME_DETECT
-Detect
+D\etection
 
 #org @NAME_BONE_RUSH
-Bone Rush
+Charge Os
 
 #org @NAME_LOCK_ON
-Lock-On
+Verrouillage
 
 #org @NAME_OUTRAGE
-Outrage
+Col\ere
 
 #org @NAME_SANDSTORM
-Sandstorm
+Temp<etesable
 
 #org @NAME_GIGA_DRAIN
-Giga Drain
+Giga-Sangsue
 
 #org @NAME_ENDURE
-Endure
+T\enacit\e
 
 #org @NAME_CHARM
-Charm
+Charme
 
 #org @NAME_ROLLOUT
-Rollout
+Roulade
 
 #org @NAME_FALSE_SWIPE
-False Swipe
+Faux-Chage
 
 #org @NAME_SWAGGER
-Swagger
+Vantardise
 
 #org @NAME_MILK_DRINK
-Milk Drink
+Lait \a Boire
 
 #org @NAME_SPARK
-Spark
+\Etincelle
 
 #org @NAME_FURY_CUTTER
-Fury Cutter
+Taillade
 
 #org @NAME_STEEL_WING
-Steel Wing
+Aile d'Acier
 
 #org @NAME_MEAN_LOOK
-Mean Look
+Regard Noir
 
 #org @NAME_ATTRACT
-Attract
+Attraction
 
 #org @NAME_SLEEP_TALK
-Sleep Talk
+Blabla Dodo
 
 #org @NAME_HEAL_BELL
-Heal Bell
+Glas de Soin
 
 #org @NAME_RETURN
-Return
+Retour
 
 #org @NAME_PRESENT
-Present
+Cadeau
 
 #org @NAME_FRUSTRATION
 Frustration
 
 #org @NAME_SAFEGUARD
-Safeguard
+Rune Protect
 
 #org @NAME_PAIN_SPLIT
-Pain Split
+Balance
 
 #org @NAME_SACRED_FIRE
-Sacred Fire
+Feu Sacr\e
 
 #org @NAME_MAGNITUDE
-Magnitude
+Ampleur
 
 #org @NAME_DYNAMICPUNCH
-DynamicPunch
+Dynamopoing
 
 #org @NAME_MEGAHORN
-Megahorn
+M\egacorne
 
 #org @NAME_DRAGONBREATH
-DragonBreath
+Dracosouffle
 
 #org @NAME_BATON_PASS
-Baton Pass
+Relais
 
 #org @NAME_ENCORE
 Encore
 
 #org @NAME_PURSUIT
-Pursuit
+Poursuite
 
 #org @NAME_RAPID_SPIN
-Rapid Spin
+Tour Rapide
 
 #org @NAME_SWEET_SCENT
-Sweet Scent
+Doux Parfum
 
 #org @NAME_IRON_TAIL
-Iron Tail
+Queue de Fer
 
 #org @NAME_METAL_CLAW
-Metal Claw
+Griffe Acier
 
 #org @NAME_VITAL_THROW
-Vital Throw
+Corps Perdu
 
 #org @NAME_MORNING_SUN
-Morning Sun
+Aurore
 
 #org @NAME_SYNTHESIS
-Synthesis
+Synth\ese
 
 #org @NAME_MOONLIGHT
-Moonlight
+Rayon Lune
 
 #org @NAME_HIDDEN_POWER
-Hidden Power
+Puis. Cach\ee
 
 #org @NAME_CROSS_CHOP
-Cross Chop
+Coup Croix
 
 #org @NAME_TWISTER
-Twister
+Ouragan
 
 #org @NAME_RAIN_DANCE
-Rain Dance
+Danse Pluie
 
 #org @NAME_SUNNY_DAY
-Sunny Day
+Z\enith
 
 #org @NAME_CRUNCH
-Crunch
+Mâchouille
 
 #org @NAME_MIRROR_COAT
-Mirror Coat
+Voile Miroir
 
 #org @NAME_PSYCH_UP
-Psych Up
+Boost
 
 #org @NAME_EXTREMESPEED
-Extremespeed
+Vit.Extr<eme
 
 #org @NAME_ANCIENTPOWER
-AncientPower
+Pouv.Antique
 
 #org @NAME_SHADOW_BALL
-Shadow Ball
+Ball'Ombre
 
 #org @NAME_FUTURE_SIGHT
-Future Sight
+Prescience
 
 #org @NAME_ROCK_SMASH
-Rock Smash
+\Eclate-Roc
 
 #org @NAME_WHIRLPOOL
-Whirlpool
+Siphon
 
 #org @NAME_BEAT_UP
-Beat Up
+Baston
 
 #org @NAME_FAKE_OUT
-Fake Out
+Bluff
 
 #org @NAME_UPROAR
-Uproar
+Brouhaha
 
 #org @NAME_STOCKPILE
-Stockpile
+Stockage
 
 #org @NAME_SPIT_UP
-Spit Up
+Relâche
 
 #org @NAME_SWALLOW
-Swallow
+Avale
 
 #org @NAME_HEAT_WAVE
-Heat Wave
+Canicule
 
 #org @NAME_HAIL
-Hail
+Gr<ele
 
 #org @NAME_TORMENT
-Torment
+Tourmente
 
 #org @NAME_FLATTER
-Flatter
+Flatterie
 
 #org @NAME_WILL_O_WISP
-Will-O-Wisp
+Feu Follet
 
 #org @NAME_MEMENTO
-Memento
+Souvenir
 
 #org @NAME_FACADE
-Facade
+Fa)cade
 
 #org @NAME_FOCUS_PUNCH
-Focus Punch
+Mitra-Poing
 
 #org @NAME_SMELLINGSALT
-SmellingSalt
+Stimulant
 
 #org @NAME_FOLLOW_ME
-Follow Me
+Par Ici
 
 #org @NAME_NATURE_POWER
-Nature Power
+Force-Nature
 
 #org @NAME_CHARGE
-Charge
+Chargeur
 
 #org @NAME_TAUNT
-Taunt
+Provoc
 
 #org @NAME_HELPING_HAND
-Helping Hand
+Coup d'Main
 
 #org @NAME_TRICK
-Trick
+Tourmagik
 
 #org @NAME_ROLE_PLAY
-Role Play
+Imitation
 
 #org @NAME_WISH
-Wish
+Voeu
 
 #org @NAME_ASSIST
-Assist
+Assistance
 
 #org @NAME_INGRAIN
-Ingrain
+Racines
 
 #org @NAME_SUPERPOWER
-Superpower
+Surpuissance
 
 #org @NAME_MAGIC_COAT
-Magic Coat
+Reflet Magik
 
 #org @NAME_RECYCLE
-Recycle
+Recyclage
 
 #org @NAME_REVENGE
-Revenge
+Vendetta
 
 #org @NAME_BRICK_BREAK
-Brick Break
+Casse-Brique
 
 #org @NAME_YAWN
-Yawn
+Bâillement
 
 #org @NAME_KNOCK_OFF
-Knock Off
+Sabotage
 
 #org @NAME_ENDEAVOR
-Endeavor
+Effort
 
 #org @NAME_ERUPTION
-Eruption
+\Eruption
 
 #org @NAME_SKILL_SWAP
-Skill Swap
+\echange
 
 #org @NAME_IMPRISON
-Imprison
+Possessif
 
 #org @NAME_REFRESH
-Refresh
+R\eg\en\eration
 
 #org @NAME_GRUDGE
-Grudge
+Rancune
 
 #org @NAME_SNATCH
-Snatch
+Saisie
 
 #org @NAME_SECRET_POWER
-Secret Power
+Force Cach\ee
 
 #org @NAME_DIVE
-Dive
+Plong\ee
 
 #org @NAME_ARM_THRUST
-Arm Thrust
+Cogne
 
 #org @NAME_CAMOUFLAGE
 Camouflage
 
 #org @NAME_TAIL_GLOW
-Tail Glow
+Lumi-Queue
 
 #org @NAME_LUSTER_PURGE
-Luster Purge
+Lumi-\Eclat
 
 #org @NAME_MIST_BALL
-Mist Ball
+Ball'Brume
 
 #org @NAME_FEATHERDANCE
-FeatherDance
+Danse-Plume
 
 #org @NAME_TEETER_DANCE
-Teeter Dance
+Danse Folle
 
 #org @NAME_BLAZE_KICK
-Blaze Kick
+Pied Br<uleur
 
 #org @NAME_MUD_SPORT
-Mud Sport
+Lance-Boue
 
 #org @NAME_ICE_BALL
-Ice Ball
+Ball'Glace
 
 #org @NAME_NEEDLE_ARM
-Needle Arm
+Poing Dard
 
 #org @NAME_SLACK_OFF
-Slack Off
+Paresse
 
 #org @NAME_HYPER_VOICE
-Hyper Voice
+M\egaphone
 
 #org @NAME_POISON_FANG
-Poison Fang
+Crochetvenin
 
 #org @NAME_CRUSH_CLAW
-Crush Claw
+\Eclategriffe
 
 #org @NAME_BLAST_BURN
-Blast Burn
+Rafale Feu
 
 #org @NAME_HYDRO_CANNON
-Hydro Cannon
+Hydroblast
 
 #org @NAME_METEOR_MASH
-Meteor Mash
+Poing M\et\eor
 
 #org @NAME_ASTONISH
-Astonish
+\Etonnement
 
 #org @NAME_WEATHER_BALL
-Weather Ball
+Ball'M\et\eo
 
 #org @NAME_AROMATHERAPY
-Aromatherapy
+Aromath\erapi
 
 #org @NAME_FAKE_TEARS
-Fake Tears
+Croco Larme
 
 #org @NAME_AIR_CUTTER
-Air Cutter
+Tranch'Air
 
 #org @NAME_OVERHEAT
-Overheat
+Surchauffe
 
 #org @NAME_ODOR_SLEUTH
-Odor Sleuth
+Flair
 
 #org @NAME_ROCK_TOMB
-Rock Tomb
+Tomberoche
 
 #org @NAME_SILVER_WIND
-Silver Wind
+Vent Argent\e
 
 #org @NAME_METAL_SOUND
-Metal Sound
+Strido-Son
 
 #org @NAME_GRASSWHISTLE
-Grasswhistle
+Siffl'Herbe
 
 #org @NAME_TICKLE
-Tickle
+Chatouille
 
 #org @NAME_COSMIC_POWER
-Cosmic Power
+Force Cosmik
 
 #org @NAME_WATER_SPOUT
-Water Spout
+Gicl\edo
 
 #org @NAME_SIGNAL_BEAM
-Signal Beam
+Rayon Signal
 
 #org @NAME_SHADOW_PUNCH
-Shadow Punch
+Poing Ombre
 
 #org @NAME_EXTRASENSORY
-Extrasensory
+Extrasenseur
 
 #org @NAME_SKY_UPPERCUT
-Sky Uppercut
+Stratopercut
 
 #org @NAME_SAND_TOMB
-Sand Tomb
+Tourbi-Sable
 
 #org @NAME_SHEER_COLD
-Sheer Cold
+Glaciation
 
 #org @NAME_MUDDY_WATER
-Muddy Water
+Ocroupi
 
 #org @NAME_BULLET_SEED
-Bullet Seed
+Balle Graine
 
 #org @NAME_AERIAL_ACE
-Aerial Ace
+A\eropique
 
 #org @NAME_ICICLE_SPEAR
-Icicle Spear
+Stalactite
 
 #org @NAME_IRON_DEFENSE
-Iron Defense
+Mur de Fer
 
 #org @NAME_BLOCK
-Block
+Barrage
 
 #org @NAME_HOWL
-Howl
+Grondement
 
 #org @NAME_DRAGON_CLAW
-Dragon Claw
+Dracogriffe
 
 #org @NAME_FRENZY_PLANT
-Frenzy Plant
+V\eg\e-Attak
 
 #org @NAME_BULK_UP
-Bulk Up
+Gonflette
 
 #org @NAME_BOUNCE
-Bounce
+Rebond
 
 #org @NAME_MUD_SHOT
-Mud Shot
+Tir de Boue
 
 #org @NAME_POISON_TAIL
-Poison Tail
+Queue-Poison
 
 #org @NAME_COVET
-Covet
+Implore
 
 #org @NAME_VOLT_TACKLE
-Volt Tackle
+\Electacle
 
 #org @NAME_MAGICAL_LEAF
-Magical Leaf
+Feuillemagik
 
 #org @NAME_WATER_SPORT
-Water Sport
+Tourniquet
 
 #org @NAME_CALM_MIND
-Calm Mind
+Pl\enitude
 
 #org @NAME_LEAF_BLADE
-Leaf Blade
+Lame-Feuille
 
 #org @NAME_DRAGON_DANCE
-Dragon Dance
+Danse Draco
 
 #org @NAME_ROCK_BLAST
-Rock Blast
+Boule Roc
 
 #org @NAME_SHOCK_WAVE
-Shock Wave
+Onde de Choc
 
 #org @NAME_WATER_PULSE
-Water Pulse
+Vibraqua
 
 #org @NAME_DOOM_DESIRE
-Doom Desire
+Carnareket
 
 #org @NAME_PSYCHO_BOOST
 Psycho Boost
@@ -1071,1156 +1071,1156 @@ Psycho Boost
 Leech Fang
 
 #org @NAME_AIR_SLASH
-Air Slash
+Lame d'Air
 
 #org @NAME_AQUA_JET
-Aqua Jet
+Aqua-Jet
 
 #org @NAME_AQUA_TAIL
-Aqua Tail
+Hydroqueue
 
 #org @NAME_AURA_SPHERE
-Aura Sphere
+Aurasph\ere
 
 #org @NAME_AVALANCHE
 Avalanche
 
 #org @NAME_BRAVE_BIRD
-Brave Bird
+Rapace
 
 #org @NAME_BUG_BUZZ
-Bug Buzz
+Bourdon
 
 #org @NAME_BULLET_PUNCH
-Bullet Punch
+Pisto-Poing
 
 #org @NAME_CHARGE_BEAM
-Charge Beam
+Rayon Charg\e
 
 #org @NAME_CLOSE_COMBAT
 Close Combat
 
 #org @NAME_CROSS_POISON
-Cross Poison
+Poison-Croix
 
 #org @NAME_DARK_PULSE
-Dark Pulse
+Vibrobscur
 
 #org @NAME_DISCHARGE
-Discharge
+Coup d'Jus
 
 #org @NAME_DRACO_METEOR
-Draco Meteor
+Draco M\et\eor
 
 #org @NAME_DRAGON_PULSE
-Dragon Pulse
+Draco-Choc
 
 #org @NAME_DRAIN_PUNCH
-Drain Punch
+Vampi-Poing
 
 #org @NAME_EARTH_POWER
-Earth Power
+Telluriforce
 
 #org @NAME_ENERGY_BALL
-Energy Ball
+\Eco-Sph\ere
 
 #org @NAME_FOCUS_BLAST
-Focus Blast
+Exploforce
 
 #org @NAME_FORCE_PALM
-Force Palm
+Forte-Paume
 
 #org @NAME_GIGA_IMPACT
 Giga Impact
 
 #org @NAME_GRASS_KNOT
-Grass Knot
+Noeud Herbe
 
 #org @NAME_GUNK_SHOT
-Gunk Shot
+D\etricanon
 
 #org @NAME_HAMMER_ARM
-Hammer Arm
+Marto-Poing
 
 #org @NAME_HEAD_SMASH
-Head Smash
+Fracass'T<ete
 
 #org @NAME_ICE_SHARD
-Ice Shard
+\Eclats Glace
 
 #org @NAME_IRON_HEAD
-Iron Head
+T<ete de Fer
 
 #org @NAME_LAVA_PLUME
-Lava Plume
+\Ebullilave
 
 #org @NAME_MAGNET_BOMB
-Magnet Bomb
+Bombaimant
 
 #org @NAME_MUD_BOMB
-Mud Bomb
+Boue-Bombe
 
 #org @NAME_NASTY_PLOT
-Nasty Plot
+Machination
 
 #org @NAME_NIGHT_SLASH
-Night Slash
+Tranche-Nuit
 
 #org @NAME_OMINOUS_WIND
-Ominous Wind
+Vent Mauvais
 
 #org @NAME_POWER_GEM
-Power Gem
+Rayon Gemme
 
 #org @NAME_POWER_WHIP
-Power Whip
+M\egafouet
 
 #org @NAME_PSYCHO_CUT
-Psycho Cut
+Coupe Psycho
 
 #org @NAME_ROCK_CLIMB
-Rock Climb
+Escalade
 
 #org @NAME_ROCK_POLISH
-Rock Polish
+Poliroche
 
 #org @NAME_ROCK_WRECKER
-Rock Wrecker
+Roc-Boulet
 
 #org @NAME_ROOST
-Roost
+Atterrissage
 
 #org @NAME_SEED_BOMB
-Seed Bomb
+Canon Graine
 
 #org @NAME_SHADOW_CLAW
-Shadow Claw
+Griffe Ombre
 
 #org @NAME_SHADOW_SNEAK
-Shadow Sneak
+Ombre Port\ee
 
 #org @NAME_VACUUM_WAVE
-Vacuum Wave
+Onde Vide
 
 #org @NAME_X_SCISSOR
-X-Scissor
+Plaie Croix
 
 #org @NAME_ZEN_HEADBUTT
-Zen Headbutt
+Psykoud'Boul
 
 #org @NAME_SWITCHEROO
-Switcheroo
+Passe-Passe
 
 #org @NAME_DRILL_RUN
-Drill Run
+Tunnelier
 
 #org @NAME_BULLDOZE
-Bulldoze
+Pi\etisol
 
 #org @NAME_ELECTROWEB
-Electroweb
+Toile \elek
 
 #org @NAME_FLAME_CHARGE
-Flame Charge
+Nitrocharge
 
 #org @NAME_FROST_BREATH
-Frost Breath
+Souffle Gla.
 
 #org @NAME_HEART_STAMP
-Heart Stamp
+Cr\eve-Coeur
 
 #org @NAME_HONE_CLAWS
-Hone Claws
+Aiguisage
 
 #org @NAME_HORN_LEECH
-Horn Leech
+Encornebois
 
 #org @NAME_COIL
-Coil
+Enroulement
 
 #org @NAME_HURRICANE
-Hurricane
+Vent Violent
 
 #org @NAME_ICICLE_CRASH
-Icicle Crash
+Chute Glace
 
 #org @NAME_WORK_UP
-Work Up
+Rengorgement
 
 #org @NAME_QUIVER_DANCE
-Quiver Dance
+Papillodanse
 
 #org @NAME_LEAF_TORNADO
-Leaf Tornado
+Phytomixeur
 
 #org @NAME_LOW_SWEEP
-Low Sweep
+Balayette
 
 #org @NAME_SNARL
-Snarl
+Aboiement
 
 #org @NAME_STRUGGLE_BUG
-Struggle Bug
+Survinsecte
 
 #org @NAME_STEAMROLLER
-Steamroller
+Bulldoboule
 
 #org @NAME_STORM_THROW
-Storm Throw
+Yama Arashi
 
 #org @NAME_VENOSHOCK
-Venoshock
+Choc Venin
 
 #org @NAME_WILD_CHARGE
-Wild Charge
+\Eclair Fou
 
 #org @NAME_POISON_JAB
-Poison Jab
+Direct Toxik
 
 #org @NAME_ACID_SPRAY
-Acid Spray
+Bombe Acide
 
 #org @NAME_FIERY_DANCE
-Fiery Dance
+Danse du Feu
 
 #org @NAME_CLEAR_SMOG
-Clear Smog
+Bain de Smog
 
 #org @NAME_LEAF_STORM
-Leaf Storm
+Temp<eteverte
 
 #org @NAME_STONE_EDGE
-Stone Edge
+Lame de Roc
 
 #org @NAME_PAYBACK
-Payback
+Repr\esailles
 
 #org @NAME_FIRE_FANG
-Fire Fang
+Crocs Feu
 
 #org @NAME_ICE_FANG
-Ice Fang
+Crocs Givre
 
 #org @NAME_THUNDER_FANG
-Thunder Fang
+Crocs \Eclair
 
 #org @NAME_FLARE_BLITZ
-Flare Blitz
+Boutefeu
 
 #org @NAME_INFERNO
-Inferno
+Feu d'Enfer
 
 #org @NAME_HEX
-Hex
+Châtiment
 
 #org @NAME_DUAL_CHOP
-Dual Chop
+Double Baffe
 
 #org @NAME_DOUBLE_HIT
-Double Hit
+Coup Double
 
 #org @NAME_COTTON_GUARD
-Cotton Guard
+Cotogarde
 
 #org @NAME_ACROBATICS
-Acrobatics
+Acrobatie
 
 #org @NAME_FLAME_BURST
-Flame Burst
+Rebondifeu
 
 #org @NAME_U_TURN
-U-turn
+Demi-Tour
 
 #org @NAME_VOLT_SWITCH
-Volt Switch
+Change\Eclair
 
 #org @NAME_DRAGON_TAIL
-Dragon Tail
+Draco-Queue
 
 #org @NAME_CIRCLE_THROW
-Circle Throw
+Projection
 
 #org @NAME_MIRROR_SHOT
-Mirror Shot
+Miroi-Tir
 
 #org @NAME_WOOD_HAMMER
-Wood Hammer
+Martobois
 
 #org @NAME_HEAL_PULSE
-Heal Pulse
+Vibra Soin
 
 #org @NAME_FLASH_CANNON
-Flash Cannon
+Luminocanon
 
 #org @NAME_BUG_BITE
-Bug Bite
+Piq<ure
 
 #org @NAME_PLUCK
-Pluck
+Picore
 
 #org @NAME_SHELL_SMASH
-Shell Smash
+Exuviation
 
 #org @NAME_RAGE_POWDER
-Rage Powder
+PoudreFureur
 
 #org @NAME_WAKE_UP_SLAP
-Wake-Up Slap
+R\eveil Forc\e
 
 #org @NAME_RAZOR_SHELL
-Razor Shell
+Coqui-Lame
 
 #org @NAME_COPYCAT
-Copycat
+Photocopie
 
 #org @NAME_MIRACLE_EYE
-Miracle Eye
+Oeil Miracle
 
 #org @NAME_SUCKER_PUNCH
-Sucker Punch
+Coup Bas
 
 #org @NAME_SCALD
-Scald
+\Ebullition
 
 #org @NAME_BRINE
-Brine
+Saumure
 
 #org @NAME_FAIRY_WIND
-Fairy Wind
+VentF\e\erique
 
 #org @NAME_DOLL_EYES
-Doll Eyes
+RegardTouch.
 
 #org @NAME_PLAY_ROUGH
-Play Rough
+Câlinerie
 
 #org @NAME_MOONBLAST
-Moonblast
+Pouv.Lunaire
 
 #org @NAME_DRAIN_KISS
-Drain Kiss
+Vampibaiser
 
 #org @NAME_DAZZLE_GLEAM
-Dazzle Gleam
+\Eclat Magic
 
 #org @NAME_DISARM_CRY
-Disarm Cry
+Voix enj<ol.
 
 #org @NAME_STEALTH_ROCK
-Stealth Rock
+Pi\ege de Roc
 
 #org @NAME_TOXIC_SPIKES
-Toxic Spikes
+Pics Toxik
 
 #org @NAME_HEALING_WISH
-Healing Wish
+Voeu Soin
 
 #org @NAME_LUNAR_DANCE
-Lunar Dance
+Danse Lune
 
 #org @NAME_TAILWIND
-Tailwind
+Vent Arri\ere
 
 #org @NAME_BOOMBURST
-Boomburst
+Bang Sonique
 
 #org @NAME_INCINERATE
-Incinerate
+Calcination
 
 #org @NAME_WORRY_SEED
-Worry Seed
+Soucigraine
 
 #org @NAME_GASTRO_ACID
-Gastro Acid
+Suc Digestif
 
 #org @NAME_GEOMANCY
-Geomancy
+G\eo-Contr<ole
 
 #org @NAME_FLOWER_GUARD
-Flower Guard
+Garde Floral
 
 #org @NAME_ROTOTILLER
-Rototiller
+Fertilisati.
 
 #org @NAME_SHIFT_GEAR
-Shift Gear
+Chgt Vitesse
 
 #org @NAME_STICKY_WEB
-Sticky Web
+Toile Gluan.
 
 #org @NAME_STORED_POWER
-Stored Power
+Force Ajout.
 
 #org @NAME_ACUPRESSURE
-Acupressure
+Acupression
 
 #org @NAME_PUNISHMENT
-Punishment
+Punition
 
 #org @NAME_ASSURANCE
 Assurance
 
 #org @NAME_DRAGON_RUSH
-Dragon Rush
+Draco-Charge
 
 #org @NAME_DARK_VOID
-Dark Void
+Trou Noir
 
 #org @NAME_FEINT
-Feint
+Ruse
 
 #org @NAME_PHANTOM_FORCE
-PhantomForce
+Hantise
 
 #org @NAME_PETAL_STORM
-Petal Storm
+Temp<ete Flor
 
 #org @NAME_PLAY_NICE
-Play Nice
+Camaraderie
 
 #org @NAME_ROAR_OF_TIME
-Roar of Time
+Hurle-Temps
 
 #org @NAME_SPACIAL_REND
-Spacial Rend
+Spatio-Rift
 
 #org @NAME_MAGMA_STORM
-Magma Storm
+Vortex Magma
 
 #org @NAME_FINAL_GAMBIT
-Final Gambit
+Tout ou Rien
 
 #org @NAME_SHADOW_FORCE
-Shadow Force
+Revenant
 
 #org @NAME_NUZZLE
-Nuzzle
+Frotte-Frim.
 
 #org @NAME_RETALIATE
-Retaliate
+Vengeance
 
 #org @NAME_METAL_BASH
-Metal Bash
+\Ecrous Poing
 
 #org @NAME_JUDGMENT
-Judgment
+Jugement
 
 #org @NAME_FREEZE_DRY
-Freeze-Dry
+Lyophilisat.
 
 #org @NAME_PSYSHOCK
-Psyshock
+Choc Psy
 
 #org @NAME_ROUND
-Round
+Chant Canon
 
 #org @NAME_TAIL_SLAP
-Tail Slap
+Plumo-Queue
 
 #org @NAME_GEAR_GRIND
-Gear Grind
+Lanc\ecrou
 
 #org @NAME_NATURAL_GIFT
-Natural Gift
+Don Naturel
 
 #org @NAME_CHIP_AWAY
-Chip Away
+Attrition
 
 #org @NAME_SMACK_DOWN
-Smack Down
+Anti-Air
 
 #org @NAME_SPACE_HOLE
-Space Hole
+TrouDimens.
 
 #org @NAME_GYRO_BALL
-Gyro Ball
+Gyroballe
 
 #org @NAME_SPACE_FURY
-Space Fury
+FurieDimens.
 
 #org @NAME_ATTACK_ORDER
-Attack Order
+Appel Attak
 
 #org @NAME_DEFEND_ORDER
-Defend Order
+Appel D\efens
 
 #org @NAME_HEAL_ORDER
-Heal Order
+Appel Soins
 
 #org @NAME_CAPTIVATE
-Captivate
+S\eduction
 
 #org @NAME_DEFOG
-Defog
+Anti-Brume
 
 #org @NAME_ORIGIN_PULSE
-Origin Pulse
+Onde Origin
 
 #org @NAME_CLIFF_BLADES
-Cliff Blades
+Lame Pang\ee
 
 #org @NAME_GUARD_SWAP
-Guard Swap
+Permugarde
 
 #org @NAME_STEAM_PUMP
-Steam Pump
+Jet d'Vapeur
 
 #org @NAME_METAL_BURST
-Metal Burst
+Fulmifer
 
 #org @NAME_ME_FIRST
-Me First
+Moi d'Abord
 
 #org @NAME_POWER_SWAP
-Power Swap
+Permuforce
 
 #org @NAME_POWER_TRICK
-Power Trick
+Astuce Force
 
 #org @NAME_PSYCHO_SHIFT
-Psycho Shift
+\Echange Psy
 
 #org @NAME_WRING_OUT
-Wring Out
+Essorage
 
 #org @NAME_KINGS_SHIELD
-Kings Shield
+BouclierRoy.
 
 #org @NAME_PSYSTRIKE
-Psystrike
+Frappe Psy
 
 #org @NAME_AUTOTOMIZE
-Autotomize
+All\egement
 
 #org @NAME_DIAMOND_STORM
-DiamondStorm
+Orage Adam.
 
 #org @NAME_SLUDGE_WAVE
-Sludge Wave
+Cradovague
 
 #org @NAME_HEAVY_SLAM
-Heavy Slam
+Tacle Lourd
 
 #org @NAME_SYNCHRONOISE
-Synchronoise
+Synchropeine
 
 #org @NAME_ELECTRO_BALL
-Electro Ball
+Boule \Elek
 
 #org @NAME_FOUL_PLAY
-Foul Play
+Tricherie
 
 #org @NAME_ENTRAINMENT
-Entrainment
+Ten-Danse
 
 #org @NAME_NIGHT_DAZE
-Night Daze
+Explonuit
 
 #org @NAME_ECHOED_VOICE
-Echoed Voice
+\Echo
 
 #org @NAME_LAND'S_WRATH
-Land's Wrath
+Force Chton.
 
 #org @NAME_OBLIVIONWING
-OblivionWing
+Mort'Ailes
 
 #org @NAME_HEART_SWAP
-Heart Swap
+Permucoeur
 
 #org @NAME_CRUSH_GRIP
-Crush Grip
+Presse
 
 #org @NAME_SACRED_SWORD
-Sacred Sword
+Lame Sainte
 
 #org @NAME_HEAT_CRASH
-Heat Crash
+Tacle Feu
 
 #org @NAME_HEAD_CHARGE
-Head Charge
+Peign\ee
 
 #org @NAME_TECHNO_BLAST
-Techno Blast
+TechnoBuster
 
 #org @NAME_RELIC_SONG
-Relic Song
+Chant Antik
 
 #org @NAME_SECRET_SWORD
-Secret Sword
+Lame Ointe
 
 #org @NAME_GLACIATE
-Glaciate
+\Ere Glac.
 
 #org @NAME_BOLT_STRIKE
-Bolt Strike
+ChargFoudre
 
 #org @NAME_BLUE_FLARE
-Blue Flare
+Flamme Bleue
 
 #org @NAME_FREEZE_SHOCK
-Freeze Shock
+\Eclair Gel\e
 
 #org @NAME_ICE_BURN
-Ice Burn
+Feu Glac\e
 
 #org @NAME_V_CREATE
-V-create
+CoupVictoire
 
 #org @NAME_FUSION_FLARE
-Fusion Flare
+Flamme Croix
 
 #org @NAME_FUSION_BOLT
-Fusion Bolt
+\Eclair Croix
 
 #org @NAME_FELL_STINGER
-Fell Stinger
+Dard Mortel
 
 #org @NAME_NOBLE_ROAR
-Noble Roar
+Râle Mâle
 
 #org @NAME_DRAGON_RISE
 Dragon Rise
 
 #org @NAME_PARTING_SHOT
-Parting Shot
+Dernier Mot
 
 #org @NAME_TOPSY_TURVY
-Topsy-Turvy
+Renversement
 
 #org @NAME_CORE_ENFORCE
-Core Enforce
+SanctSupr<em
 
 #org @NAME_CHATTER
-Chatter
+Babil
 
 #org @NAME_CONFIDE
-Confide
+Confidence
 
 #org @NAME_WATER_STAR
-Water Star
+Sheauriken
 
 #org @NAME_MYSTIC_FIRE
-Mystic Fire
+FeuEnsorcel\e
 
 #org @NAME_SPIKY_SHIELD
-Spiky Shield
+Pico-D\efense
 
 #org @NAME_EERIEIMPULSE
-EerieImpulse
+Onde \Etrange
 
 #org @NAME_HOLD_BACK
-Hold Back
+Retenue
 
 #org @NAME_INFESTATION
-Infestation
+Harc\element
 
 #org @NAME_POWER_UP_HIT
-Power-Up Hit
+Poing Boost
 
 #org @NAME_1000_ARROWS
-1000 Arrows
+Myria-Fl\eche
 
 #org @NAME_1000_WAVES
-1000 Waves
+Myria-Vagues
 
 #org @NAME_PARA_CHARGE
-Para Charge
+Parabocharge
 
 #org @NAME_SEARING_SHOT
-Searing Shot
+Incendie
 
 #org @NAME_SEED_FLARE
-Seed Flare
+Fulmigraine
 
 #org @NAME_ACCELEROCK
-Accelerock
+Vif Roc
 
 #org @NAME_ANCHOR_SHOT
-Anchor Shot
+Ancrage
 
 #org @NAME_AURORA_VEIL
-Aurora Veil
+Voile Aurore
 
 #org @NAME_BANEFUL_BUNK
-Baneful Bunk
+Blockhaus
 
 #org @NAME_BEAK_BLAST
-Beak Blast
+Bec-Canon
 
 #org @NAME_BRUTAL_SWING
-Brutal Swing
+Centrifugif.
 
 #org @NAME_BURN_UP
-Burn Up
+FlammeUltime
 
 #org @NAME_CLANG_SCALES
-Clang Scales
+Vibr\ecaille
 
 #org @NAME_DARK_LARIAT
 Dark Lariat
 
 #org @NAME_DRACO_HAMMER
-Draco Hammer
+DracoMarteau
 
 #org @NAME_FIRE_LASH
-Fire Lash
+Fouet de Feu
 
 #org @NAME_FIRST_PRESS
-First Press
+Escarmouche
 
 #org @NAME_FLEUR_CANNON
-Fleur Cannon
+Canon Floral
 
 #org @NAME_FLORAL_HEAL
-Floral Heal
+Soin Floral
 
 #org @NAME_GEAR_UP
-Gear Up
+Engrenage
 
 #org @NAME_HORSEPOWER
-Horsepower
+Caval.Lourde
 
 #org @NAME_ICE_HAMMER
-Ice Hammer
+MarteauGlace
 
 #org @NAME_LASER_FOCUS
-Laser Focus
+Affilage
 
 #org @NAME_LEAFAGE
-Leafage
+Feuillage
 
 #org @NAME_LIQUIDATION
-Liquidation
+Aqua-Br\eche
 
 #org @NAME_LUNGE
-Lunge
+Furie-Bond
 
 #org @NAME_GEIST_BEAM
-Geist Beam
+Rayon Spect.
 
 #org @NAME_MULTI_ATTACK
-Multi-Attack
+C.Varia-Type
 
 #org @NAME_NATURE'S_MAD
-Nature's Mad
+Ire Naturel
 
 #org @NAME_POLLEN_PUFF
-Pollen Puff
+Boule Pollen
 
 #org @NAME_POWER_TRIP
-Power Trip
+Arrogance
 
 #org @NAME_PRISM_LASER
-Prism Laser
+Laser Prisme
 
 #org @NAME_PSYCHIC_FANG
-Psychic Fang
+Psycho-Croc
 
 #org @NAME_PURIFY
-Purify
+Purification
 
 #org @NAME_REVEL_DANCE
-Revel Dance
+Danse \Eveil
 
 #org @NAME_SHADOW_BONE
-Shadow Bone
+Os Ombre
 
 #org @NAME_SHELL_TRAP
-Shell Trap
+Carapi\ege
 
 #org @NAME_SHORE_UP
-Shore Up
+Amass'Sable
 
 #org @NAME_SMART_STRIKE
-Smart Strike
+Estocorne
 
 #org @NAME_SOLAR_BLADE
-Solar Blade
+Lame Solaire
 
 #org @NAME_SPARKLE_ARIA
-Sparkle Aria
+Aria d'\Ecume
 
 #org @NAME_SPECT_THIEF
-Spect Thief
+Clepto-Mânes
 
 #org @NAME_SPEED_SWAP
-Speed Swap
+Permuvitesse
 
 #org @NAME_SPIRIT_LOCK
-Spirit Lock
+Tisse Ombre
 
 #org @NAME_SPOTLIGHT
-Spotlight
+Projecteur
 
 #org @NAME_BAD_TANTRUM
-Bad Tantrum
+Tr\epignement
 
 #org @NAME_STRENGTH_SAP
-Strength Sap
+Vole-Force
 
 #org @NAME_SUNSTEEL_RAM
-Sunsteel Ram
+Choc M\et\eore
 
 #org @NAME_TEARY_LOOK
-Teary Look
+Cape Sanglot
 
 #org @NAME_THROAT_CHOP
-Throat Chop
+Ex\ecu-Son
 
 #org @NAME_TOXIC_THREAD
-Toxic Thread
+Fil Toxique
 
 #org @NAME_TROP_KICK
-Trop Kick
+Botte Sucre
 
 #org @NAME_ZING_ZAP
-Zing Zap
+\Electrikipik
 
 #org @NAME_ELEC_TERRAIN
-Elec Terrain
+Cr\ea-\elec
 
 #org @NAME_GRAS_TERRAIN
-Gras Terrain
+Cr\ea-Herbe
 
 #org @NAME_MIST_TERRAIN
-Mist Terrain
+Cr\ea-Brume
 
 #org @NAME_PSYC_TERRAIN
-Psyc Terrain
+Cr\ea-Psy
 
 #org @NAME_GRASS_PLEDGE
-Grass Pledge
+Aire d'Herbe
 
 #org @NAME_FIRE_PLEDGE
-Fire Pledge
+Aire de Feu
 
 #org @NAME_WATER_PLEDGE
-Water Pledge
+Aire d'Eau
 
 #org @NAME_TRICK_ROOM
-Trick Room
+Distorsion
 
 #org @NAME_MAGIC_ROOM
-Magic Room
+Zone Magique
 
 #org @NAME_WONDER_ROOM
-Wonder Room
+Zone \Etrange
 
 #org @NAME_CRAFTY_GUARD
-Crafty Guard
+Vigilance
 
 #org @NAME_MAT_BLOCK
-Mat Block
+Tatamigaeshi
 
 #org @NAME_QUICK_GUARD
-Quick Guard
+Pr\evention
 
 #org @NAME_WIDE_GUARD
-Wide Guard
+Garde Large
 
 #org @NAME_AQUA_RING
-Aqua Ring
+Anneau Hydro
 
 #org @NAME_AROMA_MIST
-Aroma Mist
+Brume Capit.
 
 #org @NAME_BELCH
-Belch
+\Eructation
 
 #org @NAME_BESTOW
-Bestow
+Passe-Cadeau
 
 #org @NAME_FLING
-Fling
+D\egommage
 
 #org @NAME_FLYING_PRESS
 Flying Press
 
 #org @NAME_GRAVITY
-Gravity
+Gravit\e
 
 #org @NAME_GUARD_SPLIT
-Guard Split
+PartageGarde
 
 #org @NAME_HEAL_BLOCK
-Heal Block
+Anti-Soin
 
 #org @NAME_ION_DELUGE
-Ion Deluge
+D\elugePlasm.
 
 #org @NAME_LUCKY_CHANT
-Lucky Chant
+Air Veinard
 
 #org @NAME_MAGNET_RISE
-Magnet Rise
+Vol Magn\etik
 
 #org @NAME_MAGNET_FLUX
-Magnet Flux
+Magn\eControl
 
 #org @NAME_POWDER
-Powder
+Nu\ee-Poudre
 
 #org @NAME_POWER_SPLIT
-Power Split
+PartageForce
 
 #org @NAME_REFLECT_TYPE
-Reflect Type
+Copie-Type
 
 #org @NAME_SIMPLE_BEAM
-Simple Beam
+Rayon Simple
 
 #org @NAME_SOAK
-Soak
+D\etrempage
 
 #org @NAME_TELEKINESIS
-Telekinesis
+L\evikin\esie
 
 #org @NAME_TRICKOTREAT
-TrickoTreat
+Halloween
 
 #org @NAME_VENOM_DRENCH
-Venom Drench
+Pi\ege-Venin
 
 #org @NAME_WOODS_CURSE
-Woods Curse
+Mal. Sylvain
 
 #org @NAME_MIND_BLOWN
-Mind Blown
+CabochKaboum
 
 #org @NAME_PHOTONGEYSER
-PhotonGeyser
+Photo-Geyser
 
 #org @NAME_PLASMA_FISTS
-Plasma Fists
+Plasma Punch
 
 #org @NAME_ELECTRIFY
-Electrify
+\Electrisat.
 
 #org @NAME_EMBARGO
 Embargo
 
 #org @NAME_FAIRY_LOCK
-Fairy Lock
+VerrEnchant\e
 
 #org @NAME_LIGHT_O_RUIN
-Light o Ruin
+Lumi\ereN\eant
 
 #org @NAME_TRUMP_CARD
-Trump Card
+Atout
 
 #org @NAME_AFTER_YOU
-After You
+Apr\es Vous
 
 #org @NAME_INSTRUCT
-Instruct
+Sommation
 
 #org @NAME_QUASH
-Quash
+\A la Queue
 
 #org @NAME_HAPPY_HOUR
-Happy Hour
+\Etrennes
 
 #org @NAME_DOUBLE_IRON
-Double Iron
+\Ecrous Poing
 
 #org @NAME_LAST_RESORT
-Last Resort
+Dern.Recours
 
 #org @NAME_SKY_DROP
-Sky Drop
+Chute Libre
 
 #org @NAME_CELEBRATE
-Celebrate
+C\el\ebration
 
 #org @NAME_HOLD_HANDS
-Hold Hands
+MainsJointes
 
 #org @NAME_DYNAMAX_CANNON
-DMax Cannon
+Canon DyMax
 
 #org @NAME_SNIPE_SHOT
-Snipe Shot
+Tir Pr\ecis
 
 #org @NAME_JAW_LOCK
-Jaw Lock
+Croque Fort
 
 #org @NAME_STUFF_CHEEKS
-Stuff Cheeks
+Garde-\A-Joue
 
 #org @NAME_NO_RETREAT
-No Retreat
+UltimBastion
 
 #org @NAME_TAR_SHOT
-Tar Shot
+Goudronnage
 
 #org @NAME_MAGIC_POWDER
-Magic Powder
+Poudre Magik
 
 #org @NAME_DRAGON_DARTS
-Dragon Darts
+Draco-Fl\eche
 
 #org @NAME_TEATIME
-Teatime
+Th\er\emonie
 
 #org @NAME_OCTOLOCK
-Octolock
+Octoprise
 
 #org @NAME_BOLT_BEAK
-Bolt Beak
+Prise de Bec
 
 #org @NAME_FISHIOUS_REND
-Fishy Rend
+Branchicrok
 
 #org @NAME_COURT_CHANGE
-Court Change
+Change-C<ot\e
 
 #org @NAME_CLANGOROUS_SOUL
-Clang Soul
+Dracophonie
 
 #org @NAME_BODY_PRESS
-Body Press
+Big Splash
 
 #org @NAME_DECORATE
-Decorate
+Nappage
 
 #org @NAME_DRUM_BEATING
-Drum Beating
+TambourBatt.
 
 #org @NAME_SNAP_TRAP
-Snap Trap
+Troquenard
 
 #org @NAME_PYRO_BALL
-Pyro Ball
+Ballon Br<ul.
 
 #org @NAME_BEHEMOTH_BLADE
-Giant Blade
+Glad. Max.
 
 #org @NAME_BEHEMOTH_BASH
-Giant Bash
+Aegis Maxima
 
 #org @NAME_AURA_WHEEL
-Aura Wheel
+Roue Libre
 
 #org @NAME_BREAKING_SWIPE
-Break Swipe
+Abattage
 
 #org @NAME_BRANCH_POKE
-Branch Poke
+Tapotige
 
 #org @NAME_OVERDRIVE
 Overdrive
 
 #org @NAME_APPLE_ACID
-Apple Acid
+Acide Malik
 
 #org @NAME_GRAV_APPLE
-Grav Apple
+Force G
 
 #org @NAME_SPIRIT_BREAK
-Spirit Break
+Choc \Emotion
 
 #org @NAME_STRANGE_STEAM
-Weird Steam
+VapeurF\e\erik
 
 #org @NAME_LIFE_DEW
-Life Dew
+Fontaine-Vie
 
 #org @NAME_OBSTRUCT
-Obstruct
+Blocage
 
 #org @NAME_FALSE_SURRENDER
-False Yield
+Fourbette
 
 #org @NAME_METEOR_ASSAULT
-Meteor Rush
+JouteAstrale
 
 #org @NAME_ETERNABEAM
-Eternabeam
+Laser Infmax
 
 #org @NAME_STEEL_BEAM
-Steel Beam
+M\etalaser
 
 #org @NAME_EXPANDING_FORCE
-Expand Force
+Vaste Pouv.
 
 #org @NAME_STEEL_ROLLER
-Steel Roller
+M\etalliroue
 
 #org @NAME_SCALE_SHOT
-Scale Shot
+Rafa\Ecailles
 
 #org @NAME_METEOR_BEAM
-Meteor Beam
+LaserM\et\eore
 
 #org @NAME_SHELL_SIDE_ARM
-ShellSideArm
+Kokiyarme
 
 #org @NAME_MISTY_EXPLOSION
-MistyExplode
+Explo-Brume
 
 #org @NAME_GRASSY_GLIDE
-Grassy Glide
+Gliss'Herbe
 
 #org @NAME_RISING_VOLTAGE
-Rising Volt
+MonteTension
 
 #org @NAME_TERRAIN_PULSE
-TerrainPulse
+Champlificat
 
 #org @NAME_SKITTER_SMACK
-SkitterSmack
+Rvge Rampant
 
 #org @NAME_BURNING_JEALOUSY
-Jealous Burn
+Feu Envieux
 
 #org @NAME_LASH_OUT
-Lash Out
+CentRancunes
 
 #org @NAME_POLTERGEIST
-Poltergeist
+EsprFrappeur
 
 #org @NAME_CORROSIVE_GAS
-Corrode Gas
+Gaz Corrosif
 
 #org @NAME_COACHING
 Coaching
 
 #org @NAME_FLIP_TURN
-Flip Turn
+Eau Revoir
 
 #org @NAME_TRIPLE_AXEL
 Triple Axel
 
 #org @NAME_DUAL_WINGBEAT
-DualWingbeat
+Double Vol\ee
 
 #org @NAME_SCORCHING_SANDS
-Scorch Sands
+Sable Ardent
 
 #org @NAME_JUNGLE_HEALING
-Jungle Heal
+Selve Salvat
 
 #org @NAME_WICKED_BLOW
-Wicked Blow
+Poing Obscur
 
 #org @NAME_SURGING_STRIKES
-SurgeStrikes
+TorrentCoups
 
 #org @NAME_FREEZING_GLARE
-Freeze Glare
+Regard Glac.
 
 #org @NAME_THUNDEROUS_KICK
-Thunder Kick
+C. Fulgurant
 
 #org @NAME_FIERY_WRATH
-Fiery Wrath
+Fur. Ardente
 
 #org @NAME_THUNDER_CAGE
-Thunder Cage
+Voltage<ole
 
 #org @NAME_DRAGON_ENERGY
-DragonEnergy
+Draco\Energie
 
 #org @Z_Move_1
 Z-Move 1
