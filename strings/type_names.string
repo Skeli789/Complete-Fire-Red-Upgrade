@@ -6,28 +6,28 @@ FILL_FF=True
 Normal
 
 #org @NAME_FIGHTING
-Fight
+Combat
 
 #org @NAME_FLYING
-Flying
+Vol
 
 #org @NAME_POISON
 Poison
 
 #org @NAME_GROUND
-Ground
+Sol
 
 #org @NAME_ROCK
-Rock
+Roche
 
 #org @NAME_BUG
-Bug
+Insect
 
 #org @NAME_GHOST
-Ghost
+Spectr
 
 #org @NAME_STEEL
-Steel
+M/etal
 
 #org @NAME_TYPELESS
 ???
@@ -36,25 +36,25 @@ Steel
 Feu
 
 #org @NAME_WATER
-Water
+Eau
 
 #org @NAME_GRASS
-Grass
+Plante
 
 #org @NAME_ELECTRIC
-Electr
+Elect
 
 #org @NAME_PSYCHC
-Psychc
+Psy
 
 #org @NAME_ICE
-Ice
+Glace
 
 #org @NAME_DRAGON
 Dragon
 
 #org @NAME_DARK
-Dark
+T/en\ebr
 
 #org @FAIRY_TYPE_ALIGNMENT_1
 -
