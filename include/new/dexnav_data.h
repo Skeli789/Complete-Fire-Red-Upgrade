@@ -25,8 +25,6 @@ extern const u8 gInterfaceGfx_DexNavGuiDarkerCavePal[];
 extern const u8 gInterfaceGfx_DexNavGuiIndoorPal[];
 extern const u8 gInterfaceGfx_dexnavStarsTiles[];
 extern const u8 gInterfaceGfx_dexnavStarsPal[];
-extern const u8 DexNavCursorTiles[];
-extern const u8 DexNavCursorPal[];
 extern const u8 gInterfaceGfx_emptyTiles[];
 extern const u8 gInterfaceGfx_emptyPal[];
 extern const u8 gInterfaceGfx_CapturedAllPokemonTiles[];
@@ -89,6 +87,7 @@ extern const u8 gText_DexNav_RightArrow[];
 #define ICON_PAL_TAG 0xDAC0
 #define ICON_GFX_TAG 0xD75A
 #define SELECTION_CURSOR_TAG 0x200
+#define CAPTURED_ALL_TAG 0xFDF2 //Tag is from Mega Evo and not in use
 
 #define ICONX 0x10
 #define ICONY 0x92
@@ -98,6 +97,8 @@ extern const u8 gText_DexNav_RightArrow[];
 
 #define NUM_LAND_MONS 12
 #define NUM_WATER_MONS 5
+#define NUM_FISHING_MONS 10
+#define NUM_TOTAL_WATER_MONS (NUM_WATER_MONS + NUM_FISHING_MONS)
 
 #define LAND_ROW_LENGTH (6 * 2)
 #define LAND_FIRST_ROW_LAST_INDEX (5 * 2)
@@ -105,6 +106,7 @@ extern const u8 gText_DexNav_RightArrow[];
 #define LAND_SECOND_ROW_FIRST_INDEX (6 * 2)
 #define WATER_ROW_LAST_INDEX (4 * 2)
 #define ROW_MON_LENGTH 2
+#define WATER_MONS_PER_PAGE 5
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
@@ -112,7 +114,7 @@ extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 struct DexNavGuiData
 {
     u16 grassSpecies[NUM_LAND_MONS];
-    u16 waterSpecies[NUM_WATER_MONS];
+    u16 waterSpecies[NUM_TOTAL_WATER_MONS];
 	u16 hiddenSpecies[NUM_LAND_MONS + 1];
 	u8 unownForms[NUM_LAND_MONS];
 	u8 unownFormsByDNavIndices[NUM_LAND_MONS];
@@ -124,6 +126,8 @@ struct DexNavGuiData
     u8 spriteIds[17];
     u8 selectedIndex;
     u8 selectedArr;
+	s8 waterPage;
+	u16 waterScrollArrowDummy;
 	u8* tilemapPtr;
 };
 
@@ -324,13 +328,25 @@ static const struct OamData sNoDataIconOam =
 	.priority = 2,
 };
 
+static const union AnimCmd sAnimCmdHandCursor[] =
+{
+	ANIMCMD_FRAME(0, 30),
+	ANIMCMD_FRAME(16, 30),
+	ANIMCMD_JUMP(0)
+};
+
+static const union AnimCmd *const sAnimCmdTable_HandCursor[] =
+{
+	sAnimCmdHandCursor,
+};
+
 static void SpriteCB_GUICursor(struct Sprite* sprite);
 static const struct SpriteTemplate sGUICursorTemplate =
 {
 	.tileTag = SELECTION_CURSOR_TAG,
 	.paletteTag = SELECTION_CURSOR_TAG,
 	.oam = &sCursorOam,
-	.anims = gDummySpriteAnimTable,
+	.anims = sAnimCmdTable_HandCursor,
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCB_GUICursor,
@@ -338,8 +354,8 @@ static const struct SpriteTemplate sGUICursorTemplate =
 
 static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate =
 {
-	.tileTag = 0xFDF2,
-	.paletteTag = SELECTION_CURSOR_TAG,
+	.tileTag = CAPTURED_ALL_TAG,
+	.paletteTag = CAPTURED_ALL_TAG,
 	.oam = &sCapturedAllPokemonSymbolOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -358,9 +374,10 @@ static const struct SpriteTemplate sNoDataIconTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static const struct CompressedSpriteSheet sCursorSpriteSheet = {DexNavCursorTiles, (32 * 32) / 2, SELECTION_CURSOR_TAG};
-static const struct CompressedSpritePalette sCursorSpritePalette = {DexNavCursorPal, SELECTION_CURSOR_TAG};
-static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, (8 * 8) / 2, 0xFDF2}; //Tag is from Mega Evo and not in use
+static const struct SpriteSheet sCursorSpriteSheet = {(void*) 0x83D2BEC, (32 * 32 * 4) / 2, SELECTION_CURSOR_TAG};
+static const struct SpritePalette sCursorSpritePalette = {(void*) 0x83CE7F0, SELECTION_CURSOR_TAG};
+static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, (8 * 8) / 2, CAPTURED_ALL_TAG};
+static const struct CompressedSpritePalette sCapturedAllPokemonSpritePalette = {gInterfaceGfx_CapturedAllPokemonPal, CAPTURED_ALL_TAG};
 static const struct CompressedSpriteSheet sNoDataIconSpriteSheet = {gInterfaceGfx_DexNavNoDataSymbolTiles, (32 * 32) / 2, ICON_GFX_TAG};
 
 static const struct TextColor sDexNav_BlackText = {0, 3, 4};

@@ -106,6 +106,8 @@ static void CleanWindow(u8 windowId);
 static void CleanWindows(void);
 static void CommitWindow(u8 windowId);
 static void CommitWindows(void);
+static u8 GetActualWaterSlotSelected(void);
+static u8 GetWaterPageCount(void);
 static void PrintDexNavMessage(u8 messageId);
 static void PrintDexNavError(void);
 static bool8 CapturedAllLandBasedPokemon(void);
@@ -113,6 +115,7 @@ static bool8 CapturedAllWaterBasedPokemon(void);
 static void CB1_OpenDexNavScan(void);
 static void Task_DexNavFadeOutToStartMenu(u8 taskId);
 static void Task_DexNavFadeOutToScan(u8 taskId);
+static void UpdateDexNavWaterPage(s8 direction);
 static void Task_DexNavWaitForKeyPress(u8 taskId);
 static void Task_DexNavFadeIn(u8 taskId);
 static void MainCB2_DexNav(void);
@@ -125,9 +128,12 @@ static void PrintGUIChainLength(u16 species);
 static void PrintGUIHiddenAbility(u16 species);
 static void DexNavDisplaySpeciesData(void);
 static void DexNavLoadAreaNamesAndInstructions(void);
-static void CreateNoDataIcon(s16 x, s16 y);
+static u8 CreateNoDataIcon(s16 x, s16 y);
 static void CreateGrayscaleMonIconPalettes(void);
+static void SpriteCB_UpdateWaterMonIconPos(struct Sprite* sprite);
+static void SpriteCB_WaterMonIcon(struct Sprite* sprite);
 static void DexNavLoadMonIcons(void);
+static void CreateWaterScrollArrows(void);
 static void CreateCursor(void);
 static void DexNavLoadCapturedAllSymbol(void);
 static void InitDexNavGui(void);
@@ -964,11 +970,13 @@ static void Task_ManageDexNavHUD(u8 taskId)
 // ===================================== //
 static const u8 sLandEncounterRates[] = {20, 20, 10, 10, 10, 10, 5, 5, 4, 4, 1, 1};
 static const u8 sWaterEncounterRates[] = {60, 30, 5, 4, 1};
+static const u8 sFishingEncounterRates[] = {70, 30, 60, 20, 20, 40, 40, 15, 4, 1};
 static u8 GetTotalEncounterChance(u16 species, u8 environment)
 {
 	u32 i;
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
 	u8 chance = 0;
 
 	switch (environment)
@@ -995,14 +1003,24 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 			break;
 
 		case ENCOUNTER_TYPE_WATER:
-			if (waterMonsInfo == NULL)
-				break; //Hidden pokemon should only appear on walkable tiles or surf tiles
-
-			for (i = 0; i < NUM_WATER_MONS; ++i)
+			if (waterMonsInfo != NULL)
 			{
-				const struct WildPokemon* monData = &waterMonsInfo->wildPokemon[i];
-				if (monData->species == species)
-					chance += sWaterEncounterRates[i];
+				for (i = 0; i < NUM_WATER_MONS; ++i)
+				{
+					const struct WildPokemon* monData = &waterMonsInfo->wildPokemon[i];
+					if (monData->species == species)
+						chance += sWaterEncounterRates[i];
+				}
+			}
+
+			if (fishingMonsInfo != NULL)
+			{
+				for (i = 0; i < NUM_FISHING_MONS; ++i)
+				{
+					const struct WildPokemon* monData = &fishingMonsInfo->wildPokemon[i];
+					if (monData->species == species)
+						chance += sFishingEncounterRates[i];
+				}
 			}
 			break;
 	}
@@ -1016,6 +1034,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 	const struct WildPokemon* monData;
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
 
 	u8 min = 100;
 	u8 max = 0;
@@ -1057,23 +1076,41 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			break;
 
 		case ENCOUNTER_TYPE_WATER:
-			if (waterMonsInfo == NULL)
-				return MAX_LEVEL + 1; //Hidden pokemon should only appear on walkable tiles or surf tiles
-
-			for (i = 0; i < NUM_WATER_MONS; ++i)
+			if (waterMonsInfo != NULL)
 			{
-				monData = &waterMonsInfo->wildPokemon[i];
-				if (monData->species == species)
+				for (i = 0; i < NUM_WATER_MONS; ++i)
 				{
-					min = (min < monData->minLevel) ? min : monData->minLevel;
-					max = (max > monData->maxLevel) ? max : monData->maxLevel;
-					break;
+					monData = &waterMonsInfo->wildPokemon[i];
+					if (monData->species == species)
+					{
+						min = (min < monData->minLevel) ? min : monData->minLevel;
+						max = (max > monData->maxLevel) ? max : monData->maxLevel;
+						break;
+					}
 				}
+
+				if (i < NUM_WATER_MONS) //Pokemon found here
+					break;
 			}
 
-			if (i >= NUM_WATER_MONS) //Pokemon not found here
-				return MAX_LEVEL + 1;
-			break;
+			if (fishingMonsInfo != NULL)
+			{
+				for (i = 0; i < NUM_FISHING_MONS; ++i)
+				{
+					monData = &fishingMonsInfo->wildPokemon[i];
+					if (monData->species == species)
+					{
+						min = (min < monData->minLevel) ? min : monData->minLevel;
+						max = (max > monData->maxLevel) ? max : monData->maxLevel;
+						break;
+					}
+				}
+
+				if (i < NUM_FISHING_MONS) //Pokemon found here
+					break;
+			}
+
+			return MAX_LEVEL + 1; //Hidden pokemon should only appear on walkable tiles or surf tiles
 
 		default:
 			return MAX_LEVEL + 1;
@@ -1665,6 +1702,19 @@ static void CommitWindows(void)
 		CommitWindow(i);
 }
 
+static u8 GetActualWaterSlotSelected(void)
+{
+	return (sDexNavGuiPtr->selectedIndex >> 1) + (sDexNavGuiPtr->waterPage * WATER_MONS_PER_PAGE);
+}
+
+static u8 GetWaterPageCount(void)
+{
+	if (sDexNavGuiPtr->numWaterMons == 0)
+		return 1;
+
+	return ((sDexNavGuiPtr->numWaterMons - 1) / WATER_MONS_PER_PAGE) + 1;
+}
+
 static void PrintDexNavMessage(u8 messageId)
 {
 	const u8* text;
@@ -1699,7 +1749,7 @@ static void PrintDexNavMessage(u8 messageId)
 static void PrintDexNavError(void)
 {
 	if (sDexNavGuiPtr->selectedArr == ROW_WATER
-	&&  sDexNavGuiPtr->selectedIndex >> 1 >= sDexNavGuiPtr->numWaterMons + sDexNavGuiPtr->numHiddenWaterMons)
+	&&  GetActualWaterSlotSelected() >= sDexNavGuiPtr->numWaterMons + sDexNavGuiPtr->numHiddenWaterMons)
 	{
 		PrintDexNavMessage(MESSAGE_NO_DATA); //No data in slot
 		PlaySE(SE_ERROR);
@@ -1759,8 +1809,11 @@ static bool8 CapturedAllLandBasedPokemon(void)
 static bool8 CapturedAllWaterBasedPokemon(void)
 {
 	u16 i, species;
-	u8 num = 0;
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
+
+	if (waterMonsInfo == NULL && fishingMonsInfo == NULL)
+		return FALSE; //Can't catch all Pokemon when there are none
 
 	if (waterMonsInfo != NULL)
 	{
@@ -1769,17 +1822,26 @@ static bool8 CapturedAllWaterBasedPokemon(void)
 			species = waterMonsInfo->wildPokemon[i].species;
 			if (species != SPECIES_NONE)
 			{
-				++num;
 				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
-					break;
+					return FALSE; //Didn't catch at least one
 			}
 		}
-
-		if (i >= NUM_WATER_MONS && num > 0) //All water mons caught and there were water mons to catch
-			return TRUE;
 	}
 
-	return FALSE;
+	if (fishingMonsInfo != NULL)
+	{
+		for (i = 0; i < NUM_FISHING_MONS; ++i)
+		{
+			species = fishingMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE)
+			{
+				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+					return FALSE; //Didn't catch at least one
+			}
+		}
+	}
+
+	return TRUE;
 }
 
 //GUI
@@ -1830,12 +1892,26 @@ static void SpriteCB_GUICursor(struct Sprite* sprite)
 	}
 }
 
+static void UpdateDexNavWaterPage(s8 direction)
+{
+	if (direction < 0) //Left
+	{
+		if (--sDexNavGuiPtr->waterPage < 0)
+			sDexNavGuiPtr->waterPage = GetWaterPageCount() - 1; //Wrap around
+	}
+	else //Right
+	{
+		if (++sDexNavGuiPtr->waterPage == GetWaterPageCount())
+			sDexNavGuiPtr->waterPage = 0; //Wrap around
+	}
+}
+
 static void Task_DexNavWaitForKeyPress(u8 taskId)
 {
 	if (JOY_NEW(A_BUTTON))
 	{
 		//Check selection is valid. Play sound if invalid
-		u16 species = sDexNavGuiPtr->selectedArr == ROW_WATER ? sDexNavGuiPtr->waterSpecies[sDexNavGuiPtr->selectedIndex / 2] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex / 2];
+		u16 species = sDexNavGuiPtr->selectedArr == ROW_WATER ? sDexNavGuiPtr->waterSpecies[GetActualWaterSlotSelected()] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex / 2];
 
 		if (species != SPECIES_NONE && Overworld_GetFlashLevel() == 0) //DexNav doesn't work in dark areas (sprites wouldn't show up)
 		{
@@ -1867,7 +1943,7 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 	else if (JOY_NEW(R_BUTTON))
 	{
 		//Check selection is valid. Play sound if invalid
-		u16 species = sDexNavGuiPtr->selectedArr ? sDexNavGuiPtr->waterSpecies[sDexNavGuiPtr->selectedIndex / 2] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex / 2];
+		u16 species = sDexNavGuiPtr->selectedArr ? sDexNavGuiPtr->waterSpecies[GetActualWaterSlotSelected()] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex / 2];
 
 		if (species != SPECIES_NONE && Overworld_GetFlashLevel() == 0)
 		{
@@ -1947,7 +2023,15 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 	else if (JOY_REPT(DPAD_LEFT))
 	{
 		if (sDexNavGuiPtr->selectedArr == ROW_WATER)
-			sDexNavGuiPtr->selectedIndex = (sDexNavGuiPtr->selectedIndex == 0) ? WATER_ROW_LAST_INDEX : sDexNavGuiPtr->selectedIndex - ROW_MON_LENGTH;
+		{
+			if (sDexNavGuiPtr->selectedIndex == 0)
+			{
+				sDexNavGuiPtr->selectedIndex = WATER_ROW_LAST_INDEX; //Wrap around
+				UpdateDexNavWaterPage(-1); //Go to previous page
+			}
+			else
+				sDexNavGuiPtr->selectedIndex -= ROW_MON_LENGTH;
+		}
 		else //ROW_LAND
 		{
 			if (sDexNavGuiPtr->selectedIndex == 0 || sDexNavGuiPtr->selectedIndex == LAND_SECOND_ROW_FIRST_INDEX)
@@ -1963,7 +2047,15 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 	else if (JOY_REPT(DPAD_RIGHT))
 	{
 		if (sDexNavGuiPtr->selectedArr == ROW_WATER)
-			sDexNavGuiPtr->selectedIndex = (sDexNavGuiPtr->selectedIndex == WATER_ROW_LAST_INDEX) ? 0 : sDexNavGuiPtr->selectedIndex + ROW_MON_LENGTH;
+		{
+			if (sDexNavGuiPtr->selectedIndex == WATER_ROW_LAST_INDEX) //Last in row
+			{
+				sDexNavGuiPtr->selectedIndex = 0; //Wrap around
+				UpdateDexNavWaterPage(1); //Go to next page
+			}
+			else
+				sDexNavGuiPtr->selectedIndex += ROW_MON_LENGTH;
+		}
 		else //ROW_LAND
 		{
 			if (sDexNavGuiPtr->selectedIndex == LAND_FIRST_ROW_LAST_INDEX || sDexNavGuiPtr->selectedIndex == LAND_SECOND_ROW_LAST_INDEX)
@@ -2075,6 +2167,7 @@ static void DexNavPopulateEncounterList(void)
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
 	
 	#ifdef UNBOUND
 	if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD)
@@ -2110,9 +2203,7 @@ static void DexNavPopulateEncounterList(void)
 		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 		&& grassIndex < NELEMS(sDexNavGuiPtr->grassSpecies)
 		&& !SpeciesInArray(swarmSpecies, NUM_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
-		{
 			sDexNavGuiPtr->grassSpecies[grassIndex++] = swarmSpecies;
-		}
 	}
 
 	sDexNavGuiPtr->hiddenSpecies[0] = SPECIES_TABLES_TERMIN;
@@ -2122,10 +2213,18 @@ static void DexNavPopulateEncounterList(void)
 		for (int i = 0; i < NUM_WATER_MONS; ++i)
 		{
 			species = waterMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_WATER_MONS, PickUnownLetter(species, i)))
-			{
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
 				sDexNavGuiPtr->waterSpecies[waterIndex++] = waterMonsInfo->wildPokemon[i].species;
-			}
+		}
+	}
+
+	if (fishingMonsInfo != NULL)
+	{
+		for (int i = 0; i < NUM_FISHING_MONS; ++i)
+		{
+			species = fishingMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+				sDexNavGuiPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
 		}
 	}
 
@@ -2224,7 +2323,7 @@ static void PrintGUIHiddenAbility(u16 species)
 
 static void DexNavDisplaySpeciesData(void)
 {
-	u16 species = sDexNavGuiPtr->selectedArr == ROW_WATER ? sDexNavGuiPtr->waterSpecies[sDexNavGuiPtr->selectedIndex >> 1] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex >> 1];
+	u16 species = sDexNavGuiPtr->selectedArr == ROW_WATER ? sDexNavGuiPtr->waterSpecies[GetActualWaterSlotSelected()] : sDexNavGuiPtr->grassSpecies[sDexNavGuiPtr->selectedIndex >> 1];
 	TryRandomizeSpecies(&species);
 
 	PrintGUISpeciesName(species);
@@ -2293,9 +2392,9 @@ static void DexNavLoadAreaNamesAndInstructions(void)
 	CommitWindow(WIN_INSTRUCTIONS);
 }
 
-static void CreateNoDataIcon(s16 x, s16 y)
+static u8 CreateNoDataIcon(s16 x, s16 y)
 {
-	CreateSprite(&sNoDataIconTemplate, x, y, 0); //No data in spot
+	return CreateSprite(&sNoDataIconTemplate, x, y, 0); //No data in spot
 }
 
 static void CreateGrayscaleMonIconPalettes(void)
@@ -2312,6 +2411,20 @@ static void CreateGrayscaleMonIconPalettes(void)
 		TintPalette_GrayScale(&gPlttBufferUnfaded2[(index + 3) * 16], 16);
 		TintPalette_GrayScale(&gPlttBufferFaded2[(index + 3) * 16], 16);
 	}
+}
+
+static void SpriteCB_UpdateWaterMonIconPos(struct Sprite* sprite)
+{
+	if (sDexNavGuiPtr->waterPage != sprite->data[0])
+		sprite->invisible = TRUE; //Hide mon when not on water page
+	else
+		sprite->invisible = FALSE;
+}
+
+static void SpriteCB_WaterMonIcon(struct Sprite* sprite)
+{
+	SpriteCB_PokeIcon(sprite);
+	SpriteCB_UpdateWaterMonIconPos(sprite);
 }
 
 static void DexNavLoadMonIcons(void)
@@ -2355,17 +2468,24 @@ static void DexNavLoadMonIcons(void)
 			gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
 	}
 
-	for (u8 i = 0; i < NUM_WATER_MONS; ++i)
+	for (u8 i = 0; i < NUM_TOTAL_WATER_MONS; ++i)
 	{
 		u16 species = sDexNavGuiPtr->waterSpecies[i];
-		x = 30 + 24 * i;
+		x = 30 + 24 * (i %  WATER_MONS_PER_PAGE);
 		y = 48;
+		u8 pageNumber = i / WATER_MONS_PER_PAGE; //Page number - 5 per page
 
 		if (species == SPECIES_NONE)
 		{
 			if (hiddenWaterMons == 0)
 			{
-				CreateNoDataIcon(x, y);
+				u8 spriteId = CreateNoDataIcon(x, y);
+				if (spriteId < MAX_SPRITES)
+				{
+					gSprites[spriteId].data[0] = pageNumber;
+					gSprites[spriteId].callback = SpriteCB_UpdateWaterMonIconPos;
+				}
+
 				continue;
 			}
 			else
@@ -2377,24 +2497,48 @@ static void DexNavLoadMonIcons(void)
 			pid = GenerateUnownPersonalityByLetter(letter - 1);
 
 		TryRandomizeSpecies(&species);
-		u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
-		if (spriteId < MAX_SPRITES
-		&& species != SPECIES_NONE
-		&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
-			gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+		u8 spriteId = CreateMonIcon(species, SpriteCB_WaterMonIcon, x, y, 0, pid, 0);
+		if (spriteId < MAX_SPRITES)
+		{
+			gSprites[spriteId].data[0] = pageNumber;
+		
+			if (species != SPECIES_NONE
+			&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+				gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+		}
+	}
+}
+
+static void CreateWaterScrollArrows(void)
+{
+	if (GetWaterPageCount() > 1)
+	{
+		sDexNavGuiPtr->waterScrollArrowDummy = 5;
+
+		AddScrollIndicatorArrowPairParameterized(
+			SCROLL_ARROW_RIGHT,
+			45, //Y
+			7, //Left X
+			7 + 140, //Right X
+			1000, //Ridiculously high number for Total Items
+			110,
+			110,
+			&sDexNavGuiPtr->waterScrollArrowDummy
+		);
 	}
 }
 
 static void CreateCursor(void)
 {
-	LoadCompressedSpriteSheetUsingHeap(&sCursorSpriteSheet);
-	LoadCompressedSpritePaletteUsingHeap(&sCursorSpritePalette);
+	LoadSpriteSheet(&sCursorSpriteSheet);
+	LoadSpritePalette(&sCursorSpritePalette);
 	sDexNavGuiPtr->cursorId = CreateSprite(&sGUICursorTemplate, 30, 48, 0);
 }
 
 static void DexNavLoadCapturedAllSymbol(void)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
+	LoadCompressedSpritePaletteUsingHeap(&sCapturedAllPokemonSpritePalette);
 
 	if (CapturedAllLandBasedPokemon())
 		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  154, 77, 0);
@@ -2413,6 +2557,7 @@ static void InitDexNavGui(void)
 	DexNavLoadAreaNamesAndInstructions();
 	PrintDexNavMessage(MESSAGE_CHOOSE_MON);
 	DexNavLoadMonIcons();
+	CreateWaterScrollArrows();
 	CreateCursor();
 	DexNavLoadCapturedAllSymbol();
 }
