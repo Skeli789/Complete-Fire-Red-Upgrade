@@ -671,7 +671,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				else
 					class = FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER;
 			}
-			else if (attackMoveNum + numOffseniveBoostingMoves == 3 || (attackMoveNum + numOffseniveBoostingMoves == 2 && hasPersonalProtect))
+			else if (attackMoveNum + numOffseniveBoostingMoves >= 3 || (attackMoveNum + numOffseniveBoostingMoves == 2 && hasPersonalProtect))
 			{
 				if (itemEffect == ITEM_EFFECT_ROOM_SERVICE || itemEffect == ITEM_EFFECT_IRON_BALL || itemEffect == ITEM_EFFECT_MACHO_BRACE)
 					class = FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER;
@@ -1580,7 +1580,8 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 {
 	if (ABILITY(bankDef) == ABILITY_UNAWARE
 	&& !MoveInMovesetAndUsable(MOVE_STOREDPOWER, bankAtk)
-	&& !MoveInMovesetAndUsable(MOVE_POWERTRIP, bankAtk))
+	&& !MoveInMovesetAndUsable(MOVE_POWERTRIP, bankAtk)
+	&& !(stat == STAT_STAGE_DEF && MoveInMovesetAndUsable(MOVE_BODYPRESS, bankAtk)))
 		return FALSE; //Don't set up if foe has Unaware
 
 	if (WillFaintFromSecondaryDamage(bankAtk))
@@ -1590,9 +1591,9 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 	{
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
 		{
-			if (CanKnockOut(bankDef, bankAtk))
+			if (CanKnockOutWithChipDamage(bankDef, bankAtk))
 			{
-				return FALSE; //Don't set up if enemy can KO you
+				return FALSE; //Don't set up if enemy can KO you or get you down to 1 HP and you'll die from chip damage
 			}
 			else
 			{
@@ -2180,6 +2181,7 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 
 void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef, u16 move)
 {
+	u8 decrement = 0;
 	s16 viability = *originalViability;
 
 	if (move == MOVE_FAKEOUT && IS_DOUBLE_BATTLE)
@@ -2191,6 +2193,26 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 		&&  partnerMove == MOVE_FAKEOUT
 		&&  gBattleStruct->moveTarget[partner] == bankDef)
 			return; //No benefit to using Fake Out twice on the same opponent
+
+		//Try to hit the more threatening target with Fake Out
+		u8 bankAtkPartner = PARTNER(bankAtk);
+		u8 bankDefPartner = PARTNER(bankDef);
+
+		if (BATTLER_ALIVE(bankDef) && BATTLER_ALIVE(bankDefPartner) //2 opponents
+		&& !(BATTLER_ALIVE(partner) && partnerMove == MOVE_FAKEOUT && gBattleStruct->moveTarget[partner] == bankDefPartner)) //And partner isn't targeting second opponent
+		{
+			//Number of AI mons potentional target could KO
+			u8 knockOutCount1 = CanKnockOut(bankDef, bankAtk) ? 1 : 0;
+			   knockOutCount1 += BATTLER_ALIVE(bankAtkPartner) && CanKnockOut(bankDef, bankAtkPartner) ? 1 : 0;
+
+			//Number of AI mons potential target could KO
+			u8 knockOutCount2 = CanKnockOut(bankDefPartner, bankAtk) ? 1 : 0;
+			   knockOutCount2 += BATTLER_ALIVE(bankAtkPartner) && CanKnockOut(bankDefPartner, bankAtkPartner) ? 1 : 0;
+
+			if (knockOutCount2 > knockOutCount1 //Target's partner is more threatening
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)) //And it can be hit with Fake Out
+				decrement = 1; //Make it slightly less of a good option to hit this target with Fake Out
+		}
 	}
 
 	switch (class) {
@@ -2202,27 +2224,27 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 
 		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER:
 			if (!IsTrickRoomActive()) //Don't burn a Trick Room turn to use Fake Out
-				INCREASE_VIABILITY(17);
+				INCREASE_VIABILITY(17 - decrement);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP:
-			INCREASE_VIABILITY(17);
+			INCREASE_VIABILITY(17 - decrement);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_UTILITY:
-			INCREASE_VIABILITY(19);
+			INCREASE_VIABILITY(19 - decrement);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_PHAZING:
-			INCREASE_VIABILITY(19);
+			INCREASE_VIABILITY(19 - decrement);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
-			INCREASE_VIABILITY(17);
+			INCREASE_VIABILITY(17 - decrement);
 			break;
 
 		default:
-			INCREASE_VIABILITY(8);
+			INCREASE_VIABILITY(8 - decrement);
 	}
 
 	*originalViability = MathMin(viability, 255);

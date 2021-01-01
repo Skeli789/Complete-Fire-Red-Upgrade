@@ -252,4 +252,6 @@ FieldUseFunc_FormChangeItem 887D308
 FieldUseFunc_FormChangeItem 887D334
 FieldUseFunc_AbilityCapsule 8877168
 FieldUseFunc_AbilityCapsule 887CA9C
+
+CB2_NewGame 812EB54
 #endif

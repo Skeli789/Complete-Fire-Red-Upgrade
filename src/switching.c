@@ -159,11 +159,9 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 			break;
 		case ABILITY_DELTASTREAM:
 			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
-			#ifdef FLAG_DELTA_STREAM_BATTLE
-			&& !FlagGet(FLAG_DELTA_STREAM_BATTLE) //Should continue to blow even if mon leaves the field
-			#endif
-			)
+			&& !IsDeltaStreamBattle()) //Should continue to blow even if mon leaves the field
 				gBattleStringLoader = PrimalAirCurrentEndString;
+			break;
 	}
 
 	if (gBattleStringLoader != NULL)
@@ -878,27 +876,21 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_MagnetRiseBattle:
-			#ifdef FLAG_MAGNET_RISE_BATTLE
-			if (FlagGet(FLAG_MAGNET_RISE_BATTLE))
+			if (IsFloatingWithMagnetism(gActiveBattler)
+			&& CheckGrounding(gActiveBattler) == IN_AIR)
 			{
-				if (IsFloatingWithMagnetism(gActiveBattler)
-				&& CheckGrounding(gActiveBattler) == IN_AIR)
-				{
-					BattleScriptPushCursor();
-					gBattleStringLoader = gText_MagnetRiseBattleStart;
-					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
-					gBankAttacker = gBattleScripting.bank = gActiveBattler;
-					++gNewBS->switchInEffectsState;
-					return;
-				}
+				BattleScriptPushCursor();
+				gBattleStringLoader = gText_MagnetRiseBattleStart;
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				++gNewBS->switchInEffectsState;
+				return;
 			}
-			#endif
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_PixieBoost:
-			#ifdef FLAG_PIXIE_BATTLE
-			if (FlagGet(FLAG_PIXIE_BATTLE))
+			if (IsPixieBattle())
 			{
 				if (IsOfType(gActiveBattler, TYPE_FAIRY))
 				{
@@ -914,7 +906,6 @@ void atk52_switchineffects(void)
 					return;
 				}
 			}
-			#endif
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
 
@@ -1407,14 +1398,14 @@ static u8 GetStealthRockDivisor(void)
 	return divisor;
 }
 
-bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side)
 {
-	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
+	u8 ability;
 	u32 dmg = 0;
 
 	if (gSideStatuses[side] & SIDE_STATUS_SPIKES
-	&& GetMonAbility(mon) != ABILITY_MAGICGUARD
-	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	&& (ability = GetMonAbility(mon)) != ABILITY_MAGICGUARD
+	&& (ability == ABILITY_KLUTZ || ItemId_GetHoldEffect(mon->item) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)) //Has Klutz or not holding boots
 	{
 		if (gSideTimers[side].srAmount > 0)
 			dmg += CalcStealthRockDamagePartyMon(mon);
@@ -1424,10 +1415,12 @@ bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
 
 		if (gSideTimers[side].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, side);
-
-		if (dmg >= hp)
-			return TRUE;
 	}
 
-	return FALSE;
+	return dmg;
+}
+
+bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+{
+	return GetMonEntryHazardDamage(mon, side) >= mon->hp;
 }

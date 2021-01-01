@@ -94,7 +94,7 @@ bool8 TryActivateGemBattlescript(void)
 	&&  ITEM_QUALITY(gBankAttacker) == gBattleStruct->dynamicMoveType
 	&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 	&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-	&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
+	&& !TargetFullyImmuneToCurrMove(gBankTarget) //Gems only work when the target is affected
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2)
 	{
@@ -2554,7 +2554,7 @@ void atk81_trysetrest(void)
 				break;
 			#ifdef SPECIES_MINIOR_SHIELD
 			case ABILITY_SHIELDSDOWN:
-				if (SPECIES(gBankAttacker) == SPECIES_MINIOR_SHIELD)
+				if (GetBankPartyData(gBankAttacker)->species == SPECIES_MINIOR_SHIELD)
 				{
 					gBattlescriptCurrInstr = BattleScript_ButItFailed;
 					fail = TRUE;

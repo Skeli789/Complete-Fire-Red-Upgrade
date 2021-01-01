@@ -387,13 +387,13 @@ static void PlayerPartnerBufferRunCommand(void)
 
 static void PlayerPartnerHandleChooseMove(void)
 {
-	u8 chosenMoveId, moveTarget;
+	u8 chosenMovePos, moveTarget;
 	u16 chosenMove;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	BattleAI_SetupAIData(0xF);
-	chosenMoveId = BattleAI_ChooseMoveOrAction();
-	chosenMove = moveInfo->moves[chosenMoveId];
+	chosenMovePos = BattleAI_ChooseMoveOrAction();
+	chosenMove = moveInfo->moves[chosenMovePos];
 	moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
 	if (moveTarget & MOVE_TARGET_USER)
@@ -413,9 +413,9 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 
 	//You get 1 of 3 of the following gimmicks per Pokemon
-	if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
+	if (moveInfo->possibleZMoves[chosenMovePos]) //Checked first b/c Rayquaza can do all 3
 	{
-		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
+		if (ShouldAIUseZMoveByMoveAndMovePos(gActiveBattler, gBankTarget, moveInfo->moves[chosenMovePos], chosenMovePos))
 			gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 	}
 	else if (moveInfo->canMegaEvolve)
@@ -428,21 +428,21 @@ static void PlayerPartnerHandleChooseMove(void)
 				gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 		}
 	}
-	else if (moveInfo->possibleMaxMoves[chosenMoveId])
+	else if (moveInfo->possibleMaxMoves[chosenMovePos])
 	{
 		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
-	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
+	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
 	gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 
 	if (IsMockBattle())
 		TryRemovePartnerDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove, TRUE); //Moves are chosen in order of speed
 
-	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
+	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
 	PlayerPartnerBufferExecComplete();
 }
 

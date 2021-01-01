@@ -1146,7 +1146,6 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_RESTORE_HP:
-		case EFFECT_REST:
 		case EFFECT_MORNING_SUN:
 		AI_RECOVERY:
 			switch (move) {
@@ -1172,6 +1171,11 @@ MOVESCR_CHECK_0:
 						DECREASE_VIABILITY(9); //No point in healing, but should at least do it if nothing better
 			}
 			break;
+
+		case EFFECT_REST:
+			if (!CanRest(bankAtk))
+				DECREASE_VIABILITY(10);
+			goto AI_RECOVERY;
 
 		case EFFECT_POISON:
 		case EFFECT_TOXIC:

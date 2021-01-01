@@ -368,7 +368,7 @@ bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
 			return TRUE;
 		}
-		else if (IsTimeInVarInFuture(VAR_SWARM_DAILY_EVENT)) //If the player tampered with their system time to access more daily events
+		else if (IsDayInVarInFuture(VAR_SWARM_DAILY_EVENT)) //If the player tampered with their system time to access more daily events
 		{
 			sPrintedRTCWarning = TRUE;
 			BufferYearMonthDayFromVar(VAR_SWARM_DAILY_EVENT);

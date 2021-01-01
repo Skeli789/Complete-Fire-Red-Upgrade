@@ -37,6 +37,7 @@ extern const u8 gText_DynamaxUsable[];
 extern const u8 gText_BadThoughtsBattleStart[];
 extern const u8 gText_TailwindBattleStart[];
 extern const u8 gText_MagnetRiseBattleStart[];
+extern const u8 gText_TrickRoomBattleStart[];
 extern const u8 gText_PixieBattleStart[];
 extern const u8 gText_ShadowShieldBattleStart[];
 extern const u8 gText_RainbowBattleStart[];

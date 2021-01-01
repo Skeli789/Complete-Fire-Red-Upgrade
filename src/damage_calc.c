@@ -15,9 +15,10 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/switching.h"
+#include "../include/new/util.h"
 
 #include "Tables/type_tables.h"
 
@@ -584,6 +585,8 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	|| (monDef->hp == monDef->maxHP && GetMonAbility(monDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
 	|| (monDef->hp == monDef->maxHP && IsBankHoldingFocusSash(bankDef)))
 		damage = MathMin(damage, monDef->hp - 1);
+
+	damage += GetMonEntryHazardDamage(monDef, SIDE(bankDef)); //Hazard damage will be taken on switch in so factor it in (helps account for breaking Focus Sash & Sturdy)
 
 	return damage;
 }
@@ -1246,7 +1249,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 			break;
 	}
 
-	if (defType == TYPE_FLYING && multiplier == TYPE_MUL_SUPER_EFFECTIVE && gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL && move != MOVE_STEALTHROCK)
+	if (defType == TYPE_FLYING && multiplier == TYPE_MUL_SUPER_EFFECTIVE && gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL && move != MOVE_STEALTHROCK && WEATHER_HAS_EFFECT)
 		multiplier = TYPE_MUL_NORMAL;
 
 	if (multiplier != TYPE_MUL_NO_DATA && multiplier != TYPE_MUL_NORMAL)
@@ -2650,14 +2653,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	
 	//Shadow Shield Battle
-	#ifdef FLAG_SHADOW_SHIELD_BATTLE
 	//Ghosts get Shadow Shields (halve damage when at max health)
-	if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE)
+	if (IsShadowShieldBattle()
 	&& data->defHP >= data->defMaxHP
 	&& ((!useMonDef && IsOfType(bankDef, TYPE_GHOST))
 	 || (useMonDef && IsMonOfType(data->monDef, TYPE_GHOST))))
 		damage /= 2;
-	#endif
 
 	if (damage == 0)
 		damage = 1;
@@ -2826,7 +2827,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_ANY && !(gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL))
+			if (gBattleWeather & WEATHER_ANY && WEATHER_HAS_EFFECT && !(gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL))
 				power *= 2;
 			break;
 
@@ -3607,9 +3608,9 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	switch (move) {
 		case MOVE_SOLARBEAM:
 		case MOVE_SOLARBLADE:
-			if (WEATHER_HAS_EFFECT
-			&& data.atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
-			&& gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY | WEATHER_AIR_CURRENT_PRIMAL))
+			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY | WEATHER_AIR_CURRENT_PRIMAL)
+			&& WEATHER_HAS_EFFECT
+			&& data.atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 				power /= 2; //Any weather except sun weakens Solar Beam
 			break;
 		case MOVE_DYNAMAXCANNON:

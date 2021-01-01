@@ -314,6 +314,9 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 #org @gText_CouldntFullyProtect
 [TARGET] couldn't\nfully protect itself and got hurt!
 
+#org @gText_MysteriousAirCurrentContinues
+The mysterious strong winds\ncontinue to blow.
+
 //Other Battle Features
 
 #org @gText_TotemOmniboostStatsRose
@@ -348,6 +351,9 @@ A tailwind blew from behind\n[FD][36] team!
 
 #org @gText_MagnetRiseBattleStart
 [SCRIPTING_BANK] is\nlevitating with electromagnetism!
+
+#org @gText_TrickRoomBattleStart
+The dimensions are permanently\ntwisted!\pSlower Pok\emon will always move\nfirst!
 
 #org @gText_ViciousSandstormBrewed
 A vicious sandstorm brewed!

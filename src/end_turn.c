@@ -4,6 +4,7 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_util.h"
@@ -251,7 +252,12 @@ u8 TurnBasedEffects(void)
 						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					}
 
-					BattleScriptExecute(BattleScript_RainContinuesOrEnds);
+					if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+						gBattlescriptCurrInstr = BattleScript_RainContinuesOrEnds;
+					else
+						gBattlescriptCurrInstr = BattleScript_RainContinuesOrEndsNoString; //Don't need to print string every time - anim is enough
+
+					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
 				else if (gBattleWeather & WEATHER_SUN_ANY)
@@ -264,8 +270,12 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_SunlightContinues;
+						if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+							gBattlescriptCurrInstr = BattleScript_SunlightContinues;
+						else
+							gBattlescriptCurrInstr = BattleScript_SunlightContinuesNoString; //Don't need to print string every time - anim is enough
 					}
+
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
@@ -279,7 +289,10 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+							gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						else
+							gBattlescriptCurrInstr = BattleScript_SandstormHailContinuesNoString; //Don't need to print string every time - anim is enough
 					}
 
 					gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
@@ -307,7 +320,10 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+							gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
+						else
+							gBattlescriptCurrInstr = BattleScript_SandstormHailContinuesNoString; //Don't need to print string every time - anim is enough
 					}
 
 					gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
@@ -317,7 +333,12 @@ u8 TurnBasedEffects(void)
 				}
 				else if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
 				{
-					BattleScriptExecute(BattleScript_MysteriousAirCurrentContinues);
+					if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+						gBattlescriptCurrInstr = BattleScript_MysteriousAirCurrentContinues;
+					else
+						gBattlescriptCurrInstr = BattleScript_MysteriousAirCurrentContinuesNoString; //Don't need to print string every time - anim is enough
+
+					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
 				else if (gBattleWeather & WEATHER_FOG_ANY)
@@ -330,8 +351,12 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_FogContinues;
+						if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+							gBattlescriptCurrInstr = BattleScript_FogContinues;
+						else
+							gBattlescriptCurrInstr = BattleScript_FogContinuesNoString; //Don't need to print string every time - anim is enough
 					}
+
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
@@ -686,8 +711,7 @@ u8 TurnBasedEffects(void)
 				break;
 
 			case ET_BadThoughts:
-				#ifdef FLAG_BAD_THOUGHTS_BATTLE
-				if (BATTLER_ALIVE(gActiveBattler))
+				if (BATTLER_ALIVE(gActiveBattler) && IsBadThoughtsBattle())
 				{
 					gBattleMoveDamage = GetBadThoughtsDamage(gActiveBattler);
 					if (gBattleMoveDamage != 0)
@@ -696,7 +720,6 @@ u8 TurnBasedEffects(void)
 						effect++;
 					}
 				}
-				#endif
 				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 				break;
 
@@ -1647,10 +1670,6 @@ u8 TurnBasedEffects(void)
 					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisRound[i] = FALSE;
 					gNewBS->turnDamageTaken[i] = 0;
-					gNewBS->ai.calculatedAISwitchings[i] = FALSE;
-					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
-					gNewBS->ai.fightingStyle[i] = 0xFF;
-					gNewBS->ai.megaPotential[i] = NULL;
 
 					if (gNewBS->metronomeItemBonus[i] > 0)
 						--gNewBS->metronomeItemBonus[i];
@@ -1660,24 +1679,9 @@ u8 TurnBasedEffects(void)
 						if (--gNewBS->dynamaxData.timer[i] == 0)
 							gNewBS->dynamaxData.timer[i] = -1; //Indicator to revert
 					}
-
-					for (int j = 0; j < gBattlersCount; ++j)
-					{
-						gNewBS->ai.strongestMove[i][j] = 0xFFFF;
-						gNewBS->ai.canKnockOut[i][j] = 0xFF;
-						gNewBS->ai.can2HKO[i][j] = 0xFF;
-						gNewBS->ai.onlyBadMovesLeft[i][j] = 0xFF;
-						gNewBS->ai.shouldFreeChoiceLockWithDynamax[i][j] = FALSE;
-						gNewBS->ai.dynamaxPotential[i][j] = FALSE;
-
-						for (int k = 0; k < MAX_MON_MOVES; ++k)
-						{
-							gNewBS->ai.damageByMove[i][j][k] = 0xFFFFFFFF;
-							gNewBS->ai.moveKnocksOut1Hit[i][j][k] = 0xFF;
-							gNewBS->ai.moveKnocksOut2Hits[i][j][k] = 0xFF;
-						}
-					}
 				}
+
+				ClearCachedAIData();
 		}
 		gBattleStruct->turnEffectsBank++;
 
@@ -1836,40 +1840,45 @@ u32 GetBadThoughtsDamage(u8 bank)
 {
 	u32 damage = 0;
 
-	#ifdef FLAG_BAD_THOUGHTS_BATTLE
 	u8 divisor;
 	u8 ability = ABILITY(bank);
 
-	if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE)
+	if (IsBadThoughtsBattle()
 	&& !IsOfType(bank, TYPE_DARK)
 	&& !IsOfType(bank, TYPE_GHOST)
 	&& ability != ABILITY_MAGICGUARD
 	&& ability != ABILITY_OBLIVIOUS
 	&& ability != ABILITY_UNAWARE)
 	{
-		#ifdef VAR_GAME_DIFFICULTY
-		switch (VarGet(VAR_GAME_DIFFICULTY)) {
-			case OPTIONS_EASY_DIFFICULTY:
-				divisor = 16; //1/16 of HP
-				break;
-			case OPTIONS_NORMAL_DIFFICULTY:
-				divisor = 13; //1/13 of HP
-				break;
-			case OPTIONS_HARD_DIFFICULTY:
-				divisor = 10; //1/10 of HP
-				break;
-			case OPTIONS_EXPERT_DIFFICULTY:
-			default:
-				divisor = 7; //1/7 of HP
-				break;
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		{
+			divisor = 12; //1/12 of HP in Battle Circus
 		}
-		#else
-			divisor = 16; //1/16 of HP
-		#endif
+		else
+		{
+			#ifdef VAR_GAME_DIFFICULTY
+			switch (VarGet(VAR_GAME_DIFFICULTY)) {
+				case OPTIONS_EASY_DIFFICULTY:
+					divisor = 16; //1/16 of HP
+					break;
+				case OPTIONS_NORMAL_DIFFICULTY:
+					divisor = 13; //1/13 of HP
+					break;
+				case OPTIONS_HARD_DIFFICULTY:
+					divisor = 10; //1/10 of HP
+					break;
+				case OPTIONS_EXPERT_DIFFICULTY:
+				default:
+					divisor = 7; //1/7 of HP
+					break;
+			}
+			#else
+				divisor = 16; //1/16 of HP
+			#endif
+		}
 
 		damage = MathMax(1, GetBaseMaxHP(bank) / divisor);
 	}
-	#endif
 
 	return damage;
 }

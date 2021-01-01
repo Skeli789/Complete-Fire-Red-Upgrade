@@ -146,16 +146,11 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	//Try Force Shiny
 	//https://bulbapedia.bulbagarden.net/wiki/DexNav#Shiny_probability
-	u32 i, otherValue, numChecks, charmBonus, chainBonus, randBonus;
+	u32 i, otherValue, numChecks, chainBonus, randBonus;
 	otherValue = 0;
-	#ifdef ITEM_SHINY_CHARM
-	charmBonus = (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0) ? 2 : 0;
-	#else
-	charmBonus = 0;
-	#endif
 	chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
 	randBonus = (Random() % 100 < 4 ? 4 : 0);
-	numChecks = 1 + charmBonus + chainBonus + randBonus;
+	numChecks = 1 + chainBonus + randBonus; //Shiny Charm is handled elsewhere
 
 	if (searchLevel > 200)
 	{

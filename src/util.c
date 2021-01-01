@@ -222,8 +222,8 @@ void EvolveSpeciesByLevel(u16* species, u8 level)
 			break; //Break now to save time
 		else if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
 		||  (IsOtherEvolutionMethod(evolutions[i].method) && level >= 40)
-		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 50)
-		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 60))
+		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 45)
+		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 55))
 		{
 			*species = evolutions[i].targetSpecies;
 			goto START; //Evolve until it can't evolve any more

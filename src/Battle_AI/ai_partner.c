@@ -124,6 +124,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_JUSTIFIED:
 				if (moveType == TYPE_DARK
 				&&  moveSplit != SPLIT_STATUS
+				&& (moveEffect != EFFECT_KNOCK_OFF || atkPartnerAbility == ABILITY_STICKYHOLD || !CanKnockOffItem(bankAtkPartner))
 				&&  PhysicalMoveInMoveset(bankAtkPartner)
 				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
@@ -136,9 +137,11 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_RATTLED:
 				if (moveSplit != SPLIT_STATUS
 				&& (moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG)
+				&& (moveEffect != EFFECT_KNOCK_OFF || atkPartnerAbility == ABILITY_STICKYHOLD || !CanKnockOffItem(bankAtkPartner))
+				&& (moveEffect != EFFECT_EAT_BERRY || atkPartnerAbility == ABILITY_STICKYHOLD || !IsBerry(ITEM(bankAtkPartner)))
 				&& !IsTrickRoomActive()
-				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
-				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}

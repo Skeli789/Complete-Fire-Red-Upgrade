@@ -13,8 +13,10 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves);
 u32 GetAIFlags(void);
 u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);
+u8 GetSecondMostSuitableMonToSwitchInto(void);
 s16 GetMostSuitableMonToSwitchIntoScore(void);
 u8 GetMostSuitableMonToSwitchIntoFlags(void);
+u8 GetSecondMostSuitableMonToSwitchIntoFlags(void);
 u8 CalcMostSuitableMonToSwitchInto(void);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);
@@ -25,6 +27,7 @@ void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 void ShouldDoAIShiftSwitch(void);
+void ClearCachedAIData(void);
 
 //Functions Hooked In
 void BattleAI_HandleItemUseBeforeAISetup(void);
@@ -54,13 +57,16 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
 #define SWITCHING_INCREASE_OUTSPEEDS 14
 
 #define SWITCHING_DECREASE_WEAK_TO_MOVE 1
+#define SWITCHING_DECREASE_FAINTS_FROM_FOE 39
+#define SWITCHING_DECREASE_FAINTS_FROM_FOE_BUT_OUTSPEEDS 15
 
 #define SWITCHING_SCORE_MAX (SWITCHING_INCREASE_KO_FOE + SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_REVENGE_KILL + SWITCHING_INCREASE_OUTSPEEDS)
 
-#define SWITCHING_FLAG_KO_FOE                   (0 << 1)
+#define SWITCHING_FLAG_KO_FOE                   (1 << 0)
 #define SWITCHING_FLAG_RESIST_ALL_MOVES         (1 << 1)
-#define SWITCHING_FLAG_REVENGE_KILL             (2 << 1)
-#define SWITCHING_FLAG_WALLS_FOE                (3 << 1)
-#define SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE (4 << 1)
-#define SWITCHING_FLAG_CAN_REMOVE_HAZARDS       (5 << 1)
-#define SWITCHING_FLAG_OUTSPEEDS                (6 << 1)
+#define SWITCHING_FLAG_REVENGE_KILL             (1 << 2)
+#define SWITCHING_FLAG_WALLS_FOE                (1 << 3)
+#define SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE (1 << 4)
+#define SWITCHING_FLAG_CAN_REMOVE_HAZARDS       (1 << 5)
+#define SWITCHING_FLAG_OUTSPEEDS                (1 << 6)
+#define SWITCHING_FLAG_FAINTS_FROM_FOE          (1 << 7)

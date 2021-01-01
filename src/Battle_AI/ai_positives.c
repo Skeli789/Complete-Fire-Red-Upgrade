@@ -445,6 +445,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_RECOVER:
 			if (ShouldRecover(bankAtk, bankDef, move))
 			{
+				AI_RECOVER_VIABILITY_INCREASE:
 				if (IsClassStall(class))
 					INCREASE_VIABILITY(4);
 				else if (IsClassDoublesTrickRoomSetup(class))
@@ -460,9 +461,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (!BadIdeaToPoison(bankDef, bankAtk))
 			{
 				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
-				||  MoveInMoveset(MOVE_HEX, bankAtk)
 				||  MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
 				||  atkAbility == ABILITY_MERCILESS)
+					INCREASE_STATUS_VIABILITY(2);
+				else if (MoveInMoveset(MOVE_HEX, bankAtk)
+					&& MoveEffectInMoveset(EFFECT_WILL_O_WISP, bankAtk) //Can either poison or burn
+					&& (!PhysicalMoveInMoveset(bankDef) || BadIdeaToBurn(bankDef, bankAtk) || defAbility == ABILITY_FLASHFIRE)) //Preferably burn if target is physical attack and can be burned
 					INCREASE_STATUS_VIABILITY(2);
 				else
 					INCREASE_STATUS_VIABILITY(1); //AI enjoys poisoning
@@ -470,22 +474,30 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_REST:
-			if (!(CanBePutToSleep(bankAtk, FALSE)))
-				break;
-			else if (data->atkItemEffect == ITEM_EFFECT_CURE_SLP
-			|| data->atkItemEffect == ITEM_EFFECT_CURE_STATUS
+			if (ResistsAllMovesAtFullHealth(bankDef, bankAtk) //Can tank hits while sitting there useless
+			&& !OffensiveSetupMoveInMoveset(bankDef, bankAtk)) //Foe can't set up while AI is asleep
+			{
+				goto AI_RECOVER_VIABILITY_INCREASE; //Go right to the recovery increase
+			}
+			else if (data->atkItemEffect == ITEM_EFFECT_CURE_SLP //Chesto Berry
+			|| data->atkItemEffect == ITEM_EFFECT_CURE_STATUS //Lum Berry
 			|| MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk)
 			|| MoveEffectInMoveset(EFFECT_SNORE, bankAtk)
 			|| atkAbility == ABILITY_SHEDSKIN
 			|| atkAbility == ABILITY_EARLYBIRD
-			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && atkAbility == ABILITY_HYDRATION && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
+			|| (gBattleWeather & WEATHER_RAIN_ANY
+			  && gWishFutureKnock.weatherDuration != 1 //Rain won't wear off before Hydration activates
+			  && atkAbility == ABILITY_HYDRATION
+			  && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)) //Hydration will heal
 			{
-				if (ShouldRecover(bankAtk, bankDef, move))
-					INCREASE_STATUS_VIABILITY(1);
+				goto AI_RECOVER; //Treat like Recover
 			}
-			else
-				goto AI_RECOVER;
-
+			else if (IsTakingSecondaryDamage(bankDef) && IsClassStall(class)) //Healing is lower priority than setting status for stallers, so once the status is set then stall the foe out
+			{
+				goto AI_RECOVER_VIABILITY_INCREASE; //Go right to the recovery increase
+			}
+			else if (data->atkStatus1 != 0 && Random() & 1) //50% chance of wanting to use Rest when inflicted with a status condition
+				goto AI_RECOVER; //Treat like Recover
 			break;
 
 		case EFFECT_TRAP:
@@ -2172,7 +2184,19 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 			}
 
-			INCREASE_STATUS_VIABILITY(2);
+			if (IS_DOUBLE_BATTLE)
+			{
+				if (IsClassDoublesSetupAttacker(class))
+					INCREASE_VIABILITY(17);
+				else if (IsClassDoublesTeamSupport(class) && BATTLER_ALIVE(data->bankAtkPartner) && MoveInMovesetAndUsable(MOVE_EXPANDINGFORCE, data->bankAtkPartner))
+					INCREASE_VIABILITY(15);
+				else if (IsClassDoublesUtility(class) && BATTLER_ALIVE(data->bankAtkPartner) && MoveInMovesetAndUsable(MOVE_EXPANDINGFORCE, data->bankAtkPartner))
+					INCREASE_VIABILITY(15);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
+			else
+				INCREASE_STATUS_VIABILITY(2);
 		break;
 
 		case EFFECT_PLEDGE:

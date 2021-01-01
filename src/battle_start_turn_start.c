@@ -45,6 +45,7 @@ enum BattleBeginStates
 	BadThoughtsBattleMessage,
 	TailwindBattleMessage,
 	MagnetRiseBattleMessage,
+	TrickRoomBattleMessage,
 	ShadowShieldBattleMessage,
 	PixieBattleMessage,
 	PixieBattleBuffs,
@@ -143,7 +144,7 @@ static void SavePartyItems(void)
 
 void BattleBeginFirstTurn(void)
 {
-	int i, j, k;
+	int i, j;
 	u8* state = &(gBattleStruct->switchInAbilitiesCounter);
 	u8* bank = &(gBattleStruct->switchInItemsCounter);
 
@@ -275,7 +276,7 @@ void BattleBeginFirstTurn(void)
 
 			case BadThoughtsBattleMessage:
 				#ifdef FLAG_BAD_THOUGHTS_BATTLE
-				if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE))
+				if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE)) //Only print the message when the flag is set, not in Battle Circus
 				{
 					gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 					gBattleStringLoader = gText_BadThoughtsBattleStart;
@@ -298,8 +299,7 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case MagnetRiseBattleMessage:
-				#ifdef FLAG_MAGNET_RISE_BATTLE
-				if (FlagGet(FLAG_MAGNET_RISE_BATTLE))
+				if (IsMagnetRiseBattle())
 				{
 					for (; *bank < gBattlersCount; ++*bank)
 					{
@@ -312,6 +312,16 @@ void BattleBeginFirstTurn(void)
 							return;
 						}
 					}
+				}
+				++*state;
+				break;
+
+			case TrickRoomBattleMessage:
+				#ifdef FLAG_TRICK_ROOM_BATTLE
+				if (FlagGet(FLAG_TRICK_ROOM_BATTLE))
+				{
+					gBattleStringLoader = gText_TrickRoomBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
 				}
 				#endif
 				++*state;
@@ -330,7 +340,7 @@ void BattleBeginFirstTurn(void)
 
 			case PixieBattleMessage:
 				#ifdef FLAG_PIXIE_BATTLE
-				if (FlagGet(FLAG_PIXIE_BATTLE))
+				if (FlagGet(FLAG_PIXIE_BATTLE)) //Only print the message when the flag is set, not in Battle Circus
 				{
 					gBattleStringLoader = gText_PixieBattleStart;
 					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
@@ -341,8 +351,7 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case PixieBattleBuffs:
-				#ifdef FLAG_PIXIE_BATTLE
-				if (FlagGet(FLAG_PIXIE_BATTLE))
+				if (IsPixieBattle())
 				{
 					for (; *bank < gBattlersCount; ++*bank)
 					{
@@ -360,7 +369,6 @@ void BattleBeginFirstTurn(void)
 						}
 					}
 				}
-				#endif
 				++*state;
 				break;
 
@@ -496,26 +504,10 @@ void BattleBeginFirstTurn(void)
 				{
 					gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
 					gChosenActionByBank[i] = 0xFF;
-					gChosenMovesByBanks[i] = 0;
-					gNewBS->ai.fightingStyle[i] = 0xFF;
-
-					for (j = 0; j < MAX_BATTLERS_COUNT; ++j)
-					{
-						gNewBS->ai.strongestMove[i][j] = 0xFFFF;
-						gNewBS->ai.canKnockOut[i][j] = 0xFF;
-						gNewBS->ai.can2HKO[i][j] = 0xFF;
-						gNewBS->ai.strongestMove[i][j] = 0xFFFF;
-						gNewBS->ai.canKnockOut[i][j] = 0xFF;
-						gNewBS->ai.can2HKO[i][j] = 0xFF;
-
-						for (k = 0; k < MAX_MON_MOVES; ++k)
-						{
-							gNewBS->ai.damageByMove[i][j][k] = 0xFFFFFFFF;
-							gNewBS->ai.moveKnocksOut1Hit[i][j][k] = 0xFF;
-							gNewBS->ai.moveKnocksOut2Hits[i][j][k] = 0xFF;
-						}
-					}
+					gChosenMovesByBanks[i] = 0;		
 				}
+
+				ClearCachedAIData();
 
 				TurnValuesCleanUp(0);
 				SpecialStatusesClear();

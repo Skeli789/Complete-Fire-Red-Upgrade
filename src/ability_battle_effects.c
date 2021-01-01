@@ -432,6 +432,7 @@ static u8 CalcMovePowerForForewarn(u16 move);
 static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 stringIndex, bool8 moveTurn);
 static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank);
 static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
+static bool8 CanBeAffectedByIntimidate(u8 bank);
 static bool8 AllMainStatsButOneAreMinned(u8 bank);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
@@ -607,14 +608,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#endif
 			}
 
-			#ifdef FLAG_DELTA_STREAM_BATTLE
-			if (FlagGet(FLAG_DELTA_STREAM_BATTLE))
+			if (IsDeltaStreamBattle())
 			{
 				gBattleWeather = WEATHER_AIR_CURRENT_PRIMAL;
 				gBattleScripting.animArg1 = B_ANIM_STRONG_WINDS_CONTINUE;	
 				effect++;
 			}
-			#endif
 
 			if (effect)
 			{
@@ -723,7 +722,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_INTIMIDATE:
-			if (!(gBattleMons[FOE(bank)].status2 & STATUS2_SUBSTITUTE) || !(gBattleMons[PARTNER(FOE(bank))].status2 & STATUS2_SUBSTITUTE))
+			if (CanBeAffectedByIntimidate(FOE(bank)) || (IS_DOUBLE_BATTLE && CanBeAffectedByIntimidate(PARTNER(FOE(bank)))))
 			{
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
 				gBattleStruct->intimidateBank = bank;
@@ -1919,7 +1918,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& CalcMoveSplit(gBankAttacker, gCurrentMove) == SPLIT_PHYSICAL
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
-				&& (gBattleMons[bank].statStages[STAT_SPEED - 1] < 12 || gBattleMons[bank].statStages[STAT_DEF - 1] > 0))
+				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN))
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_WeakArmorActivates;
@@ -2532,6 +2531,11 @@ static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 	}
 
 	return FALSE;
+}
+
+static bool8 CanBeAffectedByIntimidate(u8 bank)
+{
+	return BATTLER_ALIVE(bank) && !IS_BEHIND_SUBSTITUTE(bank);
 }
 
 static bool8 AllMainStatsButOneAreMinned(bank_t bank)

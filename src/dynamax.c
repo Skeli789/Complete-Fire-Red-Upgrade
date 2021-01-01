@@ -1472,8 +1472,10 @@ void CreateSummaryScreenGigantamaxIcon(void)
 	if (sMonSummaryScreen->currentMon.gigantamax)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenGigantamaxIconSpriteSheet);
-		LoadSpritePalette(&sSummaryScreenGigantamaxIconSpritePalette);
+		LoadPalette(sSummaryScreenGigantamaxIconSpritePalette.data, (15 * 16) + 0x100, 32); //Load into last sprite palette slot
 		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 32, ballSprite->pos1.y, 0);
+		if (ballSprite->data[0] < MAX_SPRITES)
+			gSprites[ballSprite->data[0]].oam.paletteNum = 15; //Make sure it points to the right palette num
 	}
 	else
 		ballSprite->data[0] = MAX_SPRITES; //No icon
@@ -1605,7 +1607,7 @@ u16 GetNextRaidShieldHP(u8 bank)
 		if (i == healthRatio)
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
 
-		if (gBattleMons[bank].hp == cutOff && !BATTLER_MAX_HP(bank)) //Fix multi-hit moves
+		if (gBattleMons[bank].hp == cutOff && gNewBS->dynamaxData.turnStartHP != cutOff) //Fix multi-hit moves
 			return cutOff;
 
 		if (gBattleMons[bank].hp > prevCutOff && gBattleMons[bank].hp <= cutOff)

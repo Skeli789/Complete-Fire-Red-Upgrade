@@ -1598,6 +1598,19 @@ bool8 IsTimeInVarInFuture(u16 var)
 	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
 }
 
+bool8 IsDayInVarInFuture(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u8 day = timeData->day;
+	u8 month = timeData->month;
+	u32 year = timeData->year + timeData->century * 100;
+
+	return year > gClock.year
+	|| (year == gClock.year && month > gClock.month)
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+}
+
 void BufferYearMonthDayFromVar(u16 var)
 {
 	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
@@ -2292,11 +2305,15 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId)
 }
 
 #define gText_WelcomeToHOF (const u8*) 0x8416008
-extern const u8 gText_CasualDifficult[];
+extern const u8 gText_NewGame[];
+extern const u8 gText_Plus[];
+extern const u8 gText_VanillaDifficult[];
 extern const u8 gText_Expert[];
 extern const u8 gText_Insane[];
+extern const u8 gText_MixedUnboundVersions[];
 extern const u8 gText_PostGame[];
 extern const u8 gText_Difficulty[];
+extern const u8 gText_PlusTrades[];
 extern const struct TextColor sHOFTextColors[];
 void HallOfFame_PrintWelcomeText(void)
 {
@@ -2307,22 +2324,60 @@ void HallOfFame_PrintWelcomeText(void)
 
 	#ifdef VAR_GAME_DIFFICULTY
 	const u8* difficultyString = NULL;
-	switch (VarGet(VAR_GAME_DIFFICULTY))
+	
+	#ifdef FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY
+	if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //First HOF
+	&& FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
 	{
-		case OPTIONS_HARD_DIFFICULTY:
-			difficultyString = gText_Expert;
-			break;
-		case OPTIONS_EXPERT_DIFFICULTY:
-			difficultyString = gText_Insane;
-			break;
-		default:
-			difficultyString = gText_CasualDifficult;
-			break;
+		difficultyString = gText_NewGame; //Don't display difficulty since player didn't stick with it
+	}
+	else
+	#endif
+	{
+		switch (VarGet(VAR_GAME_DIFFICULTY))
+		{
+			case OPTIONS_HARD_DIFFICULTY:
+				difficultyString = gText_Expert;
+				break;
+			case OPTIONS_EXPERT_DIFFICULTY:
+				difficultyString = gText_Insane;
+				break;
+			default:
+				difficultyString = gText_VanillaDifficult;
+				break;
+		}
 	}
 
 	StringCopy(gStringVar4, difficultyString);
 	if (GetGameStat(GAME_STAT_ENTERED_HOF) > 1) //Second time or more in HOF
 		StringAppend(gStringVar4, gText_PostGame);
+	#ifdef UNBOUND
+	else
+	{
+		#ifdef FLAG_NEW_GAME_PLUS
+		if (FlagGet(FLAG_NEW_GAME_PLUS))
+			StringAppend(gStringVar4, gText_Plus);
+		else
+		#endif
+		{
+			#define FLAG_STARTED_GAME_1_1 0x16CC //Records if the player started the game on Unbound 1.1.0 at least
+			#define FLAG_BEAT_CHAMPION_1_1 0x16D9 //Records if the player started the game on Unbound 1.1.0 at least
+			for (u16 i = FLAG_STARTED_GAME_1_1; i <= FLAG_BEAT_CHAMPION_1_1; ++i)
+			{
+				if (!FlagGet(i)) //Player didn't beat one of the Gyms or E4 on 1.1.0 at least
+				{
+					StringAppend(gStringVar4, gText_MixedUnboundVersions);
+					break;
+				}
+			}
+		}
+	}
+	#endif
+
+	if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //Only on first HOF
+	&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0)
+		StringAppend(gStringVar4, gText_PlusTrades); //Indicate the player traded
+
 	StringAppend(gStringVar4, gText_Difficulty);
 
 	x = (0xD0 - GetStringWidth(2, gStringVar4, 0)) / 2;

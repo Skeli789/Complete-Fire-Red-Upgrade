@@ -434,15 +434,25 @@ EventScript_Defog:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .equ SPECIAL_POKEMON_TYPE_IN_PARTY, 0xB2
+.equ SPECIAL_SPECIES_IN_PARTY, 0x17C
+
 .global EventScript_UseLavaSurf
 .global EventScript_UseLavaSurf_Debug
 EventScript_UseLavaSurf:
+	@;Check Groudon - special case
+	setvar 0x8004 SPECIES_GROUDON
+	callasm GetGroudonPartyIndexIn8004
+	compare 0x8004 PARTY_SIZE
+	if lessthan _goto EventScript_UseLavaSurf_Offer
+
+	@;Check Fire-type
 	setvar 0x8000 TYPE_FIRE
 	special SPECIAL_POKEMON_TYPE_IN_PARTY
 	compare LASTRESULT PARTY_SIZE
 	if equal _goto EventScript_MagmaGlistens
 	copyvar 0x8004 LASTRESULT
 EventScript_UseLavaSurf_Debug:
+EventScript_UseLavaSurf_Offer:
 	bufferpartypokemon 0x0 0x8004
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0

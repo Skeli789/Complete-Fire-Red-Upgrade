@@ -5896,7 +5896,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_CHARGEBEAM] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP_CHANCE,
+		.effect = EFFECT_SPECIAL_ATTACK_UP_HIT,
 		.power = 50,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 90,
@@ -5928,7 +5928,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_CROSSPOISON] =
 	{
-		.effect = EFFECT_BAD_POISON_HIT,
+		.effect = EFFECT_POISON_HIT,
 		.power = 70,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -5985,7 +5985,7 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_DRAGON,
 		.accuracy = 90,
 		.pp = 5,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -6900,7 +6900,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_FIERYDANCE] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP_CHANCE,
+		.effect = EFFECT_SPECIAL_ATTACK_UP_HIT,
 		.power = 80,
 		.type = TYPE_FIRE,
 		.accuracy = 100,
@@ -6941,7 +6941,7 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_GRASS,
 		.accuracy = 90,
 		.pp = 5,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -9025,7 +9025,7 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_BUG,
 		.accuracy = 100,
 		.pp = 25,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -9549,7 +9549,7 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_FAIRY,
 		.accuracy = 90,
 		.pp = 5,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,

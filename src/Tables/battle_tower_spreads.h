@@ -36234,6 +36234,32 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.modifyMovesDoubles = TRUE,
 	},
 	{
+		.species = SPECIES_MEOWSTIC_FEMALE,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.defEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_COMPETITIVE
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_EXPANDINGFORCE,
+			MOVE_SHADOWBALL,
+			MOVE_THUNDERBOLT,
+			MOVE_PSYCHICTERRAIN,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
 		.species = SPECIES_AEGISLASH,
 		.nature = NATURE_BRAVE,
 		.hpIv = 31,

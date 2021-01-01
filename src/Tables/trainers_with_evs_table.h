@@ -78,7 +78,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[8] =
-	{ //Bulky Special Attacker 
+	{ //Bulky Special Attacker
 		.nature = NATURE_MODEST,
 		.ivs = 31,
 		.hpEv = 252,
@@ -88,7 +88,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[9] =
-	{ //Bulky Special Attacker 
+	{ //Bulky Special Attacker
 		.nature = NATURE_MODEST,
 		.ivs = 31,
 		.hpEv = 6,
@@ -98,7 +98,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[10] =
-	{ //Bulky Special Attacker 
+	{ //Bulky Special Attacker
 		.nature = NATURE_MODEST,
 		.ivs = 31,
 		.hpEv = 6,

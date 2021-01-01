@@ -21,6 +21,7 @@ u32 CalcStealthRockDamage(u8 bank);
 u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon);
 u32 CalcSteelsurgeDamage(u8 bank);
 u32 CalcSteelsurgeDamagePartyMon(struct Pokemon* mon);
+u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side);
 bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side);
 
 //Functions Hooked In

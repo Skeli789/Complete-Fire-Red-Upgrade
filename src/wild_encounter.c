@@ -282,10 +282,10 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	if (checkCuteCharm
 	&& !GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
 	&&  GetMonAbility(&gPlayerParty[0]) == ABILITY_CUTECHARM
-	&&  umodsi(Random(), 3))
+	&& (Random() % 3) > 0) //2/3 of the time
 	{
 		u16 leadingMonSpecies = gPlayerParty[0].species;
-		u32 leadingMonPersonality = gPlayerParty[0].species;
+		u32 leadingMonPersonality = gPlayerParty[0].personality;
 		u8 gender = GetGenderFromSpeciesAndPersonality(leadingMonSpecies, leadingMonPersonality);
 
 		if (gender == MON_FEMALE)

@@ -10,10 +10,17 @@ et_battle_scripts.s
 .include "../battle_script_macros.s"
 
 .global BattleScript_MysteriousAirCurrentContinues
+.global BattleScript_MysteriousAirCurrentContinuesNoString
+.global BattleScript_RainContinuesOrEnds
+.global BattleScript_RainContinuesOrEndsNoString
+.global BattleScript_SunlightContinues
+.global BattleScript_SunlightContinuesNoString
 .global BattleScript_SandstormHailContinues
+.global BattleScript_SandstormHailContinuesNoString
 .global BattleScript_WeatherDamage
 .global BattleScript_FogEnded
 .global BattleScript_FogContinues
+.global BattleScript_FogContinuesNoString
 .global BattleScript_SeaOfFireDamage
 .global BattleScript_GrassyTerrainHeal
 .global BattleScript_AquaRing
@@ -80,35 +87,73 @@ et_battle_scripts.s
 @0x80159DC with r0
 EndBattleFlagClearHook: @Not really a BS but whatever
 	bl EndOfBattleThings
-	ldr r1, .BattleMainFunc
+	ldr r1, =gBattleMainFunc
 	ldr r0, .CallbackReturnToOverworld
 	str r0, [r1]
-	ldr r1, .CB2_AfterEvolution
+	ldr r1, =gCB2_AfterEvolution
 	ldr r0, =0x80159E4 | 1
 	bx r0
 
 .align 2
-.BattleMainFunc: .word 0x3004F84
 .CallbackReturnToOverworld: .word 0x8015A30 | 1
-.CB2_AfterEvolution: .word 0x300537C
+
+.pool
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.pool
 BattleScript_MysteriousAirCurrentContinues:
-	setword BATTLE_STRING_LOADER MysteriousAirCurrentContinuesString
+	setword BATTLE_STRING_LOADER gText_MysteriousAirCurrentContinues
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+BattleScript_MysteriousAirCurrentContinuesPlayAnim:
 	playanimation 0x0 ANIM_STRONG_WINDS_CONTINUE 0x0
 	end2
+
+BattleScript_MysteriousAirCurrentContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_MysteriousAirCurrentContinuesPlayAnim
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RainContinuesOrEnds:
+	printfromtable 0x83FE540 @;gRainContinuesStringIds
+	waitmessage DELAY_1SECOND
+	jumpifbyte EQUALS, MULTISTRING_CHOOSER, 0x2, BattleScript_RainContinuesOrEndsEnd @;Rain ended
+BattleScript_RainContinuesOrEndsPlayAnim:
+	playanimation BANK_ATTACKER, ANIM_RAIN, 0x0
+BattleScript_RainContinuesOrEndsEnd:
+	end2
+
+BattleScript_RainContinuesOrEndsNoString:
+	jumpifbyte EQUALS, MULTISTRING_CHOOSER, 0x2, BattleScript_RainContinuesOrEnds @;Rain ended
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_RainContinuesOrEndsPlayAnim
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SunlightContinues:
+	printstring 0xF1 @;STRINGID_SUNLIGHTSTRONG
+	waitmessage DELAY_1SECOND
+BattleScript_SunlightContinuesPlayAnim:
+	playanimation BANK_ATTACKER, ANIM_SUN, 0x0
+	end2
+
+BattleScript_SunlightContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_SunlightContinuesPlayAnim
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SandstormHailContinues:
 	printfromtable gSandstormHailContinuesStringIds
 	waitmessage DELAY_1SECOND
+BattleScript_SandstormHailContinuesPlayAnim:
 	playanimation2 BANK_ATTACKER, ANIM_ARG_1, 0x0
 	end2
+
+BattleScript_SandstormHailContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_SandstormHailContinuesPlayAnim
 
 BattleScript_WeatherDamage:
 	weatherdamage
@@ -139,8 +184,13 @@ BattleScript_FogContinues:
 	setword BATTLE_STRING_LOADER FogContinuesString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+BattleScript_FogContinuesPlayAnim:
 	playanimation 0x0 ANIM_FOG_CONTINUES 0x0
 	end2
+
+BattleScript_FogContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_FogContinuesPlayAnim
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -733,7 +783,6 @@ BattleScript_PrintCustomStringEnd3:
 	end3
 
 .align 2
-MysteriousAirCurrentContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xE1, 0xED, 0xE7, 0xE8, 0xD9, 0xE6, 0xDD, 0xE3, 0xE9, 0xE7, 0x00, 0xD5, 0xDD, 0xE6, 0x00, 0xD7, 0xE9, 0xE6, 0xE6, 0xD9, 0xE2, 0xE8, 0xFE, 0xD7, 0xE3, 0xE2, 0xE8, 0xDD, 0xE2, 0xE9, 0xD9, 0xE7, 0x00, 0xE8, 0xE3, 0x00, 0xD6, 0xE0, 0xE3, 0xEB, 0xAD, 0xFF
 FogEndedString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xD8, 0xDD, 0xE7, 0xD5, 0xE4, 0xE4, 0xD9, 0xD5, 0xE6, 0xD9, 0xD8, 0xAD, 0xFF
 FogContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xDD, 0xE7, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0xAD, 0xAD, 0xAD, 0xFF
 GrassyTerrainHealString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDB, 0xE6, 0xD5, 0xE7, 0xE7, 0xED, 0x00, 0xE8, 0xD9, 0xE6, 0xE6, 0xD5, 0xDD, 0xE2, 0x00, 0xE6, 0xD9, 0xE7, 0xE8, 0xE3, 0xE6, 0xD9, 0xD8, 0xFE, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xE8, 0xDC, 0xAB, 0xFF

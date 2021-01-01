@@ -686,6 +686,7 @@ BattleScript_WeakArmorActivates:
 
 WeakArmorModDef:
 	call BattleScript_AbilityPopUp
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE @;Ignored Sheer Force
 	setstatchanger STAT_DEF | DECREASE_1
 	statbuffchange BANK_TARGET | STAT_CERTAIN WeakArmorModSpd
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorModSpd
@@ -705,6 +706,7 @@ WeakArmorModSpd:
 	waitmessage DELAY_1SECOND
 	
 WeakArmorRevertPopUp:
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 	call BattleScript_AbilityPopUpRevert
 
 WeakArmorReturn:

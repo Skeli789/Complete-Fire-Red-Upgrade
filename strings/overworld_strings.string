@@ -253,17 +253,29 @@ Purchased
 #org @gText_StopZooming
 Stop zooming!
 
-#org @gText_CasualDifficult
-Casual/Difficult 
+#org @gText_VanillaDifficult
+Vanilla/Difficult
 
 #org @gText_Expert
-Expert 
+Expert
 
 #org @gText_Insane
-Insane 
+Insane
 
 #org @gText_Difficulty
-Mode
+ Mode
 
 #org @gText_PostGame
-Post-Game 
+ Post-Game
+
+#org @gText_MixedUnboundVersions
+ 1.0/1.1
+
+#org @gText_PlusTrades
+ Trade
+
+#org @gText_NewGame
+New Game 
+
+#org @gText_Plus
++

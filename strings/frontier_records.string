@@ -195,8 +195,8 @@ in a sandstorm!
 #org @gText_BattleCircusDescriptionHail
 in a hailstorm!
 
-#org @gText_BattleCircusDescriptionFog
-under the cover of a deep fog[.]
+#org @gText_BattleCircusDescriptionDeltaStream
+with strong winds blowing!\pFlying-type Pok\emon take less\ndamage from super effective moves!
 
 #org @gText_BattleCircusDescriptionTrickRoom
 in a Trick Room!\pSlower Pok\emon get to move first!
@@ -210,17 +210,17 @@ in a Wonder Room!\pDefense and Sp. Def stats are\nswapped!
 #org @gText_BattleCircusDescriptionGravity
 with intense gravity!\pNo Pok\emon will remain airborne!
 
-#org @gText_BattleCircusDescriptionIonDeluge
-with a deluge of ions in the air!\pAll Normal-type moves will become\nElectric-type!
+#org @gText_BattleCircusDescriptionMagnetRise
+with electromagnetism on the field!\pElectric- and Steel-type Pok\emon\ncan't be hit by Ground-type moves!
 
 #org @gText_BattleCircusDescriptionFairyLock
 with the battlefield locked down!\pNo Pok\emon will be able to switch\nout!
 
-#org @gText_BattleCircusDescriptionMudSport
-with mud showering the battlefield!\pAll Electric-type moves will be\nweakened!
+#org @gText_BattleCircusDescriptionPixies
+with pixies in the air!\pFairy-type Pok\emon will have their\nlowest defensive stat boosted!
 
-#org @gText_BattleCircusDescriptionWaterSport
-with water in the air!\pAll Fire-type moves will be\nweakened!
+#org @gText_BattleCircusDescriptionBadThoughts
+with negative emotions in the air!\pPok\emon that aren't part Dark-\ntype, Ghost-type, or have one of\lthe Abilities Unaware, Oblivious,\lor Magic Guard will be hurt at the\lend of each turn!
 
 #org @gText_BattleCircusDescriptionInverseBattle
 in an Inverse Battle!\pAll type matchups are reversed!

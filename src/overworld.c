@@ -2465,6 +2465,24 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	return NULL;
 }
 
+void GetGroudonPartyIndexIn8004(void)
+{
+	Var8004 = PARTY_SIZE;
+
+	#ifdef SPECIES_GROUDON
+	u32 i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == SPECIES_GROUDON)
+		{
+			Var8004 = i;
+			break;
+		}
+	}
+	#endif
+}
+
 void GetFirstNonEggIn8004(void)
 {
 	u32 i;

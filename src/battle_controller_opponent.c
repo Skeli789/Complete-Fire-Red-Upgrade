@@ -29,7 +29,7 @@ static u8 LoadCorrectTrainerPicId(void);
 
 void OpponentHandleChooseMove(void)
 {
-	u8 chosenMoveId;
+	u8 chosenMovePos;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef VAR_GAME_DIFFICULTY
@@ -51,9 +51,9 @@ void OpponentHandleChooseMove(void)
 			goto CHOOSE_DUMB_MOVE;
 
 		BattleAI_SetupAIData(0xF);
-		chosenMoveId = BattleAI_ChooseMoveOrAction();
+		chosenMovePos = BattleAI_ChooseMoveOrAction();
 
-		switch (chosenMoveId) {
+		switch (chosenMovePos) {
 			case AI_CHOICE_WATCH:
 				EmitTwoReturnValues(1, ACTION_WATCHES_CAREFULLY, 0);
 				break;
@@ -67,7 +67,7 @@ void OpponentHandleChooseMove(void)
 				break;
 
 			default: ;
-				u16 chosenMove = moveInfo->moves[chosenMoveId];
+				u16 chosenMove = moveInfo->moves[chosenMovePos];
 				u8 moveTarget = GetBaseMoveTarget(chosenMove, gActiveBattler);
 
 				if (moveTarget & MOVE_TARGET_USER)
@@ -96,9 +96,9 @@ void OpponentHandleChooseMove(void)
 				}
 
 				//You get 1 of 3 of the following gimmicks per Pokemon
-				if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
+				if (moveInfo->possibleZMoves[chosenMovePos]) //Checked first b/c Rayquaza can do all 3
 				{
-					if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
+					if (ShouldAIUseZMoveByMoveAndMovePos(gActiveBattler, gBankTarget, moveInfo->moves[chosenMovePos], chosenMovePos))
 						gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 				}
 				else if (moveInfo->canMegaEvolve)
@@ -111,20 +111,20 @@ void OpponentHandleChooseMove(void)
 							gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 					}
 				}
-				else if (moveInfo->possibleMaxMoves[chosenMoveId]) //Handles the "Can I Dynamax" checks
+				else if (moveInfo->possibleMaxMoves[chosenMovePos]) //Handles the "Can I Dynamax" checks
 				{
 					if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 				}
 
 				//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
-				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
+				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
 				TryRemovePartnerDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove, TRUE);
 
-				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
-				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
+				EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
+				TryRechoosePartnerMove(moveInfo->moves[chosenMovePos]);
 				break;
 		}
 
@@ -136,16 +136,16 @@ void OpponentHandleChooseMove(void)
 		u16 move;
 		do
 		{
-			chosenMoveId = Random() & 3;
-			move = moveInfo->moves[chosenMoveId];
+			chosenMovePos = Random() & 3;
+			move = moveInfo->moves[chosenMovePos];
 		} while (move == MOVE_NONE);
 
 		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
-			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, gActiveBattler, 0, 0, 0, FALSE);
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
 		else
-			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, FOE(gActiveBattler), 0, 0, 0, FALSE);
 
 		OpponentBufferExecCompleted();
 	}

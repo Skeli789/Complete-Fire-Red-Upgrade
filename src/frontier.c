@@ -87,15 +87,15 @@ extern const u8 gText_BattleCircusDescriptionRain[];
 extern const u8 gText_BattleCircusDescriptionSun[];
 extern const u8 gText_BattleCircusDescriptionSandstorm[];
 extern const u8 gText_BattleCircusDescriptionHail[];
-extern const u8 gText_BattleCircusDescriptionFog[];
+extern const u8 gText_BattleCircusDescriptionDeltaStream[];
 extern const u8 gText_BattleCircusDescriptionTrickRoom[];
 extern const u8 gText_BattleCircusDescriptionMagicRoom[];
 extern const u8 gText_BattleCircusDescriptionWonderRoom[];
 extern const u8 gText_BattleCircusDescriptionGravity[];
-extern const u8 gText_BattleCircusDescriptionIonDeluge[];
+extern const u8 gText_BattleCircusDescriptionMagnetRise[];
 extern const u8 gText_BattleCircusDescriptionFairyLock[];
-extern const u8 gText_BattleCircusDescriptionMudSport[];
-extern const u8 gText_BattleCircusDescriptionWaterSport[];
+extern const u8 gText_BattleCircusDescriptionPixies[];
+extern const u8 gText_BattleCircusDescriptionBadThoughts[];
 extern const u8 gText_BattleCircusDescriptionInverseBattle[];
 extern const u8 gText_BattleCircusDescriptionDynamax[];
 extern const u8 gText_BattleCircusDescriptionTradeMon[];
@@ -225,15 +225,15 @@ const u8* const sBattleCircusEffectDescriptions[] =
 	gText_BattleCircusDescriptionSun,
 	gText_BattleCircusDescriptionSandstorm,
 	gText_BattleCircusDescriptionHail,
-	gText_BattleCircusDescriptionFog,
+	gText_BattleCircusDescriptionDeltaStream,
 	gText_BattleCircusDescriptionTrickRoom,
 	gText_BattleCircusDescriptionMagicRoom,
 	gText_BattleCircusDescriptionWonderRoom,
 	gText_BattleCircusDescriptionGravity,
-	gText_BattleCircusDescriptionIonDeluge,
+	gText_BattleCircusDescriptionMagnetRise,
 	gText_BattleCircusDescriptionFairyLock,
-	gText_BattleCircusDescriptionMudSport,
-	gText_BattleCircusDescriptionWaterSport,
+	gText_BattleCircusDescriptionPixies,
+	gText_BattleCircusDescriptionBadThoughts,
 	gText_BattleCircusDescriptionInverseBattle,
 	gText_BattleCircusDescriptionDynamax,
 	gText_BattleCircusDescriptionTradeMon,
@@ -687,7 +687,8 @@ bool8 AreMegasZMovesBannedInTier(u8 tier)
 
 bool8 IsMegaZMoveBannedBattle(void)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE)
+	if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE
+	&& gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER) //Only in Frontier - works fine in regular Gym Battles
 		return TRUE;
 
 	return gBattleTypeFlags & BATTLE_TYPE_TRAINER //Excludes Raid Battles
@@ -1520,38 +1521,48 @@ void sp072_LoadBattleCircusEffects(void)
 	}
 
 	u8 totalEffects = 1;
+	u8 playerPartyCount = CalculatePlayerPartyCount();
 	bool8 sideEffectsAllowed = FALSE;
 	bool8 personalEffectsAllowed = FALSE;
+	bool8 tradeMonAllowed = FALSE;
 	u16 streak = GetCurrentBattleTowerStreak();
 
 	switch (streak) {
 		case 0 ... 9:
 			break;
 		case 10 ... 19:
+			if (playerPartyCount >= 5) //Basically 6v6 only
+				tradeMonAllowed = TRUE;
 			sideEffectsAllowed = TRUE;
 			break;
 		case 20 ... 29:
+			if (playerPartyCount >= 4) //6v6 and Doubles only
+				tradeMonAllowed = TRUE;
 			sideEffectsAllowed = TRUE;
 			totalEffects = 2;
 			break;
 		case 30 ... 39:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 2;
 			break;
 		case 40 ... 49:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 3;
 			break;
 		case 50 ... 70:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 4;
 			break;
 		default:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 5;
 			break;
 	}
@@ -1572,6 +1583,7 @@ void sp072_LoadBattleCircusEffects(void)
 			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
 			|| (dynamaxActive && gBitTable[effectNum] & BATTLE_CIRCUS_DYNAMAX) //No point in stacking Dynamax effect
 			|| (randomBattleActive && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //No point in swapping mons in a random battle
+			|| (!tradeMonAllowed && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //Swapping mons becomes available later on depending on team size
 			|| (!sideEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG && gBitTable[effectNum] <= LAST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG)
 			|| (!personalEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_PERSONAL_EFFECT_FLAG));
 
@@ -1586,8 +1598,6 @@ void sp072_LoadBattleCircusEffects(void)
 				weather = WEATHER_SANDSTORM;
 			else if (gBitTable[effectNum] == BATTLE_CIRCUS_HAIL)
 				weather = WEATHER_STEADY_SNOW;
-			else if (gBitTable[effectNum] == BATTLE_CIRCUS_FOG)
-				weather = WEATHER_FOG_2;
 
 			SetSav1Weather(weather); //Followed up by a doweather in the script
 		}

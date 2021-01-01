@@ -8,9 +8,7 @@
  *		  Pokemon have finished their actions for the turn.
  */
 
-#define BattleScript_RainContinuesOrEnds (u8*) 0x81D8A64
 #define BattleScript_SunlightFaded (u8*) 0x81D8B18
-#define BattleScript_SunlightContinues (u8*) 0x81D8B0A
 #define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3)
@@ -32,10 +30,17 @@
 #define BattleScript_GiveExp ((u8*) 0x81D8694)
 
 extern const u8 BattleScript_MysteriousAirCurrentContinues[];
+extern const u8 BattleScript_MysteriousAirCurrentContinuesNoString[];
+extern const u8 BattleScript_RainContinuesOrEnds[];
+extern const u8 BattleScript_RainContinuesOrEndsNoString[];
+extern const u8 BattleScript_SunlightContinues[];
+extern const u8 BattleScript_SunlightContinuesNoString[];
 extern const u8 BattleScript_SandstormHailContinues[];
+extern const u8 BattleScript_SandstormHailContinuesNoString[];
 extern const u8 BattleScript_WeatherDamage[];
 extern const u8 BattleScript_FogEnded[];
 extern const u8 BattleScript_FogContinues[];
+extern const u8 BattleScript_FogContinuesNoString[];
 extern const u8 BattleScript_SeaOfFireDamage[];
 extern const u8 BattleScript_GrassyTerrainHeal[];
 extern const u8 BattleScript_AquaRing[];

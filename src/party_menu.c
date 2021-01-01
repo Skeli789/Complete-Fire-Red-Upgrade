@@ -33,6 +33,7 @@
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/dns.h"
 #include "../include/new/evolution.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/form_change.h"
@@ -997,8 +998,11 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 		&& CanUseEscapeRopeOnCurrMap() //Only add if usable
 		#ifndef DEBUG_HMS
 		&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
-		&& CheckBagHasItem(ITEM_TM28_DIG, 1) > 0
-		&& CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE
+		&& (
+		 #ifdef FLAG_BOUGHT_ADM
+		 FlagGet(FLAG_BOUGHT_ADM) ||
+		 #endif
+		 (CheckBagHasItem(ITEM_TM28_DIG, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE))
 		#endif
 		)
 		{
@@ -1106,6 +1110,9 @@ static void FieldCallback_Dive(void)
 static bool8 SetUpFieldMove_Dive(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
+		return FALSE;
+
+	if (!HasBadgeToUseFieldMove(FIELD_MOVE_DIVE))
 		return FALSE;
 
 	#if (defined FLAG_BOUGHT_ADM && !defined DEBUG_HMS)
@@ -1284,7 +1291,14 @@ void sp10A_CanUseCutOnTree(void)
 
 	Var8004 = PARTY_SIZE;
 	if (HasBadgeToUseFieldMove(FIELD_MOVE_CUT))
-		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_CUT, item, SHOULDNT_BE_SURFING);
+	{
+		#ifdef FLAG_BOUGHT_ADM
+		if (FlagGet(FLAG_BOUGHT_ADM))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
+			Var8004 = PartyHasMonWithFieldMovePotential(MOVE_CUT, item, SHOULDNT_BE_SURFING);
+	}
 }
 
 void sp10B_CanUseRockSmashOnRock(void)
@@ -1297,7 +1311,14 @@ void sp10B_CanUseRockSmashOnRock(void)
 
 	Var8004 = PARTY_SIZE;
 	if (HasBadgeToUseFieldMove(FIELD_MOVE_ROCK_SMASH))
-		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_ROCKSMASH, item, SHOULDNT_BE_SURFING);
+	{
+		#ifdef FLAG_BOUGHT_ADM
+		if (FlagGet(FLAG_BOUGHT_ADM))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
+			Var8004 = PartyHasMonWithFieldMovePotential(MOVE_ROCKSMASH, item, SHOULDNT_BE_SURFING);
+	}
 }
 
 void sp10C_CanUseStrengthOnBoulder(void)
@@ -1310,7 +1331,14 @@ void sp10C_CanUseStrengthOnBoulder(void)
 
 	Var8004 = PARTY_SIZE;
 	if (HasBadgeToUseFieldMove(FIELD_MOVE_STRENGTH))
-		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_STRENGTH, item, SHOULDNT_BE_SURFING);
+	{
+		#ifdef FLAG_BOUGHT_ADM
+		if (FlagGet(FLAG_BOUGHT_ADM))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
+			Var8004 = PartyHasMonWithFieldMovePotential(MOVE_STRENGTH, item, SHOULDNT_BE_SURFING);
+	}
 }
 
 //Move Item - Credits to Sagiri/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1828,7 +1856,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 	switch (item) {
 		case ITEM_GRACIDEA:
 			#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
-			if (species == SPECIES_SHAYMIN)
+			if (species == SPECIES_SHAYMIN && !IsNightTime()) //Shaymin can't change form at night
 			{
 				species = SPECIES_SHAYMIN_SKY;
 				DoItemFormChange(mon, species);

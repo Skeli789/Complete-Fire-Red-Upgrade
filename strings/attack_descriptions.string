@@ -800,7 +800,7 @@ The user attacks\nwhile stitching the\ntarget's shadow to\nthe ground to\npreven
 The user shines a\nspotlight on the\ntarget so that only\nthe target will be\nattacked.
 
 #org @DESC_STOMPINGTANTRUM
-If the user's\nprevious moves has\nfailed, the power\nof this move\ndoubles.
+If the previous move\nfailed, frustration\ndoubles the power of\nthis move.
 
 #org @DESC_STRENGTHSAP
 The user drains HP\nequal to the foe's\nAttack stat. It\nalso lowers the\nfoe's Attack stat.
@@ -1106,7 +1106,7 @@ Inflicts the more\neffective of physical\nor special damage. May\npoison the tar
 The user explodes,\nfainting in the process.\nIts power doubles\non Misty Terrain.
 
 #org @DESC_GRASSY_GLIDE
-The user glides\non the ground to\nattack. Will move\nfirst on Grassy Terrain.
+The user glides\non the ground to\nattack. Hits first\non Grassy Terrain.
 
 #org @DESC_RISING_VOLTAGE
 The user attacks\nwith voltage from the\nground. It doubles in\npower on Electric Terrain.
@@ -1151,7 +1151,7 @@ The user restores\nHP and the status\nof itself and its\nally in battle.
 The user strikes\nthe foe fiercely.\nIt always results in\na critical hit.
 
 #org @DESC_SURGING_STRIKES
-The user strikes\nthree consecutive times.\nIt always results in\na critical hit.
+The user strikes\nthree times in a row.\nIt always results in\na critical hit.
 
 #org @DESC_FREEZING_GLARE
 The user attacks\nwith psychic power.\nIt may leave the\ntarget frozen.
