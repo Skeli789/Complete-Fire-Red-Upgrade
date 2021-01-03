@@ -76,6 +76,9 @@ Capture first!
 #org @gText_DexNav_ChooseMon
 Choose a Pok\emon.
 
+#org @gText_DexNav_PokemonSelected
+[BUFFER1] is selected.
+
 #org @gText_DexNav_Invalid
 That Pok\emon can't be searched yet!
 
@@ -83,7 +86,7 @@ That Pok\emon can't be searched yet!
 There's no data for that Pok\emon[.]
 
 #org @gText_DexNav_Locked
-Pok\emon searchable via [R_BUTTON]!
+[BUFFER1] is searchable via [R_BUTTON]!
 
 #org @gText_DexNav_TooDark
 It's too dark to search for a Pok\emon!
@@ -102,3 +105,12 @@ It's too dark to search for a Pok\emon!
 
 #org @gText_MenuCube
 Cube
+
+#org @gText_DexNav_ListMenuRegister
+Register
+
+#org @gText_DexNav_ListMenuScan
+Scan
+
+#org @gText_DexNav_ListMenuCancel
+Cancel

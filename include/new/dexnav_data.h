@@ -59,13 +59,17 @@ extern const u8 gText_DexNav_CaptureToSee[];
 extern const u8 gText_DexNav_ChooseMon[];
 extern const u8 gText_DexNav_Invalid[];
 extern const u8 gText_DexNav_NoDataForSlot[];
+extern const u8 gText_DexNav_PokemonSelected[];
 extern const u8 gText_DexNav_Locked[];
 extern const u8 gText_DexNav_TooDark[];
 extern const u8 gText_DexNav_UpArrow[];
 extern const u8 gText_DexNav_DownArrow[];
 extern const u8 gText_DexNav_LeftArrow[];
 extern const u8 gText_DexNav_RightArrow[];
-
+extern const u8 gText_DexNav_ListMenuRegister[];
+extern const u8 gText_DexNav_ListMenuScan[];
+extern const u8 gText_DexNav_ListMenuCancel[];
+	
 // DEFINES
 #define sSearchLevels ((u8*) 0x203C75C)
 
@@ -135,6 +139,7 @@ enum DexNavMessages
 {
 	MESSAGE_INVALID,
 	MESSAGE_CHOOSE_MON,
+	MESSAGE_POKEMON_SELECTED,
 	MESSAGE_REGISTERED,
 	MESSAGE_NO_DATA,
 	MESSAGE_TOO_DARK,
@@ -142,9 +147,9 @@ enum DexNavMessages
 
 enum BGs
 {
+	BG_CONTEXT_MENU,
+	BG_UNUSED,
 	BG_TEXT,
-	BG_UNUSED_1,
-	BG_UNUSED_2,
 	BG_BACKGROUND,
 };
 
@@ -159,6 +164,7 @@ enum
 	WIN_LAND,
 	WIN_MAP_NAME,
 	WIN_INSTRUCTIONS,
+	WIN_CONTEXT_MENU,
 	WINDOW_COUNT,
 };
 
@@ -254,12 +260,23 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .paletteNum = 15,
         .baseBlock = 358,
 	},
+	[WIN_CONTEXT_MENU] =
+	{
+        .bg = BG_CONTEXT_MENU,
+        .tilemapLeft = 22,
+        .tilemapTop = 13,
+        .width = 7,
+        .height = 6,
+        .paletteNum = 14,
+        .baseBlock = 384,
+	},
+	//Base block 500 is used for frame tiles
     DUMMY_WIN_TEMPLATE
 };
 
 static const struct BgTemplate sDexNavBgTemplates[] =
 {
-    [BG_TEXT] =
+    [BG_CONTEXT_MENU] =
 	{
         .bg = 0,
         .charBaseIndex = 0,
@@ -269,7 +286,7 @@ static const struct BgTemplate sDexNavBgTemplates[] =
         .priority = 0,
         .baseTile = 0,
     },
-	[BG_UNUSED_1] =
+	[BG_UNUSED] =
     {
         .bg = 1,
         .charBaseIndex = 1,
@@ -279,7 +296,7 @@ static const struct BgTemplate sDexNavBgTemplates[] =
         .priority = 1,
         .baseTile = 0,
     },
-	[BG_UNUSED_2] =
+	[BG_TEXT] =
     {
         .bg = 2,
         .charBaseIndex = 2,
@@ -618,3 +635,10 @@ static const struct SpriteSheet sStarLitSpriteSheet = {&gInterfaceGfx_dexnavStar
 static const struct SpriteSheet sStarDullSpriteSheet = {&gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 1)*32], (8 * 8) / 2, 0x2613};
 static const struct SpriteSheet sHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, 0x8472};
 static const struct SpritePalette sHeldItemSpritePalette = {(const u16*) 0x0845A3EC, 0x8472};
+
+static const struct ListMenuItem sContextMenuListItems[] =
+{
+	{gText_DexNav_ListMenuRegister, 0},
+	{gText_DexNav_ListMenuScan, 1},
+	{gText_DexNav_ListMenuCancel, 2},
+};

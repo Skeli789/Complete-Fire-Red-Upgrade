@@ -1449,6 +1449,7 @@ LoadBattleMenuWindowGfx = 0x800F380 | 1;
 LoadBattleTextboxAndBackground = 0x800F420 | 1;
 RemoveHealthbarWindow = 0x804A6D8 | 1;
 DrawHealthbar = 0x804A6E8 | 1;
+GetUserFrameGraphicsInfo = 0x8069788 | 1;
 DoScheduledBgTilemapCopiesToVram = 0x80F67B8 | 1;
 DrawStdWindowFrame = 0x80F6F1C | 1;
 ClearDialogWindowAndFrame = 0x80F6F54 | 1;
@@ -1485,7 +1486,6 @@ NamingScreen_GetCharAtKeyboardPos = 0x809F634 | 1;
 DeleteTextCharacter = 0x809F700 | 1;
 NameChooserSelectLetter = 0x809F75C | 1;
 
-
 /* Menu Functions */
 MenuHelpers_LinkSomething = 0x80BF708 | 1;
 Menu_LoadStdPalAt = 0x80F77CC | 1;
@@ -1506,7 +1506,7 @@ BoxCreateTask = 0x81119D4 | 1;
 /* Text Window Functions */
 GetWindowFrameTilesPal = 0x8069788 | 1;
 LoadWindowGfx = 0x14FFC4 | 1;
-LoadUserWindowBorderGfx = 0x815001C | 1;
+TextWindow_SetUserSelectedFrame = 0x815001C | 1;
 DrawTextBorderOuter = 0x8150048 | 1;
 DrawTextBorderInner = 0x81501D0 | 1;
 stdpal_get = 0x8150408 | 1;

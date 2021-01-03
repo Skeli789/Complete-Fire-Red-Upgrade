@@ -14,6 +14,7 @@
 #include "../include/m4a.h"
 #include "../include/main.h"
 #include "../include/metatile_behavior.h"
+#include "../include/new_menu_helpers.h"
 #include "../include/overworld.h"
 #include "../include/palette.h"
 #include "../include/pokemon.h"
@@ -26,6 +27,7 @@
 #include "../include/start_menu.h"
 #include "../include/string_util.h"
 #include "../include/text.h"
+#include "../include/text_window.h"
 #include "../include/wild_encounter.h"
 #include "../include/window.h"
 #include "../include/constants/abilities.h"
@@ -1727,6 +1729,9 @@ static void PrintDexNavMessage(u8 messageId)
 		case MESSAGE_CHOOSE_MON:
 			text = gText_DexNav_ChooseMon;
 			break;
+		case MESSAGE_POKEMON_SELECTED:
+			text = gText_DexNav_PokemonSelected;
+			break;
 		case MESSAGE_REGISTERED:
 			text = gText_DexNav_Locked;
 			break;
@@ -1741,8 +1746,9 @@ static void PrintDexNavMessage(u8 messageId)
 			break;
 	}
 
+	StringExpandPlaceholders(gStringVar4, text);
 	CleanWindow(WIN_MESSAGE);
-	WindowPrint(WIN_MESSAGE, 1, 2, 8, &sDexNav_WhiteText, 0, text);
+	WindowPrint(WIN_MESSAGE, 1, 2, 8, &sDexNav_WhiteText, 0, gStringVar4);
 	CommitWindow(WIN_MESSAGE);
 }
 
@@ -1844,6 +1850,31 @@ static bool8 CapturedAllWaterBasedPokemon(void)
 	return TRUE;
 }
 
+static void RegisterSpecies(u16 species)
+{
+	if (species == SPECIES_UNOWN)
+	{
+		u8 letter = sDexNavGuiPtr->unownFormsByDNavIndices[sDexNavGuiPtr->selectedIndex / 2] - 1;
+		if (letter > 0)
+			species = SPECIES_UNOWN_B + letter - 1;
+	}
+
+	//Species was valid
+	DexNavDisplaySpeciesData();
+	StringCopy(gStringVar1, gSpeciesNames[species]);
+	PrintDexNavMessage(MESSAGE_REGISTERED);
+	PlaySE(SE_POKENAV_SEARCHING);
+
+	//Create value to store in a var
+	u16 varStore = (sDexNavGuiPtr->selectedArr << 15) | species;
+	VarSet(VAR_DEXNAV, varStore);
+
+	//Update R-Button mode if applicable
+	#ifdef VAR_R_BUTTON_MODE
+	VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
+	#endif
+}
+
 //GUI
 
 static void CB1_OpenDexNavScan(void)
@@ -1873,6 +1904,49 @@ static void Task_DexNavFadeOutToScan(u8 taskId)
 		Free(sDexNavGuiPtr);
 		FreeAllWindowBuffers();
 		DestroyTask(taskId);
+	}
+}
+
+static void RemoveContextMenu(u8 taskId)
+{
+	DestroyTask(gTasks[taskId].data[0]);
+	CleanWindow(WIN_CONTEXT_MENU);
+	CommitWindow(WIN_CONTEXT_MENU);
+	HideBg(BG_CONTEXT_MENU);
+}
+
+static void Task_HandleContextMenu(u8 taskId)
+{
+	s32 input = ListMenu_ProcessInput(gTasks[taskId].data[0]);
+	switch (input)
+	{
+		case LIST_CANCEL:
+			RETURN_TO_MAIN_INTERFACE:
+			PlaySE(SE_SELECT);
+			RemoveContextMenu(taskId);
+			gTasks[taskId].func = Task_DexNavWaitForKeyPress;
+			break;
+		case LIST_NOTHING_CHOSEN:
+            break;
+		default:
+			switch (input)
+			{
+				case 0: //Register
+					RegisterSpecies(gTasks[taskId].data[1]); //Species
+					RemoveContextMenu(taskId);
+					gTasks[taskId].func = Task_DexNavWaitForKeyPress;
+					break;
+				case 1: //Scan
+					Var8008 = gTasks[taskId].data[1]; //Species
+					Var8009 = sDexNavGuiPtr->selectedArr;
+					PlaySE(SE_POKENAV_SEARCHING);
+					RemoveContextMenu(taskId);
+					BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
+					gTasks[taskId].func = Task_DexNavFadeOutToScan;
+					break;
+				default: //Close
+					goto RETURN_TO_MAIN_INTERFACE;
+			}
 	}
 }
 
@@ -1906,6 +1980,53 @@ static void UpdateDexNavWaterPage(s8 direction)
 	}
 }
 
+static void ContextMenuMoveCursorFunc(unusedArg s32 listIndex, bool8 onInit, unusedArg struct ListMenu* list)
+{
+	if (!onInit) //Changing selection
+		PlaySE(SE_SELECT);
+}
+
+static void ContextMenuItemPrintFunc(unusedArg u8 windowId, unusedArg s32 listIndex, unusedArg u8 y)
+{
+}
+
+static void ShowSelectedContextMenu(u8 taskId, u16 species)
+{
+	CleanWindow(WIN_CONTEXT_MENU);
+
+	//Set up the player's chosen border
+	TextWindow_SetUserSelectedFrame(WIN_CONTEXT_MENU, 500, 0xE0); //500 is a base block not used
+	DrawStdFrameWithCustomTileAndPalette(WIN_CONTEXT_MENU, FALSE, 500, 14);
+	
+	//Prepare the list menu
+	gMultiuseListMenuTemplate->items = sContextMenuListItems;
+	gMultiuseListMenuTemplate->totalItems = 3; //Register, Scan, Close
+	gMultiuseListMenuTemplate->moveCursorFunc = ContextMenuMoveCursorFunc;
+	gMultiuseListMenuTemplate->itemPrintFunc = ContextMenuItemPrintFunc;
+
+	gMultiuseListMenuTemplate->windowId = WIN_CONTEXT_MENU;
+	gMultiuseListMenuTemplate->header_X = 0;
+	gMultiuseListMenuTemplate->item_X = 8; //Text is 8 px from left side of tile
+	gMultiuseListMenuTemplate->cursor_X = 0; //Cursor is 0 px from left side of tile
+	gMultiuseListMenuTemplate->lettersSpacing = 0;
+	gMultiuseListMenuTemplate->itemVerticalPadding = 2; //2 px between items
+	gMultiuseListMenuTemplate->upText_Y = 3; //3 px from top of tile
+	gMultiuseListMenuTemplate->maxShowed = 3; //3 at a time
+	gMultiuseListMenuTemplate->fontId = 2; //Normal size
+	gMultiuseListMenuTemplate->cursorPal = 2; //Grey
+	gMultiuseListMenuTemplate->fillValue = 1;
+	gMultiuseListMenuTemplate->cursorShadowPal = 3; //Light Grey
+	gMultiuseListMenuTemplate->cursorKind = 0;
+	gMultiuseListMenuTemplate->scrollMultiple = LIST_NO_MULTIPLE_SCROLL;
+
+	gTasks[taskId].data[0] = ListMenuInit(gMultiuseListMenuTemplate, 0, 0);
+	gTasks[taskId].data[1] = species;
+
+	//Move everything to VRAM
+	CommitWindow(WIN_CONTEXT_MENU);
+	ShowBg(BG_CONTEXT_MENU);
+}
+
 static void Task_DexNavWaitForKeyPress(u8 taskId)
 {
 	if (JOY_NEW(A_BUTTON))
@@ -1922,12 +2043,12 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 					species = SPECIES_UNOWN_B + letter - 1;
 			}
 
-			//Species was valid, save and enter OW HUD mode
-			Var8008 = species;
-			Var8009 = sDexNavGuiPtr->selectedArr;
-			PlaySE(SE_POKENAV_SEARCHING);
-			BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
-			gTasks[taskId].func = Task_DexNavFadeOutToScan;
+			//Species was valid, open context menu to confirm user action
+			PlaySE(SE_SELECT);
+			StringCopy(gStringVar1, gSpeciesNames[species]);
+			PrintDexNavMessage(MESSAGE_POKEMON_SELECTED);
+			ShowSelectedContextMenu(taskId, species);
+			gTasks[taskId].func = Task_HandleContextMenu;
 			return;
 		}
 		else //No species in this slot
@@ -1947,26 +2068,7 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 
 		if (species != SPECIES_NONE && Overworld_GetFlashLevel() == 0)
 		{
-			if (species == SPECIES_UNOWN)
-			{
-				u8 letter = sDexNavGuiPtr->unownFormsByDNavIndices[sDexNavGuiPtr->selectedIndex / 2] - 1;
-				if (letter > 0)
-					species = SPECIES_UNOWN_B + letter - 1;
-			}
-
-			//Species was valid
-			DexNavDisplaySpeciesData();
-			PrintDexNavMessage(MESSAGE_REGISTERED);
-			PlaySE(SE_POKENAV_SEARCHING);
-
-			//Create value to store in a var
-			u16 varStore = (sDexNavGuiPtr->selectedArr << 15) | species;
-			VarSet(VAR_DEXNAV, varStore);
-
-			//Update R-Button mode if applicable
-			#ifdef VAR_R_BUTTON_MODE
-			VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
-			#endif
+			RegisterSpecies(species);
 		}
 		else //Not valid species
 		{
