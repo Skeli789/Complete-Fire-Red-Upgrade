@@ -1960,6 +1960,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 			case ABILITY_TANGLINGHAIR:
 			case ABILITY_GOOEY:
+			case ABILITY_COTTONDOWN: //TODO REMOVE
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& CheckContact(move, gBankAttacker)
@@ -2050,12 +2051,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_COTTONDOWN:
+			/*case ABILITY_COTTONDOWN: //TODO
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank))
 				{
 				}
-				break;
+				break;*/
 
 			case ABILITY_SANDSPIT:
 				if (MOVE_HAD_EFFECT

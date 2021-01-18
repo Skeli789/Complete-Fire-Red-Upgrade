@@ -30,6 +30,7 @@ void ShouldDoAIShiftSwitch(void);
 void ClearCachedAIData(void);
 void RechooseAIMoveAfterSwitchIfNecessary(void);
 void TryChangeMoveTargetToCounterPlayerProtectCheese(void);
+void PickRaidBossRepeatedMove(u8 moveLimitations);
 
 //Functions Hooked In
 void BattleAI_HandleItemUseBeforeAISetup(void);

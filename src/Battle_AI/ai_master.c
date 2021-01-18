@@ -95,6 +95,8 @@ static u8 GetChanceOfPredictingPlayerNormalSwitch(void);
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank);
 static bool8 IsPlayerTryingToCheeseWithItemUsage(u8 playerBank, u8 aiBank);
 static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank);
+static void PickNewAIMove(u8 aiBank);
+static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank);
 
 void BattleAI_HandleItemUseBeforeAISetup(void)
 {
@@ -1006,6 +1008,17 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 	if (IS_SINGLE_BATTLE)
 	{
+		u8 foeClass = PredictBankFightingStyle(foe1);
+
+		if (!IsClassDamager(foeClass)) //Enemy is just trying to stall out
+		{
+			if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
+				return FALSE;
+
+			if (Random() & 1)
+				return FALSE; //Only switch 50% of the time
+		}
+
 		if (!MoveWouldHitFirst(predictedMove1, foe1, gActiveBattler)) //AI goes first
 		{
 			if (CanKnockOut(gActiveBattler, foe1)) //And AI can knock out the foe
@@ -1029,6 +1042,9 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	}
 	else //Double Battle
 	{
+		if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
+			return FALSE;
+
 		u16 bestMove1 = gNewBS->ai.bestDoublesKillingMoves[gActiveBattler][foe1];
 		u16 bestMove2 = gNewBS->ai.bestDoublesKillingMoves[gActiveBattler][foe2];
 		if (GetDoubleKillingScore(bestMove1, gActiveBattler, foe1) >= BEST_DOUBLES_KO_SCORE - 2 //10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
@@ -1753,7 +1769,7 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 			if
 			//OPTION A
 				((resultFlags & MOVE_RESULT_NO_EFFECT //Move will have no effect on switched in mon
-				&& (switchFlags & ( SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES))) //Will either not waste the switch or can wall
+				&& (switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES))) //Will either not waste the switch or can wall
 
 			//OPTION B
 			||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
@@ -2621,7 +2637,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								{
 									faintsFromMove = TRUE;
 
-									if (flags[i] & SWITCHING_FLAG_OUTSPEEDS && PriorityCalc(foe, ACTION_USE_MOVE, move) > 0) //This move KOs and has Priority
+									if (flags[i] & SWITCHING_FLAG_OUTSPEEDS && PriorityCalc(foe, ACTION_USE_MOVE, move) > 0 //This move KOs and has Priority
+									&& (gTerrainType != PSYCHIC_TERRAIN || !CheckMonGrounding(consideredMon))) //And the mon can be hit by priority
 										flags[i] &= ~SWITCHING_FLAG_OUTSPEEDS; //Then remove the outspeed flag so the AI doesn't think it can outspeed
 
 									break; //Only need 1 check for this to pass
@@ -3454,54 +3471,7 @@ void RechooseAIMoveAfterSwitchIfNecessary(void)
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank)
 {
 	if (IsPlayerTryingToCheeseAI(playerBank, aiBank))
-	{
-		u8 backupAtk = gBankAttacker;
-		u8 backupDef = gBankTarget;
-
-		gBankAttacker = gActiveBattler = aiBank;
-		ClearCachedAIData(); //Need recalculation since data was for old mon
-		Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Clear old predictions
-		UpdateBestDoublesKillingMoves();
-
-		BattleAI_SetupAIData(0xF);
-		u8 chosenMovePos = BattleAI_ChooseMoveOrAction();
-		if (chosenMovePos < MAX_MON_MOVES)
-		{
-			gBattleStruct->chosenMovePositions[aiBank] = chosenMovePos;
-			gChosenMovesByBanks[aiBank] = gBattleMons[aiBank].moves[chosenMovePos];
-			u8 moveTarget = GetBaseMoveTarget(gChosenMovesByBanks[aiBank], aiBank);
-
-			if (moveTarget & MOVE_TARGET_USER)
-			{
-				gBankTarget = aiBank;
-			}
-			else if (moveTarget & MOVE_TARGET_USER_OR_PARTNER)
-			{
-				if (SIDE(gBankTarget) != SIDE(aiBank))
-					gBankTarget = aiBank;
-			}
-			else if (moveTarget & MOVE_TARGET_BOTH)
-			{
-				if (SIDE(aiBank) == B_SIDE_PLAYER)
-				{
-					gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-						gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-				}
-				else
-				{
-					gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-						gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-				}
-			}
-
-			gBattleStruct->moveTarget[aiBank] = gBankTarget;
-		}
-
-		gBankAttacker = backupAtk;
-		gBankTarget = backupDef;
-	}
+		PickNewAIMove(aiBank);
 }
 
 static u8 GetChanceOfPredictingPlayerNormalSwitch(void)
@@ -3556,6 +3526,61 @@ static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
 	return FALSE;
 }
 
+
+static void PickNewAIMove(u8 aiBank)
+{
+	u8 backupAtk = gBankAttacker;
+	u8 backupDef = gBankTarget;
+
+	gBankAttacker = gActiveBattler = aiBank;
+	ClearCachedAIData(); //Need recalculation since data was for old mon
+	Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Clear old predictions
+	UpdateBestDoublesKillingMoves();
+
+	BattleAI_SetupAIData(0xF);
+	u8 chosenMovePos = BattleAI_ChooseMoveOrAction();
+	if (chosenMovePos < MAX_MON_MOVES)
+	{
+		gBattleStruct->chosenMovePositions[aiBank] = chosenMovePos;
+		gChosenMovesByBanks[aiBank] = gBattleMons[aiBank].moves[chosenMovePos];
+		u8 moveTarget = GetBaseMoveTarget(gChosenMovesByBanks[aiBank], aiBank);
+		UpdateCurrentTargetByMoveTarget(moveTarget, aiBank);
+		gBattleStruct->moveTarget[aiBank] = gBankTarget;
+	}
+
+	gBankAttacker = backupAtk;
+	gBankTarget = backupDef;
+}
+
+
+static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank)
+{
+	if (moveTarget & MOVE_TARGET_USER)
+	{
+		gBankTarget = aiBank;
+	}
+	else if (moveTarget & MOVE_TARGET_USER_OR_PARTNER)
+	{
+		if (SIDE(gBankTarget) != SIDE(aiBank))
+			gBankTarget = aiBank;
+	}
+	else if (moveTarget & MOVE_TARGET_BOTH)
+	{
+		if (SIDE(aiBank) == B_SIDE_PLAYER)
+		{
+			gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+			if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+				gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+		}
+		else
+		{
+			gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+				gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+		}
+	}
+}
+
 //If the Player used Protect to cheese AI, cheese back and change target if necessary
 void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 {
@@ -3577,4 +3602,29 @@ void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 		}
 	}
 	#endif
+}
+
+//The smart AI should actually pick a good move
+void PickRaidBossRepeatedMove(u8 moveLimitations)
+{
+	if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
+	#ifdef VAR_GAME_DIFFICULTY
+	&& VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY //And the player doesn't want a challenge
+	#endif
+	)
+	{
+		PickNewAIMove(gBankAttacker);
+	}
+	else //Dumb AI picks random move
+	{
+		u8 curPos;
+
+		do
+		{
+			curPos = gBattleStruct->chosenMovePositions[gBankAttacker] = Random() & 3;
+			gCurrentMove = gBattleMons[gBankAttacker].moves[curPos]; //Choose a new move
+		} while (gCurrentMove == MOVE_NONE || (gBitTable[curPos] & moveLimitations));
+
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, FALSE);
+	}
 }

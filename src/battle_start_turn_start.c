@@ -1462,7 +1462,7 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 {
 	if (IsRaidBattle() && gNewBS->dynamaxData.attackAgain && gNewBS->dynamaxData.repeatedAttacks < 2 && actionFuncId == ACTION_FINISHED)
 	{
-		u8 i, moveLimitations, viableMoves, curPos;
+		u8 i, moveLimitations, viableMoves;
 		gNewBS->dynamaxData.attackAgain = FALSE;
 
 		gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber - 1]; //Get original attacker
@@ -1491,13 +1491,7 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 		++gNewBS->dynamaxData.repeatedAttacks;
 		gCurrentActionFuncId = gActionsByTurnOrder[--gCurrentTurnActionNumber] = ACTION_USE_MOVE;
 
-		do
-		{
-			curPos = gBattleStruct->chosenMovePositions[gBankAttacker] = Random() & 3;
-			gCurrentMove = gBattleMons[gBankAttacker].moves[curPos]; //Choose a new move
-		} while (gCurrentMove == MOVE_NONE || (gBitTable[curPos] & moveLimitations));
-
-		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, FALSE);
+		PickRaidBossRepeatedMove(moveLimitations);
 
 		gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING);
 		gHitMarker &= ~(HITMARKER_UNABLE_TO_USE_MOVE);
