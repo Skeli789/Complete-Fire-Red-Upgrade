@@ -35,12 +35,14 @@
 	party[i].metLevel = structure[i].lvl;																													\
 }
 
-#define SET_MOVES(structure)										\
-{																	\
-	for (j = 0; j < MAX_MON_MOVES; j++) {							\
-		party[i].moves[j] = structure[i].moves[j];					\
-		party[i].pp[j] = gBattleMoves[structure[i].moves[j]].pp;	\
-	}																\
+#define SET_MOVES(structure)													\
+{																				\
+	for (j = 0; j < MAX_MON_MOVES; ++j) {										\
+		party[i].moves[j] = structure[i].moves[j];								\
+		party[i].pp[j] = GetTrainerMonMovePP(structure[i].moves[j], j);			\
+	}																			\
+																				\
+	party[i].ppBonuses = GetTrainerMonMovePPBonus();							\
 }
 
 #define SET_IVS_SINGLE_VALUE(val)					\
@@ -76,11 +78,11 @@
 #define LOAD_TIER_CHECKING_ABILITY										\
 {																		\
 	if (spread->ability == 0 && gBaseStats[species].hiddenAbility != 0)	\
-		ability = gBaseStats[species].hiddenAbility;					\
+		ability = GetHiddenAbility(species);							\
 	else if (spread->ability == 2 && gBaseStats[species].ability2 != 0)	\
-		ability = gBaseStats[species].ability2;							\
+		ability = GetAbility2(species);									\
 	else																\
-		ability = gBaseStats[species].ability1;							\
+		ability = GetAbility1(species);									\
 }
 
 struct TrainersWithEvs

@@ -68,6 +68,7 @@ void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eve
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
 void __attribute__((long_call)) EventObjectClearHeldMovement(struct EventObject *eventObject);
 u8 __attribute__((long_call)) GetJumpMovementAction(u32 idx);
+u8 __attribute__((long_call)) GetJump2MovementAction(u32 idx);
 u8 __attribute__((long_call)) GetJumpSpecialMovementAction(u32 idx);
 void __attribute__((long_call)) FreezeEventObjects(void);
 void __attribute__((long_call)) UnfreezeEventObjects(void);
@@ -292,8 +293,6 @@ void MovementType_Invisible(struct Sprite *);
 void MovementType_WalkSlowlyInPlace(struct Sprite *);
 u8 GetSlideMovementAction(u32);
 u8 GetJumpInPlaceMovementAction(u32);
-u8 GetJumpMovementAction(u32);
-u8 GetJump2MovementAction(u32);
 u8 CreateCopySpriteAt(struct Sprite *sprite, s16 x, s16 y, u8 subpriority);
 
 u8 MovementType_WanderAround_Step0(struct EventObject *, struct Sprite *);

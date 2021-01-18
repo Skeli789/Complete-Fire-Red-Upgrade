@@ -89,10 +89,10 @@ static const struct WildPokemon sRoute3_LandMonsNight[] =
 	{10, 12, SPECIES_SENTRET},
 	{10, 12, SPECIES_BIDOOF},
 	{10, 12, SPECIES_BIDOOF},
-	{10, 12, SPECIES_BUIZEL},
+	{10, 12, SPECIES_SLOWPOKE},
 	{10, 12, SPECIES_SHELLOS},
 	{10, 12, SPECIES_SURSKIT},
-	{10, 12, SPECIES_KRABBY},
+	{10, 12, SPECIES_BUIZEL},
 	{11, 12, SPECIES_KRABBY},
 	{11, 12, SPECIES_KRABBY},
 	{12, 12, SPECIES_KRABBY},
@@ -149,8 +149,8 @@ static const struct WildPokemon sRoute5_LandMonsNight[] =
 	{15, 18, SPECIES_NIDORAN_F},
 	{17, 19, SPECIES_VENONAT},
 	{17, 19, SPECIES_VENONAT},
-	{19, 19, SPECIES_NIDORINA},
-	{19, 19, SPECIES_NIDORINO},
+	{19, 19, SPECIES_DITTO},
+	{19, 19, SPECIES_DITTO},
 };
 
 static const struct WildPokemonInfo sRoute5_LandMonsInfoNight = {20, sRoute5_LandMonsNight};
@@ -273,8 +273,8 @@ static const struct WildPokemon sRoute12_LandMonsNight[] =
 	{33, 36, SPECIES_SNUBBULL},
 	{34, 36, SPECIES_INKAY},
 	{34, 36, SPECIES_MIENFOO},
-	{34, 36, SPECIES_NOCTOWL},
-	{33, 36, SPECIES_TOGEDEMARU},
+	{34, 36, SPECIES_DEERLING_SUMMER},
+	{33, 36, SPECIES_DEERLING_SUMMER},
 	{34, 36, SPECIES_NOCTOWL},
 	{35, 36, SPECIES_TOGEDEMARU},
 };

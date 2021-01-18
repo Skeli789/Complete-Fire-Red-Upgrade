@@ -19,6 +19,7 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+
 /*
 end_battle.c
 	handles all battle termination logic and data resetting/saving
@@ -91,6 +92,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_MAGNET_RISE_BATTLE
 	FLAG_MAGNET_RISE_BATTLE,
+#endif
+#ifdef FLAG_TRICK_ROOM_BATTLE
+	FLAG_TRICK_ROOM_BATTLE,
 #endif
 #ifdef FLAG_PRIMORDIAL_SEA_BATTLE
 	FLAG_PRIMORDIAL_SEA_BATTLE,
@@ -724,13 +728,14 @@ static void EndPartnerBattlePartyRestore(void)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}
+
 		Free(ExtensionState.partyBackup);
 	}
 }
 
 static void EndSkyBattlePartyRestore(void)
 {
-	int i;
+	u32 i;
 	u8 counter = 0;
 	struct Pokemon* backup = ExtensionState.skyBattlePartyBackup;
 
@@ -738,6 +743,7 @@ static void EndSkyBattlePartyRestore(void)
 	{
 		u8 newLeveledUpInBattle = 0;
 		struct Pokemon tempTeam[PARTY_SIZE] = {0};
+		bool8 slotFilled[PARTY_SIZE] = {FALSE};
 
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
@@ -745,7 +751,9 @@ static void EndSkyBattlePartyRestore(void)
 			{
 				u8 correctSlotId = gSelectedOrderFromParty[i] - 1;
 				tempTeam[correctSlotId] = gPlayerParty[i];
+				slotFilled[correctSlotId] = TRUE;
 				gSelectedOrderFromParty[i] = 0;
+
 				if (gLeveledUpInBattle & gBitTable[i])
 					newLeveledUpInBattle |= gBitTable[correctSlotId]; //Move to correct index
 			}
@@ -755,8 +763,11 @@ static void EndSkyBattlePartyRestore(void)
 
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (tempTeam[i].species == SPECIES_NONE)
+			if (!slotFilled[i])
+			{
 				tempTeam[i] = backup[counter++];
+				slotFilled[i] = TRUE;
+			}
 		}
 
 		Memcpy(gPlayerParty, tempTeam, sizeof(struct Pokemon) * PARTY_SIZE);
@@ -840,7 +851,8 @@ bool8 IsConsumable(u16 item)
 {
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
 
-	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i) {
+	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i)
+	{
 		if (effect == gConsumableItemEffects[i])
 			return TRUE;
 	}

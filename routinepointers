@@ -5,6 +5,7 @@ TagTeamExecutionCompleteHook 802E384
 
 ##Script Commands
 ScrCmd_message 815FB50
+ScrCmd_fadescreenswapbuffers 815FB90
 ScrCmd_hidemappopup 815FC78
 CreateSpriteLoadTable 0815fc5c
 
@@ -42,6 +43,9 @@ sp01B_SwapPartyAndBoxData 0815FDCC
 
 sp024_AddTextByVariable 0815FDF0
 sp025_AddTextByPointer 0815FDF4
+#ifdef UNBOUND
+sp026_RandomizerNewGamePlusTeam 0815FDF8
+#endif
 
 sp02B_CheckABButtons 0815FE0C
 sp02C_CheckDPad 0815FE10
@@ -239,7 +243,6 @@ FieldUseFunc_EVReducingBerry 8877CC0
 FieldUseFunc_EVReducingBerry 8877CEC
 FieldUseFunc_EVReducingBerry 8877D18
 FieldUseFunc_EVReducingBerry 8877D44
-FieldUseFunc_VsSeeker 887A054
 FieldUseFunc_FormChangeItem 887BE3C
 FieldUseFunc_FormChangeItem 887BE68
 FieldUseFunc_FormChangeItem 887BE94
@@ -252,6 +255,9 @@ FieldUseFunc_FormChangeItem 887D308
 FieldUseFunc_FormChangeItem 887D334
 FieldUseFunc_AbilityCapsule 8877168
 FieldUseFunc_AbilityCapsule 887CA9C
+#endif
 
+#ifdef UNBOUND
 CB2_NewGame 812EB54
+FieldUseFunc_VsSeeker 887A054
 #endif

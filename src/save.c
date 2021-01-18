@@ -338,7 +338,12 @@ u8 SaveDataAfterLinkTrade(void)
 
 void NewGameWipeNewSaveData(void)
 {
+	#ifdef UNBOUND
+	extern void WipeUnboundNewSaveRAM(void);
+	WipeUnboundNewSaveRAM();
+	#else
 	Memset((void*) SAVE_BLOCK_PARASITE, 0, 0x2EA4);
+	#endif
 }
 
 static void Task_SaveErrorStatus_RunPrinter(unusedArg u8 taskId)

@@ -404,13 +404,19 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	else
 		acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);
 
-	if ((gBattleMons[bankDef].status2 & STATUS2_FORESIGHT)
-	||  (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED)
-	||   atkAbility == ABILITY_UNAWARE
-	||   atkAbility == ABILITY_KEENEYE
-	||   gSpecialMoveFlags[move].gIgnoreStatChangesMoves)
+	if (atkAbility == ABILITY_UNAWARE
+	|| (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT)
+	|| (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED) 
+	||  gSpecialMoveFlags[move].gIgnoreStatChangesMoves)
 	{
 		buff = acc;
+	}
+	else if (atkAbility == ABILITY_KEENEYE)
+	{
+		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6) //Stops higher evasion, allows lower
+			buff = acc;
+		else
+			buff = acc + 6 - STAT_STAGE(bankDef, STAT_STAGE_EVASION);
 	}
 	else
 		buff = acc + 6 - STAT_STAGE(bankDef, STAT_STAGE_EVASION);

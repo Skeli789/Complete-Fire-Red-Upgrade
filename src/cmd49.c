@@ -176,7 +176,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					case ABILITY_POISONTOUCH: ;
 						u8 chance = 30;
-						if (BankSideHasRainbow(gBankAttacker))
+						if (BankHasRainbow(gBankAttacker))
 							chance *= 2;
 
 						if (CheckContact(gCurrentMove, gBankAttacker)

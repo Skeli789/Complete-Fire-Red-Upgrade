@@ -880,7 +880,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		switch (atkHoldEffect)
 		{
 			case ITEM_EFFECT_FLINCH:
-				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankHasRainbow(gBankAttacker))
 					bankQuality *= 2;
 				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 				&& ABILITY(gBankTarget) != ABILITY_STENCH

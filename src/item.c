@@ -267,8 +267,8 @@ u8 ReformatItemDescription(u16 itemId, u8* dest, u8 maxWidth)
 	typedef u32 TM_HM_T[2]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][2];
 #endif
 
-#if (NUM_MOVE_TUTORS > 64)
-	typedef u32 ExpandedTutor_T[4]; //extern const u32 gTutorMoves[NUM_SPECIES][4];
+#if (NUM_MOVE_TUTORS > 64) //Round up to the nearest multiple of 32
+	typedef u32 ExpandedTutor_T[(NUM_MOVE_TUTORS % 32 != 0) ? NUM_MOVE_TUTORS / 32 + 1 : NUM_MOVE_TUTORS / 32]; //extern const u32 gTutorMoves[NUM_SPECIES][];
 #else
 	typedef u32 ExpandedTutor_T[2]; //extern const u32 gTutorMoves[NUM_SPECIES][2];
 #endif
@@ -336,10 +336,26 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 			mask = 1 << (tutorId - 64);
 			return (gTutorLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
 		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 96)
 		else if (tutorId >= 96 && tutorId < 128)
 		{
 			mask = 1 << (tutorId - 96);
 			return (gTutorLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
+		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 128)
+		else if (tutorId >= 128 && tutorId < 160)
+		{
+			mask = 1 << (tutorId - 128);
+			return (gTutorLearnsets[species][4] & mask) != 0 ? TRUE : FALSE;
+		}
+	#endif
+	#if (NUM_MOVE_TUTORS > 160)
+		else if (tutorId >= 160 && tutorId < 192)
+		{
+			mask = 1 << (tutorId - 128);
+			return (gTutorLearnsets[species][5] & mask) != 0 ? TRUE : FALSE;
 		}
 	#endif
 	}
@@ -376,6 +392,9 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_STEEL_BEAM:
 			return gBaseStats[species].type1 == TYPE_STEEL
 				|| gBaseStats[species].type2 == TYPE_STEEL
+			#ifdef NATIONAL_DEX_SILVALLY
+				|| dexNum == NATIONAL_DEX_SILVALLY
+			#endif
 			#ifdef NATIONAL_DEX_ZACIAN
 				|| dexNum == NATIONAL_DEX_ZACIAN
 			#endif

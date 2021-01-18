@@ -1846,7 +1846,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Palmer2[] =
 		.atkEv = 236,
 		.spDefEv = 196,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_ROCKHEAD
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_DRILLRUN,
@@ -6265,8 +6265,8 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Paula2[] =
 const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 {
 	{
-		.species = SPECIES_MAGMORTAR,
-		.nature = NATURE_JOLLY,
+		.species = SPECIES_TALONFLAME,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -6276,18 +6276,18 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VITALSPIRIT
-		.item = ITEM_SITRUS_BERRY,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GALEWINGS
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
-			MOVE_EARTHQUAKE,
-			MOVE_MACHPUNCH,
-			MOVE_BELLYDRUM,
+			MOVE_BRAVEBIRD,
+			MOVE_STEELWING,
+			MOVE_UTURN,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,
 		.forSingles = TRUE,
-		.forDoubles = FALSE,
+		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
 	},
 	{
@@ -10835,7 +10835,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Gail[] =
 		.atkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
@@ -12352,7 +12352,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Lixdel[] =
 		.defEv = 76,
 		.spDefEv = 156,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_IRONFIST
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_DRAINPUNCH,
@@ -12379,7 +12379,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Lixdel[] =
 		.defEv = 76,
 		.spDefEv = 156,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_IRONFIST
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_DRAINPUNCH,

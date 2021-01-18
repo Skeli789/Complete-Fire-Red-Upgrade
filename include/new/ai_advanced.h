@@ -49,6 +49,7 @@ bool8 MoveSplitOnTeam(u8 bank, u8 split);
 void IncreaseStatusViability(s16* viability, u8 class, u8 boost, u8 bankAtk, u8 bankDef);
 void IncreaseStatViability(s16* viability, u8 class, u8 boost, u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit);
 void IncreaseSleepViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
+void IncreaseFreezeViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseSubstituteViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseEntryHazardsViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseFakeOutViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);

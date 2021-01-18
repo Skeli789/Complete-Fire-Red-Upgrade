@@ -591,6 +591,9 @@
 08158468 03
 081585C2 03
 
+##Help Fix Evolution Battle Terrain After Battle
+080CDE9E C0 46
+
 ##Remove Item Use Animation
 0812538E C0 46 C0 46
 #0812587E C0 46 C0 46

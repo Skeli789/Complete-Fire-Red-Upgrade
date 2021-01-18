@@ -71,8 +71,6 @@ extern const u8 gText_DexNav_ListMenuScan[];
 extern const u8 gText_DexNav_ListMenuCancel[];
 	
 // DEFINES
-#define sSearchLevels ((u8*) 0x203C75C)
-
 #define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
 
@@ -101,7 +99,10 @@ extern const u8 gText_DexNav_ListMenuCancel[];
 
 #define NUM_LAND_MONS 12
 #define NUM_WATER_MONS 5
-#define NUM_FISHING_MONS 10
+#define NUM_OLD_ROD_MONS 2
+#define NUM_GOOD_ROD_MONS 3
+#define NUM_SUPER_ROD_MONS 5
+#define NUM_FISHING_MONS (NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS + NUM_SUPER_ROD_MONS)
 #define NUM_TOTAL_WATER_MONS (NUM_WATER_MONS + NUM_FISHING_MONS)
 
 #define LAND_ROW_LENGTH (6 * 2)

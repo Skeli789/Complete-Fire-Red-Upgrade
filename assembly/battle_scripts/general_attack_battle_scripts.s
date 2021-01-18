@@ -444,7 +444,7 @@ BattleScript_MagneticFluxDidntWork:
 RaiseUserDef1_AromaticMist:
 	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED
 	callasm SetTargetPartner
-	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
 	jumpiffainted BANK_TARGET FAILED
 	jumpifprotectedbycraftyshield BANK_TARGET FAILED
 	setbyte STAT_ANIM_PLAYED 0x0
@@ -1139,7 +1139,6 @@ BS_034_PayDay:
 .global BS_035_LightScreen
 BS_035_LightScreen:
 	attackcanceler
-	jumpifsideaffecting BANK_ATTACKER SIDE_LIGHTSCREEN FAILED_PRE
 	attackstring
 	ppreduce
 	setlightscreen
@@ -1277,7 +1276,6 @@ HighJumpKickMiss:
 .global BS_046_Mist
 BS_046_Mist:
 	attackcanceler
-	jumpifsideaffecting BANK_ATTACKER SIDE_MIST FAILED_PRE
 	attackstring
 	ppreduce
 	setmisteffect
@@ -1531,7 +1529,6 @@ BS_064_LowerTargetEvsn2:
 BS_065_Reflect:
 	attackcanceler
 	jumpifmove MOVE_AURORAVEIL AuroraVeilBS
-	jumpifsideaffecting BANK_ATTACKER SIDE_REFLECT FAILED_PRE
 	attackstring
 	ppreduce
 	setreflect
@@ -2596,11 +2593,14 @@ BS_123_Blank:
 .global BS_124_Safeguard
 BS_124_Safeguard:
 	attackcanceler
-	jumpifsideaffecting BANK_ATTACKER SIDE_SAFEGUARD FAILED_PRE
 	attackstring
 	ppreduce
 	setsafeguard
-	goto 0x81D7172
+	attackanimation
+	waitanimation
+	printfromtable 0x83FE54C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3670,6 +3670,8 @@ BS_175_Taunt:
 .global BS_176_HelpingHand
 BS_176_HelpingHand:
 	attackcanceler
+	jumpifmove MOVE_DECORATE BS_Decorate
+	jumpifmove MOVE_COACHING BS_Coaching
 	attackstringnoprotean
 	ppreduce
 	sethelpinghand FAILED
@@ -3678,6 +3680,76 @@ BS_176_HelpingHand:
 	waitanimation
 	printstring 0xAE @;STRINGID_PKMNREADYTOHELP
 	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BS_Decorate:
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
+	jumpiffainted BANK_TARGET FAILED
+	jumpifprotectedbycraftyshield BANK_TARGET FAILED
+	attackstring
+	ppreduce
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX Decorate_Atk
+	jumpifstat BANK_TARGET EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleTargetStats
+
+Decorate_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN Decorate_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Decorate_SpAtk
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+Decorate_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BS_Coaching:
+	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED_PRE
+	callasm SetTargetPartner
+	jumpiffainted BANK_TARGET FAILED_PRE
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	attackstring
+	ppreduce
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX Coaching_Atk
+	jumpifstat BANK_TARGET EQUALS STAT_DEF STAT_MAX BattleScript_CantRaiseMultipleTargetStats
+
+Coaching_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_DEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN Coaching_Def
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Coaching_Def
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+Coaching_Def:
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_CantRaiseMultipleTargetStats:
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	swapattackerwithtarget @;So the proper string is shown
+	printstring 25 @;STRINGID_STATSWONTINCREASE2
+	waitmessage DELAY_1SECOND
+	swapattackerwithtarget
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5340,7 +5412,7 @@ BS_242_LastResortSkyDrop:
 	
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
 	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
@@ -5415,14 +5487,8 @@ BS_244_Teatime:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_245_Decorate
-BS_245_Decorate:
-	goto BS_STANDARD_HIT
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.global BS_246_Poltergeist
-BS_246_Poltergeist:
+.global BS_245_Poltergeist
+BS_245_Poltergeist:
 	attackcanceler
 	callasm TryFailPoltergeist
 	accuracycheck BS_MOVE_MISSED 0x0
@@ -5434,6 +5500,12 @@ BS_246_Poltergeist:
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
 	goto BS_HIT_FROM_DAMAGE_CALC
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_246_Blank
+BS_246_Blank:
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5486,14 +5558,9 @@ BS_253_MaxMove:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_254_Synchronoise
-BS_254_Synchronoise:
-	attackcanceler
-	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
-	ppreduce
-	callasm SynchronoiseFunc
-	goto BS_HIT_FROM_DAMAGE_CALC
+.global BS_254_Blank
+BS_254_Blank:
+	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

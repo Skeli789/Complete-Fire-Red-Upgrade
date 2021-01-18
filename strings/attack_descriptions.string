@@ -1091,7 +1091,7 @@ It fires a beam\nof steel from its\nbody, which also\nhurts the user.
 The move's power\nincreases and damages\nall opposing targets\nin Psychic Terrain.
 
 #org @DESC_STEEL_ROLLER
-The user attacks\nwhile destroying terrain.\nThe move fails if\nthere's no terrain.
+The user attacks and\ndestroys the terrain.\nThe move fails if\nthere is no terrain.
 
 #org @DESC_SCALE_SHOT
 It hits two to five\ntimes in a row.\nRaises Speed, but\nlowers Defense.
@@ -1103,13 +1103,13 @@ In this two-turn move,\nthe user gathers\nspace power and\nincreases Sp. Atk.
 Inflicts the more\neffective of physical\nor special damage. May\npoison the target.
 
 #org @DESC_MISTY_EXPLOSION
-The user explodes,\nfainting in the process.\nIts power doubles\non Misty Terrain.
+The user explodes\nand faints itself.\nIts power increases\non Misty Terrain.
 
 #org @DESC_GRASSY_GLIDE
 The user glides\non the ground to\nattack. Hits first\non Grassy Terrain.
 
 #org @DESC_RISING_VOLTAGE
-The user attacks\nwith voltage from the\nground. It doubles in\npower on Electric Terrain.
+The user attacks with\nearthly voltage. It\ndoubles in power on\nElectric Terrain.
 
 #org @DESC_TERRAIN_PULSE
 The move's type\nand power depends on\nthe terrain currently\nused in battle.

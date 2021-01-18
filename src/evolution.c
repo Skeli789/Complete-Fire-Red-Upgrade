@@ -387,9 +387,9 @@ u16 GetMonDevolution(struct Pokemon* mon)
 		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
 			return SPECIES_PICHU;
 		#endif
-		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
+		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SPEWPA)
 		case NATIONAL_DEX_VIVILLON:
-			return SPECIES_SCATTERBUG;
+			return SPECIES_SPEWPA;
 		#endif
 	}
 

@@ -28,6 +28,8 @@ void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backup
 void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 void ShouldDoAIShiftSwitch(void);
 void ClearCachedAIData(void);
+void RechooseAIMoveAfterSwitchIfNecessary(void);
+void TryChangeMoveTargetToCounterPlayerProtectCheese(void);
 
 //Functions Hooked In
 void BattleAI_HandleItemUseBeforeAISetup(void);

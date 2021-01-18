@@ -90,11 +90,14 @@ static const u8* const sEntryHazardsStrings[] =
 
 bool8 TryActivateGemBattlescript(void)
 {
+	//Gems only work when the target is affected
+
 	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GEM
 	&&  ITEM_QUALITY(gBankAttacker) == gBattleStruct->dynamicMoveType
 	&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 	&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-	&& !TargetFullyImmuneToCurrMove(gBankTarget) //Gems only work when the target is affected
+	&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
+	&& !DoesTargetHaveAbilityImmunity()
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2)
 	{
@@ -199,7 +202,11 @@ void atk03_ppreduce(void) {
 				break;
 
 			default:
-				if (gBankAttacker != gBankTarget && ABILITY(gBankTarget) == ABILITY_PRESSURE)
+				if (gCurrentMove == MOVE_IMPRISON
+				|| gCurrentMove == MOVE_SNATCH
+				|| (gBattleMoves[gCurrentMove].effect == EFFECT_SPIKES && gCurrentMove != MOVE_STICKYWEB)) //No Sticky Web is assumed GF bug
+					ppToDeduct += AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, gBankAttacker, ABILITY_PRESSURE, 0, 0);
+				else if (SIDE(gBankAttacker) != SIDE(gBankTarget) && ABILITY(gBankTarget) == ABILITY_PRESSURE)
 					ppToDeduct++;
 				break;
 		}
@@ -1311,6 +1318,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 				ClearSwitchBytes(gActiveBattler);
 				ClearSwitchBits(gActiveBattler);
+				gNewBS->ai.switchesInARow[gActiveBattler] = 0; //Will become 1 when player sends in new mon
 
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 				*gSeedHelper = 0;
@@ -1813,6 +1821,10 @@ void atk45_playanimation(void)
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_GRASSY_SURGE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MISTY_SURGE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_PSYCHIC_SURGE
+	||  gBattlescriptCurrInstr[2] == B_ANIM_ELECTRIC_TERRAIN_ACTIVE
+	||  gBattlescriptCurrInstr[2] == B_ANIM_GRASSY_TERRAIN_ACTIVE
+	||  gBattlescriptCurrInstr[2] == B_ANIM_MISTY_TERRAIN_ACTIVE
+	||  gBattlescriptCurrInstr[2] == B_ANIM_PSYCHIC_TERRAIN_ACTIVE
 	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEFAULT_BG
 	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_ABILITY_POP_UP
 	||  gBattlescriptCurrInstr[2] == B_ANIM_DESTROY_ABILITY_POP_UP
@@ -1897,6 +1909,10 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	|| 	*animationIdPtr == B_ANIM_GRASSY_SURGE
 	|| 	*animationIdPtr == B_ANIM_MISTY_SURGE
 	|| 	*animationIdPtr == B_ANIM_PSYCHIC_SURGE
+	||  *animationIdPtr == B_ANIM_ELECTRIC_TERRAIN_ACTIVE
+	||  *animationIdPtr == B_ANIM_GRASSY_TERRAIN_ACTIVE
+	||  *animationIdPtr == B_ANIM_MISTY_TERRAIN_ACTIVE
+	||  *animationIdPtr == B_ANIM_PSYCHIC_TERRAIN_ACTIVE
 	||  *animationIdPtr == B_ANIM_LOAD_DEFAULT_BG
 	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
 	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP
@@ -3238,8 +3254,23 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 	battleMonAttacker = (u8*)(&gBattleMons[bankAtk]);
 	battleMonTarget = (u8*)(&gBattleMons[bankDef]);
 
+	//The transformed mon's Hidden Power stays the same, so back it up here
+	u8 originalHPIV = gBattleMons[bankAtk].hpIV;
+	u8 originalAtkIV = gBattleMons[bankAtk].attackIV;
+	u8 originalDefIV = gBattleMons[bankAtk].defenseIV;
+	u8 originalSpAtkIV = gBattleMons[bankAtk].spAttackIV;
+	u8 originalSpDefIV = gBattleMons[bankAtk].spDefenseIV;
+	u8 originalSpeedIV = gBattleMons[bankAtk].speedIV;
+
 	for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
 		battleMonAttacker[i] = battleMonTarget[i];
+
+	gBattleMons[bankAtk].hpIV = originalHPIV;
+	gBattleMons[bankAtk].attackIV = originalAtkIV;
+	gBattleMons[bankAtk].defenseIV = originalDefIV;
+	gBattleMons[bankAtk].spAttackIV = originalSpAtkIV;
+	gBattleMons[bankAtk].spDefenseIV = originalSpDefIV;
+	gBattleMons[bankAtk].speedIV = originalSpeedIV;
 
 	if (IsGigantamaxed(bankDef))
 		species = GetGigantamaxBaseForm(SPECIES(bankDef));
@@ -3319,6 +3350,9 @@ void atk9E_metronome(void)
 	{
 		gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
 	} while (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove)
+		#ifdef FLAG_METRONOME_BATTLE
+		|| (FlagGet(FLAG_METRONOME_BATTLE) && gCurrentMove == MOVE_IMPRISON) //Imprison would seal all Metronome which would be bad
+		#endif
 		|| gSpecialMoveFlags[gCurrentMove].gMetronomeBannedMoves);
 
 	TryUpdateCalledMoveWithZMove();
@@ -4587,7 +4621,7 @@ u16 GetNaturePowerMove(void)
 			if (IsTerrainMoveIndoors())
 				move = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].naturePowerMove;
 			else
-				move = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
+				move = gTerrainTable[GetBattleTerrainOverride() + 4].naturePowerMove;
 	}
 
 	return move;
@@ -4910,31 +4944,40 @@ void atkE1_trygetintimidatetarget(void)
 		gBattlescriptCurrInstr += 5;
 }
 
-void atkE4_getsecretpowereffect(void)
+u8 GetSecretPowerEffect(void)
 {
+	u8 effect;
+
 	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[0].secretPowerEffect;
+			effect = gTerrainTable[0].secretPowerEffect;
 			break;
 
 		case GRASSY_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[1].secretPowerEffect;
+			effect = gTerrainTable[1].secretPowerEffect;
 			break;
 
 		case MISTY_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[2].secretPowerEffect;
+			effect = gTerrainTable[2].secretPowerEffect;
 			break;
 
 		case PSYCHIC_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[3].secretPowerEffect;
+			effect = gTerrainTable[3].secretPowerEffect;
 			break;
 
 		default:
 			if (IsTerrainMoveIndoors())
-				gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].secretPowerEffect;
+				effect = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].secretPowerEffect;
 			else
-				gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[gBattleTerrain + 4].secretPowerEffect;
+				effect = gTerrainTable[GetBattleTerrainOverride() + 4].secretPowerEffect;
 	}
+
+	return effect;
+}
+
+void atkE4_getsecretpowereffect(void)
+{
+	gBattleCommunication[MOVE_EFFECT_BYTE] = GetSecretPowerEffect();
 	gBattlescriptCurrInstr++;
 }
 
@@ -5193,7 +5236,7 @@ u8 GetCamouflageType(void)
 			if (IsTerrainMoveIndoors())
 				type = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].camouflageType;
 			else
-				type = gTerrainTable[gBattleTerrain + 4].camouflageType;
+				type = gTerrainTable[GetBattleTerrainOverride() + 4].camouflageType;
 	}
 
 	return type;

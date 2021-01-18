@@ -23,6 +23,7 @@ tables to edit:
 	gBattleMineFormat1Tiers
 	gBattleMineFormat2Tiers
 	gBattleMineFormat3Tiers
+	gBattleMineFormat4Tiers
 	gBattleMineTiers
 	gBattleCircusTiers
 	gBattleFrontierTierNames
@@ -69,6 +70,7 @@ extern const u8 gText_SmogonGen7NU[];
 extern const u8 gText_BattleMineFormat1[];
 extern const u8 gText_BattleMineFormat2[];
 extern const u8 gText_BattleMineFormat3[];
+extern const u8 gText_BattleMineFormat4[];
 
 extern const u8 gText_On[];
 extern const u8 gText_Off[];
@@ -124,7 +126,7 @@ const u8 gBattleTowerTiers[] =
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 };
 
-const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
+const u8 gNumBattleTowerTiers = NELEMS(gBattleTowerTiers);
 
 const u8 gBattleMineFormat1Tiers[] =
 {
@@ -146,14 +148,21 @@ const u8 gBattleMineFormat3Tiers[] =
 	BATTLE_FACILITY_LC_CAMOMONS,
 };
 
+const u8 gBattleMineFormat4Tiers[] =
+{
+	BATTLE_FACILITY_UBER,
+	BATTLE_FACILITY_UBER_CAMOMONS,
+};
+
 const u8 gBattleMineTiers[] =
 {
 	BATTLE_MINE_FORMAT_1,
 	BATTLE_MINE_FORMAT_2,
 	BATTLE_MINE_FORMAT_3,
+	BATTLE_MINE_FORMAT_4,
 };
 
-const u8 gNumBattleMineTiers = ARRAY_COUNT(gBattleMineTiers);
+const u8 gNumBattleMineTiers = NELEMS(gBattleMineTiers);
 
 const u8 gBattleCircusTiers[] =
 {
@@ -173,7 +182,7 @@ const u8 gBattleCircusTiers[] =
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
 };
 
-const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
+const u8 gNumBattleCircusTiers = NELEMS(gBattleCircusTiers);
 
 const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 {
@@ -202,6 +211,7 @@ const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 	[BATTLE_MINE_FORMAT_1] = gText_BattleMineFormat1,
 	[BATTLE_MINE_FORMAT_2] = gText_BattleMineFormat2,
 	[BATTLE_MINE_FORMAT_3] = gText_BattleMineFormat3,
+	[BATTLE_MINE_FORMAT_4] = gText_BattleMineFormat4,
 };
 
 const u8* const gBattleFrontierFormats[NUM_TOWER_BATTLE_TYPES] =
@@ -493,7 +503,6 @@ bool8 IsGSCupBattle()
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_FACILITY_STANDARD
-	||  IsMiddleCupTier(tier)
 	||  tier == BATTLE_FACILITY_MEGA_BRAWL
 	||  tier == BATTLE_FACILITY_DYNAMAX_STANDARD)
 		return TRUE;
@@ -667,7 +676,22 @@ bool8 Is350CupBattle(void)
 
 bool8 IsScaleMonsBattle(void)
 {
-	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS;
+	return (FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS)
+		#ifdef FLAG_SCALEMONS_GAME
+		|| FlagGet(FLAG_SCALEMONS_GAME)
+		#endif
+		;
+}
+
+bool8 IsOnlyScalemonsGame(void)
+{
+	#ifdef FLAG_SCALEMONS_GAME
+	if (FlagGet(FLAG_SCALEMONS_GAME)
+	&& !(FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS))
+		return TRUE;
+	#endif
+
+	return FALSE;
 }
 
 bool8 IsCamomonsBattle(void)
@@ -1125,6 +1149,15 @@ u16 sp056_DetermineBattlePointsToGive(void)
 	else
 		toGive = 10;
 
+	//Give half the amount of BP rounded up in the Battle Sands
+	if (BATTLE_FACILITY_NUM == IN_BATTLE_SANDS)
+	{
+		if (toGive & 1) //Odd number
+			toGive = (toGive / 2) + 1; //Round up
+		else
+			toGive /= 2;
+	}
+
 	return toGive;
 }
 
@@ -1164,7 +1197,7 @@ static void LoadProperStreakData(u8* facilityNum, u8* currentOrMax, u8* battleSt
 			break;
 
 		case IN_BATTLE_MINE:
-			*tier = MathMin(*tier - BATTLE_MINE_FORMAT_1, 2);
+			*tier = MathMin(*tier - BATTLE_MINE_FORMAT_1, BATTLE_MINE_FORMAT_4 - BATTLE_MINE_FORMAT_1);
 			break;
 
 		case IN_BATTLE_CIRCUS:
@@ -1295,10 +1328,12 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 	u16 choice = Var8000;
 	const u8* tiers = choice == 0 ? gBattleMineFormat1Tiers
 					: choice == 1 ? gBattleMineFormat2Tiers
-					: gBattleMineFormat3Tiers;
-	u8 numTiers = choice == 0 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
-				: choice == 1 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
-				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+					: choice == 2 ? gBattleMineFormat3Tiers
+					: gBattleMineFormat4Tiers;
+	u8 numTiers = choice == 0 ? NELEMS(gBattleMineFormat1Tiers)
+				: choice == 1 ? NELEMS(gBattleMineFormat2Tiers)
+				: choice == 2 ? NELEMS(gBattleMineFormat3Tiers)
+				: NELEMS(gBattleMineFormat4Tiers);
 
 	gSpecialVar_LastResult = FALSE;
 
@@ -1335,7 +1370,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 		}
 	}
 
-	VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
+	VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, BATTLE_MINE_FORMAT_4 - BATTLE_MINE_FORMAT_1));
 	gSpecialVar_LastResult = TRUE;
 }
 
@@ -1354,10 +1389,12 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 	u8 originalTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
 					: originalTier == BATTLE_MINE_FORMAT_2 ? gBattleMineFormat2Tiers
-					: gBattleMineFormat3Tiers;
-	u8 numTiers = originalTier == BATTLE_MINE_FORMAT_1 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
-				: originalTier == BATTLE_MINE_FORMAT_2 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
-				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+					: originalTier == BATTLE_MINE_FORMAT_3 ? gBattleMineFormat3Tiers
+					: gBattleMineFormat4Tiers;
+	u8 numTiers = originalTier == BATTLE_MINE_FORMAT_1 ? NELEMS(gBattleMineFormat1Tiers)
+				: originalTier == BATTLE_MINE_FORMAT_2 ? NELEMS(gBattleMineFormat2Tiers)
+				: originalTier == BATTLE_MINE_FORMAT_3 ? NELEMS(gBattleMineFormat3Tiers)
+				: NELEMS(gBattleMineFormat4Tiers);
 
 	u16 streak = GetCurrentBattleTowerStreak();
 
@@ -1468,10 +1505,13 @@ void sp071_LoadBattleMineRecordTier(void)
 	u32 i, tier;
 	u8 currTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 
-	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
+	if (currTier == BATTLE_MINE_FORMAT_1
+	||  currTier == BATTLE_MINE_FORMAT_2
+	||  currTier == BATTLE_MINE_FORMAT_3
+	||  currTier == BATTLE_MINE_FORMAT_4)
 		return;
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat1Tiers); ++i)
 	{
 		tier = gBattleMineFormat1Tiers[i];
 		if (currTier == tier)
@@ -1481,7 +1521,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat2Tiers); ++i)
 	{
 		tier = gBattleMineFormat2Tiers[i];
 		if (currTier == tier)
@@ -1491,12 +1531,22 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat3Tiers); ++i)
 	{
 		tier = gBattleMineFormat3Tiers[i];
 		if (currTier == tier)
 		{
 			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_3);
+			return;
+		}
+	}
+
+	for (i = 0; i < NELEMS(gBattleMineFormat4Tiers); ++i)
+	{
+		tier = gBattleMineFormat4Tiers[i];
+		if (currTier == tier)
+		{
+			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_4);
 			return;
 		}
 	}

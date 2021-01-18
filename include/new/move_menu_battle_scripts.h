@@ -22,6 +22,7 @@ extern const u8 BattleScript_SelectingNotAllowedRingChallenge[];
 extern const u8 BattleScript_SelectingNotAllowedGravity[];
 extern const u8 BattleScript_SelectingNotAllowedThroatChop[];
 extern const u8 BattleScript_SelectingNotAllowedHealBlock[];
+extern const u8 BattleScript_SelectingNotAllowedMinimize[];
 
 //Strings
 extern const u8 StringNull[];

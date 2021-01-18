@@ -315,7 +315,7 @@ typedef struct Pokemon
     u16 species;
     u16 item;
     u32 experience;
-    u8 pp_bonuses;
+    u8 ppBonuses;
     u8 friendship;
 	u8 pokeball; //This is new
     u8 unknown;

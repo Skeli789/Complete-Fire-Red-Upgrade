@@ -131,8 +131,11 @@ u8 BattleSetup_GetTerrainId(void)
 u8 GetBattleTerrainOverride(void)
 {
 	u8 terrain = gBattleTerrain;
-	
-	if (gMain.callback2 == CB2_BeginEvolutionScene)
+
+	if (gMain.callback2 == CB2_EvolutionSceneLoadGraphics
+	|| gMain.callback2 == CB2_BeginEvolutionScene
+	|| gMain.callback2 == CB2_EvolutionSceneUpdate
+	|| gMain.callback2 == CB2_TradeEvolutionSceneUpdate)
 	{
 		gBattleTypeFlags = 0;
 		gBattleTerrain = BattleSetup_GetTerrainId();
@@ -179,18 +182,14 @@ u8 GetBattleTerrainOverride(void)
 			else
 		#endif
 			if (GetCurrentMapBattleScene() != 0)
-			{
 				terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
-			}
 			else
 				terrain = gBattleTerrain;
 	}
 	else
 	{
 		if (GetCurrentMapBattleScene() != 0)
-		{
 			terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
-		}
 		else
 			terrain = gBattleTerrain;
 	}

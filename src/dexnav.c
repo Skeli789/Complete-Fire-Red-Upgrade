@@ -196,10 +196,11 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 	GiveMonXPerfectIVs(mon, potential);
 
 	//Set Ability
-	if (gBaseStats[species].hiddenAbility == ability)
+	TryRandomizeSpecies(&species);
+	if (GetHiddenAbility(species) == ability)
 		mon->hiddenAbility = TRUE;
 	else if (gBaseStats[species].ability2 != ABILITY_NONE) //Helps fix a bug where Unown would crash the game in the below function
-		GiveMonNatureAndAbility(mon, GetNature(mon), (gBaseStats[species].ability2 == ability) ? 1 : 0, IsMonShiny(mon), TRUE, TRUE); //Make sure details match what was on the HUD
+		GiveMonNatureAndAbility(mon, GetNature(mon), (GetAbility2(species) == ability) ? 1 : 0, IsMonShiny(mon), TRUE, TRUE); //Make sure details match what was on the HUD
 
 	//Set moves
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -304,18 +305,18 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 			{
 				//Caves and water need to have their encounter values scaled higher
 				u8 weight, scaleMax;
-				s8 scale;
+				s16 scale;
 
 				if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
 					//Water
 					scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2);
-					scaleMax = 1;
+					scaleMax = 3;
 				}
 				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
 					//Cave basically needs another check to see if the tile is passable
-					scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
+					scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
 					if (scale < 1) scale = 1;
 					scaleMax = 3;
 				}
@@ -946,8 +947,8 @@ static void Task_ManageDexNavHUD(u8 taskId)
 
 		//Increment the search level
 		u16 dexNum = SpeciesToNationalPokedexNum(species);
-		if (sSearchLevels[dexNum] < 255)
-			sSearchLevels[dexNum] += 1;
+		if (gDexNavSearchLevels[dexNum] < 255)
+			gDexNavSearchLevels[dexNum] += 1;
 
 		//Freeing only the state, objects and hblank cleared on battle start.
 		Free(sDexNavHudPtr);
@@ -1226,17 +1227,20 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 
 	if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE
 	&& GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Only give hidden ability if Pokemon has been caught before
-		return TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+		return GetHiddenAbility(species);
 	else
 	{
 		//Pick a normal ability of that Pokemon
 		u8 ability;
-		if (gBaseStats[species].ability2 != ABILITY_NONE)
-			ability = (randVal & 1) == 0 ? gBaseStats[species].ability1 : gBaseStats[species].ability2;
+		u8 ability1 = GetAbility1(species);
+		u8 ability2 = GetAbility2(species);
+		
+		if (ability2 != ABILITY_NONE)
+			ability = (randVal & 1) == 0 ? ability1 : ability2;
 		else
-			ability = gBaseStats[species].ability1;
+			ability = ability1;
 
-		return TryRandomizeAbility(ability, species);
+		return ability;
 	}
 }
 
@@ -1600,7 +1604,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 	sDexNavHudPtr->environment = environment;
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	u8 searchLevel = sSearchLevels[dexNum];
+	u8 searchLevel = gDexNavSearchLevels[dexNum];
 	sDexNavHudPtr->searchLevel = searchLevel;
 	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment);
 
@@ -1694,7 +1698,7 @@ static void CleanWindows(void)
 //Display commited windows
 static void CommitWindow(u8 windowId)
 {
-	CopyWindowToVram(windowId, 3);
+	CopyWindowToVram(windowId, COPYWIN_BOTH);
 	PutWindowTilemap(windowId);
 }
 
@@ -1861,9 +1865,6 @@ static void RegisterSpecies(u16 species)
 
 	//Species was valid
 	DexNavDisplaySpeciesData();
-	StringCopy(gStringVar1, gSpeciesNames[species]);
-	PrintDexNavMessage(MESSAGE_REGISTERED);
-	PlaySE(SE_POKENAV_SEARCHING);
 
 	//Create value to store in a var
 	u16 varStore = (sDexNavGuiPtr->selectedArr << 15) | species;
@@ -1873,6 +1874,11 @@ static void RegisterSpecies(u16 species)
 	#ifdef VAR_R_BUTTON_MODE
 	VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
 	#endif
+
+	TryRandomizeSpecies(&species);
+	StringCopy(gStringVar1, gSpeciesNames[species]);
+	PrintDexNavMessage(MESSAGE_REGISTERED);
+	PlaySE(SE_POKENAV_SEARCHING);
 }
 
 //GUI
@@ -1924,6 +1930,7 @@ static void Task_HandleContextMenu(u8 taskId)
 			RETURN_TO_MAIN_INTERFACE:
 			PlaySE(SE_SELECT);
 			RemoveContextMenu(taskId);
+			PrintDexNavMessage(MESSAGE_CHOOSE_MON);
 			gTasks[taskId].func = Task_DexNavWaitForKeyPress;
 			break;
 		case LIST_NOTHING_CHOSEN:
@@ -2045,10 +2052,12 @@ static void Task_DexNavWaitForKeyPress(u8 taskId)
 
 			//Species was valid, open context menu to confirm user action
 			PlaySE(SE_SELECT);
-			StringCopy(gStringVar1, gSpeciesNames[species]);
-			PrintDexNavMessage(MESSAGE_POKEMON_SELECTED);
 			ShowSelectedContextMenu(taskId, species);
 			gTasks[taskId].func = Task_HandleContextMenu;
+
+			TryRandomizeSpecies(&species);
+			StringCopy(gStringVar1, gSpeciesNames[species]);
+			PrintDexNavMessage(MESSAGE_POKEMON_SELECTED);
 			return;
 		}
 		else //No species in this slot
@@ -2265,7 +2274,7 @@ static void DexNavPopulateEncounterList(void)
 	//Populate unique wild grass encounters
 	u8 grassIndex = 0;
 	u8 waterIndex = 0;
-	u16 species;
+	u16 species, i;
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
@@ -2284,7 +2293,7 @@ static void DexNavPopulateEncounterList(void)
 
 	if (landMonsInfo != NULL)
 	{
-		for (int i = 0; i < NUM_LAND_MONS; ++i)
+		for (i = 0; i < NUM_LAND_MONS; ++i)
 		{
 			species = landMonsInfo->wildPokemon[i].species;
 			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_LAND_MONS, PickUnownLetter(species, i)))
@@ -2312,7 +2321,7 @@ static void DexNavPopulateEncounterList(void)
 
 	if (waterMonsInfo != NULL)
 	{
-		for (int i = 0; i < NUM_WATER_MONS; ++i)
+		for (i = 0; i < NUM_WATER_MONS; ++i)
 		{
 			species = waterMonsInfo->wildPokemon[i].species;
 			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
@@ -2322,11 +2331,35 @@ static void DexNavPopulateEncounterList(void)
 
 	if (fishingMonsInfo != NULL)
 	{
-		for (int i = 0; i < NUM_FISHING_MONS; ++i)
+		//Only add Fishing mons if player has respective rods
+		if (CheckBagHasItem(ITEM_OLD_ROD, 1))
 		{
-			species = fishingMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
-				sDexNavGuiPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+			for (i = 0; i < NUM_OLD_ROD_MONS; ++i)
+			{
+				species = fishingMonsInfo->wildPokemon[i].species;
+				if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+					sDexNavGuiPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+			}
+		}
+
+		if (CheckBagHasItem(ITEM_GOOD_ROD, 1))
+		{
+			for (i = NUM_OLD_ROD_MONS; i < NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS; ++i)
+			{
+				species = fishingMonsInfo->wildPokemon[i].species;
+				if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+					sDexNavGuiPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+			}
+		}
+
+		if (CheckBagHasItem(ITEM_SUPER_ROD, 1))
+		{
+			for (i = NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS; i < NUM_FISHING_MONS; ++i)
+			{
+				species = fishingMonsInfo->wildPokemon[i].species;
+				if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+					sDexNavGuiPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+			}
 		}
 	}
 
@@ -2377,7 +2410,7 @@ static void PrintGUISearchLevel(u16 species)
 	else
 	{
 		u16 dexNum = SpeciesToNationalPokedexNum(species);
-		ConvertIntToDecimalStringN(gStringVar4, sSearchLevels[dexNum], 0, 4);
+		ConvertIntToDecimalStringN(gStringVar4, gDexNavSearchLevels[dexNum], 0, 4);
 		text = gStringVar4;
 	}
 
@@ -2411,8 +2444,10 @@ static void PrintGUIHiddenAbility(u16 species)
 
 	if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT) || species == SPECIES_NONE) //Only display hidden ability if Pokemon has been caught
 	{
-		if (species != SPECIES_NONE && gBaseStats[species].hiddenAbility != ABILITY_NONE)
-			text = GetAbilityName(gBaseStats[species].hiddenAbility);
+		u8 hiddenAbility = GetHiddenAbility(species);
+
+		if (species != SPECIES_NONE && hiddenAbility != ABILITY_NONE)
+			text = GetAbilityName(hiddenAbility);
 		else
 			text = gText_DexNav_NoInfo;
 	}
@@ -2619,7 +2654,7 @@ static void CreateWaterScrollArrows(void)
 
 		AddScrollIndicatorArrowPairParameterized(
 			SCROLL_ARROW_RIGHT,
-			45, //Y
+			51, //Y
 			7, //Left X
 			7 + 140, //Right X
 			1000, //Ridiculously high number for Total Items

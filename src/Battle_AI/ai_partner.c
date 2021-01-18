@@ -383,10 +383,31 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			break;
 
 		case EFFECT_HELPING_HAND:
-			if (partnerMove != MOVE_NONE
+			if (move == MOVE_DECORATE)
+			{
+				if (atkPartnerAbility != ABILITY_CONTRARY)
+				{
+					if (PhysicalMoveInMoveset(bankAtkPartner)
+					&& STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX)
+						IncreaseHelpingHandViability(&viability, class);
+					else if (SpecialMoveInMoveset(bankAtkPartner)
+					&& STAT_STAGE(bankAtkPartner, STAT_SPATK) < STAT_STAGE_MAX)
+						IncreaseHelpingHandViability(&viability, class);
+				}
+			}
+			else if (move == MOVE_COACHING)
+			{
+				if (STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX
+				&& atkPartnerAbility != ABILITY_CONTRARY
+				&& PhysicalMoveInMoveset(bankAtkPartner))
+					IncreaseHelpingHandViability(&viability, class);
+			}
+			//Regular Helping Hand
+			else if (partnerMove != MOVE_NONE
 			&& !partnerProtects
 			&&  SPLIT(partnerMove) != SPLIT_STATUS
-			&& (!IsRaidBattle() || !gNewBS->dynamaxData.raidShieldsUp))
+			&& (!IsRaidBattle() || !gNewBS->dynamaxData.raidShieldsUp)
+			&& !IsClassDoublesTeamSupport(GetBankFightingStyle(bankAtkPartner))) //Don't encourage team supporter to attack
 			{
 				IncreaseHelpingHandViability(&viability, class);
 			}

@@ -169,7 +169,7 @@ extern u16 gLastUsedBall; //0x203B774
 extern bool8 gDontFadeWhite; //0x203C756
 #define gWindowsLitUp (*((bool8*) 0x203C757))
 #define gWildDataSwitch (*((const u8**) 0x203C758))
-//#define sDexNavSearchLevels //0x203C75C -999 slots
+extern u8 gDexNavSearchLevels[999]; //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC

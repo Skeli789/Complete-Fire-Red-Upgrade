@@ -1498,7 +1498,6 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 		const u8* customWalkingScript = GetCustomWalkingScript();
 		if (customWalkingScript != NULL)
 		{
-			break_func(customWalkingScript);
 			ScriptContext1_SetupScript(customWalkingScript);
 			return TRUE;
 		}
@@ -2106,6 +2105,18 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 	}
 
 	return 0;
+}
+
+void PlayerJumpLedge(u8 direction)
+{
+	u8 movementAction = GetJump2MovementAction(direction);
+ 
+	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE | PLAYER_AVATAR_FLAG_SURFING) //Player is not biking/surfing
+	&& ShouldPlayerRun(gMain.heldKeys)) //Player is running
+		movementAction += 0x70; //Change sprite to running hop
+
+	PlayerSetAnimId(movementAction, 8); //Set appropriate jumping sprite
+	PlaySE(SE_HOP);
 }
 
 const u8* GetInteractedMetatileScript(unusedArg struct MapPosition* position, u8 metatileBehavior, u8 direction)

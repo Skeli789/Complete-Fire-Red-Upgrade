@@ -475,7 +475,7 @@ const struct BattleTowerSpread gMultiLittleCupTowerSpread_Milo[] =
 		.spAtkEv = 236,
 		.spdEv = 236,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VITALSPIRIT
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_ELECTROWEB,
@@ -1532,7 +1532,7 @@ const struct BattleTowerSpread gMultiLittleCupTowerSpread_Rival[] =
 		.defEv = 76,
 		.spDefEv = 236,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ROUGHSKIN
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_EVIOLITE,
 		.moves =
 		{
 			MOVE_DRAGONCLAW,
@@ -1969,7 +1969,7 @@ const struct BattleTowerSpread gMultiLittleCupTowerSpread_Jax[] =
 		.defEv = 36,
 		.spAtkEv = 236,
 		.spDefEv = 236,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_MAGNETPULL
+		.ability = FRONTIER_ABILITY_2, //ABILITY_STURDY
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{

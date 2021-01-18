@@ -119,7 +119,7 @@ void atk15_seteffectwithchance(void)
 	//{
 	//	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 	//}
-	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
+	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankHasRainbow(gBankAttacker))
 	{
 		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
 	}

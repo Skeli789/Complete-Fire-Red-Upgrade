@@ -189,6 +189,7 @@ sItemMenuActions 08109C48
 
 ##Field Effects and Footstep Noises
 FieldEffectScript_TallGrass 081D96BC
+FieldEffectScript_Dust 081D96D4
 FieldEffectScript_JumpTallGrass 081D96DC
 FieldEffectScript_SandFootprints 081D96E0
 FieldEffectScript_LongGrass 081D96F0
@@ -223,8 +224,8 @@ sStartMenuDescPointers 0806F138
 sStartMenuDescPointers 0806F368
 
 #ifdef UNBOUND
-TestScript 08B7ADA0
-TestScript 087D67B0
+#TestScript 08B7ADA0 #Need to change offset!
+#TestScript 087D67B0
 gWildMonNightHeaders 0801D778
 
 DESC_LEECHFANG 08879C00

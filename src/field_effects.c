@@ -52,6 +52,7 @@ static void FldEff_ShakingLongGrass(void);
 static void FldEff_ShortGrass(void);
 static void FldEff_SandFootprints(void);
 static void FldEff_BikeTireTracks(void);
+static void FldEff_Dust(void);
 static void FldEff_CaveDust(void);
 static void FldEff_Sparkles(void);
 static u32 FldEff_LavaBubbles(void);
@@ -529,7 +530,7 @@ static void FldEff_ShakingLongGrass(void)
 	PlaySE(SE_LEAVES);
 }
 
-void FldEff_ShortGrass(void)
+static void FldEff_ShortGrass(void)
 {
 	u8 spriteId, eventObjectId;
 	struct Sprite *sprite;
@@ -558,7 +559,7 @@ void FldEff_ShortGrass(void)
 	}
 }
 
-void FldEff_SandFootprints(void)
+static void FldEff_SandFootprints(void)
 {
 	s32 x, y;
 	u8 spriteId;
@@ -587,7 +588,7 @@ void FldEff_SandFootprints(void)
 		PlaySE(SE_SAND_FOOTSTEP);
 }
 
-void FldEff_BikeTireTracks(void)
+static void FldEff_BikeTireTracks(void)
 {
 	s32 x, y;
 	u8 spriteId;
@@ -614,6 +615,32 @@ void FldEff_BikeTireTracks(void)
 
 	if (IsFanfareTaskInactive()) //Sound interrupts fanfare
 		PlaySE(SE_MUD_SLAP); //Different sound on bike
+}
+
+static void FldEff_Dust(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = gFieldEffectArguments[0];
+	y = gFieldEffectArguments[1];
+	LogCoordsCameraRelative(&x, &y, 8, 12);
+
+	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 9);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, gFieldEffectArguments[2]);
+	if (spriteId != MAX_SPRITES)
+	{
+		struct Sprite* sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = gFieldEffectArguments[3];
+		sprite->data[0] = gFieldEffectArguments[2];
+		sprite->data[1] = 10;
+	}
 }
 
 static void FldEff_CaveDust(void)
@@ -1216,6 +1243,12 @@ const struct FieldEffectScript FieldEffectScript_SandFootprints =
 const struct FieldEffectScript FieldEffectScript_BikeTireTracks =
 {
 	FLDEFF_CALLASM, FldEff_BikeTireTracks,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript FieldEffectScript_Dust =
+{
+	FLDEFF_CALLASM, FldEff_Dust,
 	FLDEFF_END,
 };
 

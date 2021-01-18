@@ -6,6 +6,8 @@
 #include "../../include/constants/region_map_sections.h"
 #include "../../include/constants/trainers.h"
 
+#include "../../include/new/accuracy_calc.h"
+#include "../../include/new/attackcanceler.h"
 #include "../../include/new/ai_advanced.h"
 #include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
@@ -62,6 +64,7 @@ static void CalculateAIPredictions(void);
 static bool8 ShouldSwitch(void);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
 static bool8 FindMonThatAbsorbsOpponentsMove(void);
+static bool8 SwitchToBestResistMon(void);
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void);
 static bool8 PassOnWish(void);
 static bool8 SemiInvulnerableTroll(void);
@@ -87,6 +90,11 @@ static bool8 ShouldAIUseItem(void);
 #ifdef VAR_GAME_DIFFICULTY
 static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
 #endif
+static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank);
+static u8 GetChanceOfPredictingPlayerNormalSwitch(void);
+static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank);
+static bool8 IsPlayerTryingToCheeseWithItemUsage(u8 playerBank, u8 aiBank);
+static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank);
 
 void BattleAI_HandleItemUseBeforeAISetup(void)
 {
@@ -883,6 +891,9 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES)
 		return TRUE; //Can definitely take multiple hits
 
+	if (gBattleMoves[defMove].effect == EFFECT_SUCKER_PUNCH)
+		return TRUE; //Sucker Punch never works on a switch
+
 	//Now run actual damage calc
 	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
 
@@ -1121,6 +1132,35 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	return FALSE;
 }
 
+static bool8 SwitchToBestResistMon(void)
+{
+	//Check best switching option
+	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
+	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
+	//&& Random() % 100 < 75 //75 % chance of taking the switch
+	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
+	{
+		//Switch to a mon that can KO and save your damager for later
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		return TRUE;
+	}
+
+	//Check second best switching option
+	switchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
+	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
+	//&& Random() % 100 < 75 //75 % chance of taking the switch
+	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
+	{
+		//Switch to a mon that can KO and save your damager for later
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = GetSecondMostSuitableMonToSwitchInto();
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 {
 	u8 battlerIn1, battlerIn2;
@@ -1198,6 +1238,9 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 		default:
 			return FALSE;
 	}
+
+	if (SwitchToBestResistMon())
+		return TRUE; //Mon has already been found
 
 	gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 	EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -2156,6 +2199,9 @@ static bool8 ShouldSaveSweeperForLater(void)
 
 	if (IS_SINGLE_BATTLE //Not good for Doubles
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
+	#ifdef VAR_GAME_DIFFICULTY
+	&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY) //This logic is not present on easy
+	#endif
 	&& !IsDynamaxed(gActiveBattler) //Don't waste the Dynamax
 	&& !(gBattleMons[gActiveBattler].status1 & STATUS1_FREEZE) //Better to not try to save frozen target
 	&& (!(gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS) //Better to not try to save paralyzed target
@@ -2173,34 +2219,13 @@ static bool8 ShouldSaveSweeperForLater(void)
 		|| (!AnyUsefulOffseniveStatIsRaised(gActiveBattler) //It isn't invested in useful buffs
 		 && STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) < 6 + 3 //Including +3 Evasion
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
-		 && !ResistsAllMoves(foe, gActiveBattler)) //And it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
-		                                           //don't get into an infinite loop if this mon already does)
+		 && ((GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //And the new mon can KO (helps against PP stallers)
+		  || !ResistsAllMoves(foe, gActiveBattler))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
+		                                             //don't get into an infinite loop if this mon already does)
 	)
 	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
 	{
-		//Check best switching option
-		u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
-		if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
-		//&& Random() % 100 < 75 //75 % chance of taking the switch
-		/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
-		{
-			//Switch to a mon that can KO and save your damager for later
-			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-			return TRUE;
-		}
-
-		//Check second best switching option
-		switchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
-		if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
-		//&& Random() % 100 < 75 //75 % chance of taking the switch
-		/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
-		{
-			//Switch to a mon that can KO and save your damager for later
-			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = GetSecondMostSuitableMonToSwitchInto();
-			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-			return TRUE;
-		}
+		SwitchToBestResistMon();
 	}
 
 	return FALSE;
@@ -2595,6 +2620,10 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (dmg >= party[i].hp)
 								{
 									faintsFromMove = TRUE;
+
+									if (flags[i] & SWITCHING_FLAG_OUTSPEEDS && PriorityCalc(foe, ACTION_USE_MOVE, move) > 0) //This move KOs and has Priority
+										flags[i] &= ~SWITCHING_FLAG_OUTSPEEDS; //Then remove the outspeed flag so the AI doesn't think it can outspeed
+
 									break; //Only need 1 check for this to pass
 								}
 								else if (dmg >= party[i].hp / 2) //Move does half of over half of the health remaining
@@ -2727,7 +2756,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 	if (bestMonId != PARTY_SIZE)
 	{
-		if (scores[bestMonId] < 8)
+		if (!(flags[bestMonId] & SWITCHING_FLAG_RESIST_ALL_MOVES) //Best mon doesn't resist all moves
+		&& (flags[bestMonId] & (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_OUTSPEEDS)) != (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_OUTSPEEDS)) //And doesn't outspeed and KO
 		{
 			bool8 tSpikesActive = gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0;
 			for (i = firstId; i < lastId; ++i)
@@ -2863,6 +2893,12 @@ u32 WildMonIsSmart(unusedArg u8 bank)
 		#endif
 		)
 			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+
+		#ifdef VAR_GAME_DIFFICULTY
+		if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY
+		&& gSpecialSpeciesFlags[species].smartWild)
+			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+		#endif
 
 		if (gSpecialSpeciesFlags[species].smartWild)
 			return AI_SCRIPT_CHECK_BAD_MOVE;
@@ -3156,7 +3192,7 @@ static bool8 ShouldAIUseItem(void)
 		if (item == ITEM_NONE || itemEffects == NULL)
 			continue;
 
-		switch (gBattleStruct->AI_itemType[gActiveBattler & BIT_FLANK] = GetAI_ItemType(item, itemEffects))
+		switch (gBattleStruct->AI_itemType[gActiveBattler / 2] = GetAI_ItemType(item, itemEffects))
 		{
 			case AI_ITEM_FULL_RESTORE:
 				if (BATTLER_ALIVE(gActiveBattler) && !BATTLER_MAX_HP(gActiveBattler))
@@ -3212,10 +3248,10 @@ static bool8 ShouldAIUseItem(void)
 				break;
 			case AI_ITEM_CURE_CONDITION: ;
 				u32 status1 = gBattleMons[gActiveBattler].status1;
-				gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] = 0;
+				gBattleStruct->AI_itemFlags[gActiveBattler / 2] = 0;
 				if (itemEffects[3] & ITEM3_SLEEP && status1 & STATUS1_SLEEP)
 				{
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x20;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x20;
 					shouldUse = TRUE;
 				}
 				if (itemEffects[3] & ITEM3_POISON && (status1 & STATUS1_PSN_ANY))
@@ -3223,7 +3259,7 @@ static bool8 ShouldAIUseItem(void)
 					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
 					if (!GoodIdeaToPoisonSelf(gActiveBattler)) //Pokemon shouldn't be poisoned
 					{
-						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x10; //So heal it
+						gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x10; //So heal it
 						shouldUse = TRUE;
 					}
 					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
@@ -3233,14 +3269,14 @@ static bool8 ShouldAIUseItem(void)
 					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
 					if (!GoodIdeaToBurnSelf(gActiveBattler)) //Pokemon shouldn't be burned
 					{
-						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x8; //So heal it
+						gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x8; //So heal it
 						shouldUse = TRUE;
 					}
 					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
 				}
 				if (itemEffects[3] & ITEM3_FREEZE && status1 & STATUS1_FREEZE)
 				{
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x4;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x4;
 					shouldUse = TRUE;
 				}
 				if (itemEffects[3] & ITEM3_PARALYSIS && status1 & STATUS1_PARALYSIS)
@@ -3248,38 +3284,38 @@ static bool8 ShouldAIUseItem(void)
 					gBattleMons[gActiveBattler].status1 = 0; //Temporarily remove status
 					if (!GoodIdeaToParalyzeSelf(gActiveBattler)) //Pokemon shouldn't be paralyzed
 					{
-						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x2; //So heal it
+						gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x2; //So heal it
 						shouldUse = TRUE;
 					}
 					gBattleMons[gActiveBattler].status1 = status1; //Restore from backup
 				}
 				if (itemEffects[3] & ITEM3_CONFUSION && gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION)
 				{
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x1;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x1;
 					shouldUse = TRUE;
 				}
 				break;
 			case AI_ITEM_X_STAT:
-				gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] = 0;
+				gBattleStruct->AI_itemFlags[gActiveBattler / 2] = 0;
 				if (!gDisableStructs[gActiveBattler].isFirstTurn)
 					break;
 				if (itemEffects[0] & ITEM0_X_ATTACK)
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x1;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x1;
 				if (itemEffects[1] & ITEM1_X_DEFEND)
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x2;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x2;
 				if (itemEffects[1] & ITEM1_X_SPEED)
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x4;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x4;
 				if (itemEffects[2] & ITEM2_X_SPATK)
 				{
 					if (item != ITEM_X_SP_DEF) //Sp. Atk
-						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x8;
+						gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x8;
 					else //Sp. Def
-						gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x10;
+						gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x10;
 				}
 				if (itemEffects[2] & ITEM2_X_ACCURACY)
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x20;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x20;
 				if (itemEffects[0] & ITEM0_HIGH_CRIT)
-					gBattleStruct->AI_itemFlags[gActiveBattler & BIT_FLANK] |= 0x80;
+					gBattleStruct->AI_itemFlags[gActiveBattler / 2] |= 0x80;
 				shouldUse = TRUE;
 				break;
 			case AI_ITEM_GUARD_SPECS:
@@ -3293,7 +3329,7 @@ static bool8 ShouldAIUseItem(void)
 		if (shouldUse)
 		{
 			EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
-			gBattleStruct->chosenItem[gActiveBattler & BIT_FLANK] = item;
+			gBattleStruct->chosenItem[gActiveBattler / 2] = item;
 			BATTLE_HISTORY->trainerItems[i] = 0;
 			gDisableStructs[gActiveBattler].protectUses = 0; //Reset's protect uses
 			return shouldUse;
@@ -3394,4 +3430,151 @@ void ClearCachedAIData(void)
 			}
 		}
 	}
+}
+
+//People have a tendency to cheese the AI by doing one of the following things:
+//1. Leading with a deceiving Pokemon and immediately switching it out to either PP stall the opponent or lock it into a bad move.
+//2. Constantly switching Pokemon out when they know they'll constantly be immune to PP stall the AI.
+//Using this function, the AI will decide on a new move if it sees this happening.
+void RechooseAIMoveAfterSwitchIfNecessary(void)
+{
+	if (SIDE(gBankSwitching) == B_SIDE_PLAYER && BATTLER_ALIVE(gBankSwitching))
+	{
+		u8 foe2;
+		u8 foe1 = FOE(gBankSwitching);
+	
+		if (BATTLER_ALIVE(foe1) && gChosenActionByBank[foe1] == ACTION_USE_MOVE) //Recalc Foe 1
+			TryRechooseAIMoveIfPlayerSwitchCheesed(foe1, gBankSwitching);
+
+		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(foe2 = PARTNER(foe1)) && gChosenActionByBank[foe2] == ACTION_USE_MOVE) //Recalc Foe 2
+			TryRechooseAIMoveIfPlayerSwitchCheesed(foe2, gBankSwitching);
+	}
+}
+
+static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank)
+{
+	if (IsPlayerTryingToCheeseAI(playerBank, aiBank))
+	{
+		u8 backupAtk = gBankAttacker;
+		u8 backupDef = gBankTarget;
+
+		gBankAttacker = gActiveBattler = aiBank;
+		ClearCachedAIData(); //Need recalculation since data was for old mon
+		Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Clear old predictions
+		UpdateBestDoublesKillingMoves();
+
+		BattleAI_SetupAIData(0xF);
+		u8 chosenMovePos = BattleAI_ChooseMoveOrAction();
+		if (chosenMovePos < MAX_MON_MOVES)
+		{
+			gBattleStruct->chosenMovePositions[aiBank] = chosenMovePos;
+			gChosenMovesByBanks[aiBank] = gBattleMons[aiBank].moves[chosenMovePos];
+			u8 moveTarget = GetBaseMoveTarget(gChosenMovesByBanks[aiBank], aiBank);
+
+			if (moveTarget & MOVE_TARGET_USER)
+			{
+				gBankTarget = aiBank;
+			}
+			else if (moveTarget & MOVE_TARGET_USER_OR_PARTNER)
+			{
+				if (SIDE(gBankTarget) != SIDE(aiBank))
+					gBankTarget = aiBank;
+			}
+			else if (moveTarget & MOVE_TARGET_BOTH)
+			{
+				if (SIDE(aiBank) == B_SIDE_PLAYER)
+				{
+					gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+						gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+				}
+				else
+				{
+					gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+						gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+				}
+			}
+
+			gBattleStruct->moveTarget[aiBank] = gBankTarget;
+		}
+
+		gBankAttacker = backupAtk;
+		gBankTarget = backupDef;
+	}
+}
+
+static u8 GetChanceOfPredictingPlayerNormalSwitch(void)
+{
+	u8 baseRate = 1; //By default, the AI accurately "predicts" switching 1% of the time
+	u8 playerSwitches = (gNewBS->ai.playerSwitchedCount == 0) ? 0 : gNewBS->ai.playerSwitchedCount - 1; //1st switch shouldn't increase the rate yet
+
+	if (IS_DOUBLE_BATTLE) //Switching is done less in Doubles
+		return MathMin(baseRate + (playerSwitches * 7), 45); //Each switchout the player makes increases the rate by 7%, up to a maximum of 45%
+	else
+		return MathMin(baseRate + (playerSwitches * 5), 30); //Each switchout the player makes increases the rate by 5%, up to a maximum of 30%
+}
+
+static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank)
+{
+	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
+		&& gNewBS->ai.switchesInARow[playerBank] >= 2; //And they just switched in (double-switched)
+}
+
+static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
+{
+	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
+		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //In Frontier battles
+		#ifdef VAR_GAME_DIFFICULTY
+		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY) //Or on harder game modes
+		#endif
+		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch(); //AI accurately "predicts" switch X% of the time - adds some risk for player switching
+}
+
+static bool8 IsPlayerTryingToCheeseWithItemUsage(u8 playerBank, u8 aiBank)
+{
+	return gChosenActionByBank[playerBank] == ACTION_USE_ITEM //Player decided to use an item
+		&& gBattleMoves[gChosenMovesByBanks[aiBank]].effect == EFFECT_SUCKER_PUNCH; //Because they knew they'd get a free heal thanks to Sucker Punch failing
+}
+
+static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
+{
+	if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Very Smart AI
+	&& IsPlayerInControl(playerBank)) //AI isn't in charge of player mon
+	{
+		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+		{
+			if (IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank) //Not fair in Frontier where player doesn't know opponent's lead
+			|| IsPlayerTryingToCheeseWithItemUsage(playerBank, aiBank))
+				return TRUE;
+		}
+
+		if (ShouldPredictRandomPlayerSwitch(playerBank))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+//If the Player used Protect to cheese AI, cheese back and change target if necessary
+void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
+{
+	#ifdef VAR_GAME_DIFFICULTY
+	u8 playerBank = gBattleStruct->moveTarget[gBankAttacker];
+
+	if (IS_DOUBLE_BATTLE
+	&& !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Unfair in Frontier battles
+	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY //On harder game modes
+	&& SIDE(gBankAttacker) == B_SIDE_OPPONENT //Fake Out user is AI
+	&& IsPlayerInControl(playerBank) //Protect user is player
+	&& ProtectAffects(gCurrentMove, gBankAttacker, playerBank, FALSE)) //Player protected from Fake Out
+	{
+		if (gBattleMoves[gCurrentMove].effect == EFFECT_FAKE_OUT)
+		{
+			if (BATTLER_ALIVE(PARTNER(playerBank))
+			&& !TargetFullyImmuneToCurrMove(PARTNER(playerBank))) //New target could take the hit (doesn't account for Psychic Terrain, but at this point it really doesn't matter)
+				gBattleStruct->moveTarget[gBankAttacker] = PARTNER(playerBank); //Change target to partner
+		}
+	}
+	#endif
 }

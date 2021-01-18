@@ -317,6 +317,9 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 #org @gText_MysteriousAirCurrentContinues
 The mysterious strong winds\ncontinue to blow.
 
+#org @gText_NoMinimizeOnInsane
+[CURRENT_MOVE] can't be selected on the\nInsane difficulty!\p
+
 //Other Battle Features
 
 #org @gText_TotemOmniboostStatsRose
@@ -347,7 +350,7 @@ Negative emotions fill the air!
 [ATTACKER] is\ntormented by the negative emotions!
 
 #org @gText_TailwindBattleStart
-A tailwind blew from behind\n[FD][36] team!
+A tailwind blew from behind\nFlying-type Pok\emon!
 
 #org @gText_MagnetRiseBattleStart
 [SCRIPTING_BANK] is\nlevitating with electromagnetism!
@@ -374,10 +377,10 @@ Pixies are flying around the field!
 The Pixies in the air increased\n[SCRIPTING_BANK]'s [BUFFER][00]!
 
 #org @gText_RainbowBattleStart
-A rainbow appeared in the sky above\nthe entire battlefield!\pThe chance of secondary move\neffects has been doubled!
+A rainbow appeared in the sky above\nthe entire battlefield!\pThe chance of secondary effects used\nby Dragon-types has been doubled!
 
 #org @gText_RingChallengeAttackCancel
-But the attack's type can't be used\nin this round of the Ring Challenge!
+But the attack's type can't be used\nin this fight!
 
 #org @gText_RingChallengeBanMoveMenu
 [BUFFER][00]-type moves can't be used\nin this round of the Ring Challenge!\p

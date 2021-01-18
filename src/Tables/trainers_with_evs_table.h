@@ -108,7 +108,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[11] =
-	{ //Physical Wall 
+	{ //Physical Wall
 		.nature = NATURE_BOLD,
 		.ivs = 31,
 		.hpEv = 252,
@@ -1224,15 +1224,39 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 	},
 
 #ifdef UNBOUND
+	//Special Illegal Spreads
 	[124] =
-	{ //Special Mega Rayquaza Spread
+	{	//Rayquaza
 		.nature = NATURE_JOLLY,
 		.ivs = 31,
-		.hpEv = 236,
-		.defEv = 120,
-		.spdEv = 152,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 252,
+		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+	},
+	[125] =
+	{	//Hitmontop
+		.nature = NATURE_IMPISH,
+		.ivs = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.defEv = 252,
+		.spDefEv = 252,
+		.ball = TRAINER_EV_CLASS_BALL,
+		.ability = Ability_1,
+	},
+	[126] =
+	{	//Gastrodon
+		.nature = NATURE_BOLD,
+		.ivs = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 252,
+		.ball = TRAINER_EV_CLASS_BALL,
+		.ability = Ability_2,
 	},
 #endif
 };

@@ -96,9 +96,9 @@ ability_t GetRecordedAbility(u8 bank)
 		return BATTLE_HISTORY->abilities[bank];
 
 	u16 species = SPECIES(bank);
-	u8 ability1 = TryRandomizeAbility(gBaseStats[species].ability1, species);
-	u8 ability2 = TryRandomizeAbility(gBaseStats[species].ability2, species);
-	u8 hiddenAbility = TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+	u8 ability1 = GetAbility1(species);
+	u8 ability2 = GetAbility2(species);
+	u8 hiddenAbility = GetHiddenAbility(species);
 
 	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
 		return ability1;
@@ -1501,6 +1501,78 @@ bool8 WillPoltergeistFail(u16 item, u8 ability)
 		|| IsMagicRoomActive();
 }
 
+bool8 WillSyncronoiseFail(u8 bankAtk, u8 bankDef)
+{
+	u8 atkType1 = gBattleMons[bankAtk].type1;
+	u8 atkType2 = gBattleMons[bankAtk].type2;
+	u8 atkType3 = gBattleMons[bankAtk].type3;
+
+	u8 defType1 = gBattleMons[bankDef].type1;
+	u8 defType2 = gBattleMons[bankDef].type2;
+	u8 defType3 = gBattleMons[bankDef].type3;
+
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAndBank(u8 atkType1, u8 atkType2, u8 atkType3, u8 bankDef)
+{
+	u8 defType1 = gBattleMons[bankDef].type1;
+	u8 defType2 = gBattleMons[bankDef].type2;
+	u8 defType3 = gBattleMons[bankDef].type3;
+
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(u8 bankAtk, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect)
+{
+	u8 atkType1 = gBattleMons[bankAtk].type1;
+	u8 atkType2 = gBattleMons[bankAtk].type2;
+	u8 atkType3 = gBattleMons[bankAtk].type3;
+
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defItemEffect)
+{
+	return WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, TYPE_BLANK, defItemEffect);
+}
+
+bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u8 atkType2, u8 atkType3, u8 defType1, u8 defType2, u8 defType3, u8 defItemEffect)
+{
+	if (defItemEffect == ITEM_EFFECT_RING_TARGET)
+		return FALSE;
+
+	if (!IS_BLANK_TYPE(atkType1))
+	{
+		if (atkType1 == defType1
+		||  atkType1 == defType2
+		||  atkType1 == defType3)
+			return FALSE; //No fail
+	}
+
+	if (!IS_BLANK_TYPE(atkType2))
+	{
+		if (atkType2 == defType1
+		||  atkType2 == defType2
+		||  atkType2 == defType3)
+			return FALSE; //No fail
+	}
+
+	if (!IS_BLANK_TYPE(atkType3))
+	{
+		if (atkType3 == defType1
+		||  atkType3 == defType2
+		||  atkType3 == defType3)
+			return FALSE; //No fail
+	}
+
+	return TRUE; //No type in common so fail
+}
+
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
@@ -1540,7 +1612,8 @@ bool8 DoesSleepClausePrevent(u8 bank)
 			case BATTLE_FACILITY_NATIONAL_DEX_OU:
 			case BATTLE_FACILITY_UU:
 			case BATTLE_FACILITY_RU:
-			case BATTLE_FACILITY_NU: ;
+			case BATTLE_FACILITY_NU:
+			SLEEP_ON_TEAM_CHECK: ;
 				u8 firstId, lastId;
 				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 
@@ -1553,6 +1626,10 @@ bool8 DoesSleepClausePrevent(u8 bank)
 				}
 		}
 	}
+	#ifdef VAR_GAME_DIFFICULTY
+	else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY && !FlagGet(FLAG_SYS_GAME_CLEAR)) //Insane before game cleared
+		goto SLEEP_ON_TEAM_CHECK;
+	#endif
 
 	return FALSE;
 }
@@ -1961,16 +2038,25 @@ bool8 BankSideHasMist(u8 bank)
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
 }
 
-bool8 BankSideHasTailwind(u8 bank)
+bool8 BankHasTailwind(u8 bank)
 {
-	return SideHasTailwind(SIDE(bank));
+	return BankSideHasTailwind(bank)
+		#ifdef FLAG_TAILWIND_BATTLE
+		|| (FlagGet(FLAG_TAILWIND_BATTLE) && IsOfType(bank, TYPE_FLYING))
+		#endif
+		;
 }
 
-bool8 SideHasTailwind(u8 side)
+bool8 BankSideHasTailwind(u8 bank)
+{
+	return gNewBS->TailwindTimers[SIDE(bank)];
+}
+
+bool8 MonHasTailwind(struct Pokemon* mon, u8 side)
 {
 	return gNewBS->TailwindTimers[side]
 		#ifdef FLAG_TAILWIND_BATTLE
-		|| (FlagGet(FLAG_TAILWIND_BATTLE) && side == B_SIDE_OPPONENT)
+		|| (FlagGet(FLAG_TAILWIND_BATTLE) && IsMonOfType(mon, TYPE_FLYING))
 		#endif
 		;
 }
@@ -1981,14 +2067,19 @@ bool8 BankSideHasSeaOfFire(u8 bank)
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_SEA_OF_FIRE);
 }
 
+bool8 BankHasRainbow(u8 bank)
+{
+	return BankSideHasRainbow(bank)
+		#ifdef FLAG_RAINBOW_BATTLE
+		|| (FlagGet(FLAG_RAINBOW_BATTLE) && IsOfType(bank, TYPE_DRAGON))
+		#endif
+		;
+}
+
 bool8 BankSideHasRainbow(u8 bank)
 {
 	return gNewBS->RainbowTimers[SIDE(bank)]
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_RAINBOW)
-		#ifdef FLAG_RAINBOW_BATTLE
-		|| FlagGet(FLAG_RAINBOW_BATTLE)
-		#endif
-		;
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_RAINBOW);
 }
 
 bool8 BankSideHasSwamp(u8 bank)

@@ -35,6 +35,7 @@ bool8 IsMiddleCupTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
+bool8 IsOnlyScalemonsGame(void);
 bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 AreMegasZMovesBannedInTier(u8 tier);
@@ -135,6 +136,7 @@ enum BattleTowerFormats
 	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
 	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
 	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
+	BATTLE_MINE_FORMAT_4, //Ubers, Ubers Camomons
 	NUM_TIERS
 };
 

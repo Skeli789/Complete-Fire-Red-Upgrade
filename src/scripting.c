@@ -522,7 +522,7 @@ void sp017_ChangePokemonAttacks(void)
 		//Otherwise, replace given slot
 		SetMonData(&gPlayerParty[partyId], MON_DATA_MOVE1 + moveSlot, &move);
 		SetMonData(&gPlayerParty[partyId], MON_DATA_PP1 + moveSlot, &gBattleMoves[move].pp);
-		gPlayerParty[partyId].pp_bonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
+		gPlayerParty[partyId].ppBonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
 	}
 	else
 		Special_0DD_DeleteMove();
@@ -2015,6 +2015,71 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 	return PARTY_SIZE;
 }
 
+//Fix fadescreens in rain
+bool8 __attribute__((long_call)) IsPaletteNotActive(void);
+static bool8 ClearRainFadeHelperWhenPalFadeDone(void)
+{
+	if (!gPaletteFade->active)
+	{
+		u8 currWeather = GetCurrentWeather(); 
+
+		if (currWeather == WEATHER_RAIN_LIGHT
+		|| currWeather == WEATHER_RAIN_MED
+		|| currWeather == WEATHER_RAIN_HEAVY
+		|| currWeather == WEATHER_SHADE)
+		{
+			if (gRainFadeHelper == 2)
+			{
+				gRainFadeHelper = 0; //Reset for later
+				return TRUE;
+			}
+		}
+		else
+		{
+			gRainFadeHelper = 0; //Reset for later
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
+{
+	u8 mode = ScriptReadByte(ctx);
+
+	switch (mode)
+	{
+		case FADE_TO_BLACK:
+		case FADE_TO_WHITE:
+		default:
+			//CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE); //Issue with EM version is you can't show new sprites during fadescreen
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, IsPaletteNotActive);
+			break;
+		case FADE_FROM_BLACK:
+		case FADE_FROM_WHITE:
+			//CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE);
+			gRainFadeHelper = 1;
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, ClearRainFadeHelperWhenPalFadeDone);
+			break;
+	}
+
+	return TRUE;
+}
+
+void ApplyGammaShiftOnRainFadeIn(void)
+{
+	if (gRainFadeHelper == 1)
+	{
+		ApplyGammaShift(0, 32, 0);
+		gRainFadeHelper = 2;
+	}
+	else
+		ApplyGammaShift(0, 32, 3);
+}
+
 // Hall of Fame Fix for Expanded Pokemon
 // credit to sagiri: https://github.com/Sagiri/fame-hall
 
@@ -2312,6 +2377,8 @@ extern const u8 gText_Expert[];
 extern const u8 gText_Insane[];
 extern const u8 gText_MixedUnboundVersions[];
 extern const u8 gText_PostGame[];
+extern const u8 gText_Random[];
+extern const u8 gText_Scalemons[];
 extern const u8 gText_Difficulty[];
 extern const u8 gText_PlusTrades[];
 extern const struct TextColor sHOFTextColors[];
@@ -2323,65 +2390,88 @@ void HallOfFame_PrintWelcomeText(void)
 	WindowPrint(0, 2, x, 1, &sHOFTextColors[0], 0, gText_WelcomeToHOF);
 
 	#ifdef VAR_GAME_DIFFICULTY
-	const u8* difficultyString = NULL;
-	
-	#ifdef FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY
-	if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //First HOF
-	&& FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
-	{
-		difficultyString = gText_NewGame; //Don't display difficulty since player didn't stick with it
-	}
-	else
-	#endif
-	{
-		switch (VarGet(VAR_GAME_DIFFICULTY))
-		{
-			case OPTIONS_HARD_DIFFICULTY:
-				difficultyString = gText_Expert;
-				break;
-			case OPTIONS_EXPERT_DIFFICULTY:
-				difficultyString = gText_Insane;
-				break;
-			default:
-				difficultyString = gText_VanillaDifficult;
-				break;
-		}
-	}
-
-	StringCopy(gStringVar4, difficultyString);
-	if (GetGameStat(GAME_STAT_ENTERED_HOF) > 1) //Second time or more in HOF
-		StringAppend(gStringVar4, gText_PostGame);
-	#ifdef UNBOUND
-	else
-	{
+		u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
+		const u8* difficultyString = NULL;
+		
+		#ifdef FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY
+		if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //First HOF
 		#ifdef FLAG_NEW_GAME_PLUS
-		if (FlagGet(FLAG_NEW_GAME_PLUS))
-			StringAppend(gStringVar4, gText_Plus);
+		&& FlagGet(FLAG_NEW_GAME_PLUS)
+		#endif
+		&& FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
+		{
+			difficultyString = gText_NewGame; //Don't display difficulty since player didn't stick with it
+		}
 		else
 		#endif
 		{
-			#define FLAG_STARTED_GAME_1_1 0x16CC //Records if the player started the game on Unbound 1.1.0 at least
-			#define FLAG_BEAT_CHAMPION_1_1 0x16D9 //Records if the player started the game on Unbound 1.1.0 at least
-			for (u16 i = FLAG_STARTED_GAME_1_1; i <= FLAG_BEAT_CHAMPION_1_1; ++i)
+			switch (difficulty)
 			{
-				if (!FlagGet(i)) //Player didn't beat one of the Gyms or E4 on 1.1.0 at least
-				{
-					StringAppend(gStringVar4, gText_MixedUnboundVersions);
+				case OPTIONS_HARD_DIFFICULTY:
+					difficultyString = gText_Expert;
 					break;
-				}
+				case OPTIONS_EXPERT_DIFFICULTY:
+					difficultyString = gText_Insane;
+					break;
+				default:
+					difficultyString = gText_VanillaDifficult;
+					break;
 			}
 		}
-	}
-	#endif
 
-	if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //Only on first HOF
-	&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0)
-		StringAppend(gStringVar4, gText_PlusTrades); //Indicate the player traded
+		StringCopy(gStringVar4, difficultyString);
+		#if (defined FLAG_POKEMON_RANDOMIZER || FLAG_POKEMON_LEARNSET_RANDOMIZER || FLAG_ABILITY_RANDOMIZER)
+		if (FlagGet(FLAG_POKEMON_RANDOMIZER) || FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) || FlagGet(FLAG_ABILITY_RANDOMIZER)) //Randomized gameplay
+		{
+			StringAppend(gStringVar4, gText_Random);
+			StringAppend(gStringVar4, gText_Difficulty);
+		}
+		else
+		#endif
+		#ifdef FLAG_SCALEMONS_GAME
+		if (FlagGet(FLAG_SCALEMONS_GAME)) //Base stats were scaled to ~600
+		{
+			StringAppend(gStringVar4, gText_Scalemons);
+			StringAppend(gStringVar4, gText_Difficulty);
+		}
+		else
+		#endif
+		if (GetGameStat(GAME_STAT_ENTERED_HOF) >= 2) //Second time or more in HOF
+		{
+			StringAppend(gStringVar4, gText_PostGame);
+			StringAppend(gStringVar4, gText_Difficulty);
+		}
+		#ifdef UNBOUND
+		else
+		{
+			#ifdef FLAG_NEW_GAME_PLUS
+			if (FlagGet(FLAG_NEW_GAME_PLUS))
+				StringAppend(gStringVar4, gText_Plus);
+			else
+			#endif
+			{
+				#define FLAG_STARTED_GAME_1_1 0x16CC //Records if the player started the game on Unbound 1.1.0 at least
+				#define FLAG_BEAT_CHAMPION_1_1 0x16D9 //Records if the player started the game on Unbound 1.1.0 at least
+				for (u16 i = FLAG_STARTED_GAME_1_1; i <= FLAG_BEAT_CHAMPION_1_1; ++i)
+				{
+					if (!FlagGet(i)) //Player didn't beat one of the Gyms or E4 on 1.1.0 at least
+					{
+						StringAppend(gStringVar4, gText_MixedUnboundVersions);
+						break;
+					}
+				}
+			}
 
-	StringAppend(gStringVar4, gText_Difficulty);
+			StringAppend(gStringVar4, gText_Difficulty);
 
-	x = (0xD0 - GetStringWidth(2, gStringVar4, 0)) / 2;
-	WindowPrint(0, 2, x, 17, &sHOFTextColors[0], 0, gStringVar4);
+			if (difficulty >= OPTIONS_EXPERT_DIFFICULTY //Only Insane
+			&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0)
+				StringAppend(gStringVar4, gText_PlusTrades); //Indicate the player traded
+		}
+		#endif
+
+		x = (0xD0 - GetStringWidth(2, gStringVar4, 0)) / 2;
+		WindowPrint(0, 2, x, 17, &sHOFTextColors[0], 0, gStringVar4);
 	#endif
 
 	CopyWindowToVram(0, COPYWIN_BOTH);

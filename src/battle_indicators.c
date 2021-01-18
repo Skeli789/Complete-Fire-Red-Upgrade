@@ -12,6 +12,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/util.h"
 
 /*
 move_menu.c
@@ -1343,8 +1344,23 @@ void TryLoadTypeIcons(void)
 
 		for (u8 position = 0; position < gBattlersCount; ++position)
 		{
+			u8 bank = GetBattlerAtPosition(position);
+
 			if (!BATTLER_ALIVE(GetBattlerAtPosition(position)))
 				continue;
+
+			u8 type1, type2;
+			struct Pokemon* monIllusion = GetIllusionPartyData(bank);
+			if (monIllusion != GetBankPartyData(bank)) //Under Illusion
+			{
+				type1 = GetMonType(monIllusion, 0);
+				type2 = GetMonType(monIllusion, 1);
+			}
+			else
+			{
+				type1 = gBattleMons[bank].type1;
+				type2 = gBattleMons[bank].type2;
+			}
 
 			for (u8 typeNum = 0; typeNum < 2; ++typeNum) //Load each type
 			{
@@ -1352,13 +1368,7 @@ void TryLoadTypeIcons(void)
 				s16 x = sTypeIconPositions[position][IS_SINGLE_BATTLE].x;
 				s16 y = sTypeIconPositions[position][IS_SINGLE_BATTLE].y + (11 * typeNum); //2nd type is 13px below
 
-				u8* type1Ptr;
-				if (gStatuses3[GetBattlerAtPosition(position)] & STATUS3_ILLUSION && !(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS))
-					type1Ptr = &gBaseStats[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
-				else
-					type1Ptr = &gBattleMons[GetBattlerAtPosition(position)].type1;
-
-				u8 type = *(type1Ptr + typeNum);
+				u8 type = (typeNum == 0) ? type1 : type2;
 
 				switch (type) { //Certain types have a different palette
 					case TYPE_NORMAL:

@@ -31,7 +31,6 @@ attackcanceler.c
 //This file's functions:
 static u8 AtkCanceller_UnableToUseMove(void);
 static u8 IsMonDisobedient(void);
-static bool8 DoesTargetHaveAbilityImmunity(void);
 
 void atk00_attackcanceler(void)
 {
@@ -82,6 +81,7 @@ void atk00_attackcanceler(void)
 	&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
 	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 	{
+		CancelMultiTurnMoves(gBankAttacker);
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 		return;
 	}
@@ -1257,6 +1257,8 @@ static u8 IsMonDisobedient(void)
 				gCurrMovePos = gChosenMovePos = Random() & 3;
 			} while (gBitTable[gCurrMovePos] & calc);
 
+			if (!gNewBS->ParentalBondOn)
+				gMultiHitCounter = 0; //So multi-strike moves don't cause the new move to strike more than once
 			gCalledMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
 			gBattlescriptCurrInstr = BattleScript_IgnoresAndUsesRandomMove;
 			gBankTarget = GetMoveTarget(gCalledMove, 0);
@@ -1319,16 +1321,17 @@ bool8 TargetFullyImmuneToCurrMove(u8 bankDef)
 }
 
 //For Dragon Darts
-static bool8 DoesTargetHaveAbilityImmunity(void)
+bool8 DoesTargetHaveAbilityImmunity(void)
 {
 	BattleScriptPushCursor(); //Backup the current script
 
 	if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
 	||  AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, 0))
 	{
-		BattleScriptPop(); //Restory the original script
+		BattleScriptPop(); //Restore the original script
 		return TRUE;
 	}
 
+	BattleScriptPop(); //Restore the original script
 	return FALSE;
 }

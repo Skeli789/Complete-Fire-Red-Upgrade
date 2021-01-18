@@ -254,7 +254,7 @@ Purchased
 Stop zooming!
 
 #org @gText_VanillaDifficult
-Vanilla/Difficult
+Difficult/Vanilla
 
 #org @gText_Expert
 Expert
@@ -263,7 +263,13 @@ Expert
 Insane
 
 #org @gText_Difficulty
- Mode
+ Difficulty
+
+#org @gText_Random
+ Random
+
+#org @gText_Scalemons
+ Scalemons
 
 #org @gText_PostGame
  Post-Game
@@ -272,7 +278,7 @@ Insane
  1.0/1.1
 
 #org @gText_PlusTrades
- Trade
+ +Trades
 
 #org @gText_NewGame
 New Game 

@@ -280,7 +280,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 	[BATTLE_TERRAIN_PENNY + 4] =
 		{
 			.camouflageType = TYPE_DRAGON,
-			.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.secretPowerEffect = MOVE_EFFECT_ALL_STATS_UP | MOVE_EFFECT_AFFECTS_USER,
 			.secretPowerAnim = MOVE_DRAGONRAGE,
 			.naturePowerMove = MOVE_DRAGONPULSE,
 			.burmyForm = SPECIES_BURMY_TRASH,

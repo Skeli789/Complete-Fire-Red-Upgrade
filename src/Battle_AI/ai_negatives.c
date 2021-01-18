@@ -749,7 +749,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SPLASH:
-			if (!IsTypeZCrystal(data->atkItem, moveType) || gNewBS->zMoveData.used[bankAtk])
+			if (!IsTypeZCrystal(data->atkItem, gBattleMoves[move].type) || gNewBS->zMoveData.used[bankAtk])
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1026,23 +1026,27 @@ MOVESCR_CHECK_0:
 		case EFFECT_HAZE:
 		AI_HAZE_CHECK: ;
 			decreased = FALSE;
-			//Don't want to reset own high stats
-			for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+			if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART) //Smart AI probably won't care about own boosts if it has Haze
 			{
-				if (STAT_STAGE(bankAtk, i) > 6 || STAT_STAGE(bankAtkPartner, i) > 6)
+				//Don't want to reset own high stats
+				for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 				{
-					DECREASE_VIABILITY(10);
-					decreased = TRUE;
-					break;
+					if (STAT_STAGE(bankAtk, i) > 6 || (IS_DOUBLE_BATTLE && STAT_STAGE(bankAtkPartner, i) > 6))
+					{
+						DECREASE_VIABILITY(10);
+						decreased = TRUE;
+						break;
+					}
 				}
+
+				if (decreased)
+					break;
 			}
-			if (decreased)
-				break;
 
 			//Don't want to reset enemy lowered stats
-			for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+			for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 			{
-				if (STAT_STAGE(bankDef, i) < 6 || STAT_STAGE(data->bankDefPartner, i) < 6)
+				if (STAT_STAGE(bankDef, i) < 6 || (IS_DOUBLE_BATTLE && STAT_STAGE(data->bankDefPartner, i) < 6))
 				{
 					DECREASE_VIABILITY(10);
 					break;
@@ -2813,12 +2817,12 @@ MOVESCR_CHECK_0:
 					|| !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) //Wild battle
 					|| SIDE(bankAtk) != B_SIDE_PLAYER) //Only increase money amount if will benefit player
 					{
-						if (!IsTypeZCrystal(data->atkItem, moveType) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
+						if (!IsTypeZCrystal(data->atkItem, gBattleMoves[move].type) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
 							DECREASE_VIABILITY(10);
 					}
 					else //Normal battle
 					{
-						if (!IsTypeZCrystal(data->atkItem, moveType) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
+						if (!IsTypeZCrystal(data->atkItem, gBattleMoves[move].type) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
 						{
 							if (gNewBS->usedHappyHour != 0) //Already used Happy Hour
 								DECREASE_VIABILITY(10);
@@ -2828,8 +2832,8 @@ MOVESCR_CHECK_0:
 
 				case MOVE_CELEBRATE:
 				case MOVE_HOLDHANDS:
-					if (!IsTypeZCrystal(data->atkItem, moveType)
-					|| data->atkItemQuality != moveType
+					if (!IsTypeZCrystal(data->atkItem, gBattleMoves[move].type)
+					|| data->atkItemQuality != gBattleMoves[move].type //Compare original move type
 					|| gNewBS->zMoveData.used[bankAtk])
 						DECREASE_VIABILITY(10);
 					break;
@@ -2903,7 +2907,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_TEAM_EFFECTS:
 			switch (move) {
 				case MOVE_TAILWIND:
-					if (BankSideHasTailwind(bankAtk)
+					if (BankHasTailwind(bankAtk)
 					||  PARTNER_MOVE_IS_TAILWIND_TRICKROOM
 					||  (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room active and not ending this turn
 						DECREASE_VIABILITY(10);
@@ -2955,17 +2959,6 @@ MOVESCR_CHECK_0:
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;
-			break;
-
-		case EFFECT_SYNCHRONOISE:
-			//Check holding ring target or is of same type
-			if (data->defItemEffect == ITEM_EFFECT_RING_TARGET
-			|| IsOfType(bankDef, gBattleMons[bankAtk].type1)
-			|| IsOfType(bankDef, gBattleMons[bankAtk].type2)
-			|| IsOfType(bankDef, gBattleMons[bankAtk].type3))
-				goto AI_STANDARD_DAMAGE;
-			else
-				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_POLTERGEIST:

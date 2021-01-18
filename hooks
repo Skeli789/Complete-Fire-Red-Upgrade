@@ -165,6 +165,7 @@ MetatileBehavior_IsUnableToEmerge 8059FCC 1
 #MetatileBehavior_IsHorizontalRail 805A21C 1
 DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
+PlayerJumpLedge 805C23C 1
 PlayerOnBikeCollide 805C1AC 1
 GetLedgeJumpDirection 80680F8 3
 RunOnTransitionMapScript 8069C44 0
@@ -173,6 +174,7 @@ TryRunOnFrameMapScript 8069C74 0
 GetInteractedMetatileScript 806D1F0 3
 GetInteractedWaterScript 806D548 3
 TryStartStepCountScript 0806D698 1
+RainFadeInHook 807A1E4 0
 PlayerGoThroughDoor 0807E80C 1
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
@@ -443,7 +445,7 @@ ChangeSummaryScreenMonSinglesDoubles 0813B20C 1
 ChangeSummaryScreenMonMulti 0813B38C 1
 SummaryScreenOTGenderColour 08136270 3
 
-## Hall of Fame Fix
+##Hall of Fame Fix
 CB2_DoHallOfFameScreen 080F1EFC 3
 Task_Hof_InitTeamSaveData 080F2114 3
 Task_Hof_DisplayMon 080F22B0 3
@@ -456,11 +458,11 @@ Task_Hof_InitMonData 080F1F74 3
 HallOfFame_PrintWelcomeText 080F313C 0
 HallOfFame_PrintMonInfo 080F3194 3
 
-## Unhidden Power
+##Unhidden Power
 WriteTypeHook 08030984 0
 DisplayTypeHook 081368CC 1
 
-## Evolution Methods
+##Evolution Methods
 GetEvolutionTargetSpecies 08042EC4 3
 CreateShedinja 080CE748 2
 RemoveEvoItem 080CED5C 0
@@ -502,6 +504,7 @@ PokedexLoadAlternateHeightHook 081058DC 0
 PokedexLoadAlternateWeightHook 08105A58 0
 SizeMinigameLoadAlternateHeightHook 080A0774 2
 PokedexScreenStats 08106370 0
+GetVisualBaseStat 0801D77C 2
 
 ##Daycare
 GiveEggFromDaycare 080460D4 1

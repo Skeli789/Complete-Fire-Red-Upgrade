@@ -236,7 +236,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 	#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
 	else if (mon->species == SPECIES_SHAYMIN_SKY)
 	{
-		if (IsNightTime())
+		if (IsNightTime() && !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
 		{
 			mon->species = SPECIES_SHAYMIN; //Shaymin reverts to normal form at night
 			CalculateMonStats(mon);
@@ -290,7 +290,7 @@ void UpdateBurmy(void)
 {
 	#ifdef SPECIES_BURMY
 	int i;
-	u16 form = gTerrainTable[gBattleTerrain + 4].burmyForm;
+	u16 form = gTerrainTable[GetBattleTerrainOverride() + 4].burmyForm;
 
 	if (form != SPECIES_NONE)
 	{

@@ -27,6 +27,7 @@ enum FightingClasses
 	FIGHT_CLASS_SWEEPER_KILL,
 	FIGHT_CLASS_SWEEPER_SETUP_STATS,
 	FIGHT_CLASS_SWEEPER_SETUP_STATUS,
+	FIGHT_CLASS_SWEEPER_SETUP_SCREENS,
 	FIGHT_CLASS_STALL,
 	FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS,
 	FIGHT_CLASS_TEAM_SUPPORT_CLERIC,
@@ -215,7 +216,7 @@ bool8 IsClassBatonPass(u8 class)
 
 bool8 IsClassScreener(u8 class)
 {
-	return class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
+	return class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS || class == FIGHT_CLASS_SWEEPER_SETUP_SCREENS;
 }
 
 bool8 IsClassCleric(u8 class)
@@ -285,12 +286,14 @@ bool8 IsClassDoublesAttacker(u8 class)
 
 bool8 IsClassDamager(u8 class)
 {
-	return IsClassSweeper(class) || IsClassDoublesAttacker(class);
+	return IsClassSweeper(class) || IsClassDoublesAttacker(class)
+		|| class == FIGHT_CLASS_SWEEPER_SETUP_SCREENS;
 }
 
 bool8 IsClassGoodToTaunt(u8 class)
 {
 	return class == FIGHT_CLASS_STALL
+		|| class == FIGHT_CLASS_SWEEPER_SETUP_SCREENS
 		|| class == FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS
 		|| class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC
 		|| class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS
@@ -478,7 +481,12 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 		if (class == FIGHT_CLASS_NONE)
 		{
 			if (reflectionNum >= 2 || auroraVeil)
-				class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
+			{
+				if (attackMoveNum >= 2)
+					class = FIGHT_CLASS_SWEEPER_SETUP_SCREENS;
+				else
+					class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
+			}
 			else if (entryHazardNum >= 1)
 				class = FIGHT_CLASS_ENTRY_HAZARDS;
 			else if (attackMoveNum >= 3)
@@ -965,6 +973,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 	if ((!isAtkDynamaxed && BankHoldingUsefulItemToProtectFor(bankAtk))
 	||  (!isAtkDynamaxed && BankHasAbilityUsefulToProtectFor(bankAtk, bankDef))
+	||  (!isAtkDynamaxed && WillFaintFromSecondaryDamage(bankDef)) //Don't protect if you're Dynamaxed because Max Moves can have beneficial side effects
 	||  (IsDynamaxed(bankDef) && (!IsRaidBattle() || bankDef != BANK_RAID_BOSS) && !IsDynamaxed(bankAtk) && !ShouldAIDynamax(bankAtk, bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move and ai won't be dynamaxed
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
@@ -1261,6 +1270,7 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 	if (gDisableStructs[bankAtk].isFirstTurn
 	&& IsUsefulToFlinchTarget(bankDef)
 	&& ABILITY(bankDef) != ABILITY_INNERFOCUS
+	&& ABILITY(bankDef) != ABILITY_SHIELDDUST
 	&& !MoveBlockedBySubstitute(MOVE_FAKEOUT, bankAtk, bankDef))
 	{
 		if (IS_DOUBLE_BATTLE)
@@ -1364,17 +1374,17 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 							//Pivot if attacking stats are bad
 							if (physMoveInMoveset && !specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (!physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 
@@ -1455,17 +1465,17 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 							//Pivot if attacking stats are bad
 							if (physMoveInMoveset && !specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (!physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 							else if (physMoveInMoveset && specMoveInMoveset)
 							{
-								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE_SPATK <= OFFENSIVE_STAT_MIN_NUM)
+								if (STAT_STAGE_ATK <= OFFENSIVE_STAT_MIN_NUM && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) <= OFFENSIVE_STAT_MIN_NUM)
 									return PIVOT;
 							}
 						}
@@ -1534,6 +1544,7 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 			INCREASE_VIABILITY(2 + boost);
 			break;
 
@@ -1578,6 +1589,9 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 
 static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit)
 {
+	if (stat == 0xFF) //Steal boosts with Spectral Thief
+		return TRUE;
+
 	if (ABILITY(bankDef) == ABILITY_UNAWARE
 	&& !MoveInMovesetAndUsable(MOVE_STOREDPOWER, bankAtk)
 	&& !MoveInMovesetAndUsable(MOVE_POWERTRIP, bankAtk)
@@ -1586,6 +1600,8 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 
 	if (WillFaintFromSecondaryDamage(bankAtk))
 		return FALSE; //Don't set up if you're going to die
+	else if (stat == 0xFE) //All stats
+		return TRUE;
 
 	if (IS_SINGLE_BATTLE)
 	{
@@ -1674,6 +1690,7 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 		case FIGHT_CLASS_SWEEPER_KILL:
 			if (stat == STAT_STAGE_ATK //For moves like Power-Up Punch
 			|| stat == STAT_STAGE_SPATK
+			|| stat == 0xFF //Spectral Thief
 			|| ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_VIABILITY(3 + boost);
 			break;
@@ -1724,6 +1741,7 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
@@ -1740,6 +1758,8 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			break;
 
 		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:
+			if (stat == 0xFE && ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit)) //All
+				INCREASE_VIABILITY(16);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_SETUP_ATTACKER:
@@ -1750,6 +1770,8 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 				case STAT_STAGE_SPEED:
 				case STAT_STAGE_ACC:
 				case STAT_STAGE_EVASION:
+				case 0xFE: //All
+				case 0xFF: //Spectral Thief
 					if (STAT_STAGE(bankAtk, stat) < 6 + 1) //Max 1 Boost
 						INCREASE_VIABILITY(17);
 					break;
@@ -1853,14 +1875,14 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(9);
+				INCREASE_VIABILITY(9);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(8);
+				INCREASE_VIABILITY(8);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
@@ -1871,35 +1893,36 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 
 		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(9);
+				INCREASE_VIABILITY(9);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(7);
+				INCREASE_VIABILITY(7);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(8);
+				INCREASE_VIABILITY(8);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(9);
+				INCREASE_VIABILITY(9);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_ENTRY_HAZARDS:
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 80) //Decent chance of hitting
-				INCREASE_STATUS_VIABILITY(8);
+				INCREASE_VIABILITY(8);
 			else
 				INCREASE_STATUS_VIABILITY(3);
 			break;
@@ -1951,6 +1974,82 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 	*originalViability = MathMin(viability, 255);
 }
 
+void IncreaseFreezeViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
+{
+	s16 viability = *originalViability;
+
+	if (BadIdeaToFreeze(bankDef, bankAtk))
+		return;
+
+	switch (class) {
+		case FIGHT_CLASS_SWEEPER_KILL:
+			break;
+
+		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
+			INCREASE_VIABILITY(9);
+			break;
+
+		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_STALL:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
+			INCREASE_VIABILITY(9);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
+			INCREASE_VIABILITY(7);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
+			INCREASE_VIABILITY(9);
+			break;
+
+		case FIGHT_CLASS_ENTRY_HAZARDS:
+			INCREASE_VIABILITY(8);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:
+			INCREASE_VIABILITY(17);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_SETUP_ATTACKER:
+			INCREASE_VIABILITY(18);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER:
+			INCREASE_VIABILITY(16);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP:
+			INCREASE_VIABILITY(16);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_UTILITY:
+			INCREASE_VIABILITY(17);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_PHAZING:
+			INCREASE_VIABILITY(17);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			INCREASE_VIABILITY(19);
+			break;
+	}
+
+	*originalViability = MathMin(viability, 255);
+}
+
 void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
 {
 	s16 viability = *originalViability;
@@ -1987,6 +2086,7 @@ void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u
 				break;
 
 			case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+			case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 				if (ShouldUseSubstitute(bankAtk, bankDef))
 					INCREASE_STATUS_VIABILITY(1);
 				break;
@@ -2039,6 +2139,21 @@ void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u
 	*originalViability = MathMin(viability, 255);
 }
 
+static bool8 IsWorthSettingHazards(u8 bankDef)
+{
+	u8 monsLeft = ViableMonCountFromBank(bankDef);
+	
+	if (monsLeft == 2) //Foe only two mons left
+		return FALSE; //Don't bother setting hazards
+
+	if (monsLeft == 3 //Opponent only has three Pokemon alive on team
+	&& gBattleTypeFlags & BATTLE_TYPE_FRONTIER //And it's a Frontier battle (so likely 3v3)
+	&& Random() % 100 < 66) //Don't use hazards 66% of the time 
+		return FALSE;
+
+	return TRUE;
+}
+
 void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef, u16 move)
 {
 	s16 viability = *originalViability;
@@ -2048,21 +2163,21 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			if (!IsWorthSettingHazards(bankDef))
 				break; //Don't bother
 			else
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			if (!IsWorthSettingHazards(bankDef))
 				break; //Don't bother
 			else
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 
 		case FIGHT_CLASS_STALL:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			if (!IsWorthSettingHazards(bankDef))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			else
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
@@ -2087,14 +2202,15 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			if (!IsWorthSettingHazards(bankDef))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			else
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
+			if (!IsWorthSettingHazards(bankDef))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			else
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
@@ -2291,6 +2407,7 @@ void IncreasePivotViability(s16* originalViability, u8 class, u8 bankAtk, unused
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 			INCREASE_VIABILITY(7);
 			break;
 
@@ -2374,6 +2491,7 @@ void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 			if (!Can2HKO(bankDef, bankAtk))
 				INCREASE_VIABILITY(6); //Get the screens up first
 			else
@@ -2524,6 +2642,7 @@ void IncreaseTailwindViability(s16* originalViability, u8 class, u8 bankAtk, u8 
 	s16 viability = *originalViability;
 
 	switch (class) {
+		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
 		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:

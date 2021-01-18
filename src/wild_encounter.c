@@ -315,7 +315,11 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	//Custom moves
-	if (FlagGet(FLAG_WILD_CUSTOM_MOVES))
+	if (FlagGet(FLAG_WILD_CUSTOM_MOVES)
+	#ifdef FLAG_POKEMON_RANDOMIZER
+	&& !FlagGet(FLAG_POKEMON_RANDOMIZER) //When species are changed, the custom moves no longer make sense
+	#endif
+	)
 	{
 		u16* moves = (enemyMonIndex == 0) ? &Var8000 : &Var8004;
 		for (int i = 0; i < MAX_MON_MOVES; ++i)
@@ -1258,17 +1262,35 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 	if (customMoves)
 		FlagSet(FLAG_WILD_CUSTOM_MOVES); //Reset custom move state if necessary
 
-	if (item != ITEM_NONE)
+	if (item == 0xFFFF) //Default held item
+		SetWildMonHeldItem();
+	else if (item != ITEM_NONE)
 		SetMonData(&gEnemyParty[index], MON_DATA_HELD_ITEM, &item);
 
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	if (FlagGet(FLAG_WILD_CUSTOM_MOVES))
 	{
-		moves = firstMon ? moves : &moves[4];
-		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		u8 ppBonus = 0;
+
+		#ifdef VAR_GAME_DIFFICULTY
+		if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+			ppBonus = 0xFF; //Max PP on all moves
+		#endif
+
+		SetMonData(&gEnemyParty[index], MON_DATA_PP_BONUSES, &ppBonus);
+
+		#ifdef FLAG_POKEMON_RANDOMIZER
+		if (!FlagGet(FLAG_POKEMON_RANDOMIZER)) //When species are changed, the custom moves no longer make sense
+		#endif
 		{
-			if (moves[i] != 0xFFFF)
-				gEnemyParty[index].moves[i] = moves[i];
+			moves = firstMon ? moves : &moves[4];
+			for (int i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (moves[i] != 0xFFFF)
+					gEnemyParty[index].moves[i] = moves[i];
+
+				gEnemyParty[index].pp[i] = CalculatePPWithBonus(gEnemyParty[index].moves[i], ppBonus, i);
+			}
 		}
 	}
 	#endif

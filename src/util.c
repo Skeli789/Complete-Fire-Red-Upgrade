@@ -4,13 +4,17 @@
 
 #include "../include/new/damage_calc.h"
 #include "../include/new/evolution.h"
-#include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
+#include "../include/new/util.h"
+
 /*
 util.c
 	general utility functions
 */
+
+//This file's functions:
+static u8 TryRandomizeAbility(u8 ability, unusedArg u16 species);
 
 u32 MathMax(u32 num1, u32 num2)
 {
@@ -177,9 +181,8 @@ u16 GetNationalPokedexCount(u8 caseID)
 	return count;
 }
 
-bool8 CanEvolve(struct Pokemon* mon)
+bool8 CanSpeciesEvolve(u16 species)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	const struct Evolution* evolutions = gEvolutionTable[species];
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
@@ -191,6 +194,11 @@ bool8 CanEvolve(struct Pokemon* mon)
 	}
 
 	return FALSE;
+}
+
+bool8 CanEvolve(struct Pokemon* mon)
+{
+	return CanSpeciesEvolve(GetMonData(mon, MON_DATA_SPECIES, NULL));
 }
 
 bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
@@ -242,6 +250,56 @@ u32 GetBaseStatsTotal(const u16 species)
 	return sum;
 }
 
+static u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
+{
+	u32 newAbility = ability;
+
+	#ifdef FLAG_ABILITY_RANDOMIZER
+	if (FlagGet(FLAG_ABILITY_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
+	{
+		u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
+		u16 startAt = (id & 0xFFFF) % (u32) ABILITIES_COUNT;
+		u16 xorVal = (id >> 16) % (u32) 0xFF; //Only set the bits likely to be in the ability
+
+		newAbility = ability + startAt;
+		if (newAbility >= ABILITIES_COUNT)
+		{
+			u16 overflow = newAbility - (ABILITIES_COUNT - 2);
+			newAbility = overflow;
+		}
+
+		newAbility ^= xorVal;
+		newAbility %= (u32) ABILITIES_COUNT; //Prevent overflow
+
+		if (newAbility == ABILITY_NONE) //Ability got randomized down to 0
+		{
+			newAbility *= xorVal; //So pick another ability
+			newAbility %= (u32) ABILITIES_COUNT;
+		}
+
+		if (newAbility == ABILITY_NONE) //If the Ability is still 0
+			newAbility = ABILITY_ILLUMINATE; //An Ability that has no beneficial effect
+	}
+	#endif
+
+	return newAbility;
+}
+
+u8 GetAbility1(const u16 species)
+{
+	return TryRandomizeAbility(gBaseStats[species].ability1, species);
+}
+
+u8 GetAbility2(const u16 species)
+{
+	return TryRandomizeAbility(gBaseStats[species].ability2, species);
+}
+
+u8 GetHiddenAbility(const u16 species)
+{
+	return TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+}
+
 u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon)
 {
 	u8 i;
@@ -290,6 +348,30 @@ bool8 IsMonOfType(struct Pokemon* mon, u8 type)
 	u8 type2 = GetMonType(mon, 1);
 
 	return type1 == type || type2 == type;
+}
+
+bool8 IsSpeciesAffectedByScalemons(u16 species)
+{
+	if (species == SPECIES_SHEDINJA) //Shedinja would get OP stats because of its low HP and BST
+		return FALSE;
+
+	if (IsOnlyScalemonsGame() && CanSpeciesEvolve(species))
+		return FALSE; //Only Pokemon that are fully evolved are affected by the scaling outside of the Frontier
+
+	return TRUE;
+}
+
+u8 GetVisualBaseStat(u8 statId, u16 species) //For the Pokedex screen
+{
+	u16 base = ((u8*) (&gBaseStats[species].baseHP))[statId];
+
+	if (statId != STAT_HP && IsScaleMonsBattle() && IsSpeciesAffectedByScalemons(species))
+	{
+		u8 baseHP = gBaseStats[species].baseHP;
+		base = MathMin((base * (600 - baseHP)) / (GetBaseStatsTotal(species) - baseHP), 255); //Max 255
+	}
+
+	return base;
 }
 
 #define TILE_SIZE 32

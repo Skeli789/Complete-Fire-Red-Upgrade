@@ -10,6 +10,7 @@
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
+#include "../include/new/move_tables.h"
 /*
 learn_move.c
 	handles functions for pokemon trying to learn moves
@@ -26,11 +27,6 @@ extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 //#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
-
-//This file's functions
-#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
-static move_t RandomizeMove(u16 move);
-#endif
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
@@ -114,17 +110,15 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	struct LevelUpMove lvlUpMove;
 
 	if (firstMove)
-	{
 		sLearningMoveTableID = 0;
-		lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
 
-		while (lvlUpMove.level != 0 && lvlUpMove.level != level)
-		{
-			lvlUpMove = gLevelUpLearnsets[species][++sLearningMoveTableID];
-			if (lvlUpMove.move == 0
-			&&  lvlUpMove.level == 0xFF)
-				return retVal; //0
-		}
+	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
+	while (lvlUpMove.level != 0 && lvlUpMove.level != level)
+	{
+		lvlUpMove = gLevelUpLearnsets[species][++sLearningMoveTableID];
+		if (lvlUpMove.move == 0
+		&&  lvlUpMove.level == 0xFF)
+			return retVal; //0
 	}
 
 	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
@@ -225,18 +219,39 @@ u8 GetNumberOfRelearnableMoves(struct Pokemon* mon)
 	return GetMoveRelearnerMoves(mon, moves); //Returns the number of moves
 }
 
-#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
-static move_t RandomizeMove(u16 move)
+move_t RandomizeMove(u16 move)
 {
-	move = (move * T1_READ_32(gSaveBlock2->playerTrainerId));
-	move %= NON_Z_MOVE_COUNT;
+	if (move == MOVE_NONE)
+		return move;
 
-	if (move == MOVE_NONE || move == MOVE_STRUGGLE)
-		return move + 1;
+	u16 newMove;
+	u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
+	u16 startAt = (id & 0xFFFF) % (u32) NON_Z_MOVE_COUNT;
+	u16 xorVal = (id >> 16) % (u32) 0x300; //Only set the bits likely to be in the move
+	u32 numAttempts = 0;
 
-	return move;
+	newMove = move + startAt;
+	if (newMove >= NON_Z_MOVE_COUNT)
+	{
+		u16 overflow = newMove - (NON_Z_MOVE_COUNT - 2);
+		newMove = overflow;
+	}
+
+	newMove ^= xorVal;
+	newMove %= (u32) NON_Z_MOVE_COUNT; //Prevent overflow
+
+	while (gSpecialMoveFlags[newMove].gRandomizerBanTable && numAttempts < 100)
+	{
+		newMove *= xorVal;
+		newMove %= (u32) NON_Z_MOVE_COUNT;
+		++numAttempts;
+	}
+
+	if (numAttempts >= 100)
+		newMove = MOVE_TACKLE;
+
+	return newMove;
 }
-#endif
 
 u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
 {

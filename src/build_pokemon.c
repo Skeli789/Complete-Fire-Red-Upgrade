@@ -114,7 +114,6 @@ static struct Immunity sImmunities[] =
 };
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
-extern const u8 gRandomizerAbilityBanList[];
 extern const species_t gRandomizerSpeciesBanList[];
 extern const species_t gSetPerfectXIvList[];
 extern const species_t gDeerlingForms[];
@@ -142,6 +141,8 @@ extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 //This file's functions:
 static void TryGiveMonOnlyMetronome(struct Pokemon* mon);
 static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
+static u8 GetTrainerMonMovePPBonus(void);
+static u8 GetTrainerMonMovePP(u16 move, u8 index);
 #if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 static u8 GetPlayerBiasedAverageLevel(u8 maxLevel);
 static bool8 CanTrainerEvolveMon(void);
@@ -155,7 +156,6 @@ static void BuildFrontierMultiParty(u8 multiId);
 static void BuildRaidMultiParty(void);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
 static void TryFixMiniorForm(struct Pokemon* mon);
-static void SetWildMonHeldItem(void);
 static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
 static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
 static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
@@ -253,14 +253,17 @@ void BuildTrainerPartySetup(void)
 		if (sp051_CanTeamParticipateInSkyBattle())
 		{
 			ExtensionState.skyBattlePartyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
+
 			if (ExtensionState.skyBattlePartyBackup != NULL)
 			{
 				u32 j, counter;
+				Memset(gSelectedOrderFromParty, 0, sizeof(u8) * PARTY_SIZE); //Clear old data that might interfere
+
 				for (i = 0, j = 0, counter = 0; i < PARTY_SIZE; ++i)
 				{
 					if (!CanMonParticipateInASkyBattle(&gPlayerParty[i]))
 					{
-						(ExtensionState.skyBattlePartyBackup)[counter++] = gPlayerParty[i];
+						ExtensionState.skyBattlePartyBackup[counter++] = gPlayerParty[i];
 						Memset(&gPlayerParty[i], 0x0, sizeof(struct Pokemon));
 					}
 					else
@@ -876,6 +879,15 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 				SET_EVS(spread);
 				SET_IVS_SINGLE_VALUE(MathMin(31, spread->ivs));
+				
+				#ifdef FLAG_TRICK_ROOM_BATTLE
+				if (FlagGet(FLAG_TRICK_ROOM_BATTLE) || MoveInMonMoveset(MOVE_TRICKROOM, &party[i]))
+				{
+					//Set all speed IVs to 0 in a forced Trick Room battle
+					u32 zero = 0;
+					SetMonData(&party[i], MON_DATA_SPEED_IV, &zero);
+				}
+				#endif
 
 				u8 ballType;
 				switch(spread->ball) {
@@ -954,6 +966,21 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		monsCount = 1;
 
 	return monsCount;
+}
+
+static u8 GetTrainerMonMovePPBonus(void)
+{
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+		return 0xFF; //Max PP
+	#endif
+
+	return 0;
+}
+
+static u8 GetTrainerMonMovePP(u16 move, u8 index)
+{
+	return CalculatePPWithBonus(move, GetTrainerMonMovePPBonus(), index);;
 }
 
 //These next few functions are related to scaling a Trainer's team dynamically based the player's strength
@@ -1098,7 +1125,12 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	)
 	{
 		//So scale normal enemies based on the average team level
-		newLevel = MathMin(averagePlayerTeamLevel + levelRange - levelSubtractor, MAX_LEVEL);
+		newLevel = averagePlayerTeamLevel + levelRange;
+		if (newLevel >= levelSubtractor)
+			newLevel -= levelSubtractor;
+		else
+			newLevel = 1;
+		newLevel = MathMin(newLevel, MAX_LEVEL);
 		if (*level < newLevel)
 		{
 			*level = newLevel;
@@ -1144,12 +1176,27 @@ static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg
 u8 GetScaledWildBossLevel(u8 level)
 {
 	#if (defined SCALED_TRAINERS && !defined DEBUG_NO_LEVEL_SCALING)
-	//Scale directly to biased average team level + 1 - allows chance of being stronger than team if all the same level
-	u8 newLevel = GetPlayerBiasedAverageLevel(GetHighestMonLevel(gPlayerParty)) + 1;
+	u8 newLevel;
+	
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY)
+	{
+		newLevel = GetPlayerBiasedAverageLevel(GetHighestMonLevel(gPlayerParty));
+		if (newLevel >= 3)
+			newLevel -= 2; //2 levels below biased average level
+		else
+			newLevel = 1;
+	}
+	else
+	#endif
+	{
+		//Scale directly to biased average team level + 1 - allows chance of being stronger than team if all the same level
+		newLevel = GetPlayerBiasedAverageLevel(GetHighestMonLevel(gPlayerParty)) + 1;
+	}
 
 	if (level < newLevel)
 		level = newLevel;
-		
+
 	if (level > MAX_LEVEL)
 		level = MAX_LEVEL;
 	#endif
@@ -1668,7 +1715,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 			//Only allow one Mega Stone & Z-Crystal per team
 			if (!IsPokemonBannedBasedOnStreak(species, item, builder->speciesArray, monsCount, trainerId, tier, forPlayer)
 			&& (!builder->speciesOnTeam[dexNum] || tier == BATTLE_FACILITY_NO_RESTRICTIONS)
-			&& (!ItemAlreadyOnTeam(item, monsCount, builder->itemArray) || tier == BATTLE_FACILITY_NO_RESTRICTIONS)
+			&& (!ItemAlreadyOnTeam(item, monsCount, builder->itemArray) || !DuplicateItemsAreBannedInTier(builder->tier, builder->battleType))
 			&& (tier == BATTLE_FACILITY_MEGA_BRAWL || itemEffect != ITEM_EFFECT_MEGA_STONE || item == ITEM_ULTRANECROZIUM_Z || !builder->itemEffectOnTeam[ITEM_EFFECT_MEGA_STONE])
 			&& ((itemEffect != ITEM_EFFECT_Z_CRYSTAL && item != ITEM_ULTRANECROZIUM_Z) || !builder->itemEffectOnTeam[ITEM_EFFECT_Z_CRYSTAL])
 			&& !PokemonTierBan(species, item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS)
@@ -2017,7 +2064,7 @@ static void TryFixMiniorForm(struct Pokemon* mon)
 	}
 }
 
-static void SetWildMonHeldItem(void)
+void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
 	u16 species;
@@ -2132,18 +2179,18 @@ static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 spec
 
 	switch (abilityNum) {
 		case FRONTIER_ABILITY_1:
-			ability = gBaseStats[species].ability1;
+			ability = GetAbility1(species);
 			break;
 		case FRONTIER_ABILITY_2:
-			ability = gBaseStats[species].ability2;
+			ability = GetAbility2(species);
 			break;
 		case FRONTIER_ABILITY_HIDDEN:
-			ability = gBaseStats[species].hiddenAbility;
+			ability = GetHiddenAbility(species);
 			break;
 	}
 
 	if (ability == ABILITY_NONE)
-		ability = gBaseStats[species].ability1;
+		ability = GetAbility1(species);
 
 	return ability;
 }
@@ -3739,8 +3786,8 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 			nature = Random() % NUM_NATURES;
 
 		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny, FALSE, FALSE);
-		HealMon(&mon);
 		CalculateMonStats(&mon);
+		HealMon(&mon);
 	}
 	#endif
 
@@ -3837,38 +3884,38 @@ void ForceMonShiny(struct Pokemon* mon)
 	SetMonData(mon, MON_DATA_PERSONALITY, &personality);
 	CalculateMonStats(mon);
 }
- 
+
 void TryRandomizeSpecies(unusedArg u16* species)
 {
 	#ifdef FLAG_POKEMON_RANDOMIZER
-	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY) && *species != SPECIES_NONE && *species < NUM_SPECIES)
+	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)
+	&& *species != SPECIES_NONE && *species != SPECIES_ZYGARDE_CELL && *species < NUM_SPECIES)
 	{
-		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
-		u32 newSpecies = *species;
-		u32 prevNewSpecies = SPECIES_NONE; //Helps prevent infinite loop
-		u32 offset = 1; //Used in case of an infinite loop
-		u32 attempts = 0; //Really help prevent infinite loop
+		u16 newSpecies;
+		u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
+		u16 startAt = (id & 0xFFFF) % (u32) NUM_SPECIES_RANDOMIZER;
+		u16 xorVal = (id >> 16) % (u32) 0x400; //Only set the bits likely to be in the species
+		u32 numAttempts = 0;
 
-		do
+		newSpecies = *species + startAt;
+		if (newSpecies >= NUM_SPECIES_RANDOMIZER)
 		{
-			++attempts;
-			if (attempts > 20)
-			{
-				newSpecies = SPECIES_DITTO;
-				break;
-			}
+			u16 overflow = newSpecies - (NUM_SPECIES_RANDOMIZER - 2);
+			newSpecies = overflow;
+		}
 
-			newSpecies *= id;
-			newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
+		newSpecies ^= xorVal;
+		newSpecies %= (u32) NUM_SPECIES_RANDOMIZER; //Prevent overflow
+		
+		while (gSpecialSpeciesFlags[newSpecies].randomizerBan && numAttempts < 100)
+		{
+			newSpecies *= xorVal;
+			newSpecies %= (u32) NUM_SPECIES_RANDOMIZER;
+			++numAttempts;
+		}
 
-			while (newSpecies == prevNewSpecies) //Entered into an infinite loop
-			{
-				newSpecies = (newSpecies + offset++) * id; //Offset the new species by an increasing number to fix problem
-				newSpecies = MathMax(1, newSpecies % NUM_SPECIES_RANDOMIZER);
-			}
-
-			prevNewSpecies = newSpecies; //Record the current attempted species in case of infinite loop
-		} while (gSpecialSpeciesFlags[newSpecies].randomizerBan);
+		if (numAttempts >= 100)
+			newSpecies = SPECIES_DITTO;
 
 		*species = newSpecies;
 	}
@@ -4137,12 +4184,12 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 	SetMonData(mon, MON_DATA_MAX_HP, &newMaxHP);
 
 	u8 nature = GetNature(mon);
-	if (IsScaleMonsBattle())
+	if (IsScaleMonsBattle() && IsSpeciesAffectedByScalemons(species))
 	{
 		for (i = STAT_ATK; i < NUM_STATS; ++i) //HP doesn't change in Scalemons
 		{
 			u16 base = ((u8*) (&gBaseStats[species].baseHP))[i];
-			base = (base * (600 - baseHP)) / (baseStatTotal - baseHP);
+			base = MathMin((base * (600 - baseHP)) / (baseStatTotal - baseHP), 255); //Max 255
 			CALC_STAT(base, ivs[i], evs[i], i, MON_DATA_ATK + (i - 1));
 		}
 	}
@@ -4196,51 +4243,21 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 	SetMonData(mon, MON_DATA_HP, &currentHP);
 }
 
-u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
-{
-	u32 newAbility = ability;
-
-	#ifdef FLAG_ABILITY_RANDOMIZER
-	if (FlagGet(FLAG_ABILITY_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
-	{
-		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean Pokemon wouldn't have ability
-		u32 attempt = 0;
-
-		do
-		{
-			if (++attempt > 20)
-			{
-				//Entered infinite loop
-				newAbility = ABILITY_ILLUMINATE; //An Ability that has no beneficial effect
-				break;
-			}
-
-			newAbility = newAbility * id * species;
-			newAbility = MathMax(1, newAbility % ABILITIES_COUNT);
-		}
-		while (CheckTableForAbility(newAbility, gRandomizerAbilityBanList));
-	}
-	#endif
-
-	return newAbility;
-}
-
-
 u8 GetMonAbility(const struct Pokemon* mon)
 {
 	u8 ability;
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 
 	if (mon->hiddenAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE)
-		return TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+		return GetHiddenAbility(species);
 
 	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 	if ((personality & 1) == 0 || gBaseStats[species].ability2 == ABILITY_NONE)
-		ability = gBaseStats[species].ability1;
+		ability = GetAbility1(species);
 	else
-		ability = gBaseStats[species].ability2;
+		ability = GetAbility2(species);
 
-	return TryRandomizeAbility(ability, species);
+	return ability;
 }
 
 void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, unusedArg u8 unused, u32 data)

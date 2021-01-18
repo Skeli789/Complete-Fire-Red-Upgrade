@@ -249,8 +249,8 @@ bool8 DoesZMoveUsageStopDynamaxing(u8 bank)
 
 move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 {
-	struct Pokemon* mon = GetBankPartyData(bank);
-	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+	if (IS_TRANSFORMED(bank))
+		return MOVE_NONE;
 
 	if (move == MOVE_NONE)
 		move = gBattleMons[bank].moves[moveIndex];
@@ -274,6 +274,8 @@ move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank))
 		return MOVE_NONE;
+
+	u16 item = GetBankPartyData(bank)->item; //Direct access for runtime speed
 
 	if (IsZCrystal(item) || item == ITEM_ULTRANECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{

@@ -689,7 +689,8 @@ void atk06_typecalc(void)
 				else
 					goto RE_ENTER_TYPE_CHECK;
 			}
-			else if (gCurrentMove == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+			else if ((gCurrentMove == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+			|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, bankDef)))
 			{
 				gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[bankDef] = 0;
@@ -789,7 +790,8 @@ void atk4A_typecalc2(void)
 		else
 			goto RE_ENTER_TYPE_CHECK_2;
 	}
-	else if (gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING))
+	else if ((gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING))
+	|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, gBankTarget)))
 	{
 		gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 		gLastLandedMoves[gBankTarget] = 0;
@@ -875,7 +877,8 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	else if ((move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAndBank(atkType1, atkType2, atkType3, bankDef)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -944,7 +947,8 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1023,7 +1027,8 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1092,7 +1097,8 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(bankAtk, defType1, defType2, defType3, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -1107,6 +1113,15 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	&& gBattleMoves[move].power
 	&& SPLIT(move) != SPLIT_STATUS)
 		flags |= MOVE_RESULT_MISSED;
+
+	//These things aren't related to type matchups, but they can still cause the move to fail and should be known to the player
+	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves)
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+
+	//Primal Weather Check
+	if ((gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER)
+	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE))
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 
 	return flags;
 }
@@ -2044,7 +2059,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_HUGEPOWER:
 //		case ABILITY_PUREPOWER:
 		//2x Boost
-			attack *= 2;
+			if (!IsScaleMonsBattle() //Too OP
+			|| !IsSpeciesAffectedByScalemons(data->atkSpecies)) //Doesn't get the Scalemons boost
+				attack *= 2;
 			break;
 
 		case ABILITY_FLOWERGIFT:
@@ -2278,8 +2295,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		#endif
 
 		case ITEM_EFFECT_EVIOLITE:
-			if ((useMonDef && CanEvolve(data->monDef))
-			|| (!useMonDef && CanEvolve(GetBankPartyData(bankDef))))
+			if (CanSpeciesEvolve(data->defSpecies))
 			{
 				data->defense = (data->defense * 15) / 10;
 				data->spDefense = (data->spDefense * 15) / 10;

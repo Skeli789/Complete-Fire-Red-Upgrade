@@ -48,6 +48,7 @@ static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f
 static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
 static bool8 SomeoneOnTeamGetsExpFromExpShare(u8 bank, u8 sentIn);
 static bool8 MonGetsAffectionBoost(struct Pokemon* mon);
+static bool8 IsAffectedByHardLevelCap(struct Pokemon* mon);
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c);
 static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
 static void Task_GiveExpToMon(u8 taskId);
@@ -149,7 +150,7 @@ void atk23_getexp(void)
 	case GetExp_Calculation:	; // calculate experience points to redistribute
 		u32 trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, divisor;
 
-		for (viaSentIn = 0, i = 0; i < 6; i++)
+		for (viaSentIn = 0, i = 0; i < PARTY_SIZE; i++)
 		{
 			if (gPlayerParty[i].species == SPECIES_NONE || gPlayerParty[i].hp == 0)
 				continue;
@@ -162,9 +163,15 @@ void atk23_getexp(void)
 			#endif
 
 			#ifndef FLAG_EXP_SHARE
-			if (gItems[SanitizeItemId(gPlayerParty[i].item)].holdEffect == ITEM_EFFECT_EXP_SHARE)
+			if (ItemId_GetHoldEffect(gPlayerParty[i].item) == ITEM_EFFECT_EXP_SHARE)
 					viaExpShare++;
 			#endif
+		}
+
+		if (IsAffectedByHardLevelCap(&gPlayerParty[gBattleStruct->expGetterMonId]))
+		{
+			calculatedExp = 1; //Doesn't really gain Exp. if above level cap
+			goto SKIP_EXP_CALC;
 		}
 
 		//Trainer Boost - a
@@ -245,7 +252,6 @@ void atk23_getexp(void)
 		#endif
 
 		calculatedExp = ExpCalculator(trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, divisor);
-		goto SKIP_EXP_CALC; //Only here so the compiler stops giving potential unused label errors (because it can be depending on your configuration)
 
 	SKIP_EXP_CALC:
 		calculatedExp = MathMax(1, calculatedExp);
@@ -543,6 +549,20 @@ static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
 				return TRUE;
 		#endif
 	}
+
+	return FALSE;
+}
+
+static bool8 IsAffectedByHardLevelCap(unusedArg struct Pokemon* mon)
+{
+	#ifdef FLAG_HARD_LEVEL_CAP
+	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+	if (FlagGet(FLAG_HARD_LEVEL_CAP))
+	{
+		if (GetMonData(mon, MON_DATA_LEVEL, NULL) >= GetCurrentLevelCap())
+			return TRUE;
+	}
+	#endif
 
 	return FALSE;
 }

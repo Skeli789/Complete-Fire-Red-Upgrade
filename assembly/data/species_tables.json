@@ -1281,6 +1281,7 @@
 	],
 	
 	"randomizerBan": [
+		"SPECIES_NONE",
 		"0xFC",
 		"0xFD",
 		"0xFE",

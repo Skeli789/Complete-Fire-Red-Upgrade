@@ -813,6 +813,7 @@ static void SetSurfJump(void)
 	SetFollowerSprite(FOLLOWER_SPRITE_INDEX_SURF);
 
 	follower = &gEventObjects[GetFollowerMapObjId()];
+	follower->disableJumpLandingGroundEffect = TRUE;
 	EventObjectSetHeldMovement(follower, jumpState);
 }
 
@@ -867,6 +868,7 @@ static void SetSurfDismount(void)
 	FollowMe_HandleSprite();
 
 	follower = &gEventObjects[GetFollowerMapObjId()]; //Can change after sprite reload
+	follower->disableJumpLandingGroundEffect = FALSE;
 	EventObjectSetHeldMovement(follower, jumpState);
 }
 
@@ -889,6 +891,19 @@ static void Task_FinishSurfDismount(u8 taskId)
 	DestroyTask(taskId);
 	gPlayerAvatar->preventStep = FALSE;
 }
+
+#if 0//def GEN_4_PLAYER_RUNNING_FIX
+static const union AffineAnimCmd sSpriteAffineAnim_ShrinkPlayerAtDoor[] =
+{
+	AFFINEANIMCMD_FRAME(-4, -4, 0, 60), //Shrink sprite
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_ShrinkPlayerAtDoor[] =
+{
+	sSpriteAffineAnim_ShrinkPlayerAtDoor,
+};
+#endif
 
 void PlayerGoThroughDoor(u8 taskId)
 {
@@ -924,6 +939,14 @@ void PlayerGoThroughDoor(u8 taskId)
 				EventObjectClearHeldMovementIfActive(&gEventObjects[followerObjId]);
 				EventObjectSetHeldMovement(&gEventObjects[followerObjId], newState);
 			}
+
+			#if 0//def GEN_4_PLAYER_RUNNING_FIX
+			struct Sprite* sprite = &gSprites[gEventObjects[playerObjId].spriteId];
+			sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+			sprite->affineAnims = sSpriteAffineAnimTable_ShrinkPlayerAtDoor;
+			CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+			InitSpriteAffineAnim(sprite);
+			#endif
 
             task->data[0] = 2;
         }

@@ -558,8 +558,11 @@ void CaptivateFunc(void)
 void MeFirstFunc(void)
 {
 	u16 move = gChosenMovesByBanks[gBankTarget];
+	if (move == MOVE_NONE)
+		move = gLockedMoves[gBankTarget]; //If it's charging on a two-turn move
 
-	if (SPLIT(move) == SPLIT_STATUS
+	if (move == MOVE_NONE
+	|| SPLIT(move) == SPLIT_STATUS
 	|| GetBattlerTurnOrderNum(gBankTarget) < gCurrentTurnActionNumber
 	|| gSpecialMoveFlags[move].gMeFirstBannedMoves
 	|| gSpecialMoveFlags[move].gMovesThatCallOtherMoves)
@@ -2190,6 +2193,9 @@ void SetSwitchingBankSwitchingCooldownTo2(void)
 	gNewBS->ai.sideSwitchedThisRound |= gBitTable[SIDE(gBankSwitching)];
 	if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
 		gNewBS->ai.switchingCooldown[gBankSwitching] = 2;
+
+	if (SIDE(gBankSwitching) == B_SIDE_PLAYER && gNewBS->ai.playerSwitchedCount < 0xFF)
+		++gNewBS->ai.playerSwitchedCount; //Helps the AI "predict" switches on harder difficulties
 }
 
 void FaintedBankNameInBuff1(void)
@@ -2251,7 +2257,7 @@ void HandleIllusionShiftSwitch(void)
 {
 	u8 monId, firstMonId, lastMonId;
 	struct Pokemon* party = LoadPartyRange(gBankFainted, &firstMonId, &lastMonId);
-	monId = gBattleBufferB[gActiveBattler][1];
+	monId = gBattleStruct->monToSwitchIntoId[gBankFainted];
 
 	if (!AreAbilitiesSuppressed() && GetMonAbility(&party[monId]) == ABILITY_ILLUSION)
 	{

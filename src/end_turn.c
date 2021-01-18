@@ -985,7 +985,7 @@ u8 TurnBasedEffects(void)
 
 //These Timers all fall through to eachother for quicker game speed
 			case ET_Reflect:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					sideBank = gBattleStruct->turnEffectsBank;
 					if (gSideStatuses[sideBank] & SIDE_STATUS_REFLECT && --gSideTimers[sideBank].reflectTimer == 0)
@@ -1009,7 +1009,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Light_Screen:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					sideBank = gBattleStruct->turnEffectsBank;
 					if (gSideStatuses[sideBank] & SIDE_STATUS_LIGHTSCREEN && --gSideTimers[sideBank].lightscreenTimer == 0)
@@ -1027,39 +1027,15 @@ u8 TurnBasedEffects(void)
 					}
 					break;
 				}
-				else
 
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-
-				__attribute__ ((fallthrough));
-			case ET_Aurora_Veil:
-				if (gBattleStruct->turnEffectsBank < 2)
-				{
-					if (gNewBS->AuroraVeilTimers[gBattleStruct->turnEffectsBank]
-					&& --gNewBS->AuroraVeilTimers[gBattleStruct->turnEffectsBank] == 0)
-					{
-						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
-						gBattleStringLoader = gText_SideStatusWoreOff;
-						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
-						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
-						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
-						gBattleTextBuff1[2] = MOVE_AURORAVEIL & 0xFF;
-						gBattleTextBuff1[3] = MOVE_AURORAVEIL >> 8;
-						gBattleTextBuff1[4] = EOS;
-						effect++;
-					}
-					break;
-				}
-
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
-
+				
 				__attribute__ ((fallthrough));
 			case ET_Safeguard:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
-					sideBank = SIDE(gBattleStruct->turnEffectsBank);
+					sideBank = gBattleStruct->turnEffectsBank;
 					if (gSideStatuses[sideBank] & SIDE_STATUS_SAFEGUARD && --gSideTimers[sideBank].safeguardTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
@@ -1075,9 +1051,9 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Mist:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
-					sideBank = SIDE(gBattleStruct->turnEffectsBank);
+					sideBank = gBattleStruct->turnEffectsBank;
 					if ((gSideStatuses[sideBank] & SIDE_STATUS_MIST) && --gSideTimers[sideBank].mistTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
@@ -1099,7 +1075,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Tailwind_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->TailwindTimers[gBattleStruct->turnEffectsBank]
 					&& --gNewBS->TailwindTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1116,7 +1092,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Lucky_Chant_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->LuckyChantTimers[gBattleStruct->turnEffectsBank]
 					&& --gNewBS->LuckyChantTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1133,7 +1109,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Rainbow_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->RainbowTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->RainbowTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1150,7 +1126,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Sea_Of_Fire_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->SeaOfFireTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->SeaOfFireTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1167,7 +1143,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_Swamp_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->SwampTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->SwampTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1184,7 +1160,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_G_Max_VineLash_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->maxVineLashTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->maxVineLashTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1202,7 +1178,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_G_Max_Wildfire_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->maxWildfireTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->maxWildfireTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1220,7 +1196,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_G_Max_Cannonade_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->maxCannonadeTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->maxCannonadeTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1238,7 +1214,7 @@ u8 TurnBasedEffects(void)
 
 				__attribute__ ((fallthrough));
 			case ET_G_Max_Volcalith_Timer:
-				if (gBattleStruct->turnEffectsBank < 2)
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					if (gNewBS->maxVolcalithTimers[gBattleStruct->turnEffectsBank] > 0
 					&& --gNewBS->maxVolcalithTimers[gBattleStruct->turnEffectsBank] == 0)
@@ -1246,6 +1222,29 @@ u8 TurnBasedEffects(void)
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						gBattleStringLoader = gText_GMaxVolcalithEnded;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+						effect++;
+					}
+					break;
+				}
+
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+
+				__attribute__ ((fallthrough));
+			case ET_Aurora_Veil:
+				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
+				{
+					sideBank = gBattleStruct->turnEffectsBank;
+					if (gNewBS->AuroraVeilTimers[sideBank] > 0 && --gNewBS->AuroraVeilTimers[sideBank] == 0)
+					{
+						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
+						gBattleStringLoader = gText_SideStatusWoreOff;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
+						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
+						gBattleTextBuff1[2] = MOVE_AURORAVEIL & 0xFF;
+						gBattleTextBuff1[3] = MOVE_AURORAVEIL >> 8;
+						gBattleTextBuff1[4] = EOS;
 						effect++;
 					}
 					break;

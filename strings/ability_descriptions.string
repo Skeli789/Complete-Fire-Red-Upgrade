@@ -490,7 +490,7 @@ Lowers everyone's Speed when hit.
 Bounces back stat decreases.
 
 #org @DESC_GULPMISSILE
-Spits prey if damaged after a swim.
+Spits prey if hit after a swim.
 
 #org @DESC_STALWART
 #org @DESC_PROPELLERTAIL

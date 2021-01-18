@@ -1354,6 +1354,10 @@ bool8 IsUsefulToFlinchTarget(u8 bankDef)
 	&&  !MoveInMoveset(MOVE_SNORE, bankDef))
 		return FALSE;
 
+	if (gChosenActionByBank[bankDef] == ACTION_SWITCH
+	|| gChosenActionByBank[bankDef] == ACTION_USE_ITEM)
+		return FALSE; //Player tried to cheese the Fake Out - only gets used on cheesing recalc
+
 	return TRUE;
 }
 
@@ -1880,7 +1884,7 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move)
 {
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
 
-	if (ABILITY(bank) == ABILITY_SERENEGRACE || BankSideHasRainbow(bank))
+	if (ABILITY(bank) == ABILITY_SERENEGRACE || BankHasRainbow(bank))
 		chance *= 2;
 
 	return chance;
@@ -1945,8 +1949,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move, boo
 
 bool8 ShouldPredictBankToMegaEvolve(u8 bank)
 {
-	if (SIDE(bank) != B_SIDE_PLAYER
-	|| (IsTagBattle() && GetBattlerPosition(bank) == B_POSITION_PLAYER_RIGHT))
+	if (!IsPlayerInControl(bank))
 		return TRUE; //Always predict the AI to Mega Evolve
 
 	if (!(gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_MOCK_BATTLE)) && !IsFrontierRaidBattle())
@@ -2090,8 +2093,8 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 
 	return !CanBeFrozen(bankDef, TRUE)
-		|| defItemEffect != ITEM_EFFECT_CURE_FRZ //Use this logic in general battles because Freezing is caused only by Flinging a one-time use item, so don't waste it
-		|| defItemEffect != ITEM_EFFECT_CURE_STATUS
+		|| defItemEffect == ITEM_EFFECT_CURE_FRZ //Use this logic in general battles because Freezing is caused only by Flinging a one-time use item, so don't waste it
+		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
 		|| UnfreezingMoveInMoveset(bankDef);
@@ -3704,6 +3707,14 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move
+
+			if (IsTypeZCrystal(ITEM(bankAtk), TYPE_NORMAL) //Normalium Z
+			&& MoveEffectInMoveset(EFFECT_FAIRY_LOCK_HAPPY_HOUR, bankAtk)) //Happy Hour/Celebrate/Hold Hands
+				return FALSE; //Don't waste the Z-Move on a damaging move and instead save it for +1 in all stats
+
+			if (move == MOVE_SPECTRALTHIEF
+			&& AnyUsefulStatIsRaised(bankDef))
+				return FALSE; //Steal stats instead
 
 			return TRUE;
 		}

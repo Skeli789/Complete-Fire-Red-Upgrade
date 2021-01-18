@@ -49,7 +49,6 @@ tables to edit:
 	gSmogonRU_ItemBanList
 	gSmogonRU_AbilityBanList
 	gSmogonNU_ItemBanList
-	gRandomizerAbilityBanList
 */
 
 #define ALTERNATE_SIZE(species, height, weight) {species, height * 10, weight * 10}
@@ -651,12 +650,3 @@ const item_t gSmogonNU_ItemBanList[] =
 	ITEM_CAMERUPTITE,
 	ITEM_TABLES_TERMIN
 };
-
-#ifdef FLAG_ABILITY_RANDOMIZER
-
-const ability_t gRandomizerAbilityBanList[] =
-{
-	ABILITY_TABLES_TERMIN
-};
-
-#endif

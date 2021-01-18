@@ -566,12 +566,19 @@ void atk52_switchineffects(void)
 
 				if (IS_DOUBLE_BATTLE)
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
+
+				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
+					++gNewBS->ai.switchesInARow[gBankSwitching];
 			}
 			else
 			{
 				gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] = 0;
+				gNewBS->ai.switchesInARow[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] = 0; //Using for helping treat AI abuse
 				if (IS_DOUBLE_BATTLE)
+				{
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] = 0;
+					gNewBS->ai.switchesInARow[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] = 0;
+				}
 			}
 
 			++gNewBS->switchInEffectsState;
@@ -584,12 +591,26 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
 
-				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
+				u8 type1, type2;
+				struct Pokemon* monIllusion = GetIllusionPartyData(gActiveBattler);
+				if (monIllusion != GetBankPartyData(gActiveBattler)) //Under Illusion
+				{
+					type1 = GetMonType(monIllusion, 0);
+					type2 = GetMonType(monIllusion, 1);
+				}
+				else
+				{
+					type1 = gBattleMons[gActiveBattler].type1;
+					type2 = gBattleMons[gActiveBattler].type2;
+				}
+
+				if (type1 == type2)
 					gBattleStringLoader = gText_CamomonsTypeReveal;
 				else
 					gBattleStringLoader = gText_CamomonsTypeRevealDualType;
-				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
-				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, type1);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff2, type2);
 			}
 			++gNewBS->switchInEffectsState;
 			break;
@@ -738,7 +759,8 @@ void atk52_switchineffects(void)
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
 				}
-				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS) //Pokemon with this item can still remove T-Spikes
+				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Pokemon with this item can still remove T-Spikes
+				&& !BankSideHasSafeguard(gActiveBattler))
 				{
 					if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
 					{
@@ -788,6 +810,7 @@ void atk52_switchineffects(void)
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
 				&&  gBattleMons[gActiveBattler].hp + gNewBS->DamageTaken[gActiveBattler] > gBattleMons[gActiveBattler].maxHP / 2)
 				{
+					gBattleScripting.bank = gActiveBattler;
 					BattleScriptPush(gBattlescriptCurrInstr + 2);
 					gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 					return;
@@ -1125,13 +1148,11 @@ static bool8 TryDoForceSwitchOut(void)
 		return FALSE;
 	}
 
-	//Roar always switches the target out when used by a wild Boss
+	//Roar always fails if running is impossible
 	else if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
 	{
-		gBankSwitching = bankDef;
-		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
-		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
-		return TRUE;
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+		return FALSE;
 	}	
 
 	gBankSwitching = bankDef;

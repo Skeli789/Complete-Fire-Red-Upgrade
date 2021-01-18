@@ -12,6 +12,7 @@
 void atk00_attackcanceler(void);
 bool8 CanTargetPartner(u8 bankDef);
 bool8 TargetFullyImmuneToCurrMove(u8 bankDef);
+bool8 DoesTargetHaveAbilityImmunity(void);
 
 //Exported Constants
 enum

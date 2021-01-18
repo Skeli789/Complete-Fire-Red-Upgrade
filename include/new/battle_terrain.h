@@ -11,6 +11,7 @@
 bool8 MetatileBehavior_IsIce(u8 metatileBehavior);
 bool8 MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
 bool8 IsTerrainMoveIndoors(void);
+u8 GetBattleTerrainOverride(void);
 
 //Hooked In Functions
 u8 BattleSetup_GetTerrainId(void);
