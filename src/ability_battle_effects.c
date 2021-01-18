@@ -32,7 +32,6 @@ ability_battle_effects.c
 
 tables to edit:
 	gAbilityRatings
-	gMoldBreakerIgnoredAbilities
 	gWeatherContinuesStringIds
 	gFlashFireStringIds
 */
@@ -323,79 +322,6 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_PERISH_BODY] = -1,
 	[ABILITY_WANDERING_SPIRIT] = 2,
 	[ABILITY_GORILLATACTICS] = 4,
-};
-
-const bool8 gMoldBreakerIgnoredAbilities[] =
-{
-	[ABILITY_BATTLEARMOR] =		TRUE,
-	[ABILITY_CLEARBODY] =		TRUE,
-	[ABILITY_DAMP] =			TRUE,
-	[ABILITY_DRYSKIN] =			TRUE,
-	[ABILITY_FILTER] =			TRUE,
-	[ABILITY_FLASHFIRE] =		TRUE,
-	[ABILITY_FLOWERGIFT] =		TRUE,
-	[ABILITY_HEATPROOF] =		TRUE,
-	[ABILITY_HYPERCUTTER] =		TRUE,
-	[ABILITY_IMMUNITY] =		TRUE,
-	[ABILITY_INNERFOCUS] =		TRUE,
-	[ABILITY_INSOMNIA] =		TRUE,
-	[ABILITY_KEENEYE] =			TRUE,
-	[ABILITY_LEAFGUARD] =		TRUE,
-	[ABILITY_LEVITATE] =		TRUE,
-	[ABILITY_LIGHTNINGROD] =	TRUE,
-	[ABILITY_LIMBER] =			TRUE,
-	[ABILITY_MAGMAARMOR] =		TRUE,
-	[ABILITY_MARVELSCALE] =		TRUE,
-	[ABILITY_MOTORDRIVE] =		TRUE,
-	[ABILITY_OBLIVIOUS] =		TRUE,
-	[ABILITY_OWNTEMPO] =		TRUE,
-	[ABILITY_SANDVEIL] =		TRUE,
-	[ABILITY_SHELLARMOR] =		TRUE,
-	[ABILITY_SHIELDDUST] =		TRUE,
-	[ABILITY_SIMPLE] =			TRUE,
-	[ABILITY_SNOWCLOAK] =		TRUE,
-	[ABILITY_SOLIDROCK] =		TRUE,
-	[ABILITY_SOUNDPROOF] =		TRUE,
-	[ABILITY_STICKYHOLD] =		TRUE,
-	[ABILITY_STORMDRAIN] =		TRUE,
-	[ABILITY_STURDY] =			TRUE,
-	[ABILITY_SUCTIONCUPS] =		TRUE,
-	[ABILITY_TANGLEDFEET] =		TRUE,
-	[ABILITY_THICKFAT] =		TRUE,
-	[ABILITY_UNAWARE] =			TRUE,
-	[ABILITY_VITALSPIRIT] =		TRUE,
-	[ABILITY_VOLTABSORB] =		TRUE,
-	[ABILITY_WATERABSORB] =		TRUE,
-	[ABILITY_WATERVEIL] =		TRUE,
-	[ABILITY_WHITESMOKE] =		TRUE,
-	[ABILITY_WONDERGUARD] =		TRUE,
-	[ABILITY_BIGPECKS] =		TRUE,
-	[ABILITY_CONTRARY] =		TRUE,
-	[ABILITY_FRIENDGUARD] =		TRUE,
-	[ABILITY_HEAVYMETAL] =		TRUE,
-	[ABILITY_LIGHTMETAL] =		TRUE,
-	[ABILITY_MAGICBOUNCE] =		TRUE,
-	[ABILITY_MULTISCALE] =		TRUE,
-	[ABILITY_SAPSIPPER] =		TRUE,
-	[ABILITY_TELEPATHY] =		TRUE,
-	[ABILITY_WONDERSKIN] =		TRUE,
-	[ABILITY_AROMAVEIL] =		TRUE,
-	[ABILITY_BULLETPROOF] =		TRUE,
-	[ABILITY_FLOWERVEIL] =		TRUE,
-	[ABILITY_FURCOAT] =			TRUE,
-	[ABILITY_OVERCOAT] =		TRUE,
-	[ABILITY_SWEETVEIL] =		TRUE,
-	[ABILITY_DAZZLING] =		TRUE,
-	[ABILITY_DISGUISE] =		TRUE,
-	[ABILITY_FLUFFY] =			TRUE,
-	[ABILITY_QUEENLYMAJESTY] =	TRUE,
-	[ABILITY_WATERBUBBLE] =		TRUE,
-	[ABILITY_PORTALPOWER] =		TRUE,
-	[ABILITY_MIRRORARMOR] =		TRUE,
-	[ABILITY_PUNKROCK] =		TRUE,
-	[ABILITY_ICESCALES] =		TRUE,
-	[ABILITY_ICEFACE] =			TRUE,
-	[ABILITY_PASTELVEIL] =		TRUE,
 };
 
 const u16 gWeatherContinuesStringIds[] =
@@ -776,7 +702,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 			if (effect)
 			{
-				if (!CheckTableForAbility(*GetAbilityLocation(gActiveBattler), gTraceBannedAbilities))
+				if (!gSpecialAbilityFlags[*GetAbilityLocation(gActiveBattler)].gTraceBannedAbilities)
 				{
 					gBankAttacker = bank;
 					*GetAbilityLocation(bank) = *GetAbilityLocation(gActiveBattler);
@@ -1274,7 +1200,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				if (!IsAbilitySuppressed(i) //Gastro Acid has higher priority
 				&& ABILITY(i) != ABILITY_NONE
-				&& !CheckTableForAbility(ABILITY(i), gNeutralizingGasBannedAbilities))
+				&& !gSpecialAbilityFlags[ABILITY(i)].gNeutralizingGasBannedAbilities)
 				{
 					u8* abilityLoc = GetAbilityLocation(i);
 					gNewBS->neutralizingGasBlockedAbilities[i] = *abilityLoc;

@@ -45,7 +45,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
 	if (!NO_MOLD_BREAKERS(atkAbility, move)
-	&& gMoldBreakerIgnoredAbilities[defAbility])
+	&& gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities)
 		defAbility = ABILITY_NONE;
 
 	u8 moveEffect = gBattleMoves[move].effect;

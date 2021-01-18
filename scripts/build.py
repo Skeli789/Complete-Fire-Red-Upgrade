@@ -256,7 +256,7 @@ def ProcessSpecialFlagFile(flagFile: str) -> str:
         tableHeader = "const struct SpecialSpeciesFlags gSpecialSpeciesFlags[NUM_SPECIES] =\n{\n"
     elif "ability_tables" in cFile:
         includes = '#include "../../include/constants/abilities.h"\n#include "../../include/new/ability_tables.h"\n\n'
-        tableHeader = "const struct SpecialAbilityFlags gSpecialAbilityFlags[ABILITY_COUNT] =\n{\n"
+        tableHeader = "const struct SpecialAbilityFlags gSpecialAbilityFlags[ABILITIES_COUNT] =\n{\n"
     else:
         print("Error! Can't compile JSON file \"{}\"".format(flagFile))
         sys.exit(1)

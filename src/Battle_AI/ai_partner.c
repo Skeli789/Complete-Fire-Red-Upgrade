@@ -47,7 +47,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	u8 atkPartnerAbility = data->atkPartnerAbility;
 
 	if (!NO_MOLD_BREAKERS(atkAbility, move)
-	&& gMoldBreakerIgnoredAbilities[atkPartnerAbility])
+	&& gSpecialAbilityFlags[atkPartnerAbility].gMoldBreakerIgnoredAbilities)
 		atkPartnerAbility = ABILITY_NONE;
 
 	u8 moveSplit = CalcMoveSplit(bankAtk, move);

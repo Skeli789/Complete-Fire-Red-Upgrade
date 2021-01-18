@@ -1360,7 +1360,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 				if (IS_DOUBLE_BATTLE
 				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
-				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities))
+				&& !gSpecialAbilityFlags[CopyAbility(gActiveBattler)].gReceiverBannedAbilities)
 				{
 					gLastUsedAbility = partnerAbility;
 					*GetAbilityLocation(partner) = CopyAbility(gActiveBattler);
@@ -4766,8 +4766,8 @@ void atkD3_trycopyability(void) //Role Play
 
 	if (atkAbility == defAbility
 	||  defAbility == ABILITY_NONE
-	||  CheckTableForAbility(atkAbility, gRolePlayAttackerBannedAbilities)
-	||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities))
+	||  gSpecialAbilityFlags[atkAbility].gRolePlayAttackerBannedAbilities
+	||  gSpecialAbilityFlags[defAbility].gRolePlayBannedAbilities)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	}
@@ -4842,7 +4842,7 @@ void atkDA_tryswapabilities(void) //Skill Swap
 
 	if (atkAbility == ABILITY_NONE || defAbility == ABILITY_NONE
 	|| IsDynamaxed(gBankAttacker) || IsDynamaxed(gBankTarget)
-	|| CheckTableForAbility(atkAbility, gSkillSwapBannedAbilities) || CheckTableForAbility(defAbility, gSkillSwapBannedAbilities)
+	|| gSpecialAbilityFlags[atkAbility].gSkillSwapBannedAbilities || gSpecialAbilityFlags[defAbility].gSkillSwapBannedAbilities
 	|| gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);

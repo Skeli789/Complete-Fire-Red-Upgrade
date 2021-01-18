@@ -104,7 +104,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	data->atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	data->defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
-	if (!NO_MOLD_BREAKERS(data->atkAbility, move) && gMoldBreakerIgnoredAbilities[data->defAbility])
+	if (!NO_MOLD_BREAKERS(data->atkAbility, move)
+	&& gSpecialAbilityFlags[data->defAbility].gMoldBreakerIgnoredAbilities)
 		data->defAbility = ABILITY_NONE;
 
 	u8 moveEffect = gBattleMoves[move].effect;
@@ -2135,8 +2136,8 @@ MOVESCR_CHECK_0:
 
 			if (atkAbility == defAbility
 			||  defAbility == ABILITY_NONE
-			||  CheckTableForAbility(atkAbility, gRolePlayAttackerBannedAbilities)
-			||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities))
+			||  gSpecialAbilityFlags[atkAbility].gRolePlayAttackerBannedAbilities
+			||  gSpecialAbilityFlags[defAbility].gRolePlayBannedAbilities)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -2233,7 +2234,7 @@ MOVESCR_CHECK_0:
 			switch (move) {
 				case MOVE_WORRYSEED:
 					if (defAbility2 == ABILITY_INSOMNIA
-					|| CheckTableForAbility(defAbility2, gWorrySeedBannedAbilities)
+					|| gSpecialAbilityFlags[defAbility2].gWorrySeedBannedAbilities
 					|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					else
@@ -2242,7 +2243,7 @@ MOVESCR_CHECK_0:
 
 				case MOVE_GASTROACID:
 					if (IsAbilitySuppressed(bankDef)
-					||  CheckTableForAbility(defAbility2, gGastroAcidBannedAbilities)
+					||  gSpecialAbilityFlags[defAbility2].gGastroAcidBannedAbilities
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					else
@@ -2252,8 +2253,8 @@ MOVESCR_CHECK_0:
 				case MOVE_ENTRAINMENT:
 					if (atkAbility2 == ABILITY_NONE
 					||  IsDynamaxed(bankDef)
-					||  CheckTableForAbility(atkAbility2, gEntrainmentBannedAbilitiesAttacker)
-					||  CheckTableForAbility(defAbility2, gEntrainmentBannedAbilitiesTarget)
+					||  gSpecialAbilityFlags[atkAbility2].gEntrainmentBannedAbilitiesAttacker
+					||  gSpecialAbilityFlags[defAbility2].gEntrainmentBannedAbilitiesTarget
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					else
@@ -2265,7 +2266,7 @@ MOVESCR_CHECK_0:
 
 				case MOVE_SIMPLEBEAM:
 					if (defAbility2 == ABILITY_SIMPLE
-					||  CheckTableForAbility(defAbility2, gSimpleBeamBannedAbilities)
+					||  gSpecialAbilityFlags[defAbility2].gSimpleBeamBannedAbilities
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					else
@@ -2276,8 +2277,8 @@ MOVESCR_CHECK_0:
 					if (atkAbility2 == ABILITY_NONE || defAbility2 == ABILITY_NONE
 					|| IsDynamaxed(bankAtk)
 					|| IsDynamaxed(bankDef)
-					|| CheckTableForAbility(atkAbility2, gSkillSwapBannedAbilities)
-					|| CheckTableForAbility(defAbility2, gSkillSwapBannedAbilities))
+					|| gSpecialAbilityFlags[atkAbility2].gSkillSwapBannedAbilities
+					|| gSpecialAbilityFlags[defAbility2].gSkillSwapBannedAbilities)
 						DECREASE_VIABILITY(10);
 					else
 						goto AI_SUBSTITUTE_CHECK;

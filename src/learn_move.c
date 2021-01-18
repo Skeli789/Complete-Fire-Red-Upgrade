@@ -242,13 +242,13 @@ move_t RandomizeMove(u16 move)
 
 	while (gSpecialMoveFlags[newMove].gRandomizerBanTable && numAttempts < 100)
 	{
-		newMove *= xorVal;
+		newMove *= xorVal; //Multiply this time
 		newMove %= (u32) NON_Z_MOVE_COUNT;
 		++numAttempts;
 	}
 
-	if (numAttempts >= 100)
-		newMove = MOVE_TACKLE;
+	if (numAttempts >= 100 && gSpecialMoveFlags[newMove].gRandomizerBanTable) //Tried 100 times to change move but can't find a legal one
+		newMove = MOVE_TACKLE; //Just replace the move with tackle
 
 	return newMove;
 }

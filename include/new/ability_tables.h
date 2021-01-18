@@ -3,20 +3,28 @@
 #include "../global.h"
 
 /**
- * \file move_tables.h
+ * \file ability_tables.h
  * \brief Contains declarations for many lists of abilities.
  */
 
-extern const ability_t gRolePlayBannedAbilities[];
-extern const ability_t gRolePlayAttackerBannedAbilities[];
-extern const ability_t gSkillSwapBannedAbilities[];
-extern const ability_t gWorrySeedBannedAbilities[];
-extern const ability_t gGastroAcidBannedAbilities[];
-extern const ability_t gEntrainmentBannedAbilitiesAttacker[];
-extern const ability_t gEntrainmentBannedAbilitiesTarget[];
-extern const ability_t gSimpleBeamBannedAbilities[];
-extern const ability_t gReceiverBannedAbilities[];
-extern const ability_t gTraceBannedAbilities[];
-extern const ability_t gNeutralizingGasBannedAbilities[];
-extern const bool8 gMoldBreakerIgnoredAbilities[];
+
+struct SpecialAbilityFlags
+{
+	bool8 gMoldBreakerIgnoredAbilities : 1;
+	bool8 gRandomizerBannedOriginalAbilities : 1;
+	bool8 gRandomizerBannedNewAbilities : 1;
+	bool8 gRolePlayBannedAbilities : 1;
+	bool8 gRolePlayAttackerBannedAbilities : 1;
+	bool8 gSkillSwapBannedAbilities : 1;
+	bool8 gWorrySeedBannedAbilities : 1;
+	bool8 gGastroAcidBannedAbilities : 1;
+	bool8 gEntrainmentBannedAbilitiesAttacker : 1;
+	bool8 gEntrainmentBannedAbilitiesTarget : 1;
+	bool8 gSimpleBeamBannedAbilities : 1;
+	bool8 gReceiverBannedAbilities : 1;
+	bool8 gTraceBannedAbilities : 1;
+	bool8 gNeutralizingGasBannedAbilities : 1;
+};
+
+extern const struct SpecialAbilityFlags gSpecialAbilityFlags[];
 extern const s8 gAbilityRatings[];
