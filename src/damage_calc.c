@@ -2238,7 +2238,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			||  data->atkSpecies == SPECIES_MAROWAK_A
 			#endif
 			)
-				attack *= 2;
+			{
+				if (!IsScaleMonsBattle() //Too OP
+				|| !IsSpeciesAffectedByScalemons(data->atkSpecies)) //Doesn't get the Scalemons boost
+					attack *= 2;
+			}
 			break;
 		#endif
 

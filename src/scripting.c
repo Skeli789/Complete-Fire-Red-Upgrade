@@ -2423,6 +2423,9 @@ void HallOfFame_PrintWelcomeText(void)
 		#if (defined FLAG_POKEMON_RANDOMIZER || FLAG_POKEMON_LEARNSET_RANDOMIZER || FLAG_ABILITY_RANDOMIZER)
 		if (FlagGet(FLAG_POKEMON_RANDOMIZER) || FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) || FlagGet(FLAG_ABILITY_RANDOMIZER)) //Randomized gameplay
 		{
+			if (difficultyString == gText_NewGame)
+				StringAppend(gStringVar4, gText_Plus);
+
 			StringAppend(gStringVar4, gText_Random);
 			StringAppend(gStringVar4, gText_Difficulty);
 		}
@@ -2431,6 +2434,9 @@ void HallOfFame_PrintWelcomeText(void)
 		#ifdef FLAG_SCALEMONS_GAME
 		if (FlagGet(FLAG_SCALEMONS_GAME)) //Base stats were scaled to ~600
 		{
+			if (difficultyString == gText_NewGame)
+				StringAppend(gStringVar4, gText_Plus);
+
 			StringAppend(gStringVar4, gText_Scalemons);
 			StringAppend(gStringVar4, gText_Difficulty);
 		}

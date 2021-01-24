@@ -433,6 +433,7 @@ const ability_t gMiddleCup_AbilityBanList[] =
 const species_t gMiddleCup_ItemBanList[] =
 {
 	ITEM_LIGHT_BALL,
+	ITEM_EVIOLITE,
 	ITEM_TABLES_TERMIN
 };
 

@@ -109,6 +109,7 @@ bool8 HasSnatchableMove(u8 bank);
 bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);
 bool8 StatusMoveInMoveset(u8 bank);
 bool8 MoveInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ignoreStatusMoves);
+bool8 AllMovesInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ignoreStatusMoves);
 bool8 FlinchingMoveInMoveset(u8 bank);
 bool8 HealingMoveInMoveset(u8 bank);
 bool8 HealingMoveInMonMoveset(struct Pokemon* mon);

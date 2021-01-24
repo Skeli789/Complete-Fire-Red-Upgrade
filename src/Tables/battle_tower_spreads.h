@@ -23548,7 +23548,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_GARCHOMPITE,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_SCALESHOT,
 			MOVE_EARTHQUAKE,
 			MOVE_CRUNCH,
 			MOVE_SWORDSDANCE,
@@ -23626,7 +23626,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_GROUNDIUM_Z,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_SCALESHOT,
 			MOVE_EARTHQUAKE,
 			MOVE_POISONJAB,
 			MOVE_PROTECT,
@@ -47543,22 +47543,22 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 {
 	{
 		.species = SPECIES_IVYSAUR,
-		.nature = NATURE_CALM,
+		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 236,
-		.defEv = 132,
-		.spDefEv = 140,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CHLOROPHYLL
-		.item = ITEM_EVIOLITE,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
+		.item = ITEM_ROCKY_HELMET,
 		.moves =
 		{
-			MOVE_VENOSHOCK,
-			MOVE_TOXIC,
+			MOVE_GIGADRAIN,
+			MOVE_SLEEPPOWDER,
 			MOVE_LEECHSEED,
 			MOVE_PROTECT,
 		},
@@ -47569,24 +47569,25 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_IVYSAUR,
-		.nature = NATURE_CALM,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
-		.hpEv = 236,
-		.defEv = 132,
-		.spDefEv = 140,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 248,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CHLOROPHYLL
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_WIKI_BERRY,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
-			MOVE_LEECHSEED,
+			MOVE_SLUDGEBOMB,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 			MOVE_SLEEPPOWDER,
-			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47605,14 +47606,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
-		.item = ITEM_EVIOLITE,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SOLARPOWER
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_FIREBLAST,
 			MOVE_DRAGONPULSE,
 			MOVE_HIDDENPOWER, //TYPE_GRASS
-			MOVE_AIRCUTTER,
+			MOVE_ANCIENTPOWER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47651,20 +47652,21 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 30,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.spAtkEv = 252,
+		.hpEv = 252,
+		.spAtkEv = 248,
 		.spDefEv = 4,
-		.spdEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
 			MOVE_SURF,
 			MOVE_ICEBEAM,
-			MOVE_SHELLSMASH,
-			MOVE_SUBSTITUTE,
+			MOVE_AURASPHERE,
+			MOVE_HIDDENPOWER, //TYPE_GRASS
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47673,24 +47675,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_WARTORTLE,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_SASSY,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
+		.defEv = 4,
+		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_CHOICE_SPECS,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_SCALD,
-			MOVE_ICEBEAM,
-			MOVE_DRAGONPULSE,
-			MOVE_AURASPHERE,
+			MOVE_FLIPTURN,
+			MOVE_RAPIDSPIN,
+			MOVE_TOXIC,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_WARTORTLE,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_ICEPUNCH,
+			MOVE_SHELLSMASH,
+			MOVE_MIRRORCOAT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47810,16 +47838,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
-		.defEv = 4,
+		.hpEv = 252,
+		.atkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_KEENEYE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
-			MOVE_RETURN,
-			MOVE_BRAVEBIRD,
+			MOVE_DUALWINGBEAT,
 			MOVE_UTURN,
+			MOVE_ROOST,
 			MOVE_DEFOG,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -47829,24 +47857,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_PIDGEOTTO,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_HASTY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 252,
-		.defEv = 4,
+		.spAtkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_KEENEYE
-		.item = ITEM_EVIOLITE,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_TANGLEDFEET
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_TAKEDOWN,
-			MOVE_DUALWINGBEAT,
+			MOVE_BRAVEBIRD,
+			MOVE_RETURN,
+			MOVE_HEATWAVE,
 			MOVE_UTURN,
-			MOVE_ROOST,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47872,13 +47900,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HUSTLE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_POISONIUM_Z,
 		.moves =
 		{
 			MOVE_POISONJAB,
 			MOVE_SUCKERPUNCH,
-			MOVE_TAKEDOWN,
-			MOVE_STEALTHROCK,
+			MOVE_RETURN,
+			MOVE_STOMPINGTANTRUM,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47898,7 +47926,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 240,
 		.spDefEv = 20,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_POISONPOINT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_VENOSHOCK,
@@ -47924,13 +47952,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HUSTLE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_POISONJAB,
 			MOVE_DOUBLEEDGE,
 			MOVE_SUCKERPUNCH,
-			MOVE_SHADOWCLAW,
+			MOVE_COUNTER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47939,24 +47967,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_NIDORINO,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 30,
+		.spdIv = 31,
 		.hpEv = 252,
-		.spDefEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_POISONPOINT
-		.item = ITEM_EVIOLITE,
+		.spAtkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_RIVALRY
+		.item = ITEM_GROUNDIUM_Z,
 		.moves =
 		{
-			MOVE_SUPERFANG,
-			MOVE_TOXICSPIKES,
-			MOVE_SUPERSONIC,
-			MOVE_SUBSTITUTE,
+			MOVE_SLUDGEBOMB,
+			MOVE_EARTHPOWER,
+			MOVE_ICEBEAM,
+			MOVE_THUNDERBOLT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -47976,7 +48004,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_MAGICGUARD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_MOONBLAST,
@@ -47991,50 +48019,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_CLEFAIRY,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
 		.defEv = 252,
+		.spAtkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_MAGICGUARD
-		.item = ITEM_EVIOLITE,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_CUTECHARM
+		.item = ITEM_POWER_HERB,
 		.moves =
 		{
-			MOVE_MOONBLAST,
-			MOVE_SEISMICTOSS,
+			MOVE_DRAININGKISS,
+			MOVE_METEORBEAM,
+			MOVE_FLAMETHROWER,
 			MOVE_CALMMIND,
-			MOVE_SOFTBOILED,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
+		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_JIGGLYPUFF,
-		.nature = NATURE_CALM,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 4,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CUTECHARM
-		.item = ITEM_EVIOLITE,
+		.defEv = 148,
+		.spAtkEv = 252,
+		.spDefEv = 108,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_COMPETITIVE
+		.item = ITEM_FAIRIUM_Z,
 		.moves =
 		{
-			MOVE_HYPERVOICE,
-			MOVE_DAZZLINGGLEAM,
-			MOVE_THUNDERWAVE,
-			MOVE_WISH,
+			MOVE_MISTYEXPLOSION,
+			MOVE_TRIATTACK,
+			MOVE_FIREBLAST,
+			MOVE_SHADOWBALL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48054,13 +48082,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 252,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CUTECHARM
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_HYPERVOICE,
-			MOVE_DAZZLINGGLEAM,
 			MOVE_TOXIC,
 			MOVE_WISH,
+			MOVE_TELEPORT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48076,14 +48104,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 240,
-		.defEv = 172,
-		.spdEv = 96,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFILTRATOR
-		.item = ITEM_EVIOLITE,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INNERFOCUS
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_DUALWINGBEAT,
+			MOVE_UTURN,
 			MOVE_TOXIC,
 			MOVE_DEFOG,
 			MOVE_ROOST,
@@ -48095,24 +48123,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GOLBAT,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 240,
-		.defEv = 172,
-		.spdEv = 96,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFILTRATOR
-		.item = ITEM_BRIGHT_POWDER,
+		.item = ITEM_AGUAV_BERRY,
 		.moves =
 		{
 			MOVE_AIRSLASH,
 			MOVE_GIGADRAIN,
+			MOVE_HEATWAVE,
 			MOVE_NASTYPLOT,
-			MOVE_ROOST,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48121,24 +48149,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GLOOM,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
+		.atkEv = 252,
+		.defEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STENCH
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_GRASSY_SEED,
 		.moves =
 		{
-			MOVE_GIGADRAIN,
-			MOVE_SLUDGEBOMB,
-			MOVE_SLEEPPOWDER,
-			MOVE_MOONLIGHT,
+			MOVE_GRASSYGLIDE,
+			MOVE_DRAINPUNCH,
+			MOVE_SYNTHESIS,
+			MOVE_GRASSYTERRAIN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48157,7 +48185,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STENCH
+		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
 		.item = ITEM_BIG_ROOT,
 		.moves =
 		{
@@ -48183,8 +48211,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_WATERABSORB
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SWIFTSWIM
+		.item = ITEM_WATERIUM_Z,
 		.moves =
 		{
 			MOVE_WATERFALL,
@@ -48210,7 +48238,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_WATERABSORB
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_WATERFALL,
@@ -48239,10 +48267,10 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_PSYCHIC,
-			MOVE_PSYSHOCK,
-			MOVE_ENERGYBALL,
+			MOVE_EXPANDINGFORCE,
+			MOVE_SHADOWBALL,
 			MOVE_DAZZLINGGLEAM,
+			MOVE_PSYCHICTERRAIN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48251,7 +48279,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_KADABRA,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
@@ -48261,7 +48289,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MAGICGUARD
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SYNCHRONIZE
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -48277,7 +48305,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MACHOKE,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_BRAVE,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -48285,16 +48313,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.spDefEv = 212,
-		.spdEv = 44,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_NOGUARD
-		.item = ITEM_EVIOLITE,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_GUTS
+		.item = ITEM_FLAME_ORB,
 		.moves =
 		{
-			MOVE_DYNAMICPUNCH,
-			MOVE_KNOCKOFF,
-			MOVE_SLEEPTALK,
-			MOVE_REST,
+			MOVE_CLOSECOMBAT,
+			MOVE_FACADE,
+			MOVE_PAYBACK,
+			MOVE_BULLETPUNCH,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48314,7 +48342,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_NOGUARD
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
 			MOVE_DYNAMICPUNCH,
@@ -48333,19 +48361,20 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
+		.hpEv = 4,
 		.defEv = 4,
-		.spAtkEv = 252,
+		.spAtkEv = 248,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_SOLARBEAM,
+			MOVE_GIGADRAIN,
 			MOVE_SLUDGEBOMB,
-			MOVE_SLEEPPOWDER,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 			MOVE_SYNTHESIS,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -48355,24 +48384,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_WEEPINBELL,
-		.nature = NATURE_NAIVE,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 4,
-		.spAtkEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GLUTTONY
+		.item = ITEM_IAPAPA_BERRY,
 		.moves =
 		{
-			MOVE_ENERGYBALL,
-			MOVE_SLUDGEBOMB,
 			MOVE_POWERWHIP,
-			MOVE_KNOCKOFF,
+			MOVE_POISONJAB,
+			MOVE_SUCKERPUNCH,
+			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48388,9 +48417,9 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_STURDY
 		.item = ITEM_WEAKNESS_POLICY,
 		.moves =
@@ -48407,24 +48436,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GRAVELER,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.atkEv = 32,
-		.spDefEv = 224,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_STURDY
-		.item = ITEM_LEFTOVERS,
+		.item = ITEM_LIECHI_BERRY,
 		.moves =
 		{
-			MOVE_STONEEDGE,
+			MOVE_ROCKSLIDE,
 			MOVE_EARTHQUAKE,
-			MOVE_TOXIC,
-			MOVE_STEALTHROCK,
+			MOVE_EXPLOSION,
+			MOVE_AUTOTOMIZE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48459,24 +48488,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GRAVELER_A,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.spDefEv = 56,
-		.spdEv = 204,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GALVANIZE
-		.item = ITEM_LEFTOVERS,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_MAGNETPULL
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
-			MOVE_STONEEDGE,
-			MOVE_RETURN,
-			MOVE_TOXIC,
-			MOVE_STEALTHROCK,
+			MOVE_ROCKBLAST,
+			MOVE_EARTHQUAKE,
+			MOVE_SUPERPOWER,
+			MOVE_EXPLOSION,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48485,13 +48514,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MAGNETON,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 1,
 		.defIv = 31,
 		.spAtkIv = 30,
-		.spDefIv = 31,
-		.spdIv = 30,
+		.spDefIv = 30,
+		.spdIv = 31,
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
@@ -48502,7 +48531,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_VOLTSWITCH,
 			MOVE_THUNDERBOLT,
 			MOVE_FLASHCANNON,
-			MOVE_HIDDENPOWER, //TYPE_FIRE
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48514,21 +48543,47 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 30,
+		.defIv = 30,
+		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 30,
+		.spdIv = 31,
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_MAGNETPULL
-		.item = ITEM_CHOICE_SPECS,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_STURDY
+		.item = ITEM_MAGO_BERRY,
+		.moves =
+		{
+			MOVE_RISINGVOLTAGE,
+			MOVE_STEELBEAM,
+			MOVE_HIDDENPOWER, //TYPE_ICE
+			MOVE_ELECTRICTERRAIN,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_MAGNETON,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 1,
+		.defIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_STURDY
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_VOLTSWITCH,
-			MOVE_THUNDERBOLT,
-			MOVE_FLASHCANNON,
-			MOVE_HIDDENPOWER, //TYPE_FIRE
+			MOVE_TOXIC,
+			MOVE_SUBSTITUTE,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48548,13 +48603,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_SHADOWBALL,
 			MOVE_SLUDGEWAVE,
 			MOVE_DAZZLINGGLEAM,
-			MOVE_ENERGYBALL,
+			MOVE_DESTINYBOND,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48570,8 +48625,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 4,
 		.spAtkEv = 252,
-		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
 		.item = ITEM_LIFE_ORB,
@@ -48588,6 +48643,32 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.modifyMovesDoubles = TRUE,
 	},
 	{
+		.species = SPECIES_HAUNTER,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 1,
+		.defIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 30,
+		.hpEv = 12,
+		.spAtkEv = 248,
+		.spdEv = 248,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.item = ITEM_GHOSTIUM_Z,
+		.moves =
+		{
+			MOVE_SHADOWBALL,
+			MOVE_SLUDGEWAVE,
+			MOVE_THUNDERBOLT,
+			MOVE_HIDDENPOWER, //TYPE_FIGHTING
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
 		.species = SPECIES_RHYDON,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
@@ -48595,17 +48676,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
-		.spdIv = 0,
+		.spdIv = 31,
 		.hpEv = 252,
-		.atkEv = 16,
-		.spDefEv = 240,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LIGHTNINGROD
-		.item = ITEM_LIFE_ORB,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RECKLESS
+		.item = ITEM_ROCKIUM_Z,
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
 			MOVE_STONEEDGE,
-			MOVE_HEATCRASH,
+			MOVE_DOUBLEEDGE,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -48621,16 +48702,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
-		.spdIv = 0,
+		.spdIv = 31,
 		.hpEv = 252,
-		.atkEv = 16,
-		.spDefEv = 240,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LIGHTNINGROD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_WEAKNESS_POLICY,
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
-			MOVE_STONEEDGE,
+			MOVE_ROCKSLIDE,
 			MOVE_MEGAHORN,
 			MOVE_STEALTHROCK,
 		},
@@ -48640,24 +48721,51 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.modifyMovesDoubles = TRUE,
 	},
 	{
+		.species = SPECIES_RHYDON,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_LIGHTNINGROD
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_EARTHQUAKE,
+			MOVE_STONEEDGE,
+			MOVE_AVALANCHE,
+			MOVE_POWERUPPUNCH,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
 		.species = SPECIES_SEADRA,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.defEv = 4,
-		.spAtkEv = 252,
+		.hpEv = 4,
+		.spAtkEv = 248,
+		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_SNIPER
 		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
 			MOVE_HYDROPUMP,
-			MOVE_HIDDENPOWER, //TYPE_GRASS
 			MOVE_ICEBEAM,
+			MOVE_HIDDENPOWER, //TYPE_ELECTRIC,
 			MOVE_FLIPTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -48674,17 +48782,44 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.defEv = 4,
-		.spAtkEv = 252,
+		.hpEv = 252,
+		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_POISONPOINT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_SCALD,
 			MOVE_ICEBEAM,
 			MOVE_DISABLE,
 			MOVE_SUBSTITUTE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_SEADRA,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.spAtkEv = 248,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_SNIPER
+		.item = ITEM_SHELL_BELL,
+		.moves =
+		{
+			MOVE_SURF,
+			MOVE_ICEBEAM,
+			MOVE_FLASHCANNON,
+			MOVE_HIDDENPOWER, //TYPE_GRASS
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48726,14 +48861,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 4,
-		.spAtkEv = 252,
+		.atkEv = 252,
+		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VITALSPIRIT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_THUNDERBOLT,
+			MOVE_WILDCHARGE,
 			MOVE_VOLTSWITCH,
 			MOVE_CROSSCHOP,
 			MOVE_ICEPUNCH,
@@ -48745,24 +48880,25 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MAGMAR,
-		.nature = NATURE_HASTY,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 1,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 30,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 4,
-		.spAtkEv = 252,
+		.hpEv = 4,
+		.defEv = 4,
+		.spAtkEv = 248,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VITALSPIRIT
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
-			MOVE_FIREBLAST,
-			MOVE_FLAREBLITZ,
+			MOVE_LAVAPLUME,
+			MOVE_SCORCHINGSANDS,
 			MOVE_FOCUSBLAST,
-			MOVE_CROSSCHOP,
+			MOVE_HIDDENPOWER, //TYPE_ELECTRIC
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48771,24 +48907,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MAGMAR,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 30,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 200,
-		.spAtkEv = 248,
-		.spdEv = 60,
+		.atkEv = 252,
+		.defEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_FLAMEBODY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
-			MOVE_FIREBLAST,
-			MOVE_HIDDENPOWER, //TYPE_GRASS
-			MOVE_FOCUSBLAST,
-			MOVE_WILLOWISP,
+			MOVE_FIREPUNCH,
+			MOVE_MACHPUNCH,
+			MOVE_THUNDERPUNCH,
+			MOVE_BELLYDRUM,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48797,25 +48933,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_DRAGONAIR,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.atkEv = 44,
-		.spDefEv = 188,
-		.spdEv = 24,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MARVELSCALE
-		.item = ITEM_EVIOLITE,
+		.spAtkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SHEDSKIN
+		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
-			MOVE_OUTRAGE,
-			MOVE_DRAGONDANCE,
-			MOVE_REST,
-			MOVE_SLEEPTALK,
+			MOVE_DRAGONPULSE,
+			MOVE_FIREBLAST,
+			MOVE_HYDROPUMP,
+			MOVE_THUNDERBOLT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48834,7 +48969,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SHEDSKIN
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MARVELSCALE
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -48850,24 +48985,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_BAYLEEF,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 216,
-		.defEv = 100,
-		.spDefEv = 192,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LEAFGUARD
-		.item = ITEM_EVIOLITE,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
+		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
-			MOVE_ENERGYBALL,
-			MOVE_LEECHSEED,
-			MOVE_TOXIC,
+			MOVE_SEEDBOMB,
+			MOVE_BODYSLAM,
 			MOVE_SYNTHESIS,
+			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48883,9 +49018,9 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 216,
-		.defEv = 100,
-		.spDefEv = 192,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LEAFGUARD
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
@@ -48928,23 +49063,23 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_QUILAVA,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 4,
-		.spAtkEv = 252,
+		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_FLASHFIRE
+		.item = ITEM_FIRIUM_Z,
 		.moves =
 		{
-			MOVE_ERUPTION,
-			MOVE_EXTRASENSORY,
-			MOVE_SUNNYDAY,
+			MOVE_FLAREBLITZ,
+			MOVE_WILDCHARGE,
+			MOVE_BRICKBREAK,
 			MOVE_WILLOWISP,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -48980,24 +49115,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_CROCONAW,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHEERFORCE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
 			MOVE_WATERFALL,
 			MOVE_AQUAJET,
-			MOVE_CRUNCH,
-			MOVE_SWORDSDANCE,
+			MOVE_ICEPUNCH,
+			MOVE_ROCKSLIDE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49013,15 +49148,15 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
+		.hpEv = 252,
 		.defEv = 252,
-		.spDefEv = 8,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SERENEGRACE
-		.item = ITEM_EVIOLITE,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUPERLUCK
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_DAZZLINGGLEAM,
-			MOVE_THUNDERWAVE,
+			MOVE_TOXIC,
 			MOVE_DEFOG,
 			MOVE_ROOST,
 		},
@@ -49039,15 +49174,15 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 252,
-		.spDefEv = 8,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SERENEGRACE
-		.item = ITEM_EVIOLITE,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUPERLUCK
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_DAZZLINGGLEAM,
-			MOVE_AIRSLASH,
+			MOVE_MYSTICALFIRE,
 			MOVE_NASTYPLOT,
 			MOVE_ROOST,
 		},
@@ -49069,13 +49204,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_STATIC
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_ELECTRIUM_Z,
 		.moves =
 		{
 			MOVE_THUNDERBOLT,
 			MOVE_VOLTSWITCH,
 			MOVE_HIDDENPOWER, //TYPE_ICE
-			MOVE_SIGNALBEAM,
+			MOVE_POWERGEM,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49093,7 +49228,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spdIv = 31,
 		.hpEv = 252,
 		.defEv = 252,
-		.spAtkEv = 4,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_STATIC
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
@@ -49117,9 +49252,9 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 52,
+		.hpEv = 4,
 		.atkEv = 252,
-		.spdEv = 204,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_HUGEPOWER
 		.item = ITEM_SITRUS_BERRY,
 		.moves =
@@ -49153,7 +49288,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_WATERFALL,
 			MOVE_PLAYROUGH,
 			MOVE_ICEPUNCH,
-			MOVE_AQUAJET,
+			MOVE_SUPERPOWER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49162,24 +49297,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_SKIPLOOM,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 4,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_LEAFGUARD
-		.item = ITEM_EVIOLITE,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFILTRATOR
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
-			MOVE_TOXIC,
 			MOVE_LEECHSEED,
-			MOVE_SYNTHESIS,
+			MOVE_TOXIC,
+			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49204,7 +49339,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		{
 			MOVE_SEEDBOMB,
 			MOVE_ACROBATICS,
-			MOVE_UTURN,
+			MOVE_SWORDSDANCE,
 			MOVE_SLEEPPOWDER,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -49221,9 +49356,9 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
 		.item = ITEM_LIFE_ORB,
 		.moves =
@@ -49240,24 +49375,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_PILOSWINE,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
+		.hpEv = 4,
 		.atkEv = 252,
-		.defEv = 8,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
-		.item = ITEM_EVIOLITE,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OBLIVIOUS
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
-			MOVE_ICESHARD,
+			MOVE_ICICLESPEAR,
 			MOVE_EARTHQUAKE,
-			MOVE_TOXIC,
-			MOVE_STEALTHROCK,
+			MOVE_STONEEDGE,
+			MOVE_SUPERPOWER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49276,14 +49411,40 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_TRACE
+		.ability = FRONTIER_ABILITY_2, //ABILITY_DOWNLOAD
 		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
 			MOVE_TRIATTACK,
-			MOVE_DARKPULSE,
+			MOVE_SHADOWBALL,
 			MOVE_THUNDERBOLT,
 			MOVE_ICEBEAM,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_PORYGON2,
+		.nature = NATURE_SASSY,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 0,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ANALYTIC
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_THUNDERBOLT,
+			MOVE_ICEBEAM,
+			MOVE_TOXIC,
+			MOVE_RECOVER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49299,17 +49460,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.defEv = 4,
+		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TRACE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
-			MOVE_TRIATTACK,
+			MOVE_SHADOWBALL,
 			MOVE_ICEBEAM,
-			MOVE_THUNDERBOLT,
-			MOVE_NASTYPLOT,
+			MOVE_CONVERSION,
+			MOVE_RECOVER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49318,24 +49479,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_PUPITAR,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 116,
-		.defEv = 150,
-		.spDefEv = 252,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SHEDSKIN
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
-			MOVE_STONEEDGE,
 			MOVE_EARTHQUAKE,
-			MOVE_STEALTHROCK,
-			MOVE_CURSE,
+			MOVE_ROCKSLIDE,
+			MOVE_CRUNCH,
+			MOVE_DRAGONDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49396,24 +49557,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GROVYLE,
-		.nature = NATURE_NAIVE,
+		.nature = NATURE_LONELY,
 		.hpIv = 31,
-		.atkIv = 30,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 30,
+		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 30,
-		.atkEv = 4,
-		.spAtkEv = 252,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
-		.item = ITEM_LIFE_ORB,
+		.spdIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spAtkEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_UNBURDEN
+		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
+			MOVE_LEAFSTORM,
 			MOVE_LEAFBLADE,
-			MOVE_ENERGYBALL,
+			MOVE_ACROBATICS,
 			MOVE_ROCKSLIDE,
-			MOVE_HIDDENPOWER, //TYPE_FIRE
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49433,7 +49594,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_FIGHTINIUM_Z,
 		.moves =
 		{
 			MOVE_FIREBLAST,
@@ -49459,13 +49620,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
 			MOVE_LOWKICK,
+			MOVE_ROCKSLIDE,
 			MOVE_SWORDSDANCE,
-			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49484,8 +49645,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DAMP
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_SCALD,
@@ -49500,24 +49661,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MARSHTOMP,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
 		.atkEv = 252,
-		.spDefEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
 			MOVE_WATERFALL,
 			MOVE_EARTHQUAKE,
 			MOVE_ICEPUNCH,
-			MOVE_STEALTHROCK,
+			MOVE_YAWN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49641,7 +49802,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
 			MOVE_HYDROPUMP,
@@ -49656,24 +49817,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_LOMBRE,
-		.nature = NATURE_SERIOUS,
+		.nature = NATURE_RELAXED,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 4,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
-		.item = ITEM_EVIOLITE,
+		.atkEv = 4,
+		.defEv = 252,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_RAINDISH
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
-			MOVE_RAINDANCE,
-			MOVE_TOXIC,
-			MOVE_LEECHSEED,
-			MOVE_SYNTHESIS,
+			MOVE_GIGADRAIN,
+			MOVE_SCALD,
+			MOVE_ICEBEAM,
+			MOVE_DRAINPUNCH,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49682,22 +49843,22 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_NUZLEAF,
-		.nature = NATURE_HASTY,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 4,
 		.atkEv = 252,
-		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
 		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
 			MOVE_LEAFBLADE,
-			MOVE_NIGHTSLASH,
+			MOVE_SUCKERPUNCH,
 			MOVE_ROCKSLIDE,
 			MOVE_BRICKBREAK,
 
@@ -49716,17 +49877,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.spDefEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
-		.item = ITEM_EVIOLITE,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PICKPOCKET
+		.item = ITEM_GRASS_GEM,
 		.moves =
 		{
-			MOVE_LEAFBLADE,
-			MOVE_ROCKSLIDE,
-			MOVE_SWORDSDANCE,
-			MOVE_SYNTHESIS,
+			MOVE_GRASSYGLIDE,
+			MOVE_SUCKERPUNCH,
+			MOVE_BRICKBREAK,
+			MOVE_GRASSYTERRAIN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49746,7 +49907,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SYNCHRONIZE
-		.item = ITEM_CHOICE_SPECS,
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
 			MOVE_PSYSHOCK,
@@ -49761,24 +49922,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_KIRLIA,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_QUIET,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 31,
+		.spdIv = 0,
+		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SYNCHRONIZE
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_TRACE
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_PSYSHOCK,
 			MOVE_DAZZLINGGLEAM,
-			MOVE_THUNDERWAVE,
-			MOVE_CALMMIND,
+			MOVE_PSYSHOCK,
+			MOVE_DESTINYBOND,
+			MOVE_TRICKROOM,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49794,17 +49955,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.spDefEv = 240,
-		.spdEv = 16,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_VITALSPIRIT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
+			MOVE_FOCUSPUNCH,
 			MOVE_RETURN,
-			MOVE_EARTHQUAKE,
-			MOVE_BULKUP,
-			MOVE_SLACKOFF,
+			MOVE_ENCORE,
+			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49827,7 +49988,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_FIREPUNCH,
+			MOVE_RETURN,
 			MOVE_EARTHQUAKE,
 			MOVE_SUCKERPUNCH,
 			MOVE_SLACKOFF,
@@ -49849,14 +50010,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SCRAPPY
-		.item = ITEM_CHOICE_SPECS,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SOUNDPROOF
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_HYPERVOICE,
 			MOVE_FIREBLAST,
 			MOVE_ICEBEAM,
-			MOVE_EXTRASENSORY,
+			MOVE_SHADOWBALL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49865,7 +50026,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_LOUDRED,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -49902,7 +50063,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_ROCKHEAD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_HEADSMASH,
@@ -49917,24 +50078,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_LAIRON,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_BRAVE,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 4,
+		.spdIv = 0,
+		.hpEv = 252,
 		.atkEv = 252,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_ROCKHEAD
-		.item = ITEM_EVIOLITE,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_STURDY
+		.item = ITEM_CUSTAP_BERRY,
 		.moves =
 		{
-			MOVE_IRONHEAD,
-			MOVE_HEADSMASH,
+			MOVE_STEELROLLER,
+			MOVE_STONEEDGE,
 			MOVE_EARTHQUAKE,
-			MOVE_AUTOTOMIZE,
+			MOVE_METALBURST,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49969,24 +50130,25 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_ROSELIA,
-		.nature = NATURE_CALM,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 32,
-		.spDefEv = 224,
+		.hpEv = 4,
+		.defEv = 4,
+		.spAtkEv = 248,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_NATURALCURE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
-			MOVE_SLEEPPOWDER,
-			MOVE_TOXICSPIKES,
-			MOVE_SPIKES,
-			MOVE_SYNTHESIS,
+			MOVE_GIGADRAIN,
+			MOVE_SLUDGEBOMB,
+			MOVE_DAZZLINGGLEAM,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -49995,6 +50157,84 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_VIBRAVA,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.item = ITEM_THROAT_SPRAY,
+		.moves =
+		{
+			MOVE_DRAGONPULSE,
+			MOVE_EARTHPOWER,
+			MOVE_BOOMBURST,
+			MOVE_HEATWAVE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_VIBRAVA,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.item = ITEM_DRAGONIUM_Z,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_EARTHQUAKE,
+			MOVE_UTURN,
+			MOVE_DEFOG,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_DUSCLOPS,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.item = ITEM_SHELL_BELL,
+		.moves =
+		{
+			MOVE_SHADOWBALL,
+			MOVE_ICEBEAM,
+			MOVE_HIDDENPOWER, //TYPE_FIGHTING
+			MOVE_CALMMIND,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_DUSCLOPS,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
@@ -50002,121 +50242,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_WEAKNESS_POLICY,
-		.moves =
-		{
-			MOVE_EARTHQUAKE,
-			MOVE_THROATCHOP,
-			MOVE_DUALWINGBEAT,
-			MOVE_TAILWIND,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_VIBRAVA,
-		.nature = NATURE_CAREFUL,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 8,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_EVIOLITE,
-		.moves =
-		{
-			MOVE_EARTHQUAKE,
-			MOVE_TOXIC,
-			MOVE_DEFOG,
-			MOVE_ROOST,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_DUSCLOPS,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 124,
-		.spAtkEv = 132,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_SHADOWBALL,
-			MOVE_ICEBEAM,
-			MOVE_CALMMIND,
-			MOVE_REST,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_DUSCLOPS,
-		.nature = NATURE_CALM,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 80,
-		.spDefEv = 176,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
-		.item = ITEM_EVIOLITE,
-		.moves =
-		{
-			MOVE_NIGHTSHADE,
-			MOVE_ICEBEAM,
+			MOVE_POLTERGEIST,
+			MOVE_FOCUSPUNCH,
 			MOVE_WILLOWISP,
-			MOVE_PAINSPLIT,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_SEALEO,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 252,
-		.spAtkEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
-		.item = ITEM_EVIOLITE,
-		.moves =
-		{
-			MOVE_ICEBEAM,
-			MOVE_SURF,
-			MOVE_SUPERFANG,
-			MOVE_TOXIC,
+			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50130,19 +50266,46 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
-		.spDefIv = 30,
+		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
 		.defEv = 4,
-		.spAtkEv = 252,
+		.spAtkEv = 248,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
 			MOVE_SURF,
 			MOVE_ICEBEAM,
-			MOVE_HIDDENPOWER, //TYPE_GROUND
-			MOVE_SUPERFANG,
+			MOVE_HIDDENPOWER, //TYPE_GRASS
+			MOVE_SIGNALBEAM,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_SEALEO,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OBLIVIOUS
+		.item = ITEM_AGUAV_BERRY,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_ICESHARD,
+			MOVE_EARTHQUAKE,
+			MOVE_CURSE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50162,7 +50325,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_ROCKHEAD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
 			MOVE_OUTRAGE,
@@ -50188,7 +50351,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OVERCOAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_DRAGONCLAW,
@@ -50214,7 +50377,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_PSYCHIUM_Z,
 		.moves =
 		{
 			MOVE_METEORMASH,
@@ -50236,17 +50399,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
 		.atkEv = 252,
-		.defEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
-			MOVE_BULLETPUNCH,
 			MOVE_METEORMASH,
 			MOVE_ZENHEADBUTT,
 			MOVE_EARTHQUAKE,
+			MOVE_AGILITY,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50264,15 +50427,15 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spdIv = 31,
 		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHELLARMOR
-		.item = ITEM_EVIOLITE,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
 			MOVE_SEEDBOMB,
 			MOVE_CRUNCH,
-			MOVE_EARTHQUAKE,
-			MOVE_SYNTHESIS,
+			MOVE_DOUBLEEDGE,
+			MOVE_SUPERPOWER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50281,21 +50444,21 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GROTLE,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_BOLD,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 244,
-		.spDefEv = 16,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHELLARMOR
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_SEEDBOMB,
+			MOVE_TOXIC,
 			MOVE_LEECHSEED,
 			MOVE_STEALTHROCK,
 			MOVE_SYNTHESIS,
@@ -50307,7 +50470,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MONFERNO,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -50318,7 +50481,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_IRONFIST
-		.item = ITEM_EJECT_PACK,
+		.item = ITEM_FIRIUM_Z,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
@@ -50370,7 +50533,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_SCALD,
@@ -50385,24 +50548,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_PRINPLUP,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 30,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
 		.spAtkEv = 252,
-		.spDefEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_SCALD,
+			MOVE_HYDROPUMP,
 			MOVE_ICEBEAM,
-			MOVE_HIDDENPOWER, //TYPE_ELECTRIC
-			MOVE_STEALTHROCK,
+			MOVE_GRASSKNOT,
+			MOVE_YAWN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50422,12 +50585,12 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RECKLESS
-		.item = ITEM_CHOICE_BAND,
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
 			MOVE_DOUBLEEDGE,
 			MOVE_BRAVEBIRD,
-			MOVE_STEELWING,
+			MOVE_FINALGAMBIT,
 			MOVE_UTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -50447,13 +50610,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RECKLESS
-		.item = ITEM_CHOICE_SCARF,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
+		.item = ITEM_FIGHTINIUM_Z,
 		.moves =
 		{
-			MOVE_DOUBLEEDGE,
+			MOVE_RETURN,
 			MOVE_BRAVEBIRD,
-			MOVE_STEELWING,
+			MOVE_FINALGAMBIT,
 			MOVE_UTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -50480,7 +50643,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_WILDCHARGE,
 			MOVE_ICEFANG,
 			MOVE_CRUNCH,
-			MOVE_FIREFANG,
+			MOVE_FACADE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50489,24 +50652,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_LUXIO,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
-		.defEv = 4,
+		.hpEv = 252,
+		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_INTIMIDATE
-		.item = ITEM_CHOICE_BAND,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_WILDCHARGE,
 			MOVE_VOLTSWITCH,
-			MOVE_FIREFANG,
-			MOVE_ICEFANG,
+			MOVE_SNARL,
+			MOVE_PSYCHICFANGS,
+			MOVE_EERIEIMPULSE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50525,14 +50688,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spAtkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ROUGHSKIN
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SANDVEIL
+		.item = ITEM_DRAGONIUM_Z,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_OUTRAGE,
 			MOVE_EARTHQUAKE,
 			MOVE_STONEEDGE,
-			MOVE_STEALTHROCK,
+			MOVE_IRONHEAD,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50548,11 +50711,11 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 176,
+		.hpEv = 252,
 		.defEv = 252,
-		.spdEv = 80,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ROUGHSKIN
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ROCKY_HELMET,
 		.moves =
 		{
 			MOVE_DRAGONCLAW,
@@ -50578,13 +50741,39 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_GRASSIUM_Z,
 		.moves =
 		{
 			MOVE_LEAFSTORM,
 			MOVE_HIDDENPOWER, //TYPE_FIRE
 			MOVE_GLARE,
 			MOVE_SYNTHESIS,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_SERVINE,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_LEAFBLADE,
+			MOVE_KNOCKOFF,
+			MOVE_LEECHSEED,
+			MOVE_COIL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50600,17 +50789,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 30,
 		.spDefIv = 31,
 		.spdIv = 30,
-		.hpEv = 252,
-		.spDefEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
-		.item = ITEM_EVIOLITE,
+		.hpEv = 12,
+		.spAtkEv = 248,
+		.spdEv = 248,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CONTRARY
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_GIGADRAIN,
+			MOVE_LEAFSTORM,
+			MOVE_WRINGOUT,
 			MOVE_HIDDENPOWER, //TYPE_FIRE
-			MOVE_SYNTHESIS,
-			MOVE_SUBSTITUTE,
+			MOVE_GIGADRAIN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50619,50 +50808,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_PIGNITE,
-		.nature = NATURE_NAUGHTY,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
-		.item = ITEM_LIFE_ORB,
-		.moves =
-		{
-			MOVE_FLAREBLITZ,
-			MOVE_FIREBLAST,
-			MOVE_FOCUSBLAST,
-			MOVE_WILDCHARGE,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
-	},
-	{
-		.species = SPECIES_PIGNITE,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
+		.item = ITEM_FIGHTINIUM_Z,
+		.moves =
+		{
+			MOVE_FLAREBLITZ,
+			MOVE_SUPERPOWER,
+			MOVE_THUNDERPUNCH,
+			MOVE_FLAMECHARGE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_PIGNITE,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
 		.atkEv = 252,
 		.defEv = 4,
+		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_CHESTO_BERRY,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
 			MOVE_WILDCHARGE,
 			MOVE_REST,
-			MOVE_SLEEPTALK,
+			MOVE_CURSE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50708,7 +50897,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
 			MOVE_HYDROPUMP,
@@ -50740,7 +50929,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_RETURN,
 			MOVE_PSYCHICFANGS,
 			MOVE_CRUNCH,
-			MOVE_PLAYROUGH,
+			MOVE_WILDCHARGE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50749,7 +50938,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_HERDIER,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -50757,16 +50946,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 128,
-		.spDefEv = 128,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_FAIRIUM_Z,
 		.moves =
 		{
 			MOVE_RETURN,
-			MOVE_PURSUIT,
-			MOVE_TOXIC,
-			MOVE_PROTECT,
+			MOVE_CRUNCH,
+			MOVE_PLAYROUGH,
+			MOVE_BABYDOLLEYES,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50775,7 +50964,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_TRANQUILL,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_HASTY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -50783,42 +50972,42 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 252,
-		.defEv = 4,
+		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_SUPERLUCK
-		.item = ITEM_SCOPE_LENS,
+		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
+			MOVE_SKYATTACK,
 			MOVE_RETURN,
+			MOVE_HEATWAVE,
+			MOVE_TAILWIND,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_TRANQUILL,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RIVALRY
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
 			MOVE_DUALWINGBEAT,
+			MOVE_RETURN,
 			MOVE_UTURN,
-			MOVE_HYPNOSIS,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_TRANQUILL,
-		.nature = NATURE_ADAMANT,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SUPERLUCK
-		.item = ITEM_SCOPE_LENS,
-		.moves =
-		{
-			MOVE_RETURN,
-			MOVE_DUALWINGBEAT,
-			MOVE_NIGHTSLASH,
-			MOVE_HYPNOSIS,
+			MOVE_ROOST,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50827,23 +51016,23 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_BOLDORE,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 4,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_STURDY
-		.item = ITEM_EVIOLITE,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_WEAKARMOR
+		.item = ITEM_LIECHI_BERRY,
 		.moves =
 		{
 			MOVE_STONEEDGE,
 			MOVE_EARTHQUAKE,
-			MOVE_TOXIC,
+			MOVE_EXPLOSION,
 			MOVE_STEALTHROCK,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -50887,16 +51076,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.atkEv = 192,
-		.defEv = 64,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_GUTS
-		.item = ITEM_EVIOLITE,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_IRONFIST
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
 			MOVE_DRAINPUNCH,
 			MOVE_MACHPUNCH,
-			MOVE_KNOCKOFF,
-			MOVE_BULKUP,
+			MOVE_ICEPUNCH,
+			MOVE_POISONJAB,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50916,13 +51105,39 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_GUTS
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_FLAME_ORB,
+		.moves =
+		{
+			MOVE_CLOSECOMBAT,
+			MOVE_MACHPUNCH,
+			MOVE_KNOCKOFF,
+			MOVE_FACADE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_GURDURR,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_SHEERFORCE
+		.item = ITEM_IAPAPA_BERRY,
 		.moves =
 		{
 			MOVE_DRAINPUNCH,
-			MOVE_MACHPUNCH,
-			MOVE_KNOCKOFF,
-			MOVE_STONEEDGE,
+			MOVE_THUNDERPUNCH,
+			MOVE_FIREPUNCH,
+			MOVE_BULKUP,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50939,10 +51154,10 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 244,
-		.spDefEv = 12,
+		.defEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WATERABSORB
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_SCALD,
@@ -50959,22 +51174,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_PALPITOAD,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 30,
+		.atkIv = 1,
+		.defIv = 31,
 		.spAtkIv = 30,
-		.spDefIv = 30,
-		.spdIv = 30,
-		.hpEv = 60,
-		.defEv = 196,
-		.spAtkEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WATERABSORB
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 248,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_HYDROPUMP,
 			MOVE_EARTHPOWER,
 			MOVE_SLUDGEWAVE,
-			MOVE_HIDDENPOWER, //TYPE_FIGHTING
+			MOVE_HIDDENPOWER, //TYPE_ELECTRIC
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_SWADLOON,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 248,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_CHLOROPHYLL
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_BUGBUZZ,
+			MOVE_GIGADRAIN,
+			MOVE_AIRSLASH,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -50994,33 +51237,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OVERCOAT
-		.item = ITEM_EVIOLITE,
-		.moves =
-		{
-			MOVE_BUGBUZZ,
-			MOVE_CALMMIND,
-			MOVE_BATONPASS,
-			MOVE_SYNTHESIS,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = FALSE,
-		.modifyMovesDoubles = FALSE,
-	},
-	{
-		.species = SPECIES_SWADLOON,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OVERCOAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_BUGBUZZ,
@@ -51061,24 +51278,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_WHIRLIPEDE,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 244,
-		.defEv = 252,
-		.spDefEv = 12,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_BUGINIUM_Z,
 		.moves =
 		{
-			MOVE_SKITTERSMACK,
 			MOVE_POISONJAB,
-			MOVE_SPIKES,
+			MOVE_SKITTERSMACK,
 			MOVE_TOXICSPIKES,
+			MOVE_IRONDEFENSE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51094,17 +51311,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 4,
+		.hpEv = 252,
 		.atkEv = 252,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_MOXIE
-		.item = ITEM_CHOICE_BAND,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
-			MOVE_KNOCKOFF,
+			MOVE_PURSUIT,
 			MOVE_STONEEDGE,
-			MOVE_AQUATAIL,
+			MOVE_STEALTHROCK,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51129,7 +51346,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		{
 			MOVE_EARTHQUAKE,
 			MOVE_KNOCKOFF,
-			MOVE_STONEEDGE,
+			MOVE_ROCKSLIDE,
 			MOVE_AQUATAIL,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51139,24 +51356,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_GOTHORITA,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 176,
-		.spDefEv = 84,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWTAG
-		.item = ITEM_EVIOLITE,
+		.defIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 30,
+		.hpEv = 12,
+		.spAtkEv = 248,
+		.spdEv = 248,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_COMPETITIVE
+		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
 			MOVE_PSYCHIC,
-			MOVE_THUNDERWAVE,
-			MOVE_CALMMIND,
-			MOVE_REST,
+			MOVE_SHADOWBALL,
+			MOVE_THUNDERBOLT,
+			MOVE_HIDDENPOWER, //TYPE_FIGHTING
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51172,17 +51389,69 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 176,
-		.spDefEv = 84,
+		.hpEv = 252,
+		.defEv = 252,
+		.spAtkEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWTAG
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
-			MOVE_PSYCHIC,
-			MOVE_SLEEPTALK,
+			MOVE_PSYSHOCK,
+			MOVE_THUNDERBOLT,
+			MOVE_CHARM,
 			MOVE_CALMMIND,
-			MOVE_REST,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_GOTHORITA,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWTAG
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_EXPANDINGFORCE,
+			MOVE_SHADOWBALL,
+			MOVE_ENERGYBALL,
+			MOVE_MIRRORCOAT,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_DUOSION,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 30,
+		.hpEv = 252,
+		.defEv = 8,
+		.spAtkEv = 248,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_MAGICGUARD
+		.item = ITEM_SITRUS_BERRY,
+		.moves =
+		{
+			MOVE_EXPANDINGFORCE,
+			MOVE_SHADOWBALL,
+			MOVE_HIDDENPOWER, //TYPE_FIGHTING
+			MOVE_PSYCHICTERRAIN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51201,40 +51470,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_MAGICGUARD
-		.item = ITEM_EVIOLITE,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_REGENERATOR
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
-			MOVE_PSYSHOCK,
-			MOVE_SIGNALBEAM,
-			MOVE_CALMMIND,
-			MOVE_RECOVER,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_DUOSION,
-		.nature = NATURE_QUIET,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 0,
-		.hpEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_MAGICGUARD
-		.item = ITEM_EVIOLITE,
-		.moves =
-		{
-			MOVE_PSYSHOCK,
+			MOVE_PSYCHIC,
 			MOVE_SHADOWBALL,
-			MOVE_TRICKROOM,
-			MOVE_RECOVER,
+			MOVE_SIGNALBEAM,
+			MOVE_ENERGYBALL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51243,24 +51486,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_VANILLISH,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
 		.spdIv = 31,
-		.spAtkEv = 252,
-		.spDefEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WEAKARMOR
-		.item = ITEM_CHOICE_SPECS,
+		.hpEv = 252,
+		.defEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_SNOWCLOAK
+		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
 			MOVE_ICEBEAM,
-			MOVE_SIGNALBEAM,
-			MOVE_FLASHCANNON,
 			MOVE_HIDDENPOWER, //TYPE_GROUND
+			MOVE_AURORAVEIL,
+			MOVE_HAIL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51276,11 +51519,11 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 30,
 		.spDefIv = 30,
 		.spdIv = 31,
-		.spAtkEv = 252,
-		.spDefEv = 4,
+		.spAtkEv = 248,
+		.spDefEv = 8,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WEAKARMOR
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_ICIUM_Z,
 		.moves =
 		{
 			MOVE_BLIZZARD,
@@ -51295,24 +51538,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_KLANG,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.defEv = 156,
-		.spDefEv = 100,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLEARBODY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_STEELIUM_Z,
 		.moves =
 		{
-			MOVE_GEARGRIND,
-			MOVE_SLEEPTALK,
-			MOVE_SHIFTGEAR,
-			MOVE_REST,
+			MOVE_STEELBEAM,
+			MOVE_THUNDERBOLT,
+			MOVE_POWERGEM,
+			MOVE_AUTOTOMIZE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51328,11 +51571,11 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 88,
+		.hpEv = 4,
 		.atkEv = 252,
-		.spdEv = 168,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLEARBODY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_GEARGRIND,
@@ -51347,24 +51590,25 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_EELEKTRIK,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 100,
-		.spDefEv = 156,
+		.defEv = 4,
+		.spAtkEv = 248,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_VOLTSWITCH,
-			MOVE_SLEEPTALK,
-			MOVE_SUPERFANG,
-			MOVE_REST,
+			MOVE_THUNDERBOLT,
+			MOVE_GIGADRAIN,
+			MOVE_SIGNALBEAM,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51381,8 +51625,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 100,
-		.spDefEv = 156,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
 		.item = ITEM_CHOICE_BAND,
 		.moves =
@@ -51432,17 +51676,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 252,
-		.spDefEv = 8,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_FLAMEBODY
-		.item = ITEM_EVIOLITE,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_FLASHFIRE
+		.item = ITEM_MAGO_BERRY,
 		.moves =
 		{
 			MOVE_SHADOWBALL,
-			MOVE_FIREBLAST,
-			MOVE_PAINSPLIT,
+			MOVE_FLAMETHROWER,
 			MOVE_CALMMIND,
+			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51462,12 +51706,12 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_MOLDBREAKER
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_LUM_BERRY,
 		.moves =
 		{
 			MOVE_OUTRAGE,
 			MOVE_POISONJAB,
-			MOVE_AQUATAIL,
+			MOVE_SUPERPOWER,
 			MOVE_DRAGONDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51477,7 +51721,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_FRAXURE,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -51487,14 +51731,40 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_MOLDBREAKER
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RIVALRY
 		.item = ITEM_EJECT_PACK,
 		.moves =
 		{
-			MOVE_OUTRAGE,
+			MOVE_DRAGONCLAW,
 			MOVE_SUPERPOWER,
 			MOVE_POISONJAB,
-			MOVE_AQUATAIL,
+			MOVE_FIRSTIMPRESSION,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_FRAXURE,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_MOLDBREAKER
+		.item = ITEM_CHOICE_SCARF,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_POISONJAB,
+			MOVE_SUPERPOWER,
+			MOVE_CRUNCH,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51520,6 +51790,32 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_CRUNCH,
 			MOVE_OUTRAGE,
 			MOVE_HEADSMASH,
+			MOVE_ZENHEADBUTT,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_ZWEILOUS,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_HUSTLE
+		.item = ITEM_DARKINIUM_Z,
+		.moves =
+		{
+			MOVE_CRUNCH,
+			MOVE_OUTRAGE,
+			MOVE_FIREFANG,
 			MOVE_SUPERPOWER,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51529,24 +51825,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_ZWEILOUS,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.defEv = 8,
-		.spDefEv = 252,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_HUSTLE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_POISONIUM_Z,
 		.moves =
 		{
-			MOVE_CRUNCH,
-			MOVE_DRAGONTAIL,
-			MOVE_THUNDERWAVE,
-			MOVE_TOXIC,
+			MOVE_DARKPULSE,
+			MOVE_DRAGONPULSE,
+			MOVE_BELCH,
+			MOVE_NASTYPLOT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51555,24 +51851,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_QUILLADIN,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 252,
 		.atkEv = 252,
-		.defEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_BULLETPROOF
-		.item = ITEM_EVIOLITE,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_WOODHAMMER,
-			MOVE_ZENHEADBUTT,
-			MOVE_TAUNT,
-			MOVE_SPIKES,
+			MOVE_DRAINPUNCH,
+			MOVE_LEECHSEED,
+			MOVE_BULKUP,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51588,11 +51884,11 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 248,
-		.atkEv = 8,
+		.hpEv = 252,
+		.atkEv = 4,
 		.defEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_BULLETPROOF
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ROCKY_HELMET,
 		.moves =
 		{
 			MOVE_SEEDBOMB,
@@ -51607,24 +51903,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_BRAIXEN,
-		.nature = NATURE_CALM,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
-		.defIv = 31,
+		.defIv = 30,
 		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
+		.spDefIv = 30,
+		.spdIv = 30,
 		.hpEv = 252,
-		.spAtkEv = 4,
-		.spDefEv = 252,
+		.spAtkEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MAGICIAN
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_POWER_HERB,
 		.moves =
 		{
-			MOVE_FIRESPIN,
+			MOVE_FLAMETHROWER,
+			MOVE_SOLARBEAM,
+			MOVE_HIDDENPOWER, //TYPE_ROCK
 			MOVE_WILLOWISP,
-			MOVE_WISH,
-			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51635,10 +51931,10 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_BRAIXEN,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 1,
 		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
 		.hpEv = 4,
 		.spAtkEv = 252,
@@ -51648,8 +51944,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.moves =
 		{
 			MOVE_FIREBLAST,
-			MOVE_GRASSKNOT,
 			MOVE_PSYCHIC,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 			MOVE_TRICK,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51666,14 +51962,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 4,
-		.spAtkEv = 252,
+		.atkEv = 252,
+		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_HYDROPUMP,
+			MOVE_WATERFALL,
 			MOVE_DARKPULSE,
 			MOVE_UTURN,
 			MOVE_GUNKSHOT,
@@ -51685,7 +51981,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_FROGADIER,
-		.nature = NATURE_NAIVE,
+		.nature = NATURE_HASTY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -51699,10 +51995,36 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_DARKPULSE,
+			MOVE_SURF,
 			MOVE_UTURN,
 			MOVE_TAUNT,
 			MOVE_TOXICSPIKES,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_FROGADIER,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PROTEAN
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_HYDROPUMP,
+			MOVE_ICEBEAM,
+			MOVE_GRASSKNOT,
+			MOVE_DARKPULSE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51722,7 +52044,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GALEWINGS
-		.item = ITEM_SITRUS_BERRY,
+		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
 			MOVE_ACROBATICS,
@@ -51737,24 +52059,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_FLETCHINDER,
-		.nature = NATURE_NAIVE,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
+		.hpEv = 4,
 		.atkEv = 252,
-		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GALEWINGS
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_DUALWINGBEAT,
-			MOVE_UTURN,
+			MOVE_WILLOWISP,
 			MOVE_SWORDSDANCE,
 			MOVE_ROOST,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_FLETCHINDER,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_FLAMEBODY
+		.item = ITEM_HEAVY_DUTY_BOOTS,
+		.moves =
+		{
+			MOVE_FLAMETHROWER,
+			MOVE_UTURN,
+			MOVE_TAUNT,
+			MOVE_DEFOG,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51780,7 +52128,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_BUGBITE,
 			MOVE_ELECTROWEB,
 			MOVE_POISONPOWDER,
-			MOVE_STUNSPORE,
+			MOVE_STRINGSHOT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -51805,7 +52153,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		{
 			MOVE_BUGBITE,
 			MOVE_ELECTROWEB,
-			MOVE_POISONPOWDER,
+			MOVE_RAGEPOWDER,
 			MOVE_STUNSPORE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51815,29 +52163,29 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_FLOETTE,
-		.nature = NATURE_CALM,
+		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 30,
 		.spdIv = 31,
 		.hpEv = 252,
-		.spAtkEv = 4,
-		.spDefEv = 252,
+		.defEv = 252,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_FLOWERVEIL
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_PETAYA_BERRY,
 		.moves =
 		{
 			MOVE_MOONBLAST,
-			MOVE_CALMMIND,
-			MOVE_AROMATHERAPY,
+			MOVE_HIDDENPOWER, //TYPE_GROUND
 			MOVE_SYNTHESIS,
+			MOVE_CALMMIND,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
+		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_FLOETTE,
@@ -51875,15 +52223,15 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 0,
 		.hpEv = 252,
-		.atkEv = 180,
-		.spDefEv = 76,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_NOGUARD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_IRONHEAD,
 			MOVE_SHADOWSNEAK,
-			MOVE_SACREDSWORD,
+			MOVE_GYROBALL,
+			MOVE_CLOSECOMBAT,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51893,24 +52241,50 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_DOUBLADE,
-		.nature = NATURE_BRAVE,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
-		.spdIv = 0,
+		.spdIv = 31,
 		.hpEv = 252,
-		.atkEv = 180,
-		.spDefEv = 76,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_NOGUARD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
-			MOVE_IRONHEAD,
 			MOVE_SHADOWCLAW,
-			MOVE_TOXIC,
+			MOVE_IRONHEAD,
+			MOVE_SACREDSWORD,
+			MOVE_ROCKSLIDE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_DOUBLADE,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_NOGUARD
+		.item = ITEM_SITRUS_BERRY,
+		.moves =
+		{
+			MOVE_SHADOWCLAW,
+			MOVE_SACREDSWORD,
 			MOVE_SWORDSDANCE,
+			MOVE_AUTOTOMIZE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51919,7 +52293,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_SLIGGOO,
-		.nature = NATURE_CAREFUL,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -51927,16 +52301,16 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 168,
-		.spDefEv = 88,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SAPSIPPER
-		.item = ITEM_EVIOLITE,
+		.atkEv = 252,
+		.defEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_GOOEY
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
 			MOVE_OUTRAGE,
-			MOVE_SLEEPTALK,
-			MOVE_CURSE,
-			MOVE_REST,
+			MOVE_IRONTAIL,
+			MOVE_ROCKSLIDE,
+			MOVE_COUNTER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -51971,18 +52345,18 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_DARTRIX,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.spDefEv = 4,
+		.hpEv = 132,
+		.atkEv = 124,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_LEAFBLADE,
@@ -52008,7 +52382,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 132,
 		.spDefEv = 124,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_OVERGROW
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_LEAFBLADE,
@@ -52020,6 +52394,32 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.forSingles = TRUE,
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
+	},
+	{
+		.species = SPECIES_DARTRIX,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LONGREACH
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_DUALWINGBEAT,
+			MOVE_LEAFBLADE,
+			MOVE_KNOCKOFF,
+			MOVE_SUCKERPUNCH,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_TORRACAT,
@@ -52049,50 +52449,51 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_TORRACAT,
-		.nature = NATURE_NAIVE,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 128,
-		.spAtkEv = 128,
+		.hpEv = 252,
+		.spAtkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INTIMIDATE
+		.item = ITEM_EJECT_PACK,
 		.moves =
 		{
-			MOVE_FIREBLAST,
-			MOVE_FLAREBLITZ,
-			MOVE_CRUNCH,
-			MOVE_LEECHFANG,
+			MOVE_OVERHEAT,
+			MOVE_FAKEOUT,
+			MOVE_TAUNT,
+			MOVE_PARTINGSHOT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
+		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_BRIONNE,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 30,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
 		.defEv = 4,
-		.spDefEv = 252,
+		.spAtkEv = 248,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
-			MOVE_SCALD,
-			MOVE_MOONBLAST,
+			MOVE_HYDROPUMP,
 			MOVE_ICEBEAM,
-			MOVE_AQUARING,
+			MOVE_MOONBLAST,
+			MOVE_HIDDENPOWER, //TYPE_GRASS
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52103,27 +52504,27 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_BRIONNE,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
 		.spAtkEv = 252,
-		.spDefEv = 4,
+		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LIQUIDVOICE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_HYPERVOICE,
-			MOVE_MOONBLAST,
 			MOVE_ICEBEAM,
-			MOVE_TOXIC,
+			MOVE_DRAININGKISS,
+			MOVE_FLIPTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
+		.modifyMovesDoubles = TRUE,
 	},
 	{
 		.species = SPECIES_TRUMBEAK,
@@ -52160,17 +52561,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
-		.defEv = 4,
+		.hpEv = 252,
+		.atkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SKILLLINK
-		.item = ITEM_CHOICE_SCARF,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_KEENEYE
+		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
-			MOVE_UTURN,
-			MOVE_BULLETSEED,
 			MOVE_BRICKBREAK,
+			MOVE_ROOST,
+			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52190,13 +52591,13 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 124,
 		.spDefEv = 132,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BATTERY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_ELECTROWEB,
 			MOVE_TOXIC,
 			MOVE_LIGHTSCREEN,
-			MOVE_PROTECT,
+			MOVE_STICKYWEB,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52205,24 +52606,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_CHARJABUG,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 124,
-		.spDefEv = 132,
+		.atkEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BATTERY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
 			MOVE_SKITTERSMACK,
-			MOVE_THUNDERBOLT,
-			MOVE_VOLTSWITCH,
-			MOVE_THUNDERWAVE,
+			MOVE_WILDCHARGE,
+			MOVE_CRUNCH,
+			MOVE_ACROBATICS,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52242,7 +52643,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_OBLIVIOUS
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_TOXIC,
@@ -52257,24 +52658,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_STEENEE,
-		.nature = NATURE_BOLD,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
+		.atkEv = 4,
+		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_OBLIVIOUS
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
-			MOVE_TOXIC,
-			MOVE_TEETERDANCE,
-			MOVE_AROMATHERAPY,
+			MOVE_RAPIDSPIN,
 			MOVE_SYNTHESIS,
+			MOVE_LIGHTSCREEN,
+			MOVE_REFLECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52283,24 +52684,24 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_HAKAMO_O,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_BRAVE,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
-		.defEv = 252,
-		.spDefEv = 4,
+		.atkEv = 252,
+		.spAtkEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BULLETPROOF
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_EJECT_PACK,
 		.moves =
 		{
-			MOVE_DRAGONCLAW,
+			MOVE_DRACOMETEOR,
 			MOVE_CLOSECOMBAT,
-			MOVE_TOXIC,
-			MOVE_TAUNT,
+			MOVE_IRONHEAD,
+			MOVE_ROCKSLIDE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52320,7 +52721,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.defEv = 92,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BULLETPROOF
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SHELL_BELL,
 		.moves =
 		{
 			MOVE_OUTRAGE,
@@ -54028,7 +54429,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_FIRIUM_Z,
 		.moves =
 		{
-			MOVE_BLASTBURN,
+			MOVE_FIREBLAST,
 			MOVE_VACUUMWAVE,
 			MOVE_GUNKSHOT,
 			MOVE_FIREPUNCH,

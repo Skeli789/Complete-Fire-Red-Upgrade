@@ -168,7 +168,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		//Increased stat effects
 		case EFFECT_ATTACK_UP:
-		case EFFECT_ATTACK_UP_2:
+		case EFFECT_ATTACK_UP_2:		
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
+			|| (MoveInMoveset(MOVE_KINGSSHIELD, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))) //Don't set up if the Aegislash is probably going to revert your setup
+				break;
+
 			switch (move) {
 				case MOVE_HONECLAWS:
 					if (IsMovePredictionPhazingMove(bankDef, bankAtk))
@@ -180,7 +184,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 				default:
 				AI_ATTACK_PLUS:
-					if (IsMovePredictionPhazingMove(bankDef, bankAtk) || HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN_2))
+					if (HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN_2))
 						break;
 
 					if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
@@ -382,7 +386,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_HAZE:
 			if (ShouldPhaze(bankAtk, bankDef, move, class))
-				INCREASE_VIABILITY(8);
+			{
+				if (IsClassPhazer(class))
+					INCREASE_VIABILITY(8);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 
 		/*
@@ -394,8 +403,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;*/
 
 		case EFFECT_ROAR:
-			if (ShouldPhaze(bankAtk, bankDef, move, class))
-				INCREASE_VIABILITY(8);
+			if (!MoveBlockedBySubstitute(move, bankAtk, bankDef) && ShouldPhaze(bankAtk, bankDef, move, class))
+			{
+				if (IsClassPhazer(class))
+				{
+					if (CanKnockOut(bankDef, bankAtk) && gBattleMoves[move].priority < 0) //Don't prioritize Roar if it means your death
+						INCREASE_VIABILITY(1);
+					else
+						INCREASE_VIABILITY(8);
+				}
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 
 		case EFFECT_MULTI_HIT:
@@ -611,14 +630,22 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
+		#define STAT_DOWN_HIT_CHECK \
+		( \
+			IS_SINGLE_BATTLE \
+			&& !IsClassDamager(class) \
+			&& CalcSecondaryEffectChance(bankAtk, move) >= 50 \
+			&& !MoveBlockedBySubstitute(move, bankAtk, bankDef) \
+		)
+
 		//For the stat down hit, only rely on these gimmicks in Single battles
 		case EFFECT_ATTACK_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_ATTACK_MINUS;
 			break;
 
 		case EFFECT_DEFENSE_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_DEFENSE_MINUS;
 			break;
 
@@ -644,22 +671,22 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SPECIAL_ATTACK_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_SPECIAL_ATTACK_MINUS;
 			break;
 
 		case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_SPECIAL_DEFENSE_MINUS;
 			break;
 
 		case EFFECT_ACCURACY_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_ACCURACY_MINUS;
 			break;
 
 		case EFFECT_EVASION_DOWN_HIT:
-			if (IS_SINGLE_BATTLE && CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (STAT_DOWN_HIT_CHECK)
 				goto AI_EVASION_MINUS;
 			break;
 
@@ -2260,7 +2287,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_REMOVE_TARGET_STAT_CHANGES:
 			if (!MoveBlockedBySubstitute(move, bankAtk, bankDef) && ShouldPhaze(bankAtk, bankDef, move, class))
-				INCREASE_VIABILITY(8);
+			{
+				if (IsClassPhazer(class))
+					INCREASE_VIABILITY(8);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 
 		case EFFECT_RELIC_SONG:
@@ -2603,7 +2635,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
 			{
 				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Unless the move would go before Sucker Punch
+				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 				{
 					INCREASE_VIABILITY(9);
 				}
@@ -2619,10 +2652,13 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
+			&& !IsClassEntryHazards(class) //If your goal isn't to get up hazards
+			&& !IsClassPhazer(class) //Or phaze/set up hazards
 			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Unless the move would go before Sucker Punch
+				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 				{
 					INCREASE_VIABILITY(9);
 				}

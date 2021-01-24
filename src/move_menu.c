@@ -1748,7 +1748,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	}
 	#ifdef VAR_GAME_DIFFICULTY
 	else if (!isAnyMaxMove && (gBattleMoves[move].effect == EFFECT_MINIMIZE || gBattleMoves[move].effect == EFFECT_EVASION_UP_2)
-	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY && !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY && !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) && IsPlayerInControl(gActiveBattler)) //AI can still use Minimize
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMinimize;
 		++limitations;
@@ -1759,7 +1759,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingMoveWithNoPP;
 		++limitations;
 	}
-	
+
 	if (limitations != 0)
 	{
 		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = FALSE;

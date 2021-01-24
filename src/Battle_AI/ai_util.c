@@ -1974,7 +1974,7 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 		|| defAbility == ABILITY_EARLYBIRD
 		|| defAbility == ABILITY_SHEDSKIN
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER);
 }
 
@@ -1997,7 +1997,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
 		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
 		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
@@ -2032,7 +2032,7 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 	   || (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
-	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
+	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 	   || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 	   ||  MoveInMoveset(MOVE_FACADE, bankDef)
 	   ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef)
@@ -2067,7 +2067,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
 		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
@@ -2720,6 +2720,34 @@ bool8 MoveInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ig
 	}
 
 	return FALSE;
+}
+
+bool8 AllMovesInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ignoreStatusMoves)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (ignoreStatusMoves && SPLIT(move) == SPLIT_STATUS)
+				continue;
+
+			if (gBattleMoves[move].accuracy == 0 //Always hits
+			||  GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD))
+				return FALSE; //At least one move hits
+
+			if (AccuracyCalc(move, bankAtk, bankDef) >= acc)
+				return FALSE; //At least one move hits
+		}
+	}
+
+	return TRUE; //No moves hit
 }
 
 bool8 FlinchingMoveInMoveset(u8 bank)
@@ -3703,6 +3731,10 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (gBattleMoves[move].effect != EFFECT_OVERHEAT //Base move won't lower user stats
 			&& gBattleMoves[move].effect != EFFECT_SUPERPOWER
+			&& move != MOVE_MINDBLOWN //Base move won't do recoil
+			&& move != MOVE_STEELBEAM
+			&& !gSpecialMoveFlags[move].gPercent33RecoilMoves
+			&& !gSpecialMoveFlags[move].gPercent50RecoilMoves
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
 			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left

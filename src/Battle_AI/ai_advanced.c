@@ -346,6 +346,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 	bool8 boostingMove = FALSE;
 	bool8 healingMove = FALSE;
 	bool8 auroraVeil = FALSE;
+	bool8 phazingMove = FALSE;
 
 	bool8 isSingleBattle;
 	if (bank == 0xFF)
@@ -380,6 +381,9 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			MOVE_EFFECT_SWITCH:
 				switch (moveEffect) {
 					case EFFECT_ROAR:
+						phazingMove = TRUE; //Could be Roar support for breaking setups
+						break;
+
 					case EFFECT_HAZE:
 					case EFFECT_REMOVE_TARGET_STAT_CHANGES:
 						class = FIGHT_CLASS_TEAM_SUPPORT_PHAZING;
@@ -488,22 +492,29 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 					class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
 			}
 			else if (entryHazardNum >= 1)
-				class = FIGHT_CLASS_ENTRY_HAZARDS;
+			{
+				if (phazingMove)
+					class = FIGHT_CLASS_TEAM_SUPPORT_PHAZING;
+				else
+					class = FIGHT_CLASS_ENTRY_HAZARDS;
+			}
 			else if (attackMoveNum >= 3)
 			{
 				if (boostingMove)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
 				else if (statusMoveNum > 0)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
+				else if (phazingMove) //Goal is to phaze out when stats are up
+					class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
 				else
 					class = FIGHT_CLASS_SWEEPER_KILL;
 			}
-			else if (attackMoveNum >= 2 && (boostingMove || statusMoveNum > 0))
+			else if (attackMoveNum >= 2 && (boostingMove || statusMoveNum > 0 || phazingMove))
 			{
 				//A class should always be assigned here because of the conditions to enter this scope
 				if (boostingMove)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
-				else if (statusMoveNum > 0)
+				else if (statusMoveNum > 0 || phazingMove)
 					class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
 			}
 			else if (healingMove)
@@ -1048,69 +1059,52 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	if (IsDynamaxed(bankDef))
 		return FALSE; //These Pokemon can't be forced out.
 
-	if (IsClassPhazer(class))
+	if (CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
+		return FALSE; //KO if you can
+
+	if (IS_SINGLE_BATTLE)
 	{
-		if (IS_SINGLE_BATTLE)
+		if (CanKnockOut(bankAtk, bankDef))
+			return FALSE; //KO if you can
+
+		switch (gBattleMoves[move].effect)
 		{
-			if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
-			{
-				if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
+			case EFFECT_ROAR:
+				if (IsClassPhazer(class)) //So Roar supporters don't spam this
 				{
-					if (AnyUsefulStatIsRaised(bankDef))
+					if (gSideTimers[SIDE(bankDef)].srAmount > 0 //Has some hurtful hazard
+					||  gSideTimers[SIDE(bankDef)].tspikesAmount >= 1
+					||  gSideTimers[SIDE(bankDef)].spikesAmount >= 1
+					||  gSideTimers[SIDE(bankDef)].steelsurge > 0)
 						return TRUE;
 				}
-				else
-					goto ROAR_CHECK;
-			}
-			else //Opponent Goes First
-			{
-				if (Can2HKO(bankDef, bankAtk))
-				{
-					if (AnyUsefulStatIsRaised(bankDef))
-						return TRUE;
-				}
-				else
-				{
-				ROAR_CHECK:
-					switch (gBattleMoves[move].effect)
-					{
-						case EFFECT_ROAR:
-							if (gSideTimers[SIDE(bankDef)].srAmount > 0 //Has some hurtful hazard
-							||  gSideTimers[SIDE(bankDef)].tspikesAmount >= 1
-							||  gSideTimers[SIDE(bankDef)].spikesAmount >= 1
-							||  gSideTimers[SIDE(bankDef)].steelsurge > 0
-							||  AnyUsefulStatIsRaised(bankDef))
-								return TRUE;
-							break;
-						default:
-							if (AnyUsefulStatIsRaised(bankDef))
-								return TRUE;
-					}
-				}
-			}
+				//Fallthrough
+			default:
+				if (AnyUsefulStatIsRaised(bankDef))
+					return TRUE;
 		}
-		else //Double Battle
+	}
+	else //Double Battle
+	{
+		switch (gBattleMoves[move].effect)
 		{
-			if (!CanKnockOut(bankAtk, bankDef)) //KO if you can
-			{
-				switch (gBattleMoves[move].effect)
+			case EFFECT_ROAR:
+				if (IsClassPhazer(class))
 				{
-					case EFFECT_ROAR:
-						if (gSideTimers[SIDE(bankDef)].srAmount > 0 //Has some hurtful hazard
-						||  gSideTimers[SIDE(bankDef)].tspikesAmount >= 1
-						||  gSideTimers[SIDE(bankDef)].spikesAmount >= 1
-						||  AnyUsefulStatIsRaised(bankDef))
-							return TRUE;
-						break;
-					case EFFECT_HAZE:
-						if ((BATTLER_ALIVE(PARTNER(bankAtk)) && AnyUsefulStatIsRaised(PARTNER(bankAtk))))
-							return FALSE; //Don't Haze if partner will lose benefits
-						break;
-					default:
-						if (AnyUsefulStatIsRaised(bankDef))
-							return TRUE;
+					if (gSideTimers[SIDE(bankDef)].srAmount > 0 //Has some hurtful hazard
+					||  gSideTimers[SIDE(bankDef)].tspikesAmount >= 1
+					||  gSideTimers[SIDE(bankDef)].spikesAmount >= 1
+					||  AnyUsefulStatIsRaised(bankDef))
+						return TRUE;
 				}
-			}
+				break;
+			case EFFECT_HAZE:
+				if ((BATTLER_ALIVE(PARTNER(bankAtk)) && AnyUsefulStatIsRaised(PARTNER(bankAtk))))
+					return FALSE; //Don't Haze if partner will lose benefits
+				break;
+			default:
+				if (AnyUsefulStatIsRaised(bankDef))
+					return TRUE;
 		}
 	}
 
@@ -2158,6 +2152,9 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 {
 	s16 viability = *originalViability;
 
+	if (HasUsedMoveWithEffect(bankDef, EFFECT_MAGIC_COAT))
+		return; //Don't use Hazards if the player is going to try to cheese with Magic Coat spam
+
 	switch (class) {
 		case FIGHT_CLASS_SWEEPER_KILL:
 			break;
@@ -2217,7 +2214,18 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
-			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			if (((move == MOVE_SPIKES && gSideTimers[SIDE(bankDef)].spikesAmount > 0) //Trying to set up more Spikes
+			  || (move == MOVE_TOXICSPIKES && gSideTimers[SIDE(bankDef)].tspikesAmount > 0)) //or trying to set up more Toxic Spikes
+			&& ((!gSideTimers[SIDE(bankDef)].srAmount && MoveInMoveset(MOVE_STEALTHROCK, bankAtk)) //But can set up Stealth Rock too
+			 || (!gSideTimers[SIDE(bankDef)].stickyWeb && MoveInMoveset(MOVE_STICKYWEB, bankAtk)))) //Or can set up Sticky Web too
+			{
+				//Use less of the time to allow SR to get set up
+				if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+					INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
+			else if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			else
 				INCREASE_STATUS_VIABILITY(3);

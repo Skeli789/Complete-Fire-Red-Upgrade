@@ -179,6 +179,7 @@ static void CheckShinyMon(struct Pokemon* mon);
 #ifdef UNBOUND
 extern u8 GetEVSpreadNumForUnboundRivalChallenge(struct Pokemon* mon, u32 aiFlags, u8 trainerClass);
 extern void TryGiveSpecialTrainerHiddenPower(u16 trainerId, struct Pokemon* mon);
+extern void TryGiveSpecialTrainerStatusCondition(u16 trainerId, struct Pokemon* mon);
 #endif
 
 #ifdef OPEN_WORLD_TRAINERS
@@ -941,6 +942,9 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 			//Status Inducers
 			TryStatusInducer(&party[i]);
+			#ifdef UNBOUND
+			TryGiveSpecialTrainerStatusCondition(trainerId, &party[i]);
+			#endif
 			gBankTarget = i + 1;
 		}
 

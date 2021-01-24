@@ -343,6 +343,7 @@ RemoveShopModifierCheats 809B18E 0
 DNSEndBuyMenuHook 809C078 1
 
 ##Select-From-PC
+#ifdef SELECT_FROM_PC
 pcSelect_ClosingCheck 0808ebb2 0
 pcSelect_HackWithdrawBRM 08094982 0
 pcSelect_ForceMulti 0810f99c 1
@@ -352,6 +353,7 @@ pcSelect_OperationsMsg 0808ed54 0
 pcSelect_SkipMultiGen 0808c3e0 0
 pcSelect_SkipWithdrawCount 0808c53c 1
 pcSelect_SwapDecision 0808ed8c 1
+#endif
 
 ##Keypad
 ReadKeys 080005E8 0

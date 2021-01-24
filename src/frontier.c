@@ -1157,6 +1157,11 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		else
 			toGive /= 2;
 	}
+	else if (BATTLE_FACILITY_NUM != IN_BATTLE_MINE) //Party size constantly changes so not good idea
+	{
+		if (VarGet(VAR_BATTLE_FACILITY_POKE_NUM) >= PARTY_SIZE)
+			toGive *= 2; //Battles are twice as long, so give twice as much BP
+	}
 
 	return toGive;
 }

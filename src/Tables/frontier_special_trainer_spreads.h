@@ -1442,7 +1442,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Palmer1[] =
 		.spDefEv = 96,
 		.spdEv = 96,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MARVELSCALE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_YACHE_BERRY,
 		.moves =
 		{
 			MOVE_OUTRAGE,
@@ -2788,7 +2788,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Pat1[] =
 		.spDefEv = 96,
 		.spdEv = 96,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SHEDSKIN
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_YACHE_BERRY,
 		.moves =
 		{
 			MOVE_OUTRAGE,
@@ -2814,7 +2814,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Pat1[] =
 		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFILTRATOR
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_BIG_ROOT,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
@@ -2870,7 +2870,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Pat2[] =
 		.defEv = 252,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TRACE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
 			MOVE_THUNDERBOLT,
@@ -5411,7 +5411,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Paula1[] =
 		.atkEv = 252,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_NOGUARD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
 			MOVE_IRONHEAD,
@@ -7521,7 +7521,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Skeli[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_FLOWERVEIL
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
 			MOVE_MOONBLAST,
@@ -7626,7 +7626,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Skeli[] =
 		.defEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OVERCOAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
 			MOVE_DRAGONRAGE,
@@ -9301,7 +9301,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Golche[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHEERFORCE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_WATERFALL,
@@ -10623,7 +10623,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Gail[] =
 		.atkEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
 			MOVE_AQUATAIL,
@@ -10675,7 +10675,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Gail[] =
 		.atkEv = 4,
 		.defEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_COLBUR_BERRY,
 		.moves =
 		{
 			MOVE_BODYSLAM,
@@ -11926,7 +11926,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.spDefEv = 60,
 		.spdEv = 192,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_DOWNLOAD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_NORMAL_GEM,
 		.moves =
 		{
 			MOVE_TRIATTACK,
@@ -11953,7 +11953,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.spDefEv = 60,
 		.spdEv = 192,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_DOWNLOAD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_NORMAL_GEM,
 		.moves =
 		{
 			MOVE_TRIATTACK,
@@ -11980,7 +11980,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.spDefEv = 60,
 		.spdEv = 192,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_DOWNLOAD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_NORMAL_GEM,
 		.moves =
 		{
 			MOVE_TRIATTACK,
@@ -13856,7 +13856,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Cynthia[] =
 		.defEv = 124,
 		.spAtkEv = 132,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_COLBUR_BERRY,
 		.moves =
 		{
 			MOVE_DARKPULSE,
@@ -15343,7 +15343,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Red[] =
 		.defEv = 16,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CHLOROPHYLL
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_BIG_ROOT,
 		.moves =
 		{
 			MOVE_VENOSHOCK,
@@ -16985,7 +16985,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_BigMo[] =
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_OVERCOAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_ROSELI_BERRY,
 		.moves =
 		{
 			MOVE_DRAGONCLAW,
@@ -18340,7 +18340,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Galavan[] =
 		.defEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_MAGNETPULL
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_SHUCA_BERRY,
 		.moves =
 		{
 			MOVE_STONEEDGE,
@@ -19817,7 +19817,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Candice[] =
 		.defEv = 128,
 		.spDefEv = 128,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_WIKI_BERRY,
 		.moves =
 		{
 			MOVE_ICEBEAM,
@@ -21234,7 +21234,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Giovanni[] =
 		.atkEv = 252,
 		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LIGHTNINGROD
-		.item = ITEM_EVIOLITE,
+		.item = ITEM_PASSHO_BERRY,
 		.moves =
 		{
 			MOVE_EARTHQUAKE,

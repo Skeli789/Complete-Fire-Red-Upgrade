@@ -233,6 +233,8 @@
 ##Bind String
 083FBB02 FE
 083FBB05 00
+##Fix Trainer Winnings String
+08025A0E 06
 
 ##Remove Old Flute Wild Code
 08083318 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46

@@ -112,7 +112,11 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	if (firstMove)
 		sLearningMoveTableID = 0;
 
+
 	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
+	if (lvlUpMove.move == 0 && lvlUpMove.level == 0xFF) //In case just learned last move and reentered into loop
+		return retVal; //0
+
 	while (lvlUpMove.level != 0 && lvlUpMove.level != level)
 	{
 		lvlUpMove = gLevelUpLearnsets[species][++sLearningMoveTableID];
