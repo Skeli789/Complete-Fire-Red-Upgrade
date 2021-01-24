@@ -2506,7 +2506,12 @@ void atk81_trysetrest(void)
 	gActiveBattler = gBankTarget = gBankAttacker;
 	gBattleMoveDamage = gBattleMons[gBankTarget].maxHP * (-1);
 
-	if (CheckGrounding(gActiveBattler) && (gTerrainType == MISTY_TERRAIN || gTerrainType == ELECTRIC_TERRAIN))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(gActiveBattler))
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		fail = TRUE;
+	}
+	else if (gTerrainType == MISTY_TERRAIN && CheckGrounding(gActiveBattler))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 		fail = TRUE;
@@ -2605,7 +2610,8 @@ void atk82_jumpifnotfirstturn(void)
 		gBattlescriptCurrInstr = failJump;
 }
 
-void atk84_jumpifcantmakeasleep(void) {
+void atk84_jumpifcantmakeasleep(void)
+{
 	u8 bankDef = gBankTarget;
 	u8 defPartner = PARTNER(bankDef);
 	u8 defAbility = ABILITY(bankDef);
@@ -2618,29 +2624,37 @@ void atk84_jumpifcantmakeasleep(void) {
 	|| SPECIES(bankDef) == SPECIES_MINIOR_SHIELD
 	#endif
 	)
+	{
 		gBattlescriptCurrInstr = jump_loc;
-
+	}
 	else if (defAbility == ABILITY_INSOMNIA || defAbility == ABILITY_VITALSPIRIT || defAbility == ABILITY_COMATOSE || defAbility == ABILITY_SWEETVEIL
 	|| (defAbility == ABILITY_LEAFGUARD && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
-	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST)) {
+	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST))
+	{
 		gLastUsedAbility = defAbility;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		gBattlescriptCurrInstr = jump_loc;
 		RecordAbilityBattle(bankDef, gLastUsedAbility);
 	}
-
 	else if (defPartnerAbility == ABILITY_SWEETVEIL
-	|| (defPartnerAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST)) {
+	|| (defPartnerAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST))
+	{
 		gLastUsedAbility = defPartnerAbility;
 		gBattlescriptCurrInstr = jump_loc;
 		RecordAbilityBattle(defPartner, gLastUsedAbility);
 	}
-
-	else if (CheckGrounding(bankDef) && (gTerrainType == ELECTRIC_TERRAIN || gTerrainType == MISTY_TERRAIN))
+	else if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bankDef))
+	{
 		gBattlescriptCurrInstr = jump_loc;
-
+	}
+	else if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bankDef))
+	{
+		gBattlescriptCurrInstr = jump_loc;
+	}
 	else
+	{
 		gBattlescriptCurrInstr += 5;
+	}
 }
 
 //This function used to calculate damage, but now all it does is check if Spit Up can be used

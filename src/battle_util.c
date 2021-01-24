@@ -1573,6 +1573,16 @@ bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u
 	return TRUE; //No type in common so fail
 }
 
+bool8 IsAffectedByElectricTerrain(u8 bank)
+{
+	return CheckGrounding(bank) || IsFloatingWithMagnetism(bank); //Draws Electric Terrain up to it when floating with electromagnetism
+}
+
+bool8 IsMonAffectedByElectricTerrain(struct Pokemon* mon)
+{
+	return CheckMonGrounding(mon) || IsMonFloatingWithMagnetism(mon);
+}
+
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
@@ -1685,7 +1695,7 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 			return FALSE;
 	}
 
-	if (gTerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
 		return FALSE;
 
 	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
@@ -1702,7 +1712,7 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 
 bool8 CanBeYawned(u8 bank)
 {
-	if (gTerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
 		return FALSE;
 
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
@@ -1753,8 +1763,10 @@ bool8 CanRest(u8 bank)
 	if (BATTLER_MAX_HP(bank))
 		return FALSE;
 
-	if ((gTerrainType == ELECTRIC_TERRAIN || gTerrainType == MISTY_TERRAIN)
-	&& CheckGrounding(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
+		return FALSE;
+
+	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 
 	if (gBattleMons[bank].status1 & STATUS1_SLEEP)

@@ -1389,12 +1389,12 @@ void atkFF29_trysetsleep(void)
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
+	else if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 	{
 		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && gTerrainType == ELECTRIC_TERRAIN)
+	else if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
 	{
 		gBattleStringLoader = gText_TargetWrappedInElectricTerrain;
 		fail = TRUE;
@@ -1503,7 +1503,7 @@ void atkD7_setyawn(void)
 		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}*/
-	else if (CheckGrounding(bank) && gTerrainType == ELECTRIC_TERRAIN)
+	else if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
 	{
 		gBattleStringLoader = gText_TargetWrappedInElectricTerrain;
 		fail = TRUE;
