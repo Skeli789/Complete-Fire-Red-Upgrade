@@ -317,7 +317,11 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_FLY] =
 	{
 		.effect = EFFECT_SEMI_INVULNERABLE,
+		#ifdef UNBOUND
+		.power = 100,
+		#else
 		.power = 90,
+		#endif
 		.type = TYPE_FLYING,
 		.accuracy = 95,
 		.pp = 15,
@@ -2011,7 +2015,11 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_POISON_HIT,
 		.power = 30,
 		.type = TYPE_POISON,
+		#ifdef UNBOUND
+		.accuracy = 100,
+		#else
 		.accuracy = 70,
+		#endif
 		.pp = 20,
 		.secondaryEffectChance = 40,
 		.target = MOVE_TARGET_SELECTED,
@@ -2821,7 +2829,11 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_SNORE] =
 	{
 		.effect = EFFECT_SNORE,
+		#ifdef UNBOUND
+		.power = 80,
+		#else
 		.power = 50,
+		#endif
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
 		.pp = 15,
@@ -4041,7 +4053,11 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_FIGHTING,
 		.accuracy = 100,
 		.pp = 15,
+		#ifdef UNBOUND
+		.secondaryEffectChance = 100,
+		#else
 		.secondaryEffectChance = 50,
+		#endif
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -4713,7 +4729,11 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_DIVE] =
 	{
 		.effect = EFFECT_SEMI_INVULNERABLE,
+		#ifdef UNBOUND
+		.power = 100,
+		#else
 		.power = 80,
+		#endif
 		.type = TYPE_WATER,
 		.accuracy = 100,
 		.pp = 10,

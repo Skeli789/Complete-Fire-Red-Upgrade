@@ -12,6 +12,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/species.h"
 #include "../include/constants/trainer_classes.h"
@@ -73,6 +74,10 @@ enum
 	ELECTRIC_IMMUNITY,
 	SOUND_IMMUNITY,
 	JUSTIFIED_BOOSTED,
+	ELECTRIC_TERRAIN_SETTER,
+	PSYCHIC_TERRAIN_SETTER,
+	RAIN_SETTER,
+	HAIL_SETTER,
 	NUM_INDEX_CHECKS
 };
 
@@ -1801,6 +1806,22 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case ABILITY_JUSTIFIED:
 							builder->partyIndex[JUSTIFIED_BOOSTED] = i;
 							break;
+
+						case ABILITY_DRIZZLE:
+							builder->partyIndex[RAIN_SETTER] = i;
+							break;
+
+						case ABILITY_SNOWWARNING:
+							builder->partyIndex[HAIL_SETTER] = i;
+							break;
+
+						case ABILITY_ELECTRICSURGE:
+							builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
+							break;
+
+						case ABILITY_PSYCHICSURGE:
+							builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
+							break;
 					}
 
 					u8 typeDmg;
@@ -2848,6 +2869,7 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 	bool8 hasSandSetter = builder->abilityOnTeam[ABILITY_SANDSTREAM] || builder->moveOnTeam[MOVE_SANDSTORM];
 	bool8 hasHailSetter = builder->abilityOnTeam[ABILITY_SNOWWARNING] || builder->moveOnTeam[MOVE_HAIL];
 	bool8 hasElectricTerrainSetter = builder->abilityOnTeam[ABILITY_ELECTRICSURGE] || builder->moveOnTeam[MOVE_ELECTRICTERRAIN];
+	bool8 hasPsychicTerrainSetter = builder->abilityOnTeam[ABILITY_PSYCHICSURGE] || builder->moveOnTeam[MOVE_PSYCHICTERRAIN];
 	bool8 hasWonderGuard = builder->abilityOnTeam[ABILITY_WONDERGUARD];
 	bool8 hasJustified = builder->abilityOnTeam[ABILITY_JUSTIFIED];
 
@@ -2876,6 +2898,10 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 			break;
 		case DOUBLES_ELECTRIC_TERRAIN_TEAM:
 			if (!hasElectricTerrainSetter) //These Pokemon need Electric Terrain to function
+				return TRUE;
+			break;
+		case DOUBLES_PSYCHIC_TERRAIN_TEAM:
+			if (!hasPsychicTerrainSetter) //These Pokemon need Psychic Terrain to function
 				return TRUE;
 			break;
 		case DOUBLES_TRICK_ROOM_TEAM:
@@ -3239,6 +3265,15 @@ static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 	{MOVE_BOOMBURST, MOVE_HYPERVOICE, LEARN_TYPE_TUTOR, TUTOR51_HYPER_VOICE, SOUND_IMMUNITY, 0},
 	{MOVE_SURF, MOVE_MUDDYWATER, LEARN_TYPE_TUTOR, TUTOR111_MUDDY_WATER, WATER_IMMUNITY, 0},
 	{MOVE_EARTHQUAKE, MOVE_HIGHHORSEPOWER, LEARN_TYPE_TUTOR, TUTOR109_HIGH_HORSEPOWER, GROUND_IMMUNITY, 0},
+
+	//Replace Move 1 with Move 2 if weather or terrain setter is found on team
+	{MOVE_THUNDERBOLT, MOVE_RISINGVOLTAGE, LEARN_TYPE_TUTOR, TUTOR134_RISING_VOLTAGE, 0, ELECTRIC_TERRAIN_SETTER},
+	{MOVE_PSYCHIC, MOVE_EXPANDINGFORCE, LEARN_TYPE_TUTOR, TUTOR128_EXPANDING_FORCE, 0, PSYCHIC_TERRAIN_SETTER},
+	{MOVE_PSYSHOCK, MOVE_EXPANDINGFORCE, LEARN_TYPE_TUTOR, TUTOR128_EXPANDING_FORCE, 0, PSYCHIC_TERRAIN_SETTER},
+	{MOVE_EXTRASENSORY, MOVE_EXPANDINGFORCE, LEARN_TYPE_TUTOR, TUTOR128_EXPANDING_FORCE, 0, PSYCHIC_TERRAIN_SETTER},
+	{MOVE_THUNDERBOLT, MOVE_THUNDER, LEARN_TYPE_TM, ITEM_TM25_THUNDER, 0, RAIN_SETTER},
+	{MOVE_AIRSLASH, MOVE_HURRICANE, LEARN_TYPE_TUTOR, TUTOR122_HURRICANE, 0, RAIN_SETTER},
+	{MOVE_ICEBEAM, MOVE_BLIZZARD, LEARN_TYPE_TM, ITEM_TM14_BLIZZARD, 0, HAIL_SETTER},
 
 	//Replace Move 1 with Move 2 if immunity is found on team
 	{MOVE_THUNDERBOLT, MOVE_DISCHARGE, LEARN_TYPE_LEVEL_UP, 0, 0, ELECTRIC_IMMUNITY},
@@ -3872,7 +3907,7 @@ void ForceMonShiny(struct Pokemon* mon)
 	{
 		personality = Random32();
 
-		u8 shinyRange = 1;
+		u8 shinyRange = Random() % SHINY_ODDS;
 		personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
 
 		if (abilityMatters)

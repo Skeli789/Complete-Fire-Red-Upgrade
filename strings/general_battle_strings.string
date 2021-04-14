@@ -6,6 +6,9 @@ You are challenged by\n[FD][1C] [FD][1D] and\l[FD][2E] [FD][2F]!\p
 #org @BattleText_ShadowWarriorAttacked
 The Shadow Warrior attacked!\p
 
+#org @BattleText_ShadowWarriorsAttacked
+The Shadow Warriors attacked!\p
+
 #org @BattleText_InGamePartnerSentOutZGoN
 [FD][32] [FD][33] sent\nout [FD][07]!\lGo, [FD][05]!
 

@@ -125,6 +125,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef);
 bool8 HazingMoveInMoveset(u8 bank);
 bool8 HasUsedMove(u8 bankAtk, u16 move);
 bool8 HasUsedMoveWithEffect(u8 bankAtk, u8 effect);
+bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef);
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef);
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef);

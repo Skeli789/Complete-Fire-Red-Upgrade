@@ -2471,7 +2471,11 @@ void HallOfFame_PrintWelcomeText(void)
 			StringAppend(gStringVar4, gText_Difficulty);
 
 			if (difficulty >= OPTIONS_EXPERT_DIFFICULTY //Only Insane
-			&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0)
+			&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0
+			#ifdef FLAG_NEW_GAME_PLUS
+			&& !(FlagGet(FLAG_NEW_GAME_PLUS) && FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
+			#endif
+			)
 				StringAppend(gStringVar4, gText_PlusTrades); //Indicate the player traded
 		}
 		#endif

@@ -3106,11 +3106,11 @@ bool8 HasUsedMove(u8 bank, u16 move)
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		if (BATTLE_HISTORY->usedMoves[bank][i] == move)
-			return TRUE;
-
 		if (BATTLE_HISTORY->usedMoves[bank][i] == MOVE_NONE)
 			break; //Speed optimization since no blank move slots are left
+
+		if (BATTLE_HISTORY->usedMoves[bank][i] == move)
+			return TRUE;
 	}
 
 	return FALSE;
@@ -3122,11 +3122,44 @@ bool8 HasUsedMoveWithEffect(u8 bank, u8 effect)
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		if (gBattleMoves[BATTLE_HISTORY->usedMoves[bank][i]].effect == effect)
-			return TRUE;
-
 		if (BATTLE_HISTORY->usedMoves[bank][i] == MOVE_NONE)
 			break; //Speed optimization since no blank move slots are left
+
+		if (gBattleMoves[BATTLE_HISTORY->usedMoves[bank][i]].effect == effect)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef)
+{
+    u32 i;
+
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = BATTLE_HISTORY->usedMoves[bankAtk][i];
+
+		if (move == MOVE_NONE)
+			break; //No more moves after this
+
+		if (!MoveInMovesetAndUsable(move, bankAtk))
+			continue;
+
+		u8 effect = gBattleMoves[move].effect;
+
+		if (effect == EFFECT_ROAR
+		&& !IsDynamaxed(bankDef)
+		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Contains just Soundproof check for Roar
+			return TRUE;
+
+		if (effect == EFFECT_HAZE)
+			return TRUE;
+
+		if (effect == EFFECT_REMOVE_TARGET_STAT_CHANGES
+		&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
+		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
+			return TRUE;
 	}
 
 	return FALSE;
@@ -3597,6 +3630,9 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 
 	if (gBattleResources->flags->flags[bank] & 1 //Flash Fire activated
 	&&  DamagingMoveTypeInMoveset(bank, TYPE_FIRE))
+		return TRUE;
+
+	if (gNewBS->UnburdenBoosts & gBitTable[bank] && ITEM(bank) == ITEM_NONE)
 		return TRUE;
 
 	return FALSE;

@@ -1070,30 +1070,30 @@ MOVESCR_CHECK_0:
 		case EFFECT_ROAR:
 			if (PARTNER_MOVE_EFFECT_IS_SAME)
 			{
-				DECREASE_VIABILITY(10);
-				break; //Don't blow out the same Pokemon twice
+				DECREASE_VIABILITY(10); //Don't blow out the same Pokemon twice
 			}
-
-			//Don't blow out a Pokemon that'll faint this turn or is taking
-			//bad secondary damage.
-			if (WillFaintFromSecondaryDamage(bankDef)
+			else if (WillFaintFromSecondaryDamage(bankDef) //Don't blow out a Pokemon that'll faint this turn
 			||  GetLeechSeedDamage(bankDef) > 0
 			||  GetNightmareDamage(bankDef) > 0
 			||  GetCurseDamage(bankDef) > 0
 			||  GetTrapDamage(bankDef) > 0
-			||  GetPoisonDamage(bankDef) >= gBattleMons[bankDef].maxHP / 4)
+			||  GetPoisonDamage(bankDef) >= gBattleMons[bankDef].maxHP / 4) //Or is taking Bad secondary damage.
+			{
 				DECREASE_VIABILITY(10);
+			}
+			else
+			{
+				switch (move) {
+					case MOVE_DRAGONTAIL:
+					case MOVE_CIRCLETHROW:
+						goto AI_STANDARD_DAMAGE;
 
-			switch (move) {
-				case MOVE_DRAGONTAIL:
-				case MOVE_CIRCLETHROW:
-					goto AI_STANDARD_DAMAGE;
-
-				default:
-					if (!HasMonToSwitchTo(bankDef)
-					||  data->defAbility == ABILITY_SUCTIONCUPS
-					||  data->defStatus3 & STATUS3_ROOTED)
-						DECREASE_VIABILITY(10);
+					default:
+						if (!HasMonToSwitchTo(bankDef)
+						||  data->defAbility == ABILITY_SUCTIONCUPS
+						||  data->defStatus3 & STATUS3_ROOTED)
+							DECREASE_VIABILITY(10);
+				}
 			}
 			break;
 

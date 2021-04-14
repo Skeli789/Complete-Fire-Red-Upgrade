@@ -129,7 +129,12 @@ void BufferStringBattle(u16 stringID)
 		{
 			#ifdef UNBOUND
 			if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)
-				stringPtr = BattleText_ShadowWarriorAttacked; //NEED DATA
+			{
+				if (IS_DOUBLE_BATTLE)
+					stringPtr = BattleText_ShadowWarriorsAttacked;
+				else
+					stringPtr = BattleText_ShadowWarriorAttacked;
+			}
 			#elif defined NO_GHOST_BATTLES
 			if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_1)
 				stringPtr = BattleText_WildPkmnAppeared6; //0x83FD297

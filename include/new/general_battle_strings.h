@@ -12,6 +12,7 @@
 //New Strings
 extern const u8 BattleText_TwoTrainersWantToBattle[];
 extern const u8 BattleText_ShadowWarriorAttacked[];
+extern const u8 BattleText_ShadowWarriorsAttacked[];
 extern const u8 BattleText_InGamePartnerSentOutZGoN[];
 extern const u8 BattleText_TwoTrainersSentPkmn[];
 extern const u8 BattleText_Trainer2WithdrewPkmn[];

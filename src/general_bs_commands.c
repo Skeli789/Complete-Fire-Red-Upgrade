@@ -3851,7 +3851,8 @@ void atkAE_healpartystatus(void)
 void atkAF_cursetarget(void)
 {
 	if (gBattleMons[gBankTarget].status2 & STATUS2_CURSED
-	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove)))
+	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove))
+	|| (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
 	{

@@ -247,12 +247,21 @@ struct OamMatrix
     s16 d;
 };
 
+struct OamDimensions
+{
+    s8 width;
+    s8 height;
+	s8 filler1;
+	s8 filler2;
+};
+
 extern const struct OamData gDummyOamData;
 extern const union AnimCmd *const gDummySpriteAnimTable[];
 extern const union AffineAnimCmd *const gDummySpriteAffineAnimTable[];
 extern s16 gSpriteCoordOffsetX;
 extern s16 gSpriteCoordOffsetY;
 
+extern const struct OamDimensions gOamDimensions[3][4];
 extern struct Sprite gSprites[];
 
 void __attribute__((long_call)) ResetSpriteData(void);
@@ -302,6 +311,7 @@ u8 __attribute__((long_call)) AllocOamMatrix(void);
 void __attribute__((long_call)) FreeOamMatrix(u8 matrixNum);
 void __attribute__((long_call)) InitSpriteAffineAnim(struct Sprite *sprite);
 void __attribute__((long_call)) SetOamMatrixRotationScaling(u8 matrixNum, s16 xScale, s16 yScale, u16 rotation);
+void __attribute__((long_call)) CopyOamMatrix(u8 destMatrixIndex, struct OamMatrix *srcMatrix);
 u16 __attribute__((long_call)) LoadSpriteSheet(const struct SpriteSheet *sheet);
 void __attribute__((long_call)) LoadSpriteSheets(const struct SpriteSheet *sheets);
 void __attribute__((long_call)) FreeSpriteTilesByTag(u16 tag);

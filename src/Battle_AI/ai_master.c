@@ -2944,7 +2944,12 @@ u32 WildMonIsSmart(unusedArg u8 bank)
 		#endif
 
 		if (gSpecialSpeciesFlags[species].smartWild)
-			return AI_SCRIPT_CHECK_BAD_MOVE;
+		{
+			if (IsRaidBattle())
+				return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+			else
+				return AI_SCRIPT_CHECK_BAD_MOVE;
+		}
 
 		return 0;
 	#endif
@@ -3506,9 +3511,14 @@ static u8 GetChanceOfPredictingPlayerNormalSwitch(void)
 	u8 playerSwitches = (gNewBS->ai.playerSwitchedCount == 0) ? 0 : gNewBS->ai.playerSwitchedCount - 1; //1st switch shouldn't increase the rate yet
 
 	if (IS_DOUBLE_BATTLE) //Switching is done less in Doubles
-		return MathMin(baseRate + (playerSwitches * 7), 45); //Each switchout the player makes increases the rate by 7%, up to a maximum of 45%
+		baseRate = MathMin(baseRate + (playerSwitches * 7), 45); //Each switchout the player makes increases the rate by 7%, up to a maximum of 45%
 	else
-		return MathMin(baseRate + (playerSwitches * 5), 30); //Each switchout the player makes increases the rate by 5%, up to a maximum of 30%
+		baseRate = MathMin(baseRate + (playerSwitches * 5), 30); //Each switchout the player makes increases the rate by 5%, up to a maximum of 30%
+
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		baseRate /= 3; //At most 10% in Singles and 15% in doubles
+
+	return baseRate;
 }
 
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank)
@@ -3522,7 +3532,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
 		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //In Frontier battles
 		#ifdef VAR_GAME_DIFFICULTY
-		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY) //Or on harder game modes
+		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Or only on hardest game mode
 		#endif
 		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch(); //AI accurately "predicts" switch X% of the time - adds some risk for player switching
 }
@@ -3539,7 +3549,8 @@ static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
 	if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Very Smart AI
 	&& IsPlayerInControl(playerBank)) //AI isn't in charge of player mon
 	{
-		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Only on hardest game mode
 		{
 			if (IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank) //Not fair in Frontier where player doesn't know opponent's lead
 			|| IsPlayerTryingToCheeseWithItemUsage(playerBank, aiBank))
@@ -3624,7 +3635,8 @@ void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 	&& IsPlayerInControl(playerBank) //Protect user is player
 	&& ProtectAffects(gCurrentMove, gBankAttacker, playerBank, FALSE)) //Player protected from Fake Out
 	{
-		if (gBattleMoves[gCurrentMove].effect == EFFECT_FAKE_OUT)
+		if (gBattleMoves[gCurrentMove].effect == EFFECT_FAKE_OUT //AI is using Fake Out
+		|| (gBattleResults.battleTurnCounter == 0 && gBattleMoves[gCurrentMove].target & MOVE_TARGET_SELECTED)) //Or some other single target move and the player protected on the first turn
 		{
 			if (BATTLER_ALIVE(PARTNER(playerBank))
 			&& !TargetFullyImmuneToCurrMove(PARTNER(playerBank))) //New target could take the hit (doesn't account for Psychic Terrain, but at this point it really doesn't matter)

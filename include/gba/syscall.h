@@ -11,38 +11,38 @@
 #define RESET_REGS       0x80
 #define RESET_ALL        0xFF
 
-void SoftReset(u32 resetFlags);
+void __attribute__((long_call)) SoftReset(u32 resetFlags);
 
-void RegisterRamReset(u32 resetFlags);
+void __attribute__((long_call)) RegisterRamReset(u32 resetFlags);
 
-void VBlankIntrWait(void);
+void __attribute__((long_call)) VBlankIntrWait(void);
 
-u16 Sqrt(u32 num);
+u16 __attribute__((long_call)) Sqrt(u32 num);
 
-u16 ArcTan2(s16 x, s16 y);
+u16 __attribute__((long_call)) ArcTan2(s16 x, s16 y);
 
 #define CPU_SET_SRC_FIXED 0x01000000
 #define CPU_SET_16BIT     0x00000000
 #define CPU_SET_32BIT     0x04000000
 
-void CpuSet(const void *src, void *dest, u32 control);
+void __attribute__((long_call)) CpuSet(const void *src, void *dest, u32 control);
 
 #define CPU_FAST_SET_SRC_FIXED 0x01000000
 
-void CpuFastSet(const void *src, void *dest, u32 control);
+void __attribute__((long_call)) CpuFastSet(const void *src, void *dest, u32 control);
 
-void BgAffineSet(struct BgAffineSrcData *src, struct BgAffineDstData *dest, s32 count);
+void __attribute__((long_call)) BgAffineSet(struct BgAffineSrcData *src, struct BgAffineDstData *dest, s32 count);
 
-void ObjAffineSet(struct ObjAffineSrcData *src, void *dest, s32 count, s32 offset);
+void __attribute__((long_call)) ObjAffineSet(struct ObjAffineSrcData *src, void *dest, s32 count, s32 offset);
 
 //void LZ77UnCompWram(const void *src, void *dest);
 
 //void LZ77UnCompVram(const void *src, void *dest);
 
-void RLUnCompWram(const void *src, void *dest);
+void __attribute__((long_call))RLUnCompWram(const void *src, void *dest);
 
-void RLUnCompVram(const void *src, void *dest);
+void __attribute__((long_call))RLUnCompVram(const void *src, void *dest);
 
-int MultiBoot(struct MultiBootParam *mp);
+int __attribute__((long_call))MultiBoot(struct MultiBootParam *mp);
 
 #endif // GUARD_GBA_SYSCALL_H

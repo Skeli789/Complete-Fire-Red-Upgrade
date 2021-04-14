@@ -207,7 +207,7 @@ gLoadPointer = 0x03000f14;
 sScriptContext2Enabled = 0x3000F28;
 
 /* Text RAM */
-gTextflags = 0x3003E50;
+gTextFlags = 0x3003E50;
 
 /* Save RAM */
 gSaveDataBuffer = 0x02039A38;
@@ -332,6 +332,7 @@ gStdScripts = 0x8160450;
 gStdScriptsEnd = 0x8160478;
 gDummySpriteAnimTable = 0x8231CF0;
 gDummySpriteAffineAnimTable = 0x8231CFC;
+gOamDimensions = 0x8231DA8;
 anim_082347F8 = 0x82347F8;
 gPokemonAnimTable = 0x82349BC;
 gMonFrontPicCoords = 0x82349CC;
@@ -757,6 +758,7 @@ SpriteCB_TestBallThrow = 0x804ABD4 | 1;
 SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
 CreatePokeballSpriteToReleaseMon = 0x804B908 | 1;
 objc_ball_instanciate2_entry_804B9E8 = 0x804B9E8 | 1;
+CreateTradePokeballSprite = 0x804BB98 | 1;
 sub_804BD94 = 0x804BD94 | 1;
 //LoadBallGfx = 0x804BEF4 | 1;
 FreeBallGfx = 0x804BF64 | 1;
@@ -1431,6 +1433,9 @@ CB2_EvolutionSceneLoadGraphics = 0x80CE0E8 | 1;
 CB2_EvolutionSceneUpdate = 0x80CE710 | 1;
 CB2_TradeEvolutionSceneUpdate = 0x80CE72C | 1;
 
+/* Oak Speech Functions */
+OakTutorialCreateWindow = 0x81220D4 | 1;
+
 /* Window Functions */
 InitWindows = 0x8003B24 | 1;
 AddWindow = 0x8003CE4 | 1;
@@ -1459,6 +1464,8 @@ RemoveHealthbarWindow = 0x804A6D8 | 1;
 DrawHealthbar = 0x804A6E8 | 1;
 GetUserFrameGraphicsInfo = 0x8069788 | 1;
 DoScheduledBgTilemapCopiesToVram = 0x80F67B8 | 1;
+LoadStdWindowFrameGfx = 0x80F6E9C | 1;
+DrawDialogueFrame = 0x80F6EE4 | 1;
 DrawStdWindowFrame = 0x80F6F1C | 1;
 ClearDialogWindowAndFrame = 0x80F6F54 | 1;
 ClearStdWindowAndFrame = 0x80F6F9C | 1;
@@ -1471,9 +1478,9 @@ ClearStdWindowAndFrameToTransparent = 0x810F4D8 | 1;
 RboxChoiceUpdate = 0x810FA04 | 1;
 SetWindowTemplateFields = 0x810FE50 | 1;
 CreateWindowTemplate = 0x810FF04 | 1;
-OakTutorialCreateWindow = 0x81220D4 | 1;
 WindowPrint = 0x812E51C | 1;
 TextWindow_SetStdFrame0_WithPal = 0x814FF2C | 1;
+
 
 /* Text Input Functions */
 DoNamingScreen = 0x809D954 | 1;
@@ -1497,9 +1504,12 @@ NameChooserSelectLetter = 0x809F75C | 1;
 /* Menu Functions */
 MenuHelpers_LinkSomething = 0x80BF708 | 1;
 Menu_LoadStdPalAt = 0x80F77CC | 1;
+GetStdWindowBaseTileNum = 0x80F796C | 1;
 Menu_InitCursor = 0x810F7D8 | 1;
 Menu_MoveCursor = 0x810F904 | 1;
 Menu_MoveCursorNoWrapAround = 0x810F948 | 1;
+Menu_ProcessInput = 0x810F998 | 1;
+CreateYesNoMenu = 0x810FF60 | 1;
 Menu_ProcessInputNoWrapClearOnChoose = 0x81100C8 | 1;
 Menu_PrintFormatIntlPlayerName = 0x812E6DC | 1;
 
@@ -1806,9 +1816,11 @@ PlayFanfare = 0x8071C60 | 1;
 IsFanfareTaskInactive = 0x8071C9C | 1;
 FadeInNewBGM = 0x8071D10 | 1;
 IsBGMPausedOrStopped = 0x8071D7C | 1;
+FadeOutBGM = 0x8071DBC | 1;
 IsBGMStopped = 0x8071DD4 | 1;
 PlayCry1 = 0x8071DF0 | 1;
 PlayCry3 = 0x8071E60 | 1;
+IsCryFinished = 0x80721A0 | 1;
 StopCryAndClearCrySongs = 0x80721C4 | 1;
 IsCryPlayingOrClearCrySongs = 0x80721F0 | 1;
 IsCryPlaying = 0x8072214 | 1;
@@ -1864,10 +1876,13 @@ TitleScreen_CreateBlankSprite = 0x80799F0 | 1;
 /* Math Functions */
 Sine = 0x8044E30 | 1;
 Cosine = 0x8044E4C | 1;
+Sin2 = 0x8044E6C | 1;
+Cos2 = 0x8044EB0 | 1;
 Random = 0x8044EC8 | 1;
 SeedRng2 = 0x8044EE8 | 1;
 CountTrailingZeroBits = 0x8045190 | 1;
 Random2 = 0x808322C | 1;
+ObjAffineSet = 0x81E3B7C | 1;
 Sqrt = 0x81E3B9C | 1;
 __divsi3 = 0x81E4018 | 1;
 __modsi3 = 0x81E40F4 | 1;
