@@ -50818,7 +50818,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_PIKACHU, //Placeholder Spreads
 	},
 	{
-		.species = SPECIES_PIKACHU, //Placeholder Spreads
+		.species = SPECIES_PIKACHU,
 	},
 	{
 		.species = SPECIES_NIDORINA,
@@ -51449,7 +51449,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_MAGNETON,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -51501,7 +51501,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_MAGNETON,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -51579,7 +51579,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_HAUNTER,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 30,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -51698,7 +51698,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		{
 			MOVE_HYDROPUMP,
 			MOVE_ICEBEAM,
-			MOVE_HIDDENPOWER, //TYPE_ELECTRIC,
+			MOVE_HIDDENPOWER, //TYPE_ELECTRIC
 			MOVE_FLIPTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -52794,7 +52794,6 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_SUCKERPUNCH,
 			MOVE_ROCKSLIDE,
 			MOVE_BRICKBREAK,
-
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -53145,10 +53144,10 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
+		.defIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 30,
+		.spdIv = 30,
 		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
@@ -53231,7 +53230,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ICYSCALES
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ICESCALES
 		.item = ITEM_AGUAV_BERRY,
 		.moves =
 		{
@@ -53823,8 +53822,8 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 30,
-		.spDefIv = 30,
+		.spAtkIv = 31,
+		.spDefIv = 31,
 		.spdIv = 31,
 		.defEv = 4,
 		.spAtkEv = 252,
@@ -54864,7 +54863,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.species = SPECIES_BRAIXEN,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
