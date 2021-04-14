@@ -583,13 +583,13 @@ const struct BattleTowerSpread gMultiTowerSpread_Marlon[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WATERABSORB
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DESTINYBOND
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_SEEDBOMB,
 			MOVE_SUCKERPUNCH,
-			MOVE_FOULPLAY,
+			MOVE_DESTINYBOND,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_DUSK_BALL,
@@ -1093,7 +1093,7 @@ const struct BattleTowerSpread gMultiTowerSpread_RivalV1[] =
 		.spAtkEv = 152,
 		.spDefEv = 16,
 		.spdEv = 124,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_WATERABSORB
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STEAMENGINE
 		.item = ITEM_SHUCA_BERRY,
 		.moves =
 		{
@@ -1396,7 +1396,7 @@ const struct BattleTowerSpread gMultiLegendaryTowerSpread_Rival[] =
 		.spAtkEv = 152,
 		.spDefEv = 16,
 		.spdEv = 124,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_WATERABSORB
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STEAMENGINE
 		.item = ITEM_SHUCA_BERRY,
 		.moves =
 		{
