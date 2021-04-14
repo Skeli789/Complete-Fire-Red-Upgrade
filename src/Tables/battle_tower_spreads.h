@@ -44753,7 +44753,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
@@ -44777,7 +44777,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_MEW,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
@@ -44907,7 +44907,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_LUGIA,
 		.nature = NATURE_BOLD,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
@@ -45509,7 +45509,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
@@ -45554,7 +45554,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-
 	},
 	{
 		.species = SPECIES_RAYQUAZA,
@@ -45685,7 +45684,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-
 	},
 	{
 		.species = SPECIES_RAYQUAZA,
@@ -45843,7 +45841,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-
 	},
 	{
 		.species = SPECIES_JIRACHI,
@@ -45864,7 +45861,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 			MOVE_EXPANDINGFORCE,
 			MOVE_AURASPHERE,
 			MOVE_FLASHCANNON,
-			MOVE_PROTECT
+			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -45949,7 +45946,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
-
 	},
 	{
 		.species = SPECIES_DEOXYS_ATTACK,
@@ -45977,7 +45973,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
 		.specificTeamType = DOUBLES_PSYCHIC_TERRAIN_TEAM,
-
 	},
 	{
 		.species = SPECIES_DEOXYS_DEFENSE,
@@ -46381,7 +46376,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 252,
 		.spdEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -46686,7 +46681,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_PHIONE,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 0,
+		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
@@ -47054,7 +47049,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 30,
+		.spdIv = 31,
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
@@ -47180,16 +47175,16 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_ARCEUS, //Placeholder Spreads
 	},
 	{
-		.species = SPECIES_ARCEUS, //Placeholder Spreads
+		.species = SPECIES_ARCEUS,
 	},
 	{
-		.species = SPECIES_ARCEUS, //Placeholder Spreads
+		.species = SPECIES_ARCEUS,
 	},
 	{
-		.species = SPECIES_ARCEUS, //Placeholder Spreads
+		.species = SPECIES_ARCEUS,
 	},
 	{
-		.species = SPECIES_ARCEUS, //Placeholder Spreads
+		.species = SPECIES_ARCEUS,
 	},
 	{
 		.species = SPECIES_VICTINI,
@@ -47425,7 +47420,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forDoubles = FALSE,
 		.modifyMovesDoubles = FALSE,
 	},
-		{
+	{
 		.species = SPECIES_RESHIRAM,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
@@ -47561,7 +47556,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
@@ -48702,11 +48697,11 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_DIANCIE,
 		.nature = NATURE_NAIVE,
 		.hpIv = 31,
-		.atkIv = 30,
+		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 30,
+		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 30,
+		.spdIv = 31,
 		.atkEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
@@ -48717,7 +48712,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 			MOVE_DIAMONDSTORM,
 			MOVE_MOONBLAST,
 			MOVE_EARTHPOWER,
-			MOVE_MYSTICALFIRE
+			MOVE_MYSTICALFIRE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -48993,7 +48988,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 31,
+		.spdIv = 0,
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
@@ -49773,7 +49768,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 252,
@@ -49864,7 +49859,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 			MOVE_EXPANDINGFORCE,
 			MOVE_MOONGEISTBEAM,
 			MOVE_HEATWAVE,
-			MOVE_PROTECT
+			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -49902,7 +49897,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_MAGEARNA,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -50006,7 +50001,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_MAGEARNA,
 		.nature = NATURE_QUIET,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -50139,7 +50134,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
@@ -50158,7 +50153,6 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = FALSE,
-
 	},
 	{
 		.species = SPECIES_ZERAORA,
@@ -50166,7 +50160,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 4,
@@ -50294,7 +50288,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.species = SPECIES_ZERAORA,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
