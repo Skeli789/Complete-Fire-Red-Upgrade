@@ -18,7 +18,13 @@ tables to edit:
 /*These spreads will not be compiled for your hack.
 If you'd like to use these spreads, either remove
 the #ifdef and #endif, or copy the spread you want to 
-the empty table at the bottom*/
+the empty table at the bottom
+
+IMPORTANT NOTE! Pokemon Unbound has changed the Abilities
+and learnsets of several Pokemon. Unless you intend to make
+the same changes to your hack, many of these spreads won't
+function as inteneded.
+*/
 
 const struct BattleTowerSpread gFrontierSpreads[] =
 {
@@ -56010,7 +56016,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-	},	
+	},
 	{
 		.species = SPECIES_AZURILL,
 		.nature = NATURE_ADAMANT,
@@ -56320,7 +56326,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.spAtkEv = 196,
 		.spDefEv = 40,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_CHLOROPHYLL
+		.ability = FRONTIER_ABILITY_1, //ABILITY_CHLOROPHYLL
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -56365,7 +56371,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_BERGMITE,
 		.nature = NATURE_IMPISH,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
@@ -56570,7 +56576,6 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_VOLTSWITCH,
 			MOVE_THUNDEROUSKICK,
 			MOVE_BOUNCE,
-
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -56901,7 +56906,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_BULBASAUR,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 30,
 		.spAtkIv = 31,
 		.spDefIv = 30,
@@ -56927,7 +56932,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_BULBASAUR,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 30,
 		.spAtkIv = 31,
 		.spDefIv = 30,
@@ -57340,7 +57345,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_SOLARBEAM,
 			MOVE_WEATHERBALL,
 			MOVE_HIDDENPOWER, //TYPE_ROCK
-			MOVE_SUNNYDAY
+			MOVE_SUNNYDAY,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -57965,7 +57970,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_COTTONEE,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 30,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -58729,7 +58734,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.atkEv = 236,
 		.defEv = 36,
 		.spdEv = 200,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STEELYSPIRIT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STEELY_SPIRIT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -58769,7 +58774,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.forSingles = TRUE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-	},	
+	},
 	{
 		.species = SPECIES_DIGLETT_A,
 		.nature = NATURE_JOLLY,
@@ -59628,7 +59633,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_ESPURR,
 		.nature = NATURE_NAIVE,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 30,
 		.defIv = 30,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -59678,7 +59683,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.forSingles = FALSE,
 		.forDoubles = TRUE,
 		.modifyMovesDoubles = TRUE,
-	},	
+	},
 	{
 		.species = SPECIES_EXEGGCUTE,
 		.nature = NATURE_MODEST,
@@ -61496,7 +61501,6 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.modifyMovesDoubles = FALSE,
 		.specificTeamType = DOUBLES_RAIN_TEAM,
 	},
-
 	{
 		.species = SPECIES_HOPPIP,
 		.nature = NATURE_JOLLY,
@@ -61637,8 +61641,8 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 30,
-		.spDefIv = 30,
+		.spAtkIv = 31,
+		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 4,
 		.spAtkEv = 252,
@@ -61948,7 +61952,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_METEORBEAM,
 			MOVE_HYDROPUMP,
 			MOVE_GIGADRAIN,
-			MOVE_THIEF
+			MOVE_THIEF,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -62567,7 +62571,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		{
 			MOVE_RETURN,
 			MOVE_PLAYROUGH,
-			MOVE_FIREFANG,	
+			MOVE_FIREFANG,
 			MOVE_PAYBACK,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -63314,7 +63318,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.defEv = 120,
 		.spAtkEv = 76,
 		.spDefEv = 156,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STATIC
+		.ability = FRONTIER_ABILITY_1, //ABILITY_STATIC
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{
@@ -63711,8 +63715,8 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 30,
-		.spDefIv = 30,
+		.spAtkIv = 0,
+		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 200,
 		.defEv = 36,
@@ -64462,7 +64466,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_ODDISH,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 30,
 		.spDefIv = 30,
@@ -65017,7 +65021,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_PATRAT,
 		.nature = NATURE_JOLLY,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
@@ -65126,7 +65130,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_PETILIL,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,
-		.atkIv = 1,
+		.atkIv = 0,
 		.defIv = 30,
 		.spAtkIv = 31,
 		.spDefIv = 30,
@@ -67026,9 +67030,9 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.species = SPECIES_SANDYGAST,
 		.nature = NATURE_CALM,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 236,
@@ -68656,7 +68660,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.atkEv = 80,
 		.defEv = 196,
 		.spDefEv = 116,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ICYSCALES
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ICESCALES
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{
@@ -69096,7 +69100,6 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-
 			MOVE_FOCUSPUNCH,
 			MOVE_RETURN,
 			MOVE_BIND,
@@ -70581,7 +70584,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_DARKPULSE,
 			MOVE_AIRSLASH,
 			MOVE_HEATWAVE,
-			MOVE_NASTYPLOT, 
+			MOVE_NASTYPLOT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -70792,7 +70795,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.spAtkEv = 36,
 		.spDefEv = 4,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_WIMPOUT
+		.ability = FRONTIER_ABILITY_1, //ABILITY_EMERGENCYEXIT
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -71519,7 +71522,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 116,
 		.atkEv = 196,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PUREPOWER
+		.ability = FRONTIER_ABILITY_1, //ABILITY_HUGEPOWER
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
@@ -71833,7 +71836,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 212,
 		.spAtkEv = 92,
 		.spdEv = 204,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ANTICIPATION
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ANTICIPATION
 		.item = ITEM_EEVIUM_Z,
 		.moves =
 		{
