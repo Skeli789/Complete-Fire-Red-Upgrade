@@ -2316,7 +2316,11 @@ const struct BattleMove gBattleMoves[] =
 		#endif
 		.type = TYPE_BUG,
 		.accuracy = 100,
+		#ifdef BUFFED_LEECH_LIFE
+		.pp = 10,
+		#else
 		.pp = 15,
+		#endif
 		.secondaryEffectChance = 0,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
