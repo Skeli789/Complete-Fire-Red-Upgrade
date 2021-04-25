@@ -206,7 +206,7 @@ const struct BattleTowerSpread gMultiLegendaryTowerSpread_Milo[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_TERAVOLT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_LIGHTNINGROD
 		.item = ITEM_ELECTRIUM_Z,
 		.moves =
 		{
