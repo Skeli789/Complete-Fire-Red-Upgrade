@@ -1814,6 +1814,28 @@ void AdjustDamage(bool8 checkFalseSwipe)
 	++gBattlescriptCurrInstr;
 }
 
+//Only for the AI
+u32 TryAdjustDamageForRaidBoss(u8 bankDef, u32 damage)
+{
+	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
+	{
+		if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
+		{
+			//Pretend all moves do max damage in case partner breaks shield
+			if (damage >= gBattleMons[bankDef].hp)
+				damage = gBattleMons[bankDef].hp - 1; //Can't KO while shields are up
+		}
+		else
+		{
+			u16 cutOff = GetNextRaidShieldHP(bankDef);
+			if (cutOff > 0 && gBattleMons[bankDef].hp - damage < cutOff)
+				damage = gBattleMons[bankDef].hp - cutOff; //Limit damage before Raid shields go up
+		}
+	}
+
+	return damage;
+}
+
 void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 {
 	u8 bankAtk = data->bankAtk;

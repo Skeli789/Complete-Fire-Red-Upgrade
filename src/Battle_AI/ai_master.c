@@ -2171,7 +2171,7 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(void)
 
 				if (split == SPLIT_PHYSICAL)
 				{
-					if (gBattleMoves[move].effect != EFFECT_COUNTER)
+					if (gBattleMoves[move].effect != EFFECT_COUNTER && move != MOVE_BODYPRESS && move != MOVE_FOULPLAY)
 						hasPhysicalMove = TRUE;
 				}
 				else if (split == SPLIT_SPECIAL)

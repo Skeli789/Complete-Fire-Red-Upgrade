@@ -31,6 +31,9 @@ extern const struct FlingStruct gFlingTable[];
 #undef IS_DOUBLE_BATTLE
 #define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ((BATTLER_ALIVE(data->foe1) && BATTLER_ALIVE(data->foe2)) || BATTLER_ALIVE(data->bankAtkPartner)))
 
+#define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
+#define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
+
 u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	u32 i, j;
@@ -803,7 +806,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_SNORE:
 		case EFFECT_SLEEP_TALK:
-			if (data->atkStatus1 & STATUS1_SLEEP)
+			if (ATTACKER_ASLEEP)
 				INCREASE_VIABILITY(10);
 			break;
 
@@ -920,7 +923,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_NIGHTMARE:
 			if (defAbility == ABILITY_MAGICGUARD)
 				break;
-			if (defAbility == ABILITY_COMATOSE || data->defStatus1 & STATUS1_SLEEP)
+			if (defAbility == ABILITY_COMATOSE || TARGET_ASLEEP)
 				INCREASE_STATUS_VIABILITY(3);
 			break;
 
@@ -1732,6 +1735,24 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			goto AI_SPECIAL_DEFENSE_PLUS;
 
 		case EFFECT_TAUNT:
+			//Special logic for sleeping foes
+			if (data->defStatus1 & STATUS1_SLEEP
+			&& !MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankDef)
+			&& !WillFaintFromSecondaryDamage(bankAtk)) //And you can still Taunt later
+			{
+				//Don't Taunt until they're closer to waking up
+				if (data->atkSpeed <= data->defSpeed) //Taunt would probably go second
+				{
+					if (data->defStatus1 > 2) //Will probably wake up next turn, so this is the best time to Taunt
+						break;
+				}
+				else
+				{
+					if (data->defStatus1 > 1) //Wait until the last possible turn to Taunt
+						break;
+				}
+			}
+
 			if (SPLIT(predictedMove) == SPLIT_STATUS
 			|| IsClassGoodToTaunt(GetBankFightingStyle(bankDef)))
 				INCREASE_STATUS_VIABILITY(3);
@@ -1743,7 +1764,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 
-		case EFFECT_TRICK: //+ Bestwo
+		case EFFECT_TRICK: //+ Bestow
 			switch (data->atkItemEffect) {
 				case ITEM_EFFECT_CHOICE_BAND: ;
 					if (data->atkItemQuality == QUALITY_CHOICE_SCARF
@@ -1959,7 +1980,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						goto AI_BURN_CHECKS;
 					else if (data->atkStatus1 & STATUS1_PARALYSIS)
 						goto AI_PARALYZE_CHECKS;
-					else if (data->atkStatus1 & STATUS1_SLEEP)
+					else if (ATTACKER_ASLEEP)
 						goto AI_SLEEP_CHECKS;
 					break;
 

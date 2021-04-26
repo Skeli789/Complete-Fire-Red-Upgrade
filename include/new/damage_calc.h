@@ -94,6 +94,7 @@ s32 ConfusionDamageCalc(void);
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon, struct DamageCalc* damageData);
 u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, struct DamageCalc* damageData);
+u32 TryAdjustDamageForRaidBoss(u8 bankDef, u32 damage);
 void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data);
 void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data);
 u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef);

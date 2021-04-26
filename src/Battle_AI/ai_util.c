@@ -961,6 +961,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 	}
 
 	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move, damageData);
+	dmg = TryAdjustDamageForRaidBoss(bankDef, dmg);
 	if (dmg >= gBattleMons[bankDef].hp)
 		return gBattleMons[bankDef].hp;
 
@@ -1008,8 +1009,10 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 		case EFFECT_0HKO:
 			return gBattleMons[bankDef].hp;
 	}
-	
-	return MathMin(AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData) * numHits, gBattleMons[bankDef].maxHP);
+
+	u32 dmg = AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData) * numHits;
+	dmg = TryAdjustDamageForRaidBoss(bankDef, dmg);
+	return MathMin(dmg, gBattleMons[bankDef].maxHP);
 }
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
@@ -3051,6 +3054,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 				case EFFECT_BULK_UP:
 				case EFFECT_CALM_MIND:
 				case EFFECT_DRAGON_DANCE:
+				case EFFECT_BELLY_DRUM:
 					return TRUE;
 
 				case EFFECT_ATTACK_UP_HIT:
@@ -3170,7 +3174,7 @@ bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef)
 		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Contains just Soundproof check for Roar
 			return TRUE;
 
-		if (effect == EFFECT_HAZE)
+		if (effect == EFFECT_HAZE || move == MOVE_TOPSYTURVY)
 			return TRUE;
 
 		if (effect == EFFECT_REMOVE_TARGET_STAT_CHANGES

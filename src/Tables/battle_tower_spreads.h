@@ -6710,7 +6710,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_RETURN,
 			MOVE_EARTHQUAKE,
-			MOVE_QUICKATTACK,
+			MOVE_FEINT,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,

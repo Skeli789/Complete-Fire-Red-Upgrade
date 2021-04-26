@@ -379,7 +379,11 @@ bool8 HasMonToSwitchTo(u8 bank)
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
 	struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+
+	u8 backupActiveBattler = gActiveBattler;
+	gActiveBattler = bank; //Needed for LoadBattlersAndFoes
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+	gActiveBattler = backupActiveBattler;
 
 	for (i = firstMonId; i < lastMonId; ++i)
 	{

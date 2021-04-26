@@ -82,6 +82,8 @@ ai_negatives.c
 #define GOOD_AI_MOVE_LOCKED (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE \
 							   && (data->atkItemEffect == ITEM_EFFECT_CHOICE_BAND || data->atkAbility == ABILITY_GORILLATACTICS || gDisableStructs[bankAtk].encoreTimer > 0))
 
+#define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
+
 //Doubles is now defined as being a non 1v1 Double Battle
 #undef IS_DOUBLE_BATTLE
 #define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ((BATTLER_ALIVE(data->foe1) && BATTLER_ALIVE(data->foe2)) || BATTLER_ALIVE(bankAtkPartner)))
@@ -2377,7 +2379,7 @@ MOVESCR_CHECK_0:
 					goto AI_BURN_CHECK;
 				else if (data->atkStatus1 & STATUS1_PARALYSIS)
 					goto AI_PARALYZE_CHECK;
-				else if (data->atkStatus1 & STATUS1_SLEEP)
+				else if (ATTACKER_ASLEEP)
 					goto AI_CHECK_SLEEP;
 				else
 					DECREASE_VIABILITY(10);
