@@ -170,7 +170,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 		if (gBitTable[i] & moveLimitations)
 			AI_THINKING_STRUCT->score[i] = 0;
 
-		AI_THINKING_STRUCT->simulatedRNG[i] = 100 - umodsi(Random(), 16);
+		AI_THINKING_STRUCT->simulatedRNG[i] = Random() % 100; //Used to be 100 - umodsi(Random(), 16);
 	}
 
 	// Choose proper trainer ai scripts.
@@ -1073,11 +1073,16 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 			foe1 = foe2;
 			predictedMove1 = predictedMove2;
 		}
-
-		moveType = GetMoveTypeSpecial(foe1, predictedMove1);
 	}
 	else
-		moveType = GetMoveTypeSpecial(foe2, predictedMove2);
+	{
+		foe1 = foe2;
+		predictedMove1 = predictedMove2;
+	}
+
+	moveType = GetMoveTypeSpecial(foe1, predictedMove1);
+	if (!NO_MOLD_BREAKERS(ABILITY(foe1), predictedMove1))
+		return FALSE; //Can't absorb move if the Ability is ignored
 
 	switch (moveType) {
 		case TYPE_FIRE:
@@ -3256,6 +3261,9 @@ static bool8 ShouldAIUseItem(void)
 					&& !(gStatuses3[gActiveBattler] & STATUS3_LOCKON)
 					#ifdef SPECIES_AEGISLASH_BLADE
 					&& !(SPECIES(gActiveBattler) == SPECIES_AEGISLASH_BLADE && MoveInMoveset(MOVE_KINGSSHIELD, gActiveBattler)) //Should revert before having item used on it
+					#endif
+					#ifdef SPECIES_MINIOR_SHIELD
+					&& !IsMiniorCore(SPECIES(gActiveBattler)) //Don't heal a Minior when its shields are down
 					#endif
 					)
 					{

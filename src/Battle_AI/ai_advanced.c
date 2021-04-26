@@ -43,6 +43,7 @@ enum FightingClasses
 	FIGHT_CLASS_DOUBLES_UTILITY,
 	FIGHT_CLASS_DOUBLES_PHAZING,
 	FIGHT_CLASS_DOUBLES_TEAM_SUPPORT,
+	FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT, //Only different from above is that this one won't get Helping Handed
 	NUM_FIGHT_CLASSES,
 };
 
@@ -162,6 +163,21 @@ u8 gDoublesDamageViabilityMapping[NUM_FIGHT_CLASSES - FIGHT_CLASS_DOUBLES_ALL_OU
 		[ 2] = 2,
 		[ 1] = 2,
 	},
+	[FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT - FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER] =
+	{
+		[12] = 16,
+		[11] = 9,
+		[10] = 7,
+		[ 9] = 2,
+		[ 8] = 2,
+		[ 7] = 2,
+		[ 6] = 2,
+		[ 5] = 2,
+		[ 4] = 2,
+		[ 3] = 2,
+		[ 2] = 2,
+		[ 1] = 2,
+	},
 };
 
 //Doubles is now defined as being a non 1v1 Double Battle
@@ -263,7 +279,12 @@ bool8 IsClassDoublesUtility(u8 class)
 
 bool8 IsClassDoublesTeamSupport(u8 class)
 {
-	return class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+	return class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT || class == FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
+}
+
+bool8 IsClassDoublesTotalTeamSupport(u8 class)
+{
+	return class == FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
 }
 
 bool8 IsClassDoublesSpecific(u8 class)
@@ -274,7 +295,8 @@ bool8 IsClassDoublesSpecific(u8 class)
 	    || class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP
 	    || class == FIGHT_CLASS_DOUBLES_UTILITY
 	    || class == FIGHT_CLASS_DOUBLES_PHAZING
-	    || class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+	    || class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT
+		|| class == FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
 }
 
 bool8 IsClassDoublesAttacker(u8 class)
@@ -300,7 +322,8 @@ bool8 IsClassGoodToTaunt(u8 class)
 		|| class == FIGHT_CLASS_ENTRY_HAZARDS
 		|| class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP
 		|| class == FIGHT_CLASS_DOUBLES_UTILITY
-		|| class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+		|| class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT
+		|| class == FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
 }
 
 u8 GetBankFightingStyle(u8 bank)
@@ -699,7 +722,10 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			}
 			else if (hasTeamSupport)
 			{
-				class = FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+				if (attackMoveNum <= 1) //Clearly wasn't meant for attacking
+					class = FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
+				else
+					class = FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
 			}
 			else
 			{
@@ -1574,6 +1600,7 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(2 + boost);
 			break;
 	}
@@ -1793,6 +1820,7 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
@@ -1958,6 +1986,7 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			if (spreadSleep)
 				INCREASE_VIABILITY(19);
 			else
@@ -2037,6 +2066,7 @@ void IncreaseFreezeViability(s16* originalViability, u8 class, u8 bankAtk, u8 ba
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(19);
 			break;
 	}
@@ -2124,6 +2154,7 @@ void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u
 				break;
 
 			case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 				if (ShouldUseSubstitute(bankAtk, bankDef))
 					INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 				break;
@@ -2293,6 +2324,7 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			if (BankSideHasTwoTrainers(bankDef))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move in multis
 			else
@@ -2364,6 +2396,7 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(17 - decrement);
 			break;
 
@@ -2452,6 +2485,7 @@ void IncreasePivotViability(s16* originalViability, u8 class, u8 bankAtk, unused
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(15);
 			break;
 	}
@@ -2558,6 +2592,7 @@ void IncreaseFoeProtectionViability(s16* originalViability, u8 class, u8 bankAtk
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(1);
 			break;
 
@@ -2601,6 +2636,7 @@ void IncreaseAllyProtectionViability(s16* originalViability, u8 class)
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(14);
 			break;
 	}
@@ -2638,6 +2674,7 @@ void IncreaseTeamProtectionViability(s16* originalViability, u8 class)
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(12);
 			break;
 	}
@@ -2668,6 +2705,7 @@ void IncreaseTailwindViability(s16* originalViability, u8 class, u8 bankAtk, u8 
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(18);
 			break;
 
@@ -2712,6 +2750,7 @@ void IncreaseHelpingHandViability(s16* originalViability, u8 class)
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(10);
 			break;
 	}
@@ -2753,6 +2792,7 @@ void IncreaseHealPartnerViability(s16* originalViability, u8 class, u8 partner)
 			break;
 
 		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+		case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 			INCREASE_VIABILITY(13);
 			break;
 	}
@@ -2783,6 +2823,7 @@ bool8 IncreaseViabilityForSpeedControl(s16* originalViability, u8 class, u8 bank
 				break;
 
 			case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			case FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT:
 				INCREASE_VIABILITY(11);
 				ret = TRUE;
 				break;

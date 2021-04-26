@@ -12,7 +12,6 @@
 //Exported Functions
 void atk49_moveend(void);
 bank_t GetNextMultiTarget(void);
-void SortBanksBySpeed(u8 banks[], bool8 slowToFast);
 
 //Exported Constants
 enum

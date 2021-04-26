@@ -27,6 +27,7 @@ bool8 IsClassDoublesTrickRoomSetup(u8 class);
 bool8 IsClassDoublesTrickRoomer(u8 class);
 bool8 IsClassDoublesUtility(u8 class);
 bool8 IsClassDoublesTeamSupport(u8 class);
+bool8 IsClassDoublesTotalTeamSupport(u8 class);
 bool8 IsClassDoublesSpecific(u8 class);
 bool8 IsClassDoublesAttacker(u8 class);
 bool8 IsClassDamager(u8 class);

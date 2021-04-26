@@ -93,7 +93,10 @@ enum
 	ATK49_COUNT,
 };
 
+//This file's functions
 static bool8 CanDoMoveEndSwitchout(u8 arg);
+static void SortBanksBySpeed(u8 banks[], bool8 slowToFast);
+static bool8 DidSubstituteJustBreak(void);
 
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
@@ -1364,10 +1367,24 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_RAID_MON_PREP_MORE_ATTACKS:
 			if (IsRaidBattle()
 			&& BATTLER_ALIVE(gBankAttacker)
-			&& gBankAttacker == BANK_RAID_BOSS
-			&& (SPLIT(gCurrentMove) == SPLIT_STATUS || !IsAnyMaxMove(gCurrentMove)) //Status move or Raid Boss didn't use Max Move
-			&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
-				gNewBS->dynamaxData.attackAgain = TRUE;
+			&& gBankAttacker == BANK_RAID_BOSS)
+			{
+				u8 foe = FOE(gBankAttacker);
+			
+				if (DidSubstituteJustBreak())
+					gNewBS->dynamaxData.attackAgain = TRUE; //Always attack again no matter what
+				else if (gNewBS->dynamaxData.repeatedAttacks == 0 //Raid boss hasn't attacked again yet
+				#ifdef VAR_GAME_DIFFICULTY
+				&& VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY //Too mean for easy
+				#endif
+				&& ((BATTLER_ALIVE(foe) && gChosenActionByBank[foe] == ACTION_USE_ITEM) //Player used item
+				 || (BATTLER_ALIVE(PARTNER(foe)) && gChosenActionByBank[PARTNER(foe)] == ACTION_USE_ITEM)))
+					gNewBS->dynamaxData.attackAgain = TRUE; //Always attack again no matter what
+				else if ((SPLIT(gCurrentMove) == SPLIT_STATUS || !IsAnyMaxMove(gCurrentMove)) //Status move or Raid Boss didn't use Max Move
+				&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
+					gNewBS->dynamaxData.attackAgain = TRUE;
+			}
+
 			gBattleScripting.atk49_state++;
 			break;
 
@@ -1575,7 +1592,7 @@ static bool8 CanDoMoveEndSwitchout(u8 arg)
 		&& (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].effect != EFFECT_ROAR); //Dragon Tail & Circle Throw are handled in line above
 }
 
-void SortBanksBySpeed(u8 banks[], bool8 slowToFast)
+static void SortBanksBySpeed(u8 banks[], bool8 slowToFast)
 {
 	int i, j, key, keyBank;
 	u16 speeds[4] = {0};
@@ -1610,4 +1627,17 @@ void SortBanksBySpeed(u8 banks[], bool8 slowToFast)
 		banks[j + 1] = keyBank;
 		speeds[j + 1] = key;
 	}
+}
+
+static bool8 DidSubstituteJustBreak(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (BATTLER_ALIVE(i) && IS_BEHIND_SUBSTITUTE(i) && gDisableStructs[i].substituteHP == 0)
+			return TRUE;
+	}
+
+	return FALSE;
 }

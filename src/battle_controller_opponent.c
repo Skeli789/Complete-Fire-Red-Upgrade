@@ -98,7 +98,18 @@ void OpponentHandleChooseMove(void)
 				//You get 1 of 3 of the following gimmicks per Pokemon
 				if (moveInfo->possibleZMoves[chosenMovePos]) //Checked first b/c Rayquaza can do all 3
 				{
-					if (ShouldAIUseZMoveByMoveAndMovePos(gActiveBattler, gBankTarget, moveInfo->moves[chosenMovePos], chosenMovePos))
+					u8 foe = gBankTarget;
+
+					if (IS_SINGLE_BATTLE)
+					{
+						if (gActiveBattler == gBankTarget)
+							foe = FOE(gActiveBattler); //Use actual enemy in calc
+
+						//Allows for fresh calc factoring in foe move prediction
+						ClearShouldAIUseZMoveByMoveAndMovePos(gActiveBattler, foe, chosenMovePos);
+					}
+
+					if (ShouldAIUseZMoveByMoveAndMovePos(gActiveBattler, foe, moveInfo->moves[chosenMovePos], chosenMovePos))
 						gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 				}
 				else if (moveInfo->canMegaEvolve)

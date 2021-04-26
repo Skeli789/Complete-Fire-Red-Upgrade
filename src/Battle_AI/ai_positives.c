@@ -310,6 +310,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_SPECIAL_DEFENSE_PLUS: ;
 			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
 			|| HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_2)
+			|| HasUsedMove(bankDef, MOVE_APPLEACID)
 			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
 				break;
 			if (BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_SPECIAL && atkAbility != ABILITY_CONTRARY)
@@ -749,7 +750,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 		
 		case EFFECT_TELEPORT:
-			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || SIDE(gBankAttacker) == B_SIDE_PLAYER)
+			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || SIDE(bankAtk) == B_SIDE_PLAYER)
 				goto PIVOT_CHECK;
 			break;
 
@@ -2051,11 +2052,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER: ;
-			if (atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY
+			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
+			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
 			{
 				if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 10 || IsClassBatonPass(class))
-					goto AI_DEFENSE_PLUS;
-				else
+				{
+					if (!HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
+					&& !HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Defense if foe is just going to lower it
+						goto AI_DEFENSE_PLUS;
+				}
+
+				if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Def if foe is just going to lower it
 					goto AI_SPECIAL_DEFENSE_PLUS;
 			}
 			break;
@@ -2109,12 +2117,20 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_BULK_UP:
 			if (atkAbility != ABILITY_CONTRARY
 			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
-			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
+			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk)
+			&& !HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE))
 			{
 				if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 8 || IsClassBatonPass(class))
-					goto AI_ATTACK_PLUS;
-				else if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Def
-					goto AI_DEFENSE_PLUS;
+				{
+					if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Attack if foe is just going to lower it
+						goto AI_ATTACK_PLUS;
+				}
+
+				if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Def
+				{
+					if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Defense if foe is just going to lower it
+						goto AI_DEFENSE_PLUS;
+				}
 			}
 			break;
 
@@ -2137,15 +2153,26 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					case MOVE_QUIVERDANCE:
 						if (defAbility == ABILITY_DANCER)
 							break; //Bad Idea
+
 						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
-							goto AI_SPEED_PLUS;
+						{
+							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPEED_DOWN_HIT, 75)) //Don't bother trying to boost Speed if foe is just going to lower it
+								goto AI_SPEED_PLUS;
+						}
 						__attribute__ ((fallthrough));
 
 					default:
 						if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8 || IsClassBatonPass(class))
-							goto AI_SPECIAL_ATTACK_PLUS;
-						else if (STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Sp. Def
-							goto AI_SPECIAL_DEFENSE_PLUS;
+						{
+							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Attack if foe is just going to lower it
+								goto AI_SPECIAL_ATTACK_PLUS;							
+						}
+
+						if (STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Sp. Def
+						{
+							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Defense if foe is just going to lower it
+								goto AI_SPECIAL_DEFENSE_PLUS;
+						}
 				}
 			}
 			break;
@@ -2171,11 +2198,16 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					default: //Dragon Dance + Shift Gear
 						if (move == MOVE_DRAGONDANCE && defAbility == ABILITY_DANCER)
 							break; //Bad Idea
+
 						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
-							goto AI_SPEED_PLUS;
-						else
+						{
+							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPEED_DOWN_HIT, 75)) //Don't bother trying to boost Speed if foe is just going to lower it
+								goto AI_SPEED_PLUS;
+						}
+
+						if (!HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
+						&& !HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Attack if foe is just going to lower it
 							goto AI_ATTACK_PLUS;
-						break;
 				}
 			}
 			break;

@@ -36,6 +36,7 @@ bool8 MoveInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType);
 u8 GetMonType(struct Pokemon* mon, u8 typeId);
 bool8 IsMonOfType(struct Pokemon* mon, u8 type);
+bool8 IsMiniorCore(u16 species);
 bool8 IsMinior(u16 species);
 bool8 IsSpeciesAffectedByScalemons(u16 species);
 u8 GetVisualBaseStat(u8 statId, u16 species);

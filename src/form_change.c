@@ -340,13 +340,18 @@ species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 	return GetMiniorCoreFromPersonality(mon->personality);
 }
 
+bool8 IsMiniorCore(u16 species)
+{
+	return CheckTableForSpecies(species, gMiniorCores);
+}
+
 bool8 IsMinior(u16 species)
 {
 	return
-	#ifdef SPECIES_MINIOR_SHIELD
-	species == SPECIES_MINIOR_SHIELD ||
-	#endif
-	CheckTableForSpecies(species, gMiniorCores);
+		#ifdef SPECIES_MINIOR_SHIELD
+		species == SPECIES_MINIOR_SHIELD ||
+		#endif
+		IsMiniorCore(species);
 }
 
 void HandleFormChange(void)
