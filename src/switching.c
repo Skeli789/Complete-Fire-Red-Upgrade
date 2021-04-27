@@ -570,14 +570,20 @@ void atk52_switchineffects(void)
 				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
 					++gNewBS->ai.switchesInARow[gBankSwitching];
 			}
-			else
+			else //A foe just switched in
 			{
-				gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] = 0;
-				gNewBS->ai.switchesInARow[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] = 0; //Using for helping treat AI abuse
+				u8 bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+				gNewBS->ai.switchingCooldown[bank] = 0;
+				gNewBS->ai.switchesInARow[bank] = 0; //Using for helping treat AI abuse
+				gNewBS->ai.previousMonIn[bank] = 0xFF;
+				gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
 				if (IS_DOUBLE_BATTLE)
 				{
-					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] = 0;
-					gNewBS->ai.switchesInARow[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] = 0;
+					bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+					gNewBS->ai.switchingCooldown[bank] = 0;
+					gNewBS->ai.switchesInARow[bank] = 0;
+					gNewBS->ai.previousMonIn[bank] = 0xFF;
+					gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
 				}
 			}
 

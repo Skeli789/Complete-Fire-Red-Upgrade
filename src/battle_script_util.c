@@ -2309,3 +2309,9 @@ void PrintElectromagnetismFloatingStrings(void)
 		}
 	}
 }
+
+void UpdatePreviousMonInOnSwitchout(void)
+{
+	gNewBS->ai.secondPreviousMonIn[gBankSwitching] = gNewBS->ai.previousMonIn[gBankSwitching];
+	gNewBS->ai.previousMonIn[gBankSwitching] = gBattlerPartyIndexes[gBankSwitching];
+}

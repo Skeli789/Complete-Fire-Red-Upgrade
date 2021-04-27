@@ -1318,7 +1318,9 @@ void atk1B_cleareffectsonfaint(void) {
 
 				ClearSwitchBytes(gActiveBattler);
 				ClearSwitchBits(gActiveBattler);
-				gNewBS->ai.switchesInARow[gActiveBattler] = 0; //Will become 1 when player sends in new mon
+				gNewBS->ai.switchesInARow[gActiveBattler] = 1; //Will become 2 when player sends in new mon, proccing cheese counter if they try switching out again
+				gNewBS->ai.previousMonIn[gActiveBattler] = 0xFF; //Reset since mon fainted
+				gNewBS->ai.secondPreviousMonIn[gActiveBattler] = 0xFF; //Reset since mon fainted
 
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 				*gSeedHelper = 0;

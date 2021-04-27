@@ -971,9 +971,11 @@ struct NewBattleStruct
 		u8 playerSwitchedCount; //~0x2017B6B
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B6C - Used for anti-AI cheesing
 		u8 switchesInARow[MAX_BATTLERS_COUNT]; //~0x2017B70
-		bool8 suckerPunchOkay[MAX_BATTLERS_COUNT]; 
+		u8 previousMonIn[MAX_BATTLERS_COUNT];
+		u8 secondPreviousMonIn[MAX_BATTLERS_COUNT];
+		bool8 suckerPunchOkay[MAX_BATTLERS_COUNT];
 		u8 itemEffects[MAX_BATTLERS_COUNT];
-		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //~0x2017B7C
+		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //~0x2017B84
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
 		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]

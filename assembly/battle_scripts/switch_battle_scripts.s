@@ -243,6 +243,7 @@ BattleScript_PursuitSwitchDmgLoop:
 
 BattleScript_DoSwitchOut:
 	decrementmultihit BattleScript_PursuitSwitchDmgLoop
+	callasm UpdatePreviousMonInOnSwitchout
 	switchoutabilities BANK_SWITCHING
 	waitstateatk
 	returnatktoball

@@ -35,7 +35,6 @@ ai_master.c
 
 //TODO: Add two best switching mons, one for KOing and the other for stalling
 //TODO: Touch up switching logic in doubles
-//TODO: Hook in IsPlayerTryingToCheeseWithItemUsage
 
 // AI states
 enum
@@ -92,10 +91,8 @@ static bool8 ShouldAIUseItem(void);
 static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
 #endif
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank);
-static u8 GetChanceOfPredictingPlayerNormalSwitch(void);
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank);
-static bool8 IsPlayerTryingToCheeseWithItemUsage(u8 playerBank, u8 aiBank);
-static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank);
+static bool8 IsPlayerTryingToCheeseAI(u8 playerBank);
 static void PickNewAIMove(u8 aiBank, bool8 allowPursuit);
 static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank);
 
@@ -3515,32 +3512,19 @@ void RechooseAIMoveAfterSwitchIfNecessary(void)
 
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank)
 {
-	if (IsPlayerTryingToCheeseAI(playerBank, aiBank))
+	if (IsPlayerTryingToCheeseAI(playerBank))
 		PickNewAIMove(aiBank, FALSE);
-}
-
-static u8 GetChanceOfPredictingPlayerNormalSwitch(void)
-{
-	u8 baseRate = 0; //By default, the AI never accurately "predicts" switching
-	u8 playerSwitches = (gNewBS->ai.playerSwitchedCount == 0) ? 0 : gNewBS->ai.playerSwitchedCount - 1; //1st switch shouldn't increase the rate yet
-
-	if (IS_DOUBLE_BATTLE) //Switching is done less in Doubles
-		baseRate = MathMin(baseRate + (playerSwitches * 7), 45); //Each switchout the player makes increases the rate by 7%, up to a maximum of 45%
-	else
-		baseRate = MathMin(baseRate + (playerSwitches * 5), 30); //Each switchout the player makes increases the rate by 5%, up to a maximum of 30%
-
-	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-		baseRate /= 3; //At most 10% in Singles and 15% in doubles
-
-	return baseRate;
 }
 
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank)
 {
 	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
-		&& gNewBS->ai.switchesInARow[playerBank] >= 2; //And they just switched in (double-switched)
+		&& !(gStatuses3[playerBank] & STATUS3_YAWN) //The player can always switch out freely if they're Yawned
+		&& (gNewBS->ai.switchesInARow[playerBank] >= 3 //And they just sent in at the end of a turn or switched twice before (triple-switched)
+		|| gNewBS->ai.secondPreviousMonIn[playerBank] == gBattlerPartyIndexes[playerBank]); //Or they double-switched between two Pokemon
 }
 
+extern u8 GetChanceOfPredictingPlayerNormalSwitch(void);
 static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 {
 	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
@@ -3548,28 +3532,21 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 		#ifdef VAR_GAME_DIFFICULTY
 		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Or only on hardest game mode
 		#endif
-		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch(); //AI accurately "predicts" switch X% of the time - adds some risk for player switching
+		#ifdef UNBOUND
+		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch()
+		#endif
+		;
 }
 
-//THIS ISN'T PLACED ANYWHERE WHERE IT WOULD WORK!!!
-static bool8 IsPlayerTryingToCheeseWithItemUsage(u8 playerBank, u8 aiBank)
-{
-	return gChosenActionByBank[playerBank] == ACTION_USE_ITEM //Player decided to use an item
-		&& gBattleMoves[gChosenMovesByBanks[aiBank]].effect == EFFECT_SUCKER_PUNCH; //Because they knew they'd get a free heal thanks to Sucker Punch failing
-}
-
-static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
+static bool8 IsPlayerTryingToCheeseAI(u8 playerBank)
 {
 	if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Very Smart AI
 	&& IsPlayerInControl(playerBank)) //AI isn't in charge of player mon
 	{
-		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-		&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Only on hardest game mode
-		{
-			if (IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank) //Not fair in Frontier where player doesn't know opponent's lead
-			|| IsPlayerTryingToCheeseWithItemUsage(playerBank, aiBank))
-				return TRUE;
-		}
+		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Not fair in Frontier where player doesn't know opponent's lead
+		&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY //Only on hardest game mode
+		&& IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank))
+			return TRUE;
 
 		if (ShouldPredictRandomPlayerSwitch(playerBank))
 			return TRUE;
@@ -3600,6 +3577,7 @@ static void PickNewAIMove(u8 aiBank, bool8 allowPursuit)
 			u8 moveTarget = GetBaseMoveTarget(gChosenMovesByBanks[aiBank], aiBank);
 			UpdateCurrentTargetByMoveTarget(moveTarget, aiBank);
 			gBattleStruct->moveTarget[aiBank] = gBankTarget;
+			gNewBS->zMoveData.toBeUsed[gActiveBattler] = ShouldAIUseZMoveByMoveAndMovePos(aiBank, gBankTarget, gChosenMovesByBanks[aiBank], chosenMovePos);
 		}
 	}
 

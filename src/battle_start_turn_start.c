@@ -520,7 +520,29 @@ void BattleBeginFirstTurn(void)
 					gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
 					gChosenActionByBank[i] = 0xFF;
 					gChosenMovesByBanks[i] = 0;
-					gNewBS->ai.switchesInARow[i] = 1; //So the AI gets smart if the player immediately switches out
+
+					if (i < gBattlersCount)
+					{
+						//Prepare switching anti-AI abuse
+						gNewBS->ai.previousMonIn[i] = 0xFF;
+						gNewBS->ai.secondPreviousMonIn[i] = 0xFF;
+
+						switch (ABILITY(i))
+						{
+							//These Abilities are commonly switched out of on the first turn
+							case ABILITY_DRIZZLE:
+							case ABILITY_DROUGHT:
+							case ABILITY_SANDSTREAM:
+							case ABILITY_SNOWWARNING:
+							case ABILITY_ELECTRICSURGE:
+							case ABILITY_GRASSYSURGE:
+							case ABILITY_MISTYSURGE:
+							case ABILITY_PSYCHICSURGE:
+								break;
+							default:
+								gNewBS->ai.switchesInARow[i] = 2; //So the AI gets smart if the player immediately switches out
+						}
+					}
 				}
 
 				ClearCachedAIData();
@@ -785,7 +807,8 @@ void SetActionsAndBanksTurnOrder(void)
 			{
 				if (gChosenActionByBank[gActiveBattler] == ACTION_USE_ITEM)
 				{
-					gNewBS->ai.switchesInARow[gActiveBattler] = 0;
+					gNewBS->ai.switchesInARow[gActiveBattler] = 0; //Wipe since didn't switch this turn
+					gNewBS->ai.previousMonIn[gActiveBattler] = 0xFF;
 					gActionsByTurnOrder[turnOrderId] = gChosenActionByBank[gActiveBattler];
 					gBanksByTurnOrder[turnOrderId] = gActiveBattler;
 					++turnOrderId;
@@ -797,7 +820,8 @@ void SetActionsAndBanksTurnOrder(void)
 			{
 				if (gChosenActionByBank[gActiveBattler] != ACTION_USE_ITEM && gChosenActionByBank[gActiveBattler] != ACTION_SWITCH)
 				{
-					gNewBS->ai.switchesInARow[gActiveBattler] = 0;
+					gNewBS->ai.switchesInARow[gActiveBattler] = 0; //Wipe since didn't switch this turn
+					gNewBS->ai.previousMonIn[gActiveBattler] = 0xFF;
 					gActionsByTurnOrder[turnOrderId] = gChosenActionByBank[gActiveBattler];
 					gBanksByTurnOrder[turnOrderId] = gActiveBattler;
 					++turnOrderId;
