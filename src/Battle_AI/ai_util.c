@@ -553,6 +553,17 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				if (MoveKnocksOutXHits(partnerMove, bankAtkPartner, foes[j], 1))
 					partnerHandling[j] = TRUE;
 			}
+
+			if (partnerHandling[0] && partnerHandling[1]) //Partner is planning to KO both foes
+			{
+				if (PriorityCalc(bankAtkPartner, ACTION_USE_MOVE, partnerMove) <= 0) //With a non-priority move
+				{
+					u32 partnerSpeed = SpeedCalc(bankAtkPartner);
+
+					if (partnerSpeed < SpeedCalc(foes[0]) || partnerSpeed < SpeedCalc(foes[1])) //And partner is slower then one of the foes
+						partnerHandling[0] = FALSE; //Don't get complacent and at least consider bankDef to be a viable single target (still prevents moves like EQ from being considered viable)
+				}
+			}
 		}
 	}
 
