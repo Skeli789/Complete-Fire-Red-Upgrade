@@ -160,8 +160,8 @@ BattleScript_PrimalWeatherEnd:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SuccessForceOut:
+	jumpifbyte EQUALS FORCE_SWITCH_HELPER 0x1 DragonTailForceSwitch
 	jumpifbyte EQUALS FORCE_SWITCH_HELPER 0x2 RedCardForceSwitch
-	jumpifbyte NOTEQUALS FORCE_SWITCH_HELPER 0x0 SkipRoarAnim
 	attackanimation
 	waitanimation
 
@@ -188,6 +188,10 @@ ForceSwitch:
 	jumpifmove MOVE_CIRCLETHROW BattleScript_DragonTailResetForceSwitchHelper
 	setbyte FORCE_SWITCH_HELPER 0x0
 	goto BS_MOVE_END
+
+DragonTailForceSwitch:
+	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	goto SkipRoarAnim
 
 RedCardForceSwitch:
 	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0

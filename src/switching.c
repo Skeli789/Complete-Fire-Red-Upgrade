@@ -1103,18 +1103,19 @@ void atk8F_forcerandomswitch(void)
 				while (i == battler1PartyId
 					|| i == battler2PartyId
 					|| !MON_CAN_BATTLE(&party[i]));
-			}
-			gBattleStruct->monToSwitchIntoId[bankDef] = i;
 
-			if (!IsLinkDoubleBattle() && !IsTagBattle())
-				SwitchPartyOrder(bankDef);
-			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
-			{
-				SwitchPartyOrderLinkMulti(bankDef, i, 0);
-				SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				gBattleStruct->monToSwitchIntoId[bankDef] = i;
+
+				if (!IsLinkDoubleBattle() && !IsTagBattle())
+					SwitchPartyOrder(bankDef);
+				else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
+				{
+					SwitchPartyOrderLinkMulti(bankDef, i, 0);
+					SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				}
+				else if (IsTagBattle())
+					SwitchPartyOrderInGameMulti(bankDef, i);
 			}
-			else if (IsTagBattle())
-				SwitchPartyOrderInGameMulti(bankDef, i);
 		}
 	}
 	else //Regular Wild Battle
@@ -1132,34 +1133,33 @@ static bool8 TryDoForceSwitchOut(void)
 		return FALSE;
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) //Wild
 	{
-		gBankSwitching = bankDef;
-		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
-		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
-		return TRUE;
+		if (IS_DOUBLE_BATTLE)
+		{
+			if (SIDE(bankDef) == B_SIDE_OPPONENT)
+			{
+				//Roar always fails in Wild Double Battles if used on a wild mon
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
+		else //Single Battle
+		{
+			if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
+			{
+				//Roar always fails if running is impossible
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+			else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
+			{
+				//Pokemon using Roar must be of higher level to end the battle in a Single battle
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
 	}
-
-	//If Wild Battle
-	else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-
-	//Roar always fails in Wild Double Battles if used on the wild mon
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(bankDef) == B_SIDE_OPPONENT)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-
-	//Roar always fails if running is impossible
-	else if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}	
 
 	gBankSwitching = bankDef;
 	gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];

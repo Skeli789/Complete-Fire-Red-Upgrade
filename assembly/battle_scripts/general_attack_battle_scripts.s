@@ -906,10 +906,8 @@ DragonTailBS:
 	jumpifdynamaxed BANK_TARGET BattleScript_DragonTailBlockedByDynamax
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
-	jumpifcannotswitch BANK_TARGET | ATK4F_DONT_CHECK_STATUSES BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
 	cmd49 0x6 0x0
-	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	setbyte FORCE_SWITCH_HELPER 0x1
 	forcerandomswitch BANK_TARGET BANK_ATTACKER BattleScript_DragonTailResetForceSwitchHelper
 
