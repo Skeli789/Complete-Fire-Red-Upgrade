@@ -1044,7 +1044,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gBankAttacker = bank;
 				gBankTarget = transformBank;
 
-				if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && VarGet(VAR_TOTEM + gBankTarget) != 0) //Wild boss
+				if (IsAuraBoss(gBankTarget)) //Wild boss
 				{
 					//So you can't cheese the wild bosses
 					gBattleStringLoader = gText_TransformFailsOnWildBosses;

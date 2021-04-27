@@ -54,6 +54,7 @@ static void ReloadMoveNamesIfNecessary(void);
 static void CloseZMoveDetails(void);
 static void CloseMaxMoveDetails(void);
 static void HighlightPossibleTargets(void);
+static void LoadShadowColourForGreyedOutBagText(void);
 extern void TryLoadTypeIcons(void);
 
 const u8 gText_EmptyString[] = {EOS};
@@ -635,26 +636,26 @@ static void MoveSelectionDisplayMoveType(void)
 
 			if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
-				gPlttBufferUnfaded[88] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
-				gPlttBufferUnfaded[89] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 1];
+				gPlttBufferUnfaded[5 * 0x10 + 8] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
+				gPlttBufferUnfaded[5 * 0x10 + 9] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 1];
 				formatting = sText_StabMoveInterfaceType;
 			}
 			else if (moveResult & MOVE_RESULT_NOT_VERY_EFFECTIVE)
 			{
-				gPlttBufferUnfaded[88] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 0];
-				gPlttBufferUnfaded[89] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 1];
+				gPlttBufferUnfaded[5 * 0x10 + 8] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 0];
+				gPlttBufferUnfaded[5 * 0x10 + 9] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 1];
 				formatting = sText_StabMoveInterfaceType;
 			}
 			else if (moveResult & MOVE_RESULT_NO_EFFECT)
 			{
-				gPlttBufferUnfaded[88] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
-				gPlttBufferUnfaded[89] = palPtr[NO_EFFECT_COLOURS + 1];
+				gPlttBufferUnfaded[5 * 0x10 + 8] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
+				gPlttBufferUnfaded[5 * 0x10 + 9] = palPtr[NO_EFFECT_COLOURS + 1];
 				formatting = sText_StabMoveInterfaceType;
 			}
 			else //Nothing special about move
 			{
-				gPlttBufferUnfaded[88] = palPtr[REGULAR_COLOURS + stab + 0];
-				gPlttBufferUnfaded[89] = palPtr[REGULAR_COLOURS + stab + 1];
+				gPlttBufferUnfaded[5 * 0x10 + 8] = palPtr[REGULAR_COLOURS + stab + 0];
+				gPlttBufferUnfaded[5 * 0x10 + 9] = palPtr[REGULAR_COLOURS + stab + 1];
 				formatting = sText_StabMoveInterfaceType;
 			}
 		}
@@ -662,8 +663,8 @@ static void MoveSelectionDisplayMoveType(void)
 	#endif
 			formatting = gText_MoveInterfaceType;
 
-	CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
-	CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 8], &gPlttBufferFaded[5 * 0x10 + 8], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 9], &gPlttBufferFaded[5 * 0x10 + 9], sizeof(u16));
 
 	txtPtr = StringCopy(gDisplayedStringBattle, gText_TypeWord);
 	txtPtr[0] = EXT_CTRL_CODE_BEGIN;
@@ -1024,11 +1025,11 @@ static void ZMoveSelectionDisplayPpNumber(void)
 	const u16* palPtr = Pal_PPDisplay;
 
 	//Remove Palette Fading On The PP
-	gPlttBufferUnfaded[92] = palPtr[(3 * 2) + 0];
-	gPlttBufferUnfaded[91] = palPtr[(3 * 2) + 1];
+	gPlttBufferUnfaded[5 * 0x10 + 12] = palPtr[(3 * 2) + 0];
+	gPlttBufferUnfaded[5 * 0x10 + 11] = palPtr[(3 * 2) + 1];
 
-	CpuCopy16(&gPlttBufferUnfaded[92], &gPlttBufferFaded[92], sizeof(u16));
-	CpuCopy16(&gPlttBufferUnfaded[91], &gPlttBufferFaded[91], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 12], &gPlttBufferFaded[5 * 0x10 + 12], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 11], &gPlttBufferFaded[5 * 0x10 + 11], sizeof(u16));
 
 	//Load PP Text
 	txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, 1, STR_CONV_MODE_RIGHT_ALIGN, 2);
@@ -1844,17 +1845,27 @@ void PlayerHandleChooseAction(void)
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
-	#ifndef UNBOUND
-		BattlePutTextOnWindow(gText_BattleMenu2, 2);
+	{
+		if (IsBagDisabled()) //Grey out bag text to indicate no point in pressing it
+		{
+			BattlePutTextOnWindow(gText_BattleMenu2NoItems, 2);
+			LoadShadowColourForGreyedOutBagText();
+		}
+		else
+			BattlePutTextOnWindow(gText_BattleMenu2, 2);
+	}
 	else
-		BattlePutTextOnWindow(gText_BattleMenu, 2);
-	#else
-		BattlePutTextOnWindow(gText_UnboundBattleMenu2, 2);
-	else
-		BattlePutTextOnWindow(gText_UnboundBattleMenu, 2);
-	#endif
+	{
+		if (IsBagDisabled())
+		{
+			BattlePutTextOnWindow(gText_BattleMenuNoItems, 2);
+			LoadShadowColourForGreyedOutBagText();
+		}
+		else
+			BattlePutTextOnWindow(gText_BattleMenu, 2);
+	}
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < MAX_MON_MOVES; i++)
 		ActionSelectionDestroyCursorAt(i);
 
 	ActionSelectionCreateCursorAt(gActionSelectionCursor[gActiveBattler], 0);
@@ -1869,6 +1880,12 @@ void PlayerHandleChooseAction(void)
 	#ifdef LAST_USED_BALL_TRIGGER
 	TryLoadLastUsedBallTrigger();
 	#endif
+}
+
+static void LoadShadowColourForGreyedOutBagText(void)
+{
+	gPlttBufferUnfaded[5 * 0x10 + 11] = RGB(28, 28, 27); //Grey shadow colour
+	CpuCopy16(&gPlttBufferUnfaded[5 * 0x10 + 11], &gPlttBufferFaded[5 * 0x10 + 11], sizeof(u16));
 }
 
 void HandleInputChooseAction(void)
@@ -2049,7 +2066,7 @@ bool8 IsBagDisabled(void)
 	{
 		if (!IsRaidBattle()
 		&& !FlagGet(FLAG_SYS_GAME_CLEAR) //Otherwise they can't catch Legendaries
-		&& VarGet(VAR_TOTEM + GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) != 0 //Wild boss
+		&& IsAuraBoss(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Wild boss
 		&& difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
 			return TRUE;
 	}

@@ -1177,6 +1177,7 @@ BS_038_OHK0:
 	accuracycheck FAILED 0xFFFF
 	attackstring
 	ppreduce
+	callasm FailMoveIfAura
 	typecalc2
 	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	tryko 0x81D6EF1
@@ -5244,6 +5245,7 @@ BS_234_TopsyTurvyElectrify:
 	attackstring
 	ppreduce
 	jumpifmove MOVE_ELECTRIFY ElectrifyBS
+	callasm FailMoveIfAura
 	callasm TopsyTurvyFunc
 	attackanimation
 	waitanimation
@@ -5258,6 +5260,15 @@ ElectrifyBS:
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER ElectrifyString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+.global BattleScript_MoveFailedOnAura
+BattleScript_MoveFailedOnAura:
+	pause 0x20
+	orbyte OUTCOME, OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_MoveFailsOnWildBosses
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END

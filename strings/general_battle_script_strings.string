@@ -209,6 +209,9 @@ The sleep clause prevents more\nPok\emon from being put to sleep!
 #org @gText_TransformFailsOnWildBosses
 But [TARGET]'s aura\nprevents transformation!
 
+#org @gText_MoveFailsOnWildBosses
+But [TARGET]'s aura\nblocked the move!
+
 #org @gText_DefogRemovedSideStatus
 [FD][37] team's [BUFFER][00]\nwore off!
 

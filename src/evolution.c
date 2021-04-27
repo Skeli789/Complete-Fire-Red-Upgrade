@@ -118,6 +118,9 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				case EVO_MOVE_TYPE:	// expanded for custom evolutions of any move type
+					if (gEvolutionTable[species][i].unknown && friendship < 220) //Needs High Friendship & Move Type
+						break;
+
 					// move type to know in param
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{

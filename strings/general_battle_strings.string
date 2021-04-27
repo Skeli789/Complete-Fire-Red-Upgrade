@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 //New Encounter Strings
 
 #org @BattleText_TwoTrainersWantToBattle
@@ -161,20 +163,38 @@ You paid [B7][BUFFER][00] as the prize\nmoney[.]\p[.] [.] [.] [.]\pYou were over
 #org @sText_BlackedOut
 You were overwhelmed by your\ndefeat![FC][09]
 
+#ifndef UNBOUND
+
 #org @gText_BattleMenu
-[FC][05][05][FC][04][0D][0E][0F]Fight[ALIGN][38]Bag\nPok\emon[ALIGN][38]Run
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38]Bag\nPok\emon[ALIGN][38]Run
+
+#org @gText_BattleMenuNoItems
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38][COLOR_HIGHLIGHT_SHADOW][0F][0E][0B]Bag\n[COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Pok\emon[ALIGN][38]Run
 
 #org @gText_BattleMenu2
-[FC][05][05][FC][04][0D][0E][0F]Fight[ALIGN][38]Bag\nPok\emon[ALIGN][38]Back
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38]Bag\nPok\emon[ALIGN][38]Back
 
-#org @gText_UnboundBattleMenu
-[FC][05][05][FC][04][0D][0E][0F]Fight[ALIGN][38]Cube\nPok\emon[ALIGN][38]Run
+#org @gText_BattleMenu2NoItems
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38][COLOR_HIGHLIGHT_SHADOW][0F][0E][0B]Bag\n[COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Pok\emon[ALIGN][38]Back
 
-#org @gText_UnboundBattleMenu2
-[FC][05][05][FC][04][0D][0E][0F]Fight[ALIGN][38]Cube\nPok\emon[ALIGN][38]Back
+#else
+
+#org @gText_BattleMenu
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38]Cube\nPok\emon[ALIGN][38]Run
+
+#org @gText_BattleMenuNoItems
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38][COLOR_HIGHLIGHT_SHADOW][0F][0E][0B]Cube\n[COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Pok\emon[ALIGN][38]Run
+
+#org @gText_BattleMenu2
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38]Cube\nPok\emon[ALIGN][38]Back
+
+#org @gText_BattleMenu2NoItems
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Fight[ALIGN][38][COLOR_HIGHLIGHT_SHADOW][0F][0E][0B]Cube\n[COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Pok\emon[ALIGN][38]Back
+
+#endif
 
 #org @gText_BattleMenuRaidEnd
-[FC][05][05][FC][04][0D][0E][0F]Catch[ALIGN][38]End
+[PALETTE][05][COLOR_HIGHLIGHT_SHADOW][0D][0E][0F]Catch[ALIGN][38]End
 
 #org @gText_CaptureRaidMon
 [FD][06] is weak!\nThrow a Ball now!

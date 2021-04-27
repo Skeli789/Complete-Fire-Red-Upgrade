@@ -73,6 +73,7 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u
 static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount);
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
+static void StartRoamerBattle(void);
 
 #ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
 static u8 GetLowestMonLevel(const struct Pokemon* const party);
@@ -761,7 +762,7 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 			if (!IsWildLevelAllowedByRepel(roamer->level))
 				return FALSE;
 
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 		else
@@ -812,7 +813,7 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 			if (!IsWildLevelAllowedByRepel(roamer->level))
 				return FALSE;
 
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 		else // try a regular surfing encounter
@@ -958,7 +959,7 @@ bool8 SweetScentWildEncounter(void)
 
 		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND) == TRUE)
 		{
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 
@@ -980,7 +981,7 @@ bool8 SweetScentWildEncounter(void)
 
 		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
 		{
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 
@@ -1008,7 +1009,7 @@ bool8 StartRandomWildEncounter(bool8 waterMon)
 
 		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND) == TRUE)
 		{
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 
@@ -1024,7 +1025,7 @@ bool8 StartRandomWildEncounter(bool8 waterMon)
 
 		if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
 		{
-			BattleSetup_StartRoamerBattle();
+			StartRoamerBattle();
 			return TRUE;
 		}
 
@@ -1105,6 +1106,18 @@ void DoStandardWildBattle(void)
 	}
 	#endif
 
+	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
+	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+	IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+static void StartRoamerBattle(void)
+{
+	ScriptContext2_Enable();
+	FreezeEventObjects();
+	StopPlayerAvatar();
+	gMain.savedCallback = CB2_EndWildBattle;
+	gBattleTypeFlags = BATTLE_TYPE_ROAMER;
 	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);

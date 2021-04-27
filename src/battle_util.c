@@ -1264,6 +1264,11 @@ bool8 MonMoveBlockedBySubstitute(u16 move, struct Pokemon* monAtk, u8 bankDef)
 	return IS_BEHIND_SUBSTITUTE(bankDef) && !MoveIgnoresSubstitutes(move, GetMonAbility(monAtk));
 }
 
+bool8 IsAuraBoss(u8 bank)
+{
+	return !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && VarGet(VAR_TOTEM + bank) != 0;
+}
+
 bool8 IsMockBattle(void)
 {
 	return (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
