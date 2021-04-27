@@ -263,7 +263,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (!TARGETING_PARTNER //Don't decrement if the partner is the target (handled later)
 					&& AI_STAT_CAN_RISE(bankDef, STAT_ATK) //Ability can activate
 					&& !MoveKnocksOutXHits(move, bankAtk, bankDef, 2) //This attack won't KO in a couple hits
-					&& PhysicalMoveInMoveset(bankDef))
+					&& RealPhysicalMoveInMoveset(bankDef))
 					{
 						DECREASE_VIABILITY(4); //Don't risk raising enemy stats
 						//Don't return because could get worse from here
@@ -427,7 +427,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					if (!TARGETING_PARTNER //Good idea to attack partner
 					&& AI_STAT_CAN_RISE(bankDef, STAT_ATK) //Ability can activate
-					&& PhysicalMoveInMoveset(bankDef)) //Target has a move that the ability will affect
+					&& RealPhysicalMoveInMoveset(bankDef)) //Target has a move that the ability will affect
 					{
 						DECREASE_VIABILITY(8); //Not 10 b/c move still works, just not recommended
 						return viability;
@@ -841,12 +841,12 @@ MOVESCR_CHECK_0:
 				switch (move) {
 					case MOVE_HONECLAWS:
 						if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX
-						&& (STAT_STAGE(bankAtk, STAT_STAGE_ACC) >= STAT_STAGE_MAX || !PhysicalMoveInMoveset(bankAtk)))
+						&& (STAT_STAGE(bankAtk, STAT_STAGE_ACC) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk)))
 							DECREASE_VIABILITY(10);
 						break;
 
 					default:
-						if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !PhysicalMoveInMoveset(bankAtk))
+						if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk))
 							DECREASE_VIABILITY(10);
 				}
 			}
@@ -923,7 +923,7 @@ MOVESCR_CHECK_0:
 					case MOVE_WORKUP:
 					AI_WORK_UP_CHECK: ;
 						if (data->atkAbility == ABILITY_CONTRARY
-						|| ((!AI_STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK)|| !PhysicalMoveInMoveset(bankAtk))
+						|| ((!AI_STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK)|| !RealPhysicalMoveInMoveset(bankAtk))
 						 && (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))))
 							DECREASE_VIABILITY(10);
 						break;
@@ -960,7 +960,7 @@ MOVESCR_CHECK_0:
 						{
 							if (data->atkPartnerAbility == ABILITY_PLUS || data->atkPartnerAbility == ABILITY_MINUS)
 							{
-								if ((!AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || !PhysicalMoveInMoveset(bankAtk))
+								if ((!AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
 								&&  (!AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk)))
 									DECREASE_VIABILITY(10);
 							}
@@ -1021,7 +1021,7 @@ MOVESCR_CHECK_0:
 					//Poisoned target
 					else if (STAT_STAGE(bankDef, STAT_STAGE_SPEED) == STAT_STAGE_MIN
 						 && (STAT_STAGE(bankDef, STAT_STAGE_SPATK) == STAT_STAGE_MIN || !SpecialMoveInMoveset(bankDef))
-						 && (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !PhysicalMoveInMoveset(bankDef)))
+						 && (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !RealPhysicalMoveInMoveset(bankDef)))
 					{
 						DECREASE_VIABILITY(10);
 						decreased = TRUE;
@@ -1032,7 +1032,7 @@ MOVESCR_CHECK_0:
 				case MOVE_NOBLEROAR:
 				case MOVE_TEARFULLOOK:
 					if ((STAT_STAGE(bankDef, STAT_STAGE_SPATK) == STAT_STAGE_MIN || !SpecialMoveInMoveset(bankDef))
-					&&  (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !PhysicalMoveInMoveset(bankDef)))
+					&&  (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !RealPhysicalMoveInMoveset(bankDef)))
 					{
 						DECREASE_VIABILITY(10);
 						decreased = TRUE;
@@ -1040,7 +1040,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				default:
-					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !PhysicalMoveInMoveset(bankDef))
+					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !RealPhysicalMoveInMoveset(bankDef))
 					{
 						DECREASE_VIABILITY(10);
 						decreased = TRUE;
@@ -2407,7 +2407,7 @@ MOVESCR_CHECK_0:
 			}
 			else
 			{
-				if ((STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !PhysicalMoveInMoveset(bankDef))
+				if ((STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN || !RealPhysicalMoveInMoveset(bankDef))
 				&&  STAT_STAGE(bankDef, STAT_STAGE_DEF) == STAT_STAGE_MIN)
 				{
 					DECREASE_VIABILITY(10);
@@ -2455,13 +2455,13 @@ MOVESCR_CHECK_0:
 				switch (move) {
 					case MOVE_COIL:
 						if (STAT_STAGE(bankAtk, STAT_STAGE_ACC) >= STAT_STAGE_MAX
-						&& (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !PhysicalMoveInMoveset(bankAtk))
+						&& (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !RealPhysicalMoveInMoveset(bankAtk))
 						&&  STAT_STAGE(bankAtk, STAT_STAGE_DEF) >= STAT_STAGE_MAX)
 							DECREASE_VIABILITY(10);
 						break;
 
 					default:
-						if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !PhysicalMoveInMoveset(bankAtk))
+						if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !RealPhysicalMoveInMoveset(bankAtk))
 						&&  STAT_STAGE(bankAtk, STAT_STAGE_DEF) >= STAT_STAGE_MAX)
 							DECREASE_VIABILITY(10);
 				}
@@ -2509,7 +2509,7 @@ MOVESCR_CHECK_0:
 							goto AI_COSMIC_POWER;
 
 						if ((STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE_MAX || !SpecialMoveInMoveset(bankAtk))
-						&&  (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !PhysicalMoveInMoveset(bankAtk))
+						&&  (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk))
 						&&  (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) >= STAT_STAGE_MAX))
 							DECREASE_VIABILITY(10);
 						else if (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1) //Trick Room not about to end
@@ -2522,7 +2522,7 @@ MOVESCR_CHECK_0:
 							DECREASE_VIABILITY(10);
 						else
 						{
-							if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !PhysicalMoveInMoveset(bankAtk))
+							if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk))
 							&&  (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) >= STAT_STAGE_MAX))
 								DECREASE_VIABILITY(10);
 						}
@@ -2540,7 +2540,7 @@ MOVESCR_CHECK_0:
 			{
 				switch (move) {
 					case MOVE_POWERTRICK:
-						if (gBattleMons[bankAtk].defense >= gBattleMons[bankAtk].attack && !PhysicalMoveInMoveset(bankAtk))
+						if (gBattleMons[bankAtk].defense >= gBattleMons[bankAtk].attack && !RealPhysicalMoveInMoveset(bankAtk))
 							DECREASE_VIABILITY(10);
 						break;
 

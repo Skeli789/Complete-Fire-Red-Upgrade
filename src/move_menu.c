@@ -154,7 +154,18 @@ void HandleInputChooseMove(void)
 		{
 			CloseZMoveDetails();
 			CloseMaxMoveDetails();
-			TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, chosenMove, FALSE);
+
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
+				//Will be set by emit, but needed in multi battles so the partner chooses the best move for the job
+				gBattleStruct->chosenMovePositions[gActiveBattler] = gMoveSelectionCursor[gActiveBattler];
+				gBattleStruct->moveTarget[gActiveBattler] =gMultiUsePlayerCursor;
+				gChosenMovesByBanks[gActiveBattler] = chosenMove;
+
+				//Wipe doubles killing score
+				TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gMultiUsePlayerCursor, chosenMove, moveTarget, FALSE);
+			}
+
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 			PlayerBufferExecCompleted();
 		}
@@ -1358,7 +1369,8 @@ void HandleInputChooseTarget(void)
 	{
 		PlaySE(SE_SELECT);
 		gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCb_HideAsMoveTarget;
-		TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], FALSE);
+		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			TryRemovePartnerDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], FALSE);
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 		CloseZMoveDetails();
 		CloseMaxMoveDetails();

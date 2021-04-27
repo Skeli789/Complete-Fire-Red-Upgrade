@@ -1058,7 +1058,6 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (ABILITY(bankAtk) != ABILITY_TELEPATHY)
 			{
-
 				if (partnerMove != MOVE_NONE
 				&& !isAtkDynamaxed
 				&&  ABILITY(bankAtk) != ABILITY_TELEPATHY
@@ -1235,8 +1234,8 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 		else
 		{
 			u16 defPrediction = IsValidMovePrediction(bankDef, bankAtk); //Move foe is probably going to use
-			bool8 defPhysicalMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_PHYSICAL);
-			bool8 defSpecialMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_SPECIAL);
+			bool8 defPhysicalMoveInMoveset = RealPhysicalMoveInMoveset(bankDef);
+			bool8 defSpecialMoveInMoveset = SpecialMoveInMoveset(bankDef);
 
 			switch (gBattleMoves[move].effect) {
 				case EFFECT_REFLECT:
@@ -1388,7 +1387,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 						if (IsClassDamager(class))
 						{
-							bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
+							bool8 physMoveInMoveset = RealPhysicalMoveInMoveset(bankAtk);
 							bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
 
 							//Pivot if attacking stats are bad
@@ -1479,7 +1478,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 						if (IsClassDamager(class))
 						{
-							bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
+							bool8 physMoveInMoveset = RealPhysicalMoveInMoveset(bankAtk);
 							bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
 
 							//Pivot if attacking stats are bad

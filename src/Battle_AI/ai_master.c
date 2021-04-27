@@ -469,7 +469,7 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 	mostViableTargetsNo = 1;
 
 	u16 firstMove = actionOrMoveIndex[0];
-	u32 mostDamage = 0; //The most damage AI could do to any target
+	//u32 mostDamage = 0; //The most damage AI could do to any target
 	u32 mostDmgTarget = 0; //The bank the most damage could be done to
 	bool8 mostDmgKnocksOut = FALSE; //Whether or not the strongest move also KOs
 	bool8 statusMoveOption = FALSE; //Whether or not a status move will potentially be used
@@ -481,7 +481,7 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 			//Calculate important data for later
 			mostDmgTarget = mostViableTargetsArray[0]; //First target
 			mostDmgKnocksOut = MoveKnocksOutXHits(firstMove, gBankAttacker, mostDmgTarget, 1);
-			mostDamage = GetFinalAIMoveDamage(firstMove, gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+			//mostDamage = GetFinalAIMoveDamage(firstMove, gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
 		}
 		else
 			statusMoveOption = TRUE;
@@ -500,7 +500,7 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 			{
 				//Try choosing the target which the most damage can be done to
 				bool8 thisDmgKnocksOut = MoveKnocksOutXHits(move, gBankAttacker, i, 1);
-				u32 thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, NULL); //Assumes damage has already been cached
+				//u32 thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, NULL); //Assumes damage has already been cached
 
 				if (!thisDmgKnocksOut && mostDmgKnocksOut)
 				{
@@ -532,10 +532,15 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 				{
 					//Neither target can be knocked out
 
+					/*
+					This is commented out because the AI gets too predictable when it always goes for the mon it can do the most damage to
+
 					if (thisDamage == mostDamage) //Both moves do the same damage to multiple targets
 						goto ADD_TARGET_AS_MOST_VIABLE;
 					else if (thisDamage < mostDamage)
 						continue; //Don't store this target if less damage can be done to it
+					*/
+					goto ADD_TARGET_AS_MOST_VIABLE;
 				}
 
 				if (!statusMoveOption) //Only replace all moves if no status moves can potentially be used
@@ -543,14 +548,14 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 					mostViableTargetsNo = 1;
 					mostViableTargetsArray[0] = mostDmgTarget = i;
 					mostDmgKnocksOut = thisDmgKnocksOut;
-					mostDamage = thisDamage;
+					//mostDamage = thisDamage;
 					continue;
 				}
 				else //Replace all non status moves with this best one
 				{
 					mostDmgTarget = i;
 					mostDmgKnocksOut = thisDmgKnocksOut;
-					mostDamage = thisDamage;
+					//mostDamage = thisDamage;
 
 					for (j = 0; j < mostViableTargetsNo; ++j)
 					{
@@ -582,9 +587,9 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 				{
 					//Calculate important data for later
 					statusMoveOption = FALSE;
-					mostDmgTarget = mostViableTargetsArray[0]; //New target
+					mostDmgTarget = i; //New target
 					mostDmgKnocksOut = MoveKnocksOutXHits(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1);
-					mostDamage = GetFinalAIMoveDamage(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+					//mostDamage = GetFinalAIMoveDamage(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
 				}
 				else
 					statusMoveOption = TRUE;
@@ -1769,7 +1774,7 @@ static bool8 ShouldSwitchToAvoidDeath(void)
 		&& gDisableStructs[gActiveBattler].protectUses == 0 //And it didn't use King's Shield last
 		&& defMove != MOVE_NONE //Aegislash would be hit
 		&& CheckContact(defMove, bankDef) //With a contact move
-		&& PhysicalMoveInMoveset(bankDef) //That's probably physical
+		&& RealPhysicalMoveInMoveset(bankDef) //That's probably physical
 		&& ABILITY(gActiveBattler) == ABILITY_STANCECHANGE
 		&& MoveInMoveset(MOVE_KINGSSHIELD, gActiveBattler))
 			return FALSE; //Don't switch and use King's Shield instead
@@ -3157,15 +3162,16 @@ static void UpdateBestDoublesKillingMoves(void)
 		for (i = 0; i < gBattlersCount; ++i)
 		{
 			bankAtk = gBanksByTurnOrder[i]; //Calculate in order of speed so AI can processes team combos better
+			u8 bankAtkPartner = PARTNER(bankAtk);
 
 			//mgba_printf(MGBA_LOG_INFO, "");
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
-				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk) || !BATTLER_ALIVE(bankDef))
+				if (bankAtk == bankDef || bankDef == bankAtkPartner || !BATTLER_ALIVE(bankDef))
 					continue; //Don't bother calculating for these Pokemon. Never used
 
 				//mgba_printf(MGBA_LOG_WARN, "");
-				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
+				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, bankAtkPartner, PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
 		}
 	}

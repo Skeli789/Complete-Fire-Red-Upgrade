@@ -119,7 +119,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_SAPSIPPER:
 				if (moveType == TYPE_GRASS
 				&&  !IsClassDoublesTotalTeamSupport(partnerClass)
-				&&  PhysicalMoveInMoveset(bankAtkPartner)
+				&&  RealPhysicalMoveInMoveset(bankAtkPartner)
 				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
@@ -132,7 +132,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				&&  moveSplit != SPLIT_STATUS
 				&&  !IsClassDoublesTotalTeamSupport(partnerClass)
 				&& (moveEffect != EFFECT_KNOCK_OFF || atkPartnerAbility == ABILITY_STICKYHOLD || !CanKnockOffItem(bankAtkPartner))
-				&&  PhysicalMoveInMoveset(bankAtkPartner)
+				&&  RealPhysicalMoveInMoveset(bankAtkPartner)
 				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
@@ -391,7 +391,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			if (atkPartnerAbility == ABILITY_JUSTIFIED
 			&&  moveType == TYPE_DARK
 			&&  moveSplit != SPLIT_STATUS
-			&&  PhysicalMoveInMoveset(bankAtkPartner)
+			&&  RealPhysicalMoveInMoveset(bankAtkPartner)
 			&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				INCREASE_VIABILITY(1); //1 past the previous boost
@@ -404,7 +404,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				{
 					if (atkPartnerAbility != ABILITY_CONTRARY)
 					{
-						if (PhysicalMoveInMoveset(bankAtkPartner)
+						if (RealPhysicalMoveInMoveset(bankAtkPartner)
 						&& STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX)
 							IncreaseHelpingHandViability(&viability, class);
 						else if (SpecialMoveInMoveset(bankAtkPartner)
@@ -416,7 +416,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				{
 					if (STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX
 					&& atkPartnerAbility != ABILITY_CONTRARY
-					&& PhysicalMoveInMoveset(bankAtkPartner))
+					&& RealPhysicalMoveInMoveset(bankAtkPartner))
 						IncreaseHelpingHandViability(&viability, class);
 				}
 				//Regular Helping Hand

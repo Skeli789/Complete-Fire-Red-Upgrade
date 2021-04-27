@@ -31707,7 +31707,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_WATERFALL,
+			MOVE_LIQUIDATION,
 			MOVE_BRAVEBIRD,
 			MOVE_TRIPLEAXEL,
 			MOVE_STEELWING,

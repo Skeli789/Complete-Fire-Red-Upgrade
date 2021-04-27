@@ -188,10 +188,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN_2))
 						break;
 
-					if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+					if (RealPhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
 					/*else if (IsMaxMove(move) && IS_DOUBLE_BATTLE && BATTLER_ALIVE(data->bankAtkPartner)
-						&& PhysicalMoveInMoveset(data->bankAtkPartner) && atkAbility != ABILITY_CONTRARY)
+						&& RealPhysicalMoveInMoveset(data->bankAtkPartner) && atkAbility != ABILITY_CONTRARY)
 					{
 						IncreaseStatViability(&viability, class, 2, data->bankAtkPartner, bankDef, move, STAT_STAGE_ATK, 8);
 					}*/
@@ -270,33 +270,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				case MOVE_GROWTH:
 				case MOVE_WORKUP:
-					if (PhysicalMoveInMoveset(bankAtk))
+					if (RealPhysicalMoveInMoveset(bankAtk))
 						goto AI_ATTACK_PLUS;
 					else if (SpecialMoveInMoveset(bankAtk))
 						goto AI_SPECIAL_ATTACK_PLUS;
 					break;
-				/*
-				case MOVE_ROTOTILLER:
-					if (IsOfType(data->bankAtkPartner,TYPE_GRASS))
-						viability += 5;
-					else if (PhysicalMoveInMoveset(bankAtk))
-						goto AI_ATTACK_PLUS;
-					else if (SpecialMoveInMoveset(bankAtk))
-						break;
-					goto FUNCTION_RETURN;
-
-				case MOVE_GEARUP:
-					if (data->atkPartnerAbility == ABILITY_PLUS || data->atkPartnerAbility == ABILITY_MINUS)
-					{
-						viability += 5;
-						goto FUNCTION_RETURN;
-					}
-					else if (PhysicalMoveInMoveset(bankAtk))
-						goto AI_ATTACK_PLUS;
-					else if (SpecialMoveInMoveset(bankAtk))
-						break;
-					goto FUNCTION_RETURN;
-				*/
 
 				default:
 				AI_SPECIAL_ATTACK_PLUS:
@@ -1044,7 +1022,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						|| IsClassStall(class) //Best to protect always if you're stalling
 						|| (predictedMove != MOVE_NONE 
 						 && CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
-						 && PhysicalMoveInMoveset(bankDef))) //The contact move is also physical
+						 && RealPhysicalMoveInMoveset(bankDef))) //The contact move is also physical
 						{
 							if (IsClassStall(class))
 							{
@@ -1052,7 +1030,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 									INCREASE_VIABILITY(8);
 								else if (predictedMove != MOVE_NONE 
 								&& CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
-								&& PhysicalMoveInMoveset(bankDef)) //The contact move is also physical
+								&& RealPhysicalMoveInMoveset(bankDef)) //The contact move is also physical
 									INCREASE_VIABILITY(8);
 								else
 									INCREASE_VIABILITY(3);
@@ -1512,7 +1490,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_BELLY_DRUM:
-			if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+			if (RealPhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 			{
 				if (IsMovePredictionPhazingMove(bankDef, bankAtk))
 					break;
@@ -1532,7 +1510,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					if (STAT_STAGE(bankDef, i) > STAT_STAGE(bankAtk, i))
 					{
-						if (i == STAT_STAGE_ATK && (PhysicalMoveInMoveset(bankAtk)))
+						if (i == STAT_STAGE_ATK && (RealPhysicalMoveInMoveset(bankAtk)))
 						{
 							INCREASE_STATUS_VIABILITY(1);
 							break;
@@ -2039,7 +2017,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 					//Try to boost either Attack, Sp. Attack, or Speed
 					u8 oldViability = viability;
-					if (PhysicalMoveInMoveset(bankAtk) && STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 7)
+					if (RealPhysicalMoveInMoveset(bankAtk) && STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 7)
 					{
 						INCREASE_STAT_VIABILITY(0xFE, 7, 3);
 						if (viability != oldViability) //Viability was increased
@@ -2065,7 +2043,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_TICKLE:
-			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && PhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
+			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && RealPhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
 				goto AI_DEFENSE_MINUS;
 			else
 				goto AI_ATTACK_MINUS;
@@ -2116,7 +2094,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break;
 
 					//Try to boost either Attack, Sp. Attack, or Speed
-					if (PhysicalMoveInMoveset(bankAtk))
+					if (RealPhysicalMoveInMoveset(bankAtk))
 					{
 						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
 						if (viability != oldViability) //Viability was increased
@@ -2257,7 +2235,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_POWERTRICK:
 					if (!(data->atkStatus3 & STATUS3_POWER_TRICK))
 					{
-						if (data->atkDefense > data->atkAttack && PhysicalMoveInMoveset(bankAtk))
+						if (data->atkDefense > data->atkAttack && RealPhysicalMoveInMoveset(bankAtk))
 							INCREASE_STATUS_VIABILITY(2);
 						break;
 					}
@@ -2429,7 +2407,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case MOVE_WONDERROOM:
-					if ((PhysicalMoveInMoveset(bankDef) && data->atkDefense < data->atkSpDef)
+					if ((RealPhysicalMoveInMoveset(bankDef) && data->atkDefense < data->atkSpDef)
 					||  (SpecialMoveInMoveset(bankDef) && data->atkSpDef < data->atkDefense))
 						INCREASE_STATUS_VIABILITY(2);
 					break;

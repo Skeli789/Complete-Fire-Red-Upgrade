@@ -132,7 +132,7 @@ void OpponentHandleChooseMove(void)
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
-				TryRemovePartnerDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove, TRUE);
+				TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, TRUE); //Allow the partner to choose a new target if its best move was this target
 
 				EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMovePos]);

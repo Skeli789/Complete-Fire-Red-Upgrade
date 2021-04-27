@@ -506,9 +506,6 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	if (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
 		partnerMove = GetAIChosenMove(bankAtkPartner, partnerTarget);
 
-	bool8 partnerIncapacitated = IsBankIncapacitated(bankAtkPartner);
-	bool8 partnerKnocksOut = partnerMove != MOVE_NONE && partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
-
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 	
 	u8 foes[2] = {bankDef, bankDefPartner};
@@ -531,12 +528,31 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	}
 
 	//Check targets partner is already prepared to deal with
-	if (!partnerIncapacitated && partnerKnocksOut && foesAlive >= 2) //More than 1 target left
+	if (!IsBankIncapacitated(bankAtkPartner) && partnerMove != MOVE_NONE //Partner is going to attack
+	&& foesAlive >= 2) //More than 1 target left
 	{
-		for (j = 0; j < gBattlersCount / 2; ++j)
+		bool8 partnerHitsBothFoes = partnerMove != MOVE_NONE && GetBaseMoveTarget(partnerMove, bankAtkPartner) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
+
+		if (!partnerHitsBothFoes) //Partner isn't using spread move
 		{
-			if (partnerTarget == foes[j])
-				partnerHandling[j] = TRUE;
+			if (partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1)) //Partner will KO its target
+			{
+				//Find the target it will KO and assume it unimportant
+				for (j = 0; j < gBattlersCount / 2; ++j)
+				{
+					if (partnerTarget == foes[j])
+						partnerHandling[j] = TRUE;
+				}
+			}
+		}
+		else //Parter is using spread move
+		{
+			//Find the target it will KO and assume them unimportant
+			for (j = 0; j < gBattlersCount / 2; ++j)
+			{
+				if (MoveKnocksOutXHits(partnerMove, bankAtkPartner, foes[j], 1))
+					partnerHandling[j] = TRUE;
+			}
 		}
 	}
 
@@ -722,11 +738,11 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	u8 bestIndex = 0;
 	for (u32 i = 1; i < MAX_MON_MOVES; ++i)
 	{
-		u8 currScore = moveScores[i][bankDef]
+		s8 currScore = moveScores[i][bankDef]
 					 + moveScores[i][bankDefPartner]
 					 + moveScores[i][bankAtkPartner];
 
-		u8 bestScore = moveScores[bestIndex][bankDef]
+		s8 bestScore = moveScores[bestIndex][bankDef]
 					 + moveScores[bestIndex][bankDefPartner]
 					 + moveScores[bestIndex][bankAtkPartner];
 
@@ -783,11 +799,11 @@ static void RemoveDoublesKillingScore(u8 bankAtk, u8 bankDef)
 	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 }
 
-void TryRemovePartnerDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove, bool8 doSpeedCalc)
+bool8 TryRemovePartnerDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove, bool8 doSpeedCalc)
 {
 	u8 partner = PARTNER(bankAtk);
 
-	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner))
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(bankDef) && BATTLER_ALIVE(partner))
 	{
 		u16 partnerKillingMove = gNewBS->ai.bestDoublesKillingMoves[partner][bankDef];
 
@@ -798,7 +814,23 @@ void TryRemovePartnerDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove,
 		 || MoveWouldHitFirst(chosenMove, bankAtk, bankDef) //This mon is going to hit the enemy before it can attack
 		 || !MoveWouldHitFirst(partnerKillingMove, partner, bankDef)) //The partner won't hit the enemy before it can attack
 		&& MoveKnocksOutXHits(chosenMove, bankAtk, bankDef, 1))
-			RemoveDoublesKillingScore(partner, bankDef); //This mon's got it covered
+		{
+			//This mon's got it covered, so recalculate killing score for the partner factoring this info in
+			RemoveDoublesKillingScore(partner, bankDef);
+			RemoveDoublesKillingScore(partner, PARTNER(bankDef));
+		}
+	}
+
+	return FALSE;
+}
+
+void TryRemovePartnerDoublesKillingScoreComplete(u8 bankAtk, u8 bankDef, u16 chosenMove, u32 moveTarget, bool8 doSpeedCalc)
+{
+	//Also handles the special case where the Pokemon is using a spread move
+	if (!TryRemovePartnerDoublesKillingScore(bankAtk, bankDef, chosenMove, doSpeedCalc))
+	{
+		if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+			TryRemovePartnerDoublesKillingScore(bankAtk, PARTNER(bankDef), chosenMove, doSpeedCalc); //Important in case that foe is KOd
 	}
 }
 
@@ -1997,8 +2029,8 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePoisoned(bankAtk, bankDef, TRUE) && !GoodIdeaToPoisonSelf(bankAtk))
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
-		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
-		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_TOXICBOOST && RealPhysicalMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
 		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
@@ -2015,8 +2047,8 @@ bool8 GoodIdeaToPoisonSelf(u8 bankAtk)
 		 ||  atkAbility == ABILITY_POISONHEAL
 		 ||  atkAbility == ABILITY_QUICKFEET
 		 ||  atkAbility == ABILITY_MAGICGUARD
-		 || (atkAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankAtk))
-		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_TOXICBOOST && RealPhysicalMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
 		 ||  MoveInMoveset(MOVE_FACADE, bankAtk)
 		 ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
 }
@@ -2034,7 +2066,7 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
 	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
-	   || (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+	   || (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
 	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 	   || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 	   ||  MoveInMoveset(MOVE_FACADE, bankDef)
@@ -2049,7 +2081,7 @@ bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
 	return CanBeParalyzed(bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_MARVELSCALE
 		 ||  atkAbility == ABILITY_QUICKFEET
-		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
 		 || MoveInMoveset(MOVE_FACADE, bankAtk)
 		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
 }
@@ -2069,7 +2101,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
-		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
@@ -2085,7 +2117,7 @@ bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 		 ||  atkAbility == ABILITY_HEATPROOF
 		 ||  atkAbility == ABILITY_MAGICGUARD
 		 || (atkAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankAtk))
-		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
 		 || MoveInMoveset(MOVE_FACADE, bankAtk)
 		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
 }
@@ -2110,7 +2142,7 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 
 	u8 defAbility = ABILITY(bankDef);
 
-	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && PhysicalMoveInMoveset(bankDef)
+	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && RealPhysicalMoveInMoveset(bankDef)
 		&& defAbility != ABILITY_CONTRARY
 		&& defAbility != ABILITY_CLEARBODY
 		&& defAbility != ABILITY_WHITESMOKE
@@ -2361,13 +2393,42 @@ bool8 PhysicalMoveInMoveset(u8 bank)
 		{
 			if (CalcMoveSplit(bank, move) == SPLIT_PHYSICAL
 			&& gBattleMoves[move].power != 0
-			&& gBattleMoves[move].effect != EFFECT_COUNTER)
+			&& gBattleMoves[move].effect != EFFECT_COUNTER
+			&& move != MOVE_FAKEOUT) //While physical, it can only be used on the first turn
 				return TRUE;
 		}
 	}
 
 	return FALSE;
 }
+
+//Doesn't factor in Foul Play, or Body Press
+bool8 RealPhysicalMoveInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CalcMoveSplit(bank, move) == SPLIT_PHYSICAL
+			&& gBattleMoves[move].power != 0
+			&& gBattleMoves[move].effect != EFFECT_COUNTER
+			&& move != MOVE_FAKEOUT
+			&& move != MOVE_FOULPLAY
+			&& move != MOVE_BODYPRESS)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 
 bool8 SpecialMoveInMoveset(u8 bank)
 {
@@ -3625,7 +3686,7 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 
 			switch (statId) {
 				case STAT_STAGE_ATK:
-					if (PhysicalMoveInMoveset(bank))
+					if (RealPhysicalMoveInMoveset(bank))
 						return TRUE;
 					break;
 				case STAT_STAGE_DEF:
@@ -3662,7 +3723,7 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 bool8 AnyUsefulOffseniveStatIsRaised(u8 bank)
 {
 	if (STAT_STAGE(bank, STAT_STAGE_ATK) > 6
-	&& PhysicalMoveInMoveset(bank))
+	&& RealPhysicalMoveInMoveset(bank))
 		return TRUE;
 
 	if (STAT_STAGE(bank, STAT_STAGE_DEF) > 6
@@ -3822,7 +3883,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case Z_EFFECT_RESET_STATS:
 					for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 					{
-						if (i == STAT_STAGE_ATK && !PhysicalMoveInMoveset(bankAtk)) //Only reset lowered Attack if useful
+						if (i == STAT_STAGE_ATK && !RealPhysicalMoveInMoveset(bankAtk)) //Only reset lowered Attack if useful
 							continue;
 						else if (i == STAT_STAGE_ATK && !SpecialMoveInMoveset(bankAtk)) //Only reset lowered Special Attack if useful
 							continue;
@@ -3847,7 +3908,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case Z_EFFECT_ATK_UP_2:
 				case Z_EFFECT_ATK_UP_3:
 					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
-					&& MoveSplitInMoveset(bankAtk, SPLIT_PHYSICAL))
+					&& RealPhysicalMoveInMoveset(bankAtk))
 						return TRUE;
 					break;
 				case Z_EFFECT_DEF_UP_1:
@@ -3860,7 +3921,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case Z_EFFECT_SPATK_UP_2:
 				case Z_EFFECT_SPATK_UP_3:
 					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)
-					&& MoveSplitInMoveset(bankAtk, SPLIT_SPECIAL))
+					&& SpecialMoveInMoveset(bankAtk))
 						return TRUE;
 					break;
 				case Z_EFFECT_SPDEF_UP_1:

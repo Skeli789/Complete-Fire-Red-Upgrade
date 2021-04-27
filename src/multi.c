@@ -440,7 +440,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 
 	if (IsMockBattle())
-		TryRemovePartnerDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove, TRUE); //Moves are chosen in order of speed
+		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, TRUE); //Moves are chosen in order of speed
 
 	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
 	PlayerPartnerBufferExecComplete();
