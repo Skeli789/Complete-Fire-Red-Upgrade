@@ -1668,13 +1668,14 @@ bool8 ShouldPlayerRun(u16 heldKeys)
 	if (IsRunningDisallowed(gEventObjects[gPlayerAvatar->eventObjectId].currentMetatileBehavior))
 		return FALSE;
 
+	if (IsDexNavHudActive())
+		return FALSE; //Prevent running while DexNav is open. People are just too stupid to realize they can't run
+
 	#ifdef FLAG_AUTO_RUN
 	if (FlagGet(FLAG_AUTO_RUN))
 	{
 		if (heldKeys & B_BUTTON)
 			return FALSE; //Walk when holding B while auto-run is on
-		else if (heldKeys & A_BUTTON && IsDexNavHudActive())
-			return FALSE; //Walk with A while DexNav is open
 		else
 			return TRUE;
 	}

@@ -922,6 +922,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	}
 
 	//Caves and water the pokemon moves around
+	#ifdef DEXNAV_POKEMON_MOVE_IN_CAVES_WATER
 	if ((sDexNavHudPtr->environment == ENCOUNTER_TYPE_WATER || !IsMapTypeOutdoors(GetCurrentMapType()))
 	#ifdef UNBOUND
 	&& GetCurrentRegionMapSectionId() != MAPSEC_FLOWER_PARADISE
@@ -933,6 +934,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 		while(!ShakingGrass(sDexNavHudPtr->environment, 8, 8, 1));
 		sDexNavHudPtr->movementTimes += 1;
 	}
+	#endif
 
 	// check for encounter start
 	if (sDexNavHudPtr->totalProximity < 1)
@@ -1578,7 +1580,7 @@ static void DexNavDrawIcons(void)
 	DexNavHudDrawSpeciesIcon(sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdSpecies);
 }
 
-
+extern void sp0AF_DismountBicyle(void);
 void InitDexNavHUD(u16 species, u8 environment)
 {
 	sDexNavHudPtr = Calloc(sizeof(struct DexnavHudData));
@@ -1648,6 +1650,9 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 	//Hide icons based on proximity and search level
 	DexNavIconsVisionUpdate(sDexNavHudPtr->totalProximity, searchLevel);
+
+	//Get off bike so the Pokemon doesn't run away
+	sp0AF_DismountBicyle();
 
 	//Enable Hblank interrupt
 	/*EnableInterrupts(2);
