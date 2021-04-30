@@ -597,6 +597,7 @@ MoveSelectionCreateCursorAt = 0x80309CC | 1;
 MoveSelectionDestroyCursorAt = 0x8030A14 | 1;
 ActionSelectionCreateCursorAt = 0x8030A54 | 1;
 ActionSelectionDestroyCursorAt = 0x8030A98 | 1;
+PlayerHandlePrintSelectionString = 0x08032B70 | 1;
 HandleChooseActionAfterDma3 = 0x8032B94 | 1;
 sub_8033AC8 = 0x8033AC8 | 1;
 sub_8033EEC = 0x8033EEC | 1;

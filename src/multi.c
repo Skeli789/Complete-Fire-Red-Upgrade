@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/m4a.h"
+#include "../include/battle_string_ids.h"
 
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
@@ -8,7 +10,6 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
-#include "../include/m4a.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
@@ -440,7 +441,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 
 	if (IsMockBattle())
-		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, TRUE); //Moves are chosen in order of speed
+		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, FALSE); //Moves are chosen in order of bank
 
 	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
 	PlayerPartnerBufferExecComplete();
@@ -448,11 +449,22 @@ static void PlayerPartnerHandleChooseMove(void)
 
 static void PlayerPartnerHandlePrintSelectionString(void)
 {
-	PlayerPartnerBufferExecComplete();
+	u16* stringId = (u16 *)(&gBattleBufferA[gActiveBattler][2]);
+
+	if (IsMockBattle() && *stringId == STRINGID_ITEMSCANTBEUSEDNOW) //Important to display this string to the player
+		PlayerHandlePrintSelectionString();
+	else
+		PlayerPartnerBufferExecComplete();
 }
 
 static void PlayerPartnerHandleChooseAction(void)
 {
+	if (IsMockBattle())
+	{
+		PlayerHandleChooseAction(); //Allow the player to choose to Fight, Switch, etc., but the actual choice will be made by the AI
+		return;
+	}
+
 	u8 partner = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
