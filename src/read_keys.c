@@ -128,17 +128,17 @@ void ReadKeys(void)
 	gMain.newKeys = gMain.newKeysRaw;
 	gMain.newAndRepeatedKeys = gMain.newKeysRaw;
 
-	// BUG: Key repeat won't work when pressing L using L=A button mode
-	// because it compares the raw key input with the remapped held keys.
-	// Note that newAndRepeatedKeys is never remapped either.
-
-	if (keyInput != 0 && gMain.heldKeys == keyInput)
+	if (keyInput != 0 && gMain.heldKeysRaw == keyInput)
 	{
 		gMain.keyRepeatCounter--;
 		if (gMain.keyRepeatCounter == 0)
 		{
 			gMain.newAndRepeatedKeys = keyInput;
 			gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
+
+			if (gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A
+			&& gMain.newKeys & L_BUTTON)
+				gMain.newAndRepeatedKeys |= A_BUTTON;
 		}
 	}
 	else

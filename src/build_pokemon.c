@@ -154,7 +154,7 @@ static bool8 CanTrainerEvolveMon(void);
 static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags);
 #endif
 static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId);
-static void ModifySpeciesAndLevelForGenericBattle(u16* species, u8* level, u8 minEnemyTeamLevel, u8 averagePlayerTeamLevel, u8 trainerClass, bool8 shouldEvolve);
+static void ModifySpeciesAndLevelForGenericBattle(u16* species, u8* level, u8 minEnemyTeamLevel, u8 highestPlayerTeamLevel, u8 averagePlayerTeamLevel, u8 trainerClass, bool8 shouldEvolve);
 static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 maxEnemyTeamLevel, unusedArg u8 maxPlayerTeamLevel, unusedArg bool8 shouldEvolve);
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void BuildFrontierMultiParty(u8 multiId);
@@ -1026,7 +1026,7 @@ static u8 GetPlayerBiasedAverageLevel(u8 maxLevel)
 		{
 			u8 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
 			
-			if (maxLevel - level < 5) //This level is within 5 levels of the max
+			if (maxLevel - level <= 5) //This level is within 5 levels of the max
 			{
 				sum += level;
 				++count;
@@ -1078,6 +1078,7 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 
 	switch (gTrainers[trainerId].trainerClass) {
 		case CLASS_LEADER:
+		case CLASS_SUCCESSOR:
 		case CLASS_ELITE_4:
 		case CLASS_CHAMPION:
 		case CLASS_RIVAL_2:
@@ -1091,7 +1092,8 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 	return FALSE;
 }
 
-static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerPartyFlags, unusedArg bool8 shouldEvolve)
+static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 highestPlayerTeamLevel,
+                                                  unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerPartyFlags, unusedArg bool8 shouldEvolve)
 {
 	#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 	u8 minEnemyLevel, startScalingAtLevel, prevStartScalingAtLevel, levelRange, newLevel, badgeCount, levelSubtractor;
@@ -1127,14 +1129,14 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 		levelChangedForEvolution = TRUE;
 	}
 
-	if (averagePlayerTeamLevel >= startScalingAtLevel //Team is stronger than Gym Leader would be normally
+	if (highestPlayerTeamLevel >= startScalingAtLevel //Strongest is stronger than Gym Leader would be normally
 	#ifdef VAR_GAME_DIFFICULTY
 	|| VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY //Or the game is on on a harder setting
 	#endif
 	)
 	{
 		//So scale normal enemies based on the average team level
-		newLevel = averagePlayerTeamLevel + levelRange;
+		newLevel = averagePlayerTeamLevel + levelRange; //Highest is used to enter into this section, but average is used to calculate the new level. Ensures better consistency while not scaling the enemies too fast if you want to train your whole team
 		if (newLevel >= levelSubtractor)
 			newLevel -= levelSubtractor;
 		else
@@ -1151,7 +1153,7 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 				levelChangedForEvolution = TRUE; //Always evolve Pseudobosses or regular trainers on Insane
 		}
 	}
-	else if (averagePlayerTeamLevel >= prevStartScalingAtLevel) //Team is stronger than prev Gym Leader
+	else if (highestPlayerTeamLevel >= prevStartScalingAtLevel) //Team is stronger than prev Gym Leader
 	{
 		//So scale normal enemies based on the previous Gym's start scaling level
 		//This section is most likely never going to be used

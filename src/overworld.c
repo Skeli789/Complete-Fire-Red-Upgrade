@@ -216,7 +216,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_General_TreeSideLeft 0x18
 	#define METATILE_General_TreeSideRight 0x19
 	#define METATILE_General_BothTreeSides 0x20
-	#define METATILE_General_ThinTreeTop 0x12
+	#define METATILE_General_ThinTreeTop 0x1B
 	#define METATILE_General_LandEdgeLeft 0x132
 	#define METATILE_General_LandEdgeMiddle 0x133
 	#define METATILE_General_LandEdgeRight 0x134
@@ -292,7 +292,9 @@ const struct CutGrass sCutGrassTiles[] =
 	{0xB, METATILE_General_TreeTopLeft, Tileset_General},
 	{0xC, METATILE_General_TreeTopRight, Tileset_General},
 	{0xD, METATILE_General_PlainGrass, Tileset_General},
-	{0x12, METATILE_General_PlainGrass, Tileset_General},
+	{0x12, METATILE_General_ThinTreeTop, Tileset_General},
+	{0x16, METATILE_General_TreeSideRight, Tileset_General},
+	{0x17, METATILE_General_TreeSideLeft, Tileset_General},
 	{0x137, METATILE_General_PlainGrass, Tileset_General},
 	{0x1EE, METATILE_General_PlainGrass, Tileset_General},
 	{0x1EF, METATILE_General_PlainGrass, Tileset_General},
@@ -319,15 +321,10 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x229, METATILE_General_LandEdgeMiddle, Tileset_General},
 	{0x22A, METATILE_General_PlainGrass, Tileset_General},
 	{0x22B, METATILE_General_LandEdgeMiddle, Tileset_General},
-	{0x321, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
-	{0x323, METATILE_General_LandEdgeLeft, Tileset_DrescoTown},
-	{0x329, METATILE_General_TreeSideRight, Tileset_DrescoTown},
-	{0x32B, METATILE_General_TreeSideRight, Tileset_DrescoTown},
-	{0x32C, METATILE_General_TreeTopLeft, Tileset_DrescoTown},
-	{0x32D, METATILE_General_LandEdgeLeft, Tileset_DrescoTown},
-	{0x32E, METATILE_General_LandEdgeMiddle, Tileset_DrescoTown},
-	{0x333, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
-	{0x335, METATILE_General_LandEdgeMiddle, Tileset_DrescoTown},
+	{0x350, METATILE_General_LandEdgeLeft, Tileset_DrescoTown},
+	{0x351, METATILE_General_LandEdgeRight, Tileset_DrescoTown},
+	{0x358, METATILE_General_TreeSideRight, Tileset_DrescoTown},
+	{0x359, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
 	{0x2BE, METATILE_General_TreeTopLeft, Tileset_FlowerParadise},
 	{0x2BF, METATILE_General_TreeTopRight, Tileset_FlowerParadise},
 	{0x2C7, METATILE_General_TreeTopRight, Tileset_FlowerParadise},
@@ -335,7 +332,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x2D5, METATILE_General_TreeSideLeft, Tileset_FlowerParadise},
 	{0x2F7, METATILE_General_TreeSideRight, Tileset_FlowerParadise},
 	{0x2AF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x2B7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2B7, METATILE_General_TreeSideRight, Tileset_CraterTown},
 	{0x2BF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x2C7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x2CF, METATILE_General_TreeSideLeft, Tileset_CraterTown},

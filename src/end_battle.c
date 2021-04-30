@@ -819,9 +819,13 @@ static void EndBattleFlagClear(void)
 
 	//Handle DexNav Chain
 	if (gDexNavStartedBattle
-	&& gCurrentDexNavChain < 100
 	&& (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
-		++gCurrentDexNavChain;
+	{
+		if (gCurrentDexNavChain < 100)
+			++gCurrentDexNavChain;
+		else
+			gCurrentDexNavChain = 1; //Restart from 1 (101 % 100 = 1)
+	}
 	else
 		gCurrentDexNavChain = 0;
 	gDexNavStartedBattle = FALSE;

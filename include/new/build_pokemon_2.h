@@ -27,7 +27,7 @@
 		if (IsBossTrainerClassForLevelScaling(trainerId))																									\
 			ModifySpeciesAndLevelForBossBattle(&speciesToCreate, &lvl, maxPartyLevel, highestPlayerLevel, canEvolveMon);									\
 		else																																				\
-			ModifySpeciesAndLevelForGenericBattle(&speciesToCreate, &lvl, minPartyLevel, modifiedAveragePlayerLevel, trainer->partyFlags, canEvolveMon);	\
+			ModifySpeciesAndLevelForGenericBattle(&speciesToCreate, &lvl, minPartyLevel, highestPlayerLevel, modifiedAveragePlayerLevel, trainer->partyFlags, canEvolveMon);	\
 	}																																						\
 																																							\
 	CreateMon(&party[i], speciesToCreate, lvl, baseIV, TRUE, personalityValue, otIdType, otid);																\

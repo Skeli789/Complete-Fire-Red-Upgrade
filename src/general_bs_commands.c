@@ -4393,12 +4393,13 @@ void atkBE_rapidspinfree(void)
 	}
 }
 
-void atkC0_recoverbasedonsunlight(void) {
+void atkC0_recoverbasedonsunlight(void)
+{
 	gBankTarget = gBankAttacker;
 
 	if (!BATTLER_MAX_HP(gBankAttacker))
 	{
-		if (gBattleWeather == 0 || !WEATHER_HAS_EFFECT)
+		if (gBattleWeather == 0 || gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL || !WEATHER_HAS_EFFECT)
 		{
 			NO_WEATHER_EFFECT:
 			gBattleMoveDamage = GetBaseMaxHP(gBankAttacker) / 2;

@@ -3435,6 +3435,7 @@ void ShouldDoAIShiftSwitch(void)
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
 	&& !IS_DOUBLE_BATTLE
 	&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //AI has a mon that can be switched out
+	&& gBankFainted != GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) //Handles case of both player and AI mons fainting at same time (eg. due to Explosion)
 	&& ((gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SHIFT && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY)
 	 || (gBattleScripting.battleStyle == OPTIONS_BATTLE_STYLE_SEMI_SHIFT && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
 	#ifdef UNBOUND
