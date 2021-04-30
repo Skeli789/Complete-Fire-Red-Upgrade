@@ -13,6 +13,7 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
 #include "../../include/new/end_turn.h"
+#include "../../include/new/frontier.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
@@ -1998,12 +1999,23 @@ bool8 ShouldPredictBankToMegaEvolve(u8 bank)
 	if (!IsPlayerInControl(bank))
 		return TRUE; //Always predict the AI to Mega Evolve
 
-	if (!(gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_MOCK_BATTLE)) && !IsFrontierRaidBattle())
-		return FALSE; //Don't predict player to Mega Evolve outside of the Frontier or when the AI is in control
-
 	if (SPECIES(bank) == SPECIES_NECROZMA_DUSK_MANE
 	||  SPECIES(bank) == SPECIES_NECROZMA_DAWN_WINGS)
 		return FALSE; //Don't predict player to Ultra Burst
+
+	if (!(AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE))
+		return FALSE; //Dumb and Semi-Smart AI should never predict a Mega Evo
+
+	if (!gDisableStructs[bank].isFirstTurn)
+		return FALSE; //If the player didn't Mega Evolve on the first turn, they're probably not going to (yet)
+
+	u16 megaSpecies = GetMegaSpecies(SPECIES(bank), ITEM(bank), gBattleMons[bank].moves);
+	if (megaSpecies != SPECIES_NONE && !ShouldReplaceTypesWithCamomons()) //Types are always the same in Camomons so this logic won't apply
+	{
+		if (gBaseStats[megaSpecies].type1 != gBattleMons[bank].type1
+		||  gBaseStats[megaSpecies].type2 != gBattleMons[bank].type2)
+			return FALSE; //If the Pokemon is changing type, don't predict because the player might catch on and purposely not Mega Evolve to mess with the AI
+	}
 
 	return TRUE;
 }
