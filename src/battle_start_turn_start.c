@@ -188,7 +188,8 @@ void BattleBeginFirstTurn(void)
 					return;
 
 				//Primal Reversion
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE)))
+				if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE))
+				&& !IsMegaZMoveBannedBattle())
 				{
 					for (; *bank < gBattlersCount; ++*bank)
 					{
@@ -493,6 +494,13 @@ void BattleBeginFirstTurn(void)
 							++*bank;
 							return;
 						}
+						else if (totemBoostType == TOTEM_MULTI_BOOST)
+						{
+							BattleScriptPushCursorAndCallback(BattleScript_TotemMultiBoost);
+							gBankAttacker = gBattleScripting.bank = *bank;
+							++*bank;
+							return;
+						}
 						else if (totemBoostType == TOTEM_OMNIBOOST) //All main stats
 						{
 							gBankAttacker = gBattleScripting.bank = *bank;
@@ -654,12 +662,16 @@ u8 CanActivateTotemBoost(u8 bank)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gBattleScripting.statChanger = stat | raiseAmount;
+
 			if (InBattleSands()
 			#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
 			|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
 			#endif
 			)
 				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
+
+			if (IS_SINGLE_BATTLE && VarGet(VAR_TOTEM + PARTNER(bank))) //Second stat is stored in partner's var
+				return TOTEM_MULTI_BOOST;
 
 			return TOTEM_SINGLE_BOOST;
 		}

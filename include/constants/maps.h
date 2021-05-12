@@ -727,6 +727,12 @@
 
 #define MAP_HISTORY_CUTSCENE			((31 << 8) | 5)
 
-#define MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM (79 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_E4_HALL         (74 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_MOLEMAN_ROOM    (75 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_ELIAS_ROOM      (76 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_ANABELLE_ROOM   (77 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_PENNY_ROOM      (78 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_CHAMP_ROOM      (79 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_HALL_OF_FAME    (80 | (1 << 8))
 
 #endif

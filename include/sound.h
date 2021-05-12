@@ -5,6 +5,12 @@
 extern bool8 gDisableMusic;
 extern bool8 gWarpMusicDisable;
 
+struct Fanfare
+{
+	u16 songNum;
+	u16 duration;
+};
+
 void __attribute__((long_call)) InitMapMusic(void);
 void __attribute__((long_call)) MapMusicMain(void);
 void __attribute__((long_call)) ResetMapMusic(void);

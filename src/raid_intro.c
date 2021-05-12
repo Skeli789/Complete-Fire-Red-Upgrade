@@ -730,7 +730,7 @@ static void CB2_RaidBattleIntro(void)
 				gMain.state++;
 				break;
 			case 4:
-				if (IsDma3ManagerBusyWithBgCopy() != TRUE)
+				if (!free_temp_tile_data_buffers_if_possible())
 				{
 					ShowBg(0);
 					ShowBg(1);

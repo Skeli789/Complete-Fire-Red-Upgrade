@@ -2373,6 +2373,8 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId)
 extern const u8 gText_NewGame[];
 extern const u8 gText_Plus[];
 extern const u8 gText_VanillaDifficult[];
+extern const u8 gText_Vanilla[];
+extern const u8 gText_Difficult[];
 extern const u8 gText_Expert[];
 extern const u8 gText_Insane[];
 extern const u8 gText_MixedUnboundVersions[];
@@ -2392,13 +2394,13 @@ void HallOfFame_PrintWelcomeText(void)
 	#ifdef VAR_GAME_DIFFICULTY
 		u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
 		const u8* difficultyString = NULL;
-		
-		#ifdef FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY
+
+		#ifdef FLAG_CHANGED_DIFFICULTY
 		if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1 //First HOF
 		#ifdef FLAG_NEW_GAME_PLUS
 		&& FlagGet(FLAG_NEW_GAME_PLUS)
 		#endif
-		&& FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
+		&& FlagGet(FLAG_CHANGED_DIFFICULTY))
 		{
 			difficultyString = gText_NewGame; //Don't display difficulty since player didn't stick with it
 		}
@@ -2413,8 +2415,16 @@ void HallOfFame_PrintWelcomeText(void)
 				case OPTIONS_EXPERT_DIFFICULTY:
 					difficultyString = gText_Insane;
 					break;
+				case OPTIONS_EASY_DIFFICULTY:
+					difficultyString = gText_Vanilla;
+					break;
 				default:
-					difficultyString = gText_VanillaDifficult;
+					#ifdef FLAG_CHANGED_DIFFICULTY
+					if (!FlagGet(FLAG_CHANGED_DIFFICULTY))
+						difficultyString = gText_Difficult; //True Difficult
+					else if (GetGameStat(GAME_STAT_ENTERED_HOF) <= 1) //Only show Vanilla/Difficult the first time
+					#endif
+						difficultyString = gText_VanillaDifficult;
 					break;
 			}
 		}
@@ -2472,8 +2482,8 @@ void HallOfFame_PrintWelcomeText(void)
 
 			if (difficulty >= OPTIONS_EXPERT_DIFFICULTY //Only Insane
 			&& GetGameStat(GAME_STAT_POKEMON_TRADES) > 0
-			#ifdef FLAG_NEW_GAME_PLUS
-			&& !(FlagGet(FLAG_NEW_GAME_PLUS) && FlagGet(FLAG_CHANGED_NEW_GAME_PLUS_DIFFICULTY))
+			#ifdef FLAG_CHANGED_DIFFICULTY
+			&& !FlagGet(FLAG_CHANGED_DIFFICULTY)
 			#endif
 			)
 				StringAppend(gStringVar4, gText_PlusTrades); //Indicate the player traded

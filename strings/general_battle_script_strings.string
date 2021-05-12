@@ -323,6 +323,9 @@ The mysterious strong winds\ncontinue to blow.
 #org @gText_NoMinimizeOnInsane
 [CURRENT_MOVE] can't be selected on the\nInsane difficulty!\p
 
+#org @gText_PickedUpKnockedOffItem
+[PLAYER_NAME] picked up\none [LAST_ITEM]!
+
 //Other Battle Features
 
 #org @gText_TotemOmniboostStatsRose

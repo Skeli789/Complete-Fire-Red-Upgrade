@@ -112,7 +112,6 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	if (firstMove)
 		sLearningMoveTableID = 0;
 
-
 	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
 	if (lvlUpMove.move == 0 && lvlUpMove.level == 0xFF) //In case just learned last move and reentered into loop
 		return retVal; //0
@@ -169,22 +168,28 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
 	for (i = 0; i < MAX_LEARNABLE_MOVES; ++i) //50 max moves can be relearned
 	{
 		struct LevelUpMove lvlUpMove = gLevelUpLearnsets[species][i];
+		u16 move = lvlUpMove.move;
 
-		if (lvlUpMove.move == 0 && lvlUpMove.level == 0xFF)
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER))
+			move = RandomizeMove(move);
+		#endif
+
+		if (move == 0 && lvlUpMove.level == 0xFF)
 			break;
 
 		if (lvlUpMove.level <= level)
 		{
-			for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != lvlUpMove.move; ++j)
+			for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != move; ++j)
 				;
 
 			if (j == MAX_MON_MOVES)
 			{
-				for (k = 0; k < numMoves && moves[k] != lvlUpMove.move; ++k)
+				for (k = 0; k < numMoves && moves[k] != move; ++k)
 					;
 
 				if (k == numMoves)
-					moves[numMoves++] = lvlUpMove.move;
+					moves[numMoves++] = move;
 			}
 		}
 	}

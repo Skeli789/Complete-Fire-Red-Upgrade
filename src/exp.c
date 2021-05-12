@@ -744,6 +744,11 @@ static u32 GetExpToLevel(u8 toLevel, u8 growthRate)
 	return gExperienceTables[growthRate][toLevel];
 }
 
+u32 GetSpeciesExpToLevel(u16 species, u8 toLevel)
+{
+	return GetExpToLevel(toLevel, gBaseStats[species].growthRate);
+}
+
 //////////////////// POWER ITEMS ////////////////////////////////
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 {

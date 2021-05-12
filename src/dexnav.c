@@ -1132,6 +1132,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 }
 
 
+extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
 static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
 {
 	u8 levelBase, levelBonus;
@@ -1147,6 +1148,10 @@ static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
 
 	if (levelBase + levelBonus > MAX_LEVEL)
 		return MAX_LEVEL;
+	#ifdef FLAG_HARD_LEVEL_CAP
+	else if (FlagGet(FLAG_HARD_LEVEL_CAP) && levelBase + levelBonus > GetCurrentLevelCap())
+		return GetCurrentLevelCap();
+	#endif
 	else
 		return levelBase + levelBonus;
 }
@@ -2798,7 +2803,7 @@ static void CB2_DexNav(void)
 			gMain.state++;
 			break;
 		case 4:
-			if (IsDma3ManagerBusyWithBgCopy() != TRUE)
+			if (!free_temp_tile_data_buffers_if_possible())
 			{
 				ShowBg(BG_TEXT);
 				ShowBg(BG_BACKGROUND);

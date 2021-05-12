@@ -18,6 +18,7 @@
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/catching.h"
 #include "../include/new/daycare.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
@@ -318,7 +319,11 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	//Custom moves
 	if (FlagGet(FLAG_WILD_CUSTOM_MOVES)
 	#ifdef FLAG_POKEMON_RANDOMIZER
-	&& !FlagGet(FLAG_POKEMON_RANDOMIZER) //When species are changed, the custom moves no longer make sense
+	&& (!FlagGet(FLAG_POKEMON_RANDOMIZER) //When species are changed, the custom moves no longer make sense
+	#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+	|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+	#endif
+	)
 	#endif
 	)
 	{
@@ -330,6 +335,16 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 		}
 	}
 	#endif
+
+	//Prevent Uncatchable Shinies (they're mean)
+	if (CantCatchBecauseFlag())
+	{
+		while (IsMonShiny(&gEnemyParty[enemyMonIndex]))
+		{
+			u32 otId = Random(); //Randomize otId because it's not like the player can catch it anyway
+			SetMonData(&gEnemyParty[enemyMonIndex], MON_DATA_OT_ID, &otId);
+		}
+	}
 
 	//Status Inducers
 	TryStatusInducer(&gEnemyParty[enemyMonIndex]);
@@ -1293,7 +1308,11 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 		SetMonData(&gEnemyParty[index], MON_DATA_PP_BONUSES, &ppBonus);
 
 		#ifdef FLAG_POKEMON_RANDOMIZER
-		if (!FlagGet(FLAG_POKEMON_RANDOMIZER)) //When species are changed, the custom moves no longer make sense
+		if (!FlagGet(FLAG_POKEMON_RANDOMIZER) //When species are changed, the custom moves no longer make sense
+		#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+		|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+		#endif
+		)
 		#endif
 		{
 			moves = firstMon ? moves : &moves[4];

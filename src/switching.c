@@ -827,7 +827,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
-			if(script)
+			if (!IsMegaZMoveBannedBattle() && script != NULL)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
@@ -889,6 +889,14 @@ void atk52_switchineffects(void)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			else if (totemBoostType == TOTEM_MULTI_BOOST)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemMultiBoostRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
 				++gNewBS->switchInEffectsState;
 				return;
@@ -1260,6 +1268,7 @@ void ClearSwitchBytes(u8 bank)
 	gProtectStructs[bank].enduredSturdy = 0;
 	
 	DestroyMegaIndicator(bank);
+	WipeOldDeperateAttemptRecord(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);
 	ClearBattlerMoveHistory(bank);

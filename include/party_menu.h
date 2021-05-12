@@ -127,6 +127,24 @@ struct PartyMenu
 	s16 learnMoveState;  // data2, used only as a learn move state
 };
 
+struct PartyMenuInternal
+{
+	TaskFunc task;
+	MainCallback exitCallback;
+	u32 chooseHalf:1;
+	u32 lastSelectedSlot:3;  //Used to return to same slot when going left/right bewtween columns
+	u32 spriteIdConfirmPokeball:7;
+	u32 spriteIdCancelPokeball:7;
+	u32 messageId:14;
+	u8 windowId[3]; //windowId[1] is highlighted mon
+	u8 actions[8];
+	u8 numActions;
+	u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
+	s16 data[16];
+};
+
+extern struct PartyMenuInternal* sPartyMenuInternal;
+
 struct PokemonSummaryScreenData
 {
 	u8 field0[0x3210];
@@ -163,3 +181,5 @@ bool8 __attribute__((long_call)) some_other_kind_of_link_test(void);
 void __attribute__((long_call)) InitChooseHalfPartyForBattle(u8 a1);
 u8 __attribute__((long_call)) GetItemEffectType(u16 item);
 void __attribute__((long_call)) PartyMenuModifyHP(u8 taskId, u8 slot, s8 hpIncrement, s16 hpDifference, TaskFunc task);
+
+void __attribute__((long_call)) Task_ClosePartyMenu(u8 taskId);

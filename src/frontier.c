@@ -1626,6 +1626,7 @@ void sp072_LoadBattleCircusEffects(void)
 	{
 		bool8 weatherActive = (gBattleCircusFlags & BATTLE_CIRCUS_WEATHER) != 0;
 		bool8 terrainActive = (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) != 0;
+		bool8 critEffectActive = (gBattleCircusFlags & BATTLE_CIRCUS_CRIT_EFFECT) != 0;
 		bool8 dynamaxActive = DynamaxAllowedInTier(VarGet(VAR_BATTLE_FACILITY_TIER));
 		bool8 randomBattleActive = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE) >= BATTLE_FACILITY_SINGLE_RANDOM;
 
@@ -1636,6 +1637,7 @@ void sp072_LoadBattleCircusEffects(void)
 		} while (gBattleCircusFlags & gBitTable[effectNum] //Only add non active effects
 			|| (weatherActive && gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER) //One weather effect at a time
 			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
+			|| (critEffectActive && gBitTable[effectNum] & BATTLE_CIRCUS_CRIT_EFFECT) //One critical hit effect at a time
 			|| (dynamaxActive && gBitTable[effectNum] & BATTLE_CIRCUS_DYNAMAX) //No point in stacking Dynamax effect
 			|| (randomBattleActive && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //No point in swapping mons in a random battle
 			|| (!tradeMonAllowed && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //Swapping mons becomes available later on depending on team size

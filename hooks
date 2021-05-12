@@ -326,13 +326,13 @@ MainMenuRTCWarningHook2 800C7A4 1
 CalculateMonStatsNew 803E47C 1
 SetMonHeldItemHook 8040784 2
 GetMonAbility 8040D38 1
-DaycareInheritHiddenAbility 8046116 0
 RandomlyGivePartyPokerus 8043A68 1
 UpdatePartyPokerusTime 8043B38 1
 PartySpreadPokerus 8043B40 1
 SetMonExpWithMaxLevelCheck 8043B48 2
 GiveRandomFrontierMonByTier 802883C 3
 RandomizerShowPokepicHook 809D2FC 3
+GetMegaSpecies 801D794 3
 
 ##DNS
 TransferPlttBuffer 8070474 0
@@ -516,6 +516,12 @@ TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
 CreateHatchedMon 08046BFC 2
 OvalCharmHook 08046314 1
+DaycareInheritHiddenAbility 8046116 0
+GetDaycareCompatibilityScore 804654C 1
+GetLevelAfterDaycareSteps 804574C 2
+DaycareLevelCapHook 8045690 0
+GetAllEggMoves 801D784 3
+GetMonDevolution 801D78C 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0

@@ -400,7 +400,14 @@ void atkEF_handleballthrow(void)
 			}
 
 			if (ballType == BALL_TYPE_MASTER_BALL
-			||	ballType == BALL_TYPE_PARK_BALL)
+			||	ballType == BALL_TYPE_PARK_BALL
+			#ifdef FLAG_ALWAYS_CATCHABLE
+			|| FlagGet(FLAG_ALWAYS_CATCHABLE)
+			#endif
+			#ifdef FLAG_SANDBOX_MODE
+			|| FlagGet(FLAG_SANDBOX_MODE)
+			#endif
+			)
 				shakes = maxShakes;
 			else
 			{
@@ -727,7 +734,7 @@ static bool8 CantCatchBecauseRaid(void)
 	return IsRaidBattle() && !RAID_BATTLE_END;
 }
 
-static bool8 CantCatchBecauseFlag(void)
+bool8 CantCatchBecauseFlag(void)
 {
 	return FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING);
 }

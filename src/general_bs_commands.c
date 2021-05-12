@@ -4289,7 +4289,9 @@ void atkBE_rapidspinfree(void)
 	{
 		if (gBattleMons[bankAtk].status2 & STATUS2_WRAPPED)
 		{
+			gBattleScripting.bank = gBankTarget;
 			gBattleMons[bankAtk].status2 &= ~(STATUS2_WRAPPED);
+			gNewBS->brokeFreeMessage &= ~(gBitTable[bankAtk]);
 			gNewBS->sandblastCentiferno[bankAtk] = 0;
 			gBankTarget = gBattleStruct->wrappedBy[bankAtk];
 
@@ -5030,6 +5032,17 @@ void atkE5_pickupitemcalculation(void)
 	}
 
 	++gBattlescriptCurrInstr;
+
+	#ifdef PICK_UP_KNOCKED_OFF_ITEMS
+	if (gNewBS->knockedOffWildItem != ITEM_NONE && CheckBagHasSpace(gNewBS->knockedOffWildItem, 1))
+	{
+		AddBagItem(gNewBS->knockedOffWildItem, 1);
+		gLastUsedItem = gNewBS->knockedOffWildItem;
+		BattleScriptPush(gBattlescriptCurrInstr);
+		gBattleStringLoader = gText_PickedUpKnockedOffItem;
+		gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+	}
+	#endif
 }
 
 static item_t ChoosePickupItem(u8 level)

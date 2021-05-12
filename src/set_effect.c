@@ -866,7 +866,17 @@ bool8 SetMoveEffect2(void)
 
 	if (gBattleMons[gEffectBank].hp == 0
 	&& gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
-		RESET_RETURN
+	{
+		#ifdef PICK_UP_KNOCKED_OFF_ITEMS
+		if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_KNOCK_OFF
+		&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(gEffectBank) == B_SIDE_OPPONENT)
+		{
+			//Allow knocking off wild item even if KOd
+		}
+		else
+		#endif
+			RESET_RETURN
+	}
 
 	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting.bank, gEffectBank)
 	&& !affectsUser
@@ -962,6 +972,12 @@ bool8 SetMoveEffect2(void)
 				gBattlescriptCurrInstr = BattleScript_KnockedOff;
 
 				gBattleStruct->choicedMove[gEffectBank] = 0;
+
+				#ifdef PICK_UP_KNOCKED_OFF_ITEMS
+				if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(gEffectBank) == B_SIDE_OPPONENT) //Wild Pokemon's item
+					gNewBS->knockedOffWildItem = gLastUsedItem;
+				#endif
+
 				effect = TRUE;
 			}
 			break;

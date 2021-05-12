@@ -10,6 +10,7 @@
 
 //Exported Functions
 void BattleAI_SetupAIData(u8 defaultScoreMoves);
+void WipeOldDeperateAttemptRecord(u8 bankAtk);
 u32 GetAIFlags(void);
 u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);

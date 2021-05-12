@@ -175,7 +175,7 @@ u8 GetBattleTerrainOverride(void)
 			}
 			else
 		#elif (defined UNBOUND)
-			if (MAP_IS(POKEMON_LEAGUE_CHAMPIONS_ROOM))
+			if (MAP_IS(POKEMON_LEAGUE_CHAMP_ROOM))
 			{
 				terrain = BATTLE_TERRAIN_CHAMPION;
 			}

@@ -104,3 +104,4 @@ extern const u8 gText_HurtByGMaxCannonade[];
 extern const u8 gText_GMaxCannonadeEnded[];
 extern const u8 gText_HurtByGMaxVolcalith[];
 extern const u8 gText_GMaxVolcalithEnded[];
+extern const u8 gText_PickedUpKnockedOffItem[];

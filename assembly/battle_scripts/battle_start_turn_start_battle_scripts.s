@@ -15,6 +15,8 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_TotemRet
 .global BattleScript_TotemOmniboost
 .global BattleScript_TotemOmniboostRet
+.global BattleScript_TotemMultiBoost
+.global BattleScript_TotemMultiBoostRet
 .global BattleScript_Primal
 .global BattleScript_PrimalSub
 .global BattleScript_ElectricTerrainBattleBegin
@@ -57,6 +59,10 @@ BattleScript_Totem:
 	call BattleScript_TotemRet
 	end3
 
+BattleScript_TotemMultiBoost:
+	call BattleScript_TotemMultiBoostRet
+	end3
+
 BattleScript_TotemOmniboost:
 	call BattleScript_TotemOmniboostRet
 	end3
@@ -73,6 +79,28 @@ BattleScript_TotemRet:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 .LReturn:
+	return
+
+BattleScript_TotemMultiBoostRet:
+	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0
+	setword BATTLE_STRING_LOADER TotemAuraFlared
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	callasm ToggleTotemOmniboostByte
+	playstatchangeanimation BANK_ATTACKER, 0xFF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	callasm ToggleTotemOmniboostByte
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_TotemMultiBoost_SecondStat
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_TotemMultiBoost_SecondStat
+	setgraphicalstatchangevalues
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+BattleScript_TotemMultiBoost_SecondStat:
+	callasm LoadTotemMultiBoostSecondStat
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
+	setgraphicalstatchangevalues
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
 	return
 
 BattleScript_TotemOmniboostRet:

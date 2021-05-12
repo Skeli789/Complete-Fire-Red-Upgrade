@@ -71772,6 +71772,32 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.modifyMovesDoubles = FALSE,
 	},
 	{
+		.species = SPECIES_TYPE_NULL,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 8,
+		.spDefEv = 248,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_BATTLEARMOR
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_RETURN,
+			MOVE_SWORDSDANCE,
+			MOVE_IRONDEFENSE,
+			MOVE_REST,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
 		.species = SPECIES_VULPIX,
 		.nature = NATURE_TIMID,
 		.hpIv = 31,

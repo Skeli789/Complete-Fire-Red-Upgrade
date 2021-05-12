@@ -487,6 +487,17 @@ OvalCharmHook:
 	bx r1
 
 .pool
+@0x8045690 with r0
+DaycareLevelCapHook:
+	mov r1, r5
+	add r1, #0x88
+	ldr r1, [r1] @Steps
+	mov r0, sp @Mon
+	bl GetExperienceAfterDaycareSteps
+	ldr r1, =0x8045698 | 1
+	bx r1
+
+.pool
 @0x808BA60 with r2
 SetBoxMonDataAtHook:
 	mov r2, r5

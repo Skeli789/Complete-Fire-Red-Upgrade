@@ -1747,7 +1747,7 @@ MOVESCR_CHECK_0:
 				{
 					DECREASE_VIABILITY(9); //Pretty much never use King's Shield more than once in a row
 				}
-				else if (gDisableStructs[bankAtk].protectUses == 1 && Random() & 1) //50% chance of using two Protects in a row
+				else if (gDisableStructs[bankAtk].protectUses == 1 && AI_THINKING_STRUCT->simulatedRNG[1] & 1) //50% chance of using two Protects in a row
 				{
 					if (IS_SINGLE_BATTLE)
 						DECREASE_VIABILITY(6);

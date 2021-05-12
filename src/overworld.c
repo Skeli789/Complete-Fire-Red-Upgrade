@@ -223,6 +223,8 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_General_TreeTopLeftOverTreeSideRight 0x27C
 	#define METATILE_General_TreeTopRightOverTreeSideLeft 0x27D
 
+	#define METATILE_Route2_HighLandEdgeMiddle 0x2DD
+
 	#define METATILE_Route17_LandEdgeBottomRight 0x28C
 	#define METATILE_Route17_LandEdgeBottomLeft 0x28B
 	#define METATILE_Route17_LandEdgeBottomMiddle 0x299
@@ -325,6 +327,8 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x351, METATILE_General_LandEdgeRight, Tileset_DrescoTown},
 	{0x358, METATILE_General_TreeSideRight, Tileset_DrescoTown},
 	{0x359, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
+	{0x370, METATILE_Route2_HighLandEdgeMiddle, Tileset_DrescoTown},
+	{0x371, METATILE_Route2_HighLandEdgeMiddle, Tileset_DrescoTown},
 	{0x2BE, METATILE_General_TreeTopLeft, Tileset_FlowerParadise},
 	{0x2BF, METATILE_General_TreeTopRight, Tileset_FlowerParadise},
 	{0x2C7, METATILE_General_TreeTopRight, Tileset_FlowerParadise},

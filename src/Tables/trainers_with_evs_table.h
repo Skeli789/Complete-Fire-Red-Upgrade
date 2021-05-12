@@ -1231,6 +1231,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ivs = 31,
 		.hpEv = 252,
 		.defEv = 252,
+		.spAtkEv = 252,
 		.spDefEv = 252,
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
@@ -1248,12 +1249,12 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_1,
 	},
 	[126] =
-	{	//Gastrodon
-		.nature = NATURE_BOLD,
+	{	//Swampert
+		.nature = NATURE_IMPISH,
 		.ivs = 31,
 		.hpEv = 252,
+		.atkEv = 252,
 		.defEv = 252,
-		.spAtkEv = 252,
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,

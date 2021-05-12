@@ -73,30 +73,12 @@ struct PartyMenuBox
 	u8 statusSpriteId;
 };
 
-struct PartyMenuInternal
-{
-	TaskFunc task;
-	MainCallback exitCallback;
-	u32 chooseHalf:1;
-	u32 lastSelectedSlot:3;  //Used to return to same slot when going left/right bewtween columns
-	u32 spriteIdConfirmPokeball:7;
-	u32 spriteIdCancelPokeball:7;
-	u32 messageId:14;
-	u8 windowId[3]; //windowId[1] is highlighted mon
-	u8 actions[8];
-	u8 numActions;
-	u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
-	s16 data[16];
-};
-
-extern struct PartyMenuInternal* sPartyMenuInternal;
 extern struct PartyMenuBox* sPartyMenuBoxes;
 
 //Vanilla Static Functions
 void __attribute__((long_call)) CreatePartyMonSprites(u8 slot);
 void __attribute__((long_call)) RenderPartyMenuBox(u8 slot);
 u8 __attribute__((long_call)) DisplayPartyMenuMessage(const u8* str, u8 b);
-void __attribute__((long_call)) Task_ClosePartyMenu(u8 taskId);
 void __attribute__((long_call)) ReturnToUseOnWhichMon(u8 taskId);
 void __attribute__((long_call)) DisplayPartyPokemonNickname(struct Pokemon* mon, struct PartyMenuBox* ptr, u8 c);
 void __attribute__((long_call)) DisplayPartyPokemonLevelCheck(struct Pokemon*, struct PartyMenuBox*, u8);
@@ -927,7 +909,7 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 
 const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 {
-	[FIELD_MOVE_DEFOG] = 1,
+	[FIELD_MOVE_FLY] = 1,
 	[FIELD_MOVE_CUT] = 2,
 	[FIELD_MOVE_ROCK_SMASH] = 3,
 	[FIELD_MOVE_STRENGTH] = 4,
@@ -935,7 +917,7 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 	[FIELD_MOVE_ROCK_CLIMB] = 6,
 	[FIELD_MOVE_WATERFALL] = 7,
 	[FIELD_MOVE_DIVE] = 8,
-	[FIELD_MOVE_FLY] = 1,
+	[FIELD_MOVE_DEFOG] = 0,
 	[FIELD_MOVE_FLASH] = 0,
 };
 

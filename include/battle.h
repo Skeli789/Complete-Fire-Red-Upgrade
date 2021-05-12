@@ -900,9 +900,10 @@ struct NewBattleStruct
 	u16 itemBackup[PARTY_SIZE];
 	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD8
 	u8 ringChallengeBannedTypes[3];
+	u16 knockedOffWildItem;
 
 	//Things for Spread Moves
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC8
+	s32 DamageTaken[MAX_BATTLERS_COUNT];
 	s32 turnDamageTaken[MAX_BATTLERS_COUNT]; //Specifically for multi-hit moves and Emergency Exit
 	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
@@ -985,13 +986,14 @@ struct NewBattleStruct
 		u32 secondaryEffectDamage[MAX_BATTLERS_COUNT]; //secondaryEffectDamage[bank]
 		bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
 		bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
-		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice]
+		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice] //~0x2017DD8
 		s16 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
 		u8 bestMonIdToSwitchIntoFlags[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
 		u8 calculatedAISwitchings[MAX_BATTLERS_COUNT]; //calculatedAISwitchings[bankSwitch]
 		u8 fightingStyle[MAX_BATTLERS_COUNT]; //fightingStyle[bankAtk]
 		u8 dynamaxMonId[NUM_BATTLE_SIDES]; //dynamaxMonId[SIDE(bankAtk)]
 		bool8 onlyBadMovesLeft[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //onlyBadMovesLeft[bankAtk][bankDef]
+		bool8 usingDesperateMove[MAX_BATTLERS_COUNT]; //usingDesperateMove[bankAtk]
 		bool8 shouldFreeChoiceLockWithDynamax[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]
 		bool8 shouldUseZMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //shouldUseZMove[bankAtk][bankDef][monMoveIndex]
 		bool8 dynamaxPotential[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //dynamaxPotential[bankAtk][bankDef]

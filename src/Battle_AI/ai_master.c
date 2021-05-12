@@ -57,6 +57,7 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 };
 
 //This file's functions:
+static void CheckDeperateAttempt(u8 bankAtk, u8 bankDef, u8 chosenMovePos, struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData);
 static void BattleAI_DoAIProcessing(struct AIScript* aiScriptData);
@@ -263,9 +264,16 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	{
 		TryTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		ret = ChooseMoveOrAction_Singles(&aiScriptData);
+		CheckDeperateAttempt(gBankAttacker, FOE(gBankAttacker), ret, &aiScriptData); //Record if the AI is using a move out of desperation
 	}
 	else
+	{
 		ret = ChooseMoveOrAction_Doubles(&aiScriptData);
+
+		if ((!BATTLER_ALIVE(aiScriptData.foe1) || !BATTLER_ALIVE(aiScriptData.foe2)) //Only one foe left
+		&& !BATTLER_ALIVE(aiScriptData.bankAtkPartner)) //Partner gone too making it 1v1
+			CheckDeperateAttempt(gBankAttacker, gBankTarget, ret, &aiScriptData); //Record if the AI is using a move out of desperation (treat like single battle)
+	}
 
 	TryRevertTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	TryRevertTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
@@ -313,6 +321,32 @@ void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* 
 		CalculateMonStats(mon); //Revert from temp mega
 		*GetAbilityLocation(bank) = *backupAbility;
 		Memcpy(&gBattleMons[bank], backupMon, sizeof(gBattleMons[bank]));
+	}
+}
+
+void WipeOldDeperateAttemptRecord(u8 bankAtk)
+{
+	gNewBS->ai.usingDesperateMove[bankAtk] = FALSE;
+}
+
+static void CheckDeperateAttempt(u8 bankAtk, u8 bankDef, u8 chosenMovePos, struct AIScript* aiScriptData)
+{
+	if (chosenMovePos < MAX_MON_MOVES) //Chose a move
+	{
+		u16 chosenMove = GetBattleMonMove(bankAtk, chosenMovePos);
+		u16 foePrediction = IsValidMovePrediction(bankDef, bankAtk);
+
+		if (foePrediction != MOVE_NONE
+		&& aiScriptData->defSpeed > aiScriptData->atkSpeed //Foe is faster
+		&& MoveKnocksOutXHits(foePrediction, bankDef, bankAtk, 1)) //Smart thing for foe to do would be to KO the player this turn
+		{
+			if (!(GetBaseMoveTarget(chosenMove, bankAtk) & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_DEPENDS)) //Chosen move will hit foe
+			&& PriorityCalc(bankAtk, ACTION_USE_MOVE, chosenMove) > 0 //And chosen move is priority move
+			&& StrongestMoveGoesFirst(chosenMove, bankAtk, bankDef)) //The chosen move is the strongest move that would go first
+				gNewBS->ai.usingDesperateMove[bankAtk] = TRUE; //This is clearly a desperate attempt, and the player may notice this (generally set until mon faints)
+		}
+		else
+			WipeOldDeperateAttemptRecord(bankAtk); //AI isn't in a desperate situation anymore
 	}
 }
 
@@ -516,7 +550,9 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 					bool8 thisFoeCanKOAI = CanKnockOut(i, gBankAttacker);
 					bool8 bestFoeCanKOAI = CanKnockOut(mostDmgTarget, gBankAttacker);
 
-					if (!thisFoeCanKOAI && bestFoeCanKOAI)
+					if (!(AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE))
+						goto ADD_TARGET_AS_MOST_VIABLE; //Dumb and Semi-Smart AI doesn't care about foe that can KO it
+					else if (!thisFoeCanKOAI && bestFoeCanKOAI)
 						continue; //Prioritize foe that can KO the AI
 					else if (thisFoeCanKOAI && bestFoeCanKOAI)
 						goto ADD_TARGET_AS_MOST_VIABLE; //Both foes can KO the AI, so both are good targets
@@ -980,6 +1016,14 @@ static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u8 
 	{
 		if (!WillFaintFromEntryHazards(mon, SIDE(gActiveBattler))) //Theres a point to switching in this mon
 		{
+			/* This doesn't really seem to make the AI play any better
+			if (IS_SINGLE_BATTLE //Still good to do this kind of switch in Doubles
+			&& IsHPAbsorptionAbility(monAbility) //Ability restores HP when hit
+			&& mon->hp == mon->maxHP //Mon is already at max HP
+			&& GetMonEntryHazardDamage(mon, side) == 0) //And won't take any damage switching in
+				return FALSE; //No point in absorbing this attack
+			*/
+
 			//We found a mon.
 			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
 			EmitTwoReturnValues(1, ACTION_SWITCH, 0);

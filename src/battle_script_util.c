@@ -14,6 +14,7 @@
 #include "../include/new/daycare.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
+#include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
@@ -206,6 +207,22 @@ void ToggleSpectralThiefByte(void)
 void ToggleTotemOmniboostByte(void)
 {
 	gNewBS->totemOmniboostActive ^= TRUE;
+}
+
+void LoadTotemMultiBoostSecondStat(void)
+{
+	u16 val = VarGet(VAR_TOTEM + PARTNER(gBankAttacker));
+	u16 stat = val & 0x7;
+	u8 raiseAmount = val & ~(0xF);
+
+	if (InBattleSands()
+	#ifdef FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST
+	|| FlagGet(FLAG_SINGLE_TRAINER_MON_TOTEM_BOOST)
+	#endif
+	)
+		VarSet(VAR_TOTEM + PARTNER(gBankAttacker), 0); //Only first Pokemon gets boost in battle sands
+
+	gBattleScripting.statChanger = stat | raiseAmount;
 }
 
 void CheeckPouchFunc(void)

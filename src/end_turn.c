@@ -1858,13 +1858,11 @@ u32 GetBadThoughtsDamage(u8 bank)
 			#ifdef VAR_GAME_DIFFICULTY
 			switch (VarGet(VAR_GAME_DIFFICULTY)) {
 				case OPTIONS_EASY_DIFFICULTY:
+				case OPTIONS_NORMAL_DIFFICULTY:
 					divisor = 16; //1/16 of HP
 					break;
-				case OPTIONS_NORMAL_DIFFICULTY:
-					divisor = 13; //1/13 of HP
-					break;
 				case OPTIONS_HARD_DIFFICULTY:
-					divisor = 10; //1/10 of HP
+					divisor = 12; //1/12 of HP
 					break;
 				case OPTIONS_EXPERT_DIFFICULTY:
 				default:

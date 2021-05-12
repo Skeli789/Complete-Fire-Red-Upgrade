@@ -12,6 +12,7 @@
 
 //Exported Functions
 bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd);
+u32 GetSpeciesExpToLevel(u16 species, u8 toLevel);
 
 //Functions Hooked In
 void atk23_getexp(void);

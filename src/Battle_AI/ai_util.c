@@ -1804,6 +1804,18 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 	return FALSE;
 }
 
+/*bool8 IsHPAbsorptionAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_WATERABSORB:
+		case ABILITY_VOLTABSORB:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}*/
+
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
@@ -1812,7 +1824,8 @@ bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 	&& movePos < MAX_MON_MOVES //Mon actually knows Sucker Punch (and isn't just copying it from somewhere)
 	&& SIDE(bankAtk) == B_SIDE_OPPONENT //AI side is attacker
 	&& gBattleMons[bankAtk].pp[movePos] < CalculatePPWithBonus(move, gBattleMons[bankAtk].ppBonuses, movePos) //Mon has revealed Sucker Punch
-	&& StatusMoveInMoveset(bankDef)) //Player can cheese AI with status move spam
+	&& (StatusMoveInMoveset(bankDef) //Player can cheese AI with status move spam
+	 || (DamagingPriorityMoveInMovesetThatAffects(bankDef, bankAtk) && SpeedCalc(bankDef) > SpeedCalc(bankAtk)))) //Player can cheese AI with priority spam
 	{
 		if (!gNewBS->ai.suckerPunchOkay[bankAtk]) //This turn wasn't randomly chosen to be okay for Sucker Punch
 			return FALSE;
@@ -2548,6 +2561,30 @@ bool8 PriorityMoveInMoveset(u8 bank)
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (PriorityCalc(bank, ACTION_USE_MOVE, move) > 0)
+				return TRUE;
+		}
+	}
+
+	return FALSE;	
+}
+
+bool8 DamagingPriorityMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (SPLIT(move) != SPLIT_STATUS
+			&& PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
+			&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
 				return TRUE;
 		}
 	}

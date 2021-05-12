@@ -21,6 +21,7 @@ void SetStatSwapSplit(void);
 void ResetTargetStats(void);
 void ToggleSpectralThiefByte(void);
 void ToggleTotemOmniboostByte(void);
+void LoadTotemMultiBoostSecondStat(void);
 void CheeckPouchFunc(void);
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void);
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void);

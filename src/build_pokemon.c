@@ -74,12 +74,16 @@ enum
 	ELECTRIC_IMMUNITY,
 	SOUND_IMMUNITY,
 	JUSTIFIED_BOOSTED,
+
+	//Field setters go at the end
 	ELECTRIC_TERRAIN_SETTER,
 	PSYCHIC_TERRAIN_SETTER,
 	RAIN_SETTER,
 	HAIL_SETTER,
 	NUM_INDEX_CHECKS
 };
+
+#define PARTY_INDEX_FIELD_SETTERS_START ELECTRIC_TERRAIN_SETTER
 
 struct TeamBuilder
 {
@@ -150,12 +154,15 @@ static u8 GetTrainerMonMovePPBonus(void);
 static u8 GetTrainerMonMovePP(u16 move, u8 index);
 #if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 static u8 GetPlayerBiasedAverageLevel(u8 maxLevel);
-static bool8 CanTrainerEvolveMon(void);
+static bool8 DoesTrainerBattleModeAllowMonEvolution(void);
 static bool8 IsPseudoBossTrainerPartyForLevelScaling(u8 trainerPartyFlags);
 #endif
 static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId);
-static void ModifySpeciesAndLevelForGenericBattle(u16* species, u8* level, u8 minEnemyTeamLevel, u8 highestPlayerTeamLevel, u8 averagePlayerTeamLevel, u8 trainerClass, bool8 shouldEvolve);
+static void ModifySpeciesAndLevelForGenericBattle(u16* species, u8* level, u8 minEnemyTeamLevel, u8 highestPlayerTeamLevel, u8 averagePlayerTeamLevel, u8 trainerClass, unusedArg u8 partySize, bool8 shouldEvolve);
 static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 maxEnemyTeamLevel, unusedArg u8 maxPlayerTeamLevel, unusedArg bool8 shouldEvolve);
+#ifdef VAR_GAME_DIFFICULTY
+static void GiveMon2BestBaseStatEVs(struct Pokemon* mon);
+#endif
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void BuildFrontierMultiParty(u8 multiId);
 static void BuildRaidMultiParty(void);
@@ -223,7 +230,11 @@ void BuildTrainerPartySetup(void)
 			else
 				BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
 
-			if (IsRandomBattleTowerBattle())
+			if (IsRandomBattleTowerBattle()
+			#ifdef FLAG_PRESET_RANDOM_TEAM
+			&& !FlagGet(FLAG_PRESET_RANDOM_TEAM)
+			#endif
+			)
 				BuildFrontierParty(gPlayerParty, 0, towerTier, TRUE, TRUE + 1, B_SIDE_PLAYER);
 		}
 	}
@@ -381,7 +392,7 @@ static void TryGiveMonOnlyMetronome(struct Pokemon* mon)
 	if (species != SPECIES_NONE && species != SPECIES_EGG)
 	{
 		u16 move = MOVE_METRONOME;
-		u8 bonus = 3;
+		u8 bonus = 3; //Only needs to be 3 because move index is force set at 0 (next line)
 		u8 pp = CalculatePPWithBonus(MOVE_METRONOME, bonus, 0);
 		SetMonData(mon, MON_DATA_MOVE1, &move);
 		SetMonData(mon, MON_DATA_PP1, &pp);
@@ -423,6 +434,9 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 			break;
 	}
 
+	#ifdef FLAG_PRESET_RANDOM_TEAM
+	FlagSet(FLAG_PRESET_RANDOM_TEAM);
+	#endif
 	VarSet(VAR_BATTLE_FACILITY_TIER, tier);
 	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
 
@@ -714,7 +728,9 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		maxPartyLevel = 0;
 		highestPlayerLevel = GetHighestMonLevel(gPlayerParty);
 		modifiedAveragePlayerLevel = GetPlayerBiasedAverageLevel(highestPlayerLevel);
-		canEvolveMon = CanTrainerEvolveMon();
+		canEvolveMon = side == B_SIDE_OPPONENT //Partners can't evolve their Pokemon
+					&& DoesTrainerBattleModeAllowMonEvolution();
+
 		if (side == B_SIDE_OPPONENT || !firstTrainer) //Only worth calculating if the Trainer is the enemy or the partner
 		{
 			for (i = 0; i < monsCount; ++i)
@@ -747,7 +763,11 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		highestPlayerLevel = 0;
 		canEvolveMon = FALSE;
 		#endif
-		setCustomMoves = !FlagGet(FLAG_POKEMON_RANDOMIZER) || FlagGet(FLAG_BATTLE_FACILITY); //Don't set custom moves when species are randomized
+		setCustomMoves = !FlagGet(FLAG_POKEMON_RANDOMIZER)  //Don't set custom moves when species are randomized
+						#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+						|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER) //Unless the randomizer is disabled
+						#endif
+						|| FlagGet(FLAG_BATTLE_FACILITY); //Or the species wouldn't be randomized normally
 
 		//Create each Pokemon
 		for (i = 0, trainerNameLengthOddness = StringLength(trainer->trainerName) & 1, nameHash = 0; i < monsCount; ++i)
@@ -875,16 +895,18 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 			if (gTrainers[trainerId].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
 			&& trainer->aiFlags > 1
-			#ifdef VAR_GAME_DIFFICULTY
-			&& gameDifficulty != OPTIONS_EASY_DIFFICULTY
-			#endif
 			&& spreadNum != 0
 			&& spreadNum < NELEMS(gTrainersWithEvsSpreads)) //Valid id
 			{
 				const struct TrainersWithEvs* spread = &gTrainersWithEvsSpreads[spreadNum];
 
-				SET_EVS(spread);
-				SET_IVS_SINGLE_VALUE(MathMin(31, spread->ivs));
+				#ifdef VAR_GAME_DIFFICULTY
+				if (gameDifficulty != OPTIONS_EASY_DIFFICULTY)
+				#endif
+				{
+					SET_EVS(spread);
+					SET_IVS_SINGLE_VALUE(MathMin(31, spread->ivs));
+				}
 				
 				#ifdef FLAG_TRICK_ROOM_BATTLE
 				if (FlagGet(FLAG_TRICK_ROOM_BATTLE) || MoveInMonMoveset(MOVE_TRICKROOM, &party[i]))
@@ -939,6 +961,10 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 				TryGiveSpecialTrainerHiddenPower(trainerId, &party[i]);
 				#endif
 			}
+			#ifdef VAR_GAME_DIFFICULTY
+			else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+				GiveMon2BestBaseStatEVs(&party[i]);
+			#endif
 			#endif
 
 			//Caluate stats and set to full health
@@ -989,7 +1015,7 @@ static u8 GetTrainerMonMovePPBonus(void)
 
 static u8 GetTrainerMonMovePP(u16 move, u8 index)
 {
-	return CalculatePPWithBonus(move, GetTrainerMonMovePPBonus(), index);;
+	return CalculatePPWithBonus(move, GetTrainerMonMovePPBonus(), index);
 }
 
 //These next few functions are related to scaling a Trainer's team dynamically based the player's strength
@@ -1037,7 +1063,7 @@ static u8 GetPlayerBiasedAverageLevel(u8 maxLevel)
 	return sum / count;
 }
 
-static bool8 CanTrainerEvolveMon(void)
+static bool8 DoesTrainerBattleModeAllowMonEvolution(void)
 {
 	return sTrainerBattleMode == TRAINER_BATTLE_SINGLE_SCALED
 		|| sTrainerBattleMode == TRAINER_BATTLE_DOUBLE_SCALED
@@ -1093,7 +1119,7 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 }
 
 static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unusedArg u8* level, unusedArg u8 minEnemyTeamLevel, unusedArg u8 highestPlayerTeamLevel,
-                                                  unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerPartyFlags, unusedArg bool8 shouldEvolve)
+                                                  unusedArg u8 averagePlayerTeamLevel, unusedArg u8 trainerPartyFlags, unusedArg u8 partySize, unusedArg bool8 shouldEvolve)
 {
 	#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
 	u8 minEnemyLevel, startScalingAtLevel, prevStartScalingAtLevel, levelRange, newLevel, badgeCount, levelSubtractor;
@@ -1117,7 +1143,33 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	else
 	{
 		#ifdef VAR_GAME_DIFFICULTY
-		levelSubtractor = (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) ? 2 : 6; //In Expert mode, Trainers scale closer to your average level, other the average level - 6 at minimum
+		if  (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+			levelSubtractor = 2; //In the hardest mode, Trainers scale closer to your average level
+		else
+		{
+			//The more Pokemon on the enemy team the lower the levels scale (helps maintain curve)
+			switch (partySize)
+			{
+				default:
+				case 1:
+					levelSubtractor = 3;
+					break;
+				case 2:
+					levelSubtractor = 5;
+					break;
+				case 3:
+					levelSubtractor = 6;
+					break;
+				case 4:
+					levelSubtractor = 7;
+					break;
+				case 5:
+				case 6:
+					levelSubtractor = 8;
+					break;
+			}
+		}
+
 		#else
 		levelSubtractor = 6;
 		#endif
@@ -1215,6 +1267,47 @@ u8 GetScaledWildBossLevel(u8 level)
 	return level;
 }
 
+#ifdef VAR_GAME_DIFFICULTY
+static void GiveMon2BestBaseStatEVs(struct Pokemon* mon)
+{
+	//Assign random Trainers max EVs in their two best base stats
+	u8 statId, bestStat1, bestStat2;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	//Set initial best stats
+	if (GetVisualBaseStat(STAT_HP, species) > GetVisualBaseStat(STAT_ATK, species))
+	{
+		bestStat1 = STAT_HP;
+		bestStat2 = STAT_ATK;
+	}
+	else
+	{
+		bestStat1 = STAT_ATK;
+		bestStat2 = STAT_HP;
+	}
+
+	//Find best of rest of stats
+	for (statId = STAT_DEF, bestStat1 = STAT_HP, bestStat2 = STAT_ATK; statId <= STAT_SPDEF; ++statId)
+	{
+		u16 stat = GetVisualBaseStat(statId, species);
+
+		if (stat > GetVisualBaseStat(bestStat1, species))
+		{
+			bestStat2 = bestStat1; //Shift down
+			bestStat1 = statId; //New best stat
+		}
+		else if (stat > GetVisualBaseStat(bestStat2, species))
+		{
+			bestStat2 = statId; //New second best stat
+		}
+	}
+
+	u8 maxEV = EV_CAP;
+	SetMonData(mon, MON_DATA_HP_EV + bestStat1, &maxEV);
+	SetMonData(mon, MON_DATA_HP_EV + bestStat2, &maxEV);
+}
+#endif
+
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side)
 {
@@ -1249,6 +1342,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 		case FRONTIER_BRAIN_TID:
 			trainerGender = specialTrainer->gender;
 			break;
+		case BATTLE_FACILITY_MULTI_TRAINER_TID:
+			trainerGender = multiPartner->gender;
+			break;
 	}
 
 	if (forPlayer)
@@ -1273,9 +1369,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 	builder->battleType = battleType;
 	builder->monsCount = monsCount;
 	builder->trainerId = trainerId;
-
-	for (i = 0; i < NUM_INDEX_CHECKS; ++i)
-		builder->partyIndex[i] = 0xFF;
+	Memset(builder->partyIndex, 0xFF, sizeof(builder->partyIndex));
 
 	for (i = 0; i < monsCount; ++i)
 	{
@@ -1754,7 +1848,21 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 
 				builder->speciesOnTeam[dexNum] = TRUE;
 				for (j = 0; j < MAX_MON_MOVES; ++j)
+				{
 					builder->moveOnTeam[spread->moves[j]] = TRUE;
+
+					switch (spread->moves[j]) {
+						case MOVE_ELECTRICTERRAIN:
+							builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
+							break;
+
+						case MOVE_PSYCHICTERRAIN:
+							builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
+							break;
+
+						//Rain setter and Hail setter are used for Thunder and Blizzard, so it's better to only rely on weather Abilities for those
+					}
+				}
 
 				if (spread->spdEv >= 20)
 					builder->partyIndex[FAST_MON] = i;
@@ -1772,6 +1880,25 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 					builder->partyIndex[CLERIC] = i;
 				else if (IsClassEntryHazards(class))
 					builder->partyIndex[HAZARDS_SETUP] = i;
+
+				//Abilities Always
+				switch (ability) {
+					case ABILITY_DRIZZLE:
+						builder->partyIndex[RAIN_SETTER] = i;
+						break;
+
+					case ABILITY_SNOWWARNING:
+						builder->partyIndex[HAIL_SETTER] = i;
+						break;
+
+					case ABILITY_ELECTRICSURGE:
+						builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
+						break;
+
+					case ABILITY_PSYCHICSURGE:
+						builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
+						break;
+				}
 
 				if (!IsFrontierSingles(battleType)) //Doubles or Multi
 				{
@@ -1807,22 +1934,6 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 
 						case ABILITY_JUSTIFIED:
 							builder->partyIndex[JUSTIFIED_BOOSTED] = i;
-							break;
-
-						case ABILITY_DRIZZLE:
-							builder->partyIndex[RAIN_SETTER] = i;
-							break;
-
-						case ABILITY_SNOWWARNING:
-							builder->partyIndex[HAIL_SETTER] = i;
-							break;
-
-						case ABILITY_ELECTRICSURGE:
-							builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
-							break;
-
-						case ABILITY_PSYCHICSURGE:
-							builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
 							break;
 					}
 
@@ -1996,7 +2107,11 @@ static void BuildRaidMultiParty(void)
 		CreateFrontierMon(&gPlayerParty[i + 3], GetRandomRaidLevel(), spread, RAID_BATTLE_MULTI_TRAINER_TID, 2, gRaidPartners[multiId].gender, FALSE);
 		SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &zero); //So they don't say "Battle Frontier"
 
-		if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
+		if (FlagGet(FLAG_POKEMON_RANDOMIZER) //Don't set custom moves when species has been randomized
+		#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+		&& !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+		#endif
+		&& !FlagGet(FLAG_BATTLE_FACILITY))
 		{
 			Memset(gPlayerParty[i + 3].moves, 0, sizeof(gPlayerParty[i + 3].moves));
 			GiveBoxMonInitialMoveset((void*) &gPlayerParty[i + 3]); //Give the randomized Pokemon moves it would normally have
@@ -2060,7 +2175,8 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	for (j = 0; j < MAX_MON_MOVES; j++)
 	{
 		mon->moves[j] = spread->moves[j];
-		mon->pp[j] = gBattleMoves[spread->moves[j]].pp;
+		mon->pp[j] = CalculatePPWithBonus(spread->moves[j], 0xFF, j);
+		mon->ppBonuses = 0xFF; //Max PP
 	}
 
 	SetMonData(mon, MON_DATA_HELD_ITEM, &spread->item);
@@ -3239,8 +3355,8 @@ struct DoubleReplacementMoves
 	u16 replacementMove;
 	u8 learnType;
 	u16 other;
-	u8 noIfImmunity;
-	u8 yesIfImmunity;
+	u8 replaceIfNoImmunity;
+	u8 replaceIfImmunity;
 };
 
 enum
@@ -3463,46 +3579,57 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 						u16 oldMove = sDoubleSpreadReplacementMoves[j].oldMove;
 						u16 newMove = sDoubleSpreadReplacementMoves[j].replacementMove;
 						u8 pos = FindMovePositionInMonMoveset(oldMove, &party[i]);
-						u8 newPP = gBattleMoves[newMove].pp;
+						u8 newPP = CalculatePPWithBonus(newMove, 0xFF, pos);
 
 						if (pos < MAX_MON_MOVES && !MoveInMonMoveset(newMove, &party[i]))
 						{
-							if (sDoubleSpreadReplacementMoves[j].noIfImmunity != 0
-							&&  builder->partyIndex[sDoubleSpreadReplacementMoves[j].noIfImmunity] != i)
+							//Don't replace the move if the immunity is found on the team
+							//Eg. Earthquake -> High Horsepower if no GROUND_IMMUNITY
+							u8 immunity = sDoubleSpreadReplacementMoves[j].replaceIfNoImmunity;
+							if (immunity != 0 //Entry in the table
+							&& builder->partyIndex[immunity] != 0xFF //This immunity is on the team (Eg. Flying-type on team)
+							&& builder->partyIndex[immunity] != i //This mon isn't the mon with the immunity (Eg. Flying-type is someone else)
+							&& !IsFrontierMulti(builder->battleType)) //This mon could be together with the immune mon (Eg. This mon could be with the Flying mon)
+								continue; //Don't replace move (Eg. The Earthquaker could be paired with a Flying-type)
+
+							//Only replace the move if the immunity is found on the team
+							//Eg. Thunderbolt -> Discharge if ELECTRIC_IMMUNITY
+							immunity = sDoubleSpreadReplacementMoves[j].replaceIfImmunity;
+							if (immunity != 0 //Entry in the table
+							&& (builder->partyIndex[immunity] == 0xFF //This immunity isn't on the team (No Volt Absorber on team)
+							|| builder->partyIndex[immunity] == i //This mon is the mon with the immunity (Eg. Volt Absorber is this mon)
+							|| (IsFrontierMulti(builder->battleType) //This mon couldn't be together with the immune mon
+							 && sDoubleSpreadReplacementMoves[j].replaceIfImmunity < PARTY_INDEX_FIELD_SETTERS_START))) //And the immunity is an immunity and not something like PSYCHIC_TERRAIN_SETTER
 								continue;
 
-							if (sDoubleSpreadReplacementMoves[j].yesIfImmunity == 0
-							||  builder->partyIndex[sDoubleSpreadReplacementMoves[j].yesIfImmunity] != i) //There's an immunity on some other Pokemon
-							{
-								switch (sDoubleSpreadReplacementMoves[j].learnType) {
-									case LEARN_TYPE_TM:
-										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0) == CAN_LEARN_MOVE)
+							switch (sDoubleSpreadReplacementMoves[j].learnType) {
+								case LEARN_TYPE_TM:
+									if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0) == CAN_LEARN_MOVE)
+									{
+										SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+										SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
+									}
+									break;
+
+								case LEARN_TYPE_TUTOR:
+									if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other) == CAN_LEARN_MOVE)
+									{
+										SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+										SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
+									}
+									break;
+
+								case LEARN_TYPE_LEVEL_UP:
+									for (k = 0; k < MAX_LEARNABLE_MOVES && levelUpMoves[k] != MOVE_NONE; ++k)
+									{
+										if (levelUpMoves[k] == newMove)
 										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
 											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
+											break;
 										}
-										break;
-
-									case LEARN_TYPE_TUTOR:
-										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other) == CAN_LEARN_MOVE)
-										{
-											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
-											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
-										}
-										break;
-
-									case LEARN_TYPE_LEVEL_UP:
-										for (k = 0; k < MAX_LEARNABLE_MOVES && levelUpMoves[k] != MOVE_NONE; ++k)
-										{
-											if (levelUpMoves[k] == newMove)
-											{
-												SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
-												SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
-												break;
-											}
-										}
-										break;
-								}
+									}
+									break;
 							}
 						}
 					}
@@ -3930,6 +4057,9 @@ void TryRandomizeSpecies(unusedArg u16* species)
 {
 	#ifdef FLAG_POKEMON_RANDOMIZER
 	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)
+	#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+	&& !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+	#endif
 	&& *species != SPECIES_NONE && *species != SPECIES_ZYGARDE_CELL && *species < NUM_SPECIES)
 	{
 		u16 newSpecies;
@@ -3971,10 +4101,8 @@ u16 GetRandomizedSpecies(u16 species)
 
 void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
 {
-	int i;
+	u32 i, personality, value;
 	u8 speciesName[POKEMON_NAME_LENGTH + 1];
-	u32 personality;
-	u32 value;
 
 	TryRandomizeSpecies(&species);
 
@@ -3989,12 +4117,10 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	//Determine original trainer ID
 	if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
 	{
-		u32 shinyValue;
 		do
 		{
 			value = Random32();
-			shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
-		} while (shinyValue < 8);
+		} while (IsShinyOtIdPersonality(value, personality));
 	}
 	else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
 		value = fixedOtId;

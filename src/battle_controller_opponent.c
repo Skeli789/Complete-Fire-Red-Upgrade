@@ -153,7 +153,7 @@ void OpponentHandleChooseMove(void)
 
 		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
 			EmitMoveChosen(1, chosenMovePos, gActiveBattler, 0, 0, 0, FALSE);
-		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		else if (IS_DOUBLE_BATTLE)
 			EmitMoveChosen(1, chosenMovePos, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
 		else
 			EmitMoveChosen(1, chosenMovePos, FOE(gActiveBattler), 0, 0, 0, FALSE);
@@ -181,7 +181,7 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 					u8 backup = gActiveBattler;
 					gActiveBattler = PARTNER(gActiveBattler);
 					ForceCompleteDamageRecalculation(gActiveBattler);
-					EmitChooseMove(0, (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) != 0, FALSE, &moveInfo); //Rechoose partner move
+					EmitChooseMove(0, (IS_DOUBLE_BATTLE) != 0, FALSE, &moveInfo); //Rechoose partner move
 					MarkBufferBankForExecution(gActiveBattler);
 					gActiveBattler = backup;
 				}
@@ -306,28 +306,30 @@ void OpponentHandleChoosePokemon(void)
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
+		if (IS_DOUBLE_BATTLE)
+		{
+			battlerIn1 = gActiveBattler; //The dead mon
+			if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+				battlerIn2 = gActiveBattler;
+			else
+				battlerIn2 = PARTNER(battlerIn1);
+		}
+		else
+		{
+			battlerIn1 = gActiveBattler;
+			battlerIn2 = gActiveBattler;
+		}
+
 		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
-		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
+		|| GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0 //Best mon is dead
+		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn1]
+		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn2]) //The best mon is already in
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();
 
 		if (chosenMonId == PARTY_SIZE)
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			{
-				battlerIn1 = gActiveBattler;
-				if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-					battlerIn2 = gActiveBattler;
-				else
-					battlerIn2 = PARTNER(battlerIn1);
-			}
-			else
-			{
-				battlerIn1 = gActiveBattler;
-				battlerIn2 = gActiveBattler;
-			}
-
 			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
 			{
 				if (party[chosenMonId].species != SPECIES_NONE

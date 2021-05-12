@@ -1018,7 +1018,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					&&  !IsBankIncapacitated(bankDef))
 					{
 						if (data->atkSpecies == SPECIES_AEGISLASH_BLADE //In blade form
-						|| (IS_DOUBLE_BATTLE && Random() % 100 < 80) //80% chance of spamming in doubles
+						|| (IS_DOUBLE_BATTLE && AI_THINKING_STRUCT->simulatedRNG[1] < 80) //80% chance of spamming in doubles
 						|| IsClassStall(class) //Best to protect always if you're stalling
 						|| (predictedMove != MOVE_NONE 
 						 && CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
@@ -2687,12 +2687,13 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-			//&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
 			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
 			{
 				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
 			}
 			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
+			&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn
+			 || AI_THINKING_STRUCT->simulatedRNG[3] < ((gLastPrintedMoves[bankDef] != MOVE_NONE && SPLIT(gLastPrintedMoves[bankDef]) == SPLIT_STATUS) ? 25 : 75)) //Or allowed consecutive desperate moves (higher chance if opponent last used an attacking move)
 			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
@@ -2704,6 +2705,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
 				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 				{
+					//Use a desperate priority move
 					INCREASE_VIABILITY(9);
 				}
 			}
@@ -2838,6 +2840,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		//Copied from above
 		if (SPLIT(move) != SPLIT_STATUS)
 		{
+			u8 class = GetBankFightingStyle(bankAtk);
 			u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
 
 			//Every spread type has the same viability increases for these two
@@ -2847,26 +2850,30 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
 			{
 				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Unless the move would go before Sucker Punch
+				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 				{
 					INCREASE_VIABILITY(9);
 				}
 			}
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-			&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
+			//&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
 			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
 			{
-				INCREASE_VIABILITY(8); //Use the killing move with the best accuracy
+				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
 			}
 			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
-			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
+			&& !IsClassEntryHazards(class) //If your goal isn't to get up hazards
+			&& !IsClassPhazer(class) //Or phaze/set up hazards
 			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
 				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Unless the move would go before Sucker Punch
+				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 				{
 					INCREASE_VIABILITY(9);
 				}
@@ -2904,7 +2911,6 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			else
 				INCREASE_VIABILITY(10);
 		}
-		
 
 		return viability;
 	}

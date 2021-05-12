@@ -785,7 +785,8 @@ RemoveEggFromDayCare = 0x8045F70 | 1;
 //DetermineEggSpeciesAndParentSlots = 0x8046000 | 1;
 //SetInitialEggData = 0x8046208 | 1;
 ShouldEggHatch = 0x80463B8 | 1;
-GetDaycareCompatibilityScore = 0x804654C | 1;
+EggGroupsOverlap = 0x804651C | 1;
+//GetDaycareCompatibilityScore = 0x804654C | 1;
 
 /* Pokemon Storage Functions */
 ZeroBoxMonData = 0x803D97C | 1;
@@ -1122,6 +1123,7 @@ sub_8150498 = 0x8150498 | 1;
 MapHasPreviewScreen = 0x80F8110 | 1;
 
 /* Region Map Functions */
+InitRegionMapWithExitCB = 0x80BFF50 | 1;
 RegionMap_NullVBlankHBlankCallbacks = 0x80C08E0 | 1;
 SetRegionMapVBlankCB = 0x80C08F4 | 1;
 GetRegionMapPermission = 0x80C0E04 | 1;

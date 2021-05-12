@@ -17,6 +17,7 @@ void atkF1_trysetcaughtmondexflags(void);
 struct Pokemon* LoadTargetPartyData(void);
 bool8 IsCriticalCapture(void);
 bool8 IsCriticalCaptureSuccess(void);
+bool8 CantCatchBecauseFlag(void);
 bool8 CantCatchPokemonRightNow(void);
 
 //Functions Hooked In

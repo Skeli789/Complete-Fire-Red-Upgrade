@@ -248,16 +248,16 @@ static const struct WildPokemonInfo sFrozenForest_LandMonsInfoNight = {20, sFroz
 static const struct WildPokemon sRoute11_LandMonsNight[] =
 {
 	{26, 29, SPECIES_EXEGGCUTE},
-	{26, 29, SPECIES_MEOWTH},
+	{26, 29, SPECIES_MINCCINO},
 	{26, 29, SPECIES_SPOINK},
 	{26, 29, SPECIES_SPOINK},
 	{26, 29, SPECIES_EXEGGCUTE},
 	{26, 29, SPECIES_MEDITITE},
 	{26, 29, SPECIES_MEDITITE},
-	{27, 29, SPECIES_DEDENNE},
-	{29, 29, SPECIES_PERSIAN},
+	{27, 29, SPECIES_TOGEDEMARU},
+	{29, 29, SPECIES_MINCCINO},
 	{29, 29, SPECIES_ABSOL},
-	{29, 29, SPECIES_PERSIAN},
+	{29, 29, SPECIES_MINCCINO},
 	{29, 29, SPECIES_ABSOL},
 };
 
@@ -276,7 +276,7 @@ static const struct WildPokemon sRoute12_LandMonsNight[] =
 	{34, 36, SPECIES_DEERLING_SUMMER},
 	{33, 36, SPECIES_DEERLING_SUMMER},
 	{34, 36, SPECIES_NOCTOWL},
-	{35, 36, SPECIES_TOGEDEMARU},
+	{35, 36, SPECIES_DEDENNE},
 };
 
 static const struct WildPokemonInfo sRoute12_LandMonsInfoNight = {20, sRoute12_LandMonsNight};

@@ -1,4 +1,3 @@
-.text
 .thumb
 .align 2
 /*
@@ -56,8 +55,6 @@ et_battle_scripts.s
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_OctolockTurnDmg
 .global BattleScript_DynamaxEnd
-.global BattleScript_LoseRaidBattle
-.global BattleScript_LoseFrontierRaidBattle
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
@@ -68,36 +65,9 @@ et_battle_scripts.s
 .global TerrainEndString
 .global TransformedString
 
-.global BattleScript_Victory @More of an "End Battle" BS but whatever
-.global BattleScript_PrintPlayerForfeited
-.global BattleScript_PrintPlayerForfeitedLinkBattle
-.global BattleScript_LostMultiBattleTower
-.global BattleScript_LostBattleTower
-.global BattleScript_AskIfWantsToForfeitMatch
-.global BattleScript_RanAwayUsingMonAbility
-.global BattleScript_RaidMonRanAway
-.global BattleScript_RaidMonEscapeBall
-
 .global AbilityActivatedString
 
 .equ BattleScript_DoTurnDmg, 0x81D905B
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-@0x80159DC with r0
-EndBattleFlagClearHook: @Not really a BS but whatever
-	bl EndOfBattleThings
-	ldr r1, =gBattleMainFunc
-	ldr r0, .CallbackReturnToOverworld
-	str r0, [r1]
-	ldr r1, =gCB2_AfterEvolution
-	ldr r0, =0x80159E4 | 1
-	bx r0
-
-.align 2
-.CallbackReturnToOverworld: .word 0x8015A30 | 1
-
-.pool
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -635,145 +605,6 @@ BattleScript_DynamaxEnd_SpecialTransformAnim:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_LoseRaidBattle:
-	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_STORM 0x0
-	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_BLOW_AWAY 0x0
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x5 @;Teleported
-	end2
-
-BattleScript_LoseFrontierRaidBattle:
-	setword BATTLE_STRING_LOADER gText_RaidBattleKO4
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x5 @;Teleported
-	end2
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_Victory:
-	jumpifword ANDS BATTLE_TYPE BATTLE_TWO_OPPONENTS BeatTwoPeeps
-	printstring 0x141
-	goto PostBeatString
-	
-BeatTwoPeeps:
-	setword BATTLE_STRING_LOADER BattleText_TwoInGameTrainersDefeated
-	printstring 0x184
-
-PostBeatString:
-	trainerslidein 0x1
-	waitstateatk
-	jumpifword ANDS BATTLE_TYPE BATTLE_E_READER 0x81D88FF @Just Pickup Calc
-	printstring 0xC
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_TWO_OPPONENTS CheckJumpLocForEndBattle
-	callasm TrainerSlideOut+1
-	waitstateatk
-	trainerslidein 0x3
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerBLoseString
-	printstring 0x184
-
-CheckJumpLocForEndBattle:
-	jumpifword ANDS BATTLE_TYPE BATTLE_FRONTIER 0x81D8900 @No Money Give
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_TRAINER_TOWER 0x81D87F8 @Give Money
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE 0x81D88FF @Just Pickup Calc
-	printstring 0x177 @Buffer Trainer Tower Win Text
-	goto 0x81D88FF @Just Pickup Calc
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_PrintPlayerForfeited:	
-	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	end2
-	
-BattleScript_PrintPlayerForfeitedLinkBattle:
-	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_LostMultiBattleTower:
-	returnopponentmon1toball BANK_ATTACKER
-	waitstateatk
-	callasm ReturnOpponentMon2
-	waitstateatk
-	trainerslidein BANK_ATTACKER
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerAWinString
-	printstring 0x184
-	callasm TrainerSlideOut
-	waitstateatk
-	trainerslidein 0x3
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerBVictoryString
-	printstring 0x184
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_LostBattleTower:
-	returnopponentmon1toball BANK_ATTACKER
-	waitstateatk
-	callasm ReturnOpponentMon2
-	waitstateatk
-	trainerslidein BANK_ATTACKER
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerAWinString
-	printstring 0x184
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_AskIfWantsToForfeitMatch:
-	setword BATTLE_STRING_LOADER sText_QuestionForfeitMatch
-	printstring 0x184
-	callasm DisplayForfeitYesNoBox
-	callasm HandleForfeitYesNoBox
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RanAwayUsingMonAbility:
-	printstring 0x130 @;STRINGID_EMPTYSTRING3
-	call BattleScript_AbilityPopUp
-	printstring 0xDF @;STRINGID_GOTAWAYSAFELY
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RaidMonRanAway:
-	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RaidMonEscapeBall:
-	printfromtable 0x83FE5F2 @;gBallEscapeStringIds
-	waitmessage DELAY_1SECOND
-	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
-	callasm MakeScriptingBankInvisible
-	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x1 @B_OUTCOME_WON
-	finishaction
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 BattleScript_PrintCustomStringEnd2:
 	call BattleScript_PrintCustomString
 	end2
@@ -804,6 +635,3 @@ PowerConstructCompleteString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0x
 ToCoreString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xD5, 0xD7, 0xE8, 0xDD, 0xEA, 0xD5, 0xE8, 0xD9, 0xD8, 0xAB, 0xFF
 ToMeteorString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xD8, 0xD9, 0xD5, 0xD7, 0xE8, 0xDD, 0xEA, 0xD5, 0xE8, 0xD9, 0xD8, 0xAB, 0xFF
 TransformedString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0xE7, 0xDA, 0xE3, 0xE6, 0xE1, 0xD9, 0xD8, 0xAB, 0xFF
-TrainerBLoseString: .byte 0xFD, 0x30, 0xFF
-TrainerBVictoryString: .byte 0xFD, 0x31, 0xFF
-TrainerAWinString: .byte 0xFD, 0x25, 0xFF

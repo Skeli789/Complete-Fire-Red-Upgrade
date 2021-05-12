@@ -9,13 +9,16 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/species.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/pokedex.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
+#include "../include/new/exp.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/item.h"
+#include "../include/new/pokemon_storage_system.h"
 #include "../include/new/util.h"
 /*
 daycare.c
@@ -693,12 +696,20 @@ void GiveEggFromDaycare(struct DayCare* daycare)
 	SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
 	CalculateMonStats(&egg);
 
-	//gPlayerParty[PARTY_SIZE - 1] = egg;
-	Memcpy(&gPlayerParty[5], &egg, 100);
+	#ifdef SEND_EGGS_TO_PC_IF_MAX_PARTY
+	if (gPlayerPartyCount >= PARTY_SIZE) //Calculated in script
+	{
+		SendMonToPC(&egg);
+	}
+	else
+	#endif
+	{
+		Memcpy(&gPlayerParty[5], &egg, sizeof(egg));
+		CompactPartySlots();
+		CalculatePlayerPartyCount();
+	}
 
-	CompactPartySlots();
-	CalculatePlayerPartyCount();
-	RemoveEggFromDayCare(daycare);
+	//RemoveEggFromDayCare(daycare); //Normally resets the personality and step counter
 }
 
 void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare)
@@ -849,6 +860,69 @@ void TryDecrementingDaycareStepCounterIfMoreEggsToHatch(struct DayCare* daycare,
 	}
 }
 
+u8 GetDaycareCompatibilityScore(struct DayCare *daycare)
+{
+    u32 i;
+    u16 eggGroups[DAYCARE_MON_COUNT][EGG_GROUPS_PER_MON];
+    u16 species[DAYCARE_MON_COUNT];
+    u32 trainerIds[DAYCARE_MON_COUNT];
+    u32 genders[DAYCARE_MON_COUNT];
+
+    for (i = 0; i < DAYCARE_MON_COUNT; i++)
+    {
+        u32 personality;
+
+        species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES, NULL);
+        trainerIds[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_OT_ID, NULL);
+        personality = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_PERSONALITY, NULL);
+        genders[i] = GetGenderFromSpeciesAndPersonality(species[i], personality);
+        eggGroups[i][0] = gBaseStats[species[i]].eggGroup1;
+        eggGroups[i][1] = gBaseStats[species[i]].eggGroup2;
+    }
+
+    //Check unbreedable egg group
+    if (eggGroups[0][0] == EGG_GROUP_UNDISCOVERED || eggGroups[1][0] == EGG_GROUP_UNDISCOVERED)
+        return PARENTS_INCOMPATIBLE;
+
+    //Two Ditto can't breed
+    if (eggGroups[0][0] == EGG_GROUP_DITTO && eggGroups[1][0] == EGG_GROUP_DITTO)
+        return PARENTS_INCOMPATIBLE;
+
+    //One parent is Ditto
+    if (eggGroups[0][0] == EGG_GROUP_DITTO || eggGroups[1][0] == EGG_GROUP_DITTO)
+    {
+        if (trainerIds[0] == trainerIds[1])
+            return PARENTS_LOW_COMPATIBILITY;
+
+        return PARENTS_MED_COMPATIBILITY;
+    }
+    //Neither parent is Ditto
+    else
+    {
+        if (genders[0] == genders[1])
+            return PARENTS_INCOMPATIBLE;
+        if (genders[0] == MON_GENDERLESS || genders[1] == MON_GENDERLESS)
+            return PARENTS_INCOMPATIBLE;
+        if (!EggGroupsOverlap(eggGroups[0], eggGroups[1]))
+            return PARENTS_INCOMPATIBLE;
+
+        if (SpeciesToNationalPokedexNum(species[0]) == SpeciesToNationalPokedexNum(species[1]))
+        {
+            if (trainerIds[0] == trainerIds[1])
+                return PARENTS_MED_COMPATIBILITY; //Same species, same Trainer
+
+            return PARENTS_MAX_COMPATIBILITY; //Same species, different Trainers
+        }
+        else
+        {
+            if (trainerIds[0] != trainerIds[1])
+                return PARENTS_MED_COMPATIBILITY; //Different species, different trainers
+
+            return PARENTS_LOW_COMPATIBILITY; //Different species, same Trainer
+        }
+    }
+}
+
 u8 ModifyBreedingScoreForOvalCharm(u8 score)
 {
 	#ifdef ITEM_OVAL_CHARM
@@ -910,4 +984,32 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 	}
 
 	return j;
+}
+
+u32 GetExperienceAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
+{
+    struct BoxPokemon tempMon = *mon;
+
+    u32 experience = GetBoxMonData(mon, MON_DATA_EXP, NULL) + steps;
+    SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	u8 level = GetLevelFromBoxMonExp(&tempMon);
+
+	#ifdef FLAG_HARD_LEVEL_CAP
+	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+	if (FlagGet(FLAG_HARD_LEVEL_CAP) && level >= GetCurrentLevelCap())
+	{
+		//Exp can't go past level cap
+		experience = GetSpeciesExpToLevel(GetBoxMonData(mon, MON_DATA_SPECIES, NULL), GetCurrentLevelCap());
+	}
+	#endif
+
+    return experience;
+}
+
+u8 GetLevelAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
+{
+    struct BoxPokemon tempMon = *mon;
+	u32 experience = GetExperienceAfterDaycareSteps(mon, steps);
+    SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	return GetLevelFromBoxMonExp(&tempMon);
 }
