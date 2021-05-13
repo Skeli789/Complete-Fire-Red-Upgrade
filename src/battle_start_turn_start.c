@@ -531,6 +531,9 @@ void BattleBeginFirstTurn(void)
 
 					if (i < gBattlersCount)
 					{
+						if (SIDE(i) == B_SIDE_OPPONENT)
+							gNewBS->revealedEnemyMons |= gBitTable[gBattlerPartyIndexes[i]]; //Set up base for team preview
+
 						//Prepare switching anti-AI abuse
 						gNewBS->ai.previousMonIn[i] = 0xFF;
 						gNewBS->ai.secondPreviousMonIn[i] = 0xFF;
@@ -554,7 +557,6 @@ void BattleBeginFirstTurn(void)
 				}
 
 				ClearCachedAIData();
-
 				TurnValuesCleanUp(0);
 				SpecialStatusesClear();
 				gBattleStruct->field_91 = gAbsentBattlerFlags;

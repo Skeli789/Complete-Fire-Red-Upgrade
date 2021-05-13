@@ -490,7 +490,7 @@ static void DexNavFreeHUD(void)
 
 	//Clear mon icon sprite
 	SafeFreeMonIconPalette(sDexNavHudPtr->species);
-	DestroyMonIconSprite(&gSprites[sDexNavHudPtr->spriteIdSpecies]);
+	DestroyMonIcon(&gSprites[sDexNavHudPtr->spriteIdSpecies]);
 
 	//Clear black bar
 	CleanWindow(sDexNavHudPtr->blackBarWindowId);
@@ -532,11 +532,11 @@ static void DexNavFreeHUD(void)
 	FreeSpriteTilesByTag(0x2613);
 	FreeSpriteTilesByTag(0x5424);
 	FreeSpriteTilesByTag(0x5425);
-	FreeSpriteTilesByTag(0x8472);
+	FreeSpriteTilesByTag(GFX_TAG_HELD_ITEM);
 	FreeSpriteTilesByTag(0x1EE7); //Font Sprite
 	FreeSpriteTilesByTag(0xFDF1); //Black Bars
 	FreeSpriteTilesByTag(0x3039);
-	FreeSpritePaletteByTag(0x8472);
+	FreeSpritePaletteByTag(GFX_TAG_HELD_ITEM);
 	FreeSpritePaletteByTag(0x3039);
 
 	Free(sDexNavHudPtr);
@@ -592,7 +592,8 @@ static void DexNavShowFieldMessage(u8 id)
 	}
 }
 
-
+//This function sucks
+//It was written by god knows who and is super hard to modify
 static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size)
 {
 	if (spriteId >= MAX_SPRITES)
@@ -610,75 +611,75 @@ static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size)
 
 	u8 element = *strPtr;
 
-	while (element != 0xFF)
+	while (element != EOS)
 	{
 		prevIndex = index;
-		if ((element <= 0xEE) && (element >= 0xD5))
+		if (element >= CHAR_a && element <= CHAR_z)
 		{
-			// lower case letters
-			index = (((element - 0xD5) * TILE_SIZE) + 1600);
+			//Lower case letters
+			index = ((element - CHAR_a) * TILE_SIZE) + 1600;
 		}
-		else if ((element <= 0xD4) && (element >= 0xBB))
+		else if (element >= CHAR_A && element <= CHAR_Z)
 		{
-			// upper case letters
-			index = (((element - 0xBB) * TILE_SIZE) + 768);
+			//Upper case letters
+			index = ((element - CHAR_A) * TILE_SIZE) + 768;
 		}
-		else if ((element <= 0xAA) && (element >= 0xA1))
+		else if (element >= CHAR_0 && element <= CHAR_9)
 		{
-			// numbers
-			index = (element - 0xA1) * TILE_SIZE;
+			//Numbers
+			index = (element - CHAR_0) * TILE_SIZE;
 		}
 		else
 		{
-			// misc pchars
+			//Misc characters
 			u8 symbolId = 0;
 			switch (element)
 			{
-				case 0xF0: // colon
-				case 0x0: // space bar
+				case CHAR_COLON:
+				case CHAR_SPACE:
 					symbolId = 1;
 					break;
 				case 0x36: // semi colon used indication of str end
 					symbolId = 2;
 					break;
-				case 0xAC: // question mark
+				case CHAR_QUESTION_MARK:
 					symbolId = 3;
 					break;
-				case 0xAE: // dash
+				case CHAR_HYPHEN:
 					symbolId = 4;
 					break;
-				case 0xAD: // period
+				case CHAR_PERIOD:
 					symbolId = 5;
 					break;
-				case 0xBA: // slash
+				case CHAR_SLASH:
 					symbolId = 6;
 					break;
-				case 0xB1: // open double quote
+				case CHAR_DBL_QUOT_LEFT:
 					symbolId = 7;
 					break;
-				case 0xB2: // close double quote
+				case CHAR_DBL_QUOT_RIGHT:
 					symbolId = 8;
 					break;
-				case 0xB3: // open single quote
+				case CHAR_SGL_QUOT_LEFT:
 					symbolId = 9;
 					break;
-				case 0xB4: // close single quote
+				case CHAR_SGL_QUOT_RIGHT:
 					symbolId = 10;
 					break;
-				case 0xB0: // elipsis ...
+				case CHAR_ELLIPSIS:
 					symbolId = 11;
 					break;
-				case 0xB8: // comma
+				case CHAR_COMMA:
 					symbolId = 12;
 					break;
-				case 0xB5: // male
+				case CHAR_MALE:
 					symbolId = 13;
 					//dst =
 					break;
-				case 0xB6: // f
+				case CHAR_FEMALE:
 					symbolId = 14;
 					break;
-				case 0xFF: // empty
+				case EOS:
 					symbolId = 1;
 					break;
 			}
@@ -686,65 +687,69 @@ static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size)
 			index = (symbolId + 9) * TILE_SIZE;
 		}
 
-		if ((counter == 0) || (*(strPtr + 1) == 0xFF))
+		if (counter == 0 || *(strPtr + 1) == EOS)
 		{
 			// first or last pcharacters don't need pixel merging
 			Memcpy(dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
 		}
-		else if ((element == 0x0))
+		else if (element == CHAR_SPACE)
 		{
 			Memcpy(dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
-			u8 *prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
-			*(dst + 0) = *(prevLetter + 2);
-			*(dst + 4) = *(prevLetter + 6);
-			*(dst + 8) = *(prevLetter + 10);
+			u8* prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
+			*(dst +  0) = *(prevLetter +  2);
+			*(dst +  4) = *(prevLetter +  6);
+			*(dst +  8) = *(prevLetter + 10);
 			*(dst + 12) = *(prevLetter + 14);
 			*(dst + 16) = *(prevLetter + 18);
 			*(dst + 20) = *(prevLetter + 22);
 			*(dst + 24) = *(prevLetter + 26);
 			*(dst + 28) = *(prevLetter + 30);
 		}
-		else if ((*(strPtr + 1) != 0xFF))
+		else if (*(strPtr + 1) != EOS)
 		{
 			// pcharacter in middle, if blank space fill blank with previous pcharacter's last pixel row IFF previous pchar's last pixel row non-empty
-			Memcpy((void*)dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
-			u8 *prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
-			*(dst) |= (((*(prevLetter + 0) & 0xF) == 0) ? (*(dst + 0) & 0xF) : (*(prevLetter + 0) & 0xF));
-			*(dst + 4) |= (((*(prevLetter + 4) & 0xF) == 0) ? (*(dst + 4) & 0xF) : (*(prevLetter + 4) & 0xF));
-			*(dst + 8) |= (((*(prevLetter + 8) & 0xF) == 0) ? (*(dst + 8) & 0xF) : (*(prevLetter + 8) & 0xF));
+			Memcpy(dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
+
+			//I'm not sure what the below piece of code does
+			//When uncommented, it makes letters that come after "i"'s look bad
+			/*u8* prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
+			*(dst)      |= (((*(prevLetter +  0) & 0xF) == 0) ? (*(dst +  0) & 0xF) : (*(prevLetter +  0) & 0xF));
+			*(dst +  4) |= (((*(prevLetter +  4) & 0xF) == 0) ? (*(dst +  4) & 0xF) : (*(prevLetter +  4) & 0xF));
+			*(dst +  8) |= (((*(prevLetter +  8) & 0xF) == 0) ? (*(dst +  8) & 0xF) : (*(prevLetter +  8) & 0xF));
 			*(dst + 12) |= (((*(prevLetter + 12) & 0xF) == 0) ? (*(dst + 12) & 0xF) : (*(prevLetter + 12) & 0xF));
 			*(dst + 16) |= (((*(prevLetter + 16) & 0xF) == 0) ? (*(dst + 16) & 0xF) : (*(prevLetter + 16) & 0xF));
 			*(dst + 20) |= (((*(prevLetter + 20) & 0xF) == 0) ? (*(dst + 20) & 0xF) : (*(prevLetter + 20) & 0xF));
 			*(dst + 24) |= (((*(prevLetter + 24) & 0xF) == 0) ? (*(dst + 24) & 0xF) : (*(prevLetter + 24) & 0xF));
-			*(dst + 28) |= (((*(prevLetter + 28) & 0xF) == 0) ? (*(dst + 28) & 0xF) : (*(prevLetter + 28) & 0xF));
+			*(dst + 28) |= (((*(prevLetter + 28) & 0xF) == 0) ? (*(dst + 28) & 0xF) : (*(prevLetter + 28) & 0xF));*/
 		}
 
-		if ((counter == 2) && (*(strPtr + 1) != 0xFF))
+		if (counter == 2 && *(strPtr + 1) != EOS)
 		{
-			// every two pchars, we need to merge
-			// 8x8px made of 4x8px from previous pchar and 4x8px of this pchar
-			*(dst - 30) = (((*(dst - 30) & 0x0F) == 0) ? (*(dst) & 0xF) :(*(dst - 30) & 0x0F)) | (*(dst) & 0xF0);
-			*(dst - 26) = (((*(dst - 26) & 0x0F) == 0) ? (*(dst + 4) & 0xF): (*(dst - 26) & 0x0F))  | (*(dst + 4) & 0xF0);
-			*(dst - 22) = (((*(dst - 22) & 0x0F) == 0) ? (*(dst + 8) & 0xF): (*(dst - 22) & 0x0F)) | (*(dst + 8) & 0xF0);
-			*(dst - 18) = (((*(dst - 18) & 0x0F) == 0) ? (*(dst + 12) & 0xF): (*(dst - 18) & 0x0F)) | (*(dst + 12) & 0xF0);
-			*(dst - 14) = (((*(dst - 14) & 0x0F) == 0) ? (*(dst + 16) & 0xF): (*(dst - 14) & 0x0F)) | (*(dst + 16) & 0xF0);
-			*(dst - 10) = (((*(dst - 10) & 0x0F) == 0) ? (*(dst + 20) & 0xF): (*(dst - 10) & 0x0F)) | (*(dst + 20) & 0xF0);
-			*(dst - 6) = (((*(dst - 6) & 0x0F) == 0) ? (*(dst + 24) & 0xF): (*(dst - 6) & 0x0F)) | (*(dst + 24) & 0xF0);
-			*(dst - 2) = (((*(dst - 2) & 0x0F) == 0) ? (*(dst + 28) & 0xF): (*(dst - 2) & 0x0F)) | (*(dst + 28) & 0xF0);
+			//Every second character, merge
+			//8x8px tile made of 4x8px from previous char and 4x8px of this char
+			*(dst - 30) = (((*(dst - 30) & 0x0F) == 0) ? (*(dst +  0) & 0xF) : (*(dst - 30) & 0x0F)) | (*(dst +  0) & 0xF0);
+			*(dst - 26) = (((*(dst - 26) & 0x0F) == 0) ? (*(dst +  4) & 0xF) : (*(dst - 26) & 0x0F)) | (*(dst +  4) & 0xF0);
+			*(dst - 22) = (((*(dst - 22) & 0x0F) == 0) ? (*(dst +  8) & 0xF) : (*(dst - 22) & 0x0F)) | (*(dst +  8) & 0xF0);
+			*(dst - 18) = (((*(dst - 18) & 0x0F) == 0) ? (*(dst + 12) & 0xF) : (*(dst - 18) & 0x0F)) | (*(dst + 12) & 0xF0);
+			*(dst - 14) = (((*(dst - 14) & 0x0F) == 0) ? (*(dst + 16) & 0xF) : (*(dst - 14) & 0x0F)) | (*(dst + 16) & 0xF0);
+			*(dst - 10) = (((*(dst - 10) & 0x0F) == 0) ? (*(dst + 20) & 0xF) : (*(dst - 10) & 0x0F)) | (*(dst + 20) & 0xF0);
+			*(dst -  6) = (((*(dst -  6) & 0x0F) == 0) ? (*(dst + 24) & 0xF) : (*(dst -  6) & 0x0F)) | (*(dst + 24) & 0xF0);
+			*(dst -  2) = (((*(dst -  2) & 0x0F) == 0) ? (*(dst + 28) & 0xF) : (*(dst -  2) & 0x0F)) | (*(dst + 28) & 0xF0);
 
-			// last two pixels unconditional
-			*(dst - 29) |= *(dst + 1);
-			*(dst - 25) |= *(dst + 5);
-			*(dst - 21) |= *(dst + 9);
+			//Last two pixels unconditional
+			*(dst - 29) |= *(dst +  1);
+			*(dst - 25) |= *(dst +  5);
+			*(dst - 21) |= *(dst +  9);
 			*(dst - 17) |= *(dst + 13);
 			*(dst - 13) |= *(dst + 17);
-			*(dst - 9) |= *(dst + 21);
-			*(dst - 5) |= *(dst + 25);
-			*(dst - 1) |= *(dst + 29);
+			*(dst -  9) |= *(dst + 21);
+			*(dst -  5) |= *(dst + 25);
+			*(dst -  1) |= *(dst + 29);
 
 			dst -= TILE_SIZE;
 			counter = 0;
 		}
+
 		counter++;
 		dst += TILE_SIZE; // next tile
 		strPtr++;
@@ -1441,7 +1446,7 @@ static void DexNavDrawDirectionalArrow(u8* windowId)
 static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sSightSpriteSheet);
-	LoadSpritePalette(&sHeldItemSpritePalette);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 	u8 spriteId = CreateSprite(&sSightTemplate, 175 + (16 / 2), 148 + (8 / 2), 0);
 	*spriteIdAddr = spriteId; //Must go before DexNavSightUpdate!
 	if (spriteId < MAX_SPRITES)
@@ -1451,7 +1456,7 @@ static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
 static void DexNavDrawBButton(u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sBButtonSpriteSheet);
-	LoadSpritePalette(&sHeldItemSpritePalette);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 	u8 spriteId = CreateSprite(&sBButtonTemplate, 208 + (32 / 2), 148 + (8 / 2), 0);
 	*spriteIdAddr = spriteId;
 };
@@ -1459,7 +1464,7 @@ static void DexNavDrawBButton(u8* spriteIdAddr)
 static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sAbilityCanvasSpriteSheet);
-	LoadSpritePalette(&sHeldItemSpritePalette);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 	u8 spriteId = CreateSprite(&sAbilityCanvasTemplate, ICONX + 80, ICONY + 0x12, 0x0);
 	if (spriteId < MAX_SPRITES)
 	{
@@ -1488,7 +1493,7 @@ static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
 
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr)
 {
-	LoadSpritePalette(&sHeldItemSpritePalette);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 	LoadCompressedSpriteSheetUsingHeap(&sMoveCanvasSpriteSheet);
 	u8 spriteId = CreateSprite(&sMoveCanvasTemplate, ICONX + 80, ICONY + 0x12, 0x0);
 	if (spriteId < MAX_SPRITES)
@@ -1530,7 +1535,7 @@ static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr)
 	// allocate both the lit and unlit star to VRAM
 	LoadSpriteSheet(&sStarLitSpriteSheet);
 	LoadSpriteSheet(&sStarDullSpriteSheet);
-	LoadSpritePalette(&sHeldItemSpritePalette);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 
 	// create star objects and space them according to potential 0 - 3
 	u8 i, spriteId;
@@ -1565,9 +1570,9 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 void DexNavDrawHeldItem(u8* spriteIdAddr)
 {
 	//Create SPRITE for held item icon
-	LoadSpriteSheet(&sHeldItemSpriteSheet);
-	LoadSpritePalette(&sHeldItemSpritePalette);
-	u8 spriteId = CreateSprite(&sHeldItemTemplate, ICONX + 0x8, ICONY + 0xC, 0x0);
+	LoadSpriteSheet(&gHeldItemSpriteSheet);
+	LoadSpritePalette(&gHeldItemSpritePalette);
+	u8 spriteId = CreateSprite(&gHeldItemTemplate, ICONX + 0x8, ICONY + 0xC, 0x0);
 	*spriteIdAddr = spriteId;
 }
 

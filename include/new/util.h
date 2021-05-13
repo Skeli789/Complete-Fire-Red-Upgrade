@@ -40,7 +40,7 @@ bool8 IsMiniorCore(u16 species);
 bool8 IsMinior(u16 species);
 bool8 IsSpeciesAffectedByScalemons(u16 species);
 u8 GetVisualBaseStat(u8 statId, u16 species);
-void DestroyMonIconSprite(struct Sprite* sprite);
+//void DestroyMonIconSprite(struct Sprite* sprite);
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon);
 bool8 CanPartyMonBePutToSleep(struct Pokemon* mon);
 bool8 CanPartyMonBePoisoned(struct Pokemon* mon);

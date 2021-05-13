@@ -334,11 +334,9 @@ extern struct RingChallengeStreak gRingChallengeStreaks[/*CURRENT_OR_MAX*/ 2]; /
 extern const u8 gBattleTowerTiers[];
 extern const u8 gBattleMineTiers[];
 extern const u8 gBattleCircusTiers[];
-#define gBattleSandsTiers gBattleTowerTiers //Battle Sands & Battle Tower have same tiers
 extern const u8 gNumBattleTowerTiers;
 extern const u8 gNumBattleMineTiers;
 extern const u8 gNumBattleCircusTiers;
-#define gNumBattleSandsTiers gNumBattleTowerTiers
 extern const u8* const gBattleFrontierTierNames[NUM_TIERS];
 
 extern const species_t gGSCup_LegendarySpeciesList[];

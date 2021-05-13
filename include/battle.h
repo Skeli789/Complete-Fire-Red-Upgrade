@@ -800,6 +800,7 @@ struct NewBattleStruct
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
 	u8 corrodedItems[NUM_BATTLE_SIDES];
+	u8 revealedEnemyMons;
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
@@ -825,7 +826,7 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
-	u8 playerItemUsedCount; //~0x2017A82
+	u8 playerItemUsedCount;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 	u8 backupBattlerPosition : 2; //For Neutralizing Gas
@@ -1307,12 +1308,12 @@ extern struct BattleScripting gBattleScripting;
 // functions
 
 // battle_1
-void LoadBattleTextboxAndBackground(void);
-void LoadBattleEntryBackground(void);
-void ApplyPlayerChosenFrameToBattleMenu(void);
-bool8 LoadChosenBattleElement(u8 caseId);
-void DrawMainBattleBackground(void);
-void task00_0800F6FC(u8 taskId);
+//void LoadBattleTextboxAndBackground(void);
+//void LoadBattleEntryBackground(void);
+//void ApplyPlayerChosenFrameToBattleMenu(void);
+//bool8 LoadChosenBattleElement(u8 caseId);
+void __attribute__((long_call)) DrawMainBattleBackground(void);
+//void task00_0800F6FC(u8 taskId);
 
 enum BackSprites
 {

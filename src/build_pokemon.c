@@ -220,7 +220,11 @@ void BuildTrainerPartySetup(void)
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-		if (!(gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE) /*&& !IsBattleFactoryBattle()*/) //Team should be pregenerated in these facilities
+		if (!(gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE)
+		#ifdef FLAG_PRESET_FRONTIER_OPPONENT_TEAM
+		&& !FlagGet(FLAG_PRESET_FRONTIER_OPPONENT_TEAM)
+		#endif
+		/*&& !IsBattleFactoryBattle()*/) //Team should be pregenerated in these facilities
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
@@ -533,7 +537,7 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 
 //@Details: Creates the opposing team for a Frontier battle in the overworld.
 //@Inputs:
-//		Var8000: Trainer Id	
+//		Var8000: Trainer Id
 void sp0E7_CreateFrontierOpponentTeamBeforeBattle(void)
 {
 	BuildFrontierParty(&gEnemyParty[0], Var8000, VarGet(VAR_BATTLE_FACILITY_TIER), TRUE, FALSE, B_SIDE_OPPONENT);

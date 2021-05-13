@@ -199,6 +199,12 @@ You were overwhelmed by your\ndefeat![FC][09]
 #org @gText_CaptureRaidMon
 [FD][06] is weak!\nThrow a Ball now!
 
+#org @gText_TeamPreviewSingleDoubleText
+[FD][1C] [FD][1D]'s Team
+
+#org @gText_TeamPreviewMultiText
+[FD][1C] [FD][1D]'s Team\n[FD][2E] [FD][2F]'s Team
+
 //Exp String
 
 #org @String_TeamExpGain

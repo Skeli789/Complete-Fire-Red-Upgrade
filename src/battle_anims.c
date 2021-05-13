@@ -13,6 +13,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_anims.h"
+#include "../include/new/battle_indicators.h"
 #include "../include/new/battle_terrain.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
@@ -4674,6 +4675,13 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 			if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN)
 				goto DEFAULT_CASE; //Because the game thinks the old man's a healthbox for some reason
 			break;
+
+		case CONTROLLER_CHOOSEACTION:
+			#ifdef TEAM_PREVIEW_TRIGGER
+			if (!CantLoadTeamPreviewTrigger())
+				break;
+			#endif
+			goto DEFAULT_CASE; 
 
 		case CONTROLLER_BATTLEANIMATION:
 			switch (gBattleBufferA[gBattleAnimAttacker][1]) {

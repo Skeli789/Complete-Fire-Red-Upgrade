@@ -554,7 +554,7 @@ static const union AffineAnimCmd* const sSpriteAffineAnimTable_DexNavBar[] =
 static const struct SpriteTemplate sSightTemplate =
 {
 	.tileTag = 0x5424,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sSightOam,
 	.anims = sAnimCmdTable_Sight,
 	.images = NULL,
@@ -565,7 +565,7 @@ static const struct SpriteTemplate sSightTemplate =
 static const struct SpriteTemplate sBButtonTemplate =
 {
 	.tileTag = 0x5425,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sBButtonOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -576,7 +576,7 @@ static const struct SpriteTemplate sBButtonTemplate =
 static const struct SpriteTemplate sMoveCanvasTemplate =
 {
 	.tileTag = 0x4736,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sFontOAM,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -587,7 +587,7 @@ static const struct SpriteTemplate sMoveCanvasTemplate =
 static const struct SpriteTemplate sAbilityCanvasTemplate =
 {
 	.tileTag = 0x1EE7,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sFontOAM,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -598,7 +598,7 @@ static const struct SpriteTemplate sAbilityCanvasTemplate =
 static const struct SpriteTemplate sStarLitTemplate =
 {
 	.tileTag = 0x61,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sHeldItemOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -609,7 +609,7 @@ static const struct SpriteTemplate sStarLitTemplate =
 static const struct SpriteTemplate sStarDullTemplate =
 {
 	.tileTag = 0x2613,
-	.paletteTag = 0x8472,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sHeldItemOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -617,10 +617,10 @@ static const struct SpriteTemplate sStarDullTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static const struct SpriteTemplate sHeldItemTemplate =
+const struct SpriteTemplate gHeldItemTemplate =
 {
-	.tileTag = 0x8472,
-	.paletteTag = 0x8472,
+	.tileTag = GFX_TAG_HELD_ITEM,
+	.paletteTag = GFX_TAG_HELD_ITEM,
 	.oam = &sHeldItemOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -634,8 +634,8 @@ static const struct CompressedSpriteSheet sMoveCanvasSpriteSheet = {(u8*) gInter
 static const struct CompressedSpriteSheet sAbilityCanvasSpriteSheet = {gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x1EE7};
 static const struct SpriteSheet sStarLitSpriteSheet = {&gInterfaceGfx_dexnavStarsTiles[19 * 4 * 32], (8 * 8) / 2, 0x61}; //19 tiles per row, stars are on the 4th row. 1 tile is 32 bytes. Hence 19 * 4 *32
 static const struct SpriteSheet sStarDullSpriteSheet = {&gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 1)*32], (8 * 8) / 2, 0x2613};
-static const struct SpriteSheet sHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, 0x8472};
-static const struct SpritePalette sHeldItemSpritePalette = {(const u16*) 0x0845A3EC, 0x8472};
+const struct SpriteSheet gHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, GFX_TAG_HELD_ITEM};
+const struct SpritePalette gHeldItemSpritePalette = {(const u16*) 0x0845A3EC, GFX_TAG_HELD_ITEM};
 
 static const struct ListMenuItem sContextMenuListItems[] =
 {

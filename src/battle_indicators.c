@@ -1,16 +1,23 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/bg.h"
 #include "../include/battle_anim.h"
 #include "../include/item_icon.h"
 #include "../include/m4a.h"
+#include "../include/menu.h"
+#include "../include/pokemon_icon.h"
 #include "../include/string_util.h"
+
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/catching.h"
+#include "../include/new/dexnav.h"
 #include "../include/new/dynamax.h"
+#include "../include/new/frontier.h"
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
+#include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/util.h"
 
@@ -41,10 +48,25 @@ extern const u16 Dynamax_TriggerPal[];
 extern const u8 Raid_ShieldTiles[];
 extern const u8 Last_Ball_TriggerTiles[];
 extern const u16 Last_Ball_TriggerPal[];
+extern const u8 TeamPreviewTriggerTiles[];
+extern const u16 TeamPreviewTriggerPal[];
 extern const u8 CamomonsTypeIconsTiles[];
 extern const u8 CamomonsTypeIcons2Tiles[];
 extern const u16 CamomonsTypeIconsPal[];
 extern const u16 CamomonsTypeIcons2Pal[];
+extern const u8 TeamPreviewInBattleBgTiles[];
+extern const u8 TeamPreviewInBattleBgMap[];
+extern const u16 TeamPreviewInBattleBgPal[];
+extern const u8 TeamPreviewFaintedMonIconTiles[];
+extern const u8 TeamPreviewStatusIconsTiles[];
+
+extern const u8 gText_EmptyString[];
+extern const u8 gText_TeamPreviewSingleDoubleText[];
+extern const u8 gText_TeamPreviewMultiText[];
+
+extern const struct SpriteTemplate gHeldItemTemplate;
+extern const struct SpriteSheet gHeldItemSpriteSheet;
+extern const struct SpritePalette gHeldItemSpritePalette;
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
 static struct Sprite* GetHealthboxSprite(u8 bank);
@@ -55,6 +77,7 @@ static void SpriteCB_MegaIndicator(struct Sprite* self);
 static void SpriteCB_ZTrigger(struct Sprite* self);
 static void SpriteCB_DynamaxTrigger(struct Sprite* self);
 static void SpriteCB_LastBallTrigger(struct Sprite* self);
+static void SpriteCB_TeamPreviewTrigger(struct Sprite* self);
 static void SpriteCB_RaidShield(struct Sprite* sprite);
 static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
 static void DestroyMegaTriggers(struct Sprite* sprite);
@@ -62,6 +85,7 @@ static void DestroyZTrigger(struct Sprite* sprite);
 static void DestroyDynamaxTrigger(struct Sprite* sprite);
 static void DestroyLastBallTrigger(struct Sprite* sprite);
 static void DestroyLastBallTriggerBall(struct Sprite* sprite);
+static void DestroyTeamPreviewTrigger(struct Sprite* sprite);
 static void DestroyTypeIcon(struct Sprite* sprite);
 
 enum MegaGraphicsTags
@@ -78,6 +102,9 @@ enum MegaGraphicsTags
 	GFX_TAG_RAID_SHIELD,
 	GFX_TAG_LAST_BALL_TRIGGER,
 	GFX_TAG_LAST_BALL_TRIGGER_BALL,
+	GFX_TAG_TEAM_PREVIEW_TRIGGER,
+	GFX_TAG_FAINTED_TEAM_PREVIEW_ICON,
+	GFX_TAG_TEAM_PREVIEW_STATUS_ICON,
 };
 
 enum
@@ -151,6 +178,13 @@ static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldT
 
 static const struct CompressedSpriteSheet sLastBallTriggerSpriteSheet = {Last_Ball_TriggerTiles, (32 * 32) / 2, GFX_TAG_LAST_BALL_TRIGGER};
 static const struct SpritePalette sLastBallTriggerPalette = {Last_Ball_TriggerPal, GFX_TAG_LAST_BALL_TRIGGER};
+
+static const struct CompressedSpriteSheet sTeamPreviewTriggerSpriteSheet = {TeamPreviewTriggerTiles, (32 * 32) / 2, GFX_TAG_TEAM_PREVIEW_TRIGGER};
+static const struct SpritePalette sTeamPreviewTriggerPalette = {TeamPreviewTriggerPal, GFX_TAG_TEAM_PREVIEW_TRIGGER};
+
+static const struct CompressedSpriteSheet sTeamPreviewFaintedMonIconSpriteSheet = {TeamPreviewFaintedMonIconTiles, (32 * 32) / 2, GFX_TAG_FAINTED_TEAM_PREVIEW_ICON};
+
+static const struct CompressedSpriteSheet sTeamPreviewStatusIconsSpriteSheet = {TeamPreviewStatusIconsTiles, (8 * 8 * 6) / 2, GFX_TAG_TEAM_PREVIEW_STATUS_ICON};
 
 static const struct SpritePalette sTypeIconPalTemplate = {CamomonsTypeIconsPal, TYPE_ICON_TAG};
 static const struct SpritePalette sTypeIconPalTemplate2 = {CamomonsTypeIcons2Pal, TYPE_ICON_TAG_2};
@@ -361,6 +395,39 @@ static const struct SpriteTemplate sLastBallTriggerSpriteTemplate =
 	.callback = SpriteCB_LastBallTrigger,
 };
 
+static const struct SpriteTemplate sTeamPreviewTriggerSpriteTemplate =
+{
+	.tileTag = GFX_TAG_TEAM_PREVIEW_TRIGGER,
+	.paletteTag = GFX_TAG_TEAM_PREVIEW_TRIGGER,
+	.oam = &sTriggerOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_TeamPreviewTrigger,
+};
+
+static const struct SpriteTemplate sFaintedMonIconTemplate =
+{
+	.tileTag = GFX_TAG_FAINTED_TEAM_PREVIEW_ICON,
+	.paletteTag = POKE_ICON_BASE_PAL_TAG, //Used same palette as mon icon 0
+	.oam = &sTriggerOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate sStatusIconTemplate =
+{
+	.tileTag = GFX_TAG_TEAM_PREVIEW_STATUS_ICON,
+	.paletteTag = POKE_ICON_BASE_PAL_TAG, //Used same palette as mon icon 0
+	.oam = &sIndicatorOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
 static struct SpriteTemplate sTypeIconSpriteTemplate =
 {
 	.tileTag = 0xFFFF,
@@ -383,7 +450,7 @@ static struct SpriteTemplate sTypeIconSpriteTemplate2 =
 	.callback = SpriteCB_CamomonsTypeIcon,
 };
 
-/* Declare the colours the trigger button doesn't light up */
+//Declare the colours the trigger button doesn't light up
 static const u16 sIgnoredTriggerColours[] =
 {
 	RGB(7, 10, 8),
@@ -879,6 +946,31 @@ static void SpriteCB_LastBallTrigger(struct Sprite* self)
 	{
 		if (self->data[3] < 32)
 			self->data[3] += 2;
+		else
+		{
+			void (*destructionFunc)(struct Sprite*) = (void*) (((u16) self->data[6]) | (((u16) self->data[7]) << 16));
+			destructionFunc(self);
+			return;
+		}
+	}
+}
+
+static void SpriteCB_TeamPreviewTrigger(struct Sprite* self)
+{
+	self->pos2.x = -self->data[3];
+
+	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x802E438 | 1) //Old HandleInputChooseAction
+	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseAction)
+	{
+		if (self->data[3] > 0)
+			self->data[3] -= 2; //Pop Out
+		else
+			self->data[3] = 0;
+	}
+	else if (gBattlerControllerFuncs[TRIGGER_BANK] != HandleChooseActionAfterDma3) //Team Preview Trigger should recede and destroy itself otherwise
+	{
+		if (self->data[3] < 32)
+			self->data[3] += 2; //Recede
 		else
 		{
 			void (*destructionFunc)(struct Sprite*) = (void*) (((u16) self->data[6]) | (((u16) self->data[7]) << 16));
@@ -1518,4 +1610,242 @@ bool8 DidPlayerUseLastBallAndTryUpdateControllerFunc(void)
 	}
 
 	return FALSE;
+}
+
+bool8 CantLoadTeamPreviewTrigger(void)
+{
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) //Wild Battle
+		return TRUE; //No enemy team
+
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+	&& BATTLE_FACILITY_NUM == IN_RING_CHALLENGE)
+		return TRUE; //No point in showing here
+
+	bool8 can = (gBattleTypeFlags & BATTLE_TYPE_FRONTIER) != 0 //Regular Frontier battle
+		|| gBattleTypeFlags & BATTLE_TYPE_LINK
+		#ifdef FLAG_IN_BATTLE_TEAM_PREVIEW
+		|| FlagGet(FLAG_IN_BATTLE_TEAM_PREVIEW)
+		#endif
+		;
+
+	return !can;
+}
+
+void TryLoadTeamPreviewTrigger(void)
+{
+	u8 spriteId, i;
+
+	if (CantLoadTeamPreviewTrigger())
+		return;
+
+	if (IndexOfSpritePaletteTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sTeamPreviewTriggerPalette);
+	if (IndexOfSpriteTileTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFF)
+		LoadCompressedSpriteSheetUsingHeap(&sTeamPreviewTriggerSpriteSheet);
+
+	//See if there's an old trigger that hasn't disappeared yet
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& gSprites[i].template->tileTag == GFX_TAG_TEAM_PREVIEW_TRIGGER)
+			return; //Don't create a new trigger
+	}
+
+	spriteId = CreateSprite(&sTeamPreviewTriggerSpriteTemplate, 0 + (32 / 2), 72 + (32 / 2), 1);
+	if (spriteId < MAX_SPRITES)
+	{
+		gSprites[spriteId].data[3] = 32;
+		gSprites[spriteId].data[4] = gActiveBattler;
+		gSprites[spriteId].data[6] = ((u32) DestroyTeamPreviewTrigger) & 0xFFFF;
+		gSprites[spriteId].data[7] = ((u32) DestroyTeamPreviewTrigger) >> 16;
+	}
+}
+
+static void DestroyTeamPreviewTrigger(struct Sprite* sprite)
+{
+	u32 i;
+	DestroySprite(sprite);
+
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse && gSprites[i].template->tileTag == GFX_TAG_TEAM_PREVIEW_TRIGGER)
+			return; //Tiles and palette are still in use
+	}
+
+	FreeSpritePaletteByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
+	FreeSpriteTilesByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
+}
+
+bool8 CanShowEnemyMonIcon(u8 monId)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	{
+		if (!IsRandomBattleTowerBattle()
+		&& VarGet(VAR_BATTLE_FACILITY_POKE_NUM) >= PARTY_SIZE) //Normal 6v6 Battle
+			return TRUE; //Gain access to team preview
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+		return TRUE; //Can always see link opponent's team
+	#ifdef FLAG_SANDBOX_MODE
+	else if (FlagGet(FLAG_SANDBOX_MODE)) //Doesn't help in Frontier
+		return TRUE;
+	#endif
+
+	return (gNewBS->revealedEnemyMons & gBitTable[monId]) != 0;
+}
+
+static void Task_DisplayInBattleTeamPreview(u8 taskId)
+{
+	u32 i;
+	s16 x, y;
+	const u8* string;
+
+	//Update Background
+	gBattle_BG0_Y = 0; //Hide action selection - must go before creating icons! Causes sprite bugs otherwise
+
+    LZDecompressVram(TeamPreviewInBattleBgTiles, (void *)(BG_CHAR_ADDR(1)));
+    LZDecompressVram(TeamPreviewInBattleBgMap, (void *)(BG_SCREEN_ADDR(28)));
+    LoadCompressedPalette(TeamPreviewInBattleBgPal, 0xF0, 32);
+
+	REG_BG1CNT |= BGCNT_CHARBASE(1); //Original char base that isn't getting used for some reason
+	REG_DISPCNT |= DISPCNT_BG1_ON; //Can't use ShowBg because that resets the charbase
+
+	//Create Sprites
+	u16 faintedIconPal[16];
+	struct SpritePalette faintedIconSpritePalette = {faintedIconPal, GFX_TAG_FAINTED_TEAM_PREVIEW_ICON};
+
+	for (i = 0; i < NELEMS(faintedIconPal); ++i)
+		faintedIconPal[i] = RGB(31, 31, 31);
+
+	LoadSpriteSheet(&gHeldItemSpriteSheet);
+	LoadCompressedSpriteSheet(&sTeamPreviewFaintedMonIconSpriteSheet);
+	LoadCompressedSpriteSheet(&sTeamPreviewStatusIconsSpriteSheet);
+	LoadSpritePalette(&gHeldItemSpritePalette);
+	LoadSpritePalette(&faintedIconSpritePalette);
+
+	u8 faintedIconPalNum = IndexOfSpritePaletteTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON);
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
+
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			if (!CanShowEnemyMonIcon(i))
+				species = SPECIES_NONE; //Replce unrevealed icon with question mark
+
+			u16 hp = GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL);
+			x = (64 + (32 / 2)) + (40 * (i % 3));
+			y = (20 + (32 / 2)) + (40 * (i / 3));
+			void* callback = hp == 0 ? SpriteCallbackDummy : SpriteCB_PokeIcon; //Don't animate when fainted
+
+			LoadMonIconPalette(species);
+			u8 spriteId = CreateMonIcon(species, callback, x, y, 1, GetMonData(&gEnemyParty[i], MON_DATA_PERSONALITY, NULL), FALSE);
+			if (spriteId < MAX_SPRITES)
+			{
+				struct Sprite* sprite = &gSprites[spriteId];
+				sprite->oam.priority = 0; //Above BG
+
+				if (species != SPECIES_NONE)
+				{
+					if (hp > 0)
+					{
+						if (GetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, NULL) != ITEM_NONE)
+						{
+							x = (80 + (8 / 2)) + (40 * (i % 3)); //Based on the item icon positions on the summary screen
+							y = (44 + (8 / 2)) + (40 * (i / 3));
+							CreateSprite(&gHeldItemTemplate, x, y, 0);
+						}
+
+						u32 status = GetMonData(&gEnemyParty[i], MON_DATA_STATUS, NULL);
+						if (status != 0)
+						{
+							x = (72 + (8 / 2)) + (40 * (i % 3));
+							y = (44 + (8 / 2)) + (40 * (i / 3));
+							spriteId = CreateSprite(&sStatusIconTemplate, x, y, 0);
+
+							if (spriteId < MAX_SPRITES)
+							{
+								u8 tileNum = 0;
+
+								if (status & STATUS1_POISON) //Not including Toxic
+									tileNum = 1;
+								else if (status & STATUS1_BURN)
+									tileNum = 2;
+								else if (status & STATUS1_FREEZE)
+									tileNum = 3;
+								else if (status & STATUS1_PARALYSIS)
+									tileNum = 4;
+								else if (status & STATUS1_TOXIC_POISON)
+									tileNum = 5;
+
+								gSprites[spriteId].oam.tileNum += (8 / 8) * (8 / 8) * tileNum; //Get the right status image
+							}
+						}
+					}
+					else
+					{
+						sprite->oam.paletteNum = faintedIconPalNum; //Make palette all white
+
+						LoadMonIconPalette(species);
+						u8 spriteId = CreateSprite(&sFaintedMonIconTemplate, x, y, 0);
+						if (spriteId < MAX_SPRITES)
+							gSprites[spriteId].oam.priority = 0; //Above everything
+					}
+				}
+			}
+		}
+	}
+
+	//Update Textbox
+	if (IsTwoOpponentBattle())
+		string = gText_TeamPreviewMultiText;
+	else
+		string = gText_TeamPreviewSingleDoubleText;
+
+	BattleStringExpandPlaceholdersToDisplayedString(string);
+	BattlePutTextOnWindow(gDisplayedStringBattle, 0);
+	DestroyTask(taskId);
+}
+
+void DisplayInBattleTeamPreview(void)
+{
+	CreateTask(Task_DisplayInBattleTeamPreview, 0); //Hide sprites and then load the BG
+}
+
+void HideInBattleTeamPreview(void)
+{
+	u32 i;
+	u8 pal0 = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + 0); 
+	u8 pal1 = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + 1);
+	u8 pal2 = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + 2);
+	u8 pal3 = IndexOfSpritePaletteTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON); //Fainted palette
+
+	//Hide BG
+	gBattle_BG0_Y = 160; //Show action selection
+	HideBg(1);
+
+	//Destroy Sprites
+	for (i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].inUse
+		&& (gSprites[i].oam.paletteNum == pal0
+		 || gSprites[i].oam.paletteNum == pal1
+		 || gSprites[i].oam.paletteNum == pal2
+		 || gSprites[i].oam.paletteNum == pal3))
+			DestroyMonIcon(&gSprites[i]);
+		else if (gSprites[i].template->tileTag == GFX_TAG_HELD_ITEM)
+			DestroySprite(&gSprites[i]);
+	}
+
+	//Free Palettes
+	FreeSpriteTilesByTag(GFX_TAG_HELD_ITEM);
+	FreeSpriteTilesByTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON);
+	FreeSpriteTilesByTag(GFX_TAG_TEAM_PREVIEW_STATUS_ICON);
+	FreeSpritePaletteByTag(GFX_TAG_HELD_ITEM);
+	FreeSpritePaletteByTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON);
+	FreeMonIconPalettes();
+
+	//Clear Textbox
+	BattlePutTextOnWindow(gText_EmptyString, 0); //Wipes the old string
 }

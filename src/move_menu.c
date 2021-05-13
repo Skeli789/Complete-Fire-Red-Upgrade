@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/sprite.h"
 #include "../include/string_util.h"
 #include "../include/window.h"
@@ -55,6 +56,10 @@ static void CloseZMoveDetails(void);
 static void CloseMaxMoveDetails(void);
 static void HighlightPossibleTargets(void);
 static void LoadShadowColourForGreyedOutBagText(void);
+#ifdef TEAM_PREVIEW_TRIGGER
+static void HandleInputTeamPreview(void);
+static void ChangeBattlerSpritesInvisibilities(bool8 invisible);
+#endif
 extern void TryLoadTypeIcons(void);
 
 const u8 gText_EmptyString[] = {EOS};
@@ -1880,6 +1885,9 @@ void PlayerHandleChooseAction(void)
 	#ifdef LAST_USED_BALL_TRIGGER
 	TryLoadLastUsedBallTrigger();
 	#endif
+	#ifdef TEAM_PREVIEW_TRIGGER
+	TryLoadTeamPreviewTrigger();
+	#endif
 }
 
 static void LoadShadowColourForGreyedOutBagText(void)
@@ -2005,9 +2013,9 @@ void HandleInputChooseAction(void)
 	{
 		SwapHpBarsWithHpText();
 	}
-	#ifdef LAST_USED_BALL_TRIGGER
 	else if (gMain.newKeys & L_BUTTON)
 	{
+		#ifdef LAST_USED_BALL_TRIGGER
 		if (!CantLoadLastBallTrigger()) //Can use last ball
 		{
 			if (IsPlayerPartyAndPokemonStorageFull())
@@ -2023,9 +2031,23 @@ void HandleInputChooseAction(void)
 				EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
 				PlayerBufferExecCompleted();
 			}
+			
+			return; //The Team Preview trigger check is unimportant
 		}
+		#endif
+
+		#ifdef TEAM_PREVIEW_TRIGGER
+		if (!CantLoadTeamPreviewTrigger())
+		{
+			PlaySE(SE_SELECT);
+			gBattleAnimAttacker = gActiveBattler;
+			UpdateOamPriorityInAllHealthboxes(0);
+			ChangeBattlerSpritesInvisibilities(TRUE);
+			DisplayInBattleTeamPreview();
+			gBattlerControllerFuncs[gActiveBattler] = HandleInputTeamPreview;
+		}
+		#endif
 	}
-	#endif
 	else if (gMain.newKeys & R_BUTTON)
 	{
 		PlaySE(SE_SELECT);
@@ -2036,6 +2058,42 @@ void HandleInputChooseAction(void)
 			goto NORMAL_RUN;
 	}
 }
+
+#ifdef TEAM_PREVIEW_TRIGGER
+static void HandleInputTeamPreview(void)
+{
+	if (JOY_NEW(A_BUTTON | B_BUTTON | L_BUTTON | DPAD_ANY))
+	{
+		PlaySE(SE_SELECT);
+		TryLoadTeamPreviewTrigger();;
+		gBattleAnimAttacker = gActiveBattler;
+		UpdateOamPriorityInAllHealthboxes(1);
+		ChangeBattlerSpritesInvisibilities(FALSE);
+		HideInBattleTeamPreview();
+		gBattlerControllerFuncs[gActiveBattler] = HandleInputChooseAction;
+	}
+}
+
+static void ChangeBattlerSpritesInvisibilities(bool8 invisible)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		u8 spriteId = gBattlerSpriteIds[i];
+
+		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i)) //Pokemon that are already hidden
+		{
+			if (invisible)
+				gNewBS->hiddenAnimBattlerSprites |= gBitTable[i]; //Set bit to keep hidden after closing team preview
+			else
+				gNewBS->hiddenAnimBattlerSprites &= ~gBitTable[i]; //Clear bit to keep hidden after closing team preview
+		}
+		else
+			gSprites[spriteId].invisible = invisible;
+	}
+}
+#endif
 
 bool8 CheckCantMoveThisTurn(void)
 {

@@ -446,7 +446,7 @@ void DestroyTownMapRoamerSprites(void)
 			&&  (void*) gSprites[i].images == (void*) GetMonIconTiles(gRoamers[j].species, FALSE))
 			{
 				FreeSpriteOamMatrix(&gSprites[i]);
-				DestroyMonIconSprite(&gSprites[i]);
+				DestroyMonIcon(&gSprites[i]);
 			}
 		}
 	}

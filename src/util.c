@@ -378,7 +378,7 @@ u8 GetVisualBaseStat(u8 statId, u16 species) //For the Pokedex screen
 	return base;
 }
 
-#define TILE_SIZE 32
+/*#define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
 #define sSpriteTileAllocBitmap ((u8*) 0x2021B48)
 #define FREE_SPRITE_TILE(n) (sSpriteTileAllocBitmap[(n) / 8] &= ~(1 << ((n) % 8)))
@@ -393,7 +393,7 @@ void DestroyMonIconSprite(struct Sprite* sprite)
 		FREE_SPRITE_TILE(i);
 
 	ResetSprite(sprite);
-}
+}*/
 
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 {
