@@ -1150,7 +1150,7 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 //@Returns: Species roaming.
 u16 sp058_BufferSwarmText(void)
 {
-	u8 index = VarGet(VAR_SWARM_INDEX);
+	u8 index = GetCurrentSwarmIndex();
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 

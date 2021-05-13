@@ -470,8 +470,12 @@ void TryUpdateSwarm(void)
 
 	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE))
 	{
+		#ifdef SWARM_CHANGE_BI_HOURLY
+		VarSet(VAR_SWARM_INDEX, 0); //Reset override daily
+		#else
 		u16 index = Random() % gSwarmTableLength;
 		VarSet(VAR_SWARM_INDEX, index);
+		#endif
 
 		#ifdef VAR_RAID_PARTNER_RANDOM_NUM
 		VarSet(VAR_RAID_PARTNER_RANDOM_NUM, Random()); //Changes daily to help vary the partners
@@ -486,12 +490,31 @@ void TryUpdateSwarm(void)
 	#endif
 }
 
+u8 GetCurrentSwarmIndex(void)
+{
+	if (gSwarmTableLength == 0)
+		return 0xFF;
+
+	#ifdef SWARM_CHANGE_BI_HOURLY
+	u8 dayOfWeek = (gClock.dayOfWeek == 0) ? 8 : gClock.dayOfWeek;
+	u8 hour = (gClock.hour == 0) ? 12 : gClock.hour / 2; //Change every two hours
+	u8 day = (gClock.day == 0) ? 32 : gClock.day;
+	u8 month = (gClock.month == 0) ? 13 : gClock.month;
+	u32 val = ((hour * (day + month)) + ((hour * (day + month)) ^ dayOfWeek)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
+	u8 index = val % gSwarmTableLength;
+	#else
+	u8 index = VarGet(VAR_SWARM_INDEX);
+	#endif
+
+	return index;
+}
+
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 {
 	if (gSwarmTableLength == 0)
 		return FALSE;
 
-	u8 index = VarGet(VAR_SWARM_INDEX);
+	u8 index =  GetCurrentSwarmIndex();
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 

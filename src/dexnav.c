@@ -996,7 +996,7 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 				break; //Hidden pokemon should only appear on walkable tiles or surf tiles
 
 			//Check swarming mon first
-			u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+			u8 swarmIndex = GetCurrentSwarmIndex();
 			if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 			&& species == gSwarmTable[swarmIndex].species)
 			{
@@ -1069,7 +1069,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			if (i >= NUM_LAND_MONS) //Pokemon not found here
 			{
 				//Check swarming mon
-				u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+				u8 swarmIndex = GetCurrentSwarmIndex();
 				if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 				&& species == gSwarmTable[swarmIndex].species)
 				{
@@ -1816,7 +1816,7 @@ static bool8 CapturedAllLandBasedPokemon(void)
 		}
 
 		//Check swarming mon
-		u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+		u8 swarmIndex = GetCurrentSwarmIndex();
 		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName)
 		{
 			if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(gSwarmTable[swarmIndex].species), FLAG_GET_CAUGHT))
@@ -2324,7 +2324,7 @@ static void DexNavPopulateEncounterList(void)
 		}
 
 		//Add swarming mon
-		u8 swarmIndex = VarGet(VAR_SWARM_INDEX);
+		u8 swarmIndex = GetCurrentSwarmIndex();
 		u16 swarmSpecies = gSwarmTable[swarmIndex].species;
 		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 		&& grassIndex < NELEMS(sDexNavGuiPtr->grassSpecies)

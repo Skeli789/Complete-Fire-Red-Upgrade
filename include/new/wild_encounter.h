@@ -13,6 +13,7 @@
 void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
 u8 PickUnownLetter(u16 species, u8 headerIndex);
 void TryUpdateSwarm(void);
+u8 GetCurrentSwarmIndex(void);
 void FishingWildEncounter(u8 rod);
 bool8 DoesCurrentMapHaveFishingMons(void);
 bool8 StandardWildEncounter(u32 currMetaTileBehavior, u16 previousMetaTileBehavior);
