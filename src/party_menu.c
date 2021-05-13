@@ -27,6 +27,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/item_effects.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
@@ -108,6 +109,8 @@ void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8
 void __attribute__((long_call)) PartyMenuTryEvolution(u8 taskId);
 void __attribute__((long_call)) FreePartyPointers(void);
 void __attribute__((long_call)) PartyMenuDisplayYesNoMenu(void);
+void __attribute__((long_call)) ItemUseCB_RareCandyStep(u8 taskId, UNUSED TaskFunc func);
+void __attribute__((long_call)) sub_8124DC0(u8 taskId);
 
 //This file's functions:
 static void OpenSummary(u8 taskId);
@@ -2529,6 +2532,46 @@ void FieldUseFunc_Honey(u8 taskId)
 	RemoveBagItem(Var800E, 1);
 	sItemUseOnFieldCB = Task_HoneyField;
 	sub_80A103C(taskId);
+}
+
+extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
+{
+	bool8 noEffect;
+	struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 item = gSpecialVar_ItemId;
+	u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+
+	PlaySE(SE_SELECT);
+
+	if (level >= MAX_LEVEL
+	#ifdef FLAG_HARD_LEVEL_CAP
+	|| (FlagGet(FLAG_HARD_LEVEL_CAP) && level >= GetCurrentLevelCap())
+	#endif
+	)
+	{
+		if (GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, 0) == SPECIES_NONE) //Can't use Rare Candy to evolve mon
+			noEffect = TRUE;
+		else
+		{
+			PartyMenuTryEvolution(taskId);
+			return;
+		}
+	}
+	else
+		noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
+
+	if (noEffect)
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+	else
+	{
+		ItemUseCB_RareCandyStep(taskId, func);
+	}
 }
 
 #ifdef UNBOUND

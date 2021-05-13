@@ -701,17 +701,6 @@ MaxLevelRareCandies:
 	.byte MAX_LEVEL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Stay On Item Screen - Rare Candies
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.org 0x126332, 0xFF
-RareCandiesPostUseFix:
-	mov r1, r8
-	bl RareCandiesPostUseFix + 0x1E @ItemUseCB_RareCandyStep
-	mov r8, r8
-	mov r8, r8
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Summary Screen
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x136684, 0xFF

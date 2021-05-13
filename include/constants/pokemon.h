@@ -96,4 +96,9 @@
 #define FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE 0x7
 #define FRIENDSHIP_EVENT_FAINT_LARGE          0x8
 
+#define EVO_MODE_NORMAL     0
+#define EVO_MODE_TRADE      1
+#define EVO_MODE_ITEM_USE   2
+#define EVO_MODE_ITEM_CHECK 3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+
 #define SHINY_ODDS 16 // Actual probability is SHINY_ODDS/65536

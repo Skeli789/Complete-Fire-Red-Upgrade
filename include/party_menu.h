@@ -176,7 +176,6 @@ bool8 __attribute__((long_call)) FieldCallback_PrepareFadeInFromMenu(void);
 
 void __attribute__((long_call)) AnimatePartySlot(u8 slot, u8 b);
 u16 __attribute__((long_call)) PartyMenuButtonHandler(s8 *ptr);
-u8 __attribute__((long_call)) sub_81202F8(const u8* str, u8 b);
 bool8 __attribute__((long_call)) some_other_kind_of_link_test(void);
 void __attribute__((long_call)) InitChooseHalfPartyForBattle(u8 a1);
 u8 __attribute__((long_call)) GetItemEffectType(u16 item);
