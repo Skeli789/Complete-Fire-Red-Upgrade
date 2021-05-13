@@ -457,7 +457,9 @@ Task_HofPC_CopySaveData 080F2AA4 3
 Task_HofPC_DrawSpritesPrintText 080F2B6C 3
 Task_HofPC_PrintMonInfo 080F2D60 3
 Task_Hof_InitMonData 080F1F74 3
+#ifdef UNBOUND
 HallOfFame_PrintWelcomeText 080F313C 0
+#endif
 HallOfFame_PrintMonInfo 080F3194 3
 
 ##Unhidden Power

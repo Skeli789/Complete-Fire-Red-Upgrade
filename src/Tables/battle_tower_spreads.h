@@ -774,7 +774,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STRONGJAW
+		.ability = FRONTIER_ABILITY_1, //ABILITY_STRONGJAW
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
@@ -800,7 +800,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_HUSTLE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HUSTLE
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -66207,7 +66207,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 36,
 		.atkEv = 228,
 		.spdEv = 244,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STRONGJAW
+		.ability = FRONTIER_ABILITY_1, //ABILITY_STRONGJAW
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{

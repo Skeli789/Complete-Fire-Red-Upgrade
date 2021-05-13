@@ -253,14 +253,23 @@ Purchased
 #org @gText_StopZooming
 Stop zooming!
 
-#org @gText_VanillaDifficult
-Difficult/Vanilla
+#org @gText_Capped
+Capped 
+
+#org @gText_Sandbox
+Sandbox 
+
+#org @gText_True
+True 
 
 #org @gText_Vanilla
 Vanilla
 
 #org @gText_Difficult
 Difficult
+
+#org @gText_VanillaDifficult
+Difficult/Vanilla
 
 #org @gText_Expert
 Expert
@@ -281,7 +290,7 @@ Insane
  Post-Game
 
 #org @gText_MixedUnboundVersions
- 1.0/1.1
+ 1.1/1.2
 
 #org @gText_PlusTrades
  +Trades
