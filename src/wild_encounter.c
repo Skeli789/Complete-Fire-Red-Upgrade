@@ -5,6 +5,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/script.h"
+#include "../include/rtc.h"
 #include "../include/text.h"
 #include "../include/wild_encounter.h"
 #include "../include/random.h"
@@ -463,29 +464,62 @@ static void ClearDailyEventFlags(void)
 }
 #endif
 
+#ifdef TIME_ENABLED
+static void Task_UpdateDailyValues(u8 taskId)
+{
+	if (--gTasks[taskId].data[0] == 0) //Decrement the timer
+	{
+		DirectClockUpdate();
+		if (gClock.day == gTasks[taskId].data[1]
+		&& gClock.month == gTasks[taskId].data[2]
+		&& gClock.year == gTasks[taskId].data[3]) //The date change was true and the RTC didn't just glitch out momentarily
+		{
+			u32 backupVar = VarGet(VAR_SWARM_DAILY_EVENT) | (VarGet(VAR_SWARM_DAILY_EVENT + 1) << 16);
+
+			CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE); //Update the value in the var
+
+			#ifdef SWARM_CHANGE_BI_HOURLY
+			VarSet(VAR_SWARM_INDEX, 0); //Reset override daily
+			#else
+			u16 index = Random() % gSwarmTableLength;
+			VarSet(VAR_SWARM_INDEX, index);
+			#endif
+
+			#ifdef VAR_RAID_PARTNER_RANDOM_NUM
+			VarSet(VAR_RAID_PARTNER_RANDOM_NUM, Random()); //Changes daily to help vary the partners
+			#endif
+
+			u32 daysSince = GetDaysSinceTimeInValue(backupVar);
+			UpdatePartyPokerusTime(daysSince);
+			ClearDailyEventFlags();
+			SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
+			SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
+		}
+
+		DestroyTask(taskId);
+	}
+}
+#endif
+
 void TryUpdateSwarm(void)
 {
 	#ifdef TIME_ENABLED //Otherwise causes lags
-	u32 backupVar = VarGet(VAR_SWARM_DAILY_EVENT) | (VarGet(VAR_SWARM_DAILY_EVENT + 1) << 16);
-
-	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE))
+	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, FALSE) //Just check if different, don't update yet
+	&& !FuncIsActiveTask(Task_UpdateDailyValues))
 	{
-		#ifdef SWARM_CHANGE_BI_HOURLY
-		VarSet(VAR_SWARM_INDEX, 0); //Reset override daily
-		#else
-		u16 index = Random() % gSwarmTableLength;
-		VarSet(VAR_SWARM_INDEX, index);
-		#endif
-
-		#ifdef VAR_RAID_PARTNER_RANDOM_NUM
-		VarSet(VAR_RAID_PARTNER_RANDOM_NUM, Random()); //Changes daily to help vary the partners
-		#endif
-
-		u32 daysSince = GetDaysSinceTimeInValue(backupVar);
-		UpdatePartyPokerusTime(daysSince);
-		ClearDailyEventFlags();
-		SetGameStat(GAME_STAT_CAUGHT_TODAY, 0);
-		SetGameStat(GAME_STAT_EXP_EARNED_TODAY, 0);
+		u8 taskId = CreateTask(Task_UpdateDailyValues, 0xFF);
+		if (taskId != 0xFF)
+		{
+			//Save the current time in the task.
+			//If the date when 0.25 seconds is up is different, destroy the task and try again.
+			//This helps alleviate the issue of momentarily flash cart glitches where the date
+			//is changed forward in time.
+			DirectClockUpdate();
+			gTasks[taskId].data[0] = 0x10; //Timer - 0.25 Seconds
+			gTasks[taskId].data[1] = gClock.day;
+			gTasks[taskId].data[2] = gClock.month;
+			gTasks[taskId].data[3] = gClock.year;
+		}
 	}
 	#endif
 }

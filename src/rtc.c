@@ -205,3 +205,9 @@ void ForceClockUpdate(void)
 {
 	sRTCFrameCount = 0;
 }
+
+void DirectClockUpdate(void)
+{
+	sRTCFrameCount = 0;
+	RtcCalcLocalTime();
+}
