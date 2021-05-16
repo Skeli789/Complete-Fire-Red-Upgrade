@@ -1409,7 +1409,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							if (specialTrainer->legendarySpreads != NULL)
 								spread = &specialTrainer->legendarySpreads[Random() % specialTrainer->legSpreadSize];
 							else
-								goto REGULAR_LEGENDARY_SPREADS;
+								goto REGULAR_UBERS_SPREADS;
 							break;
 						case BATTLE_FACILITY_LITTLE_CUP:
 						case BATTLE_FACILITY_LC_CAMOMONS:
@@ -1511,7 +1511,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							if (multiPartner->legendarySpreads != NULL)
 								spread = &multiPartner->legendarySpreads[Random() % multiPartner->legSpreadSize];
 							else
-								goto REGULAR_LEGENDARY_SPREADS;
+								goto REGULAR_UBERS_SPREADS;
 							break;
 						case BATTLE_FACILITY_LITTLE_CUP:
 						case BATTLE_FACILITY_LC_CAMOMONS:
@@ -1591,11 +1591,21 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_UBER:
 						case BATTLE_FACILITY_NO_RESTRICTIONS:
 						case BATTLE_FACILITY_UBER_CAMOMONS:
-							if (Random() % 100 < 5) //5% chance per mon of not being legendary
+							if (Random() % 100 < 50) //50% chance per mon of being non-legend good for Ubers (in reality a lot lower because standard spreads are much bigger)
+							{
 								spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
+								if (!gSpecialSpeciesFlags[spread->species].goodForUbers //Not a Pokemon that would do well in Ubers
+								&& !CheckTableForItem(spread->item, gSmogonOU_ItemBanList) //Doesn't have an item like Ubers Mega Stones
+								&& spread->item != ITEM_MAWILITE) //Not banned in OU but still good in Ubers
+									continue;
+							}
 							else
-							REGULAR_LEGENDARY_SPREADS:
+							{
+								REGULAR_UBERS_SPREADS:
 								spread = &gFrontierLegendarySpreads[Random() % TOTAL_LEGENDARY_SPREADS];
+								if (gSpecialSpeciesFlags[spread->species].badForUbers) //Don't allow some bad Legendaries like Shaymin-Land and Necrozma-Base
+									continue;
+							}
 							break;
 						case BATTLE_FACILITY_LITTLE_CUP:
 						case BATTLE_FACILITY_LC_CAMOMONS:
@@ -1607,13 +1617,18 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							if (!IsFrontierSingles(battleType)) //Doubles - GS Cup
 							{
 								if ((Random() & 1) == 0)
-									goto REGULAR_LEGENDARY_SPREADS;
-
-								goto REGULAR_SPREADS;
+								{
+									REGULAR_LEGENDARY_SPREADS: //Unlike REGULAR_UBERS_SPREADS, this includes bad legends
+									spread = &gFrontierLegendarySpreads[Random() % TOTAL_LEGENDARY_SPREADS];
+								}
+								else
+									goto REGULAR_SPREADS;
 							}
-
-						REGULAR_MC_SPREADS:
-							spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS];
+							else
+							{
+								REGULAR_MC_SPREADS:
+								spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS];
+							}
 							break;
 						case BATTLE_FACILITY_OU:
 						case BATTLE_FACILITY_NATIONAL_DEX_OU:
@@ -1703,7 +1718,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_UBER:
 						case BATTLE_FACILITY_NO_RESTRICTIONS:
 						case BATTLE_FACILITY_UBER_CAMOMONS:
-							goto REGULAR_LEGENDARY_SPREADS;
+							goto REGULAR_UBERS_SPREADS;
 						case BATTLE_FACILITY_LITTLE_CUP:
 						case BATTLE_FACILITY_LC_CAMOMONS:
 							goto REGULAR_LC_SPREADS;

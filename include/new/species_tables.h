@@ -26,6 +26,8 @@ struct SpecialSpeciesFlags
 	bool8 smogonUUBan : 1;
 	bool8 smogonRUBan : 1;
 	bool8 smogonNUBan : 1;
+	bool8 goodForUbers : 1;
+	bool8 badForUbers : 1;
 	bool8 setPerfectXIVs : 1;
 	bool8 smartWild : 1;
 	bool8 randomizerBan : 1;
