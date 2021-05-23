@@ -413,7 +413,8 @@ static void TryGiveMonOnlyMetronome(struct Pokemon* mon)
 extern void SortItemsInBag(u8 pocket, u8 type);
 void sp067_GenerateRandomBattleTowerTeam(void)
 {
-	u8 tier;
+	u8 tier, i;
+	struct Pokemon backupMon;
 
 	switch (Var8000) {
 		case 0:
@@ -438,11 +439,30 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 			break;
 	}
 
+	if (Var8001) //Keep team lead from previous battle
+		backupMon = gPlayerParty[0];
+
 	#ifdef FLAG_PRESET_RANDOM_TEAM
 	FlagSet(FLAG_PRESET_RANDOM_TEAM);
 	#endif
 	VarSet(VAR_BATTLE_FACILITY_TIER, tier);
 	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
+
+	if (Var8001) //Keep team lead from previous battle
+	{
+		u16 backupSpecies = GetMonData(&backupMon, MON_DATA_SPECIES, NULL);
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == backupSpecies)
+				break; //Replace this mon because duplicate species should never be offered
+		}
+
+		if (i >= PARTY_SIZE) //Duplicate species wasn't found
+			i = 0; //Just replace first mon
+
+		gPlayerParty[i] = backupMon;
+		SwapMons(gPlayerParty, 0, i);
+	}
 
 	/*for (u32 i = TOTAL_SPREADS / 2; i < TOTAL_SPREADS; ++i)
 	{
