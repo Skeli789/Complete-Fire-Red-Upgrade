@@ -1299,7 +1299,7 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 
 		for (i = 0; i < 2; ++i)
 		{
-			species = ScriptReadHalfword(ctx);
+			species = VarGet(ScriptReadHalfword(ctx));
 			level = ScriptReadByte(ctx);
 			item = ScriptReadHalfword(ctx);
 
@@ -1317,6 +1317,7 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 	else
 	#endif
 	{
+		species = VarGet(species);
 		#ifdef FLAG_DOUBLE_WILD_BATTLE
 		FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Singular mon
 		#endif

@@ -2084,7 +2084,7 @@ static void ChangeBattlerSpritesInvisibilities(bool8 invisible)
 
 		if (spriteId == 0xFF || !IsBattlerSpriteVisible(i)) //Pokemon that are already hidden
 		{
-			if (invisible)
+			if (invisible) //Hide sprite
 				gNewBS->hiddenAnimBattlerSprites |= gBitTable[i]; //Set bit to keep hidden after closing team preview
 			else
 				gNewBS->hiddenAnimBattlerSprites &= ~gBitTable[i]; //Clear bit to keep hidden after closing team preview

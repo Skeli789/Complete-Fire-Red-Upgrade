@@ -31,6 +31,7 @@ struct  __attribute__((packed)) FieldEffectScript2
 u8 __attribute__((long_call)) FieldEffectStart(u8);
 void __attribute__((long_call)) FieldEffectFreeGraphicsResources(struct Sprite *s);
 void __attribute__((long_call)) FieldEffectStop(struct Sprite* s, u8 animation);
+u8 __attribute__((long_call)) CreateTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpriority, u8 *buffer);
 bool8 __attribute__((long_call)) FieldEffectActiveListContains(u8 id);
 void __attribute__((long_call)) DeleteOBJ(struct Sprite *s);
 u32 __attribute__((long_call)) FldEff_SurfBlob(void);

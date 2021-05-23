@@ -172,7 +172,8 @@ gEventObjects = 0x2036E38;
 
 /* Sprite RAM */
 gSprites = 0x202063C;
-gObjIds = 0x2021800;
+sSpritePriorities = 0x2021780;
+sSpriteOrder = 0x2021800;
 gAffineCoefficients = 0x2021BCC;
 gMultiuseSpriteTemplate = 0x20244DC;
 template_0203AD40 = 0x203AD40;
@@ -605,6 +606,7 @@ BattleLoadOpponentMonSpriteGfx = 0x8034320 | 1;
 BattleLoadPlayerMonSpriteGfx = 0x8034498 | 1;
 DecompressTrainerFrontPic = 0x80346C4 | 1;
 DecompressTrainerBackPic = 0x8034750 | 1;
+FreeTrainerFrontPicPaletteAndTile = 0x803477C | 1;
 battle_load_health_boxes_unused = 0x80347A8 | 1;
 load_gfxc_health_bar = 0x8034964 | 1;
 SpriteCB_SetInvisible = 0x80356FC | 1;
@@ -1288,6 +1290,7 @@ FieldEffectScript_LoadFadedPalette = 0x8083614 | 1;
 FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
 FieldEffectActiveListContains = 0x808382C | 1;
+CreateTrainerSprite = 0x8083858 | 1;
 FldEffPoison_Start = 0x80A0E48 | 1;
 CheckObjectGraphicsInFrontOfPlayer = 0x80C97A8 | 1;
 MapTransitionIsEnter = 0x80C9D7C | 1;
@@ -1742,6 +1745,14 @@ UpdateSpritePaletteWithWeather = 0x807AA8C | 1;
 FadeSelectedPals = 0x807A944 | 1;
 PreservePaletteInWeather = 0x807B084 | 1;
 
+/* Palette Util Functions */
+InitPulseBlend = 0x80D90A8 | 1;
+InitPulseBlendPaletteSettings = 0x80D90D4 | 1;
+ClearPulseBlendPalettesSettings = 0x80D9140 | 1;
+UnloadUsedPulseBlendPalettes = 0x80D91BC | 1;
+MarkUsedPulseBlendPalettes = 0x80D9214 | 1;
+UnmarkUsedPulseBlendPalettes = 0x80D9294 | 1;
+UpdatePulseBlend = 0x80D93BC | 1;
 
 /* NPC Functions */
 PlayerGetDestCoords = 0x805C538 | 1;
@@ -1769,6 +1780,11 @@ DoShadowFieldEffect = 0x80692F0 | 1;
 
 /* BG Functions */
 ClearGpuRegBits = 0x8000B14 | 1;
+ClearDma3Requests = 0x8000BFC | 1;
+ProcessDma3Requests = 0x8000C34 | 1;
+RequestDma3Copy = 0x8000EAC | 1;
+RequestDma3Fill = 0x8000F44 | 1;
+WaitDma3Request = 0x8000FE8 | 1;
 ResetBgsAndClearDma3BusyFlags = 0x8001618 | 1;
 InitBgsFromTemplates = 0x8001658 | 1;
 LoadBgTiles = 0x80017D0 | 1;
@@ -1835,6 +1851,7 @@ PlayBGM = 0x80722A0 | 1;
 PlaySE = 0x80722CC | 1;
 PlaySE2WithPanning = 0x0807237C | 1;
 IsSEPlaying = 0x80723E0 | 1;
+IsSpecialSEPlaying = 0x807244C | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
 MPlayStart = 0x81DD858 | 1;

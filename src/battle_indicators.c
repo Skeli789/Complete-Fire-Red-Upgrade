@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/bg.h"
 #include "../include/battle_anim.h"
+#include "../include/dma3.h"
 #include "../include/item_icon.h"
 #include "../include/m4a.h"
 #include "../include/menu.h"
@@ -1701,6 +1702,7 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	const u8* string;
 
 	//Update Background
+	gBattle_BG0_X = 0;
 	gBattle_BG0_Y = 0; //Hide action selection - must go before creating icons! Causes sprite bugs otherwise
 
     LZDecompressVram(TeamPreviewInBattleBgTiles, (void *)(BG_CHAR_ADDR(1)));
@@ -1722,6 +1724,7 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	LoadCompressedSpriteSheet(&sTeamPreviewStatusIconsSpriteSheet);
 	LoadSpritePalette(&gHeldItemSpritePalette);
 	LoadSpritePalette(&faintedIconSpritePalette);
+	LoadMonIconPalette(SPECIES_NONE); //Used for status icon sprites
 
 	u8 faintedIconPalNum = IndexOfSpritePaletteTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON);
 
@@ -1823,19 +1826,23 @@ void HideInBattleTeamPreview(void)
 
 	//Hide BG
 	gBattle_BG0_Y = 160; //Show action selection
-	HideBg(1);
+	RequestDma3Fill(0, (void*)(BG_SCREEN_ADDR(28)), 0x1000, DMA3_32BIT); //Wipe tilemap (tiles don't need to be wiped)
 
 	//Destroy Sprites
 	for (i = 0; i < MAX_SPRITES; ++i)
 	{
-		if (gSprites[i].inUse
-		&& (gSprites[i].oam.paletteNum == pal0
-		 || gSprites[i].oam.paletteNum == pal1
-		 || gSprites[i].oam.paletteNum == pal2
-		 || gSprites[i].oam.paletteNum == pal3))
-			DestroyMonIcon(&gSprites[i]);
-		else if (gSprites[i].template->tileTag == GFX_TAG_HELD_ITEM)
-			DestroySprite(&gSprites[i]);
+		if (gSprites[i].inUse)
+		{
+			if (gSprites[i].template->tileTag == GFX_TAG_TEAM_PREVIEW_STATUS_ICON
+			|| gSprites[i].template->tileTag == GFX_TAG_FAINTED_TEAM_PREVIEW_ICON
+			|| gSprites[i].template->tileTag == GFX_TAG_HELD_ITEM)
+				DestroySprite(&gSprites[i]);
+			else if (gSprites[i].oam.paletteNum == pal0
+			|| gSprites[i].oam.paletteNum == pal1
+			|| gSprites[i].oam.paletteNum == pal2
+			|| gSprites[i].oam.paletteNum == pal3)
+				DestroyMonIcon(&gSprites[i]);
+		}
 	}
 
 	//Free Palettes

@@ -182,6 +182,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAPSEC_VIVILL_TOWN					0x79
 #define MAPSEC_VIVILL_WAREHOUSE				0x7C
 #define MAPSEC_DISTORTION_WORLD				0x97
+#define MAPSEC_ROUTE_15						0x73
 #define MAPSEC_ROUTE_16						0x74
 #define MAPSEC_ANTISIS_CITY					0x78
 #define MAPSEC_ANTISIS_SEWERS				0x8F
