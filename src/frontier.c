@@ -928,6 +928,9 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 	level = (level == 0) ? VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL) : level;
 	level = AdjustLevelForTier(level, tier);
 
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return 0; //No streak is kept for Metronome battles
+
 	LoadProperStreakData(&facilityNum, &currentOrMax, &battleStyle, &tier, &size, &level);
 
 	switch (facilityNum) {
@@ -957,6 +960,10 @@ void sp055_UpdateBattleFacilityStreak(void)
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	u8 partySize = VarGet(VAR_BATTLE_FACILITY_POKE_NUM);
 	u8 level = AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
+
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return; //This tier has no streaks
+
 	LoadProperStreakData(&facilityNum, &dummy, &battleStyle, &tier, &partySize, &level);
 
 	u16* currentStreak, *maxStreak;
@@ -1063,6 +1070,9 @@ u16 sp056_DetermineBattlePointsToGive(void)
 	u16 toGive;
 	u16 streakLength = GetCurrentBattleTowerStreak();
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
+
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return 10; //Metronome battles always give 10 BP due to their sheer length
 
 	if (streakLength <= 10)
 	{

@@ -1702,9 +1702,10 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	const u8* string;
 
 	//Update Background
-	gBattle_BG0_X = 0;
 	gBattle_BG0_Y = 0; //Hide action selection - must go before creating icons! Causes sprite bugs otherwise
-
+	gBattle_BG1_X = 0; //Fix bg offsets if necessary (gets messed up by some battle anims)
+	gBattle_BG1_Y = 0;
+	
     LZDecompressVram(TeamPreviewInBattleBgTiles, (void *)(BG_CHAR_ADDR(1)));
     LZDecompressVram(TeamPreviewInBattleBgMap, (void *)(BG_SCREEN_ADDR(28)));
     LoadCompressedPalette(TeamPreviewInBattleBgPal, 0xF0, 32);
