@@ -51,7 +51,11 @@ gTypeNames 0811977C
 
 ##Scripts
 BattleScript_RainDishActivates 0801A4A0
+BattleScript_AIUseFullRestoreOrHpHeal 081D99E8
+BattleScript_AIUseFullRestoreOrHpHeal 081D99EC
+BattleScript_AIUseStatRestore 081D99F0
 BattleScript_AIUseXstat 081D99F4
+BattleScript_AIUseGuardSpec 081D99F8
 SystemScript_FindItemMessage 081A67DD
 SystemScript_ObtainItem 08160450
 SystemScript_ObtainItemMessage 081A66AC

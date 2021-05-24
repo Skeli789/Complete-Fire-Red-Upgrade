@@ -471,6 +471,7 @@
 .equ AnimTask_GlareEyeDots, 0x80e21cd
 .equ AnimTask_ScaryFace, 0x80a9f11
 .equ AnimTask_ShakeTargetInPattern, 0x80adad9
+.equ AnimTask_StatusClearedEffect, 0x80e2085
  
 @launchtemplate
 

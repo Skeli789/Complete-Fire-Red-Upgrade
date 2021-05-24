@@ -94,6 +94,7 @@ gBattleAnims_General:
 .word ANIM_G_MAX_WILDFIRE
 .word ANIM_G_MAX_CANNONADE
 .word ANIM_G_MAX_VOLCALITH
+.word ANIM_AI_ITEM_HEAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1047,6 +1048,14 @@ ANIM_G_MAX_VOLCALITH:
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x7 0x1  
 	waitanimation 
 	pokespritefromBG side_target
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_AI_ITEM_HEAL:
+	playsound2 0xE8 SOUND_PAN_ATTACKER
+	launchtask AnimTask_StatusClearedEffect 0x2 0x1 FALSE
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

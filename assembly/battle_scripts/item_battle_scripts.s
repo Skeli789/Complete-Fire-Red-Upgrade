@@ -569,15 +569,62 @@ BattleScript_WeaknessBerryActivate:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_AIUseFullRestoreOrHpHeal:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_HEALING_SPARKLES, 0x0 @Purposely before ignore Substitute
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 298 @;STRINGID_PKMNSITEMRESTOREDHEALTH
+	waitmessage DELAY_1SECOND
+	reloadhealthbar BANK_ATTACKER
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AIUseStatRestore:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_AI_ITEM_HEAL, 0x0
+	printfromtable 0x83FE628 @;gTrainerItemCuredStatusStringIds
+	waitmessage DELAY_1SECOND
+	reloadhealthbar BANK_ATTACKER
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_AIUseXstat:
 	printstring 304 @;STRINGID_EMPTYSTRING3
-	pause 48
+	pause DELAY_HALFSECOND
 	playse 0x1 @;SE_USE_ITEM
 	printstring 343 @;STRINGID_TRAINER1USEDITEM
 	waitmessage DELAY_1SECOND
 	useitemonopponent
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C @;gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AIUseGuardSpec:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_AI_ITEM_HEAL, 0x0
+	printfromtable 0x83FE5AC @;gMistUsedStringIds
 	waitmessage DELAY_1SECOND
 	finishaction
 
