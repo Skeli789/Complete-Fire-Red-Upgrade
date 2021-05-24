@@ -3694,6 +3694,10 @@ void atkA9_trychoosesleeptalkmove(void)
 			randomPos = Random() & 3;
 		} while ((gBitTable[randomPos] & unusableMoves));
 
+		u8 sleepTalkPos = FindMovePositionInMoveset(gCurrentMove, gBankAttacker);
+		if (sleepTalkPos < MAX_MON_MOVES)
+			gNewBS->usedMoveIndices[gBankAttacker] |= gBitTable[sleepTalkPos]; //Allow Sleep Talk + Last Resort
+
 		gCalledMove = gBattleMons[gBankAttacker].moves[randomPos];
 		gCurrMovePos = randomPos;
 		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
