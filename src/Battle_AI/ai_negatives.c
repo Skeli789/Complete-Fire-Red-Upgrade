@@ -83,6 +83,7 @@ ai_negatives.c
 							   && (data->atkItemEffect == ITEM_EFFECT_CHOICE_BAND || data->atkAbility == ABILITY_GORILLATACTICS || gDisableStructs[bankAtk].encoreTimer > 0))
 
 #define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
+#define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
 
 //Doubles is now defined as being a non 1v1 Double Battle
 #undef IS_DOUBLE_BATTLE
@@ -1425,17 +1426,6 @@ MOVESCR_CHECK_0:
 			}
 			break;
 
-		case EFFECT_RAZOR_WIND:
-		case EFFECT_SKULL_BASH:
-		case EFFECT_SKY_ATTACK:
-			if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
-				goto AI_STANDARD_DAMAGE;
-
-			if (CanKnockOut(bankDef, bankAtk) //Attacker can be knocked out
-			&&  predictedMove != MOVE_NONE)
-				DECREASE_VIABILITY(4);
-			goto AI_STANDARD_DAMAGE;
-
 		//Add check for sound move?
 		case EFFECT_SUBSTITUTE:
 			if (data->atkStatus2 & STATUS2_SUBSTITUTE
@@ -2014,25 +2004,47 @@ MOVESCR_CHECK_0:
 				goto AI_STANDARD_DAMAGE;
 			break;
 
-		case EFFECT_SOLARBEAM:
-			if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB
-			|| (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
+		case EFFECT_SEMI_INVULNERABLE: ;
+			if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
 				goto AI_STANDARD_DAMAGE;
 
-			if (CanKnockOut(bankDef, bankAtk)) //Attacker can be knocked out
-				DECREASE_VIABILITY(4);
-
-			goto AI_STANDARD_DAMAGE;
-
-		case EFFECT_SEMI_INVULNERABLE: ;
 			if (predictedMove != MOVE_NONE
 			&& MoveWouldHitFirst(move, bankAtk, bankDef)
 			&& gBattleMoves[predictedMove].effect == EFFECT_SEMI_INVULNERABLE)
-				DECREASE_VIABILITY(10); //Don't Fly if opponent is going to fly after you
+				DECREASE_VIABILITY(10); //Don't Fly if opponent is going to Fly after you
 
-			if (WillFaintFromWeatherSoon(bankAtk)
-			&& (move == MOVE_FLY || move == MOVE_BOUNCE))
-				DECREASE_VIABILITY(10); //Attacker will faint while in the air
+			goto TWO_TURN_ATTACK_CHECK;
+
+		case EFFECT_SOLARBEAM:
+			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				goto AI_STANDARD_DAMAGE;
+			//Fallthrough
+
+		case EFFECT_RAZOR_WIND:
+		case EFFECT_SKULL_BASH:
+		case EFFECT_SKY_ATTACK:
+		TWO_TURN_ATTACK_CHECK:
+			if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
+				goto AI_STANDARD_DAMAGE;
+
+			if (WillFaintFromSecondaryDamage(bankAtk))
+				DECREASE_VIABILITY(10); //Attacker will faint while charging
+
+			if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Semi-Smart or SMart AI
+			{
+				if (!(data->defStatus1 & (STATUS1_PARALYSIS | STATUS1_FREEZE)) //Target won't randomly not be able to attack
+				&& (data->defStatus2 & STATUS2_CONFUSION) < 3 //Foe wouldn't be confused when the attack would hit
+				&& !(data->defStatus2 & STATUS2_INFATUATION) //Foe wouldn't miss the attack since they'll never be immobilized by love
+				&& !TARGET_ASLEEP) //Target is awake (not that they could wake up and protect for the second turn but that's fair and not AI abuse
+				{
+					if (HasProtectionMoveInMoveset(bankDef, 0) //Foe could protect before the attack hits
+					&& !WillFaintFromSecondaryDamage(bankDef)) //And the foe protecting is reasonable
+						DECREASE_VIABILITY(8); //Better not to use this attack, but still can if need be
+					else if (CanKnockOut(bankDef, bankAtk) //Attacker can be knocked out
+					&& predictedMove != MOVE_NONE)
+						DECREASE_VIABILITY(4);
+				}
+			}
 
 			goto AI_STANDARD_DAMAGE;
 
