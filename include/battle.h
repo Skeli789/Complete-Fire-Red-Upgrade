@@ -452,7 +452,8 @@ struct SideTimer
 			 u8 tspikesAmount : 2;
 			 u8 srAmount : 1;
 			 u8 stickyWeb : 1;
-    /*0x0B*/ u8 steelsurge: 1;
+			 u8 steelsurge: 1;
+	/*0x0B*/ u8 fieldB;
 };
 
 extern struct SideTimer gSideTimers[];
@@ -972,12 +973,14 @@ struct NewBattleStruct
 		bool8 sideSwitchedThisRound;
 		u8 playerSwitchedCount; //~0x2017B6B
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B6C - Used for anti-AI cheesing
-		u8 switchesInARow[MAX_BATTLERS_COUNT]; //~0x2017B70
+		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
+		u8 switchesInARow[MAX_BATTLERS_COUNT];
 		u8 previousMonIn[MAX_BATTLERS_COUNT];
 		u8 secondPreviousMonIn[MAX_BATTLERS_COUNT];
 		bool8 suckerPunchOkay[MAX_BATTLERS_COUNT];
 		u8 itemEffects[MAX_BATTLERS_COUNT];
-		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //~0x2017B84
+		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
+		u16 previousMovePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //previousMovePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
 		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]
@@ -993,6 +996,7 @@ struct NewBattleStruct
 		u8 calculatedAISwitchings[MAX_BATTLERS_COUNT]; //calculatedAISwitchings[bankSwitch]
 		u8 fightingStyle[MAX_BATTLERS_COUNT]; //fightingStyle[bankAtk]
 		u8 dynamaxMonId[NUM_BATTLE_SIDES]; //dynamaxMonId[SIDE(bankAtk)]
+		u8 didTypeAbsorbSwitchToMonBefore[NUM_BATTLE_SIDES]; //didTypeAbsorbSwitchToMonBefore[SIDE(bankAtk)] & gBitTable[monAtk]
 		bool8 onlyBadMovesLeft[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //onlyBadMovesLeft[bankAtk][bankDef]
 		bool8 usingDesperateMove[MAX_BATTLERS_COUNT]; //usingDesperateMove[bankAtk]
 		bool8 shouldFreeChoiceLockWithDynamax[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]

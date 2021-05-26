@@ -54,7 +54,7 @@ u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef);
-//bool8 IsHPAbsorptionAbility(u8 ability);
+bool8 IsHPAbsorptionAbility(u8 ability);
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef);
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef);
 bool8 IsTrapped(u8 bank, bool8 switching);
@@ -65,6 +65,7 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move);
 u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential);
 bool8 ShouldPredictBankToMegaEvolve(u8 bank);
+void ClearMovePredictionsOnBank(u8 bank);
 
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk);
 bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk);

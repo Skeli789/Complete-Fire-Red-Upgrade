@@ -183,9 +183,12 @@ u8 TurnBasedEffects(void)
 
 					if (gNewBS->DestinyBondCounters[i])
 						--gNewBS->DestinyBondCounters[i];
-					
+
 					if (gNewBS->ai.switchingCooldown[i])
 						--gNewBS->ai.switchingCooldown[i];
+
+					if (gNewBS->ai.typeAbsorbSwitchingCooldown[i])
+						--gNewBS->ai.typeAbsorbSwitchingCooldown[i];
 
 					gNewBS->synchronizeTarget[i] = 0;
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
@@ -1054,7 +1057,7 @@ u8 TurnBasedEffects(void)
 				if (gBattleStruct->turnEffectsBank < NUM_BATTLE_SIDES)
 				{
 					sideBank = gBattleStruct->turnEffectsBank;
-					if ((gSideStatuses[sideBank] & SIDE_STATUS_MIST) && --gSideTimers[sideBank].mistTimer == 0)
+					if (gSideTimers[sideBank].mistTimer > 0 && --gSideTimers[sideBank].mistTimer == 0) //Doesn't compare side status because Guard Spec. doesn't set it!
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideStatuses[sideBank] &= ~SIDE_STATUS_MIST;

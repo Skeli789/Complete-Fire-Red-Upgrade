@@ -1804,7 +1804,7 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 	return FALSE;
 }
 
-/*bool8 IsHPAbsorptionAbility(u8 ability)
+bool8 IsHPAbsorptionAbility(u8 ability)
 {
 	switch (ability)
 	{
@@ -1814,7 +1814,7 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 		default:
 			return FALSE;
 	}
-}*/
+}
 
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 {
@@ -2031,6 +2031,14 @@ bool8 ShouldPredictBankToMegaEvolve(u8 bank)
 	}
 
 	return TRUE;
+}
+
+void ClearMovePredictionsOnBank(u8 bank)
+{
+	u32 i;
+	
+	for (i = 0; i < gBattlersCount; ++i)
+		gNewBS->ai.movePredictions[i][bank] = MOVE_NONE;
 }
 
 bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)

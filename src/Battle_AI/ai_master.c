@@ -1006,26 +1006,54 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	return FALSE;
 }
 
-static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u8 absorbingTypeAbility1, u8 absorbingTypeAbility2, u8 absorbingTypeAbility3)
+/*
+Don't switch to mon if:
+1. Mon has been switched to for type absorbing before (75% / 25% not to switch).
+2. It will faint from entry hazards (100%)
+3. The mon to switch to has an HP absorption Ability and will be switched in at full health, and the mon out can take a couple hits (100% in Singles).
+*/
+static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u16 predictedMove, u8 absorbingTypeAbility1, u8 absorbingTypeAbility2, u8 absorbingTypeAbility3)
 {
+	u8 side = SIDE(gActiveBattler);
+
+	//Check mon has been switched to for type absorbing before
+	if (gNewBS->ai.didTypeAbsorbSwitchToMonBefore[side] & gBitTable[monId]) //Used this mon for a type switch before
+	{
+		u8 noSwitchChance = (gNewBS->ai.switchingCooldown[gActiveBattler]) ? 75 : 25; //Just switched in (not type absorb) 75% chance not to switch, otherwise 25% chance
+
+		if (Random() % 100 < noSwitchChance)
+			return FALSE; //Only allow switching to this mon again for a type absorbing some of the time
+	}
+
 	u8 monAbility = GetMonAbility(mon);
 
 	if (monAbility == absorbingTypeAbility1
 	||  monAbility == absorbingTypeAbility2
 	||  monAbility == absorbingTypeAbility3)
 	{
-		if (!WillFaintFromEntryHazards(mon, SIDE(gActiveBattler))) //Theres a point to switching in this mon
+		if (!WillFaintFromEntryHazards(mon, side)) //Theres a point to switching in this mon
 		{
-			/* This doesn't really seem to make the AI play any better
-			if (IS_SINGLE_BATTLE //Still good to do this kind of switch in Doubles
+			u8 foe = FOE(gActiveBattler);
+
+			//Check HP Absorption Switch
+			if (IS_SINGLE_BATTLE //Still good to do these kinds of switches in Doubles
 			&& IsHPAbsorptionAbility(monAbility) //Ability restores HP when hit
 			&& mon->hp == mon->maxHP //Mon is already at max HP
 			&& GetMonEntryHazardDamage(mon, side) == 0) //And won't take any damage switching in
-				return FALSE; //No point in absorbing this attack
-			*/
+			{
+				u32 dmg = GetFinalAIMoveDamage(predictedMove, foe, gActiveBattler, 2, NULL);
+
+				if (dmg < gBattleMons[gActiveBattler].hp) //Move doesn't 3HKO - the mon out already isn't going to take a lot of damage from the attack
+					return FALSE; //No point of switching to absorbing this attack
+			}
 
 			//We found a mon.
-			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
+			if (IsHPAbsorptionAbility(GetMonAbility(GetBankPartyData(gActiveBattler)))) //The mon being switch out has a type absorption Ability
+				gNewBS->ai.didTypeAbsorbSwitchToMonBefore[side] |= gBitTable[gBattlerPartyIndexes[gActiveBattler]]; //Act as if it was switched into to absorb an attack before
+
+			gNewBS->ai.didTypeAbsorbSwitchToMonBefore[side] |= gBitTable[monId];
+			gNewBS->ai.typeAbsorbSwitchingCooldown[gActiveBattler] = 2; //Allow switching again for type absorbers on the turn after the next
+			gBattleStruct->switchoutIndex[side] = monId;
 			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 			return TRUE;
 		}
@@ -1048,6 +1076,9 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 	predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
 	predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
+
+	if (gNewBS->ai.typeAbsorbSwitchingCooldown[gActiveBattler])
+		return FALSE; //Just switch in a mon to absorb an attack so don't allow an infinite loop
 
 	if (STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 6 + 3)
 		return FALSE; //Invested in Evasion so don't switch
@@ -1089,6 +1120,13 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 		if (IS_BEHIND_SUBSTITUTE(gActiveBattler) //AI is behind a Substitute
 		&& !DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe1, gActiveBattler)) //And the foe can't hit it through the Substitute
 			return FALSE; //Make use of your substitute before switching
+
+		//Check faulty previous prediction
+		if (!gDisableStructs[gActiveBattler].isFirstTurn //AI mon has had at least a turn in battle so far
+		&& !gDisableStructs[foe1].isFirstTurn //Player mon has had at least a turn in battle so far
+		&& gNewBS->ai.previousMovePredictions[foe1][gActiveBattler] == predictedMove1 //Player was predicted to do the same thing last turn
+		&& gLastUsedMoves[foe1] != predictedMove1) //But the player didn't do it
+			return FALSE; //The player isn't doing what's expected
 	}
 	else //Double Battle
 	{
@@ -1168,16 +1206,16 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	//Check best mon to switch into
 	if (bestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
 	&&  bestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
-	&&  TypeAbosorbingSwitchAbilityCheck(&party[bestMonId], bestMonId,
-										absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
+	&&  TypeAbosorbingSwitchAbilityCheck(&party[bestMonId], bestMonId, predictedMove1,
+										 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
 		return TRUE;
 
 	//Check second best mon to switch into
 	u8 secondBestMonId = GetSecondMostSuitableMonToSwitchInto();
 	if (secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
 	&&  secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
-	&&  TypeAbosorbingSwitchAbilityCheck(&party[secondBestMonId], secondBestMonId,
-										absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
+	&&  TypeAbosorbingSwitchAbilityCheck(&party[secondBestMonId], secondBestMonId, predictedMove1,
+										 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
 		return TRUE;
 
 	//Check the rest of the party
@@ -1196,7 +1234,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 		||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 			continue;
 
-		if (TypeAbosorbingSwitchAbilityCheck(&party[i], i, absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
+		if (TypeAbosorbingSwitchAbilityCheck(&party[i], i, predictedMove1, absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
 			return TRUE;
 	}
 
@@ -3074,7 +3112,8 @@ static void PredictMovesForBanks(void)
 	u8 bestMoves[MAX_MON_MOVES] = {0};
 	struct AIScript aiScriptData = {0};
 
-	Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Clear old predictions
+	Memcpy(gNewBS->ai.previousMovePredictions, gNewBS->ai.movePredictions, sizeof(gNewBS->ai.previousMovePredictions)); //Save old predictions
+	Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Wipe for new round
 
 	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{

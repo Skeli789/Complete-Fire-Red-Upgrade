@@ -8,6 +8,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start.h"
@@ -560,12 +561,18 @@ void atk52_switchineffects(void)
 			{
 				//If the player switches out their Pokemon, allow the AI to immediately switch out if it wants to
 				if (gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] != 3)
+				{
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+				}
 				else
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 1; //AI just decided not to shift switch
 
 				if (IS_DOUBLE_BATTLE)
+				{
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
+				}
 
 				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
 					++gNewBS->ai.switchesInARow[gBankSwitching];
@@ -574,6 +581,7 @@ void atk52_switchineffects(void)
 			{
 				u8 bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 				gNewBS->ai.switchingCooldown[bank] = 0;
+				gNewBS->ai.typeAbsorbSwitchingCooldown[bank] = 0;
 				gNewBS->ai.switchesInARow[bank] = 0; //Using for helping treat AI abuse
 				gNewBS->ai.previousMonIn[bank] = 0xFF;
 				gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
@@ -581,6 +589,7 @@ void atk52_switchineffects(void)
 				{
 					bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					gNewBS->ai.switchingCooldown[bank] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[bank] = 0;
 					gNewBS->ai.switchesInARow[bank] = 0;
 					gNewBS->ai.previousMonIn[bank] = 0xFF;
 					gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
@@ -1274,6 +1283,7 @@ void ClearSwitchBytes(u8 bank)
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);
 	ClearBattlerMoveHistory(bank);
+	ClearMovePredictionsOnBank(bank);
 }
 
 void ClearSwitchBits(u8 bank)
