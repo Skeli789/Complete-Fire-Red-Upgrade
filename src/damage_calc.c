@@ -1903,8 +1903,8 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
 		data->defIsGrounded = CheckMonGrounding(monDef);
 
-		data->defBuff = 0;
-		data->spDefBuff = 0;
+		data->defBuff = (data->defAbility == ABILITY_DAUNTLESSSHIELD) ? 7 : 6;
+		data->spDefBuff = 6;
 
 		if (IsWonderRoomActive())
 		{
@@ -1977,6 +1977,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	{
 		struct Pokemon* monAtk = data->monAtk;
 
+		data->atkBuff = 6;
+		data->spAtkBuff = 6;
+
 		switch (data->move) {
 			case MOVE_BODYPRESS:
 				attack = monAtk->defense;
@@ -1985,10 +1988,10 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			default:
 				attack = monAtk->attack;
 				spAttack = monAtk->spAttack;
+				
+				if (data->atkAbility == ABILITY_INTREPIDSWORD)
+					data->atkBuff = 7;
 		}
-
-		data->atkBuff = 0;
-		data->spAtkBuff = 0;
 
 		data->moveSplit = CalcMoveSplitFromParty(monAtk, move);
 		data->moveType = GetMonMoveTypeSpecial(monAtk, move);
@@ -2044,7 +2047,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case MOVE_FOULPLAY:
 				attack = monDef->attack;
 				spAttack = monDef->spAttack;
-				data->atkBuff = 6; //Party mon has no buffs
+				data->atkBuff = (data->defAbility == ABILITY_INTREPIDSWORD) ? 7 : 6; //Party mon has no buffs usually
 				data->spAtkBuff = 6;
 				break;
 		}
@@ -2374,7 +2377,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	#endif
 
 //Stat Buffs - Attacker
-	if (data->defAbility != ABILITY_UNAWARE && !useMonAtk)
+	if (data->defAbility != ABILITY_UNAWARE
+	&& (data->atkBuff != 6 || data->spAtkBuff != 6)) //No point in wasting time with these calcs if mon has regular stats
 	{
 		if (gCritMultiplier > BASE_CRIT_MULTIPLIER)
 		{
@@ -2392,7 +2396,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 
 //Stat Buffs - Target
-	if (data->atkAbility != ABILITY_UNAWARE && !useMonDef && !gSpecialMoveFlags[move].gIgnoreStatChangesMoves)
+	if (data->atkAbility != ABILITY_UNAWARE
+	&& !gSpecialMoveFlags[move].gIgnoreStatChangesMoves
+	&& (data->defBuff != 6 || data->spDefBuff != 6)) //No point in wasting time with these calcs if mon has regular stats
 	{
 		if (gCritMultiplier > BASE_CRIT_MULTIPLIER)
 		{
