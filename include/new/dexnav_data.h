@@ -632,8 +632,14 @@ static const struct CompressedSpriteSheet sSightSpriteSheet = {DexNavSightTiles,
 static const struct CompressedSpriteSheet sBButtonSpriteSheet = {DexNavBButtonTiles, (32 * 8) / 2, 0x5425};
 static const struct CompressedSpriteSheet sMoveCanvasSpriteSheet = {(u8*) gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x4736};
 static const struct CompressedSpriteSheet sAbilityCanvasSpriteSheet = {gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x1EE7};
+#ifdef UNBOUND
+extern const u8 DexNavStarTiles[];
+static const struct SpriteSheet sStarLitSpriteSheet = {DexNavStarTiles, (8 * 8) / 2, 0x61}; //1st Tile
+static const struct SpriteSheet sStarDullSpriteSheet = {&DexNavStarTiles[1 * 32], (8 * 8) / 2, 0x2613}; //Second tile
+#else
 static const struct SpriteSheet sStarLitSpriteSheet = {&gInterfaceGfx_dexnavStarsTiles[19 * 4 * 32], (8 * 8) / 2, 0x61}; //19 tiles per row, stars are on the 4th row. 1 tile is 32 bytes. Hence 19 * 4 *32
 static const struct SpriteSheet sStarDullSpriteSheet = {&gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 1)*32], (8 * 8) / 2, 0x2613};
+#endif
 const struct SpriteSheet gHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, GFX_TAG_HELD_ITEM};
 const struct SpritePalette gHeldItemSpritePalette = {(const u16*) 0x0845A3EC, GFX_TAG_HELD_ITEM};
 

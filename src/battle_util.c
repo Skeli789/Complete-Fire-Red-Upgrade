@@ -2055,7 +2055,10 @@ bool8 BankSideHasSafeguard(u8 bank)
 
 bool8 BankSideHasMist(u8 bank)
 {
-	return gSideStatuses[SIDE(bank)] & SIDE_STATUS_MIST
+	u8 side = SIDE(bank);
+
+	return gSideStatuses[side] & SIDE_STATUS_MIST
+		|| gSideTimers[side].mistTimer > 0 //Guard Spec
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
 }
 

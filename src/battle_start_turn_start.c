@@ -1457,15 +1457,27 @@ void HandleAction_UseMove(void)
 		gBankTarget = selectedTarget;
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 		{
-			if (SIDE(gBankAttacker) != SIDE(gBankTarget))
+			if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER_OR_PARTNER) //Acupressure
+			{
+				gBankTarget = gBankAttacker; //Redirect to user instead
+			}
+			else if (SIDE(gBankAttacker) != SIDE(gBankTarget))
 			{
 				gBankTarget = PARTNER(gBankTarget);
 			}
 			else //Targeted Partner
 			{
-				gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
-				if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-					gBankTarget = PARTNER(gBankTarget);
+				if (gCurrentMove == MOVE_HEALPULSE)
+				{
+					//Never redirect Heal Pulse to the enemy
+					goto FAIL_NO_TARGET;
+				}
+				else
+				{
+					gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
+					if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+						gBankTarget = PARTNER(gBankTarget);
+				}
 			}
 		}
 	}
@@ -1487,6 +1499,7 @@ void HandleAction_UseMove(void)
 	&& !(moveTarget & MOVE_TARGET_OPPONENTS_FIELD) //Moves like Stealth Rock can still be used
 	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 	{
+		FAIL_NO_TARGET:
 		CancelMultiTurnMoves(gBankAttacker);
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	}

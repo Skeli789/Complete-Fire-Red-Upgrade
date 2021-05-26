@@ -931,6 +931,8 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	u8 i, j, k;
 	bool8 knowsFly = FALSE;
 	bool8 knowsDig = FALSE;
+	bool8 knowsCut = FALSE;
+	u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
 
 	sPartyMenuInternal->numActions = 0;
 	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
@@ -949,53 +951,68 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 					knowsFly = TRUE; //No point in appending Fly if it is already there
 				else if (gFieldMoves[j] == MOVE_DIG)
 					knowsDig = TRUE;
+				else if (gFieldMoves[j] == MOVE_CUT)
+					knowsCut = TRUE;
 			}
 		}
 	}
 
 	//Try to give the mon fly
 	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
-	if (k < MAX_MON_MOVES && !knowsFly) //Doesn't know 4 field moves
+	if (species != SPECIES_NONE && species != SPECIES_EGG)
 	{
-		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
-		
-		if (species != SPECIES_NONE
-		&& species != SPECIES_EGG
-		&& Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) //Only add if usable
-		#ifndef DEBUG_HMS
-		&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
-		&& (
-		 #ifdef FLAG_BOUGHT_ADM
-		 FlagGet(FLAG_BOUGHT_ADM) ||
-		 #endif
-		 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE))
-		#endif
-		)
+		#ifdef UNBOUND
+		if (k < MAX_MON_MOVES && !knowsCut) //Doesn't know 4 field moves
 		{
-			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
-			++k;
+			if (GetCurrentRegionMapSectionId() == MAPSEC_GRIM_WOODS
+			&& VarGet(VAR_SQ_WEED_WHACKER) > 0 && VarGet(VAR_SQ_WEED_WHACKER) < 2 //Weed Whacker in progress
+			#ifndef DEBUG_HMS
+			&& HasBadgeToUseFieldMove(FIELD_MOVE_CUT)
+			&& (FlagGet(FLAG_BOUGHT_ADM) ||
+			 (CheckBagHasItem(ITEM_HM01_CUT, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM01_CUT, 0) == CAN_LEARN_MOVE))
+			#endif
+			)
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_CUT);
+				++k;
+			}
 		}
-	}
-
-	if (k < MAX_MON_MOVES && !knowsDig) //Doesn't know 4 field moves
-	{
-		u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
-
-		if (species != SPECIES_NONE
-		&& species != SPECIES_EGG
-		&& CanUseEscapeRopeOnCurrMap() //Only add if usable
-		#ifndef DEBUG_HMS
-		&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
-		&& (
-		 #ifdef FLAG_BOUGHT_ADM
-		 FlagGet(FLAG_BOUGHT_ADM) ||
-		 #endif
-		 (CheckBagHasItem(ITEM_TM28_DIG, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE))
 		#endif
-		)
+
+		if (k < MAX_MON_MOVES && !knowsFly) //Doesn't know 4 field moves
 		{
-			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
-			++k;
+			if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) //Only add if usable
+			#ifndef DEBUG_HMS
+			&& HasBadgeToUseFieldMove(FIELD_MOVE_FLY)
+			&& (
+			 #ifdef FLAG_BOUGHT_ADM
+			 FlagGet(FLAG_BOUGHT_ADM) ||
+			 #endif
+			 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE))
+			#endif
+			)
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_FLY);
+				++k;
+			}
+		}
+
+		if (k < MAX_MON_MOVES && !knowsDig) //Doesn't know 4 field moves
+		{
+			if (CanUseEscapeRopeOnCurrMap() //Only add if usable
+			#ifndef DEBUG_HMS
+			&& HasBadgeToUseFieldMove(FIELD_MOVE_DIG)
+			&& (
+			 #ifdef FLAG_BOUGHT_ADM
+			 FlagGet(FLAG_BOUGHT_ADM) ||
+			 #endif
+			 (CheckBagHasItem(ITEM_TM28_DIG, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE))
+			#endif
+			)
+			{
+				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_FIELD_MOVES + FIELD_MOVE_DIG);
+				++k;
+			}
 		}
 	}
 	#endif
@@ -2554,6 +2571,7 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 			noEffect = TRUE;
 		else
 		{
+			RemoveBagItem(item, 1);
 			PartyMenuTryEvolution(taskId);
 			return;
 		}

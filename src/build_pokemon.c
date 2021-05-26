@@ -985,10 +985,12 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 				TryGiveSpecialTrainerHiddenPower(trainerId, &party[i]);
 				#endif
 			}
-			#ifdef VAR_GAME_DIFFICULTY
-			else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
-				GiveMon2BestBaseStatEVs(&party[i]);
 			#endif
+
+			#ifdef VAR_GAME_DIFFICULTY
+			if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY
+			&& GetMonEVCount(&party[i]) == 0) //Has no EVs already
+				GiveMon2BestBaseStatEVs(&party[i]);
 			#endif
 
 			//Caluate stats and set to full health
@@ -1611,13 +1613,16 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_UBER:
 						case BATTLE_FACILITY_NO_RESTRICTIONS:
 						case BATTLE_FACILITY_UBER_CAMOMONS:
+							SPECIAL_UBERS_SPREADS:
 							if (Random() % 100 < 50) //50% chance per mon of being non-legend good for Ubers (in reality a lot lower because standard spreads are much bigger)
 							{
 								spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
 								if (!gSpecialSpeciesFlags[spread->species].goodForUbers //Not a Pokemon that would do well in Ubers
 								&& !CheckTableForItem(spread->item, gSmogonOU_ItemBanList) //Doesn't have an item like Ubers Mega Stones
 								&& spread->item != ITEM_MAWILITE) //Not banned in OU but still good in Ubers
+								{
 									continue;
+								}
 							}
 							else
 							{
@@ -1738,7 +1743,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_UBER:
 						case BATTLE_FACILITY_NO_RESTRICTIONS:
 						case BATTLE_FACILITY_UBER_CAMOMONS:
-							goto REGULAR_UBERS_SPREADS;
+							goto SPECIAL_UBERS_SPREADS;
 						case BATTLE_FACILITY_LITTLE_CUP:
 						case BATTLE_FACILITY_LC_CAMOMONS:
 							goto REGULAR_LC_SPREADS;

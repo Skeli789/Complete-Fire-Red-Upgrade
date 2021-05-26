@@ -3029,7 +3029,11 @@ SpectralThiefBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
+	typecalc2
+	jumpifmovehadnoeffect SpectralThiefBS_SkipSteal
+	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	tryspectralthiefsteal PlaySpectBoost
+SpectralThiefBS_SkipSteal:
 	setbyte ANIM_TURN 0x1
 	goto BS_HIT_FROM_DAMAGE_CALC
 
@@ -5179,6 +5183,7 @@ ThroatChopBS:
 BS_232_TypeChangers:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring @;Activates Protean even if it fails
 	ppreduce
 	jumpifmove MOVE_SOAK SoakBS

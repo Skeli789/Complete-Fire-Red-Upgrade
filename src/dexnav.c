@@ -495,11 +495,13 @@ static void DexNavFreeHUD(void)
 	//Clear black bar
 	CleanWindow(sDexNavHudPtr->blackBarWindowId);
 	CopyWindowToVram(sDexNavHudPtr->blackBarWindowId, COPYWIN_BOTH);
+    ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
 	RemoveWindow(sDexNavHudPtr->blackBarWindowId);
 
 	//Clean arrow
 	CleanWindow(sDexNavHudPtr->arrowWindowId);
 	CopyWindowToVram(sDexNavHudPtr->arrowWindowId, COPYWIN_BOTH);
+    ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
 	RemoveWindow(sDexNavHudPtr->arrowWindowId);
 
 	if (sDexNavHudPtr->spriteIdSight < MAX_SPRITES)
@@ -902,9 +904,9 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	if (sDexNavHudPtr->totalProximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_BIKE)) //If player is close and running then the Pokemon should flee
 	{
 		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
-		DestroyTask(taskId);
 		DexNavFreeHUD();
 		DexNavShowFieldMessage(FIELD_MSG_SNEAK_NEXT_TIME);
+		DestroyTask(taskId);
 		return;
 	}
 
@@ -912,17 +914,17 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	if (ScriptContext2_IsEnabled() == TRUE)
 	{
 		//gCurrentDexNavChain = 0; //Not fair because of the repel pop up
-		DestroyTask(taskId);
 		DexNavFreeHUD();
+		DestroyTask(taskId);
 		return;
 	}
 
 	if (gMain.newKeys & (B_BUTTON | START_BUTTON))
 	{
-		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
-		DestroyTask(taskId);
-		DexNavFreeHUD();
 		PlaySE(SE_POKENAV_OFF);
+		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
+		DexNavFreeHUD();
+		DestroyTask(taskId);
 		return;
 	}
 
@@ -1424,7 +1426,7 @@ static void DexNavDrawBlackBar(u8* windowId)
 
 	LoadPalette(blackBarPal, 0xD0, 0x8);
 	PreservePaletteInWeather(13);
-	template = SetWindowTemplateFields(0, 0, 16, 30, 4, 13, 0x24);
+	template = SetWindowTemplateFields(0, 0, 16, 30, 4, 13, GetStdWindowBaseTileNum());
 	*windowId = AddWindow(&template);
 	PutWindowTilemap(*windowId);
 	FillWindowPixelBuffer(*windowId, PIXEL_FILL(0)); //Clean tiles
@@ -1436,7 +1438,7 @@ static void DexNavDrawDirectionalArrow(u8* windowId)
 {
 	struct WindowTemplate template;
 
-	template = SetWindowTemplateFields(0, 24, 18, 2, 2, 13, 0x20);
+	template = SetWindowTemplateFields(0, 24, 18, 2, 2, 13, GetStdWindowBaseTileNum() - 4);
 	*windowId = AddWindow(&template);
 	PutWindowTilemap(*windowId);
 	FillWindowPixelBuffer(*windowId, PIXEL_FILL(1)); //Clean tiles with black

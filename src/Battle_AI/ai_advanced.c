@@ -1610,7 +1610,7 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit)
 {
 	if (stat == 0xFF) //Steal boosts with Spectral Thief
-		return TRUE;
+		return !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT); //Spectral Thief only steals stats when the move affects
 
 	if (ABILITY(bankDef) == ABILITY_UNAWARE
 	&& !MoveInMovesetAndUsable(MOVE_STOREDPOWER, bankAtk)

@@ -263,6 +263,7 @@ void HandleInputChooseMove(void)
 	else if (gMain.newKeys & SELECT_BUTTON)
 	{
 		if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_CAMOMONS))
+		&& gDisableStructs[gActiveBattler].encoreTimer == 0 //Breaks the Encore otherwise
 		&& !gNewBS->dynamaxData.viewing
 		&& !gNewBS->zMoveData.viewing
 		&& !gNewBS->zMoveData.viewingDetails)
