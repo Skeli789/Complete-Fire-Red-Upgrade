@@ -1519,6 +1519,16 @@ MOVESCR_CHECK_0:
 			|| predictedMove == MOVE_NONE
 			|| MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 				DECREASE_VIABILITY(10);
+
+			if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Smart AI only
+			&& move != MOVE_METALBURST
+			&& gLastUsedMoves[bankDef] != MOVE_NONE && gLastUsedMoves[bankDef] != 0xFFFF //Player attacked last turn
+			&& gBattleMoves[gLastUsedMoves[bankAtk]].effect == moveEffect //The AI tried using the same move last turn
+			&& CalcMoveSplit(bankDef, gLastUsedMoves[bankDef]) != CalcMoveSplit(bankDef, gNewBS->ai.previousMovePredictions[bankDef][bankAtk]) //But the player used a move split other than what was predicted
+			&& AI_THINKING_STRUCT->simulatedRNG[1] & 1) //50% of the time
+			{
+				DECREASE_VIABILITY(8); //It's not unreasonable to think that they'll try something else again
+			}
 			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_ENCORE:
