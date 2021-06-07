@@ -64,3 +64,4 @@ struct SpecialMoveFlags
 };
 
 extern const struct SpecialMoveFlags gSpecialMoveFlags[];
+extern const u8 gMoveEffectsThatIgnoreWeaknessResistance[];

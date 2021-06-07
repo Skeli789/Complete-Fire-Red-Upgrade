@@ -38,7 +38,6 @@ extern const u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 gDynamaxMovePowers[MOVES_COUNT];
 extern const u8 sTargetIdentities[];
 extern const u16 gUserInterfaceGfx_TypeHighlightingPal[];
-extern const u8 gMoveEffectsThatIgnoreWeaknessResistance[];
 
 //This file's functions:
 static bool8 TriggerMegaEvolution(void);
@@ -407,35 +406,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 					continue;
 				}
 
-				if (SPLIT(move) != SPLIT_STATUS
-				|| move == MOVE_THUNDERWAVE || gSpecialMoveFlags[move].gPowderMoves) //These status moves have immunities
-				{
-					u8 moveResult = VisualTypeCalc(move, gActiveBattler, j);
-
-					if (!(moveResult & MOVE_RESULT_NO_EFFECT)
-					&& (CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance)
-					 || gBattleMoves[move].effect == EFFECT_0HKO
-					 || move == MOVE_THUNDERWAVE
-					 || gSpecialMoveFlags[move].gPowderMoves))
-						moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = moveResult;
-				}
-				else
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
-
-				//Special type-based status immunities
-				if (gBattleMoves[move].effect == EFFECT_PARALYZE && IsOfType(j, TYPE_ELECTRIC))
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
-
-				if (gBattleMoves[move].effect == EFFECT_WILL_O_WISP && IsOfType(j, TYPE_FIRE))
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
-
-				if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && IsOfType(j, TYPE_GRASS))
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
-
-				if ((gBattleMoves[move].effect == EFFECT_POISON || gBattleMoves[move].effect == EFFECT_TOXIC)
-				&& (IsOfType(j, TYPE_POISON) || IsOfType(j, TYPE_STEEL)))
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = MOVE_RESULT_NO_EFFECT;
+				u8 moveResult = VisualTypeCalc(move, gActiveBattler, j);
+				tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = moveResult;
 			}
 		}
 		else //Single Battle or single target
@@ -450,36 +422,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 				gNewBS->ai.zMoveHelper = MOVE_NONE;
 			}
 
-			if (SPLIT(move) != SPLIT_STATUS
-			|| move == MOVE_THUNDERWAVE || gSpecialMoveFlags[move].gPowderMoves) //These status moves have immunities
-			{
-				u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
-
-				if (!(moveResult & MOVE_RESULT_NO_EFFECT)
-				&& (CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance)
-				 || gBattleMoves[move].effect == EFFECT_0HKO
-				 || move == MOVE_THUNDERWAVE
-				 || gSpecialMoveFlags[move].gPowderMoves))
-					moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
-
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = moveResult;
-			}
-			else
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = 0;
-
-			//Special type-based status immunities
-			if (gBattleMoves[move].effect == EFFECT_PARALYZE && IsOfType(foe, TYPE_ELECTRIC))
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
-	
-			if (gBattleMoves[move].effect == EFFECT_WILL_O_WISP && IsOfType(foe, TYPE_FIRE))
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
-	
-			if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && IsOfType(foe, TYPE_GRASS))
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
-
-			if ((gBattleMoves[move].effect == EFFECT_POISON || gBattleMoves[move].effect == EFFECT_TOXIC)
-			&& (IsOfType(foe, TYPE_POISON) || IsOfType(foe, TYPE_STEEL)))
-				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = MOVE_RESULT_NO_EFFECT;
+			u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
+			tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = moveResult;
 		}
 	}
 

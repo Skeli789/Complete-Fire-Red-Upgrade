@@ -1057,7 +1057,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 moveType;
-	u8 defAbility = GetRecordedAbility(bankDef);
+	u8 defAbility;
 	u8 defEffect = GetRecordedItemEffect(bankDef);
 	u8 atkAbility, defType1, defType2, defType3;
 	u8 flags = 0;
@@ -1071,19 +1071,31 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
 	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
 	{
+		u16 defSpecies = GetMonData(monIllusion, MON_DATA_SPECIES, NULL);
+		defAbility = GetMonAbility(monIllusion);
+		if ((gBaseStats[defSpecies].ability1 != ABILITY_NONE && gBaseStats[defSpecies].ability1 != defAbility)
+		|| (gBaseStats[defSpecies].ability2 != ABILITY_NONE && gBaseStats[defSpecies].ability2 != defAbility)
+		|| (gBaseStats[defSpecies].hiddenAbility != ABILITY_NONE && gBaseStats[defSpecies].hiddenAbility != defAbility))
+			defAbility = ABILITY_NONE; //Mon could have multiple Abilities so don't reveal the correct one to the player
+
 		defType1 = GetMonType(monIllusion, 0);
 		defType2 = GetMonType(monIllusion, 1);
 		defType3 = TYPE_BLANK;
 	}
 	else
 	{
+		defAbility = GetRecordedAbility(bankDef);
 		defType1 = gBattleMons[bankDef].type1;
 		defType2 = gBattleMons[bankDef].type2;
 		defType3 = gBattleMons[bankDef].type3;
 	}
 
-	//Check Special Ground Immunities
-	if (moveType == TYPE_GROUND
+	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves) //These moves aren't related to type matchups, but they can still cause the move to fail and should be known to the player
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if (moveType == TYPE_GROUND //Check Special Ground Immunities
+	&& SPLIT(move) != SPLIT_STATUS
 	&& !NonInvasiveCheckGrounding(bankDef)
 	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
 	 || defEffect == ITEM_EFFECT_AIR_BALLOON
@@ -1091,31 +1103,61 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	 || IsFloatingWithMagnetism(bankDef))
 	&& move != MOVE_THOUSANDARROWS)
 	{
-		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
 	else if (gSpecialMoveFlags[move].gPowderMoves && !IsAffectedByPowderByDetails(defType1, defType2, defType3, defAbility, defEffect))
 	{
-		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
-	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(bankAtk, defType1, defType2, defType3, defEffect)))
+	else if (gBattleMoves[move].effect == EFFECT_PARALYZE && (defType1 == TYPE_ELECTRIC || defType2 == TYPE_ELECTRIC || defType3 == TYPE_ELECTRIC))
 	{
-		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if (gBattleMoves[move].effect == EFFECT_WILL_O_WISP && (defType1 == TYPE_FIRE || defType2 == TYPE_FIRE || defType3 == TYPE_FIRE))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if ((gBattleMoves[move].effect == EFFECT_POISON || gBattleMoves[move].effect == EFFECT_TOXIC)
+	&& atkAbility != ABILITY_CORROSION
+	&& (defType1 == TYPE_POISON || defType2 == TYPE_POISON || defType3 == TYPE_POISON
+	 || defType1 == TYPE_STEEL || defType2 == TYPE_STEEL || defType3 == TYPE_STEEL))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && (defType1 == TYPE_GRASS || defType2 == TYPE_GRASS || defType3 == TYPE_GRASS))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING)))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+	}
+	else if (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerAnd3DefTypesAndItemEffect(bankAtk, defType1, defType2, defType3, defEffect))
+	{
+		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
 	else //Regular Type Calc
-		TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, &flags, defType1, defType2, defType3);
+	{
+		if (SPLIT(move) != SPLIT_STATUS || move == MOVE_THUNDERWAVE) //Thunder Wave is the only status move that doesn't affect based on type (Ground)
+			TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, &flags, defType1, defType2, defType3);
+	}
+
+	if (SPLIT(move) == SPLIT_STATUS)
+	{
+		flags &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE); //Status moves can't be super/not very effective
+		return flags; //Status moves ignore Wonder Guard and Primal weather
+	}
+
+	if (CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance)
+	|| gBattleMoves[move].effect == EFFECT_0HKO)
+		flags &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE); //These moves can't be super/not very effective
 
 	//Wonder Guard Check
 	if (defAbility == ABILITY_WONDERGUARD
 	&& NO_MOLD_BREAKERS(atkAbility, move)
-	&& !(flags & MOVE_RESULT_MISSED)
 	&& (!(flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
 	&& gBattleMoves[move].power
 	&& SPLIT(move) != SPLIT_STATUS)
-		flags |= MOVE_RESULT_MISSED;
-
-	//These things aren't related to type matchups, but they can still cause the move to fail and should be known to the player
-	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves)
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 
 	//Primal Weather Check
@@ -1948,6 +1990,18 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 			data->defense = gBattleMons[bankDef].defense;
 			data->spDefense = gBattleMons[bankDef].spDefense;
 		}
+
+		//Try to "hide" knowledge of Type-Resist Berries so they actually have a use being equipped
+		if (data->defItemEffect == ITEM_EFFECT_WEAKNESS_BERRY
+		&& IsPlayerInControl(bankDef)
+		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //Never allow knowledge in the Frontier
+		#ifdef VAR_GAME_DIFFICULTY
+		 || VarGet(VAR_GAME_DIFFICULTY) < OPTIONS_HARD_DIFFICULTY
+		#endif
+		))
+		{
+			data->defItemEffect = GetRecordedItemEffect(bankDef);
+		}
 	}
 
 	data->defenderLoaded = TRUE;
@@ -2529,11 +2583,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 	//Aura Abilities
 	if ((data->moveType == TYPE_DARK
-		&& (ABILITY_PRESENT(ABILITY_DARKAURA) || data->atkAbility == ABILITY_DARKAURA || data->defAbility == ABILITY_DARKAURA)) //Check all because may be party mon
+		&& (ABILITY_ON_FIELD(ABILITY_DARKAURA) || data->atkAbility == ABILITY_DARKAURA || data->defAbility == ABILITY_DARKAURA)) //Check all because may be party mon
 	||  (data->moveType == TYPE_FAIRY
-		&& (ABILITY_PRESENT(ABILITY_FAIRYAURA) || data->atkAbility == ABILITY_FAIRYAURA || data->defAbility == ABILITY_FAIRYAURA)))
+		&& (ABILITY_ON_FIELD(ABILITY_FAIRYAURA) || data->atkAbility == ABILITY_FAIRYAURA || data->defAbility == ABILITY_FAIRYAURA)))
 	{
-		if (ABILITY_PRESENT(ABILITY_AURABREAK) || data->atkAbility == ABILITY_AURABREAK || data->defAbility == ABILITY_AURABREAK)
+		if (ABILITY_ON_FIELD(ABILITY_AURABREAK) || data->atkAbility == ABILITY_AURABREAK || data->defAbility == ABILITY_AURABREAK)
 			damage = (damage * 75) / 100;
 		else
 			damage = (damage * 4) / 3;

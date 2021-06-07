@@ -1190,6 +1190,7 @@ void HandleAction_UseMove(void)
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
 	gNewBS->breakDisguiseSpecialDmg = FALSE;
+	gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 	gNewBS->zMoveData.active = FALSE;
 	gNewBS->batonPassing = FALSE;
 	gNewBS->dynamaxData.nullifiedStats = FALSE;
@@ -1975,12 +1976,12 @@ s32 BracketCalc(u8 bank)
 				break;
 
 			case ITEM_EFFECT_CUSTAP_BERRY:
-				if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+				if (!ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
 				#ifdef ABILITY_ASONE_GRIM
-				&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_GRIM, 0, 0)
+				&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
 				#endif
 				#ifdef ABILITY_ASONE_CHILLING
-				&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_CHILLING, 0, 0)
+				&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
 				#endif
 				&& PINCH_BERRY_CHECK(bank))
 				{

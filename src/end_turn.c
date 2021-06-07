@@ -1848,6 +1848,7 @@ u32 GetBadThoughtsDamage(u8 bank)
 	if (IsBadThoughtsBattle()
 	&& !IsOfType(bank, TYPE_DARK)
 	&& !IsOfType(bank, TYPE_GHOST)
+	&& !IsOfType(bank, TYPE_PSYCHIC)
 	&& ability != ABILITY_MAGICGUARD
 	&& ability != ABILITY_OBLIVIOUS
 	&& ability != ABILITY_UNAWARE)

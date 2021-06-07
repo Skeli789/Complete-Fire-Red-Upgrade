@@ -78,12 +78,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		gLastUsedItem = ITEM(bank);
 
 		if (IsBerry(gLastUsedItem)
-		&& (AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+		&& (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
 			#ifdef ABILITY_ASONE_GRIM
-			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_GRIM, 0, 0)
+			|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
 			#endif
 			#ifdef ABILITY_ASONE_CHILLING
-			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_CHILLING, 0, 0)
+			|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
 			#endif
 		))
 		{

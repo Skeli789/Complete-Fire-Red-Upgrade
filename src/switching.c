@@ -196,10 +196,13 @@ static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
 			gBattleStringLoader = gText_NeutralizingGasEnd;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			gNewBS->printedNeutralizingGasOverMsg = TRUE;
+			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = TRUE;
 			gNewBS->backupBattlerPosition = gBattlerPositions[bank];
 			gBattlerPositions[bank] = 0xFF; //So there are no issues with animations like Drought - will still cause problem in Link Battles
 			return TRUE;
 		}
+		
+		gBattleMons[bank].hp = 0; //So Switch-In Abilities like Intimidate don't affect the mon that's now gone
 
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
@@ -1197,7 +1200,7 @@ static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
 		for (i = 0; i < 3; i++)
 			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
 
-		SwitchPartyMonSlots(GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[bank]), GetPartyIdFromBattlePartyId(monToSwitchIntoId));
+		SwitchPartyMonSlots(GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]), GetBattlePartyIdFromPartyId(monToSwitchIntoId));
 
 		for (i = 0; i < 3; i++)
 			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];
@@ -1305,11 +1308,12 @@ void PartyMenuSwitchingUpdate(void)
 {
 	int i;
 
+	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
+
 	if (IsOfType(gActiveBattler, TYPE_GHOST)
 	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
 		goto SKIP_SWITCH_BLOCKING_CHECK;
 
-	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
 	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
 	|| IsFairyLockActive())

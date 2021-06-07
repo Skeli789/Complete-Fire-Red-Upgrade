@@ -446,6 +446,7 @@ u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpi
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
 void __attribute__((long_call)) TranslateMonSpriteLinearFixedPoint(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
+u32 __attribute__((long_call)) SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

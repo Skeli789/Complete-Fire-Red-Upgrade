@@ -54,16 +54,18 @@ void atk00_attackcanceler(void)
 		return;
 	}
 
-	if (!NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove) || gNewBS->dynamaxData.nullifiedStats) //There is a Mold Breaker
+	if (IS_MOLD_BREAKER(ABILITY(gBankAttacker), gCurrentMove) || gNewBS->dynamaxData.nullifiedStats) //There is a Mold Breaker
 	{
-		for (int i = 0; i < gBattlersCount; ++i)
+		if (!gNewBS->dontActivateMoldBreakersAnymoreThisTurn) //Like after Neutralizing Gas disappears during a spread move
 		{
-			if (i == gBankAttacker) continue;
-
-			if (gSpecialAbilityFlags[ABILITY(i)].gMoldBreakerIgnoredAbilities)
+			for (i = 0; i < gBattlersCount; ++i)
 			{
-				gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
-				gBattleMons[i].ability = ABILITY_NONE;
+				if (i != gBankAttacker
+				&& gSpecialAbilityFlags[ABILITY(i)].gMoldBreakerIgnoredAbilities)
+				{
+					gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
+					gBattleMons[i].ability = ABILITY_NONE;
+				}
 			}
 		}
 	}

@@ -15,8 +15,7 @@ stat_buffs.c
 	adjusts stat-related functions to include abilities and effects that change their opteraions (eg. contrary)
 */
 
-#define BattleScript_MistProtected (u8*) 0x81D8C3E
-
+extern u8 BattleScript_MistProtected[];
 extern u8 DrasticallyString[];
 extern u8 SeverelyString[];
 

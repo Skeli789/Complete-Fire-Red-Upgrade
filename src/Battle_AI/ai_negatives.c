@@ -110,7 +110,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	data->atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	data->defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
-	if (!NO_MOLD_BREAKERS(data->atkAbility, move)
+	if (IS_MOLD_BREAKER(data->atkAbility, move)
 	&& gSpecialAbilityFlags[data->defAbility].gMoldBreakerIgnoredAbilities)
 		data->defAbility = ABILITY_NONE;
 
@@ -720,7 +720,7 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_EXPLOSION:
 		#ifdef OKAY_WITH_AI_SUICIDE
-			if (NO_MOLD_BREAKERS(data->atkAbility, move) && ABILITY_PRESENT(ABILITY_DAMP))
+			if (NO_MOLD_BREAKERS(data->atkAbility, move) && ABILITY_ON_FIELD(ABILITY_DAMP))
 			{
 				DECREASE_VIABILITY(10);
 			}

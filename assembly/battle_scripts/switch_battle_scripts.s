@@ -67,12 +67,12 @@ BattleScript_SpikesHurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnTargetFainted
 	return
 
-BattleScript_DmgHazardsOnAttackerFainted:
+BattleScript_DmgHazardsOnTargetFainted:
 	setbyte EXP_STATE, 0x0
-	getexp BANK_ATTACKER
+	getexp BANK_TARGET
 	setbyte CMD49_STATE, 0x0
 	cmd49 0x0, 0x0
 	callasm TryToStopNewMonFromSwitchingInAfterSRHurt
@@ -88,7 +88,7 @@ BattleScript_SRHurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnTargetFainted
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -101,7 +101,7 @@ BattleScript_SteelsurgeHurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnTargetFainted
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -270,6 +270,7 @@ BattleScript_EntryHazardsHurtReturn:
 	
 BattleScript_PursuitDmgOnSwitchOut:
 	pause DELAY_HALFSECOND
+	orword HIT_MARKER, HITMARKER_OBEYS
 	setbyte FORCE_SWITCH_HELPER 0x0
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
 	call STANDARD_DAMAGE

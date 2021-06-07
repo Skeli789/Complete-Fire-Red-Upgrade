@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_transition.h"
 #include "../include/event_object_movement.h"
 #include "../include/fieldmap.h"
 #include "../include/field_player_avatar.h"
@@ -18,6 +19,7 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_transition.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
@@ -1246,6 +1248,8 @@ void sp156_StartGhostBattle(void)
 
 void sp118_StartRaidBattle(void)
 {
+	u8 transition = 0;
+
 	if (FlagGet(FLAG_BATTLE_FACILITY)) //Only heal in battle facilities
 		HealPlayerParty();
 
@@ -1270,7 +1274,19 @@ void sp118_StartRaidBattle(void)
 		VarSet(VAR_BATTLE_FACILITY_TIER, 0); //So tier doesn't interfere with anything
 	}
 
-	CreateBattleStartTask(0, GetMUS_ForBattle());
+	#ifdef VAR_BATTLE_TRANSITION_LOGO
+	for (u32 i = 0; i < gNumBattleTransitionLogos; ++i)
+	{
+		if (gBattleTransitionLogos[i].trainerClass == 0xFF) //Dynamax logo
+		{
+			u16 transitionLogo = i;
+			VarSet(VAR_BATTLE_TRANSITION_LOGO, transitionLogo); //Prep for later
+			transition =  B_TRANSITION_CUSTOM_LOGO;
+		}
+	}
+	#endif
+
+	CreateBattleStartTask(transition, GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
 	IncrementGameStat(GAME_STAT_RAID_BATTLES);

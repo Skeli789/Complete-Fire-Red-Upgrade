@@ -395,6 +395,7 @@ static void TryGiveMonOnlyMetronome(struct Pokemon* mon)
 	
 	if (species != SPECIES_NONE && species != SPECIES_EGG)
 	{
+		u16 item = ITEM_LEPPA_BERRY; //Makes it so Metronome has even more PP mwahaha
 		u16 move = MOVE_METRONOME;
 		u8 bonus = 3; //Only needs to be 3 because move index is force set at 0 (next line)
 		u8 pp = CalculatePPWithBonus(MOVE_METRONOME, bonus, 0);
@@ -407,6 +408,8 @@ static void TryGiveMonOnlyMetronome(struct Pokemon* mon)
 			SetMonData(mon, MON_DATA_MOVE1 + j, &move);
 			SetMonData(mon, MON_DATA_PP1 + j, &pp);
 		}
+
+		SetMonData(mon, MON_DATA_HELD_ITEM, &item);
 	}
 }
 

@@ -1165,7 +1165,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	}
 
 	moveType = GetMoveTypeSpecial(foe1, predictedMove1);
-	if (!NO_MOLD_BREAKERS(ABILITY(foe1), predictedMove1))
+	if (IS_MOLD_BREAKER(ABILITY(foe1), predictedMove1))
 		return FALSE; //Can't absorb move if the Ability is ignored
 
 	switch (moveType) {

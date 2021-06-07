@@ -32,6 +32,7 @@ cmd49_battle_scripts.s
 .global BattleScript_RaidShields
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
+.global BattleScript_MistProtected
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -400,6 +401,15 @@ BattleScript_RaidBattleStatIncrease:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MistProtected:
+	pause DELAY_HALFSECOND
+	printstring 98 @;STRINGID_PKMNPROTECTEDBYMIST
+	waitmessage DELAY_1SECOND
+	callasm TryHideActiveAbilityPopUps @;For Gooey
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

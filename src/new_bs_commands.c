@@ -1060,15 +1060,17 @@ void atkFE_prefaintmoveendeffects(void)
 
 		case FAINT_RAGE: // rage check
 			if (gBattleMons[gBankTarget].status2 & STATUS2_RAGE
-			&& gBattleMons[gBankTarget].hp
+			&& BATTLER_ALIVE(gBankTarget)
 			&& gBankAttacker != gBankTarget
 			&& SIDE(gBankAttacker) != SIDE(gBankTarget)
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& SPLIT(gCurrentMove) != SPLIT_STATUS
-			&& STAT_CAN_RISE(gBankTarget, STAT_ATK))
+			&& STAT_CAN_RISE(gBankTarget, STAT_ATK)
+			&& (GetNumRaidShieldsUp() <= 1 //No raid shields are up or last shield
+			 || gMultiHitCounter <= 1 //Or the last strike of a multi-hit move (or only strike of a move)
+			 || !BATTLER_ALIVE(gBankAttacker))) //Or if the attacker fainted early before finishing the multi-hit
 			{
-				gBattleMons[gBankTarget].statStages[STAT_ATK - 1]++;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
 				effect = TRUE;

@@ -174,10 +174,7 @@ item_effect_t GetMonItemEffect(struct Pokemon* mon)
 
 item_effect_t GetRecordedItemEffect(u8 bank)
 {
-	if (GetRecordedAbility(bank) != ABILITY_KLUTZ
-	&& !gNewBS->EmbargoTimers[bank]
-	&& !IsMagicRoomActive()
-	&& ITEM(bank) != ITEM_NONE) //Can't have an effect if you have no item
+	if (ITEM_EFFECT(bank) == gNewBS->ai.itemEffects[bank]) //Allows factoring in Klutz and Magic Room
 		return gNewBS->ai.itemEffects[bank];
 
 	return 0;
@@ -986,12 +983,15 @@ bool8 IsUproarBeingMade(void)
 //Change to loop through battle modified party indexes
 u8 GetIllusionPartyNumber(u8 bank)
 {
-	u8 firstMonId, lastMonId;
+	u8 firstMonId, lastMonId, side, illusionMonId;
+	bool8 useBattleParty;
 
 	if (gStatuses3[bank] & STATUS3_ILLUSION)
 	{
+		side = SIDE(bank);
+	
 		//Wild Pokemon can't diguise themselves
-		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)
+		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && side == B_SIDE_OPPONENT)
 			return gBattlerPartyIndexes[bank];
 		
 		//Check for a saved party number first.
@@ -1002,19 +1002,28 @@ u8 GetIllusionPartyNumber(u8 bank)
 			return gNewBS->disguisedAs[bank] - 1;
 
 		struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+		useBattleParty = (side == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_LINK));
+		illusionMonId = (useBattleParty) ? GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]) : gBattlerPartyIndexes[bank];
 
-		for (u32 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
+		for (u8 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
 		{
-			if (i == gBattlerPartyIndexes[bank]) //Finished checking mons after
+			u8 monId = i; //Mon id may get overwritten later
+
+			if (monId == illusionMonId) //Finished checking mons after
 				return gBattlerPartyIndexes[bank];
 
-			if (party[i].species == SPECIES_NONE
-			|| party[i].hp == 0
-			|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			if (useBattleParty)
+				monId = GetPartyIdFromBattleSlot(monId); //Use the adjusted party order
+
+			if (party[monId].species == SPECIES_NONE
+			|| party[monId].hp == 0
+			|| GetMonData(&party[monId], MON_DATA_IS_EGG, NULL)
+			|| monId < firstMonId
+			|| monId >= lastMonId)
 				continue;
 
-			gNewBS->disguisedAs[bank] = i + 1;
-			return i;
+			gNewBS->disguisedAs[bank] = monId + 1; //Use original mon id
+			return monId;
 		}
 	}
 
@@ -1171,12 +1180,12 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| itemEffect == ITEM_EFFECT_GEM
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
-	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_UNNERVE, 0, 0))
+	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_UNNERVE))
 	#ifdef ABILITY_ASONE_GRIM
-	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_ASONE_GRIM, 0, 0))
+	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_ASONE_GRIM))
 	#endif
 	#ifdef ABILITY_ASONE_CHILLING
-	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankOnSide, ABILITY_ASONE_CHILLING, 0, 0))
+	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_ASONE_CHILLING))
 	#endif
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
@@ -1590,6 +1599,22 @@ bool8 IsAffectedByElectricTerrain(u8 bank)
 bool8 IsMonAffectedByElectricTerrain(struct Pokemon* mon)
 {
 	return CheckMonGrounding(mon) || IsMonFloatingWithMagnetism(mon);
+}
+
+bool8 WeatherHasEffect(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		u8 ability = ABILITY(i);
+
+		if ((ability == ABILITY_CLOUDNINE || ability == ABILITY_AIRLOCK)
+		&& BATTLER_ALIVE(i))
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 void ClearBankStatus(u8 bank)

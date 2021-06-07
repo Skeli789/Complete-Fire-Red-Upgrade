@@ -271,7 +271,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& SPLIT(gCurrentMove) != SPLIT_STATUS
-			&& STAT_CAN_RISE(gBankTarget, STAT_ATK))
+			&& STAT_CAN_RISE(gBankTarget, STAT_ATK)
+			&& (GetNumRaidShieldsUp() <= 1 //No raid shields are up or last shield
+			 || gMultiHitCounter <= 1 //Or the last strike of a multi-hit move (or only strike of a move)
+			 || !BATTLER_ALIVE(gBankAttacker))) //Or if the attacker fainted early before finishing the multi-hit
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
@@ -412,7 +415,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_CHOICE_MOVE: // update choice band move
 			if (arg1 != ARG_IN_FUTURE_ATTACK && !IsDynamaxed(gBankAttacker))
 			{
-				if (gChosenMove != MOVE_STRUGGLE)
+				u16 moveToChoice = (arg1 == ARG_IN_PURSUIT) ? gCurrentMove : gChosenMove;
+
+				if (moveToChoice != MOVE_STRUGGLE)
 				{
 					if (gHitMarker & HITMARKER_OBEYS)
 					{
@@ -420,13 +425,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						{
 							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{
-								if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								if (moveToChoice == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
 								{
 									gBattleScripting.atk49_state++;
 									break;
 								}
 
-								*choicedMoveAtk = gChosenMove;
+								*choicedMoveAtk = moveToChoice;
 							}
 						}
 						else //This should remove the choice lock glitch
@@ -627,9 +632,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->dynamaxData.raidShieldsUp
-			&& (gMultiHitCounter <= 1 //Multi-Hit moves break the shield on the last strik
+			&& (gMultiHitCounter <= 1 //Multi-Hit moves break the shield on the last strike
 				|| !BATTLER_ALIVE(gBankAttacker) //Or if the attacker fainted early
-				|| gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed == 1)) //Or immediately if there's only one shield left
+				|| GetNumRaidShieldsUp() == 1)) //Or immediately if there's only one shield left
 			{
 				DestroyRaidShieldSprite();
 				if (IsAnyMaxMove(gCurrentMove)
@@ -1091,7 +1096,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					effect = 1;
 				}
 				else if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION
-				&& !ABILITY_PRESENT(ABILITY_DAMP))
+				&& !ABILITY_ON_FIELD(ABILITY_DAMP))
 				{
 					gBattleMoveDamage = 0;
 					BattleScriptPushCursor();
@@ -1462,6 +1467,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->consumedGem = FALSE;
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gNewBS->rolloutFinalHit = FALSE;
+			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
 
@@ -1484,7 +1490,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			if (!gNewBS->DancerInProgress
 			&& arg1 != ARG_IN_PURSUIT
-			&& ABILITY_PRESENT(ABILITY_DANCER)
+			&& ABILITY_ON_FIELD(ABILITY_DANCER)
 			&& gNewBS->attackAnimationPlayed
 			&& !gNewBS->moveWasBouncedThisTurn
 			&& gSpecialMoveFlags[gCurrentMove].gDanceMoves)

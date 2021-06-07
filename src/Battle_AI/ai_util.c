@@ -893,10 +893,9 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			numHits = 1; //Only can be used once before fainting
 	}
 
-	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS
-	&& gNewBS->dynamaxData.raidShieldsUp)
+	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
 	{
-		u8 shieldsUp = gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed;
+		u8 shieldsUp = GetNumRaidShieldsUp();
 		if (shieldsUp >= numHits)
 			numHits = 0;
 		else
@@ -3896,7 +3895,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (IsRaidBattle() && gNewBS->dynamaxData.raidShieldsUp && SIDE(bankAtk) == B_SIDE_PLAYER && SIDE(bankDef) == B_SIDE_OPPONENT) //Partner AI on Raid Pokemon with shields up
 			{
-				if (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed <= 2 //Less than 3 shields left
+				if (GetNumRaidShieldsUp() <= 2 //Less than 3 shields left
 				&& gNewBS->dynamaxData.stormLevel < 3) //The Raid boss hasn't almost won
 					return FALSE; //Don't waste a Z-Move breaking a shield
 

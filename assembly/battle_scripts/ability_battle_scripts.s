@@ -134,10 +134,10 @@ BattleScript_AirLock:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_IntimidateActivatesEnd3:
-	call BattleScript_PauseIntimidateActivates
+	call BattleScript_IntimidateActivatesRet
 	end3
 
-BattleScript_PauseIntimidateActivates:
+BattleScript_IntimidateActivatesRet:
 	call BattleScript_AbilityPopUp
 	setbyte TARGET_BANK 0x0
 

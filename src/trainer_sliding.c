@@ -151,7 +151,11 @@ void HandleIntroSlide(u8 terrain)
 		{
 			if (((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) == B_SIDE_PLAYER) //Wild Pokemon can't be hidden
 			&& GetMonAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
+			{
 				gStatuses3[bank] |= STATUS3_ILLUSION;
+				if (GetIllusionPartyData(bank) == GetBankPartyData(bank)) //Is trying to hide as itself
+					gStatuses3[bank] &= ~STATUS3_ILLUSION; //Remove the Illusion
+			}
 		}
 	}
 

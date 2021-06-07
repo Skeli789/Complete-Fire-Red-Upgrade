@@ -239,12 +239,12 @@ void atk03_ppreduce(void) {
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY
-	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
 	#ifdef ABILITY_ASONE_GRIM
-	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_GRIM, 0, 0)
+	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
 	#endif
 	#ifdef ABILITY_ASONE_CHILLING
-	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_ASONE_CHILLING, 0, 0)
+	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
 	#endif
 	)
 	{
@@ -480,7 +480,7 @@ static void DoublesHPBarReduction(void)
 					gBattleResults.playerMonWasDamaged = TRUE;
 			}
 		}
-		
+
 		gNewBS->doneDoublesSpreadHit = TRUE;
 	}
 }
@@ -771,6 +771,7 @@ void atk0C_datahpupdate(void)
 		if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
 			gSpecialStatuses[gActiveBattler].moveturnLostHP = 0xFFFF;
 	}
+
 	gBattlescriptCurrInstr += 2;
 }
 
@@ -1386,7 +1387,7 @@ void atk1B_cleareffectsonfaint(void) {
 				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
-			case Faint_PrimalWeather:	;
+			case Faint_PrimalWeather:
 				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 					return;
 
@@ -1651,7 +1652,7 @@ void atk1E_jumpifability(void)
 	}
 	else if (gBattlescriptCurrInstr[1] == BS_GET_NOT_ATTACKER_SIDE)
 	{
-		battlerId = AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ability, 0, 0);
+		battlerId = ABILITY_ON_OPPOSING_FIELD(gBankAttacker, ability);
 		if (battlerId)
 		{
 			gLastUsedAbility = ability;
@@ -4963,7 +4964,10 @@ void atkE1_trygetintimidatetarget(void)
 	}
 
 	if (gBankTarget >= gBattlersCount)
+	{
+		gBankTarget = gNewBS->originalTargetBackup; //Prevent problems during Neutralizing Gas
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
 	else
 		gBattlescriptCurrInstr += 5;
 }

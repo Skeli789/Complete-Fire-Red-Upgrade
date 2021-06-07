@@ -487,7 +487,7 @@ GetMonNickname = 0x81202E0 | 1;
 GetTutorMove = 0x8120BA8 | 1;
 CanLearnTutorMove = 0x8120BE8 | 1;
 MonKnowsMove = 0x8125AC0 | 1;
-GetPartyIdFromBattlePartyId = 0x8128030 | 1;
+GetBattlePartyIdFromPartyId = 0x8128030 | 1;
 
 /* Battle Setup Functions */
 HandleOpponentPokeSlide = 0x8011D64 | 1;
@@ -720,6 +720,7 @@ ResetSpriteRotScale = 0x8075980 | 1;
 TrySetSpriteRotScale = 0x8075A1C | 1;
 ArcTan2Neg = 0x8075B30 | 1;
 SetGreyscaleOrOriginalPalette = 0x8075B48 | 1;
+SelectBattleAnimSpriteAndBgPalettes = 0x8075BE8 | 1;
 PrepareAffineAnimInTaskData = 0x80762D0 | 1;
 RunAffineAnimFromTaskData = 0x8076308 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
@@ -1573,6 +1574,14 @@ GetStartMenuWindowId = 0x80F793C | 1;
 RemoveStartMenuWindow = 0x80F7948 | 1;
 InUnionRoom = 0x811B0D0 | 1;
 PrintTextOnHelpMessageWindow = 0x8113018 | 1;
+
+/* List Menu Functions */
+ListMenuPrintEntries = 0x81074DC | 1; 
+ListMenuDrawCursor = 0x8107594 | 1;
+ListMenuErasePrintedCursor = 0x81076EC | 1;
+ListMenuScroll = 0x8107864 | 1;
+ListMenuChangeSelection = 0x810799C | 1;
+ListMenuCallSelectionChangedCallback = 0x8107A74 | 1;
 
 /* Save State Functions */
 PrintSaveErrorStatus = 0x800C634 | 1;

@@ -12646,14 +12646,14 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_MOXIE
+		.ability = FRONTIER_ABILITY_1, //ABILITY_EARLYBIRD
 		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
 			MOVE_FLAREBLITZ,
 			MOVE_CRUNCH,
 			MOVE_FLAMECHARGE,
-			MOVE_TAUNT,
+			MOVE_HOWL,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -45275,7 +45275,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 	},
 	{
 		.species = SPECIES_KYOGRE,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_NAUGHTY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -61621,7 +61621,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.defEv = 36,
 		.spDefEv = 36,
 		.spdEv = 236,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_MOXIE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_UNNERVE
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{

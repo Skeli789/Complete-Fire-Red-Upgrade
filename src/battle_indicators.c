@@ -1677,7 +1677,7 @@ static void DestroyTeamPreviewTrigger(struct Sprite* sprite)
 	FreeSpriteTilesByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
 }
 
-bool8 CanShowEnemyMonIcon(u8 monId)
+static bool8 CanShowEnemyMonIcon(u8 monId)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
@@ -1693,6 +1693,24 @@ bool8 CanShowEnemyMonIcon(u8 monId)
 	#endif
 
 	return (gNewBS->revealedEnemyMons & gBitTable[monId]) != 0;
+}
+
+static bool8 EntireEnemyTeamRevealed(void)
+{
+	u32 i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
+
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			if (!CanShowEnemyMonIcon(i))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 static void Task_DisplayInBattleTeamPreview(u8 taskId)
@@ -1736,7 +1754,16 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 		if (species != SPECIES_NONE && species != SPECIES_EGG)
 		{
 			if (!CanShowEnemyMonIcon(i))
-				species = SPECIES_NONE; //Replce unrevealed icon with question mark
+				species = SPECIES_NONE; //Replace unrevealed icon with question mark
+			else if (GetMonAbility(&gEnemyParty[i]) == ABILITY_ILLUSION && !EntireEnemyTeamRevealed())
+			{
+				u8 bank;
+				
+				if (i == gBattlerPartyIndexes[bank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)])
+					species = GetMonData(GetIllusionPartyData(bank), MON_DATA_SPECIES, NULL);
+				else if (IS_DOUBLE_BATTLE && i == gBattlerPartyIndexes[bank = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)])
+					species = GetMonData(GetIllusionPartyData(bank), MON_DATA_SPECIES, NULL);
+			}
 
 			u16 hp = GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL);
 			x = (64 + (32 / 2)) + (40 * (i % 3));

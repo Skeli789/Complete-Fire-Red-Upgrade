@@ -47,7 +47,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
-	if (!NO_MOLD_BREAKERS(atkAbility, move)
+	if (IS_MOLD_BREAKER(atkAbility, move)
 	&& gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities)
 		defAbility = ABILITY_NONE;
 
@@ -1875,8 +1875,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_BRICK_BREAK:
 			if (IsRaidBattle() && SIDE(bankAtk) == B_SIDE_PLAYER
-			&& gNewBS->dynamaxData.raidShieldsUp //Brick Break destroys 2 Raid shields
-			&& (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed >= 2) //At least two shields left
+			&& GetNumRaidShieldsUp() >= 2 //Brick Break destroys 2 Raid shields and at least two shields left
 			&& !MoveBlockedBySubstitute(move, bankAtk, bankDef)
 			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_DOESNT_AFFECT_FOE))
 			{
