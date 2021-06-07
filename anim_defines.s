@@ -472,6 +472,7 @@
 .equ AnimTask_ScaryFace, 0x80a9f11
 .equ AnimTask_ShakeTargetInPattern, 0x80adad9
 .equ AnimTask_StatusClearedEffect, 0x80e2085
+.equ AnimTask_InvertScreenColor, 0x80BA0E9
  
 @launchtemplate
 

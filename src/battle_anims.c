@@ -968,7 +968,7 @@ void AnimTask_TechnoBlast(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
-void AnimTask_TerrainPulse(u8 taskId)
+void AnimTask_GetTerrainType(u8 taskId)
 {
 	gBattleAnimArgs[0] = gTerrainType;
 	DestroyAnimVisualTask(taskId);
@@ -4198,6 +4198,22 @@ void AnimTask_GrayscaleParticle(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+//Inverts the screen colours and all banks in a double battle
+void AnimTask_InvertScreenColorDoubles(u8 taskId)
+{
+	u32 selectedPalettes = 0;
+
+	if (gBattleAnimArgs[0] & 0x100)
+		selectedPalettes |= SelectBattleAnimSpriteAndBgPalettes(TRUE, 0, 0, 0, 0, 0, 0);
+	if (gBattleAnimArgs[1] & 0x100)
+		selectedPalettes |= SelectBattleAnimSpriteAndBgPalettes(0, TRUE, 0, TRUE, 0, 0, 0); //Attacker and partner
+	if (gBattleAnimArgs[2] & 0x100)
+		selectedPalettes |= SelectBattleAnimSpriteAndBgPalettes(0, 0, TRUE, 0, TRUE, 0, 0); //Target and partner
+
+	InvertPlttBuffer(selectedPalettes);
+	DestroyAnimVisualTask(taskId);
+}
+
 // Scales up the target mon sprite
 // Used in Let's Snuggle Forever
 // No args.
@@ -4865,9 +4881,18 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 		dst = (void *)(VRAM + 0x10000 + gSprites[gBattlerSpriteIds[bankAtk]].oam.tileNum * 32);
 		DmaCopy32(3, src, dst, 0x800);
 		paletteOffset = 0x100 + bankAtk * 16;
-		lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, otId, personality);
-		LZDecompressWram(lzPaletteData, gDecompressionBuffer);
-		LoadPalette(gDecompressionBuffer, paletteOffset, 32);
+
+		if (targetSpecies == SPECIES_CASTFORM)
+		{
+			LoadPalette(gBattleStruct->castformPalette[gBattleSpritesDataPtr->animationData->animArg], paletteOffset, 32);
+		}
+		else
+		{
+			lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, otId, personality);
+			LZDecompressWram(lzPaletteData, gDecompressionBuffer);
+			LoadPalette(gDecompressionBuffer, paletteOffset, 32);
+		}
+
 		TryFadeBankPaletteForDynamax(bankAtk, paletteOffset);
 		gSprites[gBattlerSpriteIds[bankAtk]].pos1.y = GetBattlerSpriteDefault_Y(bankAtk);
 		StartSpriteAnim(&gSprites[gBattlerSpriteIds[bankAtk]], gBattleMonForms[bankAtk]);
