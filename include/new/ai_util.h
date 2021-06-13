@@ -76,6 +76,7 @@ bool8 GoodIdeaToParalyzeSelf(u8 bankAtk);
 bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk);
 bool8 GoodIdeaToBurnSelf(u8 bankAtk);
 bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk);
+bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef);
 
 bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move);
 bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move);

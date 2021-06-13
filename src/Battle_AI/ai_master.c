@@ -2382,7 +2382,7 @@ static bool8 ShouldSaveSweeperForLater(void)
 	)
 	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
 	{
-		SwitchToBestResistMon();
+		return SwitchToBestResistMon();
 	}
 
 	return FALSE;
@@ -2786,11 +2786,13 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 									break; //Only need 1 check for this to pass
 								}
-								else if (((s32) consideredMon->hp) + passiveRecovery + wishRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
+
+								s32 adjustedHP = MathMin(((s32) consideredMon->hp) + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
+								if (adjustedHP + passiveRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
 								{
 									isWeakToMove = TRUE;
 								}
-								else if (((s32) consideredMon->hp) + (passiveRecovery * 2) + wishRecovery < (s32) (dmg * 3)) //Move could 3HKO mon
+								else if (adjustedHP + (passiveRecovery * 2) < (s32) (dmg * 3)) //Move could 3HKO mon
 								{
 									++isNormalEffectiveness;
 								}
@@ -3586,6 +3588,7 @@ void ClearCachedAIData(void)
 		for (j = 0; j < gBattlersCount; ++j)
 		{
 			gNewBS->ai.strongestMove[i][j] = 0xFFFF;
+			gNewBS->ai.strongestMoveGoesFirst[i][j] = 0xFFFF;
 			gNewBS->ai.canKnockOut[i][j] = 0xFF;
 			gNewBS->ai.can2HKO[i][j] = 0xFF;
 			gNewBS->ai.onlyBadMovesLeft[i][j] = 0xFF;

@@ -259,48 +259,88 @@ bool8 Can2HKOWithChipDamage(u8 bankAtk, u8 bankDef)
 			+ GetSecondaryEffectDamage(bankDef) >= gBattleMons[bankDef].hp;
 }
 
-bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst)
+bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst)
 {
-	u16 currMove, currAcc;
-
-	u8 bestMoveIndex = 0xFF;
+	u32 i;
 	u16 bestAcc = 0;
+	s8 bestPriority = 0;
+	bool8 perfectMoves = 0;
+	bool8 goodMoves = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
+	bool8 goodMoveThatDoesntMakeContact = FALSE;
+	bool8 perfectMoveThatDoesntMakeContact = FALSE;
 
-	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		currMove = GetBattleMonMove(bankAtk, i);
+		u16 currMove = GetBattleMonMove(bankAtk, i);
 		if (currMove == MOVE_NONE)
 			break;
 
 		currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove);
 
-		if (!(gBitTable[i] & moveLimitations))
+		if (!(gBitTable[i] & moveLimitations)) //This move can be used
 		{
-			currAcc = CalcAIAccuracy(currMove, bankAtk, bankDef);
-
-			if (MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
-			&& (!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef)))
+			if (MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1) //This move knocks out
+			&& (!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef))) //And this move goes first or it doesn't matter if it goes first
 			{
-				if (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc || bestMoveIndex == 0xFF)
+				if (MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
 				{
-					bestAcc = currAcc;
-					bestMoveIndex = i;
+					perfectMoves |= gBitTable[i]; //This is one of the best moves
+					perfectMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Make sure at least one perfect move doesn't make contact
 				}
-				else if (currAcc == bestAcc)
+				else if (perfectMoves == 0) //Only waste time with the other moves if there isn't already a perfect move
 				{
-					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove) > PriorityCalc(bankAtk, ACTION_USE_MOVE, gBattleMons[bankAtk].moves[bestMoveIndex])) //The better move is still the one with more priority
-						bestMoveIndex = i;
+					u16 currAcc = CalcAIAccuracy(currMove, bankAtk, bankDef);
+					s8 currPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove);
+
+					if (goodMoves == 0 //No good moves yet
+					|| (currAcc > bestAcc && bestAcc < 100)) //This move has perfect accuracy and the best accuracy so far was worse
+					{
+						bestAcc = currAcc;
+						bestPriority = currPriority;
+						goodMoves = gBitTable[i]; //Wipe all previously good moves
+						goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
+					}
+					else if (currAcc == bestAcc || currAcc >= 100) //This move has the same as the best accuracy or this move has perfect accuracy
+					{
+						//The better move is still the one with more priority
+						if (PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove) > bestPriority) //This move has the highest priority of all moves so far
+						{
+							bestAcc = currAcc;
+							bestPriority = currPriority;
+							goodMoves = gBitTable[i]; //Wipe all previously good moves
+							goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
+						}
+						else
+						{
+							//This move has the same priority as pre-existing moves
+							goodMoves |= gBitTable[i];
+							goodMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Update whether at least one good move doesn't make contact
+						}
+					}
 				}
 			}
 		}
 	}
 
-	if (bestMoveIndex == 0xFF) //No moves knock out and go first
-		return FALSE;
+	bool8 moveIsContact = CheckContact(checkMove, bankAtk);
+	bool8 movesToCheck = (perfectMoves == 0) ? goodMoves : perfectMoves;
+	bool8 hasMoveThatDoesntMakeContact = (perfectMoves == 0) ? goodMoveThatDoesntMakeContact : perfectMoveThatDoesntMakeContact;
 
-	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
-		return TRUE;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (movesToCheck & gBitTable[i] //Considered a best move
+		&& gBattleMons[bankAtk].moves[i] == checkMove) //The original move in question is this best move
+		{
+			if (badIdeaToMakeContact //It's better not to use a contact move
+			&& hasMoveThatDoesntMakeContact //And there is a good move that doesn't make contact
+			&& moveIsContact) //But the move in question isn't it
+				continue; //There's a better move that could be used
+
+			return TRUE;
+		}
+	}
 
 	return FALSE;
 }
@@ -388,14 +428,14 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
+static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 {
-	u16 currMove;
+	u32 i;
+	u16 currMove, bestMove;
 	u32 currDmg;
-
-	u8 bestMoveIndex = 0xFF;
 	u32 bestDmg = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -403,7 +443,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
 	PopulateDamageCalcStructWithBaseDefenderData(&damageData);
 
-	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	for (i = 0, bestMove = MOVE_NONE; i < MAX_MON_MOVES; ++i)
 	{
 		currMove = GetBattleMonMove(bankAtk, i);
 
@@ -411,7 +451,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove);
-		
+
 		if (AttacksThisTurn(bankAtk, currMove) == 1) //Has to charge first
 			continue;
 
@@ -424,30 +464,46 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 				if (currDmg > bestDmg)
 				{
 					bestDmg = currDmg;
-					bestMoveIndex = i;
+					bestMove = currMove;
 				}
 				else if (currDmg == bestDmg) //Two moves do the same (probably both KO)
 				{
 					//Try choosing the one with higher priority
 					u8 currPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove);
-					u8 bestPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, gBattleMons[bankAtk].moves[bestMoveIndex]); //Priority of the best move so far
-					
+					u8 bestPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, bestMove); //Priority of the best move so far
+
 					if (currPriority > bestPriority) //This new move has a higher priority
-						bestMoveIndex = i; //So pick it since it does the most damage and has a higher chance of going first
-					else if (currPriority == bestPriority && Random() & 1) //If the two moves have the same priority
-						bestMoveIndex = i; //Pick this new one 50% of the time
+						bestMove = currMove; //So pick it since it does the most damage and has a higher chance of going first
+					else if (currPriority == bestPriority) //If the two moves have the same priority
+					{
+						//Pick a non-contact move if contact is a bad idea
+						if (badIdeaToMakeContact && CheckContact(bestMove, bankAtk) && !CheckContact(currMove, bankAtk))
+						{
+							//The new move isn't contact
+							bestDmg = currDmg;
+							bestMove = currMove;
+						}
+						else if (Random() & 1)
+						{
+							//Both moves are contact moves/making contact doesn't matter so pick one at random
+							bestDmg = currDmg;
+							bestMove = currMove;
+						}
+					}
 				}
 			}
 		}
 	}
 
-	if (bestMoveIndex == 0xFF) //No moves knock out and go first
-		return FALSE;
+	return bestMove;
+}
 
-	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
-		return TRUE;
+bool8 StrongestMoveGoesFirst(u16 currentMove, u8 bankAtk, u8 bankDef)
+{
+	if (gNewBS->ai.strongestMoveGoesFirst[bankAtk][bankDef] == 0xFFFF)
+		gNewBS->ai.strongestMoveGoesFirst[bankAtk][bankDef] = CalcStrongestMoveGoesFirst(bankAtk, bankDef);
 
-	return FALSE;
+	return gNewBS->ai.strongestMoveGoesFirst[bankAtk][bankDef] == currentMove;
 }
 
 bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
@@ -1108,6 +1164,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
 	u32 highestDamage = 0;
 	u16 defHP = gBattleMons[bankDef].hp;
+	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	struct DamageCalc damageData = {0};
 
 	if (defHP == 0) //Foe dead
@@ -1176,16 +1233,33 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 				{
 					strongestMove = move;
 				}
-				else if (predictedDamage == highestDamage) //Find which move has better Acc
+				else if (predictedDamage == highestDamage)
 				{
+					//Find which move has better Acc
 					u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
 					u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
 
-					if (currAcc > bestMoveAcc //This move has a better chance of hitting
-					|| (currAcc >= 100 && Random() & 1)) //Both moves have a perfect chance of hitting, so pick one at random
+					if (currAcc > bestMoveAcc)
 					{
+						//This move has a better chance of hitting
 						strongestMove = move;
 						highestDamage = predictedDamage;
+					}
+					else if (currAcc == bestMoveAcc || currAcc >= 100)
+					{
+						//Both moves have the same chance of hitting so pick a non-contact move if contact is a bad idea
+						if (badIdeaToMakeContact && CheckContact(strongestMove, bankAtk) && !CheckContact(move, bankAtk))
+						{
+							//The new move isn't contact
+							strongestMove = move;
+							highestDamage = predictedDamage;
+						}
+						else if (Random() & 1)
+						{
+							//Both moves are contact moves/making contact doesn't matter so pick one at random
+							strongestMove = move;
+							highestDamage = predictedDamage;
+						}
 					}
 				}
 			}
@@ -2222,6 +2296,52 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
 		|| UnfreezingMoveInMoveset(bankDef);
+}
+
+bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+	bool8 badIdea = FALSE;
+
+	switch (ABILITY(bankDef))
+	{
+		case ABILITY_EFFECTSPORE:
+			badIdea = CanBePoisoned(bankAtk, bankDef, TRUE) || CanBeParalyzed(bankAtk, TRUE) || CanBePutToSleep(bankAtk, TRUE);
+			break;
+		case ABILITY_POISONPOINT:
+			badIdea = CanBePoisoned(bankAtk, bankDef, TRUE);
+			break;
+		case ABILITY_STATIC:
+			badIdea = CanBeParalyzed(bankAtk, TRUE);
+			break;
+		case ABILITY_FLAMEBODY:
+			badIdea = CanBeBurned(bankAtk, TRUE);
+			break;
+		case ABILITY_CUTECHARM:
+			badIdea = CanBeInfatuated(bankAtk, bankDef);
+			break;
+		case ABILITY_AFTERMATH:
+			badIdea = !ABILITY_ON_FIELD(ABILITY_DAMP) && atkAbility != ABILITY_MAGICGUARD;
+			break;
+		case ABILITY_TANGLINGHAIR:
+		case ABILITY_GOOEY:
+			badIdea = STAT_CAN_FALL(gBankAttacker, STAT_SPD) && atkAbility != ABILITY_MIRRORARMOR;
+			break;
+		case ABILITY_IRONBARBS:
+		case ABILITY_ROUGHSKIN:
+			badIdea = atkAbility != ABILITY_MAGICGUARD;
+			break;
+		case ABILITY_MUMMY:
+		case ABILITY_WANDERING_SPIRIT:
+		case ABILITY_COTTONDOWN:
+		case ABILITY_PERISH_BODY:
+			return TRUE;
+	}
+
+	if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_ROCKY_HELMET && atkAbility != ABILITY_MAGICGUARD)
+		badIdea |= TRUE;
+
+	return badIdea;
 }
 
 bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)

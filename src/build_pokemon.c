@@ -1000,9 +1000,12 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			#endif
 
 			#ifdef VAR_GAME_DIFFICULTY
-			if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY
-			&& GetMonEVCount(&party[i]) == 0) //Has no EVs already
-				GiveMon2BestBaseStatEVs(&party[i]);
+			if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+			{
+				party[i].friendship = 255; //Max friendship
+				if (GetMonEVCount(&party[i]) == 0) //Has no EVs already
+					GiveMon2BestBaseStatEVs(&party[i]);
+			}
 			#endif
 
 			//Caluate stats and set to full health

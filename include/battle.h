@@ -984,6 +984,7 @@ struct NewBattleStruct
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 previousMovePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //previousMovePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
+		u16 strongestMoveGoesFirst[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMoveGoesFirst[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
 		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]
 		u32 damageByMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //damageByMove[bankAtk][bankDef][monMoveIndex]
