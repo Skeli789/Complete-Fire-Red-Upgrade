@@ -2611,7 +2611,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			damageData.monAtk = consideredMon;
 			PopulateDamageCalcStructWithBaseAttackerData(&damageData);
 			s32 passiveRecovery = GetMonPassiveRecovery(consideredMon, gActiveBattler);
-			u16 wishRecovery = GetWishHPRecovery(gActiveBattler);
+			u16 wishRecovery = GetWishHPRecovery(gActiveBattler, FALSE);
 
 			for (j = 0; j < gBattlersCount / 2; ++j) //Loop through all enemies on field
 			{

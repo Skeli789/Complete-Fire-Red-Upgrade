@@ -4827,7 +4827,7 @@ void atkD4_trywish(void)
 			PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, gBankTarget, gWishFutureKnock.wishMonId[gBankTarget])
 			if (!BATTLER_MAX_HP(gBankTarget))
 			{
-				gBattleMoveDamage = GetWishHPRecovery(gBankTarget);
+				gBattleMoveDamage = GetWishHPRecovery(gBankTarget, TRUE);
 				gBattleMoveDamage *= -1;
 				gBattlescriptCurrInstr += 6;
 			}

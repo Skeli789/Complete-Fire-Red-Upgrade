@@ -1057,11 +1057,11 @@ struct Pokemon* GetIllusionPartyData(u8 bank)
 }
 
 
-u16 GetWishHPRecovery(u8 bank)
+u16 GetWishHPRecovery(u8 bank, bool8 ignoreWishTimer)
 {
 	u16 recovery = 0;
 
-	if (gWishFutureKnock.wishCounter[bank] > 0)
+	if (gWishFutureKnock.wishCounter[bank] > 0 || ignoreWishTimer)
 	{
 		u8 firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
