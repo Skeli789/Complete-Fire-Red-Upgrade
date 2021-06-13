@@ -86,7 +86,14 @@ BattleScript_PrintCaughtMonInfo:
 	setbyte EXP_STATE, 0x0
 	getexp BANK_TARGET
 	@;sethword gBattle_BG2_X, 0x0
-	goto 0x81D9A53
+	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
+	printstring 0x10F @;STRINGID_PKMNDATAADDEDTODEX
+	waitstateatk
+	setbyte BATTLE_COMMUNICATION, 0
+	displaydexinfo
+BattleScript_CaughtPokemonSkipNewDex:
+	callasm TrySkipBattleNicknameOffer
+	goto 0x81D9A63
 	
 BattleScript_BenjaminButterfreeDevolution:
 	callasm RestoreEffectBankHPStatsAndRemoveBackupSpecies

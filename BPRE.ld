@@ -1583,6 +1583,10 @@ ListMenuScroll = 0x8107864 | 1;
 ListMenuChangeSelection = 0x810799C | 1;
 ListMenuCallSelectionChangedCallback = 0x8107A74 | 1;
 
+/* Play Time Functions */
+PlayTimeCounter_Reset = 0x8054814 | 1;
+PlayTimeCounter_Start = 0x8054838 | 1;
+
 /* Save State Functions */
 PrintSaveErrorStatus = 0x800C634 | 1;
 SetContinueGameWarpStatus = 0x804C1AC | 1;
@@ -1866,6 +1870,7 @@ IsSEPlaying = 0x80723E0 | 1;
 IsSpecialSEPlaying = 0x807244C | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
+m4aSoundMode = 0x81DD63C | 1;
 MPlayStart = 0x81DD858 | 1;
 m4aMPlayStop = 0x81DD93C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;

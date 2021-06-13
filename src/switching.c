@@ -578,7 +578,11 @@ void atk52_switchineffects(void)
 				}
 
 				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
+				{
 					++gNewBS->ai.switchesInARow[gBankSwitching];
+					if (ABILITY(gBankSwitching) == ABILITY_INTIMIDATE) //Don't allow Intimidate cheesing
+						++gNewBS->ai.switchesInARow[gBankSwitching];
+				}
 			}
 			else //A foe just switched in
 			{

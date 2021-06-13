@@ -885,6 +885,7 @@ struct NewBattleStruct
 	bool8 threwBall : 1; //Last Used Ball only appears once a ball has been thrown once
 	bool8 totemOmniboostActive : 1; //Allows Contrary mons to get the correct animation
 	bool8 dontActivateMoldBreakersAnymoreThisTurn : 1;
+	bool8 trainerSlideInProgress : 1;
 
 	//Other
 	u16 LastUsedMove;

@@ -56,6 +56,7 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 IsHPAbsorptionAbility(u8 ability);
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef);
+s32 GetMonPassiveRecovery(struct Pokemon* mon, u8 bank);
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef);
 bool8 IsTrapped(u8 bank, bool8 switching);
 u32 GetSecondaryEffectDamage(u8 bank);
@@ -162,12 +163,11 @@ void DecreaseViability(s16* viability, u16 amount);
 #define DECREASE_VIABILITY(x) (DecreaseViability(&viability, x))
 #define MOVE_PREDICTION_SWITCH 0xFFFF
 
-#define CHECK_NO_SPECIAL_PROTECTION 0x0
-#define CHECK_QUICK_GUARD 0x1
-#define CHECK_WIDE_GUARD 0x2
-#define CHECK_CRAFTY_SHIELD 0x4
-#define CHECK_MAT_BLOCK 0x8
-
+#define CHECK_REGULAR_PROTECTION 0x1
+#define CHECK_QUICK_GUARD 0x2
+#define CHECK_WIDE_GUARD 0x4
+#define CHECK_CRAFTY_SHIELD 0x8
+#define CHECK_MAT_BLOCK 0x10
 
 #define DOUBLES_INCREASE_HIT_FOE 4
 #define DOUBLES_INCREASE_KO_FOE 2

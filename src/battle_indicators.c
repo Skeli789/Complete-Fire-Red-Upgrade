@@ -8,6 +8,7 @@
 #include "../include/menu.h"
 #include "../include/pokemon_icon.h"
 #include "../include/string_util.h"
+#include "../include/constants/items.h"
 
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
@@ -1520,13 +1521,31 @@ void DestroyTypeIcon(struct Sprite* sprite)
 	FreeSpritePaletteByTag(TYPE_ICON_TAG_2);
 }
 
+u16 GetLastUsedBall(void)
+{
+	#ifdef UNBOUND
+	if (gBattleResults.battleTurnCounter == 0
+	&& !FlagGet(FLAG_SANDBOX_MODE) //All balls have 100% catch rate so no point in this
+	&& CheckBagHasItem(ITEM_QUICK_BALL, 1))
+		return ITEM_QUICK_BALL;
+	#endif
+
+	return gLastUsedBall;
+}
+
 bool8 CantLoadLastBallTrigger(void)
 {
+	u8 lastUsedBall = GetLastUsedBall();
+
 	return (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		|| CantCatchPokemonRightNow()
-		|| !gNewBS->threwBall
-		|| GetPocketByItemId(gLastUsedBall) != POCKET_POKEBALLS
-		|| !CheckBagHasItem(gLastUsedBall, 1);
+		|| (!gNewBS->threwBall //Haven't thrown a ball
+		 #ifdef FLAG_ALWAYS_SHOW_LAST_BALL
+		 && !FlagGet(FLAG_ALWAYS_SHOW_LAST_BALL) //And the ball shouldn't show until the player has
+		 #endif
+		)
+		|| GetPocketByItemId(lastUsedBall) != POCKET_POKEBALLS
+		|| !CheckBagHasItem(lastUsedBall, 1);
 }
 
 void TryLoadLastUsedBallTrigger(void)
@@ -1558,7 +1577,7 @@ void TryLoadLastUsedBallTrigger(void)
 		gSprites[spriteId].data[7] = ((u32) DestroyLastBallTrigger) >> 16;
 	}
 	
-	spriteId = AddItemIconSprite(GFX_TAG_LAST_BALL_TRIGGER_BALL, GFX_TAG_LAST_BALL_TRIGGER_BALL, gLastUsedBall);
+	spriteId = AddItemIconSprite(GFX_TAG_LAST_BALL_TRIGGER_BALL, GFX_TAG_LAST_BALL_TRIGGER_BALL, GetLastUsedBall());
 	if (spriteId < MAX_SPRITES)
 	{
 		gSprites[spriteId].pos1.x = 0 + (40 / 2);

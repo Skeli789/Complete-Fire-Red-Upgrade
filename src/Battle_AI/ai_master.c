@@ -972,11 +972,11 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	{
 		if (OnlyBadMovesLeftInMoveset(gActiveBattler, foe1))
 		{
-			u8 firstId, lastId, bestMon, switchFlags;
+			u8 firstId, lastId, bestMon, secondBestMon, switchFlags, secondBestSwitchFlags;
 			struct Pokemon *party;
 			party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-			//Try to switch out the best mon
+			//Try to switch out to the best mon
 			bestMon = GetMostSuitableMonToSwitchInto();
 			switchFlags = GetMostSuitableMonToSwitchIntoFlags();
 
@@ -989,16 +989,38 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 			}
 
 			//Try the second best mon too because staying in with no moves is a bad idea
-			bestMon = GetSecondMostSuitableMonToSwitchInto();
-			switchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
+			secondBestMon = GetSecondMostSuitableMonToSwitchInto();
+			secondBestSwitchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
 
-			if (bestMon != PARTY_SIZE
-			&& switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES) //New mon will either go first on continuously take low damage
-			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], foe1, switchFlags))
+			if (secondBestMon != PARTY_SIZE
+			&& secondBestSwitchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES) //New mon will either go first on continuously take low damage
+			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[secondBestMon], foe1, secondBestSwitchFlags))
 			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = bestMon;
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = secondBestMon;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				return TRUE;
+			}
+
+			//Check more lenient restrictions when you're choice locked
+			if (gBattleStruct->choicedMove[gActiveBattler] && CanBeChoiceLocked(gActiveBattler))
+			{
+				//Try to switch out to the best mon
+				if (!(switchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE)
+				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], foe1, switchFlags))
+				{
+					gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+					EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+					return TRUE;
+				}
+			
+				//Try to switch out to the second best mon
+				if (!(secondBestSwitchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE)
+				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], foe1, secondBestSwitchFlags))
+				{
+					gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = secondBestMon;
+					EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+					return TRUE;
+				}
 			}
 		}
 	}
@@ -1437,7 +1459,7 @@ static bool8 PassOnWish(void)
 		//Don't switch if your health is less than half and you can survive an opponent's hit
 		if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2 //Health is less than half
 		&& ((!CanKnockOut(opposingBattler1, gActiveBattler) && !(IS_DOUBLE_BATTLE && CanKnockOut(opposingBattler2, gActiveBattler))) //Both foes can't knock out
-		  || HasProtectionMoveInMoveset(gActiveBattler, CHECK_MAT_BLOCK))) //Or you can protect during the wish
+		  || HasProtectionMoveInMoveset(gActiveBattler, CHECK_REGULAR_PROTECTION | CHECK_MAT_BLOCK))) //Or you can protect during the wish
 			return FALSE;
 
 		//Prioritize the best mons to switch into first
@@ -1807,15 +1829,19 @@ static bool8 ShouldSwitchWhileAsleep(void)
 
 static bool8 IsTakingAnnoyingSecondaryDamage(void)
 {
-	if (GetPredictedAIAbility(gActiveBattler, FOE(gActiveBattler)) != ABILITY_MAGICGUARD
+	u8 ability = GetPredictedAIAbility(gActiveBattler, FOE(gActiveBattler));
+
+	if (ability != ABILITY_MAGICGUARD
 	&& !CanKillAFoe(gActiveBattler)
 	&& !IsDynamaxed(gActiveBattler)
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
 		if ((gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
 		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > 1 && gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
-		||  gBattleMons[gActiveBattler].status2 & (STATUS2_CURSED)
-		||  (gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) > 0x600) //Been sitting with toxic for 6 turns
+		|| (gBattleMons[gActiveBattler].status2 & STATUS2_CURSED)
+		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) > 0x600 && ability != ABILITY_POISONHEAL) //Been sitting with toxic for 6 turns
+		|| (gBattleMons[gActiveBattler].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL
+		 && GetMonAbility(GetBankPartyData(gActiveBattler)) == ABILITY_POISONHEAL)) //Had Poison Heal but lost it
 		{
 			if (!WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage on switch in
 			{
@@ -2584,6 +2610,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			damageData.bankAtk = gActiveBattler;
 			damageData.monAtk = consideredMon;
 			PopulateDamageCalcStructWithBaseAttackerData(&damageData);
+			s32 passiveRecovery = GetMonPassiveRecovery(consideredMon, gActiveBattler);
+			u16 wishRecovery = GetWishHPRecovery(gActiveBattler);
 
 			for (j = 0; j < gBattlersCount / 2; ++j) //Loop through all enemies on field
 			{
@@ -2748,7 +2776,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							{
 								u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
 								
-								if (dmg >= party[i].hp)
+								if (dmg >= consideredMon->hp)
 								{
 									faintsFromMove = TRUE;
 
@@ -2758,11 +2786,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 									break; //Only need 1 check for this to pass
 								}
-								else if (dmg >= party[i].hp / 2) //Move does half of over half of the health remaining
+								else if (((s32) consideredMon->hp) + passiveRecovery + wishRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
 								{
 									isWeakToMove = TRUE;
 								}
-								else if (dmg >= party[i].hp / 3) //Move does between a third and a half of HP remaining
+								else if (((s32) consideredMon->hp) + (passiveRecovery * 2) + wishRecovery < (s32) (dmg * 3)) //Move could 3HKO mon
 								{
 									++isNormalEffectiveness;
 								}
@@ -3617,6 +3645,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Or only on hardest game mode
 		#endif
 		#ifdef UNBOUND
+		&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE
 		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch()
 		#endif
 		;
@@ -3638,7 +3667,6 @@ static bool8 IsPlayerTryingToCheeseAI(u8 playerBank)
 
 	return FALSE;
 }
-
 
 static void PickNewAIMove(u8 aiBank, bool8 allowPursuit)
 {
@@ -3668,7 +3696,6 @@ static void PickNewAIMove(u8 aiBank, bool8 allowPursuit)
 	gBankAttacker = backupAtk;
 	gBankTarget = backupDef;
 }
-
 
 static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank)
 {
@@ -3707,6 +3734,7 @@ void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 	if (IS_DOUBLE_BATTLE
 	&& !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Unfair in Frontier battles
 	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY //On harder game modes
+	&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Only very smart Trainers
 	&& SIDE(gBankAttacker) == B_SIDE_OPPONENT //Fake Out user is AI
 	&& IsPlayerInControl(playerBank) //Protect user is player
 	&& ProtectAffects(gCurrentMove, gBankAttacker, playerBank, FALSE)) //Player protected from Fake Out

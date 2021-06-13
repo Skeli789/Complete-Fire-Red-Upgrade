@@ -4809,9 +4809,6 @@ void atkD3_trycopyability(void) //Role Play
 
 void atkD4_trywish(void)
 {
-	u8 firstId, lastId;
-	struct Pokemon* party;
-
 	switch (gBattlescriptCurrInstr[1])
 	{
 		case 0: // use wish
@@ -4830,9 +4827,7 @@ void atkD4_trywish(void)
 			PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, gBankTarget, gWishFutureKnock.wishMonId[gBankTarget])
 			if (!BATTLER_MAX_HP(gBankTarget))
 			{
-				party = LoadPartyRange(gBankTarget, &firstId, &lastId);
-
-				gBattleMoveDamage = MathMax(1, GetMonData(&party[gWishFutureKnock.wishMonId[gBankTarget]], MON_DATA_MAX_HP, NULL) / 2);
+				gBattleMoveDamage = GetWishHPRecovery(gBankTarget);
 				gBattleMoveDamage *= -1;
 				gBattlescriptCurrInstr += 6;
 			}

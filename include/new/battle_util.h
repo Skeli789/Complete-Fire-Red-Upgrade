@@ -67,6 +67,7 @@ bool8 IsUproarBeingMade(void);
 u8 GetIllusionPartyNumber(u8 bank);
 u8 GetIllusionPartyNumberForShiftSwitch(struct Pokemon* party, u8 monId, u8 firstId, u8 lastId);
 struct Pokemon* GetIllusionPartyData(u8 bank);
+u16 GetWishHPRecovery(u8 bank);
 bool8 BankMovedBefore(u8 bank1, u8 bank2);
 bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2);
 bool8 IsFirstAttacker(u8 bank);
@@ -105,6 +106,7 @@ bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u
 bool8 IsAffectedByElectricTerrain(u8 bank);
 bool8 IsMonAffectedByElectricTerrain(struct Pokemon* mon);
 bool8 WeatherHasEffect(void);
+bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability);
 
 void ClearBankStatus(u8 bank);
 bool8 DoesSleepClausePrevent(u8 bank);
@@ -119,6 +121,7 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBeConfused(u8 bank, u8 checkSafeguard);
 bool8 CanBeTormented(u8 bank);
 bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk);
+bool8 CanBeChoiceLocked(u8 bank);
 
 bool8 IsTrickRoomActive(void);
 bool8 IsMagicRoomActive(void);

@@ -439,7 +439,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 						break;
 
 					default:
-						if (ability == ABILITY_GORILLATACTICS || itemEffect == ITEM_EFFECT_CHOICE_BAND || itemEffect == ITEM_EFFECT_ASSAULT_VEST)
+						if (IsChoiceItemEffectOrAbility(itemEffect, ability) || itemEffect == ITEM_EFFECT_ASSAULT_VEST)
 							class = FIGHT_CLASS_SWEEPER_KILL;
 						else if (moveEffect == EFFECT_RESTORE_HP //Not placed above because checked in this order
 							  || moveEffect == EFFECT_MORNING_SUN
@@ -880,7 +880,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 				amountToRecover += MathMax(1, maxHp / 2);
 			}
 
-			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankAtk) != ITEM_EFFECT_UTILITY_UMBRELLA)
+			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 			{
 				if (ability == ABILITY_RAINDISH)
 					amountToRecover += MathMax(1, maxHp / 16);
@@ -1296,8 +1296,8 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 		{
 			if (!CanMovePredictionProtectAgainstMove(bankDef, bankAtk, MOVE_FAKEOUT))
 			{
-				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND  //Don't lock the attacker into Fake Out
-				&& ViableMonCountFromBank(bankAtk) <= 2) 	 		 //if they can't switch out afterwards.
+				if (CanBeChoiceLocked(bankAtk)           //Don't lock the attacker into Fake Out
+				&& ViableMonCountFromBank(bankAtk) <= 2) //if they can't switch out afterwards.
 				{
 					if (ViableMonCountFromBank(bankDef) == 1
 					&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
@@ -1309,8 +1309,8 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 		}
 		else //Single Battle
 		{
-			if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND  //Don't lock the attacker into Fake Out
-			&& ViableMonCountFromBank(bankAtk) <= 1) 			 //if they can't switch out afterwards.
+			if (CanBeChoiceLocked(bankAtk)           //Don't lock the attacker into Fake Out
+			&& ViableMonCountFromBank(bankAtk) <= 1) //if they can't switch out afterwards.
 			{
 				if (ViableMonCountFromBank(bankDef) == 1
 				&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
@@ -1873,7 +1873,7 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 	if (gBattleMoves[move].effect == EFFECT_YAWN
 	&& ABILITY(bankDef) != ABILITY_TRUANT
 	&& ViableMonCountFromBank(bankAtk) == 1 //Yawner is the last mon
-	&& !HasProtectionMoveInMoveset(bankAtk, CHECK_NO_SPECIAL_PROTECTION)) //Can't protect from the follow up attack after Yawn
+	&& !HasProtectionMoveInMoveset(bankAtk, CHECK_REGULAR_PROTECTION)) //Can't protect from the follow up attack after Yawn
 	{
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Yawn would go first
 		{

@@ -58,6 +58,7 @@ extern u8 sUnownLetterSlots[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_IND
 extern const struct WildPokemonHeader gWildMonMorningHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
+extern const u8 gSwarmOrders[31][24];
 extern const struct SwarmData gSwarmTable[];
 extern const u16 gSwarmTableLength;
 
@@ -480,8 +481,8 @@ static void Task_UpdateDailyValues(u8 taskId)
 
 			CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE); //Update the value in the var
 
-			#ifdef SWARM_CHANGE_BI_HOURLY
-			VarSet(VAR_SWARM_INDEX, 0); //Reset override daily
+			#ifdef SWARM_CHANGE_HOURLY
+			VarSet(VAR_SWARM_INDEX, 0xFFFF); //Reset override daily
 			#else
 			u16 index = Random() % gSwarmTableLength;
 			VarSet(VAR_SWARM_INDEX, index);
@@ -531,13 +532,26 @@ u8 GetCurrentSwarmIndex(void)
 	if (gSwarmTableLength == 0)
 		return 0xFF;
 
-	#ifdef SWARM_CHANGE_BI_HOURLY
-	u8 dayOfWeek = (gClock.dayOfWeek == 0) ? 8 : gClock.dayOfWeek;
-	u8 hour = (gClock.hour == 0) ? 12 : gClock.hour / 2; //Change every two hours
-	u8 day = (gClock.day == 0) ? 32 : gClock.day;
-	u8 month = (gClock.month == 0) ? 13 : gClock.month;
-	u32 val = ((hour * (day + month)) + ((hour * (day + month)) ^ dayOfWeek)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
-	u8 index = val % gSwarmTableLength;
+	#ifdef SWARM_CHANGE_HOURLY
+	u8 index;
+
+	if (VarGet(VAR_SWARM_INDEX) < gSwarmTableLength)
+	{
+		index = VarGet(VAR_SWARM_INDEX); //Override
+	}
+	else if (gSwarmTableLength == 24) //24 different species: 1 for each hour
+	{
+		index = gSwarmOrders[gClock.day - 1][gClock.hour];
+	}
+	else
+	{
+		u8 dayOfWeek = (gClock.dayOfWeek == 0) ? 8 : gClock.dayOfWeek;
+		u8 hour = (gClock.hour == 0) ? 12 : gClock.hour / 2; //Change every two hours
+		u8 day = (gClock.day == 0) ? 32 : gClock.day;
+		u8 month = (gClock.month == 0) ? 13 : gClock.month;
+		u32 val = ((hour * (day + month)) + ((hour * (day + month)) ^ dayOfWeek)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
+		index = val % gSwarmTableLength;
+	}
 	#else
 	u8 index = VarGet(VAR_SWARM_INDEX);
 	#endif
@@ -732,7 +746,7 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
 {
 	encounterRate *= 16;
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
-		encounterRate = encounterRate * 80 / 100;
+		encounterRate = (encounterRate * BIKE_ENCOUNTER_PERCENT) / 100;
 
 	encounterRate += sWildEncounterData.encounterRateBuff * 16 / 200;
 	//ApplyFluteEncounterRateMod(&encounterRate);

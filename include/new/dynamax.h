@@ -54,6 +54,7 @@ bool8 IsFrontierRaidBattle(void);
 bool8 IsCatchableRaidBattle(void);
 bool8 HasRaidShields(u8 bank);
 u8 GetNumRaidShieldsUp(void);
+bool8 ShouldStartWithRaidShieldsUp(void);
 bool8 ShouldCreateRaidShields(u8 bank);
 u16 GetNextRaidShieldHP(u8 bank);
 void CreateRaidShieldSprites(void);

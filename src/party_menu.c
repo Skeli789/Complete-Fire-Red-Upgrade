@@ -2410,9 +2410,9 @@ static void Task_ChangeAbility(u8 taskId)
 		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 		u8 abilityNum = (personality & 1) ^ 1; //Flip ability bit
 
-		u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-		u16 sid = HIHALF(trainerId);
-		u16 tid = LOHALF(trainerId);
+		u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+		u16 sid = HIHALF(otId);
+		u16 tid = LOHALF(otId);
 
 		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
 		bool8 isShiny = IsMonShiny(mon);
@@ -2435,7 +2435,9 @@ static void Task_ChangeAbility(u8 taskId)
 			personality &= ~(1);
 			personality |= abilityNum; //Either 0 or 1
 
-		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		} while (GetNatureFromPersonality(personality) != nature
+		|| GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		|| (!isShiny && IsShinyOtIdPersonality(otId, personality)) //No free shinies
 		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
 		|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
 

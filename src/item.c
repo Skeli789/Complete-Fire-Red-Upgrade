@@ -1258,7 +1258,24 @@ bool8 DoesBagHaveBerry(void)
 
 void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
 {
-	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue); //Sort all the null items to the back
+	u16 sortAmount = amount - 1;
+	s8 (*func)(struct ItemSlot*, struct ItemSlot*) = CompareItemsByHavingValue;
+
+	#ifdef VAR_AUTO_SORT_BAG_ITEMS
+	if (itemSlots == gBagPockets->itemRam)
+	{
+		u8 sortStyle = VarGet(VAR_AUTO_SORT_BAG_ITEMS);
+
+		if (sortStyle == 1)
+			func = CompareItemsAlphabetically;
+		else if (sortStyle == 2)
+			func = CompareItemsByType;
+		else if (sortStyle == 3)
+			func = CompareItemsByMost;
+	}
+	#endif
+
+	MergeSort(itemSlots, 0, sortAmount, func); //Sort all the null items to the back
 }
 
 

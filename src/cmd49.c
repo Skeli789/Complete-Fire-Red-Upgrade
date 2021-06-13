@@ -421,7 +421,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				{
 					if (gHitMarker & HITMARKER_OBEYS)
 					{
-						if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND || ABILITY(gBankAttacker) == ABILITY_GORILLATACTICS)
+						if (IsChoiceItemEffectOrAbility(holdEffectAtk, ABILITY(gBankAttacker)))
 						{
 							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{

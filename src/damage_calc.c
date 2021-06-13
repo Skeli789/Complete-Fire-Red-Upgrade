@@ -62,7 +62,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
 static u16 AdjustBasePower(struct DamageCalc* data, u16 power);
 static u16 GetZMovePower(u16 zMove);
-static u16 GetMaxMovePower(void);
+static u16 GetMaxMovePower(u16 maxMove);
 static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
 static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
@@ -2009,7 +2009,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 
 static s32 CalculateBaseDamage(struct DamageCalc* data)
 {
-	u32 attack, spAttack;
+	u32 attack, spAttack, defense, spDefense;
 
 	//Take variables off struct for easier access
 	u8 bankAtk = data->bankAtk;
@@ -2020,12 +2020,16 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	u32 damage = 0;
 	bool8 useMonAtk = data->monAtk != NULL;
 	bool8 useMonDef = data->monDef != NULL;
-	
+
 	if (!data->attackerLoaded)
 		PopulateDamageCalcStructWithBaseAttackerData(data);
 	if (!data->defenderLoaded)
 		PopulateDamageCalcStructWithBaseDefenderData(data);
 
+	//Create new variables so original values stay constant
+	defense = data->defense;
+	spDefense = data->spDefense;
+	
 //Load attacker Data
 	if (useMonAtk)
 	{
@@ -2252,13 +2256,13 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_MARVELSCALE:
 		//1.5x Boost
 			if (data->defStatus1 & STATUS_ANY)
-				data->defense = (data->defense * 15) / 10;
+				defense = (defense * 15) / 10;
 			break;
 
 		case ABILITY_GRASSPELT:
 		//1.5x Boost
 			if (gTerrainType == GRASSY_TERRAIN)
-				data->defense = (data->defense * 15) / 10;
+				defense = (defense * 15) / 10;
 			break;
 
 		case ABILITY_THICKFAT:
@@ -2272,7 +2276,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 		case ABILITY_FURCOAT:
 		//2x Boost
-			data->defense *= 2;
+			defense *= 2;
 			break;
 
 		case ABILITY_PORTALPOWER:
@@ -2359,34 +2363,34 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		#if (defined OLD_SOUL_DEW_EFFECT && defined SPECIES_LATIOS && defined SPECIES_LATIAS)
 		case ITEM_EFFECT_SOUL_DEW:
 			if (data->defSpecies == SPECIES_LATIOS || data->defSpecies == SPECIES_LATIAS)
-				data->spDefense = (data->spDefense * 3) / 2; //1.5
+				spDefense = (spDefense * 3) / 2; //1.5
 			break;
 		#endif
 
 		#ifdef SPECIES_DITTO
 		case ITEM_EFFECT_METAL_POWDER:
 			if (data->defSpecies == SPECIES_DITTO && (useMonDef || !IS_TRANSFORMED(bankDef)))
-				data->defense *= 2;
+				defense *= 2;
 			break;
 		#endif
 
 		#ifdef SPECIES_CLAMPERL
 		case ITEM_EFFECT_DEEP_SEA_SCALE:
 			if (data->defSpecies == SPECIES_CLAMPERL)
-				data->spDefense *= 2;
+				spDefense *= 2;
 			break;
 		#endif
 
 		case ITEM_EFFECT_EVIOLITE:
 			if (CanSpeciesEvolve(data->defSpecies))
 			{
-				data->defense = (data->defense * 15) / 10;
-				data->spDefense = (data->spDefense * 15) / 10;
+				defense = (defense * 15) / 10;
+				spDefense = (spDefense * 15) / 10;
 			}
 			break;
 
 		case ITEM_EFFECT_ASSAULT_VEST:
-			data->spDefense = (data->spDefense * 15) / 10;
+			spDefense = (spDefense * 15) / 10;
 			break;
 	}
 
@@ -2402,13 +2406,13 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				attack = (11 * attack) / 10;
 
 			if (FlagGet(FLAG_BADGE05_GET) && SIDE(bankDef) == B_SIDE_PLAYER)
-				data->defense = (11 * data->defense) / 10;
+				defense = (11 * defense) / 10;
 
 			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankAtk) == B_SIDE_PLAYER)
 				spAttack = (11 * spAttack) / 10;
 
 			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankDef) == B_SIDE_PLAYER)
-				data->spDefense = (11 * data->spDefense) / 10;
+				spDefense = (11 * spDefense) / 10;
 		}
 	#endif
 
@@ -2416,18 +2420,18 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT)
 	{
 		if ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK)))
-			data->spDefense = (15 * data->spDefense) / 10;
+			spDefense = (15 * spDefense) / 10;
 		else if (gBattleWeather & WEATHER_SANDSTORM_PRIMAL
 		&& ((!useMonDef && IsOfType(bankDef, TYPE_GROUND)) || (useMonDef && IsMonOfType(data->monDef, TYPE_GROUND))))
-			data->spDefense = (15 * data->spDefense) / 10; //Ground types get a Sp. Def boost in a "Vicious Sandstorm"
+			spDefense = (15 * spDefense) / 10; //Ground types get a Sp. Def boost in a "Vicious Sandstorm"
 	}
 
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
 		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
-			data->defense /= 2;
+			defense /= 2;
 		else if (move == MOVE_MISTYEXPLOSION)
-			data->spDefense /= 2;
+			spDefense /= 2;
 	#endif
 
 //Stat Buffs - Attacker
@@ -2457,15 +2461,15 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		if (gCritMultiplier > BASE_CRIT_MULTIPLIER)
 		{
 			if (data->defBuff < 6)
-				APPLY_QUICK_STAT_MOD(data->defense, data->defBuff);
+				APPLY_QUICK_STAT_MOD(defense, data->defBuff);
 
 			if (data->spDefBuff < 6)
-				APPLY_QUICK_STAT_MOD(data->spDefense, data->spDefBuff);
+				APPLY_QUICK_STAT_MOD(spDefense, data->spDefBuff);
 		}
 		else
 		{
-			APPLY_QUICK_STAT_MOD(data->defense, data->defBuff);
-			APPLY_QUICK_STAT_MOD(data->spDefense, data->spDefBuff);
+			APPLY_QUICK_STAT_MOD(defense, data->defBuff);
+			APPLY_QUICK_STAT_MOD(spDefense, data->spDefBuff);
 		}
 	}
 
@@ -2480,7 +2484,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (gSpecialMoveFlags[move].gSpecialAttackPhysicalDamageMoves)
 	{
 		damage *= spAttack;
-		damage /= MathMax(1, data->defense); //MathMax prevents underflow
+		damage /= MathMax(1, defense); //MathMax prevents underflow
 	}
 	else
 	{
@@ -2488,11 +2492,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			default:
 			case SPLIT_PHYSICAL:
 					damage *= attack;
-					damage /= MathMax(1, data->defense);
+					damage /= MathMax(1, defense);
 					break;
 			case SPLIT_SPECIAL:
 					damage *= spAttack;
-					damage /= MathMax(1, data->spDefense);
+					damage /= MathMax(1, spDefense);
 					break;
 		}
 	}
@@ -2793,7 +2797,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 	else if (gNewBS->dynamaxData.active) //Only active at runtime
 	{
 		gNewBS->ai.zMoveHelper = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
-		return GetMaxMovePower();
+		return GetMaxMovePower(move);
 	}
 	else if (IsZMove(move)) //Only used in AI calcs
 	{
@@ -2801,7 +2805,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 	}
 	else if (IsAnyMaxMove(move)) //Only used in AI calcs
 	{
-		return GetMaxMovePower();
+		return GetMaxMovePower(move);
 	}
 
 	switch (move) {
@@ -2826,7 +2830,13 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_ECHOEDVOICE:
-			power = MathMin(200, power + (40 * gNewBS->EchoedVoiceDamageScale));
+			if (data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
+			{
+				if (gNewBS->EchoedVoiceCounter != 0) //Will increase if used
+					power = MathMin(200, power + (40 * (gNewBS->EchoedVoiceDamageScale + 1)));
+			}
+			else
+				power = MathMin(200, power + (40 * gNewBS->EchoedVoiceDamageScale));
 			break;
 
 		case MOVE_FACADE:
@@ -3669,8 +3679,19 @@ static u16 GetZMovePower(u16 zMove)
 }
 
 //Requires that the base move be loaded into gNewBS->ai.zMoveHelper
-static u16 GetMaxMovePower(void)
+static u16 GetMaxMovePower(u16 maxMove)
 {
+	switch (maxMove)
+	{
+		case MOVE_G_MAX_DRUM_SOLO_P:
+		case MOVE_G_MAX_DRUM_SOLO_S:
+		case MOVE_G_MAX_FIREBALL_P:
+		case MOVE_G_MAX_FIREBALL_S:
+		case MOVE_G_MAX_HYDROSNIPE_P:
+		case MOVE_G_MAX_HYDROSNIPE_S:
+			return 160; //Always the same regardless of base move
+	}
+
 	#ifdef DYNAMAX_FEATURE
 	return gDynamaxMovePowers[gNewBS->ai.zMoveHelper];
 	#else

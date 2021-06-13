@@ -5207,7 +5207,10 @@ void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
 	u8 battlerId = shadowSprite->tBattlerId;
 	struct Sprite* battlerSprite = &gSprites[gBattlerSpriteIds[battlerId]];
 
-	if (!battlerSprite->inUse || !IsBattlerSpritePresent(battlerId)
+	if (gNewBS->trainerSlideInProgress)
+		return; //Don't do anything
+
+	else if (!battlerSprite->inUse || !IsBattlerSpritePresent(battlerId)
 	#ifdef FLAG_SKY_BATTLE
 	|| FlagGet(FLAG_SKY_BATTLE) //Doesn't make sense to use Shadows in Sky Battle
 	#endif

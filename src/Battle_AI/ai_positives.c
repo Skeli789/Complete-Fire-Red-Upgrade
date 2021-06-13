@@ -1467,25 +1467,29 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_ATTACK_UP_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
-				goto AI_ATTACK_PLUS;
-			else if (move == MOVE_FELLSTINGER && STAT_STAGE(bankAtk, STAT_STAGE_ATK) < STAT_STAGE_MAX && atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY)
 			{
-				if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+				if (move == MOVE_FELLSTINGER)
 				{
-					if (IS_SINGLE_BATTLE)
+					if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) < STAT_STAGE_MAX
+					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 					{
-						if (MoveWouldHitFirst(move, bankAtk, bankDef))
-							INCREASE_VIABILITY(9);
+						if (IS_SINGLE_BATTLE)
+						{
+							if (MoveWouldHitFirst(move, bankAtk, bankDef))
+								INCREASE_VIABILITY(9);
+							else
+								INCREASE_VIABILITY(3); //Past strongest move
+						}
 						else
-							INCREASE_VIABILITY(3); //Past strongest move
+						{
+							IncreaseDoublesDamageViabilityToScore(&viability, class, 6, bankAtk, bankDef);
+						}
 					}
-					else
-					{
-						IncreaseDoublesDamageViabilityToScore(&viability, class, 6, bankAtk, bankDef);
-					}
+					break;
 				}
-				break;
+				else if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+					goto AI_ATTACK_PLUS;
 			}
 			break;
 
@@ -1643,7 +1647,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_TORMENT:
-			if (data->defItemEffect == ITEM_EFFECT_CHOICE_BAND)
+			if (IsChoiceItemEffectOrAbility(data->defItemEffect, data->defAbility))
 				INCREASE_STATUS_VIABILITY(2);
 			else
 				INCREASE_STATUS_VIABILITY(0);
@@ -2747,7 +2751,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			INCREASE_VIABILITY(10);
 	}
 
-	return MathMin(viability, 255);
+	return min(viability, 255);
 }
 
 //An AI script meant for generic Trainers who have no set strategy built into their team

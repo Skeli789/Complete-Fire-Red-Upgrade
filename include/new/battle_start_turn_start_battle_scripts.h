@@ -29,6 +29,7 @@ extern const u8 BattleScript_NoTargetMoveFailed[];
 extern const u8 BattleScript_CamomonsTypeRevealEnd3[];
 extern const u8 BattleScript_CamomonsTypeRevealRet[];
 extern const u8 BattleScript_RaidBattleStart[];
+extern const u8 BattleScript_RaidShieldsBattleStart[];
 extern const u8 BattleScript_RaidBattleStorm[];
 extern const u8 BattleScript_DynamaxEnergySwirl[];
 

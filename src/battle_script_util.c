@@ -2341,3 +2341,11 @@ void UpdatePreviousMonInOnSwitchout(void)
 	gNewBS->ai.secondPreviousMonIn[gBankSwitching] = gNewBS->ai.previousMonIn[gBankSwitching];
 	gNewBS->ai.previousMonIn[gBankSwitching] = gBattlerPartyIndexes[gBankSwitching];
 }
+
+void TrySkipBattleNicknameOffer(void)
+{
+	#ifdef FLAG_DONT_OFFER_NICKNAMES_BATTLE
+	if (FlagGet(FLAG_DONT_OFFER_NICKNAMES_BATTLE))
+		gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNickname - 5;
+	#endif
+}

@@ -1558,6 +1558,16 @@ u8 GetNumRaidShieldsUp(void)
 	return 0;
 }
 
+bool8 ShouldStartWithRaidShieldsUp(void)
+{
+	#if (defined FLAG_RAID_BATTLE_NO_FORCE_END && defined VAR_GAME_DIFFICULTY)
+	if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END) && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+		return TRUE;
+	#endif
+
+	return FALSE;
+}
+
 static u8 GetRaidShieldHealthRatio(u8 bank)
 {
 	switch (gBattleMons[bank].level) {
@@ -1580,6 +1590,8 @@ bool8 ShouldCreateRaidShields(u8 bank)
 		return FALSE;
 
 	healthRatio = GetRaidShieldHealthRatio(bank);
+	if (ShouldStartWithRaidShieldsUp() && healthRatio > 0)
+		--healthRatio; //Started with shields up so battle would have one less round of shields later
 
 	for (i = 1; i <= healthRatio; ++i)
 	{

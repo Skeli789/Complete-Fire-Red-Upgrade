@@ -662,6 +662,10 @@ static void Task_GiveExpToMon(u8 taskId)
 			if (monId == gBattlerPartyIndexes[bank]) //Pokemon in battle
 				TryBoostDynamaxHPAfterLevelUp(bank);
 			gainedExp -= (nextLvlExp - currExp);
+
+			if (IsAffectedByHardLevelCap(mon))
+				gainedExp = 0; //Don't gain any more Exp.
+
 			gActiveBattler = bank;
 			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitTwoReturnValues, but Cmd34 allows for more data transfer
 			gActiveBattler = savedActiveBattler;
@@ -722,6 +726,10 @@ static void sub_80300F4(u8 taskId)
 				CalculateMonStats(mon);
 				TryBoostDynamaxHPAfterLevelUp(bank);
 				gainedExp -= (nextLvlExp - currExp);
+
+				if (IsAffectedByHardLevelCap(mon))
+					gainedExp = 0; //Don't gain any more Exp.
+
 				gActiveBattler = bank;
 				EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) &gainedExp);
 

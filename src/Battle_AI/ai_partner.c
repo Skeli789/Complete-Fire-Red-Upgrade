@@ -540,10 +540,12 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 							instructedMove = gLastPrintedMoves[bankAtkPartner];
 
 						if (instructedMove != MOVE_NONE
-						&& SPLIT(instructedMove) != SPLIT_STATUS
-						&& GetBaseMoveTarget(instructedMove, bankAtkPartner) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Use instruct on multi-target moves
+						&& SPLIT(instructedMove) != SPLIT_STATUS)
 						{
-							IncreaseHelpingHandViability(&viability, class);
+							if (GetBaseMoveTarget(instructedMove, bankAtkPartner) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Use instruct on multi-target moves
+								IncreaseHelpingHandViability(&viability, class);
+							else
+								INCREASE_VIABILITY(1); //So at least do it as a last resort option (a flat score of 100 for the partner won't be considered)
 						}
 						break;
 				}

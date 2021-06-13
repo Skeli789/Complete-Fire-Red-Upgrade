@@ -217,6 +217,7 @@ extern const u8 BattleScript_TSAbsorb[];
 extern const u8 BattleScript_StickyWebSpeedDrop[];
 extern const u8 BattleScript_SuccessForceOut[];
 extern const u8 BattleScript_TrainerSlideMsgRet[];
+#define BattleScript_CaughtPokemonSkipNickname (u8*) 0x81D9A80
 
 extern const u8 gText_SurroundedByGMaxVineLash[];
 extern const u8 gText_SurroundedByGMaxWildfire[];

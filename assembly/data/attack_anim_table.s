@@ -2905,27 +2905,28 @@ ANIM_HEADSMASH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_ICESHARD:
-	loadparticle ANIM_TAG_ICICLE_SPEAR @Icicle
-	loadparticle ANIM_TAG_IMPACT @Hit
 	loadparticle ANIM_TAG_ICE_CRYSTALS @Ice
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x0
-	waitanimation
-	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x6
-	pause 0x3
-	playsound2 0xba SOUND_PAN_ATTACKER
-	launchtemplate ICICLE 0x82 0x6 0x10 0x0 0x0 0x0 0x19 0x101
-	waitanimation
-	launchtemplate BLUEHIT 0x83 0x4 0x0 0x0 0x1 0x1
+	loadparticle ANIM_TAG_IMPACT @Hit
+	launchtemplate ICE_SHARD, TEMPLATE_TARGET | 2, 0x3, 0, 0,  30
+	pause 0x1
+	launchtemplate ICE_SHARD, TEMPLATE_TARGET | 2, 0x3, 0, 0, -20
+	pause 0x1
+	launchtemplate ICE_SHARD, TEMPLATE_TARGET | 2, 0x3, 0, 0,  30
+	pause 0x1
+	launchtemplate ICE_SHARD, TEMPLATE_TARGET | 2, 0x3, 0, 0, -20
+	pause 0x1
+	launchtemplate ICE_SHARD, TEMPLATE_TARGET | 2, 0x3, 0, 0,  30
+	pause 0x4
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x3 0x2 0x0 0xb 0x7fff
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x2 0x0 0x20 0x1
 	call FREEZE_CHANCE_ANIM
-	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-ICICLE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 0x83E74A8 0x0 0x83E7540 0x80B5075
-BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 0x80BA561
+ICE_SHARD: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_DOUBLE_8x8 0x83E6324 0x0 gSpriteAffineAnimTable_Flutterby SpriteCB_MaxFlutterby
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5791,7 +5792,10 @@ ANIM_INCINERATE:
 	waitanimation
 	playsound2 0x89 SOUND_PAN_ATTACKER
 	launchtemplate INCINERATE_BALL 0x2 0x6 0x14 0xfff8 0xfff8 0xfff8 0x14 0xffe0
-	pause 0x13
+	pause 0x12
+	pokespritefromBG bank_target
+	pause 0x1
+	pokespritetoBG bank_target @;This time without leftbankBG_over_partnerBG
 	playsound2 0x8A SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0xC 0x1
 	launchtask AnimTask_move_bank_2 0x2 0x5 target_partner 0x2 0x0 0xC 0x1
@@ -8237,16 +8241,19 @@ ANIM_ECHOEDVOICE:
 	pokespritetoBG side_target
 	leftopponentbankBG_over_partnerBG 0x1
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x2 0x0 0x8 0x1
-	call METALSOUND_PARTICLE_LOAD_AND_PLAY
-	call METALSOUND_PARTICLE_LOAD_AND_PLAY
-	call METALSOUND_PARTICLE_LOAD_AND_PLAY
-	call METALSOUND_PARTICLE_LOAD_AND_PLAY
+	call ECHOED_VOICE_WAVE
+	call ECHOED_VOICE_WAVE
+	call ECHOED_VOICE_WAVE
+	call ECHOED_VOICE_WAVE
+	pause 0x5
+	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x10 0x1 0x0
 	waitanimation
 	pokespritefromBG side_target
 	pause 0x0
 	waitanimation
 	endanimation
-METALSOUND_PARTICLE_LOAD_AND_PLAY:
+
+ECHOED_VOICE_WAVE:
 	playsoundpanchange 0xEA SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
 	launchtemplate 0x83E3CD0 0x82 0x6 0x10 0x0 0x0 0x0 0x1e 0x0
 	pause 0x2

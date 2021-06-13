@@ -375,7 +375,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 		gFieldEffectArguments[0] = sDexNavHudPtr->tileX;
 		gFieldEffectArguments[1] = sDexNavHudPtr->tileY;
 		gFieldEffectArguments[2] = 0xFF; //Below everything
-		gFieldEffectArguments[3] = 2; //Normal height
+		gFieldEffectArguments[3] = ZCoordToPriority(MapGridGetZCoordAt(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY));
 		switch (environment)
 		{
 			case ENCOUNTER_TYPE_LAND:

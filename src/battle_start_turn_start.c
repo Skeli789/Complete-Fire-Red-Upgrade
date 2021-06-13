@@ -260,22 +260,33 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case RaidBattleReveal:
-				#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
-				if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
-				{
-					//Don't play the storm animation in a Raid Battle that isn't 10 turns long
-					++*state;
-					break;
-				}
-				#endif
-
 				if (IsRaidBattle())
 				{
 					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without
-					gBattleScripting.bank = BANK_RAID_BOSS;
-					gBattleStringLoader = gText_RaidBattleReveal;
-					BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
+
+					if (ShouldStartWithRaidShieldsUp() && !gNewBS->dynamaxData.raidShieldsUp)
+					{
+						//Start with shields for harder Raids
+						gNewBS->dynamaxData.raidShieldsUp = TRUE;
+						gNewBS->dynamaxData.shieldsDestroyed = 0;
+						gBattleScripting.bank = BANK_RAID_BOSS;
+						BattleScriptPushCursorAndCallback(BattleScript_RaidShieldsBattleStart);
+					}
+					else
+					#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
+					if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
+					{
+						//Don't play the storm animation in a Raid Battle that isn't 10 turns long
+					}
+					else
+					#endif
+					{
+						gBattleScripting.bank = BANK_RAID_BOSS;
+						gBattleStringLoader = gText_RaidBattleReveal;
+						BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
+					}
 				}
+
 				++*state;
 				break;
 
@@ -1468,9 +1479,9 @@ void HandleAction_UseMove(void)
 			}
 			else //Targeted Partner
 			{
-				if (gCurrentMove == MOVE_HEALPULSE)
+				if (gCurrentMove == MOVE_HEALPULSE || gCurrentMove == MOVE_INSTRUCT)
 				{
-					//Never redirect Heal Pulse to the enemy
+					//Never redirect Heal Pulse or Instruct to the enemy
 					goto FAIL_NO_TARGET;
 				}
 				else

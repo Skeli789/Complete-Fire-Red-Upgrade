@@ -301,10 +301,12 @@ void atkFF1C_handletrainerslidemsg(void)
 
 	switch(caseId) {
 		case 0:
+			gNewBS->trainerSlideInProgress = TRUE; //Prevent's the foe's shadow from having problems
 			gNewBS->savedObjId = gBattlerSpriteIds[gActiveBattler];
 			break;
 
 		case 1:
+			gNewBS->trainerSlideInProgress = FALSE;
 			gBattlerSpriteIds[gActiveBattler] = gNewBS->savedObjId;
 			if (BATTLER_ALIVE(gActiveBattler))
 				BattleLoadOpponentMonSpriteGfx(GetBankPartyData(gActiveBattler), gActiveBattler);
