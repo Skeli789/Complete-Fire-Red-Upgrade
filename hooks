@@ -686,6 +686,8 @@ ActivateMGBAPrint 81E381C 0
 FixInstantTextOptionSpeed 08002D10 0
 RunTextPrintersForInstantTextHook 08002DEE 0
 #endif
+TextPrinterWaitWithDownArrow 08005634 1
+TextPrinterWait 8005680 1
 
 #ifdef UNBOUND
 GetCurrentLevelCap 801D79C 0

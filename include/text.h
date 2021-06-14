@@ -284,6 +284,9 @@ bool16 __attribute__((long_call)) IsTextPrinterActive(u8 id);
 s32 __attribute__((long_call)) GetStringWidth(u8 fontId, const u8 *str, s16 letterSpacing);
 u8 __attribute__((long_call)) GetFontAttribute(u8 fontId, u8 attributeId);
 u8 __attribute__((long_call)) GetMenuCursorDimensionByFont(u8 fontId, u8 whichDimension);
+void __attribute__((long_call)) TextPrinterDrawDownArrow(struct TextPrinter *textPrinter);
+bool8 __attribute__((long_call)) TextPrinterWaitAutoMode(struct TextPrinter *textPrinter);
+bool16 __attribute__((long_call)) TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter);
 
 /*
 extern u8 gStringVar1[];
@@ -316,10 +319,7 @@ u16 Font7Func(struct TextPrinter *textPrinter);
 u16 Font8Func(struct TextPrinter *textPrinter);
 
 void TextPrinterInitDownArrowCounters(struct TextPrinter *textPrinter);
-void TextPrinterDrawDownArrow(struct TextPrinter *textPrinter);
 void TextPrinterClearDownArrow(struct TextPrinter *textPrinter);
-bool8 TextPrinterWaitAutoMode(struct TextPrinter *textPrinter);
-bool16 TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter);
 bool16 TextPrinterWait(struct TextPrinter *textPrinter);
 void DrawDownArrow(u8 windowId, u16 x, u16 y, u8 bgColor, bool8 drawArrow, u8 *counter, u8 *yCoordIndex);
 u16 RenderText(struct TextPrinter *textPrinter);

@@ -1,9 +1,34 @@
 #include "defines.h"
-#include "../include/window.h"
 #include "../include/text.h"
 #include "../include/new_menu_helpers.h"
+#include "../include/window.h"
+#include "../include/constants/songs.h"
 
 extern struct TextPrinter sTextPrinters[];
+
+bool8 IsAutoScrollEnabled(void)
+{
+	#ifdef AUTOSCROLL_TEXT_BY_HOLDING_A_AND_B
+	return TRUE;
+	#endif
+
+	#ifdef FLAG_SANDBOX_MODE
+	if (FlagGet(FLAG_SANDBOX_MODE))
+		return TRUE;
+	#endif
+
+	#ifdef FLAG_NEW_GAME_PLUS
+	if (FlagGet(FLAG_NEW_GAME_PLUS))
+		return TRUE;
+	#endif
+
+	#ifdef UNBOUND
+	if (FlagGet(FLAG_SYS_GAME_CLEAR))
+		return TRUE;
+	#endif
+
+	return FALSE;
+}
 
 bool32 RunTextPrintersForInstantText(void)
 {
@@ -54,4 +79,45 @@ bool32 RunTextPrintersForInstantText(void)
 	#else
 	return FALSE;
 	#endif
+}
+
+bool16 TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter)
+{
+	bool8 result = FALSE;
+	if (gTextFlags.autoScroll != 0)
+	{
+		result = TextPrinterWaitAutoMode(textPrinter);
+	}
+	else
+	{
+		TextPrinterDrawDownArrow(textPrinter);
+		if (JOY_NEW(A_BUTTON | B_BUTTON)
+		|| (JOY_HELD(A_BUTTON) && JOY_HELD(B_BUTTON) && IsAutoScrollEnabled()))
+		{
+			result = TRUE;
+			PlaySE(SE_SELECT);
+		}
+	}
+
+	return result;
+}
+
+bool16 TextPrinterWait(struct TextPrinter *textPrinter)
+{
+	bool16 result = FALSE;
+	if (gTextFlags.autoScroll != 0)
+	{
+		result = TextPrinterWaitAutoMode(textPrinter);
+	}
+	else
+	{
+		if (JOY_NEW(A_BUTTON | B_BUTTON)
+		|| (JOY_HELD(A_BUTTON) && JOY_HELD(B_BUTTON) && IsAutoScrollEnabled()))
+		{
+			result = TRUE;
+			PlaySE(SE_SELECT);
+		}
+	}
+
+	return result;
 }
