@@ -485,7 +485,7 @@ FollowMe_CreateAvatarHook2 080570EC 0
 FollowMe_StairsMoveHook 0807EB28 1
 FollowMe_EscalatorMoveHook 08084868 2
 FollowMe_EscalatorWarpEndHook 08084ACC 0
-FollowMe_WarpDoorEndHook 0807E1F8 0
+Task_PlayerExitDoor 0807DFBC 1
 FollowMe_WarpArrowEndHook 0807E2B8 0
 FollowMe_WarpNormalEndHook 0807DF74 0
 FollowMe_WarpTeleportEndHook 807E364 0

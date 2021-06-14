@@ -8,7 +8,7 @@ extern struct TextPrinter sTextPrinters[];
 
 bool8 IsAutoScrollEnabled(void)
 {
-	#ifdef AUTOSCROLL_TEXT_BY_HOLDING_A_AND_B
+	#ifdef AUTOSCROLL_TEXT_BY_HOLDING_R
 	return TRUE;
 	#endif
 
@@ -92,7 +92,7 @@ bool16 TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter)
 	{
 		TextPrinterDrawDownArrow(textPrinter);
 		if (JOY_NEW(A_BUTTON | B_BUTTON)
-		|| (JOY_HELD(A_BUTTON) && JOY_HELD(B_BUTTON) && IsAutoScrollEnabled()))
+		|| (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled()))
 		{
 			result = TRUE;
 			PlaySE(SE_SELECT);
@@ -112,7 +112,7 @@ bool16 TextPrinterWait(struct TextPrinter *textPrinter)
 	else
 	{
 		if (JOY_NEW(A_BUTTON | B_BUTTON)
-		|| (JOY_HELD(A_BUTTON) && JOY_HELD(B_BUTTON) && IsAutoScrollEnabled()))
+		|| (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled()))
 		{
 			result = TRUE;
 			PlaySE(SE_SELECT);

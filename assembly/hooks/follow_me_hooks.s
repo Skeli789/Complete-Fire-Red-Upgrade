@@ -150,18 +150,6 @@ FollowMe_EscalatorWarpEndHook:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-FollowMe_WarpDoorEndHook:
-	bl FollowMe_SetIndicatorToComeOutDoor
-	bl FollowMe_WarpSetEnd
-	ldr r3, =UnfreezeEventObjects
-	bl bxr3
-	ldr r3, =ScriptContext2_Disable
-	bl bxr3
-	ldr r0, =0x0807E200 | 1
-	bx r0
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
 FollowMe_WarpArrowEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =UnfreezeEventObjects

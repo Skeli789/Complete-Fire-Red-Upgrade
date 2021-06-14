@@ -2,6 +2,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/field_door.h"
 #include "../include/field_effect.h"
+#include "../include/field_fadetransition.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_screen_effect.h"
 #include "../include/field_weather.h"
@@ -892,10 +893,17 @@ static void Task_FinishSurfDismount(u8 taskId)
 	gPlayerAvatar->preventStep = FALSE;
 }
 
-#if 0//def GEN_4_PLAYER_RUNNING_FIX
+#ifdef SHRINK_PLAYER_THROUGH_DOOR
 static const union AffineAnimCmd sSpriteAffineAnim_ShrinkPlayerAtDoor[] =
 {
 	AFFINEANIMCMD_FRAME(-4, -4, 0, 60), //Shrink sprite
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_GrowPlayerFromDoor[] =
+{
+	AFFINEANIMCMD_FRAME(196, 196, 0, 0),
+	AFFINEANIMCMD_FRAME(4, 4, 0, 15), //Grow sprite
 	AFFINEANIMCMD_END,
 };
 
@@ -903,34 +911,53 @@ static const union AffineAnimCmd* const sSpriteAffineAnimTable_ShrinkPlayerAtDoo
 {
 	sSpriteAffineAnim_ShrinkPlayerAtDoor,
 };
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_GrowPlayerFromDoor[] =
+{
+	sSpriteAffineAnim_GrowPlayerFromDoor,
+};
 #endif
+
+static void Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion(u8 taskId)
+{
+	struct Sprite* sprite = &gSprites[gEventObjects[gTasks[taskId].data[0]].spriteId];
+
+	if (sprite->affineAnimEnded)
+	{
+		FreeSpriteOamMatrix(sprite);
+		sprite->affineAnims = gDummySpriteAffineAnimTable;
+		sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+		DestroyTask(taskId);
+	}
+}
 
 void PlayerGoThroughDoor(u8 taskId)
 {
-    struct Task *task = &gTasks[taskId];
-    s16 *x = &task->data[2];
-    s16 *y = &task->data[3];
+	struct Task *task = &gTasks[taskId];
+	s16 *x = &task->data[2];
+	s16 *y = &task->data[3];
 	u8 playerObjId = gPlayerAvatar->eventObjectId;
 	u8 followerObjId = GetFollowerObjectId();
 
-    switch (task->data[0])
-    {
-    case 0:
+	switch (task->data[0])
+	{
+	case 0:
 		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH))
 			SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT); //Stop running
 
 		gFollowerState.comeOutDoorStairs = FALSE; //Just in case came out and when right back in
-        FreezeEventObjects();
-        PlayerGetDestCoords(x, y);
-        PlaySE(GetDoorSoundEffect(*x, *y - 1));
-        task->data[1] = FieldAnimateDoorOpen(*x, *y - 1);
-        task->data[0] = 1;
-        break;
-    case 1:
-        if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE)
-        {
-            EventObjectClearHeldMovementIfActive(&gEventObjects[playerObjId]);
-            EventObjectSetHeldMovement(&gEventObjects[playerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
+		FreezeEventObjects();
+		PlayerGetDestCoords(x, y);
+		PlaySE(GetDoorSoundEffect(*x, *y - 1));
+		task->data[1] = FieldAnimateDoorOpen(*x, *y - 1);
+		task->data[0] = 1;
+		break;
+	case 1:
+		if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE)
+		{
+			EventObjectClearHeldMovementIfActive(&gEventObjects[playerObjId]);
+			EventObjectSetHeldMovement(&gEventObjects[playerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
 
 			if (gFollowerState.inProgress && !gEventObjects[followerObjId].invisible)
 			{
@@ -940,7 +967,7 @@ void PlayerGoThroughDoor(u8 taskId)
 				EventObjectSetHeldMovement(&gEventObjects[followerObjId], newState);
 			}
 
-			#if 0//def GEN_4_PLAYER_RUNNING_FIX
+			#ifdef SHRINK_PLAYER_THROUGH_DOOR
 			struct Sprite* sprite = &gSprites[gEventObjects[playerObjId].spriteId];
 			sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
 			sprite->affineAnims = sSpriteAffineAnimTable_ShrinkPlayerAtDoor;
@@ -948,45 +975,124 @@ void PlayerGoThroughDoor(u8 taskId)
 			InitSpriteAffineAnim(sprite);
 			#endif
 
-            task->data[0] = 2;
-        }
-        break;
-    case 2:
-        if (walkrun_is_standing_still())
-        {
+			task->data[0] = 2;
+		}
+		break;
+	case 2:
+		if (walkrun_is_standing_still())
+		{
 			if (!gFollowerState.inProgress || gEventObjects[followerObjId].invisible) //Don't close door on follower
 				task->data[1] = FieldAnimateDoorClose(*x, *y - 1);
-            EventObjectClearHeldMovementIfFinished(&gEventObjects[playerObjId]);
-            sub_807DCB0(0); //sub_80AF0F4
-            task->data[0] = 3;
-        }
-        break;
-    case 3:
-        if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE)
-        {
-            task->data[0] = 4;
-        }
-        break;
-    case 4:
+			EventObjectClearHeldMovementIfFinished(&gEventObjects[playerObjId]);
+			SetPlayerVisibility(0); //sub_80AF0F4
+			task->data[0] = 3;
+		}
+		break;
+	case 3:
+		if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE)
+		{
+			task->data[0] = 4;
+		}
+		break;
+	case 4:
 		if (gFollowerState.inProgress)
 		{
 			EventObjectClearHeldMovementIfActive(&gEventObjects[followerObjId]);
 			EventObjectSetHeldMovement(&gEventObjects[followerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
+
+			#ifdef SHRINK_PLAYER_THROUGH_DOOR
+			struct Sprite* sprite = &gSprites[gEventObjects[followerObjId].spriteId];
+			sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+			sprite->affineAnims = sSpriteAffineAnimTable_ShrinkPlayerAtDoor;
+			CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+			InitSpriteAffineAnim(sprite);
+			#endif
 		}
 
-        TryFadeOutOldMapMusic();
-        WarpFadeScreen();
-        PlayRainStoppingSoundEffect();
-        task->data[0] = 0;
-        task->func = (void*) 0x807E719;
-        break;
+		TryFadeOutOldMapMusic();
+		WarpFadeScreen();
+		PlayRainStoppingSoundEffect();
+		task->data[0] = 0;
+		task->func = (void*) 0x807E719;
+		break;
 	case 5:
-        TryFadeOutOldMapMusic();
-        PlayRainStoppingSoundEffect();
-        task->data[0] = 0;
-        task->func = (void*) 0x807E719;
-        break;
-    }
+		TryFadeOutOldMapMusic();
+		PlayRainStoppingSoundEffect();
+		task->data[0] = 0;
+		task->func = (void*) 0x807E719;
+		break;
+	}
+}
+
+void Task_PlayerExitDoor(u8 taskId)
+{
+	struct Task * task = &gTasks[taskId];
+	s16 *x = &task->data[2];
+	s16 *y = &task->data[3];
+	u8 playerObjId = gPlayerAvatar->eventObjectId;
+
+	switch (task->data[0])
+	{
+		case 0:
+			SetPlayerVisibility(FALSE);
+			FreezeEventObjects();
+			DoOutwardBarnDoorWipe();
+			sub_807DBAC();
+			++task->data[0];
+			break;
+		case 1:
+			task->data[15]++;
+			if (task->data[15] == 25)
+			{
+				PlayerGetDestCoords(x, y);
+				PlaySE(GetDoorSoundEffect(*x, *y));
+				FieldAnimateDoorOpen(*x, *y);
+				++task->data[0];
+			}
+			break;
+		case 2:
+			if (!FieldIsDoorAnimationRunning())
+			{
+				PlayerGetDestCoords(&task->data[12], &task->data[13]);
+				SetPlayerVisibility(TRUE);
+				EventObjectSetHeldMovement(&gEventObjects[GetEventObjectIdByLocalIdAndMap(EVENT_OBJ_ID_PLAYER, 0, 0)], MOVEMENT_ACTION_WALK_NORMAL_DOWN);
+				++task->data[0];
+
+				#ifdef SHRINK_PLAYER_THROUGH_DOOR
+				struct Sprite* sprite = &gSprites[gEventObjects[playerObjId].spriteId];
+				sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+				sprite->affineAnims = sSpriteAffineAnimTable_GrowPlayerFromDoor;
+				CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+				InitSpriteAffineAnim(sprite);
+				u8 newTaskId = CreateTask(Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion, 0xFF);
+				if (newTaskId != 0xFF)
+					gTasks[newTaskId].data[0] = playerObjId;
+				#endif
+			}
+			break;
+		case 3:
+			task->data[14]++;
+			if (task->data[14] == 14)
+			{
+				FieldAnimateDoorClose(task->data[12], task->data[13]);
+				++task->data[0];
+			}
+			break;
+		case 4:
+			if (FieldFadeTransitionBackgroundEffectIsFinished() && walkrun_is_standing_still() && !FieldIsDoorAnimationRunning() && !FuncIsActiveTask(Task_BarnDoorWipe))
+			{
+				EventObjectClearHeldMovementIfFinished(&gEventObjects[GetEventObjectIdByLocalIdAndMap(EVENT_OBJ_ID_PLAYER, 0, 0)]);
+				++task->data[0];
+			}
+			break;
+		case 5:
+			FollowMe_SetIndicatorToComeOutDoor();
+			FollowMe_WarpSetEnd();
+			UnfreezeEventObjects();
+			ScriptContext2_Disable();
+			DestroyTask(taskId);
+			break;
+	}
 }
 
 static u8 GetPlayerFaceToDoorDirection(struct EventObject* player, struct EventObject* follower)
@@ -1005,9 +1111,9 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 {
 	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
-    struct Task *task = &gTasks[taskId];
-    s16 x = task->data[2];
-    s16 y = task->data[3];
+	struct Task *task = &gTasks[taskId];
+	s16 x = task->data[2];
+	s16 y = task->data[3];
 
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH)
 	&& EventObjectClearHeldMovementIfFinished(player))
@@ -1030,6 +1136,17 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 				EventObjectTurn(follower, DIR_SOUTH); //The follower should be facing down when it comes out the door
 				EventObjectSetHeldMovement(follower, MOVEMENT_ACTION_WALK_NORMAL_DOWN);
 				task->data[0] = 2;
+
+				#ifdef SHRINK_PLAYER_THROUGH_DOOR
+				struct Sprite* sprite = &gSprites[follower->spriteId];
+				sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+				sprite->affineAnims = sSpriteAffineAnimTable_GrowPlayerFromDoor;
+				CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+				InitSpriteAffineAnim(sprite);
+				u8 newTaskId = CreateTask(Task_DestroyEventObjSpriteMatrixOnAffineAnimCompletion, 0xFF);
+				if (newTaskId != 0xFF)
+					gTasks[newTaskId].data[0] = GetFollowerMapObjId();
+				#endif
 			}
 			break;
 		case 2:
@@ -1051,7 +1168,7 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 			gFollowerState.comeOutDoorStairs = FALSE;
 			gPlayerAvatar->preventStep = FALSE; //Player can move again
 			DestroyTask(taskId);
-        break;
+		break;
 	}
 }
 
@@ -1068,7 +1185,7 @@ static void Task_FollowerHandleIndoorStairs(u8 taskId)
 {
 	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
-    struct Task *task = &gTasks[taskId];
+	struct Task *task = &gTasks[taskId];
 
 	switch (task->data[0]) {
 		case 0:
@@ -1119,7 +1236,7 @@ static void Task_FollowerHandleEscalatorFinish(u8 taskId)
 	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
 	struct Sprite* sprite = &gSprites[follower->spriteId];
-    struct Task *task = &gTasks[taskId];
+	struct Task *task = &gTasks[taskId];
 
 	switch (task->data[0]) {
 		case 0:
@@ -1193,14 +1310,14 @@ static void Task_FollowerHandleEscalatorFinish(u8 taskId)
 
 static void CalculateFollowerEscalatorTrajectoryDown(struct Task *task)
 {
-    struct Sprite* sprite = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
+	struct Sprite* sprite = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
 	sprite->pos2.x = Cosine(0x84, task->data[1]);
 	sprite->pos2.y = Sine(0x94, task->data[1]);
 }
 
 static void CalculateFollowerEscalatorTrajectoryUp(struct Task *task)
 {
-    struct Sprite* sprite = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
+	struct Sprite* sprite = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
 	sprite->pos2.x = Cosine(0x7c, task->data[1]);
 	sprite->pos2.y = Sine(0x76, task->data[1]);
 }
