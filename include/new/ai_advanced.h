@@ -18,6 +18,7 @@ bool8 IsClassStall(u8 class);
 bool8 IsClassTeamSupport(u8 class);
 bool8 IsClassBatonPass(u8 class);
 bool8 IsClassScreener(u8 class);
+bool8 IsClassSupportScreener(u8 class);
 bool8 IsClassCleric(u8 class);
 bool8 IsClassPhazer(u8 class);
 bool8 IsClassEntryHazards(u8 class);

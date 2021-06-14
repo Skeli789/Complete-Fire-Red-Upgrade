@@ -2,6 +2,7 @@
 #include "../global.h"
 #include "../battle.h"
 
+#include "ai_scripts.h"
 #include "damage_calc.h"
 
 //Exported Functions
@@ -94,6 +95,7 @@ bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef);
+bool8 IsMovePredictionHPDrainingMove(u8 bankAtk, u8 bankDef);
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move);
 
 bool8 MoveInMovesetAndUsable(u16 move, u8 bank);
@@ -134,6 +136,7 @@ bool8 HasUsedMove(u8 bankAtk, u16 move);
 bool8 HasUsedMoveWithEffect(u8 bankAtk, u8 effect);
 bool8 HasUsedMoveWithEffectHigherThanChance(u8 bank, u8 effect, u8 chance);
 bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef);
+bool8 NoUsableHazardsInMoveset(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData);
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef);
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef);

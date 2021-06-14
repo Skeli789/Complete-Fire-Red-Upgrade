@@ -941,12 +941,33 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 	if (predictedDmg >= mon->hp)
 		return FALSE; //Don't switch and sack your other mon
 
-	if (predictedDmg < mon->hp / 2)
+	if (predictedDmg * 2 < mon->hp)
 		return TRUE; //Can take multiple hits
 
-	return predictedDmg >= mon->maxHP / 2 //Will take a sizeable chunk of damage on the switch
+	return predictedDmg * 2 >= mon->maxHP //Will take a sizeable chunk of damage on the switch
 		&& HealingMoveInMonMoveset(mon) //But can heal off that damage
 		&& SpeedCalcMon(SIDE(activeBattler), mon) > SpeedCalc(foe); //And will get the healing move off first
+}
+
+
+static bool8 PredictedMoveWontKOMon(u8 activeBattler, struct Pokemon* mon, u8 foe)
+{
+	u16 defMove = IsValidMovePrediction(foe, activeBattler);
+
+	//Check if a switch against the predicted move is safe
+	if (defMove == MOVE_NONE || SPLIT(defMove) == SPLIT_STATUS) //Predicted move won't do damage
+		return TRUE;
+
+	if (gBattleMoves[defMove].effect == EFFECT_SUCKER_PUNCH)
+		return TRUE; //Sucker Punch never works on a switch
+
+	//Now run actual damage calc
+	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
+
+	if (predictedDmg >= mon->hp)
+		return FALSE; //Don't switch and sack your other mon
+
+	return TRUE;
 }
 
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
@@ -1063,6 +1084,9 @@ static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u16
 			&& mon->hp == mon->maxHP //Mon is already at max HP
 			&& GetMonEntryHazardDamage(mon, side) == 0) //And won't take any damage switching in
 			{
+				if (gNewBS->ai.switchingCooldown[gActiveBattler]) //AI just switched out
+					return FALSE; //Don't double switch when there's no point
+
 				u32 dmg = GetFinalAIMoveDamage(predictedMove, foe, gActiveBattler, 2, NULL);
 
 				if (dmg < gBattleMons[gActiveBattler].hp) //Move doesn't 3HKO - the mon out already isn't going to take a lot of damage from the attack
@@ -1234,9 +1258,10 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 	//Check second best mon to switch into
 	u8 secondBestMonId = GetSecondMostSuitableMonToSwitchInto();
-	if (secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
-	&&  secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
-	&&  TypeAbosorbingSwitchAbilityCheck(&party[secondBestMonId], secondBestMonId, predictedMove1,
+	if (secondBestMonId != PARTY_SIZE
+	&& secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
+	&& secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
+	&& TypeAbosorbingSwitchAbilityCheck(&party[secondBestMonId], secondBestMonId, predictedMove1,
 										 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3))
 		return TRUE;
 
@@ -1436,7 +1461,9 @@ bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng)
 static bool8 PassOnWishSwitchingCheck(struct Pokemon* party, u8 monId)
 {
 	if (party[monId].hp < party[monId].maxHP / 2
-	&& !WillFaintFromEntryHazards(&party[monId], SIDE(gActiveBattler)))
+	&& !WillFaintFromEntryHazards(&party[monId], SIDE(gActiveBattler))
+	&& (IS_DOUBLE_BATTLE
+	 || PredictedMoveWontKOMon(gActiveBattler, &party[monId], FOE(gActiveBattler))))
 	{
 		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
 		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -1474,9 +1501,10 @@ static bool8 PassOnWish(void)
 
 		//Check second best mon to switch into
 		u8 secondBestMonId = GetSecondMostSuitableMonToSwitchInto();
-		if (secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
-		&&  secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
-		&&  PassOnWishSwitchingCheck(party, secondBestMonId))
+		if (secondBestMonId != PARTY_SIZE
+		&& secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn1]
+		&& secondBestMonId != gBattleStruct->monToSwitchIntoId[battlerIn2]
+		&& PassOnWishSwitchingCheck(party, secondBestMonId))
 			return TRUE;
 
 		for (u32 i = firstId; i < lastId; ++i)
@@ -2321,7 +2349,6 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(void)
 		if ((!CanKnockOut(foe1, gActiveBattler) && !(IS_DOUBLE_BATTLE && CanKnockOut(foe2, gActiveBattler))) //Can't knock out only (or both) foe
 		|| STAT_STAGE(gActiveBattler, STAT_STAGE_ACC) <= OFFENSIVE_STAT_MIN_NUM) //Or just has really bad accuracy
 		{
-			
 			u8 firstId, lastId, bestMonId, switchFlags;
 			struct Pokemon *party;
 			party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
@@ -2337,6 +2364,28 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(void)
 			}
 		}
 	}
+
+	return FALSE;
+}
+
+static bool8 ShouldSaveChoiceSweeper(u8 monId, u8 switchFlags, struct Pokemon* party)
+{
+	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
+
+	//Check if should switch to the best mon
+	if (switchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE) //The mon faints from the current foe
+	{
+		if (!(switchFlags & wantedFlags)) //And it couldn't outspeed and KO if the current mon was sacked
+		{
+			SWITCH_TO_MON:
+			//Switch to mon and save choice sweeper
+			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId; //Sack the mon"
+			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			return TRUE;
+		}
+	}
+	else if (PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[monId], FOE(gActiveBattler), switchFlags))
+		goto SWITCH_TO_MON;
 
 	return FALSE;
 }
@@ -2382,7 +2431,60 @@ static bool8 ShouldSaveSweeperForLater(void)
 	)
 	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
 	{
-		return SwitchToBestResistMon();
+		if (SwitchToBestResistMon())
+			return TRUE;
+
+		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon
+		{
+			//Try to switch out to the best mon
+			u8 bestMonId, secondBestMonId, switchFlags, secondBestSwitchFlags, wantedFlags, firstId, lastId;
+			struct Pokemon *party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+			wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
+
+			//Check best mon can come in and KO the foe
+			bestMonId = GetMostSuitableMonToSwitchInto();
+			switchFlags = GetMostSuitableMonToSwitchIntoFlags();
+			if ((switchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
+			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMonId], foe, switchFlags))
+			{
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				return TRUE;
+			}
+
+			//Check second best mon can come in and KO the foe
+			secondBestMonId = GetSecondMostSuitableMonToSwitchInto();
+			secondBestSwitchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
+			if ((secondBestSwitchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
+			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[secondBestMonId], foe, secondBestSwitchFlags))
+			{
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = secondBestMonId;
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				return TRUE;
+			}
+
+			//Check if it's worth breaking a Choice Lock
+			if (CHOICED_MOVE(gActiveBattler) != MOVE_NONE //The AI is choice locked
+			&& IsChoiceItemEffectOrAbility(ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler))) //And the choice lock is legit
+			{
+				u16 backupChoiceMove = CHOICED_MOVE(gActiveBattler); //Backup the choice move
+				CHOICED_MOVE(gActiveBattler) = MOVE_NONE; //Wipe the move locked into so it can compare other moves
+				s16 strongestMove = CalcStrongestMove(gActiveBattler, foe, FALSE); //Get the strongest move assuming any move could be chosen
+				CHOICED_MOVE(gActiveBattler) = backupChoiceMove; //Restore the old choiced move
+
+				if (GetFinalAIMoveDamage(strongestMove, gActiveBattler, foe, 1, NULL) >= gBattleMons[foe].hp //The strongest move could KO the current foe
+				&& MoveWouldHitFirst(strongestMove, gActiveBattler, foe)) //And it would hit first against the move the foe is likely to use
+				{
+					//Switch the AI out becuase when it switches back in it can KO the current foe
+
+					if (ShouldSaveChoiceSweeper(bestMonId, switchFlags, party)
+					||  ShouldSaveChoiceSweeper(secondBestMonId, secondBestSwitchFlags, party))
+						return TRUE;
+
+					//Sack the current mon and the next mon that comes in will do clean up
+				}
+			}
+		}
 	}
 
 	return FALSE;
@@ -3216,12 +3318,9 @@ static void UpdateStrongestMoves(void)
 {
 	u8 bankAtk, bankDef;
 
+	//First update if Pokemon will be mega evolving
 	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
-		struct BattlePokemon backupMonAtk;
-		u8 backupAbilityAtk = ABILITY_NONE;
-		u16 backupSpeciesAtk = SPECIES_NONE;
-
 		if (!IS_TRANSFORMED(bankAtk)
 		&& !BankMegaEvolved(bankAtk, FALSE)
 		&&  MegaEvolutionEnabled(bankAtk)
@@ -3233,6 +3332,14 @@ static void UpdateStrongestMoves(void)
 			if (gNewBS->ai.megaPotential[bankAtk] == NULL)
 				gNewBS->ai.megaPotential[bankAtk] = CanMegaEvolve(bankAtk, TRUE); //Check Ultra Burst
 		}
+	}
+
+	//Then calculate the damage
+	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+	{
+		struct BattlePokemon backupMonAtk;
+		u8 backupAbilityAtk = ABILITY_NONE;
+		u16 backupSpeciesAtk = SPECIES_NONE;
 
 		gNewBS->ai.suckerPunchOkay[bankAtk] = Random() & 1; //Randomly choose if turn is okay for a revealed Sucker Punch
 

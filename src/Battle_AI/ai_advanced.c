@@ -235,6 +235,11 @@ bool8 IsClassScreener(u8 class)
 	return class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS || class == FIGHT_CLASS_SWEEPER_SETUP_SCREENS;
 }
 
+bool8 IsClassSupportScreener(u8 class)
+{
+	return IsClassScreener(class) && IsClassTeamSupport(class);
+}
+
 bool8 IsClassCleric(u8 class)
 {
 	return class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
@@ -904,6 +909,9 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			{
 				amountToRecover += MathMax(1, maxHp / 16);
 			}
+
+			if (GetSecondaryEffectDamage(bankAtk) >= amountToRecover)
+				amountToRecover = 0; //The AI wouldn't actually recover any HP
 	}
 
 	return MathMin(amountToRecover, gBattleMons[bankAtk].maxHP - gBattleMons[bankAtk].hp);

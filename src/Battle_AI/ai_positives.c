@@ -2700,7 +2700,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
 			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
-			&& !IsClassEntryHazards(class) //If your goal isn't to get up hazards
+			&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up
 			&& !IsClassPhazer(class) //Or phaze/set up hazards
 			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
@@ -2733,7 +2733,30 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				|| atkAbility == ABILITY_ASONE_CHILLING
 				#endif
 				|| atkAbility == ABILITY_BEASTBOOST)
-					INCREASE_VIABILITY(2);
+				{
+					if (viability == 100 //Untouched viability
+					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Strongest move would probably go second but will KO
+					&& !IsMovePredictionHPDrainingMove(bankDef, bankAtk) //And the foe probably won't try to restore their HP
+					&& !IsMovePredictionHealingMove(bankDef, bankAtk))
+					{
+						if (IsClassCleric(class))
+							INCREASE_VIABILITY(5); //Same priority as mid-status move
+						else if (IsClassSupportScreener(class))
+							INCREASE_VIABILITY(6); //Same priority as Mist
+						else if (IsClassBatonPass(class))
+							INCREASE_VIABILITY(6); //Same priority as an evasiveness booster
+						else if (IsClassPhazer(class))
+							INCREASE_VIABILITY(8); //Same priority as phazing
+						else if (IsClassStall(class))
+							INCREASE_VIABILITY(8); //Same priority as a trapping move
+						else if (IsClassEntryHazards(class))
+							INCREASE_VIABILITY(4); //Same priority as spikes
+						else
+							INCREASE_VIABILITY(2);
+					}
+					else
+						INCREASE_VIABILITY(2);
+				}
 			}
 		}
 		else //Double Battle

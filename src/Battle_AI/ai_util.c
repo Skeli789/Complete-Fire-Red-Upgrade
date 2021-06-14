@@ -2541,6 +2541,19 @@ bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+bool8 IsMovePredictionHPDrainingMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		return effect == EFFECT_ABSORB || effect == EFFECT_DREAM_EATER;
+	}
+
+	return FALSE;
+}
+
 //bankAtk is the protector
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move)
 {
@@ -3477,6 +3490,30 @@ bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef)
 		&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
 		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
 			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 NoUsableHazardsInMoveset(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData)
+{
+    u32 i;
+
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = BATTLE_HISTORY->usedMoves[bankAtk][i];
+
+		if (move == MOVE_NONE)
+			break; //No more moves after this
+
+		if (!MoveInMovesetAndUsable(move, bankAtk))
+			continue;
+
+		u8 effect = gBattleMoves[move].effect;
+
+		if (effect == EFFECT_SPIKES
+		&& AIScript_Negatives(bankAtk, bankDef, move, 100, aiScriptData) >= 100)
+			return FALSE; //Some hazard move can still be used
 	}
 
 	return FALSE;

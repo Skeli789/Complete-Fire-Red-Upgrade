@@ -427,6 +427,20 @@ bool8 CheckSoundMove(move_t move)
 	return gSpecialMoveFlags[move].gSoundMoves;
 }
 
+bool8 CheckRecoil(u16 move)
+{
+	return move == MOVE_MINDBLOWN
+		|| move == MOVE_STEELBEAM
+		|| move == MOVE_STRUGGLE
+		|| gBattleMoves[move].effect == EFFECT_EXPLOSION
+		|| gSpecialMoveFlags[move].gPercent25RecoilMoves
+		|| gSpecialMoveFlags[move].gPercent33RecoilMoves
+		|| gSpecialMoveFlags[move].gPercent50RecoilMoves
+		|| gSpecialMoveFlags[move].gPercent66RecoilMoves
+		|| gSpecialMoveFlags[move].gPercent75RecoilMoves
+		|| gSpecialMoveFlags[move].gPercent100RecoilMoves;
+}
+
 bool8 SheerForceCheck(void)
 {
 	return ABILITY(gBankAttacker) == ABILITY_SHEERFORCE && gSpecialMoveFlags[gCurrentMove].gSheerForceBoostedMoves;

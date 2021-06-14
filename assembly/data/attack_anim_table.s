@@ -2608,9 +2608,9 @@ ANIM_DRAGONPULSE:
 	endanimation
 
 DRAGON_PULSE_CALL:
-	launchtemplate PULSE_RING 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x0
+	launchtemplate PULSE_RING TEMPLATE_TARGET | 2, 0x6 0x10 0x0 0x0 0x0 0x16 0x0
 	pause 0x1
-	launchtemplate PULSE_BALL 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x0
+	launchtemplate PULSE_BALL TEMPLATE_TARGET | 2, 0x6 0x10 0x0 0x0 0x0 0x16 0x0
 	pause 0x1
 	return
 
@@ -4501,7 +4501,7 @@ ANIM_STONEEDGE:
 	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | -5, 0x2, -24, 24
 	pause 4
 	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | 3, 0x2, 12, 30
-	soundcomplex 124, SOUND_PAN_TARGET, 7, 5
+	soundcomplex 124, SOUND_PAN_TARGET, 7, 4
 	launchtask AnimTask_move_bank_2, 0x3, 0x5, bank_target, 3, 0, 10, 2
 	launchtemplate Template_Hit, TEMPLATE_TARGET | 2, 0x4, 16, 3, 1, 2
 	pause 4
@@ -4513,6 +4513,8 @@ ANIM_STONEEDGE:
 	pause 4
 	launchtemplate Template_Hit, TEMPLATE_TARGET | 2, 0x4, 10, 9, 1, 2
 	waitanimation
+	pause 4
+	stopmusic
 	pokespritefromBG side_target
 	endanimation
 
