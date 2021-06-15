@@ -1510,7 +1510,7 @@ MOVESCR_CHECK_0:
 			|| MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 				DECREASE_VIABILITY(10);
 
-			if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Smart AI only
+			if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Semi-Smart/Smart AI only
 			&& move != MOVE_METALBURST
 			&& gLastUsedMoves[bankDef] != MOVE_NONE && gLastUsedMoves[bankDef] != 0xFFFF //Player attacked last turn
 			&& gBattleMoves[gLastUsedMoves[bankAtk]].effect == moveEffect //The AI tried using the same move last turn

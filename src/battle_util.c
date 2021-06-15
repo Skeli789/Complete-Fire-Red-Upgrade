@@ -432,7 +432,6 @@ bool8 CheckRecoil(u16 move)
 	return move == MOVE_MINDBLOWN
 		|| move == MOVE_STEELBEAM
 		|| move == MOVE_STRUGGLE
-		|| gBattleMoves[move].effect == EFFECT_EXPLOSION
 		|| gSpecialMoveFlags[move].gPercent25RecoilMoves
 		|| gSpecialMoveFlags[move].gPercent33RecoilMoves
 		|| gSpecialMoveFlags[move].gPercent50RecoilMoves

@@ -201,7 +201,7 @@ u32 GetAIFlags(void)
 	else if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART; //Shadow Warrior is pretty smart
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
-		flags = AI_SCRIPT_CHECK_BAD_MOVE;
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | WildMonIsSmart(gActiveBattler);
 	else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY_FRLG)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
 	else
@@ -235,9 +235,12 @@ u32 GetAIFlags(void)
 					flags |= AI_SCRIPT_SEMI_SMART; //Regular Trainers are always semi smart in expert mode
 			}
 			else
-				flags = AI_SCRIPT_CHECK_BAD_MOVE; //Even Wild Pokemon are moderately smart in expert mode
+				flags = AI_SCRIPT_CHECK_BAD_MOVE | WildMonIsSmart(gActiveBattler); //Even Wild Pokemon are moderately smart in expert mode
 		}
 		#endif
+
+		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) //Generic wild battle
+			flags |= WildMonIsSmart(gActiveBattler);
 	}
 
 	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
@@ -1855,6 +1858,44 @@ static bool8 ShouldSwitchWhileAsleep(void)
 	return FALSE;
 }
 
+static bool8 AnnoyingSecondaryDamageSwitchCheck(u8 monId, u8 switchFlags, struct Pokemon* party, bool8 urgent)
+{
+	u8 foe = FOE(gActiveBattler);
+	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
+	bool8 goodToSwitch = FALSE;
+
+	if (urgent)
+		goodToSwitch = TRUE;
+	else if ((switchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
+	&& (IS_DOUBLE_BATTLE
+	 || PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[monId], foe, switchFlags))) //And won't take a lot of damage on the switch in
+		goodToSwitch = TRUE;
+	else if (switchFlags & (SWITCHING_FLAG_RESIST_ALL_MOVES | SWITCHING_FLAG_WALLS_FOE)) //Just walls in general
+		goodToSwitch = TRUE;
+	else
+	{
+		//New mon might die on the switch in, so determine if it's worth it to sack the mon
+		if (BATTLER_ALIVE(foe) && Can2HKO(gActiveBattler, foe)) //This mon could KO a foe in a couple of turns
+			goodToSwitch = TRUE;
+
+		if (IS_DOUBLE_BATTLE)
+		{
+			foe = PARTNER(foe);
+			if (BATTLER_ALIVE(foe) && Can2HKO(gActiveBattler, foe)) //This mon could KO a foe in a couple of turns
+				goodToSwitch = TRUE;
+		}
+	}
+
+	if (goodToSwitch)
+	{
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 IsTakingAnnoyingSecondaryDamage(void)
 {
 	u8 ability = GetPredictedAIAbility(gActiveBattler, FOE(gActiveBattler));
@@ -1864,19 +1905,31 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 	&& !IsDynamaxed(gActiveBattler)
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
-		if ((gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
-		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > 1 && gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
+		bool8 trySwitch = FALSE;
+		bool8 urgent = FALSE;
+		
+		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
+		{
+			trySwitch = TRUE;
+		}
+		else if (((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > 1 && gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
 		|| (gBattleMons[gActiveBattler].status2 & STATUS2_CURSED)
 		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) > 0x600 && ability != ABILITY_POISONHEAL) //Been sitting with toxic for 6 turns
 		|| (gBattleMons[gActiveBattler].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL
 		 && GetMonAbility(GetBankPartyData(gActiveBattler)) == ABILITY_POISONHEAL)) //Had Poison Heal but lost it
 		{
-			if (!WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage on switch in
-			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			trySwitch = TRUE;
+			urgent = TRUE;
+		}
+
+		if (trySwitch && !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage on switch in
+		{
+			u8 firstId, lastId;
+			struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+
+			if (AnnoyingSecondaryDamageSwitchCheck(GetMostSuitableMonToSwitchInto(), GetMostSuitableMonToSwitchIntoFlags(), party, urgent) //Try to switch to the first best mon
+			|| AnnoyingSecondaryDamageSwitchCheck(GetSecondMostSuitableMonToSwitchInto(), GetSecondMostSuitableMonToSwitchIntoFlags(), party, urgent)) //Try to switch to the second best mon
 				return TRUE;
-			}
 		}
 	}
 
@@ -2465,7 +2518,7 @@ static bool8 ShouldSaveSweeperForLater(void)
 
 			//Check if it's worth breaking a Choice Lock
 			if (CHOICED_MOVE(gActiveBattler) != MOVE_NONE //The AI is choice locked
-			&& IsChoiceItemEffectOrAbility(ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler))) //And the choice lock is legit
+			&& CanBeChoiceLocked(gActiveBattler)) //And the choice lock is legit
 			{
 				u16 backupChoiceMove = CHOICED_MOVE(gActiveBattler); //Backup the choice move
 				CHOICED_MOVE(gActiveBattler) = MOVE_NONE; //Wipe the move locked into so it can compare other moves
@@ -3142,36 +3195,41 @@ void RemoveBestMonToSwitchInto(u8 bank)
 	}
 }
 
-u32 WildMonIsSmart(unusedArg u8 bank)
+u32 WildMonIsSmart(u8 bank)
 {
+	#ifdef FLAG_SMART_WILD
+	if (FlagGet(FLAG_SMART_WILD))
+		return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+	#endif
+
+	u16 species = SPECIES(bank);
+	if (IsMegaSpecies(species)
+	|| IsRedPrimalSpecies(species)
+	|| IsBluePrimalSpecies(species)
+	|| IsUltraNecrozmaSpecies(species)
+	#ifdef SPECIES_HOOPA_UNBOUND
+	|| species == SPECIES_HOOPA_UNBOUND
+	#endif
+	)
+		return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+
+	#ifdef VAR_GAME_DIFFICULTY
+	if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY
+	&& gSpecialSpeciesFlags[species].smartWild)
+		return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+	#endif
+
+	if (gSpecialSpeciesFlags[species].smartWild)
+	{
+		if (IsRaidBattle())
+			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
+		else
+			return AI_SCRIPT_CHECK_BAD_MOVE;
+	}
+
 	#ifdef WILD_ALWAYS_SMART
 		return AI_SCRIPT_CHECK_BAD_MOVE;
 	#else
-		u16 species = SPECIES(bank);
-		if (IsMegaSpecies(species)
-		|| IsRedPrimalSpecies(species)
-		|| IsBluePrimalSpecies(species)
-		|| IsUltraNecrozmaSpecies(species)
-		#ifdef SPECIES_HOOPA_UNBOUND
-		|| species == SPECIES_HOOPA_UNBOUND
-		#endif
-		)
-			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
-
-		#ifdef VAR_GAME_DIFFICULTY
-		if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY
-		&& gSpecialSpeciesFlags[species].smartWild)
-			return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
-		#endif
-
-		if (gSpecialSpeciesFlags[species].smartWild)
-		{
-			if (IsRaidBattle())
-				return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_SEMI_SMART;
-			else
-				return AI_SCRIPT_CHECK_BAD_MOVE;
-		}
-
 		return 0;
 	#endif
 }

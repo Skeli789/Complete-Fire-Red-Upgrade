@@ -436,6 +436,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	u32 bestDmg = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
+	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -476,19 +477,44 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 						bestMove = currMove; //So pick it since it does the most damage and has a higher chance of going first
 					else if (currPriority == bestPriority) //If the two moves have the same priority
 					{
-						//Pick a non-contact move if contact is a bad idea
-						if (badIdeaToMakeContact && CheckContact(bestMove, bankAtk) && !CheckContact(currMove, bankAtk))
+						if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
 						{
-							//The new move isn't contact
-							bestDmg = currDmg;
-							bestMove = currMove;
+							//Pick a non-contact move if contact is a bad idea
+							if (badIdeaToMakeContact)
+							{
+								bool8 bestMoveContact = CheckContact(bestMove, bankAtk);
+								bool8 currMoveContact = CheckContact(currMove, bankAtk);
+							
+								if (bestMoveContact && !currMoveContact)
+								{
+									//The new move isn't contact unlike the old best move
+									bestMove = currMove;
+									continue; //Proceed to next move
+								}
+								else if (!bestMoveContact && currMoveContact)
+									continue; //Check the next move - this move is out
+							}
+
+							//Pick a non-recoil move preferably
+							if (takesRecoilDamage)
+							{
+								bool8 bestMoveRecoil = CheckRecoil(bestMove);
+								bool8 currMoveRecoil = CheckRecoil(currMove);
+
+								if (bestMoveRecoil && !currMoveRecoil)
+								{
+									//Prefer the move that doesn't do recoil damage
+									bestMove = currMove;
+									continue; //Proceed to next move
+								}
+								else if (!bestMoveRecoil && currMoveRecoil)
+									continue; //Check the next move - this move is out
+							}
 						}
-						else if (Random() & 1)
-						{
-							//Both moves are contact moves/making contact doesn't matter so pick one at random
-							bestDmg = currDmg;
+
+						//Pick a move at random.
+						if (Random() & 1)
 							bestMove = currMove;
-						}
 					}
 				}
 			}
@@ -1056,7 +1082,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 
 		case EFFECT_COUNTER: //Includes Metal Burst
 		case EFFECT_MIRROR_COAT:
-			return CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
+			return MathMin(CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef), gBattleMons[bankDef].hp);
 	}
 
 	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move, damageData);
@@ -1165,6 +1191,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	u32 highestDamage = 0;
 	u16 defHP = gBattleMons[bankDef].hp;
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
+	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	struct DamageCalc damageData = {0};
 
 	if (defHP == 0) //Foe dead
@@ -1193,16 +1220,9 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 			|| (onlySpreadMoves && !(GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
 				continue;
 
-			if (gBattleMoves[move].effect == EFFECT_COUNTER || gBattleMoves[move].effect == EFFECT_MIRROR_COAT) //Includes Metal Burst
-			{
-				predictedDamage = CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
-				if (predictedDamage > (u32) highestDamage)
-				{
-					strongestMove = move;
-					highestDamage = predictedDamage;
-				}
-			}
-			else if (gBattleMoves[move].effect == EFFECT_0HKO)
+			u8 moveEffect = gBattleMoves[move].effect;
+
+			if (moveEffect == EFFECT_0HKO)
 			{
 				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = FALSE;
 				gNewBS->ai.damageByMove[bankAtk][bankDef][i] = 0;
@@ -1228,37 +1248,65 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 					strongestMove = move;
 					highestDamage = predictedDamage;
 				}
-				else if (predictedDamage == highestDamage
-				&& PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
+				else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
+				&& moveEffect != EFFECT_COUNTER
+				&& moveEffect != EFFECT_MIRROR_COAT) //Never try to make counter moves a priority unless they do the most damage
 				{
-					strongestMove = move;
-				}
-				else if (predictedDamage == highestDamage)
-				{
-					//Find which move has better Acc
-					u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
-					u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
-
-					if (currAcc > bestMoveAcc)
+					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
 					{
-						//This move has a better chance of hitting
 						strongestMove = move;
-						highestDamage = predictedDamage;
 					}
-					else if (currAcc == bestMoveAcc || currAcc >= 100)
+					else
 					{
-						//Both moves have the same chance of hitting so pick a non-contact move if contact is a bad idea
-						if (badIdeaToMakeContact && CheckContact(strongestMove, bankAtk) && !CheckContact(move, bankAtk))
+						//Find which move has better Acc
+						u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
+						u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
+
+						if (currAcc > bestMoveAcc)
 						{
-							//The new move isn't contact
+							//This move has a better chance of hitting
 							strongestMove = move;
-							highestDamage = predictedDamage;
 						}
-						else if (Random() & 1)
+						else if (currAcc == bestMoveAcc || currAcc >= 100)
 						{
-							//Both moves are contact moves/making contact doesn't matter so pick one at random
-							strongestMove = move;
-							highestDamage = predictedDamage;
+							if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
+							{
+								//Pick a non-contact move if contact is a bad idea
+								if (badIdeaToMakeContact)
+								{
+									bool8 strongestMoveContact = CheckContact(strongestMove, bankAtk);
+									bool8 currMoveContact = CheckContact(move, bankAtk);
+
+									if (strongestMoveContact && !currMoveContact)
+									{
+										//The new move isn't contact unlike the old best move
+										strongestMove = move;
+										continue; //Proceed to next move
+									}
+									else if (!strongestMoveContact && currMoveContact)
+										continue; //Check the next move - this move is out
+								}
+
+								//Pick a non-recoil move preferably
+								if (takesRecoilDamage)
+								{
+									bool8 strongestMoveRecoil = CheckRecoil(strongestMove);
+									bool8 currMoveRecoil = CheckRecoil(move);
+
+									if (strongestMoveRecoil && !currMoveRecoil)
+									{
+										//Prefer the move that doesn't do recoil damage
+										strongestMove = move;
+										continue; //Proceed to next move
+									}
+									else if (!strongestMoveRecoil && currMoveRecoil)
+										continue; //Check the next move - this move is out
+								}
+							}
+
+							//Pick a move at random.
+							if (Random() & 1)
+								strongestMove = move;
 						}
 					}
 				}
@@ -4072,9 +4120,10 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
 		{
+			u8 atkAbility = ABILITY(bankAtk);
 			u8 defAbility = ABILITY(bankDef);
 			u16 defSpecies = SPECIES(bankDef);
-			bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), zMove);
+			bool8 noMoldBreakers = NO_MOLD_BREAKERS(atkAbility, zMove);
 
 			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
@@ -4082,7 +4131,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
 			|| (defMovePrediction == MOVE_SUBSTITUTE
 			 && !MoveWouldHitFirst(zMove, bankAtk, bankDef)
-			 && !MoveIgnoresSubstitutes(zMove, ABILITY(bankAtk))))
+			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
 			#ifdef SPECIES_MIMIKYU
@@ -4126,10 +4175,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (gBattleMoves[move].effect != EFFECT_OVERHEAT //Base move won't lower user stats
 			&& gBattleMoves[move].effect != EFFECT_SUPERPOWER
-			&& move != MOVE_MINDBLOWN //Base move won't do recoil
-			&& move != MOVE_STEELBEAM
-			&& !gSpecialMoveFlags[move].gPercent33RecoilMoves
-			&& !gSpecialMoveFlags[move].gPercent50RecoilMoves
+			&& (atkAbility == ABILITY_MAGICGUARD || !CheckRecoil(move)) //Base move won't do recoil
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
 			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left

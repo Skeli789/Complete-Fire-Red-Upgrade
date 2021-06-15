@@ -251,8 +251,14 @@ void BuildTrainerPartySetup(void)
 	else if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-			CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, B_SIDE_OPPONENT);
-
+		{
+			#ifdef FLAG_BATTLE_YOURSELF
+			if (FlagGet(FLAG_BATTLE_YOURSELF))
+				Memcpy(gEnemyParty, gPlayerParty, sizeof(struct Pokemon) * PARTY_SIZE);
+			else
+			#endif
+				CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, B_SIDE_OPPONENT);
+		}
 		else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1)))
 			SetWildMonHeldItem();
 

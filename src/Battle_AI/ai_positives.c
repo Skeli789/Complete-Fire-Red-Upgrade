@@ -2925,7 +2925,30 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				|| data->atkAbility == ABILITY_ASONE_CHILLING
 				#endif
 				|| data->atkAbility == ABILITY_BEASTBOOST)
-					INCREASE_VIABILITY(2);
+				{
+					if (viability == 100 //Untouched viability
+					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Strongest move would probably go second but will KO
+					&& !IsMovePredictionHPDrainingMove(bankDef, bankAtk) //And the foe probably won't try to restore their HP
+					&& !IsMovePredictionHealingMove(bankDef, bankAtk))
+					{
+						if (IsClassCleric(class))
+							INCREASE_VIABILITY(5); //Same priority as mid-status move
+						else if (IsClassSupportScreener(class))
+							INCREASE_VIABILITY(6); //Same priority as Mist
+						else if (IsClassBatonPass(class))
+							INCREASE_VIABILITY(6); //Same priority as an evasiveness booster
+						else if (IsClassPhazer(class))
+							INCREASE_VIABILITY(8); //Same priority as phazing
+						else if (IsClassStall(class))
+							INCREASE_VIABILITY(8); //Same priority as a trapping move
+						else if (IsClassEntryHazards(class))
+							INCREASE_VIABILITY(4); //Same priority as spikes
+						else
+							INCREASE_VIABILITY(2);
+					}
+					else
+						INCREASE_VIABILITY(2);
+				}
 			}
 		}
 
