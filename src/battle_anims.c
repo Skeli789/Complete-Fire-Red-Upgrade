@@ -1010,6 +1010,16 @@ void AnimTask_IsTargetPartner(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_IsAttackerPlayerSide(u8 taskId)
+{
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[7] = 0;
+	else
+		gBattleAnimArgs[7] = 1;
+
+	DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_IsRockfallPillarLoaded(u8 taskId)
 {
 	gBattleAnimArgs[0] = (IndexOfSpriteTileTag(ANIM_TAG_STONE_PILLAR) == 0xFF) ? 0 : 1;
@@ -1925,7 +1935,7 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
 		sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
 	}
 
-	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
 		StartSpriteAffineAnim(sprite, 1);
 
 	sprite->data[0] = 16;
@@ -2727,9 +2737,6 @@ void SpriteCB_ToxicThreadWrap(struct Sprite *sprite)
 		sprite->pos1.x += gBattleAnimArgs[0];
 
 	sprite->pos1.y += gBattleAnimArgs[1];
-	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
-		sprite->pos1.y += 8;
-
 	sprite->callback = (void*) (0x80B4274 | 1);
 }
 
@@ -4214,15 +4221,15 @@ void AnimTask_InvertScreenColorDoubles(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
-// Scales up the target mon sprite
-// Used in Let's Snuggle Forever
-// No args.
+//Scales up the target mon sprite
+//Used in Let's Snuggle Forever
+//arg 0: Duration until size reset.
 void AnimTask_GrowTarget(u8 taskId)
 {
 	u8 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
 	PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_BLEND);
 	SetSpriteRotScale(spriteId, 208, 208, 0);
-	gTasks[taskId].data[0] = 120;
+	gTasks[taskId].data[0] = gBattleAnimArgs[0];
 	gTasks[taskId].func = AnimTask_GrowStep;
 }
 
@@ -4420,6 +4427,65 @@ void AnimTask_TwinkleTackleLaunch(u8 taskId)
 #undef tSide
 #undef tAnimLengthTime
 
+//Moves up the orbs up in Genesis Supernova
+//arg 0: Initial X-Pos
+//arg 1: Initial Y-Pos
+//arg 2: Destination Y-Pos
+//arg 3: Duration
+void SpriteCB_GenesisSupernovaOrbUp(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+	sprite->data[0] = gBattleAnimArgs[3]; //Duration
+	sprite->data[2] = sprite->pos1.x; //Dest X - Don't move
+	sprite->data[4] = gBattleAnimArgs[2]; //Dest Y
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	sprite->callback = InitAndRunAnimFastLinearTranslation;
+}
+
+//Moves the rings for Clangorous Soulblaze
+//arg 0: initial x offset
+//arg 1: initial y offset
+//arg 2: target x offset
+//arg 3: target y offset
+//arg 4: duration
+//arg 5: lower 8 bits = location on attacking mon, upper 8 bits = location on target mon pick to target
+void SpriteCB_TranslateAnimSpriteToTargetsCentre(struct Sprite* sprite)
+{
+	bool8 respectMonPicOffsets;
+	u8 coordType;
+
+	if (!(gBattleAnimArgs[5] & 0xFF00))
+		respectMonPicOffsets = TRUE;
+	else
+		respectMonPicOffsets = FALSE;
+
+	if (!(gBattleAnimArgs[5] & 0xFF))
+		coordType = BATTLER_COORD_Y_PIC_OFFSET;
+	else
+		coordType = BATTLER_COORD_Y;
+
+	InitSpritePosToAnimAttacker(sprite, respectMonPicOffsets);
+	if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+	if (SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget) || IS_SINGLE_BATTLE)
+	{
+		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, coordType);
+	}
+	else
+	{
+		sprite->data[2] = (GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_X_2)) / 2;
+		sprite->data[4] = (GetBattlerSpriteCoord(gBattleAnimTarget, coordType) + GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), coordType)) / 2;
+	}
+
+	sprite->data[2] += gBattleAnimArgs[2];
+	sprite->data[4] += gBattleAnimArgs[3];
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
 // To move a mon off-screen when pushed out by Roar/Whirlwind
 void AnimTask_SlideOffScreen(u8 taskId)
 {
@@ -4582,7 +4648,7 @@ void SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16 *x
 
 void AnimTask_AllBanksInvisible(u8 taskId)
 {
-	for (int i = 0; i < gBattlersCount; ++i)
+	for (u32 i = 0; i < gBattlersCount; ++i)
 	{
 		u8 spriteId = gBattlerSpriteIds[i];
 
@@ -4597,14 +4663,16 @@ void AnimTask_AllBanksInvisible(u8 taskId)
 
 void AnimTask_AllBanksVisible(u8 taskId)
 {
-	for (int i = 0; i < gBattlersCount; ++i)
+	for (u32 i = 0; i < gBattlersCount; ++i)
 	{
 		u8 spriteId = gBattlerSpriteIds[i];
 
-		if (spriteId == 0xFF || gNewBS->hiddenAnimBattlerSprites & gBitTable[i]) //Pokemon that are already hidden
+		if (!IsBattlerSpriteVisible(i) //This means "on the field" instead of "not invisible"
+		|| spriteId == 0xFF
+		|| gNewBS->hiddenAnimBattlerSprites & gBitTable[i]) //Pokemon that are already hidden
 			gNewBS->hiddenAnimBattlerSprites &= ~gBitTable[i]; //Clear bit to keep hidden after animation
 		else
-			gSprites[spriteId].invisible = FALSE;
+			gSprites[spriteId].invisible = FALSE;		
 	}
 
 	DestroyAnimVisualTask(taskId);
@@ -4612,7 +4680,7 @@ void AnimTask_AllBanksVisible(u8 taskId)
 
 void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 {
-	for (int i = 0; i < gBattlersCount; ++i)
+	for (u32 i = 0; i < gBattlersCount; ++i)
 	{
 		u8 spriteId = gBattlerSpriteIds[i];
 
@@ -4624,6 +4692,235 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 			gNewBS->hiddenAnimBattlerSprites |= gBitTable[i]; //Set bit to keep hidden after animation
 		else
 			gSprites[spriteId].invisible = TRUE;
+	}
+
+	DestroyAnimVisualTask(taskId);
+}
+
+static void AnimTask_FadeOutHelper(u8 taskId)
+{
+	if (gTasks[taskId].data[1] == 0) //Target reached
+	{
+		u32 i;
+		u16 bldcnt = GetGpuReg(REG_OFFSET_BLDCNT);
+
+		for (i = 3; i <= 6; ++i)
+		{
+			if (gTasks[taskId].data[i] < MAX_SPRITES)
+				gSprites[gTasks[taskId].data[i]].invisible = TRUE;
+		}
+
+		if (bldcnt & BLDCNT_TGT1_BG1)
+			ResetBattleAnimBg(FALSE);
+
+		if (bldcnt & BLDCNT_TGT1_BG2)
+			ResetBattleAnimBg(TRUE);
+
+		DestroyAnimVisualTask(taskId);
+	}
+	else
+	{
+		gTasks[taskId].data[1]--;
+		gTasks[taskId].data[2]++;
+		SetGpuReg(REG_OFFSET_BLDALPHA, (gTasks[taskId].data[2] * 256) + gTasks[taskId].data[1]);
+	}
+}
+
+void AnimTask_FadeOutAllBanksExceptAttackerAndTarget(u8 taskId)
+{
+	//This uses BGs because at most two banks other than attacker and target
+	//Not to mention this way only those two would get faded. Using sprites would fade all banks regardless.
+	u32 bank;
+	bool8 usedBg1, usedBg2;
+	u32 blendTarget = 0;
+	gTasks[taskId].data[3] = MAX_SPRITES;
+	gTasks[taskId].data[4] = MAX_SPRITES;
+	gTasks[taskId].data[5] = MAX_SPRITES;
+	gTasks[taskId].data[6] = MAX_SPRITES;
+
+	for (bank = 0, usedBg1 = FALSE, usedBg2 = FALSE; bank < gBattlersCount; ++bank)
+	{
+		bool8 toBg2;
+		u8 spriteId = gBattlerSpriteIds[bank];
+
+		if (spriteId == GetAnimBattlerSpriteId(ANIM_BANK_ATTACKER)
+		||  spriteId == GetAnimBattlerSpriteId(ANIM_BANK_TARGET)
+		|| !IsBattlerSpriteVisible(bank))
+			continue;
+
+		//Move to a BG - max 1 mon per bg
+		if (usedBg1)
+			toBg2 = TRUE;
+		else if (usedBg2)
+			toBg2 = FALSE; //Use Bg 1
+		else
+		{	
+			u8 position = GetBattlerPosition(bank);
+			if (position == B_POSITION_OPPONENT_LEFT
+			||  position == B_POSITION_PLAYER_RIGHT)
+			{
+				toBg2 = FALSE;
+				usedBg1 = FALSE;
+			}
+			else
+			{
+				toBg2 = TRUE;
+				usedBg2 = TRUE;
+			}
+		}
+
+		MoveBattlerSpriteToBG(bank, toBg2);
+
+		//Fade Out that Bg
+		if (!toBg2) //Bg 1
+			blendTarget |= BLDCNT_TGT1_BG1 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND; //Blend Bg 1 out
+		else //Bg 2
+			blendTarget |= BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND; //Blend Bg 2 out
+
+		if (gTasks[taskId].data[3] == MAX_SPRITES)
+			gTasks[taskId].data[3] = spriteId;
+		else
+			gTasks[taskId].data[4] = spriteId;
+	}
+
+	if (blendTarget != 0) //At least one sprite is getting faded
+	{
+		SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+		SetGpuReg(REG_OFFSET_BLDCNT, blendTarget);
+		gTasks[taskId].data[1] = 16;
+		gTasks[taskId].data[2] = 0;
+		gTasks[taskId].func = AnimTask_FadeOutHelper;
+	}
+	else
+		DestroyAnimVisualTask(taskId); //No point in fading
+}
+
+static void AnimTask_FadeOutBank(u8 taskId, u8 bank)
+{
+	u32 blendTarget = 0;
+	gTasks[taskId].data[3] = MAX_SPRITES;
+	gTasks[taskId].data[4] = MAX_SPRITES;
+	gTasks[taskId].data[5] = MAX_SPRITES;
+	gTasks[taskId].data[6] = MAX_SPRITES;
+
+	if (IsBattlerSpriteVisible(bank))
+	{
+		bool8 toBg2;
+		u8 spriteId = gBattlerSpriteIds[bank];
+
+		u8 position = GetBattlerPosition(bank);
+		if (position == B_POSITION_OPPONENT_LEFT
+		||  position == B_POSITION_PLAYER_RIGHT)
+			toBg2 = FALSE;
+		else
+			toBg2 = TRUE;
+
+		gTasks[taskId].data[3] = spriteId;
+		MoveBattlerSpriteToBG(bank, toBg2);
+
+		if (!toBg2)
+			blendTarget = BLDCNT_TGT1_BG1 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND; //Blend Bg 1 out
+		else
+			blendTarget = BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND; //Blend Bg 2 out
+	}
+
+	if (blendTarget != 0) //At least one sprite is getting faded
+	{
+		SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+		SetGpuReg(REG_OFFSET_BLDCNT, blendTarget);
+		gTasks[taskId].data[1] = 16;
+		gTasks[taskId].data[2] = 0;
+		gTasks[taskId].func = AnimTask_FadeOutHelper;
+	}
+	else
+		DestroyAnimVisualTask(taskId); //No point in fading
+}
+
+void AnimTask_FadeOutTarget(u8 taskId)
+{
+	AnimTask_FadeOutBank(taskId, gBattleAnimTarget);
+}
+
+void AnimTask_FadeOutAttackerPartner(u8 taskId)
+{
+	AnimTask_FadeOutBank(taskId, PARTNER(gBattleAnimAttacker));
+}
+
+void AnimTask_FadeOutAllBanks(u8 taskId)
+{
+	//This uses the sprites instead of Bgs because all sprites need to fade out anyway
+	u8 bank;
+	u8 dataSlot = 3;
+	gTasks[taskId].data[3] = MAX_SPRITES;
+	gTasks[taskId].data[4] = MAX_SPRITES;
+	gTasks[taskId].data[5] = MAX_SPRITES;
+	gTasks[taskId].data[6] = MAX_SPRITES;
+
+	for (bank = 0; bank < gBattlersCount; ++bank)
+	{
+		u8 spriteId = gBattlerSpriteIds[bank];
+
+		if (spriteId == GetAnimBattlerSpriteId(ANIM_BANK_ATTACKER)
+		||  spriteId == GetAnimBattlerSpriteId(ANIM_BANK_TARGET)
+		|| !IsBattlerSpriteVisible(bank))
+			continue;
+
+		gTasks[taskId].data[dataSlot++] = spriteId;
+	}
+
+	if (dataSlot != 3) //At least one sprite will be faded
+	{
+		SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+		SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND); //Blend sprites out
+		gTasks[taskId].data[1] = 16;
+		gTasks[taskId].data[2] = 0;
+		gTasks[taskId].func = AnimTask_FadeOutHelper;
+	}
+	else
+		DestroyAnimVisualTask(taskId); //No point in fading
+}
+
+void AnimTask_SingleBankToBg(u8 taskId)
+{
+	u8 bank = LoadBattleAnimTarget(0);
+
+	if (IsBattlerSpriteVisible(bank))
+	{
+		bool8 toBg2;
+		u8 position = GetBattlerPosition(bank);
+		if (position == B_POSITION_OPPONENT_LEFT
+		||  position == B_POSITION_PLAYER_RIGHT)
+			toBg2 = FALSE;
+		else
+			toBg2 = TRUE;
+
+		MoveBattlerSpriteToBG(bank, toBg2);
+
+		if (gBattlerSpriteIds[bank] < MAX_SPRITES)
+			gSprites[gBattlerSpriteIds[bank]].invisible = TRUE; //Hide while also on bg
+	}
+
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_SingleBankFromBg(u8 taskId)
+{
+	u8 bank = LoadBattleAnimTarget(0);
+
+	if (IsBattlerSpriteVisible(bank))
+	{
+		bool8 toBg2;
+		u8 position = GetBattlerPosition(bank);
+		if (position == B_POSITION_OPPONENT_LEFT
+		||  position == B_POSITION_PLAYER_RIGHT)
+			toBg2 = FALSE;
+		else
+			toBg2 = TRUE;
+
+		if (gBattlerSpriteIds[bank] < MAX_SPRITES)
+			gSprites[gBattlerSpriteIds[bank]].invisible = FALSE; //Show again now that bg is gone
+
+		ResetBattleAnimBg(toBg2);
 	}
 
 	DestroyAnimVisualTask(taskId);

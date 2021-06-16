@@ -418,9 +418,10 @@
 .equ AnimTask_pal_fade, 0x80BA7F9
 .equ AnimTask_pal_fade_complex, 0x80B9BDD
 .equ AnimTask_BlendBackground, 0x80adaa5
+.equ AnimTask_HardwarePaletteFade, 0x80bab39
 .equ AnimTask_screen_shake, 0x80B94B5
 .equ AnimTask_prepare_moving_psychicBG, 0x80DE6F1
-.equ AnimTask_arg7_is_target_player, 0x80DEAB5
+.equ AnimTask_IsTargetPlayerSide, 0x80DEAB5
 .equ AnimTask_arg7_is_attacker_opponent, 0x80BB921
 .equ AnimTask_arg7_is_in_contests, 0x80BC02D
 .equ AnimTask_IsTargetSameSide, 0x80BC091
@@ -473,6 +474,18 @@
 .equ AnimTask_ShakeTargetInPattern, 0x80adad9
 .equ AnimTask_StatusClearedEffect, 0x80e2085
 .equ AnimTask_InvertScreenColor, 0x80BA0E9
+.equ AnimTask_DigDownMovement, 0x80b8e95
+.equ AnimTask_SetAllNonAttackersInvisiblity, 0x80bb9b1
+.equ AnimTask_FlashAnimTagWithColor, 0x80b9f6d
+.equ AnimTask_VoltTackleBolt, 0x80aea11
+.equ AnimTask_VoltTackleAttackerReappear, 0x80ae8a1
+.equ AnimTask_StockpileDeformMon, 0x80df849
+.equ AnimTask_CreateSpotlight, 0x80dedd9
+.equ AnimTask_RemoveSpotlight, 0x80dee79
+.equ AnimTask_CreateRaindrops, 0x80aabc1
+.equ AnimTask_NightShadeClone, 0x80b54e9
+.equ SoundTask_PlaySE2WithPanning, 0x80DD411
+.equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
 @launchtemplate
 
@@ -497,7 +510,11 @@
 .equ Template_Teeth, 0x83E7930
 .equ Template_FrenzyPlantRoot, 0x83e2ddc
 .equ Template_BellyDrumNote, 0x83e3914
+.equ Template_Electricity, 0x83E6088
 .equ Template_ElectricSparkPlayer, 0x83e5fc4
+.equ Template_SparkElectricityFlashing, 0x83e6070
+.equ Template_ElectricPuff, 0x83e6204
+.equ Template_ThunderboltOrb, 0x83e6058
 .equ Template_DigMound, 0x83E7AC4
 .equ Template_Lightning, 0x83E5F38
 .equ Template_SmallBubblePair, 0x83e5ab0
@@ -522,7 +539,6 @@
 .equ Template_RockScatter, 0x83e7560
 .equ Template_GrowingShockWaveOrb, 0x83E6290
 .equ Tempate_RazorLeaf, 0x83e2c08
-.equ Template_Electricity, 0x83E6088
 .equ Template_CurseGhost, 0x83E7698
 .equ Template_KarateChop, 0x83e66e0
 .equ Template_DragonBreathFire, 0x83e77a4
@@ -545,6 +561,27 @@
 .equ Template_CrossImpact, 0x83e7c80
 .equ Template_EyeSparkle, 0x83e42fc
 .equ Template_MegaPunchKick, 0x83e67c0
+.equ Template_DirtPlume, 0x83e7aac
+.equ Template_FlyBallUp, 0x83e6bb8
+.equ Template_WhirlwindLine, 0x83e6c84
+.equ Template_DiveBall, 0x83e6d40
+.equ Template_DiveWaterSplash, 0x83e6d7c
+.equ Template_Whirlpool, 0x83e7420
+.equ Template_AromatherapySmallFlower, 0x83e3024
+.equ Template_AromatherapyBigFlower, 0x83e303c
+.equ Template_BrickBreakWallShard, 0x83e6820
+.equ Template_IceBeamOuterCrystal, 0x83e63a4
+.equ Template_GrowingChargeOrb, 0x83e61d4
+.equ Template_VoltTackleOrbSlide, 0x83e621c
+.equ Template_BounceBallLand, 0x83e6cfc
+.equ Template_GrantingStars, 0x83e33f4
+.equ Template_FirePlume, 0x83e5ca0
+.equ Template_FireSpin, 0x83e7438
+.equ Template_FireBlastCross, 0x83e5de4
+.equ Template_FireBlastRing, 0x83e5d94
+.equ Template_WillOWispFire, 0x83e5ee4
+.equ Template_FlatterSpotlight, 0x83ff3a0
+.equ Template_SuperpowerOrb, 0x83e6864
 
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
@@ -627,6 +664,7 @@
 
 .equ SET_PSYCHIC_BG, 0x81D59BB
 .equ UNSET_SCROLLING_BG, 0x81D59C7
+.equ UNSET_SKY_BG, 0x81d59ff
 .equ BURN_CHANCE_ANIM, 0x81D0950
 .equ FREEZE_CHANCE_ANIM, 0x81D540A
 .equ FREEZE_CHANCE_ANIM_DOUBLES, 0x81D548E
@@ -653,6 +691,8 @@
 .equ SAND_ATTACK_DIRT, 0x81cdf72
 .equ EMBER_FIRE_HIT, 0x81c7cd5
 .equ PSYBEAM_RINGS, 0x81d0dd4
+.equ DIVE_SET_UP_WATER_DROPLETS, 0x81d41b6
+.equ ICE_BEAM_CRYSTALS, 0x81ce3fc
 
 @supercommands
 

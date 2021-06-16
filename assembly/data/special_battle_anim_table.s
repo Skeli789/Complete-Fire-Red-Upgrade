@@ -604,7 +604,7 @@ ANIM_BERRY_EATING:
 	playsound2 0xb3 SOUND_PAN_ATTACKER
 	launchtemplate BERRYFLOAT TEMPLATE_ATTACKER | 1 0x1 0x0
 	pause 0x45
-	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	launchtask AnimTask_IsTargetPlayerSide 0x2 0x0
 	jumpifargmatches 0x7 0x1 BERRYEAT_ON_PLAYER
 BERRYEAT_ON_OPPONENT:
 	call BITE_FOE

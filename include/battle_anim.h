@@ -416,6 +416,7 @@ void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) AnimTranslateLinear(struct Sprite *sprite);
+void  __attribute__((long_call)) InitAndRunAnimFastLinearTranslation(struct Sprite *sprite);
 u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
 void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
 void __attribute__((long_call)) PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
@@ -424,7 +425,8 @@ void __attribute__((long_call)) SetSpriteRotScale(u8 spriteId, s16 xScale, s16 y
 u8 __attribute__((long_call)) GetAnimBattlerSpriteId(u8 wantedBattler);
 u8 __attribute__((long_call)) GetBattlerSpriteBGPriority(u8 battlerId);
 bool8 __attribute__((long_call)) IsBattlerSpriteVisible(u8 battlerId);
-void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2, bool8 setSpriteInvisible);
+void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2);
+void __attribute__((long_call)) ResetBattleAnimBg(u8);
 void __attribute__((long_call)) SpriteCB_AnimMissileArcStep(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimArcTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) TranslateAnimHorizontalArc(struct Sprite *sprite);
