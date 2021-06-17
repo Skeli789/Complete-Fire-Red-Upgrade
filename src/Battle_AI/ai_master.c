@@ -95,7 +95,7 @@ static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank);
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank);
 static bool8 IsPlayerTryingToCheeseAI(u8 playerBank);
-static void PickNewAIMove(u8 aiBank, bool8 allowPursuit);
+static void PickNewAIMove(u8 aiBank, bool8 allowPursuit, bool8 allowNewHostileMove);
 static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank);
 
 void BattleAI_HandleItemUseBeforeAISetup(void)
@@ -3613,7 +3613,15 @@ void ClearCachedAIData(void)
 //People have a tendency to cheese the AI by doing one of the following things:
 //1. Leading with a deceiving Pokemon and immediately switching it out to either PP stall the opponent or lock it into a bad move.
 //2. Constantly switching Pokemon out when they know they'll constantly be immune to PP stall the AI.
-//Using this function, the AI will decide on a new move if it sees this happening.
+//Using these functions, the AI will decide on a new move if it sees this happening.
+
+enum
+{
+	NOT_CHEESING,
+	CHEESING,
+	CHEESING_BY_SWITCHING_OFTEN,
+};
+
 void RechooseAIMoveAfterSwitchIfNecessary(void)
 {
 	if (SIDE(gBankSwitching) == B_SIDE_PLAYER && BATTLER_ALIVE(gBankSwitching))
@@ -3631,8 +3639,13 @@ void RechooseAIMoveAfterSwitchIfNecessary(void)
 
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank)
 {
-	if (IsPlayerTryingToCheeseAI(playerBank))
-		PickNewAIMove(aiBank, FALSE);
+	u8 cheeseType = IsPlayerTryingToCheeseAI(playerBank);
+
+	if (cheeseType != NOT_CHEESING)
+	{
+		bool8 allowHostileMove = (cheeseType == CHEESING) ? TRUE : FALSE; //Only allow a hostile move if player is blatantly abusing
+		PickNewAIMove(aiBank, FALSE, allowHostileMove);
+	}
 }
 
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank)
@@ -3649,7 +3662,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
 		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //In Frontier battles
 		#ifdef VAR_GAME_DIFFICULTY
-		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Or only on hardest game mode
+		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY) //Or only on harder game modes
 		#endif
 		#ifdef UNBOUND
 		&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE
@@ -3658,7 +3671,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 		;
 }
 
-static bool8 IsPlayerTryingToCheeseAI(u8 playerBank)
+static u8 IsPlayerTryingToCheeseAI(u8 playerBank)
 {
 	if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Very Smart AI
 	&& IsPlayerInControl(playerBank)) //AI isn't in charge of player mon
@@ -3666,16 +3679,16 @@ static bool8 IsPlayerTryingToCheeseAI(u8 playerBank)
 		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Not fair in Frontier where player doesn't know opponent's lead
 		&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY //Only on hardest game mode
 		&& IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank))
-			return TRUE;
+			return CHEESING;
 
 		if (ShouldPredictRandomPlayerSwitch(playerBank))
-			return TRUE;
+			return CHEESING_BY_SWITCHING_OFTEN;
 	}
 
-	return FALSE;
+	return NOT_CHEESING;
 }
 
-static void PickNewAIMove(u8 aiBank, bool8 allowPursuit)
+static void PickNewAIMove(u8 aiBank, bool8 allowPursuit, bool8 allowHostileMove)
 {
 	u8 backupAtk = gBankAttacker;
 	u8 backupDef = gBankTarget;
@@ -3689,14 +3702,29 @@ static void PickNewAIMove(u8 aiBank, bool8 allowPursuit)
 	u8 chosenMovePos = BattleAI_ChooseMoveOrAction();
 	if (chosenMovePos < MAX_MON_MOVES)
 	{
-		if (allowPursuit || gBattleMoves[gBattleMons[aiBank].moves[chosenMovePos]].effect != EFFECT_PURSUIT) //Using Pursuit after a switch would make the anti-abuse obvious
+		bool8 allow = TRUE;
+		u16 chosenMove = gBattleMons[aiBank].moves[chosenMovePos];
+		u8 moveTarget = GetBaseMoveTarget(chosenMove, aiBank);
+
+		if (!allowPursuit && gBattleMoves[chosenMove].effect == EFFECT_PURSUIT)
+			allow = FALSE; //Using Pursuit after a switch would make the anti-abuse obvious
+		else if (!allowHostileMove && (IS_SINGLE_BATTLE || gBankTarget != PARTNER(gBankAttacker)))
+		{
+			//Be subtle and only allow picking a new move if it's not reliant on the foe that switched in
+			if (moveTarget == MOVE_TARGET_SELECTED) //Single target move - must be ==
+				allow = FALSE;
+			else if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL | MOVE_TARGET_RANDOM) //Could hit multiple targets
+			&& CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, gBankTarget) <= 1) //But there's only one target to hit
+				allow = FALSE; //Only one target so it's obvious this move was changed
+		}
+
+		if (allow)
 		{
 			gBattleStruct->chosenMovePositions[aiBank] = chosenMovePos;
-			gChosenMovesByBanks[aiBank] = gBattleMons[aiBank].moves[chosenMovePos];
-			u8 moveTarget = GetBaseMoveTarget(gChosenMovesByBanks[aiBank], aiBank);
+			gChosenMovesByBanks[aiBank] = chosenMove;
 			UpdateCurrentTargetByMoveTarget(moveTarget, aiBank);
 			gBattleStruct->moveTarget[aiBank] = gBankTarget;
-			gNewBS->zMoveData.toBeUsed[gActiveBattler] = ShouldAIUseZMoveByMoveAndMovePos(aiBank, gBankTarget, gChosenMovesByBanks[aiBank], chosenMovePos);
+			gNewBS->zMoveData.toBeUsed[gActiveBattler] = ShouldAIUseZMoveByMoveAndMovePos(aiBank, gBankTarget, chosenMove, chosenMovePos);
 		}
 	}
 
@@ -3740,7 +3768,7 @@ void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 
 	if (IS_DOUBLE_BATTLE
 	&& !(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Unfair in Frontier battles
-	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY //On harder game modes
+	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY //On hardest game modes
 	&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Only very smart Trainers
 	&& SIDE(gBankAttacker) == B_SIDE_OPPONENT //Fake Out user is AI
 	&& IsPlayerInControl(playerBank) //Protect user is player
@@ -3766,7 +3794,7 @@ void PickRaidBossRepeatedMove(u8 moveLimitations)
 	#endif
 	)
 	{
-		PickNewAIMove(gBankAttacker, TRUE);
+		PickNewAIMove(gBankAttacker, TRUE, TRUE);
 	}
 	else //Dumb AI picks random move
 	{

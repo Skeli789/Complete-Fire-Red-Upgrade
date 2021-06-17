@@ -72730,7 +72730,7 @@ const struct BattleTowerSpread gWormadamSpreads[] =
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
-		.spAtkIv = 30,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.spAtkEv = 252,
@@ -72741,7 +72741,7 @@ const struct BattleTowerSpread gWormadamSpreads[] =
 		.moves =
 		{
 			MOVE_SILVERWIND,
-			MOVE_HIDDENPOWER, //TYPE_GRASS
+			MOVE_ENERGYBALL,
 			MOVE_ANCIENTPOWER,
 			MOVE_QUIVERDANCE,
 		},

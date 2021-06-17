@@ -34,6 +34,8 @@ extern const struct FlingStruct gFlingTable[];
 #define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
 #define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
 
+static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, struct AIScript* data);
+
 u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	u32 i, j;
@@ -2672,68 +2674,93 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	}
 
 	if (moveSplit != SPLIT_STATUS)
+		viability = DamageMoveViabilityIncrease(bankAtk, bankDef, move, viability, class, predictedMove, atkAbility, data);
+
+	if (data->atkStatus1 & STATUS1_FREEZE && gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)
 	{
-		if (IS_SINGLE_BATTLE) //Single Battle or only 1 target left
+		//Unfreeze yourself
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			INCREASE_VIABILITY(20);
+		else
+			INCREASE_VIABILITY(10);
+	}
+
+	return min(viability, 255);
+}
+
+static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, struct AIScript* data)
+{
+	if (IS_SINGLE_BATTLE) //Single Battle or only 1 target left
+	{
+		//Every spread type has the same viability increases for these two
+		if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
+		&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
+		 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
+		 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
 		{
-			//Every spread type has the same viability increases for these two
-			if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
-			&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
-			 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
-			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
+			if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
+			|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+			|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 			{
-				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
-				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
-				{
+				if (!(data->defStatus2 & STATUS2_DESTINY_BOND) //AI shouldn't prioritize damaging move if foe is going to take AI down with it
+				|| CanKnockOut(bankDef, bankAtk) //Unless foe can KO anyway
+				//|| !MoveWouldHitFirst(move, bankAtk, bankDef) //Or the Destiny Bond will have worn off by the time the AI's attack hits - Not needed here because only moves that would go first would reach here
+				)
 					INCREASE_VIABILITY(9);
-				}
 			}
-			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
-			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
+		}
+		else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+		&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
+		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
+		{
+			IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
+		}
+		else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
+		&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn
+		 || AI_THINKING_STRUCT->simulatedRNG[3] < ((gLastPrintedMoves[bankDef] != MOVE_NONE && SPLIT(gLastPrintedMoves[bankDef]) == SPLIT_STATUS) ? 25 : 75)) //Or allowed consecutive desperate moves (higher chance if opponent last used an attacking move)
+		&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
+		&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
+		&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
+		&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up
+		&& !IsClassPhazer(class) //Or phaze/set up hazards
+		&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+		{
+			if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
+			|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
+			|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 			{
-				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
+				//Use a desperate priority move
+				INCREASE_VIABILITY(9);
 			}
-			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
-			&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn
-			 || AI_THINKING_STRUCT->simulatedRNG[3] < ((gLastPrintedMoves[bankDef] != MOVE_NONE && SPLIT(gLastPrintedMoves[bankDef]) == SPLIT_STATUS) ? 25 : 75)) //Or allowed consecutive desperate moves (higher chance if opponent last used an attacking move)
-			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
-			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
-			&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up
-			&& !IsClassPhazer(class) //Or phaze/set up hazards
-			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+		}
+		else if (IsStrongestMove(move, bankAtk, bankDef))
+		{
+			//If the attacker is slower than the target and the target is going to die
+			//anyways, then do something else and let it die.
+			bool8 wouldHitFirst = MoveWouldHitFirst(move, bankAtk, bankDef);
+
+			if (wouldHitFirst
+			|| !WillFaintFromSecondaryDamage(bankDef)
+			|| IsMovePredictionHealingMove(bankDef, bankAtk)
+			|| atkAbility == ABILITY_MOXIE
+			#ifdef ABILITY_GRIMNEIGH
+			||atkAbility == ABILITY_GRIMNEIGH
+			#endif
+			#ifdef ABILITY_CHILLINGNEIGH
+			|| atkAbility == ABILITY_CHILLINGNEIGH
+			#endif
+			#ifdef ABILITY_ASONE_GRIM
+			|| atkAbility == ABILITY_ASONE_GRIM
+			#endif
+			#ifdef ABILITY_ASONE_CHILLING
+			|| atkAbility == ABILITY_ASONE_CHILLING
+			#endif
+			|| atkAbility == ABILITY_BEASTBOOST)
 			{
-				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
-				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
-				{
-					//Use a desperate priority move
-					INCREASE_VIABILITY(9);
-				}
-			}
-			else if (IsStrongestMove(move, bankAtk, bankDef))
-			{
-				//If the attacker is slower than the target and the target is going to die
-				//anyways, then do something else and let it die.
-				if (MoveWouldHitFirst(move, bankAtk, bankDef)
-				|| !WillFaintFromSecondaryDamage(bankDef)
-				|| IsMovePredictionHealingMove(bankDef, bankAtk)
-				|| atkAbility == ABILITY_MOXIE
-				#ifdef ABILITY_GRIMNEIGH
-				||atkAbility == ABILITY_GRIMNEIGH
-				#endif
-				#ifdef ABILITY_CHILLINGNEIGH
-				|| atkAbility == ABILITY_CHILLINGNEIGH
-				#endif
-				#ifdef ABILITY_ASONE_GRIM
-				|| atkAbility == ABILITY_ASONE_GRIM
-				#endif
-				#ifdef ABILITY_ASONE_CHILLING
-				|| atkAbility == ABILITY_ASONE_CHILLING
-				#endif
-				|| atkAbility == ABILITY_BEASTBOOST)
-				{
+				if (!(data->defStatus2 & STATUS2_DESTINY_BOND) //AI shouldn't prioritize damaging move if foe is going to take AI down with it
+				|| CanKnockOut(bankDef, bankAtk) //Unless foe can KO anyway
+				|| !wouldHitFirst) //Or the Destiny Bond will have worn off by the time the AI's attack hits - Not needed here because only moves that would go first would reach here
+				{	
 					if (viability == 100 //Untouched viability
 					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Strongest move would probably go second but will KO
 					&& !IsMovePredictionHPDrainingMove(bankDef, bankAtk) //And the foe probably won't try to restore their HP
@@ -2759,22 +2786,13 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 			}
 		}
-		else //Double Battle
-		{
-			IncreaseDoublesDamageViability(&viability, class, bankAtk, bankDef, move);
-		}
 	}
-
-	if (data->atkStatus1 & STATUS1_FREEZE && gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)
+	else //Double Battle
 	{
-		//Unfreeze yourself
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			INCREASE_VIABILITY(20);
-		else
-			INCREASE_VIABILITY(10);
+		IncreaseDoublesDamageViability(&viability, class, bankAtk, bankDef, move);
 	}
 
-	return min(viability, 255);
+	return viability;
 }
 
 //An AI script meant for generic Trainers who have no set strategy built into their team
@@ -2863,93 +2881,10 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				return AIScript_Positives(bankAtk, bankDef, originalMove, originalViability, data);
 		}
 
-		//Copied from above
 		if (SPLIT(move) != SPLIT_STATUS)
 		{
-			u8 class = GetBankFightingStyle(bankAtk);
-			u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
-
-			//Every spread type has the same viability increases for these two
-			if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
-			&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
-			 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
-			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
-			{
-				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
-				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
-				{
-					INCREASE_VIABILITY(9);
-				}
-			}
-			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
-			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-			//&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
-			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
-			{
-				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
-			}
-			else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
-			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
-			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
-			&& !IsClassEntryHazards(class) //If your goal isn't to get up hazards
-			&& !IsClassPhazer(class) //Or phaze/set up hazards
-			&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
-			{
-				if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
-				|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
-				|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
-				{
-					INCREASE_VIABILITY(9);
-				}
-			}
-			else if (IsStrongestMove(move, bankAtk, bankDef))
-			{
-				//If the attacker is slower than the target and the target is going to die
-				//anyways, then do something else and let it die.
-				if (MoveWouldHitFirst(move, bankAtk, bankDef)
-				|| !WillFaintFromSecondaryDamage(bankDef)
-				|| IsMovePredictionHealingMove(bankDef, bankAtk)
-				|| data->atkAbility == ABILITY_MOXIE
-				#ifdef ABILITY_GRIMNEIGH
-				|| data->atkAbility == ABILITY_GRIMNEIGH
-				#endif
-				#ifdef ABILITY_CHILLINGNEIGH
-				|| data->atkAbility == ABILITY_CHILLINGNEIGH
-				#endif
-				#ifdef ABILITY_ASONE_GRIM
-				|| data->atkAbility == ABILITY_ASONE_GRIM
-				#endif
-				#ifdef ABILITY_ASONE_CHILLING
-				|| data->atkAbility == ABILITY_ASONE_CHILLING
-				#endif
-				|| data->atkAbility == ABILITY_BEASTBOOST)
-				{
-					if (viability == 100 //Untouched viability
-					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Strongest move would probably go second but will KO
-					&& !IsMovePredictionHPDrainingMove(bankDef, bankAtk) //And the foe probably won't try to restore their HP
-					&& !IsMovePredictionHealingMove(bankDef, bankAtk))
-					{
-						if (IsClassCleric(class))
-							INCREASE_VIABILITY(5); //Same priority as mid-status move
-						else if (IsClassSupportScreener(class))
-							INCREASE_VIABILITY(6); //Same priority as Mist
-						else if (IsClassBatonPass(class))
-							INCREASE_VIABILITY(6); //Same priority as an evasiveness booster
-						else if (IsClassPhazer(class))
-							INCREASE_VIABILITY(8); //Same priority as phazing
-						else if (IsClassStall(class))
-							INCREASE_VIABILITY(8); //Same priority as a trapping move
-						else if (IsClassEntryHazards(class))
-							INCREASE_VIABILITY(4); //Same priority as spikes
-						else
-							INCREASE_VIABILITY(2);
-					}
-					else
-						INCREASE_VIABILITY(2);
-				}
-			}
+			viability = DamageMoveViabilityIncrease(bankAtk, bankDef, move, viability, GetBankFightingStyle(bankAtk),
+			                                        IsValidMovePrediction(bankDef, bankAtk), GetAIAbility(bankAtk, bankDef, move), data);
 		}
 
 		if (data->atkStatus1 & STATUS1_FREEZE && gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)
