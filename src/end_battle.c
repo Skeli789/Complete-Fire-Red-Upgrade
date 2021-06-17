@@ -222,11 +222,9 @@ void HandleEndTurn_BattleWon(void)
 			case CLASS_SHADOW_ADMIN: //0x30
 			case CLASS_BOSS: //0x53
 			case CLASS_SHADOW: //0x55
-			#ifndef DEBUG_UNBOUND_MUSIC
 				PlayBGM(BGM_VICTORY_PLASMA);
 				specialMus = TRUE;
 				break;
-			#endif
 			case CLASS_LOR_LEADER: //0x2
 			case CLASS_LOR_ADMIN: //0x2E
 			case CLASS_LOR: //0x2F
@@ -247,15 +245,8 @@ void HandleEndTurn_BattleWon(void)
 			goto VICTORY_MUSIC_SELECTION;
 		}
 	}
-	else
+	else //Wild - Music played in Exp.C
 	{
-		if (IsRaidBattle())
-		#ifdef UNBOUND
-			PlayBGM(BGM_VICTORY_GYM);
-		#else
-			PlayBGM(BGM_VICTORY_SPECIAL);
-		#endif
-
 		gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
 	}
 
@@ -832,7 +823,9 @@ static void EndBattleFlagClear(void)
 	if (gDexNavStartedBattle
 	&& (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
 	{
-		if (gCurrentDexNavChain < 100)
+		if (gCurrentDexNavChain == 0)
+			gCurrentDexNavChain = 2; //Next battle would be battle 2
+		else if (gCurrentDexNavChain < 100)
 			++gCurrentDexNavChain;
 		else
 			gCurrentDexNavChain = 1; //Restart from 1 (101 % 100 = 1)

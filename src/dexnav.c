@@ -93,6 +93,7 @@ static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
 static void DexNavDrawBlackBar(u8* windowId);
 static void DexNavDrawDirectionalArrow(u8* windowId);
+static void DexNavDrawChainNumber(u8* spriteIdAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
 static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
@@ -509,6 +510,9 @@ static void DexNavFreeHUD(void)
 
 	if (sDexNavHudPtr->spriteIdBButton < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdBButton]);
+
+	if (sDexNavHudPtr->spriteIdChainNumber < MAX_SPRITES)
+		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdChainNumber]);
 
 	if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdAbility]);
@@ -1445,6 +1449,49 @@ static void DexNavDrawDirectionalArrow(u8* windowId)
 	CopyWindowToVram(*windowId, COPYWIN_BOTH);
 }
 
+
+static void DexNavDrawChainNumber(u8* spriteIdAddr)
+{
+	u8 spriteId = MAX_SPRITES;
+
+	if (gCurrentDexNavChain > 0) //Started a chain
+	{
+		LoadCompressedSpriteSheetUsingHeap(&sChainNumberCanvasSpriteSheet);
+		LoadSpritePalette(&gHeldItemSpritePalette);
+		spriteId = CreateSprite(&sChainNumberCanvasTemplate, ICONX + 80, ICONY + 0x12, 0x0);
+		if (spriteId < MAX_SPRITES)
+		{
+			//Get Text
+			StringCopy(gStringVar4, gText_DexNavHUDChainNumber);
+			ConvertIntToDecimalStringN(gStringVar1, gCurrentDexNavChain, 0, 3);
+			StringAppend(gStringVar4, gStringVar1);
+
+			//Adjust Position
+			gSprites[spriteId].pos1.x = 205 + (32 / 2);
+			gSprites[spriteId].pos1.y = 137 + (16 / 2);
+
+			if (gCurrentDexNavChain < 10)
+				gSprites[spriteId].pos1.x += 8;
+			else if (gCurrentDexNavChain < 100)
+				gSprites[spriteId].pos1.x += 4;
+
+			//Format string so it's even length or if it's odd ends in two spaces
+			u8 len = StringLength(gStringVar4);
+			if (!(len % 2))
+			{
+				gStringVar4[len] = 0x0;
+				gStringVar4[len + 1] = 0x0;
+				gStringVar4[len + 2] = 0xFF;
+			}
+
+			//Draw the chain number on a blank sprite
+			OutlinedFontDraw(spriteId, 0, 16 * 8);
+		}
+	}
+
+	*spriteIdAddr = spriteId;
+}
+
 static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sSightSpriteSheet);
@@ -1583,6 +1630,7 @@ static void DexNavDrawIcons(void)
 	u8 searchLevel = sDexNavHudPtr->searchLevel;
 	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
 	DexNavDrawDirectionalArrow(&sDexNavHudPtr->arrowWindowId);
+	DexNavDrawChainNumber(&sDexNavHudPtr->spriteIdChainNumber);
 	DexNavDrawSight(sDexNavHudPtr->totalProximity, &sDexNavHudPtr->spriteIdSight);
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
 	DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
@@ -2444,7 +2492,8 @@ static void PrintGUIChainLength(u16 species)
 		text = gText_DexNav_NoInfo;
 	else
 	{
-		ConvertIntToDecimalStringN(gStringVar4, gCurrentDexNavChain, 0, 3);
+		u8 chainLength = (gCurrentDexNavChain == 0) ? 0 : gCurrentDexNavChain - 1; //Always 1 less than what's stored internally
+		ConvertIntToDecimalStringN(gStringVar4, chainLength, 0, 3);
 		text = gStringVar4;
 	}
 

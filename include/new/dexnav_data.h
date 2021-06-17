@@ -33,6 +33,7 @@ extern const u8 gInterfaceGfx_DexNavNoDataSymbolTiles[];
 extern const u8 DexNavBarTiles[];
 extern const u8 DexNavSightTiles[];
 extern const u8 DexNavBButtonTiles[];
+extern const u8 DexNavHUDChainCanvasTiles[];
 
 //STRINGS
 extern const u8 gText_DexNavInstructions[];
@@ -69,6 +70,7 @@ extern const u8 gText_DexNav_RightArrow[];
 extern const u8 gText_DexNav_ListMenuRegister[];
 extern const u8 gText_DexNav_ListMenuScan[];
 extern const u8 gText_DexNav_ListMenuCancel[];
+extern const u8 gText_DexNavHUDChainNumber[];
 	
 // DEFINES
 #define TILE_SIZE 32
@@ -457,6 +459,7 @@ struct DexnavHudData
     u8 spriteIdSpecies;
     u8 spriteIdSight;
     u8 spriteIdBButton;
+	u8 spriteIdChainNumber;
     u8 spriteIdAbility;
     u8 spriteIdMove;
     u8 spriteIdItem;
@@ -502,6 +505,16 @@ static const struct OamData sFontOAM =
 	.objMode = ST_OAM_OBJ_NORMAL,
 	.shape = SPRITE_SHAPE(64x32),
 	.size = SPRITE_SIZE(64x32),
+	.priority = 0, //Above everything
+};
+
+//32x16 oam with highest priority
+static const struct OamData sSmallerFontOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x16),
+	.size = SPRITE_SIZE(32x16),
 	.priority = 0, //Above everything
 };
 
@@ -595,6 +608,17 @@ static const struct SpriteTemplate sAbilityCanvasTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
+static const struct SpriteTemplate sChainNumberCanvasTemplate =
+{
+	.tileTag = 0x1EE8,
+	.paletteTag = GFX_TAG_HELD_ITEM,
+	.oam = &sSmallerFontOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
 static const struct SpriteTemplate sStarLitTemplate =
 {
 	.tileTag = 0x61,
@@ -632,6 +656,8 @@ static const struct CompressedSpriteSheet sSightSpriteSheet = {DexNavSightTiles,
 static const struct CompressedSpriteSheet sBButtonSpriteSheet = {DexNavBButtonTiles, (32 * 8) / 2, 0x5425};
 static const struct CompressedSpriteSheet sMoveCanvasSpriteSheet = {(u8*) gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x4736};
 static const struct CompressedSpriteSheet sAbilityCanvasSpriteSheet = {gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x1EE7};
+static const struct CompressedSpriteSheet sChainNumberCanvasSpriteSheet = {DexNavHUDChainCanvasTiles, (32 * 16) / 2, 0x1EE8};
+
 #ifdef UNBOUND
 extern const u8 DexNavStarTiles[];
 static const struct SpriteSheet sStarLitSpriteSheet = {DexNavStarTiles, (8 * 8) / 2, 0x61}; //1st Tile
