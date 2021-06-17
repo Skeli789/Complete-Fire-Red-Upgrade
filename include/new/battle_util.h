@@ -18,7 +18,7 @@ ability_t* GetAbilityLocationIgnoreNeutralizingGas(u8 bank);
 void RecordAbilityBattle(u8 bank, u8 ability);
 void ClearBattlerAbilityHistory(u8 bank);
 item_effect_t GetBankItemEffect(u8 bank);
-item_effect_t GetMonItemEffect(struct Pokemon* mon);
+item_effect_t GetMonItemEffect(const struct Pokemon* mon);
 item_effect_t GetRecordedItemEffect(u8 bank);
 void RecordItemEffectBattle(u8 bank, u8 itemEffect);
 void ClearBattlerItemEffectHistory(u8 bank);

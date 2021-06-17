@@ -57,6 +57,7 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 IsHPAbsorptionAbility(u8 ability);
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef);
+bool8 CanHealFirstToPreventKnockOut(u8 bankAtk, u8 foe);
 s32 GetMonPassiveRecovery(struct Pokemon* mon, u8 bank);
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef);
 bool8 IsTrapped(u8 bank, bool8 switching);

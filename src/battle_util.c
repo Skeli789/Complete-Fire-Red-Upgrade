@@ -164,7 +164,7 @@ item_effect_t GetBankItemEffect(u8 bank)
 	return 0;
 }
 
-item_effect_t GetMonItemEffect(struct Pokemon* mon)
+item_effect_t GetMonItemEffect(const struct Pokemon* mon)
 {
 	if (GetMonAbility(mon) != ABILITY_KLUTZ && !IsMagicRoomActive())
 		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));

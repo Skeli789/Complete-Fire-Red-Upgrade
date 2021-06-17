@@ -760,12 +760,13 @@ u8 TurnBasedEffects(void)
 				else if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED)
 				&& gBattleMons[gActiveBattler].hp)
 				{
+					bool8 setBrokeFreeMessage = FALSE;
 					gBattleMons[gActiveBattler].status2 -= 0x2000;
 
 					if (!(gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED))
 					{
 						gBattleMons[gActiveBattler].status2 |= STATUS2_WRAPPED; //Reactivate temporarily
-						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
+						setBrokeFreeMessage = TRUE; //Will play next turn
 					}
 
 					if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
@@ -785,6 +786,10 @@ u8 TurnBasedEffects(void)
 						BattleScriptExecute(gBattlescriptCurrInstr);
 						effect++;
 					}
+	
+					//Must be placed afterwards so the trap damage still has an effect on the last turn
+					if (setBrokeFreeMessage)
+						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
 				}
 				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 				break;
@@ -1799,6 +1804,7 @@ u32 GetTrapDamage(u8 bank)
 	u32 damage = 0;
 
 	if (gBattleMons[bank].status2 & STATUS2_WRAPPED
+	&& !(gNewBS->brokeFreeMessage & gBitTable[bank]) //Trapping isn't about to end
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
 	{
 		if ((gNewBS->sandblastCentiferno[gActiveBattler] & 2) //Trapped by this move and user held Binding Band

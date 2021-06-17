@@ -32,6 +32,7 @@ ai_util.c
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
+static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move);
 
 bool8 CanKillAFoe(u8 bank)
@@ -190,7 +191,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits)) //Need fresh calculation since data is locked earlier
+			if (CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, numHits)) //Need fresh calculation since data is locked earlier
 			{
 				gBattleMons[bankDef].hp = backupHp;
 				return TRUE;
@@ -939,6 +940,14 @@ bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
 	if (GetFinalAIMoveDamage(move, bankAtk, bankDef, numHits, NULL) >= gBattleMons[bankDef].hp)
+		return TRUE;
+
+	return FALSE;
+}
+
+static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+{
+	if (CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits, NULL) >= gBattleMons[bankDef].hp)
 		return TRUE;
 
 	return FALSE;
@@ -1959,6 +1968,37 @@ bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 	return TRUE;
 }
 
+bool8 CanHealFirstToPreventKnockOut(u8 bankAtk, u8 foe)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u16 foePrediction = IsValidMovePrediction(foe, bankAtk);
+	bool8 isAtkDynamaxed = IsDynamaxed(bankAtk);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			u8 effect = gBattleMoves[move].effect;
+			if ((effect == EFFECT_RESTORE_HP && !isAtkDynamaxed)
+			 || (effect == EFFECT_MORNING_SUN && !isAtkDynamaxed)
+			 || (effect == EFFECT_PROTECT && DoesProtectionMoveBlockMove(foe, bankAtk, foePrediction, move)))
+			{
+				u32 healAmount = GetAmountToRecoverBy(bankAtk, foe, move);
+				if (MoveWouldHitFirst(move, bankAtk, foe)
+				&& !CanKnockOutAfterHealing(foe, bankAtk, healAmount, 1))
+					return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
 s32 GetMonPassiveRecovery(struct Pokemon* mon, unusedArg u8 bank)
 {
 	s32 amountToRecover = 0;
@@ -2057,10 +2097,8 @@ static u32 CalcSecondaryEffectDamage(u8 bank)
 		if ((gBattleMons[bank].status1 & STATUS1_SLEEP) != 1)
 			damage += GetNightmareDamage(bank); //Sleep's not about to end
 
-		if (!(gNewBS->brokeFreeMessage & gBitTable[bank]))
-			damage += GetTrapDamage(bank); //Trapping isn't about to end
-
-		damage += GetLeechSeedDamage(bank)
+		damage += GetTrapDamage(bank)
+			+ GetLeechSeedDamage(bank)
 			+ GetPoisonDamage(bank)
 			+ GetBurnDamage(bank)
 			+ GetCurseDamage(bank)

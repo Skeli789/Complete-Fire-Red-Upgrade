@@ -105,8 +105,6 @@ OpponentHandleDrawTrainerPic 08037CD0 0
 OpponentHandleTrainerSlide 08037EA4 0
 OpponentHandleChooseMove 80385B0 0
 OpponentHandleChoosePokemon 8038744 0
-HasSuperEffectiveMoveAgainstOpponents 08039698 1
-FindMonWithFlagsAndSuperEffective 08039828 2
 GetMostSuitableMonToSwitchInto 8039E3C 0
 BattleAI_DoAIProcessing 080C7038 0
 BattleAI_HandleItemUseBeforeAISetup 080C6D0C 0
