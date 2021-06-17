@@ -1019,6 +1019,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	if ((!isAtkDynamaxed && BankHoldingUsefulItemToProtectFor(bankAtk))
 	||  (!isAtkDynamaxed && BankHasAbilityUsefulToProtectFor(bankAtk, bankDef))
 	||  (!isAtkDynamaxed && WillFaintFromSecondaryDamage(bankDef)) //Don't protect if you're Dynamaxed because Max Moves can have beneficial side effects
+	||  (!isAtkDynamaxed && IsTrapped(bankDef, TRUE) && IsTakingSecondaryDamage(bankDef)) //Not like the foe will be able to go anywhere
 	||  (IsDynamaxed(bankDef) && (!IsRaidBattle() || bankDef != BANK_RAID_BOSS) && !IsDynamaxed(bankAtk) && !ShouldAIDynamax(bankAtk, bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move and ai won't be dynamaxed
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
@@ -2571,7 +2572,10 @@ void IncreaseFoeProtectionViability(s16* originalViability, u8 class, u8 bankAtk
 
 	switch (class) {
 		case FIGHT_CLASS_STALL:
-			INCREASE_VIABILITY(3);
+			if (IsTrapped(bankDef, TRUE))
+				INCREASE_VIABILITY(7); //Not like the foe can go anywhere
+			else
+				INCREASE_VIABILITY(3);
 			break;
 
 		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:

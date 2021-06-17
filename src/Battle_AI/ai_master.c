@@ -2469,6 +2469,7 @@ static bool8 ShouldSaveSweeperForLater(void)
 	&& !CanKnockOut(gActiveBattler, foe) //But this powerhouse can't KO right now
 	&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe, gActiveBattler)) //It's not behind a Substitute
 	&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4) //Will take less than 25% damage on reentry
+	&& !(IsTrapped(foe, TRUE) && IsTakingSecondaryDamage(foe)) //This mon isn't keeping the foe locked in taking damage
 	&& 
 	(
 		//OPTION A:
@@ -2479,8 +2480,8 @@ static bool8 ShouldSaveSweeperForLater(void)
 		 && STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) < 6 + 3 //Including +3 Evasion
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
 		 && ((GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //And the new mon can KO (helps against PP stallers)
-		  || !ResistsAllMoves(foe, gActiveBattler))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
-		                                             //don't get into an infinite loop if this mon already does)
+		  || ((Random() & 1) && !ResistsAllMoves(foe, gActiveBattler)))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
+		                                                                 //don't get into an infinite loop if this mon already does). Do this randomly to throw off opponent.
 	)
 	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
 	{

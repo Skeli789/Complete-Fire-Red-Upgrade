@@ -1,7 +1,9 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/string_util.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/trainer_sliding_data.h"
@@ -270,10 +272,19 @@ void TryDoDynamaxTrainerSlide(void)
 		trainerId = gTrainerBattleOpponent_A;
 
 	gBattleStringLoader = gText_DefaultTrainerDynamaxMsg;
-	for (i = 0; i < ARRAY_COUNT(sDynamaxTrainerSlides); ++i)
+	for (i = 0; i < NELEMS(sDynamaxTrainerSlides); ++i)
 	{
 		if (trainerId == sDynamaxTrainerSlides[i].trainerId)
 			gBattleStringLoader = sDynamaxTrainerSlides[i].dynamaxMsg;
+	}
+
+	//Try giving any Trainer named "Red" a special string
+	if (i >= NELEMS(sDynamaxTrainerSlides))
+	{
+		u8 redName[] = {CHAR_R, CHAR_e, CHAR_d, EOS};
+
+		if (StringCompare(GetTrainerName(gBattleScripting.bank), redName) == 0) //Trainer's name is "Red"
+			gBattleStringLoader = gText_RedDynamaxMsg;
 	}
 
 	BattleScriptPush(gBattlescriptCurrInstr + 5); //After callasm

@@ -8,6 +8,9 @@ Time to Dynamax!\p
 #org @gText_TestTrainerDynamaxMsg
 I now shall unleash the power\nof Dynamax!\p 
 
+#org @gText_RedDynamaxMsg
+[.]!\p 
+
 //For Pokemon Unbound - Feel free to remove, and do not place strings below
 #ifdef UNBOUND
 

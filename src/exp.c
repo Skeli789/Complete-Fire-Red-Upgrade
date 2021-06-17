@@ -270,7 +270,15 @@ void atk23_getexp(void)
 			|| (!(IS_DOUBLE_BATTLE) && gBattleMons[0].hp && gBattleMons[1].hp == 0))
 			{
 				BattleStopLowHpSound();
-				PlayBGM(BGM_VICTORY_WILD_POKE); //Wild PKMN Victory
+
+				#ifdef UNBOUND
+				if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)
+					PlayBGM(BGM_VICTORY_PLASMA);
+				else
+				#endif
+				if (!IsRaidBattle()) //Music would be played if the player caught the raid boss
+					PlayBGM(BGM_VICTORY_WILD_POKE); //Wild PKMN Victory
+
 				gBattleStruct->wildVictorySong++;
 				//gAbsentBattlerFlags |= gBitTable[gBankFainted];
 			}

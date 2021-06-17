@@ -1157,7 +1157,7 @@ The user strikes\nthree times in a row.\nIt always results in\na critical hit.
 The user attacks\nwith psychic power.\nIt may leave the\ntarget frozen.
 
 #org @DESC_THUNDEROUS_KICK
-The user delivers\na fierce kick that\nlower's the target's\ndefense stat.
+The user delivers\na fierce kick that\nlowers the target's\ndefense stat.
 
 #org @DESC_FIERY_WRATH
 The user attacks with\nintense, dark flames.\nIt may also make\nthe foe flinch.

@@ -126,7 +126,9 @@ void __attribute__((long_call)) EventObjectForceSetHeldMovement(struct EventObje
 bool8 __attribute__((long_call)) EventObjectIsMovementOverridden(struct EventObject *eventObject);
 u8 __attribute__((long_call)) EventObjectCheckHeldMovementStatus(struct EventObject *eventObject);
 u8 __attribute__((long_call)) EventObjectGetHeldMovementActionId(struct EventObject *eventObject);
-void __attribute__((long_call)) DoShadowFieldEffect(struct EventObject *);
+void __attribute__((long_call)) DoShadowFieldEffect(struct EventObject*);
+void __attribute__((long_call)) DoGroundEffects_OnBeginStep(struct EventObject* eventObject, struct Sprite *sprite);
+void __attribute__((long_call)) DoGroundEffects_OnFinishStep(struct EventObject* eventObject, struct Sprite *sprite);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];

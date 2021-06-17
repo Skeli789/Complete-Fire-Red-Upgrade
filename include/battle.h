@@ -770,8 +770,8 @@ struct NewBattleStruct
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 statFellThisRound[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
-	s8 lastBracketCalc[MAX_BATTLERS_COUNT];
-	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT]; //~0x2017A4B
+	s8 lastBracketCalc[MAX_BATTLERS_COUNT]; //~0x2017A4C
+	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT];
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
 
@@ -782,7 +782,8 @@ struct NewBattleStruct
 	u8 playedFocusPunchMessage;
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
-	u8 CustapQuickClawIndicator; //0x2017632
+	u8 quickClawCustapIndicator;
+	u8 ateCustapBerry;
 	u8 HealingWishLoc;
 	u8 PowderByte;
 	u8 turnOrderLocked;

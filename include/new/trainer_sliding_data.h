@@ -13,6 +13,7 @@ extern const u8 BattleScript_TrainerSlideMsgEnd2[];
 
 extern const u8 gText_DefaultTrainerDynamaxMsg[];
 extern const u8 gText_TestTrainerDynamaxMsg[];
+extern const u8 gText_RedDynamaxMsg[];
 
 //For Unbound
 

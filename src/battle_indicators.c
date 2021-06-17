@@ -1762,7 +1762,9 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	LoadCompressedSpriteSheet(&sTeamPreviewStatusIconsSpriteSheet);
 	LoadSpritePalette(&gHeldItemSpritePalette);
 	LoadSpritePalette(&faintedIconSpritePalette);
-	LoadMonIconPalette(SPECIES_NONE); //Used for status icon sprites
+
+	for (i = 0; i < 25; ++i) //Can't use LoadMonIconPalettes() because it loads 3 extra palettes into memory
+		LoadMonIconPalette(i); //Pretty much guaranteed to load all palettes
 
 	u8 faintedIconPalNum = IndexOfSpritePaletteTag(GFX_TAG_FAINTED_TEAM_PREVIEW_ICON);
 
@@ -1789,7 +1791,7 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 			y = (20 + (32 / 2)) + (40 * (i / 3));
 			void* callback = hp == 0 ? SpriteCallbackDummy : SpriteCB_PokeIcon; //Don't animate when fainted
 
-			LoadMonIconPalette(species);
+			LoadMonIconPalette(species); //On the off chance the palette didn't get loaded above
 			u8 spriteId = CreateMonIcon(species, callback, x, y, 1, GetMonData(&gEnemyParty[i], MON_DATA_PERSONALITY, NULL), FALSE);
 			if (spriteId < MAX_SPRITES)
 			{
@@ -1837,7 +1839,7 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 					{
 						sprite->oam.paletteNum = faintedIconPalNum; //Make palette all white
 
-						LoadMonIconPalette(species);
+						LoadMonIconPalette(species); //On the off chance the palette didn't get loaded above
 						u8 spriteId = CreateSprite(&sFaintedMonIconTemplate, x, y, 0);
 						if (spriteId < MAX_SPRITES)
 							gSprites[spriteId].oam.priority = 0; //Above everything

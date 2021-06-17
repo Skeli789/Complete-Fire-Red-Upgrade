@@ -765,17 +765,13 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	//obedience = GetMonData(egg, MON_DATA_OBEDIENCE, NULL);
 	hidden = egg->hiddenAbility;
 
-	CreateMon(temp, species, EGG_HATCH_LEVEL, 32, TRUE, personality, 0, 0);
+	CreateMon(temp, species, EGG_HATCH_LEVEL, 0, TRUE, personality, OT_ID_PLAYER_ID, 0); //Set all IVs to 0 to start (set actually later on)
 
 	for (i = 0; i < 4; ++i)
-	{
 		SetMonData(temp, MON_DATA_MOVE1 + i,  &moves[i]);
-	}
 
 	for (i = 0; i < NUM_STATS; ++i)
-	{
 		SetMonData(temp, MON_DATA_HP_IV + i,  &ivs[i]);
-	}
 
 	language = GAME_LANGUAGE;
 	SetMonData(temp, MON_DATA_POKEBALL, &ballType);
@@ -791,6 +787,7 @@ void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 	temp->hiddenAbility = hidden;
 
 	*egg = *temp;
+	CalculateMonStats(egg);
 	HealMon(egg); //Fixes a bug where new Pokemon could hatch with more HP
 }
 

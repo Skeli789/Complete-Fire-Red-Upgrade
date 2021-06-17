@@ -130,6 +130,7 @@ bool8 UnfreezingMoveInMoveset(u8 bank);
 bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef);
 bool8 PivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
 bool8 FastPivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
+bool8 OHKOMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData);
 bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef);
 bool8 HazingMoveInMoveset(u8 bank);
 bool8 HasUsedMove(u8 bankAtk, u16 move);

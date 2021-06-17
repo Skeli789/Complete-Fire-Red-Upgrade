@@ -2275,7 +2275,7 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 //Item Find Show Picture Special (Really Callasm)
 #define ITEM_ICON_X (10 + 16)
 #define ITEM_ICON_Y (8 + 16)
-#define sHeaderBoxWindowId (*((u8*) 0x2039A28)) //Steal coin box Id
+#define sHeaderBoxWindowId (*((u8*) 0x203B020)) //Steal help menu window Id
 #if (defined ITEM_PICTURE_ACQUIRE && defined ITEM_DESCRIPTION_ACQUIRE)
 static void ShowObtainedItemDescription(unusedArg u16 itemId)
 {
@@ -2431,29 +2431,62 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 	#endif
 }
 
-static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
+#ifdef ITEM_PICTURE_ACQUIRE
+static void Task_ClearItemSpriteAfterFind(u8 taskId)
 {
-	#ifdef ITEM_PICTURE_ACQUIRE
-	FreeSpriteTilesByTag(ITEM_TAG);
-	FreeSpritePaletteByTag(ITEM_TAG);
+	u8 spriteId1 = gTasks[taskId].data[0];
 
 	if (Overworld_GetFlashLevel() != 0) //Handle dark rooms
 	{
-		u8 spriteId2 = gSprites[spriteId].data[7];
-		FreeSpriteOamMatrix(&gSprites[spriteId2]);
-		DestroySprite(&gSprites[spriteId2]);
+		u8 spriteId2 = gSprites[spriteId1].data[7];
+		if (spriteId2 < MAX_SPRITES)
+		{
+			FreeSpriteOamMatrix(&gSprites[spriteId2]);
+			DestroySprite(&gSprites[spriteId2]);
+		}
 	}
 
-	FreeSpriteOamMatrix(&gSprites[spriteId]);
-	DestroySprite(&gSprites[spriteId]);
+	if (spriteId1 < MAX_SPRITES)
+	{
+		FreeSpriteOamMatrix(&gSprites[spriteId1]);
+		DestroySprite(&gSprites[spriteId1]);
+	}
+
+	FreeSpriteTilesByTag(ITEM_TAG);
+	FreeSpritePaletteByTag(ITEM_TAG);
 
 	#ifdef ITEM_DESCRIPTION_ACQUIRE
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
 		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
 		RemoveWindow(sHeaderBoxWindowId);
+		sHeaderBoxWindowId = 0xFF;
 	}
 	#endif
+
+	DestroyTask(taskId);
+}
+#endif
+
+static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
+{
+	#ifdef ITEM_PICTURE_ACQUIRE
+	u8 taskId = CreateTask(Task_ClearItemSpriteAfterFind, 0xFF);
+	if (taskId != 0xFF)
+	{
+		gTasks[taskId].data[0] = spriteId;
+
+		//Hide sprites until they're destroyed
+		if (spriteId < MAX_SPRITES)
+			gSprites[spriteId].invisible = TRUE; //Hide until destroyed
+	
+		if (Overworld_GetFlashLevel() != 0) //Handle dark rooms
+		{
+			u8 spriteId2 = gSprites[spriteId].data[7];
+			if (spriteId2 < MAX_SPRITES)
+				gSprites[spriteId2].invisible = TRUE; //Hide until destroyed
+		}
+	}
 	#endif
 }
 

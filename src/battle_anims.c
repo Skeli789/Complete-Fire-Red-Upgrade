@@ -5248,6 +5248,27 @@ void HandleSpeciesGfxDataChange(u8 bankAtk, u8 bankDef, u8 transformType)
 	}
 }
 
+void DoMoveAnim(u16 move)
+{
+    gBattleAnimAttacker = gBankAttacker;
+    gBattleAnimTarget = gBankTarget;
+
+	if (IS_DOUBLE_BATTLE
+	&& gBattleMoves[move].target & MOVE_TARGET_ALL
+	&& SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget)) //Targeting same side
+	{
+		//Double spread move that is targeted at the partner
+		//Try setting anim target to other side of field so the anim looks normal
+		u8 foe = FOE(gBankAttacker);
+		if (!(gAbsentBattlerFlags & gBitTable[foe]))
+			gBattleAnimTarget = foe;
+		else if (!(gAbsentBattlerFlags & gBitTable[PARTNER(foe)]))
+			gBattleAnimTarget = PARTNER(foe);
+	}
+
+    LaunchBattleAnimation(gMoveAnimations, move, TRUE);
+}
+
 #define tBattlerId 	data[0]
 #define tAnimId 	data[1]
 #define tArgumentId	data[2]

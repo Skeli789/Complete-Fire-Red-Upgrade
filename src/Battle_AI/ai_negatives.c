@@ -1289,8 +1289,11 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_0HKO:
-			if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED)
-			|| (NO_MOLD_BREAKERS(data->atkAbility, move) && data->defAbility == ABILITY_STURDY))
+			if ((IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS)) //Only Dynamaxed foe that can be hit is one with shields up
+			|| AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED)
+			|| (NO_MOLD_BREAKERS(data->atkAbility, move) && data->defAbility == ABILITY_STURDY)
+			|| gBattleMons[bankAtk].level < gBattleMons[bankDef].level
+			|| (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE)))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1584,7 +1587,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				default: //Lock on
-					if (data->atkStatus3 & STATUS3_LOCKON
+					if ((data->defStatus3 & STATUS3_LOCKON && gDisableStructs[bankDef].bankWithSureHit == bankAtk) //It's the target that has the status, not the attacker!
 					|| data->atkAbility == ABILITY_NOGUARD
 					|| data->defAbility == ABILITY_NOGUARD
 					|| PARTNER_MOVE_EFFECT_IS_SAME)

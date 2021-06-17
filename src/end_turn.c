@@ -201,7 +201,8 @@ u8 TurnBasedEffects(void)
 				gNewBS->turnOrderLocked = 0;
 				gNewBS->playedFocusPunchMessage = 0;
 				gNewBS->playedShellTrapMessage = 0;
-				gNewBS->CustapQuickClawIndicator = 0;
+				gNewBS->ateCustapBerry = 0;
+				gNewBS->quickClawCustapIndicator = 0;
 				gNewBS->activatedCustapQuickClaw = 0;
 				gNewBS->criticalCapture = 0;
 

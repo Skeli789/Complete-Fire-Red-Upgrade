@@ -470,3 +470,8 @@ bool16 InitMoveRelearnerWindows(void)
 		return InitWindows(sMoveRelearnerWindowTemplates);
 	#endif
 }
+
+void HideMoveReminderBg1Palette(void)
+{
+	Memset(&gPlttBufferFaded[0], RGB_BLACK, sizeof(u16) * 16);
+}

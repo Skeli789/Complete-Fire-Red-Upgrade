@@ -340,7 +340,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x2BF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x2C7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x2CF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x30F, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x30F, METATILE_General_TreeSideRight, Tileset_CraterTown},
 	{0x319, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
 	{0x321, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x329, METATILE_General_TreeSideLeft, Tileset_CraterTown},
@@ -1491,7 +1491,9 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 		}
 		if (UpdatePoisonStepCounter() == TRUE)
 		{
-			ScriptContext1_SetupScript(EventScript_Poison);
+			#ifndef POISON_1_HP_SURVIVAL
+			ScriptContext1_SetupScript(EventScript_Poison); //Tries to faint Pokemon
+			#endif
 			return TRUE;
 		}
 		if (ShouldEggHatch())
@@ -1887,9 +1889,10 @@ s32 DoPoisonFieldEffect(void)
 			numPoisoned++;
 		}
 	}
+
 	if (numSurvived != 0)
 	{
-		return FLDPSN_NONE;
+		return FLDPSN_FNT; //Triggers the script
 	}
 	if (numFainted != 0 || numPoisoned != 0)
 	{
@@ -1948,6 +1951,7 @@ bool8 UpdateRepelCounter(void)
 			#endif
 		}
 	}
+
 	return FALSE;
 }
 

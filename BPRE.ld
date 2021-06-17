@@ -689,6 +689,7 @@ AddSpriteIndex = 0x8072798 | 1;
 WaitAnimFrameCount = 0x80727FC | 1;
 IsBattlerSpriteVisible = 0x8072DF0 | 1;
 MoveBattlerSpriteToBG = 0x8072E48 | 1;
+ResetBattleAnimBg = 0x8073128 | 1;
 sub_807331C = 0x807331C | 1;
 GetBattlerSpriteCoord = 0x8074480 | 1;
 GetBattlerSpriteCoord2 = 0x8074844 | 1;
@@ -714,6 +715,7 @@ InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 InitAnimLinearTranslation = 0x80754F8 | 1;
 StartAnimLinearTranslation = 0x8075590 | 1;
 AnimTranslateLinear = 0x80755E0 | 1;
+InitAndRunAnimFastLinearTranslation = 0x8075764 | 1;
 SetSpriteRotScale = 0x8075858 | 1;
 PrepareBattlerSpriteForRotScale = 0x80758E0 | 1;
 ResetSpriteRotScale = 0x8075980 | 1;
@@ -833,7 +835,7 @@ GetValidMonIconPalettePtr = 0x80971CC | 1;
 GetValidMonIconPalIndex = 0x80971F8 | 1;
 GetMonIconPaletteIndexFromSpecies = 0x8097218 | 1;
 UpdateMonIconFrame = 0x8097228 | 1;
-
+SetPartyHPBarSprite = 0x8097414 | 1;
 
 /* Wild Encounter Functions */
 ChooseWildMonIndex_Land = 0x808274C | 1;
@@ -1289,6 +1291,8 @@ EventObjectFaceOppositeDirection = 0x080642C8 | 1;
 InitObjectPriorityByZCoord = 0x8068248 | 1;
 ZCoordToPriority = 0x8068294 | 1;
 SetObjectSubpriorityByZCoord = 0x80682F8 | 1;
+DoGroundEffects_OnBeginStep = 0x806883C | 1;
+DoGroundEffects_OnFinishStep = 0x8068890 | 1;
 FreezeEventObject = 0x80688E4 | 1;
 UnfreezeEventObjects = 0x8068A5C | 1;
 LockSelectedEventObject = 0x806966C | 1;

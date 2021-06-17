@@ -904,9 +904,9 @@ void RunTurnActionsFunctions(void)
 			u8 bank = gBanksByTurnOrder[i];
 			u8 action = gActionsByTurnOrder[i];
 
-			if (gNewBS->CustapQuickClawIndicator & gBitTable[bank])
+			if (gNewBS->quickClawCustapIndicator & gBitTable[bank])
 			{
-				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
+				gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
 
 				if (action == ACTION_USE_ITEM)
 					continue;
@@ -917,6 +917,8 @@ void RunTurnActionsFunctions(void)
 				gLastUsedItem = ITEM(bank);
 				if (ITEM_EFFECT(bank) != ITEM_EFFECT_CUSTAP_BERRY)
 					RecordItemEffectBattle(bank, ITEM_EFFECT(bank));
+				else
+					gNewBS->ateCustapBerry |= gBitTable[bank];
 
 				BattleScriptExecute(BattleScript_QuickClaw);
 				gCurrentActionFuncId = savedActionFuncId;
@@ -924,7 +926,7 @@ void RunTurnActionsFunctions(void)
 			}
 		}
 	}
-	
+
 	gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
 
 	//Try to Mega Evolve/Ultra Burst Pokemon
@@ -1172,8 +1174,8 @@ void HandleAction_UseMove(void)
 					&& gActionsByTurnOrder[j] != ACTION_SWITCH
 					&& gActionsByTurnOrder[i] != ACTION_FINISHED
 					&& gActionsByTurnOrder[j] != ACTION_FINISHED
-					&& !(gBitTable[bank1] & gNewBS->turnOrderLocked)
-					&& !(gBitTable[bank2] & gNewBS->turnOrderLocked))
+					&& !(gNewBS->turnOrderLocked & gBitTable[bank1])
+					&& !(gNewBS->turnOrderLocked & gBitTable[bank2]))
 				{
 					if (GetWhoStrikesFirstUseLastBracketCalc(bank1, bank2))
 						SwapTurnOrder(i, j);
@@ -1974,35 +1976,41 @@ s32 BracketCalc(u8 bank)
 	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
 
-	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
+	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
-		switch (itemEffect) {
-			case ITEM_EFFECT_QUICK_CLAW:
-				if (gRandomTurnNumber < (0xFFFF * itemQuality) / 100)
-				{
-					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-					return 1;
-				}
-				break;
+		if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
+			return 1;
+		else
+		{
+			switch (itemEffect) {
+				case ITEM_EFFECT_QUICK_CLAW:
+					if (gRandomTurnNumber < (0xFFFF * itemQuality) / 100)
+					{
+						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
+						return 1;
+					}
+					break;
 
-			case ITEM_EFFECT_CUSTAP_BERRY:
-				if (!ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-				#ifdef ABILITY_ASONE_GRIM
-				&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-				#endif
-				#ifdef ABILITY_ASONE_CHILLING
-				&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-				#endif
-				&& PINCH_BERRY_CHECK(bank))
-				{
-					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-					return 1;
-				}
-				break;
+				case ITEM_EFFECT_CUSTAP_BERRY:
+					if (PINCH_BERRY_CHECK(bank)
+						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
+						#ifdef ABILITY_ASONE_GRIM
+						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
+						#endif
+						#ifdef ABILITY_ASONE_CHILLING
+						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
+						#endif
+						)
+					{
+						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
+						return 1;
+					}
+					break;
 
-			case ITEM_EFFECT_LAGGING_TAIL:
-				return -2;
+				case ITEM_EFFECT_LAGGING_TAIL:
+					return -2;
+			}
 		}
 
 		if (ability == ABILITY_STALL)

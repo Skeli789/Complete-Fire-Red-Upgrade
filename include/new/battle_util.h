@@ -107,6 +107,7 @@ bool8 WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(u8 atkType1, u
 bool8 IsAffectedByElectricTerrain(u8 bank);
 bool8 IsMonAffectedByElectricTerrain(struct Pokemon* mon);
 bool8 WeatherHasEffect(void);
+bool8 IsChoiceAbility(u8 ability);
 bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability);
 
 void ClearBankStatus(u8 bank);

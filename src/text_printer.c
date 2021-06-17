@@ -8,6 +8,9 @@ extern struct TextPrinter sTextPrinters[];
 
 bool8 IsAutoScrollEnabled(void)
 {
+	if (gMain.inBattle)
+		return FALSE; //Only in the overworld
+
 	#ifdef AUTOSCROLL_TEXT_BY_HOLDING_R
 	return TRUE;
 	#endif

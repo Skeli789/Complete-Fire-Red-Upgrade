@@ -1171,6 +1171,8 @@ static bool8 RockClimb_WaitStopRockClimb(unusedArg struct Task *task, struct Eve
 		ScriptContext2_Disable();
 		DestroySprite(&gSprites[eventObject->fieldEffectSpriteId]);
 		FieldEffectActiveListRemove(FLDEFF_USE_ROCK_CLIMB);
+		eventObject->triggerGroundEffectsOnMove = TRUE;
+		DoGroundEffects_OnBeginStep(eventObject, &gSprites[eventObject->spriteId]); //In case you land in tall grass
 		DestroyTask(FindTaskIdByFunc(Task_UseRockClimb));
 	}
 

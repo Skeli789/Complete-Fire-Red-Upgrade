@@ -689,7 +689,7 @@ void CancelMultiTurnMoves(u8 battler)
 	gBattleMons[battler].status2 &= ~(STATUS2_UPROAR);
 	gBattleMons[battler].status2 &= ~(STATUS2_BIDE);
 
-	gStatuses3[battler] &= ~(STATUS3_SEMI_INVULNERABLE);
+	gStatuses3[battler] &= (~(STATUS3_SEMI_INVULNERABLE) | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET); //Sky Drop is removed seperately
 
 	gDisableStructs[battler].rolloutTimer = 0;
 	gDisableStructs[battler].furyCutterCounter = 0;
@@ -1645,9 +1645,14 @@ bool8 WeatherHasEffect(void)
 	return TRUE;
 }
 
+bool8 IsChoiceAbility(u8 ability)
+{
+	return ability == ABILITY_GORILLATACTICS;
+}
+
 bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability)
 {
-	return itemEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS;
+	return itemEffect == ITEM_EFFECT_CHOICE_BAND || IsChoiceAbility(ability);
 }
 
 void ClearBankStatus(u8 bank)

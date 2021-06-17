@@ -807,7 +807,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				default:
-					if (MoveEffectInMoveset(EFFECT_0HKO, bankAtk))
+					if (OHKOMoveInMovesetThatAffects(bankAtk, bankDef, data))
 						INCREASE_STATUS_VIABILITY(2);
 			}
 			break;

@@ -28,8 +28,6 @@ cmd49.c
 */
 
 //TODO:
-//Make sure there's no choice lock glitch
-//Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
 
 /*Fix references to:
@@ -342,10 +340,15 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE
 			&& gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
 			{
+				gBankTarget = gNewBS->skyDropAttackersTarget[gBankAttacker];
 				gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
 				gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
 				gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
 				gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
+				gActiveBattler = gBankTarget;
+				EmitSpriteInvisibility(0, FALSE);
+				MarkBufferBankForExecution(gActiveBattler);
+
 				gBattleScripting.bank = gBankTarget;
 				gBattleStringLoader = FreedFromSkyDropString;
 				BattleScriptPushCursor();
@@ -386,19 +389,23 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			|| !(gStatuses3[gBankAttacker] & (STATUS3_SEMI_INVULNERABLE))
 			|| WasUnableToUseMove(gBankAttacker))
 			{
-				gActiveBattler = gBankAttacker;
-				EmitSpriteInvisibility(0, FALSE);
-				MarkBufferBankForExecution(gActiveBattler);
-				gStatuses3[gBankAttacker] &= ~(STATUS3_SEMI_INVULNERABLE);
-				gSpecialStatuses[gBankAttacker].restoredBankSprite = 1;
-				gBattleScripting.atk49_state++;
-				return;
+				if (arg1 != ARG_IN_FUTURE_ATTACK)
+				{
+					gActiveBattler = gBankAttacker;
+					EmitSpriteInvisibility(0, FALSE);
+					MarkBufferBankForExecution(gActiveBattler);
+					gStatuses3[gBankAttacker] &= ~(STATUS3_SEMI_INVULNERABLE);
+					gSpecialStatuses[gBankAttacker].restoredBankSprite = 1;
+					gBattleScripting.atk49_state++;
+					return;
+				}
 			}
 			gBattleScripting.atk49_state++;
 			break;
 
 		case ATK49_TARGET_VISIBLE: // make target sprite visible
-			if (!gSpecialStatuses[gBankTarget].restoredBankSprite
+			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&& !gSpecialStatuses[gBankTarget].restoredBankSprite
 			&& gBankTarget < gBattlersCount
 			&& !(gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE))
 			{
@@ -425,7 +432,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						{
 							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{
-								if (moveToChoice == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								if ((moveToChoice == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								|| (gBattleMoves[moveToChoice].effect == EFFECT_TRICK
+								 && MOVE_HAD_EFFECT && !IsChoiceAbility(ABILITY(gBankAttacker)))) //Used Trick to obtain a Choice item - don't lock into move
 								{
 									gBattleScripting.atk49_state++;
 									break;
@@ -1578,7 +1587,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gBattlescriptCurrInstr += 3;
 }
 
-static const bank_t gTargetsByBank[4][4] =
+static const bank_t sTargetsByBank[4][4] =
 {
 	{B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, B_POSITION_PLAYER_RIGHT, 0xFF},	//Bank 0 - Player Left
 	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left
@@ -1586,9 +1595,23 @@ static const bank_t gTargetsByBank[4][4] =
 	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, 0xFF}  		//Bank 3 - Opponent Right
 };
 
+static const bank_t sRaidTargetsByBank[4][4] =
+{
+	{B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, 0xFF},	//Bank 0 - Player Left
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left
+	{B_POSITION_PLAYER_LEFT, B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 2 - Player Right
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, 0xFF}  		//Bank 3 - Opponent Right (Doesn't Exist)
+};
+
 bank_t GetNextMultiTarget(void)
 {
-	u8 pos = gTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+	u8 pos;
+	
+	if (IsRaidBattle()) //Raid battles have special orders so damage to a partner is resolved first (in case the turn is prematurely ended due to the Raid boss' defeat)
+		pos = sRaidTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+	else
+		pos = sTargetsByBank[gBankAttacker][gNewBS->OriginalAttackerTargetCount];
+
 	if (pos != 0xFF)
 		return GetBattlerAtPosition(pos);
 

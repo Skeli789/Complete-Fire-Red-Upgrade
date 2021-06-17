@@ -6,24 +6,13 @@
 .include "../asm_defines.s"
 
 @@ Move Reminder
-.global FixReminderCalloc
-.global FixNumMovesLimiter
-.global FixMultiUseTemplate
-.global FixLoadMoveId1
-.global FixLoadMoveId2
-.global FixLoadMoveId3
-.global FixLoadMoveId4
-.global FixLoadMoveId5
-.global FixMoveNameLoading
-.global FixMoveReminderDataLoading
-.global FixWindowTemplates
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - fix move to load data from
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixMoveReminderDataLoading:
+MoveReminderHook_FixDataLoading:
 	bl GetMoveIdFromRelearnerStruct
 	ldr r1, =(0x080E54D8 +1)
 	bx r1
@@ -34,7 +23,7 @@ FixMoveReminderDataLoading:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixMoveNameLoading:
+MoveReminderHook_FixMoveNameLoading:
 	mov r0, r3	@cursor pos
 	bl CopyMoveReminderMoveName
 	ldr r1, =(0x080E5250 +1)
@@ -46,21 +35,22 @@ FixMoveNameLoading:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixNumRelearnableMoves:
+MoveReminderHook_FixNumRelearnableMoves:
 	push {r4-r7}
 	bl GetRelearnableMoves
 	pop {r4-r7}
 	mov r12, r0		@total list num count
 	mov r8, r0
 	ldr r2, =(0x080E51AA +1)
+bxr2:
 	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Move Reminder - Fix Window Templates
+@ Move Reminder - Fix Window Templates and Palette
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixWindowTemplates:
+MoveReminderHook_FixWindowTemplates:
 	push {r1-r7}
 	bl InitMoveRelearnerWindows
 	pop {r1-r7}
@@ -73,6 +63,19 @@ ExitMoveRelearnGuiInit:
 	ldr r1, =(0x80E476C +1)
 	bx r1
 
+.align 2
+.pool
+@0x80E4760 with r2
+MoveReminderHook_FixBgPalette:
+	ldr r2, =SetGpuReg
+	bl bxr2
+	mov r0, #0x14
+	mov r1, #0x0
+	ldr r2, =SetGpuReg
+	bl bxr2
+	bl HideMoveReminderBg1Palette
+	ldr r0, =0x80E476C | 1
+	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder Calloc
@@ -80,7 +83,7 @@ ExitMoveRelearnGuiInit:
 .align 2
 .pool
 @ E47A4 via r0
-FixReminderCalloc:
+MoveReminderHook_FixCalloc:
 	bl InitLearnMoveFix
 	ldr r0, =(0x080E47AC +1)
 	bx r0
@@ -90,7 +93,7 @@ FixReminderCalloc:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixLoadMoveId1:
+MoveReminderHook_FixLoadMoveId1:
 	push {r0, r2-r7}
 	ldrb r0, [r1]	@cursor pos
 	bl GetMoveIdFromRelearnerStruct
@@ -101,7 +104,7 @@ FixLoadMoveId1:
 
 .align 2
 .pool
-FixLoadMoveId2:
+MoveReminderHook_FixLoadMoveId2:
 	push {r0-r3, r5-r7}
 	ldrb r0, [r4]	@ cursor pos
 	bl GetMoveIdFromRelearnerStruct
@@ -112,7 +115,7 @@ FixLoadMoveId2:
 
 .align 2
 .pool
-FixLoadMoveId3:
+MoveReminderHook_FixLoadMoveId3:
 	push {r0, r3-r7}	@gMoveRelearnerStruct
 	mov r0, r2
 	bl GetMoveIdFromRelearnerStruct
@@ -123,7 +126,7 @@ FixLoadMoveId3:
 
 .align 2
 .pool
-FixLoadMoveId4:
+MoveReminderHook_FixLoadMoveId4:
 	mov r0, r1
 	bl GetMoveIdFromRelearnerStruct
 	mov r1, r0
@@ -133,7 +136,7 @@ FixLoadMoveId4:
 
 .align 2
 .pool
-FixLoadMoveId5:
+MoveReminderHook_FixLoadMoveId5:
 	bl InitMoveRelearnerMoveIDs
 	ldr r4, =(0x080E4F9C +1)
 	bx r4

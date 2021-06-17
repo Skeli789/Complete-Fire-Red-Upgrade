@@ -1185,10 +1185,10 @@ static void ClearDamageByMove(u8 bankAtk, u8 bankDef, u8 movePos)
 
 move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
-	u16 move;
 	u32 predictedDamage;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
 	u32 highestDamage = 0;
+	u16 bestMoveAcc = 0;
 	u16 defHP = gBattleMons[bankDef].hp;
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
@@ -1208,7 +1208,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 
 	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		move = gBattleMons[bankAtk].moves[i];
+		u16 move = gBattleMons[bankAtk].moves[i];
 		if (move == MOVE_NONE)
 			break;
 
@@ -1224,90 +1224,80 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 
 			if (moveEffect == EFFECT_0HKO)
 			{
-				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = FALSE;
-				gNewBS->ai.damageByMove[bankAtk][bankDef][i] = 0;
-				if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
+				if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level
+				|| (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
+				|| (ABILITY(bankDef) == ABILITY_STURDY)
+				|| (IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS)) //Not hitting Raid shield
+				|| !(MoveWillHit(move, bankAtk, bankDef))) //Never worth the risk unless it's a sure hit
 					continue;
-				if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
-					continue;
-				if (ABILITY(bankDef) == ABILITY_STURDY)
-					continue;
-				if (MoveWillHit(move, bankAtk, bankDef))
-				{
-					gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = TRUE;
-					gNewBS->ai.damageByMove[bankAtk][bankDef][i] = defHP;
-					return move; //No stronger move that OHKO move that can kill
-				}
 			}
-			else
-			{
-				predictedDamage = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, &damageData);
+	
+			predictedDamage = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, &damageData);
 
-				if (predictedDamage > (u32) highestDamage)
+			if (predictedDamage > (u32) highestDamage)
+			{
+				strongestMove = move;
+				highestDamage = predictedDamage;
+			}
+			else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
+			&& moveEffect != EFFECT_COUNTER
+			&& moveEffect != EFFECT_MIRROR_COAT) //Never try to make counter moves a priority unless they do the most damage
+			{
+				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
 				{
 					strongestMove = move;
-					highestDamage = predictedDamage;
 				}
-				else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
-				&& moveEffect != EFFECT_COUNTER
-				&& moveEffect != EFFECT_MIRROR_COAT) //Never try to make counter moves a priority unless they do the most damage
+				else
 				{
-					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
+					//Find which move has better Acc
+					u16 currAcc = (MoveWillHit(move, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(move, bankAtk, bankDef);
+
+					if (currAcc > bestMoveAcc && bestMoveAcc < 100)
 					{
+						//This move has a better chance of hitting
 						strongestMove = move;
+						bestMoveAcc = currAcc;
 					}
-					else
+					else if (currAcc == bestMoveAcc || currAcc >= 100)
 					{
-						//Find which move has better Acc
-						u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
-						u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
-
-						if (currAcc > bestMoveAcc)
+						if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
 						{
-							//This move has a better chance of hitting
-							strongestMove = move;
-						}
-						else if (currAcc == bestMoveAcc || currAcc >= 100)
-						{
-							if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
+							//Pick a non-contact move if contact is a bad idea
+							if (badIdeaToMakeContact)
 							{
-								//Pick a non-contact move if contact is a bad idea
-								if (badIdeaToMakeContact)
+								bool8 strongestMoveContact = CheckContact(strongestMove, bankAtk);
+								bool8 currMoveContact = CheckContact(move, bankAtk);
+
+								if (strongestMoveContact && !currMoveContact)
 								{
-									bool8 strongestMoveContact = CheckContact(strongestMove, bankAtk);
-									bool8 currMoveContact = CheckContact(move, bankAtk);
-
-									if (strongestMoveContact && !currMoveContact)
-									{
-										//The new move isn't contact unlike the old best move
-										strongestMove = move;
-										continue; //Proceed to next move
-									}
-									else if (!strongestMoveContact && currMoveContact)
-										continue; //Check the next move - this move is out
+									//The new move isn't contact unlike the old best move
+									strongestMove = move;
+									continue; //Proceed to next move
 								}
-
-								//Pick a non-recoil move preferably
-								if (takesRecoilDamage)
-								{
-									bool8 strongestMoveRecoil = CheckRecoil(strongestMove);
-									bool8 currMoveRecoil = CheckRecoil(move);
-
-									if (strongestMoveRecoil && !currMoveRecoil)
-									{
-										//Prefer the move that doesn't do recoil damage
-										strongestMove = move;
-										continue; //Proceed to next move
-									}
-									else if (!strongestMoveRecoil && currMoveRecoil)
-										continue; //Check the next move - this move is out
-								}
+								else if (!strongestMoveContact && currMoveContact)
+									continue; //Check the next move - this move is out
 							}
 
-							//Pick a move at random.
-							if (Random() & 1)
-								strongestMove = move;
+							//Pick a non-recoil move preferably
+							if (takesRecoilDamage)
+							{
+								bool8 strongestMoveRecoil = CheckRecoil(strongestMove);
+								bool8 currMoveRecoil = CheckRecoil(move);
+
+								if (strongestMoveRecoil && !currMoveRecoil)
+								{
+									//Prefer the move that doesn't do recoil damage
+									strongestMove = move;
+									continue; //Proceed to next move
+								}
+								else if (!strongestMoveRecoil && currMoveRecoil)
+									continue; //Check the next move - this move is out
+							}
 						}
+
+						//Pick a move at random.
+						if (Random() & 1)
+							strongestMove = move;
 					}
 				}
 			}
@@ -1447,7 +1437,7 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD
 	||  defAbility == ABILITY_NOGUARD
-	||  (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
+	|| (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
 		return TRUE;
 
 	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !gSpecialMoveFlags[move].gIgnoreInAirMoves)
@@ -1793,9 +1783,13 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 				return TRUE;
 			break;
 		case EFFECT_0HKO:
-			if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
+			if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
 				return TRUE;
 			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
+				return TRUE;
+			if (IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS))
+				return TRUE;
+			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move) && ABILITY(bankDef) == ABILITY_STURDY)
 				return TRUE;
 			break;
 		case EFFECT_SUCKER_PUNCH:
@@ -1895,7 +1889,7 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 				return TRUE;
 			break;
 		case EFFECT_0HKO:
-			if (GetMonData(monAtk, MON_DATA_LEVEL, NULL) <= gBattleMons[bankDef].level)
+			if (GetMonData(monAtk, MON_DATA_LEVEL, NULL) < gBattleMons[bankDef].level)
 				return TRUE;
 			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 				return TRUE;
@@ -3344,7 +3338,7 @@ bool8 PivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 			 || gBattleMoves[move].effect == EFFECT_TELEPORT))
 			{
 				if (SPLIT(move) != SPLIT_STATUS
-				&& (TypeCalc(move, bankAtk, bankDef, NULL, FALSE) & MOVE_RESULT_NO_EFFECT
+				&& (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT
 				 || IsDamagingMoveUnusable(move, bankAtk, bankDef)))
 					continue; //A move like Volt Switch doesn't affect
 
@@ -3373,13 +3367,38 @@ bool8 FastPivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 			&& gBattleMoves[move].effect == EFFECT_BATON_PASS)
 			{
 				if (SPLIT(move) != SPLIT_STATUS
-				&& (TypeCalc(move, bankAtk, bankDef, NULL, FALSE) & MOVE_RESULT_NO_EFFECT
+				&& (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT
 				 || IsDamagingMoveUnusable(move, bankAtk, bankDef)))
 					continue; //A move like Volt Switch doesn't affect
 
 				if (MoveWouldHitFirst(move, bankAtk, bankDef))
 					return TRUE;
 			}
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 OHKOMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData)
+{
+	if (IsDynamaxed(bankDef))
+		return FALSE;
+
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations)
+		&& gBattleMoves[move].effect == EFFECT_0HKO)
+		{
+			if (AIScript_Negatives(bankAtk, bankDef, move, 100, aiScriptData) >= 100) //Not bad idea to use
+				return TRUE;
 		}
 	}
 
@@ -3422,7 +3441,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 						return TRUE;
 
 				CHECK_AFFECTS:
-					if (!(TypeCalc(move, bankAtk, bankDef, NULL, FALSE) & MOVE_RESULT_NO_EFFECT) //Move affects
+					if (!(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
 					&& IsDamagingMoveUnusable(move, bankAtk, bankDef)) //And can be used
 						return TRUE;
 					break;
@@ -3629,7 +3648,7 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 				&&  CanKnockOffItem(bankDef))
 					return FALSE; //Using Knock-Off is good even if it does minimal damage
 
-				if (TypeCalc(move, bankAtk, bankDef, NULL, FALSE) & MOVE_RESULT_SUPER_EFFECTIVE)
+				if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_SUPER_EFFECTIVE)
 					hasSuperEffectiveMove = TRUE;
 
 				++numDamageMoves; //By default can't be a status move here

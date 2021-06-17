@@ -1776,7 +1776,9 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 		)
 		{
 			u16 hpDiff = oldMaxHP - GetMonData(mon, MON_DATA_MAX_HP, NULL);
-			if (GetMonData(mon, MON_DATA_HP, NULL) == oldHP) //HP didn't change for some reason
+			if (oldHP == 0) //Mon was fainted before
+				SetMonData(mon, MON_DATA_HP, &oldHP); //Keep it fainted
+			else if (GetMonData(mon, MON_DATA_HP, NULL) == oldHP) //HP didn't change for some reason
 			{
 				if (hpDiff > oldHP)
 					oldHP = 1; //Don't faint it
@@ -1785,7 +1787,7 @@ static void ItemUseCB_EVReducingBerry(u8 taskId, TaskFunc func)
 
 				SetMonData(mon, MON_DATA_HP, &oldHP);
 			}
-		
+
 			UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon); //So Max HP Updates
 		}
 

@@ -32793,7 +32793,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
+		.ability = FRONTIER_ABILITY_2, //ABILITY_CLEARBODY
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -54512,7 +54512,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
+		.ability = FRONTIER_ABILITY_2, //ABILITY_CLEARBODY
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -62025,7 +62025,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.defEv = 40,
 		.spDefEv = 116,
 		.spdEv = 116,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_CLEARBODY
+		.ability = FRONTIER_ABILITY_2, //ABILITY_CLEARBODY
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{

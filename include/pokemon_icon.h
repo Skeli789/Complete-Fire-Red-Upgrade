@@ -15,9 +15,9 @@ void __attribute__((long_call)) FreeMonIconPalettes(void);
 void __attribute__((long_call)) SafeFreeMonIconPalette(u16 species);
 void __attribute__((long_call)) FreeMonIconPalette(u16 species);
 void __attribute__((long_call)) SpriteCB_PokeIcon(struct Sprite *sprite);
+void __attribute__((long_call)) SetPartyHPBarSprite(struct Sprite *sprite, u8 animNum);
 const u16* __attribute__((long_call)) GetValidMonIconPalettePtr(u16 species);
 u8 __attribute__((long_call)) GetValidMonIconPalIndex(u16 species);
 u8 __attribute__((long_call)) GetMonIconPaletteIndexFromSpecies(u16 species);
 const u16* __attribute__((long_call)) GetValidMonIconPalettePtr(u16 species);
 u8 __attribute__((long_call)) UpdateMonIconFrame(struct Sprite *sprite);
-
