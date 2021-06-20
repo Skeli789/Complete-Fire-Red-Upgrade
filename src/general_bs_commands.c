@@ -812,6 +812,7 @@ void atk0D_critmessage(void)
 	
 		if (stringId != 0)
 		{
+			++gNewBS->criticalHitsThisBattle[gBattlerPartyIndexes[gBankAttacker]];
 			PrepareStringBattle(stringId, gBankAttacker);
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}

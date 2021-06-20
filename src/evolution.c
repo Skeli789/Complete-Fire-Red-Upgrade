@@ -12,14 +12,17 @@
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
+
 /*
 evolution.c
 	handles old and new evolution methods
 */
 
+static bool8 HasHighNature(struct Pokemon* mon);
+
 u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 {
-	int i, j;
+	u32 i, j;
 	u16 targetSpecies = 0;
 	u32 personality = mon->personality;
 	u16 species = mon->species;
@@ -253,6 +256,35 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 				case EVO_FLAG_SET:
 					if (FlagGet(gEvolutionTable[species][i].param))
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				case EVO_CRITICAL_HIT:
+					if (gMain.callback2 == BattleMainCB2) //Only after battles
+					{
+						for (j = 0; i < PARTY_SIZE; ++i)
+						{
+							if (mon == &gPlayerParty[j] || mon == &gEnemyParty[j]) //Get the correct mon id
+							{
+								if (gScored3CritsInBattle & gBitTable[i])
+									targetSpecies = gEvolutionTable[species][i].targetSpecies;
+								break;
+							}
+						}
+					}
+					break;
+
+				case EVO_NATURE_HIGH:
+					if (level >= gEvolutionTable[species][i].param
+					&& HasHighNature(mon))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
+				case EVO_NATURE_LOW:
+					if (level >= gEvolutionTable[species][i].param
+					&& !HasHighNature(mon))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+				//case EVO_DAMAGE_LOCATION:
 			}
 		}
 		break;
@@ -330,6 +362,8 @@ bool8 IsLevelUpEvolutionMethod(u8 method)
 		case EVO_LEVEL_NIGHT:
 		case EVO_LEVEL_DAY:
 		case EVO_LEVEL_SPECIFIC_TIME_RANGE:
+		case EVO_NATURE_HIGH:
+		case EVO_NATURE_LOW:
 			return TRUE;
 		default:
 			return FALSE;
@@ -371,6 +405,31 @@ bool8 IsOtherEvolutionMethod(u8 method)
 		case EVO_MOVE:
 		case EVO_OTHER_PARTY_MON:
 		case EVO_FLAG_SET:
+		case EVO_CRITICAL_HIT:
+		case EVO_DAMAGE_LOCATION:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+static bool8 HasHighNature(struct Pokemon* mon)
+{
+	switch (GetNature(mon))
+	{
+		case NATURE_HARDY:
+		case NATURE_BRAVE:
+		case NATURE_ADAMANT:
+		case NATURE_NAUGHTY:
+		case NATURE_DOCILE:
+		case NATURE_IMPISH:
+		case NATURE_LAX:
+		case NATURE_HASTY:
+		case NATURE_JOLLY:
+		case NATURE_NAIVE:
+		case NATURE_RASH:
+		case NATURE_SASSY:
+		case NATURE_QUIRKY:
 			return TRUE;
 		default:
 			return FALSE;

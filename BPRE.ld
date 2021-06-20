@@ -30,6 +30,7 @@ sSavedWildDataMapNum = 0x203E085;
 gLastDexNavSpecies = 0x203E086;
 gMultiChoice = 0x203E088;
 gPartyPresetTeamIndices = 0x203E0C0;
+gScored3CritsInBattle = 0x203E0C6;
 ExtensionState = 0x3000F28;
 sRtc = 0x3005E88;
 gClock = 0x3005EA0;
@@ -491,6 +492,7 @@ MonKnowsMove = 0x8125AC0 | 1;
 GetBattlePartyIdFromPartyId = 0x8128030 | 1;
 
 /* Battle Setup Functions */
+BattleMainCB2 = 0x8011100 | 1;
 HandleOpponentPokeSlide = 0x8011D64 | 1;
 SetEnemyElevation = 0x8076494 | 1;
 OpponentHandleIntroTrainerBallThrow = 0x8038C80 | 1;
