@@ -50,6 +50,7 @@ const u8 * const gStatusConditionStringsTable[11][2] =
 };
 
 //This file's functions:
+static void FixTheCapitalizationInDisplayedString(void);
 #ifdef OPEN_WORLD_TRAINERS
 static u8* GetOpenWorldTrainerName(bool8 female);
 #endif
@@ -444,6 +445,7 @@ void BufferStringBattle(u16 stringID)
 	}
 
 	BattleStringExpandPlaceholdersToDisplayedString(stringPtr);
+	FixTheCapitalizationInDisplayedString();
 }
 
 u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
@@ -1115,3 +1117,40 @@ static u8* GetOpenWorldTrainerName(bool8 female)
 		return gMaleFrontierNamesTable[nameId % NUM_MALE_NAMES];
 }
 #endif
+
+static bool8 IsPunctuation(u8 character)
+{
+	return character == CHAR_PERIOD
+		|| character == CHAR_EXCL_MARK
+		|| character == CHAR_QUESTION_MARK
+		|| character == CHAR_ELLIPSIS;
+}
+
+static void FixTheCapitalizationInDisplayedString(void)
+{
+	//Fixes the capitalization of the word "The" in the middle of a sentence
+	u32 i, lastChar, secondLastChar;
+	
+	for (i = 0, lastChar = EOS, secondLastChar = EOS; gDisplayedStringBattle[i] != EOS; ++i)
+	{
+		if (lastChar == CHAR_SPACE //Middle of sentence
+		&& !IsPunctuation(secondLastChar) //If it is, then a sentence just ended and this should be capital
+		&& gDisplayedStringBattle[i + 0] == CHAR_T
+		&& gDisplayedStringBattle[i + 1] == CHAR_h
+		&& gDisplayedStringBattle[i + 2] == CHAR_e
+		&& (gDisplayedStringBattle[i + 3] == CHAR_SPACE
+		 || gDisplayedStringBattle[i + 3] == EOS
+		 || IsPunctuation(gDisplayedStringBattle[i + 3]))) //Check the end of the word to not affect words starting with "The"
+		{
+			//Current word is "The" and it's not the beginning of a textbox
+			gDisplayedStringBattle[i] = CHAR_t; //Decapitalize the "T"
+		}
+
+		secondLastChar = lastChar;
+		lastChar = gDisplayedStringBattle[i];
+		if (lastChar == CHAR_NEWLINE
+		|| lastChar == CHAR_PROMPT_SCROLL
+		|| lastChar == CHAR_PROMPT_CLEAR)
+			lastChar = CHAR_SPACE; //Consider line breaks like spaces
+	}
+}

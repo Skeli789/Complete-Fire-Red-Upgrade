@@ -73,6 +73,7 @@ void atkEF_handleballthrow(void)
 	u8 ballType = ItemId_GetType(gLastUsedItem);
 	gNewBS->threwBall = TRUE;
 	if (ballType != BALL_TYPE_QUICK_BALL //Useless to offer to player after initial use
+	|| gBattleResults.battleTurnCounter > 0 //Unless the player explictly chose it after the first turn
 	#ifdef FLAG_SANDBOX_MODE
 	|| FlagGet(FLAG_SANDBOX_MODE) //Unless all balls have a 100% catch rate
 	#endif

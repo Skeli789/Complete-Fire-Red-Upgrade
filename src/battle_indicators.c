@@ -64,7 +64,9 @@ extern const u8 TeamPreviewStatusIconsTiles[];
 
 extern const u8 gText_EmptyString[];
 extern const u8 gText_TeamPreviewSingleDoubleText[];
+extern const u8 gText_TeamPreviewSingleDoubleLinkText[];
 extern const u8 gText_TeamPreviewMultiText[];
+extern const u8 gText_TeamPreviewMultiLinkText[];
 
 extern const struct SpriteTemplate gHeldItemTemplate;
 extern const struct SpriteSheet gHeldItemSpriteSheet;
@@ -1850,10 +1852,25 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	}
 
 	//Update Textbox
-	if (IsTwoOpponentBattle())
-		string = gText_TeamPreviewMultiText;
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+		{
+			if (IS_TOWER_LINK_MULTI_BATTLE)
+				string = gText_TeamPreviewMultiText;
+			else
+				string = gText_TeamPreviewMultiLinkText;
+		}
+		else
+			string = gText_TeamPreviewSingleDoubleLinkText;
+	}
 	else
-		string = gText_TeamPreviewSingleDoubleText;
+	{
+		if (IsTwoOpponentBattle())
+			string = gText_TeamPreviewMultiText;
+		else
+			string = gText_TeamPreviewSingleDoubleText;
+	}
 
 	BattleStringExpandPlaceholdersToDisplayedString(string);
 	BattlePutTextOnWindow(gDisplayedStringBattle, 0);

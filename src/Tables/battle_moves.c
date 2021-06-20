@@ -10991,7 +10991,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_DYNAMAXCANNON] =
-	{	//ANIM TODO
+	{
 		.effect = 0,
 		.power = 100,
 		.type = TYPE_DRAGON,
@@ -11295,7 +11295,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_BEHEMOTHBLADE] =
-	{	//ANIM TODO
+	{
 		.effect = 0,
 		.power = 100,
 		.type = TYPE_STEEL,
@@ -11311,7 +11311,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_BEHEMOTHBASH] =
-	{	//ANIM TODO
+	{
 		.effect = 0,
 		.power = 100,
 		.type = TYPE_STEEL,

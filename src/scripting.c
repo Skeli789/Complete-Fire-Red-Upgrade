@@ -2455,15 +2455,6 @@ static void Task_ClearItemSpriteAfterFind(u8 taskId)
 	FreeSpriteTilesByTag(ITEM_TAG);
 	FreeSpritePaletteByTag(ITEM_TAG);
 
-	#ifdef ITEM_DESCRIPTION_ACQUIRE
-	if (sHeaderBoxWindowId != 0xFF) //Description was shown
-	{
-		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
-		RemoveWindow(sHeaderBoxWindowId);
-		sHeaderBoxWindowId = 0xFF;
-	}
-	#endif
-
 	DestroyTask(taskId);
 }
 #endif
@@ -2487,6 +2478,15 @@ static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 				gSprites[spriteId2].invisible = TRUE; //Hide until destroyed
 		}
 	}
+
+	#ifdef ITEM_DESCRIPTION_ACQUIRE
+	if (sHeaderBoxWindowId != 0xFF) //Description was shown
+	{
+		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
+		RemoveWindow(sHeaderBoxWindowId);
+		sHeaderBoxWindowId = 0xFF;
+	}
+	#endif
 	#endif
 }
 

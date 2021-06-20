@@ -440,6 +440,7 @@ const species_t gMiddleCup_ItemBanList[] =
 const ability_t gSmogonMonotype_AbilityBanList[] =
 {
 	ABILITY_BATTLEBOND,
+	ABILITY_SHADOWTAG,
 	ABILITY_TABLES_TERMIN
 };
 

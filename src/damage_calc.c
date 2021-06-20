@@ -1822,12 +1822,14 @@ void AdjustDamage(bool8 checkFalseSwipe)
 
 		if (gProtectStructs[bankDef].endured || gProtectStructs[bankDef].enduredSturdy)
 		{
+			gNewBS->enduredDamage |= gBitTable[bankDef]; //Helps contact Abilities still work even if no damage was done (fixes a bug from vanilla FR)
 			resultFlags |= MOVE_RESULT_FOE_ENDURED;
 			goto END;
 		}
 
 		if (gSpecialStatuses[bankDef].focusBanded)
 		{
+			gNewBS->enduredDamage |= gBitTable[bankDef];
 			resultFlags |= MOVE_RESULT_FOE_HUNG_ON;
 			gLastUsedItem = item;
 		}
@@ -2792,20 +2794,20 @@ static u16 GetBasePower(struct DamageCalc* data)
 		if (gNewBS->ai.zMoveHelper == MOVE_NONE) //Would be set by moves like Mirror Move & Me First
 			gNewBS->ai.zMoveHelper = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
 
-		return GetZMovePower(move);
+		return data->basePower = GetZMovePower(move);
 	}
 	else if (gNewBS->dynamaxData.active) //Only active at runtime
 	{
 		gNewBS->ai.zMoveHelper = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
-		return GetMaxMovePower(move);
+		return data->basePower = GetMaxMovePower(move);
 	}
 	else if (IsZMove(move)) //Only used in AI calcs
 	{
-		return GetZMovePower(move);
+		return data->basePower = GetZMovePower(move);
 	}
 	else if (IsAnyMaxMove(move)) //Only used in AI calcs
 	{
-		return GetMaxMovePower(move);
+		return data->basePower = GetMaxMovePower(move);
 	}
 
 	switch (move) {

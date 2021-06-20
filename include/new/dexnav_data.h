@@ -206,9 +206,9 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
 	[WIN_HIDDEN_ABILITY] =
     {
         .bg = BG_TEXT,
-        .tilemapLeft = 21,
+        .tilemapLeft = 20,
         .tilemapTop = 15,
-        .width = 12,
+        .width = 10,
         .height = 3,
         .paletteNum = 15,
         .baseBlock = 91,
@@ -221,7 +221,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 27,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 127,
+        .baseBlock = 130,
     },
 	[WIN_WATER] =
 	{
@@ -231,7 +231,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 208,
+        .baseBlock = 211,
 	},
 	[WIN_LAND] =
 	{
@@ -241,7 +241,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 265,
+        .baseBlock = 268,
 	},
 	[WIN_MAP_NAME] =
 	{
@@ -251,7 +251,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 12,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 322,
+        .baseBlock = 325,
 	},
 	[WIN_INSTRUCTIONS] =
 	{
@@ -261,7 +261,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 13,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 358,
+        .baseBlock = 361,
 	},
 	[WIN_CONTEXT_MENU] =
 	{
@@ -271,7 +271,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 7,
         .height = 6,
         .paletteNum = 14,
-        .baseBlock = 384,
+        .baseBlock = 387,
 	},
 	//Base block 500 is used for frame tiles
     DUMMY_WIN_TEMPLATE
@@ -453,6 +453,7 @@ struct DexnavHudData
     u8 yProximity;
     u8 totalProximity;
     u8 environment;
+	u8 elevation;
 	u8 unownLetter;
     s16 tileX; // position of shaking grass
     s16 tileY;

@@ -133,6 +133,7 @@ BattleScript_TSAbsorb:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StickyWebSpeedDrop:
+	callasm SetStickyWebActive
 	setword BATTLE_STRING_LOADER gText_CaughtInStickyWeb
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
@@ -146,6 +147,7 @@ BattleScript_StickyWebSpeedDrop:
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 BattleScript_StickyWebSpeedDropReturn:
+	callasm ClearStickyWebActive
 	bicword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return
 	

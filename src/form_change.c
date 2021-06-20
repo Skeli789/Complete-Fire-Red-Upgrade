@@ -103,6 +103,9 @@ void SwitchOutFormsRevert(u8 bank)
 	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
 
+	if (IS_TRANSFORMED(bank))
+		return;
+
 	switch (gBattleMons[bank].species) {
 		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 		case SPECIES_CHERRIM_SUN:
@@ -195,7 +198,7 @@ void SwitchOutFormsRevert(u8 bank)
 	}
 }
 
-void FormsRevert(pokemon_t* party)
+void FormsRevert(struct Pokemon* party)
 {
 	int i;
 
@@ -203,7 +206,7 @@ void FormsRevert(pokemon_t* party)
 		TryFormRevert(&party[i]);
 }
 
-bool8 TryFormRevert(pokemon_t* mon)
+bool8 TryFormRevert(struct Pokemon* mon)
 {
 	int i;
 	u16 species = mon->species;

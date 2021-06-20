@@ -17,8 +17,8 @@
 void CB2_DoHallOfFameScreen(void);
 static void Task_Hof_InitTeamSaveData(u8 taskId);
 void Task_Hof_DisplayMon(u8 taskId);
-void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId);
-void Task_Hof_TryDisplayAnotherMon(u8 taskId);
+static void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId);
+static void Task_Hof_TryDisplayAnotherMon(u8 taskId);
 void Task_HofPC_CopySaveData(u8 taskId);
 void Task_HofPC_DrawSpritesPrintText(u8 taskId);
 void Task_HofPC_PrintMonInfo(u8 taskId);
@@ -154,7 +154,7 @@ void Task_Hof_DisplayMon(u8 taskId)
 	gTasks[taskId].func = Task_Hof_PlayMonCryAndPrintInfo;
 }
 
-void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId)
+static void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId)
 {
 	u16 currMonId = gTasks[taskId].tDisplayedMonId;
 	struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
@@ -172,7 +172,7 @@ void Task_Hof_PlayMonCryAndPrintInfo(u8 taskId)
 }
 
 
-void Task_Hof_TryDisplayAnotherMon(u8 taskId)
+static void Task_Hof_TryDisplayAnotherMon(u8 taskId)
 {
 	u16 currPokeID = gTasks[taskId].tDisplayedMonId;
 	struct HallofFameMon *currMon = &sHofMonPtr->mon[currPokeID];
@@ -336,15 +336,17 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
     u16 dexNumber;
     s32 width;
     s32 x;
+	u16 species = currMon->species;
+	
 
 	FillWindowPixelBuffer(0, 0);
 	PutWindowTilemap(0);
 
 	// dex number
-	if (currMon->species != SPECIES_EGG)
+	if (species != SPECIES_EGG)
 	{
 		stringPtr = StringCopy(text, gText_Number);
-		dexNumber = SpeciesToPokedexNum(currMon->species);
+		dexNumber = SpeciesToPokedexNum(species);
 		if (dexNumber != 0xFFFF)
 		{
             text[0] = (dexNumber / 100) + CHAR_0;
@@ -370,7 +372,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 	text[i] = EOS;
 	width = GetStringWidth(2, text, GetFontAttribute(2, FONTATTR_LETTER_SPACING));
 
-	if (currMon->species == SPECIES_EGG)
+	if (species == SPECIES_EGG)
 	{
 		x = 0x80 - width / 2;
 		WindowPrint(0, 2, x, 1, sUnknown_0840C23C, 0, text);
@@ -381,13 +383,13 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 		WindowPrint(0, 2, x, 1, sUnknown_0840C23C, 0, text);
 
 		text[0] = CHAR_SLASH;
-		stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
+		stringPtr = StringCopy(text + 1, gSpeciesNames[species]);
 
 		#if (defined NATIONAL_DEX_NIDORAN_M && defined NATIONAL_DEX_NIDORAN_F)
-		if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F)
+		if (species != NATIONAL_DEX_NIDORAN_M && species != NATIONAL_DEX_NIDORAN_F)
 		#endif
 		{
-			switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality))
+			switch (GetGenderFromSpeciesAndPersonality(species, currMon->personality))
 			{
 				case MON_MALE:
 					*stringPtr++ = CHAR_MALE;

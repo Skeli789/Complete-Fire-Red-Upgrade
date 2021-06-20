@@ -199,7 +199,7 @@ BattleScript_AquaRing:
 BattleScript_LeechSeedTurnDrain:
 	playanimation BANK_ATTACKER, ANIM_LEECH_SEED_DRAIN, ANIM_ARG_1
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
-	graphicalhpupdate BANK_ATTACKER
+	graphicalhpupdate BANK_ATTACKER @;Attacker being the mon losing health
 	datahpupdate BANK_ATTACKER
 	copyword DAMAGE_LOC HP_DEALT
 	callasm TryManipulateDamageForLeechSeedBigRoot
@@ -212,9 +212,11 @@ BattleScript_LeechSeedTurnPrintLiquidOoze:
 	setbyte MULTISTRING_CHOOSER, 0x4
 
 BattleScript_LeechSeedTurnPrintAndUpdateHp:
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
+BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock:
 	printfromtable 0x83FE558 @;gLeechSeedStringIds
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0

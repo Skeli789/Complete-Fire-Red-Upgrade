@@ -98,6 +98,7 @@ void __attribute__((long_call)) MakeObjectTemplateFromEventObjectTemplate(struct
 void __attribute__((long_call)) MakeObjectTemplateFromEventObjectGraphicsInfo(u16 graphicsId, void* callback, void* spriteTemplate, void* subspriteTables);
 u8 __attribute__((long_call)) GetMoveDirectionAnimNum(u8 direction);
 u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
+void __attribute__((long_call)) InitEventObjectPalettes(u8 palSlot);
 void __attribute__((long_call)) PatchObjectPalette(u16, u8);
 u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);
 struct EventObjectTemplate* __attribute__((long_call)) FindEventObjectTemplateByLocalId(u8 localId, struct EventObjectTemplate* templates, u8 count);
@@ -170,7 +171,6 @@ void EventObjectGetLocalIdAndMap(struct EventObject *eventObject, void *localId,
 void ShiftEventObjectCoords(struct EventObject *, s16, s16);
 void sub_808EB08(struct EventObject *, s16, s16);
 void sub_808F254(u8, u8, u8);
-void InitEventObjectPalettes(u8 palSlot);
 void UpdateEventObjectCurrentMovement(struct EventObject *, struct Sprite *, bool8(struct EventObject *, struct Sprite *));
 u8 GetWalkInPlaceFastestMovementAction(u32);
 u8 GetWalkInPlaceFastMovementAction(u32);

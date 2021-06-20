@@ -117,22 +117,6 @@ void atk00_attackcanceler(void)
 
 	gHitMarker &= ~(HITMARKER_x800000);
 
-	if (!(gHitMarker & HITMARKER_OBEYS) && !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS))
-	{
-		switch (IsMonDisobedient()) {
-			case 0:
-				break;
-			case 2:
-				gHitMarker |= HITMARKER_OBEYS;
-				return;
-			default:
-				gMoveResultFlags |= MOVE_RESULT_MISSED;
-				return;
-		}
-	}
-
-	gHitMarker |= HITMARKER_OBEYS;
-
 	if (MoveIgnoresSubstitutes(gCurrentMove, ABILITY(gBankAttacker)))
 		gNewBS->bypassSubstitute = TRUE;
 
@@ -683,6 +667,26 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			gBattleStruct->atkCancellerTracker++;
 			break;
 
+		case CANCELLER_OBEDIENCE:
+			if (!(gHitMarker & HITMARKER_OBEYS) && !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS))
+			{
+				switch (IsMonDisobedient()) {
+					case 0:
+						gHitMarker |= HITMARKER_OBEYS;
+						break;
+					case 2:
+						gHitMarker |= HITMARKER_OBEYS;
+						effect = 1;
+						break;
+					default:
+						gMoveResultFlags |= MOVE_RESULT_MISSED;
+						effect = 1;
+				}
+			}
+
+			gBattleStruct->atkCancellerTracker++;
+			break;
+
 		case CANCELLER_STANCE_CHANGE:
 		case CANCELLER_STANCE_CHANGE_2:
 			#if (defined SPECIES_AEGISLASH && defined SPECIES_AEGISLASH_BLADE)
@@ -919,6 +923,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (gTerrainType == PSYCHIC_TERRAIN
 			&& CheckGrounding(gBankTarget)
 			&& gBankAttacker != gBankTarget
+			&& (IS_SINGLE_BATTLE || gBankTarget != PARTNER(gBankAttacker)) //Can still hit partner
 			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
 			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))

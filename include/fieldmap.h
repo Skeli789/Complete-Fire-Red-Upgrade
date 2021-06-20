@@ -19,7 +19,8 @@ void __attribute__((long_call)) ApplySpecialMapPalette(u16 a0, u16 a1);
 u8 __attribute__((long_call)) MapGridGetZCoordAt(int x, int y);
 bool8 __attribute__((long_call)) MapGridIsImpassableAt(s16 x, s16 y);
 void __attribute__((long_call)) save_serialize_map(void);
-void __attribute__((long_call)) apply_map_tileset1_tileset2_palette(struct MapLayout const *mapLayout);
+void __attribute__((long_call)) LoadMapTilesetPalettes(struct MapLayout const *mapLayout);
+void __attribute__((long_call)) CopyMapTilesetsToVram(struct MapLayout const *mapLayout);
 
 /*
 u32 MapGridGetMetatileIdAt(int, int);

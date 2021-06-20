@@ -1446,6 +1446,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			gNewBS->totalDamageGiven = 0;
 			gNewBS->selfInflictedDamage = 0;
+			gNewBS->enduredDamage = 0;
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 			ResetDoublesSpreadMoveCalcs();
 

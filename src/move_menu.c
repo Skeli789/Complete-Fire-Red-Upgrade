@@ -363,6 +363,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		}
 	}
 
+	//Calculate Data For Dynamax
 	#ifdef DYNAMAX_FEATURE
 	tempMoveStruct->dynamaxed = IsDynamaxed(gActiveBattler);
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
@@ -377,56 +378,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 	#endif
 
-	gBattleScripting.dmgMultiplier = 1;
-	for (i = 0; i < MAX_MON_MOVES; ++i)
-	{
-		u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
-		u16 originalMove = gBattleMons[gActiveBattler].moves[i];
-		u16 move = (tempMoveStruct->dynamaxed) ? tempMoveStruct->possibleMaxMoves[i] : originalMove;
-
-		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
-
-		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
-		{
-			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, move, TRUE);
-			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
-
-			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
-			{
-				gNewBS->ai.zMoveHelper = originalMove;
-				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, tempMoveStruct->possibleMaxMoves[i], TRUE);
-				gNewBS->ai.zMoveHelper = MOVE_NONE;
-			}
-
-			for (j = 0; j < gBattlersCount; ++j)
-			{
-				if (j == gActiveBattler || j == PARTNER(gActiveBattler))
-				{
-					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
-					continue;
-				}
-
-				u8 moveResult = VisualTypeCalc(move, gActiveBattler, j);
-				tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = moveResult;
-			}
-		}
-		else //Single Battle or single target
-		{
-			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, move, FALSE);
-			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
-
-			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
-			{
-				gNewBS->ai.zMoveHelper = originalMove;
-				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, foe, tempMoveStruct->possibleMaxMoves[i], FALSE);
-				gNewBS->ai.zMoveHelper = MOVE_NONE;
-			}
-
-			u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
-			tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = moveResult;
-		}
-	}
-
+	//Calculate Data for Mega Evolution
 	tempMoveStruct->megaDone = gNewBS->megaData.done[gActiveBattler];
 	tempMoveStruct->ultraDone = gNewBS->ultraData.done[gActiveBattler];
 	if (!IS_TRANSFORMED(gActiveBattler) && !tempMoveStruct->dynamaxed)
@@ -464,6 +416,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		}
 	}
 
+	//Calculate Data for Z-Moves
 	tempMoveStruct->zMoveUsed = gNewBS->zMoveData.used[gActiveBattler];
 	tempMoveStruct->zPartyIndex = gNewBS->zMoveData.partyIndex[SIDE(gActiveBattler)];
 	if (!gNewBS->zMoveData.used[gActiveBattler] && !IsMegaZMoveBannedBattle() && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler))
@@ -474,6 +427,70 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		{
 			if (!(limitations & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
 				tempMoveStruct->possibleZMoves[i] = CanUseZMove(gActiveBattler, i, 0);
+		}
+	}
+	
+	//Calculate Data for Attacks
+	gBattleScripting.dmgMultiplier = 1;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
+		u16 originalMove = gBattleMons[gActiveBattler].moves[i];
+		u16 move = (tempMoveStruct->dynamaxed) ? tempMoveStruct->possibleMaxMoves[i] : originalMove;
+
+		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
+
+		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
+		{
+			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, move, TRUE);
+			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
+
+			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
+			{
+				gNewBS->ai.zMoveHelper = originalMove;
+				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, tempMoveStruct->possibleMaxMoves[i], TRUE);
+				gNewBS->ai.zMoveHelper = MOVE_NONE;
+			}
+
+			for (j = 0; j < gBattlersCount; ++j)
+			{
+				u8 foePosition = GetBattlerPosition(j);
+
+				if (j == gActiveBattler || j == PARTNER(gActiveBattler))
+				{
+					tempMoveStruct->moveResults[foePosition][i] = tempMoveStruct->zMoveResults[foePosition][i] = 0;
+					continue;
+				}
+
+				u8 moveResult = VisualTypeCalc(move, gActiveBattler, j);
+				tempMoveStruct->moveResults[foePosition][i] = tempMoveStruct->zMoveResults[foePosition][i] = moveResult;
+
+				//All Z-Moves have the same type as their base move except for these two moves
+				if ((move == MOVE_FREEZEDRY || move == MOVE_FLYINGPRESS)
+				&& tempMoveStruct->possibleZMoves[i] != MOVE_NONE)
+					tempMoveStruct->zMoveResults[foePosition][i] =  VisualTypeCalc(tempMoveStruct->zMoveResults[foePosition][i], gActiveBattler, j);
+			}
+		}
+		else //Single Battle or single target
+		{
+			u8 foePosition = GetBattlerPosition(foe);
+			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, move, FALSE);
+			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
+
+			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
+			{
+				gNewBS->ai.zMoveHelper = originalMove;
+				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, foe, tempMoveStruct->possibleMaxMoves[i], FALSE);
+				gNewBS->ai.zMoveHelper = MOVE_NONE;
+			}
+
+			u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
+			tempMoveStruct->moveResults[foePosition][i] = tempMoveStruct->zMoveResults[foePosition][i] = moveResult;
+
+			//All Z-Moves have the same type as their base move except for these two moves
+			if ((move == MOVE_FREEZEDRY || move == MOVE_FLYINGPRESS)
+			&& tempMoveStruct->possibleZMoves[i] != MOVE_NONE)
+				tempMoveStruct->zMoveResults[foePosition][i] = VisualTypeCalc(tempMoveStruct->zMoveResults[foePosition][i], gActiveBattler, foe);
 		}
 	}
 
@@ -560,6 +577,7 @@ static void MoveSelectionDisplayMoveType(void)
 	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
 		if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && !IS_GHOST_BATTLE) //Don't use this feature in link battles or battles against Ghosts
 		{
+			u8 foePosition;
 			u8 stab = 0;
 			const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;
 			if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
@@ -572,18 +590,30 @@ static void MoveSelectionDisplayMoveType(void)
 
 			u8 moveResult = 0;
 			if (IS_SINGLE_BATTLE)
-				moveResult = moveInfo->moveResults[GetBattlerPosition(FOE(gActiveBattler))][gMoveSelectionCursor[gActiveBattler]];
+			{
+				foePosition = GetBattlerPosition(FOE(gActiveBattler));
+			}
 			else if (gBattlerControllerFuncs[gActiveBattler] == HandleInputChooseTarget)
-				moveResult = moveInfo->moveResults[GetBattlerPosition(gMultiUsePlayerCursor)][gMoveSelectionCursor[gActiveBattler]];
+			{
+				foePosition = GetBattlerPosition(gMultiUsePlayerCursor);
+			}
 			else if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) <= 1) //Only 1 enemy left
 			{
 				u8 bankDef = FOE(gActiveBattler);
 				if (!BATTLER_ALIVE(bankDef))
 					bankDef = PARTNER(bankDef);
 
-				moveResult = moveInfo->moveResults[GetBattlerPosition(bankDef)][gMoveSelectionCursor[gActiveBattler]];
+				foePosition = GetBattlerPosition(bankDef);
 			}
+			else
+				goto SKIP_LOAD_MOVE_RESULT;
 
+			if (gNewBS->zMoveData.viewing)
+				moveResult = moveInfo->zMoveResults[foePosition][gMoveSelectionCursor[gActiveBattler]];
+			else
+				moveResult = moveInfo->moveResults[foePosition][gMoveSelectionCursor[gActiveBattler]];
+
+			SKIP_LOAD_MOVE_RESULT:
 			if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
 				gPlttBufferUnfaded[5 * 0x10 + 8] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
@@ -750,9 +780,10 @@ static bool8 MoveSelectionDisplayZMove(void)
 		}
 		BattlePutTextOnWindow(gDisplayedStringBattle, 3);
 
-		ZMoveSelectionDisplayPpNumber();
-		MoveSelectionCreateCursorAt(0, 0);
 		gNewBS->zMoveData.viewing = TRUE;
+		ZMoveSelectionDisplayPpNumber();
+		MoveSelectionDisplayMoveType();
+		MoveSelectionCreateCursorAt(0, 0);
 		PlaySE(2); //Turn On
 		return TRUE;
 	}

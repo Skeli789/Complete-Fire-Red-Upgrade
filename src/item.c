@@ -1127,6 +1127,23 @@ bool8 AllocateBerryPouchListBuffers(void)
 	return TRUE;
 }
 
+void PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId)
+{
+	if (gBagMenuState.cursorPos[pocketId] != 0
+	&& gBagMenuState.cursorPos[pocketId] + sBagMenuDisplay->maxShowed[pocketId] > GetNumItemsInPocket(pocketId) + 1)
+	{
+		gBagMenuState.cursorPos[pocketId] = (GetNumItemsInPocket(pocketId) + 1) - sBagMenuDisplay->maxShowed[pocketId];
+	}
+
+	if (gBagMenuState.cursorPos[pocketId] + gBagMenuState.itemsAbove[pocketId] >= GetNumItemsInPocket(pocketId) + 1)
+	{
+		if (GetNumItemsInPocket(pocketId) + 1 < 2)
+			gBagMenuState.itemsAbove[pocketId] = 0;
+		else
+			gBagMenuState.itemsAbove[pocketId] = GetNumItemsInPocket(pocketId);
+	}
+}
+
 extern struct BagSlots* sBackupPlayerBag;
 void BackupPlayerBag(void)
 {
@@ -1140,8 +1157,8 @@ void BackupPlayerBag(void)
 	sBackupPlayerBag->pocket = gBagMenuState.pocket;
 	for (i = 0; i < 3; i++)
 	{
-		sBackupPlayerBag->itemsAbove[i] = gBagMenuState.scrollPosition[i];
-		sBackupPlayerBag->cursorPos[i] = gBagMenuState.cursorPosition[i];
+		sBackupPlayerBag->itemsAbove[i] = gBagMenuState.itemsAbove[i];
+		sBackupPlayerBag->cursorPos[i] = gBagMenuState.cursorPos[i];
 	}
 
 	Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS); //Too many to use ClearItemSlots
@@ -1162,8 +1179,8 @@ void RestorePlayerBag(void)
 	gBagMenuState.pocket = sBackupPlayerBag->pocket;
 	for (i = 0; i < 3; i++)
 	{
-		gBagMenuState.scrollPosition[i] = sBackupPlayerBag->itemsAbove[i];
-		gBagMenuState.cursorPosition[i] = sBackupPlayerBag->cursorPos[i];
+		gBagMenuState.cursorPos[i] = sBackupPlayerBag->cursorPos[i];
+		gBagMenuState.itemsAbove[i] = sBackupPlayerBag->itemsAbove[i];
 	}
 
 	Free(sBackupPlayerBag);
@@ -1679,8 +1696,8 @@ static void BagMenu_CancelSort(u8 taskId)
 static void BagMenu_ConfirmSort(u8 taskId)
 {
 	s16* data = gTasks[taskId].data;
-	u16* scrollPos = &gBagMenuState.scrollPosition[gBagMenuState.pocket];
-	u16* cursorPos = &gBagMenuState.cursorPosition[gBagMenuState.pocket];
+	u16* cursorPos = &gBagMenuState.cursorPos[gBagMenuState.pocket];
+	u16* itemsAbove = &gBagMenuState.itemsAbove[gBagMenuState.pocket];
 
 	HideBagWindow(6);
 	sItemDescriptionPocket = 0x0; //Sorting Items
@@ -1688,10 +1705,10 @@ static void BagMenu_ConfirmSort(u8 taskId)
 	StringExpandPlaceholders(gStringVar4, gText_ItemsSortedBy);
 	BagPrintTextOnWindow(ShowBagWindow(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
 	SortItemsInBag(gBagMenuState.pocket, data[2]);
-	DestroyListMenuTask(data[0], scrollPos, cursorPos);
-	SetInitialScrollAndCursorPositions(gBagMenuState.pocket);
+	DestroyListMenuTask(data[0], cursorPos, itemsAbove);
+	PocketCalculateInitialCursorPosAndItemsAbove(gBagMenuState.pocket);
 	Bag_BuildListMenuTemplate(gBagMenuState.pocket);
-	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
+	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *cursorPos, *itemsAbove);
 	PlaySE(SE_CORRECT);
 	gTasks[taskId].func = Task_SortFinish;
 }

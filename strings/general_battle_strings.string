@@ -202,8 +202,14 @@ You were overwhelmed by your\ndefeat![FC][09]
 #org @gText_TeamPreviewSingleDoubleText
 [FD][1C] [FD][1D]'s Team
 
+#org @gText_TeamPreviewSingleDoubleLinkText
+[FD][20]'s Team 
+
 #org @gText_TeamPreviewMultiText
 [FD][1C] [FD][1D]'s Team\n[FD][2E] [FD][2F]'s Team
+
+#org @gText_TeamPreviewMultiLinkText
+[FD][20]'s Team\n[FD][21]'s Team 
 
 //Exp String
 

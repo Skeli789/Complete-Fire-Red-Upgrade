@@ -32,7 +32,9 @@ void atk13_printfromtable(void)
 
 	if (stringId == STRINGID_PKMNSSTATCHANGED4)
 	{	
-		if (gNewBS->intimidateActive || SIDE(gBankTarget) != SIDE(gBankAttacker))
+		if (gNewBS->intimidateActive
+		|| gNewBS->stickyWebActive
+		|| SIDE(gBankTarget) != SIDE(gBankAttacker))
 			DefiantActivation(); //Stat Fell From Enemy
 	}
 }

@@ -84,7 +84,7 @@ static void FadeDayNightPalettes()
 					bool8 hardFade = gLastRecordedFadeCoeff == 0xFF; //Set to 0xFF next so check up here
 
 					if (!palFadeActive)
-						apply_map_tileset1_tileset2_palette(gMapHeader.mapLayout);
+						LoadMapTilesetPalettes(gMapHeader.mapLayout);
 
 					gWindowsLitUp = FALSE;
 					FadeOverworldBackground(palsToFade, coeff, colour, palFadeActive); //Load/remove the palettes to fade once during the day and night
@@ -245,7 +245,7 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 	else
 	{
 		if (!palFadeActive)
-			apply_map_tileset1_tileset2_palette(gMapHeader.mapLayout);
+			LoadMapTilesetPalettes(gMapHeader.mapLayout);
 		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32); //Don't ignore colours during day
 		gWindowsLitUp = FALSE;
 	}

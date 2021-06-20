@@ -45,6 +45,7 @@ extern const u8 BattleScript_MagneticFluxStatBoost[];
 extern const u8 BattleScript_GearUpStatBoost[];
 extern const u8 BattleScript_SapSipperAromatherapy[];
 extern const u8 BattleScript_DefogAdditionalEffects[];
+extern const u8 BattleScript_DefogAdditionalEffects_PlayAttackAnim[];
 extern const u8 BattleScript_PledgeCombined[];
 extern const u8 BattleScript_PledgeReady[];
 extern const u8 BattleScript_PrintCustomString[];

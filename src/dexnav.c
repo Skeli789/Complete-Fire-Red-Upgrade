@@ -328,7 +328,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 				}
 
 				weight = Random() % scale <= scaleMax
-					&& !IsZCoordMismatchAt(gEventObjects[gPlayerAvatar->spriteId].currentElevation, topX + 7, topY + 7) //Must be on same elevation
+					&& !IsZCoordMismatchAt(sDexNavHudPtr->elevation, topX + 7, topY + 7) //Must be on same elevation
 					&& !MapGridIsImpassableAt(topX + 7, topY + 7); //Can walk on tile
 
 				if (weight)
@@ -1686,6 +1686,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 	u8 totalEncounterChance = GetTotalEncounterChance(sDexNavHudPtr->species, environment);
 	u8 randVal = (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) ? 0 : Random() % 100; //Pokemon already caught are easy to catch again
+	sDexNavHudPtr->elevation = gEventObjects[gPlayerAvatar->eventObjectId].currentElevation; //Constant elevation for all tiles (helps prevent crashes in caves)
 	//*((u8*) 0x2023D70) = randVal; //For debugging
 	if (randVal >= totalEncounterChance * 2 //Harder Pokemon to find in the area are half as hard to find with the DexNav
 	|| gDexNavCooldown
@@ -2520,7 +2521,15 @@ static void PrintGUIHiddenAbility(u16 species)
 	else
 		text = gText_DexNav_CaptureToSee;
 
-	WindowPrint(WIN_HIDDEN_ABILITY, 0, 0, 4, &sDexNav_BlackText, 0, text);
+	//Print Text
+	u8 xPos = 8;
+	u16 windowWidth = (sDexNavWinTemplates[WIN_HIDDEN_ABILITY].width - 1) * 8 - 3; //Leave at least 1 whitespace at the end
+	u16 largeWidth = GetStringWidth(0, text, 0);
+
+	if (largeWidth > windowWidth) //Too big to start at a pos of one tile over
+		xPos = 4; //Move left to fit
+
+	WindowPrint(WIN_HIDDEN_ABILITY, 0, xPos, 4, &sDexNav_BlackText, 0, text);
 	CommitWindow(WIN_HIDDEN_ABILITY);
 }
 

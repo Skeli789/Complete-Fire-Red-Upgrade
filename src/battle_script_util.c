@@ -32,7 +32,7 @@ battle_script_util.c
 */
 
 //TODO
-//-Court Change & Sticky Web Defiant Activation
+//-Court Change & Sticky Web Activation
 
 extern const u8* gBattleScriptsForMoveEffects[];
 
@@ -421,7 +421,10 @@ void DefogHelperFunc(void)
 										  | SIDE_STATUS_SAFEGUARD
 										  | SIDE_STATUS_MIST))
 	{
-		gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+		if (MOVE_HAD_EFFECT)
+			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+		else
+			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects_PlayAttackAnim - 5;
 	}
 }
 
@@ -2054,6 +2057,16 @@ void TryFailLifeDew(void)
 		gBattlescriptCurrInstr = RecoverBS - 5;
 	else if (BATTLER_MAX_HP(gBankAttacker) && BATTLER_MAX_HP(PARTNER(gBankAttacker)))
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+}
+
+void SetStickyWebActive(void)
+{
+	gNewBS->stickyWebActive = TRUE;
+}
+
+void ClearStickyWebActive(void)
+{
+	gNewBS->stickyWebActive = FALSE;
 }
 
 void ChooseTargetForMirrorArmorStickyWeb(void)

@@ -2459,6 +2459,8 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			else
 				return EventScript_CannotUseWaterfall;
 		}
+		else
+			return EventScript_WallOfWater;
 	}
 	else if (IsPlayerFacingRockClimbableWall())
 	{
@@ -2522,14 +2524,26 @@ void GetFirstNonEggIn8004(void)
 }
 
 extern void Task_UseWaterfall(u8 taskId);
+static void Task_PrepareUseWaterfall(u8 taskId)
+{
+	struct EventObject* playerObj = &gEventObjects[GetPlayerMapObjId()];
+
+	ScriptContext2_Enable();
+	if (!EventObjectIsMovementOverridden(playerObj))
+	{
+		EventObjectClearHeldMovementIfFinished(playerObj);
+		gTasks[taskId].data[0] = 2;
+		gTasks[taskId].func = Task_UseWaterfall;
+	}
+}
+
 void DoWaterfallWithNoShowMon(void)
 {
-	u8 taskId = CreateTask(Task_UseWaterfall, 0xFF);
+	u8 taskId = CreateTask(Task_PrepareUseWaterfall, 0xFF);
 	if (taskId != 0xFF)
 	{
 		ScriptContext2_Enable();
 		gPlayerAvatar->preventStep = TRUE;
-		gTasks[taskId].data[0] = 3;
 	}
 }
 
@@ -2733,6 +2747,12 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 void UseRegisteredItem(u16 registeredItem)
 {
 	u8 taskId;
+
+	if (IsMapNamePopupTaskActive())
+	{
+		ChangeBgY(0, 0, 0);
+		DismissMapNamePopup();
+	}
 
 	ScriptContext2_Enable();
 	FreezeEventObjects();

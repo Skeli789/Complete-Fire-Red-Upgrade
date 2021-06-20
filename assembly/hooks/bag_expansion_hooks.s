@@ -33,7 +33,7 @@ GetSmallestItemAmount:
 	bx r3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
+/*.pool
 OpenBagBugFix1:
 	push {r2-r3}
 	mov r0, r4
@@ -44,9 +44,9 @@ OpenBagBugFix1:
 	cmp r2, r0
 	ldr r0, =0x8108A26 | 1
 	bx r0
-
+*/
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
+/*.pool
 OpenBagBugFix2:
 	push {r1-r2}
 	mov r0, r4
@@ -55,7 +55,7 @@ OpenBagBugFix2:
 	add r3, r0, #0x1
 	ldr r4, =0x8108A4C | 1
 	bx r4
-
+*/
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 OpenBagBugFix3:

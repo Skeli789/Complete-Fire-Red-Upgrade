@@ -611,8 +611,9 @@ BerryIdFromItemId 809C8E4 1
 PrintRegisteredItemInBagHook 810872C 0
 AllocateBagItemListBuffers 81083F4 0
 PrintItemDescriptionOnMessageWindow 8108818 1
-OpenBagBugFix1 8108A1C 1
-OpenBagBugFix2 8108A40 0
+PocketCalculateInitialCursorPosAndItemsAbove 81089F4 1
+#OpenBagBugFix1 8108A1C 1
+#OpenBagBugFix2 8108A40 0
 OpenBagBugFix3 8108AC0 0
 CountItemsInBag 8108DC8 1
 GetSmallestItemAmount 8108E20 0

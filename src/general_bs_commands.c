@@ -3617,16 +3617,17 @@ void atkA6_settypetorandomresistance(void) //Conversion 2
 
 void atkA8_copymovepermanently(void) // sketch
 {
+	//Use gLastResultingMoves to allow copying Transform & Mimic. Metronome still won't be copied, though
 	gChosenMove = 0xFFFF;
 
 	if (!(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)
-	&& !IsZMove(gLastPrintedMoves[gBankTarget])
-	&& !IsAnyMaxMove(gLastPrintedMoves[gBankTarget])
-	&& gLastPrintedMoves[gBankTarget] != MOVE_STRUGGLE
-	&& gLastPrintedMoves[gBankTarget] != MOVE_CHATTER
-	&& gLastPrintedMoves[gBankTarget] != MOVE_SKETCH
-	&& gLastPrintedMoves[gBankTarget] != 0
-	&& gLastPrintedMoves[gBankTarget] != 0xFFFF)
+	&& !IsZMove(gLastResultingMoves[gBankTarget])
+	&& !IsAnyMaxMove(gLastResultingMoves[gBankTarget])
+	&& gLastResultingMoves[gBankTarget] != MOVE_STRUGGLE
+	&& gLastResultingMoves[gBankTarget] != MOVE_CHATTER
+	&& gLastResultingMoves[gBankTarget] != MOVE_SKETCH
+	&& gLastResultingMoves[gBankTarget] != 0
+	&& gLastResultingMoves[gBankTarget] != 0xFFFF)
 	{
 		int i;
 
@@ -3634,7 +3635,7 @@ void atkA8_copymovepermanently(void) // sketch
 		{
 			if (gBattleMons[gBankAttacker].moves[i] == MOVE_SKETCH)
 				continue;
-			if (gBattleMons[gBankAttacker].moves[i] == gLastPrintedMoves[gBankTarget])
+			if (gBattleMons[gBankAttacker].moves[i] == gLastResultingMoves[gBankTarget])
 				break;
 		}
 
@@ -3646,8 +3647,8 @@ void atkA8_copymovepermanently(void) // sketch
 		{
 			struct MovePpInfo movePpData;
 
-			gBattleMons[gBankAttacker].moves[gCurrMovePos] = gLastPrintedMoves[gBankTarget];
-			gBattleMons[gBankAttacker].pp[gCurrMovePos] = gBattleMoves[gLastPrintedMoves[gBankTarget]].pp;
+			gBattleMons[gBankAttacker].moves[gCurrMovePos] = gLastResultingMoves[gBankTarget];
+			gBattleMons[gBankAttacker].pp[gCurrMovePos] = gBattleMoves[gLastResultingMoves[gBankTarget]].pp;
 			gActiveBattler = gBankAttacker;
 
 			for (i = 0; i < MAX_MON_MOVES; i++)
@@ -3660,7 +3661,7 @@ void atkA8_copymovepermanently(void) // sketch
 			EmitSetMonData(0, REQUEST_MOVES_PP_BATTLE, 0, sizeof(struct MovePpInfo), &movePpData);
 			MarkBufferBankForExecution(gActiveBattler);
 
-			PREPARE_MOVE_BUFFER(gBattleTextBuff1, gLastPrintedMoves[gBankTarget])
+			PREPARE_MOVE_BUFFER(gBattleTextBuff1, gLastResultingMoves[gBankTarget])
 
 			gBattlescriptCurrInstr += 5;
 		}
@@ -3989,7 +3990,7 @@ void atkB3_rolloutdamagecalculation(void)
 	if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
 		CancelMultiTurnMoves(gBankAttacker);
-		gBattlescriptCurrInstr = BattleScript_MoveMissedPause;
+		gBattlescriptCurrInstr = BattleScript_MoveMissedPause + 2; //Skip the PP Reduce
 	}
 	else
 	{
@@ -4745,6 +4746,8 @@ void atkD2_tryswapitems(void) //Trick
 			gBattleMons[gBankTarget].item = oldItemAtk;
 			HandleUnburdenBoost(gBankAttacker); //Give or take away Unburden boost
 			HandleUnburdenBoost(gBankTarget); //Give or take away Unburden boost
+			RecordItemEffectBattle(gBankAttacker, ItemId_GetHoldEffect(ITEM(gBankAttacker))); //Must use ItemId_GetHoldEffect explicitly in case item effect can't be used currently
+			RecordItemEffectBattle(gBankTarget, ItemId_GetHoldEffect(ITEM(gBankTarget)));
 
 			gActiveBattler = gBankAttacker;
 			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gBankAttacker].item);

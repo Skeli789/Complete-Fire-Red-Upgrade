@@ -538,11 +538,14 @@ void atk51_switchhandleorder(void)
 
 void atk52_switchineffects(void)
 {
-	int i;
+	if (gBattleExecBuffer)
+		return;
+
+	u32 i;
 	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
 	if (arg == BS_GET_SCRIPTING_BANK)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
-
+	
 	gActiveBattler = GetBankForBattleScript(arg);
 	sub_80174B8(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
@@ -665,6 +668,7 @@ void atk52_switchineffects(void)
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 					gBattleMons[gActiveBattler].status1 = 0;
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+					MarkBufferBankForExecution(gActiveBattler);
 					gBattleScripting.bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
 					++gNewBS->switchInEffectsState;
@@ -685,6 +689,7 @@ void atk52_switchineffects(void)
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+				MarkBufferBankForExecution(gActiveBattler);
 
 				//PP Restored in Battle Script
 

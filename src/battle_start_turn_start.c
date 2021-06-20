@@ -1214,6 +1214,7 @@ void HandleAction_UseMove(void)
 
 	gNewBS->totalDamageGiven = 0;
 	gNewBS->selfInflictedDamage = 0;
+	gNewBS->enduredDamage = 0;
 	gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 	ResetDoublesSpreadMoveCalcs(); //Clear spread move things
 
@@ -1348,6 +1349,8 @@ void HandleAction_UseMove(void)
 			TURN_MOVE_INTO_MAX_MOVE:
 			gNewBS->dynamaxData.active = TRUE;
 			gCurrentMove = GetMaxMove(gBankAttacker, gCurrMovePos);
+			if (gCurrentMove == MOVE_MAX_GUARD)
+				gBattleStruct->moveTarget[gBankAttacker] = gBankAttacker; //Fix target to self
 		}
 	}
 

@@ -6,6 +6,8 @@
 .include "../xse_defines.s"
 .include "../asm_defines.s"
 
+.equ SPECIAL_STOP_SOUNDS, 0x9A
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global EventScript_SecondBagItemCanBeRegisteredToL
@@ -18,19 +20,18 @@ EventScript_SecondBagItemCanBeRegisteredToL:
 .global SystemScript_EnableAutoRun
 SystemScript_EnableAutoRun:
 	lockall
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x2
 	signmsg
 	msgboxsign
 	msgbox gText_AutoRunEnable MSG_SIGN
-	checksound
 	releaseall
 	end
 	
 .global SystemScript_DisableAutoRun
 SystemScript_DisableAutoRun:
 	lockall
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x3
 	msgboxsign
 	msgbox gText_AutoRunDisable MSG_SIGN
@@ -41,23 +42,21 @@ SystemScript_DisableAutoRun:
 .global SystemScript_EnableBikeTurboBoost
 SystemScript_EnableBikeTurboBoost:
 	lockall
-	@;checksound - otherwise lags after hopping on bike
+	special SPECIAL_STOP_SOUNDS
 	sound 0x2
 	signmsg
 	msgboxsign
 	msgbox gText_BikeTurboBoostEnable MSG_SIGN
-	checksound
 	releaseall
 	end
 	
 .global SystemScript_DisableBikeTurboBoost
 SystemScript_DisableBikeTurboBoost:
 	lockall
-	@;checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x3
 	msgboxsign
 	msgbox gText_BikeTurboBoostDisable MSG_SIGN
-	checksound
 	releaseall
 	end
 

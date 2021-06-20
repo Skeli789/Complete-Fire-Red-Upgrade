@@ -53,8 +53,8 @@ struct BagStruct
     u8 location;
     bool8 bagOpen;
     u16 pocket;
-    u16 cursorPosition[MAIN_POCKETS_COUNT];
-    u16 scrollPosition[MAIN_POCKETS_COUNT];
+    u16 itemsAbove[MAIN_POCKETS_COUNT];
+    u16 cursorPos[MAIN_POCKETS_COUNT];
 };
 
 extern struct BagStruct gBagMenuState; //0x203ACFC
@@ -72,7 +72,7 @@ void __attribute__((long_call)) Task_RedrawArrowsAndReturnToBagMenuSelect(u8 tas
 void __attribute__((long_call)) BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 *str, u8 left, u8 top, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 h);
 void __attribute__((long_call)) Bag_BuildListMenuTemplate(u8 pocketId);
 void __attribute__((long_call)) BagCreateYesNoMenuBottomRight(u8 a, const struct YesNoFuncTable *funcTable);
-void __attribute__((long_call)) SetInitialScrollAndCursorPositions(u8 pocketId);
+//void __attribute__((long_call)) PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId);
 void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);
 void __attribute__((long_call)) ItemMenu_StartFadeToExitCallback(u8 taskId);
 void __attribute__((long_call)) ItemMenu_SetExitCallback(void* callbackFunc);

@@ -1885,7 +1885,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 			//Only allow one Mega Stone & Z-Crystal per team
 			if (!IsPokemonBannedBasedOnStreak(species, item, builder->speciesArray, monsCount, trainerId, tier, forPlayer)
 			&& (!builder->speciesOnTeam[dexNum] || tier == BATTLE_FACILITY_NO_RESTRICTIONS)
-			&& (!ItemAlreadyOnTeam(item, monsCount, builder->itemArray) || !DuplicateItemsAreBannedInTier(builder->tier, builder->battleType))
+			&& !(ItemAlreadyOnTeam(item, monsCount, builder->itemArray) && DuplicateItemsAreBannedInTier(builder->tier, builder->battleType))
 			&& (tier == BATTLE_FACILITY_MEGA_BRAWL || itemEffect != ITEM_EFFECT_MEGA_STONE || item == ITEM_ULTRANECROZIUM_Z || !builder->itemEffectOnTeam[ITEM_EFFECT_MEGA_STONE])
 			&& ((itemEffect != ITEM_EFFECT_Z_CRYSTAL && item != ITEM_ULTRANECROZIUM_Z) || !builder->itemEffectOnTeam[ITEM_EFFECT_Z_CRYSTAL])
 			&& !PokemonTierBan(species, item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS)
@@ -2960,6 +2960,9 @@ bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier)
 
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
 {
+	if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER))
+		return FALSE; //There are no streaks outside of the Frontier
+
 	u16 streak = GetCurrentBattleTowerStreak();
 	bool8 megasZMovesBannedInTier = AreMegasZMovesBannedInTier(tier) || BATTLE_FACILITY_NUM == IN_RING_CHALLENGE;
 

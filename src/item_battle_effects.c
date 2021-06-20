@@ -227,11 +227,13 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	case ItemEffects_EndTurn:
 		gBattleScripting.bank = bank;
 
-		if (gBattleMons[bank].hp)
+		if (BATTLER_ALIVE(bank))
 		{
 			switch (bankHoldEffect) {
 			case ITEM_EFFECT_RESTORE_HP:
-				if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && !BATTLER_MAX_HP(bank)))
+			
+				if (!IsHealBlocked(bank)
+				&& ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && !BATTLER_MAX_HP(bank))))
 				{
 					if (gLastUsedItem == ITEM_SITRUS_BERRY)
 						gBattleMoveDamage = GetBaseMaxHP(bank) / 4;
@@ -810,6 +812,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 			case ITEM_EFFECT_ENIGMA_BERRY:
 				if (!doPluck
+				&& !IsHealBlocked(bank)
 				&& TOOK_DAMAGE(bank)
 				&& gMoveResultFlags == MOVE_RESULT_SUPER_EFFECTIVE
 				&& BATTLER_ALIVE(bank)
@@ -899,6 +902,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				&& bank != gBankTarget
 				&& BATTLER_ALIVE(bank)
 				&& !BATTLER_MAX_HP(bank)
+				&& !IsHealBlocked(bank)
 				&& !SheerForceCheck())
 				{
 					if (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2)
@@ -993,6 +997,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 	u8 effect = 0;
+
+	if (IsHealBlocked(bank))
+		return effect;
 
 	#ifdef OLD_CONFUSION_HEAL_BERRIES
 	if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 && !moveTurn)

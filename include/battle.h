@@ -798,6 +798,7 @@ struct NewBattleStruct
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
 	u8 hiddenAnimBattlerSprites;
+	u8 enduredDamage;
 
 	//Bit Fields for Party
 	u8 canBelch[NUM_BATTLE_SIDES];
@@ -887,6 +888,7 @@ struct NewBattleStruct
 	bool8 totemOmniboostActive : 1; //Allows Contrary mons to get the correct animation
 	bool8 dontActivateMoldBreakersAnymoreThisTurn : 1;
 	bool8 trainerSlideInProgress : 1;
+	bool8 stickyWebActive : 1;
 
 	//Other
 	u16 LastUsedMove;
