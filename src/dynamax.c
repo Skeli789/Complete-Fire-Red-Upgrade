@@ -207,7 +207,7 @@ static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
 static const struct CompressedSpriteSheet sSummaryScreenGigantamaxIconSpriteSheet =    {GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
 static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =          {GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
 #ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
-static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
+static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 2) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
 static const struct SpritePalette sSummaryScreenMaxFriendshipIconSpritePalette =       {MaxFriendshipSummaryScreenIconPal, GFX_TAG_MAX_FRIENDSHIP_ICON};
 #endif
 
@@ -1481,11 +1481,14 @@ void CreateSummaryScreenGigantamaxIcon(void)
 		ballSprite->data[0] = MAX_SPRITES; //No icon
 
 	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
-	if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL) >= 255)
+	u8 friendship = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL);
+	if (friendship >= 220)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
 		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
 		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, ballSprite->pos1.x - 78, ballSprite->pos1.y - 12, 0);
+		if (friendship < 255 && ballSprite->data[1] < MAX_SPRITES)
+			gSprites[ballSprite->data[1]].oam.tileNum += (8 / 8) * (8 / 8); //Use grayscale heart when can evolve but not max friendship
 	}
 	else
 		ballSprite->data[1] = MAX_SPRITES; //No icon
