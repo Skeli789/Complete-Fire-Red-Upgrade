@@ -1017,7 +1017,7 @@ BS_032_Recover:
 	ppreduce
 	jumpifmove MOVE_ROOST RoostBS
 	jumpifmove MOVE_LIFEDEW LifeDewBS
-	jumpifmove MOVE_JUNGLEHEALING LifeDewBS @TODO
+	jumpifmove MOVE_JUNGLEHEALING JungleHealingBS
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -1103,11 +1103,73 @@ BattleScript_LifeDewFail:
 	printstring 0x4C @;STRINGID_PKMNHPFULL
 	waitmessage DELAY_1SECOND
 	callasm SetTargetPartner
+	jumpiffainted BANK_TARGET BS_MOVE_END
 LifeDewPartnerFullHealthBS:
 	printstring 0x4C @;STRINGID_PKMNHPFULL
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+JungleHealingBS:
+	callasm TryFailJungleHealing
+	attackanimation
+	waitanimation
+	setdamageasrestorehalfmaxhp JungleHealingAttackerFullHealthBS BANK_ATTACKER
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
+	waitmessage DELAY_1SECOND
+	goto JungleHealingTryClearAttackerStatusBS
+
+JungleHealingAttackerFullHealthBS:
+	printstring 0x4C @;STRINGID_PKMNHPFULL
+	waitmessage DELAY_1SECOND
+
+JungleHealingTryClearAttackerStatusBS:
+	cureprimarystatus BANK_ATTACKER JungleHealingRestorePartnerHPBS
+	refreshhpbar BANK_ATTACKER
+	setword BATTLE_STRING_LOADER PurifyString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+
+JungleHealingRestorePartnerHPBS:
+	callasm SetTargetPartner
+	jumpiffainted BANK_TARGET BS_MOVE_END
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_NoHealPartnerAfterHealBlock_JungleHealing
+	accuracycheck JungleHealingMissedPartnerBS 0x0
+	setdamageasrestorehalfmaxhp JungleHealingPartnerFullHealthBS BANK_TARGET
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
+	waitmessage DELAY_1SECOND
+	goto JungleHealingTryClearPartnerStatusBS
+
+JungleHealingPartnerFullHealthBS:
+	printstring 0x4C @;STRINGID_PKMNHPFULL
+	waitmessage DELAY_1SECOND
+
+JungleHealingTryClearPartnerStatusBS:
+	cureprimarystatus BANK_TARGET BS_MOVE_END
+	refreshhpbar BANK_TARGET
+	setword BATTLE_STRING_LOADER PurifyString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+JungleHealingMissedPartnerBS:
+	orbyte OUTCOME OUTCOME_MISSED
+	goto BS_MOVE_MISSED_PAUSE + 4
+
+BattleScript_NoHealPartnerAfterHealBlock_JungleHealing:
+	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER HealBlockTargetString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto JungleHealingTryClearPartnerStatusBS
+	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_033_SetBadPoison

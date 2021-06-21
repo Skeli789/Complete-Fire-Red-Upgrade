@@ -847,11 +847,18 @@ static const union AnimCmd sAnimCmdPhotonGeyserBeam[] =
 	ANIMCMD_END
 };
 
+static const union AnimCmd sAnimCmdEternabeamBeam[] =
+{
+	ANIMCMD_FRAME(12, 1),
+	ANIMCMD_END
+};
+
 const union AnimCmd *const gAnimCmdTable_StarfallBeam[] =
 {
 	sAnimCmdStarfallBeam,
 	sAnimCmdSmiteBeam,
 	sAnimCmdPhotonGeyserBeam,
+	sAnimCmdEternabeamBeam,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_StarfallBeam[] =

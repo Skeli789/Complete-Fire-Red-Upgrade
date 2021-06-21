@@ -17124,10 +17124,141 @@ GENERIC_EXPLOSION:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+.equ SHORT_ETERNABEAM_DURATION, 20
+.equ ETERNABEAM_LEFT_BEHIND_X_POS, -15
+.equ ETERNABEAM_RIGHT_BEHIND_X_POS, 20
+.equ ETERNABEAM_TOP_LEFT_X_POS, -25
+.equ ETERNABEAM_TOP_RIGHT_X_POS, 10
+@Credits to Skeli
 ANIM_ETERNABEAM:
-	goto 0x81d29a7 @ANIM_HYPERBEAM
+	loadparticle ANIM_TAG_STRAIGHT_BEAM
+	loadparticle ANIM_TAG_ROUND_SHADOW
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ROUND_SHADOW 0x0 0xD 0xD 0x289F @;Pinkish Red
+	playsound2 0x97 SOUND_PAN_ATTACKER
+	launchtemplate Template_FlyBallUp 0x2 0x4 0x0 0x0 0xd 0x150 @Fly up
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL 0x0 0x0 0x10 RGB_BLACK @;To black
+	waitanimation
+	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
+	call ETERNABEAM_BEHIND_TARGET_LEFT
+	pause SHORT_ETERNABEAM_DURATION
+	call ETERNABEAM_IN_FRONT_TARGET_RIGHT
+	pause SHORT_ETERNABEAM_DURATION
+	call ETERNABEAM_BEHIND_TARGET_RIGHT
+	pause SHORT_ETERNABEAM_DURATION
+	call ETERNABEAM_IN_FRONT_TARGET_LEFT
+	pause SHORT_ETERNABEAM_DURATION
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x6 0x0 0x10 0x6A9F @;Reddish Pink
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x60 0x1
+	playsound2 0xC2 SOUND_PAN_TARGET
+	call ETERNABEAM_ON_TARGET
+	waitanimation
+	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x6A9F @;Reddish Pink
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x1 0x0 0x10 0x0 RGB_BLACK @;0x1 = Blend all except target
+	waitanimation
 	endanimation
+
+ETERNABEAM_BEHIND_TARGET_LEFT:
+	playsound2 0xC2 SOUND_PAN_TARGET
+	makebankinvisible bank_target
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS, -77, bank_target, SHORT_ETERNABEAM_DURATION, 3, 0
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS, -61, bank_target, SHORT_ETERNABEAM_DURATION, 3, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS, -45, bank_target, SHORT_ETERNABEAM_DURATION, 3, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS, -29, bank_target, SHORT_ETERNABEAM_DURATION, 3, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS, -13, bank_target, SHORT_ETERNABEAM_DURATION, 3, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS,   3, bank_target, SHORT_ETERNABEAM_DURATION, 3, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_LEFT_BEHIND_X_POS,  19, bank_target, SHORT_ETERNABEAM_DURATION, 3, 6
+	pause 0x1
+	makebankvisible bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 RGB_BLACK @;Flash from black
+	return
+
+ETERNABEAM_BEHIND_TARGET_RIGHT:
+	playsound2 0xC2 SOUND_PAN_TARGET
+	makebankinvisible bank_target
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS, -77, bank_target, SHORT_ETERNABEAM_DURATION, 3, 0
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS, -61, bank_target, SHORT_ETERNABEAM_DURATION, 3, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS, -45, bank_target, SHORT_ETERNABEAM_DURATION, 3, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS, -29, bank_target, SHORT_ETERNABEAM_DURATION, 3, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS, -13, bank_target, SHORT_ETERNABEAM_DURATION, 3, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS,   3, bank_target, SHORT_ETERNABEAM_DURATION, 3, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x42, 0x6, ETERNABEAM_RIGHT_BEHIND_X_POS,  19, bank_target, SHORT_ETERNABEAM_DURATION, 3, 6
+	pause 0x1
+	makebankvisible bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 RGB_BLACK @;Flash from black
+	return
+
+ETERNABEAM_IN_FRONT_TARGET_RIGHT:
+	playsound2 0xC2 SOUND_PAN_TARGET
+	makebankinvisible bank_target
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS, -77 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 0
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS, -61 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS, -45 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS, -29 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS, -13 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS,   3 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_RIGHT_X_POS,  19 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 6
+	pause 0x1
+	makebankvisible bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 RGB_BLACK @;Flash from black
+	return
+
+ETERNABEAM_IN_FRONT_TARGET_LEFT:
+	playsound2 0xC2 SOUND_PAN_TARGET
+	makebankinvisible bank_target
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS, -77 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 0
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS, -61 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS, -45 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS, -29 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS, -13 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS,   3 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 2, 0x6, ETERNABEAM_TOP_LEFT_X_POS,  19 + 10, bank_target, SHORT_ETERNABEAM_DURATION, 3, 6
+	pause 0x1
+	makebankvisible bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 RGB_BLACK @;Flash from black
+	return
+
+ETERNABEAM_ON_TARGET:
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -77, bank_target, 180, 3, 0
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -61, bank_target, 180, 3, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -45, bank_target, 180, 3, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -29, bank_target, 180, 3, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -13, bank_target, 180, 3, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,   3, bank_target, 180, 3, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,  19, bank_target, 180, 3, 6
+	pause 0x1
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -17959,7 +18090,40 @@ ANIM_SCORCHING_SANDS:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_JUNGLE_HEALING:
-	goto ANIM_LIFE_DEW
+	loadparticle ANIM_TAG_ROOTS
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_SPARKLE_2
+	loadBG1 BG_SNUGGLE_FOREVER
+	waitbgfadeout
+	launchtemplate Template_IngrainRoot TEMPLATE_ATTACKER | 2, 0x5 0x10 0x1a 0xffff 0x2 0x96
+	playsound2 0x94 SOUND_PAN_ATTACKER
+	pause 0xa
+	launchtemplate Template_IngrainRoot TEMPLATE_ATTACKER | 2, 0x5 0xffe0 0x14 0x1 0x1 0x8c
+	playsound2 0x94 SOUND_PAN_ATTACKER
+	pause 0xa
+	launchtemplate Template_IngrainRoot TEMPLATE_ATTACKER | 2, 0x5 0x20 0x16 0x1 0x0 0x82
+	playsound2 0x94 SOUND_PAN_ATTACKER
+	pause 0xa
+	launchtemplate Template_IngrainRoot TEMPLATE_ATTACKER | 2, 0x5 0xfff0 0x19 0xffff 0x3 0x78
+	playsound2 0x94 SOUND_PAN_ATTACKER
+	pause 0x28
+	launchtemplate Template_IngrainOrb TEMPLATE_ATTACKER | 3, 0x5 0x20 0x1a 0xffff 0x3 0x1e
+	pause 0x5
+	playsound2 0x77 SOUND_PAN_ATTACKER
+	pause 0x5
+	launchtemplate Template_IngrainOrb TEMPLATE_ATTACKER | 3, 0x5 0xffd0 0x14 0x1 0x2 0x1e
+	playsound2 0x77 SOUND_PAN_ATTACKER
+	pause 0x5
+	playsound2 0x77 SOUND_PAN_ATTACKER
+	pause 0x5
+	launchtemplate Template_IngrainOrb TEMPLATE_ATTACKER | 3, 0x5 0x30 0x1a 0xfffe 0x3 0x12
+	playsound2 0x77 SOUND_PAN_ATTACKER
+	pause 0xa
+	playsound2 0xe8 0xc0
+	launchtask AnimTask_StatusClearedEffect 0x2 0x1 0x1 
+	waitanimation
+	loaddefaultbg
+	waitbgfadein
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

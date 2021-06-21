@@ -2059,6 +2059,20 @@ void TryFailLifeDew(void)
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
 }
 
+void TryFailJungleHealing(void)
+{
+	if (!BATTLER_MAX_HP(gBankAttacker) || gBattleMons[gBankAttacker].status1 != 0)
+		return; //Success
+
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker)))
+	{
+		if (!BATTLER_MAX_HP(PARTNER(gBankAttacker)) || gBattleMons[PARTNER(gBankAttacker)].status1 != 0)
+			return; //Success
+	}
+
+	gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+}
+
 void SetStickyWebActive(void)
 {
 	gNewBS->stickyWebActive = TRUE;

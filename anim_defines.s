@@ -107,6 +107,9 @@
 .equ PAL_OPPONENT1, 0x200
 .equ PAL_OPPONENT2, 0x400
 
+.equ RGB_BLACK, 0x0
+.equ RGB_WHITE, 0x7FFF
+
 @for sound commands
 .equ SOUND_PAN_ABOVE, 0
 .equ SOUND_PAN_BELOW, 127
@@ -417,6 +420,7 @@
 .equ AnimTask_BlendParticle, 0x80BAA21
 .equ AnimTask_pal_fade, 0x80BA7F9
 .equ AnimTask_pal_fade_complex, 0x80B9BDD
+.equ AnimTask_BlendNonAttackerPalettes, 0x80bb7dd
 .equ AnimTask_BlendBackground, 0x80adaa5
 .equ AnimTask_HardwarePaletteFade, 0x80bab39
 .equ AnimTask_screen_shake, 0x80B94B5
@@ -484,7 +488,6 @@
 .equ AnimTask_RemoveSpotlight, 0x80dee79
 .equ AnimTask_CreateRaindrops, 0x80aabc1
 .equ AnimTask_NightShadeClone, 0x80b54e9
-.equ AnimTask_BlendNonAttackerPalettes, 0x80bb7dd
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -585,7 +588,9 @@
 .equ Template_SuperpowerOrb, 0x83e6864
 .equ Template_ThinRingShrinking, 0x83E40C8
 .equ Template_SwordsDanceBlade, 0x83e3bf8
-
+.equ Template_IngrainRoot, 0x83e2dc4
+.equ Template_IngrainOrb, 0x83e2e04
+.equ Template_BlendThinRingExpanding, 0x83e40e0
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 

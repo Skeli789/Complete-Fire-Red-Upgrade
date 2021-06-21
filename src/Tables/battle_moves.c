@@ -11519,7 +11519,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_ETERNABEAM] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_RECHARGE,
 		.power = 160,
 		.type = TYPE_DRAGON,
@@ -11855,8 +11855,8 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_JUNGLEHEALING] =
-	{	//ANIM TODO
-		.effect = EFFECT_RESTORE_HP, //EFFECT TODO
+	{
+		.effect = EFFECT_RESTORE_HP,
 		.power = 0,
 		.type = TYPE_GRASS,
 		.accuracy = 0,
@@ -11873,11 +11873,7 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_WICKEDBLOW] =
 	{
 		.effect = EFFECT_HIT,
-		#ifdef UNBOUND
-		.power = 70,
-		#else
 		.power = 80,
-		#endif
 		.type = TYPE_DARK,
 		.accuracy = 100,
 		.pp = 5,

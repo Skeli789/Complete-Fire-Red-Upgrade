@@ -492,12 +492,18 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 
 	SortItemsInBag(0, 1);*/
 
-	for (u32 i = SPECIES_GROOKEY; i < SPECIES_URSHIFU_RAPID_GIGA; ++i)
+	/*for (u32 i = 0; i <= SPECIES_STUNFISK_G; ++i)
 	{
-		struct Pokemon mon;
-		CreateMon(&mon, i, 1, STANDARD_IV, TRUE, 0xAAAAAAAA, 0, 0);
-		GiveMonToPlayer(&mon);
-	}
+		if (gSpecialSpeciesFlags[i].randomizerBan)
+			continue;
+
+		if (!CanSpeciesEvolve(i))
+		{
+			struct Pokemon mon;
+			CreateMon(&mon, i, 100, 31, FALSE, 0, OT_ID_PLAYER_ID, 0);
+			GiveMonToPlayer(&mon);
+		}
+	}*/
 }
 
 //@Details: Adds a Pokemon with the given species from the requested spreads to
