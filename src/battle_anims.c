@@ -902,6 +902,34 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_LargeExplosion[] =
 	sSpriteAffineAnim_LargeExplosion,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_GlacialLance_Grow[] =
+{
+    AFFINEANIMCMD_FRAME(0x20, 0x20, 0, 0),
+    AFFINEANIMCMD_FRAME(0x10, 0x10, 0, 30), //Double sprite size
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_GlacialLance_OnFoe[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_FRAME(0, 0, -8, 4), //Rotate 45 degrees right
+	AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_GlacialLance_OnPlayer[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_FRAME(0, 0, 24, 4), //Rotate 135 degrees left
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_GlacialLance[] =
+{
+	sSpriteAffineAnim_GlacialLance_Grow,
+	sSpriteAffineAnim_GlacialLance_OnFoe,
+	sSpriteAffineAnim_GlacialLance_OnPlayer,
+};
+
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
@@ -3214,6 +3242,56 @@ void SpriteCB_SurgingStrikes(struct Sprite* sprite)
 	sprite->data[5] = gBattleAnimArgs[5];
 	InitAnimArcTranslation(sprite);
 	sprite->callback = SpriteCB_AnimMissileArcStep;
+}
+
+static void SpriteCB_GlacialLance_Step2(struct Sprite* sprite)
+{
+	if (sprite->data[7]++ >= sprite->data[6])
+	{
+		if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+			StartSpriteAffineAnim(sprite, 2);
+		else
+			StartSpriteAffineAnim(sprite, 1);
+
+		sprite->data[5] = 0;
+		sprite->data[6] = 0;
+		sprite->data[7] = 0;
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
+static void SpriteCB_GlacialLance_Step1(struct Sprite* sprite)
+{
+	if (sprite->data[7]++ >= sprite->data[5])
+	{
+		sprite->data[7] = 0;
+		sprite->callback = SpriteCB_GlacialLance_Step2;
+	}
+	else
+		--sprite->pos1.y; //Move up
+}
+
+//Moves the ice lance for Glacial Lance
+//arg 0: initial x pixel offset (from attacker)
+//arg 1: initial y pixel offset (from attacker)
+//arg 2: target x pixel offset (from target)
+//arg 3: target y pixel offset (from target)
+//arg 4: distance moved up
+//arg 5: pause in middle
+//arg 6: duration to target
+void SpriteCB_GlacialLance(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+	sprite->data[5] = gBattleAnimArgs[4];
+	sprite->data[6] = gBattleAnimArgs[5];
+	
+	sprite->data[0] = gBattleAnimArgs[6];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Converge on target
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+
+	sprite->oam.priority = 1; //Above the ice cube
+	sprite->callback = SpriteCB_GlacialLance_Step1;
 }
 
 //Creates The Extreme Evoboost Circles

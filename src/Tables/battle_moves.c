@@ -12015,7 +12015,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_GLACIALLANCE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 130,
 		.type = TYPE_ICE,
