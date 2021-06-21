@@ -1,14 +1,14 @@
 # Complete Fire Red Upgrade
 
-## What is this:
-A complete upgrade for Fire Red, including an upgraded Battle Engine.
+## What is this?
+A complete upgrade for FireRed, including an upgraded Battle Engine. By using this or any assets from this repository, you consent to never making money off your game (unless you have my explicit permission). That includes both pay-walls **as well as optional donations** (which includes ko-fi, Patreon, etc.). If you have a problem with this, feel free to send me a Discord message (Skeli#3917) and I will give you my PayPal so you can pay me $100000 for the hundreds if not thousands of hours I poured into this for **free** (I don't actually want your money - I'm trying to make a point). Not to mention it's illegal to profit off of an IP you don't own.
 
 **Before doing anything it is HIGHLY recommended the documentation be read thoroughly.**
 
-## Features:
-* Expanded PC Boxes (up to 24!)
-* Battle Engine Upgraded to Gen 7
-  * All Moves, Abilities, Items, Item Effects through Gen 7
+## Features
+* Expanded PC Boxes (up to 25!)
+* Battle Engine Upgraded to Gen 8
+  * All Moves, Abilities, Items, Item Effects through Gen 8
   * A complete set of move animations
   * Vastly improved AI system with decision-making skills for all new battle effects
   * Z Moves
@@ -76,32 +76,11 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
 **Note** Pokemon Expansion can be found [here](https://github.com/Skeli789/Dynamic-Pokemon-Expansion)
 
-## Installation Instructions:
-### Windows:
-1. Download and install Devkitpro. You can follow steps 4-6 from [this tutorial](https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96). You may need to restart your computer for the changes to take effect.
+## Installation Instructions
+### Windows
+See [the wiki](https://github.com/Skeli789/Complete-Fire-Red-Upgrade/wiki/Windows-Installation-Instructions).
 
-2. Download the latest version of Python 3.7 (3.7.6). **DO NOT DOWNLOAD PYTHON 3.8!**
-After downloading and before proceeding to install, make sure that the **add to path** checkbox is ticked, otherwise you'll have to add the Python path in the environment variables manually. If you have installed multiple Python versions, please make sure that Python 3.6+ can be explicitly called with command `python3`.
-
-3. Download (or clone) the master folder from this github page.
-(Click 'Clone or Download', then 'Download Zip')
-
-4. Get your ROM, rename it to **BPRE0.gba** and place it the main (master) folder.
-
-5. To decide the offsets where you want to insert the code:
-In 'scripts/make.py' change `OFFSET_TO_PUT=YYY` to the location you want to insert the data. Don't worry about changing *insert.py* because *make.py* automatically updates *insert.py* and *linker.ld*.
-
-6. Run **cmd.exe** from the **main folder**. You can do this by typing `cmd` and hitting enter in the
-url address or selecting *Open command window here* from right clicking on empty space while holding the shift key. If the command line contains */scripts* when showing the current directory, you are in the wrong place.
-
-7. In the command prompt window, type `python scripts//make.py` (or `python3 scripts//make.py` if you've installed multiple python versions).
-
-7.5. If you get an error with a mention of a file called **libwinpthread-1.dll** (or something similar), search Google for a 64-bit version of this file and add it to the root.
-
-A new gba file will appear named as **test.gba** and an **offsets.ini** file.
-Those are your resultant files.
-
-### UNIX-like OS (Linux, MacOS, ...):
+### UNIX-like OS (Linux, MacOS, ...)
 1. Install devkitPro with instructions [here](https://devkitpro.org/wiki/Getting_Started).
 
 2. Export `${DEVKITARM}/bin/` to your `PATH` variable.
