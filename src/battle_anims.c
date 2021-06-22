@@ -1200,9 +1200,10 @@ bool8 IsAnimMoveDestinyBond(void)
 	return sAnimMoveIndex == MOVE_DESTINYBOND;
 }
 
-bool8 IsAnimMoveThunderWave(void)
+bool8 IsAnimMoveWithChain(void)
 {
-	return sAnimMoveIndex == MOVE_THUNDERWAVE;
+	return sAnimMoveIndex == MOVE_ANCHORSHOT
+		|| sAnimMoveIndex == MOVE_SPIRITSHACKLE;
 }
 
 bool8 IsAnimMoveGrudge(void)
@@ -3244,6 +3245,41 @@ void SpriteCB_SurgingStrikes(struct Sprite* sprite)
 	sprite->callback = SpriteCB_AnimMissileArcStep;
 }
 
+//Moves the balls for Dragon Energy sideways along the target side
+//arg 0: Duration
+void SpriteCB_DragonEnergyShot(struct Sprite* sprite)
+{
+	s16 startingX, finishingX, y;
+	u8 def1 = gBattleAnimTarget;
+	u8 def2 = PARTNER(def1);
+
+	if (IS_SINGLE_BATTLE || SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget))
+		y = GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET);
+	else
+		y = (GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET) + GetBattlerSpriteCoord(def2, BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+
+	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)
+	{
+		startingX = 0;
+		finishingX = 255;
+	}
+	else
+	{
+		startingX = 255;
+		finishingX = 0;
+	}
+
+	sprite->oam.priority = 1; //So it always appears above both targets
+	sprite->pos1.x = startingX;
+	sprite->pos1.y = y;
+	sprite->pos2.x = 0;
+	sprite->data[0] = gBattleAnimArgs[0];
+	sprite->data[2] = finishingX;
+	sprite->data[4] = y;
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+}
+
 static void SpriteCB_GlacialLance_Step2(struct Sprite* sprite)
 {
 	if (sprite->data[7]++ >= sprite->data[6])
@@ -3282,16 +3318,58 @@ static void SpriteCB_GlacialLance_Step1(struct Sprite* sprite)
 //arg 6: duration to target
 void SpriteCB_GlacialLance(struct Sprite* sprite)
 {
+	u8 def1 = gBattleAnimTarget;
+	u8 def2 = PARTNER(def1);
+	
 	InitSpritePosToAnimAttacker(sprite, TRUE);
 	sprite->data[5] = gBattleAnimArgs[4];
 	sprite->data[6] = gBattleAnimArgs[5];
 	
 	sprite->data[0] = gBattleAnimArgs[6];
-	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Converge on target
-	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	
+	if (IS_SINGLE_BATTLE || SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget))
+	{
+		sprite->data[2] = GetBattlerSpriteCoord(def1, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Converge on target
+		sprite->data[4] = GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+	}
+	else
+	{
+		sprite->data[2] = (GetBattlerSpriteCoord(def1, BATTLER_COORD_X_2) + GetBattlerSpriteCoord(def2, BATTLER_COORD_X_2)) / 2 + gBattleAnimArgs[2]; //Converge on target
+		sprite->data[4] = (GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET) + GetBattlerSpriteCoord(def2, BATTLER_COORD_Y_PIC_OFFSET)) / 2 + gBattleAnimArgs[3];
+	}
 
 	sprite->oam.priority = 1; //Above the ice cube
 	sprite->callback = SpriteCB_GlacialLance_Step1;
+}
+
+void AnimTask_CentredFrozenIceCube(u8 taskId)
+{
+	s16 x, y;
+	u8 spriteId;
+	u8 bank1 = gBattleAnimTarget;
+	u8 bank2 = PARTNER(bank1);
+
+	if (IS_SINGLE_BATTLE || SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget))
+	{
+		x = GetBattlerSpriteCoord(bank1, BATTLER_COORD_X_2);
+		y = GetBattlerSpriteCoord(bank1, BATTLER_COORD_Y_PIC_OFFSET);
+	}
+	else
+	{
+		x = (GetBattlerSpriteCoord(bank1, BATTLER_COORD_X_2) + GetBattlerSpriteCoord(bank2, BATTLER_COORD_X_2)) / 2;
+		y = (GetBattlerSpriteCoord(bank1, BATTLER_COORD_Y_PIC_OFFSET) + GetBattlerSpriteCoord(bank2, BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+	}
+
+	x -= 32;
+	y -= 36;
+
+	spriteId = CreateSprite((void*) 0x83BF55C, x, y, 4);
+	if (GetSpriteTileStartByTag(ANIM_TAG_ICE_CUBE) == SPRITE_INVALID_TAG)
+		gSprites[spriteId].invisible = TRUE;
+
+	SetSubspriteTables(&gSprites[spriteId], (void*) 0x83BF554);
+	gTasks[taskId].data[15] = spriteId;
+	gTasks[taskId].func = (void*) (0x80784D8 | 1);
 }
 
 //Creates The Extreme Evoboost Circles

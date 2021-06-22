@@ -13,6 +13,7 @@
 
 @For launchtemplate
 .equ TEMPLATE_ATTACKER, 0x0
+.equ TEMPLATE_BELOW, 0x40 @;Appears underneath the sprite
 .equ TEMPLATE_TARGET, 0x80
 
 @background IDs
@@ -488,6 +489,7 @@
 .equ AnimTask_RemoveSpotlight, 0x80dee79
 .equ AnimTask_CreateRaindrops, 0x80aabc1
 .equ AnimTask_NightShadeClone, 0x80b54e9
+.equ AnimTask_ElectricBolt, 0x80AE221
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -591,6 +593,7 @@
 .equ Template_IngrainRoot, 0x83e2dc4
 .equ Template_IngrainOrb, 0x83e2e04
 .equ Template_BlendThinRingExpanding, 0x83e40e0
+.equ Template_ThunderWave, 0x83E60B8
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 

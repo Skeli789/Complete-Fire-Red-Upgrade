@@ -10931,9 +10931,9 @@ ANCHORANGLED: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_NORMAL_32x32 g
 ANCHORSHOT_ASM:
 	push {r1-r3}
 	strh r0, [r4, #0x22]
-	bl IsAnimMoveThunderWave
+	bl IsAnimMoveWithChain
 	cmp r0, #0x0
-	beq AnchorShota
+	bne AnchorShota
 	ldr r0, .NormalTWaveTemplate
 	b Jump
 
@@ -10943,11 +10943,11 @@ Jump:
 	pop {r1-r3}
 	add r1, #0x20
 	lsl r1, #0x10
-	ldr r2, =(0x80AE48C +1)
+	ldr r2, =(0x80AE48C | 1)
 	bx r2
 
 .align 2
-.NormalTWaveTemplate: .word 0x83E60B8
+.NormalTWaveTemplate: .word Template_ThunderWave
 .ATemplate: .word CHAIN
 CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80AE471
 
@@ -13125,7 +13125,7 @@ ANIM_SPIRITSHACKLE:
 	pause 0x8
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0xa 0x1
 	waitanimation
-	soundcomplex 0x5F SOUND_PAN_ATTACKER 0x1c 0x2
+	soundcomplex 0x5F SOUND_PAN_TARGET 0x1c 0x2
 	launchtemplate SHACKLE_CHAIN TEMPLATE_TARGET | 2, 0x2 0xfff0 0xfff0
 	pause 0x4
 	launchtemplate SHACKLE_CHAIN TEMPLATE_TARGET | 2, 0x2 0xfff0 0x0
@@ -13149,7 +13149,7 @@ ANIM_SPOTLIGHT:
 	launchtask AnimTask_CreateSpotlight 0x2 0x0
 	launchtask AnimTask_HardwarePaletteFade 0x2 0x5 0xf8 0x3 0x0 0xa 0x0
 	waitanimation
-	playsound2 0x5C SOUND_PAN_ATTACKER
+	playsound2 0x5C SOUND_PAN_TARGET
 	launchtemplate 0x83FF00C TEMPLATE_TARGET | 2, 0x2 0x0 0xfff8
 	pause 0x40
 	launchtask  AnimTask_HardwarePaletteFade 0x2 0x5 0xf8 0x3 0xa 0x0 0x1
@@ -18317,16 +18317,105 @@ ANIM_EERIE_SPELL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+.equ THUNDER_CAGE_BALL_TIME, 0x64
+@Credits to Skeli
 .global ANIM_THUNDER_CAGE
 ANIM_THUNDER_CAGE:
-	goto 0x81c8160 @MOVE_THUNDERWAVE
+	loadparticle ANIM_TAG_SHOCK_3 @;Thunderbolt Ball
+	loadparticle ANIM_TAG_SPARK @;Electric lines
+	loadparticle ANIM_TAG_SPARK_H @;Thunder Wave
+	pokespritetobg bank_target
+	leftbankBG_over_partnerBG bank_target
+	soundcomplex 0x70 0x3F 0xA 0x9
+	launchtemplate Template_ThunderboltOrb TEMPLATE_TARGET | 3, 0x4, THUNDER_CAGE_BALL_TIME, -25, -30, 0x0
+	launchtemplate Template_ThunderboltOrb TEMPLATE_TARGET | 3, 0x4, THUNDER_CAGE_BALL_TIME, 0, -30, 0x0
+	launchtemplate Template_ThunderboltOrb TEMPLATE_TARGET | 3, 0x4, THUNDER_CAGE_BALL_TIME, 25, -30, 0x0
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0xfff0
+	pause 0x4 
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0x0
+	pause 0x4 
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0x10
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x3 0x0 0x32 0x1
+	call THUNDER_CAGE_BOLTS
+	pause 0x4
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0xfff0
+	pause 0x4 
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0x0
+	pause 0x4 
+	launchtemplate Template_ThunderWave TEMPLATE_TARGET | 1, 0x2 0xfff0 0x10
+	call THUNDER_CAGE_BOLTS
+	waitanimation
+	pokespritefrombg bank_target
 	endanimation
+
+THUNDER_CAGE_BOLTS:
+	launchtask AnimTask_ElectricBolt TEMPLATE_TARGET | 2, 0x3, 25, -40, 1
+	pause 0x9
+	launchtask AnimTask_ElectricBolt TEMPLATE_TARGET | 2, 0x3, -25, -40, 1
+	pause 0x9
+	launchtask AnimTask_ElectricBolt TEMPLATE_TARGET | 2, 0x3, 0, -40, 1
+	pause 0x9
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DRAGON_ENERGY:
-	goto ANIM_DRAGONPULSE
+	loadparticle ANIM_TAG_HYDRO_PUMP
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_HYDRO_PUMP 0x0 0xC 0xC 0x2C5E @;Regidrago Reddish Purple
+	playsound2 0x85 SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x4 0x0 0xB 0x7F9F @;Pinkish White
+	waitanimation
+	playsound2 0xca SOUND_PAN_TARGET
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL 0x1 0x10 0x0 0x2C5E @;Regidrago Reddish Purple
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 0, -120, 0, 0, 1 @;Slide off screen
+	waitanimation
+	playsound2 0xC2 SOUND_PAN_TARGET
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x4 0x0 0x5E 0x1
+	launchtask AnimTask_move_bank 0x5 0x5 target_partner 0x4 0x0 0x5E 0x1
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	call DRAGON_ENERGY_SHOT
+	waitanimation
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 10
+	waitanimation
 	endanimation
+
+DRAGON_ENERGY_SHOT:
+	launchtemplate SIDEWAYS_ENERGY_SHOT TEMPLATE_TARGET | 2, 0x1, 0x19
+	pause 0x1
+	launchtemplate SIDEWAYS_ENERGY_SHOT TEMPLATE_TARGET | 2, 0x1, 0x19
+	pause 0x1
+	return
+
+.align 2
+SIDEWAYS_ENERGY_SHOT: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_HydroCannonBall SpriteCB_DragonEnergyShot
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18340,20 +18429,21 @@ ANIM_ASTRAL_BARRAGE:
 ANIM_GLACIAL_LANCE:
 	loadparticle ANIM_TAG_ICICLE_SPEAR
 	loadparticle ANIM_TAG_ICE_CUBE
-	loadparticle ANIM_TAG_TORN_METAL
+	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x3C00 @;Royal Blue
 	pokespritetobg bank_target
-	leftbankBG_over_partnerBG bank_target
 	playsound2 0xEB SOUND_PAN_TARGET
-	launchtask AnimTask_FrozenIceCube TEMPLATE_TARGET | 2, 0x0
-	launchtemplate LARGE_ICE_LANCE TEMPLATE_TARGET | 2 0x7 0, 30, 0, 0, 30, 18, 10
-	pause 30
+	launchtask AnimTask_CentredFrozenIceCube TEMPLATE_TARGET | 2, 0x0
+	launchtemplate LARGE_ICE_LANCE TEMPLATE_TARGET | 2 0x7 0, 40, 0, 0, 40, 50, 10
+	pause 60
 	launchtask AnimTask_FlashAnimTagWithColor 0x2 0x7 ANIM_TAG_ICICLE_SPEAR 0x4 0x1 0x7FFF 0x10 0x0 0x0
 	playsound2 0xca SOUND_PAN_TARGET
-	pause 22
-	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x14 0x1 0x0
+	pause 38
 	playsound2 0xBF SOUND_PAN_TARGET
-	call BROKEN_GLASS
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x6 0x0 0x34 0x1
+	launchtask AnimTask_move_bank 0x5 0x5 target_partner 0x6 0x0 0x34 0x1
+	pause 4
+	call FREEZE_CHANCE_ANIM_DOUBLES
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0xA 0x0 0x3C00 @;Royal Blue
 	waitanimation

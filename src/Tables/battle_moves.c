@@ -11967,13 +11967,13 @@ const struct BattleMove gBattleMoves[] =
 	},
 	
 	[MOVE_THUNDERCAGE] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_TRAP,
 		.power = 80,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 90,
 		.pp = 15,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MIRROR_MOVE_AFFECTED,
@@ -11983,7 +11983,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_DRAGONENERGY] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_HIT,
 		.power = 150,
 		.type = TYPE_DRAGON,
