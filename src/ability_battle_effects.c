@@ -986,7 +986,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			u32 opposingDef = gBattleMons[opposingBank].defense;
 			APPLY_STAT_MOD(opposingDef, &gBattleMons[opposingBank], opposingDef, STAT_DEF);
 			u32 opposingSpDef = gBattleMons[opposingBank].spDefense;
-			APPLY_STAT_MOD(opposingDef, &gBattleMons[opposingBank], opposingDef, STAT_SPDEF);
+			APPLY_STAT_MOD(opposingSpDef, &gBattleMons[opposingBank], opposingSpDef, STAT_SPDEF);
 
 			if (IS_DOUBLE_BATTLE)
 			{
