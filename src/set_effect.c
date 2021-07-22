@@ -869,7 +869,12 @@ bool8 SetMoveEffect2(void)
 	{
 		#ifdef PICK_UP_KNOCKED_OFF_ITEMS
 		if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_KNOCK_OFF
-		&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(gEffectBank) == B_SIDE_OPPONENT)
+		&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		&& SIDE(gEffectBank) == B_SIDE_OPPONENT
+		#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+		&& !FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS) //Can't keep these items
+		#endif
+		)
 		{
 			//Allow knocking off wild item even if KOd
 		}
@@ -974,7 +979,12 @@ bool8 SetMoveEffect2(void)
 				gBattleStruct->choicedMove[gEffectBank] = 0;
 
 				#ifdef PICK_UP_KNOCKED_OFF_ITEMS
-				if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(gEffectBank) == B_SIDE_OPPONENT) //Wild Pokemon's item
+				if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+				&& SIDE(gEffectBank) == B_SIDE_OPPONENT //Wild Pokemon's item
+				#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
+				&& !FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS) //Can't keep these items
+				#endif
+				)
 					gNewBS->knockedOffWildItem = gLastUsedItem;
 				#endif
 

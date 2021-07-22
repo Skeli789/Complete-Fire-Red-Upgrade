@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/battle_anim.h"
+#include "../include/bike.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
 #include "../include/field_effect_helpers.h"
@@ -926,6 +927,7 @@ static const struct RockClimbRide sRockClimbMovement[] =
 #define tDestX       data[1]
 #define tDestY       data[2]
 #define tMovementDir data[3]
+#define tOnBike      data[14]
 #define tMonId       data[15]
 
 static u8 CreateRockClimbBlob(void)
@@ -1010,8 +1012,19 @@ static bool8 RockClimb_Init(struct Task *task, struct EventObject* eventObject)
 	PlayerGetDestCoords(&task->tDestX, &task->tDestY);
 	MoveCoords(eventObject->movementDirection, &task->tDestX, &task->tDestY);
 
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
+		task->tOnBike = TRUE;
+
 	#ifdef FLAG_BOUGHT_ADM
 	if (FlagGet(FLAG_BOUGHT_ADM))
+	{
+		task->tState = STATE_ROCK_CLIMB_JUMP_ON;
+		sp09A_StopSounds();
+	}
+	else
+	#endif
+	#ifdef FLAG_SANDBOX_MODE
+	if (FlagGet(FLAG_SANDBOX_MODE))
 	{
 		task->tState = STATE_ROCK_CLIMB_JUMP_ON;
 		sp09A_StopSounds();
@@ -1031,6 +1044,7 @@ static bool8 RockClimb_FieldMovePose(struct Task *task, struct EventObject *even
 		EventObjectSetHeldMovement(eventObject, MOVEMENT_ACTION_START_ANIM_IN_DIRECTION);
 		task->tState++;
 	}
+
 	return FALSE;
 }
 
@@ -1165,7 +1179,9 @@ static bool8 RockClimb_WaitStopRockClimb(unusedArg struct Task *task, struct Eve
 {
 	if (EventObjectClearHeldMovementIfFinished(eventObject))
 	{
-		EventObjectSetGraphicsId(eventObject, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_NORMAL));
+		u8 avatarState = (task->tOnBike) ? PLAYER_AVATAR_STATE_BIKE : PLAYER_AVATAR_STATE_NORMAL;
+
+		EventObjectSetGraphicsId(eventObject, GetPlayerAvatarGraphicsIdByStateId(avatarState));
 		EventObjectSetHeldMovement(eventObject, GetFaceDirectionMovementAction(eventObject->facingDirection));
 		gPlayerAvatar->preventStep = FALSE;
 		ScriptContext2_Disable();

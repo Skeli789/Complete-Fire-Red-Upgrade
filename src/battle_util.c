@@ -1169,6 +1169,20 @@ bool8 CanTransferItem(u16 species, u16 item)
 			break;
 		#endif
 
+		#ifdef NATIONAL_DEX_ZACIAN
+		case ITEM_EFFECT_RUSTED_SWORD:
+			if (dexNum == NATIONAL_DEX_ZACIAN)
+				return FALSE;
+			break;
+		#endif
+
+		#ifdef NATIONAL_DEX_ZAMAZENTA
+		case ITEM_EFFECT_RUSTED_SHIELD:
+			if (dexNum == NATIONAL_DEX_ZAMAZENTA)
+				return FALSE;
+			break;
+		#endif
+
 		case ITEM_EFFECT_MEGA_STONE:
 			for (i = 0; i < EVOS_PER_MON; ++i)
 			{

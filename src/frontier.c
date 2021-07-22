@@ -646,6 +646,11 @@ bool8 InBattleSands(void)
 	return (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS) != 0;
 }
 
+bool8 IsAIControlledBattle(void)
+{
+	return InBattleSands() || (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
+}
+
 bool8 IsCamomonsTier(u8 tier)
 {
 	return tier == BATTLE_FACILITY_CAMOMONS

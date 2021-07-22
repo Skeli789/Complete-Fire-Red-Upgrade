@@ -14,6 +14,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
+#include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
@@ -140,6 +141,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_TEMP_DISABLE_RANDOMIZER
 	FLAG_TEMP_DISABLE_RANDOMIZER,
+#endif
+#ifdef FLAG_AI_CONTROL_BATTLE
+	FLAG_AI_CONTROL_BATTLE,
 #endif
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
@@ -602,7 +606,7 @@ void EndOfBattleThings(void)
 
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();
-		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+		if (InBattleSands())
 		{
 			if (weather != WEATHER_NONE
 			&& weather != WEATHER_CLOUDS
@@ -811,7 +815,11 @@ static void EndBattleFlagClear(void)
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		if (gNewBS->criticalHitsThisBattle[i] >= 3)
+		{
 			gScored3CritsInBattle |= gBitTable[i];
+			if (EvolvesViaScoring3Crits(&gPlayerParty[i]))
+				gLeveledUpInBattle |= gBitTable[i];
+		}
 	}
 
 	//Reset Totem Vars

@@ -692,4 +692,5 @@ TextPrinterWait 8005680 1
 
 #ifdef UNBOUND
 GetCurrentLevelCap 801D79C 0
+ChangeTrainerPicPal 801D7A4 1
 #endif

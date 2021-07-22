@@ -1,10 +1,12 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/constants/items.h"
 #include "../include/constants/region_map_sections.h"
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
+#include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
@@ -46,6 +48,9 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_EISCUE_NOICE,
 	SPECIES_CRAMORANT_GULPING,
 	SPECIES_CRAMORANT_GORGING,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_DARMANITAN_G_ZEN,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -233,6 +238,28 @@ bool8 TryFormRevert(struct Pokemon* mon)
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
 		#endif
+		#ifdef SPECIES_ZACIAN
+		if (mon->species == SPECIES_ZACIAN)
+		{
+			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_BEHEMOTHBLADE, mon);
+			if (moveIndex < MAX_MON_MOVES)
+			{
+				u16 newMove = MOVE_IRONHEAD; //Zacian's Behemoth Blade changes to Iron Head in its base forme
+				SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove);
+			}
+		}
+		#endif
+		#ifdef SPECIES_ZAMAZENTA
+		if (mon->species == SPECIES_ZAMAZENTA)
+		{
+			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_BEHEMOTHBASH, mon);
+			if (moveIndex < MAX_MON_MOVES)
+			{
+				u16 newMove = MOVE_IRONHEAD; //Zamazenta's Behemoth Bash changes to Iron Head in its base forme
+				SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove);
+			}
+		}
+		#endif
 
 		return TRUE;
 	}
@@ -373,6 +400,67 @@ void HandleFormChange(void)
 
 	SetMonData(mon, MON_DATA_HP, &battleMon->hp);
 	SetMonData(mon, MON_DATA_MAX_HP, &battleMon->maxHP);
+}
+
+void TryCrownZacianZamazenta(struct Pokemon* party)
+{
+	//Zacian and Zamazenta only transform at the beginning of battle
+	#if (defined SPECIES_ZACIAN && defined SPECIES_ZAMAZENTA)
+	u32 i;
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 newSpecies, newMove;
+		u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
+		u16 itemEffect = ItemId_GetHoldEffect(GetMonData(&party[i], MON_DATA_HELD_ITEM, NULL));
+		bool8 transform = FALSE;
+
+		if (species == SPECIES_ZACIAN && itemEffect == ITEM_EFFECT_RUSTED_SWORD)
+		{
+			newSpecies = SPECIES_ZACIAN_CROWNED;
+			newMove = MOVE_BEHEMOTHBLADE;
+			transform = TRUE;
+		}
+		else if (species == SPECIES_ZAMAZENTA && itemEffect == ITEM_EFFECT_RUSTED_SHIELD)
+		{
+			newSpecies = SPECIES_ZAMAZENTA_CROWNED;
+			newMove = MOVE_BEHEMOTHBASH;
+			transform = TRUE;
+		}
+
+		if (transform)
+		{
+			party[i].backupSpecies = species;
+			SetMonData(&party[i], MON_DATA_SPECIES, &newSpecies);
+			CalculateMonStats(&party[i]);
+
+			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, &party[i]);
+			if (moveIndex < MAX_MON_MOVES)
+			{
+				SetMonData(&party[i], MON_DATA_MOVE1 + moveIndex, &newMove); //Iron Head changes when changing forms
+				if (GetMonData(&party[i], MON_DATA_PP1 + moveIndex, NULL) > gBattleMoves[newMove].pp)
+					SetMonData(&party[i], MON_DATA_PP1 + moveIndex, &gBattleMoves[newMove].pp); //Adjust PP
+			}
+		}
+	}
+	#endif
+}
+
+void TrySetCorrectToxtricityForm(struct BoxPokemon* mon)
+{
+	u16 species = GetBoxMonData(mon, MON_DATA_SPECIES2, NULL);
+
+	if (species == SPECIES_TOXTRICITY || species == SPECIES_TOXTRICITY_LOW_KEY)
+	{
+		if (HasHighNature((struct Pokemon*) mon))
+			species = SPECIES_TOXTRICITY;
+		else
+			species = SPECIES_TOXTRICITY_LOW_KEY;
+	}
+	else
+		species = SPECIES_NONE;
+
+	if (species != SPECIES_NONE)
+		SetBoxMonData(mon, MON_DATA_SPECIES, &species); //Set the correct form
 }
 
 //Overworld Form Change Functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

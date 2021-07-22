@@ -67,6 +67,9 @@ The wall is very rocky[.]\nWould you like to use [BUFFER2]?
 #org @gText_WantToScaleCliffWithADM
 The wall is very rocky[.]\nWould you like to use the ADM?
 
+#org @gText_WantToScaleCliffSandbox
+The wall is very rocky[.]\nWould you like to scale it?
+
 #org @gText_RockIsRocky
 The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 
@@ -75,6 +78,9 @@ The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 
 #org @gText_OfferADMWaterfall
 It's a large waterfall.\nWould you like to use the ADM?
+
+#org @gText_OfferSandboxWaterfall
+It's a large waterfall.\nWould you like to climb it?
 
 #org @gText_WaterDyed
 The water is dyed a deep blue[.]
@@ -93,6 +99,9 @@ The water is a murky brown[.]\nWould you like to use the ADM?
 
 #org @gText_ADMBlewUpInflatablePokemon
 The ADM attached to [BUFFER1]\nas a floating device!
+
+#org @gText_SandboxSurfStarted
+A floating device attached to\n[BUFFER1]!
 
 #org @gText_LikeToLavaSurf
 The magma glistens a crimson red[.]\nWould you like to surf on it?
@@ -135,9 +144,6 @@ The door is locked.
 
 #org @gText_PsychicBarrier
 There appears to be some sort of\nPsychic barrier in the way.
-
-#org @gText_ClimbLadder
-Climb the ladder?
 
 #org @gText_CantReachLadder
 You can't reach the ladder from\nhere!

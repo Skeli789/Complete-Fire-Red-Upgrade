@@ -49,15 +49,18 @@ extern const u8 EventScript_UndergroundMining[];
 #define EventScript_CannotUseWaterfall (const u8*) 0x81BE2FF
 extern const u8 EventScript_UseSurf[];
 extern const u8 EventScript_UseADMSurf[];
+extern const u8 EventScript_UseSandboxSurf[];
 extern const u8 EventScript_WaterDyedBlue[];
 extern const u8 EventScript_WaterMurkyBrown[];
 extern const u8 EventScript_UseLavaSurf[];
 extern const u8 EventScript_MagmaGlistens[];
 extern const u8 EventScript_UseWaterfall[];
 extern const u8 EventScript_UseADMWaterfall[];
+extern const u8 EventScript_UseSandboxWaterfall[];
 extern const u8 EventScript_WallOfWater[];
 extern const u8 EventScript_UseRockClimb[];
 extern const u8 EventScript_UseADMRockClimb[];
+extern const u8 EventScript_UseSandboxRockClimb[];
 extern const u8 EventScript_JustRockWall[];
 extern const u8 EventScript_UseFlash[];
 extern const u8 EventScript_UseDive[];

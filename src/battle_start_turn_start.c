@@ -487,7 +487,7 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case TotemPokemon: ;
-				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS //The only battle facility to utilize totem boosts
+				if (InBattleSands() //The only battle facility to utilize totem boosts
 				|| !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
 					for (; *bank < gBattlersCount; ++*bank)

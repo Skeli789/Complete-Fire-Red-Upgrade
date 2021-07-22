@@ -968,7 +968,7 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 			&& VarGet(VAR_SQ_WEED_WHACKER) > 0 && VarGet(VAR_SQ_WEED_WHACKER) < 2 //Weed Whacker in progress
 			#ifndef DEBUG_HMS
 			&& HasBadgeToUseFieldMove(FIELD_MOVE_CUT)
-			&& (FlagGet(FLAG_BOUGHT_ADM) ||
+			&& (FlagGet(FLAG_BOUGHT_ADM) || FlagGet(FLAG_SANDBOX_MODE) ||
 			 (CheckBagHasItem(ITEM_HM01_CUT, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM01_CUT, 0) == CAN_LEARN_MOVE))
 			#endif
 			)
@@ -988,6 +988,9 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 			 #ifdef FLAG_BOUGHT_ADM
 			 FlagGet(FLAG_BOUGHT_ADM) ||
 			 #endif
+			 #ifdef FLAG_SANDBOX_MODE
+			 FlagGet(FLAG_SANDBOX_MODE) ||
+			 #endif
 			 (CheckBagHasItem(ITEM_HM02_FLY, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_HM02_FLY, 0) == CAN_LEARN_MOVE))
 			#endif
 			)
@@ -1005,6 +1008,9 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 			&& (
 			 #ifdef FLAG_BOUGHT_ADM
 			 FlagGet(FLAG_BOUGHT_ADM) ||
+			 #endif
+			 #ifdef FLAG_SANDBOX_MODE
+			 FlagGet(FLAG_SANDBOX_MODE) ||
 			 #endif
 			 (CheckBagHasItem(ITEM_TM28_DIG, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE))
 			#endif
@@ -1302,6 +1308,11 @@ void sp10A_CanUseCutOnTree(void)
 			Var8004 = 0; //Mon doesn't matter, just can't be over 6
 		else
 		#endif
+		#ifdef FLAG_SANDBOX_MODE
+		if (FlagGet(FLAG_SANDBOX_MODE))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
 			Var8004 = PartyHasMonWithFieldMovePotential(MOVE_CUT, item, SHOULDNT_BE_SURFING);
 	}
 }
@@ -1322,6 +1333,11 @@ void sp10B_CanUseRockSmashOnRock(void)
 			Var8004 = 0; //Mon doesn't matter, just can't be over 6
 		else
 		#endif
+		#ifdef FLAG_SANDBOX_MODE
+		if (FlagGet(FLAG_SANDBOX_MODE))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
 			Var8004 = PartyHasMonWithFieldMovePotential(MOVE_ROCKSMASH, item, SHOULDNT_BE_SURFING);
 	}
 }
@@ -1339,6 +1355,11 @@ void sp10C_CanUseStrengthOnBoulder(void)
 	{
 		#ifdef FLAG_BOUGHT_ADM
 		if (FlagGet(FLAG_BOUGHT_ADM))
+			Var8004 = 0; //Mon doesn't matter, just can't be over 6
+		else
+		#endif
+		#ifdef FLAG_SANDBOX_MODE
+		if (FlagGet(FLAG_SANDBOX_MODE))
 			Var8004 = 0; //Mon doesn't matter, just can't be over 6
 		else
 		#endif

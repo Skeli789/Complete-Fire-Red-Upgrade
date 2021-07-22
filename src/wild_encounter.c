@@ -95,8 +95,13 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
 	if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
 	{
-		min = GetLowestMonLevel(gPlayerParty);
-		max = GetLowestMonLevel(gPlayerParty);
+		min = max = GetLowestMonLevel(gPlayerParty);
+
+		#ifdef FLAG_HARD_LEVEL_CAP
+		u8 levelCap;
+		if (FlagGet(FLAG_HARD_LEVEL_CAP) && max >= (levelCap = GetCurrentLevelCap()))
+			min = max = levelCap;
+		#endif
 	}
 	else
 	#endif
@@ -1194,6 +1199,11 @@ void DoStandardWildBattle(void)
 	}
 	#endif
 
+	#ifdef FLAG_AI_CONTROL_BATTLE
+	if (FlagGet(FLAG_AI_CONTROL_BATTLE))
+		gBattleTypeFlags |= BATTLE_TYPE_MOCK_BATTLE;
+	#endif
+
 	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
@@ -1228,6 +1238,11 @@ void sp138_StartLegendaryBattle(void)
 		if (FlagGet(FLAG_TAG_BATTLE))
 			gBattleTypeFlags |=  BATTLE_TYPE_INGAME_PARTNER;
 	}
+	#endif
+
+	#ifdef FLAG_AI_CONTROL_BATTLE
+	if (FlagGet(FLAG_AI_CONTROL_BATTLE))
+		gBattleTypeFlags |= BATTLE_TYPE_MOCK_BATTLE;
 	#endif
 
 	CreateBattleStartTask(0, GetMUS_ForBattle());

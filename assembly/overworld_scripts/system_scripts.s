@@ -358,7 +358,6 @@ EventScript_ChooseSelectItem:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .equ FLAG_AUTO_HMS, 0x902 @For Unbound
-.equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
 .equ FLDEFF_USE_ROCK_CLIMB, 55
 
 .global EventScript_UseRockClimb
@@ -394,13 +393,11 @@ EventScript_RockClimb:
 	lockall
 	call FollowerIntoPlayerScript
 	callasm HideFollower
-	special SPECIAL_DISMOUNT_BICYCLE
 	dofieldeffect FLDEFF_USE_ROCK_CLIMB
 	waitfieldeffect FLDEFF_USE_ROCK_CLIMB
 	callasm FollowMe_WarpSetEnd
 	releaseall
 	end
-
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -409,6 +406,18 @@ EventScript_UseADMRockClimb:
 	checkflag FLAG_AUTO_HMS
 	if SET _goto EventScript_RockClimb
 	msgbox gText_WantToScaleCliffWithADM MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_RockClimbEnd
+	closeonkeypress
+	goto EventScript_RockClimb
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_UseSandboxRockClimb
+EventScript_UseSandboxRockClimb:
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_RockClimb
+	msgbox gText_WantToScaleCliffSandbox MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_RockClimbEnd
 	closeonkeypress
@@ -540,6 +549,17 @@ EventScript_UseADMWaterfall_SkipAsk:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global EventScript_UseSandboxWaterfall
+EventScript_UseSandboxWaterfall:
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseADMWaterfall_SkipAsk
+	msgbox gText_OfferSandboxWaterfall MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_WaterfallEnd
+	goto EventScript_UseADMWaterfall_SkipAsk
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global EventScript_UseSurf
 EventScript_UseSurf:
 	bufferpartypokemon 0x0 0x8004
@@ -611,6 +631,29 @@ EventScript_UseADMSurf_SkipAsk:
 EventScript_UseADMSurf_AskMurkyWater:
 	msgbox gText_WaterMurkyBrownUseADMSurf MSG_YESNO	
 	goto EventScript_UseADMSurf_CheckAnswer
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_UseSandboxSurf
+EventScript_UseSandboxSurf:
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseADMSurf_SkipAsk
+	callasm IsPlayerFacingMurkyBrownWaterToVar
+	compare LASTRESULT 0x0
+	if notequal _goto EventScript_UseSandboxSurf_AskMurkyWater
+	msgbox 0x81A556E MSG_YESNO	
+EventScript_UseSandboxSurf_CheckAnswer:
+	compare LASTRESULT NO
+	if equal _goto EventScript_SurfEnd
+	lockall
+	callasm GetFirstNonEggIn8004
+	bufferpartypokemon 0x0 0x8004
+	msgbox gText_SandboxSurfStarted MSG_KEEPOPEN
+	goto EventScript_UseADMSurf_SkipAsk
+
+EventScript_UseSandboxSurf_AskMurkyWater:
+	msgbox gText_WaterMurkyBrownUseSurf MSG_YESNO	
+	goto EventScript_UseSandboxSurf_CheckAnswer
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -764,6 +807,8 @@ EventScript_PsychicBarrier:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
+
 .global EventScript_Ladder
 EventScript_Ladder:
 	special SPECIAL_GET_PLAYER_FACING
@@ -771,10 +816,6 @@ EventScript_Ladder:
 	if equal _goto EventScript_FacingLadderSideways
 	compare PLAYERFACING RIGHT
 	if equal _goto EventScript_FacingLadderSideways
-	msgbox gText_ClimbLadder MSG_YESNO
-	compare LASTRESULT NO
-	if equal _goto EventScript_LadderEnd
-	closeonkeypress
 	lockall
 	call FollowerIntoPlayerScript
 	callasm HideFollower

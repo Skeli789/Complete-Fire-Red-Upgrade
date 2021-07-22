@@ -956,7 +956,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUPERLUCK
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
@@ -1008,7 +1008,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUPERLUCK
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -1383,7 +1383,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spdIv = 31,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SANDFORCE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SANDRUSH
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -1461,7 +1461,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SANDFORCE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SANDRUSH
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -4275,13 +4275,13 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SCRAPPY
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
 		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
-			MOVE_CLOSECOMBAT,
 			MOVE_DOUBLEEDGE,
+			MOVE_CLOSECOMBAT,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -9964,7 +9964,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_COTTONDOWN
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
@@ -9990,7 +9990,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.defEv = 252,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -10016,7 +10016,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.defEv = 252,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_BIG_ROOT,
 		.moves =
 		{
@@ -10042,7 +10042,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 128,
 		.defEv = 128,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_COTTONDOWN
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -10787,7 +10787,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_GIRAFARIG,
-		.nature = NATURE_MODEST,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
@@ -10797,7 +10797,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SAPSIPPER
 		.item = ITEM_WIKI_BERRY,
 		.moves =
 		{
@@ -10823,7 +10823,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SAPSIPPER
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SAPSIPPER
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
@@ -10849,7 +10849,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SAPSIPPER
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -10875,7 +10875,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 252,
 		.spdEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SPEEDBOOST
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INNERFOCUS
 		.item = ITEM_MAGO_BERRY,
 		.moves =
 		{
@@ -25090,7 +25090,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLOUDNINE
 		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
@@ -25142,7 +25142,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.defEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLOUDNINE
 		.item = ITEM_CUSTAP_BERRY,
 		.moves =
 		{
@@ -52246,7 +52246,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -52272,7 +52272,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_SITRUS_BERRY,
 		.moves =
 		{
@@ -61513,7 +61513,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 76,
 		.atkEv = 236,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INFLILTRATOR
 		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
@@ -62455,7 +62455,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 116,
 		.atkEv = 236,
 		.defEv = 156,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_THICKFAT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLOUDNINE
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{
@@ -66821,7 +66821,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.atkEv = 236,
 		.spDefEv = 36,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SANDFORCE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SANDRUSH
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{
@@ -68579,7 +68579,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.spDefEv = 28,
 		.spdEv = 196,
 		.ability = FRONTIER_ABILITY_2, //ABILITY_SNIPER
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_SCOPE_LENS,
 		.moves =
 		{
 			MOVE_DOUBLEEDGE,
@@ -68606,7 +68606,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.defEv = 36,
 		.spDefEv = 28,
 		.spdEv = 196,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUPERLUCK
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{

@@ -19,6 +19,8 @@ void UpdateBurmy(void);
 void TryRevertGiratinaOrigin(unusedArg struct Pokemon* mon, unusedArg bool8 ignoreDistortionWorld);
 species_t GetMiniorCoreFromPersonality(u32 personality);
 species_t GetMiniorCoreSpecies(struct Pokemon* mon);
+void TryCrownZacianZamazenta(struct Pokemon* party);
+void TrySetCorrectToxtricityForm(struct BoxPokemon* mon);
 void HoldItemFormChange(struct Pokemon* mon, u16 item);
 void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats);
 //Hooked In Functions

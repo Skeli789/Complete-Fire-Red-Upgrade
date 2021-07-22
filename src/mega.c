@@ -463,10 +463,17 @@ const u8* GetTrainerName(u8 bank)
 
 	switch (GetBattlerPosition(bank)) {
 		case B_POSITION_PLAYER_LEFT:
-			if (InBattleSands())
+			if (IsAIControlledBattle())
 			{
-				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
-				battlerNum = 2; //Name stored in partner var
+				if (InBattleSands())
+				{
+					trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
+					battlerNum = 2; //Name stored in partner var
+				}
+				else
+				{
+					trainerId = VarGet(VAR_PARTNER);
+				}
 			}
 			break;
 
@@ -485,10 +492,17 @@ const u8* GetTrainerName(u8 bank)
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkPartner;
-			else if (InBattleSands())
+			else if (IsAIControlledBattle())
 			{
-				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
-				battlerNum = 2; //Name stored in partner var
+				if (InBattleSands())
+				{
+					trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
+					battlerNum = 2; //Name stored in partner var
+				}
+				else
+				{
+					trainerId = VarGet(VAR_PARTNER);
+				}
 			}
 			else
 				battlerNum = 0;

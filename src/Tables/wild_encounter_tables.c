@@ -81,7 +81,7 @@ static const struct WildPokemon sRoute2_LandMonsNight[] =
 	{11, 11, SPECIES_RIOLU},
 };
 
-static const struct WildPokemonInfo sRoute2_LandMonsInfoNight = {20, sRoute2_LandMonsNight};
+static const struct WildPokemonInfo sRoute2_LandMonsInfoNight = {15, sRoute2_LandMonsNight};
 
 static const struct WildPokemon sRoute3_LandMonsNight[] =
 {
@@ -99,7 +99,7 @@ static const struct WildPokemon sRoute3_LandMonsNight[] =
 	{12, 12, SPECIES_KRABBY},
 };
 
-static const struct WildPokemonInfo sRoute3_LandMonsInfoNight = {20, sRoute3_LandMonsNight};
+static const struct WildPokemonInfo sRoute3_LandMonsInfoNight = {15, sRoute3_LandMonsNight};
 
 static const struct WildPokemon sRoute4_LandMonsNight[] =
 {
@@ -117,7 +117,7 @@ static const struct WildPokemon sRoute4_LandMonsNight[] =
 	{17, 17, SPECIES_RALTS},
 };
 
-static const struct WildPokemonInfo sRoute4_LandMonsInfoNight = {20, sRoute4_LandMonsNight};
+static const struct WildPokemonInfo sRoute4_LandMonsInfoNight = {15, sRoute4_LandMonsNight};
 
 static const struct WildPokemon sGrimWoods_LandMonsNight[] =
 {
@@ -135,7 +135,7 @@ static const struct WildPokemon sGrimWoods_LandMonsNight[] =
 	{16, 16, SPECIES_PHANTUMP},
 };
 
-static const struct WildPokemonInfo sGrimWoods_LandMonsInfoNight = {20, sGrimWoods_LandMonsNight};
+static const struct WildPokemonInfo sGrimWoods_LandMonsInfoNight = {15, sGrimWoods_LandMonsNight};
 
 static const struct WildPokemon sRoute5_LandMonsNight[] =
 {
@@ -153,7 +153,7 @@ static const struct WildPokemon sRoute5_LandMonsNight[] =
 	{19, 19, SPECIES_DITTO},
 };
 
-static const struct WildPokemonInfo sRoute5_LandMonsInfoNight = {20, sRoute5_LandMonsNight};
+static const struct WildPokemonInfo sRoute5_LandMonsInfoNight = {15, sRoute5_LandMonsNight};
 
 static const struct WildPokemon sRoute6_LandMonsMorning[] =
 {
@@ -171,7 +171,7 @@ static const struct WildPokemon sRoute6_LandMonsMorning[] =
 	{22, 22, SPECIES_LUXIO},
 };
 
-static const struct WildPokemonInfo sRoute6_LandMonsInfoMorning = {20, sRoute6_LandMonsMorning};
+static const struct WildPokemonInfo sRoute6_LandMonsInfoMorning = {15, sRoute6_LandMonsMorning};
 
 static const struct WildPokemon sRoute6_LandMonsNight[] =
 {
@@ -189,7 +189,7 @@ static const struct WildPokemon sRoute6_LandMonsNight[] =
 	{22, 22, SPECIES_LUXIO},
 };
 
-static const struct WildPokemonInfo sRoute6_LandMonsInfoNight = {20, sRoute6_LandMonsNight};
+static const struct WildPokemonInfo sRoute6_LandMonsInfoNight = {15, sRoute6_LandMonsNight};
 
 static const struct WildPokemon sRoute7_LandMonsNight[] =
 {
@@ -207,7 +207,7 @@ static const struct WildPokemon sRoute7_LandMonsNight[] =
 	{23, 23, SPECIES_RATICATE_A},
 };
 
-static const struct WildPokemonInfo sRoute7_LandMonsInfoNight = {20, sRoute7_LandMonsNight};
+static const struct WildPokemonInfo sRoute7_LandMonsInfoNight = {15, sRoute7_LandMonsNight};
 
 static const struct WildPokemon sRoute8_LandMonsNight[] =
 {
@@ -225,7 +225,7 @@ static const struct WildPokemon sRoute8_LandMonsNight[] =
 	{23, 25, SPECIES_MINIOR_SHIELD},
 };
 
-static const struct WildPokemonInfo sRoute8_LandMonsInfoNight = {20, sRoute8_LandMonsNight};
+static const struct WildPokemonInfo sRoute8_LandMonsInfoNight = {15, sRoute8_LandMonsNight};
 
 static const struct WildPokemon sFrozenForest_LandMonsNight[] =
 {
@@ -243,25 +243,25 @@ static const struct WildPokemon sFrozenForest_LandMonsNight[] =
 	{26, 26, SPECIES_CUBCHOO},
 };
 
-static const struct WildPokemonInfo sFrozenForest_LandMonsInfoNight = {20, sFrozenForest_LandMonsNight};
+static const struct WildPokemonInfo sFrozenForest_LandMonsInfoNight = {15, sFrozenForest_LandMonsNight};
 
 static const struct WildPokemon sRoute11_LandMonsNight[] =
 {
-	{26, 29, SPECIES_EXEGGCUTE},
 	{26, 29, SPECIES_NOCTOWL},
-	{26, 29, SPECIES_SPOINK},
-	{26, 29, SPECIES_SPOINK},
 	{26, 29, SPECIES_EXEGGCUTE},
+	{26, 29, SPECIES_SPOINK},
+	{26, 29, SPECIES_SPOINK},
+	{26, 29, SPECIES_GULPIN},
 	{26, 29, SPECIES_MEDITITE},
 	{26, 29, SPECIES_MEDITITE},
 	{27, 29, SPECIES_TOGEDEMARU},
 	{29, 29, SPECIES_NOCTOWL},
-	{29, 29, SPECIES_ABSOL},
+	{29, 29, SPECIES_GULPIN},
 	{29, 29, SPECIES_NOCTOWL},
-	{29, 29, SPECIES_ABSOL},
+	{29, 29, SPECIES_GULPIN},
 };
 
-static const struct WildPokemonInfo sRoute11_LandMonsInfoNight = {20, sRoute11_LandMonsNight};
+static const struct WildPokemonInfo sRoute11_LandMonsInfoNight = {15, sRoute11_LandMonsNight};
 
 static const struct WildPokemon sRoute12_LandMonsNight[] =
 {
@@ -279,7 +279,7 @@ static const struct WildPokemon sRoute12_LandMonsNight[] =
 	{35, 36, SPECIES_DEDENNE},
 };
 
-static const struct WildPokemonInfo sRoute12_LandMonsInfoNight = {20, sRoute12_LandMonsNight};
+static const struct WildPokemonInfo sRoute12_LandMonsInfoNight = {15, sRoute12_LandMonsNight};
 
 static const struct WildPokemon sRoute14_LandMonsNight[] =
 {
@@ -297,7 +297,7 @@ static const struct WildPokemon sRoute14_LandMonsNight[] =
 	{25, 30, SPECIES_ODDISH},
 };
 
-static const struct WildPokemonInfo sRoute14_LandMonsInfoNight = {20, sRoute14_LandMonsNight};
+static const struct WildPokemonInfo sRoute14_LandMonsInfoNight = {15, sRoute14_LandMonsNight};
 
 static const struct WildPokemon sVivillWoods_LandMonsNight[] =
 {
@@ -315,7 +315,7 @@ static const struct WildPokemon sVivillWoods_LandMonsNight[] =
 	{39, 41, SPECIES_CASCOON},
 };
 
-static const struct WildPokemonInfo sVivillWoods_LandMonsInfoNight = {20, sVivillWoods_LandMonsNight};
+static const struct WildPokemonInfo sVivillWoods_LandMonsInfoNight = {15, sVivillWoods_LandMonsNight};
 
 static const struct WildPokemon sRoute17_LandMonsNight[] =
 {
@@ -333,7 +333,7 @@ static const struct WildPokemon sRoute17_LandMonsNight[] =
 	{40, 45, SPECIES_BAGON},
 };
 
-static const struct WildPokemonInfo sRoute17_LandMonsInfoNight = {20, sRoute17_LandMonsNight};
+static const struct WildPokemonInfo sRoute17_LandMonsInfoNight = {15, sRoute17_LandMonsNight};
 
 static const struct WildPokemon sCootesBog_LandMonsNight[] =
 {
@@ -351,7 +351,7 @@ static const struct WildPokemon sCootesBog_LandMonsNight[] =
 	{52, 52, SPECIES_TOXICROAK},
 };
 
-static const struct WildPokemonInfo sCootesBog_LandMonsInfoNight = {20, sCootesBog_LandMonsNight};
+static const struct WildPokemonInfo sCootesBog_LandMonsInfoNight = {15, sCootesBog_LandMonsNight};
 
 static const struct WildPokemon sMagnoliaFields_LandMonsNight[] =
 {
@@ -369,7 +369,7 @@ static const struct WildPokemon sMagnoliaFields_LandMonsNight[] =
 	{50, 53, SPECIES_TAUROS},
 };
 
-static const struct WildPokemonInfo sMagnoliaFields_LandMonsInfoNight = {20, sMagnoliaFields_LandMonsNight};
+static const struct WildPokemonInfo sMagnoliaFields_LandMonsInfoNight = {15, sMagnoliaFields_LandMonsNight};
 
 static const struct WildPokemon sRoute18_LandMonsNight[] =
 {
@@ -387,7 +387,7 @@ static const struct WildPokemon sRoute18_LandMonsNight[] =
 	{53, 57, SPECIES_AUDINO},
 };
 
-static const struct WildPokemonInfo sRoute18_LandMonsInfoNight = {20, sRoute18_LandMonsNight};
+static const struct WildPokemonInfo sRoute18_LandMonsInfoNight = {15, sRoute18_LandMonsNight};
 
 static const struct WildPokemon sRedwoodForest_LandMonsNight[] =
 {
@@ -405,7 +405,7 @@ static const struct WildPokemon sRedwoodForest_LandMonsNight[] =
 	{60, 65, SPECIES_ORANGURU},
 };
 
-static const struct WildPokemonInfo sRedwoodForest_LandMonsInfoNight = {20, sRedwoodForest_LandMonsNight};
+static const struct WildPokemonInfo sRedwoodForest_LandMonsInfoNight = {15, sRedwoodForest_LandMonsNight};
 
 const struct WildPokemonHeader gWildMonMorningHeaders[] =
 {

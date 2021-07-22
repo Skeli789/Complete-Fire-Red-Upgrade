@@ -29,6 +29,7 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
+bool8 IsAIControlledBattle(void);
 bool8 IsCamomonsTier(u8 tier);
 bool8 IsLittleCupTier(u8 tier);
 bool8 IsMiddleCupTier(u8 tier);

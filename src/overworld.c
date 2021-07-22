@@ -335,30 +335,16 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x2CF, METATILE_General_TreeSideRight, Tileset_FlowerParadise},
 	{0x2D5, METATILE_General_TreeSideLeft, Tileset_FlowerParadise},
 	{0x2F7, METATILE_General_TreeSideRight, Tileset_FlowerParadise},
-	{0x2AF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2AF, METATILE_General_LandEdgeLeft, Tileset_CraterTown},
 	{0x2B7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x2BF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x2C7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x2CF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
-	{0x30F, METATILE_General_TreeSideRight, Tileset_CraterTown},
-	{0x319, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
-	{0x321, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x319, METATILE_General_TreeTopLeft, Tileset_CraterTown},
+	{0x31A, METATILE_General_TreeTopRight, Tileset_CraterTown},
 	{0x329, METATILE_General_TreeSideLeft, Tileset_CraterTown},
 	{0x32A, METATILE_General_TreeSideRight, Tileset_CraterTown},
-	{0x32C, METATILE_General_TreeSideRight, Tileset_CraterTown},
 	{0x331, METATILE_General_TreeTopLeft, Tileset_CraterTown},
 	{0x332, METATILE_General_TreeTopRight, Tileset_CraterTown},
-	{0x340, METATILE_General_TreeTopRight, Tileset_CraterTown},
-	{0x341, METATILE_General_TreeSideRight, Tileset_CraterTown},
-	{0x365, METATILE_General_TreeTopLeftOverTreeSideRight, Tileset_CraterTown},
-	{0x36D, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
-	{0x370, METATILE_General_TreeTopLeft, Tileset_CraterTown},
-	{0x371, METATILE_General_TreeTopRight, Tileset_CraterTown},
-	{0x372, METATILE_General_TreeTopLeft, Tileset_CraterTown},
-	{0x396, METATILE_General_LandEdgeLeft, Tileset_CraterTown},
-	{0x397, METATILE_General_LandEdgeRight, Tileset_CraterTown},
-	{0x3AE, METATILE_General_TreeTopLeftOverTreeSideRight, Tileset_CraterTown},
-	{0x3B5, METATILE_General_TreeSideRight, Tileset_CraterTown},
+	{0x348, METATILE_General_TreeTopLeftOverTreeSideRight, Tileset_CraterTown},
+	{0x34A, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
 
 	{0x2C0, METATILE_Autumn_Ground, Tileset_Autumn},
 	{0x2C1, METATILE_Autumn_Ground, Tileset_Autumn},
@@ -1102,6 +1088,11 @@ void BattleSetup_StartTrainerBattle(void)
 		#ifdef FLAG_RING_CHALLENGE_BATTLE
 		if (FlagGet(FLAG_RING_CHALLENGE_BATTLE))
 			gBattleTypeFlags |= BATTLE_TYPE_RING_CHALLENGE;
+		#endif
+
+		#ifdef FLAG_AI_CONTROL_BATTLE
+		if (FlagGet(FLAG_AI_CONTROL_BATTLE))
+			gBattleTypeFlags |= BATTLE_TYPE_MOCK_BATTLE;
 		#endif
 	}
 
@@ -2376,6 +2367,9 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		#ifdef FLAG_BOUGHT_ADM
 		FlagGet(FLAG_BOUGHT_ADM) ||
 		#endif
+		#ifdef FLAG_SANDBOX_MODE
+		FlagGet(FLAG_SANDBOX_MODE) ||
+		#endif
 		PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
 			return EventScript_CurrentTooFast;
 	}
@@ -2417,6 +2411,12 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				return EventScript_UseADMSurf;
 			#endif
 
+			#ifdef FLAG_SANDBOX_MODE
+			if (FlagGet(FLAG_SANDBOX_MODE)
+			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
+				return EventScript_UseSandboxSurf;
+			#endif
+
 			if (partyId < PARTY_SIZE
 			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 			{
@@ -2444,6 +2444,12 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				if (FlagGet(FLAG_BOUGHT_ADM)
 				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
 					return EventScript_UseADMWaterfall;
+				#endif
+
+				#ifdef FLAG_SANDBOX_MODE
+				if (FlagGet(FLAG_SANDBOX_MODE)
+				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
+					return EventScript_UseSandboxWaterfall;
 				#endif
 
 				u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_WATERFALL, item, SHOULD_BE_SURFING);
@@ -2474,6 +2480,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			#ifdef FLAG_BOUGHT_ADM
 			if (FlagGet(FLAG_BOUGHT_ADM))
 				return EventScript_UseADMRockClimb;
+			#endif
+
+			#ifdef FLAG_SANDBOX_MODE
+			if (FlagGet(FLAG_SANDBOX_MODE))
+				return EventScript_UseSandboxRockClimb;
 			#endif
 
 			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_ROCKCLIMB, item, 0);
@@ -2838,9 +2849,9 @@ void UseChosenRegisteredItem(void)
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =
 {
-	ANIMCMD_FRAME(9, 3),
+	ANIMCMD_FRAME( 9, 3),
 	ANIMCMD_FRAME(10, 5),
-	ANIMCMD_FRAME(9, 3),
+	ANIMCMD_FRAME( 9, 3),
 	ANIMCMD_FRAME(11, 5),
 	ANIMCMD_JUMP(0),
 };

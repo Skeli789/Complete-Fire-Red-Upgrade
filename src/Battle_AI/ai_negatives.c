@@ -1318,20 +1318,20 @@ MOVESCR_CHECK_0:
 			if (data->atkAbility == ABILITY_MAGICGUARD || data->atkAbility == ABILITY_ROCKHEAD)
 				goto AI_STANDARD_DAMAGE;
 
-			u32 dmg = GetFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
+			u32 recoilDmg = GetFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
 
 			if (gSpecialMoveFlags[move].gPercent25RecoilMoves)
-				dmg = MathMax(1, dmg / 4);
+				recoilDmg = MathMax(1, recoilDmg / 4);
 			else if (gSpecialMoveFlags[move].gPercent33RecoilMoves)
-				dmg = MathMax(1, dmg / 3);
+				recoilDmg = MathMax(1, recoilDmg / 3);
 			else if (gSpecialMoveFlags[move].gPercent50RecoilMoves)
-				dmg = MathMax(1, dmg / 2);
+				recoilDmg = MathMax(1, recoilDmg / 2);
 			else if (gSpecialMoveFlags[move].gPercent66RecoilMoves)
-				dmg = MathMax(1, (dmg * 2) / 3);
+				recoilDmg = MathMax(1, (recoilDmg * 2) / 3);
 			else if (gSpecialMoveFlags[move].gPercent75RecoilMoves)
-				dmg = MathMax(1, (dmg * 3) / 4);
+				recoilDmg = MathMax(1, (recoilDmg * 3) / 4);
 			else if (gSpecialMoveFlags[move].gPercent100RecoilMoves)
-				dmg = MathMax(1, dmg);
+				recoilDmg = MathMax(1, recoilDmg);
 			else if (move == MOVE_MINDBLOWN || move == MOVE_STEELBEAM)
 			{
 				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
@@ -1340,20 +1340,18 @@ MOVESCR_CHECK_0:
 					goto AI_STANDARD_DAMAGE; //Don't use Mind Blown to break a Substitute
 				}
 
-				dmg = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
+				recoilDmg = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
 			}
 
-			if (dmg >= gBattleMons[bankAtk].hp //Recoil kills attacker
+			if (recoilDmg >= gBattleMons[bankAtk].hp //Recoil kills attacker
 			&&  ViableMonCountFromBank(bankDef) > 1) //Foe has more than 1 target left
 			{
-				if (dmg >= gBattleMons[bankDef].hp && !CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE))
-					goto AI_STANDARD_DAMAGE; //If it's the only KO move then just use it
-				else
+				if (!MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //This move doesn't knock out
+				|| CanKnockOutWithoutMove(move, bankAtk, bankDef, TRUE)) //Or has another move that does knock out
 					DECREASE_VIABILITY(4); //Not as good to use move if you'll faint and not win
 			}
-			else
-				goto AI_STANDARD_DAMAGE;
-			break;
+
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_CONFUSE:
 		AI_CONFUSE:
