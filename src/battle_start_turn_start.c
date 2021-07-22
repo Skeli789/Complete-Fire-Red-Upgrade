@@ -46,6 +46,7 @@ enum BattleBeginStates
 	TailwindBattleMessage,
 	MagnetRiseBattleMessage,
 	TrickRoomBattleMessage,
+	WeightSpeedBattleMessage,
 	ShadowShieldBattleMessage,
 	PixieBattleMessage,
 	PixieBattleBuffs,
@@ -348,6 +349,17 @@ void BattleBeginFirstTurn(void)
 				if (FlagGet(FLAG_TRICK_ROOM_BATTLE))
 				{
 					gBattleStringLoader = gText_TrickRoomBattleStart;
+					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+				}
+				#endif
+				++*state;
+				break;
+
+			case WeightSpeedBattleMessage:
+				#ifdef FLAG_WEIGHT_SPEED_BATTLE
+				if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+				{
+					gBattleStringLoader = gText_WeightSpeedBattleStart;
 					BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
 				}
 				#endif
@@ -1909,31 +1921,36 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 		if (move != MOVE_BIDE && gBattleMons[bank].status2 & STATUS2_BIDE)
 			priority = 1;
 
-		switch (ABILITY(bank)) {
-			case ABILITY_PRANKSTER:
-				if (SPLIT(move) == SPLIT_STATUS)
-					++priority;
-				break;
 
-			case ABILITY_GALEWINGS:
-				if (GetMoveTypeSpecial(bank, move) == TYPE_FLYING
-				#ifndef OLD_GALE_WINGS
-				&& BATTLER_MAX_HP(bank)
-				#endif
-				#ifdef FLAG_TRICK_ROOM_BATTLE
-				&& !FlagGet(FLAG_TRICK_ROOM_BATTLE)
-				#endif
-				)
-				{
-					++priority;
-				}
-				break;
+		#ifdef FLAG_WEIGHT_SPEED_BATTLE
+		if (!FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+		#endif
+		{
+			switch (ABILITY(bank))
+			{
+				case ABILITY_PRANKSTER:
+					if (SPLIT(move) == SPLIT_STATUS)
+						++priority;
+					break;
 
-			case ABILITY_TRIAGE:
-				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
-					priority += 3;
+				case ABILITY_GALEWINGS:
+					if (GetMoveTypeSpecial(bank, move) == TYPE_FLYING
+					#ifndef OLD_GALE_WINGS
+					&& BATTLER_MAX_HP(bank)
+					#endif
+					)
+					{
+						++priority;
+					}
+					break;
+
+				case ABILITY_TRIAGE:
+					if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
+						priority += 3;
+					break;
+			}
 		}
-		
+
 		if (move == MOVE_GRASSYGLIDE && gTerrainType == GRASSY_TERRAIN && CheckGrounding(bank))
 			++priority;
 	}
@@ -1945,29 +1962,31 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 {
 	u8 priority = gBattleMoves[move].priority;
 
-	switch (GetMonAbility(mon)) {
-		case ABILITY_PRANKSTER:
-			if (SPLIT(move) == SPLIT_STATUS)
-				++priority;
-			break;
+	#ifdef FLAG_WEIGHT_SPEED_BATTLE
+	if (!FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+	#endif
+	{
+		switch (GetMonAbility(mon)) {
+			case ABILITY_PRANKSTER:
+				if (SPLIT(move) == SPLIT_STATUS)
+					++priority;
+				break;
 
-		case ABILITY_GALEWINGS:
-			if (GetMonMoveTypeSpecial(mon, move) == TYPE_FLYING
-			#ifndef OLD_GALE_WINGS
-			&& GetMonData(mon, MON_DATA_HP, NULL) == GetMonData(mon, MON_DATA_MAX_HP, NULL)
-			#endif
-			#ifdef FLAG_TRICK_ROOM_BATTLE
-			&& !FlagGet(FLAG_TRICK_ROOM_BATTLE)
-			#endif
-			)
-			{
-				++priority;
-			}
-			break;
+			case ABILITY_GALEWINGS:
+				if (GetMonMoveTypeSpecial(mon, move) == TYPE_FLYING
+				#ifndef OLD_GALE_WINGS
+				&& GetMonData(mon, MON_DATA_HP, NULL) == GetMonData(mon, MON_DATA_MAX_HP, NULL)
+				#endif
+				)
+				{
+					++priority;
+				}
+				break;
 
-		case ABILITY_TRIAGE:
-			if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
-				priority += 3;
+			case ABILITY_TRIAGE:
+				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
+					priority += 3;
+		}
 	}
 
 	return priority;
@@ -2072,7 +2091,7 @@ static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u3
 
 u32 SpeedCalc(u8 bank)
 {
-	u32 speed;
+	u32 speed, rawSpeed;
 
 	if (!BATTLER_ALIVE(bank))
 		return 0;
@@ -2082,7 +2101,14 @@ u32 SpeedCalc(u8 bank)
 	u8 itemQuality = ITEM_QUALITY(bank);
 
 	//Calculate adjusted speed stat
-	speed = (gBattleMons[bank].speed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
+	#ifdef FLAG_WEIGHT_SPEED_BATTLE
+	if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+		rawSpeed = GetActualSpeciesWeight(SPECIES(bank), ability, itemEffect, bank, TRUE);
+	else
+	#endif
+		rawSpeed = gBattleMons[bank].speed;
+
+	speed = (rawSpeed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
 
 	//Check for abilities that alter speed
 	speed = BoostSpeedInWeather(ability, itemEffect, speed);
@@ -2139,17 +2165,18 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
 		return 0;
 
-	u8 itemEffect;
+	u32 speed;
 	u8 ability = GetMonAbility(mon);
-	u32 speed = mon->speed;
+	u8 itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(mon->item) : 0;
+	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
 	u8 statVal = 6;
 
-	if (ability != ABILITY_KLUTZ)
-		itemEffect = ItemId_GetHoldEffect(mon->item);
+	#ifdef FLAG_WEIGHT_SPEED_BATTLE
+	if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+		speed = GetActualSpeciesWeight(mon->species, ability, itemEffect, 0, FALSE);
 	else
-		itemEffect = 0;
-
-	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
+	#endif
+		speed = mon->speed;
 
 	//Calculate adjusted speed stat if Sticky Web is present
 	if (gSideTimers[side].stickyWeb

@@ -2584,16 +2584,26 @@ MOVESCR_CHECK_0:
 						break;
 
 					case MOVE_SPEEDSWAP:
+						#ifdef FLAG_WEIGHT_SPEED_BATTLE
+						if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+							DECREASE_VIABILITY(10);
+						else
+						#endif
 						if (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1) //Trick Room not about to end
 						{
 							if (gBattleMons[bankAtk].speed <= gBattleMons[bankDef].speed)
+							{
 								DECREASE_VIABILITY(10);
+								break;
+							}
 						}
 						else if (gBattleMons[bankAtk].speed >= gBattleMons[bankDef].speed)
+						{
 							DECREASE_VIABILITY(10);
-						else
-							goto AI_SUBSTITUTE_CHECK;
-						break;
+							break;
+						}
+						
+						goto AI_SUBSTITUTE_CHECK;
 
 					case MOVE_HEARTSWAP: ;
 						u8 attackerPositiveStages = CountBanksPositiveStatStages(bankAtk);

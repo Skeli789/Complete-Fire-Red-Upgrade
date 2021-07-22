@@ -973,15 +973,17 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 					if (spread->ivs != 0) //Otherwise use default class values
 						SET_IVS_SINGLE_VALUE(MathMin(31, spread->ivs));
 				}
-				
+
+				if (MoveInMonMoveset(MOVE_TRICKROOM, &party[i])
 				#ifdef FLAG_TRICK_ROOM_BATTLE
-				if (FlagGet(FLAG_TRICK_ROOM_BATTLE) || MoveInMonMoveset(MOVE_TRICKROOM, &party[i]))
+				|| FlagGet(FLAG_TRICK_ROOM_BATTLE)
+				#endif
+				)
 				{
 					//Set all speed IVs to 0 in a forced Trick Room battle
 					u32 zero = 0;
 					SetMonData(&party[i], MON_DATA_SPEED_IV, &zero);
 				}
-				#endif
 
 				u8 ballType;
 				switch(spread->ball) {

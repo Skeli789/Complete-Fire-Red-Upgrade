@@ -881,20 +881,28 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						stats[STAT_STAGE_SPDEF-2] = gBattleMons[gBankAttacker].spDefense;
 						stats[STAT_STAGE_SPEED+1] = gBattleMons[gBankAttacker].speed;
 
-						if (IsWonderRoomActive()) {
+						/*#ifdef FLAG_WEIGHT_SPEED_BATTLE
+						if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
+							stats[STAT_STAGE_SPEED+1] = GetActualSpeciesWeight(SPECIES(gBankAttacker), ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), gBankAttacker, TRUE);
+						#endif*/
+
+						if (IsWonderRoomActive())
+						{
 							temp = stats[STAT_STAGE_DEF-1];
 							stats[STAT_STAGE_DEF-1] = stats[STAT_STAGE_SPDEF-2]; //-2 b/c shifted left due to speed
 							stats[STAT_STAGE_SPDEF-2] = temp;
 						}
 
 						max = 0;
-						for (int i = 1; i < STAT_STAGE_SPDEF; ++i) {
+						for (int i = 1; i < STAT_STAGE_SPDEF; ++i)
+						{
 							if (stats[i] > stats[max])
 								max = i;
 						}
 
 						//Get the proper stat stage value
-						switch(max) {
+						switch(max)
+						{
 							case 0: //Attack
 							case 1: //Defense
 								max += 1;
