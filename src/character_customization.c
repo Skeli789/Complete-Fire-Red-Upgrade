@@ -13,6 +13,7 @@
 
 #include "../include/new/character_customization.h"
 #include "../include/new/follow_me.h"
+#include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
 /*
@@ -29,83 +30,122 @@ tables to edit:
 //extern const u16 MalePlayer_Trainer_Outfit_RedPal[];
 //extern const u16 MalePlayer_OW_Outfit_RedPal[];
 extern const u16 MalePlayer_Trainer_Outfit_BlackPal[];
-extern const u16 MalePlayer_OW_Outfit_BlackPal[];
 extern const u16 MalePlayer_Trainer_Outfit_BluePal[];
-extern const u16 MalePlayer_OW_Outfit_BluePal[];
 extern const u16 MalePlayer_Trainer_Outfit_GrayPal[];
-extern const u16 MalePlayer_OW_Outfit_GrayPal[];
 extern const u16 MalePlayer_Trainer_Outfit_PurplePal[];
-extern const u16 MalePlayer_OW_Outfit_PurplePal[];
 extern const u16 MalePlayer_Trainer_Outfit_YellowPal[];
-extern const u16 MalePlayer_OW_Outfit_YellowPal[];
 extern const u16 MalePlayer_Trainer_Outfit_GreenPal[];
-extern const u16 MalePlayer_OW_Outfit_GreenPal[];
-extern const u16 MalePlayer_Trainer_Outfit_WhitePal[];
-extern const u16 MalePlayer_OW_Outfit_WhitePal[];
+extern const u16 MalePlayer_Trainer_Outfit_TealPal[];
 extern const u16 MalePlayer_Trainer_Outfit_BrownPal[];
-extern const u16 MalePlayer_OW_Outfit_BrownPal[];
+extern const u16 MalePlayer_Trainer_Outfit_OrangePal[];
+extern const u16 MalePlayer_Trainer_Outfit_PinkPal[];
+
+//extern const u16 MalePlayer_Trainer_Trim_GoldPal[];
+extern const u16 MalePlayer_Trainer_Trim_BlackPal[];
+extern const u16 MalePlayer_Trainer_Trim_BluePal[];
+extern const u16 MalePlayer_Trainer_Trim_BrownPal[];
+extern const u16 MalePlayer_Trainer_Trim_BrownOrangePal[];
+extern const u16 MalePlayer_Trainer_Trim_GreenPal[];
+extern const u16 MalePlayer_Trainer_Trim_LightBluePal[];
+extern const u16 MalePlayer_Trainer_Trim_LightGreenPal[];
+extern const u16 MalePlayer_Trainer_Trim_LightPinkPal[];
+extern const u16 MalePlayer_Trainer_Trim_LightRedPal[];
+extern const u16 MalePlayer_Trainer_Trim_OrangePal[];
+extern const u16 MalePlayer_Trainer_Trim_PinkPal[];
+extern const u16 MalePlayer_Trainer_Trim_PurplePal[];
+extern const u16 MalePlayer_Trainer_Trim_Purple2Pal[];
+extern const u16 MalePlayer_Trainer_Trim_RedPal[];
+extern const u16 MalePlayer_Trainer_Trim_TealPal[];
+extern const u16 MalePlayer_Trainer_Trim_WhitePal[];
+extern const u16 MalePlayer_Trainer_Trim_YellowPal[];
+
 //extern const u16 MalePlayer_Trainer_Hair_BrownPal[];
-//extern const u16 MalePlayer_OW_Hair_BrownPal[];
 extern const u16 MalePlayer_Trainer_Hair_BlondePal[];
-extern const u16 MalePlayer_OW_Hair_BlondePal[];
 extern const u16 MalePlayer_Trainer_Hair_LBlondePal[];
-extern const u16 MalePlayer_OW_Hair_LBlondePal[];
 extern const u16 MalePlayer_Trainer_Hair_BlackPal[];
-extern const u16 MalePlayer_OW_Hair_BlackPal[];
 extern const u16 MalePlayer_Trainer_Hair_RedPal[];
-extern const u16 MalePlayer_OW_Hair_RedPal[];
 extern const u16 MalePlayer_Trainer_Hair_GreenPal[];
-extern const u16 MalePlayer_OW_Hair_GreenPal[];
 extern const u16 MalePlayer_Trainer_Hair_PurplePal[];
-extern const u16 MalePlayer_OW_Hair_PurplePal[];
 extern const u16 MalePlayer_Trainer_Hair_BluePal[];
-extern const u16 MalePlayer_OW_Hair_BluePal[];
+extern const u16 MalePlayer_Trainer_Hair_TealPal[];
 extern const u16 MalePlayer_Trainer_Hair_PinkPal[];
-extern const u16 MalePlayer_OW_Hair_PinkPal[];
 extern const u16 MalePlayer_Trainer_Hair_SilverPal[];
-extern const u16 MalePlayer_OW_Hair_SilverPal[];   
-extern const u16 MalePlayer_Trainer_Hair_BlackDSPal[];
-extern const u16 MalePlayer_OW_Hair_BlackDSPal[];
+extern const u16 MalePlayer_Trainer_Hair_GreyPal[];
+extern const u16 MalePlayer_Trainer_Hair_WhitePal[];
+extern const u16 MalePlayer_Trainer_Hair_OrangePal[];
+extern const u16 MalePlayer_Trainer_Hair_LightBrownPal[];
+extern const u16 MalePlayer_Trainer_Hair_DarkBrownPal[];
+
 //extern const u16 MalePlayer_Trainer_Skin_LightPal[];
-//extern const u16 MalePlayer_OW_Skin_LightPal[];
 extern const u16 MalePlayer_Trainer_Skin_LBrownPal[];
-extern const u16 MalePlayer_OW_Skin_LBrownPal[];
 extern const u16 MalePlayer_Trainer_Skin_BrownPal[];
-extern const u16 MalePlayer_OW_Skin_BrownPal[];
+extern const u16 MalePlayer_Trainer_Skin_DarkBrownPal[];
+extern const u16 MalePlayer_Trainer_Skin_YellowPal[];
 
-static const u16* sPlayerOutfitColours[][2] =
+static const u16* sPlayerOutfitColours[] =
 {
-    {/*MalePlayer_Trainer_Outfit_RedPal, MalePlayer_OW_Outfit_RedPal*/}, //Default's are loaded from elsewhere
-    {MalePlayer_Trainer_Outfit_BlackPal, MalePlayer_OW_Outfit_BlackPal},
-    {MalePlayer_Trainer_Outfit_BluePal, MalePlayer_OW_Outfit_BluePal},
-    {MalePlayer_Trainer_Outfit_GrayPal, MalePlayer_OW_Outfit_GrayPal},
-    {MalePlayer_Trainer_Outfit_PurplePal, MalePlayer_OW_Outfit_PurplePal},
-    {MalePlayer_Trainer_Outfit_YellowPal, MalePlayer_OW_Outfit_YellowPal},
-    {MalePlayer_Trainer_Outfit_GreenPal, MalePlayer_OW_Outfit_GreenPal},
-    {MalePlayer_Trainer_Outfit_WhitePal, MalePlayer_OW_Outfit_WhitePal},
-    {MalePlayer_Trainer_Outfit_BrownPal, MalePlayer_OW_Outfit_BrownPal},
+	NULL /*MalePlayer_Trainer_Outfit_RedPal*/, //Defaults are loaded from elsewhere
+	MalePlayer_Trainer_Outfit_BlackPal,
+	MalePlayer_Trainer_Outfit_BluePal,
+	MalePlayer_Trainer_Outfit_GrayPal,
+	MalePlayer_Trainer_Outfit_PurplePal,
+	MalePlayer_Trainer_Outfit_YellowPal,
+	MalePlayer_Trainer_Outfit_GreenPal,
+	MalePlayer_Trainer_Outfit_TealPal,
+	MalePlayer_Trainer_Outfit_BrownPal,
+	MalePlayer_Trainer_Outfit_OrangePal,
+	MalePlayer_Trainer_Outfit_PinkPal,
 };
 
-static const u16* sPlayerHairColours[][2] =
+static const u16* sPlayerTrimColours[] =
 {
-    {/*MalePlayer_Trainer_Hair_BrownPal, MalePlayer_OW_Hair_BrownPal*/},
-    {MalePlayer_Trainer_Hair_BlondePal, MalePlayer_OW_Hair_BlondePal},
-    {MalePlayer_Trainer_Hair_LBlondePal, MalePlayer_OW_Hair_LBlondePal},
-    {MalePlayer_Trainer_Hair_BlackPal, MalePlayer_OW_Hair_BlackPal},
-    {MalePlayer_Trainer_Hair_RedPal, MalePlayer_OW_Hair_RedPal},
-    {MalePlayer_Trainer_Hair_GreenPal, MalePlayer_OW_Hair_GreenPal}, 
-    {MalePlayer_Trainer_Hair_PurplePal, MalePlayer_OW_Hair_PurplePal},
-    {MalePlayer_Trainer_Hair_BluePal, MalePlayer_OW_Hair_BluePal}, 
-    {MalePlayer_Trainer_Hair_PinkPal, MalePlayer_OW_Hair_PinkPal},
-    {MalePlayer_Trainer_Hair_SilverPal, MalePlayer_OW_Hair_SilverPal},    
-    {MalePlayer_Trainer_Hair_BlackDSPal, MalePlayer_OW_Hair_BlackDSPal},    
+	NULL /*MalePlayer_Trainer_Trim_GoldPal*/,
+	MalePlayer_Trainer_Trim_RedPal,
+	MalePlayer_Trainer_Trim_LightRedPal,
+	MalePlayer_Trainer_Trim_OrangePal,
+	MalePlayer_Trainer_Trim_YellowPal,
+	MalePlayer_Trainer_Trim_GreenPal,
+	MalePlayer_Trainer_Trim_LightGreenPal,
+	MalePlayer_Trainer_Trim_BrownPal,
+	MalePlayer_Trainer_Trim_BrownOrangePal,
+	MalePlayer_Trainer_Trim_BlackPal,
+	MalePlayer_Trainer_Trim_WhitePal,
+	MalePlayer_Trainer_Trim_BluePal,
+	MalePlayer_Trainer_Trim_LightBluePal,
+	MalePlayer_Trainer_Trim_TealPal,
+	MalePlayer_Trainer_Trim_PinkPal,
+	MalePlayer_Trainer_Trim_LightPinkPal,
+	MalePlayer_Trainer_Trim_Purple2Pal,
+	MalePlayer_Trainer_Trim_PurplePal,
 };
 
-static const u16* sPlayerSkinColours[][2] =
+static const u16* sPlayerHairColours[] =
 {
-    {/*MalePlayer_Trainer_Skin_LightPal, MalePlayer_OW_Skin_LightPal*/},
-    {MalePlayer_Trainer_Skin_LBrownPal, MalePlayer_OW_Skin_LBrownPal},
-    {MalePlayer_Trainer_Skin_BrownPal, MalePlayer_OW_Skin_BrownPal},
+	NULL /*MalePlayer_Trainer_Hair_BrownPal*/,
+	MalePlayer_Trainer_Hair_LBlondePal,
+	MalePlayer_Trainer_Hair_BlondePal,
+	MalePlayer_Trainer_Hair_BlackPal,
+	MalePlayer_Trainer_Hair_RedPal,
+	MalePlayer_Trainer_Hair_GreenPal,
+	MalePlayer_Trainer_Hair_PurplePal,
+	MalePlayer_Trainer_Hair_BluePal,
+	MalePlayer_Trainer_Hair_PinkPal,
+	MalePlayer_Trainer_Hair_SilverPal,
+	MalePlayer_Trainer_Hair_GreyPal,
+	MalePlayer_Trainer_Hair_WhitePal,
+	MalePlayer_Trainer_Hair_TealPal,
+	MalePlayer_Trainer_Hair_OrangePal,
+	MalePlayer_Trainer_Hair_LightBrownPal,
+	MalePlayer_Trainer_Hair_DarkBrownPal,
+};
+
+static const u16* sPlayerSkinColours[] =
+{
+    NULL /*MalePlayer_Trainer_Skin_LightPal*/,
+    MalePlayer_Trainer_Skin_LBrownPal,
+    MalePlayer_Trainer_Skin_BrownPal,
+    MalePlayer_Trainer_Skin_DarkBrownPal,
+    MalePlayer_Trainer_Skin_YellowPal,
 };
 #endif
 
@@ -445,7 +485,7 @@ u16 GetBackspriteId(void)
 	{
 		trainerPicId = LoadPartnerBackspriteIndex();
 	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+	else if (IsAIControlledBattle())
 	{
 		trainerPicId = LoadPartnerBackspriteIndex(); //The trainer's backsprite for the Battle Sands is stored in the multi partner var
 	}
@@ -461,38 +501,44 @@ u16 GetBackspriteId(void)
 }
 
 #ifdef UNBOUND
-static void ChangePlayerPaletteByPaletteAndOffset(u8 palType, u16 paletteOffset)
+#define SKIN_TONE_OFFSET 1
+#define HAIR_COLOUR_OFFSET 4
+#define OUTFIT_OFFSET 7
+#define TRIM_OFFSET 9
+static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset)
 {
 	u16 skinTone = VarGet(VAR_PLAYER_SKIN_TONE);
 	u16 hairColour = VarGet(VAR_PLAYER_HAIR_COLOUR);
 	u16 outfitColour = VarGet(VAR_PLAYER_OUTFIT_COLOUR);
+	u16 trimColour = VarGet(VAR_PLAYER_TRIM_COLOUR);
 
 	if (skinTone > 0 && skinTone < NELEMS(sPlayerSkinColours))
 	{
-		u16 skinOffset = paletteOffset + 1;
-		CpuCopy16(sPlayerSkinColours[skinTone][palType] + 1, gPlttBufferUnfaded + skinOffset, 3 * sizeof(u16));
-		CpuCopy16(sPlayerSkinColours[skinTone][palType] + 1, gPlttBufferFaded + skinOffset, 3 * sizeof(u16));
+		u16 skinOffset = paletteOffset + SKIN_TONE_OFFSET;
+		CpuCopy16(sPlayerSkinColours[skinTone] + SKIN_TONE_OFFSET, gPlttBufferUnfaded + skinOffset, 3 * sizeof(u16));
+		CpuCopy16(sPlayerSkinColours[skinTone] + SKIN_TONE_OFFSET, gPlttBufferFaded + skinOffset, 3 * sizeof(u16));
 	}
 
 	if (hairColour > 0 && hairColour < NELEMS(sPlayerHairColours))
 	{
-		LOAD_HAIR: ;
-		u16 hairOffset = paletteOffset + 4;
-		CpuCopy16(sPlayerHairColours[hairColour][palType] + 4, gPlttBufferUnfaded + hairOffset, 3 * sizeof(u16));
-		CpuCopy16(sPlayerHairColours[hairColour][palType] + 4, gPlttBufferFaded + hairOffset, 3 * sizeof(u16));
-	}
-	else if (hairColour == 0 && skinTone == 2) //Darkest skin has different brown hair
-	{
-		hairColour = NELEMS(sPlayerHairColours) - 1; //Last entry is reserved for this alternate brown hair
-		goto LOAD_HAIR;
+		u16 hairOffset = paletteOffset + HAIR_COLOUR_OFFSET;
+		CpuCopy16(sPlayerHairColours[hairColour] + HAIR_COLOUR_OFFSET, gPlttBufferUnfaded + hairOffset, 3 * sizeof(u16));
+		CpuCopy16(sPlayerHairColours[hairColour] + HAIR_COLOUR_OFFSET, gPlttBufferFaded + hairOffset, 3 * sizeof(u16));
 	}
 
 	if (outfitColour > 0 && outfitColour < NELEMS(sPlayerOutfitColours))
 	{
-		u16 outfitOffset = paletteOffset + 7;
-		u8 copyAmount = (outfitColour == 1) ? 3 : 2; //Black outfit needs belt copied
-		CpuCopy16(sPlayerOutfitColours[outfitColour][palType] + 7, gPlttBufferUnfaded + outfitOffset, copyAmount * sizeof(u16));
-		CpuCopy16(sPlayerOutfitColours[outfitColour][palType] + 7, gPlttBufferFaded + outfitOffset, copyAmount * sizeof(u16));
+		u16 outfitOffset = paletteOffset + OUTFIT_OFFSET;
+		u8 copyAmount = 2;
+		CpuCopy16(sPlayerOutfitColours[outfitColour] + OUTFIT_OFFSET, gPlttBufferUnfaded + outfitOffset, copyAmount * sizeof(u16));
+		CpuCopy16(sPlayerOutfitColours[outfitColour] + OUTFIT_OFFSET, gPlttBufferFaded + outfitOffset, copyAmount * sizeof(u16));
+	}
+
+	if (trimColour > 0 && trimColour < NELEMS(sPlayerTrimColours))
+	{
+		u16 trimOffset = paletteOffset + TRIM_OFFSET;
+		CpuCopy16(sPlayerTrimColours[trimColour] + TRIM_OFFSET, gPlttBufferUnfaded + trimOffset, 2 * sizeof(u16));
+		CpuCopy16(sPlayerTrimColours[trimColour] + TRIM_OFFSET, gPlttBufferFaded + trimOffset, 2 * sizeof(u16));
 	}
 }
 #endif
@@ -500,14 +546,14 @@ static void ChangePlayerPaletteByPaletteAndOffset(u8 palType, u16 paletteOffset)
 void ChangeTrainerPicPal(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(0, paletteOffset);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset);
 	#endif
 }
 
 void ChangeEventObjPal(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(1, paletteOffset);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset);
 	#endif
 }
 
@@ -530,7 +576,7 @@ const u8* GetTrainerSpritePal(u16 trainerPicId)
 
 void TryUpdateTrainerPicPalTrainerCard(u16 trainerPicId, u16 palOffset)
 {
-	LoadCompressedPalette(GetTrainerSpritePal(trainerPicId), palOffset * 0x10, 0x20);
+	LoadCompressedPalette(GetTrainerSpritePal(trainerPicId), palOffset * 16, 0x20);
 	#ifdef UNBOUND
 	if (trainerPicId == TRAINER_PIC_PLAYER_M || trainerPicId == TRAINER_PIC_PLAYER_F)
 		ChangeTrainerPicPal(palOffset * 16);
