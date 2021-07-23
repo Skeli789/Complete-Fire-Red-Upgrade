@@ -11,7 +11,7 @@ extern u8 sRTCFrameCount;
 extern struct SiiRtcInfo sRtc; //0x3005E88
 
 // const rom
-static const struct SiiRtcInfo sRtcDummy = {.year = 0, .month = MONTH_JAN, .day = 1}; // 2000 Jan 1
+static const struct SiiRtcInfo sRtcDummy = {.year = 0, .month = MONTH_JAN, .day = 1, .hour = 0x20}; // 2000 Jan 1, 8:00 PM (hex is intentional)
 
 static const s32 sNumDaysInMonths[12] =
 {
@@ -173,15 +173,20 @@ static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
 	gClock.second = ConvertBcdToBinary(rtc->second);
 }
 
+void __attribute__((long_call)) break_func();
 extern const u8 SystemScript_StopZooming[];
 void RtcCalcLocalTime(void)
 {
 	if (sRTCFrameCount == 0)
 	{
 		RtcInit();
+
+		if (sRTCErrorStatus & RTC_ERR_FLAG_MASK)
+			sRtc = sRtcDummy;
+
 		//u8 prevSecond = gClock.second;
 		UpdateClockFromRtc(&sRtc);
-		
+
 		/*if (prevSecond == gClock.second
 		&& !ScriptContext2_IsEnabled())
 		//Probably needs an overworld check and a minute/hour/day etc check too
