@@ -3,14 +3,17 @@
 #include "../include/battle_transition.h"
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
+#include "../include/gpu_regs.h"
 #include "../include/load_save.h"
 #include "../include/random.h"
+#include "../include/scanline_effect.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_transition.h"
@@ -18,6 +21,7 @@
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -135,6 +139,29 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	#endif
 
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
+}
+
+void VBlankCB_Battle(void)
+{
+	#ifndef DEBUG_AI_CHOICES
+	AIRandom(); //Only change AI thinking seed every frame
+	#endif
+	SetGpuReg(REG_OFFSET_BG0HOFS, gBattle_BG0_X);
+	SetGpuReg(REG_OFFSET_BG0VOFS, gBattle_BG0_Y);
+	SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
+	SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
+	SetGpuReg(REG_OFFSET_BG2HOFS, gBattle_BG2_X);
+	SetGpuReg(REG_OFFSET_BG2VOFS, gBattle_BG2_Y);
+	SetGpuReg(REG_OFFSET_BG3HOFS, gBattle_BG3_X);
+	SetGpuReg(REG_OFFSET_BG3VOFS, gBattle_BG3_Y);
+	SetGpuReg(REG_OFFSET_WIN0H, gBattle_WIN0H);
+	SetGpuReg(REG_OFFSET_WIN0V, gBattle_WIN0V);
+	SetGpuReg(REG_OFFSET_WIN1H, gBattle_WIN1H);
+	SetGpuReg(REG_OFFSET_WIN1V, gBattle_WIN1V);
+	LoadOam();
+	ProcessSpriteCopyRequests();
+	TransferPlttBuffer();
+	ScanlineEffect_InitHBlankDmaTransfer();
 }
 
 static void SavePartyItems(void)
@@ -606,6 +633,9 @@ void BattleBeginFirstTurn(void)
 				gBattleStruct->turncountersTracker = 0;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
+				#ifdef DEBUG_AI_CHOICES
+				gNewBS->ai.randSeed = Random32(); //So the seed doesn't start at 0
+				#endif
 				*state = 0;
 		}
 	}

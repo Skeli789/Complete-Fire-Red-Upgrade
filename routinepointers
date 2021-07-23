@@ -234,6 +234,12 @@ PlayerAvatarTransition_HandleUnderwater 8471EEC
 MetatileBehavior_IsMuddySlope 835B7FC
 ForcedMovement_MuddySlope 835B800
 
+##Battle VBlank
+VBlankCB_Battle 800FF6C
+VBlankCB_Battle 8011B80
+VBlankCB_Battle 802AAC4
+VBlankCB_Battle 8077A9C
+
 #ifdef UNBOUND
 FieldUseFunc_MaxPowder 8876C40
 FieldUseFunc_Honey 8876E7C

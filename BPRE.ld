@@ -62,6 +62,12 @@ gBattle_BG1_X = 0x2022978;
 gBattle_BG1_Y = 0x202297A;
 gBattle_BG2_X = 0x202297C;
 gBattle_BG2_Y = 0x202297E;
+gBattle_BG3_X = 0x2022980;
+gBattle_BG3_Y = 0x2022982;
+gBattle_WIN0H = 0x2022984;
+gBattle_WIN0V = 0x2022986;
+gBattle_WIN1H = 0x2022988;
+gBattle_WIN1V = 0x202298A;
 gDisplayedStringBattle = 0x202298C;
 gBattleTextBuff1 = 0x2022AB8;
 gBattleTextBuff2 = 0x2022AC8;
@@ -1844,12 +1850,11 @@ free_temp_tile_data_buffers_if_possible = 0x80F682C | 1;
 decompress_and_copy_tile_data_to_vram = 0x80F6878 | 1;
 ResetBGs = 0x812D594 | 1;
 
-
 /* Scanline Effect Functions */
 ScanlineEffect_Stop = 0x8087E64 | 1;
 ScanlineEffect_Clear = 0x8087EA4 | 1;
 ScanlineEffect_SetParams = 0x8087EE4 | 1;
-//ScanlineEffect_InitHBlankDmaTransfer = 0x8087F54 | 1;
+ScanlineEffect_InitHBlankDmaTransfer = 0x8087F54 | 1;
 dp12_b_callback = 0x8087FE0 | 1;
 ScanlineEffect_InitWave = 0x8088230 | 1;
 

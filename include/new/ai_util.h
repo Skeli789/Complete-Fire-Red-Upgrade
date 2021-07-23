@@ -6,6 +6,7 @@
 #include "damage_calc.h"
 
 //Exported Functions
+u16 AIRandom(void);
 bool8 CanKillAFoe(u8 bank);
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef);
 bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef);

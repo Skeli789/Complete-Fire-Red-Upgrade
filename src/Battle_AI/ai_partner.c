@@ -1,6 +1,5 @@
 #include "../defines.h"
 #include "../defines_battle.h"
-#include "../../include/random.h"
 #include "../../include/constants/items.h"
 
 #include "../../include/new/ability_tables.h"

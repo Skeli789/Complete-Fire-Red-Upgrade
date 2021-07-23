@@ -1,6 +1,5 @@
 #include "../defines.h"
 #include "../defines_battle.h"
-#include "../../include/random.h"
 #include "../../include/constants/items.h"
 #include "../../include/constants/item_effects.h"
 #include "../../include/constants/region_map_sections.h"
@@ -153,7 +152,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 	// Decide a random target battlerId in doubles.
 	if (IS_DOUBLE_BATTLE)
 	{
-		gBankTarget = (Random() & BIT_FLANK) + (SIDE(gActiveBattler) ^ BIT_SIDE);
+		gBankTarget = (AIRandom() & BIT_FLANK) + (SIDE(gActiveBattler) ^ BIT_SIDE);
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 			gBankTarget ^= BIT_FLANK;
 	}
@@ -169,7 +168,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 		if (gBitTable[i] & moveLimitations)
 			AI_THINKING_STRUCT->score[i] = 0;
 
-		AI_THINKING_STRUCT->simulatedRNG[i] = Random() % 100; //Used to be 100 - umodsi(Random(), 16);
+		AI_THINKING_STRUCT->simulatedRNG[i] = AIRandom() % 100; //Used to be 100 - (Random() % 16);
 	}
 
 	// Choose proper trainer ai scripts.
@@ -405,7 +404,7 @@ static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData)
 		}
 	}
 
-	return consideredMoveArray[Random() % numOfBestMoves];
+	return consideredMoveArray[AIRandom() % numOfBestMoves];
 }
 
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
@@ -481,7 +480,7 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 					}
 				}
 
-				actionOrMoveIndex[i] = mostViableMovesIndices[Random() % mostViableMovesNo];
+				actionOrMoveIndex[i] = mostViableMovesIndices[AIRandom() % mostViableMovesNo];
 				bestMovePointsForTarget[i] = mostViableMovesScores[0];
 
 				// Don't use a move against ally if it has less than 101 points.
@@ -634,7 +633,7 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 		}
 	}
 
-	gBankTarget = mostViableTargetsArray[Random() % mostViableTargetsNo];
+	gBankTarget = mostViableTargetsArray[AIRandom() % mostViableTargetsNo];
 	return actionOrMoveIndex[gBankTarget];
 }
 
@@ -1058,7 +1057,7 @@ static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u16
 	{
 		u8 noSwitchChance = (gNewBS->ai.switchingCooldown[gActiveBattler]) ? 75 : 25; //Just switched in (not type absorb) 75% chance not to switch, otherwise 25% chance
 
-		if (Random() % 100 < noSwitchChance)
+		if (AIRandom() % 100 < noSwitchChance)
 			return FALSE; //Only allow switching to this mon again for a type absorbing some of the time
 	}
 
@@ -1133,7 +1132,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 			if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
 				return FALSE;
 
-			if (Random() & 1)
+			if (AIRandom() & 1)
 				return FALSE; //Only switch 50% of the time
 		}
 
@@ -1188,7 +1187,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 	{
 		if (IS_DOUBLE_BATTLE
 		&& predictedMove2 != MOVE_NONE && SPLIT(predictedMove2) != SPLIT_STATUS
-		&& Random() & 1)
+		&& AIRandom() & 1)
 		{
 			//If both foes are going to use a damaging move, pick one at random to check
 			foe1 = foe2;
@@ -1283,7 +1282,7 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party)
 	//Check best switching option
 	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
 	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
-	//&& Random() % 100 < 75 //75 % chance of taking the switch
+	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
 	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
 	{
 		//Switch to a mon that can KO and save your damager for later
@@ -1295,7 +1294,7 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party)
 	//Check second best switching option
 	switchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
 	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
-	//&& Random() % 100 < 75 //75 % chance of taking the switch
+	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
 	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
 	{
 		//Switch to a mon that can KO and save your damager for later
@@ -1639,7 +1638,7 @@ static bool8 IsYawned(void)
 	&& ABILITY(gActiveBattler) != ABILITY_NATURALCURE //Can switch out when asleep to cure
 	&& (itemEffect = ITEM_EFFECT(gActiveBattler)) != ITEM_EFFECT_CURE_SLP //Will wake up as soon as it falls asleep
 	&& itemEffect != ITEM_EFFECT_CURE_STATUS
-	&& (!IsDynamaxed(gActiveBattler) || Random() & 1) //50% chance to switch out if Dynamaxed
+	&& (!IsDynamaxed(gActiveBattler) || AIRandom() & 1) //50% chance to switch out if Dynamaxed
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4 //Don't bother saving a mon with less than 25% of HP
 	&& CanBePutToSleep(gActiveBattler, FALSE)) //Could have been yawned and then afflicted with another status condition
 	{
@@ -1739,7 +1738,7 @@ static bool8 ShouldSwitchWhileAsleep(struct Pokemon* party)
 		return FALSE;
 
 	if (IsBankAsleep(gActiveBattler)
-	&& Random() & 1 //50 % chance of switching out here
+	&& AIRandom() & 1 //50 % chance of switching out here
 	&& (!IsDynamaxed(gActiveBattler) //Not Dynamaxed
 	 || (s8) (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > gNewBS->dynamaxData.timer[gActiveBattler])) //Or will wake up after the Dynamax ends
 	{
@@ -1750,7 +1749,7 @@ static bool8 ShouldSwitchWhileAsleep(struct Pokemon* party)
 		||  STAT_STAGE(gActiveBattler, STAT_STAGE_SPEED) >= 8
 		||  STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 9)
 		{
-			if (Random() & 1) //50 % chance of not switching out here
+			if (AIRandom() & 1) //50 % chance of not switching out here
 				return FALSE; //Lower chance of switching out if AI has some good stat boosted
 		}
 
@@ -1834,7 +1833,7 @@ static bool8 IsTakingAnnoyingSecondaryDamage(struct Pokemon* party)
 		bool8 trySwitch = FALSE;
 		bool8 urgent = FALSE;
 		
-		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
+		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (AIRandom() & 3) == 0) //25% chance to switch out when seeded
 		{
 			trySwitch = TRUE;
 		}
@@ -2309,7 +2308,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 		 && GetTrapDamage(foe) == 0 //And it isn't necessary to stay in so the foe will take trap damage
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
 		 && ((GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //And the new mon can KO (helps against PP stallers)
-		  || ((Random() & 1) && !ResistsAllMoves(foe, gActiveBattler)))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
+		  || ((AIRandom() & 1) && !ResistsAllMoves(foe, gActiveBattler)))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
 		                                                                 //don't get into an infinite loop if this mon already does). Do this randomly to throw off opponent.
 	)
 	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
@@ -2898,7 +2897,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			if (bestMonId == PARTY_SIZE)
 				bestMonId = i;
 			else if (scores[i] > scores[bestMonId]
-			|| (scores[i] == scores[bestMonId] && (Random() % 100 < 50))) //50% chance when having similar scores
+			|| (scores[i] == scores[bestMonId] && (AIRandom() % 100 < 50))) //50% chance when having similar scores
 			{
 				secondBestMonId = bestMonId;
 				bestMonId = i;
@@ -3202,7 +3201,7 @@ static void PredictMovesForBanks(void)
 					if (viabilities[GetMaxByteIndexInList(viabilities, MAX_MON_MOVES)] < 100) //Best move has viability < 100
 						StoreSwitchPrediction(bankAtk, bankDef);
 					else
-						StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+						StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[AIRandom() % (j + 1)] - 1]);
 
 					Memset(viabilities, 0, sizeof(viabilities));
 				}
@@ -3238,7 +3237,7 @@ static void UpdateStrongestMoves(void)
 		u8 backupAbilityAtk = ABILITY_NONE;
 		u16 backupSpeciesAtk = SPECIES_NONE;
 
-		gNewBS->ai.suckerPunchOkay[bankAtk] = Random() & 1; //Randomly choose if turn is okay for a revealed Sucker Punch
+		gNewBS->ai.suckerPunchOkay[bankAtk] = AIRandom() & 1; //Randomly choose if turn is okay for a revealed Sucker Punch
 
 		if (IS_SINGLE_BATTLE) //There's a high chance these values will be used in singles so calc now.
 		{
@@ -3666,7 +3665,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 		#endif
 		#ifdef UNBOUND
 		&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE
-		&& Random() % 100 < GetChanceOfPredictingPlayerNormalSwitch()
+		&& AIRandom() % 100 < GetChanceOfPredictingPlayerNormalSwitch()
 		#endif
 		;
 }
@@ -3802,7 +3801,7 @@ void PickRaidBossRepeatedMove(u8 moveLimitations)
 
 		do
 		{
-			curPos = gBattleStruct->chosenMovePositions[gBankAttacker] = Random() & 3;
+			curPos = gBattleStruct->chosenMovePositions[gBankAttacker] = AIRandom() & 3;
 			gCurrentMove = gBattleMons[gBankAttacker].moves[curPos]; //Choose a new move
 		} while (gCurrentMove == MOVE_NONE || (gBitTable[curPos] & moveLimitations));
 

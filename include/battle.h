@@ -975,10 +975,11 @@ struct NewBattleStruct
 
 	struct 
 	{
-		u16 zMoveHelper;
+		u16 zMoveHelper; //~0x2017B74
+		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
-		u8 playerSwitchedCount; //~0x2017B6B
-		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B6C - Used for anti-AI cheesing
+		u8 playerSwitchedCount;
+		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //Used for anti-AI cheesing
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
 		u8 switchesInARow[MAX_BATTLERS_COUNT];
 		u8 previousMonIn[MAX_BATTLERS_COUNT];
