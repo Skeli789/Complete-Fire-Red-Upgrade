@@ -55,6 +55,24 @@ Obtained [BUFFER1] [BUFFER2]!
 #org @gText_ObtainedTMHM
 Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 
+#org @gText_RegisteredItemSelectButton
+[SELECT_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLButton
+[L_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemRButton
+[R_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemStartButton
+[START_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLeftButton
+[DPAD_LEFT] [ALIGN][1E]
+
+#org @gText_RegisteredItemRightButton
+[DPAD_RIGHT] [ALIGN][1E]
+
 #org @gText_UseWhichRegisteredItem
 Use which item?
 

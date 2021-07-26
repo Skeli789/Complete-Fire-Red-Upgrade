@@ -1184,6 +1184,8 @@ FlagSet = 0x806E680 | 1;
 FlagClear = 0x806E6A8 | 1;
 GetFlagPointer = 0x806E5C0 | 1;
 FlagGet = 0x806E6D0 | 1;
+Task_MultichoiceMenu_HandleInput = 0x809CC98 | 1;
+DestroyScriptMenuWindow = 0x809D6B0 | 1;
 HelpSystemDisableOnField = 0x812B478 | 1;
 
 
@@ -1419,6 +1421,8 @@ AnimatePartySlot = 0x811F818 | 1;
 Task_ClosePartyMenu = 0x811FA78 | 1;
 GetCursorSelectionMonId = 0x811FB0C | 1;
 Task_HandleChooseMonInput = 0x811FB28 | 1;
+GetCurrentPartySlotPtr = 0x811FBA4 | 1;
+HandleChooseMonSelection = 0x811FBC4 | 1;
 HandleChooseMonCancel = 0x811FD88 | 1;
 PartyMenuButtonHandler = 0x811FEFC | 1;
 GetMedicineItemEffectMessage = 0x8125058 | 1;

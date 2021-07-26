@@ -1032,7 +1032,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			#endif
 
 			#ifdef VAR_GAME_DIFFICULTY
-			if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+			if (gameDifficulty >= OPTIONS_EXPERT_DIFFICULTY
+			|| (gameDifficulty == OPTIONS_HARD_DIFFICULTY && GetCurrentRegionMapSectionId() == MAPSEC_VICTORY_ROAD))
 			{
 				party[i].friendship = 255; //Max friendship
 				if (GetMonEVCount(&party[i]) == 0) //Has no EVs already

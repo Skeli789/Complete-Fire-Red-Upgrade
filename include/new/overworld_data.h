@@ -69,3 +69,10 @@ extern const u8 EventScript_CantDive[];
 extern const u8 EventScript_UseDiveUnderwater[];
 extern const u8 EventScript_UseADMDiveUnderwater[];
 extern const u8 EventScript_CantSurface[];
+
+extern const u8 gText_RegisteredItemSelectButton[];
+extern const u8 gText_RegisteredItemLButton[];
+extern const u8 gText_RegisteredItemRButton[];
+extern const u8 gText_RegisteredItemStartButton[];
+extern const u8 gText_RegisteredItemLeftButton[];
+extern const u8 gText_RegisteredItemRightButton[];

@@ -324,7 +324,8 @@ SystemScript_PickedUpHiddenItem: @;Replaces 81A6885
 .macro showselectitems num
 EventScript_ShowSelectItems\num:
 	multichoice 0x0 0x0 TWO_MULTICHOICE_OPTIONS + \num - 2 0x0
-	goto EventScript_ChooseSelectItem
+	releaseall
+	end
 .endm
 
 .global EventScript_ShowSelectItems
@@ -332,6 +333,7 @@ EventScript_ShowSelectItems:
 	lockall
 	preparemsg gText_UseWhichRegisteredItem
 	waitmsg
+	callasm UseChosenRegisteredItem @;Fires when script ends
 	switch 0x8004
 	case 2, EventScript_ShowSelectItems2
 	case 3, EventScript_ShowSelectItems3
@@ -346,14 +348,6 @@ showselectitems 3
 showselectitems 4
 showselectitems 5
 showselectitems 6
-
-EventScript_ChooseSelectItem:
-	comparevars LASTRESULT 0x8004
-	if greaterorequal _goto .LEnd @Chose to cancel
-	callasm UseChosenRegisteredItem
-.LEnd:
-	releaseall
-	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

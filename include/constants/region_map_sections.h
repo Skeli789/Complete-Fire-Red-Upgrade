@@ -171,7 +171,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAPSEC_DEHARA_DEPT					0xC4
 #define MAPSEC_RIFT_CAVE					0x8B
 #define MAPSEC_RUINS_OF_VOID				0x68
-#define MAPSEC_JUDGMENT_ZONE				0x7D
+#define MAPSEC_CUBE_SPACE					0x7D
 #define MAPSEC_ROUTE_13						0x71
 #define MAPSEC_ROUTE_14						0x72
 #define MAPSEC_GREAT_DESERT					0x7B

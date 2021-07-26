@@ -9,6 +9,7 @@
 #include "../include/field_effect.h"
 #include "../include/field_effect_helpers.h"
 #include "../include/field_fadetransition.h"
+#include "../include/field_message_box.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
 #include "../include/field_screen_effect.h"
@@ -30,7 +31,9 @@
 #include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
+#include "../include/script_menu.h"
 #include "../include/sound.h"
+#include "../include/string_util.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
@@ -1984,7 +1987,6 @@ bool8 IsCurrentAreaWinter(void)
 			|| mapSec == MAPSEC_ROUTE_8
 			|| mapSec == MAPSEC_BLIZZARD_CITY
 			|| mapSec == MAPSEC_FROZEN_FOREST
-			|| mapSec == MAPSEC_JUDGMENT_ZONE
 			|| mapSec == MAPSEC_POKEMON_LEAGUE
 			|| (mapSec == MAPSEC_VICTORY_ROAD
 			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
@@ -2726,6 +2728,16 @@ void WarpFadeOutScreen(void)
 }
 
 //Stuff to do with pressing buttons in the field//
+static const u8* sRegisteredItemStringVars[][2] =
+{
+	{gStringVar7, gText_RegisteredItemSelectButton},
+	{gStringVar8, gText_RegisteredItemLButton},
+	{gStringVar9, gText_RegisteredItemRButton},
+	{gStringVarA, gText_RegisteredItemStartButton},
+	{gStringVarB, gText_RegisteredItemLeftButton},
+	{gStringVarC, gText_RegisteredItemRightButton},
+};
+
 void FieldCheckIfPlayerPressedLButton(struct FieldInput* input, u16 newKeys)
 {
 	if (newKeys & L_BUTTON)
@@ -2772,7 +2784,10 @@ void UseRegisteredItem(u16 registeredItem)
 	Var800E = registeredItem;
 	taskId = CreateTask(ItemId_GetFieldFunc(registeredItem), 8);
 	if (taskId != 0xFF)
+	{
 		gTasks[taskId].data[3] = 1;
+		gTasks[taskId].func(taskId);
+	}
 }
 
 static bool8 UseRegisteredKeyItemOnField(void)
@@ -2799,7 +2814,11 @@ static bool8 UseRegisteredKeyItemOnField(void)
 				gSaveBlock1->registeredItems[i] = ITEM_NONE; //Don't have item so remove it from list
 			else
 			{
-				gMultiChoice[numRegisteredItems].name = ItemId_GetName(gSaveBlock1->registeredItems[i]);
+				u8* stringVar = (u8*) sRegisteredItemStringVars[numRegisteredItems][0];
+				StringCopy(stringVar, sRegisteredItemStringVars[numRegisteredItems][1]);
+				StringAppend(stringVar, ItemId_GetName(gSaveBlock1->registeredItems[i]));
+
+				gMultiChoice[numRegisteredItems].name = stringVar;
 				gMultiChoice[numRegisteredItems].id = numRegisteredItems;
 				numRegisteredItems++;
 			}
@@ -2836,8 +2855,42 @@ void Task_UseChosenRegisteredItem(u8 taskId)
 {
 	if (!ScriptContext2_IsEnabled())
 	{
-		UseRegisteredItem(gSaveBlock1->registeredItems[gSpecialVar_LastResult]);
+		if (gSpecialVar_LastResult < Var8004) //Didn't cancel
+			UseRegisteredItem(gSaveBlock1->registeredItems[gSpecialVar_LastResult]);
+
 		DestroyTask(taskId);
+	}
+	else
+	{
+		//Check button combos for quick access
+		u16 usedItem = ITEM_NONE;
+	
+		if (JOY_NEW(SELECT_BUTTON))
+			usedItem = gSaveBlock1->registeredItems[0];
+		else if (JOY_NEW(L_BUTTON))
+			usedItem = gSaveBlock1->registeredItems[1];
+		else if (JOY_NEW(R_BUTTON))
+			usedItem = gSaveBlock1->registeredItems[2];
+		else if (JOY_NEW(START_BUTTON))
+			usedItem = gSaveBlock1->registeredItems[3];
+		else if (JOY_NEW(DPAD_LEFT))
+			usedItem = gSaveBlock1->registeredItems[4];
+		else if (JOY_NEW(DPAD_RIGHT))
+			usedItem = gSaveBlock1->registeredItems[5];
+
+		if (usedItem != ITEM_NONE)
+		{
+			u8 multichoiceTaskId = FindTaskIdByFunc(Task_MultichoiceMenu_HandleInput);
+			if (multichoiceTaskId != 0xFF)
+			{
+				DestroyScriptMenuWindow(gTasks[multichoiceTaskId].data[6]);
+				DestroyTask(multichoiceTaskId);
+			}
+
+			HideFieldMessageBox();
+			UseRegisteredItem(usedItem);
+			DestroyTask(taskId);
+		}
 	}
 }
 
