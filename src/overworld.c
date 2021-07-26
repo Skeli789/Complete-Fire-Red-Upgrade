@@ -2784,10 +2784,7 @@ void UseRegisteredItem(u16 registeredItem)
 	Var800E = registeredItem;
 	taskId = CreateTask(ItemId_GetFieldFunc(registeredItem), 8);
 	if (taskId != 0xFF)
-	{
 		gTasks[taskId].data[3] = 1;
-		gTasks[taskId].func(taskId);
-	}
 }
 
 static bool8 UseRegisteredKeyItemOnField(void)

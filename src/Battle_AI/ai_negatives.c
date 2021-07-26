@@ -381,7 +381,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_CLEARBODY:
 			//case ABILITY_FULLMETALBODY:
 			case ABILITY_WHITESMOKE:
-				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects))
+				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
+				|| move == MOVE_PARTINGSHOT)
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
@@ -1922,6 +1923,27 @@ MOVESCR_CHECK_0:
 			{
 				DECREASE_VIABILITY(10);
 				break;
+			}
+			else if (move == MOVE_PARTINGSHOT)
+			{
+				if (data->defAbility == ABILITY_CONTRARY)
+				{
+					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) >= STAT_STAGE_MAX
+					&& STAT_STAGE(bankDef, STAT_STAGE_SPATK) >= STAT_STAGE_MAX)
+					{
+						DECREASE_VIABILITY(10);
+						break;
+					}
+				}
+				else
+				{
+					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN
+					&& STAT_STAGE(bankDef, STAT_STAGE_SPATK) == STAT_STAGE_MIN)
+					{
+						DECREASE_VIABILITY(10);
+						break;
+					}
+				}
 			}
 			else //Baton pass
 			{

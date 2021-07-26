@@ -182,7 +182,7 @@
 #define EFFECT_WISH 179
 #define EFFECT_ASSIST 180
 #define EFFECT_INGRAIN 181 //+ Aqua Ring
-#define EFFECT_SUPERPOWER 182 //+ Close Combat + Dragon Ascent + Hammer Arm + Ice Hammer + Clanging Scales + V-Create + Hyperspace Hole + Hyperspace Fury
+#define EFFECT_SUPERPOWER 182 //+ Close Combat + Dragon Ascent + Hammer Arm + Ice Hammer + Clanging Scales + V-Create + Hyperspace Fury
 #define EFFECT_MAGIC_COAT 183
 #define EFFECT_RECYCLE 184 //+ Belch
 #define EFFECT_BLANK_185 185
@@ -231,7 +231,7 @@
 #define EFFECT_PLEDGE 227
 #define EFFECT_FIELD_EFFECTS 228 //+ Court Change
 #define EFFECT_FLING 229
-#define EFFECT_FEINT 230
+#define EFFECT_FEINT 230 //+ Hyperspace Hole
 #define EFFECT_ATTACK_BLOCKERS 231
 #define EFFECT_TYPE_CHANGES 232 //+ Magic Powder
 #define EFFECT_HEAL_TARGET 233
@@ -249,4 +249,3 @@
 #define EFFECT_POLTERGEIST 245
 
 #define EFFECT_MAX_MOVE 253
-

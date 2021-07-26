@@ -276,6 +276,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 goodMoveThatDoesntMakeContact = FALSE;
+	bool8 hasNonMultiHitMove = FALSE;
 	bool8 perfectMoveThatDoesntMakeContact = FALSE;
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -308,6 +309,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 						bestPriority = currPriority;
 						goodMoves = gBitTable[i]; //Wipe all previously good moves
 						goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
+						hasNonMultiHitMove = gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
 					}
 					else if (currAcc == bestAcc || currAcc >= 100) //This move has the same as the best accuracy or this move has perfect accuracy
 					{
@@ -318,12 +320,14 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 							bestPriority = currPriority;
 							goodMoves = gBitTable[i]; //Wipe all previously good moves
 							goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
+							hasNonMultiHitMove = gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
 						}
 						else
 						{
 							//This move has the same priority as pre-existing moves
 							goodMoves |= gBitTable[i];
 							goodMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Update whether at least one good move doesn't make contact
+							hasNonMultiHitMove |= gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
 						}
 					}
 				}
@@ -341,9 +345,14 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 		&& gBattleMons[bankAtk].moves[i] == checkMove) //The original move in question is this best move
 		{
 			if (badIdeaToMakeContact //It's better not to use a contact move
-			&& hasMoveThatDoesntMakeContact //And there is a good move that doesn't make contact
-			&& moveIsContact) //But the move in question isn't it
-				continue; //There's a better move that could be used
+			&& moveIsContact) //And the move being checked is a contact move
+			{
+				if (hasMoveThatDoesntMakeContact) //There is a good move that doesn't make contact
+					continue; //There's a better move that could be used
+
+				if (gBattleMoves[checkMove].effect == EFFECT_MULTI_HIT && hasNonMultiHitMove) //A different contect move only hits once
+					continue; //Prefer that move
+			}
 
 			return TRUE;
 		}
@@ -500,6 +509,21 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 								}
 								else if (!bestMoveContact && currMoveContact)
 									continue; //Check the next move - this move is out
+								else if (bestMoveContact && currMoveContact)
+								{
+									//They're both contact moves, so pick the one less likely to proc the contact
+									bool8 bestMoveMultiHit = gBattleMoves[bestMove].effect == EFFECT_MULTI_HIT;
+									bool8 currMoveMultiHit = gBattleMoves[currMove].effect == EFFECT_MULTI_HIT;
+
+									if (bestMoveMultiHit && !currMoveMultiHit)
+									{
+										//The new move isn't a multi-hit unlike the old best move
+										bestMove = currMove;
+										continue; //Proceed to next move
+									}
+									else if (!bestMoveMultiHit && currMoveMultiHit)
+										continue; //Check the next move - this move is out
+								}
 							}
 
 							//Pick a non-recoil move preferably
@@ -515,6 +539,21 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 									continue; //Proceed to next move
 								}
 								else if (!bestMoveRecoil && currMoveRecoil)
+									continue; //Check the next move - this move is out
+							}
+
+							//Pick a non-stat recoil move preferably
+							{
+								bool8 bestMoveStatRecoil = IsStatRecoilMove(bestMove);
+								bool8 currMoveStatRecoil = IsStatRecoilMove(currMove);
+
+								if (bestMoveStatRecoil && !currMoveStatRecoil)
+								{
+									//Prefer the move that doesn't lower stats
+									bestMove = currMove;
+									continue; //Proceed to next move
+								}
+								else if (!bestMoveStatRecoil && currMoveStatRecoil)
 									continue; //Check the next move - this move is out
 							}
 						}
@@ -1291,6 +1330,21 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 								}
 								else if (!strongestMoveContact && currMoveContact)
 									continue; //Check the next move - this move is out
+								else if (strongestMoveContact && currMoveContact)
+								{
+									//They're both contact moves, so pick the one less likely to proc the contact
+									bool8 strongestMoveMultiHit = gBattleMoves[strongestMove].effect == EFFECT_MULTI_HIT;
+									bool8 currMoveMultiHit = gBattleMoves[move].effect == EFFECT_MULTI_HIT;
+
+									if (strongestMoveMultiHit && !currMoveMultiHit)
+									{
+										//The new move isn't a multi-hit unlike the old best move
+										strongestMove = move;
+										continue; //Proceed to next move
+									}
+									else if (!strongestMoveMultiHit && currMoveMultiHit)
+										continue; //Check the next move - this move is out
+								}
 							}
 
 							//Pick a non-recoil move preferably
@@ -1306,6 +1360,21 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 									continue; //Proceed to next move
 								}
 								else if (!strongestMoveRecoil && currMoveRecoil)
+									continue; //Check the next move - this move is out
+							}
+
+							//Pick a non-stat recoil move preferably
+							{
+								bool8 strongestMoveStatRecoil = IsStatRecoilMove(strongestMove);
+								bool8 currMoveStatRecoil = IsStatRecoilMove(move);
+
+								if (strongestMoveStatRecoil && !currMoveStatRecoil)
+								{
+									//Prefer the move that doesn't lower stats
+									strongestMove = move;
+									continue; //Proceed to next move
+								}
+								else if (!strongestMoveStatRecoil && currMoveStatRecoil)
 									continue; //Check the next move - this move is out
 							}
 						}
@@ -1493,8 +1562,13 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 	}
 	else
 	{
-		if (PriorityCalc(bankAtk, ACTION_USE_MOVE, moveAtk) > PriorityCalc(bankDef, ACTION_USE_MOVE, moveDef))
+		s8 atkPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, moveAtk);
+		s8 defPriority = PriorityCalc(bankDef, ACTION_USE_MOVE, moveDef);
+
+		if (atkPriority > defPriority)
 			return TRUE;
+		else if (defPriority > atkPriority)
+			return FALSE;
 	}
 
 //BracketCalc
@@ -1946,6 +2020,18 @@ bool8 IsHPAbsorptionAbility(u8 ability)
 	}
 }
 
+bool8 IsStatRecoilMove(u16 move)
+{
+	switch (gBattleMoves[move].effect)
+	{
+		case EFFECT_SUPERPOWER:
+		case EFFECT_OVERHEAT:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
@@ -2143,6 +2229,46 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	u8 hp = gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT); //Assume leftover etc. healing first
 
 	return GetSecondaryEffectDamage(bank) >= hp;
+}
+
+static u32 GetContactDamageByDefAbilityItemEffect(u8 defAbility, u8 defItemEffect, u16 baseMaxHP)
+{
+	u32 dmg = 0;
+
+	if (defAbility == ABILITY_ROUGHSKIN || defAbility == ABILITY_IRONBARBS)
+		dmg += baseMaxHP / 8;
+
+	if (defItemEffect == ITEM_EFFECT_ROCKY_HELMET)
+		dmg += baseMaxHP / 6;
+
+	return dmg;
+}
+
+u32 GetContactDamage(u16 move, u16 bankAtk, u16 bankDef)
+{
+	if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
+		return 0;
+
+	if (CanNeverMakeContact(bankAtk) || ABILITY(bankAtk) == ABILITY_MAGICGUARD)
+		return 0;
+
+	return GetContactDamageByDefAbilityItemEffect(ABILITY(bankDef), ITEM_EFFECT(bankDef), GetBaseMaxHP(bankAtk));
+}
+
+u32 GetContactDamageMonAtk(struct Pokemon* monAtk, u16 bankDef)
+{
+	if (CanMonNeverMakeContact(monAtk) || GetMonAbility(monAtk) == ABILITY_MAGICGUARD)
+		return 0;
+
+	return GetContactDamageByDefAbilityItemEffect(ABILITY(bankDef), ITEM_EFFECT(bankDef), monAtk->maxHP);
+}
+
+u32 GetContactDamageMonDef(u16 bankAtk, struct Pokemon* monDef)
+{
+	if (CanNeverMakeContact(bankAtk) || ABILITY(bankAtk) == ABILITY_MAGICGUARD)
+		return 0;
+
+	return GetContactDamageByDefAbilityItemEffect(GetMonAbility(monDef), GetMonItemEffect(monDef), GetBaseMaxHP(bankAtk));
 }
 
 u16 CalcSecondaryEffectChance(u8 bank, u16 move)

@@ -8272,7 +8272,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_HYPERSPACEHOLE] =
 	{
-		.effect = EFFECT_SUPERPOWER,
+		.effect = EFFECT_FEINT,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,

@@ -399,22 +399,30 @@ bool8 HasMonToSwitchTo(u8 bank)
 
 bool8 CheckContact(u16 move, u8 bank)
 {
-	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
-	|| ITEM_EFFECT(bank) == ITEM_EFFECT_PROTECTIVE_PADS
-	|| ABILITY(bank) == ABILITY_LONGREACH)
-		return FALSE;
-
-	return TRUE;
+	return gBattleMoves[move].flags & FLAG_MAKES_CONTACT
+		&& !CanNeverMakeContact(bank);
 }
 
 bool8 CheckContactByMon(u16 move, struct Pokemon* mon)
 {
-	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
-	|| GetMonItemEffect(mon) == ITEM_EFFECT_PROTECTIVE_PADS
-	|| GetMonAbility(mon) == ABILITY_LONGREACH)
-		return FALSE;
+	return gBattleMoves[move].flags & FLAG_MAKES_CONTACT
+		&& !CanMonNeverMakeContact(mon);
+}
 
-	return TRUE;
+bool8 CanNeverMakeContact(u8 bank)
+{
+	return CanNeverMakeContactByAbilityItemEffect(ABILITY(bank), ITEM_EFFECT(bank));
+}
+
+bool8 CanMonNeverMakeContact(struct Pokemon* mon)
+{
+	return CanNeverMakeContactByAbilityItemEffect(GetMonAbility(mon), GetMonItemEffect(mon));
+}
+
+bool8 CanNeverMakeContactByAbilityItemEffect(u8 ability, u8 itemEffect)
+{
+	return ability == ABILITY_LONGREACH
+		|| itemEffect == ITEM_EFFECT_PROTECTIVE_PADS;
 }
 
 bool8 CheckHealingMove(move_t move)

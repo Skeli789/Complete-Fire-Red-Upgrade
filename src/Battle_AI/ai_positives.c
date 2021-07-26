@@ -550,8 +550,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_CONFUSE:
 		AI_CONFUSE_CHECK:
 			if (CanBeConfused(bankDef, TRUE)
-			&&  data->defItemEffect != ITEM_EFFECT_CURE_CONFUSION
-			&&  data->defItemEffect != ITEM_EFFECT_CURE_STATUS)
+			&& (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || data->defItemEffect != ITEM_EFFECT_CURE_CONFUSION) //Don't use this logic in general battles
+			&& (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || data->defItemEffect != ITEM_EFFECT_CURE_STATUS)) //Don't use this logic in general battles
 			{
 				if (data->defStatus1 & STATUS1_PARALYSIS
 				|| data->defStatus2 & (STATUS2_INFATUATION)
@@ -1862,8 +1862,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SUPERPOWER:
-			if (move != MOVE_HYPERSPACEHOLE
-			&&  atkAbility != ABILITY_CONTRARY
+			if (atkAbility != ABILITY_CONTRARY
 			&& data->atkItemEffect == ITEM_EFFECT_EJECT_PACK)
 				goto PIVOT_CHECK;
 			break;
