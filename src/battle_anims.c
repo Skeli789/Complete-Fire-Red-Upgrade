@@ -110,6 +110,17 @@ const union AnimCmd *const gAnimCmdTable_QuickGuard[] =
 	sAnimCmdQuickGuardRight,
 };
 
+static const union AnimCmd sAnimCmdPsyshockOrb[] =
+{
+	ANIMCMD_FRAME(8, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_PsyshockOrb[] =
+{
+	sAnimCmdPsyshockOrb,
+};
+
 static const union AnimCmd sAnimCmdDreepyMissilePlayer[] =
 {
 	ANIMCMD_END,

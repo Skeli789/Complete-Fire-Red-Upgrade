@@ -6942,13 +6942,10 @@ ANIM_FREEZEDRY:
 .pool
 @Credits to Lixdel
 ANIM_PSYSHOCK:
-	loadparticle ANIM_TAG_WATER_ORB @whirlpool animation
-	loadparticle ANIM_TAG_ICE_CRYSTALS @freeze chance animation
-	loadparticle ANIM_TAG_FLAT_ROCK @rocks
-	loadparticle ANIM_TAG_POISON_BUBBLE
-	loadparticle ANIM_TAG_IMPACT @pound particles
-	loadparticle ANIM_TAG_GREEN_SPIKE @needle arm animation
-	launchtask AnimTask_BlendParticle 0x2 0x5 ANIM_TAG_POISON_BUBBLE 0x0 0x4 0x4 0x7136 @;More purple
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_FLAT_ROCK @;Impact colour
+	call PSYSHOCK_ORB_BLEND
 	pokespritetoBG side_target
 	call SET_PSYCHIC_BG
 	setblends 0x80C
@@ -7009,9 +7006,13 @@ ANIM_PSYSHOCK:
 	pokespritefromBG side_target
 	endanimation
 
+PSYSHOCK_ORB_BLEND:
+	launchtask AnimTask_BlendParticle 0x2 0x5 ANIM_TAG_ORBS 0x0 0xA 0xA 0x7C7F @;Pink purple
+	return
+
 .align 2
-PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E741C 0x80B477D
-PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_16x16 gAnimCmdTable_PsyshockOrb 0x0 0x83E741C 0x80B477D
+PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_16x16 gAnimCmdTable_PsyshockOrb 0x0 gDummySpriteAffineAnimTable 0x80A4299
 PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 gDummySpriteAnimTable 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7849,13 +7850,12 @@ ANIM_KINGSSHIELD:
 .pool
 @Credits to Lixdel
 ANIM_PSYSTRIKE:
-	loadparticle ANIM_TAG_FLAT_ROCK @rocks
-	loadparticle ANIM_TAG_IMPACT @pound particles
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_FLAT_ROCK @;Impact colour
 	loadparticle ANIM_TAG_THIN_RING @calm mind animation
-	loadparticle ANIM_TAG_POISON_BUBBLE @violet color
-	loadparticle ANIM_TAG_EXPLOSION @Explosion
-	loadparticle ANIM_TAG_WATER_GUN @Blue Colour
-	launchtask AnimTask_BlendParticle 0x2 0x5 ANIM_TAG_POISON_BUBBLE 0x0 0x4 0x4 0x7136 @;More purple
+	loadparticle ANIM_TAG_POISON_BUBBLE @Purple colour
+	CALL PSYSHOCK_ORB_BLEND
 	pokespritetoBG side_target
 	call SET_PSYCHIC_BG
 	setblends 0x80c
@@ -7929,8 +7929,8 @@ PSYSTRIKE_DESTROY:
 
 .align 2
 VIOLETMIND: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E40C4 SpriteCB_AnimSpriteOnMonPos
-PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 gDummySpriteAnimTable 0x0 0x83E741C 0x80B477D
-PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80A4299
+PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_16x16 gAnimCmdTable_PsyshockOrb 0x0 0x83E741C 0x80B477D
+PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_16x16 gAnimCmdTable_PsyshockOrb 0x0 gDummySpriteAffineAnimTable 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
