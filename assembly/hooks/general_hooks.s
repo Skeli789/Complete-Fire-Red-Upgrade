@@ -582,6 +582,8 @@ ExpandedItemNameFixPokemonStorageSystemHook:
 ExpandedAbilityNamesBattle2:
 	add r0, r5, r7
 	ldrb r0, [r0, #0x1]
+	ldr r1, =ABILITY_POPUP_SPECIES
+	ldrh r1, [r1]
 	bl GetAbilityName
 	mov r1, r0
 	ldr r0, =0x80D8618 | 1
@@ -591,6 +593,14 @@ ExpandedAbilityNamesBattle2:
 @0x8136714 with r1
 ExpandedAbilityNamesSummaryScreen:
 	mov r1, r4
+	push {r0-r1}
+	ldr r0, [r6]
+	add r0, r8
+	mov r1, #11 @;MON_DATA_SPECIES
+	ldr r2, =GetMonData
+	bl bxr2
+	mov r2, r0 @;Species
+	pop {r0-r1}
 	bl CopyAbilityName
 	ldr r0, =0x8136720 | 1
 	bx r0

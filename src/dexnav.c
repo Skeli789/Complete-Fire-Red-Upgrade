@@ -95,7 +95,7 @@ static void DexNavDrawBlackBar(u8* windowId);
 static void DexNavDrawDirectionalArrow(u8* windowId);
 static void DexNavDrawChainNumber(u8* spriteIdAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
-static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
+static void DexNavDrawAbility(u8 ability, u16 species, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
 static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
@@ -1510,7 +1510,7 @@ static void DexNavDrawBButton(u8* spriteIdAddr)
 	*spriteIdAddr = spriteId;
 };
 
-static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
+static void DexNavDrawAbility(u8 ability, u16 species, u8* spriteIdAddr)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sAbilityCanvasSpriteSheet);
 	LoadSpritePalette(&gHeldItemSpritePalette);
@@ -1522,7 +1522,8 @@ static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr)
 		gSprites[spriteId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
 
 		//Copy ability string from table using state id
-		CopyAbilityName(gStringVar4, ability);
+		TryRandomizeSpecies(&species);
+		CopyAbilityName(gStringVar4, ability, species);
 
 		//Format string so it's even length or if it's odd ends in two spaces
 		len = StringLength(gStringVar4);
@@ -1635,7 +1636,7 @@ static void DexNavDrawIcons(void)
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
 	DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
 	DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
-	DexNavDrawAbility(sDexNavHudPtr->ability, &sDexNavHudPtr->spriteIdAbility);
+	DexNavDrawAbility(sDexNavHudPtr->ability, sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdAbility);
 	DexNavDrawPotential(sDexNavHudPtr->potential, &sDexNavHudPtr->spriteIdPotential[0]);
 	DexNavHudDrawSpeciesIcon(sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdSpecies);
 }
@@ -2514,7 +2515,7 @@ static void PrintGUIHiddenAbility(u16 species)
 		u8 hiddenAbility = GetHiddenAbility(species);
 
 		if (species != SPECIES_NONE && hiddenAbility != ABILITY_NONE)
-			text = GetAbilityName(hiddenAbility);
+			text = GetAbilityName(hiddenAbility, species);
 		else
 			text = gText_DexNav_NoInfo;
 	}

@@ -76,8 +76,9 @@ spe:
 	bl call_via_r5
 
 print_ability_one:
-	ldrh r0, [sp, #0x1C]
+	ldrh r0, [sp, #0x1C] @Species
 	bl GetAbility1
+	ldrh r1, [sp, #0x1C]
 	bl GetAbilityName
 	mov r2, r0
  
@@ -103,6 +104,7 @@ print_ability_two:
 	beq return
 	cmp r0, #0 @Ability 2 == 0
 	beq return
+	ldrh r1, [sp, #0x1C]
 	bl GetAbilityName
    	mov r2, r0
 	

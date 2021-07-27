@@ -27,7 +27,6 @@ battle_strings.c
 */
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
 extern u8 gStatusConditionString_DisableProblem[];
 extern u8 gStatusConditionString_EncoreProblem[];
@@ -81,9 +80,8 @@ void BufferStringBattle(u16 stringID)
 	bool8 zMoveActive = (*gStringInfo)->zMoveActive;
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-	{
 		gAbilitiesPerBank[i] = (*gStringInfo)->abilities[i];
-	}
+
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
 	{
 		gBattleTextBuff1[i] = (*gStringInfo)->textBuffs[0][i];
@@ -600,19 +598,19 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = text;
 				break;
 			case B_TXT_LAST_ABILITY: // last used ability
-				toCpy = GetAbilityName(gLastUsedAbility);
+				toCpy = GetAbilityName(gLastUsedAbility, SPECIES_NONE);
 				break;
 			case B_TXT_ATK_ABILITY: // attacker ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker], (*gStringInfo)->species[gBankAttacker]);
 				break;
 			case B_TXT_DEF_ABILITY: // target ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBankTarget]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gBankTarget], (*gStringInfo)->species[gBankTarget]);
 				break;
 			case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting.bank]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting.bank], (*gStringInfo)->species[gBattleScripting.bank]);
 				break;
 			case B_TXT_EFF_ABILITY: // effect battlerId ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank], (*gStringInfo)->species[gEffectBank]);
 				break;
 			case B_TXT_TRAINER1_CLASS: // trainer class name
 				if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases
@@ -1047,7 +1045,11 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 		StringCopyBattleStringLoader(stringInfo->battleStringLoader, gBattleStringLoader);
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-		stringInfo->abilities[i] = *GetAbilityLocation(i);
+	{
+		stringInfo->abilities[i] = *GetAbilityLocation(i);	
+		stringInfo->species[i] = SPECIES(i);
+	}
+
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
 	{
 		stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];
@@ -1081,29 +1083,19 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 		StringCopyBattleStringLoader(stringInfo->battleStringLoader, gBattleStringLoader);
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+	{
 		stringInfo->abilities[i] = *GetAbilityLocation(i);
+		stringInfo->species[i] = SPECIES(i);
+	}
+
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
 	{
 		stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];
 		stringInfo->textBuffs[1][i] = gBattleTextBuff2[i];
 		stringInfo->textBuffs[2][i] = gBattleTextBuff3[i];
 	}
+
 	PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
-}
-
-const u8* GetAbilityName(const u8 ability)
-{
-	const u8* ptr = gAbilityNames[ability];
-
-	if (ptr[3] == 0x8 || ptr[3] == 0x9) //Expanded Ability Names
-		ptr = T1_READ_PTR(ptr);
-
-	return ptr;
-}
-
-void CopyAbilityName(u8* dst, const u8 ability)
-{
-	StringCopy(dst, GetAbilityName(ability));
 }
 
 #ifdef OPEN_WORLD_TRAINERS

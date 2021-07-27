@@ -767,8 +767,55 @@ Screen Cleaner
 #org @NAME_PASTEL_VEIL
 Pastel Veil
 
+#org @NAME_LAST_ABILITY
+-
 
-//Below Abilities must replace older ones
+//Below Abilities are loaded dynamically by the engine
+#org @gText_AbilityName_AirLock
+Air Lock
+
+#org @gText_AbilityName_VitalSpirit
+Vital Spirit
+
+#org @gText_AbilityName_WhiteSmoke
+White Smoke
+
+#org @gText_AbilityName_PurePower
+Pure Power
+
+#org @gText_AbilityName_IronBarbs
+Iron Barbs
+
+#org @gText_AbilityName_SolidRock
+Solid Rock
+
+#org @gText_AbilityName_Turboblaze
+Turboblaze
+
+#org @gText_AbilityName_Teravolt
+Teravolt
+
+#org @gText_AbilityName_GrimNeigh
+Grim Neigh
+
+#org @gText_AbilityName_Libero
+Libero
+
+#org @gText_AbilityName_TanglingHair
+Tangling Hair
+
+#org @gText_AbilityName_WimpOut
+Wimp Out
+
+#org @gText_AbilityName_QueenlyMajesty
+Queenly Majesty
+
+#org @gText_AbilityName_PowerOfAlchemy
+Alchemic Power
+
+#org @gText_AbilityName_PropellorTail
+Propellor Tail
+
 //#org @NAME_UNSEEN_FIST
 //Unseen Fist
 
@@ -777,9 +824,6 @@ Pastel Veil
 
 //#org @NAME_TRANSISTOR
 //Transistor
-
-//#org @NAME_GRIM_NEIGH
-//Grim Neigh
 
 //#org @NAME_CHILLING_NEIGH
 //Chilling Neigh

@@ -1375,7 +1375,8 @@ void atk1B_cleareffectsonfaint(void) {
 					gBattlescriptCurrInstr = BattleScript_Receiver;
 
 					gAbilityPopUpHelper = gLastUsedAbility;
-					EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
+					gAbilityPopUpSpecies = SPECIES(gActiveBattler);
+					EmitDataTransfer(0, &gAbilityPopUpHelper, 3, &gAbilityPopUpHelper); //Copy Ability and Species
 					MarkBufferBankForExecution(gActiveBattler);
 
 					++gNewBS->faintEffectsState;

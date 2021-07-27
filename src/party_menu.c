@@ -2338,7 +2338,7 @@ static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 	if (changeTo != ABILITY_NONE) //Ability can be changed
 	{
 		GetMonNickname(mon, gStringVar1);
-		CopyAbilityName(gStringVar2, changeTo);
+		CopyAbilityName(gStringVar2, changeTo, mon->species);
 		StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleOfferChange);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);
 		ScheduleBgCopyTilemapToVram(2);
@@ -2421,6 +2421,7 @@ static void Task_ChangeAbility(u8 taskId)
 	u16 item = Var800E;
 	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	PlaySE(SE_USE_ITEM);
 	
 	if (abilityType != 0) //Hidden Ability capsule
@@ -2429,7 +2430,6 @@ static void Task_ChangeAbility(u8 taskId)
 	}
 	else //Regular Ability capsule
 	{
-		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 		u8 abilityNum = (personality & 1) ^ 1; //Flip ability bit
 
@@ -2470,7 +2470,7 @@ static void Task_ChangeAbility(u8 taskId)
 	}
 
 	GetMonNickname(mon, gStringVar1);
-	CopyAbilityName(gStringVar2, GetMonAbility(mon));
+	CopyAbilityName(gStringVar2, GetMonAbility(mon), species);
 	StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleChangedAbility);
 	DisplayPartyMenuMessage(gStringVar4, TRUE);
 	ScheduleBgCopyTilemapToVram(2);

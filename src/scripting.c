@@ -2677,7 +2677,7 @@ u8* LoadTextBuffer0D(void)
 //		  Var 0x8001 - Buffer #
 void sp0CF_BufferAbilityName(void)
 {
-	const u8* name = GetAbilityName(Var8000);
+	const u8* name = GetAbilityName(Var8000, SPECIES_NONE);
 	StringCopy(sScriptStringVars[Var8001], name);
 }
 

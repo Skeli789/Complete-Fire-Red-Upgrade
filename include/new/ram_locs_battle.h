@@ -177,13 +177,10 @@
 #define gShakerData (((u8*) 0x203E02C))
 #define gForceSwitchHelper (*((u8*) 0x203E02E))
 #define gAbilityPopUpHelper (*((u8*) 0x203E02F))
-#define gBackupHWord (*((u16*) 0x203E030))
+#define gAbilityPopUpSpecies (*((u16*) 0x203E030))
 #define gDontRemoveTransformSpecies (*((bool8*) 0x203E032))
 #define gBankSwitching (*((u8*) 0x203E033))
-
-//#define gInShop (*((bool8*) 0x203E043))
-//#define gBattleCircusFlags (*((u32*) 0x203E044))
-//#define gFishingByte *((u8*) 0x203E048)
+#define gBackupHWord (*((u16*) 0x203E034))
 
 //Don't go past 0x203E048
 

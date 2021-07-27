@@ -174,7 +174,7 @@ extern u8 gDexNavSearchLevels[999]; //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((const void**) 0x203E034))
+#define gPokeBackupPtr (*((const void**) 0x203E034)) //Not used during battle
 //#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203E044))

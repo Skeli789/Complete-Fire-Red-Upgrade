@@ -734,22 +734,37 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_MOLDBREAKER:
-			gBattleStringLoader = gText_MoldBreakerActivate;
+			#ifndef ABILITY_TURBOBLAZE
+			if (SpeciesHasTurboblaze(SPECIES(bank)))
+				gBattleStringLoader = gText_TurboblazeActivate;
+			else
+			#endif
+			#ifndef ABILITY_TERAVOLT
+			if (SpeciesHasTeravolt(SPECIES(bank)))
+				gBattleStringLoader = gText_TeravoltActivate;
+			else
+			#endif
+				gBattleStringLoader = gText_MoldBreakerActivate;
+
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
-		case ABILITY_TERAVOLT:
-			gBattleStringLoader = gText_TeravoltActivate;
-			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
-			effect++;
-			break;
-
+		#ifdef ABILITY_TURBOBLAZE
 		case ABILITY_TURBOBLAZE:
 			gBattleStringLoader = gText_TurboblazeActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
+		#endif
+
+		#ifdef ABILITY_TERAVOLT
+		case ABILITY_TERAVOLT:
+			gBattleStringLoader = gText_TeravoltActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+			effect++;
+			break;
+		#endif
 
 		case ABILITY_SLOWSTART:
 			gNewBS->SlowStartTimers[bank] = 5;
@@ -2726,9 +2741,9 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 						2, 7, 1);
 }
 
-static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2)
+static void PrintAbilityOnAbilityPopUp(u32 ability, u16 species, u8 spriteId1, u8 spriteId2)
 {
-	const u8* abilityName = GetAbilityName(ability);
+	const u8* abilityName = GetAbilityName(ability, species);
 
 	PrintOnAbilityPopUp(abilityName,
 						(void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,
@@ -2858,7 +2873,8 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 {
 	const s16 (*coords)[2];
 	u8 spriteId1, spriteId2, battlerPosition, destroyerTaskId;
-	u8 ability = gAbilityPopUpHelper; //Preceded by transfer of proper ability
+	u8 ability = gAbilityPopUpHelper; //Preceded by transfer of proper Ability
+	u16 species = gAbilityPopUpSpecies; //Preceded by transfer of proper species
 
 	LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
 	LoadSpritePalette((const struct SpritePalette*) &gBattleAnimPaletteTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
@@ -2917,7 +2933,7 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 	StartSpriteAnim(&gSprites[spriteId2], 0);
 
 	PrintBattlerOnAbilityPopUp(gBattleAnimAttacker, spriteId1, spriteId2);
-	PrintAbilityOnAbilityPopUp(ability, spriteId1, spriteId2);
+	PrintAbilityOnAbilityPopUp(ability, species, spriteId1, spriteId2);
 	RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32));
 
 	DestroyAnimVisualTask(taskId);
@@ -3023,9 +3039,13 @@ void TransferAbilityPopUp(u8 bank, u8 ability)
 {
 	gActiveBattler = bank;
 	gAbilityPopUpHelper = ability;
+	gAbilityPopUpSpecies = SPECIES(bank);
 
-	EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
+	EmitDataTransfer(0, &gAbilityPopUpHelper, 3, &gAbilityPopUpHelper); //Copy Ability and species
 	MarkBufferBankForExecution(gActiveBattler);
+
+	//For debug
+	gAbilityPopUpSpecies = SPECIES_NONE;
 }
 
 void TryRemoveIntimidateAbilityPopUp(void)
