@@ -347,6 +347,15 @@ const item_t gBattleTowerStandard_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
+const move_t gRingChallenge_MoveBanList[] =
+{
+	MOVE_SELFDESTRUCT,
+	MOVE_EXPLOSION,
+	MOVE_MISTYEXPLOSION,
+	MOVE_PERISHSONG,
+	MOVE_DESTINYBOND,
+};
+
 const item_t gSmogonOU_ItemBanList[] =
 {
 	ITEM_BLAZIKENITE,

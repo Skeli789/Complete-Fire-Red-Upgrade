@@ -411,6 +411,18 @@ bool8 IsOtherEvolutionMethod(u8 method)
 	}
 }
 
+bool8 EvolutionMethodRequiresLevelUp(u8 method)
+{
+	return IsLevelUpEvolutionMethod(method)
+		|| IsFriendshipEvolutionMethod(method)
+		|| method == EVO_BEAUTY
+		|| method == EVO_MOVE_TYPE
+		|| method == EVO_MAP
+		|| method == EVO_MOVE
+		|| method == EVO_OTHER_PARTY_MON
+		|| method == EVO_FLAG_SET;
+}
+
 bool8 HasHighNature(struct Pokemon* mon)
 {
 	switch (GetNature(mon))
@@ -450,12 +462,11 @@ bool8 EvolvesViaScoring3Crits(struct Pokemon* mon)
 	return FALSE;
 }
 
-u16 GetMonDevolution(struct Pokemon* mon)
+static u16 GetDevolution(u16 originalSpecies, u16 backupSpecies)
 {
 	int j, k;
 	bool8 found;
 	bool8 checkingBackupSpecies = FALSE;
-	u16 originalSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 dexNum = SpeciesToNationalPokedexNum(originalSpecies);
 
 	switch(dexNum) {
@@ -507,14 +518,47 @@ u16 GetMonDevolution(struct Pokemon* mon)
 	if (species != originalSpecies)
 		return species;
 
-	if (mon->backupSpecies != SPECIES_NONE && !checkingBackupSpecies) //Only check once
+	if (backupSpecies != SPECIES_NONE && !checkingBackupSpecies) //Only check once
 	{
 		checkingBackupSpecies = TRUE;
-		originalSpecies = mon->backupSpecies;
+		originalSpecies = backupSpecies;
 		goto SEARCH_START;
 	}
 
 	return SPECIES_NONE;
+}
+
+u16 GetMonDevolution(struct Pokemon* mon)
+{
+	return GetDevolution(GetMonData(mon, MON_DATA_SPECIES, NULL), mon->backupSpecies);
+}
+
+u8 GetMinimumLevel(u16 species)
+{
+	u32 i;
+	u32 increase = 0;
+
+	while (TRUE)
+	{
+		u16 devolutionSpecies = GetDevolution(species, SPECIES_NONE);
+		if (devolutionSpecies == SPECIES_NONE)
+			return 1 + increase; //Can't go any lower
+
+		for (i = 0; i < EVOS_PER_MON; ++i)
+		{
+			if (gEvolutionTable[devolutionSpecies][i].targetSpecies == species)
+			{
+				u8 method = gEvolutionTable[devolutionSpecies][i].method;
+
+				if (IsLevelUpEvolutionMethod(method))
+					return gEvolutionTable[devolutionSpecies][i].param + increase; //The minimum level is the one that it was when it evolved
+				else if (EvolutionMethodRequiresLevelUp(method))
+					increase = 1; //Must have leveled up at least once to evolve
+			}
+		}
+
+		species = devolutionSpecies; //Go another round down
+	}
 }
 
 void CreateShedinja(u16 preEvoSpecies, struct Pokemon* mon)

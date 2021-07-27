@@ -367,6 +367,7 @@ extern const item_t gSmogonMetronome_ItemBanList[];
 extern const item_t gSmogonUU_ItemBanList[];
 extern const item_t gSmogonRU_ItemBanList[];
 extern const item_t gSmogonNU_ItemBanList[];
+extern const move_t gRingChallenge_MoveBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];

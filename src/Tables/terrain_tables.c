@@ -528,6 +528,15 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_MUDDYWATER,
 			.burmyForm = SPECIES_NONE,
 		},
+
+	[BATTLE_TERRAIN_CUBE_SPACE + 4] =
+		{
+			.camouflageType = TYPE_STEEL,
+			.secretPowerEffect = MOVE_EFFECT_FREEZE,
+			.secretPowerAnim = MOVE_GEARGRIND,
+			.naturePowerMove = MOVE_SHIFTGEAR,
+			.burmyForm = SPECIES_BURMY_TRASH,
+		},
 #endif
 };
 

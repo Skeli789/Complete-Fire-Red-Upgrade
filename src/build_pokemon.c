@@ -2589,17 +2589,31 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			//Load correct ability
 			switch (checkFromLocationType) {
 				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
 					LOAD_TIER_CHECKING_ABILITY;
 					break;
 				default:
+					moveLoc = mon->moves;
 					ability = GetMonAbility(mon);
 			}
 
 			if (gSpecialSpeciesFlags[species].battleTowerStandardBan
 			||  CheckTableForItem(item, gBattleTowerStandard_ItemBanList)
-			|| (ability == ABILITY_BATTLEBOND && tier != BATTLE_FACILITY_MEGA_BRAWL && BATTLE_FACILITY_NUM != IN_RING_CHALLENGE) //Battle Bond is banned in Standard
-			|| (item == ITEM_FOCUS_SASH && BATTLE_FACILITY_NUM == IN_RING_CHALLENGE)) //No Focus Sash in Ring Challenge
+			|| (ability == ABILITY_BATTLEBOND && tier != BATTLE_FACILITY_MEGA_BRAWL && BATTLE_FACILITY_NUM != IN_RING_CHALLENGE)) //Battle Bond is banned in Standard
 				return TRUE;
+
+			if (BATTLE_FACILITY_NUM == IN_RING_CHALLENGE) //1v1
+			{
+				if (item == ITEM_FOCUS_SASH) //No Focus Sash in Ring Challenge
+					return TRUE;
+
+				//Check Banned Moves
+				for (i = 0; i < MAX_MON_MOVES; ++i)
+				{
+					if (CheckTableForMove(moveLoc[i], gRingChallenge_MoveBanList))
+						return TRUE;
+				}
+			}
 			break;
 
 		case BATTLE_FACILITY_OU:
