@@ -77,15 +77,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	{
 		gLastUsedItem = ITEM(bank);
 
-		if (IsBerry(gLastUsedItem)
-		&& (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-			#ifdef ABILITY_ASONE_GRIM
-			|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-			#endif
-			#ifdef ABILITY_ASONE_CHILLING
-			|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-			#endif
-		))
+		if (IsBerry(gLastUsedItem) && UnnerveOnOpposingField(bank))
 		{
 			bankHoldEffect = 0;
 			bankQuality = 0;

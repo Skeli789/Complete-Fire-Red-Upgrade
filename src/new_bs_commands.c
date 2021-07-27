@@ -694,9 +694,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 		else if (BankSideHasMist(gActiveBattler) && (gBattlescriptCurrInstr[1] != BS_GET_TARGET || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
 			gFormCounter = 2;
 
-		else if (ability == ABILITY_CLEARBODY
-		|| ability == ABILITY_WHITESMOKE
-		//|| ability == ABILITY_FULLMETALBODY
+		else if (IsClearBodyAbility(ability)
 		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		{
 			gBattleScripting.bank = gActiveBattler;
@@ -1436,7 +1434,9 @@ void atkFF29_trysetsleep(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_INSOMNIA:
+			#ifdef ABILITY_VITALSPIRIT
 			case ABILITY_VITALSPIRIT:
+			#endif
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
@@ -1545,7 +1545,9 @@ void atkD7_setyawn(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_INSOMNIA:
+			#ifdef ABILITY_VITALSPIRIT
 			case ABILITY_VITALSPIRIT:
+			#endif
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:

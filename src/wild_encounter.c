@@ -18,6 +18,7 @@
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/vars.h"
 
+#include "../include/new/ability_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_transition.h"
 #include "../include/new/build_pokemon.h"
@@ -144,7 +145,17 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{
 		u8 ability = GetMonAbility(&gPlayerParty[0]);
-		if (ability == ABILITY_HUSTLE || ability == ABILITY_VITALSPIRIT || ability == ABILITY_PRESSURE)
+
+		#ifndef ABILITY_VITALSPIRIT
+		if (IsVitalSpiritAbility(ability, GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL)))
+			ability = ABILITY_PRESSURE;
+		#endif
+
+		if (ability == ABILITY_HUSTLE
+		#ifdef ABILITY_VITALSPIRIT
+		|| ability == ABILITY_VITALSPIRIT
+		#endif
+		|| ability == ABILITY_PRESSURE)
 		{
 			if (Random() % 2 == 0)
 				return max;
@@ -790,9 +801,15 @@ u8 GetAbilityEncounterRateModType(void)
     if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
     {
         u8 ability = GetMonAbility(&gPlayerParty[0]);
-
+		#ifndef ABILITY_WHITESMOKE
+		if (IsWhiteSmokeAbility(ability, GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL)))
+			ability = ABILITY_STENCH;
+		#endif
+	
 		switch (ability) {
+			#ifdef ABILITY_WHITESMOKE
 			case ABILITY_WHITESMOKE:
+			#endif
 			case ABILITY_STENCH:
 			case ABILITY_QUICKFEET:
 			case ABILITY_INFILTRATOR:

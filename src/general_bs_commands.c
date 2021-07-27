@@ -239,14 +239,7 @@ void atk03_ppreduce(void) {
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY
-	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-	#ifdef ABILITY_ASONE_GRIM
-	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-	#endif
-	#ifdef ABILITY_ASONE_CHILLING
-	&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-	#endif
-	)
+	&& !UnnerveOnOpposingField(bank))
 	{
 		if ((resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(bank) == gBattleStruct->dynamicMoveType && !DoesBankNegateDamage(bank, gCurrentMove))
 		||  (SPLIT(gCurrentMove) != SPLIT_STATUS && ITEM_QUALITY(bank) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
@@ -1363,7 +1356,11 @@ void atk1B_cleareffectsonfaint(void) {
 				u8 partnerAbility = ABILITY(partner);
 
 				if (IS_DOUBLE_BATTLE
-				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
+				&& (partnerAbility == ABILITY_RECEIVER
+				#ifdef ABILITY_POWEROFALCHEMY
+				|| partnerAbility == ABILITY_POWEROFALCHEMY
+				#endif
+				)
 				&& !gSpecialAbilityFlags[CopyAbility(gActiveBattler)].gReceiverBannedAbilities)
 				{
 					gLastUsedAbility = partnerAbility;
@@ -2563,7 +2560,9 @@ void atk81_trysetrest(void)
 	{
 		switch (ABILITY(gActiveBattler)) {
 			case ABILITY_INSOMNIA:
+			#ifdef ABILITY_VITALSPIRIT
 			case ABILITY_VITALSPIRIT:
+			#endif
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				fail = TRUE;
 				break;
@@ -2632,7 +2631,12 @@ void atk84_jumpifcantmakeasleep(void)
 	{
 		gBattlescriptCurrInstr = jump_loc;
 	}
-	else if (defAbility == ABILITY_INSOMNIA || defAbility == ABILITY_VITALSPIRIT || defAbility == ABILITY_COMATOSE || defAbility == ABILITY_SWEETVEIL
+	else if (defAbility == ABILITY_INSOMNIA
+	#ifdef ABILITY_VITALSPIRIT
+	|| defAbility == ABILITY_VITALSPIRIT
+	#endif
+	|| defAbility == ABILITY_COMATOSE
+	|| defAbility == ABILITY_SWEETVEIL
 	|| (defAbility == ABILITY_LEAFGUARD && WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS) && gCurrentMove != MOVE_REST))
 	{

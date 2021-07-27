@@ -216,21 +216,10 @@ static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
 				gDisableStructs[gBankTarget].truantCounter = 0;
 
 				//Some abilities don't reactivate
-				switch (ability) {
-					case ABILITY_UNNERVE:
-					#ifdef ABILITY_ASONE_GRIM
-					case ABILITY_ASONE_GRIM:
-					#endif
-					#ifdef ABILITY_ASONE_CHILLING
-					case ABILITY_ASONE_CHILLING:
-					#endif
-						break;
-					case ABILITY_IMPOSTER: //Never gets another chance
-						gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
-						break;
-					default:
-						gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
-				}
+				if (IsUnnerveAbility(ability) || ability == ABILITY_IMPOSTER) //Never gets another chance
+					gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+				else
+					gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
 
 				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
 					return TRUE;
@@ -253,14 +242,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 	bool8 ret = FALSE;
 	u8 ability = ABILITY(bank);
 
-	if (ability == ABILITY_UNNERVE
-	#ifdef ABILITY_ASONE_GRIM
-	|| ability == ABILITY_ASONE_GRIM
-	#endif
-	#ifdef ABILITY_ASONE_CHILLING
-	|| ability == ABILITY_ASONE_CHILLING
-	#endif
-	)
+	if (IsUnnerveAbility(ability))
 	{
 		*GetAbilityLocation(bank) = ABILITY_NONE; //Temporarily remove Unnerve so Berries can activate
 
@@ -290,8 +272,11 @@ static bool8 TryActivateFlowerGift(u8 leavingBank)
 {
 	u32 i = 0;
 
-	if (ABILITY(leavingBank) == ABILITY_AIRLOCK
-	||  ABILITY(leavingBank) == ABILITY_CLOUDNINE)
+	if (ABILITY(leavingBank) == ABILITY_CLOUDNINE
+	#ifdef ABILITY_AIRLOCK
+	|| ABILITY(leavingBank) == ABILITY_AIRLOCK
+	#endif
+	)
 		gBattleMons[leavingBank].ability = ABILITY_NONE; //Remove ability because we can't have these anymore
 
 	for (u8 bank = gBanksByTurnOrder[i]; i < gBattlersCount; ++i, bank = gBanksByTurnOrder[i])

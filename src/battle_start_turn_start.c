@@ -2045,15 +2045,7 @@ s32 BracketCalc(u8 bank)
 					break;
 
 				case ITEM_EFFECT_CUSTAP_BERRY:
-					if (PINCH_BERRY_CHECK(bank)
-						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
-						#ifdef ABILITY_ASONE_GRIM
-						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
-						#endif
-						#ifdef ABILITY_ASONE_CHILLING
-						&& !ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
-						#endif
-						)
+					if (PINCH_BERRY_CHECK(bank) && !UnnerveOnOpposingField(bank))
 					{
 						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
 						return 1;

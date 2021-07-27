@@ -2969,3 +2969,4 @@ const union AnimCmd gEventObjectImageAnim_RunEast[] =
 	ANIMCMD_JUMP(0),
 };
 #endif
+

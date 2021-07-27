@@ -279,11 +279,15 @@ def ProcessSpecialFlagFile(flagFile: str) -> str:
         outputString += tableHeader
 
         for move in flags:
+            if not move[0].isdigit():
+                outputString += "#ifdef {}\n".format(move)  # Allows adding defines that may not currently be in the engine
             outputString += "\t[{}] =\n".format(move)
             outputString += "\t{\n"
             for flag in flags[move]:
                 outputString += "\t\t.{} = TRUE,\n".format(flag)
             outputString += "\t},\n"
+            if not move[0].isdigit():
+                outputString += "#endif\n"
         outputString += "};\n"
         output.write(outputString)
 

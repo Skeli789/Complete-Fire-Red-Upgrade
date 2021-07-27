@@ -2208,7 +2208,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 //Attacker Ability Checks
 	switch(data->atkAbility) {
 		case ABILITY_HUGEPOWER:
-//		case ABILITY_PUREPOWER:
+		#ifdef ABILITY_PUREPOWER
+		case ABILITY_PUREPOWER:
+		#endif
 		//2x Boost
 			if (!IsScaleMonsBattle() //Too OP
 			|| !IsSpeciesAffectedByScalemons(data->atkSpecies)) //Doesn't get the Scalemons boost
@@ -2695,7 +2697,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				damage = (damage * 125) / 100;
 			break;
 
+		#ifdef ABILITY_SOLIDROCK
 		case ABILITY_SOLIDROCK:
+		#endif
 		case ABILITY_FILTER:
 		case ABILITY_PRISMARMOR:
 		//0.75x Decrement
@@ -2747,14 +2751,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	//Second Target Item Checks
 	switch (data->defItemEffect) {
 		case ITEM_EFFECT_WEAKNESS_BERRY:
-			if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankDef, ABILITY_UNNERVE, 0, 0) && data->atkAbility != ABILITY_UNNERVE
-			#ifdef ABILITY_ASONE_GRIM
-			&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankDef, ABILITY_ASONE_GRIM, 0, 0) && data->atkAbility != ABILITY_ASONE_GRIM
-			#endif
-			#ifdef ABILITY_ASONE_CHILLING
-			&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bankDef, ABILITY_ASONE_CHILLING, 0, 0) && data->atkAbility != ABILITY_ASONE_CHILLING
-			#endif
-			)
+			if (!UnnerveOnOpposingField(bankDef)
+			&& !IsUnnerveAbility(data->atkAbility))
 			{
 				if ((data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE && data->defItemQuality == data->moveType)
 				|| (data->defItemQuality == TYPE_NORMAL && data->moveType == TYPE_NORMAL)) //Chilan Berry

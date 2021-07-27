@@ -6,6 +6,7 @@
 #include "../include/constants/species.h"
 
 #include "../include/new/ability_util.h"
+#include "../include/new/battle_util.h"
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 extern const u8 gText_AbilityName_AirLock[];
@@ -16,7 +17,7 @@ extern const u8 gText_AbilityName_IronBarbs[];
 extern const u8 gText_AbilityName_SolidRock[];
 extern const u8 gText_AbilityName_Turboblaze[];
 extern const u8 gText_AbilityName_Teravolt[];
-extern const u8 gText_AbilityName_GrimNeigh[];
+extern const u8 gText_AbilityName_ChillingNeigh[];
 extern const u8 gText_AbilityName_Libero[];
 extern const u8 gText_AbilityName_TanglingHair[];
 extern const u8 gText_AbilityName_WimpOut[];
@@ -40,67 +41,12 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			}
 			break;
 		case ABILITY_INSOMNIA:
-			switch (dexNum)
-			{
-				#ifdef NATIONAL_DEX_MANKEY
-				case NATIONAL_DEX_MANKEY:
-				#endif
-				#ifdef NATIONAL_DEX_PRIMEAPE
-				case NATIONAL_DEX_PRIMEAPE:
-				#endif
-				#ifdef NATIONAL_DEX_MR_MIME
-				case NATIONAL_DEX_MR_MIME:
-				#endif
-				#ifdef NATIONAL_DEX_ELECTABUZZ
-				case NATIONAL_DEX_ELECTABUZZ:
-				#endif
-				#ifdef NATIONAL_DEX_ELECTABUZZ
-				case NATIONAL_DEX_MAGMAR:
-				#endif
-				#ifdef NATIONAL_DEX_DELIBIRD
-				case NATIONAL_DEX_DELIBIRD:
-				#endif
-				#ifdef NATIONAL_DEX_TYROGUE
-				case NATIONAL_DEX_TYROGUE:
-				#endif
-				#ifdef NATIONAL_DEX_ELEKID
-				case NATIONAL_DEX_ELEKID:
-				#endif
-				#ifdef NATIONAL_DEX_MAGBY
-				case NATIONAL_DEX_MAGBY:
-				#endif
-				#ifdef NATIONAL_DEX_VIGOROTH
-				case NATIONAL_DEX_VIGOROTH:
-				#endif
-				#ifdef NATIONAL_DEX_ELECTIVIRE
-				case NATIONAL_DEX_ELECTIVIRE:
-				#endif
-				#ifdef NATIONAL_DEX_MAGMORTAR
-				case NATIONAL_DEX_MAGMORTAR:
-				#endif
-				#ifdef NATIONAL_DEX_LILLIPUP
-				case NATIONAL_DEX_LILLIPUP:
-				#endif
-				#ifdef NATIONAL_DEX_ROCKRUFF
-				case NATIONAL_DEX_ROCKRUFF:
-				#endif
-				#ifdef NATIONAL_DEX_LYCANROC
-				case NATIONAL_DEX_LYCANROC:
-				#endif
-					return gText_AbilityName_VitalSpirit;
-			}
+			if (IsVitalSpiritAbility(ability, species))
+				return gText_AbilityName_VitalSpirit;
 			break;
 		case ABILITY_CLEARBODY:
-			switch (dexNum)
-			{
-				#if (defined NATIONAL_DEX_TORKOAL && defined NATIONAL_DEX_HEATMOR && defined NATIONAL_DEX_SIZZLIPEDE && defined NATIONAL_DEX_CENTISKORCH)
-				case NATIONAL_DEX_TORKOAL:
-				case NATIONAL_DEX_HEATMOR:
-				case NATIONAL_DEX_SIZZLIPEDE:
-				case NATIONAL_DEX_CENTISKORCH:
-					return gText_AbilityName_WhiteSmoke;
-				#endif
-			}
+			if (IsWhiteSmokeAbility(ability, species))
+				return gText_AbilityName_WhiteSmoke;
 			break;
 		case ABILITY_HUGEPOWER:
 			switch (dexNum)
@@ -144,9 +90,9 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_MOXIE:
 			switch (dexNum)
 			{
-				#ifdef NATIONAL_DEX_SPECTRIER
-				case NATIONAL_DEX_SPECTRIER:
-					return gText_AbilityName_GrimNeigh;
+				#ifdef NATIONAL_DEX_GLASTRIER
+				case NATIONAL_DEX_GLASTRIER:
+					return gText_AbilityName_ChillingNeigh;
 				#endif
 			}
 			break;
@@ -202,9 +148,9 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_STALWART:
 			switch (dexNum)
 			{
-				#if (defined SPECIES_ARROKUDA && defined SPECIES_BARRASKEWDA)
-				case SPECIES_ARROKUDA:
-				case SPECIES_BARRASKEWDA:
+				#if (defined NATIONAL_DEX_ARROKUDA && defined NATIONAL_DEX_BARRASKEWDA)
+				case NATIONAL_DEX_ARROKUDA:
+				case NATIONAL_DEX_BARRASKEWDA:
 					return gText_AbilityName_PropellorTail;
 				#endif
 			}
@@ -251,4 +197,160 @@ bool8 SpeciesHasTeravolt(u16 species)
 	#else
 	return FALSE;
 	#endif
+}
+
+bool8 IsClearBodyAbility(u8 ability)
+{
+	return ability == ABILITY_CLEARBODY
+		#ifdef ABILITY_FULLMETALBODY
+		|| ability == ABILITY_FULLMETALBODY
+		#endif
+		#ifdef ABILITY_WHITESMOKE
+		|| ability == ABILITY_WHITESMOKE
+		#endif
+		;
+}
+
+bool8 IsMoldBreakerAbility(u8 ability)
+{
+	return ability == ABILITY_MOLDBREAKER
+		#ifdef ABILITY_TURBOBLAZE
+		|| ability == ABILITY_TURBOBLAZE
+		#endif
+		#ifdef ABILITY_TERAVOLT
+		|| ability == ABILITY_TERAVOLT
+		#endif
+		;
+}
+
+bool8 IsMoxieAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_MOXIE:
+		#ifdef ABILITY_GRIMNEIGH
+		case ABILITY_GRIMNEIGH:
+		#endif
+		#ifdef ABILITY_CHILLINGNEIGH
+		case ABILITY_CHILLINGNEIGH:
+		#endif
+		#ifdef ABILITY_ASONE_GRIM
+		case ABILITY_ASONE_GRIM:
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		case ABILITY_ASONE_CHILLING:
+		#endif
+		case ABILITY_BEASTBOOST:
+		case ABILITY_SOULHEART:
+		case ABILITY_BATTLEBOND:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsChoiceAbility(u8 ability)
+{
+	return ability == ABILITY_GORILLATACTICS;
+}
+
+bool8 IsUnnerveAbility(u8 ability)
+{
+	return ability == ABILITY_UNNERVE
+		#ifdef ABILITY_ASONE_GRIM
+		|| ability == ABILITY_ASONE_GRIM
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		|| ability == ABILITY_ASONE_CHILLING
+		#endif
+		;
+}
+
+bool8 UnnerveOnOpposingField(u8 bank)
+{
+	return ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_UNNERVE)
+		#ifdef ABILITY_ASONE_GRIM
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_GRIM)
+		#endif
+		#ifdef ABILITY_ASONE_CHILLING
+		|| ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ASONE_CHILLING)
+		#endif
+		;
+}
+
+bool8 IsWhiteSmokeAbility(u8 ability, u16 species)
+{
+	if (!IsClearBodyAbility(ability))
+		return FALSE;
+
+	switch (SpeciesToNationalPokedexNum(species))
+	{
+		#if (defined NATIONAL_DEX_TORKOAL && defined NATIONAL_DEX_HEATMOR && defined NATIONAL_DEX_SIZZLIPEDE && defined NATIONAL_DEX_CENTISKORCH)
+		case NATIONAL_DEX_TORKOAL:
+		case NATIONAL_DEX_HEATMOR:
+		case NATIONAL_DEX_SIZZLIPEDE:
+		case NATIONAL_DEX_CENTISKORCH:
+			return TRUE;
+		#endif
+	}
+
+	return FALSE;
+}
+
+bool8 IsVitalSpiritAbility(u8 ability, u16 species)
+{
+	if (ability != ABILITY_INSOMNIA)
+		return FALSE;
+
+	switch (SpeciesToNationalPokedexNum(species))
+	{
+		#ifdef NATIONAL_DEX_MANKEY
+		case NATIONAL_DEX_MANKEY:
+		#endif
+		#ifdef NATIONAL_DEX_PRIMEAPE
+		case NATIONAL_DEX_PRIMEAPE:
+		#endif
+		#ifdef NATIONAL_DEX_MR_MIME
+		case NATIONAL_DEX_MR_MIME:
+		#endif
+		#ifdef NATIONAL_DEX_ELECTABUZZ
+		case NATIONAL_DEX_ELECTABUZZ:
+		#endif
+		#ifdef NATIONAL_DEX_ELECTABUZZ
+		case NATIONAL_DEX_MAGMAR:
+		#endif
+		#ifdef NATIONAL_DEX_DELIBIRD
+		case NATIONAL_DEX_DELIBIRD:
+		#endif
+		#ifdef NATIONAL_DEX_TYROGUE
+		case NATIONAL_DEX_TYROGUE:
+		#endif
+		#ifdef NATIONAL_DEX_ELEKID
+		case NATIONAL_DEX_ELEKID:
+		#endif
+		#ifdef NATIONAL_DEX_MAGBY
+		case NATIONAL_DEX_MAGBY:
+		#endif
+		#ifdef NATIONAL_DEX_VIGOROTH
+		case NATIONAL_DEX_VIGOROTH:
+		#endif
+		#ifdef NATIONAL_DEX_ELECTIVIRE
+		case NATIONAL_DEX_ELECTIVIRE:
+		#endif
+		#ifdef NATIONAL_DEX_MAGMORTAR
+		case NATIONAL_DEX_MAGMORTAR:
+		#endif
+		#ifdef NATIONAL_DEX_LILLIPUP
+		case NATIONAL_DEX_LILLIPUP:
+		#endif
+		#ifdef NATIONAL_DEX_ROCKRUFF
+		case NATIONAL_DEX_ROCKRUFF:
+		#endif
+		#ifdef NATIONAL_DEX_LYCANROC
+		case NATIONAL_DEX_LYCANROC:
+		#endif
+			return TRUE;
+	}
+
+	return FALSE;
 }

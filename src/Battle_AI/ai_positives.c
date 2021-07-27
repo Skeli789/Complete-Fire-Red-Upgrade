@@ -651,10 +651,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				else //Double Battle
 				{
-					if (defAbility != ABILITY_CONTRARY
-					&& defAbility != ABILITY_CLEARBODY
-					&& defAbility != ABILITY_WHITESMOKE
-					//&& defAbility != ABILITY_FULLMETALBODY
+					if (!IsClearBodyAbility(defAbility)
+					&& defAbility != ABILITY_CONTRARY
 					&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > 0)
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
 				}
@@ -2741,20 +2739,7 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 			if (wouldHitFirst
 			|| !WillFaintFromSecondaryDamage(bankDef)
 			|| IsMovePredictionHealingMove(bankDef, bankAtk)
-			|| atkAbility == ABILITY_MOXIE
-			#ifdef ABILITY_GRIMNEIGH
-			||atkAbility == ABILITY_GRIMNEIGH
-			#endif
-			#ifdef ABILITY_CHILLINGNEIGH
-			|| atkAbility == ABILITY_CHILLINGNEIGH
-			#endif
-			#ifdef ABILITY_ASONE_GRIM
-			|| atkAbility == ABILITY_ASONE_GRIM
-			#endif
-			#ifdef ABILITY_ASONE_CHILLING
-			|| atkAbility == ABILITY_ASONE_CHILLING
-			#endif
-			|| atkAbility == ABILITY_BEASTBOOST)
+			|| IsMoxieAbility(atkAbility))
 			{
 				if (!(data->defStatus2 & STATUS2_DESTINY_BOND) //AI shouldn't prioritize damaging move if foe is going to take AI down with it
 				|| CanKnockOut(bankDef, bankAtk) //Unless foe can KO anyway

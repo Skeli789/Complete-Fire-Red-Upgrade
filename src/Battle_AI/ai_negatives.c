@@ -326,7 +326,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_DAZZLING:
+			#ifdef ABILITY_QUEENLYMAJESTY
 			case ABILITY_QUEENLYMAJESTY:
+			#endif
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
 					DECREASE_VIABILITY(10);
@@ -379,8 +381,12 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_CLEARBODY:
-			//case ABILITY_FULLMETALBODY:
+			#ifdef ABILITY_FULLMETALBODY
+			case ABILITY_FULLMETALBODY:
+			#endif
+			#ifdef ABILITY_WHITESMOKE
 			case ABILITY_WHITESMOKE:
+			#endif
 				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
 				|| move == MOVE_PARTINGSHOT)
 				{
@@ -537,7 +543,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case ABILITY_DAZZLING:
+				#ifdef ABILITY_QUEENLYMAJESTY
 				case ABILITY_QUEENLYMAJESTY:
+				#endif
 					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					{
 						DECREASE_VIABILITY(10);
@@ -1723,21 +1731,7 @@ MOVESCR_CHECK_0:
 			&&  move != MOVE_WIDEGUARD
 			&&  move != MOVE_CRAFTYSHIELD) //These moves have infinite usage
 			{
-				if (WillFaintFromSecondaryDamage(bankAtk)
-				&&  data->defAbility != ABILITY_MOXIE
-				#ifdef ABILITY_GRIMNEIGH
-				&&  data->defAbility != ABILITY_GRIMNEIGH
-				#endif
-				#ifdef ABILITY_CHILLINGNEIGH
-				&&  data->defAbility != ABILITY_CHILLINGNEIGH
-				#endif
-				#ifdef ABILITY_ASONE_GRIM
-				&&  data->defAbility != ABILITY_ASONE_GRIM
-				#endif
-				#ifdef ABILITY_ASONE_CHILLING
-				&&  data->defAbility != ABILITY_ASONE_CHILLING
-				#endif
-				&&  data->defAbility != ABILITY_BEASTBOOST)
+				if (WillFaintFromSecondaryDamage(bankAtk) && !IsMoxieAbility(data->defAbility))
 				{
 					DECREASE_VIABILITY(10); //Don't protect if you're going to faint after protecting
 				}

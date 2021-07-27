@@ -1955,9 +1955,7 @@ static bool8 ShouldSwitchIfWonderGuard(struct Pokemon* party, u8 firstId, u8 las
 			if (SPLIT(move) != SPLIT_STATUS)
 			{
 				u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
-				if (atkAbility == ABILITY_MOLDBREAKER
-				||  atkAbility == ABILITY_TERAVOLT
-				||  atkAbility == ABILITY_TURBOBLAZE)
+				if (IsMoldBreakerAbility(atkAbility))
 					return FALSE;
 
 				moveFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef);
@@ -2628,22 +2626,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						scores[i] += SWITCHING_INCREASE_KO_FOE;
 						flags[i] |= SWITCHING_FLAG_KO_FOE;
 
-						if (ability == ABILITY_MOXIE
-						#ifdef ABILITY_GRIMNEIGH
-						||  ability == ABILITY_GRIMNEIGH
-						#endif
-						#ifdef ABILITY_CHILLINGNEIGH
-						||  ability == ABILITY_CHILLINGNEIGH
-						#endif
-						#ifdef ABILITY_ASONE_GRIM
-						||  ability == ASONE_GRIM
-						#endif
-						#ifdef ABILITY_ASONE_CHILLING
-						||  ability == ASONE_CHILLING
-						#endif
-						||  ability == ABILITY_SOULHEART
-						||  ability == ABILITY_BEASTBOOST
-						||  ability == ABILITY_BATTLEBOND)
+						if (IsMoxieAbility(ability))
 						{
 							scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
 							flags[i] |= SWITCHING_FLAG_REVENGE_KILL;

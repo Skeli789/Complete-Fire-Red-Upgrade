@@ -1851,7 +1851,9 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 				break;
 
 			case ABILITY_DAZZLING:
+			#ifdef ABILITY_QUEENLYMAJESTY
 			case ABILITY_QUEENLYMAJESTY:
+			#endif
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					return TRUE;
 				break;
@@ -1960,7 +1962,9 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 				break;
 
 			case ABILITY_DAZZLING:
+			#ifdef ABILITY_QUEENLYMAJESTY
 			case ABILITY_QUEENLYMAJESTY:
+			#endif
 				if (PriorityCalcMon(monAtk, move) > 0) //Check if right num
 					return TRUE;
 				break;
@@ -2235,7 +2239,11 @@ static u32 GetContactDamageByDefAbilityItemEffect(u8 defAbility, u8 defItemEffec
 {
 	u32 dmg = 0;
 
-	if (defAbility == ABILITY_ROUGHSKIN || defAbility == ABILITY_IRONBARBS)
+	if (defAbility == ABILITY_ROUGHSKIN
+	#ifdef ABILITY_IRONBARBS
+	|| defAbility == ABILITY_IRONBARBS
+	#endif
+	)
 		dmg += baseMaxHP / 8;
 
 	if (defItemEffect == ITEM_EFFECT_ROCKY_HELMET)
@@ -2535,16 +2543,20 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 		case ABILITY_AFTERMATH:
 			badIdea = !ABILITY_ON_FIELD(ABILITY_DAMP) && atkAbility != ABILITY_MAGICGUARD;
 			break;
+		#ifdef ABILITY_TANGLINGHAIR
 		case ABILITY_TANGLINGHAIR:
+		#endif
 		case ABILITY_GOOEY:
 			badIdea = STAT_CAN_FALL(gBankAttacker, STAT_SPD) && atkAbility != ABILITY_MIRRORARMOR;
 			break;
+		#ifdef ABILITY_IRONBARBS
 		case ABILITY_IRONBARBS:
+		#endif
 		case ABILITY_ROUGHSKIN:
 			badIdea = atkAbility != ABILITY_MAGICGUARD;
 			break;
 		case ABILITY_MUMMY:
-		case ABILITY_WANDERING_SPIRIT:
+		case ABILITY_WANDERINGSPIRIT:
 		case ABILITY_COTTONDOWN:
 		case ABILITY_PERISH_BODY:
 			return TRUE;
@@ -2565,9 +2577,7 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 
 	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && RealPhysicalMoveInMoveset(bankDef)
 		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		&& defAbility != ABILITY_WHITESMOKE
-		//&& defAbility != ABILITY_FULLMETALBODY
+		&& !IsClearBodyAbility(defAbility)
 		&& defAbility != ABILITY_HYPERCUTTER
 		&& defAbility != ABILITY_DEFIANT
 		&& defAbility != ABILITY_COMPETITIVE;
@@ -2583,9 +2593,7 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 	return STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4
 		&& PhysicalMoveInMoveset(bankAtk)
 		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		&& defAbility != ABILITY_WHITESMOKE
-		//&& defAbility != ABILITY_FULLMETALBODY
+		&& !IsClearBodyAbility(defAbility)
 		&& defAbility != ABILITY_BIGPECKS
 		&& defAbility != ABILITY_DEFIANT
 		&& defAbility != ABILITY_COMPETITIVE;
@@ -2600,9 +2608,7 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
 		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE
+		&& !IsClearBodyAbility(defAbility)
 		&& defAbility != ABILITY_DEFIANT
 		&& defAbility != ABILITY_COMPETITIVE;
 }
@@ -2616,9 +2622,7 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
 		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE
+		&& !IsClearBodyAbility(defAbility)
 		&& defAbility != ABILITY_DEFIANT
 		&& defAbility != ABILITY_COMPETITIVE;
 }
@@ -2632,9 +2636,7 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
 
 	return SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
 		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE
+		&& !IsClearBodyAbility(defAbility)
 		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy));
 }
 
@@ -2646,9 +2648,7 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 	u8 defAbility = ABILITY(bankDef);
 
 	return defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		&& defAbility != ABILITY_WHITESMOKE
-		//&& defAbility != ABILITY_FULLMETALBODY
+		&& !IsClearBodyAbility(defAbility)
 		&& defAbility != ABILITY_KEENEYE;
 }
 
@@ -2657,10 +2657,8 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 	u8 defAbility = ABILITY(bankDef);
 
 	return (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
-		&& defAbility != ABILITY_CONTRARY
-		&& defAbility != ABILITY_CLEARBODY
-		//&& defAbility != ABILITY_FULLMETALBODY
-		&& defAbility != ABILITY_WHITESMOKE;
+		&& !IsClearBodyAbility(defAbility)
+		&& defAbility != ABILITY_CONTRARY;
 }
 
 //Move Prediction Code

@@ -154,9 +154,7 @@ void atk48_playstatchangeanimation(void)
 					}
 				}
 				else if (!BankSideHasMist(gActiveBattler)
-						&& ability != ABILITY_CLEARBODY
-						&& ability != ABILITY_WHITESMOKE
-						//&& ability != ABILITY_FULLMETALBODY
+						&& !IsClearBodyAbility(ability)
 						&& !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
 						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
 						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF)
@@ -327,9 +325,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			return STAT_CHANGE_DIDNT_WORK;
 		}
 
-		else if ((ability == ABILITY_CLEARBODY
-			  ||  ability == ABILITY_WHITESMOKE
-			  //||  ability == ABILITY_FULLMETALBODY
+		else if ((IsClearBodyAbility(ability)
 			  || (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		&& !certain && gCurrentMove != MOVE_CURSE)
 		{

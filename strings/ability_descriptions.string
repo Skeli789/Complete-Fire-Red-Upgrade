@@ -556,8 +556,14 @@ Powers up Electric-type moves.
 #org @DESC_GRIMNEIGH
 Knockouts boost Sp. Atk.
 
-#org @DESC_AS_ONE_GRIM
+#org @DESC_ASONE_GRIM
 Both Unnerve and Grim Neigh.
 
-#org @DESC_AS_ONE_CHILLING
+#org @DESC_ASONE_CHILLING
 Both Unnerve and Chilling Neigh.
+
+#org @DESC_QUICKDRAW
+Sometimes moves quicker.
+
+#org @DESC_CURIOUSMEDICINE
+Resets ally's stat changes.

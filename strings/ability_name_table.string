@@ -218,11 +218,11 @@ Drought
 #org @NAME_ARENA_TRAP
 Arena Trap
 
-#org @NAME_VITAL_SPIRIT
-Vital Spirit
+#org @NAME_TRANSISTOR
+Transistor
 
-#org @NAME_WHITE_SMOKE
-White Smoke
+#org @NAME_DRAGONS_MAW
+Dragon's Maw
 
 #org @NAME_NEUTRALISING_GAS
 Neutralize Gas
@@ -233,8 +233,8 @@ Shell Armor
 #org @NAME_HUNGER_SWITCH
 Hunger Switch
 
-#org @NAME_AIR_LOCK
-Air Lock
+#org @NAME_UNUSED
+Unused
 
 #org @NAME_SWEET_VEIL
 Sweet Veil
@@ -302,8 +302,8 @@ Dry Skin
 #org @NAME_TINTED_LENS
 Tinted Lens
 
-#org @NAME_SOLID_ROCK
-Solid Rock
+#org @NAME_UNSEEN_FIST
+Unseen Fist
 
 #org @NAME_FILTER
 Filter
@@ -371,8 +371,8 @@ Gooey
 #org @NAME_MUMMY
 Mummy
 
-#org @NAME_IRON_BARBS
-Iron Barbs
+#org @NAME_GRIM_NEIGH
+Grim Neigh
 
 #org @NAME_SAND_RUSH
 Sand Rush
@@ -461,11 +461,11 @@ Parental Bond
 #org @NAME_MOLD_BREAKER
 Mold Breaker
 
-#org @NAME_TURBOBLAZE
-Turboblaze
+#org @NAME_AS_ONE_GRIM
+As One
 
-#org @NAME_TERAVOLT
-Teravolt
+#org @NAME_AS_ONE_CHILLING
+As One
 
 #org @NAME_ZEN_MODE
 Zen Mode
@@ -527,8 +527,8 @@ Stamina
 #org @NAME_STEELWORKER
 Steelworker
 
-#org @NAME_TANGLING_HAIR
-Tangling Hair
+#org @NAME_FULL_METAL_BODY
+Full Metal Body
 
 #org @NAME_TRIAGE
 Triage
@@ -659,8 +659,8 @@ Long Reach
 #org @NAME_LIQUID_VOICE
 Liquid Voice
 
-#org @NAME_QUEENLY_MAJESTY
-Queenly Majesty
+#org @NAME_QUICK_DRAW
+Quick Draw
 
 #org @NAME_INNARDS_OUT
 Innards Out
@@ -707,8 +707,8 @@ Battery
 #org @NAME_RECEIVER
 Receiver
 
-#org @NAME_POWER_OF_ALCHEMY
-Alchemic Power
+#org @NAME_CURIOUS_MEDICINE
+Nosy Medicine
 
 #org @NAME_NEUROFORCE
 Neuroforce
@@ -731,7 +731,7 @@ Cotton Down
 #org @NAME_MIRROR_ARMOR
 Mirror Armor
 
-#org @NAME_GULP_MISSLE
+#org @NAME_GULP_MISSILE
 Gulp Missile
 
 #org @NAME_STALWART
@@ -795,8 +795,8 @@ Turboblaze
 #org @gText_AbilityName_Teravolt
 Teravolt
 
-#org @gText_AbilityName_GrimNeigh
-Grim Neigh
+#org @gText_AbilityName_ChillingNeigh
+Chilling Neigh
 
 #org @gText_AbilityName_Libero
 Libero
@@ -815,21 +815,3 @@ Alchemic Power
 
 #org @gText_AbilityName_PropellorTail
 Propellor Tail
-
-//#org @NAME_UNSEEN_FIST
-//Unseen Fist
-
-//#org @NAME_DRAGONS_MAW
-//Dragon's Maw
-
-//#org @NAME_TRANSISTOR
-//Transistor
-
-//#org @NAME_CHILLING_NEIGH
-//Chilling Neigh
-
-//#org @NAME_AS_ONE_GRIM
-//As One
-
-//#org @NAME_AS_ONE_CHILLING
-//As One

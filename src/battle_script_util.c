@@ -245,9 +245,7 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	else
 		bank = gBankAttacker;
 
-	if (ABILITY(bank) == ABILITY_MOLDBREAKER
-	||  ABILITY(bank) == ABILITY_TURBOBLAZE
-	||  ABILITY(bank) == ABILITY_TERAVOLT)
+	if (IsMoldBreakerAbility(ABILITY(bank)))
 	{
 		if (gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMoldBreakerIgnoredAbilities)
 		{
@@ -256,7 +254,6 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 		}
 	}
 }
-
 
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void)
 {
@@ -2012,14 +2009,7 @@ void FailIfAttackerIsntHoldingEdibleBerry(void)
 	u16 item = ITEM(gBankAttacker);
 
 	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
-	|| ABILITY_ON_OPPOSING_FIELD(gBankAttacker, ABILITY_UNNERVE)
-	#ifdef ABILITY_ASONE_GRIM
-	|| ABILITY_ON_OPPOSING_FIELD(gBankAttacker, ABILITY_ASONE_GRIM)
-	#endif
-	#ifdef ABILITY_ASONE_CHILLING
-	|| ABILITY_ON_OPPOSING_FIELD(gBankAttacker, ABILITY_ASONE_CHILLING)
-	#endif
-	)
+	|| UnnerveOnOpposingField(gBankAttacker))
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 }
 

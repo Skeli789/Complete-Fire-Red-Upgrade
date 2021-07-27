@@ -40,7 +40,6 @@
 
 extern bool8 WeatherHasEffect(void);
 #define WEATHER_HAS_EFFECT WeatherHasEffect()
-#define WEATHER_HAS_EFFECT2 (!AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, ABILITY_CLOUDNINE, 0, 0) && !AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, ABILITY_AIRLOCK, 0, 0))
 
 #define MON_CAN_BATTLE(mon) (((GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE && !GetMonData(mon, MON_DATA_IS_EGG, NULL) && GetMonData(mon, MON_DATA_HP, NULL) != 0)))
 

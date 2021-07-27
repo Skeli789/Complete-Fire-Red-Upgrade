@@ -1230,13 +1230,7 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| itemEffect == ITEM_EFFECT_GEM
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
-	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_UNNERVE))
-	#ifdef ABILITY_ASONE_GRIM
-	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_ASONE_GRIM))
-	#endif
-	#ifdef ABILITY_ASONE_CHILLING
-	|| (IsBerry(item) && ABILITY_ON_OPPOSING_FIELD(bankOnSide, ABILITY_ASONE_CHILLING))
-	#endif
+	|| (IsBerry(item) && UnnerveOnOpposingField(bankOnSide))
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
 
@@ -1659,17 +1653,16 @@ bool8 WeatherHasEffect(void)
 	{
 		u8 ability = ABILITY(i);
 
-		if ((ability == ABILITY_CLOUDNINE || ability == ABILITY_AIRLOCK)
+		if ((ability == ABILITY_CLOUDNINE
+		#ifdef ABILITY_AIRLOCK
+		|| ability == ABILITY_AIRLOCK
+		#endif
+		)
 		&& BATTLER_ALIVE(i))
 			return FALSE;
 	}
 
 	return TRUE;
-}
-
-bool8 IsChoiceAbility(u8 ability)
-{
-	return ability == ABILITY_GORILLATACTICS;
 }
 
 bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability)
@@ -1784,7 +1777,9 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 
 	switch (ABILITY(bank)) {
 		case ABILITY_INSOMNIA:
+		#ifdef ABILITY_VITALSPIRIT
 		case ABILITY_VITALSPIRIT:
+		#endif
 		case ABILITY_SWEETVEIL:
 			return FALSE;
 	}
@@ -1829,7 +1824,9 @@ bool8 CanBeYawned(u8 bank)
 
 	switch (ABILITY(bank)) {
 		case ABILITY_INSOMNIA:
+		#ifdef ABILITY_VITALSPIRIT
 		case ABILITY_VITALSPIRIT:
+		#endif
 		case ABILITY_SWEETVEIL:
 		case ABILITY_COMATOSE:
 			return FALSE;
@@ -1886,7 +1883,9 @@ bool8 CanRest(u8 bank)
 
 	switch (ABILITY(bank)) {
 		case ABILITY_INSOMNIA:
+		#ifdef ABILITY_VITALSPIRIT
 		case ABILITY_VITALSPIRIT:
+		#endif
 		case ABILITY_SWEETVEIL:
 		case ABILITY_COMATOSE:
 			return FALSE;
