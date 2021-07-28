@@ -975,6 +975,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 				}
 
 				if (MoveInMonMoveset(MOVE_TRICKROOM, &party[i])
+				|| MoveInMonMoveset(MOVE_GYROBALL, &party[i])
 				#ifdef FLAG_TRICK_ROOM_BATTLE
 				|| FlagGet(FLAG_TRICK_ROOM_BATTLE)
 				#endif

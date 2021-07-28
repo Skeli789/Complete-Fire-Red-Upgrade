@@ -1047,7 +1047,7 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
 		stringInfo->abilities[i] = *GetAbilityLocation(i);	
-		stringInfo->species[i] = SPECIES(i);
+		stringInfo->species[i] = GetProperAbilityPopUpSpecies(i);
 	}
 
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
@@ -1085,7 +1085,7 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
 		stringInfo->abilities[i] = *GetAbilityLocation(i);
-		stringInfo->species[i] = SPECIES(i);
+		stringInfo->species[i] = GetProperAbilityPopUpSpecies(i);
 	}
 
 	for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)

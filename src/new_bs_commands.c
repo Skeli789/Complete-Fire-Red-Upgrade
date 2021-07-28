@@ -502,10 +502,8 @@ void atkFF0A_setability(void)
 {
 	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 ability = gBattlescriptCurrInstr[2];
-	ability_t* abilityLoc = GetAbilityLocation(bank);
-
-	*abilityLoc = ability;
-
+	*GetAbilityLocation(bank) = ability;
+	ResetTookAbilityFrom(bank);
 	gBattlescriptCurrInstr += 3;
 }
 

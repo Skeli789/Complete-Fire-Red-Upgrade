@@ -1270,6 +1270,16 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
 	},
+	[128] =
+	{	//Benjamin Flygon/Volcarona
+		.nature = NATURE_NAIVE,
+		.ivs = 31,
+		.atkEv = 252,
+		.spAtkEv = 252,
+		.spdEv = 252,
+		.ball = TRAINER_EV_CLASS_BALL,
+		.ability = Ability_Hidden,
+	},
 #endif
 };
 #endif
