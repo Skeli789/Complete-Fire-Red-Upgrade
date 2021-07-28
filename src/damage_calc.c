@@ -161,10 +161,10 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 
 	if (monAtk != NULL)
 	{
-			atkAbility = GetMonAbility(monAtk);
-			atkSpecies = monAtk->species;
-			atkEffect = GetMonItemEffect(monAtk);
-			atkStatus2 = 0;
+		atkAbility = GetMonAbilityAfterTrace(monAtk, bankDef);
+		atkSpecies = monAtk->species;
+		atkEffect = GetMonItemEffect(monAtk);
+		atkStatus2 = 0;
 	}
 	else
 	{
@@ -176,7 +176,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 
 	if (monDef != NULL)
 	{
-		defAbility = GetMonAbility(monDef);
+		defAbility = GetMonAbilityAfterTrace(monDef, bankAtk);
 		defStatus1 = monDef->condition;
 	}
 	else
@@ -482,7 +482,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
 	u8 numHits = 1;
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && GetMonAbility(monAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
+	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && GetMonAbilityAfterTrace(monAtk, bankDef) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
 	{
 		numHits = 5;
 	}
@@ -494,7 +494,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	{
 		numHits = 2;
 	}
-	else if (GetMonAbility(monAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	else if (GetMonAbilityAfterTrace(monAtk, bankDef) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
 			damage = (damage * 150) / 100; //1.5x overall boost
@@ -512,7 +512,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-		|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetMonAbility(monAtk), move))
+		|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
 		|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
 			damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 	}
@@ -557,7 +557,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 				return 0;
 			break;
 		case EFFECT_POLTERGEIST:
-			if (WillPoltergeistFail(monDef->item, GetMonAbility(monDef)))
+			if (WillPoltergeistFail(monDef->item, GetMonAbilityAfterTrace(monDef, bankAtk)))
 				return 0;
 			break;
 	}
@@ -624,7 +624,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 			damage = MathMin(damage, monDef->hp - 1);
 		else if (entryHazardDamage == 0) //Focus Sash and Sturdy would work
 		{
-			if ((monDef->hp == monDef->maxHP && GetMonAbility(monDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+			if ((monDef->hp == monDef->maxHP && GetMonAbilityAfterTrace(monDef, bankAtk) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
 			 || (monDef->hp == monDef->maxHP && IsBankHoldingFocusSash(bankDef)))
 				damage = MathMin(damage, monDef->hp - 1);
 		}
@@ -882,7 +882,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 
 	if (CheckParty)
 	{
-		atkAbility = GetMonAbility(monAtk);
+		atkAbility = GetMonAbilityAfterTrace(monAtk, bankDef);
 		atkType1 = GetMonType(monAtk, 0);
 		atkType2 = GetMonType(monAtk, 1);
 		atkType3 = TYPE_BLANK;
@@ -948,10 +948,11 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 }
 
 //The function allows the AI to do type calculations from a move onto one of their partied mons
-u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
+u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
+{
 	u8 flags = 0;
 
-	u8 defAbility = GetMonAbility(monDef);
+	u8 defAbility = GetMonAbilityAfterTrace(monDef, bankAtk);
 	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
 	u8 defType1 = GetMonType(monDef, 0);
 	u8 defType2 = GetMonType(monDef, 1);
@@ -1935,7 +1936,7 @@ void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 		struct Pokemon* monAtk = data->monAtk;
 
 		data->atkSpecies = monAtk->species;
-		data->atkAbility = GetMonAbility(monAtk);
+		data->atkAbility = GetMonAbilityAfterTrace(monAtk, FOE(side));
 		data->atkPartnerAbility = ABILITY_NONE;
 		data->atkItemEffect = GetMonItemEffect(monAtk);
 		data->atkItem = monAtk->item;
@@ -1991,7 +1992,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 		struct Pokemon* monDef = data->monDef;
 
 		data->defSpecies = monDef->species;
-		data->defAbility = GetMonAbility(monDef);
+		data->defAbility = GetMonAbilityAfterTrace(monDef, FOE(side));
 		data->defPartnerAbility = ABILITY_NONE;
 		data->defItemEffect = GetMonItemEffect(monDef);
 		data->defItemQuality = ItemId_GetHoldEffectParam(monDef->item);

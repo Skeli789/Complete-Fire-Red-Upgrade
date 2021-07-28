@@ -12,7 +12,7 @@
 //Exported Functions
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 species_t GetMegaSpecies(u16 species, u16 item, const u16* moves);
-ability_t GetBankMegaFormAbility(u8 bank);
+ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe);
 const u8* DoMegaEvolution(u8 bank);
 const u8* DoPrimalReversion(u8 bank, u8 caseId);
 void MegaRevert(pokemon_t* mon);

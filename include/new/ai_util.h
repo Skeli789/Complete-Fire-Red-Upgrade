@@ -54,6 +54,7 @@ bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy);
 u16 GetBattleMonMove(u8 bank, u8 index);
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef);
+u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe);
 bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 IsHPAbsorptionAbility(u8 ability);

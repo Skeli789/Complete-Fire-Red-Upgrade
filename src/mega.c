@@ -4,6 +4,8 @@
 #include "../include/string_util.h"
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
+
+#include "../include/new/ability_tables.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/util.h"
@@ -14,6 +16,7 @@
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
+
 /*
 mega.c
 	functions that support mega evolution logic and execution
@@ -135,22 +138,33 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	#endif
 }
 
-ability_t GetBankMegaFormAbility(u8 bank)
+ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe)
 {
+	u8 ability = ABILITY_NONE;
 	const struct Evolution* evos;
 
-	if (!IsAbilitySuppressed(bank))
+	if (!IsAbilitySuppressed(megaBank))
 	{
-		evos = CanMegaEvolve(bank, FALSE);
+		evos = CanMegaEvolve(megaBank, FALSE);
 		if (evos != NULL)
-			return GetAbility1(evos->targetSpecies); //Megas can only have 1 ability
+			ability = GetAbility1(evos->targetSpecies); //Megas can only have 1 ability
+		else
+		{
+			//Check Ultra Burst
+			evos = CanMegaEvolve(megaBank, TRUE);
+			if (evos != NULL)
+				ability = GetAbility1(evos->targetSpecies); //Ultra Necrozma only has 1 ability
+		}
 
-		evos = CanMegaEvolve(bank, TRUE);
-		if (evos != NULL)
-			return GetAbility1(evos->targetSpecies); //Ultra Necrozma only has 1 ability
+		if (ability == ABILITY_TRACE && IS_SINGLE_BATTLE)
+		{
+			u8 foeAbility = *GetAbilityLocation(foe);
+			if (!gSpecialAbilityFlags[foeAbility].gTraceBannedAbilities)
+				ability = foeAbility; //What the Ability will become
+		}
 	}
 
-	return ABILITY_NONE;
+	return ability;
 }
 
 const u8* DoMegaEvolution(u8 bank)

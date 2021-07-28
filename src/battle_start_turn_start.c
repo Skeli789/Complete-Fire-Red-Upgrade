@@ -2182,13 +2182,13 @@ u32 SpeedCalc(u8 bank)
 	return speed;
 }
 
-u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
+u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 {
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
 		return 0;
 
 	u32 speed;
-	u8 ability = GetMonAbility(mon);
+	u8 ability = GetMonAbilityAfterTrace(mon, FOE(side));
 	u8 itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(mon->item) : 0;
 	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
 	u8 statVal = 6;
@@ -2203,7 +2203,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 	//Calculate adjusted speed stat if Sticky Web is present
 	if (gSideTimers[side].stickyWeb
 	&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
-	&& GetMonAbility(mon) != ABILITY_CLEARBODY
+	&& ability != ABILITY_CLEARBODY
 	&& CheckMonGrounding(mon))
 	{
 		if (ability == ABILITY_CONTRARY) //Gets a speed boost

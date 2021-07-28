@@ -297,7 +297,8 @@ void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backup
 		mon->species = ((struct Evolution*) gNewBS->ai.megaPotential[bank])->targetSpecies;
 		CalculateMonStats(mon); //Temporarily mega evolve mon
 		Memcpy(&gBattleMons[bank].attack, &mon->attack, sizeof(u16) * NUM_COPY_STATS);
-		*GetAbilityLocation(bank) = GetMonAbility(mon);
+		*GetAbilityLocation(bank) = GetMonAbilityAfterTrace(mon, FOE(bank));
+
 		if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
 		{
 			UpdateTypesForCamomons(bank);
@@ -944,7 +945,6 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 		&& SpeedCalcMon(SIDE(activeBattler), mon) > SpeedCalc(foe); //And will get the healing move off first
 }
 
-
 static bool8 PredictedMoveWontKOMon(u8 activeBattler, struct Pokemon* mon, u8 foe)
 {
 	u16 defMove = IsValidMovePrediction(foe, activeBattler);
@@ -1061,7 +1061,7 @@ static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u16
 			return FALSE; //Only allow switching to this mon again for a type absorbing some of the time
 	}
 
-	u8 monAbility = GetMonAbility(mon);
+	u8 monAbility = GetMonAbilityAfterTrace(mon, FOE(gActiveBattler));
 
 	if (monAbility == absorbingTypeAbility1
 	||  monAbility == absorbingTypeAbility2
@@ -2588,7 +2588,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 		{
 			u8 foes[] = {foe1, foe2};
 			u8 moveLimitations = CheckMoveLimitationsFromParty(consideredMon, 0, 0xFF);
-			u8 ability = GetMonAbility(consideredMon);
+			u8 ability = GetMonAbilityAfterTrace(consideredMon, foe1);
 			u32 speed = SpeedCalcMon(SIDE(gActiveBattler), consideredMon);
 			secondLastValidMon = lastValidMon;
 			lastValidMon = i;
