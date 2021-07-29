@@ -1,15 +1,3 @@
-#org @gText_DexNav
-Dexnav
-
-#org @gText_MissionLog
-Missions
-
-#org @gText_MenuExitRight
-Exit  [DPAD_RIGHT]
-
-#org @gText_MenuExitLeft
-Exit  [DPAD_LEFT]
-
 #org @gText_DexNavInstructions
 [R_BUTTON]Register [B_BUTTON]Cancel
 

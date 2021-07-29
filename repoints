@@ -221,11 +221,13 @@ gBattleAnims_Special 08034238
 #endif
 
 ##Start Menu
+#ifndef UNBOUND
 sStartMenuActionTable 0806EF9C
 sStartMenuActionTable 0806F374
 sStartMenuActionTable 0806F3F8
 sStartMenuDescPointers 0806F138
 sStartMenuDescPointers 0806F368
+#endif
 
 #ifdef UNBOUND
 #TestScript 08B7ADA0 #Need to change offset!

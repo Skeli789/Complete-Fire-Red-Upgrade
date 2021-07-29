@@ -310,6 +310,8 @@ sStartMenuCursorPos = 0x20370F4;
 sNumStartMenuItems = 0x20370F5;
 sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
+sSafariZoneStatsWindowId = 0x2037101;
+sStartMenuWindowId = 0x203ABE0;
 
 /* Other RAM */
 sWarpDestination = 0x2031DBC;
@@ -332,6 +334,7 @@ gTotalCameraPixelOffsetX = 0x300506C;
 gInputToStoreInQuestLogMaybe = 0x3005078;
 gCB2_AfterEvolution = 0x300537C;
 gItemUseCB = 0x3005E98;
+
 
 /*==========================
 ===========ROM==============
@@ -1577,7 +1580,7 @@ SetUpStartMenu_Link = 0x806EE34 | 1;
 SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
 DestroySafariZoneStatsWindow = 0x806EF18 | 1;
 PrintStartMenuItems = 0x806EF44 | 1;
-DrawStartMenuInOneGo = 0x806F14C | 1;
+//DrawStartMenuInOneGo = 0x806F14C | 1;
 task50_startmenu = 0x806F168 | 1;
 ShowStartMenu = 0x806F258 | 1;
 StartMenu_FadeScreenIfLeavingOverworld = 0x806F394 | 1;
@@ -1592,6 +1595,9 @@ StartMenuOptionCallback = 0x806F4FC | 1;
 StartMenuExitCallback = 0x806F540 | 1;
 StartMenuSafariZoneRetireCallback = 0x806F554 | 1;
 StartMenuLinkModePlayerCallback = 0x806F56C | 1;
+PrintSaveTextWithFollowupFunc = 0x806F69C | 1;
+SaveDialogCB_AskSavePrintYesNoMenu = 0x806F7DC | 1;
+PrintSaveStatsOld = 0x806FCF4 | 1;
 CloseStartMenu = 0x806FEA0 | 1;
 AppendToList = 0x806FEC8 | 1;
 CB2_OptionMenu = 0x08088454 | 1;
@@ -1601,6 +1607,7 @@ GetStartMenuWindowId = 0x80F793C | 1;
 RemoveStartMenuWindow = 0x80F7948 | 1;
 InUnionRoom = 0x811B0D0 | 1;
 PrintTextOnHelpMessageWindow = 0x8113018 | 1;
+SetUsingUnionRoomStartMenu = 0x81198EC | 1;
 
 /* List Menu Functions */
 ListMenuPrintEntries = 0x81074DC | 1; 
@@ -1841,6 +1848,7 @@ ChangeBgX = 0x8001B90 | 1;
 ChangeBgY = 0x8001D08 | 1;
 SetBgTilemapBuffer = 0x8001FA0 | 1;
 UnsetBgTilemapBuffer = 0x8001FD4 | 1;
+GetBgTilemapBuffer = 0x8002008 | 1;
 CopyToBgTilemapBuffer = 0x8002040 | 1;
 CopyBgTilemapBufferToVram = 0x80020BC | 1;
 FillBgTilemapBufferRect_Palette0 = 0x8002454 | 1;
