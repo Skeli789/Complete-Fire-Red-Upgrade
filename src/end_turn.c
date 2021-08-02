@@ -657,10 +657,10 @@ u8 TurnBasedEffects(void)
 					if (gBattleMons[gActiveBattler].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 					{
 						if (gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON
-						&& (gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
-							gBattleMons[gActiveBattler].status1 += 0x100;
+						&& (gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) != STATUS1_TOXIC_TURN(15)) //not 16 turns
+							gBattleMons[gActiveBattler].status1 += STATUS1_TOXIC_TURN(1);
 
-						gBattleMoveDamage = GetPoisonDamage(gActiveBattler);
+						gBattleMoveDamage = GetPoisonDamage(gActiveBattler, FALSE);
 
 						if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL)
 						{
@@ -1666,6 +1666,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
 				gNewBS->ai.sideSwitchedThisRound = 0;
+				gNewBS->ai.goodToPivot = 0;
 				gNewBS->devolveForgotMove = 0;
 
 				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
@@ -1689,6 +1690,7 @@ u8 TurnBasedEffects(void)
 					}
 				}
 
+				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
 				ClearCachedAIData();
 		}
 		gBattleStruct->turnEffectsBank++;
@@ -1719,7 +1721,7 @@ u32 GetLeechSeedDamage(u8 bank)
 	return damage;
 }
 
-u32 GetPoisonDamage(u8 bank)
+u32 GetPoisonDamage(u8 bank, bool8 aiCalc)
 {
 	u32 damage = 0;
 	u8 ability = ABILITY(bank);
@@ -1733,8 +1735,12 @@ u32 GetPoisonDamage(u8 bank)
 		}
 		else if (gBattleMons[bank].status1 & STATUS_TOXIC_POISON)
 		{
+			u32 status = gBattleMons[bank].status1 & STATUS1_TOXIC_COUNTER;
+			if (aiCalc && status < STATUS1_TOXIC_TURN(15))
+				status += 0x100; //At the end of the turn it'll do more
+
 			damage = MathMax(1, GetBaseMaxHP(bank) / 16);
-			damage *= (gBattleMons[gActiveBattler].status1 & 0xF00) >> 8;
+			damage *= (status) >> 8;
 		}
 	}
 	else if (ability == ABILITY_POISONHEAL)

@@ -891,6 +891,7 @@ struct NewBattleStruct
 	bool8 dontActivateMoldBreakersAnymoreThisTurn : 1;
 	bool8 trainerSlideInProgress : 1;
 	bool8 stickyWebActive : 1;
+	bool8 inPivotingMove : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -980,6 +981,8 @@ struct NewBattleStruct
 		u16 zMoveHelper; //~0x2017B74
 		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
+		bool8 goodToPivot;
+		u8 pivotTo[PARTY_SIZE];
 		u8 playerSwitchedCount;
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //Used for anti-AI cheesing
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop

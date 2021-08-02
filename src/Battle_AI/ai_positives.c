@@ -81,7 +81,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (ShouldRecover(bankAtk, bankDef, move))
 			{
 				if (IsClassStall(class))
-					INCREASE_VIABILITY(6);
+					INCREASE_STATUS_VIABILITY(2);
 				else if (IsClassDoublesTrickRoomSetup(class))
 					INCREASE_VIABILITY(16);
 				else if (IS_SINGLE_BATTLE)
@@ -383,6 +383,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				else
 					INCREASE_STATUS_VIABILITY(2);
 			}
+			else
+			{
+				if (CountUsefulDebuffs(bankAtk) > 0)
+					INCREASE_STATUS_VIABILITY(1); //Reset lowered stats
+			}
 			break;
 
 		/*
@@ -457,7 +462,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				AI_RECOVER_VIABILITY_INCREASE:
 				if (IsClassStall(class))
-					INCREASE_VIABILITY(4);
+					INCREASE_VIABILITY(8);
+				else if (IsClassPhazer(class))
+					INCREASE_VIABILITY(8);
 				else if (IsClassDoublesTrickRoomSetup(class))
 					INCREASE_VIABILITY(16);
 				else
@@ -522,7 +529,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break; //Just a regular attacking move now
 			}
 			else if (ShouldTrap(bankAtk, bankDef, move, class))
-				INCREASE_VIABILITY(8);
+				INCREASE_VIABILITY(7); //Only stallers can trap
 			break;
 
 		case EFFECT_MIST:
@@ -1307,8 +1314,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (IS_SINGLE_BATTLE)
 					{
 						u8 shouldPivot = ShouldPivot(bankAtk, bankDef, move, class);
-						if (shouldPivot == PIVOT)
-							IncreasePivotViability(&viability, class, bankAtk, bankDef);
+						if (shouldPivot == PIVOT || shouldPivot == PIVOT_IMMEDIATELY)
+							IncreasePivotViability(&viability, class, bankAtk, bankDef, shouldPivot);
 						else if (shouldPivot == DONT_PIVOT)
 							DECREASE_VIABILITY(10); //Bad idea to use this move
 						else if (gWishFutureKnock.wishCounter[bankAtk] > 0
@@ -2563,7 +2570,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (!IsTrapped(bankDef, TRUE))
 					{
 						if (ShouldTrap(bankAtk, bankDef, move, class))
-							INCREASE_VIABILITY(8);
+							INCREASE_VIABILITY(7); //Only stallers can trap
 					}
 					break;
 
@@ -2710,23 +2717,27 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 		&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
 		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
 		{
-			IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
+			if (!WillFaintFromSecondaryDamage(bankDef)
+			|| IsMovePredictionHealingMove(bankDef, bankAtk)
+			|| IsMoxieAbility(atkAbility))
+				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
 		}
 		else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
 		&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn
 		 || AI_THINKING_STRUCT->simulatedRNG[3] < ((gLastPrintedMoves[bankDef] != MOVE_NONE && SPLIT(gLastPrintedMoves[bankDef]) == SPLIT_STATUS) ? 25 : 75)) //Or allowed consecutive desperate moves (higher chance if opponent last used an attacking move)
 		&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
+		&& !((IsTakingSecondaryDamage(bankDef) || HighChanceOfBeingImmobilized(bankDef)) && CanHealFirstToPreventKnockOut(bankAtk, bankDef)) //Could potentially stall to survive while hurting the foe
 		&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 		&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
 		&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up
 		&& !IsClassPhazer(class) //Or phaze/set up hazards
+		&& !(gNewBS->ai.goodToPivot & gBitTable[bankAtk]) //Don't use a desperate move if you should pivot out
 		&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 		{
 			if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
 			|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
 			|| (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed > data->defSpeed)) //Or their move would go before Sucker Punch
 			{
-				//Use a desperate priority move
 				INCREASE_VIABILITY(9);
 			}
 		}
@@ -2759,7 +2770,7 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 						else if (IsClassPhazer(class))
 							INCREASE_VIABILITY(8); //Same priority as phazing
 						else if (IsClassStall(class))
-							INCREASE_VIABILITY(8); //Same priority as a trapping move
+							INCREASE_VIABILITY(8); //Same priority as a healing move
 						else if (IsClassEntryHazards(class))
 							INCREASE_VIABILITY(4); //Same priority as spikes
 						else

@@ -55,7 +55,7 @@ void IncreaseFreezeViability(s16* originalViability, u8 class, u8 bankAtk, u8 ba
 void IncreaseSubstituteViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseEntryHazardsViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseFakeOutViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
-void IncreasePivotViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
+void IncreasePivotViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u8 pivotType);
 void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseFoeProtectionViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseAllyProtectionViability(s16* viability, u8 class);
@@ -82,6 +82,7 @@ enum PivotQueries
 	DONT_PIVOT,
 	CAN_TRY_PIVOT,
 	PIVOT,
+	PIVOT_IMMEDIATELY,
 };
 
 #define INCREASE_STATUS_VIABILITY(x) (IncreaseStatusViability(&viability, class, x, bankAtk, bankDef))

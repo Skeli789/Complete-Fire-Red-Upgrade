@@ -65,7 +65,7 @@ static void CalculateAIPredictions(void);
 static bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(struct Pokemon* party);
 static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, u8 lastId);
-static bool8 SwitchToBestResistMon(const struct Pokemon* party);
+static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot);
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party);
 static bool8 PassOnWish(struct Pokemon* party, u8 firstId, u8 lastId);
 static bool8 SemiInvulnerableTroll(void);
@@ -711,7 +711,8 @@ void AI_TrySwitchOrUseItem(void)
 	{
 		TryTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 
-		if (ShouldSwitch(party, firstId, lastId)) //0x8039A80
+		if (ShouldSwitch(party, firstId, lastId)
+		&& !(gNewBS->ai.goodToPivot & gBitTable[gActiveBattler]))
 		{
 			if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 			{
@@ -904,6 +905,21 @@ void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2)
 		*battlerIn2 = gActiveBattler;
 		*foe1 = FOE(gActiveBattler);
 		*foe2 = *foe1;
+	}
+}
+
+static void ConfirmAISwitch(u8 monId, bool8 willPivot)
+{
+	//Switch to a mon that can KO and save your damager for later
+	if (!willPivot) //U-Turn/Volt Switch switch on their own
+	{
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+	}
+	else
+	{
+		gNewBS->ai.pivotTo[gActiveBattler] = monId;
+		gNewBS->ai.goodToPivot |= gBitTable[gActiveBattler];
 	}
 }
 
@@ -1277,7 +1293,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 	return FALSE;
 }
 
-static bool8 SwitchToBestResistMon(const struct Pokemon* party)
+static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot)
 {
 	//Check best switching option
 	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
@@ -1285,9 +1301,7 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party)
 	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
 	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
 	{
-		//Switch to a mon that can KO and save your damager for later
-		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		ConfirmAISwitch(GetMostSuitableMonToSwitchIntoByParty(party), willPivot);
 		return TRUE;
 	}
 
@@ -1297,9 +1311,7 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party)
 	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
 	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
 	{
-		//Switch to a mon that can KO and save your damager for later
-		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = GetSecondMostSuitableMonToSwitchIntoByParty(party);
-		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		ConfirmAISwitch(GetSecondMostSuitableMonToSwitchIntoByParty(party), willPivot);
 		return TRUE;
 	}
 
@@ -1383,8 +1395,20 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party)
 			return FALSE;
 	}
 
-	if (SwitchToBestResistMon(party))
+	if (SwitchToBestResistMon(party, FALSE))
 		return TRUE; //Mon has already been found
+
+	struct Pokemon* mostSuitableMon = &party[GetMostSuitableMonToSwitchIntoByParty(party)]; //Mon to be switched to
+	if (IS_SINGLE_BATTLE && !PredictedMoveWontDoTooMuchToMon(gActiveBattler, mostSuitableMon, foe1, GetMostSuitableMonToSwitchIntoFlags())) //Move would do a lot to switched in mon
+	{
+		if (PredictedMoveWontKOMon(gActiveBattler, mostSuitableMon, foe1))
+		{
+			if (AIRandom() & 1) //Switch only 50% of the time
+				return FALSE;
+		}
+		else //Attack would KO the mon about to switch in
+			return FALSE; //Don't sack your best mon just to save this one
+	}
 
 	gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 	EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -1858,6 +1882,29 @@ static bool8 IsTakingAnnoyingSecondaryDamage(struct Pokemon* party)
 	return FALSE;
 }
 
+static bool8 ShouldSwitchToAvoidDeathHelper(struct Pokemon* party, u8 bankDef, u16 defMove, u8 monId, u8 switchFlags)
+{
+	struct Pokemon* mon = &party[monId];
+
+	if
+	//OPTION A
+		((switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES) //Will either not waste the switch or can wall
+		&& (AI_TypeCalc(defMove, bankDef, mon) & MOVE_RESULT_NO_EFFECT)) //Move will have no effect on switched in mon
+
+	//OPTION B
+	||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
+		&& ((switchFlags & (SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //Walls foe
+		 || (switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & SWITCHING_FLAG_OUTSPEEDS)) //Or can go first and KO
+		&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, mon, bankDef, switchFlags))) //Move will affect but not do too much damage
+	{
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 {
 	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
@@ -1893,27 +1940,13 @@ static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 		&&  MoveKnocksOutXHits(defMove, bankDef, gActiveBattler, 1) //Foe will kill
 		&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 3) //33% health loss
 		&& (GetHealthPercentage(gActiveBattler) > 20 //Don't switch out mons that are super close to death
-		 || GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_SCORE_MAX)) //Unless its a really good switch
+		 || GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_SCORE_MAX) //Unless its a really good switch
+		 /*|| TODO: Damager and faster than majority of living enemy team*/)
 		{
-			u8 bestMon = GetMostSuitableMonToSwitchIntoByParty(party);
-			u32 resultFlags = AI_TypeCalc(defMove, bankDef, &party[bestMon]);
-			u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
-
-			if
-			//OPTION A
-				((resultFlags & MOVE_RESULT_NO_EFFECT //Move will have no effect on switched in mon
-				&& (switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES))) //Will either not waste the switch or can wall
-
-			//OPTION B
-			||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
-				&& ((switchFlags & (SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //Walls foe
-				 || (switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & SWITCHING_FLAG_OUTSPEEDS)) //Or can go first and KO
-				&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], bankDef, switchFlags))) //Move will affect but not do too much damage
-			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, GetMostSuitableMonToSwitchIntoByParty(party), GetMostSuitableMonToSwitchIntoFlags()))
 				return TRUE;
-			}
+			else if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, GetSecondMostSuitableMonToSwitchIntoByParty(party), GetSecondMostSuitableMonToSwitchIntoFlags()))
+				return TRUE;
 		}
 	}
 
@@ -2165,8 +2198,7 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 	&& IsClassDamager(class) //Role is to dish out as much damage as possible
 	&& (STAT_STAGE(gActiveBattler, STAT_STAGE_ATK) <= OFFENSIVE_STAT_MIN_NUM
 	 || STAT_STAGE(gActiveBattler, STAT_STAGE_SPATK) <= OFFENSIVE_STAT_MIN_NUM
-	 || STAT_STAGE(gActiveBattler, STAT_STAGE_ACC) <= OFFENSIVE_STAT_MIN_NUM) //Has at least one bad offensive stat (placed here to save runtime)
-	&& (IS_DOUBLE_BATTLE || !FastPivotingMoveInMovesetThatAffects(gActiveBattler, FOE(gActiveBattler)))) //U-Turn/Volt Switch switch on their own
+	 || STAT_STAGE(gActiveBattler, STAT_STAGE_ACC) <= OFFENSIVE_STAT_MIN_NUM)) //Has at least one bad offensive stat (placed here to save runtime)
 	{
 		u8 i;
 		u8 battlerIn1, battlerIn2;
@@ -2226,6 +2258,8 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 		else //Didn't clear stat stage check
 			return FALSE; //Switch not worth it
 
+		bool8 willPivot = !IS_DOUBLE_BATTLE && FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe1);
+
 		if ((!CanKnockOut(foe1, gActiveBattler) && !(IS_DOUBLE_BATTLE && CanKnockOut(foe2, gActiveBattler))) //Can't knock out only (or both) foe
 		|| STAT_STAGE(gActiveBattler, STAT_STAGE_ACC) <= OFFENSIVE_STAT_MIN_NUM) //Or just has really bad accuracy
 		{
@@ -2234,9 +2268,8 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 
 			if (switchFlags & (SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES) //New mon can take a hit
 			|| (IS_SINGLE_BATTLE && switchFlags & SWITCHING_FLAG_OUTSPEEDS && PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMonId], foe1, switchFlags))) //Can take at least the next hit and follow up
-			{	
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			{
+				ConfirmAISwitch(bestMonId, willPivot);
 				return TRUE;
 			}
 		}
@@ -2303,15 +2336,16 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 		//OPTION B:
 		|| (!AnyUsefulOffseniveStatIsRaised(gActiveBattler) //It isn't invested in useful buffs
 		 && STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) < 6 + 3 //Including +3 Evasion
-		 && GetTrapDamage(foe) == 0 //And it isn't necessary to stay in so the foe will take trap damage
+		 && !(IsTakingSecondaryDamage(foe) && IsTrapped(foe, TRUE)) //And it isn't necessary to stay in so the foe will take trap damage
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
 		 && ((GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //And the new mon can KO (helps against PP stallers)
 		  || ((AIRandom() & 1) && !ResistsAllMoves(foe, gActiveBattler)))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
 		                                                                 //don't get into an infinite loop if this mon already does). Do this randomly to throw off opponent.
-	)
-	&& !FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe)) //U-Turn/Volt Switch switch on their own
+	)) 
 	{
-		if (SwitchToBestResistMon(party))
+		bool8 willPivot = FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe); //U-Turn/Volt Switch switch on their own
+	
+		if (SwitchToBestResistMon(party, willPivot))
 			return TRUE;
 
 		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon
@@ -2326,8 +2360,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 			if ((switchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
 			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMonId], foe, switchFlags))
 			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				ConfirmAISwitch(bestMonId, willPivot);
 				return TRUE;
 			}
 
@@ -2337,8 +2370,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 			if ((secondBestSwitchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
 			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[secondBestMonId], foe, secondBestSwitchFlags))
 			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = secondBestMonId;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				ConfirmAISwitch(secondBestMonId, willPivot);
 				return TRUE;
 			}
 
@@ -2356,7 +2388,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 				{
 					//Switch the AI out becuase when it switches back in it can KO the current foe
 
-					if (ShouldSaveChoiceSweeper(bestMonId, switchFlags, party)
+					if (ShouldSaveChoiceSweeper(bestMonId, switchFlags, party) //Handles the emit in the function
 					||  ShouldSaveChoiceSweeper(secondBestMonId, secondBestSwitchFlags, party))
 						return TRUE;
 

@@ -321,8 +321,14 @@ void BuildTrainerPartySetup(void)
 	}
 	#endif
 
+	bool8 useHalfPartnerTeam = FALSE;
+	#ifdef FLAG_USE_HALF_PARTNER_TEAM
+	useHalfPartnerTeam = FlagGet(FLAG_USE_HALF_PARTNER_TEAM); //Partner's team still replaces second half of team but you have control
+	#endif
+
 	//Build multi partner's team
-	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && (ViableMonCount(gEnemyParty) > 1 || IsRaidBattle()))
+	if (((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) || useHalfPartnerTeam)
+	&& (ViableMonCount(gEnemyParty) > 1 || IsRaidBattle() || useHalfPartnerTeam))
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
@@ -358,13 +364,16 @@ void BuildTrainerPartySetup(void)
 						Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
 				}
 
-				ReducePartyToThree(); //Well...sometimes can be less than 3
+				ReducePartyToThree(); //Well... sometimes can be less than 3
 				Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
 
 				if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
 					BuildRaidMultiParty();
 				else
 					CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
+
+				if (useHalfPartnerTeam)
+					CompactPartySlots();
 			}
 		}
 	}

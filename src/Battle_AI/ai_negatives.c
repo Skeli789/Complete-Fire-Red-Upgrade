@@ -1130,9 +1130,12 @@ MOVESCR_CHECK_0:
 			}
 
 			//Don't want to reset enemy lowered stats
-			for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
+			if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE)
 			{
-				if (STAT_STAGE(bankDef, i) < 6 || (IS_DOUBLE_BATTLE && STAT_STAGE(data->bankDefPartner, i) < 6))
+				u16 goodToGetRidOf = CountUsefulBoosts(bankDef) + CountUsefulDebuffs(bankAtk);
+				u16 badToGetRidOf = CountUsefulDebuffs(bankDef) + CountUsefulBoosts(bankAtk);
+			
+				if (goodToGetRidOf  < badToGetRidOf)
 				{
 					DECREASE_VIABILITY(10);
 					break;
@@ -1162,7 +1165,7 @@ MOVESCR_CHECK_0:
 			||  GetNightmareDamage(bankDef) > 0
 			||  GetCurseDamage(bankDef) > 0
 			||  GetTrapDamage(bankDef) > 0
-			||  GetPoisonDamage(bankDef) >= gBattleMons[bankDef].maxHP / 4) //Or is taking Bad secondary damage.
+			||  GetPoisonDamage(bankDef, TRUE) >= gBattleMons[bankDef].maxHP / 4) //Or is taking Bad secondary damage.
 			{
 				DECREASE_VIABILITY(10);
 			}
@@ -1255,6 +1258,16 @@ MOVESCR_CHECK_0:
 					break;
 
 				default:
+					if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE) //Very smart AI
+					{
+						if (IS_SINGLE_BATTLE && IsTakingSecondaryDamage(bankDef))
+						{
+							if (GetHealthPercentage(bankAtk) == 100)
+								DECREASE_VIABILITY(1); //Can heal to stall out opponent even if at full health
+							break;
+						}
+					}
+
 					if (GetHealthPercentage(bankAtk) == 100)
 						DECREASE_VIABILITY(10);
 					else if (GetHealthPercentage(bankAtk) >= 90)

@@ -2375,3 +2375,13 @@ void TrySkipBattleNicknameOffer(void)
 	}
 	#endif
 }
+
+void SetInPivotingMove(void)
+{
+	gNewBS->inPivotingMove = TRUE;
+}
+
+void ClearInPivotingMove(void)
+{
+	gNewBS->inPivotingMove = FALSE;
+}

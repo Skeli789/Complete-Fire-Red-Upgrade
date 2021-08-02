@@ -2730,6 +2730,7 @@ BatonPassSwitchOutBS:
 	callasm ClearAttackerDidDamageOnce
 	callasm ClearTargetStatFellThisTurn @;So Eject Pack doesn't activate
 	openpartyscreen BANK_SWITCHING FAILED
+	callasm ClearInPivotingMove
 	switchoutabilities BANK_SWITCHING
 	waitstateatk
 	switchhandleorder BANK_SWITCHING 0x2
@@ -2803,6 +2804,7 @@ BattleScript_DoSwitchOutUTurn:
 BattleScript_UTurnSwitchOutAnim:
 	playanimation BANK_SWITCHING ANIM_CALL_BACK_POKEMON 0x0
 	callasm MakeSwitchingBankInvisible @;So the sprite stays hidden
+	callasm SetInPivotingMove
 	goto BatonPassSwitchOutBS
 	
 BattleScript_PursuitDmgOnSwitchOutUTurn:

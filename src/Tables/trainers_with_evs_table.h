@@ -118,7 +118,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[12] =
-	{ //Physical Wall 
+	{ //Physical Wall
 		.nature = NATURE_IMPISH,
 		.ivs = 31,
 		.hpEv = 252,

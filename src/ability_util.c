@@ -313,6 +313,21 @@ bool8 UnnerveOnOpposingField(u8 bank)
 		;
 }
 
+bool8 AbilityPreventsLoweringAtk(u8 ability)
+{
+	return ability == ABILITY_HYPERCUTTER
+		|| ability == ABILITY_MIRRORARMOR
+		|| IsClearBodyAbility(ability);
+}
+
+bool8 AbilityBlocksIntimidate(u8 ability)
+{
+	return ability == ABILITY_INNERFOCUS
+		|| ability == ABILITY_OWNTEMPO
+		|| ability == ABILITY_OBLIVIOUS
+		|| ability == ABILITY_SCRAPPY;
+}
+
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)
 {
 	if (!IsClearBodyAbility(ability))

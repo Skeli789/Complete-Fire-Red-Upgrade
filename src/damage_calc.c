@@ -2170,6 +2170,25 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	{
 		struct Pokemon* monDef = data->monDef;
 
+		if (data->defAbility == ABILITY_INTIMIDATE) //Goes before Foul Play
+		{
+			if (!AbilityPreventsLoweringAtk(data->atkAbility)
+			&& !AbilityBlocksIntimidate(data->atkAbility)
+			&& !BankSideHasMist(bankAtk))
+			{
+				//Factor in Intimidate
+				if (data->atkAbility == ABILITY_CONTRARY && data->atkBuff < STAT_STAGE_MAX)
+					data->atkBuff += 1;
+				else if (data->atkBuff > STAT_STAGE_MIN)
+					data->atkBuff -= 1;
+			}
+
+			if (data->atkAbility == ABILITY_DEFIANT && data->atkBuff < STAT_STAGE_MAX)
+				data->atkBuff += 2;
+			else if (data->defAbility == ABILITY_COMPETITIVE && data->spAtkBuff < STAT_STAGE_MAX)
+				data->spAtkBuff += 2;
+		}
+
 		switch (data->move) {
 			case MOVE_FOULPLAY:
 				attack = monDef->attack;

@@ -636,6 +636,7 @@ void BattleBeginFirstTurn(void)
 				#ifdef DEBUG_AI_CHOICES
 				gNewBS->ai.randSeed = Random32(); //So the seed doesn't start at 0
 				#endif
+				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
 				*state = 0;
 		}
 	}

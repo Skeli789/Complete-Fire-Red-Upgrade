@@ -170,7 +170,7 @@ bool8 GetCan2HKO(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits)
+bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits, bool8 dealOneHitFirst)
 {
 	int i;
 	u16 move;
@@ -180,28 +180,65 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	//Temporarily increase target's hp for calcs
-	u16 backupHp = gBattleMons[bankDef].hp;
-	gBattleMons[bankDef].hp = MathMin(backupHp + healAmount, gBattleMons[bankDef].maxHP);
-
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
-	for (i = 0; i < MAX_MON_MOVES; ++i)
+	//Temporarily increase target's hp for calcs
+	u16 backupHp = gBattleMons[bankDef].hp;
+	
+	if (dealOneHitFirst)
 	{
-		move = GetBattleMonMove(bankAtk, i);
-
-		if (move == MOVE_NONE)
-			break;
-
-		if (isAsleep && move != MOVE_SNORE)
-			continue;
-
-		if (!(gBitTable[i] & moveLimitations))
+		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
-			if (CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, numHits)) //Need fresh calculation since data is locked earlier
+			move = GetBattleMonMove(bankAtk, i);
+
+			if (move == MOVE_NONE)
+				break;
+
+			if (isAsleep && move != MOVE_SNORE)
+				continue;
+
+			if (!(gBitTable[i] & moveLimitations))
 			{
-				gBattleMons[bankDef].hp = backupHp;
-				return TRUE;
+				u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
+				if (dmg >= backupHp)
+				{
+					gBattleMons[bankDef].hp = backupHp;
+					return TRUE; //Can't even survive a single attack, let alone 2 or more
+				}
+
+				gBattleMons[bankDef].hp = (backupHp - dmg) + healAmount; //Deal the damage and then heal it off
+				gBattleMons[bankDef].hp += GetAmountToRecoverBy(bankDef, 0, MOVE_PROTECT); //Then get more HP at the end of the turn
+				gBattleMons[bankDef].hp = MathMin(gBattleMons[bankDef].hp, gBattleMons[bankDef].maxHP);
+
+				if (CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, numHits)) //Then see if it can KO with the rest of the hits
+				{
+					gBattleMons[bankDef].hp = backupHp;
+					return TRUE;
+				}
+			}
+		}
+	}
+	else
+	{
+		gBattleMons[bankDef].hp = MathMin(backupHp + healAmount, gBattleMons[bankDef].maxHP);
+
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			move = GetBattleMonMove(bankAtk, i);
+
+			if (move == MOVE_NONE)
+				break;
+
+			if (isAsleep && move != MOVE_SNORE)
+				continue;
+
+			if (!(gBitTable[i] & moveLimitations))
+			{
+				if (CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, numHits)) //Need fresh calculation since data is locked earlier
+				{
+					gBattleMons[bankDef].hp = backupHp;
+					return TRUE;
+				}
 			}
 		}
 	}
@@ -2101,7 +2138,7 @@ bool8 CanHealFirstToPreventKnockOut(u8 bankAtk, u8 foe)
 			{
 				u32 healAmount = GetAmountToRecoverBy(bankAtk, foe, move);
 				if (MoveWouldHitFirst(move, bankAtk, foe)
-				&& !CanKnockOutAfterHealing(foe, bankAtk, healAmount, 1))
+				&& !CanKnockOutAfterHealing(foe, bankAtk, healAmount, 1, FALSE))
 					return TRUE;
 			}
 		}
@@ -2210,7 +2247,7 @@ static u32 CalcSecondaryEffectDamage(u8 bank)
 
 		damage += GetTrapDamage(bank)
 			+ GetLeechSeedDamage(bank)
-			+ GetPoisonDamage(bank)
+			+ GetPoisonDamage(bank, TRUE)
 			+ GetBurnDamage(bank)
 			+ GetCurseDamage(bank)
 			+ GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
@@ -2245,7 +2282,7 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	&&  gDisableStructs[bank].perishSongTimer == 0)
 		return TRUE;
 
-	u8 hp = gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT); //Assume leftover etc. healing first
+	u8 hp = MathMin(gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT), gBattleMons[bank].maxHP); //Assume leftover etc. healing first
 
 	return GetSecondaryEffectDamage(bank) >= hp;
 }
@@ -2292,6 +2329,30 @@ u32 GetContactDamageMonDef(u16 bankAtk, struct Pokemon* monDef)
 		return 0;
 
 	return GetContactDamageByDefAbilityItemEffect(GetMonAbilityAfterTrace(monDef, bankAtk), GetMonItemEffect(monDef), GetBaseMaxHP(bankAtk));
+}
+
+bool8 HighChanceOfBeingImmobilized(u8 bank)
+{
+	u32 odds = 100; //The odds of being able to land an attack
+
+	if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
+		odds = (odds * 75) / 100; //75% chance of attacking
+	else if (gBattleMons[bank].status1 & STATUS1_FREEZE)
+		odds = (odds * 20) / 100; //20% chance of attacking
+
+	if (gBattleMons[bank].status2 & STATUS2_INFATUATION)
+		odds = (odds * 50) / 100; //50% chance of attacking
+
+	if ((gBattleMons[bank].status2 & STATUS2_CONFUSION) > 1)
+	{
+		#ifdef OLD_CONFUSION_CHANCE
+		odds = (odds * 50) / 100; //50% chance of attacking
+		#else
+		odds = (odds * 67) / 100; //67% chance of attacking
+		#endif
+	}
+
+	return odds <= 50;
 }
 
 u16 CalcSecondaryEffectChance(u8 bank, u16 move)
@@ -4195,42 +4256,77 @@ bool8 AnyStatIsRaised(u8 bank)
 	return FALSE;
 }
 
-bool8 AnyUsefulStatIsRaised(u8 bank)
+static u8 CountUsefulStatChanges(u8 bank, bool8 debuff)
 {
-	bool8 storedPowerInMoveset = MoveInMovesetAndUsable(MOVE_STOREDPOWER, bank) || MoveInMovesetAndUsable(MOVE_POWERTRIP, bank);
+	u8 buffs = 0;
+	bool8 storedPowerInMoveset = !debuff && (MoveInMovesetAndUsable(MOVE_STOREDPOWER, bank) || MoveInMovesetAndUsable(MOVE_POWERTRIP, bank));
 
 	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
 	{
-		if (STAT_STAGE(bank, statId) > 6)
-		{
-			if (storedPowerInMoveset)
-				return TRUE;
+		s8 statVal = STAT_STAGE(bank, statId) - 6;
+		bool8 cond = (debuff) ? statVal < 0 : statVal > 0;
 
-			switch (statId) {
-				case STAT_STAGE_ATK:
-					if (RealPhysicalMoveInMoveset(bank))
-						return TRUE;
-					break;
-				case STAT_STAGE_DEF:
-					if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL)
-					|| MoveInMoveset(MOVE_BODYPRESS, bank))
-						return TRUE;
-					break;
-				case STAT_STAGE_SPATK:
-					if (SpecialMoveInMoveset(bank))
-						return TRUE;
-					break;
-				case STAT_STAGE_SPDEF:
-					if (MoveSplitOnTeam(FOE(bank), SPLIT_SPECIAL))
-						return TRUE;
-					break;
-				case STAT_STAGE_SPEED:
-				case STAT_STAGE_ACC:
-				case STAT_STAGE_EVASION:
-					return TRUE;
+		if (cond)
+		{
+			bool8 add = FALSE;
+
+			if (storedPowerInMoveset)
+				add = TRUE;
+			else
+			{
+				switch (statId)
+				{
+					case STAT_STAGE_ATK:
+						if (RealPhysicalMoveInMoveset(bank))
+							add = TRUE;
+						break;
+					case STAT_STAGE_DEF:
+						if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL)
+						|| MoveInMoveset(MOVE_BODYPRESS, bank))
+							add = TRUE;
+						break;
+					case STAT_STAGE_SPATK:
+						if (SpecialMoveInMoveset(bank))
+							add = TRUE;
+						break;
+					case STAT_STAGE_SPDEF:
+						if (MoveSplitOnTeam(FOE(bank), SPLIT_SPECIAL))
+							add = TRUE;
+						break;
+					case STAT_STAGE_SPEED:
+					case STAT_STAGE_ACC:
+					case STAT_STAGE_EVASION:
+						add = TRUE;
+				}
+			}
+
+			if (add)
+			{
+				if (debuff)
+					buffs += (statVal * -1);
+				else
+					buffs += statVal;
 			}
 		}
 	}
+
+	return buffs;
+}
+
+u8 CountUsefulBoosts(u8 bank)
+{
+	return CountUsefulStatChanges(bank, FALSE);
+}
+
+u8 CountUsefulDebuffs(u8 bank)
+{
+	return CountUsefulStatChanges(bank, TRUE);
+}
+
+bool8 AnyUsefulStatIsRaised(u8 bank)
+{
+	if (CountUsefulBoosts(bank) > 0)
+		return TRUE;
 
 	if (gBattleResources->flags->flags[bank] & 1 //Flash Fire activated
 	&&  DamagingMoveTypeInMoveset(bank, TYPE_FIRE))

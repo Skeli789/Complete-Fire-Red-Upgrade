@@ -300,7 +300,7 @@ void OpponentHandleTrainerSlide(void)
 void OpponentHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
-
+	
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
@@ -320,13 +320,24 @@ void OpponentHandleChoosePokemon(void)
 			battlerIn2 = gActiveBattler;
 		}
 
-		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
-		|| GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0 //Best mon is dead
-		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn1]
-		|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn2]) //The best mon is already in
-			CalcMostSuitableMonToSwitchInto();
+		if (gNewBS->inPivotingMove //TODO: Add logic for Baton Pass
+		&& gNewBS->ai.pivotTo[gActiveBattler] != PARTY_SIZE //Set at some point before
+		&& gNewBS->ai.pivotTo[gActiveBattler] != battlerIn1 //Hasn't been switched in, in the mean time
+		&& gNewBS->ai.pivotTo[gActiveBattler] != battlerIn2
+		&& party[gNewBS->ai.pivotTo[gActiveBattler]].hp != 0) //Still alive
+		{
+			chosenMonId = gNewBS->ai.pivotTo[gActiveBattler];
+		}
+		else
+		{
+			if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
+			|| GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0 //Best mon is dead
+			|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn1]
+			|| gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == gBattlerPartyIndexes[battlerIn2]) //The best mon is already in
+				CalcMostSuitableMonToSwitchInto();
 
-		chosenMonId = GetMostSuitableMonToSwitchInto();
+			chosenMonId = GetMostSuitableMonToSwitchInto();
+		}
 
 		if (chosenMonId == PARTY_SIZE)
 		{
