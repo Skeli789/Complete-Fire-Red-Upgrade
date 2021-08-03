@@ -1318,7 +1318,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (shouldPivot == PIVOT || shouldPivot == PIVOT_IMMEDIATELY)
 							IncreasePivotViability(&viability, class, bankAtk, bankDef, shouldPivot);
 						else if (shouldPivot == DONT_PIVOT)
+						{
+							if (IsStrongestMove(move, bankAtk, bankDef))
+								RecalcStrongestMoveIgnoringMove(bankAtk, bankDef, move);
 							DECREASE_VIABILITY(10); //Bad idea to use this move
+						}
 						else if (gWishFutureKnock.wishCounter[bankAtk] > 0
 							  && ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))
 						{

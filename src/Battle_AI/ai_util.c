@@ -1275,7 +1275,7 @@ static void ClearDamageByMove(u8 bankAtk, u8 bankDef, u8 movePos)
 	gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = 0xFFFFFFFF;
 }
 
-move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves, const u16 ignoreMove)
 {
 	u32 predictedDamage;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
@@ -1303,6 +1303,9 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 		u16 move = gBattleMons[bankAtk].moves[i];
 		if (move == MOVE_NONE)
 			break;
+
+		if (move == ignoreMove)
+			continue;
 
 		move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
 
@@ -1435,6 +1438,16 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	return strongestMove;
 }
 
+move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+{
+	return CalcStrongestMoveIgnoringMove(bankAtk, bankDef, onlySpreadMoves, 0);
+}
+
+void RecalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, const u16 ignoreMove)
+{
+	gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMoveIgnoringMove(bankAtk, bankDef, FALSE, ignoreMove);
+}
+
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 {
 	if (gNewBS->ai.strongestMove[bankAtk][bankDef] == 0xFFFF)
@@ -1457,7 +1470,6 @@ static void ClearStrongestMoveAndCanKnockOut(const u8 bankAtk, const u8 bankDef)
 	gNewBS->ai.canKnockOut[bankAtk][bankDef] = 0xFF;
 	gNewBS->ai.can2HKO[bankAtk][bankDef] = 0xFF;
 }
-
 
 bool8 ResistsAllMoves(const u8 bankAtk, const u8 bankDef)
 {

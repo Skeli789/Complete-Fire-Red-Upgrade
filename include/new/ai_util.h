@@ -32,6 +32,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
 u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
 move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
+void RecalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, const u16 ignoreMove);
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef);
 u16 GetStrongestMove(const u8 bankAtk, const u8 bankDef);
 bool8 ResistsAllMoves(const u8 bankAtk, const u8 bankDef);
