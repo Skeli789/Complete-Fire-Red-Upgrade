@@ -42,10 +42,10 @@ extern const u8 Dynamax_IndicatorTiles[];
 extern const u8 Mega_TriggerTiles[];
 extern const u8 Ultra_TriggerTiles[];
 extern const u16 Mega_TriggerPal[];
+extern const u16 Ultra_TriggerPal[];
 extern const u8 Z_Move_TriggerTiles[];
 extern const u16 Z_Move_TriggerPal[];
 extern const u8 Dynamax_TriggerTiles[]; //For some reason this doesn't work
-extern const u8 Dynamax_Trigger_WorkingTiles[]; //This is used as the image until the bug is fixed
 extern const u16 Dynamax_TriggerPal[];
 extern const u8 Raid_ShieldTiles[];
 extern const u8 Last_Ball_TriggerTiles[];
@@ -143,21 +143,21 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 #else //For Pokemon Unbound
 	[B_POSITION_PLAYER_LEFT] =
 	{
-		[TRUE] = {225, 86}, 	//Single Battle
-		[FALSE] = {142, 70},	//Double Battle
+		[TRUE] = {224, 86}, 	//Single Battle
+		[FALSE] = {141, 70},	//Double Battle
 	},
 	[B_POSITION_OPPONENT_LEFT] =
 	{
-		[TRUE] = {18, 26}, 		//Single Battle
-		[FALSE] = {99, 15},		//Double Battle
+		[TRUE] = {19, 26}, 		//Single Battle
+		[FALSE] = {100, 15},		//Double Battle
 	},
 	[B_POSITION_PLAYER_RIGHT] =
 	{
-		[FALSE] = {154, 96},	//Double Battle
+		[FALSE] = {153, 96},	//Double Battle
 	},
 	[B_POSITION_OPPONENT_RIGHT] =
 	{
-		[FALSE] = {87, 40},		//Double Battle
+		[FALSE] = {88, 40},		//Double Battle
 	},
 #endif
 };
@@ -169,14 +169,16 @@ static const struct CompressedSpriteSheet sUltraIndicatorSpriteSheet = {Ultra_In
 static const struct SpritePalette sMegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_MEGA_INDICATOR};
 
 static const struct CompressedSpriteSheet sMegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
-static const struct CompressedSpriteSheet sUltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
 static const struct SpritePalette sMegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
+
+static const struct CompressedSpriteSheet sUltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
+static const struct SpritePalette sUltraTriggerPalette = {Ultra_TriggerPal, GFX_TAG_ULTRA_TRIGGER};
 
 static const struct CompressedSpriteSheet sZTriggerSpriteSheet = {Z_Move_TriggerTiles, (32 * 32) / 2, GFX_TAG_Z_TRIGGER};
 static const struct SpritePalette sZTriggerPalette = {Z_Move_TriggerPal, GFX_TAG_Z_TRIGGER};
 
 static const struct CompressedSpriteSheet sDynamaxIndicatorSpriteSheet = {Dynamax_IndicatorTiles, (8 * 8) / 2, GFX_TAG_DYNAMAX_INDICATOR};
-static const struct CompressedSpriteSheet sDynamaxTriggerSpriteSheet = {Dynamax_Trigger_WorkingTiles, (32 * 32) / 2, GFX_TAG_DYNAMAX_TRIGGER};
+static const struct CompressedSpriteSheet sDynamaxTriggerSpriteSheet = {Dynamax_TriggerTiles, (32 * 32) / 2, GFX_TAG_DYNAMAX_TRIGGER};
 static const struct SpritePalette sDynamaxTriggerPalette = {Dynamax_TriggerPal, GFX_TAG_DYNAMAX_TRIGGER};
 static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldTiles, (16 * 8) / 2, GFX_TAG_RAID_SHIELD};
 
@@ -336,7 +338,7 @@ static const struct SpriteTemplate sMegaTriggerSpriteTemplate =
 static const struct SpriteTemplate sUltraTriggerSpriteTemplate =
 {
 	.tileTag = GFX_TAG_ULTRA_TRIGGER,
-	.paletteTag = GFX_TAG_MEGA_TRIGGER,
+	.paletteTag = GFX_TAG_ULTRA_TRIGGER,
 	.oam = &sTriggerOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -410,7 +412,7 @@ static const struct SpriteTemplate sTeamPreviewTriggerSpriteTemplate =
 	.callback = SpriteCB_TeamPreviewTrigger,
 };
 
-static const struct SpriteTemplate sFaintedMonIconTemplate =
+/*static const struct SpriteTemplate sFaintedMonIconTemplate =
 {
 	.tileTag = GFX_TAG_FAINTED_TEAM_PREVIEW_ICON,
 	.paletteTag = POKE_ICON_BASE_PAL_TAG, //Used same palette as mon icon 0
@@ -419,7 +421,7 @@ static const struct SpriteTemplate sFaintedMonIconTemplate =
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
-};
+};*/
 
 static const struct SpriteTemplate sStatusIconTemplate =
 {
@@ -457,15 +459,20 @@ static struct SpriteTemplate sTypeIconSpriteTemplate2 =
 //Declare the colours the trigger button doesn't light up
 static const u16 sIgnoredTriggerColours[] =
 {
+	RGB(18, 14, 23), //Pink
+	RGB(16, 11, 23), //Purple
+	RGB(11, 4, 15), //Purple
+	RGB(30, 23, 10), //Gold
+	RGB(26, 18, 2), //Gold
+	RGB(31, 31, 31), //White
+	RGB(0, 0, 0), //Black
+	RGB(4, 7, 0), //Dark Grey Circle Outline
+	RGB(5, 5, 5), //Dark Grey Circle Outline
 	RGB(7, 10, 8),
 	RGB(7, 6, 6),
 	RGB(15, 18, 16),
 	RGB(10, 13, 12),
 	RGB(13, 13, 11),
-	RGB(31, 31, 31),
-	RGB(4, 7, 0),
-	RGB(4, 4, 0),
-	RGB(0, 0, 0),
 };
 
 static bool8 IsIgnoredTriggerColour(u16 colour)
@@ -615,22 +622,23 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 	// Only change the palette if the state has changed
 	if (PALETTE_STATE != self->data[2])
 	{
+		const u16* romPal = (PAL_TAG == GFX_TAG_ULTRA_TRIGGER) ? Ultra_TriggerPal : Mega_TriggerPal;
 		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(PAL_TAG) * 16];
 		u8 i;
 
 		for(i = 1; i < 16; i++)
 		{
-			if (IsIgnoredTriggerColour(Mega_TriggerPal[i])) continue;
+			if (IsIgnoredTriggerColour(romPal[i])) continue;
 
 			switch(PALETTE_STATE) {
 				case MegaTriggerLightUp:
-					pal[i] = LightUpTriggerSymbol(Mega_TriggerPal[i]);
+					pal[i] = LightUpTriggerSymbol(romPal[i]);
 					break;
 				case MegaTriggerNormalColour:
-					pal[i] = Mega_TriggerPal[i];
+					pal[i] = romPal[i];
 					break;
 				case MegaTriggerGrayscale:
-					pal[i] = ConvertColorToGrayscale(Mega_TriggerPal[i]);
+					pal[i] = ConvertColorToGrayscale(romPal[i]);
 					break;
 			}
 		}
@@ -1239,6 +1247,8 @@ void TryLoadMegaTriggers(void)
 
 	if (IndexOfSpritePaletteTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
 		LoadSpritePalette(&sMegaTriggerPalette);
+	if (IndexOfSpritePaletteTag(GFX_TAG_ULTRA_TRIGGER) == 0xFF)
+		LoadSpritePalette(&sUltraTriggerPalette);
 	if (IndexOfSpriteTileTag(GFX_TAG_MEGA_TRIGGER) == 0xFF)
 		LoadCompressedSpriteSheetUsingHeap(&sMegaTriggerSpriteSheet);
 	if (IndexOfSpriteTileTag(GFX_TAG_ULTRA_TRIGGER) == 0xFF)
@@ -1582,8 +1592,8 @@ void TryLoadLastUsedBallTrigger(void)
 	spriteId = AddItemIconSprite(GFX_TAG_LAST_BALL_TRIGGER_BALL, GFX_TAG_LAST_BALL_TRIGGER_BALL, GetLastUsedBall());
 	if (spriteId < MAX_SPRITES)
 	{
-		gSprites[spriteId].pos1.x = 0 + (40 / 2);
-		gSprites[spriteId].pos1.y = 76 + (40 / 2);
+		gSprites[spriteId].pos1.x = -1 + (40 / 2);
+		gSprites[spriteId].pos1.y = 75 + (40 / 2);
 		gSprites[spriteId].data[3] = 32;
 		gSprites[spriteId].data[4] = gActiveBattler;
 		gSprites[spriteId].data[6] = ((u32) DestroyLastBallTriggerBall) & 0xFFFF;
@@ -1842,9 +1852,9 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 						sprite->oam.paletteNum = faintedIconPalNum; //Make palette all white
 
 						LoadMonIconPalette(species); //On the off chance the palette didn't get loaded above
-						u8 spriteId = CreateSprite(&sFaintedMonIconTemplate, x, y, 0);
+						/*u8 spriteId = CreateSprite(&sFaintedMonIconTemplate, x, y, 0);
 						if (spriteId < MAX_SPRITES)
-							gSprites[spriteId].oam.priority = 0; //Above everything
+							gSprites[spriteId].oam.priority = 0; //Above everything*/
 					}
 				}
 			}
