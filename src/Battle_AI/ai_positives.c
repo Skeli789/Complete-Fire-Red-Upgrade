@@ -2720,12 +2720,12 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 		}
 		else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 		&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
-		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
-		{
-			if (!WillFaintFromSecondaryDamage(bankDef)
+		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE) //Don't check going first
+		&& ((!WillFaintFromSecondaryDamage(bankDef) && !WillFaintFromContactDamage(bankDef, bankAtk, predictedMove)) //Won't faint on it's own
 			|| IsMovePredictionHealingMove(bankDef, bankAtk)
-			|| IsMoxieAbility(atkAbility))
-				IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
+			|| IsMoxieAbility(atkAbility)))
+		{
+			IncreaseViabilityForSlowKOMove(&viability, class, bankAtk, bankDef); //Use the killing move with the best accuracy
 		}
 		else if (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //This rule doesn't apply in these battles
 		&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn

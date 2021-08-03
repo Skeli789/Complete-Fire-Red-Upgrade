@@ -591,17 +591,9 @@ void BattleBeginFirstTurn(void)
 						switch (ABILITY(i))
 						{
 							//These Abilities are commonly switched out of on the first turn
-							case ABILITY_DRIZZLE:
-							case ABILITY_DROUGHT:
-							case ABILITY_SANDSTREAM:
-							case ABILITY_SNOWWARNING:
-							case ABILITY_ELECTRICSURGE:
-							case ABILITY_GRASSYSURGE:
-							case ABILITY_MISTYSURGE:
-							case ABILITY_PSYCHICSURGE:
-								break;
-							default:
+							case ABILITY_INTIMIDATE:
 								gNewBS->ai.switchesInARow[i] = 2; //So the AI gets smart if the player immediately switches out
+								break;
 						}
 					}
 				}

@@ -2343,6 +2343,11 @@ u32 GetContactDamageMonDef(u16 bankAtk, struct Pokemon* monDef)
 	return GetContactDamageByDefAbilityItemEffect(GetMonAbilityAfterTrace(monDef, bankAtk), GetMonItemEffect(monDef), GetBaseMaxHP(bankAtk));
 }
 
+bool8 WillFaintFromContactDamage(u8 bankAtk, u8 bankDef, u16 move)
+{
+	return GetContactDamage(move, bankAtk, bankDef) >= gBattleMons[bankAtk].hp;
+}
+
 bool8 HighChanceOfBeingImmobilized(u8 bank)
 {
 	u32 odds = 100; //The odds of being able to land an attack
