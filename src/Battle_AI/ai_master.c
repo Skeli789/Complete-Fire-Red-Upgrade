@@ -2622,6 +2622,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			u8 moveLimitations = CheckMoveLimitationsFromParty(consideredMon, 0, 0xFF);
 			u8 ability = GetMonAbilityAfterTrace(consideredMon, foe1);
 			u32 speed = SpeedCalcMon(SIDE(gActiveBattler), consideredMon);
+			bool8 isOneFoeOnField = IS_SINGLE_BATTLE || ViableMonCountFromBank(foe1) == 1;
 			secondLastValidMon = lastValidMon;
 			lastValidMon = i;
 			canNegateToxicSpikes[i] = IsMonOfType(consideredMon, TYPE_POISON) && CheckMonGrounding(consideredMon);
@@ -2748,6 +2749,9 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					}
 
 					//Check Defensive Capabilities
+					u16 moves[MAX_MON_MOVES];
+					bool8 isPriority[MAX_MON_MOVES];
+					u8 numUsableMoves = 0;
 					bool8 physMoveInMoveset = FALSE;
 					bool8 specMoveInMoveset = FALSE;
 					u8 foeMoveLimitations = CheckMoveLimitations(foe, 0, 0xFF);
@@ -2758,73 +2762,99 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					PopulateDamageCalcStructWithBaseAttackerData(&foeDamageData);
 					PopulateDamageCalcStructWithBaseDefenderData(&foeDamageData);
 
-					for (k = 0; k < MAX_MON_MOVES; ++k)
+					for (k = 0; k < MAX_MON_MOVES; ++k) //Get a list of all usable moves with priority moves at the front
 					{
 						move = GetBattleMonMove(foe, k);
 
 						if (move == MOVE_NONE)
-							break;
+							break; //End of moveset
 
 						if (gBattleMons[foe].status2 & STATUS2_MULTIPLETURNS
 						&&  MoveInMoveset(gLockedMoves[foe], foe)
 						&&  move != gLockedMoves[foe])
 							continue; //Skip non-locked moves
 
-						u8 split = CalcMoveSplit(foe, move);
-						if (split == SPLIT_PHYSICAL)
-							physMoveInMoveset = TRUE;
-						else if (split == SPLIT_SPECIAL)
-							specMoveInMoveset = TRUE;
-						else
-							continue; //Skip status moves
-
 						if (!(gBitTable[k] & foeMoveLimitations))
 						{
-							if (IS_SINGLE_BATTLE && AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Only smart AI gets this calc to not slow down regular Trainers
+							u8 split = CalcMoveSplit(foe, move);
+							if (split == SPLIT_PHYSICAL)
+								physMoveInMoveset = TRUE;
+							else if (split == SPLIT_SPECIAL)
+								specMoveInMoveset = TRUE;
+							else
+								continue; //Skip status moves
+
+							if (PriorityCalc(foe, ACTION_USE_MOVE, move) > 0) //Move has priority
 							{
-								u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
-								
-								if (dmg >= consideredMon->hp)
+								//Add move at the beginning of the list
+								for (u8 m = numUsableMoves; m > 0; --m)
 								{
-									faintsFromMove = TRUE;
-
-									if (flags[i] & SWITCHING_FLAG_OUTSPEEDS && PriorityCalc(foe, ACTION_USE_MOVE, move) > 0 //This move KOs and has Priority
-									&& (gTerrainType != PSYCHIC_TERRAIN || !CheckMonGrounding(consideredMon))) //And the mon can be hit by priority
-										flags[i] &= ~SWITCHING_FLAG_OUTSPEEDS; //Then remove the outspeed flag so the AI doesn't think it can outspeed
-
-									break; //Only need 1 check for this to pass
+									moves[m] = moves[m - 1]; //Shift moves down
+									isPriority[m] = isPriority[m - 1];
 								}
 
-								s32 adjustedHP = MathMin(((s32) consideredMon->hp) + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
-								if (adjustedHP + passiveRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
-								{
-									isWeakToMove = TRUE;
-								}
-								else if (adjustedHP + (passiveRecovery * 2) < (s32) (dmg * 3)) //Move could 3HKO mon
-								{
-									++isNormalEffectiveness;
-								}
-								//else //Move does less than a third of HP remaining
-									//++isNotVeryEffective;
+								moves[0] = move;
+								isPriority[0] = TRUE;
+								numUsableMoves++;
 							}
-							else //In Doubles or regular Trainers use type matchups because too slow otherwise
+							else //Not priority move
 							{
-								typeEffectiveness = AI_TypeCalc(move, foe, consideredMon);
-
-								if (typeEffectiveness & MOVE_RESULT_SUPER_EFFECTIVE)
-								{
-									isWeakToMove = TRUE;
-									break; //Only need 1 check for this to pass
-								}
-								else if (typeEffectiveness == 0)
-									++isNormalEffectiveness;
-								//else
-									//++isNotVeryEffective; //By default it either resists or is immune
+								//Tack move on to the end of the list
+								isPriority[numUsableMoves] = FALSE;
+								moves[numUsableMoves++] = move;
 							}
 						}
 					}
 
-					if (faintsFromMove)
+					for (k = 0; k < numUsableMoves; ++k) //Check how much damage each move does
+					{
+						move = moves[k];
+
+						if (isOneFoeOnField && AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Only smart AI gets this calc to not slow down regular Trainers
+						{
+							u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
+							
+							if (dmg >= consideredMon->hp)
+							{
+								faintsFromMove = TRUE;
+
+								if (flags[i] & SWITCHING_FLAG_OUTSPEEDS //This mon would normally go first
+								&& isPriority[k] > 0 //But the foe has a move that KOs and has priority
+								&& (gTerrainType != PSYCHIC_TERRAIN || !CheckMonGrounding(consideredMon))) //And the mon can be hit by priority
+									flags[i] &= ~SWITCHING_FLAG_OUTSPEEDS; //Then remove the outspeed flag so the AI doesn't think it can outspeed
+
+								break; //Only need 1 check for this to pass - priority moves are sorted first so a break here won't cause problems
+							}
+
+							s32 adjustedHP = MathMin(((s32) consideredMon->hp) + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
+							if (adjustedHP + passiveRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
+							{
+								isWeakToMove = TRUE;
+							}
+							else if (adjustedHP + (passiveRecovery * 2) < (s32) (dmg * 3)) //Move could 3HKO mon
+							{
+								++isNormalEffectiveness;
+							}
+							//else //Move does less than a third of HP remaining
+								//++isNotVeryEffective;
+						}
+						else //In Doubles or regular Trainers use type matchups because too slow otherwise
+						{
+							typeEffectiveness = AI_TypeCalc(move, foe, consideredMon);
+
+							if (typeEffectiveness & MOVE_RESULT_SUPER_EFFECTIVE)
+							{
+								isWeakToMove = TRUE;
+								break; //Only need 1 check for this to pass
+							}
+							else if (typeEffectiveness == 0)
+								++isNormalEffectiveness;
+							//else
+								//++isNotVeryEffective; //By default it either resists or is immune
+						}
+					}
+
+					if (faintsFromMove) //At least one move KOs the considered mon
 					{
 						if (IS_DOUBLE_BATTLE)
 							goto WEAK_TO_MOVE_DECREMENT;
@@ -2848,7 +2878,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						else //Outspeeds and KOs
 							goto WEAK_TO_MOVE_DECREMENT;
 					}
-					else if (isWeakToMove)
+					else if (isWeakToMove) //At least one move does a good chunk of damage to the considered mon
 					{
 						WEAK_TO_MOVE_DECREMENT:
 						if (scores[i] >= SWITCHING_DECREASE_WEAK_TO_MOVE)
@@ -2859,7 +2889,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					else if (!isNormalEffectiveness) //Foe has no Super-Effective or Normal-Effectiveness moves
 					{
 						scores[i] += SWITCHING_INCREASE_RESIST_ALL_MOVES;
-						flags[i] = SWITCHING_FLAG_RESIST_ALL_MOVES;
+						flags[i] |= SWITCHING_FLAG_RESIST_ALL_MOVES;
 					}
 					else
 					{
@@ -2882,47 +2912,30 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 				}
 			}
 
-			if (IS_SINGLE_BATTLE || ViableMonCountFromBank(foe1) == 1) //Single Battle or 1 target left
+			if (scores[i] >= SWITCHING_SCORE_MAX * (isOneFoeOnField ? 1 : 2) //Adjust when multiple foes are on the field
+			&& canRemoveHazards[i]) //This mon is perfect
 			{
-				if (scores[i] >= SWITCHING_SCORE_MAX && canRemoveHazards[i]) //This mon is perfect
-				{
-					if (bestMonId == PARTY_SIZE)
-						bestMonId = i;
-					else
-					{
-						secondBestMonId = i;
-						break;
-					}
-				}
+				secondBestMonId = bestMonId; //Move down the old best mon
+				bestMonId = i; //This is the best mon
 			}
-			else //Double Battle
-			{
-				if (scores[i] >= SWITCHING_SCORE_MAX * 2 && canRemoveHazards[i]) //This mon is perfect
-				{
-					if (bestMonId == PARTY_SIZE)
-						bestMonId = i;
-					else
-					{
-						secondBestMonId = i;
-						break;
-					}
-				}
-			}
-
-			if (bestMonId == PARTY_SIZE)
-				bestMonId = i;
-			else if (scores[i] > scores[bestMonId]
+			else if (bestMonId == PARTY_SIZE //No best mon yet
+			|| scores[i] > scores[bestMonId]
 			|| (scores[i] == scores[bestMonId] && (AIRandom() % 100 < 50))) //50% chance when having similar scores
 			{
-				secondBestMonId = bestMonId;
+				secondBestMonId = bestMonId; //If no best mon will still be PARTY_SIZE
 				bestMonId = i;
 			}
-			else if (secondBestMonId == PARTY_SIZE)
+			else if (secondBestMonId == PARTY_SIZE //No second best mon yet
+			|| scores[i] > scores[secondBestMonId] //This mon isn't the best but it's better than the current second best
+			|| (scores[i] == scores[secondBestMonId] && (AIRandom() % 100 < 50))) //50% chance when having similar scores
 				secondBestMonId = i;
 		}
 
 		CHECK_NEXT_MON: ;
 	}
+
+	Memcpy(gNewBS->ai.monIdToSwitchIntoScores[SIDE(gActiveBattler)], scores, sizeof(gNewBS->ai.monIdToSwitchIntoScores[SIDE(gActiveBattler)]));
+	Memcpy(gNewBS->ai.monIdToSwitchIntoFlags[SIDE(gActiveBattler)], flags, sizeof(gNewBS->ai.monIdToSwitchIntoFlags[SIDE(gActiveBattler)]));
 
 	if (bestMonId != PARTY_SIZE)
 	{
@@ -2969,7 +2982,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 		gNewBS->ai.bestMonIdToSwitchIntoScores[gActiveBattler][1] = scores[secondBestMonId];
 		gNewBS->ai.bestMonIdToSwitchIntoFlags[gActiveBattler][0] = flags[bestMonId];
 		gNewBS->ai.bestMonIdToSwitchIntoFlags[gActiveBattler][1] = flags[secondBestMonId];
-		
+
 		if (IS_DOUBLE_BATTLE && !BankSideHasTwoTrainers(gActiveBattler)) //Store data for second mon too
 		{
 			gNewBS->ai.bestMonIdToSwitchInto[PARTNER(gActiveBattler)][0] = bestMonId;
@@ -3005,7 +3018,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 	return lastValidMon; //If lastValidMon is still PARTY_SIZE when reaching here, there is a bigger problem
 }
 
-void ResetBestMonToSwitchInto(u8 bank)
+static void ResetBestMonToSwitchIntoData(u8 bank)
 {
 	gNewBS->ai.bestMonIdToSwitchIntoScores[bank][0] = 0;
 	gNewBS->ai.bestMonIdToSwitchIntoFlags[bank][0] = 0;
@@ -3013,19 +3026,19 @@ void ResetBestMonToSwitchInto(u8 bank)
 	gNewBS->ai.bestMonIdToSwitchIntoScores[bank][1] = 0;
 	gNewBS->ai.bestMonIdToSwitchIntoFlags[bank][1] = 0;
 	gNewBS->ai.bestMonIdToSwitchInto[bank][1] = PARTY_SIZE;
-
-	if (!BankSideHasTwoTrainers(bank)) //Store data for second mon too
-	{
-		gNewBS->ai.bestMonIdToSwitchIntoScores[PARTNER(bank)][0] = 0;
-		gNewBS->ai.bestMonIdToSwitchIntoFlags[PARTNER(bank)][0] = 0;
-		gNewBS->ai.bestMonIdToSwitchInto[PARTNER(bank)][0] = PARTY_SIZE;
-		gNewBS->ai.bestMonIdToSwitchIntoScores[PARTNER(bank)][1] = 0;
-		gNewBS->ai.bestMonIdToSwitchIntoFlags[PARTNER(bank)][1] = 0;
-		gNewBS->ai.bestMonIdToSwitchInto[PARTNER(bank)][1] = PARTY_SIZE;
-	}
+	Memset(gNewBS->ai.monIdToSwitchIntoScores[SIDE(bank)], 0, sizeof(gNewBS->ai.monIdToSwitchIntoScores[SIDE(bank)]));
+	Memset(gNewBS->ai.monIdToSwitchIntoFlags[SIDE(bank)], 0, sizeof(gNewBS->ai.monIdToSwitchIntoFlags[SIDE(bank)]));
 }
 
-void RemoveBestMonToSwitchInto(u8 bank)
+void ResetBestMonToSwitchInto(u8 bank)
+{
+	ResetBestMonToSwitchIntoData(bank);
+
+	if (!BankSideHasTwoTrainers(bank)) //Wipe data for second mon too
+		ResetBestMonToSwitchIntoData(PARTNER(bank));
+}
+
+static void RemoveBestMonToSwitchIntoData(u8 bank)
 {
 	//secondBestMonId -> bestMonId
 	gNewBS->ai.bestMonIdToSwitchIntoScores[bank][0] = gNewBS->ai.bestMonIdToSwitchIntoScores[bank][1];
@@ -3035,17 +3048,14 @@ void RemoveBestMonToSwitchInto(u8 bank)
 	gNewBS->ai.bestMonIdToSwitchIntoScores[bank][1] = 0;
 	gNewBS->ai.bestMonIdToSwitchIntoFlags[bank][1] = 0;
 	gNewBS->ai.bestMonIdToSwitchInto[bank][1] = PARTY_SIZE;
+}
 
-	if (!BankSideHasTwoTrainers(bank)) //Store data for second mon too
-	{
-		gNewBS->ai.bestMonIdToSwitchIntoScores[PARTNER(bank)][0] = gNewBS->ai.bestMonIdToSwitchIntoScores[PARTNER(bank)][1];
-		gNewBS->ai.bestMonIdToSwitchIntoFlags[PARTNER(bank)][0] = gNewBS->ai.bestMonIdToSwitchIntoFlags[PARTNER(bank)][1];
-		gNewBS->ai.bestMonIdToSwitchInto[PARTNER(bank)][0] = gNewBS->ai.bestMonIdToSwitchInto[PARTNER(bank)][1];
+void RemoveBestMonToSwitchInto(u8 bank)
+{
+	RemoveBestMonToSwitchIntoData(bank);
 
-		gNewBS->ai.bestMonIdToSwitchIntoScores[PARTNER(bank)][1] = 0;
-		gNewBS->ai.bestMonIdToSwitchIntoFlags[PARTNER(bank)][1] = 0;
-		gNewBS->ai.bestMonIdToSwitchInto[PARTNER(bank)][1] = PARTY_SIZE;
-	}
+	if (!BankSideHasTwoTrainers(bank)) //Wipe data for second mon too
+		RemoveBestMonToSwitchIntoData(PARTNER(bank));
 }
 
 u32 WildMonIsSmart(u8 bank)

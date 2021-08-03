@@ -33,6 +33,7 @@ extern const struct FlingStruct gFlingTable[];
 
 #define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
 #define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
+#define PRIORITY_MOVE_BUT_NORMALLY_SLOWER (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed < data->defSpeed)
 
 static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, struct AIScript* data);
 
@@ -2730,7 +2731,8 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 		&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 		&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
 		&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up
-		&& !IsClassPhazer(class) //Or phaze/set up hazards
+		&& (!IsClassPhazer(class) || PRIORITY_MOVE_BUT_NORMALLY_SLOWER) //Or phaze/set up hazards
+		&& (!IsClassStall(class) || PRIORITY_MOVE_BUT_NORMALLY_SLOWER) //Or do residual damage
 		&& !(gNewBS->ai.goodToPivot & gBitTable[bankAtk]) //Don't use a desperate move if you should pivot out
 		&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 		{

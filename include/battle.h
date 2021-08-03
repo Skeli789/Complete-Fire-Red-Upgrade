@@ -1004,8 +1004,10 @@ struct NewBattleStruct
 		bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
 		bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
 		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice] //~0x2017DD8
-		s16 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
-		u8 bestMonIdToSwitchIntoFlags[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		s16 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		u8 bestMonIdToSwitchIntoFlags[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		s16 monIdToSwitchIntoScores[NUM_BATTLE_SIDES][PARTY_SIZE]; //monIdToSwitchIntoScores[sideToSwitchFrom][monIdToSwitchTo]
+		u8 monIdToSwitchIntoFlags[NUM_BATTLE_SIDES][PARTY_SIZE]; //monIdToSwitchIntoFlags[sideToSwitchFrom][monIdToSwitchTo]
 		u8 calculatedAISwitchings[MAX_BATTLERS_COUNT]; //calculatedAISwitchings[bankSwitch]
 		u8 fightingStyle[MAX_BATTLERS_COUNT]; //fightingStyle[bankAtk]
 		u8 dynamaxMonId[NUM_BATTLE_SIDES]; //dynamaxMonId[SIDE(bankAtk)]
