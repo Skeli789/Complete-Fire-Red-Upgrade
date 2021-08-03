@@ -307,7 +307,7 @@ bool8 IsClassDoublesSpecific(u8 class)
 bool8 IsClassDoublesAttacker(u8 class)
 {
 	return class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
-		|| class ==  FIGHT_CLASS_DOUBLES_SETUP_ATTACKER;
+		|| class == FIGHT_CLASS_DOUBLES_SETUP_ATTACKER;
 }
 
 bool8 IsClassDamager(u8 class)
