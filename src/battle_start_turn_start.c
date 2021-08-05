@@ -614,6 +614,7 @@ void BattleBeginFirstTurn(void)
 					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisTurn[i] = FALSE;
 					gNewBS->statFellThisRound[i] = FALSE;
+					UpdateQuickClawRandomNumber(i);
 				}
 
 				gBattleStruct->turnEffectsTracker = 0;
@@ -939,9 +940,23 @@ void RunTurnActionsFunctions(void)
 			u8 bank = gBanksByTurnOrder[i];
 			u8 action = gActionsByTurnOrder[i];
 
-			if (gNewBS->quickClawCustapIndicator & gBitTable[bank])
+			if (gNewBS->quickDrawIndicator & gBitTable[bank])
+			{
+				gNewBS->quickDrawIndicator &= ~(gBitTable[bank]);
+				gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //One or the other
+
+				if (action == ACTION_USE_ITEM || action == ACTION_SWITCH || action == ACTION_RUN)
+					continue;
+
+				gBattleScripting.bank = bank;
+				BattleScriptExecute(BattleScript_QuickDraw);
+				gCurrentActionFuncId = savedActionFuncId;
+				return;
+			}
+			else if (gNewBS->quickClawCustapIndicator & gBitTable[bank])
 			{
 				gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
+				gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //One or the other
 
 				if (action == ACTION_USE_ITEM)
 					continue;
@@ -1845,26 +1860,34 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 	u32 bank1Spd, bank2Spd;
 
 //Priority Calc
-	if(!ignoreMovePriorities)
+	if (!ignoreMovePriorities)
 	{
-		bank1Priority = PriorityCalc(bank1, gChosenActionByBank[bank1], ReplaceWithZMoveRuntime(bank1, gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]));
-		bank2Priority = PriorityCalc(bank2, gChosenActionByBank[bank2], ReplaceWithZMoveRuntime(bank2, gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]));
+		u16 move1 = ReplaceWithZMoveRuntime(bank1, gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]);
+		u16 move2 = ReplaceWithZMoveRuntime(bank2, gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]);
+	
+		bank1Priority = PriorityCalc(bank1, gChosenActionByBank[bank1], move1);
+		bank2Priority = PriorityCalc(bank2, gChosenActionByBank[bank2], move2);
 		if (bank1Priority > bank2Priority)
 			return FirstMon;
 		else if (bank1Priority < bank2Priority)
 			return SecondMon;
-	}
 
-//BracketCalc
-	bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1);
-	bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2);
+		bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1, gChosenActionByBank[bank1], move1);
+		bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2, gChosenActionByBank[bank2], move2);
+	}
+	else
+	{
+		//Bracket Calc
+		bank1Bracket = gNewBS->lastBracketCalc[bank1] = BracketCalc(bank1, 0, MOVE_NONE);
+		bank2Bracket = gNewBS->lastBracketCalc[bank2] = BracketCalc(bank2, 0, MOVE_NONE);
+	}
 
 	if (bank1Bracket > bank2Bracket)
 		return FirstMon;
 	else if (bank1Bracket < bank2Bracket)
 		return SecondMon;
 
-//SpeedCalc
+//Speed Calc
 	bank1Spd = SpeedCalc(bank1);
 	bank2Spd = SpeedCalc(bank2);
 	u32 temp;
@@ -2015,22 +2038,32 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 	return priority;
 }
 
-s32 BracketCalc(u8 bank)
+s32 BracketCalc(u8 bank, u8 action, u16 move)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
 	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
 
 	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
+	gNewBS->quickDrawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
 		if (gNewBS->ateCustapBerry & gBitTable[bank]) //Already ate the Berry
 			return 1;
 		else
 		{
+			if (ability == ABILITY_QUICKDRAW
+			&& gNewBS->quickDrawRandomNumber[bank] < 30 //30% chance - activates before items
+			&& action == ACTION_USE_MOVE
+			&& SPLIT(move) != SPLIT_STATUS) //Only damaging moves
+			{
+				gNewBS->quickDrawIndicator |= gBitTable[bank];
+				return 1;
+			}
+
 			switch (itemEffect) {
 				case ITEM_EFFECT_QUICK_CLAW:
-					if (gRandomTurnNumber < (0xFFFF * itemQuality) / 100)
+					if (gNewBS->quickClawRandomNumber[bank] < itemQuality)
 					{
 						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
 						return 1;

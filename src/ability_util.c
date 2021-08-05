@@ -24,6 +24,8 @@ extern const u8 gText_AbilityName_WimpOut[];
 extern const u8 gText_AbilityName_QueenlyMajesty[];
 extern const u8 gText_AbilityName_PowerOfAlchemy[];
 extern const u8 gText_AbilityName_PropellorTail[];
+extern const u8 gText_AbilityName_SoundWaves[];
+extern const u8 gText_AbilityName_IcySkin[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -152,6 +154,27 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_ARROKUDA:
 				case NATIONAL_DEX_BARRASKEWDA:
 					return gText_AbilityName_PropellorTail;
+				#endif
+			}
+			break;
+		case ABILITY_PUNKROCK:
+			switch (dexNum)
+			{
+				#if (defined NATIONAL_DEX_VIBRAVA && defined NATIONAL_DEX_FLYGON)
+				case NATIONAL_DEX_VIBRAVA:
+				case NATIONAL_DEX_FLYGON:
+					return gText_AbilityName_SoundWaves;
+				#endif
+			}
+			break;
+		case ABILITY_ICESCALES:
+			switch (dexNum)
+			{
+				#if (defined NATIONAL_DEX_GLACEON && defined NATIONAL_DEX_SMOOCHUM && defined NATIONAL_DEX_JYNX)
+				case NATIONAL_DEX_GLACEON:
+				case NATIONAL_DEX_SMOOCHUM:
+				case NATIONAL_DEX_JYNX:
+					return gText_AbilityName_IcySkin;
 				#endif
 			}
 			break;

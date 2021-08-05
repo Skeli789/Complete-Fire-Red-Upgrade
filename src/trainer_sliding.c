@@ -35,7 +35,7 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2CF, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x2D0, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x2D1, sText_MirskleFirstMonDown, NULL, NULL},
-	{0x33, sText_MirskleFirstMonDown, NULL, NULL}, //Post Game
+	{0x36, sText_MirskleFirstMonDown, NULL, NULL}, //Post Game
 	{0x19F, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D2, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D3, NULL, sText_VegaLastSwitchIn, NULL},
@@ -93,14 +93,14 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2B1, NULL, NULL, sText_Zeph2LowHP},
 	{0x2B2, NULL, NULL, sText_Zeph2LowHP},
 	{0x2B3, NULL, NULL, sText_Zeph2LowHP},
-	{0x32, NULL, NULL, sText_Zeph3LowHP},
+	{0x35, NULL, NULL, sText_Zeph3LowHP},
 	{0x180, NULL, NULL, sText_Aklove1LowHP},
 	{0x2B4, NULL, NULL, sText_Aklove1LowHP},
 	{0x2B5, NULL, NULL, sText_Aklove1LowHP},
 	{0x2B6, NULL, NULL, sText_Aklove1LowHP},
 	//TOOD New Aklove 2
-	{0x30, NULL, NULL, sText_Aklove2LowHP},
-	{0x31, NULL, NULL, sText_Aklove2LowHP},
+	{0x33, NULL, NULL, sText_Aklove2LowHP},
+	{0x34, NULL, NULL, sText_Aklove2LowHP},
 	{0x19, NULL, sText_MaximaLastSwitchIn, NULL},
 	{0x2BD, NULL, sText_MaximaLastSwitchIn, NULL},
 	{0x2BE, NULL, sText_MaximaLastSwitchIn, NULL},

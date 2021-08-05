@@ -906,6 +906,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			TrainerBattleLoadArgs(sMultiBattleParams, data);
 			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
 			gTrainerBattleOpponent_B = VarGet(gTrainerBattleOpponent_B); //Allow dynamic loading
+			gTrainerBattlePartner = VarGet(gTrainerBattlePartner); //Allow dynamic loading
 			VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
 			VarSet(VAR_PARTNER, gTrainerBattlePartner);
 			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
@@ -936,6 +937,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
 			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A); //Allow dynamic loading
+			gTrainerBattlePartner = VarGet(gTrainerBattlePartner); //Allow dynamic loading
 			VarSet(VAR_PARTNER, gTrainerBattlePartner);
 			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
 			FlagSet(FLAG_TAG_BATTLE);

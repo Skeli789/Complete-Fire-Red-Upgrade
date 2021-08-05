@@ -268,6 +268,11 @@ void BuildTrainerPartySetup(void)
 						HealMon(&gEnemyParty[k++]);
 					}
 				}
+
+				#ifdef FLAG_DOUBLE_BATTLE
+				if (FlagGet(FLAG_DOUBLE_BATTLE) && k >= 2 && ViableMonCount(gPlayerParty) >= 2)
+					gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+				#endif
 			}
 			else
 			#endif

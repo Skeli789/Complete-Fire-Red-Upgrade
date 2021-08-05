@@ -124,10 +124,7 @@ The opposing
 #org @sText_FoePkmnPrefix5
 the opposing 
 
-#org @TheWildString
-The wild 
-
-#org @sText_thewild
+#org @gText_TheWild
 The wild 
 
 #org @TheShadowString

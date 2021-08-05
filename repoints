@@ -62,14 +62,14 @@ SystemScript_ObtainItemMessage 081A66AC
 SystemScript_PickedUpHiddenItem 081A685E
 
 ##Wild -> The Wild
-TheWildString 080D7B78
-TheWildString 080D7CA0
-TheWildString 080D7D14
-TheWildString 080D7D88
-TheWildString 080D7DFC
-TheWildString 080D7E70
-TheWildString 080D82BC
-TheWildString 080D8584
+gText_TheWild 080D7B78
+gText_TheWild 080D7CA0
+gText_TheWild 080D7D14
+gText_TheWild 080D7D88
+gText_TheWild 080D7DFC
+gText_TheWild 080D7E70
+gText_TheWild 080D82BC
+gText_TheWild 080D8584
 ##The Foe -> The Opposing
 TheOpposingString 080D7B7C
 TheOpposingString 080D7CA4

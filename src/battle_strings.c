@@ -454,6 +454,11 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 
 	u32 dstID = 0; // if they used dstID, why not use srcID as well?
 	const u8* toCpy = NULL;
+	bool8 useTheOpposing = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) != 0
+		#ifdef FLAG_DISPLAY_OPPOSING_FOR_WILD
+		|| FlagGet(FLAG_DISPLAY_OPPOSING_FOR_WILD)
+		#endif
+		;
 
 	multiplayerId = GetMultiplayerId();
 
@@ -933,8 +938,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = NULL;
 				else
 				{
-					if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
-						toCpy = sText_thewild; //the wild
+					if (!useTheOpposing)
+						toCpy = gText_TheWild; //the wild
 					else
 						toCpy = sText_FoePkmnPrefix5; //the opposing
 				}
@@ -974,19 +979,19 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 
 static u8* StringCopyBattleStringLoader(u8 *dest, const u8 *src)
 {
-    s32 i;
-    s32 limit = MAX_BATTLE_STRING_LOADER_LENGTH;
+	s32 i;
+	s32 limit = MAX_BATTLE_STRING_LOADER_LENGTH;
 
-    for (i = 0; i < limit; i++)
-    {
-        dest[i] = src[i];
+	for (i = 0; i < limit; i++)
+	{
+		dest[i] = src[i];
 
-        if (dest[i] == EOS)
-            return &dest[i];
-    }
+		if (dest[i] == EOS)
+			return &dest[i];
+	}
 
-    dest[i] = EOS;
-    return &dest[i];
+	dest[i] = EOS;
+	return &dest[i];
 }
 
 void BufferMoveNameBattle(u16 move, u8* dst)

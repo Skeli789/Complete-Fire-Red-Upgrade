@@ -1556,6 +1556,12 @@ void RemoveScreensFromSide(const u8 side)
 	gNewBS->AuroraVeilTimers[side] = 0;
 }
 
+void UpdateQuickClawRandomNumber(u8 bank)
+{
+	gNewBS->quickClawRandomNumber[bank] = ((u32) Random32()) % 100;
+	gNewBS->quickDrawRandomNumber[bank] = ((u32) Random32()) % 100;
+}
+
 bool8 WillPoltergeistFail(u16 item, u8 ability)
 {
 	return item == ITEM_NONE

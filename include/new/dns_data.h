@@ -940,6 +940,51 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Crystal Peak - Blue Crystals
+		.tilesetPointer = 0x82D4E0C, //Tileset 37
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(24, 27, 30)},
+			{2,  RGB(19, 23, 30)},
+			{3,  RGB(15, 20, 29)},
+			{4,  RGB(11, 18, 27)},
+			{5,  RGB(8, 15, 26)},
+			{6,  RGB(5, 13, 24)},
+			{7,  RGB(3, 11, 21)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Crystal Peak - Red Crystals
+		.tilesetPointer = 0x82D4E0C, //Tileset 37
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(30, 25, 24)},
+			{2,  RGB(30, 21, 19)},
+			{3,  RGB(29, 17, 15)},
+			{4,  RGB(27, 14, 11)},
+			{5,  RGB(26, 12, 8)},
+			{6,  RGB(24, 9, 5)},
+			{7,  RGB(21, 6, 3)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Crystal Peak - Yellow Crystals
+		.tilesetPointer = 0x82D4E0C, //Tileset 37
+		.paletteNumToFade = 10,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(30, 30, 18)},
+			{2,  RGB(28, 27, 14)},
+			{3,  RGB(26, 24, 10)},
+			{4,  RGB(23, 22, 7)},
+			{5,  RGB(21, 19, 4)},
+			{6,  RGB(19, 16, 2)},
+			{7,  RGB(17, 13, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
 	{ //Magnolia Town Windows
 		.tilesetPointer = 0x82D4D04, //Tileset 26
 		.paletteNumToFade = 8,

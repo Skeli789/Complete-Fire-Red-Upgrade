@@ -1224,7 +1224,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 	},
 
 #ifdef UNBOUND
-	//Special Illegal Spreads
+	//Special Spreads
 	[124] =
 	{	//Rayquaza
 		.nature = NATURE_JOLLY,
@@ -1280,6 +1280,16 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
 	},
+	[129] =
+	{	//Attack Boosting Stakataka - Ability_1
+        .nature = NATURE_LONELY,
+        .ivs = 31, //15 Def
+        .hpEv = 252,
+        .atkEv = 252,
+        .spDefEv = 6,
+        .ball = TRAINER_EV_CLASS_BALL,
+        .ability = Ability_1,
+    },
 #endif
 };
 #endif

@@ -1622,7 +1622,7 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 	}
 
 //BracketCalc
-	if (BracketCalc(bankAtk) > BracketCalc(bankDef)) //Hehehe...AI knows when its Quick Claw activates
+	if (BracketCalc(bankAtk, ACTION_USE_MOVE, moveAtk) > BracketCalc(bankDef, ACTION_USE_MOVE, moveDef)) //Hehehe...AI knows when its Quick Claw activates
 		return TRUE;
 
 //SpeedCalc

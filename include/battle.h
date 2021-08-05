@@ -198,6 +198,8 @@ enum
 #define MOVE_TARGET_ALL   			0x20
 #define MOVE_TARGET_OPPONENTS_FIELD 0x40
 
+#define MOVE_TARGET_SPREAD (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+
 // defines for the u8 array gTypeEffectiveness
 #define TYPE_EFFECT_ATK_TYPE(i)((gTypeEffectiveness[i + 0]))
 #define TYPE_EFFECT_DEF_TYPE(i)((gTypeEffectiveness[i + 1]))
@@ -775,6 +777,8 @@ struct NewBattleStruct
 	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT];
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
+	u8 quickClawRandomNumber[MAX_BATTLERS_COUNT];
+	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
 	u16 tookAbilityFrom[MAX_BATTLERS_COUNT]; //Helps display the correct Ability when one has been passed around
 
 	//Bit Fields for Banks
@@ -785,6 +789,7 @@ struct NewBattleStruct
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
 	u8 quickClawCustapIndicator;
+	u8 quickDrawIndicator;
 	u8 ateCustapBerry;
 	u8 HealingWishLoc;
 	u8 PowderByte;

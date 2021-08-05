@@ -1679,6 +1679,7 @@ u8 TurnBasedEffects(void)
 					gNewBS->statRoseThisRound[i] = FALSE;
 					gNewBS->statFellThisRound[i] = FALSE;
 					gNewBS->turnDamageTaken[i] = 0;
+					UpdateQuickClawRandomNumber(i);
 
 					if (gNewBS->metronomeItemBonus[i] > 0)
 						--gNewBS->metronomeItemBonus[i];

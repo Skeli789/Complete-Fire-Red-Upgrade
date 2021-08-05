@@ -25,6 +25,7 @@ extern const u8 BattleScript_BeakBlastSetUp[];
 extern const u8 BattleScript_ShellTrapSetUp[];
 extern const u8 BattleScript_FocusPunchSetUp[];
 extern const u8 BattleScript_QuickClaw[];
+extern const u8 BattleScript_QuickDraw[];
 extern const u8 BattleScript_NoTargetMoveFailed[];
 extern const u8 BattleScript_CamomonsTypeRevealEnd3[];
 extern const u8 BattleScript_CamomonsTypeRevealRet[];
