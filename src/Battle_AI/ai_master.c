@@ -58,6 +58,10 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 
 //This file's functions:
 static void CheckDeperateAttempt(u8 bankAtk, u8 bankDef, u8 chosenMovePos, struct AIScript* aiScriptData);
+static void TryTempMegaEvolveAllBanks(struct BattlePokemon* backupBattleMons, u16* backupSpecies, u8* backupAbilities);
+static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
+static void TryRevertTempMegaEvolveAllBanks(struct BattlePokemon* backupBattleMons, u16* backupSpecies, u8* backupAbilities);
+static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData);
 static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* actionOrMoveIndex);
@@ -84,6 +88,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party);
 static void CalcMostSuitableMonSwitchIfNecessary(void);
 static void PredictMovesForBanks(void);
 static void RunCalcShouldAIDynamax(void);
+static void UpdateMegaPotential(void);
 static void UpdateStrongestMoves(void);
 static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
@@ -258,15 +263,14 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	struct AIScript aiScriptData = {0}; //Do this now to save time during the processing
 	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, gBankAttacker);
 
-	struct BattlePokemon backupMonAtk, backupMonDef;
-	u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
-	u16 backupSpeciesAtk = SPECIES_NONE; u16 backupSpeciesDef = SPECIES_NONE;
-
-	TryTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+	struct BattlePokemon backupBattleMons[gBattlersCount];
+	u8* backupAbilities = gNewBS->ai.backupAbilities;
+	u16 backupSpecies[gBattlersCount];
+	//UpdateMegaPotential(); //Mega potential already updated before switching
+	TryTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Mega Evolve everyone on the field during the processing
 
 	if (IS_SINGLE_BATTLE)
 	{
-		TryTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		ret = ChooseMoveOrAction_Singles(&aiScriptData);
 		CheckDeperateAttempt(gBankAttacker, FOE(gBankAttacker), ret, &aiScriptData); //Record if the AI is using a move out of desperation
 	}
@@ -279,14 +283,21 @@ u8 BattleAI_ChooseMoveOrAction(void)
 			CheckDeperateAttempt(gBankAttacker, gBankTarget, ret, &aiScriptData); //Record if the AI is using a move out of desperation (treat like single battle)
 	}
 
-	TryRevertTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
-	TryRevertTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+	TryRevertTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Revert all the temporary Mega Evolutions if any were done earlier
 
 	gCurrentMove = savedCurrentMove;
 	return ret;
 }
 
-void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+static void TryTempMegaEvolveAllBanks(struct BattlePokemon* backupBattleMons, u16* backupSpecies, u8* backupAbilities)
+{
+	u8 bank;
+
+	for (bank = 0; bank < gBattlersCount; ++bank)
+		TryTempMegaEvolveBank(bank, &backupBattleMons[bank], &backupSpecies[bank], &backupAbilities[bank]);
+}
+
+static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
 {
 	if (gNewBS->ai.megaPotential[bank] != NULL) //Mon will probably mega evolve
 	{
@@ -317,7 +328,19 @@ void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backup
 	}
 }
 
-void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+static void TryRevertTempMegaEvolveAllBanks(struct BattlePokemon* backupBattleMons, u16* backupSpecies, u8* backupAbilities)
+{
+	u8 bank;
+
+	for (bank = 0; bank < gBattlersCount; ++bank)
+		TryRevertTempMegaEvolveBank(bank, &backupBattleMons[bank], &backupSpecies[bank], &backupAbilities[bank]);
+
+	//Clear when done
+	Memset(backupSpecies, 0, sizeof(backupSpecies));
+	Memset(backupAbilities, 0, sizeof(backupAbilities));
+}
+
+static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
 {
 	if (*backupSpecies != SPECIES_NONE)
 	{
@@ -673,7 +696,22 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 						else if (!thisFoeCanKOAI && bestFoeCanKOAI)
 							continue; //Prioritize foe that can KO the AI
 						else if (thisFoeCanKOAI && bestFoeCanKOAI)
-							goto TRY_HIT_MOST_DAMAGE; //Both foes can KO the AI, so both are good targets, prioritize more damage if needed
+						{
+							//Both foes can KO the AI, so both are good targets
+							//But try KOing the Mega Evolved one if there is
+							
+							bool8 thisFoeIsMega = IsMega(bankDef) || IsDynamaxed(bankDef);
+							bool8 bestFoeIsMega = IsMega(mostDmgTarget) || IsDynamaxed(mostDmgTarget);
+
+							if (!thisFoeIsMega && bestFoeIsMega)
+								continue; //Prioritize the Mega
+							else if (thisFoeIsMega && bestFoeIsMega) //Both targets
+								goto ADD_TARGET_AS_MOST_VIABLE; //Then pick a target to KO at random
+							else if (!thisFoeIsMega && !bestFoeIsMega) //Neither target is
+								goto ADD_TARGET_AS_MOST_VIABLE; //Then pick a target to KO at random
+							//else if (thisFoeIsMega && !bestFoeIsMega)
+								//Fallthrough and replace best damaging moves
+						}
 						else if (!thisFoeCanKOAI && !bestFoeCanKOAI)
 							goto TRY_HIT_MOST_DAMAGE; //Neither foe can KO the AI, so both are good targets, prioritize more damage if needed
 						//else if (thisFoeCanKOAI && !bestFoeCanKOAI) //Inferred
@@ -830,13 +868,15 @@ void AI_TrySwitchOrUseItem(void)
 	u8 battlerIn1, battlerIn2;
 	u8 firstId, lastId;
 	bool8 ret = FALSE;
-
-	struct BattlePokemon backupMonAtk;
-	u8 backupAbilityAtk = ABILITY_NONE;
-	u16 backupSpeciesAtk = SPECIES_NONE;
+	struct BattlePokemon backupBattleMons[gBattlersCount];
+	u8* backupAbilities = gNewBS->ai.backupAbilities;
+	u16 backupSpecies[gBattlersCount];
 
 	if (RAID_BATTLE_END)
 		goto DONT_THINK;
+
+	UpdateMegaPotential();
+	TryTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Mega Evolve everyone on the field during the processing
 
 	//Calulate everything important now to save as much processing time as possible later
 	CalculateAIPredictions();
@@ -845,8 +885,6 @@ void AI_TrySwitchOrUseItem(void)
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		TryTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
-
 		if (ShouldSwitch(party, firstId, lastId)
 		&& !(gNewBS->ai.goodToPivot & gBitTable[gActiveBattler]))
 		{
@@ -896,9 +934,11 @@ void AI_TrySwitchOrUseItem(void)
 		else if (ShouldAIUseItem())
 			ret = TRUE;
 
-		TryRevertTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+		TryRevertTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Revert all the temporary Mega Evolutions if any were done earlier
 		if (ret) return;
 	}
+	else
+		TryRevertTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Revert all the temporary Mega Evolutions if any were done earlier
 
 DONT_THINK:
 	//mgba_printf(MGBA_LOG_INFO, "AI thinking complete.");
@@ -3403,11 +3443,10 @@ static void PredictMovesForBanks(void)
 	}
 }
 
-static void UpdateStrongestMoves(void)
+static void UpdateMegaPotential(void)
 {
-	u8 bankAtk, bankDef;
+	u8 bankAtk;
 
-	//First update if Pokemon will be mega evolving
 	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
 		if (!IS_TRANSFORMED(bankAtk)
@@ -3422,39 +3461,28 @@ static void UpdateStrongestMoves(void)
 				gNewBS->ai.megaPotential[bankAtk] = CanMegaEvolve(bankAtk, TRUE); //Check Ultra Burst
 		}
 	}
+}
 
-	//Then calculate the damage
+static void UpdateStrongestMoves(void)
+{
+	u8 bankAtk, bankDef;
+
 	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
-		struct BattlePokemon backupMonAtk;
-		u8 backupAbilityAtk = ABILITY_NONE;
-		u16 backupSpeciesAtk = SPECIES_NONE;
-
 		gNewBS->ai.suckerPunchOkay[bankAtk] = AIRandom() & 1; //Randomly choose if turn is okay for a revealed Sucker Punch
 
 		if (IS_SINGLE_BATTLE) //There's a high chance these values will be used in singles so calc now.
 		{
-			TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
-
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
 				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
 					continue; //Don't bother calculating for these Pokemon. Never used
 
-				struct BattlePokemon backupMonDef;
-				u8 backupAbilityDef = ABILITY_NONE;
-				u16 backupSpeciesDef = SPECIES_NONE;
-				TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
-
 				gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 				gNewBS->ai.canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->ai.strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 				gNewBS->ai.can2HKO[bankAtk][bankDef] = (gNewBS->ai.canKnockOut[bankAtk][bankDef]) ? TRUE
 													  : MoveKnocksOutXHits(gNewBS->ai.strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2
-
-				TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 			}
-
-			TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		}
 	}
 }
@@ -3467,13 +3495,8 @@ static void UpdateBestDoublesKillingMoves(void)
 
 		for (i = 0; i < gBattlersCount; ++i)
 		{
-			struct BattlePokemon backupMonAtk;
-			u8 backupAbilityAtk = ABILITY_NONE;
-			u16 backupSpeciesAtk = SPECIES_NONE;
-
 			bankAtk = gBanksByTurnOrder[i]; //Calculate in order of speed so AI can processes team combos better
 			u8 bankAtkPartner = PARTNER(bankAtk);
-			TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 
 			//mgba_printf(MGBA_LOG_INFO, "");
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
@@ -3484,8 +3507,6 @@ static void UpdateBestDoublesKillingMoves(void)
 				//mgba_printf(MGBA_LOG_WARN, "");
 				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, bankAtkPartner, PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
-
-			TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		}
 	}
 }
