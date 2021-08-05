@@ -35,16 +35,7 @@ ai_negatives.c
 #define PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET (IS_DOUBLE_BATTLE \
 									&& gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
-#define PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& gBattleStruct->moveTarget[bankAtkPartner] == bankDef \
-									&& (gBattleMoves[partnerMove].effect == EFFECT_SLEEP \
-									 || gBattleMoves[partnerMove].effect == EFFECT_POISON \
-									 || gBattleMoves[partnerMove].effect == EFFECT_TOXIC \
-									 || gBattleMoves[partnerMove].effect == EFFECT_PARALYZE \
-									 || gBattleMoves[partnerMove].effect == EFFECT_WILL_O_WISP \
-									 || gBattleMoves[partnerMove].effect == EFFECT_YAWN \
-									 || IsMaxMoveWithStatusEffect(partnerMove))) \
+#define PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET PartnerMoveEffectIsStatusSameTarget(data, move, bankDef)
 
 #define PARTNER_MOVE_EFFECT_IS_WEATHER (IS_DOUBLE_BATTLE \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
@@ -95,6 +86,7 @@ extern move_effect_t gConfusionMoveEffects[];
 extern const struct FlingStruct gFlingTable[];
 
 //This file's functions:
+static bool8 PartnerMoveEffectIsStatusSameTarget(struct AIScript* data, u16 move, u8 bankDef);
 static void AI_Flee(void);
 static void AI_Watch(void);
 
@@ -135,7 +127,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	}
 
 	//Ranged Move Check
-	if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+	if (moveTarget & MOVE_TARGET_SPREAD)
 	{
 		if (moveType == TYPE_ELECTRIC && ABILITY_ON_OPPOSING_FIELD(bankAtk, ABILITY_LIGHTNINGROD))
 		{
@@ -489,9 +481,10 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 		}
 
-		//Target Partner Ability Check
+		//Partner Ability Checks
 		if (IS_DOUBLE_BATTLE && !TARGETING_PARTNER)
 		{
+			//Target Partner Ability Check
 			switch (data->defPartnerAbility) {
 				case ABILITY_LIGHTNINGROD:
 					if (moveType == TYPE_ELECTRIC && !IsMoveRedirectionPrevented(move, data->atkAbility))
@@ -552,6 +545,29 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						return viability;
 					}
 					break;
+			}
+
+			//Attacker Partner Ability Check
+			if (!(moveTarget & MOVE_TARGET_SPREAD)) //Single target move
+			{
+				//Make sure partner isn't going to steal move (assuming this attack is intended to hit the foe)
+				switch (data->atkPartnerAbility) {
+					case ABILITY_LIGHTNINGROD:
+						if (moveType == TYPE_ELECTRIC && !IsMoveRedirectionPrevented(move, data->atkAbility))
+						{
+							DECREASE_VIABILITY(10); //Only 10 because wouldn't be so bad to hit partner
+							return viability;
+						}
+						break;
+
+					case ABILITY_STORMDRAIN:
+						if (moveType == TYPE_WATER && !IsMoveRedirectionPrevented(move, data->atkAbility))
+						{
+							DECREASE_VIABILITY(10);
+							return viability;
+						}
+						break;
+				}
 			}
 		}
 	}
@@ -666,7 +682,7 @@ MOVESCR_CHECK_0:
 	//Status Wide Guard Check
 	if (IS_DOUBLE_BATTLE
 	&& moveSplit == SPLIT_STATUS
-	&& moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+	&& moveTarget & MOVE_TARGET_SPREAD)
 	{
 		if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Not dumb AI
 		&& AI_THINKING_STRUCT->simulatedRNG[0] < 75 //75% chance AI will care about Wide Guard this round
@@ -3138,6 +3154,42 @@ MOVESCR_CHECK_0:
 		return 0;
 
 	return viability;
+}
+
+static bool8 PartnerMoveEffectIsStatusSameTarget(struct AIScript* data, u16 move, u8 bankDef)
+{
+	u8 bankAtkPartner = data->bankAtkPartner;
+
+	if (IS_DOUBLE_BATTLE
+	&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE
+	&& gBattleStruct->moveTarget[bankAtkPartner] == bankDef)
+	{
+		u16 partnerMove = data->partnerMove;
+	
+		switch (gBattleMoves[partnerMove].effect)
+		{
+			case EFFECT_SLEEP:
+			case EFFECT_POISON:
+			case EFFECT_TOXIC:
+			case EFFECT_PARALYZE:
+			case EFFECT_WILL_O_WISP:
+			case EFFECT_YAWN:
+				return TRUE;
+
+			case EFFECT_PARALYZE_HIT:
+			case EFFECT_BURN_HIT:
+			case EFFECT_POISON_HIT:
+			case EFFECT_BAD_POISON_HIT:
+			case EFFECT_FREEZE_HIT:
+				if (CalcSecondaryEffectChance(bankAtkPartner, partnerMove, data->atkPartnerAbility) >= 75 && !MoveBlockedBySubstitute(move, bankAtkPartner, bankDef))
+					return TRUE;
+		}
+
+		if (IsMaxMoveWithStatusEffect(partnerMove))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 static void AI_Flee(void)

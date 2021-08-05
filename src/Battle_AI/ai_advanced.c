@@ -306,7 +306,8 @@ bool8 IsClassDoublesSpecific(u8 class)
 
 bool8 IsClassDoublesAttacker(u8 class)
 {
-	return class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
+	return class == FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER
+		|| class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
 		|| class == FIGHT_CLASS_DOUBLES_SETUP_ATTACKER;
 }
 
@@ -687,7 +688,9 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 
 			if (class != FIGHT_CLASS_NONE) break; //Leave loop because we found a class
 
-			if (SPLIT(move) != SPLIT_STATUS)
+			if (SPLIT(move) != SPLIT_STATUS
+			&& move != MOVE_NUZZLE //Really just meant for the Paralysis
+			&& move != MOVE_FAKEOUT) //Really just for the flinch
 				++attackMoveNum;
 		}
 
@@ -739,6 +742,58 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 	}
 
 	return class;
+}
+
+
+bool8 ShouldPrioritizeKOingFoesDoubles(u8 bank)
+{
+	//Handles what happens when two targets have the same move score.
+	//Should the AI use the move that KOs more targets, or should it pick one at random?
+
+	if (SIDE(bank) == B_SIDE_PLAYER) //Partners should always try to KO as much as they can
+		return TRUE;
+
+	if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_CHECK_BAD_MOVE) //Dumber AI should always go for the kill
+		return TRUE;
+
+	if (IsClassDoublesAttacker(GetBankFightingStyle(bank)))
+		return TRUE; //Hyper offense mons should always go for the kill
+
+	return FALSE;
+}
+
+bool8 ShouldPrioritizeMostDamageDoubles(u8 bank)
+{
+	//Handles what happens when two targets have the same move score.
+	//Should the AI go for the one that it does a higher damage percentage to, or should it pick one at random?
+
+	if (SIDE(bank) == B_SIDE_PLAYER) //Partners should always try to KO as much as they can
+		return TRUE;
+
+	if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART)
+		return TRUE;
+
+	if (IsClassDoublesAttacker(GetBankFightingStyle(bank)))
+		return (AIRandom() % 4) == 0; //25% chance this turn - can get too predictable otherwise
+
+	return FALSE;
+}
+
+bool8 ShouldPrioritizeDangerousTarget(u8 bank)
+{
+	//Handles what happens when two targets have the same move score and both take over 50% of their max HP in damage.
+	//Should the AI go for the one that is more dangerous to it, or should is pick one at random?
+
+	if (SIDE(bank) == B_SIDE_PLAYER) //Partners should always go for their threats.
+		return TRUE;
+
+	if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART)
+		return FALSE; //Semi-smart Trainers shouldn't care
+
+	if (IsClassDoublesAttacker(GetBankFightingStyle(bank)))
+		return TRUE;
+
+	return FALSE;
 }
 
 bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)

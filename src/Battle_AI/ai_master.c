@@ -60,6 +60,7 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 static void CheckDeperateAttempt(u8 bankAtk, u8 bankDef, u8 chosenMovePos, struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData);
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData);
+static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* actionOrMoveIndex);
 static void BattleAI_DoAIProcessing(struct AIScript* aiScriptData);
 static void CalculateAIPredictions(void);
 static bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId);
@@ -408,17 +409,95 @@ static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData)
 	return consideredMoveArray[AIRandom() % numOfBestMoves];
 }
 
+static bool8 HasChosenToDamageTarget(u8 bankAtk, u8 bankDef)
+{
+	return BATTLER_ALIVE(bankAtk)
+		&& !HighChanceOfBeingImmobilized(bankAtk)
+		&& gChosenMovesByBanks[bankAtk] != MOVE_NONE
+		&& (gBattleStruct->moveTarget[bankAtk] == bankDef
+			|| GetBaseMoveTarget(GetAIChosenMove(bankAtk, bankDef), bankAtk) & MOVE_TARGET_SPREAD);
+}
+
+static u8 GetTargetsKnockedOut(u16 move, u8 bankAtk, u8 baseBankDef)
+{
+	u8 targetsKOd = 0;
+	u8 atkPartner = PARTNER(bankAtk);
+
+	if (BATTLER_ALIVE(baseBankDef))
+	{
+		if (MoveKnocksOutXHits(move, bankAtk, baseBankDef, 1))
+			++targetsKOd;
+		else if (gBattleMoves[move].effect != EFFECT_SUPER_FANG //Super Fang probably won't KO even with a partner's help
+		&& HasChosenToDamageTarget(atkPartner, baseBankDef) //Check if partner will help KO this target
+		&& MoveWouldHitFirst(gChosenMovesByBanks[atkPartner], atkPartner, baseBankDef)) //Damage will be done to this target before it could potentially fight back
+		{
+			u32 partnerDmg = GetFinalAIMoveDamage(gChosenMovesByBanks[atkPartner], atkPartner, baseBankDef, 1, NULL);
+
+			if (partnerDmg < gBattleMons[baseBankDef].hp) //Partner won't KO on their own
+			{
+				u32 thisDmg = GetFinalAIMoveDamage(move, bankAtk, baseBankDef, 1, NULL);
+				if (partnerDmg < gBattleMons[baseBankDef].hp //Partner won't KO on their own
+				&& thisDmg + partnerDmg >= gBattleMons[baseBankDef].hp)
+					++targetsKOd; //KOs target together
+			}
+		}
+	}
+
+	u8 defPartner = PARTNER(baseBankDef);
+	if (BATTLER_ALIVE(defPartner)
+	&& GetBaseMoveTarget(move, bankAtk) & MOVE_TARGET_SPREAD) //Hits multiple targets
+	{
+		if (MoveKnocksOutXHits(move, bankAtk, defPartner, 1))
+			++targetsKOd;
+		else if (gBattleMoves[move].effect != EFFECT_SUPER_FANG //Super Fang probably won't KO even with a partner's help
+		&& HasChosenToDamageTarget(atkPartner, defPartner) //Check if partner will help KO this target
+		&& MoveWouldHitFirst(gChosenMovesByBanks[atkPartner], atkPartner, defPartner)) //Damage will be done to this target before it could potentially fight back
+		{
+			u32 partnerDmg = GetFinalAIMoveDamage(gChosenMovesByBanks[atkPartner], atkPartner, defPartner, 1, NULL);
+
+			if (partnerDmg < gBattleMons[defPartner].hp) //Partner won't KO on their own
+			{
+				u32 thisDmg = GetFinalAIMoveDamage(move, bankAtk, defPartner, 1, NULL);
+				if (partnerDmg < gBattleMons[defPartner].hp //Partner won't KO on their own
+				&& thisDmg + partnerDmg >= gBattleMons[defPartner].hp)
+					++targetsKOd; //KOs target together
+			}
+		}
+	}
+
+	return targetsKOd;
+}
+
+static u32 GetTotalDamageForTargets(u16 move, u8 bankAtk, u8 baseBankDef)
+{
+	u32 damage = 0;
+	u32 percentage = 0;
+
+	if (BATTLER_ALIVE(baseBankDef))
+	{
+		damage = GetFinalAIMoveDamage(move, bankAtk, baseBankDef, 1, NULL);
+		percentage += ((damage * 100) / gBattleMons[baseBankDef].maxHP);
+	}
+
+	u8 defPartner = PARTNER(baseBankDef);
+	if (BATTLER_ALIVE(defPartner)
+	&& GetBaseMoveTarget(move, bankAtk) & MOVE_TARGET_SPREAD) //Hits multiple targets
+	{
+		damage = GetFinalAIMoveDamage(move, bankAtk, defPartner, 1, NULL);
+		percentage += ((damage * 100) / gBattleMons[baseBankDef].maxHP);
+	}
+
+	return percentage;
+}
+
 static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 {
-	s32 i;
-	s32 j;
-	u32 flags;
-	s16 bestMovePointsForTarget[4];
-	s8 mostViableTargetsArray[4];
-	u8 actionOrMoveIndex[4];
-	u8 mostViableMovesScores[4];
-	u8 mostViableMovesIndices[4];
-	s32 mostViableTargetsNo, mostViableMovesNo, mostMovePoints;
+	u32 i, j, flags;
+	u8 mostViableMovesNo;
+	s16 bestMovePointsForTarget[MAX_BATTLERS_COUNT];
+	u8 actionOrMoveIndex[MAX_BATTLERS_COUNT];
+	u8 mostViableMovesScores[MAX_BATTLERS_COUNT];
+	u8 mostViableMovesIndices[MAX_BATTLERS_COUNT];
 
 	//Get best moves for each potential target
 	for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
@@ -493,140 +572,197 @@ static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 		}
 	}
 
+	return ChooseTarget_Doubles(bestMovePointsForTarget, actionOrMoveIndex);
+}
+
+static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* actionOrMoveIndex)
+{
 	/*
 	Choose best potential targets. If targets have the same score, the better target is determined by:
 	1. Move that can knock out target.
 		- KOing both targets then chooses foe that can KO (poses bigger threat)
 	2. Move that does the most damage.
 	*/
+	u8 bankDef, mostViableTargetsNo;
+	s16 mostMovePoints;
+	s8 mostViableTargetsArray[MAX_BATTLERS_COUNT];
+	bool8 tryKnockOut = ShouldPrioritizeKOingFoesDoubles(gBankAttacker);
+	bool8 tryDoMostDamage = ShouldPrioritizeMostDamageDoubles(gBankAttacker);
+	bool8 tryKODangerous = ShouldPrioritizeDangerousTarget(gBankAttacker);
+
 	mostMovePoints = bestMovePointsForTarget[0]; //Start with first target
-	mostViableTargetsArray[0] = 0;
+	mostViableTargetsArray[0] = 0; //Set the list of most viable targets to just the first target
 	mostViableTargetsNo = 1;
 
-	u16 firstMove = actionOrMoveIndex[0];
-	//u32 mostDamage = 0; //The most damage AI could do to any target
-	u32 mostDmgTarget = 0; //The bank the most damage could be done to
-	bool8 mostDmgKnocksOut = FALSE; //Whether or not the strongest move also KOs
+	u16 firstMovePos = actionOrMoveIndex[0];
+	u16 firstMove = gBattleMons[gBankAttacker].moves[firstMovePos];
+	u8 mostDmgTarget = 0; //The bank the most damage could be done to
+	u32 mostDamage = 0; //The damage AI could do to mostDmgTarget
+	u8 mostDmgKnocksOut = 0; //How many targets are KOd by the move that does the most combined damage
 	bool8 statusMoveOption = FALSE; //Whether or not a status move will potentially be used
 
-	if (firstMove < MAX_MON_MOVES) //A move was chosen against the first target
+	if (firstMovePos < MAX_MON_MOVES) //A move was chosen against the first target
 	{
 		if (SPLIT(firstMove) != SPLIT_STATUS) //Move against first target isn't status move
 		{
-			//Calculate important data for later
-			mostDmgTarget = mostViableTargetsArray[0]; //First target
-			mostDmgKnocksOut = MoveKnocksOutXHits(firstMove, gBankAttacker, mostDmgTarget, 1);
-			//mostDamage = GetFinalAIMoveDamage(firstMove, gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+			if (SIDE(mostDmgTarget) != SIDE(gBankAttacker)) //Don't do damage calcs for mons on the same side
+			{
+				//Calculate important data for later
+				firstMove = TryReplaceMoveWithZMove(gBankAttacker, mostDmgTarget, firstMove);
+
+				if (tryKnockOut)
+					mostDmgKnocksOut = GetTargetsKnockedOut(firstMove, gBankAttacker, mostDmgTarget);
+				if (tryDoMostDamage || tryKODangerous)
+					mostDamage = GetTotalDamageForTargets(firstMove, gBankAttacker, mostDmgTarget); //Assumes damage has already been cached
+			}
 		}
 		else
 			statusMoveOption = TRUE;
 	}
 
-	for (i = 1; i < MAX_BATTLERS_COUNT; ++i) //Start by looping through the rest of the targets
+	for (bankDef = 1; bankDef < MAX_BATTLERS_COUNT; ++bankDef) //Start by looping through the rest of the targets
 	{
-		if (bestMovePointsForTarget[i] == mostMovePoints) //This target is as good to hit as the other one
-		{
-			u16 move = actionOrMoveIndex[i];
-			statusMoveOption = statusMoveOption || (move < MAX_MON_MOVES && SPLIT(move) == SPLIT_STATUS); //Update if status move can potentially be used
+		u8 movePos = actionOrMoveIndex[bankDef];
+		u16 move = gBattleMons[gBankAttacker].moves[movePos];
 
-			if (SIDE(i) != SIDE(gBankAttacker) //Don't do damage calcs for mons on the same side
-			&& move < MAX_MON_MOVES //Move was chosen
+		if (bestMovePointsForTarget[bankDef] == mostMovePoints) //This target is as good to hit as the best one so far
+		{
+			statusMoveOption = statusMoveOption || (movePos < MAX_MON_MOVES && SPLIT(move) == SPLIT_STATUS); //Update if status move can potentially be used
+
+			if (SIDE(bankDef) != SIDE(gBankAttacker) //Don't do damage calcs for mons on the same side
+			&& movePos < MAX_MON_MOVES //Move was chosen
 			&& SPLIT(move) != SPLIT_STATUS) //And this move isn't a status move
 			{
-				//Try choosing the target which the most damage can be done to
-				bool8 thisDmgKnocksOut = MoveKnocksOutXHits(move, gBankAttacker, i, 1);
-				//u32 thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, NULL); //Assumes damage has already been cached
+				move = TryReplaceMoveWithZMove(gBankAttacker, bankDef, move);
 
-				if (!thisDmgKnocksOut && mostDmgKnocksOut)
+				//Calc important details for this move if necessary
+				u8 thisDmgKnocksOut = 0;
+				u32 thisDamage = 0;
+				if (tryKnockOut)
+					thisDmgKnocksOut = GetTargetsKnockedOut(move, gBankAttacker, bankDef); //How many targets this move KOs
+				if (tryDoMostDamage || tryKODangerous)
+					thisDamage = GetTotalDamageForTargets(move, gBankAttacker, bankDef); //Assumes damage has already been cached
+
+				if (!tryKnockOut) //This AI mon shouldn't prioritize KOing foes
+					goto CANT_KNOCK_OUT_EITHER_TARGET;
+
+				if (thisDmgKnocksOut < mostDmgKnocksOut)
 				{
-					//Best move KOs a target but this target can't be KOd so skip this move
+					//Using the move against this target KOs less than the move targeting the best foe would, so skip this move
 					continue;
 				}
-				else if (thisDmgKnocksOut && !mostDmgKnocksOut)
+				else if (thisDmgKnocksOut > mostDmgKnocksOut)
 				{
-					//This move KOs a target making it better than even the move that could do a higher damage number to another target
+					//The move used against this target KOs more, making it better than even a move that could do a higher damage number to another target
 					//Fallthrough and replace the most damaging move
 				}
-				else if (thisDmgKnocksOut && mostDmgKnocksOut)
+				else if (thisDmgKnocksOut == mostDmgKnocksOut && thisDmgKnocksOut > 0 && mostDmgKnocksOut > 0) //Both KO at least one foe
 				{
-					//Both targets can be KOd so they're both viable
-					//But the better target is the one that poses a bigger threat
-					bool8 thisFoeCanKOAI = CanKnockOut(i, gBankAttacker);
-					bool8 bestFoeCanKOAI = CanKnockOut(mostDmgTarget, gBankAttacker);
+					//Both moves can KO the same number of targets so they're both viable
 
-					if (!(AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE))
-						goto ADD_TARGET_AS_MOST_VIABLE; //Dumb and Semi-Smart AI doesn't care about foe that can KO it
-					else if (!thisFoeCanKOAI && bestFoeCanKOAI)
-						continue; //Prioritize foe that can KO the AI
-					else if (thisFoeCanKOAI && bestFoeCanKOAI)
-						goto ADD_TARGET_AS_MOST_VIABLE; //Both foes can KO the AI, so both are good targets
-					else if (!thisFoeCanKOAI && !bestFoeCanKOAI)
-						goto ADD_TARGET_AS_MOST_VIABLE; //Neither foe can KO the AI, so both are good targets
-					//else if (thisFoeCanKOAI && !bestFoeCanKOAI) //Inferred
-						//Fallthrough and replace best damaging moves
+					if (tryKODangerous)
+					{
+						TRY_HIT_DANGEROUS_TARGET: ;
+						//But the better move is the one targeting a foe that poses a bigger threat
+						//Spread moves are automatically accounted for because a specific target is chosen for the spread move, and not a generic left slot
+						bool8 thisFoeCanKOAI = CanKnockOut(bankDef, gBankAttacker);
+						bool8 bestFoeCanKOAI = CanKnockOut(mostDmgTarget, gBankAttacker);
+
+						if (!(AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE))
+							goto ADD_TARGET_AS_MOST_VIABLE; //Dumb and Semi-Smart AI doesn't care about foe that can KO it
+						else if (!thisFoeCanKOAI && bestFoeCanKOAI)
+							continue; //Prioritize foe that can KO the AI
+						else if (thisFoeCanKOAI && bestFoeCanKOAI)
+							goto TRY_HIT_MOST_DAMAGE; //Both foes can KO the AI, so both are good targets, prioritize more damage if needed
+						else if (!thisFoeCanKOAI && !bestFoeCanKOAI)
+							goto TRY_HIT_MOST_DAMAGE; //Neither foe can KO the AI, so both are good targets, prioritize more damage if needed
+						//else if (thisFoeCanKOAI && !bestFoeCanKOAI) //Inferred
+							//Fallthrough and replace best damaging moves
+					}
+					else
+						goto ADD_TARGET_AS_MOST_VIABLE;
 				}
-				else //if (!thisDmgKnocksOut && !mostDmgKnocksOut) //Inferred
+				else //if (thisDmgKnocksOut == mostDmgKnocksOut && thisDmgKnocksOut == 0 && mostDmgKnocksOut == 0) //Inferred
 				{
+					CANT_KNOCK_OUT_EITHER_TARGET:
 					//Neither target can be knocked out
 
-					/*
-					This is commented out because the AI gets too predictable when it always goes for the mon it can do the most damage to
+					if (tryKODangerous && thisDamage >= 50 && mostDamage >= 50) //Both moves do 50% of max HP damage total
+						goto TRY_HIT_DANGEROUS_TARGET;
 
-					if (thisDamage == mostDamage) //Both moves do the same damage to multiple targets
+					TRY_HIT_MOST_DAMAGE:
+					if (tryDoMostDamage) //This doesn't apply for enemies because the AI gets too predictable when it always goes for the mon it can do the most damage to
+					{
+						if (thisDamage < mostDamage)
+							continue; //Don't store this target if less damage can be done to it
+						else if (thisDamage == mostDamage) //Both moves do the same damage to multiple targets
+							goto ADD_TARGET_AS_MOST_VIABLE; //Both targets are viable
+						//else
+							//Try change to only target
+					}
+					else
 						goto ADD_TARGET_AS_MOST_VIABLE;
-					else if (thisDamage < mostDamage)
-						continue; //Don't store this target if less damage can be done to it
-					*/
-					goto ADD_TARGET_AS_MOST_VIABLE;
 				}
 
 				if (!statusMoveOption) //Only replace all moves if no status moves can potentially be used
 				{
 					mostViableTargetsNo = 1;
-					mostViableTargetsArray[0] = mostDmgTarget = i;
+					mostViableTargetsArray[0] = mostDmgTarget = bankDef;
 					mostDmgKnocksOut = thisDmgKnocksOut;
-					//mostDamage = thisDamage;
+					mostDamage = thisDamage;
 					continue;
 				}
 				else //Replace all non status moves with this best one
 				{
-					mostDmgTarget = i;
+					u32 i;
+					mostDmgTarget = bankDef;
 					mostDmgKnocksOut = thisDmgKnocksOut;
-					//mostDamage = thisDamage;
+					mostDamage = thisDamage;
 
-					for (j = 0; j < mostViableTargetsNo; ++j)
+					bool8 keepTargets[MAX_BATTLERS_COUNT] = {FALSE};
+					keepTargets[mostDmgTarget] = TRUE;
+					for (i = 0; i < mostViableTargetsNo; ++i)
 					{
-						u8 bankDef = mostViableTargetsArray[j];
-						u16 move = actionOrMoveIndex[bankDef];
-						
-						if (move < MAX_MON_MOVES && SPLIT(move) != SPLIT_STATUS)
-							mostViableTargetsArray[j] = mostDmgTarget;
+						u8 target = mostViableTargetsArray[i];
+						u8 movePos = actionOrMoveIndex[target]; //The move to be used against target
+						u16 move = gBattleMons[gBankAttacker].moves[movePos];
+
+						if (movePos >= MAX_MON_MOVES || SPLIT(move) == SPLIT_STATUS)
+							keepTargets[target] = TRUE;
 					}
 
-					//TODO: Filter out duplicates
+					//Rebuild list
+					for (i = 0, mostViableTargetsNo = 0; i < NELEMS(keepTargets); ++i)
+					{
+						if (keepTargets[i])
+							mostViableTargetsArray[mostViableTargetsNo++] = i;
+					}
+
 					continue;
 				}
 			}
 
 			ADD_TARGET_AS_MOST_VIABLE:
-			mostViableTargetsArray[mostViableTargetsNo++] = i;
+			mostViableTargetsArray[mostViableTargetsNo++] = bankDef;
 		}
-		else if (bestMovePointsForTarget[i] > mostMovePoints) //This target is the best one so far
+		else if (bestMovePointsForTarget[bankDef] > mostMovePoints) //This target is the best one so far
 		{
 			//Make target new best and only target
 			mostViableTargetsNo = 1;
-			mostViableTargetsArray[0] = i;
-			mostMovePoints = bestMovePointsForTarget[i];
+			mostViableTargetsArray[0] = bankDef;
+			mostMovePoints = bestMovePointsForTarget[bankDef];
 
-			if (i + 1 < MAX_BATTLERS_COUNT) //Don't waste time if loop is about to end
+			if (!(bankDef & BIT_FLANK)) //Don't waste time if just finished dealing with the last enemy mon
 			{
-				if (SPLIT(actionOrMoveIndex[i]) != SPLIT_STATUS) //Move against target isn't status move
+				if (SPLIT(move) != SPLIT_STATUS) //Move against target isn't status move
 				{
 					//Calculate important data for later
 					statusMoveOption = FALSE;
-					mostDmgTarget = i; //New target
-					mostDmgKnocksOut = MoveKnocksOutXHits(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1);
-					//mostDamage = GetFinalAIMoveDamage(actionOrMoveIndex[i], gBankAttacker, mostDmgTarget, 1, NULL); //Assumes damage has already been cached
+					mostDmgTarget = bankDef; //New target
+					if (tryKnockOut)
+						mostDmgKnocksOut = GetTargetsKnockedOut(move, gBankAttacker, mostDmgTarget);
+					if (tryDoMostDamage || tryKODangerous)
+						mostDamage = GetTotalDamageForTargets(move, gBankAttacker, mostDmgTarget); //Assumes damage has already been cached
 				}
 				else
 					statusMoveOption = TRUE;
@@ -3331,8 +3467,13 @@ static void UpdateBestDoublesKillingMoves(void)
 
 		for (i = 0; i < gBattlersCount; ++i)
 		{
+			struct BattlePokemon backupMonAtk;
+			u8 backupAbilityAtk = ABILITY_NONE;
+			u16 backupSpeciesAtk = SPECIES_NONE;
+
 			bankAtk = gBanksByTurnOrder[i]; //Calculate in order of speed so AI can processes team combos better
 			u8 bankAtkPartner = PARTNER(bankAtk);
+			TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 
 			//mgba_printf(MGBA_LOG_INFO, "");
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
@@ -3343,6 +3484,8 @@ static void UpdateBestDoublesKillingMoves(void)
 				//mgba_printf(MGBA_LOG_WARN, "");
 				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, bankAtkPartner, PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
+
+			TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		}
 	}
 }

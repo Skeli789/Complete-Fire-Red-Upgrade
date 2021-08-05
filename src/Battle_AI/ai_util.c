@@ -695,10 +695,13 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	}
 
 	//Check targets partner is already prepared to deal with
-	if (!IsBankIncapacitated(bankAtkPartner) && partnerMove != MOVE_NONE //Partner is going to attack
-	&& foesAlive >= 2) //More than 1 target left
+	bool8 partnerHitsBothFoes = FALSE;
+	bool8 partnerWillAttack = !IsBankIncapacitated(bankAtkPartner) && partnerMove != MOVE_NONE; //Partner is going to attack
+	bool8 partnerWillUseDamagingMove = partnerWillAttack && SPLIT(partnerMove) != SPLIT_STATUS;
+
+	if (partnerWillAttack && foesAlive >= 2) //More than 1 target left
 	{
-		bool8 partnerHitsBothFoes = partnerMove != MOVE_NONE && GetBaseMoveTarget(partnerMove, bankAtkPartner) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
+		partnerHitsBothFoes = partnerMove != MOVE_NONE && GetBaseMoveTarget(partnerMove, bankAtkPartner) & MOVE_TARGET_SPREAD;
 
 		if (!partnerHitsBothFoes) //Partner isn't using spread move
 		{
@@ -712,9 +715,9 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				}
 			}
 		}
-		else //Parter is using spread move
+		else //Partner is using spread move
 		{
-			//Find the target it will KO and assume them unimportant
+			//Find the targets it will KO and assume them unimportant
 			for (j = 0; j < gBattlersCount / 2; ++j)
 			{
 				if (MoveKnocksOutXHits(partnerMove, bankAtkPartner, foes[j], 1))
@@ -768,7 +771,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 		{
 			u8 moveTarget = GetBaseMoveTarget(move, bankAtk);
 			if (foeHasWideGuard //Enemy side has mon who can use Wide Guard
-			&& moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //This move is a spread move
+			&& moveTarget & MOVE_TARGET_SPREAD) //This move is a spread move
 				goto MOVE_LOOP_END;//Pretend this move sucks
 
 			for (j = 0; j < gBattlersCount / 2; ++j)
@@ -776,7 +779,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				//mgba_printf(MGBA_LOG_WARN, "");
 				currTarget = foes[j];
 
-				if (foeAlive[j] && (j == 0 || moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
+				if (foeAlive[j] && (j == 0 || moveTarget & MOVE_TARGET_SPREAD) //Only can hit second foe with spread move
 				&& !partnerHandling[j]) //Don't count the target if the partner is already taking care of it
 				{
 					u32 dmg = GetFinalAIMoveDamage(move, bankAtk, currTarget, 1, &damageDatas[j]);
@@ -784,6 +787,13 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 					if (dmg > 0) //Move will do damage/hit enemy
 					{
 						moveScores[i][currTarget] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
+
+						//Don't prioritze one dependent on how much HP the foe has left if the partner is going to attack the target first
+						if (gBattleMoves[move].effect == EFFECT_SUPER_FANG //Considering Super Fang
+						&& partnerWillUseDamagingMove //And the partner's planning to use a damaging move
+						&& (partnerTarget == currTarget || partnerHitsBothFoes) //On this same target, but won't KO (otherwise wouldn't get here)
+						&& MoveWouldHitBeforeOtherMove(partnerMove, bankAtkPartner, move, bankAtk)) //And will go before Super Fang gets a chance
+							moveScores[i][currTarget] -= 2; //Remove part of the added bonus
 
 						if (MoveKnocksOutXHits(move, bankAtk, currTarget, 1))
 						{
@@ -796,7 +806,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 							moveScores[i][currTarget] += DOUBLES_INCREASE_STRONGEST_MOVE;
 						else
 						{
-							#define CALC (CalcSecondaryEffectChance(bankAtk, move) >= 50)
+							#define CALC (CalcSecondaryEffectChance(bankAtk, move, ABILITY(bankAtk)) >= 50)
 							//These move effects are good even if they do minimal damage
 							switch (gBattleMoves[move].effect) {
 								case EFFECT_FLINCH_HIT:
@@ -928,8 +938,10 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 			bestIndex = i;
 		else if (currScore == bestScore)
 		{
+			//Try use the one with the best range
+			u16 thisMove = gBattleMons[bankAtk].moves[i];
 			u8 currentBestRange = GetBaseMoveTarget(gBattleMons[bankAtk].moves[bestIndex], bankAtk);
-			u8 checkBestRange = GetBaseMoveTarget(gBattleMons[bankAtk].moves[i], bankAtk);
+			u8 checkBestRange = GetBaseMoveTarget(thisMove, bankAtk);
 
 			if (currentBestRange & MOVE_TARGET_ALL
 			&& !(checkBestRange & MOVE_TARGET_ALL)
@@ -1007,7 +1019,7 @@ void TryRemovePartnerDoublesKillingScoreComplete(u8 bankAtk, u8 bankDef, u16 cho
 	//Also handles the special case where the Pokemon is using a spread move
 	if (!TryRemovePartnerDoublesKillingScore(bankAtk, bankDef, chosenMove, doSpeedCalc))
 	{
-		if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+		if (moveTarget & MOVE_TARGET_SPREAD)
 			TryRemovePartnerDoublesKillingScore(bankAtk, PARTNER(bankDef), chosenMove, doSpeedCalc); //Important in case that foe is KOd
 	}
 }
@@ -1312,7 +1324,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (gBattleMoves[move].power == 0
-			|| (onlySpreadMoves && !(GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
+			|| (onlySpreadMoves && !(GetBaseMoveTarget(move, bankAtk) & MOVE_TARGET_SPREAD)))
 				continue;
 
 			u8 moveEffect = gBattleMoves[move].effect;
@@ -2372,11 +2384,11 @@ bool8 HighChanceOfBeingImmobilized(u8 bank)
 	return odds <= 50;
 }
 
-u16 CalcSecondaryEffectChance(u8 bank, u16 move)
+u16 CalcSecondaryEffectChance(u8 bank, u16 move, u8 ability)
 {
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
 
-	if (ABILITY(bank) == ABILITY_SERENEGRACE || BankHasRainbow(bank))
+	if (ability == ABILITY_SERENEGRACE || BankHasRainbow(bank))
 		chance *= 2;
 
 	return chance;
@@ -3235,7 +3247,7 @@ bool8 DamagingSpreadMoveInMoveset(u8 bank)
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (SPLIT(move) != SPLIT_STATUS
-			&&  GetBaseMoveTarget(move, bank) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+			&&  GetBaseMoveTarget(move, bank) & MOVE_TARGET_SPREAD)
 				return TRUE;
 		}
 	}
@@ -3698,7 +3710,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 				case EFFECT_SPECIAL_ATTACK_UP_HIT:
 				case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
 				case EFFECT_DEFENSE_DOWN_HIT:
-					if (CalcSecondaryEffectChance(bankAtk, move) >= 50)
+					if (CalcSecondaryEffectChance(bankAtk, move, ABILITY(bankAtk)) >= 50)
 						return TRUE;
 
 				CHECK_AFFECTS:
@@ -3783,7 +3795,7 @@ bool8 HasUsedMoveWithEffectHigherThanChance(u8 bank, u8 effect, u8 chance)
 			break; //Speed optimization since no blank move slots are left
 
 		if (gBattleMoves[BATTLE_HISTORY->usedMoves[bank][i]].effect == effect
-		&& CalcSecondaryEffectChance(bank, BATTLE_HISTORY->usedMoves[bank][i]) >= chance)
+		&& CalcSecondaryEffectChance(bank, BATTLE_HISTORY->usedMoves[bank][i], ABILITY(bank)) >= chance)
 			return TRUE;
 	}
 

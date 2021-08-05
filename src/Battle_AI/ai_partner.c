@@ -174,7 +174,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				}
 				break;
 
-			case ABILITY_DEFIANT:
+			//THESE TWO DO NOT TRIGGER WHEN A PARTNER TRIES TRIGGERING THEM!
+			/*case ABILITY_DEFIANT:
 				if (moveEffect != EFFECT_ATTACK_DOWN_2 //Useless to trigger then
 				&& !IsClassDoublesTotalTeamSupport(partnerClass)
 				&& CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
@@ -191,7 +192,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
-				break;
+				break;*/
 
 			//Mummy
 			case ABILITY_MUMMY: ;

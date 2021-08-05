@@ -93,18 +93,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_PARALYZE_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				goto AI_PARALYZE_CHECKS;
 			break;
 
 		case EFFECT_BURN_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				goto AI_BURN_CHECKS;
 			break;
 
 		case EFFECT_POISON_HIT:
 		case EFFECT_BAD_POISON_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				goto AI_POISON_CHECKS;
 			break;
 
@@ -633,7 +633,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		( \
 			IS_SINGLE_BATTLE \
 			&& !IsClassDamager(class) \
-			&& CalcSecondaryEffectChance(bankAtk, move) >= 50 \
+			&& CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 50 \
 			&& !MoveBlockedBySubstitute(move, bankAtk, bankDef) \
 		)
 
@@ -649,7 +649,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SPEED_DOWN_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 50 && !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 			{
 				AI_SPEED_MINUS:
 				if (IS_SINGLE_BATTLE)
@@ -688,7 +688,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_CONFUSE_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75
 			&& !MoveBlockedBySubstitute(move, bankAtk, bankDef)
 			&& MoveWillHit(move, bankAtk, bankDef))
 				goto AI_CONFUSE_CHECK;
@@ -821,7 +821,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SPEED_UP_1_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75)
 				goto AI_SPEED_PLUS;
 			break;
 
@@ -1500,7 +1500,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					break;
 				}
-				else if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+				else if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75)
 					goto AI_ATTACK_PLUS;
 			}
 			break;
@@ -1992,7 +1992,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SECRET_POWER:
-			if (CalcSecondaryEffectChance(bankAtk, move) < 60 || MoveBlockedBySubstitute(move, bankAtk, bankDef))
+			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) < 60 || MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				break;
 
 			u8 secretPowerEffect = GetSecretPowerEffect() & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
@@ -2593,7 +2593,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				switch (move) {
 					case MOVE_QUASH:
-						if (!MoveWouldHitFirst(move, data->bankAtkPartner, bankDef)) //Attacker partner wouldn't go before target
+						if (!MoveWouldHitFirst(data->partnerMove, data->bankAtkPartner, bankDef)) //Attacker partner wouldn't go before target
 						{
 							if (IsClassDoublesTeamSupport(class))
 								INCREASE_VIABILITY(7);

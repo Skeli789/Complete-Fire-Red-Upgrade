@@ -73,7 +73,7 @@ u32 GetContactDamageMonAtk(struct Pokemon* monAtk, u16 bankDef);
 u32 GetContactDamageMonDef(u16 bankAtk, struct Pokemon* monDef);
 bool8 WillFaintFromContactDamage(u8 bankAtk, u8 bankDef, u16 move);
 bool8 HighChanceOfBeingImmobilized(u8 bank);
-u16 CalcSecondaryEffectChance(u8 bank, u16 move);
+u16 CalcSecondaryEffectChance(u8 bank, u16 move, u8 ability);
 u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential);
 bool8 ShouldPredictBankToMegaEvolve(u8 bank);
