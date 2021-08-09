@@ -325,6 +325,7 @@ HowlTryPartnerBS:
 	callasm SetTargetPartner
 	jumpifbehindsubstitute BANK_TARGET BS_MOVE_END
 	jumpiffainted BANK_TARGET BS_MOVE_END
+	jumpifability BANK_TARGET ABILITY_SOUNDPROOF BattleScript_ProtectedByAbility
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x2 HowlSecondAttackAnimation
 	pause DELAY_HALFSECOND
@@ -355,8 +356,6 @@ BS_011_RaiseUserDef1:
 	ppreduce
 	setstatchanger STAT_DEF | INCREASE_1
 	jumpifmove MOVE_FLOWERSHIELD FlowerShieldBS
-	jumpifmove MOVE_MAGNETICFLUX MagneticFluxBS
-	jumpifmove MOVE_AROMATICMIST RaiseUserDef1_AromaticMist
 	goto 0x81D6BA1
 
 FlowerShieldBS:
@@ -391,56 +390,34 @@ BattleScript_FlowerShieldDidntWork:
 	waitmessage DELAY_1SECOND
 	goto BattleScript_FlowerShieldLoop
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MagneticFluxBS:
-	pause DELAY_HALFSECOND
-	setbyte BATTLE_COMMUNICATION 0x0
-BattleScript_MagneticFluxLoop:
-	flowershieldlooper 0x1 BattleScript_MagneticFluxStatBoost BattleScript_MagneticFluxDidntWork
-	goto BS_MOVE_END
+.global BS_012_RaiseUserSpd1
+BS_012_RaiseUserSpd1:
+	setstatchanger STAT_SPD | INCREASE_1
+	goto BS_BUFF_ATK_STATS
 
-BattleScript_MagneticFluxStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_DEF MagneticFlux_Def
-	jumpifstatcanberaised BANK_TARGET STAT_SPDEF MagneticFlux_Def
-	goto MagneticFluxStatsWontGoHigher
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MagneticFlux_Def:
-	attackanimation
-	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_DEF | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR MagneticFlux_SpDef
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MagneticFlux_SpDef
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
+.global BS_013_RaiseUserSpAtk1
+BS_013_RaiseUserSpAtk1:
+	setstatchanger STAT_SPATK | INCREASE_1
+	goto BS_BUFF_ATK_STATS
 
-MagneticFlux_SpDef:
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_014_RaiseUserSpDef1
+BS_014_RaiseUserSpDef1:
+	attackcanceler
+	attackstring
+	ppreduce
 	setstatchanger STAT_SPDEF | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_MagneticFluxLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MagneticFluxLoop
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	goto BattleScript_MagneticFluxLoop
-
-MagneticFluxStatsWontGoHigher:
-	setbyte MULTISTRING_CHOOSER 0x3
-	swapattackerwithtarget @;So the correct string plays
-	printfromtable gFlowerShieldStringIds
-	swapattackerwithtarget
-	waitmessage DELAY_1SECOND
-	goto BattleScript_MagneticFluxLoop
-
-BattleScript_MagneticFluxDidntWork:
-	printfromtable gFlowerShieldStringIds
-	waitmessage DELAY_1SECOND
-	goto BattleScript_MagneticFluxLoop
+	jumpifmove MOVE_AROMATICMIST AromaticMistBS
+	goto 0x81D6BA1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-RaiseUserDef1_AromaticMist:
+AromaticMistBS:
 	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE FAILED
 	callasm SetTargetPartner
 	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
@@ -461,180 +438,6 @@ AromaticMistRaiseSpDef:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.global BS_012_RaiseUserSpd1
-BS_012_RaiseUserSpd1:
-	setstatchanger STAT_SPD | INCREASE_1
-	goto BS_BUFF_ATK_STATS
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.global BS_013_RaiseUserSpAtk1
-BS_013_RaiseUserSpAtk1:
-	attackcanceler
-	attackstring
-	ppreduce
-	setstatchanger STAT_SPATK | INCREASE_1
-	jumpifmove MOVE_GROWTH GrowthBS
-	jumpifmove MOVE_WORKUP WorkUpBS
-	jumpifmove MOVE_ROTOTILLER RototillerBS
-	jumpifmove MOVE_GEARUP GearUpBS
-	goto 0x81D6BA1
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-GrowthBS:
-	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX Growth_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
-
-Growth_RaiseAtk:
-	attackanimation
-	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	callasm ModifyGrowthInSun
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN Growth_RaiseSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Growth_RaiseSpAtk
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-
-Growth_RaiseSpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	callasm ModifyGrowthInSun
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-WorkUpBS:
-	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX WorkUp_RaiseAtk
-	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
-
-WorkUp_RaiseAtk:
-	attackanimation
-	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN WorkUp_RaiseSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WorkUp_RaiseSpAtk
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-
-WorkUp_RaiseSpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-RototillerBS:
-	pause DELAY_HALFSECOND
-	setbyte BATTLE_COMMUNICATION 0x0
-BattleScript_RototillerLoop:
-	flowershieldlooper 0x0 BattleScript_RototillerStatBoost BattleScript_RototillerDidntWork
-	goto BS_MOVE_END
-
-BattleScript_RototillerStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK Rototiller_Atk
-	goto RototillerStatsWontGoHigher
-
-Rototiller_Atk:
-	attackanimation
-	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR Rototiller_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Rototiller_SpAtk
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	
-Rototiller_SpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_RototillerLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_RototillerLoop
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-RototillerStatsWontGoHigher:
-	setbyte MULTISTRING_CHOOSER 0x3
-	swapattackerwithtarget @;So the correct string plays
-	printfromtable gFlowerShieldStringIds
-	swapattackerwithtarget
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-BattleScript_RototillerDidntWork:
-	printfromtable gFlowerShieldStringIds
-	waitmessage DELAY_1SECOND
-	goto BattleScript_RototillerLoop
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-GearUpBS:
-	pause DELAY_HALFSECOND
-	setbyte BATTLE_COMMUNICATION 0x0
-BattleScript_GearUpLoop:
-	flowershieldlooper 0x1 BattleScript_GearUpStatBoost BattleScript_GearUpDidntWork
-	goto BS_MOVE_END
-
-BattleScript_GearUpStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Atk
-	goto GearUpStatsWontGoHigher
-
-GearUp_Atk:
-	attackanimation
-	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR GearUp_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	
-GearUp_SpAtk:
-	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_GearUpLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GearUpLoop
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
-
-GearUpStatsWontGoHigher:
-	setbyte MULTISTRING_CHOOSER 0x3
-	swapattackerwithtarget @;So the correct string plays
-	printfromtable gFlowerShieldStringIds
-	swapattackerwithtarget
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
-
-BattleScript_GearUpDidntWork:
-	printfromtable gFlowerShieldStringIds
-	waitmessage DELAY_1SECOND
-	goto BattleScript_GearUpLoop
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.global BS_014_RaiseUserSpDef1
-BS_014_RaiseUserSpDef1:
-	setstatchanger STAT_SPDEF | INCREASE_1
-	goto BS_BUFF_ATK_STATS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -676,98 +479,8 @@ BS_017_NeverMiss:
 
 .global BS_018_LowerTargetAtk1
 BS_018_LowerTargetAtk1:
-	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	attackstring
-	ppreduce
-	accuracycheck BS_MOVE_MISSED+2 0x0
-	setbyte STAT_ANIM_PLAYED 0x0
-	jumpifmove MOVE_PLAYNICE PlayNiceBS
-	jumpifmove MOVE_NOBLEROAR PlayNiceBS
-	jumpifmove MOVE_TEARFULLOOK PlayNiceBS
-	jumpifmove MOVE_VENOMDRENCH VenomDrenchBS
 	setstatchanger STAT_ATK | DECREASE_1
-	goto 0x81D6C27
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-PlayNiceBS:
-	jumpifstatcanbelowered BANK_TARGET STAT_ATK PlayNice_Atk
-	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PlayNice_Atk
-	pause 0x10
-	goto PlayNice_SkipAnim
-
-PlayNice_Atk:
-	attackanimation
-	waitanimation
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	
-PlayNice_SkipAnim:
-	setbyte FORM_COUNTER 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
-	setstatchanger STAT_ATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR PlayNice_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PlayNice_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
-	printfromtable 0x83FE588
-	waitmessage DELAY_1SECOND
-
-PlayNice_SpAtk:
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
-	setstatchanger STAT_SPATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83FE588
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-VenomDrenchBS:
-	jumpifstatus BANK_TARGET STATUS_POISON | STATUS_BAD_POISON DoVenomDrench
-	goto NOEFFECT
-
-DoVenomDrench:
-	jumpifstatcanbelowered BANK_TARGET STAT_ATK VenomDrench_Atk
-	jumpifstatcanbelowered BANK_TARGET STAT_SPATK VenomDrench_Atk
-	jumpifstatcanbelowered BANK_TARGET STAT_SPD VenomDrench_Atk
-	pause 0x10
-	goto VenomDrench_SkipAnim
-
-VenomDrench_Atk:
-	attackanimation
-	waitanimation
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_TRIPLE
-	
-VenomDrench_SkipAnim:
-	setbyte FORM_COUNTER 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK, STAT_ANIM_DOWN
-	setstatchanger STAT_ATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 VenomDrench_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
-	printfromtable 0x83FE588
-	waitmessage DELAY_1SECOND
-
-VenomDrench_SpAtk:
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK, STAT_ANIM_DOWN
-	setstatchanger STAT_SPATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_Spd
-	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 VenomDrench_Spd
-	printfromtable 0x83FE588
-	waitmessage DELAY_1SECOND
-
-VenomDrench_Spd:
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPD, STAT_ANIM_DOWN
-	setstatchanger STAT_SPD | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable 0x83FE588
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
+	goto 0x81D6C13
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4392,15 +4105,220 @@ BS_210_WaterSport:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_202_Blank @;Was Poison Chance + Crit
-BS_202_Blank:
-	goto BS_STANDARD_HIT
+.global BS_202_RaiseUserAtkSpAtk
+BS_202_RaiseUserAtkSpAtk:
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifmove MOVE_ROTOTILLER RototillerBS
+	jumpifmove MOVE_GEARUP GearUpBS
+
+@;WorkUpBS
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX WorkUp_RaiseAtk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleStats
+
+WorkUp_RaiseAtk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	callasm ModifyGrowthInSun
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN WorkUp_RaiseSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WorkUp_RaiseSpAtk
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+WorkUp_RaiseSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	callasm ModifyGrowthInSun
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+RototillerBS:
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_RototillerLoop:
+	flowershieldlooper 0x0 BattleScript_RototillerStatBoost BattleScript_RototillerDidntWork
+	goto BS_MOVE_END
+
+BattleScript_RototillerStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK Rototiller_Atk
+	goto RototillerStatsWontGoHigher
+
+Rototiller_Atk:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR Rototiller_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Rototiller_SpAtk
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	
+Rototiller_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_RototillerLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_RototillerLoop
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+RototillerStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+BattleScript_RototillerDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+GearUpBS:
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_GearUpLoop:
+	flowershieldlooper 0x1 BattleScript_GearUpStatBoost BattleScript_GearUpDidntWork
+	goto BS_MOVE_END
+
+BattleScript_GearUpStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Atk
+	goto GearUpStatsWontGoHigher
+
+GearUp_Atk:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR GearUp_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	
+GearUp_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_GearUpLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GearUpLoop
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
+
+GearUpStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
+
+BattleScript_GearUpDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_203_Blank @;Was Weather Ball
-BS_203_Blank:
-	goto BS_STANDARD_HIT
+.global BS_203_PlayNice
+BS_203_PlayNice:
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	attackstring
+	ppreduce
+	accuracycheck BS_MOVE_MISSED + 2 0x0
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpifmove MOVE_VENOMDRENCH VenomDrenchBS
+	jumpifstatcanbelowered BANK_TARGET STAT_ATK PlayNice_Atk
+	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PlayNice_Atk
+	pause 0x10
+	goto PlayNice_SkipAnim
+
+PlayNice_Atk:
+	attackanimation
+	waitanimation
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	
+PlayNice_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
+	setstatchanger STAT_ATK | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+PlayNice_SpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
+	setstatchanger STAT_SPATK | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+VenomDrenchBS:
+	jumpifstatus BANK_TARGET STATUS_POISON | STATUS_BAD_POISON DoVenomDrench
+	goto NOEFFECT
+
+DoVenomDrench:
+	jumpifstatcanbelowered BANK_TARGET STAT_ATK VenomDrench_Atk
+	jumpifstatcanbelowered BANK_TARGET STAT_SPATK VenomDrench_Atk
+	jumpifstatcanbelowered BANK_TARGET STAT_SPD VenomDrench_Atk
+	pause 0x10
+	goto VenomDrench_SkipAnim
+
+VenomDrench_Atk:
+	attackanimation
+	waitanimation
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_TRIPLE
+	
+VenomDrench_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK, STAT_ANIM_DOWN
+	setstatchanger STAT_ATK | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 VenomDrench_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+VenomDrench_SpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK, STAT_ANIM_DOWN
+	setstatchanger STAT_SPATK | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_Spd
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 VenomDrench_Spd
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+VenomDrench_Spd:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPD, STAT_ANIM_DOWN
+	setstatchanger STAT_SPD | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4455,8 +4373,9 @@ BS_206_CosmicPower:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BANK_TARGET LESSTHAN STAT_DEF STAT_MAX CosmicPower_Def
-	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
+	jumpifmove MOVE_MAGNETICFLUX MagneticFluxBS
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX CosmicPower_Def
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX BattleScript_CantRaiseMultipleStats
 
 CosmicPower_Def:
 	attackanimation
@@ -4476,6 +4395,53 @@ CosmicPower_SpDef:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MagneticFluxBS:
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_MagneticFluxLoop:
+	flowershieldlooper 0x1 BattleScript_MagneticFluxStatBoost BattleScript_MagneticFluxDidntWork
+	goto BS_MOVE_END
+
+BattleScript_MagneticFluxStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_DEF MagneticFlux_Def
+	jumpifstatcanberaised BANK_TARGET STAT_SPDEF MagneticFlux_Def
+	goto MagneticFluxStatsWontGoHigher
+
+MagneticFlux_Def:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR MagneticFlux_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MagneticFlux_SpDef
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+MagneticFlux_SpDef:
+	setstatchanger STAT_SPDEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_MagneticFluxLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MagneticFluxLoop
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
+
+MagneticFluxStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
+
+BattleScript_MagneticFluxDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -155,9 +155,7 @@ void atk48_playstatchangeanimation(void)
 				}
 				else if (!BankSideHasMist(gActiveBattler)
 						&& !IsClearBodyAbility(ability)
-						&& !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
-						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
-						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF)
+						&& !AbilityPreventsLoweringStat(ability, currStat)
 						&& !(AbilityBlocksIntimidate(ability) && gNewBS->intimidateActive)
 						&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
 				{
@@ -369,11 +367,8 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			return STAT_CHANGE_DIDNT_WORK;
 		}
 
-		else if (((ability == ABILITY_KEENEYE && statId == STAT_STAGE_ACC)
-			  ||  (ability == ABILITY_HYPERCUTTER && statId == STAT_STAGE_ATK)
-			  ||  (ability == ABILITY_BIGPECKS && statId == STAT_STAGE_DEF)
-			  ||  (AbilityBlocksIntimidate(ability) && gNewBS->intimidateActive))
-		&& !certain)
+		else if (!certain
+		&& (AbilityPreventsLoweringStat(ability, statId) || (gNewBS->intimidateActive && AbilityBlocksIntimidate(ability))))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -511,6 +506,40 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	return STAT_CHANGE_WORKED;
 }
 
+u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+{
+	if (!BATTLER_ALIVE(bankDef))
+		return STAT_FAINTED; 
+
+	if (defAbility == ABILITY_CONTRARY)
+	{
+		if (STAT_STAGE(bankDef, statId) >= STAT_STAGE_MAX)
+			return STAT_AT_MAX;
+
+		return STAT_CAN_BE_LOWERED;		
+	}
+
+	if (STAT_STAGE(bankDef, statId) == STAT_STAGE_MIN)
+		return STAT_AT_MIN;
+	else if (BankSideHasMist(bankDef) && (bankDef != bankAtk && ABILITY(bankAtk) != ABILITY_INFILTRATOR))
+		return STAT_PROTECTED_BY_MIST;
+
+	if (IsClearBodyAbility(defAbility)
+	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS)))
+		return STAT_PROTECTED_BY_GENERAL_ABILITY;
+	else if (ABILITY(PARTNER(bankDef)) == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS))
+		return STAT_PROTECTED_BY_PARTNER_ABILITY;
+	else if (AbilityPreventsLoweringStat(defAbility, statId))
+		return STAT_PROTECTED_BY_SPECIFIC_ABILITY;
+
+	return STAT_CAN_BE_LOWERED;
+}
+
+bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+{
+	return CanStatNotBeLowered(statId, bankDef, bankAtk, defAbility) == STAT_CAN_BE_LOWERED;
+}
+
 bool8 NewXSpecialBoost(u16 item, u8 boostAmount)
 {
 	u8 stat;
@@ -584,4 +613,3 @@ void PrepareStringForAIUsingXItem(void)
 	gBattleScripting.animArg1 = gBattleTextBuff1[2] + STAT_ANIM_PLUS2 - 1;
 	gBattleScripting.animArg2 = 0;
 }
-

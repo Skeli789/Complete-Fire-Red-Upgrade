@@ -473,6 +473,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				case EFFECT_SPECIAL_DEFENSE_UP:
 				case EFFECT_ACCURACY_UP:
 				case EFFECT_EVASION_UP:
+				case EFFECT_ATK_SPATK_UP:
 				case EFFECT_ATTACK_UP_2:
 				case EFFECT_DEFENSE_UP_2:
 				case EFFECT_SPEED_UP_2:
@@ -568,7 +569,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 		bool8 hasPersonalProtect = FALSE;
 		//bool8 hasTeamProtect = FALSE;
 		bool8 hasFakeOut = FALSE;
-		u8 numOffseniveBoostingMoves = 0;
+		u8 numOffensiveBoostingMoves = 0;
 
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
@@ -596,18 +597,22 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 					case EFFECT_DRAGON_DANCE:
 					case EFFECT_CALM_MIND:
 					case EFFECT_BULK_UP:
+						++numOffensiveBoostingMoves;
+						break;
+
+					case EFFECT_ATK_SPATK_UP:
 						if (move == MOVE_ROTOTILLER)
 						{
-							if (bank == 0xFF || !IsOfType(bank, TYPE_GRASS))
+							if (bank == 0xFF || !IsOfType(bank, TYPE_GRASS) || !CheckGrounding(bank))
 								break; //Don't boost self
 						}
 						else if (move == MOVE_GEARUP)
 						{
-							if (ability != ABILITY_PLUS && ability != ABILITY_MINUS)
+							if (!IsPlusMinusAbility(ability))
 								break; //Don't boost self
 						}
 
-						++numOffseniveBoostingMoves;
+						++numOffensiveBoostingMoves;
 						break;
 
 					case EFFECT_ROAR:
@@ -728,7 +733,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				else
 					class = FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER;
 			}
-			else if (attackMoveNum + numOffseniveBoostingMoves >= 3 || (attackMoveNum + numOffseniveBoostingMoves == 2 && hasPersonalProtect))
+			else if (attackMoveNum + numOffensiveBoostingMoves >= 3 || (attackMoveNum + numOffensiveBoostingMoves == 2 && hasPersonalProtect))
 			{
 				if (itemEffect == ITEM_EFFECT_ROOM_SERVICE || itemEffect == ITEM_EFFECT_IRON_BALL || itemEffect == ITEM_EFFECT_MACHO_BRACE)
 					class = FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER;

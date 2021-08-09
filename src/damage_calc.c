@@ -2247,7 +2247,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_PLUS:
 		case ABILITY_MINUS:
 		//1.5x Boost
-			if (data->atkPartnerAbility == ABILITY_PLUS || data->atkPartnerAbility == ABILITY_MINUS) //Double battle check prior
+			if (IsPlusMinusAbility(data->atkPartnerAbility)) //Double battle check prior
 				spAttack = (spAttack * 15) / 10;
 			break;
 

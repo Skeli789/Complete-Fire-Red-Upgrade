@@ -182,7 +182,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			switch (move) {
 				case MOVE_HONECLAWS:
-					if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) >= 8)
+					if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= 8)
 						goto AI_ACCURACY_PLUS;
 					break;
 
@@ -210,41 +210,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
 				break;
 
-			/*
-			switch (move) {
-				case MOVE_FLOWERSHIELD:
-					if (IsClassCleric(class)
-					&& IsOfType(data->bankAtkPartner, TYPE_GRASS)
-					&& data->atkPartnerAbility != ABILITY_CONTRARY
-					&& STAT_STAGE(data->bankAtkPartner, STAT_STAGE_DEF) < 12
-					&& BATTLER_ALIVE(data->bankAtkPartner))
-					{
-						viability += 5;
-					}
-					break;
-
-				case MOVE_MAGNETICFLUX:
-					if (IsClassCleric(class)
-					&& (data->atkPartnerAbility == ABILITY_PLUS || data->atkPartnerAbility == ABILITY_MINUS)
-					&& (STAT_STAGE(data->bankAtkPartner, STAT_STAGE_DEF) < 12 || STAT_STAGE(data->bankAtkPartner, STAT_STAGE_SPDEF) < 12))
-					&& BATTLER_ALIVE(data->bankAtkPartner)
-					{
-						viability += 5;
-					}
-					else if (BankLikelyToUseMoveSplit(bankDef) == SPLIT_PHYSICAL)
-						break;
-
-					goto AI_SPECIAL_DEFENSE_PLUS;
-
-				case MOVE_AROMATICMIST:
-					if (IsClassCleric(class)
-					&& STAT_STAGE(data->bankAtkPartner, STAT_STAGE_SPDEF) < 12
-					&& BATTLER_ALIVE(data->bankAtkPartner)
-					&& data->atkPartnerAbility != ABILITY_CONTRARY)
-						viability += 5;
-					break;
-			}*/
-
 			//Continue defense check
 			if ((BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_PHYSICAL && atkAbility != ABILITY_CONTRARY))
 				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 10, 1);
@@ -266,27 +231,15 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_SPECIAL_ATTACK_UP:
 		case EFFECT_SPECIAL_ATTACK_UP_2:
 			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_2)
 			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
 				break;
-			switch (move)
-			{
-				case MOVE_GROWTH:
-				case MOVE_WORKUP:
-					if (RealPhysicalMoveInMoveset(bankAtk))
-						goto AI_ATTACK_PLUS;
-					else if (SpecialMoveInMoveset(bankAtk))
-						goto AI_SPECIAL_ATTACK_PLUS;
-					break;
 
-				default:
-				AI_SPECIAL_ATTACK_PLUS:
-					if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-						break;
-					if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
-						INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
-					break;
-			}
+			AI_SPECIAL_ATTACK_PLUS:
+			if (HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_2))
+				break;
+
+			if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+				INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
 			break;
 
 		case EFFECT_SPECIAL_DEFENSE_UP:
@@ -299,6 +252,18 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 			if (BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_SPECIAL && atkAbility != ABILITY_CONTRARY)
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 10, 1);
+			break;
+
+		case EFFECT_ATK_SPATK_UP:
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
+			|| HasUsedMoveWithEffect(bankDef, EFFECT_PLAY_NICE)
+			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
+				break;
+
+			if (RealPhysicalMoveInMoveset(bankAtk))
+				goto AI_ATTACK_PLUS;
+			else if (SpecialMoveInMoveset(bankAtk))
+				goto AI_SPECIAL_ATTACK_PLUS;
 			break;
 
 		case EFFECT_ACCURACY_UP:
@@ -374,6 +339,20 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_EVASION_MINUS:
 			if (GoodIdeaToLowerEvasion(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(2);
+			break;
+
+		case EFFECT_PLAY_NICE:
+			if (GoodIdeaToLowerAttack(bankDef, bankAtk, move)
+			|| GoodIdeaToLowerSpAtk(bankDef, bankAtk, move)
+			|| (move == MOVE_VENOMDRENCH && GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 1)))
+				INCREASE_STATUS_VIABILITY(1);
+			break;
+
+		case EFFECT_TICKLE:
+			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && RealPhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
+				goto AI_DEFENSE_MINUS;
+			else
+				goto AI_ATTACK_MINUS;
 			break;
 
 		case EFFECT_HAZE:
@@ -2065,13 +2044,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
-		case EFFECT_TICKLE:
-			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && RealPhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
-				goto AI_DEFENSE_MINUS;
-			else
-				goto AI_ATTACK_MINUS;
-			break;
-
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER: ;
 			if (atkAbility != ABILITY_CONTRARY
@@ -2835,6 +2807,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_MIRROR_MOVE:
 			case EFFECT_ATTACK_UP:
 			case EFFECT_ATTACK_UP_2:
+			case EFFECT_ATK_SPATK_UP:
 			case EFFECT_SPEED_UP:
 			case EFFECT_SPEED_UP_2:
 			case EFFECT_SPECIAL_ATTACK_UP:

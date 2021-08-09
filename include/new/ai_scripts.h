@@ -53,7 +53,6 @@ struct AIScript
 	u8 foe1;
 	u8 foe2;
 	u16 partnerMove;
-	bool8 partnerHandling;
 };
 
 //Exported Functions

@@ -312,6 +312,43 @@ bool8 IsChoiceAbility(u8 ability)
 	return ability == ABILITY_GORILLATACTICS;
 }
 
+bool8 IsHPAbsorptionAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_WATERABSORB:
+		case ABILITY_VOLTABSORB:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsElectricAbsorptionAblity(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_VOLTABSORB:
+		case ABILITY_MOTORDRIVE:
+		case ABILITY_LIGHTNINGROD:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsPlusMinusAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_PLUS:
+		case ABILITY_MINUS:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 bool8 IsUnnerveAbility(u8 ability)
 {
 	return ability == ABILITY_UNNERVE
@@ -336,12 +373,6 @@ bool8 UnnerveOnOpposingField(u8 bank)
 		;
 }
 
-bool8 AbilityPreventsLoweringAtk(u8 ability)
-{
-	return ability == ABILITY_HYPERCUTTER
-		|| ability == ABILITY_MIRRORARMOR
-		|| IsClearBodyAbility(ability);
-}
 
 bool8 AbilityBlocksIntimidate(u8 ability)
 {
@@ -349,6 +380,28 @@ bool8 AbilityBlocksIntimidate(u8 ability)
 		|| ability == ABILITY_OWNTEMPO
 		|| ability == ABILITY_OBLIVIOUS
 		|| ability == ABILITY_SCRAPPY;
+}
+
+bool8 AbilityPreventsLoweringAtk(u8 ability)
+{
+	return ability == ABILITY_HYPERCUTTER
+		|| ability == ABILITY_MIRRORARMOR
+		|| IsClearBodyAbility(ability);
+}
+
+bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
+{
+	switch (ability)
+	{
+		case ABILITY_HYPERCUTTER:
+			return statId == STAT_STAGE_ATK;
+		case ABILITY_BIGPECKS:
+			return statId == STAT_STAGE_DEF;
+		case ABILITY_KEENEYE:
+			return statId == STAT_STAGE_ACC;
+		default:
+			return FALSE;
+	}
 }
 
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)

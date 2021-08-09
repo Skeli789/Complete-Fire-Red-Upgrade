@@ -12,9 +12,11 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
 #include "../../include/new/general_bs_commands.h"
-#include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/stat_buffs.h"
+#include "../../include/new/util.h"
+
 /*
 ai_partner.c
 	Partner AI logic function(s)
@@ -233,14 +235,61 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	}
 
 	switch (moveEffect) {
+		case EFFECT_ATTACK_UP:
+			if (move == MOVE_HOWL
+			&& atkPartnerAbility != ABILITY_CONTRARY
+			&& atkPartnerAbility != ABILITY_SOUNDPROOF
+			&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+
+		case EFFECT_SPECIAL_DEFENSE_UP:
+			if (move == MOVE_AROMATICMIST && !partnerProtects
+			&& atkPartnerAbility != ABILITY_CONTRARY
+			&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF))
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+
 		case EFFECT_EVASION_UP:
 			if (move == MOVE_ACUPRESSURE && !partnerProtects
-			&&  !IsClassDoublesTotalTeamSupport(partnerClass))
+			&& atkPartnerAbility != ABILITY_CONTRARY
+			&& !IsClassDoublesTotalTeamSupport(partnerClass))
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+
+		case EFFECT_ATK_SPATK_UP:
+			switch (move)
+			{
+				case MOVE_ROTOTILLER:
+				if (IsOfType(bankAtkPartner, TYPE_GRASS)
+				&& atkPartnerAbility != ABILITY_CONTRARY
+				&& CheckGrounding(bankAtkPartner)
+				&& (AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				&& !IsClassDoublesTotalTeamSupport(partnerClass)
+				&& DamagingMoveInMoveset(bankAtkPartner))
+					IncreaseHelpingHandViability(&viability, class);	
+				break;
+
+				case MOVE_GEARUP:
+					if (IsPlusMinusAbility(atkPartnerAbility)
+					&& (AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK) || AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+					&& !IsClassDoublesTotalTeamSupport(partnerClass)
+					&& DamagingMoveInMoveset(bankAtkPartner))
+						IncreaseHelpingHandViability(&viability, class);
+					break;
+			}
+			break;
+
+		case EFFECT_COSMIC_POWER:
+			if (move == MOVE_MAGNETICFLUX 
+			&& IsPlusMinusAbility(atkPartnerAbility)
+			&& (AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF) || AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF)))
 				IncreaseHelpingHandViability(&viability, class);
 			break;
 
 		case EFFECT_RESTORE_HP:
-			switch (move) {
+			switch (move)
+			{
 				case MOVE_PURIFY: ;
 					u32 status = gBattleMons[bankAtkPartner].status1;
 					if (status != 0 && !partnerProtects)
@@ -388,13 +437,45 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			break;
 
 		case EFFECT_BEAT_UP:
-			if (atkPartnerAbility == ABILITY_JUSTIFIED
-			&&  moveType == TYPE_DARK
-			&&  moveSplit != SPLIT_STATUS
-			&&  RealPhysicalMoveInMoveset(bankAtkPartner)
-			&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
-			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
-				INCREASE_VIABILITY(1); //1 past the previous boost
+			switch (atkPartnerAbility)
+			{
+				case ABILITY_JUSTIFIED:
+					if (moveType == TYPE_DARK
+					&& moveSplit != SPLIT_STATUS
+					&& RealPhysicalMoveInMoveset(bankAtkPartner)
+					&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
+					&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+						IncreaseHelpingHandViability(&viability, class);
+					break;
+				case ABILITY_STAMINA:
+					if (moveSplit != SPLIT_STATUS
+					&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF)
+					&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+						IncreaseHelpingHandViability(&viability, class);
+					break;
+				case ABILITY_COTTONDOWN:
+					if (moveSplit != SPLIT_STATUS
+					&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+					{
+						u8 foe1 = FOE(bankAtk);
+						u8 foe2 = PARTNER(foe1);
+						u8 foe1Ability = ABILITY(foe1);
+						u8 foe2Ability = ABILITY(foe2);
+
+						if (BATTLER_ALIVE(foe1)
+						&& (foe1Ability == ABILITY_CONTRARY || foe1Ability == ABILITY_MIRRORARMOR))
+							break; //Don't try to benefit enemy
+
+						if (BATTLER_ALIVE(foe2)
+						&& (foe2Ability == ABILITY_CONTRARY || foe2Ability == ABILITY_MIRRORARMOR))
+							break; //Don't try to benefit enemy
+
+						if (CanStatBeLowered(STAT_STAGE_SPEED, foe1, bankAtk, foe1Ability)
+						|| CanStatBeLowered(STAT_STAGE_SPEED, foe2, bankAtk, foe2Ability))
+							IncreaseHelpingHandViability(&viability, class); //Try lower opposing enemies speed		
+					}
+					break;
+			}
 			break;
 
 		case EFFECT_HELPING_HAND:
@@ -402,19 +483,19 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			{
 				if (move == MOVE_DECORATE)
 				{
-					if (atkPartnerAbility != ABILITY_CONTRARY)
+					if (atkPartnerAbility != ABILITY_CONTRARY && !partnerProtects)
 					{
 						if (RealPhysicalMoveInMoveset(bankAtkPartner)
-						&& STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX)
+						&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_ATK))
 							IncreaseHelpingHandViability(&viability, class);
 						else if (SpecialMoveInMoveset(bankAtkPartner)
-						&& STAT_STAGE(bankAtkPartner, STAT_SPATK) < STAT_STAGE_MAX)
+						&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_SPATK))
 							IncreaseHelpingHandViability(&viability, class);
 					}
 				}
-				else if (move == MOVE_COACHING)
+				else if (move == MOVE_COACHING && !partnerProtects)
 				{
-					if (STAT_STAGE(bankAtkPartner, STAT_ATK) < STAT_STAGE_MAX
+					if (AI_STAT_CAN_RISE(bankAtkPartner, STAT_ATK)
 					&& atkPartnerAbility != ABILITY_CONTRARY
 					&& RealPhysicalMoveInMoveset(bankAtkPartner))
 						IncreaseHelpingHandViability(&viability, class);

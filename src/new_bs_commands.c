@@ -20,6 +20,7 @@
 #include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/stat_buffs.h"
 #include "../include/new/util.h"
 
 /*
@@ -673,59 +674,46 @@ void atkFF14_jumpiftypepresent(void)
 //jumpifstatcanbelowered BANK STAT ROM_ADDRESS
 void atkFF15_jumpifstatcanbemodified(void)
 {
-	u32 currStat = 0;
+	u8 statId, ability;
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	ability = ABILITY(gActiveBattler);
+	statId = gBattlescriptCurrInstr[2];
 	gFormCounter = 0;
 
-	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
-	currStat = T2_READ_8(gBattlescriptCurrInstr + 2);
-	u8 ability = ABILITY(gActiveBattler);
-
-	if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_NEGATIVE) // goes down
+	if (gBattlescriptCurrInstr[3] & ATK48_STAT_NEGATIVE) // goes down
 	{
-		if (ability == ABILITY_CONTRARY)
-			goto STAT_ANIM_UP;
+		STAT_DECREASE: ;
+		u8 ret = CanStatNotBeLowered(statId, gActiveBattler, (gBattlescriptCurrInstr[1] == BS_GET_TARGET) ? gBankAttacker : gActiveBattler, ability);
 
-	STAT_ANIM_DOWN:
-		if (gBattleMons[gActiveBattler].statStages[currStat - 1] == 0)
-			gFormCounter = 1;
-
-		else if (BankSideHasMist(gActiveBattler) && (gBattlescriptCurrInstr[1] != BS_GET_TARGET || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
-			gFormCounter = 2;
-
-		else if (IsClearBodyAbility(ability)
-		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
+		switch (ret)
 		{
-			gBattleScripting.bank = gActiveBattler;
-			gFormCounter = 3;
+			case STAT_CAN_BE_LOWERED:
+				gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
+				return;
+			case STAT_PROTECTED_BY_GENERAL_ABILITY:
+				gBattleScripting.bank = gActiveBattler;
+				break;
+			case STAT_PROTECTED_BY_PARTNER_ABILITY:
+				gBattleScripting.bank = PARTNER(gActiveBattler);
+				ret = STAT_PROTECTED_BY_GENERAL_ABILITY;
+				break;
 		}
-		else if (ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL
-		&& IsOfType(gActiveBattler, TYPE_GRASS))
-		{
-			gBattleScripting.bank = PARTNER(gActiveBattler);
-			gFormCounter = 3;
-		}
-		else if ((ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
-		|| (ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
-		|| (ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
-			gFormCounter = 4;
 
-		PREPARE_STAT_BUFFER(gBattleTextBuff1, currStat)
-
-		if (gFormCounter)
-			gBattlescriptCurrInstr += 8;
-		else
-			gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
+		gFormCounter = ret;
+		PREPARE_STAT_BUFFER(gBattleTextBuff1, statId)
+		gBattlescriptCurrInstr += 8;
 	}
-
-	else // goes up
+	else //Goes up
 	{
 		if (ability == ABILITY_CONTRARY)
-			goto STAT_ANIM_DOWN;
-
-	STAT_ANIM_UP:	;
-		if (gBattleMons[gActiveBattler].statStages[currStat - 1] >= 12)
 		{
-			gFormCounter = 5;
+			ability = ABILITY_NONE; //Make it actually check going down
+			goto STAT_DECREASE;
+		}
+
+		if (STAT_STAGE(gActiveBattler, statId) >= STAT_STAGE_MAX)
+		{
+			gFormCounter = STAT_AT_MAX;
 			gBattlescriptCurrInstr += 8;
 		}
 		else
@@ -857,7 +845,7 @@ void atkFF1F_flowershieldlooper(void)
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 			}
 			else if ((!plusMinus && IsOfType(bank, TYPE_GRASS))
-			|| (plusMinus && (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)))
+			|| (plusMinus && IsPlusMinusAbility(ABILITY(bank))))
 			{
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 				gMoveResultFlags = 0;

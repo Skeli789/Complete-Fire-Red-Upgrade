@@ -3398,14 +3398,14 @@ void PopulateAIScriptStructWithBaseDefenderData(struct AIScript* data, u8 bankDe
 	if (!IsBankIncapacitated(data->bankAtkPartner))
 		data->partnerMove = GetAIChosenMove(data->bankAtkPartner, bankDef);
 
-	data->partnerHandling = IS_DOUBLE_BATTLE
+	/*data->partnerHandling = IS_DOUBLE_BATTLE
 		&& BATTLER_ALIVE(data->bankAtkPartner)
 		&& !IsBankIncapacitated(data->bankAtkPartner)
 		&& gChosenMovesByBanks[data->bankAtkPartner] != MOVE_NONE //Partner actually selected a move
 		&& gBattleStruct->moveTarget[data->bankAtkPartner] == bankDef
 		&& GetBaseMoveTarget(data->partnerMove, data->bankAtkPartner) & MOVE_TARGET_SELECTED //Partner isn't using spread move
 		&& CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, 0, bankDef) >= 2 //With one target left, both Pokemon should aim for the same target
-		&& MoveKnocksOutXHits(data->partnerMove, data->bankAtkPartner, gBattleStruct->moveTarget[data->bankAtkPartner], 1);
+		&& MoveKnocksOutXHits(data->partnerMove, data->bankAtkPartner, gBattleStruct->moveTarget[data->bankAtkPartner], 1);*/
 }
 
 static void PredictMovesForBanks(void)

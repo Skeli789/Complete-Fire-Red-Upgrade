@@ -75,7 +75,10 @@ void IncreaseNimbleCounter(void)
 
 void ModifyGrowthInSun(void)
 {
-	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (gCurrentMove == MOVE_GROWTH
+	&& WEATHER_HAS_EFFECT
+	&& gBattleWeather & WEATHER_SUN_ANY
+	&& ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		gBattleScripting.statChanger += INCREASE_1;
 }
 

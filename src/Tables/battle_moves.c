@@ -1220,7 +1220,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_GROWTH] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP,
+		.effect = EFFECT_ATK_SPATK_UP,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -6732,7 +6732,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_WORKUP] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP,
+		.effect = EFFECT_ATK_SPATK_UP,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -7780,7 +7780,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_ROTOTILLER] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP,
+		.effect = EFFECT_ATK_SPATK_UP,
 		.power = 0,
 		.type = TYPE_GROUND,
 		.accuracy = 0,
@@ -7980,7 +7980,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_PLAYNICE] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_PLAY_NICE,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -9060,7 +9060,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_NOBLEROAR] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_PLAY_NICE,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -9600,7 +9600,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_GEARUP] =
 	{
-		.effect = EFFECT_SPECIAL_ATTACK_UP,
+		.effect = EFFECT_ATK_SPATK_UP,
 		.power = 0,
 		.type = TYPE_STEEL,
 		.accuracy = 0,
@@ -10064,7 +10064,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_TEARFULLOOK] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_PLAY_NICE,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -10384,7 +10384,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_AROMATICMIST] =
 	{
-		.effect = EFFECT_DEFENSE_UP,
+		.effect = EFFECT_SPECIAL_DEFENSE_UP,
 		.power = 0,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
@@ -10560,7 +10560,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_MAGNETICFLUX] =
 	{
-		.effect = EFFECT_DEFENSE_UP,
+		.effect = EFFECT_COSMIC_POWER,
 		.power = 0,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 0,
@@ -10688,7 +10688,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_VENOMDRENCH] =
 	{
-		.effect = EFFECT_ATTACK_DOWN,
+		.effect = EFFECT_PLAY_NICE,
 		.power = 0,
 		.type = TYPE_POISON,
 		.accuracy = 100,
