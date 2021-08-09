@@ -14,14 +14,17 @@ dns.c
 	handles functions and palette changes for the day, night, and seasons feature
 */
 
-#define DNSHelper ((u8*) 0x2021691)
+#define COEFF_FLAG_HARD_FADE 0x20
+#define COEFF_FLAG_SKIP_TILESET_1 0x40
+#define COEFF_FLAG_SKIP_TILESET_2 0x80
+#define FIRST_COEFF_FLAG COEFF_FLAG_HARD_FADE
 
 typedef bool8 IgnoredPalT[16];
 #define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
 //This file's functions:
 #ifdef TIME_ENABLED
-static void FadeDayNightPalettes();
+static void FadeDayNightPalettes(void);
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor);
 static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
@@ -49,7 +52,7 @@ void TransferPlttBuffer(void)
 }
 
 #ifdef TIME_ENABLED
-static void FadeDayNightPalettes()
+static void FadeDayNightPalettes(void)
 {
 	u32 palsToFade;
 	bool8 inOverworld, fadePalettes;
@@ -81,10 +84,20 @@ static void FadeDayNightPalettes()
 				if (gLastRecordedFadeCoeff != coeff
 				||  gLastRecordedFadeColour != colour) //Only fade the background if colour should change
 				{
-					bool8 hardFade = gLastRecordedFadeCoeff == 0xFF; //Set to 0xFF next so check up here
+					bool8 hardFade = gLastRecordedFadeCoeff >= FIRST_COEFF_FLAG; //Reload tileset palettes if necessary
 
 					if (!palFadeActive)
-						LoadMapTilesetPalettes(gMapHeader.mapLayout);
+					{
+						if (hardFade)
+						{
+							if (!(gLastRecordedFadeCoeff & COEFF_FLAG_SKIP_TILESET_1)) //Indicator to not reload tileset 1's palette (because just loaded)
+								apply_map_tileset1_palette(gMapHeader.mapLayout);
+							if (!(gLastRecordedFadeCoeff & COEFF_FLAG_SKIP_TILESET_2)) //Indicator to not reload tileset 2's palette (because just loaded)
+								apply_map_tileset2_palette(gMapHeader.mapLayout);
+						}
+						else
+							LoadMapTilesetPalettes(gMapHeader.mapLayout);
+					}
 
 					gWindowsLitUp = FALSE;
 					FadeOverworldBackground(palsToFade, coeff, colour, palFadeActive); //Load/remove the palettes to fade once during the day and night
@@ -94,12 +107,12 @@ static void FadeDayNightPalettes()
 					//The weather fading needs to be reloaded when the tileset palette is reloaded
 					if (!palFadeActive)
 					{
-						for (u8 paletteIndex = 0; paletteIndex < 13; paletteIndex++)
+						for (u8 paletteIndex = 0; paletteIndex <= 12; paletteIndex++)
 							ApplyWeatherGammaShiftToPal(paletteIndex);
 					}
 
 					if (hardFade) //Changed routes and part of the tileset was reloaded
-						DmaCopy16(3, gPlttBufferFaded, (void *)PLTT, PLTT_SIZE / 2);
+						DmaCopy16(3, gPlttBufferFaded, (void *)PLTT, 0x20 * 12); //12 tileset palettes
 				}
 
 				if (coeff == 0)
@@ -187,10 +200,11 @@ static void BlendFadedUnfadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u3
 		s8 g = data1->g;
 		s8 b = data1->b;
 
-		gPlttBufferUnfaded[index] = FadeColourForDNS(data2, coeff, r, g, b);
+		u16 newColour = FadeColourForDNS(data2, coeff, r, g, b);
+		gPlttBufferUnfaded[index] = newColour;
 
 		if (!palFadeActive)
-			gPlttBufferFaded[index] = FadeColourForDNS(data2, coeff, r, g, b);
+			gPlttBufferFaded[index] = newColour;
 	}
 }
 
@@ -250,12 +264,11 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 		gWindowsLitUp = FALSE;
 	}
 
-	for (u16 paletteOffset = 0; paletteOffset < 256; paletteOffset += 16) //Only background colours
+	for (u16 paletteOffset = 0; paletteOffset < 12 * 16; paletteOffset += 16) //Only background colours
 	{
 		if (selectedPalettes & 1)
-		{
 			BlendFadedUnfadedPalette(paletteOffset, 16, coeff, color, palFadeActive);
-		}
+
 		selectedPalettes >>= 1;
 	}
 }
@@ -271,22 +284,34 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
 		{
 			LoadPalette(&black, destOffset, 2);
 			LoadPalette(((u16*)tileset->palettes) + 1, destOffset + 1, size - 2);
-			ApplySpecialMapPalette(destOffset + 1, (size - 2) >> 1);
+			Fieldmap_ApplyGlobalTintToPaletteEntries(destOffset + 1, (size - 2) >> 1);
+			gLastRecordedFadeCoeff |= COEFF_FLAG_SKIP_TILESET_1;
 		}
 		else if (tileset->isSecondary == TRUE)
 		{
 			LoadPalette(((u16*) tileset->palettes) + (NUM_PALS_IN_PRIMARY * 16), destOffset, size);
-			ApplySpecialMapPalette(destOffset, size >> 1);
+			Fieldmap_ApplyGlobalTintToPaletteEntries(destOffset, size >> 1);
+			gLastRecordedFadeCoeff |= COEFF_FLAG_SKIP_TILESET_2;
 		}
 		else
 		{
 			LoadCompressedPalette((u32*) tileset->palettes, destOffset, size);
-			ApplySpecialMapPalette(destOffset, size >> 1);
+			Fieldmap_ApplyGlobalTintToPaletteEntries(destOffset, size >> 1);
 		}
 
 		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32);
-		gLastRecordedFadeCoeff = 0xFF; //So the colours can be reloaded on map re-entry
+		gLastRecordedFadeCoeff |= COEFF_FLAG_HARD_FADE; //So the colours can be reloaded on map re-entry
 		gLastRecordedFadeColour = 0;
+	}
+}
+
+void TryLoadTileset2OnCameraTransition(struct MapLayout* oldMapLayout)
+{
+	if (oldMapLayout->secondaryTileset != gMapHeader.mapLayout->secondaryTileset)
+	{
+		//Tileset has changed, so reload it, otherwise don't and save time
+		copy_map_tileset2_to_vram_2(gMapHeader.mapLayout);
+		apply_map_tileset2_palette(gMapHeader.mapLayout);
 	}
 }
 

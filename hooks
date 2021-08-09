@@ -336,6 +336,8 @@ GetMegaSpecies 801D794 3
 
 ##DNS
 TransferPlttBuffer 8070474 0
+LoadMapFromCameraTransition_DNSFixHook1 8055880 0
+LoadMapFromCameraTransition_DNSFixHook2 80558C4 0
 
 #Shop
 DNSCreateBuyMenuHook 809AC84 0

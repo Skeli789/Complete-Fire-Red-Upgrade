@@ -1382,4 +1382,28 @@ FreeShopMemoryReturn:
 RainFadeInHook:
 	bl ApplyGammaShiftOnRainFadeIn
 	ldr r0, =0x807A1EE | 1
+bxr0:
+	bx r0
+
+.pool
+@0x8055880 with r0
+LoadMapFromCameraTransition_DNSFixHook1:
+	ldr r0, =gMapHeader
+	ldr r0, [r0] @Map Layout (Footer)
+	str r0, [sp] @Save for next hook
+
+	@Call normal functions and return
+	ldr r0, =Overworld_TryMapConnectionMusicTransition
+	bl bxr0
+	ldr r0, =ApplyCurrentWarp
+	bl bxr0
+	ldr r0, =0x8055888 | 1
+	bx r0
+
+.pool
+@0x80558C4 with r0
+LoadMapFromCameraTransition_DNSFixHook2:
+	ldr r0, [sp] @Old map header - saved above in Hook1
+	bl TryLoadTileset2OnCameraTransition
+	ldr r0, =0x80558D2 | 1
 	bx r0
