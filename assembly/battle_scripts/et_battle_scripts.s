@@ -55,6 +55,7 @@ et_battle_scripts.s
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_OctolockTurnDmg
 .global BattleScript_DynamaxEnd
+.global BattleScript_HoopaSOS
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
@@ -604,6 +605,24 @@ BattleScript_DynamaxEnd_SpecialTransformAnim:
 	copybyte TARGET_BANK BATTLE_SCRIPTING_BANK
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM_ATTACK 0x0
 	goto BattleScript_DynamaxEnd_Rejoin
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BattleScript_HoopaSOS
+BattleScript_HoopaSOS:
+	getswitchedmondata BANK_SWITCHING
+	waitstateatk
+	switchindataupdate BANK_SWITCHING
+	callasm ShowSOSMon
+	playanimation BANK_SWITCHING ANIM_HOOPA_RING_SPAWN 0x0
+	callasm ShowSOSMonHealthbox
+	copybyte USER_BANK, BATTLE_SCRIPTING_BANK @;For the string
+	callasm SetTargetPartner
+	setword BATTLE_STRING_LOADER gText_HoopaRespawnedAlly
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	switchineffects BANK_SWITCHING
+	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

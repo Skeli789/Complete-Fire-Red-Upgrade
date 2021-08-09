@@ -95,6 +95,7 @@ gBattleAnims_General:
 .word ANIM_G_MAX_CANNONADE
 .word ANIM_G_MAX_VOLCALITH
 .word ANIM_AI_ITEM_HEAL
+.word ANIM_HOOPA_RING_SPAWN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1057,6 +1058,23 @@ ANIM_AI_ITEM_HEAL:
 	launchtask AnimTask_StatusClearedEffect 0x2 0x1 FALSE
 	waitanimation
 	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_HOOPA_RING_SPAWN:
+	loadparticle ANIM_TAG_HOOPA_RING_LARGE
+	playsound2 0x72 SOUND_PAN_ATTACKER @;SE_HOOPA_RING
+	launchtemplate HOOPA_RING_SPAWNER TEMPLATE_ATTACKER | TEMPLATE_BELOW | 2, 0x1, bank_attacker
+	pause 72
+	playsound2 0x27 SOUND_PAN_ATTACKER @;SE_TELEPORT
+	launchtask AnimTask_SpinInAttacker 0x5 0x0
+	pause 64
+	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
+	waitanimation
+	endanimation
+
+.align 2
+HOOPA_RING_SPAWNER: objtemplate ANIM_TAG_HOOPA_RING_LARGE ANIM_TAG_HOOPA_RING_LARGE OAM_NORMAL_64x64 gAnimCmdTable_LargeHoopaRing 0x0 gSpriteAffineAnimTable_LargeHoopaRing SpriteCB_SpriteOnMonUntilAffineAnimEnds
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

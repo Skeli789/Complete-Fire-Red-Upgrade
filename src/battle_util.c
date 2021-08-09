@@ -1562,6 +1562,17 @@ void UpdateQuickClawRandomNumber(u8 bank)
 	gNewBS->quickDrawRandomNumber[bank] = ((u32) Random32()) % 100;
 }
 
+void GiveOmniboost(u8 bank)
+{
+	u32 i;
+
+	for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
+	{
+		if (STAT_STAGE(bank, i) < STAT_STAGE_MAX)
+			++STAT_STAGE(bank, i);
+	}
+}
+
 bool8 WillPoltergeistFail(u16 item, u8 ability)
 {
 	return item == ITEM_NONE

@@ -387,6 +387,7 @@ animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 4) / 2, ANIM_TAG_STRAIGHT_BEAM
 animparticle DREEPY_IMG, (32 * 32 * 2) / 2, ANIM_TAG_DREEPY
 animparticle ICE_ROCK_IMG, (64 * 64 * 3) / 2, ANIM_TAG_ICE_ROCK_SINGLE @;For Max Hailstorm in Multi battles
 animparticle STONE_PILLAR_IMG, (64 * 64 * 3) / 2, ANIM_TAG_STONE_PILLAR_MULTI @;For Max Rockfall in Multi battles
+animparticle LARGE_HOOPA_RING_IMG, (64 * 64 * 4) / 2, ANIM_TAG_HOOPA_RING_LARGE
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE
@@ -759,3 +760,4 @@ animparticlepal STRAIGHT_BEAM_PAL, ANIM_TAG_STRAIGHT_BEAM
 animparticlepal DREEPY_PAL, ANIM_TAG_DREEPY
 animparticlepal ICE_ROCK_PAL, ANIM_TAG_ICE_ROCK_SINGLE
 animparticlepal STONE_PILLAR_PAL, ANIM_TAG_STONE_PILLAR_MULTI
+animparticlepal LARGE_HOOPA_RING_PAL, ANIM_TAG_HOOPA_RING_LARGE

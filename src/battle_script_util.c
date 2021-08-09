@@ -1,15 +1,17 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
+#include "../include/pokeball.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
+#include "../include/new/battle_indicators.h"
+#include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_util.h"
-#include "../include/new/battle_script_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/daycare.h"
 #include "../include/new/dynamax.h"
@@ -2387,4 +2389,38 @@ void SetInPivotingMove(void)
 void ClearInPivotingMove(void)
 {
 	gNewBS->inPivotingMove = FALSE;
+}
+
+void ShowSOSMon(void)
+{
+    u16 species;
+	u8 sosBank = gBankSwitching;
+
+	ClearTemporarySpeciesSpriteData(sosBank, FALSE);
+	species = GetMonData(GetBankPartyData(sosBank), MON_DATA_SPECIES, NULL);
+	BattleLoadOpponentMonSpriteGfx(&gEnemyParty[gBattlerPartyIndexes[sosBank]], sosBank);
+	SetMultiuseSpriteTemplateToPokemon(species, GetBattlerPosition(sosBank));
+	gBattlerSpriteIds[sosBank] = CreateSprite(gMultiuseSpriteTemplate,
+												GetBattlerSpriteCoord(sosBank, 2),
+												GetBattlerSpriteDefault_Y(sosBank),
+												GetBattlerSpriteSubpriority(sosBank));
+
+	gSprites[gBattlerSpriteIds[sosBank]].data[0] = sosBank;
+	gSprites[gBattlerSpriteIds[sosBank]].data[2] = species;
+	gSprites[gBattlerSpriteIds[sosBank]].oam.paletteNum = sosBank;
+	StartSpriteAnim(&gSprites[gBattlerSpriteIds[sosBank]], gBattleMonForms[sosBank]);
+	gSprites[gBattlerSpriteIds[sosBank]].invisible = TRUE;
+	gSprites[gBattlerSpriteIds[sosBank]].callback = SpriteCallbackDummy;
+}
+
+void ShowSOSMonHealthbox(void)
+{
+	u8 sosBank = gActiveBattler = gBankSwitching;
+	struct Pokemon* mon = GetBankPartyData(sosBank);
+
+	SetBattlerShadowSpriteCallback(sosBank, GetMonData(mon, MON_DATA_SPECIES, NULL));
+	UpdateHealthboxAttribute(gHealthboxSpriteIds[sosBank], mon, HEALTHBOX_ALL);
+	StartHealthboxSlideIn(sosBank);
+	SetHealthboxSpriteVisible(gHealthboxSpriteIds[sosBank]);
+	CreateMegaIndicatorAfterAnim();
 }

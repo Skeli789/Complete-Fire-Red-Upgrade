@@ -75,6 +75,7 @@ extern const u8 BattleScript_ShieldsDownToCore[];
 extern const u8 BattleScript_ShieldsDownToMeteor[];
 extern const u8 BattleScript_FlowerGift[];
 extern const u8 BattleScript_FlowerGiftEnd2[];
+extern const u8 BattleScript_HoopaSOS[];
 extern const u8 BattleScript_RaiseStatsItemEnd2[];
 extern const u8 BattleScript_HandleFaintedMonSingles[];
 extern const u8 BattleScript_HandleFaintedMonDoublesInitial[];

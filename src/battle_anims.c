@@ -435,6 +435,36 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_HoopaRing[] =
 	sSpriteAffineAnim_HoopaRing,
 };
 
+static const union AnimCmd sAnimCmdLargeHoopaRing[] =
+{
+	ANIMCMD_FRAME(0, 8),
+	ANIMCMD_FRAME(64, 8),
+	ANIMCMD_FRAME(128, 8),
+	ANIMCMD_FRAME(192, 8),
+	ANIMCMD_JUMP(0)
+};
+
+const union AnimCmd *const gAnimCmdTable_LargeHoopaRing[] =
+{
+	sAnimCmdLargeHoopaRing,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_LargeHoopaRing[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start small
+	AFFINEANIMCMD_FRAME(4, 4, -16, 60), //Spin and grow sprite
+	AFFINEANIMCMD_FRAME(0, 0, -16, 4), //Keep spinning until back to proper orientation
+	AFFINEANIMCMD_FRAME(0, 0, 0, 0x22), //Pause
+	AFFINEANIMCMD_FRAME(0, 0, 0, 64), //Pause
+	AFFINEANIMCMD_FRAME(-16, -16, 16, 15), //Spin and shrink sprite
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_LargeHoopaRing[] =
+{
+	sSpriteAffineAnim_LargeHoopaRing,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_GrowingRing[] =
 {
 	AFFINEANIMCMD_FRAME(8, 8, 0, 16), //Double in size
@@ -4662,6 +4692,62 @@ void SpriteCB_GenesisSupernovaOrbUp(struct Sprite* sprite)
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	sprite->callback = InitAndRunAnimFastLinearTranslation;
 }
+
+
+static const union AffineAnimCmd sSpinAndGrowMonSpriteAffineAnimCmds[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start small
+	AFFINEANIMCMD_FRAME(4, 4, -16, 60), //Spin and grow sprite
+	AFFINEANIMCMD_FRAME(0, 0, -16, 4), //Keep spinning until back to proper orientation
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), //Pause
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const sSpinAndGrowMonSpriteAffineAnimTable[] =
+{
+	sSpinAndGrowMonSpriteAffineAnimCmds,
+};
+
+#define tSpriteId data[0]
+
+void AnimTask_SpinInAttacker_Step(u8 taskId)
+{
+	struct Task* task = &gTasks[taskId];
+
+	if (gSprites[task->tSpriteId].affineAnimEnded)
+	{
+		gSprites[task->tSpriteId].affineAnims = (void*) (task->data[1] | (task->data[2] << 16)); //Restore old affine anims
+		ResetSpriteRotScale(task->tSpriteId);
+		gSprites[task->tSpriteId].affineAnimPaused = TRUE; //So the Pokemon coming out a Poke Ball animation doesn't play
+		DestroyAnimVisualTask(taskId);
+	}
+}
+
+void AnimTask_SpinInAttacker(u8 taskId)
+{
+	struct Task* task = &gTasks[taskId];
+	u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+
+	PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_NORMAL);
+
+	if (spriteId < MAX_SPRITES)
+	{
+		struct Sprite* sprite = &gSprites[spriteId];
+
+		task->data[1] = ((u32) sprite->affineAnims) & 0xFFFF; //Backup old affine anims
+		task->data[2] = ((u32) sprite->affineAnims) >> 16;
+		sprite->affineAnims = sSpinAndGrowMonSpriteAffineAnimTable;
+		StartSpriteAffineAnim(sprite, 0);
+		sprite->affineAnimPaused = FALSE;
+
+		task->tSpriteId = spriteId;
+		task->func = AnimTask_SpinInAttacker_Step;
+	}
+	else
+		DestroyAnimVisualTask(taskId);
+}
+
+#undef tSpriteId
 
 //Moves the rings for Clangorous Soulblaze
 //arg 0: initial x offset

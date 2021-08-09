@@ -456,7 +456,7 @@ void SpriteCB_WildMonShowHealthbox(struct Sprite *sprite)
     {
 		u32 selectedPalettes = 0x10000 << sprite->oam.paletteNum;
 
-        sub_804BD94(sprite->sBattler);
+        StartHealthboxSlideIn(sprite->sBattler);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[sprite->sBattler]);
         sprite->callback = SpriteCallbackDummy;
         StartSpriteAnimIfDifferent(sprite, 0);

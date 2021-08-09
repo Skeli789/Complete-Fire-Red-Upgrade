@@ -35,9 +35,9 @@ void __attribute__((long_call)) BattleStopLowHpSound(void);
 void __attribute__((long_call)) HandleBattleLowHpMusicChange(void);
 void __attribute__((long_call)) SetBattlerSpriteAffineMode(u8 affineMode);
 void __attribute__((long_call)) LoadAndCreateEnemyShadowSprites(void);
-void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);*/
 void __attribute__((long_call)) SetBattlerShadowSpriteCallback(u8 battlerId, u16 species);
-void __attribute__((long_call)) HideBattlerShadowSprite(u8 battlerId);
+/*void __attribute__((long_call)) HideBattlerShadowSprite(u8 battlerId);
 void __attribute__((long_call)) BattleInterfaceSetWindowPals(void);
 void __attribute__((long_call)) ClearTemporarySpeciesSpriteData(u8 battlerId, bool8 dontClearSubstitute);
 void __attribute__((long_call)) AllocateMonSpritesGfx(void);

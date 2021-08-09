@@ -1144,6 +1144,11 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 				return PROTECT_FROM_FOES; //Partner has this covered
 			}
 		}
+
+		#if (defined FLAG_HOOPA_SOS_BATTLE && defined SPECIES_HOOPA_UNBOUND)
+		if (FlagGet(FLAG_HOOPA_SOS_BATTLE) && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SPECIES(bankAtk) == SPECIES_HOOPA_UNBOUND)
+			return PROTECT_FROM_FOES; //Higher protect chance so partner can be respawned more often
+		#endif
 	}
 
 	return DONT_PROTECT;

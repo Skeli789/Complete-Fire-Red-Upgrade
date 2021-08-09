@@ -329,6 +329,9 @@ The mysterious strong winds\ncontinue to blow.
 #org @gText_PickedUpKnockedOffItem
 [PLAYER_NAME] picked up\none [LAST_ITEM]!
 
+#org @gText_HoopaRespawnedAlly
+[TARGET] summoned\nanother [BUFFER][00]!
+
 //Other Battle Features
 
 #org @gText_TotemOmniboostStatsRose

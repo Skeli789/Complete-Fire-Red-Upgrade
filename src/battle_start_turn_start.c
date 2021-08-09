@@ -553,14 +553,9 @@ void BattleBeginFirstTurn(void)
 						}
 						else if (totemBoostType == TOTEM_OMNIBOOST) //All main stats
 						{
+							gBattleScripting.statAnimPlayed = FALSE;
 							gBankAttacker = gBattleScripting.bank = *bank;
-	
-							for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
-							{
-								if (STAT_STAGE(gBankAttacker, i) < STAT_STAGE_MAX)
-									++STAT_STAGE(gBankAttacker, i);
-							}
-
+							GiveOmniboost(gBankAttacker);
 							BattleScriptPushCursorAndCallback(BattleScript_TotemOmniboost);
 							++*bank;
 							return;

@@ -684,6 +684,7 @@ u8 __attribute__((long_call)) GetNatureFromPersonality(u32 personality);
 u8 __attribute__((long_call)) GetMonGender(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetBoxMonGender(struct BoxPokemon* boxMon);
 u8 __attribute__((long_call)) GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
+void __attribute__((long_call)) SetMultiuseSpriteTemplateToPokemon(u16 speciesTag, u8 battlerPosition);
 void __attribute__((long_call)) SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
 void __attribute__((long_call)) EncryptBoxMon(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) ZeroBoxMonData(struct BoxPokemon *boxMon);

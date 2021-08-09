@@ -96,6 +96,7 @@ enum EndTurnEffects
 	ET_Form_Change,
 	ET_Reactivate_Overworld_Weather,
 	ET_Reactivate_Overworld_Terrain,
+	ET_SOS,
 	ET_End
 };
 
@@ -1652,6 +1653,43 @@ u8 TurnBasedEffects(void)
 					++effect;
 					return effect;
 				}
+				break;
+
+			case ET_SOS:
+				gBattleStruct->turnEffectsBank = gBattlersCount;
+
+				#if (defined FLAG_HOOPA_SOS_BATTLE && defined SPECIES_HOOPA_UNBOUND)
+				if (IS_DOUBLE_BATTLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && FlagGet(FLAG_HOOPA_SOS_BATTLE))
+				{
+					u8 sosBank = 0xFF;
+					u8 foeBank1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					
+					if (SPECIES(foeBank1) == SPECIES_HOOPA_UNBOUND)
+						sosBank = PARTNER(foeBank1);
+					else if (SPECIES(PARTNER(foeBank1)) == SPECIES_HOOPA_UNBOUND)
+						sosBank = foeBank1;
+
+					if (sosBank != 0xFF && BATTLER_ALIVE(foeBank1) && !BATTLER_ALIVE(sosBank)) //Hoopa's alive but partner fainted
+					{
+						//Restore HP of fainted ally
+						gActiveBattler = sosBank;
+						u8 monId = (GetBattlerPosition(sosBank) == B_POSITION_OPPONENT_LEFT) ? 0 : 1;
+						struct Pokemon* mon = &gEnemyParty[monId];
+						gBattleMons[gActiveBattler].hp = GetMonData(mon, MON_DATA_MAX_HP, NULL);
+						EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
+						MarkBufferBankForExecution(gActiveBattler);
+
+						//Bring it back in
+						PREPARE_SPECIES_BUFFER(gBattleTextBuff1, GetMonData(mon, MON_DATA_SPECIES, NULL));
+						gBattleStruct->monToSwitchIntoId[sosBank] = monId;
+						gAbsentBattlerFlags &= ~(gBitTable[sosBank]);
+						gBankSwitching = sosBank;
+						gBattleScripting.bank = foeBank1;
+						BattleScriptExecute(BattleScript_HoopaSOS);
+						return ++effect;
+					}
+				}
+				#endif
 				break;
 
 			case ET_End:
