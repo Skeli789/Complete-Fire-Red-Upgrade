@@ -10,6 +10,7 @@
 #include "../include/sound.h"
 
 #include "../include/constants/region_map_sections.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_anims.h"
@@ -1059,10 +1060,31 @@ void AnimTask_GetTimeOfDay(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+static u16 GetAnimAttackerSpecies(void)
+{
+	u16 species = gBattleSpritesDataPtr->bankData[gBattleAnimAttacker].transformSpecies;
+	if (species == SPECIES_NONE)
+		species = GetIllusionPartyData(gBattleAnimAttacker)->species;
+
+	return species;
+}
+
 void AnimTask_GetLycanrocForm(u8 taskId)
 {
 	#ifdef SPECIES_LYCANROC_N
-	if (GetIllusionPartyData(gBattleAnimAttacker)->species == SPECIES_LYCANROC_N)
+	if (GetAnimAttackerSpecies() == SPECIES_LYCANROC_N)
+		gBattleAnimArgs[0] = 1;
+	else
+	#endif
+		gBattleAnimArgs[0] = 0;
+
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_IsAttackerRayquaza(u8 taskId)
+{
+	#ifdef NATIONAL_DEX_RAYQUAZA
+	if (SpeciesToNationalPokedexNum(GetAnimAttackerSpecies()) == NATIONAL_DEX_RAYQUAZA)
 		gBattleAnimArgs[0] = 1;
 	else
 	#endif

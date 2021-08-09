@@ -56,7 +56,7 @@ bool8 CanKillAFoe(u8 bank)
 
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 {
-	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef))
+	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef) || IsBankIncapacitated(bankAtk))
 		return FALSE; //Can't KO if you're dead or target is dead
 
 	if (gNewBS->ai.canKnockOut[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
@@ -73,15 +73,14 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 	return gNewBS->ai.canKnockOut[bankAtk][bankDef];
 }
 
-bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef)
+bool8 CanKnockOutWithFasterMove(u8 bankAtk, u8 bankDef, u16 defMove)
 {
 	int i;
 	u16 move;
 	bool8 isAsleep = IsBankAsleep(bankAtk);
 
-	if (IsBankIncapacitated(bankAtk)
-	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
-		return FALSE;
+	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef) || IsBankIncapacitated(bankAtk))
+		return FALSE; //Can't KO if you're dead or target is dead
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
@@ -90,14 +89,15 @@ bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef)
 		move = GetBattleMonMove(bankAtk, i);
 
 		if (move == MOVE_NONE)
-			break;
+			break; //End of usable moves
 
 		if (isAsleep && move != MOVE_SNORE)
 			continue;
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
+			&& MoveWouldHitBeforeOtherMove(move, bankAtk, defMove, bankDef))
 				return TRUE;
 		}
 	}

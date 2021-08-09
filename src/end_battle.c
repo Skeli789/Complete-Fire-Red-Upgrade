@@ -235,15 +235,17 @@ void HandleEndTurn_BattleWon(void)
 				PlayBGM(BGM_VICTORY_GYM);
 				specialMus = TRUE;
 				break;
-			case CLASS_SHADOW_ADMIN: //0x30
-			case CLASS_BOSS: //0x53
-			case CLASS_SHADOW: //0x55
+			case CLASS_SHADOW:
+			case CLASS_SHADOW_ADMIN:
+			case CLASS_EX_SHADOW_ADMIN:
+			case CLASS_BOSS:
 				PlayBGM(BGM_VICTORY_PLASMA);
 				specialMus = TRUE;
 				break;
-			case CLASS_LOR_LEADER: //0x2
-			case CLASS_LOR_ADMIN: //0x2E
-			case CLASS_LOR: //0x2F
+			case CLASS_LOR:
+			case CLASS_LOR_ADMIN:
+			case CLASS_LOR_LEADER:
+			case CLASS_AGENT:
 				PlayBGM(BGM_VICTORY_GALACTIC);
 				specialMus = TRUE;
 				break;

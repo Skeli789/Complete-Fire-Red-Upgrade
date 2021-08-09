@@ -9,7 +9,7 @@
 u16 AIRandom(void);
 bool8 CanKillAFoe(u8 bank);
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef);
-bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef);
+bool8 CanKnockOutWithFasterMove(u8 bankAtk, u8 bankDef, u16 defMove);
 bool8 Can2HKO(u8 bankAtk, u8 bankDef);
 bool8 GetCan2HKO(u8 bankAtk, u8 bankDef);
 bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits, bool8 dealOneHitFirst);

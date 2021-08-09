@@ -379,8 +379,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_HAZE:
 			if (ShouldPhaze(bankAtk, bankDef, move, class))
 			{
-				if (IsClassPhazer(class))
+				if (IsClassDoublesPhazer(class))
+					INCREASE_VIABILITY(15);
+				else if (IsClassPhazer(class)) //Singles
 					INCREASE_VIABILITY(8);
+				else if (IsClassDoublesSetupAttacker(class))
+					INCREASE_VIABILITY(12); //Right above Stongest Move 2 Foes, Hurt Partner
 				else
 					INCREASE_STATUS_VIABILITY(2);
 			}
@@ -402,7 +406,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_ROAR:
 			if (!MoveBlockedBySubstitute(move, bankAtk, bankDef) && ShouldPhaze(bankAtk, bankDef, move, class))
 			{
-				if (IsClassPhazer(class))
+				if (IsClassDoublesPhazer(class))
+					INCREASE_VIABILITY(16);
+				else if (IsClassPhazer(class)) //Singles
 				{
 					if (CanKnockOut(bankDef, bankAtk) && gBattleMoves[move].priority < 0) //Don't prioritize Roar if it means your death
 						INCREASE_VIABILITY(1);
@@ -451,7 +457,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			|| IsConfused(bankDef))
 			{
 				if (IsUsefulToFlinchTarget(bankDef))
-					INCREASE_STATUS_VIABILITY(3);
+				{
+					if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 60 //High flinch chance
+					|| !Can2HKO(bankAtk, bankDef)) //Will need to stall to survive
+						INCREASE_STATUS_VIABILITY(3);
+				}
 			}
 			break;
 
@@ -1669,11 +1679,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		AI_BURN_CHECKS:
 			if (!BadIdeaToBurn(bankDef, bankAtk))
 			{
-				if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL
-				&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
-					INCREASE_STATUS_VIABILITY(3); //If the enemy can kill with a physical move, try burning them so they can't anymore
-
-				else if ((IsClassDoublesUtility(class) || IsClassDoublesTeamSupport(class))
+				if ((IsClassDoublesUtility(class) || IsClassDoublesTeamSupport(class))
 				&& PhysicalMoveInMoveset(bankDef))
 				{
 					//They're split up for now so just in case they change
@@ -1682,6 +1688,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					else //(IsClassDoublesTeamSupport(class))
 						INCREASE_VIABILITY(11);
 				}
+				else if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL
+				&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
+					INCREASE_STATUS_VIABILITY(3); //If the enemy can kill with a physical move, try burning them so they can't anymore
 				else if (MoveInMoveset(MOVE_HEX, bankAtk)
 				|| MoveInMoveset(MOVE_HEX, data->bankAtkPartner)
 				|| PhysicalMoveInMoveset(bankDef))
@@ -2346,8 +2355,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_REMOVE_TARGET_STAT_CHANGES:
 			if (!MoveBlockedBySubstitute(move, bankAtk, bankDef) && ShouldPhaze(bankAtk, bankDef, move, class))
 			{
-				if (IsClassPhazer(class))
+				if (IsClassDoublesPhazer(class))
+					INCREASE_VIABILITY(16);
+				else if (IsClassPhazer(class)) //Singles
 					INCREASE_VIABILITY(8);
+				else if (IsClassDoublesSetupAttacker(class))
+					INCREASE_VIABILITY(12); //Right above Stongest Move 2 Foes, Hurt Partner
 				else
 					INCREASE_STATUS_VIABILITY(2);
 			}

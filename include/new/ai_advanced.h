@@ -21,6 +21,7 @@ bool8 IsClassScreener(u8 class);
 bool8 IsClassSupportScreener(u8 class);
 bool8 IsClassCleric(u8 class);
 bool8 IsClassPhazer(u8 class);
+bool8 IsClassDoublesPhazer(u8 class);
 bool8 IsClassEntryHazards(u8 class);
 bool8 IsClassDoublesAllOutAttacker(u8 class);
 bool8 IsClassDoublesSetupAttacker(u8 class);

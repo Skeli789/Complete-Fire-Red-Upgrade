@@ -4714,7 +4714,7 @@ static struct Raid sRoute10Raids3Star[] =
 	},
 	{
 		.species = SPECIES_DITTO,
-		.ability = RAID_ABILITY_RANDOM_ALL,
+		.ability = RAID_ABILITY_RANDOM_1_2,
 		.drops =
 		{
 			/*100 %*/ ITEM_QUICK_POWDER,
@@ -4813,7 +4813,7 @@ static struct Raid sRoute10Raids4Star[] =
 	},
 	{
 		.species = SPECIES_DITTO,
-		.ability = RAID_ABILITY_RANDOM_ALL,
+		.ability = RAID_ABILITY_RANDOM_1_2,
 		.drops =
 		{
 			/*100 %*/ ITEM_QUICK_POWDER,
@@ -4912,7 +4912,7 @@ static struct Raid sRoute10Raids5Star[] =
 	},
 	{
 		.species = SPECIES_DITTO,
-		.ability = RAID_ABILITY_HIDDEN,
+		.ability = RAID_ABILITY_RANDOM_1_2,
 		.drops =
 		{
 			/*100 %*/ ITEM_QUICK_POWDER,

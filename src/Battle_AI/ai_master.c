@@ -113,7 +113,7 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
 
 	// Items are allowed to use in ONLY trainer battles.
 	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
+		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_EREADER_TRAINER))
 		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT
 		&& !IsFrontierTrainerId(gTrainerBattleOpponent_A)
 		&& !IsBagDisabled()) //If the player's bag is disabled, the AI's should also be
@@ -441,6 +441,23 @@ static bool8 HasChosenToDamageTarget(u8 bankAtk, u8 bankDef)
 			|| GetBaseMoveTarget(GetAIChosenMove(bankAtk, bankDef), bankAtk) & MOVE_TARGET_SPREAD);
 }
 
+static bool8 PartnerWillKOTargetBeforeItCanAttack(u8 bankAtk, u8 bankDef)
+{
+	u8 partner = PARTNER(bankAtk);
+
+	return HasChosenToDamageTarget(partner, bankDef)
+		&& !CanKnockOutWithFasterMove(bankDef, partner, gChosenMovesByBanks[partner]) //Neither foe can kill the partner before the attack
+		&& !CanKnockOutWithFasterMove(PARTNER(bankDef), partner, gChosenMovesByBanks[partner])
+		&& MoveWouldHitFirst(gChosenMovesByBanks[partner], partner, bankDef); //And the partner's attack would land before the target has a chance to attack
+}
+
+static bool8 DefaultTargetIsUselessStatusMove(u8 bankAtk, u8 bankDef, const u8* actionOrMoveIndex)
+{
+	return SIDE(bankDef) != SIDE(bankAtk) //Default target is a foe
+		&& SPLIT(gBattleMons[bankAtk].moves[actionOrMoveIndex[bankDef]]) == SPLIT_STATUS //The move to be used against the default target is a status move
+		&& PartnerWillKOTargetBeforeItCanAttack(bankAtk, bankDef); //But the partner will be able to KO it, wasting the status move
+}
+
 static u8 GetTargetsKnockedOut(u16 move, u8 bankAtk, u8 baseBankDef)
 {
 	u8 targetsKOd = 0;
@@ -609,6 +626,7 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	u8 bankDef, mostViableTargetsNo;
 	s16 mostMovePoints;
 	s8 mostViableTargetsArray[MAX_BATTLERS_COUNT];
+	bool8 usingDefaultTarget = TRUE; //Indicates whether the target has changed from 0
 	bool8 tryKnockOut = ShouldPrioritizeKOingFoesDoubles(gBankAttacker);
 	bool8 tryDoMostDamage = ShouldPrioritizeMostDamageDoubles(gBankAttacker);
 	bool8 tryKODangerous = ShouldPrioritizeDangerousTarget(gBankAttacker);
@@ -748,6 +766,7 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 					mostViableTargetsArray[0] = mostDmgTarget = bankDef;
 					mostDmgKnocksOut = thisDmgKnocksOut;
 					mostDamage = thisDamage;
+					usingDefaultTarget = FALSE;
 					continue;
 				}
 				else //Replace all non status moves with this best one
@@ -776,19 +795,42 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 							mostViableTargetsArray[mostViableTargetsNo++] = i;
 					}
 
+					usingDefaultTarget = FALSE;
 					continue;
+				}
+			}
+			else if (SPLIT(move) == SPLIT_STATUS)
+			{
+				if (move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
+				{
+					if (!usingDefaultTarget //Has added new targets
+					|| !DefaultTargetIsUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex))
+						continue; //No point in using a status move on this target
+
+					//Fallthrough and add as viable move alongside the first useless move
 				}
 			}
 
 			ADD_TARGET_AS_MOST_VIABLE:
 			mostViableTargetsArray[mostViableTargetsNo++] = bankDef;
+			usingDefaultTarget = FALSE;
 		}
 		else if (bestMovePointsForTarget[bankDef] > mostMovePoints) //This target is the best one so far
 		{
+			if (SPLIT(move) == SPLIT_STATUS && move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
+			{
+				if (!usingDefaultTarget //Has added new targets
+				|| !DefaultTargetIsUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex))
+					continue; //No point in using a status move on this target
+
+				//Replace the initial useless move with this new useless move since it has a better score
+			}
+
 			//Make target new best and only target
 			mostViableTargetsNo = 1;
 			mostViableTargetsArray[0] = bankDef;
 			mostMovePoints = bestMovePointsForTarget[bankDef];
+			usingDefaultTarget = FALSE;
 
 			if (!(bankDef & BIT_FLANK)) //Don't waste time if just finished dealing with the last enemy mon
 			{
@@ -3035,11 +3077,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							}
 
 							s32 adjustedHP = MathMin(((s32) consideredMon->hp) + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
-							if (adjustedHP + passiveRecovery < (s32) (dmg * 2)) //Move could 2HKO new mon
+							if (adjustedHP + passiveRecovery <= (s32) (dmg * 2)) //Move could 2HKO new mon
 							{
 								isWeakToMove = TRUE;
 							}
-							else if (adjustedHP + (passiveRecovery * 2) < (s32) (dmg * 3)) //Move could 3HKO mon
+							else if (adjustedHP + (passiveRecovery * 2) <= (s32) (dmg * 3)) //Move could 3HKO mon
 							{
 								++isNormalEffectiveness;
 							}

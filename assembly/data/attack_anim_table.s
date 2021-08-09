@@ -9755,12 +9755,15 @@ ANIM_DRAGONASCENT:
 	waitbgfadein
 	playsound2 151, SOUND_PAN_ATTACKER
 	makebankinvisible bank_attacker
-	launchtemplate ASCENT_FLYUP 0x2 0x7 0x0 0x0 0x400 0x24 0x15 0x1 bank_attacker
+	launchtask AnimTask_IsAttackerRayquaza 0x2 0x0
+	jumpifargmatches 0x0 0x0 DRAGON_ASCENT_PURPLE_FLY_UP
+	launchtemplate ASCENT_FLYUP TEMPLATE_ATTACKER | 2, 0x7 0x0 0x0 0x400 0x24 0x15 0x1 bank_attacker
+DRAGON_ASCENT_REJOIN_1:
 	waitanimation
 	launchtask AnimTask_pal_fade, 0xa 0x5, PAL_ATK | PAL_BG | PAL_BG_4 | PAL_BG_5, 4, 0, 14, 0x5400|0x3E0|0x1B	@RGB(21, 31, 27)
 	playsound2 133, SOUND_PAN_ATTACKER
 	waitanimation
-	playsound2 202, SOUND_PAN_ATTACKER
+	playsound2 202, SOUND_PAN_ABOVE
 	launchtask AnimTask_scroll_background, 0x5 0x4, -7304, -784, 1, -1
 	pause 2
 	launchtask AnimTask_pal_fade, 0xa 0x5, PAL_ATK | PAL_BG | PAL_BG_4 | PAL_BG_5, 0, 14, 0, 0x5400|0x3E0|0x1B	@RGB(21, 31, 27)
@@ -9768,8 +9771,11 @@ ANIM_DRAGONASCENT:
 	pause 1
 	pokespritetobg side_target
 	setblends 0x80C
-	playsound2 128, SOUND_PAN_ATTACKER
-	launchtemplate DRAGONASCENT_DRAKE, TEMPLATE_ATTACKER | 2, 0x1 5
+	playsound2 128, SOUND_PAN_TARGET
+	launchtask AnimTask_IsAttackerRayquaza 0x2 0x0
+	jumpifargmatches 0x0 0x0 DRAGON_ASCENT_PURPLE_DRAKE
+	launchtemplate DRAGONASCENT_DRAKE, TEMPLATE_TARGET | 2, 0x1 5
+DRAGON_ASCENT_REJOIN_2:
 	pause 1
 	playsound2 134, SOUND_PAN_TARGET
 	launchtemplate Template_Hit, TEMPLATE_TARGET | 4, 0x4, -10, 0, 1, 0
@@ -9785,9 +9791,21 @@ ANIM_DRAGONASCENT:
 	call UNSET_SCROLLING_BG
 	endanimation
 
+DRAGON_ASCENT_PURPLE_FLY_UP:
+	unloadparticle ANIM_TAG_DRAGON_ASCENT
+	loadparticle ANIM_TAG_PURPLE_DRAKE
+	launchtemplate ASCENT_FLYUP_PURPLE TEMPLATE_ATTACKER | 2, 0x7 0x0 0x0 0x400 0x24 0x15 0x1 bank_attacker
+	goto DRAGON_ASCENT_REJOIN_1
+
+DRAGON_ASCENT_PURPLE_DRAKE:
+	launchtemplate DRAGONASCENT_DRAKE_PURPLE, TEMPLATE_TARGET | 2, 0x1 5
+	goto DRAGON_ASCENT_REJOIN_2
+
 .align 2
 ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_UP_ROTATIONS 0x80B477D
+ASCENT_FLYUP_PURPLE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_UP_ROTATIONS 0x80B477D
 DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+DRAGONASCENT_DRAKE_PURPLE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

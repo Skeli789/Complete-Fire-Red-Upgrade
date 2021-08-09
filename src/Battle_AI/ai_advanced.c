@@ -245,10 +245,15 @@ bool8 IsClassCleric(u8 class)
 	return class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
 }
 
+bool8 IsClassDoublesPhazer(u8 class)
+{
+	return class == FIGHT_CLASS_DOUBLES_PHAZING;
+}
+
 bool8 IsClassPhazer(u8 class)
 {
 	return class == FIGHT_CLASS_TEAM_SUPPORT_PHAZING
-	    || class == FIGHT_CLASS_DOUBLES_PHAZING;
+	    || IsClassDoublesPhazer(class);
 }
 
 bool8 IsClassEntryHazards(u8 class)
@@ -711,7 +716,10 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			}
 			else if (hasPhazing)
 			{
-				class = FIGHT_CLASS_DOUBLES_PHAZING;
+				if (attackMoveNum == 3 || (attackMoveNum == 2 && hasPersonalProtect))
+					class = FIGHT_CLASS_DOUBLES_SETUP_ATTACKER;
+				else
+					class = FIGHT_CLASS_DOUBLES_PHAZING;
 			}
 			else if (attackMoveNum >= MAX_MON_MOVES || (attackMoveNum == 3 && hasPersonalProtect))
 			{

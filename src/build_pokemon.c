@@ -1271,6 +1271,7 @@ static void ModifySpeciesAndLevelForGenericBattle(unusedArg u16* species, unused
 	}
 
 	if (highestPlayerTeamLevel >= startScalingAtLevel //Strongest is stronger than Gym Leader would be normally
+	|| IsPseudoBossTrainerPartyForLevelScaling(trainerPartyFlags) //Fighting a pseudo boss on Difficult
 	#ifdef VAR_GAME_DIFFICULTY
 	|| VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY //Or the game is on on a harder setting
 	#endif

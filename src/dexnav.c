@@ -1243,6 +1243,14 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 		#endif
 	}
 
+	#ifdef UNBOUND
+	if (genAbility
+	&& !FlagGet(FLAG_SYS_GAME_CLEAR)
+	&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY
+	&& gBaseStats[species].hiddenAbility == ABILITY_IMPOSTER)
+		genAbility = FALSE; //Don't allow Imposter until the post-game
+	#endif
+
 	if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE
 	&& GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Only give hidden ability if Pokemon has been caught before
 		return GetHiddenAbility(species);
