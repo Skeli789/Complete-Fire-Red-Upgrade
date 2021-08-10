@@ -262,6 +262,10 @@ TradePokeballFixHook 804BBD8 0
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0
 DoubleWildDexHook1 802D9D8 0
 DoubleWildDexHook2 802DAEC 0
+PokeBallThrowSoundHook 804AA2C 0
+TrainersThrowPokeBallsHook1 804AB04 1
+TrainersThrowPokeBallsHook2 804B80E 1
+SpriteCB_OpponentMonSendOut_1 804B868 1
 
 ##Illusion Hooks
 BattleLoadOpponentMonSpriteGfxHook 803432C 2

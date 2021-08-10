@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/pokeball.h"
 #include "../include/random.h"
@@ -463,5 +464,22 @@ void SpriteCB_WildMonShowHealthbox(struct Sprite *sprite)
         if (!BeginNormalPaletteFade(selectedPalettes, 0, 10, 0, RGB(8, 8, 8))) //If a fade is already in progress,
 			gPaletteFade_selectedPalettes |= selectedPalettes; //Then add second mon in wild doubles to the palettes to unfade
     }
+}
+#undef sBattler
+
+#define sBattler data[6]
+void SpriteCB_OpponentMonSendOut_1(struct Sprite* sprite)
+{
+	sprite->data[0] = 25;
+	sprite->data[2] = GetBattlerSpriteCoord(sprite->sBattler, BATTLER_COORD_X_2);
+	sprite->data[4] = GetBattlerSpriteCoord(sprite->sBattler, BATTLER_COORD_Y) + 24;
+	sprite->data[5] = -30;
+
+	if (IS_DOUBLE_BATTLE && GetBattlerPosition(sprite->sBattler) == B_POSITION_OPPONENT_LEFT)
+		sprite->data[0] = 23; //Slightly faster than the second mon
+
+	sprite->oam.affineParam = sprite->sBattler;
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PlayerMonSendOut_2;
 }
 #undef sBattler

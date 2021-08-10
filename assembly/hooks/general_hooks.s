@@ -149,6 +149,46 @@ NormalBallThrowReturn:
 	bx r2
 
 .pool
+@0x804AA2C with r0
+PokeBallThrowSoundHook:
+	mov r0, #0x36 @Throw Poke Ball
+	ldr r1, =PlaySE
+	bl bxr1
+	ldr r0, =0x804AA68 | 1
+	bx r0
+
+.pool
+@0x804AB04 with r1
+TrainersThrowPokeBallsHook1:
+	add r0, #24 @X-Offset to the right thrown from
+	strh r0, [r4, #0x20]
+	mov r0, r6
+	mov r1, #1
+	ldr r2, =GetBattlerSpriteCoord
+	bl bxr2
+	lsl r0, #0x18
+	lsr r0, #0x18
+	sub r0, #12 @Y-Offset upwards thrown from
+	ldr r1, =0x0804AB14 | 1
+	bx r1
+
+.pool
+@0x804B80E with r1
+TrainersThrowPokeBallsHook2:
+	mov r0, r4
+	bl GetBattlerPosition
+	mov r1, #2 @BIT_FLANK
+	and r0, r1
+	cmp r0, #0
+	beq ReleaseMon1FromBall @Left mon
+	ldr r0, =0x0804B81C | 1 @Release mon 2
+	bx r0
+
+ReleaseMon1FromBall:
+	ldr r0, =0x0804B828 | 1
+	bx r0
+
+.pool
 @0x80A1E2C with r0
 DoubleWildPokeBallItemUseFixHook:
 	mov r0, r4

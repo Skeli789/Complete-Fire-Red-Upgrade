@@ -777,6 +777,7 @@ CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
 /* Poke Ball Functions */
 SpriteCB_TestBallThrow = 0x804ABD4 | 1;
 SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
+SpriteCB_PlayerMonSendOut_2 = 0x804B6D4 | 1;
 CreatePokeballSpriteToReleaseMon = 0x804B908 | 1;
 objc_ball_instanciate2_entry_804B9E8 = 0x804B9E8 | 1;
 CreateTradePokeballSprite = 0x804BB98 | 1;
