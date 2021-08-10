@@ -615,7 +615,8 @@ enum EvolutionMethods
 	EVO_CRITICAL_HIT, // successfully land 3 critical hits in one battle
 	EVO_NATURE_HIGH, // evolution based on high key nature at a certain level
 	EVO_NATURE_LOW, // evolution based on low key nature at a certain level
-	EVO_DAMAGE_LOCATION // recieve 49+ damage in battle without fainting, walk to specific tile
+	EVO_DAMAGE_LOCATION, // recieve 49+ damage in battle without fainting, walk to specific tile
+	EVO_ITEM_LOCATION, // Stand on a tile with a certain behaviour and use an item on a Pokemon
 };
 #define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE

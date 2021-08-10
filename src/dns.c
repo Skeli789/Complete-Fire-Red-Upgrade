@@ -112,7 +112,7 @@ static void FadeDayNightPalettes(void)
 					}
 
 					if (hardFade) //Changed routes and part of the tileset was reloaded
-						DmaCopy16(3, gPlttBufferFaded, (void *)PLTT, 0x20 * 12); //12 tileset palettes
+						DmaCopy16(3, gPlttBufferFaded, (void *)PLTT, 0x20 * 13); //13 tileset palettes
 				}
 
 				if (coeff == 0)
@@ -264,7 +264,7 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 		gWindowsLitUp = FALSE;
 	}
 
-	for (u16 paletteOffset = 0; paletteOffset < 12 * 16; paletteOffset += 16) //Only background colours
+	for (u16 paletteOffset = 0; paletteOffset < 13 * 16; paletteOffset += 16) //Only background colours
 	{
 		if (selectedPalettes & 1)
 			BlendFadedUnfadedPalette(paletteOffset, 16, coeff, color, palFadeActive);

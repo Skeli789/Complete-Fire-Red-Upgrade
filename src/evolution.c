@@ -2,6 +2,8 @@
 #include "defines_battle.h"
 #include "../include/battle.h"
 #include "../include/field_weather.h"
+#include "../include/field_player_avatar.h"
+#include "../include/fieldmap.h"
 #include "../include/overworld.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
@@ -282,6 +284,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					&& !HasHighNature(mon))
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
+
 				//case EVO_DAMAGE_LOCATION:
 			}
 		}
@@ -313,11 +316,22 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 	case EVO_MODE_ITEM_CHECK:	// using items
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if (gEvolutionTable[species][i].method == EVO_ITEM
+			if ((gEvolutionTable[species][i].method == EVO_ITEM || gEvolutionTable[species][i].method == EVO_ITEM_LOCATION)
 			 && gEvolutionTable[species][i].param == evolutionItem)
 			{
 				if (evolutionItem == ITEM_DAWN_STONE && GetMonGender(mon) != gEvolutionTable[species][i].unknown)
 					break;
+
+				if (gEvolutionTable[species][i].method == EVO_ITEM_LOCATION)
+				{
+					s16 x, y, behaviour;
+					PlayerGetDestCoords(&x, &y);
+					behaviour = MapGridGetMetatileBehaviorAt(x, y);
+
+					if (behaviour != gEvolutionTable[species][i].unknown) //Not standing on the correct kind of tile
+						continue;				
+				}
+
 				targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				break;
 			}
@@ -372,6 +386,7 @@ bool8 IsItemEvolutionMethod(u8 method)
 {
 	switch (method) {
 		case EVO_ITEM:
+		case EVO_ITEM_LOCATION:
 		case EVO_TRADE_ITEM:
 		case EVO_HOLD_ITEM_NIGHT:
 		case EVO_HOLD_ITEM_DAY:
