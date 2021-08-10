@@ -1407,3 +1407,11 @@ LoadMapFromCameraTransition_DNSFixHook2:
 	bl TryLoadTileset2OnCameraTransition
 	ldr r0, =0x80558D2 | 1
 	bx r0
+
+.pool
+@0x80714D4 with r0
+BlendPalettesOptimization:
+	push {lr}
+	lsl r1, #0x2
+	bl BlendPalettesOptimized
+	pop {pc}

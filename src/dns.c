@@ -354,6 +354,52 @@ void DNSBattleBGPalFade(void)
 }
 #endif
 
+void BlendPalettesOptimized(u32 selectedPalettes, u32 coeff, u32 blendColor)
+{
+	s32 newR, newG, newB;
+	u16 *palDataSrc, *palDataDst;
+
+	if (!selectedPalettes)
+		return;
+
+	newR = (blendColor << 27) >> 27;
+	newG = (blendColor << 22) >> 27;
+	newB = (blendColor << 17) >> 27;
+
+	palDataSrc = gPlttBufferUnfaded;
+	palDataDst = gPlttBufferFaded;
+
+	do
+	{
+		if (selectedPalettes & 1)
+		{
+			u16* palDataSrcEnd = palDataSrc + 16;
+			while (palDataSrc != palDataSrcEnd)
+			{
+				u32 palDataSrcColor = *palDataSrc;
+
+				s32 r = (palDataSrcColor << 27) >> 27;
+				s32 g = (palDataSrcColor << 22) >> 27;
+				s32 b = (palDataSrcColor << 17) >> 27;
+
+				*palDataDst = ((r + (((newR - r) * coeff) >> 5)) << 0)
+							| ((g + (((newG - g) * coeff) >> 5)) << 5)
+							| ((b + (((newB - b) * coeff) >> 5)) << 10);
+
+				palDataSrc++;
+				palDataDst++;
+			}
+		}
+		else
+		{
+			palDataSrc += 16;
+			palDataDst += 16;
+		}
+
+		selectedPalettes >>= 1;
+	} while (selectedPalettes);
+}
+
 bool8 IsDayTime(void)
 {
 	return gClock.hour >= TIME_MORNING_START && gClock.hour < TIME_NIGHT_START;
