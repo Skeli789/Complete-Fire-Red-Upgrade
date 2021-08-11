@@ -101,7 +101,7 @@ extern struct ScrollArrowsTemplate gTempScrollArrowTemplate;
 
 // Exported ROM declarations
 s32 __attribute__((long_call)) DoMysteryGiftListMenu(const struct WindowTemplate *windowTemplate, const struct ListMenuTemplate *listMenuTemplate, u8 arg2, u16 tileNum, u16 palNum);
-u8 __attribute__((long_call)) ListMenuInit(struct ListMenuTemplate *listMenuTemplate, u16 scrollOffset, u16 selectedRow);
+u8 __attribute__((long_call)) ListMenuInit(const struct ListMenuTemplate *listMenuTemplate, u16 cursorPos, u16 itemsAbove);
 u8 __attribute__((long_call)) ListMenuInitInRect(struct ListMenuTemplate *listMenuTemplate, struct ListMenuWindowRect *arg1, u16 scrollOffset, u16 selectedRow);
 s32 __attribute__((long_call)) ListMenu_ProcessInput(u8 listTaskId);
 void __attribute__((long_call)) DestroyListMenuTask(u8 listTaskId, u16 *scrollOffset, u16 *selectedRow);

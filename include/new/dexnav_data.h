@@ -9,20 +9,23 @@
  */
 
 //IMAGES
-extern const u8 gInterfaceGfx_dexnavGuiTiles[];
-extern const u8 gInterfaceGfx_dexnavGuiMap[];
-extern const u8 gInterfaceGfx_dexnavGuiPal[];
-extern const u8 gInterfaceGfx_DexNavGuiVolcanoPal[];
-extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseAPal[];
-extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseBPal[];
-extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseCPal[];
-extern const u8 gInterfaceGfx_DexNavGuiAutumnPal[];
-extern const u8 gInterfaceGfx_DexNavGuiWinterPal[];
-extern const u8 gInterfaceGfx_DexNavGuiDesertPal[];
-extern const u8 gInterfaceGfx_DexNavGuiSwampPal[];
-extern const u8 gInterfaceGfx_DexNavGuiCavePal[];
-extern const u8 gInterfaceGfx_DexNavGuiDarkerCavePal[];
-extern const u8 gInterfaceGfx_DexNavGuiIndoorPal[];
+extern const u8 DexNavBGTiles[];
+extern const u8 DexNavBGMap[];
+extern const u16 DexNavBGPal[];
+extern const u8 DexNavBGUnboundTiles[];
+extern const u8 DexNavBGUnboundMap[];
+extern const u16 DexNavBGUnboundPal[];
+extern const u16 DexNavBG_VolcanoPal[];
+extern const u16 DexNavBG_FlowerParadiseAPal[];
+extern const u16 DexNavBG_FlowerParadiseBPal[];
+extern const u16 DexNavBG_FlowerParadiseCPal[];
+extern const u16 DexNavBG_AutumnPal[];
+extern const u16 DexNavBG_WinterPal[];
+extern const u16 DexNavBG_DesertPal[];
+extern const u16 DexNavBG_SwampPal[];
+extern const u16 DexNavBG_CavePal[];
+extern const u16 DexNavBG_DarkerCavePal[];
+extern const u16 DexNavBG_IndoorPal[];
 extern const u8 gInterfaceGfx_dexnavStarsTiles[];
 extern const u8 gInterfaceGfx_dexnavStarsPal[];
 extern const u8 gInterfaceGfx_emptyTiles[];
@@ -36,7 +39,7 @@ extern const u8 DexNavBButtonTiles[];
 extern const u8 DexNavHUDChainCanvasTiles[];
 
 //STRINGS
-extern const u8 gText_DexNavInstructions[];
+extern const u8 gText_EmptyString[];
 extern const u8 gText_DexNavWater[];
 extern const u8 gText_DexNavLand[];
 extern const u8 gText_PinkFlowers[];
@@ -54,15 +57,21 @@ extern const u8 gText_GotAwayShouldSneak[];
 extern const u8 gText_CannotBeFound[];
 extern const u8 gText_NotFoundNearby[];
 extern const u8 gText_TooDarkForDexNav[];
-extern const u8 gText_DexNavBack[];
+extern const u8 gText_DexNav_Chain[];
 extern const u8 gText_DexNav_NoInfo[];
 extern const u8 gText_DexNav_CaptureToSee[];
+extern const u8 gText_DexNav_Walk[];
+extern const u8 gText_DexNav_Surf[];
+extern const u8 gText_DexNav_Fish[];
+extern const u8 gText_DexNav_Swarm[];
 extern const u8 gText_DexNav_ChooseMon[];
 extern const u8 gText_DexNav_Invalid[];
 extern const u8 gText_DexNav_NoDataForSlot[];
 extern const u8 gText_DexNav_PokemonSelected[];
 extern const u8 gText_DexNav_Locked[];
+extern const u8 gText_DexNav_NeedRod[];
 extern const u8 gText_DexNav_TooDark[];
+extern const u8 gText_DexNav_NoPokemonHere[];
 extern const u8 gText_DexNav_UpArrow[];
 extern const u8 gText_DexNav_DownArrow[];
 extern const u8 gText_DexNav_LeftArrow[];
@@ -99,149 +108,211 @@ extern const u8 gText_DexNavHUDChainNumber[];
 #define ICONX 0x10
 #define ICONY 0x92
 
-#define NUM_LAND_MONS 12
 #define NUM_WATER_MONS 5
 #define NUM_OLD_ROD_MONS 2
 #define NUM_GOOD_ROD_MONS 3
 #define NUM_SUPER_ROD_MONS 5
 #define NUM_FISHING_MONS (NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS + NUM_SUPER_ROD_MONS)
-#define NUM_TOTAL_WATER_MONS (NUM_WATER_MONS + NUM_FISHING_MONS)
 
-#define LAND_ROW_LENGTH (6 * 2)
-#define LAND_FIRST_ROW_LAST_INDEX (5 * 2)
-#define LAND_SECOND_ROW_LAST_INDEX (LAND_FIRST_ROW_LAST_INDEX + LAND_ROW_LENGTH)
-#define LAND_SECOND_ROW_FIRST_INDEX (6 * 2)
-#define WATER_ROW_LAST_INDEX (4 * 2)
-#define ROW_MON_LENGTH 2
-#define WATER_MONS_PER_PAGE 5
+#define ROW_MON_LENGTH 1
+#define WATER_ROW_LENGTH 6
+#define LAND_ROW_LENGTH 6
+#define LAND_ROW_COUNT 2
+#define WATER_ROW_COUNT 3
+#define MIN_WATER_ROW_COUNT 2
+#define VISIBLE_LAND_ROW_COUNT 2
+#define VISIBLE_WATER_ROW_COUNT 2
+#define LAND_ROW_LAST_INDEX (LAND_ROW_LENGTH - 1)
+#define WATER_ROW_LAST_INDEX (WATER_ROW_LENGTH - 1)
+#define MAX_TOTAL_LAND_MONS (LAND_ROW_COUNT * LAND_ROW_LENGTH)
+#define MAX_TOTAL_WATER_MONS (WATER_ROW_LENGTH * WATER_ROW_COUNT)
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 //GUI Data
-struct DexNavGuiData
+struct DexNavGUIData
 {
-    u16 grassSpecies[NUM_LAND_MONS];
-    u16 waterSpecies[NUM_TOTAL_WATER_MONS];
-	u16 hiddenSpecies[NUM_LAND_MONS + 1];
-	u8 unownForms[NUM_LAND_MONS];
-	u8 unownFormsByDNavIndices[NUM_LAND_MONS];
+    u16 grassSpecies[MAX_TOTAL_LAND_MONS];
+    u16 waterSpecies[MAX_TOTAL_WATER_MONS];
+	u16 hiddenSpecies[MAX_TOTAL_LAND_MONS + 1];
+	u8 unownForms[MAX_TOTAL_LAND_MONS];
+	u8 unownFormsByDNavIndices[MAX_TOTAL_LAND_MONS];
+	u16 waterItemRequired[MAX_TOTAL_WATER_MONS];
+	u8 landEncounterMethod[MAX_TOTAL_LAND_MONS];
+	u8 waterEncounterMethod[MAX_TOTAL_WATER_MONS];
 	u8 numGrassMons;
 	u8 numWaterMons;
 	u8 numHiddenLandMons;
 	u8 numHiddenWaterMons;
-    u8 cursorId;
-    u8 spriteIds[17];
+    u8 cursorSpriteId;
     u8 selectedIndex;
-    u8 selectedArr;
-	s8 waterPage;
-	u16 waterScrollArrowDummy;
+    u8 selectedArea;
+	u16 landRowScroll;
+	u16 waterRowScroll;
+	u16 waterRowsAbove;
 	u8* tilemapPtr;
 };
 
 enum DexNavMessages
 {
-	MESSAGE_INVALID,
-	MESSAGE_CHOOSE_MON,
 	MESSAGE_POKEMON_SELECTED,
 	MESSAGE_REGISTERED,
+	MESSAGE_NEED_ROD,
+	MESSAGE_INVALID,
 	MESSAGE_NO_DATA,
 	MESSAGE_TOO_DARK,
+	MESSAGE_NO_POKEMON_HERE,
+};
+
+enum EncounterTypes
+{
+	ENCOUNTER_METHOD_GRASS,
+	ENCOUNTER_METHOD_WATER,
+	ENCOUNTER_METHOD_FISH,
+	ENCOUNTER_METHOD_SWARM,
 };
 
 enum BGs
 {
-	BG_CONTEXT_MENU,
-	BG_UNUSED,
+	BG_TEXTBOX,
+	BG_TEXT_2,
 	BG_TEXT,
 	BG_BACKGROUND,
 };
 
 enum
 {
+	WIN_TEXTBOX,
+	WIN_CONTEXT_MENU,
 	WIN_SPECIES,
 	WIN_SEARCH_LEVEL,
-	WIN_CHAIN_LENGTH,
+	WIN_METHOD,
 	WIN_HIDDEN_ABILITY,
-	WIN_MESSAGE,
+	WIN_HELD_ITEMS,
+	WIN_MON_TYPE_1,
+	WIN_MON_TYPE_2,
 	WIN_WATER,
 	WIN_LAND,
 	WIN_MAP_NAME,
-	WIN_INSTRUCTIONS,
-	WIN_CONTEXT_MENU,
+	WIN_CHAIN_LENGTH,
 	WINDOW_COUNT,
 };
 
 static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
 {
+	[WIN_TEXTBOX] =
+    {
+		.bg = BG_TEXTBOX,
+		.tilemapLeft = 1,
+		.tilemapTop = 15,
+		.width = 28,
+		.height = 4,
+		.paletteNum = 14,
+		.baseBlock = 1,
+    },
+	[WIN_CONTEXT_MENU] =
+	{
+        .bg = BG_TEXTBOX,
+        .tilemapLeft = 21,
+        .tilemapTop = 7,
+        .width = 7,
+        .height = 6,
+        .paletteNum = 14,
+        .baseBlock = 113,
+	},
 	[WIN_SPECIES] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 21,
-        .tilemapTop = 6,
+        .bg = BG_TEXT_2, //Above so it doesn't conflict with the type icons
+        .tilemapLeft = 20,
+        .tilemapTop = 2,
         .width = 9,
-        .height = 2,
+        .height = 3,
         .paletteNum = 15,
-        .baseBlock = 1,
+        .baseBlock = 155,
 	},
 	[WIN_SEARCH_LEVEL] =
     {
         .bg = BG_TEXT,
-        .tilemapLeft = 21,
-        .tilemapTop = 9,
+        .tilemapLeft = 20,
+        .tilemapTop = 7,
         .width = 9,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 19,
+        .baseBlock = 182,
     },
-	[WIN_CHAIN_LENGTH] =
+	[WIN_METHOD] =
     {
         .bg = BG_TEXT,
-        .tilemapLeft = 21,
-        .tilemapTop = 12,
+        .tilemapLeft = 20,
+        .tilemapTop = 10,
         .width = 9,
-        .height = 3,
+        .height = 2,
         .paletteNum = 15,
-        .baseBlock = 64,
+        .baseBlock = 200,
     },
 	[WIN_HIDDEN_ABILITY] =
     {
         .bg = BG_TEXT,
         .tilemapLeft = 20,
-        .tilemapTop = 15,
+        .tilemapTop = 13,
         .width = 10,
-        .height = 3,
+        .height = 2,
         .paletteNum = 15,
-        .baseBlock = 91,
+        .baseBlock = 218,
     },
-	[WIN_MESSAGE] =
+	[WIN_HELD_ITEMS] =
     {
         .bg = BG_TEXT,
-        .tilemapLeft = 0,
-        .tilemapTop = 17,
-        .width = 27,
-        .height = 3,
+        .tilemapLeft = 20,
+        .tilemapTop = 16,
+        .width = 10,
+        .height = 4,
         .paletteNum = 15,
-        .baseBlock = 130,
+        .baseBlock = 238,
     },
+	[WIN_MON_TYPE_1] =
+	{
+        .bg = BG_TEXT,
+        .tilemapLeft = 20,
+        .tilemapTop = 4,
+        .width = 5,
+        .height = 2,
+        .paletteNum = 12,
+        .baseBlock = 278,
+	},
+	[WIN_MON_TYPE_2] =
+	{
+        .bg = BG_TEXT,
+        .tilemapLeft = 25,
+        .tilemapTop = 4,
+        .width = 5,
+        .height = 2,
+        .paletteNum = 12,
+        .baseBlock = 288,
+	},
 	[WIN_WATER] =
 	{
         .bg = BG_TEXT,
-        .tilemapLeft = 1,
+        .tilemapLeft = 0,
         .tilemapTop = 2,
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 211,
+        .baseBlock = 298,
 	},
 	[WIN_LAND] =
 	{
         .bg = BG_TEXT,
         .tilemapLeft = 0,
-        .tilemapTop = 8,
+	#ifdef UNBOUND
+        .tilemapTop = 10,
+	#else
+        .tilemapTop = 11,
+	#endif
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 268,
+        .baseBlock = 355,
 	},
 	[WIN_MAP_NAME] =
 	{
@@ -251,27 +322,17 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 12,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 325,
+        .baseBlock = 412,
 	},
-	[WIN_INSTRUCTIONS] =
+	[WIN_CHAIN_LENGTH] =
 	{
         .bg = BG_TEXT,
-        .tilemapLeft = 17,
+        .tilemapLeft = 22,
         .tilemapTop = 0,
-        .width = 13,
+        .width = 8,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 361,
-	},
-	[WIN_CONTEXT_MENU] =
-	{
-        .bg = BG_CONTEXT_MENU,
-        .tilemapLeft = 22,
-        .tilemapTop = 13,
-        .width = 7,
-        .height = 6,
-        .paletteNum = 14,
-        .baseBlock = 387,
+        .baseBlock = 448,
 	},
 	//Base block 500 is used for frame tiles
     DUMMY_WIN_TEMPLATE
@@ -279,9 +340,9 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
 
 static const struct BgTemplate sDexNavBgTemplates[] =
 {
-    [BG_CONTEXT_MENU] =
+    [BG_TEXTBOX] =
 	{
-        .bg = 0,
+        .bg = BG_TEXTBOX,
         .charBaseIndex = 0,
         .mapBaseIndex = 31,
         .screenSize = 0,
@@ -289,9 +350,9 @@ static const struct BgTemplate sDexNavBgTemplates[] =
         .priority = 0,
         .baseTile = 0,
     },
-	[BG_UNUSED] =
+	[BG_TEXT_2] =
     {
-        .bg = 1,
+        .bg = BG_TEXT_2,
         .charBaseIndex = 1,
         .mapBaseIndex = 30,
         .screenSize = 0,
@@ -301,7 +362,7 @@ static const struct BgTemplate sDexNavBgTemplates[] =
     },
 	[BG_TEXT] =
     {
-        .bg = 2,
+        .bg = BG_TEXT,
         .charBaseIndex = 2,
         .mapBaseIndex = 29,
         .screenSize = 0,
@@ -311,7 +372,7 @@ static const struct BgTemplate sDexNavBgTemplates[] =
     },
 	[BG_BACKGROUND] =
     {
-        .bg = 3,
+        .bg = BG_BACKGROUND,
         .charBaseIndex = 3,
         .mapBaseIndex = 28,
         .screenSize = 0,
@@ -321,13 +382,43 @@ static const struct BgTemplate sDexNavBgTemplates[] =
     },
 };
 
+static const struct ListMenuItem sContextMenuListItems[] =
+{
+	{gText_DexNav_ListMenuRegister, 0},
+	{gText_DexNav_ListMenuScan, 1},
+	{gText_DexNav_ListMenuCancel, 2},
+};
+
+static const struct ListMenuTemplate sContextMenuTemplate =
+{
+	.items = sContextMenuListItems,
+	.totalItems = 3, //Register, Scan, Close
+	.moveCursorFunc = ContextMenuMoveCursorFunc,
+	.itemPrintFunc = ContextMenuItemPrintFunc,
+
+	.windowId = WIN_CONTEXT_MENU,
+	.header_X = 0,
+	.item_X = 8, //Text is 8 px from left side of tile
+	.cursor_X = 0, //Cursor is 0 px from left side of tile
+	.lettersSpacing = 0,
+	.itemVerticalPadding = 2, //2 px between items
+	.upText_Y = 3, //3 px from top of tile
+	.maxShowed = 3, //3 at a time
+	.fontId = 2, //Normal size
+	.cursorPal = 2, //Grey
+	.fillValue = 1,
+	.cursorShadowPal = 3, //Light Grey
+	.cursorKind = 0,
+	.scrollMultiple = LIST_NO_MULTIPLE_SCROLL,
+};
+
 static const struct OamData sCursorOam =
 {
 	.affineMode = ST_OAM_AFFINE_OFF,
 	.objMode = ST_OAM_OBJ_NORMAL,
 	.shape = SPRITE_SHAPE(32x32),
 	.size = SPRITE_SIZE(32x32),
-	.priority = 0, //Above other sprites
+	.priority = 1, //Above other sprites
 };
 
 static const struct OamData sCapturedAllPokemonSymbolOam =
@@ -355,9 +446,16 @@ static const union AnimCmd sAnimCmdHandCursor[] =
 	ANIMCMD_JUMP(0)
 };
 
+static const union AnimCmd sAnimCmdHandCursorPointed[] =
+{
+	ANIMCMD_FRAME(16, 30),
+	ANIMCMD_END
+};
+
 static const union AnimCmd *const sAnimCmdTable_HandCursor[] =
 {
 	sAnimCmdHandCursor,
+	sAnimCmdHandCursorPointed,
 };
 
 static void SpriteCB_GUICursor(struct Sprite* sprite);
@@ -400,8 +498,19 @@ static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInt
 static const struct CompressedSpritePalette sCapturedAllPokemonSpritePalette = {gInterfaceGfx_CapturedAllPokemonPal, CAPTURED_ALL_TAG};
 static const struct CompressedSpriteSheet sNoDataIconSpriteSheet = {gInterfaceGfx_DexNavNoDataSymbolTiles, (32 * 32) / 2, ICON_GFX_TAG};
 
-static const struct TextColor sDexNav_BlackText = {0, 3, 4};
-static const struct TextColor sDexNav_WhiteText = {0, 1, 2};
+static const struct TextColor sWhiteText =
+{
+	.bgColor = TEXT_COLOR_TRANSPARENT,
+	.fgColor = TEXT_COLOR_WHITE,
+	.shadowColor = TEXT_COLOR_DARK_GREY,
+};
+
+static const struct TextColor sBlackText =
+{
+	.bgColor = TEXT_COLOR_TRANSPARENT,
+	.fgColor = TEXT_COLOR_DARK_GREY,
+	.shadowColor = TEXT_COLOR_LIGHT_GREY,
+};
 
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
 static const u16 sDexNavGuiTextPal[] =
@@ -669,10 +778,3 @@ static const struct SpriteSheet sStarDullSpriteSheet = {&gInterfaceGfx_dexnavSta
 #endif
 const struct SpriteSheet gHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, GFX_TAG_HELD_ITEM};
 const struct SpritePalette gHeldItemSpritePalette = {(const u16*) 0x0845A3EC, GFX_TAG_HELD_ITEM};
-
-static const struct ListMenuItem sContextMenuListItems[] =
-{
-	{gText_DexNav_ListMenuRegister, 0},
-	{gText_DexNav_ListMenuScan, 1},
-	{gText_DexNav_ListMenuCancel, 2},
-};

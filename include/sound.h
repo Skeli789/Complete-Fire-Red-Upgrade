@@ -55,3 +55,5 @@ void __attribute__((long_call)) SE12PanpotControl(s8 pan);
 bool8 __attribute__((long_call)) IsSEPlaying(void);
 bool8 __attribute__((long_call)) IsBGMPlaying(void);
 bool8 __attribute__((long_call)) IsSpecialSEPlaying(void);
+void __attribute__((long_call)) SetBGMVolume_SuppressHelpSystemReduction(u16 volume);
+void __attribute__((long_call)) BGMVolumeMax_EnableHelpSystemReduction(void);

@@ -1,5 +1,4 @@
-#org @gText_DexNavInstructions
-[R_BUTTON]Register [B_BUTTON]Cancel
+//GUI Strings
 
 #org @gText_DexNavWater
 Water
@@ -31,6 +30,60 @@ Magma
 #org @gText_Sand
 Sand
 
+#org @gText_DexNav_Chain
+Chain: 
+
+#org @gText_DexNav_CaptureToSee
+Capture first!
+
+#org @gText_DexNav_Walk
+Walk
+
+#org @gText_DexNav_Surf
+Surf
+
+#org @gText_DexNav_Fish
+Fish
+
+#org @gText_DexNav_Swarm
+Swarm
+
+#org @gText_DexNav_NoInfo
+--------
+
+#org @gText_DexNav_ListMenuRegister
+Register
+
+#org @gText_DexNav_ListMenuScan
+Scan
+
+#org @gText_DexNav_ListMenuCancel
+Cancel
+
+#org @gText_DexNav_PokemonSelected
+[BUFFER1] is selected.
+
+#org @gText_DexNav_NeedRod
+The [BUFFER2] must be acquired\nbefore searching for [BUFFER1].[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Invalid
+That Pok\emon can't be searched yet![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoDataForSlot
+There's no data for that Pok\emon[.][PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Locked
+[BUFFER1] is searchable via [R_BUTTON]![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_TooDark
+It's too dark to search for a Pok\emon![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoPokemonHere
+No Pok\emon can be found here.[PAUSE_UNTIL_PRESS]
+
+
+//Field Strings
+
 #org @gText_DexNavDescription
 Search for wild Pok\emon in the area\nwith potential special qualities!
 
@@ -52,33 +105,6 @@ There is no reaction.\nThe signal was lost!
 #org @gText_TooDarkForDexNav
 It's too dark to search for\na Pok\emon!
 
-#org @gText_DexNavBack
- Back  
-
-#org @gText_DexNav_CaptureToSee
-Capture first!
-
-#org @gText_DexNav_NoInfo
---------
-
-#org @gText_DexNav_ChooseMon
-Choose a Pok\emon.
-
-#org @gText_DexNav_PokemonSelected
-[BUFFER1] is selected.
-
-#org @gText_DexNav_Invalid
-That Pok\emon can't be searched yet!
-
-#org @gText_DexNav_NoDataForSlot
-There's no data for that Pok\emon[.]
-
-#org @gText_DexNav_Locked
-[BUFFER1] is searchable via [R_BUTTON]!
-
-#org @gText_DexNav_TooDark
-It's too dark to search for a Pok\emon!
-
 #org @gText_DexNav_UpArrow
 [ARROW_UP]
 
@@ -91,17 +117,8 @@ It's too dark to search for a Pok\emon!
 #org @gText_DexNav_RightArrow
 [ARROW_RIGHT]
 
-#org @gText_MenuCube
-Cube
-
-#org @gText_DexNav_ListMenuRegister
-Register
-
-#org @gText_DexNav_ListMenuScan
-Scan
-
-#org @gText_DexNav_ListMenuCancel
-Cancel
-
 #org @gText_DexNavHUDChainNumber
 No. 
+
+#org @gText_MenuCube
+Cube

@@ -29,6 +29,7 @@ bool8 IsElectricAbsorptionAblity(u8 ability);
 bool8 IsPlusMinusAbility(u8 ability);
 bool8 IsUnnerveAbility(u8 ability);
 bool8 UnnerveOnOpposingField(u8 bank);
+bool8 AbilityIncreasesWildItemChance(u8 ability);
 bool8 AbilityBlocksIntimidate(u8 ability);
 bool8 AbilityPreventsLoweringAtk(u8 ability);
 bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId);

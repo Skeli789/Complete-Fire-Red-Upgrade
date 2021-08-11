@@ -63,6 +63,7 @@ void __attribute__((long_call)) ShowBg(u8 bg);
 void __attribute__((long_call)) HideBg(u8 bg);
 void __attribute__((long_call)) SetBgAttribute(u8 bg, u8 attributeId, u8 value);
 u16 __attribute__((long_call)) GetBgAttribute(u8 bg, u8 attributeId);
+u16 __attribute__((long_call)) GetBgControlAttribute(u8 bg, u8 attributeId);
 u32 __attribute__((long_call)) ChangeBgX(u8 bg, u32 value, u8 op);
 u32 __attribute__((long_call)) ChangeBgY(u8 bg, u32 value, u8 op);
 
@@ -82,7 +83,6 @@ u8 GetBgMode(void);
 void ResetBgControlStructs(void);
 void Unused_ResetBgControlStruct(u8 bg);
 void SetBgControlAttributes(u8 bg, u8 charBaseIndex, u8 mapBaseIndex, u8 screenSize, u8 paletteMode, u8 priority, u8 mosaic, u8 wraparound);
-u16 GetBgControlAttribute(u8 bg, u8 attributeId);
 u8 LoadBgVram(u8 bg, const void *src, u16 size, u16 destOffset, u8 mode);
 void SetTextModeAndHideBgs(void);
 bool8 IsInvalidBg(u8 bg);

@@ -27,6 +27,7 @@ void CalculateMonStatsNew(struct Pokemon *mon);
 u8 GetOpenWorldBadgeCount(void);
 u8 GetScaledWildBossLevel(u8 level);
 void TryRandomizeSpecies(u16* species);
+u16 GenerateWildMonHeldItem(u16 species, u8 bonus);
 void SetWildMonHeldItem(void);
 
 //Functions Hooked In

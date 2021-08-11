@@ -373,6 +373,10 @@ bool8 UnnerveOnOpposingField(u8 bank)
 		;
 }
 
+bool8 AbilityIncreasesWildItemChance(u8 ability)
+{
+	return ability == ABILITY_COMPOUNDEYES || ability == ABILITY_SUPERLUCK;
+}
 
 bool8 AbilityBlocksIntimidate(u8 ability)
 {

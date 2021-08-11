@@ -2324,43 +2324,56 @@ static void TryFixMiniorForm(struct Pokemon* mon)
 	}
 }
 
-void SetWildMonHeldItem(void)
+u16 GenerateWildMonHeldItem(u16 species, u8 bonus)
 {
-	u16 rnd = umodsi(Random(), 100);
-	u16 species;
+	u16 rnd = Random() % 100;
 	u16 var1 = 45;
 	u16 var2 = 95;
 
-	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, 0)
-	&& (GetMonAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES || GetMonAbility(&gPlayerParty[0]) == ABILITY_SUPERLUCK))
+	if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != ITEM_NONE)
+		return gBaseStats[species].item1; //100% chance
+
+	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
+	&& AbilityIncreasesWildItemChance(GetMonAbility(&gPlayerParty[0]))) //Increased chance of finding an item
 	{
 		var1 = 20;
 		var2 = 80;
 	}
 
+	if (bonus < var1)
+		var1 -= bonus;
+	else
+		var1 = 0; //Guaranteed at least one item
+
+	if (bonus < var2)
+		var2 -= bonus;
+	else
+		var2 = 0; //Guaranteed the second item
+
+	if (rnd < var1)
+		return ITEM_NONE;
+
+	if (rnd < var2)
+		return gBaseStats[species].item1;
+
+	return gBaseStats[species].item2;
+}
+
+void SetWildMonHeldItem(void)
+{
 	if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_TRAINER))
 	&& !gDexNavStartedBattle) //Items would be set earlier
 	{
-		for (int i = 0; i < 2; ++i) //Two possible wild opponents
+		for (u8 i = 0; i < 2; ++i) //Two possible wild opponents
 		{
 			if (i > 0 && !IS_DOUBLE_BATTLE)
 				break;
 
-			species = gEnemyParty[i].species;
-
-			if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
-			{
-				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-				continue;
-			}
-
-			if (rnd < var1)
-				continue;
-
-			if (rnd < var2)
-				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-			else
-				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
+			u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES, NULL);
+			u16 item = GenerateWildMonHeldItem(species, 0);
+			
+			if (item != ITEM_NONE)
+				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &item);
 		}
 	}
 }
