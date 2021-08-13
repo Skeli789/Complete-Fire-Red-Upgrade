@@ -69,7 +69,8 @@ Boosts "not very effective\" moves.
 
 #org @DESC_SOLIDROCK
 #org @DESC_FILTER
-Weakens super-effective moves.
+#org @DESC_PRISMARMOR
+Weakens super effective moves.
 
 #org @DESC_INFILTRATOR
 #ifdef UNBOUND
@@ -262,9 +263,6 @@ No special Ability.
 #org @DESC_POWERCONSTRUCT
 Transforms below half HP.
 
-#org @DESC_PRISMARMOR
-Weakens super-effective moves.
-
 #org @DESC_RKS_SYSTEM
 Changes type to match Memory.
 
@@ -326,7 +324,7 @@ Ups Defense on Grassy Terrain.
 Maxes Attack after a critical hit.
 
 #org @DESC_ANTICIPATION
-Senses super-effective moves.
+Senses super effective moves.
 
 #org @DESC_FOREWARN
 Warns of the foe's strongest move.
@@ -467,7 +465,7 @@ Takes over a KOed ally's Ability.
 Takes over a KOed ally's Ability.
 
 #org @DESC_NEUROFORCE
-Powers up super-effective hits.
+Powers up super effective hits.
 
 #org @DESC_GALVANIZE
 Normal moves become Electric.

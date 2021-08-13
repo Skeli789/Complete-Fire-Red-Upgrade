@@ -2760,7 +2760,8 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 		return TRUE;
 	}
 
-	if (input->pressedRButton && StartRButtonFunc())
+	if (input->pressedRButton && JOY_NEW(R_BUTTON) //Not when held!
+	&& StartRButtonFunc())
 	{
 		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;
 		return TRUE;

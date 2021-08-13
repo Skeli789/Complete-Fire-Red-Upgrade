@@ -2672,13 +2672,14 @@ u8* LoadTextBuffer0D(void)
 	return sScriptStringVars[11];
 }
 
-//@Details: Buffers the given ability name to the chosen buffer.
+//@Details: Buffers the given Ability's name to the chosen buffer.
 //@Input: Var 0x8000 - Ability Num
-//		  Var 0x8001 - Buffer #
+//		  Var 0x8001 - Species
+//		  Var 0x8002 - Buffer #
 void sp0CF_BufferAbilityName(void)
 {
-	const u8* name = GetAbilityName(Var8000, SPECIES_NONE);
-	StringCopy(sScriptStringVars[Var8001], name);
+	const u8* name = GetAbilityName(Var8000, Var8001);
+	StringCopy(sScriptStringVars[Var8002], name);
 }
 
 //////////////////EXPANDED COINS///////////////////////

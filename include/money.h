@@ -7,6 +7,7 @@ void __attribute__((long_call)) AddMoney(u32* moneySaveblock, u32 to_give);
 void __attribute__((long_call)) RemoveMoney(u32* moneyPtr, u32 toSub);
 bool8 __attribute__((long_call)) IsEnoughMoney(u32* moneyPtr, u32 cost);
 void __attribute__((long_call)) PrintMoneyAmountInMoneyBox(u8 windowId, int amount, u8 speed);
+void __attribute__((long_call)) PrintMoneyAmount(u8 windowId, u8 x, u8 y, int amount, u8 speed);
 
 /*
 void SetMoney(u32* moneyPtr, u32 newValue);

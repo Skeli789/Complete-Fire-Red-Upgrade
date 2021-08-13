@@ -917,6 +917,7 @@ struct NewBattleStruct
 	u8 ringChallengeBannedTypes[3];
 	u16 knockedOffWildItem;
 	u8 criticalHitsThisBattle[PARTY_SIZE];
+	u8 pickupMonId;
 
 	//Things for Spread Moves
 	s32 DamageTaken[MAX_BATTLERS_COUNT];

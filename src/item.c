@@ -375,9 +375,19 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_RELIC_SONG:
 			return dexNum == NATIONAL_DEX_MELOETTA;
 		#endif
-		#ifdef NATIONAL_DEX_PIKACHU
+		#if (defined NATIONAL_DEX_PICHU && defined NATIONAL_DEX_PIKACHU && defined NATIONAL_DEX_RAICHU)
 		case TUTOR_SPECIAL_VOLT_TACKLE:
-			return dexNum == NATIONAL_DEX_PIKACHU;
+			return dexNum == NATIONAL_DEX_PICHU
+				|| dexNum == NATIONAL_DEX_PIKACHU
+				|| dexNum == NATIONAL_DEX_RAICHU
+				#ifdef UNBOUND
+				|| dexNum == NATIONAL_DEX_SHINX
+				|| dexNum == NATIONAL_DEX_LUXIO
+				|| dexNum == NATIONAL_DEX_LUXRAY
+				|| dexNum == NATIONAL_DEX_BLITZLE
+				|| dexNum == NATIONAL_DEX_ZEBSTRIKA
+				#endif
+				;
 		#endif
 		#ifdef NATIONAL_DEX_RAYQUAZA
 		case TUTOR_SPECIAL_DRAGON_ASCENT:

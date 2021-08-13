@@ -5018,18 +5018,25 @@ void atkE4_getsecretpowereffect(void)
 
 void atkE5_pickupitemcalculation(void)
 {
-	for (u32 i = 0; i < PARTY_SIZE; ++i)
+
+
+	for (; gNewBS->pickupMonId < PARTY_SIZE; ++gNewBS->pickupMonId)
 	{
-		u16 item, level, chance;
-		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
-		
+		u16 item, chance, species, level;
+		struct Pokemon* mon = &gPlayerParty[gNewBS->pickupMonId];
+		species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+
 		if (species == SPECIES_NONE || species == SPECIES_EGG
-		|| GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL) != ITEM_NONE)
+		#ifndef PICKUP_ITEMS_STRAIGHT_TO_BAG //No issue with Pokemon already holding an item since they won't carry it anyway
+		|| GetMonData(mon, MON_DATA_HELD_ITEM, NULL) != ITEM_NONE
+		#endif
+		)
 			continue;
 
-		level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+		level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 
-		switch (GetMonAbility(&gPlayerParty[i])) {
+		switch (GetMonAbility(mon))
+		{
 			case ABILITY_PICKUP:
 				chance = 10; // ~10% chance of pickup to activate
 				item = ChoosePickupItem(level);
@@ -5043,7 +5050,27 @@ void atkE5_pickupitemcalculation(void)
 		}
 
 		if (Random() % 100 < chance)
+		{
+			#ifdef PICKUP_ITEMS_STRAIGHT_TO_BAG
+			if (CheckBagHasSpace(item, 1))
+			{
+				AddBagItem(item, 1);
+				gLastUsedItem = item;
+				PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, GetBattlerAtPosition(B_POSITION_PLAYER_LEFT), gNewBS->pickupMonId);
+				BattleScriptPush(gBattlescriptCurrInstr);
+				#ifdef UNBOUND
+				gBattleStringLoader = gText_PickUpItemToCube;
+				#else
+				gBattleStringLoader = gText_PickUpItemToBag;
+				#endif
+				++gNewBS->pickupMonId;
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				return;
+			}
+			#else
 			SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
+			#endif
+		}
 	}
 
 	++gBattlescriptCurrInstr;

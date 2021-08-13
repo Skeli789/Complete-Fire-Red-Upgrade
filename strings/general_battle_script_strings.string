@@ -326,6 +326,12 @@ The mysterious strong winds\ncontinue to blow.
 #org @gText_NoMinimizeOnInsane
 [CURRENT_MOVE] can't be selected on the\nInsane difficulty!\p
 
+#org @gText_PickUpItemToBag
+[BUFFER][00] found and placed one\n[LAST_ITEM] in the Bag!
+
+#org @gText_PickUpItemToCube
+[BUFFER][00] found and placed one\n[LAST_ITEM] in the Cube!
+
 #org @gText_PickedUpKnockedOffItem
 [PLAYER_NAME] picked up\none [LAST_ITEM]!
 

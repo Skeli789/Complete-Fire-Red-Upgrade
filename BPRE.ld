@@ -953,6 +953,7 @@ AddMoney = 0x809FDA0 | 1;
 GetMoney = 0x809FD58 | 1;
 RemoveMoney = 0x809FDD8 | 1;
 PrintMoneyAmountInMoneyBox = 0x809FE40 | 1;
+PrintMoneyAmount = 0x809FEC4 | 1;
 
 /* PokeMart Functions */
 Task_ShopMenu = 0x809AC10 | 1;
@@ -1556,6 +1557,7 @@ NameChooserSelectLetter = 0x809F75C | 1;
 
 /* Menu Functions */
 MenuHelpers_LinkSomething = 0x80BF708 | 1;
+AdjustQuantityAccordingToDPadInput = 0x80BF848 | 1;
 Menu_LoadStdPalAt = 0x80F77CC | 1;
 GetStdWindowBaseTileNum = 0x80F796C | 1;
 Menu_InitCursor = 0x810F7D8 | 1;
