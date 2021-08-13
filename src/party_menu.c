@@ -929,10 +929,11 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
 	u8 i, j, k;
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 	bool8 knowsFly = FALSE;
 	bool8 knowsDig = FALSE;
 	bool8 knowsCut = FALSE;
-	u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
+	#endif
 
 	sPartyMenuInternal->numActions = 0;
 	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
@@ -947,18 +948,21 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 				AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
 				++k;
 
+				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				if (gFieldMoves[j] == MOVE_FLY)
 					knowsFly = TRUE; //No point in appending Fly if it is already there
 				else if (gFieldMoves[j] == MOVE_DIG)
 					knowsDig = TRUE;
 				else if (gFieldMoves[j] == MOVE_CUT)
 					knowsCut = TRUE;
+				#endif
 			}
 		}
 	}
 
 	//Try to give the mon fly
 	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES2, NULL);
 	if (species != SPECIES_NONE && species != SPECIES_EGG)
 	{
 		#ifdef UNBOUND

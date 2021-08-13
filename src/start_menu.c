@@ -262,7 +262,7 @@ bool8 StartCB_HandleInput(void)
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(-1);
 		#ifndef UNBOUND
-		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
+		if (!MenuHelpers_LinkSomething() && !InUnionRoom())
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}
@@ -273,7 +273,7 @@ bool8 StartCB_HandleInput(void)
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(+1);
 		#ifndef UNBOUND
-		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
+		if (!MenuHelpers_LinkSomething() && !InUnionRoom())
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}

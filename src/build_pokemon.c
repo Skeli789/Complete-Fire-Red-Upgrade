@@ -842,11 +842,14 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		highestPlayerLevel = 0;
 		canEvolveMon = FALSE;
 		#endif
-		setCustomMoves = !FlagGet(FLAG_POKEMON_RANDOMIZER)  //Don't set custom moves when species are randomized
-						#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
-						|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER) //Unless the randomizer is disabled
-						#endif
-						|| FlagGet(FLAG_BATTLE_FACILITY); //Or the species wouldn't be randomized normally
+		setCustomMoves = FlagGet(FLAG_BATTLE_FACILITY) //Don't set custom moves when the species wouldn't be randomized normally
+					#ifdef FLAG_POKEMON_RANDOMIZER
+					|| !FlagGet(FLAG_POKEMON_RANDOMIZER) //Or when species are randomized
+					#endif
+					#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+					|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER) //Unless the randomizer is disabled
+					#endif
+					;
 
 		//Create each Pokemon
 		for (i = 0, trainerNameLengthOddness = StringLength(trainer->trainerName) & 1, nameHash = 0; i < monsCount; ++i)
@@ -1193,12 +1196,12 @@ static bool8 IsBossTrainerClassForLevelScaling(u16 trainerId)
 
 	switch (gTrainers[trainerId].trainerClass) {
 		case CLASS_LEADER:
-		case CLASS_SUCCESSOR:
 		case CLASS_ELITE_4:
 		case CLASS_CHAMPION:
 		case CLASS_RIVAL_2:
 		case CLASS_BOSS:
 		#ifdef UNBOUND
+		case CLASS_SUCCESSOR:
 		case CLASS_LOR_LEADER:
 		#endif
 			return TRUE;
@@ -2224,11 +2227,14 @@ static void BuildRaidMultiParty(void)
 		CreateFrontierMon(&gPlayerParty[i + 3], GetRandomRaidLevel(), spread, RAID_BATTLE_MULTI_TRAINER_TID, 2, gRaidPartners[multiId].gender, FALSE);
 		SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &zero); //So they don't say "Battle Frontier"
 
-		if (FlagGet(FLAG_POKEMON_RANDOMIZER) //Don't set custom moves when species has been randomized
-		#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
-		&& !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+		if (!FlagGet(FLAG_BATTLE_FACILITY)
+		#ifdef FLAG_POKEMON_RANDOMIZER
+		&& FlagGet(FLAG_POKEMON_RANDOMIZER) //Don't set custom moves when species has been randomized
 		#endif
-		&& !FlagGet(FLAG_BATTLE_FACILITY))
+		#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+		&& !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER) //Unless the species has been temporarily disabled
+		#endif
+		)
 		{
 			Memset(gPlayerParty[i + 3].moves, 0, sizeof(gPlayerParty[i + 3].moves));
 			GiveBoxMonInitialMoveset((void*) &gPlayerParty[i + 3]); //Give the randomized Pokemon moves it would normally have

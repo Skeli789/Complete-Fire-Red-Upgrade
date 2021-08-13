@@ -96,10 +96,10 @@ static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
 static bool8 ShouldAIUseItem(void);
 #ifdef VAR_GAME_DIFFICULTY
 static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
-#endif
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank);
 static bool8 IsPlayerTryingToCheeseWithRepeatedSwitches(u8 playerBank);
 static bool8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank);
+#endif
 static void PickNewAIMove(u8 aiBank, bool8 allowPursuit, bool8 allowNewHostileMove);
 static void UpdateCurrentTargetByMoveTarget(u8 moveTarget, u8 aiBank);
 
@@ -3887,6 +3887,7 @@ enum
 
 void RechooseAIMoveAfterSwitchIfNecessary(void)
 {
+	#ifdef VAR_GAME_DIFFICULTY
 	if (SIDE(gBankSwitching) == B_SIDE_PLAYER && BATTLER_ALIVE(gBankSwitching))
 	{
 		u8 foe2;
@@ -3898,8 +3899,10 @@ void RechooseAIMoveAfterSwitchIfNecessary(void)
 		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(foe2 = PARTNER(foe1)) && gChosenActionByBank[foe2] == ACTION_USE_MOVE) //Recalc Foe 2
 			TryRechooseAIMoveIfPlayerSwitchCheesed(foe2, gBankSwitching);
 	}
+	#endif
 }
 
+#ifdef VAR_GAME_DIFFICULTY
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank)
 {
 	u8 cheeseType = IsPlayerTryingToCheeseAI(playerBank, aiBank);
@@ -3931,9 +3934,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 {
 	return gChosenActionByBank[playerBank] == ACTION_SWITCH //Player decided to switch
 		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //In Frontier battles
-		#ifdef VAR_GAME_DIFFICULTY
 		 || VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_HARD_DIFFICULTY) //Or only on harder game modes
-		#endif
 		#ifdef UNBOUND
 		&& AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE
 		&& AIRandom() % 100 < GetChanceOfPredictingPlayerNormalSwitch()
@@ -3941,7 +3942,7 @@ static bool8 ShouldPredictRandomPlayerSwitch(u8 playerBank)
 		;
 }
 
-static u8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
+static u8 IsPlayerTryingToCheeseAI(unusedArg u8 playerBank, unusedArg u8 aiBank)
 {
 	if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE //Very Smart AI
 	&& IsPlayerInControl(playerBank)) //AI isn't in charge of player mon
@@ -3957,6 +3958,7 @@ static u8 IsPlayerTryingToCheeseAI(u8 playerBank, u8 aiBank)
 
 	return NOT_CHEESING;
 }
+#endif
 
 static void PickNewAIMove(u8 aiBank, bool8 allowPursuit, bool8 allowHostileMove)
 {

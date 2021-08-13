@@ -2215,6 +2215,7 @@ void FollowHiddenGrottoWarp(void)
 
 void PrepMiningWarp(void)
 {
+	#ifdef MB_UNDERGROUND_MINING 
 	s8 warpEventId;
 	struct MapPosition position;
 
@@ -2237,6 +2238,7 @@ void PrepMiningWarp(void)
 		else
 			gSpecialVar_LastResult = TRUE;
 	}
+	#endif
 }
 
 static bool8 MetatileBehavior_IsClimbableLadder(unusedArg u8 behaviour)

@@ -338,10 +338,6 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = &sWinterGrassObjectPaletteInfo;
 			break;
-		case MAPSEC_VICTORY_ROAD:
-			if (MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
-				goto WINTER;
-			goto DEFAULT;
 		case MAPSEC_POLDER_TOWN:
 		case MAPSEC_COOTES_BOG:
 			if (fieldEffectTemplateArg == 15) //Long Grass
@@ -352,9 +348,12 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 				*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = &sSwampGrassObjectPaletteInfo;
 			break;
+		case MAPSEC_VICTORY_ROAD:
+			if (MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
+				goto WINTER;
+			//Fallthrough
 	#endif
 		default:
-		DEFAULT:
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = gFieldEffectObjectPaletteInfo1;
 			break;

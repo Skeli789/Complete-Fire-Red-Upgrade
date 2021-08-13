@@ -246,7 +246,7 @@ bool8 StartRButtonFunc(void)
 	if (dexNavSpecies != SPECIES_NONE)
 	{
 		DismissMapNamePopup();
-		ChangeBgY(0, 0);
+		ChangeBgY(0, 0, 0);
 		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 		return FALSE; //Don't enable the script context
 	}

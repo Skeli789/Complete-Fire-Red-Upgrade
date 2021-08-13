@@ -5068,7 +5068,7 @@ void atkE5_pickupitemcalculation(void)
 				return;
 			}
 			#else
-			SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
+			SetMonData(mon, MON_DATA_HELD_ITEM, &item);
 			#endif
 		}
 	}
