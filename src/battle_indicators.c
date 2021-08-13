@@ -183,10 +183,10 @@ static const struct SpritePalette sDynamaxTriggerPalette = {Dynamax_TriggerPal, 
 static const struct CompressedSpriteSheet sRaidShieldSpriteSheet = {Raid_ShieldTiles, (16 * 8) / 2, GFX_TAG_RAID_SHIELD};
 
 static const struct CompressedSpriteSheet sLastBallTriggerSpriteSheet = {Last_Ball_TriggerTiles, (32 * 32) / 2, GFX_TAG_LAST_BALL_TRIGGER};
-static const struct SpritePalette sLastBallTriggerPalette = {Last_Ball_TriggerPal, GFX_TAG_LAST_BALL_TRIGGER};
+//static const struct SpritePalette sLastBallTriggerPalette = {Last_Ball_TriggerPal, GFX_TAG_LAST_BALL_TRIGGER};
 
 static const struct CompressedSpriteSheet sTeamPreviewTriggerSpriteSheet = {TeamPreviewTriggerTiles, (32 * 32) / 2, GFX_TAG_TEAM_PREVIEW_TRIGGER};
-static const struct SpritePalette sTeamPreviewTriggerPalette = {TeamPreviewTriggerPal, GFX_TAG_TEAM_PREVIEW_TRIGGER};
+//static const struct SpritePalette sTeamPreviewTriggerPalette = {TeamPreviewTriggerPal, GFX_TAG_TEAM_PREVIEW_TRIGGER};
 
 static const struct CompressedSpriteSheet sTeamPreviewFaintedMonIconSpriteSheet = {TeamPreviewFaintedMonIconTiles, (32 * 32) / 2, GFX_TAG_FAINTED_TEAM_PREVIEW_ICON};
 
@@ -393,7 +393,7 @@ const struct SpriteTemplate gRaidShieldSpriteTemplate =
 static const struct SpriteTemplate sLastBallTriggerSpriteTemplate =
 {
 	.tileTag = GFX_TAG_LAST_BALL_TRIGGER,
-	.paletteTag = GFX_TAG_LAST_BALL_TRIGGER,
+	.paletteTag = TAG_HEALTHBOX_PAL,
 	.oam = &sTriggerOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -404,7 +404,7 @@ static const struct SpriteTemplate sLastBallTriggerSpriteTemplate =
 static const struct SpriteTemplate sTeamPreviewTriggerSpriteTemplate =
 {
 	.tileTag = GFX_TAG_TEAM_PREVIEW_TRIGGER,
-	.paletteTag = GFX_TAG_TEAM_PREVIEW_TRIGGER,
+	.paletteTag = TAG_HEALTHBOX_PAL,
 	.oam = &sTriggerOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
@@ -1567,8 +1567,8 @@ void TryLoadLastUsedBallTrigger(void)
 	if (CantLoadLastBallTrigger())
 		return;
 
-	if (IndexOfSpritePaletteTag(GFX_TAG_LAST_BALL_TRIGGER) == 0xFF)
-		LoadSpritePalette(&sLastBallTriggerPalette);
+	//if (IndexOfSpritePaletteTag(GFX_TAG_LAST_BALL_TRIGGER) == 0xFF)
+	//	LoadSpritePalette(&sLastBallTriggerPalette);
 	if (IndexOfSpriteTileTag(GFX_TAG_LAST_BALL_TRIGGER) == 0xFF)
 		LoadCompressedSpriteSheetUsingHeap(&sLastBallTriggerSpriteSheet);
 
@@ -1613,7 +1613,7 @@ static void DestroyLastBallTrigger(struct Sprite* sprite)
 			return; //Tiles and palette are still in use
 	}
 
-	FreeSpritePaletteByTag(GFX_TAG_LAST_BALL_TRIGGER);
+	//FreeSpritePaletteByTag(GFX_TAG_LAST_BALL_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_LAST_BALL_TRIGGER);
 }
 
@@ -1670,10 +1670,10 @@ void TryLoadTeamPreviewTrigger(void)
 	if (CantLoadTeamPreviewTrigger())
 		return;
 
-	if (IndexOfSpritePaletteTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFF)
-		LoadSpritePalette(&sTeamPreviewTriggerPalette);
 	if (IndexOfSpriteTileTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFF)
 		LoadCompressedSpriteSheetUsingHeap(&sTeamPreviewTriggerSpriteSheet);
+	//if (IndexOfSpritePaletteTag(GFX_TAG_TEAM_PREVIEW_TRIGGER) == 0xFF)
+	//	LoadSpritePalette(&sTeamPreviewTriggerPalette);
 
 	//See if there's an old trigger that hasn't disappeared yet
 	for (i = 0; i < MAX_SPRITES; ++i)
@@ -1704,7 +1704,7 @@ static void DestroyTeamPreviewTrigger(struct Sprite* sprite)
 			return; //Tiles and palette are still in use
 	}
 
-	FreeSpritePaletteByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
+	//FreeSpritePaletteByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
 	FreeSpriteTilesByTag(GFX_TAG_TEAM_PREVIEW_TRIGGER);
 }
 
