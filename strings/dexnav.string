@@ -42,8 +42,23 @@ Walk
 #org @gText_DexNav_Surf
 Surf
 
-#org @gText_DexNav_Fish
-Fish
+#org @gText_DexNav_OldRod
+Old Rod
+
+#org @gText_DexNav_GoodRod
+Good Rod
+
+#org @gText_DexNav_SuperRod
+Super Rod
+
+#org @gText_DexNav_SurfOldRod
+Surf/Old Rod
+
+#org @gText_DexNav_SurfGoodRod
+Surf/Good Rod
+
+#org @gText_DexNav_SurfSuperRod
+Surf/Super Rod
 
 #org @gText_DexNav_Swarm
 Swarm

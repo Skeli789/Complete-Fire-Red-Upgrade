@@ -1969,6 +1969,7 @@ bool8 IsCurrentAreaAutumn(void)
 		u8 mapSec = GetCurrentRegionMapSectionId();
 		return mapSec == MAPSEC_TEHL_TOWN
 			|| mapSec == MAPSEC_ROUTE_9
+			|| mapSec == MAPSEC_AUTL_WOODS
 			|| mapSec == MAPSEC_ROUTE_10
 			|| mapSec == MAPSEC_AUBURN_WATERWAY
 			|| (mapSec == MAPSEC_HIDDEN_GROTTO

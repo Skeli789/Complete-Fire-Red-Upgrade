@@ -117,9 +117,10 @@ static u8 GetTotalLandMonCount(void);
 static u8 GetTotalWaterMonCount(void);
 static u8 GetTotalWaterMonSlots(void);
 static u8 GetWaterRowCount(void);
+static bool8 IsFishingEncounterMethod(u8 method);
 static bool8 CapturedAllLandBasedPokemon(void);
 static bool8 CapturedAllWaterBasedPokemon(void);
-static bool8 TryAddSpeciesToArray(u16 species, u8 indexCount, u8 unownLetter);
+static bool8 TryAddSpeciesToArray(u16 species, u8 encounterMethod, u8 indexCount, u8 unownLetter);
 static void DexNavPopulateEncounterList(void);
 static void RegisterSpecies(u16 species, u8 taskId);
 static bool8 CanWaterMonBeSearched(void);
@@ -142,7 +143,7 @@ static void PrintGUIAreaDescriptors(void);
 static void PrintGUISpeciesName(u16 species);
 static void PrintGUISpeciesTypes(u16 species);
 static void PrintGUISearchLevel(u16 species);
-static void PrintGUIEncounterMethod(u16 species, u8 encounterMethod);
+static void PrintGUIEncounterMethod(u8 encounterMethod);
 static void PrintGUIHiddenAbility(u16 species);
 static void PrintGUIHeldItems(u16 species);
 static void DexNavDisplaySpeciesData(void);
@@ -1789,7 +1790,7 @@ static bool8 AnyPokemonInCurrentArea(void)
 
 static u8 GetTotalLandMonCount(void)
 {
-	return sDexNavGUIPtr->numGrassMons + sDexNavGUIPtr->numHiddenLandMons;
+	return sDexNavGUIPtr->numLandMons + sDexNavGUIPtr->numHiddenLandMons;
 }
 
 static u8 GetTotalWaterMonCount(void)
@@ -1810,6 +1811,22 @@ static u8 GetWaterRowCount(void)
 		count += 1;
 
 	return max(count, MIN_WATER_ROW_COUNT);
+}
+
+static bool8 IsFishingEncounterMethod(u8 method)
+{
+	switch (method)
+	{
+		case ENCOUNTER_METHOD_OLD_ROD:
+		case ENCOUNTER_METHOD_GOOD_ROD:
+		case ENCOUNTER_METHOD_SUPER_ROD:
+		case ENCOUNTER_METHOD_SURF_OLD_ROD:
+		case ENCOUNTER_METHOD_SURF_GOOD_ROD:
+		case ENCOUNTER_METHOD_SURF_SUPER_ROD:
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 //Checks if all Pokemon that can be encountered in the grass/ground have been captured
@@ -1886,7 +1903,7 @@ static bool8 CapturedAllWaterBasedPokemon(void)
 	return TRUE;
 }
 
-static bool8 TryAddSpeciesToArray(u16 species, u8 indexCount, u8 unownLetter)
+static bool8 TryAddSpeciesToArray(u16 species, u8 encounterMethod, u8 indexCount, u8 unownLetter)
 {
 	u32 i;
 	TryRandomizeSpecies(&species);
@@ -1895,7 +1912,7 @@ static bool8 TryAddSpeciesToArray(u16 species, u8 indexCount, u8 unownLetter)
 	//Disallow species not seen
 	if (!GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
 	{
-		for (i = 0; i < MAX_TOTAL_LAND_MONS; ++i)
+		for (i = 0; i < max(MAX_TOTAL_LAND_MONS, MAX_TOTAL_WATER_MONS); ++i)
 		{
 			#ifdef SPECIES_UNOWN
 			if (species == SPECIES_UNOWN && InTanobyRuins())
@@ -1905,10 +1922,9 @@ static bool8 TryAddSpeciesToArray(u16 species, u8 indexCount, u8 unownLetter)
 			}
 			else
 			#endif
-			if (sDexNavGUIPtr->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
+			if (sDexNavGUIPtr->hiddenSpecies[i] == HIDDEN_SPEECIES_TERMIN)
 			{
 				sDexNavGUIPtr->hiddenSpecies[i] = dexNum;
-				sDexNavGUIPtr->hiddenSpecies[i + 1] = SPECIES_TABLES_TERMIN;
 				break;
 			}
 			else if (sDexNavGUIPtr->hiddenSpecies[i] == dexNum) //Already in array
@@ -1916,9 +1932,19 @@ static bool8 TryAddSpeciesToArray(u16 species, u8 indexCount, u8 unownLetter)
 		}
 
 		if (indexCount == MAX_TOTAL_LAND_MONS)
+		{
 			sDexNavGUIPtr->numHiddenLandMons++; //Increase how many question marks to print
+
+			if (i < NELEMS(sDexNavGUIPtr->hiddenLandEncounterMethod))
+				sDexNavGUIPtr->hiddenLandEncounterMethod[i] = encounterMethod;
+		}
 		else
+		{
 			sDexNavGUIPtr->numHiddenWaterMons++;
+
+			if (i < NELEMS(sDexNavGUIPtr->hiddenWaterEncounterMethod))
+				sDexNavGUIPtr->hiddenWaterEncounterMethod[i] = encounterMethod;
+		}
 
 		return FALSE;
 	}
@@ -1959,7 +1985,7 @@ static void DexNavPopulateEncounterList(void)
 	//Populate unique wild grass encounters
 	u8 grassIndex = 0;
 	u8 waterIndex = 0;
-	u16 species, i;
+	u16 species, i, j;
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
@@ -1974,14 +2000,14 @@ static void DexNavPopulateEncounterList(void)
 	}
 	#endif
 
-	sDexNavGUIPtr->hiddenSpecies[0] = SPECIES_TABLES_TERMIN; //Used in TryAddSpeciesToArray
+	Memset(sDexNavGUIPtr->hiddenSpecies, HIDDEN_SPEECIES_TERMIN & 0xFF, sizeof(sDexNavGUIPtr->hiddenSpecies)); //Used in TryAddSpeciesToArray
 
 	if (landMonsInfo != NULL)
 	{
 		for (i = 0; i < MAX_TOTAL_LAND_MONS; ++i)
 		{
 			species = landMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, MAX_TOTAL_LAND_MONS, PickUnownLetter(species, i)))
+			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, ENCOUNTER_METHOD_GRASS, MAX_TOTAL_LAND_MONS, PickUnownLetter(species, i)))
 			{
 				if (InTanobyRuins())
 				{
@@ -1998,21 +2024,21 @@ static void DexNavPopulateEncounterList(void)
 		u16 swarmSpecies = gSwarmTable[swarmIndex].species;
 		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 		&& grassIndex < NELEMS(sDexNavGUIPtr->grassSpecies)
-		&& TryAddSpeciesToArray(swarmSpecies, MAX_TOTAL_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
+		&& TryAddSpeciesToArray(swarmSpecies, ENCOUNTER_METHOD_SWARM, MAX_TOTAL_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
 		{
 			sDexNavGUIPtr->landEncounterMethod[grassIndex] = ENCOUNTER_METHOD_SWARM;
 			sDexNavGUIPtr->grassSpecies[grassIndex++] = swarmSpecies;
 		}
 	}
 
-	sDexNavGUIPtr->hiddenSpecies[0] = SPECIES_TABLES_TERMIN; //Used in TryAddSpeciesToArray
+	Memset(sDexNavGUIPtr->hiddenSpecies, HIDDEN_SPEECIES_TERMIN & 0xFF, sizeof(sDexNavGUIPtr->hiddenSpecies)); //Used in TryAddSpeciesToArray
 
 	if (waterMonsInfo != NULL)
 	{
 		for (i = 0; i < NUM_WATER_MONS; ++i)
 		{
 			species = waterMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, ENCOUNTER_METHOD_WATER, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
 			{
 				sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_WATER;
 				sDexNavGUIPtr->waterSpecies[waterIndex++] = waterMonsInfo->wildPokemon[i].species;
@@ -2025,33 +2051,78 @@ static void DexNavPopulateEncounterList(void)
 		for (i = 0; i < NUM_OLD_ROD_MONS; ++i)
 		{
 			species = fishingMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+			if (species != SPECIES_NONE)
 			{
-				sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_FISH;
-				sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_OLD_ROD; //Can only be searched if player has an Old Rod
-				sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				if (TryAddSpeciesToArray(species, ENCOUNTER_METHOD_OLD_ROD, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+				{
+					sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_OLD_ROD;
+					sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_OLD_ROD; //Can only be searched if player has an Old Rod
+					sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				}
+				else
+				{
+					for (j = 0; j < waterIndex; ++j)
+					{
+						if (sDexNavGUIPtr->waterSpecies[j] == fishingMonsInfo->wildPokemon[i].species
+						&& sDexNavGUIPtr->waterEncounterMethod[j] == ENCOUNTER_METHOD_WATER)
+						{
+							sDexNavGUIPtr->waterEncounterMethod[j] = ENCOUNTER_METHOD_SURF_OLD_ROD; //Can be found both ways
+							break;
+						}
+					}
+				}
 			}
 		}
 
 		for (i = NUM_OLD_ROD_MONS; i < NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS; ++i)
 		{
 			species = fishingMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+			if (species != SPECIES_NONE)
 			{
-				sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_FISH;
-				sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_GOOD_ROD; //Can only be searched if player has a Good Rod
-				sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				if (TryAddSpeciesToArray(species, ENCOUNTER_METHOD_GOOD_ROD, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+				{
+					sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_GOOD_ROD;
+					sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_GOOD_ROD; //Can only be searched if player has a Good Rod
+					sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				}
+				else
+				{
+					for (j = 0; j < waterIndex; ++j)
+					{
+						if (sDexNavGUIPtr->waterSpecies[j] == fishingMonsInfo->wildPokemon[i].species
+						&& sDexNavGUIPtr->waterEncounterMethod[j] == ENCOUNTER_METHOD_WATER)
+						{
+							sDexNavGUIPtr->waterEncounterMethod[j] = ENCOUNTER_METHOD_SURF_GOOD_ROD; //Can be found both ways
+							break;
+						}
+					}
+				}
 			}
 		}
 
 		for (i = NUM_OLD_ROD_MONS + NUM_GOOD_ROD_MONS; i < NUM_FISHING_MONS; ++i)
 		{
 			species = fishingMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && TryAddSpeciesToArray(species, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+			if (species != SPECIES_NONE)
 			{
-				sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_FISH;
-				sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_SUPER_ROD; //Can only be searched if player has a Super Rod
-				sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				if (TryAddSpeciesToArray(species, ENCOUNTER_METHOD_SUPER_ROD, MAX_TOTAL_WATER_MONS, PickUnownLetter(species, i)))
+				{
+					sDexNavGUIPtr->waterEncounterMethod[waterIndex] = ENCOUNTER_METHOD_SUPER_ROD;
+					sDexNavGUIPtr->waterItemRequired[waterIndex] = ITEM_SUPER_ROD; //Can only be searched if player has an Super Rod
+					sDexNavGUIPtr->waterSpecies[waterIndex++] = fishingMonsInfo->wildPokemon[i].species;
+				}
+				else
+				{
+					for (j = 0; j < waterIndex; ++j)
+					{
+						if (sDexNavGUIPtr->waterSpecies[j] == fishingMonsInfo->wildPokemon[i].species
+						&& sDexNavGUIPtr->waterEncounterMethod[j] == ENCOUNTER_METHOD_WATER)
+						{
+							sDexNavGUIPtr->waterEncounterMethod[j] = ENCOUNTER_METHOD_SURF_SUPER_ROD; //Can be found both ways
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2060,7 +2131,7 @@ static void DexNavPopulateEncounterList(void)
 	if (InTanobyRuins() && !GetSetPokedexFlag(NATIONAL_DEX_UNOWN, FLAG_GET_SEEN))
 	{ //This is so the right amount of ? appear for Unown in the different chambers
 		u16 unowns[MAX_TOTAL_LAND_MONS + 1];
-		unowns[0] = SPECIES_TABLES_TERMIN;
+		unowns[0] = HIDDEN_SPEECIES_TERMIN;
 
 		sDexNavGUIPtr->numHiddenLandMons = 0;
 		for (int i = 0; i < MAX_TOTAL_LAND_MONS; ++i)
@@ -2069,16 +2140,16 @@ static void DexNavPopulateEncounterList(void)
 			if (!CheckTableForSpecies(letter, unowns)) //Table with Unown letters treated like a species table
 			{
 				unowns[sDexNavGUIPtr->numHiddenLandMons++] = letter;
-				unowns[sDexNavGUIPtr->numHiddenLandMons] = SPECIES_TABLES_TERMIN; //Shift end down 1
+				unowns[sDexNavGUIPtr->numHiddenLandMons] = HIDDEN_SPEECIES_TERMIN; //Shift end down 1
 			}
 		}
 	}
 	#endif
 
-	sDexNavGUIPtr->numGrassMons = grassIndex;
+	sDexNavGUIPtr->numLandMons = grassIndex;
 	sDexNavGUIPtr->numWaterMons = waterIndex;
 
-	if (sDexNavGUIPtr->numGrassMons == 0 && sDexNavGUIPtr->numWaterMons != 0)
+	if (sDexNavGUIPtr->numLandMons == 0 && sDexNavGUIPtr->numWaterMons != 0)
 		sDexNavGUIPtr->selectedArea = AREA_WATER; //Start with water selected because no searchable land mons anyway
 }
 
@@ -2423,12 +2494,12 @@ static void PrintGUISearchLevel(u16 species)
 	CommitWindow(WIN_SEARCH_LEVEL);
 }
 
-static void PrintGUIEncounterMethod(u16 species, u8 encounterMethod)
+static void PrintGUIEncounterMethod(u8 encounterMethod)
 {
 	const u8* text = gText_DexNav_NoInfo;
 	CleanWindow(WIN_METHOD);
 
-	if (species != SPECIES_NONE)
+	if (encounterMethod < ENCOUNTER_METHOD_COUNT)
 	{
 		switch (encounterMethod)
 		{
@@ -2438,8 +2509,23 @@ static void PrintGUIEncounterMethod(u16 species, u8 encounterMethod)
 			case ENCOUNTER_METHOD_WATER:
 				text = gText_DexNav_Surf;
 				break;
-			case ENCOUNTER_METHOD_FISH:
-				text = gText_DexNav_Fish;
+			case ENCOUNTER_METHOD_OLD_ROD:
+				text = gText_DexNav_OldRod;
+				break;
+			case ENCOUNTER_METHOD_GOOD_ROD:
+				text = gText_DexNav_GoodRod;
+				break;
+			case ENCOUNTER_METHOD_SUPER_ROD:
+				text = gText_DexNav_SuperRod;
+				break;
+			case ENCOUNTER_METHOD_SURF_OLD_ROD:
+				text = gText_DexNav_SurfOldRod;
+				break;
+			case ENCOUNTER_METHOD_SURF_GOOD_ROD:
+				text = gText_DexNav_SurfGoodRod;
+				break;
+			case ENCOUNTER_METHOD_SURF_SUPER_ROD:
+				text = gText_DexNav_SurfSuperRod;
 				break;
 			case ENCOUNTER_METHOD_SWARM:
 				text = gText_DexNav_Swarm;
@@ -2523,25 +2609,47 @@ static void PrintGUIHeldItems(u16 species)
 
 static void DexNavDisplaySpeciesData(void)
 {
-	u8 method;
-	u16 species;
+	u16 species = SPECIES_NONE;
+	u8 method = ENCOUNTER_METHOD_COUNT;
 
 	//First determine the correct encounter method and species to display
 	if (sDexNavGUIPtr->selectedArea == AREA_WATER)
 	{
 		u8 waterSlot = GetWaterSlotSelected();
-		method = ENCOUNTER_METHOD_WATER;
-		if (sDexNavGUIPtr->waterEncounterMethod[waterSlot] == ENCOUNTER_METHOD_FISH)
-			method = sDexNavGUIPtr->waterEncounterMethod[waterSlot];
 		species = sDexNavGUIPtr->waterSpecies[waterSlot];
+
+		if (species != SPECIES_NONE || waterSlot < GetTotalWaterMonCount())
+		{
+			u8 newMethod;
+			method = ENCOUNTER_METHOD_WATER;
+
+			if (waterSlot >= sDexNavGUIPtr->numWaterMons)
+				newMethod = sDexNavGUIPtr->hiddenWaterEncounterMethod[waterSlot - sDexNavGUIPtr->numWaterMons];
+			else
+				newMethod = sDexNavGUIPtr->waterEncounterMethod[waterSlot];
+
+			if (IsFishingEncounterMethod(newMethod))
+				method = newMethod;
+		}
 	}
 	else //Land
 	{
 		u8 landSlot = GetLandSlotSelected();
-		method = ENCOUNTER_METHOD_GRASS;
-		if (sDexNavGUIPtr->landEncounterMethod[landSlot] == ENCOUNTER_METHOD_SWARM)
-			method = sDexNavGUIPtr->landEncounterMethod[landSlot];
 		species = sDexNavGUIPtr->grassSpecies[landSlot];
+
+		if (species != SPECIES_NONE || landSlot < GetTotalLandMonCount())
+		{
+			u8 newMethod;
+			method = ENCOUNTER_METHOD_GRASS;
+
+			if (landSlot >= sDexNavGUIPtr->numLandMons)
+				newMethod = sDexNavGUIPtr->hiddenLandEncounterMethod[landSlot - sDexNavGUIPtr->numLandMons];
+			else
+				newMethod = sDexNavGUIPtr->landEncounterMethod[landSlot];
+
+			if (newMethod == ENCOUNTER_METHOD_SWARM)
+				method = newMethod;
+		}
 	}
 
 	TryRandomizeSpecies(&species);
@@ -2550,7 +2658,7 @@ static void DexNavDisplaySpeciesData(void)
 	PrintGUISpeciesName(species);
 	PrintGUISpeciesTypes(species);
 	PrintGUISearchLevel(species);
-	PrintGUIEncounterMethod(species, method);
+	PrintGUIEncounterMethod(method);
 	PrintGUIHiddenAbility(species);
 	PrintGUIHeldItems(species);
 }

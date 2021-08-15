@@ -641,11 +641,14 @@
 #define MAP_FROST_MOUNTAIN_2F	((50 << 8) | 1)
 #define MAP_FROST_MOUNTAIN_3F	((48 << 8) | 1)
 
+#define MAP_AUTL_WOODS_WEST		((1 << 8) | 119)
+#define MAP_AUTL_WOODS_EAST		((1 << 8) | 120)
+
 #define MAP_LOST_TUNNEL_B1F		((1 << 8) | 121)
 
-#define MAP_THUNDERCAP_MT_WEST_1F	((52 << 8) | 0)
-#define MAP_THUNDERCAP_MT_WEST_2F	((52 << 8) | 1)
-#define MAP_THUNDERCAP_MT_WEST_3F	((52 << 8) | 2)
+#define MAP_CLIFF_CAVE_1F	((52 << 8) | 0)
+#define MAP_CLIFF_CAVE_2F	((52 << 8) | 1)
+#define MAP_CLIFF_CAVE_3F	((52 << 8) | 2)
 
 #define MAP_THUNDERCAP_MT_SUMMIT	((53 << 8) | 0)
 #define MAP_THUNDERCAP_MT_1F		((53 << 8) | 1)

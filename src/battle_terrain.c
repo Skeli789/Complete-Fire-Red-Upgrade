@@ -297,7 +297,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				terrain = BATTLE_TERRAIN_SNOW_FIELD;
 			else if (IsCurrentAreaDesert())
 				terrain = BATTLE_TERRAIN_DESERT;
-			else if (mapSec == MAPSEC_ANTISIS_CITY)
+			else if (mapSec == MAPSEC_ANTISIS_CITY || mapSec == MAPSEC_ANTISIS_PORT)
 				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
 			else if (IsCurrentAreaSwamp())
 				terrain = BATTLE_TERRAIN_BOG;

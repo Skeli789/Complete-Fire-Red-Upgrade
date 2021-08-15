@@ -325,6 +325,7 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 	switch (GetCurrentRegionMapSectionId()) {
 	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
 		case MAPSEC_ROUTE_9:
+		case MAPSEC_AUTL_WOODS:
 		case MAPSEC_ROUTE_10:
 		case MAPSEC_AUBURN_WATERWAY:
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
@@ -351,7 +352,7 @@ static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTe
 		case MAPSEC_VICTORY_ROAD:
 			if (MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
 				goto WINTER;
-			//Fallthrough
+			__attribute__ ((fallthrough));
 	#endif
 		default:
 			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];

@@ -63,6 +63,12 @@ extern const u8 gText_DexNav_CaptureToSee[];
 extern const u8 gText_DexNav_Walk[];
 extern const u8 gText_DexNav_Surf[];
 extern const u8 gText_DexNav_Fish[];
+extern const u8 gText_DexNav_OldRod[];
+extern const u8 gText_DexNav_GoodRod[];
+extern const u8 gText_DexNav_SuperRod[];
+extern const u8 gText_DexNav_SurfOldRod[];
+extern const u8 gText_DexNav_SurfGoodRod[];
+extern const u8 gText_DexNav_SurfSuperRod[];
 extern const u8 gText_DexNav_Swarm[];
 extern const u8 gText_DexNav_ChooseMon[];
 extern const u8 gText_DexNav_Invalid[];
@@ -127,6 +133,8 @@ extern const u8 gText_DexNavHUDChainNumber[];
 #define MAX_TOTAL_LAND_MONS (LAND_ROW_COUNT * LAND_ROW_LENGTH)
 #define MAX_TOTAL_WATER_MONS (WATER_ROW_LENGTH * WATER_ROW_COUNT)
 
+#define HIDDEN_SPEECIES_TERMIN 0xFEFE
+
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 //GUI Data
@@ -134,13 +142,15 @@ struct DexNavGUIData
 {
     u16 grassSpecies[MAX_TOTAL_LAND_MONS];
     u16 waterSpecies[MAX_TOTAL_WATER_MONS];
-	u16 hiddenSpecies[MAX_TOTAL_LAND_MONS + 1];
+	u16 hiddenSpecies[max(MAX_TOTAL_LAND_MONS, MAX_TOTAL_WATER_MONS) + 1];
+	u8 hiddenLandEncounterMethod[MAX_TOTAL_LAND_MONS];
+	u8 hiddenWaterEncounterMethod[MAX_TOTAL_LAND_MONS];
 	u8 unownForms[MAX_TOTAL_LAND_MONS];
 	u8 unownFormsByDNavIndices[MAX_TOTAL_LAND_MONS];
 	u16 waterItemRequired[MAX_TOTAL_WATER_MONS];
 	u8 landEncounterMethod[MAX_TOTAL_LAND_MONS];
 	u8 waterEncounterMethod[MAX_TOTAL_WATER_MONS];
-	u8 numGrassMons;
+	u8 numLandMons;
 	u8 numWaterMons;
 	u8 numHiddenLandMons;
 	u8 numHiddenWaterMons;
@@ -168,8 +178,14 @@ enum EncounterTypes
 {
 	ENCOUNTER_METHOD_GRASS,
 	ENCOUNTER_METHOD_WATER,
-	ENCOUNTER_METHOD_FISH,
+	ENCOUNTER_METHOD_OLD_ROD,
+	ENCOUNTER_METHOD_GOOD_ROD,
+	ENCOUNTER_METHOD_SUPER_ROD,
+	ENCOUNTER_METHOD_SURF_OLD_ROD,
+	ENCOUNTER_METHOD_SURF_GOOD_ROD,
+	ENCOUNTER_METHOD_SURF_SUPER_ROD,
 	ENCOUNTER_METHOD_SWARM,
+	ENCOUNTER_METHOD_COUNT,
 };
 
 enum BGs
@@ -245,7 +261,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .bg = BG_TEXT,
         .tilemapLeft = 20,
         .tilemapTop = 10,
-        .width = 9,
+        .width = 10,
         .height = 2,
         .paletteNum = 15,
         .baseBlock = 200,
@@ -258,7 +274,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 10,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 218,
+        .baseBlock = 220,
     },
 	[WIN_HELD_ITEMS] =
     {
@@ -268,7 +284,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 10,
         .height = 4,
         .paletteNum = 15,
-        .baseBlock = 238,
+        .baseBlock = 240,
     },
 	[WIN_MON_TYPE_1] =
 	{
@@ -278,7 +294,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 5,
         .height = 2,
         .paletteNum = 12,
-        .baseBlock = 278,
+        .baseBlock = 280,
 	},
 	[WIN_MON_TYPE_2] =
 	{
@@ -288,7 +304,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 5,
         .height = 2,
         .paletteNum = 12,
-        .baseBlock = 288,
+        .baseBlock = 290,
 	},
 	[WIN_WATER] =
 	{
@@ -298,7 +314,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 298,
+        .baseBlock = 300,
 	},
 	[WIN_LAND] =
 	{
@@ -312,7 +328,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 19,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 355,
+        .baseBlock = 357,
 	},
 	[WIN_MAP_NAME] =
 	{
@@ -322,7 +338,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 12,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 412,
+        .baseBlock = 414,
 	},
 	[WIN_CHAIN_LENGTH] =
 	{
@@ -332,7 +348,7 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
         .width = 8,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 448,
+        .baseBlock = 450,
 	},
 	//Base block 500 is used for frame tiles
     DUMMY_WIN_TEMPLATE
