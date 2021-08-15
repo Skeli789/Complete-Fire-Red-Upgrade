@@ -185,19 +185,25 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		defStatus1 = gBattleMons[bankDef].status1;
 	}
 
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
+		defAbility = ABILITY_NONE; //Ignore Ability
+
 	if (defAbility == ABILITY_BATTLEARMOR
 	||  defAbility == ABILITY_SHELLARMOR
 	||  CantScoreACrit(bankAtk, monAtk)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
 	||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
+	{
 		return FALSE;
-
+	}
 	else if ((atkAbility == ABILITY_MERCILESS && (defStatus1 & STATUS_PSN_ANY))
 	|| (IsLaserFocused(bankAtk) && monAtk == NULL)
 	|| gSpecialMoveFlags[move].gAlwaysCriticalMoves)
+	{
 		return TRUE;
-
-	else {
+	}
+	else
+	{
 		critChance  = 2 * ((atkStatus2 & STATUS2_FOCUS_ENERGY) != 0)
 					+ gNewBS->chiStrikeCritBoosts[bankAtk]
 					+ (gSpecialMoveFlags[move].gHighCriticalChanceMoves)
@@ -226,6 +232,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 				return 2; //50 % Chance
 		#endif
 	}
+
 	return FALSE;
 }
 
@@ -897,6 +904,9 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		moveType = GetMoveTypeSpecial(bankAtk, move);
 	}
 
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
+		defAbility = ABILITY_NONE; //Ignore Ability
+
 	//Check stab
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
@@ -950,6 +960,9 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 //The function allows the AI to do type calculations from a move onto one of their partied mons
 u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 {
+	if (move == MOVE_STRUGGLE)
+		return 0;
+
 	u8 flags = 0;
 
 	u8 defAbility = GetMonAbilityAfterTrace(monDef, bankAtk);
@@ -961,14 +974,12 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 	u8 atkType1 = gBattleMons[bankAtk].type1;
 	u8 atkType2 = gBattleMons[bankAtk].type2;
 	u8 atkType3 = gBattleMons[bankAtk].type3;
-	u8 moveType;
+	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 
-	if (move == MOVE_STRUGGLE)
-		return 0;
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
+		defAbility = ABILITY_NONE; //Ignore Ability
 
-	moveType = GetMoveTypeSpecial(bankAtk, move);
-
-	//Check stab
+	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
@@ -1015,15 +1026,15 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 //This calc takes into account things like Pokemon Mega Evolving, Protean, & Illusion
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
+	if (move == MOVE_STRUGGLE)
+		return 0;
+
 	u8 moveType;
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, IsValidMovePrediction(bankDef, bankAtk));
 	u8 defEffect = ITEM_EFFECT(bankDef);
 	u8 atkType1, atkType2, atkType3, defType1, defType2, defType3;
 	u8 flags = 0;
-
-	if (move == MOVE_STRUGGLE)
-		return 0;
 
 	atkType1 = gBattleMons[bankAtk].type1;
 	atkType2 = gBattleMons[bankAtk].type2;
@@ -1047,6 +1058,9 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		defType2 = gBattleMons[bankDef].type2;
 	}
 	defType3 = gBattleMons[bankDef].type3; //Same type 3 - eg switched in on Forest's curse
+
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
+		defAbility = ABILITY_NONE; //Ignore Ability
 
 	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
@@ -1101,14 +1115,14 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 //The TypeCalc for showing move effectiveness on the move menu
 u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
+	if (move == MOVE_STRUGGLE)
+		return 0;
+
 	u8 moveType;
 	u8 defAbility;
 	u8 defEffect = GetRecordedItemEffect(bankDef);
 	u8 atkAbility, defType1, defType2, defType3;
 	u8 flags = 0;
-
-	if (move == MOVE_STRUGGLE)
-		return 0;
 
 	atkAbility = ABILITY(bankAtk);
 	moveType = GetMoveTypeSpecial(bankAtk, move);
@@ -1134,6 +1148,9 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		defType2 = gBattleMons[bankDef].type2;
 		defType3 = gBattleMons[bankDef].type3;
 	}
+
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
+		defAbility = ABILITY_NONE; //Ignore Ability
 
 	if (IsDynamaxed(bankDef) && gSpecialMoveFlags[move].gDynamaxBannedMoves) //These moves aren't related to type matchups, but they can still cause the move to fail and should be known to the player
 	{
@@ -2095,6 +2112,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (!data->defenderLoaded)
 		PopulateDamageCalcStructWithBaseDefenderData(data);
 
+	if (IsTargetAbilityIgnored(data->defAbility, data->atkAbility, move))
+		data->defAbility = ABILITY_NONE; //Ignore Ability - modify original value intentionally
+
 	//Create new variables so original values stay constant
 	defense = data->defense;
 	spDefense = data->spDefense;
@@ -2107,7 +2127,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->atkBuff = 6;
 		data->spAtkBuff = 6;
 
-		switch (data->move) {
+		switch (move) {
 			case MOVE_BODYPRESS:
 				attack = monAtk->defense;
 				spAttack = monAtk->spDefense;
@@ -2130,7 +2150,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Load from bank
 	{
-		switch (data->move) {
+		switch (move) {
 			case MOVE_BODYPRESS:
 				attack = gBattleMons[bankAtk].defense;
 				spAttack = gBattleMons[bankAtk].spDefense;
@@ -2189,7 +2209,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				data->spAtkBuff += 2;
 		}
 
-		switch (data->move) {
+		switch (move) {
 			case MOVE_FOULPLAY:
 				attack = monDef->attack;
 				spAttack = monDef->spAttack;
@@ -2200,7 +2220,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Load from bank
 	{
-		switch (data->move) {
+		switch (move) {
 			case MOVE_FOULPLAY:
 				attack = gBattleMons[bankDef].attack;
 				spAttack = gBattleMons[bankDef].spAttack;
