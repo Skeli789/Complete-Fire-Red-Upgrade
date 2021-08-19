@@ -1007,7 +1007,21 @@ void TopsyTurvyFunc(void)
 
 void FailMoveIfAura(void)
 {
-	if (IsAuraBoss(gBankTarget)) //Wild boss
+	bool8 fail = FALSE;
+	
+	if ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_SELECTED)
+	|| (IS_SINGLE_BATTLE && gBattleMoves[gCurrentMove].target & MOVE_TARGET_SPREAD))
+		fail = IsAuraBoss(gBankTarget); //Wild boss
+	else if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER
+	|| (IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & MOVE_TARGET_SPREAD))
+	{
+		//Check both foes
+		u8 foe = FOE(gBankAttacker);
+		u8 partner = PARTNER(foe);
+		fail = (BATTLER_ALIVE(foe) && IsAuraBoss(foe)) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner) && IsAuraBoss(partner));
+	}
+
+	if (fail)
 		gBattlescriptCurrInstr = BattleScript_MoveFailedOnAura - 5;
 }
 

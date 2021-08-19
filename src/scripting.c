@@ -2015,28 +2015,13 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 
 //Fix fadescreens in rain
 bool8 __attribute__((long_call)) IsPaletteNotActive(void);
-static bool8 ClearRainFadeHelperWhenPalFadeDone(void)
-{
-	if (!gPaletteFade->active)
-	{
-		u8 currWeather = GetCurrentWeather(); 
 
-		if (currWeather == WEATHER_RAIN_LIGHT
-		|| currWeather == WEATHER_RAIN_MED
-		|| currWeather == WEATHER_RAIN_HEAVY
-		|| currWeather == WEATHER_SHADE)
-		{
-			if (gRainFadeHelper == 2)
-			{
-				gRainFadeHelper = 0; //Reset for later
-				return TRUE;
-			}
-		}
-		else
-		{
-			gRainFadeHelper = 0; //Reset for later
-			return TRUE;
-		}
+static bool8 ResetUnfadedPaletteWhenPaletteNotActive(void)
+{
+	if (IsPaletteNotActive())
+	{
+		CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE); //Restore original unfaded pelette
+		return TRUE;
 	}
 
 	return FALSE;
@@ -2051,31 +2036,18 @@ bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
 		case FADE_TO_BLACK:
 		case FADE_TO_WHITE:
 		default:
-			//CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE); //Issue with EM version is you can't show new sprites during fadescreen
+			CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE); //Backup because replaced with faded palette in weather
 			FadeScreen(mode, 0);
-			SetupNativeScript(ctx, IsPaletteNotActive);
+			SetupNativeScript(ctx, ResetUnfadedPaletteWhenPaletteNotActive);
 			break;
 		case FADE_FROM_BLACK:
 		case FADE_FROM_WHITE:
-			//CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE);
-			gRainFadeHelper = 1;
 			FadeScreen(mode, 0);
-			SetupNativeScript(ctx, ClearRainFadeHelperWhenPalFadeDone);
+			SetupNativeScript(ctx, IsPaletteNotActive);
 			break;
 	}
 
 	return TRUE;
-}
-
-void ApplyGammaShiftOnRainFadeIn(void)
-{
-	if (gRainFadeHelper == 1)
-	{
-		ApplyGammaShift(0, 32, 0);
-		gRainFadeHelper = 2;
-	}
-	else
-		ApplyGammaShift(0, 32, 3);
 }
 
 //Naming Screen Special////////////////////////////////////////////////////////////////////////////
@@ -2168,10 +2140,31 @@ static void ConvertNumberEntryToInteger(void)
 	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
 
+static void Task_DoChooseNumberScreen(u8 taskId)
+{
+	if (!gPaletteFade->active) //Fade screen is done
+	{
+		gStringVar1[0] = EOS; //Empty input
+		DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
+		DestroyTask(taskId);
+	}
+}
+
 void sp0B3_DoChooseNumberScreen(void)
 {
-	gStringVar1[0] = EOS; //Empty input
-	DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
+	FadeScreen(1, 0);
+	CreateTask(Task_DoChooseNumberScreen, 0);
+}
+
+static void Task_DoEnterPhraseScreen(u8 taskId)
+{
+	if (!gPaletteFade->active) //Fade screen is done
+	{
+		u8 type = gTasks[taskId].data[0];
+		gStringVar1[0] = EOS; //Empty input
+		DoNamingScreen(type, gStringVar1, 0, 0, 0, (void*) CB2_ReturnToFieldContinueScriptPlayMapMusic);
+		DestroyTask(taskId);
+	}
 }
 
 void sp12C_DoEnterPhraseScreen(void)
@@ -2189,8 +2182,10 @@ void sp12C_DoEnterPhraseScreen(void)
 			type = NAMING_SCREEN_ENTER_PHRASE;
 	}
 
-	gStringVar1[0] = EOS; //Empty input
-	DoNamingScreen(type, gStringVar1, 0, 0, 0, (void*) CB2_ReturnToFieldContinueScriptPlayMapMusic);
+	FadeScreen(1, 0);
+	u8 taskId = CreateTask(Task_DoEnterPhraseScreen, 0);
+	if (taskId != 0xFF)
+		gTasks[taskId].data[0] = type;
 }
 
 void sp12D_CompareEnteredPhrase(void)

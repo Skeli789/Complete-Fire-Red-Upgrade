@@ -172,7 +172,6 @@ TryRunOnFrameMapScript 8069C74 0
 GetInteractedMetatileScript 806D1F0 3
 GetInteractedWaterScript 806D548 3
 TryStartStepCountScript 0806D698 1
-RainFadeInHook 807A1E4 0
 PlayerGoThroughDoor 0807E80C 1
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
@@ -342,7 +341,7 @@ GetMegaSpecies 801D794 3
 TransferPlttBuffer 8070474 0
 LoadMapFromCameraTransition_DNSFixHook1 8055880 0
 LoadMapFromCameraTransition_DNSFixHook2 80558C4 0
-BlendPalettesOptimized 80714D4 3
+#BlendPalettesOptimized 80714D4 3
 
 #Shop
 DNSCreateBuyMenuHook 809AC84 0

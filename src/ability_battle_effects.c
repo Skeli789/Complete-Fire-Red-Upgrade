@@ -490,13 +490,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				case WEATHER_RAIN_HEAVY:
 					if (!(gBattleWeather & WEATHER_RAIN_ANY))
 					{
-						gBattleWeather = (WEATHER_RAIN_DOWNPOUR | WEATHER_RAIN_PERMANENT);
+						gBattleWeather = (WEATHER_RAIN_TEMPORARY | WEATHER_RAIN_PERMANENT);
 						gBattleScripting.animArg1 = B_ANIM_RAIN_CONTINUES;
 						effect++;
 
 						#ifdef FLAG_PRIMORDIAL_SEA_BATTLE
 						if (FlagGet(FLAG_PRIMORDIAL_SEA_BATTLE))
-							gBattleWeather |= WEATHER_RAIN_PRIMAL;
+							gBattleWeather |= (WEATHER_RAIN_PRIMAL | WEATHER_RAIN_DOWNPOUR);
 						#endif
 					}
 					break;

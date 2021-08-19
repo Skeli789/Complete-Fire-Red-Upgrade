@@ -312,6 +312,9 @@ void TryLoadTileset2OnCameraTransition(struct MapLayout* oldMapLayout)
 		//Tileset has changed, so reload it, otherwise don't and save time
 		copy_map_tileset2_to_vram_2(gMapHeader.mapLayout);
 		apply_map_tileset2_palette(gMapHeader.mapLayout);
+
+		for (u32 paletteIndex = 7; paletteIndex < 13; paletteIndex++)
+			ApplyWeatherGammaShiftToPal(paletteIndex);
 	}
 }
 
@@ -354,6 +357,7 @@ void DNSBattleBGPalFade(void)
 }
 #endif
 
+/* Causes mugshot issues
 void BlendPalettesOptimized(u32 selectedPalettes, u32 coeff, u32 blendColor)
 {
 	s32 newR, newG, newB;
@@ -399,6 +403,7 @@ void BlendPalettesOptimized(u32 selectedPalettes, u32 coeff, u32 blendColor)
 		selectedPalettes >>= 1;
 	} while (selectedPalettes);
 }
+*/
 
 bool8 IsDayTime(void)
 {

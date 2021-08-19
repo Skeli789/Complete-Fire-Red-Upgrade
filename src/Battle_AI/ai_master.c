@@ -3653,8 +3653,14 @@ static bool8 ShouldAIUseItem(void)
 						if (IS_SINGLE_BATTLE)
 						{
 							u16 movePrediction = IsValidMovePrediction(gActiveBattler, foe);
-							if (movePrediction != MOVE_NONE && gBattleMoves[movePrediction].effect == EFFECT_EXPLOSION)
-								break; //Don't heal if going to commit suicide anyway
+							if (movePrediction != MOVE_NONE)
+							{
+								u8 effect = gBattleMoves[movePrediction].effect;
+								
+								if (effect == EFFECT_EXPLOSION //Don't heal if going to commit suicide anyway
+								||  effect == EFFECT_FAKE_OUT) //Don't heal if basically getting a free turn
+									break; 
+							}
 
 							if (BATTLER_ALIVE(foe) && ShouldRecover(gActiveBattler, foe, 0xFFFF))
 							{

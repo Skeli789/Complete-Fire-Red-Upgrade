@@ -184,7 +184,7 @@ extern bool8 gInShop; //0x203E043
 #define gRaidBattleSpecies (*((u16*) 0x203E04C))
 #define gRaidBattleStars (*((u8*) 0x203E04E))
 #define gRaidBattleLevel (*((u8*) 0x203E04F))
-#define gRainFadeHelper (*((u8*) 0x203E050))
+//#define gRainFadeHelper (*((u8*) 0x203E050)) //UNUSED - FREE AGAIN
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))

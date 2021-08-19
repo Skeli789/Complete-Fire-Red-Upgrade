@@ -232,6 +232,7 @@ void HandleEndTurn_BattleWon(void)
 				break;
 			case CLASS_LEADER:
 			case CLASS_FRONTIER_BRAIN:
+			case CLASS_SUCCESSOR:
 				PlayBGM(BGM_VICTORY_GYM);
 				specialMus = TRUE;
 				break;

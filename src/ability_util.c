@@ -135,6 +135,12 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			{
 				#ifdef NATIONAL_DEX_TSAREENA
 				case NATIONAL_DEX_TSAREENA:
+				#ifdef NATIONAL_DEX_NIDOQUEEN
+				case NATIONAL_DEX_NIDOQUEEN:
+				#endif
+				#ifdef NATIONAL_DEX_VESPIQUEN
+				case NATIONAL_DEX_VESPIQUEN:
+				#endif
 					return gText_AbilityName_QueenlyMajesty;
 				#endif
 			}

@@ -1240,6 +1240,7 @@ static void StartRoamerBattle(void)
 
 void sp138_StartLegendaryBattle(void)
 {
+	u8 transition = B_TRANSITION_BLUR; //Default
 	ScriptContext2_Enable();
 	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
 
@@ -1262,7 +1263,13 @@ void sp138_StartLegendaryBattle(void)
 		gBattleTypeFlags |= BATTLE_TYPE_MOCK_BATTLE;
 	#endif
 
-	CreateBattleStartTask(0, GetMUS_ForBattle());
+	#ifdef VAR_BATTLE_TRANSITION_LOGO
+	u16 transitionLogo = VarGet(VAR_BATTLE_TRANSITION_LOGO);
+	if (transitionLogo != 0)
+		transition = B_TRANSITION_CUSTOM_LOGO;
+	#endif
+
+	CreateBattleStartTask(transition, GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }

@@ -54,7 +54,6 @@
 #include "../include/new/wild_encounter.h"
 #include "../include/new/util.h"
 
-
 /*
 dexnav.c
 	Functions for the simplified DexNav system
@@ -3344,10 +3343,24 @@ static void DexNavLoadCapturedAllSymbol(void)
 	LoadCompressedSpritePaletteUsingHeap(&sCapturedAllPokemonSpritePalette);
 
 	if (CapturedAllLandBasedPokemon())
-		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  154, 77, 0);
+	{
+		#ifdef UNBOUND
+		s16 x = 153; s16 y = 93;
+		#else
+		s16 x = 154; s16 y = 95;
+		#endif
+		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  x, y, 0);
+	}
 
 	if (CapturedAllWaterBasedPokemon())
-		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  140, 29, 0);
+	{
+		#ifdef UNBOUND
+		s16 x = 153; s16 y = 24;
+		#else
+		s16 x = 154; s16 y = 23;
+		#endif
+		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  x, y, 0);
+	}
 }
 
 static void InitDexNavGUI(void)

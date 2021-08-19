@@ -1803,6 +1803,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						INCREASE_STATUS_VIABILITY(2); //Force 'em out next turn
 					break;
 
+				case ITEM_EFFECT_ASSAULT_VEST: //Only for Klutz Users
+					if (IsClassStall(GetBankFightingStyle(bankDef))
+					&& StatusMoveInMoveset(bankDef))
+						INCREASE_STATUS_VIABILITY(2); //Ruin their strategies
+					break;
+
 				default:
 					if (move != MOVE_BESTOW && data->atkItem == ITEM_NONE)
 					{
@@ -2865,6 +2871,8 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_PLEDGE:
 			case EFFECT_FEINT:
 			case EFFECT_POLTERGEIST:
+			case EFFECT_REFLECT:
+			case EFFECT_LIGHT_SCREEN:
 				return AIScript_Positives(bankAtk, bankDef, originalMove, originalViability, data);
 		}
 

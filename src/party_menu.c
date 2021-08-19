@@ -1442,8 +1442,11 @@ static void CursorCb_MoveItemCallback(u8 taskId)
 			DisplayPartyMenuMessage(gStringVar4, 1);
 
 			//Update colors of selected boxes
-			AnimatePartySlot(gPartyMenu.slotId2, 0);
-			AnimatePartySlot(gPartyMenu.slotId, 1);
+			AnimatePartySlot(gPartyMenu.slotId2, 1);
+			AnimatePartySlot(gPartyMenu.slotId, 0);
+
+			//Move cursor to second select slot
+			gPartyMenu.slotId = gPartyMenu.slotId2;
 
 			//Return to the main party menu
 			ScheduleBgCopyTilemapToVram(2);
