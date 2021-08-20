@@ -109,7 +109,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_FLASHFIRE:
 				if (moveType == TYPE_FIRE
 				&&  !IsClassDoublesTotalTeamSupport(partnerClass)
-				&&  MoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
+				&&  DamagingMoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
 				&&  !(gBattleResources->flags->flags[bankAtkPartner] & RESOURCE_FLAG_FLASH_FIRE))
 				{
 					IncreaseHelpingHandViability(&viability, class);
@@ -388,7 +388,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			 || atkPartnerAbility == ABILITY_DRYSKIN
 			 || MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner) //Includes Hurricane
 			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
-			 || MoveTypeInMoveset(TYPE_WATER, bankAtkPartner)))
+			 || DamagingMoveTypeInMoveset(bankAtkPartner, TYPE_WATER)))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);
@@ -409,7 +409,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			 || MoveEffectInMoveset(EFFECT_MORNING_SUN, bankAtkPartner)
 			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
 			 || MoveInMoveset(MOVE_GROWTH, bankAtkPartner)
-			 || MoveTypeInMoveset(TYPE_FIRE, bankAtkPartner)))
+			 || DamagingMoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);

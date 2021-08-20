@@ -6648,7 +6648,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_HONECLAWS] =
 	{
-		.effect = EFFECT_ATTACK_UP,
+		.effect = EFFECT_ATK_ACC_UP,
 		.power = 0,
 		.type = TYPE_DARK,
 		.accuracy = 0,
@@ -6908,7 +6908,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_ACIDSPRAY] =
 	{
-		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
 		.power = 40,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -9348,7 +9348,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SEEDFLARE] =
 	{
-		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
 		.power = 120,
 		.type = TYPE_GRASS,
 		.accuracy = 85,
@@ -10688,7 +10688,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_VENOMDRENCH] =
 	{
-		.effect = EFFECT_PLAY_NICE,
+		.effect = EFFECT_VENOM_DRENCH,
 		.power = 0,
 		.type = TYPE_POISON,
 		.accuracy = 100,

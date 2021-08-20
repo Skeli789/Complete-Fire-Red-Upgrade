@@ -867,13 +867,6 @@ SKIP_CHECK_TARGET:
 			{
 				switch (move)
 				{
-					case MOVE_HONECLAWS:
-						if (data->atkAbility == ABILITY_CONTRARY
-						|| (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
-						 && (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC) || !RealPhysicalMoveInMoveset(bankAtk))))
-							DECREASE_VIABILITY(10);
-						break;
-					
 					case MOVE_HOWL:
 						if (TARGETING_PARTNER) //Handled in ai_partner.c
 							break;
@@ -886,6 +879,18 @@ SKIP_CHECK_TARGET:
 							DECREASE_VIABILITY(10);
 						break;
 				}
+			}
+			break;
+		
+		case EFFECT_ATK_ACC_UP: //Hone Claws
+			if (GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				if (data->atkAbility == ABILITY_CONTRARY
+				|| (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
+				&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))))
+					DECREASE_VIABILITY(10);
 			}
 			break;
 
@@ -929,7 +934,7 @@ SKIP_CHECK_TARGET:
 		case EFFECT_SPEED_UP_2:
 			if (data->atkAbility == ABILITY_CONTRARY || !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)
 			|| GOOD_AI_MOVE_LOCKED
-			|| (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room not about to end
+			|| (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())) //Trick Room not about to end
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1046,35 +1051,23 @@ SKIP_CHECK_TARGET:
 				goto AI_SUBSTITUTE_CHECK;
 			break;
 
-		case EFFECT_PLAY_NICE: ; //Attack & Sp. Atk down
-			decreased = FALSE;
+		case EFFECT_PLAY_NICE: //Attack & Sp. Atk down
+			if ((!CanStatBeLowered(STAT_STAGE_SPATK, bankDef, bankAtk, data->defAbility) || !SpecialMoveInMoveset(bankDef))
+			&&  (!CanStatBeLowered(STAT_STAGE_ATK, bankDef, bankAtk, data->defAbility) || !RealPhysicalMoveInMoveset(bankDef)))
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_SUBSTITUTE_CHECK;
+			break;
 
-			switch (move)
-			{
-				case MOVE_VENOMDRENCH: //Attack, Sp. Atk, & Speed down
-					if (!(data->defStatus1 & STATUS_PSN_ANY))
-					{
-						DECREASE_VIABILITY(10);
-						decreased = TRUE;
-					}
-					//Poisoned target
-					else if (!CanStatBeLowered(STAT_STAGE_SPEED, bankDef, bankAtk, data->defAbility))
-					{
-						DECREASE_VIABILITY(10);
-						decreased = TRUE;
-					}
-					//Fallthrough
-				default:
-					if ((!CanStatBeLowered(STAT_STAGE_SPATK, bankDef, bankAtk, data->defAbility) || !SpecialMoveInMoveset(bankDef))
-					&&  (!CanStatBeLowered(STAT_STAGE_ATK, bankDef, bankAtk, data->defAbility) || !RealPhysicalMoveInMoveset(bankDef)))
-					{
-						DECREASE_VIABILITY(10);
-						decreased = TRUE;
-					}
-					break;
-			}
-
-			if (!decreased)
+		case EFFECT_VENOM_DRENCH: //Attack, Sp. Atk, & Speed down
+			if (!(data->defStatus1 & STATUS_PSN_ANY) //Not poisoned
+			|| ( //Or stat can't be lowered
+				 !CanStatBeLowered(STAT_STAGE_SPEED, bankDef, bankAtk, data->defAbility)
+			 && (!CanStatBeLowered(STAT_STAGE_ATK, bankDef, bankAtk, data->defAbility) || !RealPhysicalMoveInMoveset(bankDef))
+			 && (!CanStatBeLowered(STAT_STAGE_SPATK, bankDef, bankAtk, data->defAbility) || !SpecialMoveInMoveset(bankDef))
+			))
+				DECREASE_VIABILITY(10);
+			else
 				goto AI_SUBSTITUTE_CHECK;
 			break;
 
@@ -1132,7 +1125,7 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_HAZE:
-		AI_HAZE_CHECK: ;
+		AI_HAZE_CHECK:
 			decreased = FALSE;
 			if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART) //Smart AI probably won't care about own boosts if it has Haze
 			{
@@ -1305,7 +1298,7 @@ SKIP_CHECK_TARGET:
 		case EFFECT_POISON:
 		case EFFECT_TOXIC:
 			if (move == MOVE_TOXICTHREAD
-			&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > STAT_STAGE_MIN
+			&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED)
 			&& data->defAbility != ABILITY_CONTRARY)
 				break;
 
@@ -1957,8 +1950,7 @@ SKIP_CHECK_TARGET:
 			{
 				if (data->defAbility == ABILITY_CONTRARY)
 				{
-					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) >= STAT_STAGE_MAX
-					&& STAT_STAGE(bankDef, STAT_STAGE_SPATK) >= STAT_STAGE_MAX)
+					if (!AI_STAT_CAN_RISE(bankDef, STAT_STAGE_ATK) && !AI_STAT_CAN_RISE(bankDef, STAT_STAGE_SPATK))
 					{
 						DECREASE_VIABILITY(10);
 						break;
@@ -1966,8 +1958,7 @@ SKIP_CHECK_TARGET:
 				}
 				else
 				{
-					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN
-					&& STAT_STAGE(bankDef, STAT_STAGE_SPATK) == STAT_STAGE_MIN)
+					if (!AI_STAT_CAN_FALL(bankDef, STAT_STAGE_ATK) && !AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK))
 					{
 						DECREASE_VIABILITY(10);
 						break;
@@ -2192,11 +2183,8 @@ SKIP_CHECK_TARGET:
 				default: //Memento
 					if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
-					else if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == STAT_STAGE_MIN
-						  && STAT_STAGE(bankDef, STAT_STAGE_SPATK) == STAT_STAGE_MIN)
-					{
+					else if (!AI_STAT_CAN_FALL(bankDef, STAT_STAGE_ATK) && !AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK))
 						DECREASE_VIABILITY(10);
-					}
 					else
 						goto AI_SUBSTITUTE_CHECK;
 			}
@@ -2235,7 +2223,7 @@ SKIP_CHECK_TARGET:
 				break;
 			}
 
-			if (!MoveTypeInMoveset(bankAtk, TYPE_ELECTRIC))
+			if (!DamagingMoveTypeInMoveset(bankAtk, TYPE_ELECTRIC))
 				goto AI_SPDEF_UP;
 			break;
 
@@ -2480,7 +2468,10 @@ SKIP_CHECK_TARGET:
 			{
 				if (move == MOVE_MAGNETICFLUX)
 				{
-					if (!TARGETING_PARTNER && !IsPlusMinusAbility(data->atkAbility))
+					if (TARGETING_PARTNER)
+						break;
+
+					if (!IsPlusMinusAbility(data->atkAbility))
 					{
 						DECREASE_VIABILITY(10);
 						break;
@@ -2488,8 +2479,7 @@ SKIP_CHECK_TARGET:
 				}
 
 				AI_COSMIC_POWER:
-				if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) >= STAT_STAGE_MAX
-				&& STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) >= STAT_STAGE_MAX)
+				if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
 					DECREASE_VIABILITY(10);
 			}
 			break;
@@ -2520,15 +2510,15 @@ SKIP_CHECK_TARGET:
 			{
 				switch (move) {
 					case MOVE_COIL:
-						if (STAT_STAGE(bankAtk, STAT_STAGE_ACC) >= STAT_STAGE_MAX
-						&& (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !RealPhysicalMoveInMoveset(bankAtk))
-						&&  STAT_STAGE(bankAtk, STAT_STAGE_DEF) >= STAT_STAGE_MAX)
+						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
+						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
 							DECREASE_VIABILITY(10);
 						break;
 
 					default:
-						if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX && !RealPhysicalMoveInMoveset(bankAtk))
-						&&  STAT_STAGE(bankAtk, STAT_STAGE_DEF) >= STAT_STAGE_MAX)
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
 							DECREASE_VIABILITY(10);
 				}
 			}
@@ -2548,17 +2538,17 @@ SKIP_CHECK_TARGET:
 				switch (move) {
 					case MOVE_QUIVERDANCE:
 					case MOVE_GEOMANCY:
-						if (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) >= STAT_STAGE_MAX
-						&& (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE_MAX || !SpecialMoveInMoveset(bankAtk))
-						&&  STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) >= STAT_STAGE_MAX)
+						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)
+						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
 							DECREASE_VIABILITY(10);
-						else if (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1) //Trick Room not about to end
+						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
 							DECREASE_VIABILITY(10);
 						break;
 
 					default:
-						if ((STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE_MAX || !SpecialMoveInMoveset(bankAtk))
-						&&  STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) >= STAT_STAGE_MAX)
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
 							DECREASE_VIABILITY(10);
 				}
 			}
@@ -2574,22 +2564,22 @@ SKIP_CHECK_TARGET:
 						if (data->atkAbility == ABILITY_CONTRARY)
 							goto AI_COSMIC_POWER;
 
-						if ((STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE_MAX || !SpecialMoveInMoveset(bankAtk))
-						&&  (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk))
-						&&  (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) >= STAT_STAGE_MAX))
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
 							DECREASE_VIABILITY(10);
-						else if (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1) //Trick Room not about to end
+						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
 							DECREASE_VIABILITY(10);
 						break;
 
 					default: //Dragon Dance + Shift Gear
 						if (data->atkAbility == ABILITY_CONTRARY
-						|| (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room not about to end
+						|| (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())) //Trick Room not about to end
 							DECREASE_VIABILITY(10);
 						else
 						{
-							if ((STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE_MAX || !RealPhysicalMoveInMoveset(bankAtk))
-							&&  (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) >= STAT_STAGE_MAX))
+							if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+							&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
 								DECREASE_VIABILITY(10);
 						}
 				}
@@ -2606,7 +2596,8 @@ SKIP_CHECK_TARGET:
 			{
 				switch (move) {
 					case MOVE_POWERTRICK:
-						if (gBattleMons[bankAtk].defense >= gBattleMons[bankAtk].attack && !RealPhysicalMoveInMoveset(bankAtk))
+						if (gBattleMons[bankAtk].attack >= gBattleMons[bankAtk].defense //Already stronger
+						|| !RealPhysicalMoveInMoveset(bankAtk))
 							DECREASE_VIABILITY(10);
 						break;
 
@@ -2632,7 +2623,7 @@ SKIP_CHECK_TARGET:
 							DECREASE_VIABILITY(10);
 						else
 						#endif
-						if (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1) //Trick Room not about to end
+						if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
 						{
 							if (gBattleMons[bankAtk].speed <= gBattleMons[bankDef].speed)
 							{
@@ -3071,7 +3062,7 @@ SKIP_CHECK_TARGET:
 				case MOVE_TAILWIND:
 					if (BankHasTailwind(bankAtk)
 					||  PARTNER_MOVE_IS_TAILWIND_TRICKROOM
-					||  (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room active and not ending this turn
+					||  (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())) //Trick Room active and not ending this turn
 						DECREASE_VIABILITY(10);
 					break;
 

@@ -2062,6 +2062,18 @@ bool8 IsTrickRoomActive(void)
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TRICK_ROOM);
 }
 
+bool8 IsTrickRoomOnLastTurn(void)
+{
+	if ((IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TRICK_ROOM)
+	#ifdef FLAG_TRICK_ROOM_BATTLE
+	|| FlagGet(FLAG_TRICK_ROOM_BATTLE)
+	#endif
+	)
+		return FALSE;
+
+	return gNewBS->TrickRoomTimer == 1;
+}
+
 bool8 IsMagicRoomActive(void)
 {
 	return gNewBS->MagicRoomTimer > 0

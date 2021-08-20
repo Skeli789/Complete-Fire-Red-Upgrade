@@ -143,7 +143,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs?
-			switch (move) {
+			switch (move)
+			{
 				case MOVE_COPYCAT:
 					if (MoveWouldHitFirst(move, bankAtk, bankDef))
 					{
@@ -174,118 +175,234 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		//Increased stat effects
 		case EFFECT_ATTACK_UP:
-		case EFFECT_ATTACK_UP_2:		
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk)
-			|| (MoveInMoveset(MOVE_KINGSSHIELD, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))) //Don't set up if the Aegislash is probably going to revert your setup
-				break;
-
-			switch (move) {
-				case MOVE_HONECLAWS:
-					if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= 8)
-						goto AI_ACCURACY_PLUS;
-					break;
-
-				default:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+				goto AI_ATTACK_PLUS;
+			break;
+		case EFFECT_ATTACK_UP_2:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 2))
+			{
 				AI_ATTACK_PLUS:
-					if (HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN_2))
-						break;
-
-					if (RealPhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
-						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
-					/*else if (IsMaxMove(move) && IS_DOUBLE_BATTLE && BATTLER_ALIVE(data->bankAtkPartner)
-						&& RealPhysicalMoveInMoveset(data->bankAtkPartner) && atkAbility != ABILITY_CONTRARY)
-					{
-						IncreaseStatViability(&viability, class, 2, data->bankAtkPartner, bankDef, move, STAT_STAGE_ATK, 8);
-					}*/
-					break;
+				INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
 			}
 			break;
 
 		case EFFECT_DEFENSE_UP:
-		case EFFECT_DEFENSE_UP_2:
-		AI_DEFENSE_PLUS:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedMoveWithEffect(bankDef, EFFECT_DEFENSE_DOWN_2)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-
-			//Continue defense check
-			if ((BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_PHYSICAL && atkAbility != ABILITY_CONTRARY))
-				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 10, 1);
-			else if (MoveInMoveset(MOVE_BODYPRESS, bankAtk))
-				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 8, 1);
+		AI_DEFENSE_PLUS_FULL: ;
+			u8 defRet;
+			if (atkAbility != ABILITY_CONTRARY && (defRet = GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1)))
+				goto AI_DEFENSE_PLUS;
 			break;
-
-		case EFFECT_SPEED_UP:
-		case EFFECT_SPEED_UP_2:
-		AI_SPEED_PLUS:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedMoveWithEffect(bankDef, EFFECT_SPEED_DOWN_2)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-			if (!IsTrickRoomActive() && atkAbility != ABILITY_CONTRARY)
-				INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3);
+		case EFFECT_DEFENSE_UP_2:
+			if (atkAbility != ABILITY_CONTRARY && (defRet = GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 2)))
+			{
+				AI_DEFENSE_PLUS:
+				if (defRet == 1) //Foe likely to use physical move
+					INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 10, 2);
+				else //Has Body Press
+					INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 8, 1);
+			}
 			break;
 
 		case EFFECT_SPECIAL_ATTACK_UP:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 1))
+				goto AI_SP_ATTACK_PLUS;
+			break;
 		case EFFECT_SPECIAL_ATTACK_UP_2:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-
-			AI_SPECIAL_ATTACK_PLUS:
-			if (HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_2))
-				break;
-
-			if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
+			{
+				AI_SP_ATTACK_PLUS:
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
+			}
 			break;
 
 		case EFFECT_SPECIAL_DEFENSE_UP:
+		AI_SP_DEFENSE_PLUS_FULL:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 1))
+				goto AI_SP_DEFENSE_PLUS;
+			break;
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
-		AI_SPECIAL_DEFENSE_PLUS: ;
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_2)
-			|| HasUsedMove(bankDef, MOVE_APPLEACID)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-			if (BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_SPECIAL && atkAbility != ABILITY_CONTRARY)
-				INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 10, 1);
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 2))
+			{
+				AI_SP_DEFENSE_PLUS:
+				INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 10, 1); //Foe likely to use special move
+			}
 			break;
 
-		case EFFECT_ATK_SPATK_UP:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedMoveWithEffect(bankDef, EFFECT_PLAY_NICE)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-
-			if (RealPhysicalMoveInMoveset(bankAtk))
-				goto AI_ATTACK_PLUS;
-			else if (SpecialMoveInMoveset(bankAtk))
-				goto AI_SPECIAL_ATTACK_PLUS;
+		case EFFECT_SPEED_UP:
+		AI_SPEED_PLUS_FULL:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1))
+				goto AI_SPEED_PLUS;
+			break;
+		case EFFECT_SPEED_UP_2:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+			{
+				AI_SPEED_PLUS:
+				INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3);
+			}
 			break;
 
 		case EFFECT_ACCURACY_UP:
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseAccuracyAgainst(bankAtk, bankDef, 1))
+				goto AI_ACCURACY_PLUS;
+			break;
 		case EFFECT_ACCURACY_UP_2:
-		AI_ACCURACY_PLUS: ;
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-				break;
-			if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE) && defAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseAccuracyAgainst(bankAtk, bankDef, 2))
+			{
+				AI_ACCURACY_PLUS:
 				INCREASE_STAT_VIABILITY(STAT_STAGE_ACC, STAT_STAGE_MAX, 2);
+			}
 			break;
 
 		case EFFECT_EVASION_UP:
+			if (move == MOVE_ACUPRESSURE)
+			{
+				if (!TARGETING_PARTNER)
+				{
+					if (atkAbility != ABILITY_CONTRARY && !BadIdeaToRaiseStatAgainst(bankAtk, bankDef, TRUE))
+						INCREASE_STAT_VIABILITY(0xFE, STAT_STAGE_MAX, 2); //All stats
+				}
+				break;
+			}
+			else if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseEvasionAgainst(bankAtk, bankDef, 1))
+				goto AI_EVASION_PLUS;
+			break;
 		case EFFECT_EVASION_UP_2:
 		case EFFECT_MINIMIZE:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk)
-			|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-				break;
-			if (move != MOVE_ACUPRESSURE)
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseEvasionAgainst(bankAtk, bankDef, 2))
 			{
-				if (atkAbility != ABILITY_CONTRARY)
-					INCREASE_STAT_VIABILITY(STAT_STAGE_EVASION, STAT_STAGE_MAX, 4);
+				AI_EVASION_PLUS:
+				INCREASE_STAT_VIABILITY(STAT_STAGE_EVASION, STAT_STAGE_MAX, 4); //Best to go until maxed
 			}
+			break;
+
+		case EFFECT_ATK_SPATK_UP:
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+					goto AI_ATTACK_PLUS;
+				else if (SpecialMoveInMoveset(bankAtk) && GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 1))
+					goto AI_SP_ATTACK_PLUS;
+			}
+			break;
+		
+		case EFFECT_ATK_ACC_UP:
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+					goto AI_ATTACK_PLUS;
+				else if (GoodIdeaToRaiseAccuracyAgainst(bankAtk, bankDef, 1))
+					goto AI_ACCURACY_PLUS;
+			}
+			break;
+
+		case EFFECT_COSMIC_POWER:
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				AI_COSMIC_POWER:
+				if ((defRet = GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1)))
+					goto AI_DEFENSE_PLUS;
+				else if (GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 1))
+					goto AI_SP_DEFENSE_PLUS;
+			}
+			break;
+
+		case EFFECT_BULK_UP:
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+					goto AI_ATTACK_PLUS;
+				else if (GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1))
+					INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 8, 1); //Normally checks for 10 Def
+			}
+			break;
+
+		case EFFECT_CALM_MIND:
+			if (atkAbility == ABILITY_CONTRARY)
+				break;
+
+			switch (move)
+			{
+				case MOVE_GEOMANCY:
+					if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB
+					|| (IsTypeZCrystal(data->atkItem, gBattleMoves[move].type) && !IsMegaZMoveBannedBattle() && !gNewBS->zMoveData.used[bankAtk]) //Z-Geomancy
+					|| IsBankIncapacitated(bankDef) //Not a bad idea to use both turns
+					|| (!CanKnockOut(bankDef, bankAtk) && HighChanceOfBeingImmobilized(bankDef))) //Most likely will be done setting up and still be alive
+					{
+						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+							goto AI_SPEED_PLUS;
+						else if (GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
+							goto AI_SP_ATTACK_PLUS;
+						else if (GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 2))
+							INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 8, 1); //Normally checks for 10 Sp. Def
+					}
+					break;
+	
+				case MOVE_QUIVERDANCE:
+					if (defAbility == ABILITY_DANCER)
+						break; //Bad Idea
+
+					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+						goto AI_SPEED_PLUS;
+					__attribute__ ((fallthrough));
+
+				default:
+					if (GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 1))
+						goto AI_SP_ATTACK_PLUS;
+					else if (GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 1))
+						INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 8, 1); //Normally checks for 10 Sp. Def
+			}
+			break;
+
+		case EFFECT_DRAGON_DANCE:
+			switch (move)
+			{
+				case MOVE_SHELLSMASH:
+					if (atkAbility == ABILITY_CONTRARY)
+					{
+						goto AI_COSMIC_POWER;
+					}
+					else
+					{
+						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+							goto AI_SPEED_PLUS;
+						else if (GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 2))
+							goto AI_ATTACK_PLUS;
+						else if (GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
+							goto AI_SP_ATTACK_PLUS;
+					}
+					break;
+				default:
+					if (atkAbility == ABILITY_CONTRARY)
+						break;
+
+					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1))
+						goto AI_SPEED_PLUS;
+					else if (GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+						goto AI_ATTACK_PLUS;
+					break;
+			}
+			break;
+
+		case EFFECT_DEFENSE_CURL:
+			if (MoveEffectInMoveset(EFFECT_ROLLOUT, bankAtk) && !(data->atkStatus2 & STATUS2_DEFENSE_CURL))
+				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, STAT_STAGE_MAX, 5);
+			else
+				goto AI_DEFENSE_PLUS_FULL;
+			break;
+
+		case EFFECT_CHARGE:
+			if (DamagingMoveTypeInMovesetThatAffects(bankAtk, bankDef, TYPE_ELECTRIC))
+				INCREASE_STATUS_VIABILITY(2); //Power up the potential next attack
+			else
+				goto AI_SP_DEFENSE_PLUS_FULL;
+			break;
+
+		case EFFECT_STOCKPILE:
+			if (MoveEffectInMoveset(EFFECT_SWALLOW, bankAtk)
+			||  MoveEffectInMoveset(EFFECT_SPIT_UP, bankAtk))
+				INCREASE_STATUS_VIABILITY(2);
+			else if (atkAbility != ABILITY_CONTRARY)
+				goto AI_COSMIC_POWER;
 			break;
 
 		//Decreased stat effects
@@ -343,8 +460,14 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_PLAY_NICE:
 			if (GoodIdeaToLowerAttack(bankDef, bankAtk, move)
+			|| GoodIdeaToLowerSpAtk(bankDef, bankAtk, move))
+				INCREASE_STATUS_VIABILITY(1);
+			break;
+
+		case EFFECT_VENOM_DRENCH:
+			if (GoodIdeaToLowerAttack(bankDef, bankAtk, move)
 			|| GoodIdeaToLowerSpAtk(bankDef, bankAtk, move)
-			|| (move == MOVE_VENOMDRENCH && GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 1)))
+			|| GoodIdeaToLowerSpeed(bankDef, bankAtk, move, 1))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
@@ -414,7 +537,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || data->atkItemEffect == ITEM_EFFECT_FLINCH))
 				INCREASE_VIABILITY(3); //Move past strongest move
 			else if (move == MOVE_SCALESHOT)
-				goto AI_SPEED_PLUS;
+				goto AI_SPEED_PLUS_FULL;
 			break;
 
 		case EFFECT_CONVERSION:
@@ -468,7 +591,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (!BadIdeaToPoison(bankDef, bankAtk))
 			{
 				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
-				||  MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
+				||  MoveEffectInMoveset(EFFECT_VENOM_DRENCH, bankAtk)
 				||  atkAbility == ABILITY_MERCILESS)
 					INCREASE_STATUS_VIABILITY(2);
 				else if (MoveInMoveset(MOVE_HEX, bankAtk)
@@ -557,17 +680,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				else
 					INCREASE_STATUS_VIABILITY(1);
 			}
-			/* Automatically runs the above check for target's partner too
-			else if (IS_DOUBLE_BATTLE
-			&& moveTarget & MOVE_TARGET_BOTH && CanBeConfused(data->bankDefPartner))
-			{
-				if (defPartnerStatus1 & STATUS1_PARALYSIS
-				|| defPartnerStatus2 & (STATUS2_INFATUATION)
-				|| (atkAbility == ABILITY_SERENEGRACE && FlinchingMoveInMoveset(bankAtk)))
-					INCREASE_STATUS_VIABILITY(2);
-				else
-					INCREASE_STATUS_VIABILITY(1);
-			}*/
 			break;
 
 		case EFFECT_REFLECT:
@@ -650,7 +762,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					if (!IsClearBodyAbility(defAbility)
 					&& defAbility != ABILITY_CONTRARY
-					&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > 0)
+					&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED))
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
 				}
 			}
@@ -662,6 +774,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
+		case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
 			if (STAT_DOWN_HIT_CHECK)
 				goto AI_SPECIAL_DEFENSE_MINUS;
 			break;
@@ -811,7 +924,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_SPEED_UP_1_HIT:
 			if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75)
-				goto AI_SPEED_PLUS;
+				goto AI_SPEED_PLUS_FULL;
 			break;
 
 		case EFFECT_DESTINY_BOND:
@@ -1182,7 +1295,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (move == MOVE_MIRACLEEYE)
 			{
 				if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6
-				|| (IsOfType(bankDef, TYPE_DARK) && (MoveTypeInMoveset(TYPE_PSYCHIC, bankAtk))))
+				|| (IsOfType(bankDef, TYPE_DARK) && DamagingMoveTypeInMoveset(bankAtk, TYPE_PSYCHIC)))
 					INCREASE_STATUS_VIABILITY(2);
 				break;
 			}
@@ -1192,8 +1305,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 				else if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6
 				|| (IsOfType(bankDef, TYPE_GHOST)
-				 && (MoveTypeInMoveset(TYPE_NORMAL, bankAtk)
-				  || MoveTypeInMoveset(TYPE_FIGHTING, bankAtk))))
+				 && (DamagingMoveTypeInMoveset(bankAtk, TYPE_NORMAL)
+				  || DamagingMoveTypeInMoveset(bankAtk, TYPE_FIGHTING))))
 					INCREASE_STATUS_VIABILITY(2);
 				break;
 			}
@@ -1421,8 +1534,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || MoveEffectInMoveset(EFFECT_THUNDER, bankAtk) //Includes Hurricane
 			 || MoveEffectInMoveset(EFFECT_MORNING_SUN, bankDef)
 			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
-			 || MoveTypeInMoveset(TYPE_WATER, bankAtk)
-			 || MoveTypeInMoveset(TYPE_FIRE, bankDef)
+			 || MoveTypeInMoveset(bankAtk, TYPE_WATER)
+			 || MoveTypeInMoveset(bankDef, TYPE_FIRE)
 			 || data->atkItemEffect == ITEM_EFFECT_DAMP_ROCK))
 			{
 				if (IsClassDoublesTeamSupport(class))
@@ -1456,8 +1569,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || MoveEffectInMoveset(EFFECT_THUNDER, bankDef)
 			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
 			 || MoveInMoveset(MOVE_GROWTH, bankAtk)
-			 || MoveTypeInMoveset(TYPE_FIRE, bankAtk)
-			 || MoveTypeInMoveset(TYPE_WATER, bankDef)
+			 || MoveTypeInMoveset(bankAtk, TYPE_FIRE)
+			 || MoveTypeInMoveset(bankDef, TYPE_WATER)
 			 || data->atkItemEffect == ITEM_EFFECT_HEAT_ROCK))
 			{
 				if (IsClassDoublesTeamSupport(class))
@@ -1472,8 +1585,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				if (move == MOVE_FELLSTINGER)
 				{
-					if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) < STAT_STAGE_MAX
-					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+					if (AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) && MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 					{
 						if (IS_SINGLE_BATTLE)
 						{
@@ -1489,15 +1601,15 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					break;
 				}
-				else if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75)
+				else if (CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75 && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
 					goto AI_ATTACK_PLUS;
 			}
 			break;
 
 		case EFFECT_BELLY_DRUM:
-			if (RealPhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY && RealPhysicalMoveInMoveset(bankAtk))
 			{
-				if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, TRUE))
 					break;
 
 				if (IsTypeZCrystal(data->atkItem, gBattleMoves[move].type) && !IsMegaZMoveBannedBattle())
@@ -1578,29 +1690,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
-		case EFFECT_DEFENSE_CURL:
-			if (MoveEffectInMoveset(EFFECT_ROLLOUT, bankAtk) && !(data->atkStatus2 & STATUS2_DEFENSE_CURL))
-				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, STAT_STAGE_MAX, 5);
-			else if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-				break;
-			else
-				goto AI_DEFENSE_PLUS;
-			break;
-
 		case EFFECT_FAKE_OUT:
 			if (move == MOVE_FAKEOUT
 			&& ShouldUseFakeOut(bankAtk, bankDef))
 			{
 				IncreaseFakeOutViability(&viability, class, bankAtk, bankDef, move);
 			}
-			break;
-
-		case EFFECT_STOCKPILE:
-			if (MoveEffectInMoveset(EFFECT_SWALLOW, bankAtk)
-			||  MoveEffectInMoveset(EFFECT_SPIT_UP, bankAtk))
-				INCREASE_STATUS_VIABILITY(2);
-			else
-				goto AI_COSMIC_POWER;
 			break;
 
 		case EFFECT_HAIL:
@@ -1705,16 +1800,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_NATURE_POWER:
 			return AIScript_Positives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
-
-		case EFFECT_CHARGE:
-			for (i = 0; i < MAX_MON_MOVES; ++i)
-			{
-				if (GetMoveTypeSpecial(bankAtk, gBattleMons[bankAtk].moves[i]) == TYPE_ELECTRIC
-				&&  SPLIT(gBattleMons[bankAtk].moves[i]) != SPLIT_STATUS)
-					INCREASE_STATUS_VIABILITY(2);
-			}
-
-			goto AI_SPECIAL_DEFENSE_PLUS;
 
 		case EFFECT_TAUNT:
 			//Special logic for sleeping foes
@@ -2046,26 +2131,15 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_MUD_SPORT:
-			if (!MoveTypeInMoveset(TYPE_ELECTRIC, bankAtk) && MoveTypeInMoveset(TYPE_ELECTRIC, bankDef))
+			if (DamagingMoveTypeInMoveset(bankDef, TYPE_ELECTRIC) //Foe has electric move
+			&& !DamagingMoveTypeInMoveset(bankAtk, TYPE_ELECTRIC)) //AI doesn't
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
-		case EFFECT_COSMIC_POWER:
-		AI_COSMIC_POWER: ;
-			if (atkAbility != ABILITY_CONTRARY
-			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
-			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-			{
-				if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 10 || IsClassBatonPass(class))
-				{
-					if (!HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
-					&& !HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Defense if foe is just going to lower it
-						goto AI_DEFENSE_PLUS;
-				}
-
-				if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Def if foe is just going to lower it
-					goto AI_SPECIAL_DEFENSE_PLUS;
-			}
+		case EFFECT_WATER_SPORT:
+			if (DamagingMoveTypeInMoveset(bankDef, TYPE_FIRE) //Foe has Fire move
+			&& !DamagingMoveTypeInMoveset(bankAtk, TYPE_FIRE)) //And AI doesn't
+				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_EXTREME_EVOBOOST: ;
@@ -2111,104 +2185,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 					INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3); //At least try to boost Speed
 					break;
-			}
-			break;
-
-		case EFFECT_BULK_UP:
-			if (atkAbility != ABILITY_CONTRARY
-			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
-			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk)
-			&& !HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE))
-			{
-				if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 8 || IsClassBatonPass(class))
-				{
-					if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Attack if foe is just going to lower it
-						goto AI_ATTACK_PLUS;
-				}
-
-				if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Def
-				{
-					if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Defense if foe is just going to lower it
-						goto AI_DEFENSE_PLUS;
-				}
-			}
-			break;
-
-		case EFFECT_WATER_SPORT:
-			if (!MoveTypeInMoveset(TYPE_FIRE, bankAtk) && (MoveTypeInMoveset(TYPE_FIRE, bankDef)))
-				INCREASE_STATUS_VIABILITY(1);
-			break;
-
-		case EFFECT_CALM_MIND:
-			if (atkAbility != ABILITY_CONTRARY
-			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
-			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-			{
-				switch (move) {
-					case MOVE_GEOMANCY:
-						if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
-							INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, STAT_STAGE_MAX, 3);
-						__attribute__ ((fallthrough));
-
-					case MOVE_QUIVERDANCE:
-						if (defAbility == ABILITY_DANCER)
-							break; //Bad Idea
-
-						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
-						{
-							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPEED_DOWN_HIT, 75)) //Don't bother trying to boost Speed if foe is just going to lower it
-								goto AI_SPEED_PLUS;
-						}
-						__attribute__ ((fallthrough));
-
-					default:
-						if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8 || IsClassBatonPass(class))
-						{
-							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Attack if foe is just going to lower it
-								goto AI_SPECIAL_ATTACK_PLUS;							
-						}
-
-						if (STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) < 8 || IsClassBatonPass(class)) //Normally checks for 10 Sp. Def
-						{
-							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_HIT, 75)) //Don't bother trying to boost Sp. Defense if foe is just going to lower it
-								goto AI_SPECIAL_DEFENSE_PLUS;
-						}
-				}
-			}
-			break;
-
-		case EFFECT_DRAGON_DANCE:
-			if (atkAbility != ABILITY_CONTRARY 
-			&& !IsMovePredictionPhazingMove(bankDef, bankAtk)
-			&& !HasUsedPhazingMoveThatAffects(bankDef, bankAtk))
-			{
-				switch (move) {
-					case MOVE_SHELLSMASH:
-						if (data->atkItemEffect == ITEM_EFFECT_POWER_HERB)
-							INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, STAT_STAGE_MAX, 3);
-						else if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
-							goto AI_SPEED_PLUS;
-						else if ((IsClassBatonPass(class) && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 10)
-						|| (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 8 && (SpecialMoveInMoveset(bankAtk))))
-							goto AI_SPECIAL_ATTACK_PLUS;
-						else
-							goto AI_ATTACK_PLUS;
-						__attribute__ ((fallthrough));
-
-					default: //Dragon Dance + Shift Gear
-						if (move == MOVE_DRAGONDANCE && defAbility == ABILITY_DANCER)
-							break; //Bad Idea
-
-						if (data->atkSpeed <= data->defSpeed || IsClassBatonPass(class))
-						{
-							if (!HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPEED_DOWN_HIT, 75)) //Don't bother trying to boost Speed if foe is just going to lower it
-								goto AI_SPEED_PLUS;
-						}
-
-						if (!HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
-						&& !HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ATTACK_DOWN_HIT, 75)) //Don't bother trying to boost Attack if foe is just going to lower it
-							goto AI_ATTACK_PLUS;
-				}
 			}
 			break;
 
@@ -2523,7 +2499,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			switch (move) {
 				case MOVE_SOAK:
 					if (IsClassSweeper(class)
-					&& (MoveTypeInMoveset(bankAtk, TYPE_ELECTRIC) || MoveTypeInMoveset(bankAtk, TYPE_GRASS)))
+					&& (DamagingMoveTypeInMoveset(bankAtk, TYPE_ELECTRIC) || DamagingMoveTypeInMoveset(bankAtk, TYPE_GRASS)))
 						INCREASE_STATUS_VIABILITY(2); //Get some super effective moves
 					break;
 
@@ -2752,7 +2728,7 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 				if (!(data->defStatus2 & STATUS2_DESTINY_BOND) //AI shouldn't prioritize damaging move if foe is going to take AI down with it
 				|| CanKnockOut(bankDef, bankAtk) //Unless foe can KO anyway
 				|| !wouldHitFirst) //Or the Destiny Bond will have worn off by the time the AI's attack hits - Not needed here because only moves that would go first would reach here
-				{	
+				{
 					if (viability == 100 //Untouched viability
 					&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Strongest move would probably go second but will KO
 					&& !IsMovePredictionHPDrainingMove(bankDef, bankAtk) //And the foe probably won't try to restore their HP
@@ -2814,6 +2790,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_ATTACK_UP:
 			case EFFECT_ATTACK_UP_2:
 			case EFFECT_ATK_SPATK_UP:
+			case EFFECT_ATK_ACC_UP:
 			case EFFECT_SPEED_UP:
 			case EFFECT_SPEED_UP_2:
 			case EFFECT_SPECIAL_ATTACK_UP:

@@ -131,6 +131,7 @@ bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk);
 bool8 CanBeChoiceLocked(u8 bank);
 
 bool8 IsTrickRoomActive(void);
+bool8 IsTrickRoomOnLastTurn(void);
 bool8 IsMagicRoomActive(void);
 bool8 IsWonderRoomActive(void);
 bool8 IsGravityActive(void);

@@ -389,6 +389,9 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 
 	if (isSingleBattle) //AI Single Battle
 	{
+		bool8 leechSeed = FALSE;
+		bool8 protectionMove = FALSE;
+
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
 			u16 move = moves[i];
@@ -411,8 +414,9 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			}
 			else
 			{
-			MOVE_EFFECT_SWITCH:
-				switch (moveEffect) {
+				MOVE_EFFECT_SWITCH:
+				switch (moveEffect)
+				{
 					case EFFECT_ROAR:
 						phazingMove = TRUE; //Could be Roar support for breaking setups
 						break;
@@ -443,6 +447,14 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 						++reflectionNum;
 						break;
 
+					case EFFECT_LEECH_SEED:
+						leechSeed = TRUE;
+						break;
+					
+					case EFFECT_PROTECT:
+						protectionMove = TRUE;
+						break;
+
 					case EFFECT_TRAP:
 					case EFFECT_MEAN_LOOK:
 						class = FIGHT_CLASS_STALL;
@@ -465,7 +477,8 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			if (SPLIT(move) != SPLIT_STATUS)
 				++attackMoveNum;
 
-			switch (moveEffect) {
+			switch (moveEffect)
+			{
 				case EFFECT_ATTACK_UP:
 				case EFFECT_DEFENSE_UP:
 				case EFFECT_SPEED_UP:
@@ -474,6 +487,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				case EFFECT_ACCURACY_UP:
 				case EFFECT_EVASION_UP:
 				case EFFECT_ATK_SPATK_UP:
+				case EFFECT_ATK_ACC_UP:
 				case EFFECT_ATTACK_UP_2:
 				case EFFECT_DEFENSE_UP_2:
 				case EFFECT_SPEED_UP_2:
@@ -543,6 +557,8 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				else
 					class = FIGHT_CLASS_SWEEPER_KILL;
 			}
+			else if (leechSeed && protectionMove)
+				class = FIGHT_CLASS_STALL;
 			else if (attackMoveNum >= 2 && (boostingMove || statusMoveNum > 0 || phazingMove))
 			{
 				//A class should always be assigned here because of the conditions to enter this scope
@@ -597,6 +613,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 					case EFFECT_DRAGON_DANCE:
 					case EFFECT_CALM_MIND:
 					case EFFECT_BULK_UP:
+					case EFFECT_ATK_ACC_UP:
 						++numOffensiveBoostingMoves;
 						break;
 
@@ -1731,6 +1748,28 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 			if (stat == STAT_STAGE_SPEED && STAT_STAGE(bankAtk, stat) < statLimit
 			&& !MoveKnocksOutXHits(foePrediction, bankDef, bankAtk, 1)) //Opponent won't KO with its next move
 				return TRUE; //Opponent goes first now,	but maybe boosting speed will make you faster
+
+			if (!Can2HKO(bankDef, bankAtk))
+			{
+				if (STAT_STAGE(bankAtk, stat) < statLimit)
+					return TRUE;
+			}
+			else //Can 2HKO
+			{
+				if (!CanKnockOut(bankDef, bankAtk)) //Will actually take 2 hits to KO
+				{
+					if (stat == STAT_STAGE_DEF)
+					{
+						if (CalcMoveSplit(bankDef, GetStrongestMove(bankDef, bankAtk)) == SPLIT_PHYSICAL)
+							return TRUE; //Maybe increasing defenses will reduce the chance of a 2HKO
+					}
+					else if (stat == STAT_STAGE_SPDEF)
+					{
+						if (CalcMoveSplit(bankDef, GetStrongestMove(bankDef, bankAtk)) == SPLIT_SPECIAL)
+							return TRUE; //Maybe increasing defenses will reduce the chance of a 2HKO
+					}
+				}
+			}
 
 			if (!Can2HKO(bankDef, bankAtk) && STAT_STAGE(bankAtk, stat) < statLimit)
 				return TRUE;

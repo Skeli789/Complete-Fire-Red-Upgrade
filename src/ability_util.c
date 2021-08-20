@@ -421,6 +421,12 @@ bool8 AbilityPreventsLoweringStat(u8 ability, u8 statId)
 	}
 }
 
+bool8 AbilityRaisesOneStatWhenSomeStatIsLowered(u8 ability)
+{
+	return ability == ABILITY_DEFIANT
+		|| ability == ABILITY_COMPETITIVE;
+}
+
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)
 {
 	if (!IsClearBodyAbility(ability))

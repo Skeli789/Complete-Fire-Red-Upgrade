@@ -823,6 +823,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
+								case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
 									if (CALC && GoodIdeaToLowerSpDef(currTarget, bankAtk, move))
 										break;
 									goto DEFAULT_CHECK;
@@ -2643,6 +2644,233 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 	return badIdea;
 }
 
+bool8 BadIdeaToRaiseStatAgainst(u8 bankAtk, u8 bankDef, bool8 checkDefAbility)
+{
+	return IsMovePredictionPhazingMove(bankDef, bankAtk)
+		|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk)
+		|| (checkDefAbility && ABILITY(bankDef) == ABILITY_UNAWARE && !WillFaintFromSecondaryDamage(bankDef)); //Don't set up if the boosts will just be ignored
+}
+
+bool8 BadIdeaToRaiseAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN_2))
+		return TRUE;
+
+	if (checkingOriginalTarget
+	&& MoveInMoveset(MOVE_KINGSSHIELD, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_ATTACK_DOWN)
+		|| HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
+		|| HasUsedMoveWithEffect(bankDef, EFFECT_PLAY_NICE)
+		|| (gBattleMons[bankAtk].status1 & STATUS1_PSN_ANY && HasUsedMoveWithEffect(bankDef, EFFECT_VENOM_DRENCH))
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ATTACK_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseAttackAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_DEFENSE_DOWN_2))
+		return TRUE;
+
+	if (checkingOriginalTarget
+	&& MoveInMoveset(MOVE_OBSTRUCT, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_DEFENSE_DOWN)
+		|| HasUsedMoveWithEffect(bankDef, EFFECT_TICKLE)
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_DEFENSE_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseDefenseAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseSpAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_2))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_ATTACK_DOWN)
+		|| HasUsedMoveWithEffect(bankDef, EFFECT_PLAY_NICE)
+		|| (gBattleMons[bankAtk].status1 & STATUS1_PSN_ANY && HasUsedMoveWithEffect(bankDef, EFFECT_VENOM_DRENCH))
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_ATTACK_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseSpAttackAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseSpDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_2)
+	|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT, 75))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN)
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPECIAL_DEFENSE_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseSpDefenseAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())
+		return TRUE;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_SPEED_DOWN_2))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_SPEED_DOWN)
+		|| (gBattleMons[bankAtk].status1 & STATUS1_PSN_ANY && HasUsedMoveWithEffect(bankDef, EFFECT_VENOM_DRENCH))
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_SPEED_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseSpeedAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseAccuracyAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_ACCURACY_DOWN_2))
+		return TRUE;
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_ACCURACY_DOWN)
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_ACCURACY_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseAccuracyAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 BadIdeaToRaiseEvasionAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkPartner)
+{
+	bool8 checkingOriginalTarget = checkPartner;
+
+	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
+	|| HasUsedMoveWithEffect(bankDef, EFFECT_EVASION_DOWN_2))
+		return TRUE;
+
+	if (checkingOriginalTarget
+	&& (ABILITY(bankDef) == ABILITY_KEENEYE
+	 || (gBattleMons[bankAtk].status2 & STATUS2_FORESIGHT)
+	 || (gBattleMons[bankAtk].status2 & STATUS3_MIRACLE_EYED)))
+		return TRUE; //Evasion will be ignored
+
+	if (amount <= 1)
+	{
+		if (HasUsedMoveWithEffect(bankDef, EFFECT_EVASION_DOWN)
+		|| HasUsedMoveWithEffectHigherThanChance(bankDef, EFFECT_EVASION_DOWN_HIT, 75))
+			return TRUE;
+	}
+
+	if (checkPartner && IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef))) //Check partner too so the AI doesn't raise stats against one foe because it's okay
+		return BadIdeaToRaiseEvasionAgainst(bankAtk, PARTNER(bankDef), amount, FALSE); //Single recursive call
+
+	return FALSE;
+}
+
+bool8 GoodIdeaToRaiseAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseAttackAgainst(bankAtk, bankDef, amount, TRUE) //Check both opponents
+		&& RealPhysicalMoveInMoveset(bankAtk);
+}
+
+bool8 GoodIdeaToRaiseDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	if (!BadIdeaToRaiseDefenseAgainst(bankAtk, bankDef, amount, TRUE)) //Check both opponents
+	{
+		//Determine what kind of good idea
+		if (BankLikelyToUseMoveSplit(bankDef, GetBankFightingStyle(bankDef)) == SPLIT_PHYSICAL)
+			return 1;
+		else if (MoveInMoveset(MOVE_BODYPRESS, bankAtk))
+			return 2;
+	}
+
+	return FALSE;
+}
+
+bool8 GoodIdeaToRaiseSpAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, amount, TRUE) //Check both opponents
+		&& SpecialMoveInMoveset(bankAtk);
+}
+
+bool8 GoodIdeaToRaiseSpDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, amount, TRUE) //Check both opponents
+		&& BankLikelyToUseMoveSplit(bankDef, GetBankFightingStyle(bankDef)) == SPLIT_SPECIAL;
+}
+
+bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseSpeedAgainst(bankAtk, bankDef, amount, TRUE);
+}
+
+bool8 GoodIdeaToRaiseAccuracyAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseAccuracyAgainst(bankAtk, bankDef, amount, TRUE) //Check both opponents
+		&& MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE);
+}
+
+bool8 GoodIdeaToRaiseEvasionAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+{
+	return !BadIdeaToRaiseEvasionAgainst(bankAtk, bankDef, amount, TRUE); //Check both opponents
+}
+
 bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 {
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
@@ -2651,11 +2879,10 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 	u8 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && RealPhysicalMoveInMoveset(bankDef)
-		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& defAbility != ABILITY_HYPERCUTTER
-		&& defAbility != ABILITY_DEFIANT
-		&& defAbility != ABILITY_COMPETITIVE;
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ATK)
+		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
+		&& defAbility != ABILITY_CONTRARY;
 }
 
 bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
@@ -2667,11 +2894,10 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 
 	return STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4
 		&& PhysicalMoveInMoveset(bankAtk)
-		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& defAbility != ABILITY_BIGPECKS
-		&& defAbility != ABILITY_DEFIANT
-		&& defAbility != ABILITY_COMPETITIVE;
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_DEF)
+		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
+		&& defAbility != ABILITY_CONTRARY;
 }
 
 bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
@@ -2682,10 +2908,10 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 	u8 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
-		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& defAbility != ABILITY_DEFIANT
-		&& defAbility != ABILITY_COMPETITIVE;
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPATK)
+		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
+		&& defAbility != ABILITY_CONTRARY;
 }
 
 bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
@@ -2696,10 +2922,10 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 	u8 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
-		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& defAbility != ABILITY_DEFIANT
-		&& defAbility != ABILITY_COMPETITIVE;
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPDEF)
+		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
+		&& defAbility != ABILITY_CONTRARY;
 }
 
 bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
@@ -2712,6 +2938,7 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
 	return SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
 		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPEED)
 		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy));
 }
 
@@ -2724,7 +2951,7 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 
 	return defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& defAbility != ABILITY_KEENEYE;
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC);
 }
 
 bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
@@ -2733,6 +2960,8 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 
 	return (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
 		&& !IsClearBodyAbility(defAbility)
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
+		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
 		&& defAbility != ABILITY_CONTRARY;
 }
 
@@ -3198,8 +3427,32 @@ bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (GetMoveTypeSpecial(bank, move) == moveType
-			&&  SPLIT(move) != SPLIT_STATUS)
+			if (SPLIT(move) != SPLIT_STATUS
+			&& GetMoveTypeSpecial(bank, move) == moveType)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 DamagingMoveTypeInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 moveType)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (SPLIT(move) != SPLIT_STATUS //Damaging move
+			&& GetMoveTypeSpecial(bankAtk, move) == moveType //Correct type
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Wil have effect
+			&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Is usable
 				return TRUE;
 		}
 	}
@@ -3698,6 +3951,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 				case EFFECT_SPECIAL_ATTACK_UP_2:
 				case EFFECT_EVASION_UP_2:
 				case EFFECT_ATK_SPATK_UP:
+				case EFFECT_ATK_ACC_UP:
 				case EFFECT_BULK_UP:
 				case EFFECT_CALM_MIND:
 				case EFFECT_DRAGON_DANCE:
@@ -3707,6 +3961,7 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 				case EFFECT_ATTACK_UP_HIT:
 				case EFFECT_SPECIAL_ATTACK_UP_HIT:
 				case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
+				case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
 				case EFFECT_DEFENSE_DOWN_HIT:
 					if (CalcSecondaryEffectChance(bankAtk, move, ABILITY(bankAtk)) >= 50)
 						return TRUE;
@@ -3803,6 +4058,9 @@ bool8 HasUsedMoveWithEffectHigherThanChance(u8 bank, u8 effect, u8 chance)
 bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef)
 {
     u32 i;
+
+	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef))
+		return FALSE;
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
 	{

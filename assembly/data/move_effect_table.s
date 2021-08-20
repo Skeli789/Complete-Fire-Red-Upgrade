@@ -92,7 +92,7 @@ gBattleScriptsForMoveEffects:
 .word BS_074_LowerTargetEvsn1Chance
 .word BS_075_SkyAttack
 .word BS_076_SetConfusionChance
-.word BS_077_Blank
+.word BS_077_LowerTargetSpDef2Chance
 .word BS_078_Blank
 .word BS_079_Substitute
 .word BS_080_Recharge
@@ -213,11 +213,11 @@ gBattleScriptsForMoveEffects:
 .word BS_195_Snatch
 .word BS_196_Blank	@was low kick
 .word BS_197_SecretPower
-.word BS_198_Blank	@was 33% recoil
-.word BS_199_Blank	@was teeter dance
+.word BS_198_RaiseUserAtkSpAtk
+.word BS_199_RaiseUserAtkAcc
 .word BS_200_Blank	@was blaze kick
 .word BS_201_MudSport
-.word BS_202_RaiseUserAtkSpAtk	@was poison fang
+.word BS_202_Blank	@was poison fang
 .word BS_203_PlayNice	@was weather ball
 .word BS_204_Overheat
 .word BS_205_Tickle
@@ -302,6 +302,7 @@ gStatLoweringMoveEffects:
 .byte EFFECT_EVASION_DOWN_2
 .byte EFFECT_TICKLE
 .byte EFFECT_PLAY_NICE
+.byte EFFECT_VENOM_DRENCH
 .byte MOVE_EFFECT_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
