@@ -791,6 +791,7 @@ SummaryScreenExpDisplay2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/* Handled in bytereplacement
 .org 0x3E05B0, 0xFF
 .word MULTICHOICE_STRING_LOADER
 .word 0x2
@@ -804,6 +805,7 @@ SummaryScreenExpDisplay2:
 .word 0x6
 .word MULTICHOICE_STRING_LOADER
 .word 0x7
+*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
