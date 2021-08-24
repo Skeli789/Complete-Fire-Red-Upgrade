@@ -13,6 +13,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_switching.h"
 #include "../include/new/ai_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
@@ -421,9 +422,9 @@ void BattleBeginFirstTurn(void)
 				{
 					for (; *bank < gBattlersCount; ++*bank)
 					{
-						if (IsOfType(*bank, TYPE_FAIRY))
+						if (IsAffectedByPixies(*bank))
 						{
-							if (gBattleMons[*bank].defense < gBattleMons[*bank].spDefense)
+							if (gBattleMons[*bank].defense <= gBattleMons[*bank].spDefense) //Prioritizes defense when equal
 								gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
 							else
 								gBattleScripting.statChanger = STAT_STAGE_SPDEF | INCREASE_1;

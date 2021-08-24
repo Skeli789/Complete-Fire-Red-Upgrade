@@ -302,6 +302,31 @@ s32 ConfusionDamageCalc(void)
 	return gBattleMoveDamage;
 }
 
+static u8 GetNumHitsBasedOnMove(u16 move, u8 atkAbility, unusedArg u16 atkSpecies)
+{
+	u8 numHits = 1;
+
+	if (move == MOVE_SURGINGSTRIKES
+	#ifdef SPECIES_ASHGRENINJA
+	|| (move == MOVE_WATERSHURIKEN && atkSpecies == SPECIES_ASHGRENINJA)
+	#endif
+	)
+		numHits = 3;
+	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves)
+	{
+		if (atkAbility == ABILITY_SKILLLINK)
+			numHits = 5;
+		else
+			numHits = 3; //Three hits on average
+	}
+	//else if (gBattleMoves[move].effect == EFFECT_TRIPLE_KICK) //Factored into the base calc - not the best solution since doesn't account for breaking sash/mulitscale
+	//	numHits = 3;
+	else if (gSpecialMoveFlags[move].gTwoStrikesMoves)
+		numHits = 2;
+
+	return numHits;
+}
+
 static u8 AdjustNumHitsForContactDamage(u8 numHits, s32 currHP, u32 contactDamage)
 {
 	if (contactDamage > 0)
@@ -325,8 +350,7 @@ static u8 AdjustNumHitsForContactDamage(u8 numHits, s32 currHP, u32 contactDamag
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData)
 {
 	u8 resultFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef);
-	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
-	&& (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT))
+	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT && resultFlags & MOVE_RESULT_NO_EFFECT)
 		return 0;
 
 	switch (gBattleMoves[move].effect) {
@@ -341,7 +365,9 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 		case EFFECT_PSYWAVE:
 			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
 		case EFFECT_MEMENTO: //Final Gambit
-			return gBattleMons[bankAtk].hp;
+			if (move == MOVE_FINALGAMBIT)
+				return gBattleMons[bankAtk].hp;
+			return 0;
 		case EFFECT_ENDEAVOR: ;
 			s32 dmg;
 			dmg = GetBaseCurrentHP(bankDef) - GetBaseCurrentHP(bankAtk);
@@ -385,20 +411,8 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 
 	damage = (damage * 93) / 100; //Roll 93% damage - about halfway between min & max damage
 
-	u8 numHits = 1;
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
-	{
-		numHits = 5;
-	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
-	{
-		numHits = 3;
-	}
-	else if (gSpecialMoveFlags[move].gTwoStrikesMoves)
-	{
-		numHits = 2;
-	}
-	else if (ABILITY(bankAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
+	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
 			damage = (damage * 150) / 100; //1.5x overall boost
@@ -409,19 +423,24 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	}
 
 	//Try to reduce the number of hits for a multi-hit move if the attacker won't be able to finish because it will be KOd by the contact recoil first
-	if (numHits > 1)
+	if (numHits >= 2)
 		numHits = AdjustNumHitsForContactDamage(numHits, gBattleMons[bankAtk].hp, GetContactDamage(move, bankAtk, bankDef));
 
 	if (numHits <= 1)
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-		|| (IsAffectedBySturdy(ABILITY(bankDef), bankDef) && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+		|| (IsAffectedBySturdy(damageData->defAbility, bankDef) && NO_MOLD_BREAKERS(damageData->atkAbility, move))
 		|| IsAffectedByFocusSash(bankDef))
 			damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 	}
 	else
-		damage *= numHits;
+	{
+		if (IsDamageHalvedDueToFullHP(bankDef, damageData->defAbility, move, damageData->atkAbility))
+			damage = damage + (damage * 2 * (numHits - 1)); //Adjust damage on subsequent hits
+		else
+			damage *= numHits;
+	}
 
 	return damage;
 }
@@ -445,7 +464,9 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 		case EFFECT_PSYWAVE:
 			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
 		case EFFECT_MEMENTO: //Final Gambit
-			return monAtk->hp;
+			if (move == MOVE_FINALGAMBIT)
+				return monAtk->hp;
+			return 0;
 		case EFFECT_ENDEAVOR:
 			if (gBattleMons[bankDef].hp <= monAtk->hp)
 				return 0;
@@ -488,20 +509,8 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
-	u8 numHits = 1;
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && GetMonAbilityAfterTrace(monAtk, bankDef) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
-	{
-		numHits = 5;
-	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
-	{
-		numHits = 3;
-	}
-	else if (gSpecialMoveFlags[move].gTwoStrikesMoves)
-	{
-		numHits = 2;
-	}
-	else if (GetMonAbilityAfterTrace(monAtk, bankDef) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
+	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
 			damage = (damage * 150) / 100; //1.5x overall boost
@@ -519,12 +528,17 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-		|| (IsAffectedBySturdy(ABILITY(bankDef), bankDef) && NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
+		|| (IsAffectedBySturdy(damageData->defAbility, bankDef) && NO_MOLD_BREAKERS(damageData->atkAbility, move))
 		|| IsAffectedByFocusSash(bankDef))
 			damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 	}
 	else
-		damage *= numHits;
+	{
+		if (IsDamageHalvedDueToFullHP(bankDef, damageData->defAbility, move, damageData->atkAbility))
+			damage = damage + (damage * 2 * (numHits - 1)); //Adjust damage on subsequent hits
+		else
+			damage *= numHits;
+	}
 
 	return damage;
 }
@@ -548,7 +562,9 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 		case EFFECT_PSYWAVE:
 			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
 		case EFFECT_MEMENTO: //Final Gambit
-			return gBattleMons[bankAtk].hp;
+			if (move == MOVE_FINALGAMBIT)
+				return gBattleMons[bankAtk].hp;
+			return 0;
 		case EFFECT_ENDEAVOR:
 			if (monDef->hp <= gBattleMons[bankAtk].hp)
 				return 0;
@@ -596,20 +612,8 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
-	u8 numHits = 1;
-	if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves && ABILITY(bankAtk) == ABILITY_SKILLLINK && move != MOVE_SURGINGSTRIKES)
-	{
-		numHits = 5;
-	}
-	else if (gSpecialMoveFlags[move].gTwoToFiveStrikesMoves) //Three hits on average
-	{
-		numHits = 3;
-	}
-	else if (gSpecialMoveFlags[move].gTwoStrikesMoves)
-	{
-		numHits = 2;
-	}
-	else if (ABILITY(bankAtk) == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
+	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
+	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
 			damage = (damage * 150) / 100; //1.5x overall boost
@@ -623,23 +627,27 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	if (numHits > 1)
 		numHits = AdjustNumHitsForContactDamage(numHits, gBattleMons[bankAtk].hp, GetContactDamageMonDef(bankAtk, monDef));
 
-	u32 entryHazardDamage = GetMonEntryHazardDamage(monDef, SIDE(bankDef));
 	if (numHits <= 1)
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE)
 			damage = MathMin(damage, monDef->hp - 1);
-		else if (entryHazardDamage == 0) //Focus Sash and Sturdy would work
+		else if (GetMonEntryHazardDamage(monDef, SIDE(bankDef)) == 0) //Focus Sash and Sturdy would work
 		{
-			if ((monDef->hp == monDef->maxHP && GetMonAbilityAfterTrace(monDef, bankAtk) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
-			 || (monDef->hp == monDef->maxHP && IsBankHoldingFocusSash(bankDef)))
+			if ((monDef->hp == monDef->maxHP && damageData->defAbility == ABILITY_STURDY && NO_MOLD_BREAKERS(damageData->atkAbility, move))
+			 || IsMonAffectedByFocusSash(monDef))
 				damage = MathMin(damage, monDef->hp - 1);
 		}
 	}
 	else
-		damage *= numHits;
+	{
+		if (IsMonDamageHalvedDueToFullHP(monDef, damageData->defAbility, move, damageData->atkAbility))
+			damage = damage + (damage * 2 * (numHits - 1)); //Adjust damage on subsequent hits
+		else
+			damage *= numHits;
+	}
 
-	return damage + entryHazardDamage; //Hazard damage will be taken on switch in so factor it in
+	return damage;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2034,6 +2042,14 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 			data->spDefense = monDef->spDefense;
 		}
 
+		if (IsMonAffectedByPixies(monDef))
+		{
+			if (data->defense <= data->spDefense)
+				data->defBuff += 1;
+			else
+				data->spDefBuff += 1;
+		}
+
 		if (monDef->condition == 0
 		&& gSideTimers[side].tspikesAmount > 0
 		&& data->defIsGrounded
@@ -2135,7 +2151,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			default:
 				attack = monAtk->attack;
 				spAttack = monAtk->spAttack;
-				
+
 				if (data->atkAbility == ABILITY_INTREPIDSWORD)
 					data->atkBuff = 7;
 		}
@@ -3350,9 +3366,17 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_MAGNITUDE:
+			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
+				power = gDynamicBasePower;
+			else if (data->specialFlags & FLAG_AI_CALC)
+				power = 71; //Average Power
+			break;
+
 		case MOVE_PRESENT:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
 				power = gDynamicBasePower;
+			else if (data->specialFlags & FLAG_AI_CALC)
+				power = 40; //Average Power
 			break;
 
 		case MOVE_BOLTBEAK:

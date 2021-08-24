@@ -941,7 +941,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_PixieBoost:
 			if (IsPixieBattle())
 			{
-				if (IsOfType(gActiveBattler, TYPE_FAIRY))
+				if (IsAffectedByPixies(gActiveBattler))
 				{
 					if (gBattleMons[gActiveBattler].defense < gBattleMons[gActiveBattler].spDefense)
 						gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;

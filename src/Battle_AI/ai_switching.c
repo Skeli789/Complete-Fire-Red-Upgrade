@@ -187,7 +187,15 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 		return TRUE; //Sucker Punch never works on a switch
 
 	//Now run actual damage calc
-	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
+	u32 predictedDmg = 0;
+	u8 monAbility = GetMonAbility(mon);
+	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(foe, defMove)))
+	{
+		if (monAbility == ABILITY_DISGUISE) //Disguise only - no Ice Face
+			predictedDmg = mon->maxHP / 8;
+	}
+	else
+		predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL) + GetMonEntryHazardDamage(mon, SIDE(activeBattler));
 
 	if (predictedDmg >= mon->hp)
 		return FALSE; //Don't switch and sack your other mon
@@ -212,7 +220,15 @@ static bool8 PredictedMoveWontKOMon(u8 activeBattler, struct Pokemon* mon, u8 fo
 		return TRUE; //Sucker Punch never works on a switch
 
 	//Now run actual damage calc
-	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
+	u32 predictedDmg = 0;
+	u8 monAbility = GetMonAbility(mon);
+	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(foe, defMove)))
+	{
+		if (monAbility == ABILITY_DISGUISE) //Disguise only - no Ice Face
+			predictedDmg = mon->maxHP / 8;
+	}
+	else
+		predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL) + GetMonEntryHazardDamage(mon, SIDE(activeBattler));
 
 	if (predictedDmg >= mon->hp)
 		return FALSE; //Don't switch and sack your other mon
@@ -2033,6 +2049,12 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					PopulateDamageCalcStructWithBaseAttackerData(&foeDamageData);
 					PopulateDamageCalcStructWithBaseDefenderData(&foeDamageData);
 
+					s32 hpOnSwitchIn = consideredMon->hp - GetMonEntryHazardDamage(consideredMon, SIDE(gActiveBattler));
+					if (hpOnSwitchIn < 0)
+						hpOnSwitchIn = 0;
+
+					foeDamageData.defHP = hpOnSwitchIn; //Adjust for hazard damage
+
 					for (k = 0; k < MAX_MON_MOVES; ++k) //Get a list of all usable moves with priority moves at the front
 					{
 						move = GetBattleMonMove(foe, k);
@@ -2083,9 +2105,19 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 						if (isOneFoeOnField && AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Only smart AI gets this calc to not slow down regular Trainers
 						{
-							u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
-							
-							if (dmg >= consideredMon->hp)
+							u32 firstHitDmg, otherHitsDmg;
+							firstHitDmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
+							otherHitsDmg = firstHitDmg;
+
+							//Check if KO in one shot
+							if (IsAffectedByDisguse(foeDamageData.defAbility, foeDamageData.defSpecies, foeDamageData.moveSplit))
+							{
+								if (foeDamageData.defAbility == ABILITY_DISGUISE) //Disguise only - not Ice Face
+									firstHitDmg = foeDamageData.defMaxHP / 8;
+								else
+									firstHitDmg = 0;
+							}
+							else if (firstHitDmg >= (u16) hpOnSwitchIn) //TODO eventually: factor in secondary damage (eg. weather, poison)
 							{
 								faintsFromMove = TRUE;
 
@@ -2097,12 +2129,16 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								break; //Only need 1 check for this to pass - priority moves are sorted first so a break here won't cause problems
 							}
 
-							s32 adjustedHP = MathMin(((s32) consideredMon->hp) + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
-							if (adjustedHP + passiveRecovery <= (s32) (dmg * 2)) //Move could 2HKO new mon
+							//Check how weak to move this mon is
+							if (IsMonDamageHalvedDueToFullHP(consideredMon, foeDamageData.defAbility, move, foeDamageData.atkAbility))	
+								otherHitsDmg *= 2; //Only factor in Multiscale for first hit
+
+							s32 adjustedHP = MathMin(hpOnSwitchIn + wishRecovery, consideredMon->maxHP); //Factor in Wish up to max HP if possible
+							if (adjustedHP + passiveRecovery <= (s32) (firstHitDmg + otherHitsDmg)) //Move could 2HKO new mon
 							{
 								isWeakToMove = TRUE;
 							}
-							else if (adjustedHP + (passiveRecovery * 2) <= (s32) (dmg * 3)) //Move could 3HKO mon
+							else if (adjustedHP + (passiveRecovery * 2) <= (s32) (firstHitDmg + otherHitsDmg * 2)) //Move could 3HKO mon
 							{
 								++isNormalEffectiveness;
 							}

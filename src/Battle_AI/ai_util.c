@@ -1040,13 +1040,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	u8 ability = ABILITY(bankDef);
 
 	if (MoveBlockedBySubstitute(move, bankAtk, bankDef)
-	#ifdef SPECIES_MIMIKYU
-	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
-	#endif
-	#ifdef SPECIES_EISCUE
-	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
-	#endif
-	)
+	|| (NO_MOLD_BREAKERS(ABILITY(bankAtk), move) && IsAffectedByDisguse(ability, species, CalcMoveSplit(bankAtk, move))))
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
@@ -1114,13 +1108,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move);
 
 	if (MonMoveBlockedBySubstitute(move, monAtk, bankDef)
-	#ifdef SPECIES_MIMIKYU
-	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
-	#endif
-	#ifdef SPECIES_EISCUE
-	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && noMoldBreakers)
-	#endif
-	)
+	|| (noMoldBreakers && IsAffectedByDisguse(ability, species, CalcMoveSplitFromParty(monAtk, move))))
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
@@ -1181,19 +1169,19 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 
 	if (numHits >= 2)
 	{
-		dmg += GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
-
+		u8 atkAbility = (damageData != NULL) ? damageData->atkAbility : ABILITY(bankAtk); //Would be loaded in by the damage calc prior
 		u8 defAbility = (damageData != NULL) ? damageData->defAbility : ABILITY(bankDef); //Would be loaded in by the damage calc prior
+		u32 endTurnDmg = GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
 
-		if (BATTLER_MAX_HP(bankDef) && (defAbility == ABILITY_MULTISCALE
-									 || defAbility == ABILITY_SHADOWSHIELD
-									 || (IsShadowShieldBattle() && IsOfType(bankDef, TYPE_GHOST))))
-		{
-			return MathMin(dmg + (dmg * 2) * (numHits - 1), gBattleMons[bankDef].maxHP); //Adjust damage on subsequent hits
-		}
+		if (IsDamageHalvedDueToFullHP(bankDef, defAbility, move, atkAbility))
+			dmg = dmg + (dmg * 2 * (numHits - 1)) + endTurnDmg; //Adjust damage on subsequent hits
+		else
+			dmg = dmg * numHits + endTurnDmg;
 	}
+	else
+		dmg *= numHits;
 
-	return MathMin(dmg * numHits, gBattleMons[bankDef].hp);
+	return min(dmg, gBattleMons[bankDef].hp);
 }
 
 u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
@@ -1201,10 +1189,26 @@ u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct Da
 	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
 	if (movePos < MAX_MON_MOVES) //Move in moveset
 	{
+		u32 damage;
+	
 		if (gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] != 0xFFFFFFFF)
-			return gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] * numHits;
-		gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData);
-		return gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] * numHits;
+			damage = gNewBS->ai.damageByMove[bankAtk][bankDef][movePos];
+		else
+			damage = gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData);
+
+		if (numHits >= 2)
+		{
+			u32 endTurnDmg = GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
+
+			if (IsDamageHalvedDueToFullHP(bankDef, ABILITY(bankDef), move, ABILITY(bankAtk)))
+				damage = damage + (damage * 2 * (numHits - 1)); //Only half damage on first hit
+			else
+				damage = damage * numHits + endTurnDmg;
+		}
+		else
+			damage *= numHits;
+
+		return min(damage, gBattleMons[bankDef].hp);
 	}
 
 	return CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData) * numHits;
@@ -4770,14 +4774,8 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
-			#ifdef SPECIES_MIMIKYU
-			if (noMoldBreakers && defAbility == ABILITY_DISGUISE && defSpecies == SPECIES_MIMIKYU)
-				return FALSE; //Don't waste a Z-Move busting Mimikyu's disguise
-			#endif
-			#ifdef SPECIES_EISCUE
-			if (noMoldBreakers && defAbility == ABILITY_ICEFACE && defSpecies == SPECIES_EISCUE && SPLIT(zMove) == SPLIT_PHYSICAL)
-				return FALSE; //Don't waste a Z-Move busting Eiscue's Ice Face
-			#endif
+			if (noMoldBreakers && IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(bankAtk, zMove)))
+				return FALSE; //Don't waste a Z-Move breaking a disguise
 
 			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT
 			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))

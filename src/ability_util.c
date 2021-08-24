@@ -362,6 +362,18 @@ bool8 IsPlusMinusAbility(u8 ability)
 	}
 }
 
+bool8 IsMultiscaleAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_MULTISCALE:
+		case ABILITY_SHADOWSHIELD:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 bool8 IsUnnerveAbility(u8 ability)
 {
 	return ability == ABILITY_UNNERVE
@@ -431,6 +443,20 @@ bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef)
 {
 	return defAbility == ABILITY_STURDY
 		&& BATTLER_MAX_HP(bankDef);
+}
+
+bool8 IsAffectedByDisguse(unusedArg u8 defAbility, unusedArg u16 defSpecies, unusedArg u8 moveSplit)
+{
+	#ifdef SPECIES_MIMIKYU
+	if (defAbility == ABILITY_DISGUISE && defSpecies == SPECIES_MIMIKYU)
+		return TRUE;
+	#endif
+	#ifdef SPECIES_EISCUE
+	if (defAbility == ABILITY_ICEFACE && defSpecies == SPECIES_EISCUE && moveSplit == SPLIT_PHYSICAL)
+		return TRUE;
+	#endif
+
+	return FALSE;
 }
 
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)

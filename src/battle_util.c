@@ -6,6 +6,7 @@
 #include "../include/constants/pokedex.h"
 
 #include "../include/new/ai_master.h"
+#include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
@@ -346,6 +347,52 @@ bool8 IsMonFloatingWithMagnetism(unusedArg struct Pokemon* mon)
 {
 	return IsMagnetRiseBattle()
 		&& (IsMonOfType(mon, TYPE_ELECTRIC) || IsMonOfType(mon, TYPE_STEEL));
+}
+
+bool8 IsAffectedByPixies(u8 bank)
+{
+	return IsPixieBattle() && IsOfType(bank, TYPE_FAIRY);
+}
+
+bool8 IsMonAffectedByPixies(struct Pokemon* mon)
+{
+	return IsPixieBattle() && IsMonOfType(mon, TYPE_FAIRY);
+}
+
+bool8 IsAffectedByShadowShieldBattle(u8 bank)
+{
+	return IsShadowShieldBattle() && IsOfType(bank, TYPE_GHOST);
+}
+
+bool8 IsMonAffectedByShadowShieldBattle(struct Pokemon* mon)
+{
+	return IsShadowShieldBattle() && IsMonOfType(mon, TYPE_GHOST);
+}
+
+bool8 IsDamageHalvedDueToFullHP(u8 bank, u8 defAbility, u16 move, u8 atkAbility)
+{
+	if (BATTLER_MAX_HP(bank))
+	{
+		if (IsMultiscaleAbility(defAbility))
+			return NO_MOLD_BREAKERS(atkAbility, move) || !gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
+
+		return IsAffectedByShadowShieldBattle(bank);
+	}
+
+	return FALSE;
+}
+
+bool8 IsMonDamageHalvedDueToFullHP(struct Pokemon* mon, u8 defAbility, u16 move, u8 atkAbility)
+{
+	if (mon->hp == mon->maxHP)
+	{
+		if (IsMultiscaleAbility(defAbility))
+			return NO_MOLD_BREAKERS(atkAbility, move) || !gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
+
+		return IsMonAffectedByShadowShieldBattle(mon);
+	}
+
+	return FALSE;
 }
 
 u8 ViableMonCountFromBank(u8 bank)
@@ -1288,15 +1335,22 @@ bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side)
 
 bool8 IsBankHoldingFocusSash(u8 bank)
 {
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(ITEM(bank)))
-		return TRUE;
+	return ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(ITEM(bank));
+}
 
-	return FALSE;
+bool8 IsMonHoldingFocusSash(struct Pokemon* mon)
+{
+	return GetMonItemEffect(mon) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(mon->item);
 }
 
 bool8 IsAffectedByFocusSash(u8 bank)
 {
 	return BATTLER_MAX_HP(bank) && IsBankHoldingFocusSash(bank);
+}
+
+bool8 IsMonAffectedByFocusSash(struct Pokemon* mon)
+{
+	return mon->hp == mon->maxHP && IsMonHoldingFocusSash(mon);
 }
 
 bool8 IsAffectedByPowder(u8 bank)
