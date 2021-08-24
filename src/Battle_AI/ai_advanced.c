@@ -5,8 +5,9 @@
 
 #include "../../include/new/accuracy_calc.h"
 #include "../../include/new/ai_advanced.h"
-#include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
+#include "../../include/new/ai_util.h"
+#include "../../include/new/ai_switching.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_script_util.h"
 #include "../../include/new/battle_util.h"
