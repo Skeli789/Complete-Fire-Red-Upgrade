@@ -416,8 +416,8 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-		|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
-		|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
+		|| (IsAffectedBySturdy(ABILITY(bankDef), bankDef) && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+		|| IsAffectedByFocusSash(bankDef))
 			damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 	}
 	else
@@ -519,8 +519,8 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	{
 		//Multi hit moves skip these checks
 		if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-		|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
-		|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
+		|| (IsAffectedBySturdy(ABILITY(bankDef), bankDef) && NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
+		|| IsAffectedByFocusSash(bankDef))
 			damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 	}
 	else
@@ -1843,13 +1843,13 @@ void AdjustDamage(bool8 checkFalseSwipe)
 			}
 		}
 
-		if (BATTLER_MAX_HP(bankDef) && defAbility == ABILITY_STURDY)
+		if (IsAffectedBySturdy(defAbility, bankDef))
 		{
 			RecordAbilityBattle(bankDef, defAbility);
 			gProtectStructs[bankDef].enduredSturdy = TRUE;
 			gNewBS->EnduranceHelper[bankDef] = ENDURE_STURDY;
 		}
-		else if (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef))
+		else if (IsAffectedByFocusSash(bankDef))
 		{
 			RecordItemEffectBattle(bankDef, itemEffect);
 			gSpecialStatuses[bankDef].focusBanded = 1;
@@ -3970,15 +3970,6 @@ u16 TryGetAlternateSpeciesSize(u16 species, u8 type)
 	}
 
 	return 0;
-}
-
-bool8 IsBankHoldingFocusSash(u8 bank)
-{
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND
-	&& ItemId_GetMystery2(ITEM(bank)))
-		return TRUE;
-
-	return FALSE;
 }
 
 u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef)

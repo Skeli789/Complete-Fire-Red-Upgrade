@@ -308,7 +308,8 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 		if (!(gBitTable[i] & moveLimitations)) //This move can be used
 		{
 			if (MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1) //This move knocks out
-			&& (!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef))) //And this move goes first or it doesn't matter if it goes first
+			&& (!checkGoingFirst //It doesn't matter if this move does first
+			|| (MoveWouldHitFirst(currMove, bankAtk, bankDef) && gBattleMoves[currMove].effect != EFFECT_FUTURE_SIGHT))) //Or this move really hits first
 			{
 				if (MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
 				{
@@ -439,6 +440,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		&& moveEffect != EFFECT_SKY_ATTACK
 		&& moveEffect != EFFECT_RAZOR_WIND
 		&& moveEffect != EFFECT_SKULL_BASH
+		&& moveEffect != EFFECT_FUTURE_SIGHT
 		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
 		{
 			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
@@ -494,7 +496,8 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 		{
 			currDmg = GetFinalAIMoveDamage(currMove, bankAtk, bankDef, 1, &damageData);
 
-			if (MoveWouldHitFirst(currMove, bankAtk, bankDef))
+			if (MoveWouldHitFirst(currMove, bankAtk, bankDef)
+			&& gBattleMoves[currMove].effect != EFFECT_FUTURE_SIGHT) //Future attacks don't really go first
 			{
 				if (currDmg > bestDmg)
 				{
@@ -1329,9 +1332,11 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 			}
 			else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
 			&& moveEffect != EFFECT_COUNTER
-			&& moveEffect != EFFECT_MIRROR_COAT) //Never try to make counter moves a priority unless they do the most damage
+			&& moveEffect != EFFECT_MIRROR_COAT //Never try to make counter moves a priority unless they do the most damage
+			&& moveEffect != EFFECT_FUTURE_SIGHT) //Never try to make future attacks a priority unless they do the most damage
 			{
-				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
+				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove) //Use faster of two strongest moves
+				|| gBattleMoves[strongestMove].effect == EFFECT_FUTURE_SIGHT) //Strongest move is the slowest possible - it takes multiple turns
 				{
 					strongestMove = move;
 				}
@@ -1675,12 +1680,16 @@ bool8 IsBankIncapacitated(u8 bank)
 	return FALSE;
 }
 
+bool8 EnduresAHitFromFullHealth(u8 bankDef, u8 defAbility, u8 atkAbility)
+{
+	return IsAffectedByFocusSash(bankDef)
+		|| (IsAffectedBySturdy(defAbility, bankDef) && !IsMoldBreakerAbility(atkAbility));
+}
+
 bool8 WillFaintFromWeatherSoon(u8 bank)
 {
 	if (TakesDamageFromSandstorm(bank) || TakesDamageFromHail(bank))
-	{
 		return gBattleMons[bank].hp <= GetBaseMaxHP(bank) / 16;
-	}
 
 	return FALSE;
 }
@@ -1738,27 +1747,6 @@ u8 CountBanksNegativeStatStages(u8 bank)
 	return negativeStages;
 }
 
-u16 GetTeamSpeedAverage(u8 bank)
-{
-	u8 firstId, lastId;
-	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
-
-	u8 totalNum = 0;
-	u16 sum = 0;
-
-	for (u32 i = 0; i < PARTY_SIZE; ++i)
-	{
-		if (party[i].species == SPECIES_NONE
-		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
-			continue;
-
-		++totalNum;
-		sum += GetMonData(&party[i], MON_DATA_SPEED, NULL);
-	}
-
-	return sum / totalNum;
-}
-
 u16 GetPokemonOnSideSpeedAverage(u8 bank)
 {
 	u16 speed1 = 0;
@@ -1779,6 +1767,38 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank)
 	}
 
 	return (speed1 + speed2) / numBattlersAlive;
+}
+
+u16 GetTeamMaxSpeed(u8 bank)
+{
+	u32 i, maxSpeed;
+	u8 firstId, lastId;
+	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
+	u8 side = SIDE(bank);
+
+	for (i = 0, maxSpeed = 0; i < PARTY_SIZE; ++i)
+	{
+		u32 thisSpeed;
+
+		if (party[i].species == SPECIES_NONE
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
+
+		if (i == gBattlerPartyIndexes[bank])
+			thisSpeed = SpeedCalc(bank);
+		else
+			thisSpeed = SpeedCalcMon(side, &party[i]);
+
+		if (thisSpeed > maxSpeed)
+			maxSpeed = thisSpeed;
+	}
+
+	return min(maxSpeed, 0xFFFF);
+}
+
+bool8 FasterThanEntireTeam(u16 atkSpeed, u8 opposingBank)
+{
+	return atkSpeed > GetTeamMaxSpeed(opposingBank);
 }
 
 bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy)
@@ -2855,9 +2875,17 @@ bool8 GoodIdeaToRaiseSpDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount)
 		&& BankLikelyToUseMoveSplit(bankDef, GetBankFightingStyle(bankDef)) == SPLIT_SPECIAL;
 }
 
-bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount)
+bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, u16 atkSpeed, u16 defSpeed)
 {
-	return !BadIdeaToRaiseSpeedAgainst(bankAtk, bankDef, amount, TRUE);
+	if (!BadIdeaToRaiseSpeedAgainst(bankAtk, bankDef, amount, TRUE))
+	{
+		if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART)
+			return atkSpeed <= defSpeed; //Semi-smart AI doesn't care about forward thinking
+		else
+			return !FasterThanEntireTeam(atkSpeed, bankDef);
+	}
+
+	return FALSE;
 }
 
 bool8 GoodIdeaToRaiseAccuracyAgainst(u8 bankAtk, u8 bankDef, u8 amount)
@@ -3897,6 +3925,30 @@ bool8 FastPivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 				if (MoveWouldHitFirst(move, bankAtk, bankDef))
 					return TRUE;
 			}
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 MultiHitMoveWithSplitInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 split)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].effect == EFFECT_MULTI_HIT
+			&& CalcMoveSplit(bankAtk, move) == split
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
+			&& !IsDamagingMoveUnusable(move, bankAtk, bankDef))
+				return TRUE;
 		}
 	}
 

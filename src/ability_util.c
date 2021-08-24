@@ -427,6 +427,12 @@ bool8 AbilityRaisesOneStatWhenSomeStatIsLowered(u8 ability)
 		|| ability == ABILITY_COMPETITIVE;
 }
 
+bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef)
+{
+	return defAbility == ABILITY_STURDY
+		&& BATTLER_MAX_HP(bankDef);
+}
+
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)
 {
 	if (!IsClearBodyAbility(ability))

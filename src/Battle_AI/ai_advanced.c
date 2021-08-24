@@ -1184,6 +1184,17 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 		if (CanKnockOut(bankAtk, bankDef))
 			return FALSE; //KO if you can
 
+		if (gStatuses3[bankDef] & STATUS3_PERISH_SONG)
+		{
+			if (gDisableStructs[bankDef].perishSongTimer == 1)
+				return FALSE; //They're going to faint this turn if they don't switch, so why bother
+			else if (gDisableStructs[bankDef].perishSongTimer == 2) //Will faint at the end of next turn
+			{
+				if (!MoveWouldHitFirst(move, bankAtk, bankDef))
+					return FALSE; //Why waste time when they'll probably switch at the beginning of next turn
+			}
+		}
+
 		switch (gBattleMoves[move].effect)
 		{
 			case EFFECT_ROAR:
@@ -1721,40 +1732,24 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 
 	if (IS_SINGLE_BATTLE)
 	{
-		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
+		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Setup move would go first
 		{
 			if (CanKnockOutWithChipDamage(bankDef, bankAtk))
-			{
 				return FALSE; //Don't set up if enemy can KO you or get you down to 1 HP and you'll die from chip damage
-			}
-			else
-			{
-				if (BATTLER_SEMI_INVULNERABLE(bankDef))
-					return TRUE; //Can't hit target anyways
-
-				if (STAT_STAGE(bankAtk, stat) >= statLimit)
-					return FALSE;
-			}
-
-			return TRUE;
+			else if (BATTLER_SEMI_INVULNERABLE(bankDef))
+				return TRUE; //Can't hit target anyways
 		}
-		else //Opponent Goes First
+		else //Setup move would go second
 		{
-			u16 foePrediction = IsValidMovePrediction(bankDef, bankAtk);
-
 			if (IsMovePredictionSemiInvulnerable(bankDef, bankAtk))
-				return TRUE;
+				return TRUE; //Might as well if the enemy is going to hide first
 
-			if (stat == STAT_STAGE_SPEED && STAT_STAGE(bankAtk, stat) < statLimit
+			u16 foePrediction = IsValidMovePrediction(bankDef, bankAtk);
+			if (stat == STAT_STAGE_SPEED && STAT_STAGE(bankAtk, stat) < statLimit //Trying to raise Speed
 			&& !MoveKnocksOutXHits(foePrediction, bankDef, bankAtk, 1)) //Opponent won't KO with its next move
 				return TRUE; //Opponent goes first now,	but maybe boosting speed will make you faster
 
-			if (!Can2HKO(bankDef, bankAtk))
-			{
-				if (STAT_STAGE(bankAtk, stat) < statLimit)
-					return TRUE;
-			}
-			else //Can 2HKO
+			if (Can2HKO(bankDef, bankAtk)) //Foe can 2HKO AI
 			{
 				if (!CanKnockOut(bankDef, bankAtk)) //Will actually take 2 hits to KO
 				{
@@ -1769,13 +1764,21 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 							return TRUE; //Maybe increasing defenses will reduce the chance of a 2HKO
 					}
 				}
+
+				return FALSE; //Don't set up now if you'll just die on the next turn
 			}
-
-			if (!Can2HKO(bankDef, bankAtk) && STAT_STAGE(bankAtk, stat) < statLimit)
-				return TRUE;
-
-			return FALSE;
 		}
+
+		if (STAT_STAGE(bankAtk, stat) >= statLimit)
+			return FALSE;
+
+		if ((stat == STAT_STAGE_ATK || stat == STAT_STAGE_SPATK) //Trying to boost offensive stat
+		&& EnduresAHitFromFullHealth(bankDef, ABILITY(bankDef), ABILITY(bankAtk)) //The foe is going to live a hit with Sturdy/Focus Sash no matter how many times the AI sets up
+		&& !MultiHitMoveWithSplitInMovesetThatAffects(bankAtk, bankDef, (stat == STAT_STAGE_ATK) ? SPLIT_PHYSICAL : SPLIT_SPECIAL) //The offensive boost will never be able to make a multi-hit move OHKO
+		&& !IsBankIncapacitated(bankDef)) //The foe will be able to attack this turn
+			return FALSE; //Prioritize breaking the endurance since you'll never be able to OHKO
+
+		return TRUE;
 	}
 	else //Double Battle
 	{

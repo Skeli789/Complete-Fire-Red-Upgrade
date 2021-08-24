@@ -1286,6 +1286,19 @@ bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side)
 	return TRUE;
 }
 
+bool8 IsBankHoldingFocusSash(u8 bank)
+{
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND && ItemId_GetMystery2(ITEM(bank)))
+		return TRUE;
+
+	return FALSE;
+}
+
+bool8 IsAffectedByFocusSash(u8 bank)
+{
+	return BATTLER_MAX_HP(bank) && IsBankHoldingFocusSash(bank);
+}
+
 bool8 IsAffectedByPowder(u8 bank)
 {
 	return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));

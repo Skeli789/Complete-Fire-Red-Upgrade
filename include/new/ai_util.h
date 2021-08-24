@@ -45,13 +45,16 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 bool8 IsUsefulToFlinchTarget(u8 bankDef);
 bool8 IsBankAsleep(u8 bank);
 bool8 IsBankIncapacitated(u8 bank);
+bool8 EnduresAHitFromFullHealth(u8 bankDef, u8 defAbility, u8 atkAbility);
 bool8 WillFaintFromWeatherSoon(u8 bank);
 bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction);
 u8 CountBanksPositiveStatStages(u8 bank);
 u8 CountBanksNegativeStatStages(u8 bank);
-u16 GetTeamSpeedAverage(u8 bank);
 u16 GetPokemonOnSideSpeedAverage(u8 bank);
+u16 GetTeamMaxSpeed(u8 bank);
+bool8 FasterThanEntireTeam(u16 atkSpeed, u8 opposingBank);
 bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy);
+
 u16 GetBattleMonMove(u8 bank, u8 index);
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef);
@@ -101,7 +104,7 @@ bool8 GoodIdeaToRaiseAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount);
 bool8 GoodIdeaToRaiseDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount);
 bool8 GoodIdeaToRaiseSpAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount);
 bool8 GoodIdeaToRaiseSpDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount);
-bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount);
+bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, u16 atkSpeed, u16 defSpeed);
 bool8 GoodIdeaToRaiseEvasionAgainst(u8 bankAtk, u8 bankDef, u8 amount);
 bool8 GoodIdeaToRaiseAccuracyAgainst(u8 bankAtk, u8 bankDef, u8 amount);
 
@@ -158,6 +161,7 @@ bool8 UnfreezingMoveInMoveset(u8 bank);
 bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef);
 bool8 PivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
 bool8 FastPivotingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
+bool8 MultiHitMoveWithSplitInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 split);
 bool8 OHKOMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData);
 bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef);
 bool8 HazingMoveInMoveset(u8 bank);

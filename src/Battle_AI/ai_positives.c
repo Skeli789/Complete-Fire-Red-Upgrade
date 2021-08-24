@@ -230,11 +230,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_SPEED_UP:
 		AI_SPEED_PLUS_FULL:
-			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1))
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1, data->atkSpeed, data->defSpeed))
 				goto AI_SPEED_PLUS;
 			break;
 		case EFFECT_SPEED_UP_2:
-			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+			if (atkAbility != ABILITY_CONTRARY && GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 			{
 				AI_SPEED_PLUS:
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3);
@@ -328,7 +328,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					|| IsBankIncapacitated(bankDef) //Not a bad idea to use both turns
 					|| (!CanKnockOut(bankDef, bankAtk) && HighChanceOfBeingImmobilized(bankDef))) //Most likely will be done setting up and still be alive
 					{
-						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 							goto AI_SPEED_PLUS;
 						else if (GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
 							goto AI_SP_ATTACK_PLUS;
@@ -341,7 +341,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (defAbility == ABILITY_DANCER)
 						break; //Bad Idea
 
-					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 						goto AI_SPEED_PLUS;
 					__attribute__ ((fallthrough));
 
@@ -363,7 +363,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					else
 					{
-						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2))
+						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 							goto AI_SPEED_PLUS;
 						else if (GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 2))
 							goto AI_ATTACK_PLUS;
@@ -375,7 +375,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					if (atkAbility == ABILITY_CONTRARY)
 						break;
 
-					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1))
+					if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1, data->atkSpeed, data->defSpeed))
 						goto AI_SPEED_PLUS;
 					else if (GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
 						goto AI_ATTACK_PLUS;
@@ -2713,9 +2713,12 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 			{
 				INCREASE_VIABILITY(9);
 			}
+			else if (IsStrongestMove(move, bankAtk, bankDef))
+				goto STRONGEST_MOVE_CHECK;
 		}
 		else if (IsStrongestMove(move, bankAtk, bankDef))
 		{
+			STRONGEST_MOVE_CHECK: ;
 			//If the attacker is slower than the target and the target is going to die
 			//anyways, then do something else and let it die.
 			bool8 wouldHitFirst = MoveWouldHitFirst(move, bankAtk, bankDef);

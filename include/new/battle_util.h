@@ -81,6 +81,8 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank);
 bool8 CanKnockOffItem(u8 bank);
 bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side);
+bool8 IsBankHoldingFocusSash(u8 bank);
+bool8 IsAffectedByFocusSash(u8 bank);
 bool8 IsAffectedByPowder(u8 bank);
 bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect);
 bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility);

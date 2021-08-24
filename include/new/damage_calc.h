@@ -104,7 +104,6 @@ u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef);
 u8 GetNaturalGiftMoveType(u16 item);
 u8 GetNaturalGiftMovePower(u16 item);
 u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble);
-bool8 IsBankHoldingFocusSash(u8 bank);
 
 //Functions Hooked In
 u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon);
