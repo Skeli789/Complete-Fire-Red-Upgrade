@@ -20,7 +20,7 @@ An attack that\nabsorbs half the\ndamage it inflicted\nto restore HP.
 The foe is sliced\nby a blade of air.\nIt may also make\nthe foe flinch.
 
 #org @DESC_AQUAJET
-An almost invisibly\nfast attack that\nis certain to strike\nfirst.
+An almost invisibly\nfast lunge that\nis certain to strike\nfirst.
 
 #org @DESC_AQUATAIL
 The foe is attacked\nwith a swinging tail\nas vicious as a\nwave in a storm.
@@ -110,7 +110,7 @@ The foe is struck\nwith a mud ball\nthat may also lower\nits accuracy.
 The user thinks\nbad thoughts. It\nsharply raises the\nSp. Atk stat.
 
 #org @DESC_NIGHTSLASH
-The user slashes\nthe foe when it\ncan. It has a high\ncritical-hit ratio.
+The user slashes the\nfoe when opportune.\nIt has a high\ncritical-hit ratio.
 
 #org @DESC_OMINOUSWIND
 Repulsive wind is\nused to attack. It\nmay also raise all\nthe user's stats.
@@ -641,10 +641,10 @@ If the target has\nalready used its\nmove this turn, it\nnullifies the effect\no
 The user attacks the\ntarget with sound\nwaves of deafening\nchatter. This\nconfuses the target.
 
 #org @DESC_CONFIDE
-The user tells the\nfoe a secret, and it\nloses concentration.\nIt lowers the foe's\nSp.Atk stat.
+The user tells the\nfoe a secret and it\nloses concentration.\nThis lowers Sp. Atk.
 
 #org @DESC_WATERSHURIKEN
-The user hits the foe\nwith throwing stars\ntwo to five times in\na row. This always\ngoes first.
+The user throws stars\nat the foe 2 to 5\ntimes in a row. This\nalways strikes first.
 
 #org @DESC_MYSTICALFIRE
 The user attacks by\nbreathing a special,\nhot fire. This also\nlowers the target's\nSp. Atk stat.
@@ -836,13 +836,13 @@ The user covers the\nground in mist for\nfive turns, halving\nDragon moves and\n
 The user makes the\nground weird for\nfive turns, boosting\nPsychic moves and\nblocking priority.
 
 #org @DESC_GRASSPLEDGE
-When used with its\nwater equivalent,\nits power increases\nand a vast swamp\nappears.
+When combined with\nWater Pledge, its\npower increases and\na vast swamp appears.
 
 #org @DESC_FIREPLEDGE
-When used with its\ngrass equivalent,\nits power increases\nand a vast sea of\nfire appears.
+When combined with\nGrass Pledge, its\npower increases and a\nsea of fire appears.
 
 #org @DESC_WATERPLEDGE
-When combined with\nits fire equivalent,\nits power increases\nand a rainbow\nappears.
+When combined with\nFire Pledge, its\npower increases and\na rainbow appears.
 
 #org @DESC_TRICKROOM
 The user creates a\nbizarre area in\nwhich slower Pok\emon\nget to move first\nfor five turns.
