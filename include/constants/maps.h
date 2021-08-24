@@ -710,6 +710,13 @@
 
 #define MAP_FALLSHORE_CITY_EVOLUTION_HOUSE_LOWER	((14 << 8) | 2)
 
+#define MAP_FALLSHORE_CITY_GYM_B1F ((14 << 8) | 15)
+#define MAP_FALLSHORE_CITY_GYM_B2F ((14 << 8) | 14)
+
+#define MAP_DEHARA_CITY_GYM_1F  ((10 << 8) | 23)
+#define MAP_DEHARA_CITY_GYM_B1F ((10 << 8) | 24)
+#define MAP_DEHARA_CITY_GYM_B2F ((10 << 8) | 25)
+
 #define MAP_VIVILL_TOWN_POKEMON_CENTRE				((44 << 8) | 3)
 #define MAP_VIVILL_TOWN_POKEMON_CENTRE_TOP_FLOOR	((44 << 8) | 4)
 #define MAP_VIVILL_TOWN_MART 						((44 << 8) | 5)
@@ -722,13 +729,20 @@
 #define MAP_VIVILL_WAREHOUSE_COMMAND_ROOM 			((1 << 8) | 105)
 #define MAP_VIVILL_WAREHOUSE_UNDERWATER 			((1 << 8) | 106)
 
+#define MAP_ANTISIS_CITY_GYM_B1F ((54 << 8) | 4)
+
 #define MAP_ANTISIS_SEWERS_NORTH		((1 << 8) | 68)
 #define MAP_ANTISIS_SEWERS_SOUTH		((1 << 8) | 69)
 #define MAP_ANTISIS_SEWERS_WEST_TUNNEL	((1 << 8) | 70)
 #define MAP_ANTISIS_SEWERS_EAST_TUNNEL	((1 << 8) | 71)
 #define MAP_ANTISIS_SEWERS_ROOM			((1 << 8) | 72)
 
-#define MAP_HISTORY_CUTSCENE			((31 << 8) | 5)
+#define MAP_POLDER_TOWN_GYM ((34 << 8) | 4)
+
+#define MAP_REDWOOD_VILLAGE_GYM_ROOM_1 ((36 << 8) | 7)
+#define MAP_REDWOOD_VILLAGE_GYM_ROOM_2 ((36 << 8) | 8)
+#define MAP_REDWOOD_VILLAGE_GYM_ROOM_3 ((36 << 8) | 9)
+#define MAP_REDWOOD_VILLAGE_GYM_ROOM_4 ((36 << 8) | 10)
 
 #define MAP_POKEMON_LEAGUE_E4_HALL         (74 | (1 << 8))
 #define MAP_POKEMON_LEAGUE_MOLEMAN_ROOM    (75 | (1 << 8))
@@ -737,5 +751,7 @@
 #define MAP_POKEMON_LEAGUE_PENNY_ROOM      (78 | (1 << 8))
 #define MAP_POKEMON_LEAGUE_CHAMP_ROOM      (79 | (1 << 8))
 #define MAP_POKEMON_LEAGUE_HALL_OF_FAME    (80 | (1 << 8))
+
+#define MAP_HISTORY_CUTSCENE			((31 << 8) | 5)
 
 #endif

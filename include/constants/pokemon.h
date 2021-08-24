@@ -86,15 +86,16 @@
 #define STAT_ACC 6 // only in battles
 #define STAT_EVASION 7 // only in battles
 
-#define FRIENDSHIP_EVENT_GROW_LEVEL           0x0
-#define FRIENDSHIP_EVENT_VITAMIN              0x1 // unused
-#define FRIENDSHIP_EVENT_BATTLE_ITEM          0x2 // unused
-#define FRIENDSHIP_EVENT_LEAGUE_BATTLE        0x3
-#define FRIENDSHIP_EVENT_LEARN_TMHM           0x4
-#define FRIENDSHIP_EVENT_WALKING              0x5
-#define FRIENDSHIP_EVENT_FAINT_SMALL          0x6
-#define FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE 0x7
-#define FRIENDSHIP_EVENT_FAINT_LARGE          0x8
+#define FRIENDSHIP_EVENT_GROW_LEVEL           0
+#define FRIENDSHIP_EVENT_VITAMIN              1
+#define FRIENDSHIP_EVENT_BATTLE_ITEM          2
+#define FRIENDSHIP_EVENT_LEAGUE_BATTLE        3
+#define FRIENDSHIP_EVENT_LEARN_TMHM           4
+#define FRIENDSHIP_EVENT_WALKING              5
+#define FRIENDSHIP_EVENT_MASSAGE              6
+#define FRIENDSHIP_EVENT_FAINT_SMALL          7
+#define FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE 8
+#define FRIENDSHIP_EVENT_FAINT_LARGE          9
 
 #define EVO_MODE_NORMAL     0
 #define EVO_MODE_TRADE      1

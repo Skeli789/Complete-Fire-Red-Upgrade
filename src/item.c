@@ -4,6 +4,8 @@
 #include "../include/menu.h"
 #include "../include/menu_helpers.h"
 #include "../include/money.h"
+#include "../include/party_menu.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/script.h"
 #include "../include/shop.h"
 #include "../include/string_util.h"
@@ -12,12 +14,15 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/tutors.h"
 
-#include "../include/new/util.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/util.h"
+
 /*
 item.c
 	handles all item related functions, such as returning hold effects, tm/hm expansion, etc.
@@ -755,7 +760,6 @@ bool8 CheckIsHmMove(u16 move)
 	#endif
 }
 
-
 bool8 CheckTmHmInFront(u16 item)
 {
 	#ifdef TMS_BEFORE_HMS
@@ -767,7 +771,6 @@ bool8 CheckTmHmInFront(u16 item)
 	#endif
 	return FALSE;
 }
-
 
 u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 {
@@ -786,7 +789,6 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 	return ItemId_GetMystery2(itemId);
 }
 
-
 u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 {
 	u8 num;
@@ -802,7 +804,6 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 	return num;
 }
 
-
 bool8 CheckReusableTMs(u16 item)
 {
 	#ifdef REUSABLE_TMS
@@ -817,7 +818,6 @@ bool8 CheckReusableTMs(u16 item)
 			return FALSE;
 	#endif
 }
-
 
 u8 CheckHmSymbol(u16 item)
 {
@@ -848,7 +848,6 @@ u8 CheckHmSymbol(u16 item)
 	#endif
 }
 
-
 bool8 CheckSellTmHm(u16 item)
 {
 	#ifdef REUSABLE_TMS
@@ -868,8 +867,6 @@ bool8 CheckSellTmHm(u16 item)
 			return TRUE;
 	#endif
 }
-
-
 
 extern const u8 gText_SingleTmBuy[];
 void CheckTmPurchase(u16 item, u8 taskId)
@@ -977,6 +974,27 @@ const void* FixTmHmDiscPalette(u8 type)
 		return 0;
 }
 
+void NewTMReplaceMove(struct Pokemon* mon, u16 move)
+{
+	u8 moveIdx = GetMoveSlotToReplace();
+
+	#ifdef TMS_DONT_RESTORE_PP
+	u8 oldPP = GetMonData(mon, MON_DATA_PP1 + moveIdx, NULL);
+	#endif
+
+	RemoveMonPPBonus(mon, moveIdx);
+	SetMonMoveSlot(mon, move, moveIdx);
+	AdjustFriendship(mon, FRIENDSHIP_EVENT_LEARN_TMHM);
+
+	#ifdef TMS_DONT_RESTORE_PP
+	s16* moves = &gPartyMenu.data1;
+	if (moves[1] == 0) //Teaching TM only
+	{
+		if (oldPP < GetMonData(mon, MON_DATA_PP1 + moveIdx, NULL))
+			SetMonData(mon, MON_DATA_PP1 + moveIdx, &oldPP); //Don't restore any PP
+	}
+	#endif
+}
 
 // Premier Ball Bonus
 #define tItemCount data[1]
@@ -1116,7 +1134,7 @@ void CompactRegisteredItems(void)
 		{
 			if (gSaveBlock1->registeredItems[j] == ITEM_NONE && gSaveBlock1->registeredItems[j + 1] != ITEM_NONE)
 			{
-			    u16 temp = gSaveBlock1->registeredItems[j + 1];
+				u16 temp = gSaveBlock1->registeredItems[j + 1];
 				gSaveBlock1->registeredItems[j + 1] = gSaveBlock1->registeredItems[j];
 				gSaveBlock1->registeredItems[j] = temp;
 			}
@@ -1173,13 +1191,13 @@ struct ListBuffer2
 
 struct BagSlots
 {
-    struct ItemSlot bagPocket_Items[NUM_REGULAR_ITEMS];
-    struct ItemSlot bagPocket_KeyItems[NUM_KEY_ITEMS];
-    struct ItemSlot bagPocket_PokeBalls[NUM_POKE_BALLS];
-    u16 itemsAbove[3];
-    u16 cursorPos[3];
-    u16 registeredItems[NELEMS(gSaveBlock1->registeredItems)];
-    u16 pocket;
+	struct ItemSlot bagPocket_Items[NUM_REGULAR_ITEMS];
+	struct ItemSlot bagPocket_KeyItems[NUM_KEY_ITEMS];
+	struct ItemSlot bagPocket_PokeBalls[NUM_POKE_BALLS];
+	u16 itemsAbove[3];
+	u16 cursorPos[3];
+	u16 registeredItems[NELEMS(gSaveBlock1->registeredItems)];
+	u16 pocket;
 };
 
 struct BagPockets

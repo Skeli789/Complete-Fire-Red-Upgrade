@@ -87,7 +87,6 @@ u8 __attribute__((long_call)) GetDefaultMoveTarget(u8 battlerId);
 void __attribute__((long_call)) SetMultiuseSpriteTemplateToTrainerBack(u16 trainerSpriteId, u8 battlerPosition);
 u8 __attribute__((long_call)) GetSecretBaseTrainerPicIndex(void);
 u8 __attribute__((long_call)) GetSecretBaseTrainerNameIndex(void);
-void __attribute__((long_call)) AdjustFriendship(struct Pokemon *mon, u8 event);
 u8 __attribute__((long_call)) sub_80447F0(void); //Something Trainer Related
 u8 __attribute__((long_call)) GetLinkTrainerFlankId(u8 a);
 u8 __attribute__((long_call)) GetBattlerMultiplayerId(u8 bank);

@@ -752,6 +752,7 @@ u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 select
 bool8 __attribute__((long_call)) PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 u8 __attribute__((long_call)) GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
 u16 __attribute__((long_call)) GetEvolutionTargetSpeciesOld(struct Pokemon *mon, u8 type, u16 evolutionItem);
+void __attribute__((long_call)) AdjustFriendship(struct Pokemon *mon, u8 event);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -827,7 +828,6 @@ u16 SpeciesToNationalPokedexNum(u16);
 u16 HoennToNationalOrder(u16);
 u16 SpeciesToCryId(u16 species);
 void DrawSpindaSpots(u16, u32, u8 *, u8);
-void AdjustFriendship(struct Pokemon *, u8);
 u8 CheckPartyHasHadPokerus(struct Pokemon *, u8);
 void UpdatePartyPokerusTime(u16);
 u32 CanMonLearnTMHM(struct Pokemon *, u8);

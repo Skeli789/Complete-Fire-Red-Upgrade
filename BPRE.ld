@@ -1480,6 +1480,7 @@ GetItemEffectType = 0x8126C68 | 1;
 InitChooseHalfPartyForBattle = 0x81274A8 | 1;
 ShowSelectMovePokemonSummaryScreen = 0x8134738 | 1;
 sub_813A45C = 0x813A45C | 1;
+GetMoveSlotToReplace = 0x8138B2C | 1;
 some_other_kind_of_link_test = 0x80BF748 |1;
 
 /* Evolution Functions */

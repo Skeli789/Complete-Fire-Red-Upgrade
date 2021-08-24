@@ -539,6 +539,7 @@ CreateBoxMonHook 803DAD2 0
 CanMonLearnTMHM 08043C2C 2
 CanMonLearnTMTutor 08120B20 3
 ItemIdToBattleMoveId 08125A78 1
+RemoveTMPPRestoreHook 08125FC8 2
 LoadTMNameWithNo 08131D48 2
 SortTmHms 0809A624 1
 FixTmHmDiscLoader 081336BC 0
