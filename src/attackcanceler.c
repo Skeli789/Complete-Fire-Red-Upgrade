@@ -8,7 +8,7 @@
 
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
-#include "../include/new/ai_master.h"
+#include "../include/new/ai_switching.h"
 #include "../include/new/attackcanceler.h"
 #include "../include/new/attackcanceler_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"

@@ -1610,7 +1610,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe, gActiveBattler)) //It's not behind a Substitute
 	&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4) //Will take less than 25% damage on reentry
 	&& !(IsTrapped(foe, TRUE) && IsTakingSecondaryDamage(foe)) //This mon isn't keeping the foe locked in taking damage
-	&& 
+	&&
 	(
 		//OPTION A:
 		(CanKnockOut(foe, gActiveBattler) //Foe is likely slower and will KO
@@ -1621,10 +1621,17 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 		 && STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) < 6 + 3 //Including +3 Evasion
 		 && !(IsTakingSecondaryDamage(foe) && IsTrapped(foe, TRUE)) //And it isn't necessary to stay in so the foe will take trap damage
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
-		 && ((GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //And the new mon can KO (helps against PP stallers)
-		  || ((AIRandom() & 1) && !ResistsAllMoves(foe, gActiveBattler)))) //Or it doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen,
-		                                                                 //don't get into an infinite loop if this mon already does). Do this randomly to throw off opponent.
-	)) 
+		 &&
+		 (
+			//OPTION B1:
+			(GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //The new mon can KO (helps against PP stallers)
+
+			//OPTION B2:
+			|| (AIRandom() & 1 //Do this randomly to throw off opponent.
+			 && !ResistsAllMoves(foe, gActiveBattler) //It doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen, don't get into an infinite loop if this mon already does).
+			 && !IsStrongestMoveHPDrainingMove(gActiveBattler, foe)) //And it can't chip away at the foe's HP by healing off damage it takes
+		))
+	))
 	{
 		u16 movePrediction = IsValidMovePrediction(gActiveBattler, foe);
 		if (movePrediction == MOVE_FAKEOUT || gBattleMoves[movePrediction].effect == EFFECT_PROTECT)

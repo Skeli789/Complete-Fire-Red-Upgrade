@@ -912,8 +912,11 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			amountToRecover = maxHp;
 			break;
 
+		case EFFECT_DREAM_EATER:
+			if (ABILITY(bankDef) != ABILITY_COMATOSE && !(gBattleMons[bankDef].status1 & STATUS1_SLEEP))
+				break; //Move will fail
+			//Fallthrough
 		case EFFECT_ABSORB:
-		case EFFECT_DREAM_EATER: ;
 			if (move == MOVE_STRENGTHSAP)
 			{
 				amountToRecover = CalcStrengthSapHealAmount(bankAtk, bankDef) * -1;
@@ -928,7 +931,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 					amountToRecover = MathMax(1, predictedDmg / 2);
 
 				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_BIG_ROOT)
-					amountToRecover = (130 * predictedDmg) / 100;
+					amountToRecover = (13 * predictedDmg) / 10;
 			}
 			break;
 

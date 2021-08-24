@@ -2138,7 +2138,6 @@ bool8 CanHealFirstToPreventKnockOut(u8 bankAtk, u8 foe)
 	u16 move;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 	u16 foePrediction = IsValidMovePrediction(foe, bankAtk);
-	bool8 isAtkDynamaxed = IsDynamaxed(bankAtk);
 
 	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -2149,8 +2148,10 @@ bool8 CanHealFirstToPreventKnockOut(u8 bankAtk, u8 foe)
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			u8 effect = gBattleMoves[move].effect;
-			if ((effect == EFFECT_RESTORE_HP && !isAtkDynamaxed)
-			 || (effect == EFFECT_MORNING_SUN && !isAtkDynamaxed)
+			if (effect == EFFECT_RESTORE_HP
+			 || effect == EFFECT_MORNING_SUN
+			 || effect == EFFECT_ABSORB
+			 || effect == EFFECT_DREAM_EATER
 			 || (effect == EFFECT_PROTECT && DoesProtectionMoveBlockMove(foe, bankAtk, foePrediction, move)))
 			{
 				u32 healAmount = GetAmountToRecoverBy(bankAtk, foe, move);
@@ -3112,6 +3113,12 @@ bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move)
 	}
 
 	return FALSE;
+}
+
+bool8 IsStrongestMoveHPDrainingMove(u8 bankAtk, u8 bankDef)
+{
+	u8 moveEffect = gBattleMoves[GetStrongestMove(bankAtk, bankDef)].effect;
+	return moveEffect == EFFECT_ABSORB || moveEffect == EFFECT_DREAM_EATER;
 }
 
 bool8 MoveInMovesetAndUsable(u16 move, u8 bank)

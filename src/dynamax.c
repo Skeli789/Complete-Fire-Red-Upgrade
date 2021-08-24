@@ -1467,7 +1467,7 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 void CreateSummaryScreenGigantamaxIcon(void)
 {
 	//Base the position of the icon off of where the Poke Ball sprite is
-	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->caughtBallSpriteId];
+	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->ballIconSpriteId];
 
 	if (sMonSummaryScreen->currentMon.gigantamax)
 	{
@@ -1497,9 +1497,9 @@ void CreateSummaryScreenGigantamaxIcon(void)
 
 void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
-	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[1];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     gSprites[ballSpriteId].invisible = invisible;
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
@@ -1513,9 +1513,9 @@ void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
 
 void SummaryScreen_DestroyCaughtBallSprite(void)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
-	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[1];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     DestroySpriteAndFreeResources(&gSprites[ballSpriteId]);
 	if (gigantamaxIconSpriteId != MAX_SPRITES)

@@ -4,8 +4,9 @@
 #include "../include/m4a.h"
 #include "../include/battle_string_ids.h"
 
-#include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_switching.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dynamax.h"
