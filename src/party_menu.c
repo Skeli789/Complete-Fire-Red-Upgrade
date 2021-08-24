@@ -14,6 +14,7 @@
 #include "../include/party_menu.h"
 #include "../include/pokemon_icon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/random.h"
 #include "../include/script.h"
 #include "../include/sound.h"
@@ -39,6 +40,7 @@
 #include "../include/new/follow_me.h"
 #include "../include/new/form_change.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/util.h"
@@ -450,9 +452,9 @@ u8 ChangeSummaryScreenMonSinglesDoubles(u8 delta)
 	u8 result = (sLastViewedMonIndex + delta) % numMons;
 
 	//Skip over eggs on other pages
-	if (sMonSummaryScreen->currentPage != PAGE_INFO)
+	if (sMonSummaryScreen->curPageIndex != PAGE_INFO)
 	{
-		while (GetMonData(sMonSummaryScreen->partyData+result, MON_DATA_IS_EGG, NULL))
+		while (GetMonData(&sMonSummaryScreen->monList.mons[result], MON_DATA_IS_EGG, NULL))
 			result = (result + delta) % numMons;
 	}
 
@@ -484,7 +486,7 @@ s8 ChangeSummaryScreenMonMulti(s8 delta)
 	u8 result = (listPos + delta) % numMons;
 
 	//Skip over eggs on other pages
-	if (sMonSummaryScreen->currentPage != PAGE_INFO)
+	if (sMonSummaryScreen->curPageIndex != PAGE_INFO)
 	{
 		while (GetMonData(&gPlayerParty[sMultiPokemonPartyMenuOrder[result]], MON_DATA_IS_EGG, NULL))
 			result = (result + delta) % numMons;

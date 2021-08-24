@@ -145,19 +145,6 @@ struct PartyMenuInternal
 
 extern struct PartyMenuInternal* sPartyMenuInternal;
 
-struct PokemonSummaryScreenData
-{
-	u8 field0[0x3210];
-	u8 lastIndex;
-	u8 field3211[3];
-	u8 currentPage;
-	u8 field3215[0xDF];
-	struct Pokemon* partyData;
-	u8 field32f8[0x10];
-};
-
-#define sMonSummaryScreen ((struct PokemonSummaryScreenData*) *((u32*) 0x203B140))
-
 extern struct PartyMenu gPartyMenu;
 extern bool8 gPartyMenuUseExitCallback;
 extern u8 gSelectedMonPartyId;

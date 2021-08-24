@@ -218,6 +218,29 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
 	return numMoves;
 }
 
+u8 GetLevelUpMovePairsBySpecies(u16 species, struct MovePair* moves)
+{
+	u8 numMoves = 0;
+	int i;
+
+	for (i = 0; i < MAX_LEARNABLE_MOVES && !(gLevelUpLearnsets[species][i].move == 0
+						&& gLevelUpLearnsets[species][i].level == 0xFF); ++i)
+	{
+		u16 move = gLevelUpLearnsets[species][i].move;
+
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
+			move = RandomizeMove(move);
+		#endif
+
+		moves[numMoves].move = move;
+		moves[numMoves].num = gLevelUpLearnsets[species][i].level;
+		++numMoves;
+	}
+
+	return numMoves;
+}
+
 u8 GetNumberOfRelearnableMoves(struct Pokemon* mon)
 {
 	u16 moves[MAX_LEARNABLE_MOVES];
@@ -286,6 +309,56 @@ u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
 			++moves; //Increase Ptr
 		}
 
+		#ifdef EXPANDED_MOVE_TUTORS
+		u8 tutRet = CanMonLearnTutorMove(mon, i);
+		#else
+		u8 tutRet = CanLearnTutorMove(mon->species, i);
+		#endif
+		if (tutRet == TRUE
+		|| (tutRet > TRUE && tutRet == dexNum))
+		{
+			#ifdef EXPANDED_MOVE_TUTORS
+			*moves = GetExpandedTutorMove(i);
+			#else
+			*moves = GetTutorMove(i);
+			#endif
+
+			if (*moves != MOVE_NONE)
+			{
+				++numTotalMoves;
+				++moves; //Increase Ptr
+			}
+		}
+	}
+
+	return numTotalMoves;
+}
+
+u16 BuildTMMoveset(struct Pokemon* mon, struct MovePair* moves)
+{
+	u16 numTotalMoves = 0;
+
+	for (u32 i = 0; i < NUM_TMSHMS; ++i)
+	{
+		if (CanMonLearnTMHM(mon, i))
+		{
+			moves[numTotalMoves].num = i + 1;
+			moves[numTotalMoves].move = gTMHMMoves[i];
+			++numTotalMoves;
+		}
+	}
+
+	return numTotalMoves;
+}
+
+u16 BuildTutorMoveset(struct Pokemon* mon, u16* moves)
+{
+	u16 numTotalMoves = 0;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+
+	for (u32 i = 0; i < NUM_TMSHMS; ++i)
+	{
 		#ifdef EXPANDED_MOVE_TUTORS
 		u8 tutRet = CanMonLearnTutorMove(mon, i);
 		#else

@@ -745,12 +745,13 @@ u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
-void __attribute__((long_call)) SetMonMoveSlot(struct Pokemon *mon, u16 move, u8 slot);
+void __attribute__((long_call)) SetMonMoveSlotOld(struct Pokemon *mon, u16 move, u8 slot);
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);
 u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 selection);
 bool8 __attribute__((long_call)) PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 u8 __attribute__((long_call)) GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
+u16 __attribute__((long_call)) GetEvolutionTargetSpeciesOld(struct Pokemon *mon, u8 type, u16 evolutionItem);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -851,7 +852,6 @@ bool16 sub_806D82C(u8 id);
 u16 MonTryLearningNewMove(struct Pokemon* mon, bool8);
 void sub_8068AA4(void); // sets stats for deoxys
 bool8 HasTwoFramesAnimation(u16 species);
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
 void UpdatePartyPokerusTime(u16 days);
 void PartySpreadPokerus(struct Pokemon *party);

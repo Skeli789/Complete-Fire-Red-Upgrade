@@ -708,4 +708,7 @@ TextPrinterWait 8005680 1
 GetCurrentLevelCap 801D79C 0
 ChangeTrainerPicPal 801D7A4 1
 GetMinimumLevel 801D7AC 1
+GetLevelUpMovePairsBySpecies 801D7BC 2
+BuildTMMoveset 801D7C4 2
+BuildTutorMoveset 801D7CC 2
 #endif

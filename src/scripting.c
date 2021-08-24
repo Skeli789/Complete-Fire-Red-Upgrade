@@ -37,6 +37,7 @@
 #include "../include/new/dns.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
@@ -505,22 +506,12 @@ void sp017_ChangePokemonAttacks(void)
 	//Check empty move slots first, if not deleting
 	if (move != MOVE_NONE)
 	{
-		u8 i;
-
-		for (i = 0; i < MAX_MON_MOVES-1; ++i)
-		{
-			if (GetMonData(&gPlayerParty[partyId], MON_DATA_MOVE1 + i, NULL) == MOVE_NONE)
-			{
-				SetMonData(&gPlayerParty[partyId], MON_DATA_MOVE1 + i, &move);
-				SetMonData(&gPlayerParty[partyId], MON_DATA_PP1 + i, &gBattleMoves[move].pp);
-				return;
-			}
-		}
+		if (GiveMoveToMon(&gPlayerParty[partyId], move) != 0xFFFF)
+			return; //Had an empty slot
 
 		//Otherwise, replace given slot
-		SetMonData(&gPlayerParty[partyId], MON_DATA_MOVE1 + moveSlot, &move);
-		SetMonData(&gPlayerParty[partyId], MON_DATA_PP1 + moveSlot, &gBattleMoves[move].pp);
-		gPlayerParty[partyId].ppBonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
+		SetMonMoveSlot(&gPlayerParty[partyId], move, moveSlot);
+		RemoveMonPPBonus(&gPlayerParty[partyId], moveSlot);
 	}
 	else
 		Special_0DD_DeleteMove();
