@@ -2110,24 +2110,22 @@ u16 GetRaidRewardAmount(u16 item)
 		}	
 	}
 
-	switch (gItemsByType[item]) {
-		case ITEM_TYPE_HEALTH_RECOVERY:
-		case ITEM_TYPE_STATUS_RECOVERY:
-			return Random() % 5 + 1; //1 - 5
-		case ITEM_TYPE_PP_RECOVERY:
-		case ITEM_TYPE_STAT_BOOST_DRINK:
-			#if (defined ITEM_ABILITY_CAPSULE || defined ITEM_DREAM_MIST)
-			if (item == ITEM_ABILITY_CAPSULE || item == ITEM_DREAM_MIST)
-				return 1;
-			#endif
-			return Random() % 3 + 1; //1 - 3
-		case ITEM_TYPE_STAT_BOOST_WING:
-			return Random() % 21 + 10; //10 - 30
-		case ITEM_TYPE_SHARD:
-			return Random() % 10 + 1; //1 - 10
-		default:
-			return 1;
-	}
+	if (IsHealthRecoveryItem(item)
+	|| IsStatusRecoveryItem(item))
+		return Random() % 5 + 1; //1 - 5
+	else if (IsPPRecoveryItem(item)
+	|| IsStatBoostDrink(item)
+	|| IsExpModifierItem(item))
+		return Random() % 3 + 1; //1 - 3
+	else if (IsAbilityModifierItem(item)
+	|| IsPPBoostDrink(item))
+		return 1;
+	else if (IsStatBoostWing(item))
+		return Random() % 21 + 10; //10 - 30
+	else if (IsShard(item))
+		return Random() % 10 + 1; //1 - 10
+	else
+		return 1;
 }
 
 static const u16 s4StarFrontierRaidBattleDrops[] =

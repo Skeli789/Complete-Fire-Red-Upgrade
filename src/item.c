@@ -148,6 +148,104 @@ bool8 IsGem(u16 item)
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_GEM;
 }
 
+bool8 IsHealthRecoveryItem(u16 item)
+{
+	switch (gItemsByType[item])
+	{
+		case ITEM_TYPE_FULL_RESTORE:
+		case ITEM_TYPE_MAX_POTION:
+		case ITEM_TYPE_HYPER_POTION:
+		case ITEM_TYPE_SUPER_POTION:
+		case ITEM_TYPE_POTION:
+		case ITEM_TYPE_REVIVE:
+		case ITEM_TYPE_MOOMOO_MILK:
+		case ITEM_TYPE_LEMONADE:
+		case ITEM_TYPE_SODA_POP:
+		case ITEM_TYPE_FRESH_WATER:
+		case ITEM_TYPE_HERB_HEAL:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsStatusRecoveryItem(u16 item)
+{
+	switch (gItemsByType[item])
+	{
+		case ITEM_TYPE_FULL_HEAL:
+		case ITEM_TYPE_FOOD_STATUS_RECOVERY:
+		case ITEM_TYPE_STATUS_RECOVERY:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsPPRecoveryItem(u16 item)
+{
+	return gItemsByType[item] == ITEM_TYPE_PP_RECOVERY;
+}
+
+bool8 IsStatBoostDrink(u16 item)
+{
+	switch (gItemsByType[item])
+	{
+		case ITEM_TYPE_HP_UP:
+		case ITEM_TYPE_PROTEIN:
+		case ITEM_TYPE_IRON:
+		case ITEM_TYPE_CALCIUM:
+		case ITEM_TYPE_ZINC:
+		case ITEM_TYPE_CARBOS:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsPPBoostDrink(u16 item)
+{
+	switch (gItemsByType[item])
+	{
+		case ITEM_TYPE_PP_UP:
+		case ITEM_TYPE_PP_MAX:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsExpModifierItem(u16 item)
+{
+	return gItemsByType[item] == ITEM_TYPE_LEVEL_MODIFIER;
+}
+
+bool8 IsAbilityModifierItem(u16 item)
+{
+	return gItemsByType[item] == ITEM_TYPE_ABILITY_GIGANTAMAX_MODIFIER;
+}
+
+bool8 IsStatBoostWing(u16 item)
+{
+	switch (gItemsByType[item])
+	{
+		case ITEM_TYPE_HP_WING:
+		case ITEM_TYPE_ATTACK_WING:
+		case ITEM_TYPE_DEFENSE_WING:
+		case ITEM_TYPE_SPATK_WING:
+		case ITEM_TYPE_SPDEF_WING:
+		case ITEM_TYPE_SPEED_WING:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsShard(u16 item)
+{
+	return gItemsByType[item] == ITEM_TYPE_SHARD;
+}
+	
 bool8 IsTMHM(u16 item)
 {
 	return GetPocketByItemId(item) == POCKET_TM_CASE;

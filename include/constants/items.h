@@ -860,7 +860,7 @@ enum
 #define ITEM_RUSTED_SWORD 0x2C6
 #define ITEM_RUSTED_SHIELD 0x2C7
 
-#define ITEMS_COUNT (ITEM_STAR_SWEET + 1)
+#define ITEMS_COUNT (ITEM_GALARICA_WREATH + 1)
 
 //For Pokemon Unbound
 #ifdef UNBOUND
