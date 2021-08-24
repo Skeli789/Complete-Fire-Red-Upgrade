@@ -8,6 +8,7 @@
 
 #include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_switching.h"
 #include "../include/new/battle_controller_opponent.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
@@ -21,8 +22,6 @@
 battle_controller_opponent.c
 	handles the functions responsible for the user moving between battle menus, choosing moves, etc.
 */
-
-//TODO: Update Acupressure Targeting for AI
 
 //This file's functions:
 static void TryRechoosePartnerMove(u16 chosenMove);

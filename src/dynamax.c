@@ -1486,7 +1486,16 @@ void CreateSummaryScreenGigantamaxIcon(void)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
 		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
-		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, ballSprite->pos1.x - 78, ballSprite->pos1.y - 12, 0);
+
+		#ifdef UNBOUND
+		s16 x = ballSprite->pos1.x - 78;
+		s16 y = ballSprite->pos1.y - 12;
+		#else
+		s16 x = ballSprite->pos1.x - 12;
+		s16 y = ballSprite->pos1.y + 2;
+		#endif
+
+		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, x, y, 0);
 		if (friendship < 255 && ballSprite->data[1] < MAX_SPRITES)
 			gSprites[ballSprite->data[1]].oam.tileNum += (8 / 8) * (8 / 8); //Use grayscale heart when can evolve but not max friendship
 	}
