@@ -313,6 +313,15 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
 
+	[BATTLE_TERRAIN_DARK_CAVE + 4] =
+		{
+			.camouflageType = TYPE_ROCK,
+			.secretPowerEffect = MOVE_EFFECT_FLINCH,
+			.secretPowerAnim = MOVE_ROCKTHROW,
+			.naturePowerMove = MOVE_POWERGEM,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
 	[BATTLE_TERRAIN_DARK_CAVE_WATER + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -322,13 +331,22 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_NONE,
 		},
 
-	[BATTLE_TERRAIN_DARK_CAVE + 4] =
+	[BATTLE_TERRAIN_CRYSTAL_PEAK + 4] =
 		{
 			.camouflageType = TYPE_ROCK,
-			.secretPowerEffect = MOVE_EFFECT_FLINCH,
-			.secretPowerAnim = MOVE_ROCKTHROW,
+			.secretPowerEffect = MOVE_EFFECT_DEF_PLUS_1 | MOVE_EFFECT_AFFECTS_USER,
+			.secretPowerAnim = MOVE_DIAMONDSTORM,
 			.naturePowerMove = MOVE_POWERGEM,
 			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_CRYSTAL_PEAK_WATER + 4] =
+		{
+			.camouflageType = TYPE_WATER,
+			.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
+			.secretPowerAnim = MOVE_WATERPULSE,
+			.naturePowerMove = MOVE_HYDROPUMP,
+			.burmyForm = SPECIES_NONE,
 		},
 
 	[BATTLE_TERRAIN_SNOW_CAVE + 4] =

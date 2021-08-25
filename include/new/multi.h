@@ -33,7 +33,6 @@ extern const u8 gOpenWorldLevelRanges[NUM_BADGE_OPTIONS][2];
 void BattleIntroOpponent1SendsOutMonAnimation(void);
 void MultiInitPokemonOrder(void);
 void MultiBattleAddSecondOpponent(void);
-void sub_8035C30Fix(void);
 u32 MultiMoneyCalc(void);
 void ChooseProperPartnerController(void);
 

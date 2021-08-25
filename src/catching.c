@@ -693,7 +693,7 @@ void AnimTask_ThrowBall(u8 taskId)
 	gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
 	gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
 	gSprites[spriteId].callback = (void*) 0x80EF8C1;
-	gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
+	gBattleSpritesDataPtr->animationData->wildMonInvisible = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
 	gTasks[taskId].data[0] = spriteId;
 	gTasks[taskId].func = (void*) 0x80EF699;
 }

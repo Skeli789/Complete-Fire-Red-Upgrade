@@ -297,6 +297,8 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				terrain = BATTLE_TERRAIN_SNOW_FIELD;
 			else if (IsCurrentAreaDesert())
 				terrain = BATTLE_TERRAIN_DESERT;
+			else if (mapSec == MAPSEC_DEHARA_CITY)
+				terrain = BATTLE_TERRAIN_SAND;
 			else if (mapSec == MAPSEC_ANTISIS_CITY || mapSec == MAPSEC_ANTISIS_PORT)
 				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
 			else if (IsCurrentAreaSwamp())
@@ -341,6 +343,9 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				break;
 			case BATTLE_TERRAIN_SNOW_CAVE:
 				terrain = BATTLE_TERRAIN_WATER_IN_SNOW_CAVE;
+				break;
+			case BATTLE_TERRAIN_CRYSTAL_PEAK:
+				terrain = BATTLE_TERRAIN_CRYSTAL_PEAK_WATER;
 				break;
 			case BATTLE_TERRAIN_ANTISIS_SEWERS:
 				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;

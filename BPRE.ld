@@ -172,6 +172,7 @@ gBattlerControllerFuncs = 0x3004FE0;
 gHealthboxSpriteIds = 0x3004FF0;
 gMultiUsePlayerCursor = 0x3004FF4;
 gNumberOfMovesToChoose = 0x3004FF8;
+gBattleControllerData = 0x3004FFC;
 
 /* NPC RAM */
 gNpcPlayerPtr = 0x2036E30;
@@ -285,6 +286,8 @@ sMapMusicState = 0x3000FC4;
 sMapMusicFadeInSpeed = 0x3000FC5;
 sFanfareCounter = 0x3000FC6;
 gDisableMusic = 0x3005080;
+gPokemonCryMusicPlayers = 0x3006F70;
+gPokemonCryTracks = 0x3007180;
 gPokemonCrySong = 0x30072C0;
 gMPlayInfo_BGM = 0x3007300;
 gMPlayInfo_SE1 = 0x3007340;
@@ -629,9 +632,9 @@ SpriteCB_SetInvisible = 0x80356FC | 1;
 SetBattlerShadowSpriteCallback = 0x8035708 | 1;
 sub_80357C8 = 0x80357C8 | 1;
 SetControllerToOpponent = 0x8035A7D | 1;
-sub_8035BE8 = 0x8035BE8 | 1;
+OpponentIntro_DelayAndEnd = 0x8035BE8 | 1;
 OpponentBufferExecCompleted = 0x8036530 | 1;
-sub_8037A28 = 0x8037A28 | 1;
+OpponentStartSendOutAnim = 0x8037A28 | 1;
 ShouldSwitchIfPerishSong = 0x8039188 | 1;
 AreStatsRaised = 0x80397E0 | 1;
 //ModulateByTypeEffectiveness = 0x8039DB4 | 1;
@@ -691,6 +694,7 @@ EmitMoveAnimation = 0x800E1FC | 1;
 EmitStatusAnimation = 0x800E6AC | 1;
 EmitSpriteInvisibility = 0x800EB04 | 1;
 EmitBattleAnimation = 0x800EB28 | 1;
+SpriteCallbackDummy3 = 0x801210C | 1;
 DoBounceEffect = 0x8012138 | 1;
 EndBounceEffect = 0x8012258 | 1;
 InitAndLaunchSpecialAnimation = 0x80341D8 | 1;
@@ -797,7 +801,7 @@ RepeatBallOpenParticleAnimation = 0x80F0DB4 | 1;
 MasterBallOpenParticleAnimation = 0x80F0F10 | 1;
 PremierBallOpenParticleAnimation = 0x80F103C | 1;
 FreeBallTiles = 0x80F1198 | 1;
-
+TryShinyAnimation = 0x80F1720 | 1;
 
 /* Daycare */
 GetNumLevelsGainedForDaycareMon = 0x80457B4 | 1;
@@ -1569,6 +1573,7 @@ Menu_MoveCursor = 0x810F904 | 1;
 Menu_MoveCursorNoWrapAround = 0x810F948 | 1;
 Menu_ProcessInput = 0x810F998 | 1;
 CreateYesNoMenu = 0x810FF60 | 1;
+DestroyYesNoMenu = 0x81100E8 | 1;
 Menu_ProcessInputNoWrapClearOnChoose = 0x81100C8 | 1;
 Menu_PrintFormatIntlPlayerName = 0x812E6DC | 1;
 
@@ -1923,6 +1928,7 @@ BGMVolumeMax_EnableHelpSystemReduction = 0x807249C | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
 m4aSoundMode = 0x81DD63C | 1;
+MPlayOpen = 0x81DD7E0 | 1;
 MPlayStart = 0x81DD858 | 1;
 m4aMPlayStop = 0x81DD93C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;

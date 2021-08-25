@@ -9,7 +9,6 @@
 .global MultiBattleAddSecondOpponentHook
 .global MultiMoneyCalcHook
 .global MultiTrainerSendOutHook
-.global MultiTrainersSendOutHook2
 .global MultiTrainersSendOutHook3
 .global PartnerSetupHook
 
@@ -82,22 +81,6 @@ NoSecondOpponentSendOut:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-@0x8038DF4
-MultiTrainersSendOutHook2:
-	ldr r0, [r0] @Battle Type Flags
-	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS
-	and r0, r1
-	cmp r0, #0x0
-	beq NoSecondOpponentSendOut2
-	ldr r0, =0x8038DFE | 1
-	bx r0
-
-NoSecondOpponentSendOut2:
-	ldr r0, =0x8038E30 | 1
-	bx r0
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 @0x8035EA0
 MultiTrainersSendOutHook4:
 	ldr r0, =BATTLE_TYPE
@@ -106,27 +89,6 @@ MultiTrainersSendOutHook4:
 	and r0, r1
 	ldr r1, =0x8035EA8 | 1
 	bx r1
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-@0x8035C30
-MultiTrainersSendOutGameCrashingFix:
-	push {r4-r7, lr}
-	bl IsTwoOpponentBattle
-	cmp r0, #0x0
-	bne NewFixForMultiSendIn
-
-	mov r6, #0x0
-	ldr r0, =BATTLE_TYPE
-	ldr r0, [r0]
-	mov r1, #BATTLE_DOUBLE
-	and r0, r1
-	ldr r1, =0x8035C3A | 1
-	bx r1
-
-NewFixForMultiSendIn:
-	bl sub_8035C30Fix
-	pop {r4-r7, pc}
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

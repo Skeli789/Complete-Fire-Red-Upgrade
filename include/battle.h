@@ -163,6 +163,8 @@
 #define BATTLE_TERRAIN_BOG_WATER			0x2C
 #define BATTLE_TERRAIN_DISTORTION_WORLD_FULL 0x2D
 #define BATTLE_TERRAIN_CUBE_SPACE			0x2E
+#define BATTLE_TERRAIN_CRYSTAL_PEAK			0x2F
+#define BATTLE_TERRAIN_CRYSTAL_PEAK_WATER	0x30
 
 #define BATTLE_TERRAIN_RANDOM				0xFF
 #endif
@@ -1379,42 +1381,42 @@ struct BattleAnimationInfo
     u8 field_6;
     u8 field_7;
     u8 ballThrowCaseId;
-    u8 field_9_x1 : 1;
-    u8 field_9_x2 : 1;
+    u8 introAnimActive : 1;
+    u8 wildMonInvisible : 1;
     u8 field_9_x1C : 3;
     u8 field_9_x20 : 1;
     u8 field_9_x40 : 1;
     u8 field_9_x80 : 1;
-    u8 field_A;
+    u8 numBallParticles;
     u8 field_B;
-    s16 field_C;
+    s16 ballSubpx;
     u8 field_E;
     u8 field_F;
 };
 
 struct BattleHealthboxInfo
 {
-    u8 partyStatusSummaryShown:1;
-    u8 healthboxIsBouncing:1;
-    u8 battlerIsBouncing:1;
-    u8 ballAnimActive:1; // 0x8
-    u8 statusAnimActive:1; // x10
-    u8 animFromTableActive:1; // x20
-    u8 specialAnimActive:1; // x40
-    u8 flag_x80:1;
-    u8 field_1_x1:1;
-    u8 field_1_x1E:4;
-    u8 field_1_x20:1;
-    u8 field_1_x40:1;
-    u8 field_1_x80:1;
+    u8 partyStatusSummaryShown : 1; // x1
+    u8 healthboxIsBouncing : 1; // x2
+    u8 battlerIsBouncing : 1; // x4
+    u8 ballAnimActive : 1; // 0x8
+    u8 statusAnimActive : 1; // x10
+    u8 animFromTableActive : 1; // x20
+    u8 specialAnimActive : 1; // x40
+    u8 triedShinyMonAnim : 1; // x80
+    u8 finishedShinyMonAnim : 1; // x1
+	u8 opponentDrawPartyStatusSummaryDelay : 4;
+    u8 bgmRestored : 1;
+    u8 waitForCry : 1;
+    u8 healthboxSlideInStarted : 1;
     u8 healthboxBounceSpriteId;
     u8 battlerBounceSpriteId;
     u8 animationState;
-    u8 field_5;
+    u8 partyStatusDelayTimer;
     u8 matrixNum;
     u8 shadowSpriteId;
-    u8 field_8;
-    u8 field_9;
+    u8 soundTimer;
+    u8 introEndDelay;
     u8 field_A;
     u8 field_B;
 };
@@ -1580,7 +1582,7 @@ extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(void);
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;
-extern u8 gUnknown_03005D7C[MAX_BATTLERS_COUNT];
+extern u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 
 extern u8 gUnknown_2023E8A;
 

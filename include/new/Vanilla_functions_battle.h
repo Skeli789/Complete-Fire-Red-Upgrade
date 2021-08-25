@@ -74,7 +74,7 @@ void __attribute__((long_call)) BattleStopLowHpSound(void);
 void __attribute__((long_call)) SetControllerToOpponent(void);
 void __attribute__((long_call)) CompleteOnBattlerSpriteCallbackDummy(void);
 void __attribute__((long_call)) CompleteOnBankSpriteCallbackDummy2(void);
-void __attribute__((long_call)) sub_8035BE8(void);
+void __attribute__((long_call)) OpponentIntro_DelayAndEnd(void);
 void __attribute__((long_call)) OpponentBufferExecCompleted(void);
 bool8 __attribute__((long_call)) ShouldSwitchIfPerishSong(void);
 bool8 __attribute__((long_call)) AreStatsRaised(void);
