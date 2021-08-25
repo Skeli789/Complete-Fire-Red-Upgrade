@@ -58,7 +58,6 @@ extern const u16 CamomonsTypeIconsPal[];
 extern const u16 CamomonsTypeIcons2Pal[];
 extern const u8 TeamPreviewInBattleBgTiles[];
 extern const u8 TeamPreviewInBattleBgMap[];
-extern const u16 TeamPreviewInBattleBgPal[];
 extern const u8 TeamPreviewFaintedMonIconTiles[];
 extern const u8 TeamPreviewStatusIconsTiles[];
 
@@ -1756,9 +1755,9 @@ static void Task_DisplayInBattleTeamPreview(u8 taskId)
 	gBattle_BG1_X = 0; //Fix bg offsets if necessary (gets messed up by some battle anims)
 	gBattle_BG1_Y = 0;
 	
-    LZDecompressVram(TeamPreviewInBattleBgTiles, (void *)(BG_CHAR_ADDR(1)));
-    LZDecompressVram(TeamPreviewInBattleBgMap, (void *)(BG_SCREEN_ADDR(28)));
-    LoadCompressedPalette(TeamPreviewInBattleBgPal, 0xF0, 32);
+	LZDecompressVram(TeamPreviewInBattleBgTiles, (void *)(BG_CHAR_ADDR(1)));
+	LZDecompressVram(TeamPreviewInBattleBgMap, (void *)(BG_SCREEN_ADDR(28)));
+	//LoadCompressedPalette(TeamPreviewInBattleBgPal, 0xF0, 32);
 
 	REG_BG1CNT |= BGCNT_CHARBASE(1); //Original char base that isn't getting used for some reason
 	REG_DISPCNT |= DISPCNT_BG1_ON; //Can't use ShowBg because that resets the charbase

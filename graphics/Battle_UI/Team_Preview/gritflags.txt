@@ -1,1 +1,1 @@
--fts -fh -m -mR4 -mzl -mu8 -mp15 -pzl -pe16 -g -gB4 -gzl -gu8 -ah112 -aw256
+-fts -fh -m -mR4 -mzl -mu8 -mp0 -p! -g -gB4 -gzl -gu8 -ah112 -aw256
