@@ -440,7 +440,6 @@ static void Task_RaidBattleIntroWaitForKeyPress(u8 taskId)
 	{
 		gSpecialVar_LastResult = 0;
 
-		PlaySE(SE_ERROR);
 		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
 		gTasks[taskId].func = Task_RaidBattleIntroFadeOut;
 	}

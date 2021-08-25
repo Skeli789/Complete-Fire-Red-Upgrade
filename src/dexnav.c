@@ -10,6 +10,7 @@
 #include "../include/fieldmap.h"
 #include "../include/gpu_regs.h"
 #include "../include/international_string_util.h"
+#include "../include/item_menu.h"
 #include "../include/map_name_popup.h"
 #include "../include/menu.h"
 #include "../include/m4a.h"
@@ -3179,6 +3180,7 @@ static void Task_DexNavFadeOutToScan(u8 taskId)
 {
 	if (!gPaletteFade->active)
 	{
+		PrepareOverworldReturn();
 		SetMainCallback1(CB1_OpenDexNavScan);
 		SetMainCallback2(CB2_ReturnToFieldFromDiploma); //Needed so followers don't get messed up
 		FreeAndCloseDexNav(taskId);

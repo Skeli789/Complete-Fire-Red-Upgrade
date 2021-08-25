@@ -10,6 +10,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/ai_switching.h"
 #include "../include/new/ai_util.h"
+#include "../include/new/battle_anims.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dynamax.h"
@@ -199,14 +200,14 @@ static void MultiIntro_TryShinyAnimShowHealthbox(void)
 	if (!gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].triedShinyMonAnim 
 	&& !gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].ballAnimActive 
 	&& !gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].finishedShinyMonAnim)
-		TryShinyAnimation(gActiveBattler, GetBankPartyData(gActiveBattler));
+		TryStartShinyAnimation(gActiveBattler, GetBankPartyData(gActiveBattler));
 
 	if (!(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
 	&& IS_DOUBLE_BATTLE
 	&& !gBattleSpritesDataPtr->healthBoxesData[partner].triedShinyMonAnim 
 	&& !gBattleSpritesDataPtr->healthBoxesData[partner].ballAnimActive 
 	&& !gBattleSpritesDataPtr->healthBoxesData[partner].finishedShinyMonAnim)
-		TryShinyAnimation(partner, GetBankPartyData(partner));
+		TryStartShinyAnimation(partner, GetBankPartyData(partner));
 
 	if (!gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].ballAnimActive && !gBattleSpritesDataPtr->healthBoxesData[partner].ballAnimActive)
 	{

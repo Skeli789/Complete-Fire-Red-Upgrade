@@ -1547,7 +1547,7 @@ u16 GetLastUsedBall(void)
 
 bool8 CantLoadLastBallTrigger(void)
 {
-	u8 lastUsedBall = GetLastUsedBall();
+	u16 lastUsedBall = GetLastUsedBall();
 
 	return (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		|| CantCatchPokemonRightNow()
@@ -1713,6 +1713,7 @@ static bool8 CanShowEnemyMonIcon(u8 monId)
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		if (!IsRandomBattleTowerBattle()
+		&& BATTLE_FACILITY_NUM != IN_BATTLE_MINE //No team preview here
 		&& VarGet(VAR_BATTLE_FACILITY_POKE_NUM) >= PARTY_SIZE) //Normal 6v6 Battle
 			return TRUE; //Gain access to team preview
 	}

@@ -1540,6 +1540,11 @@ void Task_ClosePartyMenuAfterText(u8 taskId)
 	}
 }
 
+void InitPartyMenuAfterCancellingLearnMove(TaskFunc task)
+{
+	InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, gPartyMenu.action, TRUE, PARTY_MSG_NONE, task, gPartyMenu.exitCallback);
+}
+
 static bool8 IsUsePartyMenuItemHPEVModifier(struct Pokemon* mon, u16 oldHP, u16 item)
 {
 	return GetMonData(mon, MON_DATA_HP, NULL) != oldHP

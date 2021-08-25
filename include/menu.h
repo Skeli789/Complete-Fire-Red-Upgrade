@@ -29,6 +29,7 @@ void __attribute__((long_call)) AddTextPrinterParameterized3(u8 windowId, u8 fon
 void __attribute__((long_call)) AddTextPrinterParameterized4(u8 windowId, u8 fontId, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, const u8 *color, s8 speed, const u8 *str);
 void __attribute__((long_call)) AddTextPrinterParameterized5(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 letterSpacing, u8 lineSpacing);
 void __attribute__((long_call)) CreateYesNoMenu(const struct WindowTemplate *window, u8 fontId, u8 left, u8 top, u16 baseTileNum, u8 paletteNum, u8 initialCursorPos);
+void __attribute__((long_call)) DestroyYesNoMenu(void);
 void __attribute__((long_call)) clear_scheduled_bg_copies_to_vram(void);
 int __attribute__((long_call)) decompress_and_copy_tile_data_to_vram(u8 bg_id, const void *src, int size, u16 offset, u8 mode);
 bool8 __attribute__((long_call)) free_temp_tile_data_buffers_if_possible(void);

@@ -149,14 +149,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_SET_UP: //For Emergency Exit to use later
 			gNewBS->originalAttackerBackup = gBankAttacker;
 
-			if (gNewBS->MultiHitOn)
-				gNewBS->turnDamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
-			else
+			if (gBattleMoves[gCurrentMove].effect != EFFECT_CURSE) //Damage is done to the attacker, not the target
 			{
-				if (gCurrentMove == MOVE_BATONPASS)
-					gNewBS->turnDamageTaken[gBankAttacker] = gHpDealt; //Target could be set to foe due to Intimidate
+				if (gNewBS->MultiHitOn)
+					gNewBS->turnDamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
 				else
-					gNewBS->turnDamageTaken[gBankTarget] = gHpDealt;
+				{
+					if (gCurrentMove == MOVE_BATONPASS)
+						gNewBS->turnDamageTaken[gBankAttacker] = gHpDealt; //Target could be set to foe due to Intimidate
+					else
+						gNewBS->turnDamageTaken[gBankTarget] = gHpDealt;
+				}
 			}
 
 			gNewBS->totalDamageGiven += gHpDealt;

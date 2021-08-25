@@ -333,12 +333,14 @@ void InitBagMenuFromField(void)
 static void CB2_PartyMenuFromField(void)
 {
 	FreezeEventObjects();
+	PrepareOverworldReturn();
     InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldFromDiploma);
 }
 
 static void CB2_ItemMenuFromField(void)
 {
 	FreezeEventObjects();
+	PrepareOverworldReturn();
 	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldFromDiploma); //Continue script is needed so followers don't get messed up
 }
 

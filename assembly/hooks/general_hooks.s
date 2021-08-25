@@ -123,6 +123,13 @@ PartyMenuSwitchingHook:
 	bx r0
 
 .pool
+@0x8125EEE with r1
+PartyMenuAfterCancelLearnMoveHook:
+	bl InitPartyMenuAfterCancellingLearnMove
+	ldr r0, =0x8125F02 | 1
+	bx r0
+
+.pool
 @0x80EFEE4 with r0
 CriticalCaptureAnimHook:
 	push {r1}

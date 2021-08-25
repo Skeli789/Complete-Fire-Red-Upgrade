@@ -859,65 +859,65 @@ void TryDecrementingDaycareStepCounterIfMoreEggsToHatch(struct DayCare* daycare,
 
 u8 GetDaycareCompatibilityScore(struct DayCare *daycare)
 {
-    u32 i;
-    u16 eggGroups[DAYCARE_MON_COUNT][EGG_GROUPS_PER_MON];
-    u16 species[DAYCARE_MON_COUNT];
-    u32 trainerIds[DAYCARE_MON_COUNT];
-    u32 genders[DAYCARE_MON_COUNT];
+	u32 i;
+	u16 eggGroups[DAYCARE_MON_COUNT][EGG_GROUPS_PER_MON];
+	u16 species[DAYCARE_MON_COUNT];
+	u32 trainerIds[DAYCARE_MON_COUNT];
+	u32 genders[DAYCARE_MON_COUNT];
 
-    for (i = 0; i < DAYCARE_MON_COUNT; i++)
-    {
-        u32 personality;
+	for (i = 0; i < DAYCARE_MON_COUNT; i++)
+	{
+		u32 personality;
 
-        species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES, NULL);
-        trainerIds[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_OT_ID, NULL);
-        personality = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_PERSONALITY, NULL);
-        genders[i] = GetGenderFromSpeciesAndPersonality(species[i], personality);
-        eggGroups[i][0] = gBaseStats[species[i]].eggGroup1;
-        eggGroups[i][1] = gBaseStats[species[i]].eggGroup2;
-    }
+		species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES, NULL);
+		trainerIds[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_OT_ID, NULL);
+		personality = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_PERSONALITY, NULL);
+		genders[i] = GetGenderFromSpeciesAndPersonality(species[i], personality);
+		eggGroups[i][0] = gBaseStats[species[i]].eggGroup1;
+		eggGroups[i][1] = gBaseStats[species[i]].eggGroup2;
+	}
 
-    //Check unbreedable egg group
-    if (eggGroups[0][0] == EGG_GROUP_UNDISCOVERED || eggGroups[1][0] == EGG_GROUP_UNDISCOVERED)
-        return PARENTS_INCOMPATIBLE;
+	//Check unbreedable egg group
+	if (eggGroups[0][0] == EGG_GROUP_UNDISCOVERED || eggGroups[1][0] == EGG_GROUP_UNDISCOVERED)
+		return PARENTS_INCOMPATIBLE;
 
-    //Two Ditto can't breed
-    if (eggGroups[0][0] == EGG_GROUP_DITTO && eggGroups[1][0] == EGG_GROUP_DITTO)
-        return PARENTS_INCOMPATIBLE;
+	//Two Ditto can't breed
+	if (eggGroups[0][0] == EGG_GROUP_DITTO && eggGroups[1][0] == EGG_GROUP_DITTO)
+		return PARENTS_INCOMPATIBLE;
 
-    //One parent is Ditto
-    if (eggGroups[0][0] == EGG_GROUP_DITTO || eggGroups[1][0] == EGG_GROUP_DITTO)
-    {
-        if (trainerIds[0] == trainerIds[1])
-            return PARENTS_LOW_COMPATIBILITY;
+	//One parent is Ditto
+	if (eggGroups[0][0] == EGG_GROUP_DITTO || eggGroups[1][0] == EGG_GROUP_DITTO)
+	{
+		if (trainerIds[0] == trainerIds[1])
+			return PARENTS_LOW_COMPATIBILITY;
 
-        return PARENTS_MED_COMPATIBILITY;
-    }
-    //Neither parent is Ditto
-    else
-    {
-        if (genders[0] == genders[1])
-            return PARENTS_INCOMPATIBLE;
-        if (genders[0] == MON_GENDERLESS || genders[1] == MON_GENDERLESS)
-            return PARENTS_INCOMPATIBLE;
-        if (!EggGroupsOverlap(eggGroups[0], eggGroups[1]))
-            return PARENTS_INCOMPATIBLE;
+		return PARENTS_MED_COMPATIBILITY;
+	}
+	//Neither parent is Ditto
+	else
+	{
+		if (genders[0] == genders[1])
+			return PARENTS_INCOMPATIBLE;
+		if (genders[0] == MON_GENDERLESS || genders[1] == MON_GENDERLESS)
+			return PARENTS_INCOMPATIBLE;
+		if (!EggGroupsOverlap(eggGroups[0], eggGroups[1]))
+			return PARENTS_INCOMPATIBLE;
 
-        if (SpeciesToNationalPokedexNum(species[0]) == SpeciesToNationalPokedexNum(species[1]))
-        {
-            if (trainerIds[0] == trainerIds[1])
-                return PARENTS_MED_COMPATIBILITY; //Same species, same Trainer
+		if (SpeciesToNationalPokedexNum(species[0]) == SpeciesToNationalPokedexNum(species[1]))
+		{
+			if (trainerIds[0] == trainerIds[1])
+				return PARENTS_MED_COMPATIBILITY; //Same species, same Trainer
 
-            return PARENTS_MAX_COMPATIBILITY; //Same species, different Trainers
-        }
-        else
-        {
-            if (trainerIds[0] != trainerIds[1])
-                return PARENTS_MED_COMPATIBILITY; //Different species, different trainers
+			return PARENTS_MAX_COMPATIBILITY; //Same species, different Trainers
+		}
+		else
+		{
+			if (trainerIds[0] != trainerIds[1])
+				return PARENTS_MED_COMPATIBILITY; //Different species, different trainers
 
-            return PARENTS_LOW_COMPATIBILITY; //Different species, same Trainer
-        }
-    }
+			return PARENTS_LOW_COMPATIBILITY; //Different species, same Trainer
+		}
+	}
 }
 
 u8 ModifyBreedingScoreForOvalCharm(u8 score)
@@ -985,28 +985,31 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 
 u32 GetExperienceAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
 {
-    struct BoxPokemon tempMon = *mon;
-
-    u32 experience = GetBoxMonData(mon, MON_DATA_EXP, NULL) + steps;
-    SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	u32 originalExp = GetBoxMonData(mon, MON_DATA_EXP, NULL);
+	u32 experience = originalExp + steps;
 
 	#ifdef FLAG_HARD_LEVEL_CAP
+	struct BoxPokemon tempMon = *mon;
+	SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
 	u8 level = GetLevelFromBoxMonExp(&tempMon);
 	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
 	if (FlagGet(FLAG_HARD_LEVEL_CAP) && level >= GetCurrentLevelCap())
 	{
-		//Exp can't go past level cap
-		experience = GetSpeciesExpToLevel(GetBoxMonData(mon, MON_DATA_SPECIES, NULL), GetCurrentLevelCap());
+		SetBoxMonData(&tempMon, MON_DATA_EXP, &originalExp); //Prepare to get the original level
+		if (GetLevelFromBoxMonExp(&tempMon) >= GetCurrentLevelCap())
+			experience = originalExp; //Original level is already past level cap so don't add anymore
+		else
+			experience = GetSpeciesExpToLevel(GetBoxMonData(mon, MON_DATA_SPECIES, NULL), GetCurrentLevelCap()); //Exp can't go past level cap
 	}
 	#endif
 
-    return experience;
+	return experience;
 }
 
 u8 GetLevelAfterDaycareSteps(struct BoxPokemon* mon, u32 steps)
 {
-    struct BoxPokemon tempMon = *mon;
+	struct BoxPokemon tempMon = *mon;
 	u32 experience = GetExperienceAfterDaycareSteps(mon, steps);
-    SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
+	SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
 	return GetLevelFromBoxMonExp(&tempMon);
 }
