@@ -183,7 +183,8 @@ TrainersThrowPokeBallsHook1:
 @0x804B80E with r1
 TrainersThrowPokeBallsHook2:
 	mov r0, r4
-	bl GetBattlerPosition
+	ldr r1, =GetBattlerPosition
+	bl bxr1
 	mov r1, #2 @BIT_FLANK
 	and r0, r1
 	cmp r0, #0
