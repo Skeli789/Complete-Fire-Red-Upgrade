@@ -84,19 +84,17 @@ MultiInitPokemonOrderHook 800D8A0 0
 MultiBattleAddSecondOpponentHook 80132F8 0
 BattleIntroOpponent1SendsOutMonAnimation 801359C 0
 MultiMoneyCalcHook 8025904 2
-MultiTrainersSendOutHook4 8035EA0 0
-Task_OpponentStartSendOutAnim 8038DC4 1
 IsMultiBattle 811FA20 0
 PartnerSetupHook 800D458 0
 DisplayPartnerNameInPartyMenuHook 8127AE8 0
 TagTeamPartnerSendoutPokemonHook 8013758 0
-TagTeamThrowPokeballHook 80336A0 0
 TagTeamPokeballReadoutHook 8048FAC 1
 SetNewPartySelectTarget2 81200F8 2
 PlayerHandleDrawTrainerPic 803227C 0
 PlayerHandleTrainerSlide 8032428 0
 TagTeamBackspritePalHook 8033530 0
-
+Task_PlayerStartSendOutAnim 8033660 1
+Task_OpponentStartSendOutAnim 8038DC4 1
 
 ##AI Hooks
 AIHandleItemUseHook 800D2CC 0

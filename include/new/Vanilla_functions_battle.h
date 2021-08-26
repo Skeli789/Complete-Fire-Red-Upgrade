@@ -76,6 +76,7 @@ void __attribute__((long_call)) CompleteOnBattlerSpriteCallbackDummy(void);
 void __attribute__((long_call)) CompleteOnBankSpriteCallbackDummy2(void);
 void __attribute__((long_call)) OpponentIntro_DelayAndEnd(void);
 void __attribute__((long_call)) OpponentBufferExecCompleted(void);
+void __attribute__((long_call)) PlayerIntro_DelayAndEnd(void);
 bool8 __attribute__((long_call)) ShouldSwitchIfPerishSong(void);
 bool8 __attribute__((long_call)) AreStatsRaised(void);
 //void __attribute__((long_call)) AI_TrySwitchOrUseItem(void);

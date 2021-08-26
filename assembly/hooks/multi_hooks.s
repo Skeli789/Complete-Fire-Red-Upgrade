@@ -81,17 +81,6 @@ NoSecondOpponentSendOut:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-@0x8035EA0
-MultiTrainersSendOutHook4:
-	ldr r0, =BATTLE_TYPE
-	ldr r0, [r0]
-	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS
-	and r0, r1
-	ldr r1, =0x8035EA8 | 1
-	bx r1
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 PartnerSetupHook:
 	bl ChooseProperPartnerController
 	ldr r0, =0x800D478 | 1
