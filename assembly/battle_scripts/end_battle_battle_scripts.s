@@ -20,6 +20,8 @@ end_battle_battle_scripts.s
 .global BattleScript_RaidMonRanAway
 .global BattleScript_RaidMonEscapeBall
 .global BattleScript_RanAwayUsingMonAbility
+.global BattleScript_TryTakeWildMonItem
+.global BattleScript_TakeWildMonItem
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -178,6 +180,22 @@ BattleScript_RanAwayUsingMonAbility:
 	printstring 0xDF @;STRINGID_GOTAWAYSAFELY
 	waitmessage DELAY_1SECOND
 	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_TryTakeWildMonItem:
+	callasm WipeYesNoBattleBoxes
+	setword BATTLE_STRING_LOADER gText_OfferTakeCaughtMonItem
+	printstring 0x184
+	callasm DisplayForfeitYesNoBox
+	callasm HandleTryTakeItemFromCaughtMonInput
+BattleScript_TakeWildMonItem:
+	callasm WipeYesNoBattleBoxes
+	callasm TakeItemFromCaughtMon
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+testaassd:
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

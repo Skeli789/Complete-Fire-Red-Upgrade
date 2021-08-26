@@ -335,6 +335,15 @@ The mysterious strong winds\ncontinue to blow.
 #org @gText_PickedUpKnockedOffItem
 [PLAYER_NAME] picked up\none [LAST_ITEM]!
 
+#org @gText_OfferTakeCaughtMonItem
+[BUFFER][00] appears to be holding\nthe [LAST_ITEM].\pWould you like to take the\n[LAST_ITEM] from it?
+
+#org @gText_TookCaughtItemToBag
+One [LAST_ITEM] was taken from\n[BUFFER][00] and placed in the Bag.
+
+#org @gText_TookCaughtItemToCube
+One [LAST_ITEM] was taken from\n[BUFFER][00] and placed in the Cube.
+
 #org @gText_HoopaRespawnedAlly
 [TARGET] summoned\nanother [BUFFER][00]!
 

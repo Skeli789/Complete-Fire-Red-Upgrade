@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
+#include "../include/bg.h"
 #include "../include/event_data.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_specials.h"
@@ -10,15 +11,18 @@
 #include "../include/string_util.h"
 #include "../include/constants/game_stat.h"
 #include "../include/constants/items.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/battle_util.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
+#include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+
 /*
 catching.c
 	handles the catch probability logic, expands pokeballs, etc.
@@ -531,10 +535,22 @@ bool8 IsCriticalCaptureSuccess(void)
 	return gNewBS->criticalCaptureSuccess;
 }
 
+static bool8 GetFreeSlotInPartyForMon(void)
+{
+	u32 i = 0;
+
+	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
+		++i;
+
+	if (i >= PARTY_SIZE
+	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
+		return PARTY_SIZE;
+
+	return i;
+}
+
 u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 {
-	int i;
-
 	TryFormRevert(mon);
 	TryRevertMega(mon);
 	TryRevertGigantamax(mon);
@@ -558,30 +574,27 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 		#endif
 	}
 
-	if (gMain.inBattle && IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))
-		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
-
-	i = 0;
-
-	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
-		++i;
-
-	if (i >= PARTY_SIZE
-	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
+	u8 freeSlot = GetFreeSlotInPartyForMon();
+	if (freeSlot >= PARTY_SIZE) //Can't add mon
 	{
 		TryRevertGiratinaOrigin(mon, TRUE);
 		return SendMonToPC(mon);
 	}
 
-	CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
-	gPlayerPartyCount = i + 1;
-
+	CopyMon(&gPlayerParty[freeSlot], mon, sizeof(struct Pokemon));
+	gPlayerPartyCount = freeSlot + 1;
 	return MON_GIVEN_TO_PARTY;
 }
 
 void atkF0_givecaughtmon(void)
 {
 	struct Pokemon* mon = LoadTargetPartyData();
+
+	if (IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY) && gNewBS->dynamaxData.backupRaidMonItem != ITEM_NONE)
+	{
+		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
+		gNewBS->dynamaxData.backupRaidMonItem = ITEM_NONE;
+	}
 
 	if (GiveMonToPlayer(mon) != MON_GIVEN_TO_PARTY)
 	{
@@ -613,9 +626,104 @@ void atkF0_givecaughtmon(void)
 	++gBattlescriptCurrInstr;
 }
 
+void WipeYesNoBattleBoxes(void)
+{
+	HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
+	CopyBgTilemapBufferToVram(0); //Wipe any yes/no boxes that may still be present
+}
+
+void HandleTryTakeItemFromCaughtMonInput(void)
+{
+	if (gMain.newKeys & DPAD_UP && gBattleCommunication[CURSOR_POSITION] != 0)
+	{
+		PlaySE(SE_SELECT);
+		BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
+		gBattleCommunication[CURSOR_POSITION] = 0;
+		BattleCreateYesNoCursorAt(0);
+	}
+	else if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
+	{
+		PlaySE(SE_SELECT);
+		BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
+		gBattleCommunication[CURSOR_POSITION] = 1;
+		BattleCreateYesNoCursorAt(1);
+	}
+	else if (gMain.newKeys & A_BUTTON)
+	{
+		PlaySE(SE_SELECT);
+
+		if (gBattleCommunication[CURSOR_POSITION] != 0)
+			goto SELECTED_NO;
+
+		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
+		return;
+	}
+	else if (gMain.newKeys & B_BUTTON)
+	{
+		SELECTED_NO:
+		PlaySE(SE_SELECT);
+		BattleScriptPop();
+		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
+		HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
+		CopyBgTilemapBufferToVram(0);
+	}
+
+	gBattlescriptCurrInstr -= 5;
+}
+
+void TakeItemFromCaughtMon(void)
+{
+	struct Pokemon* mon = LoadTargetPartyData();
+
+	//Add the item to the bag
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+	AddBagItem(item, 1);
+
+	//Remove the item from the mon
+	item = ITEM_NONE;
+	SetMonData(mon, MON_DATA_HELD_ITEM, &item);
+
+	gBattleStringLoader =
+	#ifdef UNBOUND
+		gText_TookCaughtItemToCube;
+	#else
+		gText_TookCaughtItemToBag;
+	#endif
+}
+
 void atkF1_trysetcaughtmondexflags(void)
 {
 	struct Pokemon* mon = LoadTargetPartyData();
+
+	#ifdef TAKE_WILD_MON_ITEM_ON_CAPTURE
+	if (!gNewBS->triedToTakeWildItem)
+	{
+		gNewBS->triedToTakeWildItem = TRUE; //Only execute this code once
+		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+		if (item != ITEM_NONE && CheckBagHasSpace(item, 1))
+		{
+			gLastUsedItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+			PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gBankTarget, gBattlerPartyIndexes[gBankTarget]);
+			BattleScriptPushCursor();
+
+			#ifdef VAR_TAKE_WILD_ITEM
+			u8 choice = VarGet(VAR_TAKE_WILD_ITEM);
+			if (choice == OPTIONS_ALWAYS_TAKE_WILD_ITEM)
+			{
+				gBattlescriptCurrInstr = BattleScript_TakeWildMonItem;
+				return;
+			}
+			else if (choice != OPTIONS_NEVER_TAKE_WILD_ITEM) //Prompt
+			#endif
+			{
+				gBattlescriptCurrInstr = BattleScript_TryTakeWildMonItem;
+				return;
+			}
+		}
+	}
+	#endif
+
 	TryRevertMega(mon); //Megas aren't set in the habitat table
 	TryRevertGigantamax(mon); //Gigantamaxes aren't set in the habitat table
 	TryFormRevert(mon);

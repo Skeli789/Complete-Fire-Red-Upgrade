@@ -899,6 +899,7 @@ struct NewBattleStruct
 	bool8 trainerSlideInProgress : 1;
 	bool8 stickyWebActive : 1;
 	bool8 inPivotingMove : 1;
+	bool8 triedToTakeWildItem : 1;
 
 	//Other
 	u16 LastUsedMove;

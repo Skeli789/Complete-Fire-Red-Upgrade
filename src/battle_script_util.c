@@ -1689,18 +1689,18 @@ void HandleForfeitYesNoBox(void)
 		gBattleCommunication[CURSOR_POSITION] = 0;
 		BattleCreateYesNoCursorAt(0);
 	}
-	if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
+	else if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
 	{
 		PlaySE(SE_SELECT);
 		BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
 		gBattleCommunication[CURSOR_POSITION] = 1;
 		BattleCreateYesNoCursorAt(1);
 	}
-	if (gMain.newKeys & A_BUTTON)
+	else if (gMain.newKeys & A_BUTTON)
 	{
 		PlaySE(SE_SELECT);
 
-		if (gBattleCommunication[1] == 0)
+		if (gBattleCommunication[CURSOR_POSITION] == 0)
 			gBattleMainFunc = HandleEndTurn_RanFromBattle;
 
 		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
