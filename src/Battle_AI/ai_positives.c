@@ -1827,6 +1827,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				INCREASE_VIABILITY(15); //Taunt the Wide Guard user
 			else if (IsClassDoublesTeamSupport(class) && HasProtectionMoveInMoveset(bankDef, CHECK_QUICK_GUARD | CHECK_WIDE_GUARD))
 				INCREASE_VIABILITY(13); //Taunt the Wide Guard user
+			else if (IsClassDoublesTrickRoomer(class) && MoveInMoveset(MOVE_TRICKROOM, bankDef))
+				INCREASE_VIABILITY(13); //Taunt the Trick Room user
 			else if (StatusMoveInMoveset(bankDef))
 				INCREASE_STATUS_VIABILITY(2);
 			break;

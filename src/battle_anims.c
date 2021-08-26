@@ -21,11 +21,11 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/end_turn.h"
 #include "../include/new/mega.h"
+
 /*
 battle_anims.c
 	Functions and structures to modify attack animations.
 */
-
 
 #define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
 #define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
@@ -137,6 +137,30 @@ const union AnimCmd *const gAnimCmdTable_DreepyMissile[] =
 {
 	sAnimCmdDreepyMissilePlayer,
 	sAnimCmdDreepyMissileOpponent,
+};
+
+#define PRIMAL_PULSE_SCALE_SIZE 16
+#define PRIMAL_PULSE_FRAME_COUNT 4
+static const union AffineAnimCmd sSpriteAffineAnim_PrimalSymbol[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start small
+	AFFINEANIMCMD_FRAME(32, 32, 0, 15), //Grow sprite
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), //Pause
+
+	//Pulsate
+	AFFINEANIMCMD_FRAME(-PRIMAL_PULSE_SCALE_SIZE, -PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME( PRIMAL_PULSE_SCALE_SIZE,  PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME(-PRIMAL_PULSE_SCALE_SIZE, -PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME( PRIMAL_PULSE_SCALE_SIZE,  PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME(-PRIMAL_PULSE_SCALE_SIZE, -PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME( PRIMAL_PULSE_SCALE_SIZE,  PRIMAL_PULSE_SCALE_SIZE, 0, PRIMAL_PULSE_FRAME_COUNT),
+	AFFINEANIMCMD_FRAME(-32, -32, 0, 15), //Shrink down again
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_PrimalSymbol[] =
+{
+	sSpriteAffineAnim_PrimalSymbol,
 };
 
 const struct OamData gPoisonColumnOam =
