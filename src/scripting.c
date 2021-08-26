@@ -485,6 +485,7 @@ void sp016_ChangePokemonSpecies(void)
 		return;
 
 	SetMonDataFromVar8003(MON_DATA_SPECIES);
+	CalculateMonStats(&gPlayerParty[partyId]);
 }
 
 // Change Pokemon Attacks

@@ -5,6 +5,7 @@
 #include "../include/money.h"
 #include "../include/random.h"
 #include "../include/string_util.h"
+#include "../include/wild_encounter.h"
 #include "../include/constants/items.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
@@ -3263,6 +3264,55 @@ void atk9B_transformdataexecution(void)
 	}
 }
 
+static u32 CreatePersonalityRetainingVisualDataForOtId(u32 originalPersonality, u32 originalOtId, u32 newOtId, u16 species)
+{
+	//Tricks the game into duplicating the visual appearance of the copied Pokemon
+	u32 personality;
+	u16 sid = HIHALF(newOtId);
+	u16 tid = LOHALF(newOtId);
+
+	u8 nature = GetNatureFromPersonality(originalPersonality);
+	u8 gender = GetGenderFromSpeciesAndPersonality(species, originalPersonality);
+	u8 letter = GetUnownLetterFromPersonality(originalPersonality);
+	bool8 isMinior = IsMinior(species);
+	u16 miniorCore = GetMiniorCoreFromPersonality(originalPersonality);
+	bool8 isShiny = IsShinyOtIdPersonality(originalOtId, originalPersonality);
+
+	//Try to copy Spinda's spots if you can
+	if (species == SPECIES_SPINDA)
+	{
+		if (isShiny) //Spinda is Shiny
+		{
+			if (IsShinyOtIdPersonality(newOtId, originalPersonality)) //The Ditto would become Shiny by transforming
+				return originalPersonality; //Use the Spinda's actual personality
+		}
+		else //Spinda isn't Shiny
+		{
+			if (!IsShinyOtIdPersonality(newOtId, originalPersonality)) //The Ditto wouldn't become Shiny by transforming
+				return originalPersonality; //Use the Spinda's actual personality
+		}
+	}
+
+	//Randomize a personality until a match is found
+	do
+	{
+		personality = Random32();
+
+		if (isShiny)
+		{
+			u8 shinyRange = Random() % SHINY_ODDS;
+			personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+		}
+	} while (GetNatureFromPersonality(personality) != nature
+	|| GetGenderFromSpeciesAndPersonality(species, personality) != gender
+	|| (isShiny && !IsShinyOtIdPersonality(newOtId, personality))
+	|| (!isShiny && IsShinyOtIdPersonality(newOtId, personality))
+	|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
+	|| (isMinior && GetMiniorCoreFromPersonality(personality) != miniorCore));
+
+	return personality;
+}
+
 void TransformPokemon(u8 bankAtk, u8 bankDef)
 {
 	u32 i;
@@ -3272,8 +3322,9 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 	gBattleMons[bankAtk].status2 |= STATUS2_TRANSFORMED;
 	gDisableStructs[bankAtk].disabledMove = 0;
 	gDisableStructs[bankAtk].disableTimer1 = 0;
-	gDisableStructs[bankAtk].transformedMonPersonality = gBattleMons[bankDef].personality;
 	gDisableStructs[bankAtk].mimickedMoves = 0;
+	gDisableStructs[bankAtk].transformedMonPersonality =
+		CreatePersonalityRetainingVisualDataForOtId(gBattleMons[bankDef].personality, gBattleMons[bankDef].otId, gBattleMons[bankAtk].otId, SPECIES(bankDef));
 
 	battleMonAttacker = (u8*)(&gBattleMons[bankAtk]);
 	battleMonTarget = (u8*)(&gBattleMons[bankDef]);

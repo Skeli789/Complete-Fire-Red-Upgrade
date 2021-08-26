@@ -104,6 +104,7 @@ extern const u8 BattleScript_AbilityPopUp[];
 extern const u8 BattleScript_AbilityPopUpRevert[];
 
 //Strings
+extern const u8 gText_ItIsHailing[];
 extern const u8 gText_FogIsDeep[];
 extern const u8 gText_ViciousSandstormBrewed[];
 extern const u8 gText_SnowWarningActivate[];

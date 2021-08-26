@@ -2078,14 +2078,26 @@ SKIP_CHECK_TARGET:
 				if (!(data->defStatus1 & (STATUS1_PARALYSIS | STATUS1_FREEZE)) //Target won't randomly not be able to attack
 				&& (data->defStatus2 & STATUS2_CONFUSION) < 3 //Foe wouldn't be confused when the attack would hit
 				&& !(data->defStatus2 & STATUS2_INFATUATION) //Foe wouldn't miss the attack since they'll never be immobilized by love
-				&& !TARGET_ASLEEP) //Target is awake (not that they could wake up and protect for the second turn but that's fair and not AI abuse
+				&& !TARGET_ASLEEP) //Target is awake (not that they could wake up and protect for the second turn but that's fair and not AI abuse)
 				{
 					if (HasProtectionMoveInMoveset(bankDef, CHECK_REGULAR_PROTECTION) //Foe could protect before the attack hits
 					&& !WillFaintFromSecondaryDamage(bankDef)) //And the foe protecting is reasonable
 						DECREASE_VIABILITY(8); //Better not to use this attack, but still can if need be
-					else if (CanKnockOut(bankDef, bankAtk) //Attacker can be knocked out
-					&& predictedMove != MOVE_NONE)
-						DECREASE_VIABILITY(4);
+					else
+					{
+						if (data->atkSpeed > data->defSpeed) //Charge -> Foe Attack -> Charge Release
+						{
+							if (CanKnockOut(bankDef, bankAtk) //Attacker can be knocked out before it can attack
+							&& predictedMove != MOVE_NONE)
+								DECREASE_VIABILITY(4);
+						}
+						else //Foe Attack -> Charge -> Foe Attack -> Charge Release
+						{
+							if (Can2HKO(bankDef, bankAtk) //Attacker can be knocked out before it can attack
+							&& predictedMove != MOVE_NONE)
+								DECREASE_VIABILITY(8); //You're slower so probably not a good idea
+						}
+					}
 				}
 			}
 

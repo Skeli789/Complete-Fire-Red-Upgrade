@@ -356,13 +356,13 @@ const u16 gWeatherContinuesStringIds[] =
 	STRINGID_STARTEDHAIL, 		//Light Snow
 	STRINGID_ITISRAINING,		//Thunderstorm
 	STRINGID_CUSTOMSTRING, 		//Steady Mist
-	STRINGID_STARTEDHAIL, 		//Steady Snowing
+	STRINGID_CUSTOMSTRING, 		//Steady Snowing
 	STRINGID_SANDSTORMISRAGING,	//Sandstorm
 	STRINGID_CUSTOMSTRING, 		//Mist from Top Right Corner
 	STRINGID_CUSTOMSTRING, 		//Dense Bright Mist
 	STRINGID_ITISRAINING,		//Cloudy
 	STRINGID_SUNLIGHTSTRONG, 	//Drought
-	STRINGID_DOWNPOURSTARTED, 	//Downpour
+	STRINGID_ITISRAINING,		//Downpour
 	STRINGID_CUSTOMSTRING, 		//Underwater Mist
 	STRINGID_ITISRAINING,		//???
 	STRINGID_CUSTOMSTRING, 		//Vicious Sandstorm
@@ -529,6 +529,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					{
 						gBattleWeather = (WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY);
 						gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
+						gBattleStringLoader = gText_ItIsHailing;
 						effect++;
 					}
 					break;

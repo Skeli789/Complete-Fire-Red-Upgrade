@@ -546,10 +546,16 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	if (gMain.inBattle
 	&&  GetPocketByItemId(gLastUsedItem) == POCKET_POKE_BALLS)
 	{
-		if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
+		u8 ballType = ItemId_GetType(gLastUsedItem);
+
+		if (ballType == BALL_TYPE_HEAL_BALL)
 			HealMon(mon);
-		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
+		else if (ballType == BALL_TYPE_FRIEND_BALL)
 			mon->friendship = 200;
+		#ifdef UNBOUND
+		else if (ballType == BALL_TYPE_DREAM_BALL)
+			mon->hiddenAbility = TRUE;
+		#endif
 	}
 
 	if (gMain.inBattle && IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))

@@ -2383,7 +2383,8 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 		if (ability != hiddenAbility
 		&& hiddenAbility != ABILITY_NONE
 		#ifdef UNBOUND
-		&& SpeciesToNationalPokedexNum(species) != NATIONAL_DEX_ZYGARDE //Must be given with Power Construct
+		&& (FlagGet(FLAG_ABILITY_RANDOMIZER)
+		 || SpeciesToNationalPokedexNum(species) != NATIONAL_DEX_ZYGARDE) //Must be given with Power Construct
 		#endif
 		)
 			changeTo = hiddenAbility;

@@ -321,7 +321,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				terrain = BATTLE_TERRAIN_DESERT;
 			break;
 		case BATTLE_TERRAIN_INSIDE:
-			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS)
+			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS || MAP_IS(ANTISIS_CITY_GYM_B1F))
 				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
 			break;
 	}

@@ -1137,7 +1137,7 @@ FadeInFromBlack = 0x807DC00 | 1;
 WarpFadeScreen = 0x807DC18 | 1;
 palette_bg_faded_fill_black = 0x807DB38 | 1;
 SetPlayerVisibility = 0x807DCB0 | 1;
-FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
+FieldCB_ContinueScriptHandleMusic = 0x807DD24 | 1;
 FieldFadeTransitionBackgroundEffectIsFinished = 0x807E418 | 1;
 DoWarp = 0x807E438 | 1;
 DoDiveWarp = 0x807E470 | 1;
@@ -1485,6 +1485,7 @@ InitChooseHalfPartyForBattle = 0x81274A8 | 1;
 ShowSelectMovePokemonSummaryScreen = 0x8134738 | 1;
 sub_813A45C = 0x813A45C | 1;
 GetMoveSlotToReplace = 0x8138B2C | 1;
+SetPokemonSummaryScreenMode = 0x8138B38 | 1;
 some_other_kind_of_link_test = 0x80BF748 |1;
 
 /* Evolution Functions */

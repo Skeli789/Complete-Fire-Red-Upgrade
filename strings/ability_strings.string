@@ -40,6 +40,9 @@ It was alerted to\n[EFFECT_BANK]'s\l[BUFFER][00]!
 #org @gText_FriskActivate
 [SCRIPTING_BANK] frisked\n[TARGET] and found\lits [LAST_ITEM]!
 
+#org @gText_ItIsHailing
+It is hailing.
+
 #org @gText_FogIsDeep
 The fog is deep[.]
 
