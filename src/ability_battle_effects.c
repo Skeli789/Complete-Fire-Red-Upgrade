@@ -692,54 +692,56 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 		case ABILITY_TRACE: ;
 			u8 target2;
-			side = (GetBattlerPosition(bank) ^ BIT_SIDE) & BIT_SIDE; // side of the opposing pokemon
-			target1 = GetBattlerAtPosition(side);
-			target2 = GetBattlerAtPosition(side | BIT_FLANK);
+			target1 = FOE(bank);
+			target2 = PARTNER(target1);
+
 			if (IS_DOUBLE_BATTLE)
 			{
 				if (*GetAbilityLocation(target1) != ABILITY_NONE && BATTLER_ALIVE(target1)
 				&& *GetAbilityLocation(target2) != ABILITY_NONE && BATTLER_ALIVE(target2))
 				{
-					gActiveBattler = GetBattlerAtPosition(((Random() & 1) * 2) | side);
+					if (gSpecialAbilityFlags[*GetAbilityLocation(target1)].gTraceBannedAbilities)
+						target1 = target2; //Pick the one that might not have a banned Ability
+					else if (Random() & 1)
+						target1 = target2; //50% chance of picking flank bank
+
 					effect++;
 				}
 				else if (*GetAbilityLocation(target1) != ABILITY_NONE && BATTLER_ALIVE(target1) != 0)
 				{
-					gActiveBattler = target1;
-
+					//target1 = target1;
 					effect++;
 				}
 				else if (*GetAbilityLocation(target2) != ABILITY_NONE && BATTLER_ALIVE(target2) != 0)
 				{
-					gActiveBattler = target2;
+					target1 = target2;
 					effect++;
 				}
 			}
 			else //Single Battle
 			{
-				if (*GetAbilityLocation(target1) && BATTLER_ALIVE(target1))
+				if (BATTLER_ALIVE(target1) && *GetAbilityLocation(target1) != ABILITY_NONE)
 				{
-					gActiveBattler = target1;
+					target1 = target1;
 					effect++;
 				}
 			}
 
 			if (effect)
 			{
-				if (!gSpecialAbilityFlags[*GetAbilityLocation(gActiveBattler)].gTraceBannedAbilities)
+				if (!gSpecialAbilityFlags[*GetAbilityLocation(target1)].gTraceBannedAbilities)
 				{
 					gBankAttacker = bank;
-					*GetAbilityLocation(bank) = *GetAbilityLocation(gActiveBattler);
-					SetTookAbilityFrom(bank, gActiveBattler);
-					gLastUsedAbility = *GetAbilityLocation(gActiveBattler);
+					*GetAbilityLocation(bank) = *GetAbilityLocation(target1);
+					SetTookAbilityFrom(bank, target1);
+					gLastUsedAbility = *GetAbilityLocation(target1);
 					BattleScriptPushCursorAndCallback(BattleScript_TraceActivates);
 
-					PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, gActiveBattler, gBattlerPartyIndexes[gActiveBattler])
+					PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, target1, gBattlerPartyIndexes[target1])
 					PREPARE_ABILITY_BUFFER(gBattleTextBuff2, gLastUsedAbility)
 				}
 				else
 				{
-					gActiveBattler = bank;
 					effect = FALSE;
 				}
 			}
