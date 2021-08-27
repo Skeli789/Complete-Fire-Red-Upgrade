@@ -66,6 +66,8 @@
 ##Remove Deoxys Stat Changes
 08044708 70 47
 08044674 00 20 70 47
+##Remove Deoxys Trade Limiter - b 0x4E590
+0804E538 2A E0
 ##Fix CMD49 References
 081D9500 49 00 00
 081D94E6 49 00 00

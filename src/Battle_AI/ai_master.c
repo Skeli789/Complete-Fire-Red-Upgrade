@@ -406,6 +406,17 @@ static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData)
 	return consideredMoveArray[AIRandom() % numOfBestMoves];
 }
 
+static bool8 WontHitTargetWithMove(u8 bankAtk, u8 bankDef, u16 move)
+{
+	u8 baseTarget;
+
+	return BATTLER_SEMI_INVULNERABLE(bankDef) //The default target is in the air
+		&& ((baseTarget = GetBaseMoveTarget(move, bankAtk)) == MOVE_TARGET_SELECTED //And this move is directed specifically at the default target
+		 || (baseTarget & MOVE_TARGET_ALL && RangeMoveCanHurtPartner(move, bankAtk, PARTNER(bankAtk)))) //Or it could hurt the partner
+		&& !MoveWillHit(move, bankAtk, bankDef) //And this move won't break through the semi-invlunerability
+		&& MoveWouldHitFirst(move, bankAtk, bankDef); //And the move would be used before the default target is vulnerable again
+}
+
 static bool8 HasChosenToDamageTarget(u8 bankAtk, u8 bankDef)
 {
 	return BATTLER_ALIVE(bankAtk)
@@ -612,9 +623,18 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	mostViableTargetsArray[0] = 0; //Set the list of most viable targets to just the first target
 	mostViableTargetsNo = 1;
 
-	u16 firstMovePos = actionOrMoveIndex[0];
+	u16 firstMovePos = actionOrMoveIndex[mostViableTargetsArray[0]];
 	u16 firstMove = gBattleMons[gBankAttacker].moves[firstMovePos];
-	u8 mostDmgTarget = 0; //The bank the most damage could be done to
+
+	if (WontHitTargetWithMove(gBankAttacker, mostViableTargetsArray[0], firstMove)) //The default target will be semi-invulnerable and avoid the attack
+	{
+		//Change the default target
+		mostViableTargetsArray[0] = 1;
+		firstMovePos = actionOrMoveIndex[mostViableTargetsArray[0]];
+		firstMove = gBattleMons[gBankAttacker].moves[firstMovePos];
+	}
+
+	u8 mostDmgTarget = mostViableTargetsArray[0]; //The bank the most damage could be done to
 	u32 mostDamage = 0; //The damage AI could do to mostDmgTarget
 	u8 mostDmgKnocksOut = 0; //How many targets are KOd by the move that does the most combined damage
 	bool8 statusMoveOption = FALSE; //Whether or not a status move will potentially be used
@@ -642,6 +662,16 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	{
 		u8 movePos = actionOrMoveIndex[bankDef];
 		u16 move = gBattleMons[gBankAttacker].moves[movePos];
+
+		if (WontHitTargetWithMove(gBankAttacker, bankDef, move)) //This target will be semi-invlunerable and avoid the attack
+		{
+			if (!usingDefaultTarget) //Already changed targets at least once
+				continue; //Don't attack this target if you won't actually be able to hit it
+
+			//Still using the default target, so check if the default target is semi-invulnerable too
+			if (!WontHitTargetWithMove(gBankAttacker, mostViableTargetsArray[0], firstMove)) //The default target isn't going to avoid the attack with semi-invlunerability
+				continue; //Don't replace the default target if it's actually viable
+		}
 
 		if (bestMovePointsForTarget[bankDef] == mostMovePoints) //This target is as good to hit as the best one so far
 		{
@@ -825,7 +855,6 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	}
 
 	gBankTarget = mostViableTargetsArray[AIRandom() % mostViableTargetsNo];
-
 	if (gBankTarget == PARTNER(gBankAttacker) && mostMovePoints < 0)
 	{
 		//Never target your partner if its a bad idea to
