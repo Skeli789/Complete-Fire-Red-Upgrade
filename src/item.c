@@ -1390,6 +1390,21 @@ u16 GetCurrentPocketItemAmount(void)
 	return sBagItemAmounts[sCurrentBagPocket];
 }
 
+u16 CountTMsInBag(void)
+{
+	u32 i, count;
+	struct ItemSlot* itemMem = sBagPocketArrangement.tmRam;
+	u16 amount = sBagPocketArrangement.tmAmount;
+
+	for (i = 0, count = 0; i < amount; ++i)
+	{
+		if (itemMem[i].itemId != ITEM_NONE && itemMem[i].quantity > 0)
+			++count;
+	}
+
+	return count;
+}
+
 bool8 DoesBagHaveBerry(void)
 {
 	if (CheckBagHasItem(ITEM_BERRY_POUCH, 1)

@@ -694,6 +694,13 @@ PPUpPostUseFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove TM Animation
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x125BC4, 0xFF
+RemoveTMAnimationLessThan4Moves:
+	bl RemoveTMAnimationLessThan4Moves + 0x84 @0x8125C48 Task_LearnedMove
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1262D2, 0xFF
