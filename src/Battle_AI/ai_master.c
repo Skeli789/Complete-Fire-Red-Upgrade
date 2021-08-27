@@ -425,10 +425,13 @@ static bool8 PartnerWillKOTargetBeforeItCanAttack(u8 bankAtk, u8 bankDef)
 		&& MoveWouldHitFirst(gChosenMovesByBanks[partner], partner, bankDef); //And the partner's attack would land before the target has a chance to attack
 }
 
-static bool8 DefaultTargetIsUselessStatusMove(u8 bankAtk, u8 bankDef, const u8* actionOrMoveIndex)
+static bool8 HittingTargetWithUselessStatusMove(u8 bankAtk, u8 bankDef, const u8* actionOrMoveIndex)
 {
+	u16 move = gBattleMons[bankAtk].moves[actionOrMoveIndex[bankDef]];
+
 	return SIDE(bankDef) != SIDE(bankAtk) //Default target is a foe
-		&& SPLIT(gBattleMons[bankAtk].moves[actionOrMoveIndex[bankDef]]) == SPLIT_STATUS //The move to be used against the default target is a status move
+		&& SPLIT(move) == SPLIT_STATUS //The move to be used against the default target is a status move
+		&& GetBaseMoveTarget(move, bankAtk) == MOVE_TARGET_SELECTED //The move is actually targeted at this target
 		&& PartnerWillKOTargetBeforeItCanAttack(bankAtk, bankDef); //But the partner will be able to KO it, wasting the status move
 }
 
@@ -773,16 +776,13 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 					continue;
 				}
 			}
-			else if (SPLIT(move) == SPLIT_STATUS)
+			else if (SPLIT(move) == SPLIT_STATUS && move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
 			{
-				if (move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
-				{
-					if (!usingDefaultTarget //Has added new targets
-					|| !DefaultTargetIsUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex))
-						continue; //No point in using a status move on this target
+				if (!usingDefaultTarget //Has added new targets
+				|| !HittingTargetWithUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex)) //The only target (the default target) isn't being targeted with a useless move
+					continue; //No point in overriding the default target and using a status move on this target
 
-					//Fallthrough and add as viable move alongside the first useless move
-				}
+				//Fallthrough and add as viable move alongside the first useless move
 			}
 
 			ADD_TARGET_AS_MOST_VIABLE:
@@ -794,8 +794,8 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 			if (SPLIT(move) == SPLIT_STATUS && move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
 			{
 				if (!usingDefaultTarget //Has added new targets
-				|| !DefaultTargetIsUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex))
-					continue; //No point in using a status move on this target
+				|| !HittingTargetWithUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex)) //The only target (the default target) isn't being targeted with a useless move
+					continue; //No point in overriding the default target and using a status move on this target
 
 				//Replace the initial useless move with this new useless move since it has a better score
 			}
@@ -825,6 +825,15 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	}
 
 	gBankTarget = mostViableTargetsArray[AIRandom() % mostViableTargetsNo];
+
+	if (gBankTarget == PARTNER(gBankAttacker) && mostMovePoints < 0)
+	{
+		//Never target your partner if its a bad idea to
+		gBankTarget = FOE(gBankAttacker);
+		if (!BATTLER_ALIVE(gBankTarget))
+			gBankTarget = PARTNER(gBankTarget);
+	}
+
 	return actionOrMoveIndex[gBankTarget];
 }
 

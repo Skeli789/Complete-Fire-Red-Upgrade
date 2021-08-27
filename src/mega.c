@@ -177,14 +177,13 @@ const u8* DoMegaEvolution(u8 bank)
 
 	if (evolutions != NULL)
 	{
-		u16 species = mon->species;
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE, TRUE);
 
 		gBattleScripting.bank = bank;
 		gLastUsedItem = mon->item;
 
 		//[BUFFER][00]'s [LAST_ITEM]\nis reacting to [PLAYER_NAME]'s [BUFFER][01]!
-		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
+		PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, bank, gBattlerPartyIndexes[bank]);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
 
 		if (evolutions->unknown == MEGA_VARIANT_WISH)
