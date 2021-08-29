@@ -1210,15 +1210,6 @@ void SetTrainerFlags(void)
 }
 
 //Script Callasms
-enum
-{
-	GoDown,
-	GoUp,
-	GoLeft,
-	GoRight
-};
-
-
 void AllowTrainerIncrementation(void)
 {
 	ExtensionState.multiTaskStateHelper = TRUE;
@@ -1226,49 +1217,60 @@ void AllowTrainerIncrementation(void)
 
 void MoveSecondNPCForTwoOpponentSighting(void)
 {
-	u8 localId, obj;
+	u8 localId, firstTrainerEventObj, secondTrainerEventObj;
 	if (gEventObjects[ExtensionState.spotted.trainers[0].id].localId == ExtensionState.spotted.firstTrainerNPCId)
+	{
+		firstTrainerEventObj = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
 		localId = ExtensionState.spotted.secondTrainerNPCId;
+	}
 	else
+	{
+		firstTrainerEventObj = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
 		localId = ExtensionState.spotted.firstTrainerNPCId;
+	}
 
-	obj = GetEventObjectIdByLocalId(localId);
+	secondTrainerEventObj = GetEventObjectIdByLocalId(localId);
 	Var8005 = localId;
 
-	u16 playerX = gEventObjects[0].currentCoords.x;
-	u16 playerY = gEventObjects[0].currentCoords.y;
-	u16 npcX = gEventObjects[obj].currentCoords.x;
-	u16 npcY = gEventObjects[obj].currentCoords.y;
+	u16 dir;
+	s16 playerX = gEventObjects[GetPlayerMapObjId()].currentCoords.x;
+	s16 playerY = gEventObjects[GetPlayerMapObjId()].currentCoords.y;
+	s16 npcX = gEventObjects[secondTrainerEventObj].currentCoords.x;
+	s16 npcY = gEventObjects[secondTrainerEventObj].currentCoords.y;
 
-	gSpecialVar_LastResult = 0xFFFF;
-	switch(gEventObjects[obj].facingDirection) {
+	dir = 0xFFFF;
+	switch(gEventObjects[firstTrainerEventObj].facingDirection) //The first Trainer is the one who spotted the player, so move in the direction they're facing
+	{
 		case 0:
 		case 1:
-			if (npcY != playerY - 1)
-				gSpecialVar_LastResult = GoDown;
+		default:
+			if (npcY != playerY - 1) //Above player
+				dir = DIR_SOUTH;
 			break;
 		case 2:
-			if (npcY != playerY + 1)
-				gSpecialVar_LastResult = GoUp;
+			if (npcY != playerY + 1) //Below Player
+				dir = DIR_NORTH;
 			break;
 		case 3:
-			if (npcX != playerX + 1)
-				gSpecialVar_LastResult = GoLeft;
+			if (npcX != playerX + 1) //Right of Player
+				dir = DIR_WEST;
 			break;
 		case 4:
-			if (npcX != playerX - 1)
-				gSpecialVar_LastResult = GoRight;
-			break;
-		default:
-			if (npcY != playerY - 1)
-				gSpecialVar_LastResult = GoDown;
+			if (npcX != playerX - 1) //Left of Player
+				dir = DIR_EAST;
 			break;
 	}
+
+	if (GetCollisionInDirection(&gEventObjects[secondTrainerEventObj], dir))
+		dir = 0xFFFF; //Must stop moving
+
+	gSpecialVar_LastResult = dir;
 }
 
 void LoadProperIntroSpeechForTwoOpponentSighting(void)
 {
-	switch (Var8000) {
+	switch (Var8000)
+	{
 		case 0:
 			if (gEventObjects[ExtensionState.spotted.trainers[0].id].localId != ExtensionState.spotted.firstTrainerNPCId)
 			{
@@ -1318,10 +1320,10 @@ void MoveCameraToTrainerB(void)
 	else
 		newObj = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
 
-	u16 currentX = gEventObjects[gSelectedEventObject].currentCoords.x;
-	u16 currentY = gEventObjects[gSelectedEventObject].currentCoords.y;
-	u16 toX = gEventObjects[newObj].currentCoords.x;
-	u16 toY = gEventObjects[newObj].currentCoords.y;
+	s16 currentX = gEventObjects[gSelectedEventObject].currentCoords.x;
+	s16 currentY = gEventObjects[gSelectedEventObject].currentCoords.y;
+	s16 toX = gEventObjects[newObj].currentCoords.x;
+	s16 toY = gEventObjects[newObj].currentCoords.y;
 
 	GetProperDirection(currentX, currentY, toX, toY);
 	Var8005 = 0x7F; //Camera
@@ -1332,14 +1334,6 @@ static u8 GetPlayerMapObjId(void)
 	return gPlayerAvatar->eventObjectId;
 }
 
-static const u8 sMovementToDirection[] =
-{
-	[GoDown] = DIR_SOUTH,
-	[GoUp] = DIR_NORTH,
-	[GoLeft] = DIR_WEST,
-	[GoRight] = DIR_EAST,
-};
-
 static u8 GetNPCDirectionFaceToPlayer(u8 eventObj)
 {
 	u8 playerObjId = GetPlayerMapObjId();
@@ -1349,7 +1343,7 @@ static u8 GetNPCDirectionFaceToPlayer(u8 eventObj)
 	u16 npcY = gEventObjects[eventObj].currentCoords.y;
 
 	if (GetProperDirection(playerX, playerY, npcX, npcY))
-		return GetOppositeDirection(sMovementToDirection[gSpecialVar_LastResult]);
+		return GetOppositeDirection(gSpecialVar_LastResult);
 
 	return DIR_SOUTH; //Error handling...sort of
 }
@@ -1373,21 +1367,22 @@ static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY)
 	if (currentX == toX)
 	{
 		if (currentY < toY)
-			gSpecialVar_LastResult = GoDown;
+			gSpecialVar_LastResult = DIR_SOUTH;
 		else
-			gSpecialVar_LastResult = GoUp;
+			gSpecialVar_LastResult = DIR_NORTH;
 
 		ret = TRUE;
 	}
 	else if (currentY == toY)
 	{
 		if (currentX < toX)
-			gSpecialVar_LastResult = GoRight;
+			gSpecialVar_LastResult = DIR_EAST;
 		else
-			gSpecialVar_LastResult = GoLeft;
+			gSpecialVar_LastResult = DIR_WEST;
 
 		ret = TRUE;
 	}
+
 	return ret;
 }
 
@@ -1412,7 +1407,7 @@ void FollowerPositionFix(u8 offset)
 			if (playerY != npcY + offset) //Player and follower are not 1 tile apart
 			{
 				if (Var8000 == 0)
-					gSpecialVar_LastResult = GoDown;
+					gSpecialVar_LastResult = DIR_SOUTH;
 				else
 					gEventObjects[followerObjid].currentCoords.y = playerY - offset;
 			}
@@ -1422,7 +1417,7 @@ void FollowerPositionFix(u8 offset)
 			if (playerY != npcY - offset) //Player and follower are not 1 tile apart
 			{
 				if (Var8000 == 0)
-					gSpecialVar_LastResult = GoUp;
+					gSpecialVar_LastResult = DIR_NORTH;
 				else
 					gEventObjects[followerObjid].currentCoords.y = playerY + offset;
 			}
@@ -1435,7 +1430,7 @@ void FollowerPositionFix(u8 offset)
 			if (playerX != npcX + offset) //Player and follower are not 1 tile apart
 			{
 				if (Var8000 == 0)
-					gSpecialVar_LastResult = GoRight;
+					gSpecialVar_LastResult = DIR_EAST;
 				else
 					gEventObjects[followerObjid].currentCoords.x = playerX - offset;
 			}
@@ -1445,7 +1440,7 @@ void FollowerPositionFix(u8 offset)
 			if (playerX != npcX - offset) //Player and follower are not 1 tile apart
 			{
 				if (Var8000 == 0)
-					gSpecialVar_LastResult = GoLeft;
+					gSpecialVar_LastResult = DIR_WEST;
 				else
 					gEventObjects[followerObjid].currentCoords.x = playerX + offset;
 			}

@@ -148,10 +148,10 @@ TrainerFaceFixScript:
 	compare LASTRESULT 0xFFFF
 	if equal _goto .LReturn
 	switch LASTRESULT
-	case 0, PlayerLookDown
-	case 1, PlayerLookUp
-	case 2, PlayerLookLeft
-	case 3, PlayerLookRight
+	case DOWN, PlayerLookDown
+	case UP, PlayerLookUp
+	case LEFT, PlayerLookLeft
+	case RIGHT, PlayerLookRight
 .LReturn:
 	return
 
@@ -201,9 +201,10 @@ FollowerIntoPlayerScript:
 WalkCall:
 	switch LASTRESULT
 	case 0, Var8005WalkDown
-	case 1, Var8005WalkUp
-	case 2, Var8005WalkLeft
-	case 3, Var8005WalkRight
+	case DOWN, Var8005WalkDown
+	case UP, Var8005WalkUp
+	case LEFT, Var8005WalkLeft
+	case RIGHT, Var8005WalkRight
 	return
 	
 Var8005WalkDown:

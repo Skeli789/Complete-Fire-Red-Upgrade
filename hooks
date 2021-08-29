@@ -498,6 +498,7 @@ FollowMe_WarpHoleEndHook 8084770 0
 FollowMe_LocalIdHook 0805DF60 3
 FollowMe_ScriptHook 0805FC20 3
 FollowMe_WhiteOutHook 8054E1A 2
+FollowMe_FishingHook 80A139C 1
 
 ##Learn Move
 GiveMoveToBoxMon 0803E8B0 2
