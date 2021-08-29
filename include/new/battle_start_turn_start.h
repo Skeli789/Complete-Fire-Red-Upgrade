@@ -9,6 +9,9 @@
 
 //Exported Functions
 bool8 TryActivateOWTerrain(void);
+u8 GetTotemStat(u8 bank, bool8 multiBoost);
+u8 GetTotemRaiseAmount(u8 bank, bool8 multiBoost);
+s8 TotemRaiseAmountToStatMod(u8 raiseAmount);
 u8 CanActivateTotemBoost(u8 bank);
 u16 GetMUS_ForBattle(void);
 u8 GetTrainerBattleTransition(void);

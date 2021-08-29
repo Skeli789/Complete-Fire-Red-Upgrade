@@ -67,6 +67,10 @@ static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 chec
 static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
+static void TryBoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 bodyPress);
+static void TryBoostMonDefensesForTotemBoost(struct DamageCalc* data, u8 bankDef);
+static void BoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 multiBoost, bool8 bodyPress);
+static void BoostMonDefensesForTotemBoost(struct DamageCalc* data, u8 bankDef, bool8 multiBoost);
 
 void atk04_critcalc(void)
 {
@@ -2050,6 +2054,8 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 				data->spDefBuff += 1;
 		}
 
+		TryBoostMonDefensesForTotemBoost(data, bankDef);
+
 		if (monDef->condition == 0
 		&& gSideTimers[side].tspikesAmount > 0
 		&& data->defIsGrounded
@@ -2147,13 +2153,34 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case MOVE_BODYPRESS:
 				attack = monAtk->defense;
 				spAttack = monAtk->spDefense;
+
+				//Factor in Abilities that will activate on switch-in
+				if (data->atkAbility == ABILITY_DAUNTLESSSHIELD)
+					data->atkBuff = 7;
+
+				TryBoostMonOffensesForTotemBoost(data, bankAtk, TRUE); //Check the Defense Totem Buff
 				break;
 			default:
 				attack = monAtk->attack;
 				spAttack = monAtk->spAttack;
 
+				//Factor in Abilities that will activate on switch-in
 				if (data->atkAbility == ABILITY_INTREPIDSWORD)
 					data->atkBuff = 7;
+				else if (data->atkAbility == ABILITY_DOWNLOAD)
+				{
+					u32 downloadDefense = defense;
+					APPLY_QUICK_STAT_MOD(downloadDefense, data->defBuff);
+					u32 downloadSpDefense = spDefense;
+					APPLY_QUICK_STAT_MOD(downloadDefense, data->spDefBuff);
+
+					if (downloadDefense < downloadSpDefense)
+						data->atkBuff = 7;
+					else
+						data->spAtkBuff = 7;
+				}
+
+				TryBoostMonOffensesForTotemBoost(data, bankAtk, FALSE);
 		}
 
 		data->moveSplit = CalcMoveSplitFromParty(monAtk, move);
@@ -2221,7 +2248,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 			if (data->atkAbility == ABILITY_DEFIANT && data->atkBuff < STAT_STAGE_MAX)
 				data->atkBuff += 2;
-			else if (data->defAbility == ABILITY_COMPETITIVE && data->spAtkBuff < STAT_STAGE_MAX)
+			else if (data->atkAbility == ABILITY_COMPETITIVE && data->spAtkBuff < STAT_STAGE_MAX)
 				data->spAtkBuff += 2;
 		}
 
@@ -2231,6 +2258,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				spAttack = monDef->spAttack;
 				data->atkBuff = (data->defAbility == ABILITY_INTREPIDSWORD) ? 7 : 6; //Party mon has no buffs usually
 				data->spAtkBuff = 6;
+				TryBoostMonOffensesForTotemBoost(data, bankDef, FALSE); //Use target totem boost against it
 				break;
 		}
 	}
@@ -4026,4 +4054,74 @@ u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef)
 	}
 
 	return retVal;
+}
+
+static void TryBoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 bodyPress)
+{
+	switch (CanActivateTotemBoost(bankAtk)) //Bank is used mainly for position on field
+	{
+		case TOTEM_MULTI_BOOST: //Boost 2 Stats
+			BoostMonOffensesForTotemBoost(data, bankAtk, TRUE, bodyPress);
+			//Fallthrough
+		case TOTEM_SINGLE_BOOST:
+			BoostMonOffensesForTotemBoost(data, bankAtk, FALSE, bodyPress);
+			break;
+		case TOTEM_OMNIBOOST:
+			data->atkBuff += 1;
+			data->spAtkBuff += 1;
+			break;
+	}
+}
+
+static void TryBoostMonDefensesForTotemBoost(struct DamageCalc* data, u8 bankDef)
+{
+	switch (CanActivateTotemBoost(bankDef))
+	{
+		case TOTEM_MULTI_BOOST: //Boost 2 Stats
+			BoostMonDefensesForTotemBoost(data, bankDef, TRUE);
+			//Fallthrough
+		case TOTEM_SINGLE_BOOST:
+			BoostMonDefensesForTotemBoost(data, bankDef, FALSE);
+			break;
+		case TOTEM_OMNIBOOST:
+			data->defBuff += 1;
+			data->spDefBuff += 1;
+			break;
+	}
+}
+
+static void BoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 multiBoost, bool8 bodyPress)
+{
+	u8 checkStat1, checkStat2;
+	u8 totemStat, raiseAmount;
+	totemStat = GetTotemStat(bankAtk, multiBoost);
+	raiseAmount = GetTotemRaiseAmount(bankAtk, multiBoost);
+
+	if (!bodyPress)
+	{
+		checkStat1 = STAT_STAGE_ATK;
+		checkStat2 = STAT_STAGE_SPATK;
+	}
+	else //Body Press
+	{
+		checkStat1 = STAT_STAGE_DEF;
+		checkStat2 = STAT_STAGE_SPDEF;
+	}
+
+	if (totemStat == checkStat1)
+		data->atkBuff = min(data->atkBuff + TotemRaiseAmountToStatMod(raiseAmount), STAT_STAGE_MAX);
+	else if (totemStat == checkStat2)
+		data->spAtkBuff = min(data->spAtkBuff + TotemRaiseAmountToStatMod(raiseAmount), STAT_STAGE_MAX);
+}
+
+static void BoostMonDefensesForTotemBoost(struct DamageCalc* data, u8 bankDef, bool8 multiBoost)
+{
+	u8 totemStat, raiseAmount;
+	totemStat = GetTotemStat(bankDef, multiBoost);
+	raiseAmount = GetTotemRaiseAmount(bankDef, multiBoost);
+
+	if (totemStat == STAT_STAGE_DEF)
+		data->defBuff = min(data->defBuff + TotemRaiseAmountToStatMod(raiseAmount), STAT_STAGE_MAX);
+	else if (totemStat == STAT_STAGE_SPDEF)
+		data->spDefBuff = min(data->spDefBuff + TotemRaiseAmountToStatMod(raiseAmount), STAT_STAGE_MAX);
 }
