@@ -250,3 +250,27 @@ FollowMe_WhiteOutHook:
 	bl bxr2
 	bl FollowMe_TryRemoveFollowerOnWhiteOut
 	pop {pc}
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x80A139C with r1
+FollowMe_FishingHook:
+	lsr r6, r0, #0x10
+	lsl r0, r6, #0x18
+	lsr r5, r0, #0x18
+	ldrh r0, [sp] @;X
+	lsl r0, #0x10
+	lsr r0, #0x10
+	ldrh r1, [r4] @;Y
+	lsl r1, #0x10
+	lsr r1, #0x10
+	bl IsFollowerAtCoords
+	cmp r0, #0x0
+	bne FollowMe_FishingHook_NoFishing
+	mov r0, r5
+	ldr r1, =0x80A13A4 | 1
+	bx r1
+
+FollowMe_FishingHook_NoFishing:
+	ldr r0, =0x80A1404 | 1
+	bx r0

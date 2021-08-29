@@ -1402,6 +1402,19 @@ void FollowMe_WarpSetEnd(void)
 	follower->movementDirection = player->movementDirection;
 }
 
+bool8 IsFollowerAtCoords(s16 x, s16 y)
+{
+	if (gFollowerState.inProgress)
+	{
+		struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
+
+		return follower->currentCoords.x == x
+			&& follower->currentCoords.y == y;
+	}
+
+	return FALSE;
+}
+
 void CreateFollowerAvatar(void)
 {
 	struct EventObject* player;
