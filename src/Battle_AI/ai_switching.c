@@ -1953,12 +1953,13 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						scores[i] += SWITCHING_INCREASE_KO_FOE;
 						flags[i] |= SWITCHING_FLAG_KO_FOE;
 
-						if (IsMoxieAbility(ability))
+						if (IsMoxieAbility(ability)
+						|| (IsTrappedByAbility(foe, ability))) //Basically guaranteed kill
 						{
 							scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
 							flags[i] |= SWITCHING_FLAG_REVENGE_KILL;
 						}
-						else
+						else //No revenge killing Ability, so check moves
 						{
 							for (k = 0; k < MAX_MON_MOVES; ++k)
 							{
@@ -1976,7 +1977,9 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards
 								}
 
-								if (move == MOVE_FELLSTINGER)
+								if (move == MOVE_FELLSTINGER //Gets an attack boost when a foe is KOd
+								|| move == MOVE_PURSUIT //KOs the foe before it can switch out
+								|| (SPLIT(move) != SPLIT_STATUS && PriorityCalcMon(consideredMon, move) > 0)) //Priority move that KOs
 								{
 									if (MoveKnocksOutXHitsFromParty(move, consideredMon, foe, 1, &damageData))
 									{
@@ -1984,15 +1987,6 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 										flags[i] |= SWITCHING_FLAG_REVENGE_KILL;
 										break;
 									}
-								}
-								else if (SPLIT(move) != SPLIT_STATUS
-								&& PriorityCalcMon(consideredMon, move) > 0
-								&& MoveKnocksOutXHitsFromParty(move, consideredMon, foe, 1, &damageData))
-								{
-									//Priority move that KOs
-									scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
-									flags[i] |= SWITCHING_FLAG_REVENGE_KILL;
-									break;
 								}
 							}
 						}

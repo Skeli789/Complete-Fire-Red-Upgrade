@@ -2230,17 +2230,16 @@ u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
 
 bool8 IsTrapped(u8 bank, bool8 switching)
 {
-	if (IsOfType(bank, TYPE_GHOST)
-	|| (switching && ITEM_EFFECT(bank) == ITEM_EFFECT_SHED_SHELL)
+	if (!CanBeTrapped(bank)
 	|| (!switching && ABILITY(bank) == ABILITY_RUNAWAY)
 	|| (!switching && ITEM_EFFECT(bank) == ITEM_EFFECT_CAN_ALWAYS_RUN))
 		return FALSE;
 	else
 	{
 		if (gBattleMons[bank].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED)
-		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_SHADOWTAG) && ABILITY(bank) != ABILITY_SHADOWTAG)
-		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && CheckGrounding(bank) == GROUNDED)
-		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsOfType(bank, TYPE_STEEL))
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_SHADOWTAG) && IsTrappedByAbility(bank, ABILITY_SHADOWTAG))
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && IsTrappedByAbility(bank, ABILITY_ARENATRAP))
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsTrappedByAbility(bank, ABILITY_MAGNETPULL))
 		|| gStatuses3[bank] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
 		|| IsFairyLockActive())
 			return TRUE;

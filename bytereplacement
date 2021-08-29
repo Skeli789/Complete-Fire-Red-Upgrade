@@ -206,6 +206,8 @@
 083FC92A AB FF
 ##Another Heal String
 083FDA00 AB FF
+##Endure String
+083FC121 D9
 ##Follow Me String
 083FC231 FD 10
 ##Suction Cups String

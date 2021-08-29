@@ -436,34 +436,16 @@ u8 IsRunningFromBattleImpossible(void)
 
 	for (i = 0; i < gBattlersCount; i++)
 	{
-		if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
-		&& side != SIDE(i)
-		&& ABILITY(i) == ABILITY_SHADOWTAG)
+		if (side != SIDE(i))
 		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
-		}
-
-		if (side != SIDE(i)
-		&& ABILITY(i) == ABILITY_ARENATRAP
-		&& CheckGrounding(gActiveBattler))
-		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
-		}
-
-		if (side != SIDE(i)
-		&& ABILITY(i) == ABILITY_MAGNETPULL
-		&& IsOfType(gActiveBattler, TYPE_STEEL))
-		{
-			gBattleScripting.bank = i;
-			gLastUsedAbility = ABILITY(i);
-			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return ABILITY_PREVENTING_ESCAPE;
+			u8 ability = ABILITY(i);
+			if (IsTrappedByAbility(gActiveBattler, ability))
+			{
+				gBattleScripting.bank = i;
+				gLastUsedAbility = ABILITY(i);
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+				return ABILITY_PREVENTING_ESCAPE;
+			}
 		}
 	}
 

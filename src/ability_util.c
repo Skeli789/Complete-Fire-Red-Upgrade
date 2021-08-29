@@ -459,6 +459,24 @@ bool8 IsAffectedByDisguse(unusedArg u8 defAbility, unusedArg u16 defSpecies, unu
 	return FALSE;
 }
 
+bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
+{
+	if (!CanBeTrapped(bankDef))
+		return FALSE;
+
+	switch (trapAbility)
+	{
+		case ABILITY_SHADOWTAG:
+			return ABILITY(bankDef) != ABILITY_SHADOWTAG; //Shadow Tag's not affected by Shadow Tag
+		case ABILITY_ARENATRAP:
+			return CheckGrounding(bankDef) == GROUNDED;
+		case ABILITY_MAGNETPULL:
+			return IsOfType(bankDef, TYPE_STEEL);
+		default:
+			return FALSE;
+	}
+}
+
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)
 {
 	if (!IsClearBodyAbility(ability))

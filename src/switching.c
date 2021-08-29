@@ -458,8 +458,7 @@ void atk4F_jumpifcantswitch(void)
 	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
 
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
-	&& !IsOfType(gActiveBattler, TYPE_GHOST)
-	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
+	&& CanBeTrapped(gActiveBattler)
 	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
@@ -1310,8 +1309,7 @@ void PartyMenuSwitchingUpdate(void)
 
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 
-	if (IsOfType(gActiveBattler, TYPE_GHOST)
-	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
+	if (!CanBeTrapped(gActiveBattler))
 		goto SKIP_SWITCH_BLOCKING_CHECK;
 
 	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
@@ -1320,9 +1318,9 @@ void PartyMenuSwitchingUpdate(void)
 	{
 		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}
-	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
-		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
-		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsOfType(gActiveBattler, TYPE_STEEL)))
+	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && IsTrappedByAbility(gActiveBattler, ABILITY_SHADOWTAG))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && IsTrappedByAbility(gActiveBattler, ABILITY_ARENATRAP))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsTrappedByAbility(gActiveBattler, ABILITY_MAGNETPULL)))
 	{
 		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
 	}
