@@ -1991,6 +1991,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 				}
 			}
 
+			if (ability == ABILITY_WONDERGUARD && IsRandomBattleTowerBattle())
+				continue; //Don't allow Wonder Guard to appear when you have no control over the Pokemon you get
+
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
 			if (!IsPokemonBannedBasedOnStreak(species, item, builder->speciesArray, monsCount, trainerId, tier, forPlayer)
