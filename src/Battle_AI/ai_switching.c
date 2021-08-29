@@ -171,7 +171,8 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 		return FALSE; //Don't switch and sack your other mon
 
 	//Check if a switch against the predicted move is safe
-	if (defMove == MOVE_NONE || SPLIT(defMove) == SPLIT_STATUS) //Predicted move won't do damage
+	if (defMove == MOVE_NONE || SPLIT(defMove) == SPLIT_STATUS //Predicted move won't do damage
+	|| defMove == MOVE_PURSUIT) //Predicted move won't hit the incoming Pokemon
 		return TRUE;
 
 	//Check if a switch is worth it at all in Benjamin Butterfree

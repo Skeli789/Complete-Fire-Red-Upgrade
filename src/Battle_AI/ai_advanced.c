@@ -405,7 +405,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 			{
 				if (bank != 0xFF)
 				{
-					if (ViableMonCountFromBank(bank) > 1)
+					if (ViableMonCountFromBankLoadPartyRange(bank) > 1)
 						class = FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS;
 					else
 						goto MOVE_EFFECT_SWITCH;
@@ -1405,7 +1405,7 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 			if (!CanMovePredictionProtectAgainstMove(bankDef, bankAtk, MOVE_FAKEOUT))
 			{
 				if (CanBeChoiceLocked(bankAtk)           //Don't lock the attacker into Fake Out
-				&& ViableMonCountFromBank(bankAtk) <= 2) //if they can't switch out afterwards.
+				&& ViableMonCountFromBankLoadPartyRange(bankAtk) <= 2) //if they can't switch out afterwards.
 				{
 					if (ViableMonCountFromBank(bankDef) == 1
 					&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
@@ -1418,7 +1418,7 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 		else //Single Battle
 		{
 			if (CanBeChoiceLocked(bankAtk)           //Don't lock the attacker into Fake Out
-			&& ViableMonCountFromBank(bankAtk) <= 1) //if they can't switch out afterwards.
+			&& ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1) //if they can't switch out afterwards.
 			{
 				if (ViableMonCountFromBank(bankDef) == 1
 				&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
@@ -2294,7 +2294,7 @@ void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u
 
 static bool8 IsWorthSettingHazards(u8 bankDef)
 {
-	u8 monsLeft = ViableMonCountFromBank(bankDef);
+	u8 monsLeft = ViableMonCountFromBankLoadPartyRange(bankDef);
 	
 	if (monsLeft == 2) //Foe only two mons left
 		return FALSE; //Don't bother setting hazards
@@ -2379,12 +2379,12 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			 || (!gSideTimers[SIDE(bankDef)].stickyWeb && MoveInMoveset(MOVE_STICKYWEB, bankAtk)))) //Or can set up Sticky Web too
 			{
 				//Use less of the time to allow SR to get set up
-				if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				if (ViableMonCountFromBankLoadPartyRange(bankDef) == 2) //Only two mons left
 					INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 				else
 					INCREASE_STATUS_VIABILITY(2);
 			}
-			else if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+			else if (ViableMonCountFromBankLoadPartyRange(bankDef) == 2) //Only two mons left
 				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			else
 				INCREASE_STATUS_VIABILITY(3);

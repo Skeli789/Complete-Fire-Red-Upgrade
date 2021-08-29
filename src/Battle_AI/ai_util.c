@@ -36,6 +36,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move);
+static bool8 IsEffectivePursuit(u16 move, bool8 defCantSwitch, bool8 playerHasSwitchedBefore);
 
 u16 AIRandom()
 {
@@ -292,8 +293,11 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 	s8 bestPriority = 0;
 	bool8 perfectMoves = 0;
 	bool8 goodMoves = 0;
+	bool8 bestMovePursuit = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
+	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
+	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 	bool8 goodMoveThatDoesntMakeContact = FALSE;
 	bool8 hasNonMultiHitMove = FALSE;
 	bool8 perfectMoveThatDoesntMakeContact = FALSE;
@@ -312,10 +316,13 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 			&& (!checkGoingFirst //It doesn't matter if this move does first
 			|| (MoveWouldHitFirst(currMove, bankAtk, bankDef) && gBattleMoves[currMove].effect != EFFECT_FUTURE_SIGHT))) //Or this move really hits first
 			{
+				bool8 isEffectivePursuit = IsEffectivePursuit(currMove, defCantSwitch, playerHasSwitchedBefore);
+
 				if (MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
 				{
 					perfectMoves |= gBitTable[i]; //This is one of the best moves
 					perfectMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Make sure at least one perfect move doesn't make contact
+					bestMovePursuit |= isEffectivePursuit;
 				}
 				else if (perfectMoves == 0) //Only waste time with the other moves if there isn't already a perfect move
 				{
@@ -325,22 +332,27 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 					if (goodMoves == 0 //No good moves yet
 					|| (currAcc > bestAcc && bestAcc < 100)) //This move has perfect accuracy and the best accuracy so far was worse
 					{
+						REPLACE_ALL_MOVES:
 						bestAcc = currAcc;
 						bestPriority = currPriority;
 						goodMoves = gBitTable[i]; //Wipe all previously good moves
 						goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
 						hasNonMultiHitMove = gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
+						bestMovePursuit = isEffectivePursuit;
 					}
 					else if (currAcc == bestAcc || currAcc >= 100) //This move has the same as the best accuracy or this move has perfect accuracy
 					{
-						//The better move is still the one with more priority
-						if (PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove) > bestPriority) //This move has the highest priority of all moves so far
+						//The better move is still Pursuit or the one with more priority
+						if (isEffectivePursuit
+						|| PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove) > bestPriority) //This move has the highest priority of all moves so far
 						{
-							bestAcc = currAcc;
-							bestPriority = currPriority;
-							goodMoves = gBitTable[i]; //Wipe all previously good moves
-							goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
-							hasNonMultiHitMove = gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
+							if (isEffectivePursuit)
+							{
+								bestMovePursuit = TRUE;
+								goto REPLACE_ALL_MOVES;
+							}
+							else if (!bestMovePursuit) //Don't replace Pursuit, even if this move has a higher priority (since the move already goes first anyway)
+								goto REPLACE_ALL_MOVES;
 						}
 						else
 						{
@@ -348,6 +360,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 							goodMoves |= gBitTable[i];
 							goodMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Update whether at least one good move doesn't make contact
 							hasNonMultiHitMove |= gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
+							bestMovePursuit = isEffectivePursuit;
 						}
 					}
 				}
@@ -474,6 +487,8 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
+	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
+	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -515,7 +530,16 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 						bestMove = currMove; //So pick it since it does the most damage and has a higher chance of going first
 					else if (currPriority == bestPriority) //If the two moves have the same priority
 					{
-						if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
+						if (IsEffectivePursuit(currMove, defCantSwitch, playerHasSwitchedBefore)) //Pursuit is the best possible move in the case the foe switches
+						{
+							bestMove = currMove;
+							continue; //Proceed to next move
+						}
+						else if (IsEffectivePursuit(bestMove, defCantSwitch, playerHasSwitchedBefore)) //The best possible move is already Pursuit
+						{
+							continue; //Proceed to next move
+						}
+						else if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
 						{
 							//Pick a non-contact move if contact is a bad idea
 							if (badIdeaToMakeContact)
@@ -1285,6 +1309,8 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 	u16 defHP = gBattleMons[bankDef].hp;
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
+	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
+	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 	struct DamageCalc damageData = {0};
 
 	if (defHP == 0) //Foe dead
@@ -1338,14 +1364,22 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 			else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
 			&& moveEffect != EFFECT_COUNTER
 			&& moveEffect != EFFECT_MIRROR_COAT //Never try to make counter moves a priority unless they do the most damage
-			&& moveEffect != EFFECT_FUTURE_SIGHT) //Never try to make future attacks a priority unless they do the most damage
+			&& moveEffect != EFFECT_FUTURE_SIGHT //Never try to make future attacks a priority unless they do the most damage
+			&& !IsEffectivePursuit(strongestMove, defCantSwitch, playerHasSwitchedBefore)) //Pursuit isn't already the best possible move that can be used if the player can switch out to avoid a KO
 			{
-				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove) //Use faster of two strongest moves
-				|| gBattleMoves[strongestMove].effect == EFFECT_FUTURE_SIGHT) //Strongest move is the slowest possible - it takes multiple turns
+				u8 thisPriority, bestPriority;
+
+				if (IsEffectivePursuit(move, defCantSwitch, playerHasSwitchedBefore)) //Only prioritize Pursuit if the player has shown they like switching and can switch
 				{
 					strongestMove = move;
 				}
-				else
+				else if (gBattleMoves[strongestMove].effect == EFFECT_FUTURE_SIGHT //Strongest move is the slowest possible - it takes multiple turns
+				|| ((thisPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, move)) > (bestPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
+				 && gBattleMoves[move].effect != EFFECT_FUTURE_SIGHT)) //And this move isn't as slow as possible (multiple turns)
+				{
+					strongestMove = move;
+				}
+				else if (thisPriority == bestPriority) //Helps exclude negative priority moves - Future Attacks are allowed here
 				{
 					//Find which move has better Acc
 					u16 currAcc = (MoveWillHit(move, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(move, bankAtk, bankDef);
@@ -1642,6 +1676,11 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 		return TRUE;
 
 	return FALSE;
+}
+
+static bool8 IsEffectivePursuit(u16 move, bool8 defCantSwitch, bool8 playerHasSwitchedBefore)
+{
+	return move == MOVE_PURSUIT && !defCantSwitch && playerHasSwitchedBefore;
 }
 
 bool8 IsUsefulToFlinchTarget(u8 bankDef)
