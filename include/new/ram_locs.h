@@ -107,7 +107,7 @@
 		//#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		//#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		//#define gLoadPointer (*((const u8**) 0x03000f14))
-		//#define sScriptContext2Enabled (*((u8*) 0x3000F28))
+		//#define sScriptContext2Enabled (*((u8*) 0x3000F9C))
 		//#define gKeypadInitialCountdown ((*u16) 0x030030e0)
 		//#define gMain (((struct Main*) 0x30030F0)[0])
 		//#define gKeypadFollowUpCountdown ((*u16) 0x0300352c)

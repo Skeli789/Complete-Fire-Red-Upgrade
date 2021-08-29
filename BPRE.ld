@@ -213,7 +213,7 @@ gRAMScriptPtr = 0x20370A4;
 gScriptEnv1 = 0x03000EB0;
 gScriptEnv2 = 0x03000F28;
 gLoadPointer = 0x03000f14;
-sScriptContext2Enabled = 0x3000F28;
+sScriptContext2Enabled = 0x3000F9C;
 
 /* Text RAM */
 gTextFlags = 0x3003E50;

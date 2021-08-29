@@ -333,8 +333,9 @@ void InitBagMenuFromField(void)
 static void CB2_PartyMenuFromField(void)
 {
 	FreezeEventObjects();
+	ScriptContext2_Enable(); //So HMs don't cause problems
 	PrepareOverworldReturn();
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldFromDiploma);
+	InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldFromDiploma);
 }
 
 static void CB2_ItemMenuFromField(void)
@@ -372,13 +373,13 @@ u8 GetLRKeysPressedAndHeld(void)
 
 s32 sub_8104284(void)
 {
-    if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
-    {
-        if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_LEFT))
-            return 1;
-        else if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_RIGHT))
-            return 2;
-    }
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_LEFT))
+			return 1;
+		else if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_RIGHT))
+			return 2;
+	}
 
 	return 0;
 }

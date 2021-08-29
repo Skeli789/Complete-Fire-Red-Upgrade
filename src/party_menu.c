@@ -1054,7 +1054,10 @@ static bool8 SetUpFieldMove_Fly(void)
 	#endif
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
+	{
+		gFieldCallback2 = NULL; //Undoes when its set when party menu is accessed via R
 		return TRUE;
+	}
 
 	return FALSE;
 }
