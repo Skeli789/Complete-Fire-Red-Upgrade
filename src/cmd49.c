@@ -298,7 +298,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
-			&& CanBeBurned(gBankAttacker, TRUE))
+			&& CanBeBurned(gBankAttacker, gBankTarget, TRUE))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;

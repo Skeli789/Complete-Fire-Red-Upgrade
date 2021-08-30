@@ -1761,7 +1761,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 					switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
 						case MOVE_EFFECT_SLEEP:
-							if (CanBePutToSleep(gBankAttacker, TRUE))
+							if (CanBePutToSleep(gBankAttacker, bank, TRUE))
 								++effect;
 							break;
 						case MOVE_EFFECT_POISON:
@@ -1770,7 +1770,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							break;
 						case MOVE_EFFECT_BURN: //Gets changed to Paralysis
 							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-							if (CanBeParalyzed(gBankAttacker, TRUE))
+							if (CanBeParalyzed(gBankAttacker, bank, TRUE))
 								++effect;
 							break;
 					}
@@ -1793,7 +1793,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
 				&& CheckContact(move, gBankAttacker)
-				&& CanBePoisoned(gBankAttacker, gBankTarget, TRUE)
+				&& CanBePoisoned(gBankAttacker, bank, TRUE)
 				&& umodsi(Random(), 3) == 0)
 				{
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
@@ -1810,7 +1810,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
 				&& CheckContact(move, gBankAttacker)
-				&& CanBeParalyzed(gBankAttacker, TRUE)
+				&& CanBeParalyzed(gBankAttacker, bank, TRUE)
 				&& umodsi(Random(), 3) == 0)
 				{
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
@@ -1827,7 +1827,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
 				&& CheckContact(move, gBankAttacker)
-				&& CanBeBurned(gBankAttacker, TRUE)
+				&& CanBeBurned(gBankAttacker, bank, TRUE)
 				&& umodsi(Random(), 3) == 0)
 				{
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;

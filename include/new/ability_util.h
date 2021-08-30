@@ -18,6 +18,7 @@ void SetTookAbilityFrom(u8 taker, u8 takenFrom);
 void SwapTookAbilityFrom(u8 bank1, u8 bank2);
 void ResetTookAbilityFrom(u8 bank);
 bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move);
+bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility);
 
 bool8 SpeciesHasTurboblaze(u16 species);
 bool8 SpeciesHasTeravolt(u16 species);

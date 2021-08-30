@@ -27,6 +27,7 @@ battle_util.c
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 
 static void TryRemoveUnburdenBoost(u8 bank);
+static bool8 CanBeGeneralStatused(u8 bankDef, u8 bankAtk, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil);
 
 u8 GetBankForBattleScript(u8 caseId)
 {
@@ -1836,66 +1837,80 @@ bool8 DoesSleepClausePrevent(u8 bank)
 	return FALSE;
 }
 
-bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
+static bool8 CanBeGeneralStatused(u8 bankDef, u8 bankAtk, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)
 {
-	switch (ABILITY(bank)) {
-		case ABILITY_COMATOSE:
-			return FALSE;
-
-		case ABILITY_LEAFGUARD:
-			if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_COMATOSE:
 				return FALSE;
-			break;
 
-		case ABILITY_FLOWERVEIL:
-			if (checkFlowerVeil && IsOfType(bank, TYPE_GRASS))
-				return FALSE;
-			break;
+			case ABILITY_LEAFGUARD:
+				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+					return FALSE;
+				break;
 
-		#ifdef SPECIES_MINIOR_SHIELD
-		case ABILITY_SHIELDSDOWN:
-			if (GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
-				return FALSE;
-			break;
-		#endif
+			case ABILITY_FLOWERVEIL:
+				if (checkFlowerVeil && IsOfType(bankDef, TYPE_GRASS))
+					return FALSE;
+				break;
+
+			#ifdef SPECIES_MINIOR_SHIELD
+			case ABILITY_SHIELDSDOWN:
+				if (GetBankPartyData(bankDef)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
+					return FALSE;
+				break;
+			#endif
+		}
 	}
 
-	if (checkFlowerVeil && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (checkFlowerVeil
+	&& IS_DOUBLE_BATTLE
+	&& ABILITY(PARTNER(bankDef)) == ABILITY_FLOWERVEIL //Check target partner Flower Veil
+	&& IsOfType(bankDef, TYPE_GRASS)
+	&& !IsTargetAbilityIgnoredNoMove(ABILITY_FLOWERVEIL, atkAbility)
+	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
-	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bankDef))
 		return FALSE;
 
-	if (gBattleMons[bank].status1 != STATUS1_NONE)
+	if (gBattleMons[bankDef].status1 != STATUS1_NONE)
 		return FALSE;
 
-	if (checkFlowerVeil && BankSideHasSafeguard(bank) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (checkFlowerVeil && BankSideHasSafeguard(bankDef) && !BypassesScreens(atkAbility) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	return TRUE;
 }
 
-bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
+bool8 CanBePutToSleep(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+
+	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	switch (ABILITY(bank)) {
-		case ABILITY_INSOMNIA:
-		#ifdef ABILITY_VITALSPIRIT
-		case ABILITY_VITALSPIRIT:
-		#endif
-		case ABILITY_SWEETVEIL:
-			return FALSE;
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_INSOMNIA:
+			#ifdef ABILITY_VITALSPIRIT
+			case ABILITY_VITALSPIRIT:
+			#endif
+			case ABILITY_SWEETVEIL:
+				return FALSE;
+		}
 	}
 
-	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bankDef))
 		return FALSE;
 
-	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
+	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankDef)) == ABILITY_SWEETVEIL && !IsTargetAbilityIgnoredNoMove(ABILITY_SWEETVEIL, atkAbility))
 		return FALSE;
 
-	if (DoesSleepClausePrevent(bank))
+	if (DoesSleepClausePrevent(bankDef))
 		return FALSE;
 
 	if (IsUproarBeingMade())
@@ -1904,51 +1919,64 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 	return TRUE;
 }
 
-bool8 CanBeYawned(u8 bank)
+bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 {
-	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(bankDef))
 		return FALSE;
 
-	if (gBattleMons[bank].status1 != STATUS1_NONE)
+	if (gBattleMons[bankDef].status1 != STATUS1_NONE)
 		return FALSE;
 
-	if (BankSideHasSafeguard(bank) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (!(gStatuses3[bankDef] & STATUS3_YAWN))
 		return FALSE;
 
-	if (IS_DOUBLE_BATTLE)
+	u8 atkAbility = ABILITY(bankAtk);
+	if (BankSideHasSafeguard(bankDef) && !BypassesScreens(atkAbility) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+		return FALSE;
+
+	u8 defAbility = ABILITY(bankDef);
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
-		switch (ABILITY(PARTNER(bank))) {
+		switch (defAbility) {
+			case ABILITY_INSOMNIA:
+			#ifdef ABILITY_VITALSPIRIT
+			case ABILITY_VITALSPIRIT:
+			#endif
 			case ABILITY_SWEETVEIL:
-				return TRUE;
-			case ABILITY_FLOWERVEIL:
-				if (IsOfType(bank, TYPE_GRASS) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
-					return TRUE;
+			case ABILITY_COMATOSE:
+				return FALSE;
+			case ABILITY_LEAFGUARD:
+				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+					return FALSE;
 				break;
+			case ABILITY_FLOWERVEIL:
+				if (IsOfType(bankDef, TYPE_GRASS))
+					return FALSE;
+				break;
+			#ifdef SPECIES_MINIOR_SHIELD
+			case ABILITY_SHIELDSDOWN:
+				if (GetBankPartyData(bankDef)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
+					return FALSE;
+				break;
+			#endif
 		}
 	}
 
-	switch (ABILITY(bank)) {
-		case ABILITY_INSOMNIA:
-		#ifdef ABILITY_VITALSPIRIT
-		case ABILITY_VITALSPIRIT:
-		#endif
-		case ABILITY_SWEETVEIL:
-		case ABILITY_COMATOSE:
-			return FALSE;
-		case ABILITY_LEAFGUARD:
-			if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
-				return FALSE;
-			break;
-		case ABILITY_FLOWERVEIL:
-			if (IsOfType(bank, TYPE_GRASS))
-				return FALSE;
-			break;
-		#ifdef SPECIES_MINIOR_SHIELD
-		case ABILITY_SHIELDSDOWN:
-			if (GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
-				return FALSE;
-			break;
-		#endif
+	if (IS_DOUBLE_BATTLE)
+	{
+		u8 defPartnerAbility = ABILITY(PARTNER(bankDef));
+
+		if (!IsTargetAbilityIgnoredNoMove(defPartnerAbility, atkAbility)) //Target partner's Ability is not ignored
+		{
+			switch (defPartnerAbility) {
+				case ABILITY_SWEETVEIL:
+					return TRUE;
+				case ABILITY_FLOWERVEIL:
+					if (IsOfType(bankDef, TYPE_GRASS) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+						return TRUE;
+					break;
+			}
+		}
 	}
 
 	return TRUE;
@@ -2015,19 +2043,25 @@ bool8 CanRest(u8 bank)
 
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeGeneralStatused(bankDef, checkFlowerVeil))
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+
+	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	switch (ABILITY(bankDef)) {
-		case ABILITY_IMMUNITY:
-		case ABILITY_PASTELVEIL:
-			return FALSE;
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_IMMUNITY:
+			case ABILITY_PASTELVEIL:
+				return FALSE;
+		}
 	}
 
-	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankDef)) == ABILITY_PASTELVEIL)
+	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankDef)) == ABILITY_PASTELVEIL && !IsTargetAbilityIgnoredNoMove(ABILITY_PASTELVEIL, atkAbility))
 		return FALSE;
 
-	if (ABILITY(bankAtk) != ABILITY_CORROSION)
+	if (atkAbility != ABILITY_CORROSION)
 	{
 		if (IsOfType(bankDef, TYPE_POISON) || IsOfType(bankDef, TYPE_STEEL))
 			return FALSE;
@@ -2036,70 +2070,95 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	return TRUE;
 }
 
-bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil)
+bool8 CanBeParalyzed(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+
+	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	if (IsOfType(bank, TYPE_ELECTRIC))
+	if (IsOfType(bankDef, TYPE_ELECTRIC))
 		return FALSE;
 
-	switch (ABILITY(bank)) {
-		case ABILITY_LIMBER:
-			return FALSE;
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_LIMBER:
+				return FALSE;
+		}
 	}
 
 	return TRUE;
 }
 
-bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil)
+bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+
+	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	if (IsOfType(bank, TYPE_FIRE))
+	if (IsOfType(bankAtk, TYPE_FIRE))
 		return FALSE;
 
-	switch (ABILITY(bank)) {
-		case ABILITY_WATERVEIL:
-		case ABILITY_WATERBUBBLE:
-			return FALSE;
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_WATERVEIL:
+			case ABILITY_WATERBUBBLE:
+				return FALSE;
+		}
 	}
 
 	return TRUE;
 }
 
-bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
+bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+
+	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	if (IsOfType(bank, TYPE_ICE))
+	if (IsOfType(bankDef, TYPE_ICE))
 		return FALSE;
 
-	switch (ABILITY(bank)) {
-		case ABILITY_MAGMAARMOR:
-			return FALSE;
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_MAGMAARMOR:
+				return FALSE;
+		}
 	}
 
-	if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		return FALSE;
 
 	return TRUE;
 }
 
-bool8 CanBeConfused(u8 bank, u8 checkSafeguard)
+bool8 CanBeConfused(u8 bankDef, u8 bankAtk, u8 checkSafeguard)
 {
-	if (IsConfused(bank))
+	if (IsConfused(bankDef))
 		return FALSE;
 
-	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bankDef))
 		return FALSE;
 
-	if (ABILITY(bank) == ABILITY_OWNTEMPO)
-		return FALSE;
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
+	{
+		switch (defAbility) {
+			case ABILITY_OWNTEMPO:
+				return FALSE;
+		}
+	}
 
-	if (checkSafeguard && BankSideHasSafeguard(bank) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (checkSafeguard && BankSideHasSafeguard(bankDef) && !BypassesScreens(atkAbility) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	return TRUE;
@@ -2127,7 +2186,7 @@ bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk)
 
 	return BATTLER_ALIVE(bankDef)
 		&& !(gBattleMons[bankDef].status2 & STATUS2_INFATUATION)
-		&& ABILITY(bankDef) != ABILITY_OBLIVIOUS
+		&& (ABILITY(bankDef) != ABILITY_OBLIVIOUS || IsTargetAbilityIgnoredNoMove(ABILITY_OBLIVIOUS, ABILITY(bankAtk)))
 		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
 		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != MON_GENDERLESS
 		&& GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget) != MON_GENDERLESS

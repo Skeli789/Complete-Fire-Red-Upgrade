@@ -229,7 +229,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]]) {
 			case STATUS1_SLEEP:
 				// check active uproar
-				if (CanBePutToSleep(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBePutToSleep(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -243,12 +243,12 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case STATUS1_BURN:
-				if (CanBeBurned(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeBurned(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 					statusChanged = TRUE;
 				break;
 
 			case STATUS1_FREEZE:
-				if (CanBeFrozen(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeFrozen(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -256,7 +256,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case STATUS1_PARALYSIS:
-				if (CanBeParalyzed(gEffectBank, FALSE)) //Flower Veil & Safeguard checked earlier
+				if (CanBeParalyzed(gEffectBank, gBankAttacker, FALSE)) //Flower Veil & Safeguard checked earlier
 					statusChanged = TRUE;
 				break;
 		}
@@ -323,7 +323,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			switch (gBattleCommunication[MOVE_EFFECT_BYTE])
 			{
 			case MOVE_EFFECT_CONFUSION:
-				if (CanBeConfused(gEffectBank, FALSE)) //Safeguard checked earlier
+				if (CanBeConfused(gEffectBank, gBankAttacker, FALSE)) //Safeguard checked earlier
 				{
 					gBattleMons[gEffectBank].status2 |= (umodsi(Random(), 4)) + 2;
 

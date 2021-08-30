@@ -868,7 +868,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_CONFUSE_HIT:
-									if (CALC && CanBeConfused(bankDef, TRUE))
+									if (CALC && CanBeConfused(currTarget, bankAtk, TRUE))
 										break;
 									goto DEFAULT_CHECK;
 								case EFFECT_SPEED_UP_1_HIT:
@@ -2533,13 +2533,13 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBePutToSleep(bankDef, TRUE)
+	return !CanBePutToSleep(bankDef, bankAtk, TRUE)
 		|| gStatuses3[bankDef] & STATUS3_YAWN
 		|| (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_SLP) //Don't use this logic in general battles
 		|| (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		|| defAbility == ABILITY_EARLYBIRD
 		|| defAbility == ABILITY_SHEDSKIN
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, bankDef, TRUE))
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER);
 }
@@ -2589,12 +2589,12 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBeParalyzed(bankDef, TRUE)
+	return !CanBeParalyzed(bankDef, bankAtk, TRUE)
 	   ||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_PAR) //Don't use this logic in general battles
 	   ||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 	   ||  defAbility == ABILITY_SHEDSKIN
 	   ||  defAbility == ABILITY_QUICKFEET
-	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
+	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, bankDef, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
 	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 	   || (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
@@ -2609,7 +2609,7 @@ bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 
-	return CanBeParalyzed(bankAtk, FALSE)
+	return CanBeParalyzed(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_MARVELSCALE
 		 ||  atkAbility == ABILITY_QUICKFEET
 		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
@@ -2622,13 +2622,13 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 
-	return !CanBeBurned(bankDef, TRUE)
+	return !CanBeBurned(bankDef, bankAtk, TRUE)
 		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_BRN) //Don't use this logic in general battles
 		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		||  defAbility == ABILITY_SHEDSKIN
 		|| (defAbility == ABILITY_MAGICGUARD && !MoveInMoveset(MOVE_HEX, bankAtk))
 		||  defAbility == ABILITY_QUICKFEET
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, bankDef, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
@@ -2643,7 +2643,7 @@ bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 
-	return CanBeBurned(bankAtk, FALSE)
+	return CanBeBurned(bankAtk, bankAtk, FALSE)
 		&&  (atkAbility == ABILITY_QUICKFEET
 		 ||  atkAbility == ABILITY_HEATPROOF
 		 ||  atkAbility == ABILITY_MAGICGUARD
@@ -2658,10 +2658,10 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 	u8 defAbility = ABILITY(bankDef);
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 
-	return !CanBeFrozen(bankDef, TRUE)
+	return !CanBeFrozen(bankDef, bankAtk, TRUE)
 		|| defItemEffect == ITEM_EFFECT_CURE_FRZ //Use this logic in general battles because Freezing is caused only by Flinging a one-time use item, so don't waste it
 		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
-		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, bankDef, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
 		|| UnfreezingMoveInMoveset(bankDef);
 }
@@ -2674,16 +2674,16 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 	switch (ABILITY(bankDef))
 	{
 		case ABILITY_EFFECTSPORE:
-			badIdea = CanBePoisoned(bankAtk, bankDef, TRUE) || CanBeParalyzed(bankAtk, TRUE) || CanBePutToSleep(bankAtk, TRUE);
+			badIdea = CanBePoisoned(bankAtk, bankDef, TRUE) || CanBeParalyzed(bankAtk, bankDef, TRUE) || CanBePutToSleep(bankAtk, bankDef, TRUE);
 			break;
 		case ABILITY_POISONPOINT:
 			badIdea = CanBePoisoned(bankAtk, bankDef, TRUE);
 			break;
 		case ABILITY_STATIC:
-			badIdea = CanBeParalyzed(bankAtk, TRUE);
+			badIdea = CanBeParalyzed(bankAtk, bankDef, TRUE);
 			break;
 		case ABILITY_FLAMEBODY:
-			badIdea = CanBeBurned(bankAtk, TRUE);
+			badIdea = CanBeBurned(bankAtk, bankDef, TRUE);
 			break;
 		case ABILITY_CUTECHARM:
 			badIdea = CanBeInfatuated(bankAtk, bankDef);
@@ -4511,7 +4511,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			//TODO AI
 			break;
 		case MAX_EFFECT_PARALYZE_FOES:
-			if (CanBeParalyzed(bankDef, TRUE))
+			if (CanBeParalyzed(bankDef, bankAtk, TRUE))
 				moveEffect = EFFECT_PARALYZE;
 			break;
 		case MAX_EFFECT_POISON_FOES:
@@ -4520,7 +4520,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 		case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
 		case MAX_EFFECT_CONFUSE_FOES:
-			if (CanBeConfused(bankDef, TRUE))
+			if (CanBeConfused(bankDef, bankAtk, TRUE))
 				moveEffect = EFFECT_CONFUSE;
 			break;
 
@@ -4590,7 +4590,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		case MAX_EFFECT_YAWN_FOE:
-			if (CanBePutToSleep(bankDef, TRUE) && !(gStatuses3[bankDef] & STATUS3_YAWN))
+			if (CanBePutToSleep(bankDef, bankAtk, TRUE) && !(gStatuses3[bankDef] & STATUS3_YAWN)) //Don't use CanBeYawned because we want the target to actually fall asleep
 				moveEffect = EFFECT_YAWN;
 			break;
 

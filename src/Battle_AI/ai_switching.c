@@ -936,7 +936,7 @@ static bool8 IsYawned(void)
 	&& itemEffect != ITEM_EFFECT_CURE_STATUS
 	&& (!IsDynamaxed(gActiveBattler) || AIRandom() & 1) //50% chance to switch out if Dynamaxed
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4 //Don't bother saving a mon with less than 25% of HP
-	&& CanBePutToSleep(gActiveBattler, FALSE)) //Could have been yawned and then afflicted with another status condition
+	&& CanBePutToSleep(gActiveBattler, gActiveBattler, FALSE)) //Could have been yawned and then afflicted with another status condition
 	{
 		u8 battlerIn1, battlerIn2;
 		u8 foe1, foe2;
@@ -1284,7 +1284,7 @@ static bool8 ShouldSwitchIfWonderGuard(struct Pokemon* party, u8 firstId, u8 las
 				switch (gBattleMoves[move].effect) {
 					case EFFECT_SLEEP:
 					case EFFECT_YAWN:
-						if (CanBePutToSleep(bankDef, TRUE))
+						if (CanBePutToSleep(bankDef, bankAtk, TRUE)) //Don't use CanBeYawned since we want the sleep to actually stick
 							return FALSE;
 						break;
 					case EFFECT_ROAR:
@@ -1299,17 +1299,17 @@ static bool8 ShouldSwitchIfWonderGuard(struct Pokemon* party, u8 firstId, u8 las
 						break;
 					case EFFECT_WILL_O_WISP:
 					BRN_CHECK:
-						if (CanBeBurned(bankDef, TRUE))
+						if (CanBeBurned(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_CONFUSE:
 					case EFFECT_SWAGGER:
 					case EFFECT_FLATTER:
-						if (CanBeConfused(bankDef, TRUE))
+						if (CanBeConfused(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_PARALYZE:
-						if (CanBeParalyzed(bankDef, TRUE))
+						if (CanBeParalyzed(bankDef, bankAtk, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_LEECH_SEED:

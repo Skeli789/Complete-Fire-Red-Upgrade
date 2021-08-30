@@ -669,7 +669,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_CONFUSE:
 		AI_CONFUSE_CHECK:
-			if (CanBeConfused(bankDef, TRUE)
+			if (CanBeConfused(bankDef, bankAtk, TRUE)
 			&& (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || data->defItemEffect != ITEM_EFFECT_CURE_CONFUSION) //Don't use this logic in general battles
 			&& (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || data->defItemEffect != ITEM_EFFECT_CURE_STATUS)) //Don't use this logic in general battles
 			{

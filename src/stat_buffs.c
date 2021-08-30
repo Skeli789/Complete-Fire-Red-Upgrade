@@ -521,7 +521,7 @@ u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
 
 	if (STAT_STAGE(bankDef, statId) == STAT_STAGE_MIN)
 		return STAT_AT_MIN;
-	else if (BankSideHasMist(bankDef) && (bankDef != bankAtk && !BypassesScreens(ABILITY(bankAtk)))
+	else if (BankSideHasMist(bankDef) && bankDef != bankAtk && !BypassesScreens(ABILITY(bankAtk)))
 		return STAT_PROTECTED_BY_MIST;
 
 	if (IsClearBodyAbility(defAbility)

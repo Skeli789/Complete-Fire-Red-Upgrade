@@ -1055,7 +1055,7 @@ static bool8 BankHoldingUsefulItemToProtectFor(u8 bank)
 		return TRUE;
 
 	if (itemEffect == ITEM_EFFECT_FLAME_ORB
-	&& CanBeBurned(bank, FALSE)
+	&& CanBeBurned(bank, bank, FALSE)
 	&& (ability == ABILITY_GUTS
 	 || ability == ABILITY_FLAREBOOST
 	 || ability == ABILITY_MAGICGUARD

@@ -917,7 +917,7 @@ u8 TurnBasedEffects(void)
 
 					if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN))
 					{
-						if (CanBePutToSleep(gActiveBattler, FALSE))
+						if (CanBePutToSleep(gActiveBattler, gActiveBattler, FALSE)) //Falling asleep now
 						{
 							if (!BATTLER_SEMI_INVULNERABLE(gActiveBattler)) //Semi-Invulnerability is removed when it tries to attack
 								CancelMultiTurnMoves(gActiveBattler);
@@ -1403,7 +1403,7 @@ u8 TurnBasedEffects(void)
 									}
 									break;
 								case ITEM_EFFECT_FLAME_ORB:
-									if (CanBeBurned(gActiveBattler, FALSE))
+									if (CanBeBurned(gActiveBattler, gActiveBattler, FALSE))
 									{
 										gLastUsedItem = ITEM(gActiveBattler);
 										RecordItemEffectBattle(gActiveBattler, itemEffect);

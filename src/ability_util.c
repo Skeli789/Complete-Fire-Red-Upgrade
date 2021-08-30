@@ -250,6 +250,11 @@ bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
 	return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
 }
 
+bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
+{
+	return IsMoldBreakerAbility(atkAbility) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
+}
+
 bool8 SpeciesHasTurboblaze(u16 species)
 {
 	#if (defined SPECIES_RESHIRAM && defined SPECIES_KYUREM_WHITE)
