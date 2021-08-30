@@ -113,19 +113,15 @@ const u16 gWrappedStringIds[] =
 
 void atk15_seteffectwithchance(void)
 {
-	u32 PercentChance;
+	u32 percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
 
-	//if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
-	//{
-	//	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
-	//}
 	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankHasRainbow(gBankAttacker))
 	{
-		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
-	}
-	else
-	{
-		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
+		percentChance *= 2;
+
+		if ((ABILITY(gBankAttacker) == ABILITY_SERENEGRACE && BankHasRainbow(gBankAttacker)) //Has both
+		&& (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) != MOVE_EFFECT_FLINCH) //Doesn't stack for flinches
+			percentChance *= 2;
 	}
 
 	if (!SheerForceCheck() || (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) == MOVE_EFFECT_RAPIDSPIN)
@@ -135,7 +131,7 @@ void atk15_seteffectwithchance(void)
 			gBattleCommunication[MOVE_EFFECT_BYTE] &= 0x7F;
 			SetMoveEffect(FALSE, MOVE_EFFECT_CERTAIN);
 		}
-		else if (Random() % 100 <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
+		else if (Random() % 100 <= percentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
 		{
 			SetMoveEffect(FALSE, 0);
 		}
