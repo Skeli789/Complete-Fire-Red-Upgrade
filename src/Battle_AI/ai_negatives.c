@@ -1469,7 +1469,7 @@ SKIP_CHECK_TARGET:
 			if (data->atkStatus2 & STATUS2_SUBSTITUTE
 			|| GetHealthPercentage(bankAtk) <= 25)
 				DECREASE_VIABILITY(10);
-			else if (ABILITY(bankDef) == ABILITY_INFILTRATOR
+			else if (BypassesScreens(data->defAbility)
 			|| SoundMoveInMoveset(bankDef))
 				DECREASE_VIABILITY(8);
 			break;

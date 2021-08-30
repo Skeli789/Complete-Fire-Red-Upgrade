@@ -293,7 +293,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		if (BankSideHasMist(gActiveBattler)
 		&& !certain
 		&& gCurrentMove != MOVE_CURSE
-		&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
+		&& !BypassesScreens(ABILITY(gBankAttacker)))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -521,7 +521,7 @@ u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
 
 	if (STAT_STAGE(bankDef, statId) == STAT_STAGE_MIN)
 		return STAT_AT_MIN;
-	else if (BankSideHasMist(bankDef) && (bankDef != bankAtk && ABILITY(bankAtk) != ABILITY_INFILTRATOR))
+	else if (BankSideHasMist(bankDef) && (bankDef != bankAtk && !BypassesScreens(ABILITY(bankAtk)))
 		return STAT_PROTECTED_BY_MIST;
 
 	if (IsClearBodyAbility(defAbility)

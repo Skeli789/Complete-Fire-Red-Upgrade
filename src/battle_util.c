@@ -1375,7 +1375,7 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
 {
 	return CheckSoundMove(move)
-		|| (atkAbility == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM && move != MOVE_SKYDROP)
+		|| (BypassesScreens(atkAbility) && move != MOVE_TRANSFORM && move != MOVE_SKYDROP)
 		|| gSpecialMoveFlags[move].gSubstituteBypassMoves;
 }
 
@@ -1387,6 +1387,20 @@ bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef)
 bool8 MonMoveBlockedBySubstitute(u16 move, struct Pokemon* monAtk, u8 bankDef)
 {
 	return IS_BEHIND_SUBSTITUTE(bankDef) && !MoveIgnoresSubstitutes(move, GetMonAbility(monAtk));
+}
+
+bool8 BypassesScreens(u8 ability)
+{
+	return ability == ABILITY_INFILTRATOR;
+}
+
+bool8 BypassesFog(unusedArg u8 ability, unusedArg u8 itemEffect)
+{
+	#ifdef UNBOUND
+	return BypassesScreens(ability) || ability == ABILITY_KEENEYE || itemEffect == ITEM_EFFECT_UTILITY_UMBRELLA;
+	#else
+	return FALSE;
+	#endif
 }
 
 bool8 IsAuraBoss(u8 bank)

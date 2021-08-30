@@ -2857,7 +2857,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case SPLIT_PHYSICAL:
 				if ((data->defSideStatus & SIDE_STATUS_REFLECT || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
 				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
-				&& data->atkAbility != ABILITY_INFILTRATOR)
+				&& !BypassesScreens(data->atkAbility))
 				{
 					if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
 						damage = (damage * 2) / 3;
@@ -2869,7 +2869,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case SPLIT_SPECIAL:
 				if ((data->defSideStatus & SIDE_STATUS_LIGHTSCREEN || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
 				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
-				&& data->atkAbility != ABILITY_INFILTRATOR)
+				&& !BypassesScreens(data->atkAbility))
 				{
 					if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
 						damage = (damage * 2) / 3;

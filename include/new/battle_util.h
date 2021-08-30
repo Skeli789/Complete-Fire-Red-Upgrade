@@ -97,6 +97,8 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility);
 bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MonMoveBlockedBySubstitute(u16 move, struct Pokemon* monAtk, u8 bankDef);
+bool8 BypassesScreens(u8 ability);
+bool8 BypassesFog(u8 ability, itemEffect);
 bool8 IsAuraBoss(u8 bank);
 bool8 IsMockBattle(void);
 bool8 IsPlayerInControl(u8 bank);

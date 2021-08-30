@@ -474,9 +474,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 
 		if (gBattleWeather & WEATHER_FOG_ANY)
 		{
-			#ifdef UNBOUND
-			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
-			#endif
+			if (!BypassesFog(atkAbility, atkEffect))
 			{
 				#ifdef VAR_GAME_DIFFICULTY
 				if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY
@@ -586,9 +584,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 
 	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_FOG_ANY)
 	{
-		#ifdef UNBOUND
-		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
-		#endif
+		if (!BypassesFog(atkAbility, atkEffect))
 		{
 			#ifdef VAR_GAME_DIFFICULTY
 			if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY
