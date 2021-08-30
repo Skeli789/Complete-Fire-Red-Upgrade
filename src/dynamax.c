@@ -1582,16 +1582,26 @@ bool8 ShouldStartWithRaidShieldsUp(void)
 
 static u8 GetRaidShieldHealthRatio(u8 bank)
 {
+	u8 ratio;
+
 	switch (gBattleMons[bank].level) {
 		case 0 ... 19:
-			return 1; //Never
+			ratio = 1; //Never
+			break;
 		case 20 ... 40:
-			return 2; //Every 1/2 health lost
+			ratio = 2; //Every 1/2 health lost
+			break;
 		case 41 ... 70:
-			return 3; //Every 1/3 health lost
+			ratio = 3; //Every 1/3 health lost
+			break;
 		default:
-			return 4; //Every 1/4 health lost
+			ratio = 4; //Every 1/4 health lost
 	}
+
+	if (ShouldStartWithRaidShieldsUp() && ratio > 0)
+		--ratio; //Started with shields up so battle would have one less round of shields later
+
+	return ratio;
 }
 
 bool8 ShouldCreateRaidShields(u8 bank)
@@ -1602,8 +1612,6 @@ bool8 ShouldCreateRaidShields(u8 bank)
 		return FALSE;
 
 	healthRatio = GetRaidShieldHealthRatio(bank);
-	if (ShouldStartWithRaidShieldsUp() && healthRatio > 0)
-		--healthRatio; //Started with shields up so battle would have one less round of shields later
 
 	for (i = 1; i <= healthRatio; ++i)
 	{

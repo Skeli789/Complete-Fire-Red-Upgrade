@@ -193,7 +193,7 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(foe, defMove)))
 	{
 		if (monAbility == ABILITY_DISGUISE) //Disguise only - no Ice Face
-			predictedDmg = mon->maxHP / 8;
+			predictedDmg = mon->maxHP / 8; //Loses an 1/8 of max HP when the disguise is busted
 	}
 	else
 		predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL) + GetMonEntryHazardDamage(mon, SIDE(activeBattler));

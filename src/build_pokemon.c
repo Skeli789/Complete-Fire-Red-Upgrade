@@ -807,9 +807,9 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			#endif
 				monsCount = trainer->partySize;
 		}
-		
+
 		//Get details for level scaling
-		#if (defined SCALED_TRAINERS && !defined  DEBUG_NO_LEVEL_SCALING)
+		#if (defined SCALED_TRAINERS && !defined DEBUG_NO_LEVEL_SCALING)
 		#ifdef VAR_GAME_DIFFICULTY
 		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY //Don't scale Trainers on easy mode
 					|| trainer->trainerClass == CLASS_ELITE_4 || trainer->trainerClass == CLASS_CHAMPION || trainer->trainerClass == CLASS_RIVAL_2 //Unless you're facing the final bosses
