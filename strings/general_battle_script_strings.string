@@ -400,6 +400,12 @@ A vicious sandstorm is raging.
 #org @gText_ShadowShieldBattleStart
 A shadowy veil is covering\nthe field!\pGhost-type Pok\emon will take half\ndamage when at full health!
 
+#org @gText_ShadowShieldBattleBlocksSafeguard
+But only Ghost-types can create a\nSafeguard under the shadowy veil!
+
+#org @gText_ShadowShieldBattleBlocksSubstitute
+But only Ghost-types can create a\nSubstitute under the shadowy veil!
+
 #org @gText_PixieBattleStart
 Pixies are flying around the field!
 

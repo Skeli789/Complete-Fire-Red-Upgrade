@@ -143,3 +143,10 @@ void CorrodeItem(void);
 void TryFailSteelRoller(void);
 void PrintElectromagnetismFloatingStrings(void);
 void UpdatePreviousMonInOnSwitchout(void);
+void TrySkipBattleNicknameOffer(void);
+void SetInPivotingMove(void);
+void ClearInPivotingMove(void);
+void ShowSOSMon(void);
+void ShowSOSMonHealthbox(void);
+void FailSubstituteInShadowShieldBattle(void);
+
