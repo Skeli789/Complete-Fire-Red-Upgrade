@@ -418,6 +418,7 @@ u8 IsRunningFromBattleImpossible(void)
 
 	itemEffect = ITEM_EFFECT(gActiveBattler);
 	gStringBank = gActiveBattler;
+	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
 		return FALSE;
@@ -443,7 +444,7 @@ u8 IsRunningFromBattleImpossible(void)
 			{
 				gBattleScripting.bank = i;
 				gLastUsedAbility = ABILITY(i);
-				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+				gBattleCommunication[MULTISTRING_CHOOSER] = ABILITY_PREVENTING_ESCAPE;
 				return ABILITY_PREVENTING_ESCAPE;
 			}
 		}
