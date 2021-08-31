@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
@@ -874,62 +875,38 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& MOVE_HAD_EFFECT
 					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
 					{
-						u16 temp;
-						u16 max;
-						u16 stats[STAT_STAGE_SPDEF]; //Create new array to avoid modifying original stats
+						u16 maxStatId;
+						u16 stats[STAT_STAGE_SPDEF + 1]; //Create new array to avoid modifying original stats
 
-						stats[STAT_STAGE_ATK-1] = gBattleMons[gBankAttacker].attack;
-						stats[STAT_STAGE_DEF-1] = gBattleMons[gBankAttacker].defense;
-						stats[STAT_STAGE_SPATK-2] = gBattleMons[gBankAttacker].spAttack;
-						stats[STAT_STAGE_SPDEF-2] = gBattleMons[gBankAttacker].spDefense;
-						stats[STAT_STAGE_SPEED+1] = gBattleMons[gBankAttacker].speed;
-
-						/*#ifdef FLAG_WEIGHT_SPEED_BATTLE
-						if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
-							stats[STAT_STAGE_SPEED+1] = GetActualSpeciesWeight(SPECIES(gBankAttacker), ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), gBankAttacker, TRUE);
-						#endif*/
+						stats[STAT_STAGE_ATK] = gBattleMons[gBankAttacker].attack;
+						stats[STAT_STAGE_DEF] = gBattleMons[gBankAttacker].defense;
+						stats[STAT_STAGE_SPATK] = gBattleMons[gBankAttacker].spAttack;
+						stats[STAT_STAGE_SPDEF] = gBattleMons[gBankAttacker].spDefense;
+						stats[STAT_STAGE_SPEED] = gBattleMons[gBankAttacker].speed;
 
 						if (IsWonderRoomActive())
 						{
-							temp = stats[STAT_STAGE_DEF-1];
-							stats[STAT_STAGE_DEF-1] = stats[STAT_STAGE_SPDEF-2]; //-2 b/c shifted left due to speed
-							stats[STAT_STAGE_SPDEF-2] = temp;
+							u16 temp = stats[STAT_STAGE_DEF];
+							stats[STAT_STAGE_DEF] = stats[STAT_STAGE_SPDEF];
+							stats[STAT_STAGE_SPDEF] = temp;
 						}
 
-						max = 0;
-						for (int i = 1; i < STAT_STAGE_SPDEF; ++i)
+						maxStatId = STAT_STAGE_ATK;
+						for (u8 i = STAT_STAGE_DEF; i < NELEMS(stats); ++i)
 						{
-							if (stats[i] > stats[max])
-								max = i;
+							if (stats[i] > stats[maxStatId])
+								maxStatId = i;
 						}
 
-						//Get the proper stat stage value
-						switch(max)
+						if (STAT_CAN_RISE(gBankAttacker, maxStatId))
 						{
-							case 0: //Attack
-							case 1: //Defense
-								max += 1;
-								break;
-							case 2: //Special Attack
-							case 3: //Special Defense
-								max += 2;
-								break;
-							case 4:
-								max = STAT_STAGE_SPEED;
-						}
-
-						if (STAT_CAN_RISE(gBankAttacker, max))
-						{
-							PREPARE_STAT_BUFFER(gBattleTextBuff1, max);
+							PREPARE_STAT_BUFFER(gBattleTextBuff1, maxStatId);
 
 							gEffectBank = gBankAttacker;
 							gBattleScripting.bank = gBankAttacker;
-							gBattleScripting.statChanger = INCREASE_1 | max;
-							gBattleScripting.animArg1 = 0xE + max;
+							gBattleScripting.statChanger = INCREASE_1 | maxStatId;
+							gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + maxStatId - 1;
 							gBattleScripting.animArg2 = 0;
-							gLastUsedAbility = ABILITY_BEASTBOOST;
-							RecordAbilityBattle(gBankAttacker, gLastUsedAbility);
-
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_Moxie;
 							effect = 1;
