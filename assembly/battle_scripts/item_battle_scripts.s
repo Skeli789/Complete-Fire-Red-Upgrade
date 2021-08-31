@@ -331,7 +331,7 @@ BattleScript_ItemStatChangeRet:
 	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	setbyte MULTISTRING_CHOOSER 0x4
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	removeitem BANK_TARGET
 ItemStatChangeReturn:
@@ -369,14 +369,14 @@ WP_Atk:
 	setstatchanger STAT_ATK | INCREASE_2
 	statbuffchange STAT_TARGET | STAT_BS_PTR WP_SpAtk
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_SpAtk
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 WP_SpAtk:
 	setstatchanger STAT_SP_ATK | INCREASE_2
 	statbuffchange STAT_TARGET | STAT_BS_PTR WP_Ret
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_Ret
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 WP_Ret:
@@ -610,7 +610,7 @@ BattleScript_AIUseXstat:
 	waitmessage DELAY_1SECOND
 	useitemonopponent
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C @;gStatUpStringIds
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	finishaction
 

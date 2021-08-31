@@ -566,7 +566,7 @@ BattleScript_OctolockTurnDmg_Def:
 BattleScript_OctolockTurnDmgPrintDefMsg:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_OctolockTurnDmg_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_OctolockTurnDmgEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_OctolockTurnDmg_SpDef:
@@ -575,7 +575,7 @@ BattleScript_OctolockTurnDmg_SpDef:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_NOT_PROTECT_AFFECTED BattleScript_OctolockTurnDmgPrintSpDefMsg
 BattleScript_OctolockTurnDmgPrintSpDefMsg:
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_OctolockTurnDmgEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_OctolockTurnDmgEnd:

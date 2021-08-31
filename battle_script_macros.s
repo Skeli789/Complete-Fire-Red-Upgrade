@@ -18,6 +18,10 @@
 .equ BS_FLUSH_MESSAGE_BOX, 0x81D96A8
 .equ BattleScript_AllStatsUp, 0x81D8D55
 
+@String Tables
+.equ gStatUpStringIds, 0x83FE57C
+.equ gStatDownStringIds, 0x83FE588
+
 @Banks
 .equ BANK_TARGET, 0
 .equ BANK_ATTACKER, 1

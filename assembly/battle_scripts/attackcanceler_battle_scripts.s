@@ -78,7 +78,7 @@ SteadfastBoost:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	copyarray 0x2023FDB USER_BANK 0x1 @;gBattlescripting->bank
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END

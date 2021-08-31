@@ -78,7 +78,7 @@ BattleScript_TotemRet:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER 0x1 ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 .LReturn:
 	return
@@ -94,14 +94,14 @@ BattleScript_TotemMultiBoostRet:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_TotemMultiBoost_SecondStat
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_TotemMultiBoost_SecondStat
 	setgraphicalstatchangevalues
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 BattleScript_TotemMultiBoost_SecondStat:
 	callasm LoadTotemMultiBoostSecondStat
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
 	setgraphicalstatchangevalues
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	return
 

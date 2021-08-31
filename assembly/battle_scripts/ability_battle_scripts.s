@@ -149,7 +149,7 @@ BS_IntimidateActivatesLoop:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_IntimidatePrevented
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_AdrenalineOrb
 	goto IntimidateActivatesLoopIncrement
@@ -173,7 +173,7 @@ BattleScript_AdrenalineOrbCall:
 
 BattleScript_IntimidatePrevented:
 	pause DELAY_HALFSECOND
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 IntimidateActivatesLoopIncrement:
@@ -418,7 +418,7 @@ MoodySkipString:
 	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_CERTAIN MoodyStatRaiseEnd
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 MoodyStatRaiseEnd:
 	call BattleScript_AbilityPopUpRevert
@@ -429,7 +429,7 @@ BattleScript_MoodyRegular:
 	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_CERTAIN MoodyRegularP2
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	
 MoodyRegularP2:
@@ -692,7 +692,7 @@ WeakArmorModDef:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorModSpd
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	
 WeakArmorModSpd:
@@ -702,7 +702,7 @@ WeakArmorModSpd:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorRevertPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	
 WeakArmorRevertPopUp:
@@ -785,7 +785,7 @@ BattleScript_GooeyActivates:
 	setstatchanger STAT_SPD | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR GooeyReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GooeyReturn
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 
@@ -968,7 +968,7 @@ BattleScript_DefiantCompetitiveCall:
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 
@@ -1050,7 +1050,7 @@ BattleScript_MirrorArmorReflectsStatLoss_StatChange:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MirrorArmorReflectsStatLossAttackerStatCantGoLower
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_MirrorArmorReflectsStatLossReturn:
@@ -1058,7 +1058,7 @@ BattleScript_MirrorArmorReflectsStatLossReturn:
 	return
 
 BattleScript_MirrorArmorReflectsStatLossAttackerStatCantGoLower:
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	setbyte MULTISTRING_CHOOSER 0x3
 	goto BattleScript_MirrorArmorReflectsStatLossReturn
@@ -1093,7 +1093,7 @@ BattleScript_MirrorArmorReflectsIntimidate:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MirrorArmorAttackerStatCantGoLower
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_MirrorArmorAdrenalineOrb
 
@@ -1109,7 +1109,7 @@ BattleScript_MirrorArmorAdrenalineOrb:
 	goto BattleScript_MirrorArmorReflectsIntimidateReturn
 
 BattleScript_MirrorArmorAttackerStatCantGoLower:
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 	setbyte MULTISTRING_CHOOSER 0x3
 	goto BattleScript_MirrorArmorReflectsIntimidateReturn

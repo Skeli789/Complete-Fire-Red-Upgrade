@@ -31,7 +31,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_LeechSeedFree (u8*) 0x81D8E04
 #define BattleScript_SpikesFree (u8*) 0x81D8E0B
 
-#define BattleScript_AllStatsUp (u8*) 0x81D8D55
 #define BattleScript_RapidSpinAway (u8*) 0x81D8DF1
 #define BattleScript_TargetPRLZHeal (u8*) 0x81D9177
 #define BattleScript_AtkDefDown (u8*) 0x81D8F35
@@ -77,6 +76,7 @@ extern const u8 BattleScript_ItemSteal[];
 extern const u8 BattleScript_KnockedOff[];
 extern const u8 BattleScript_AbilityWasSuppressed[];
 extern const u8 BattleScript_StatUpPartner[];
+extern const u8 BattleScript_AllStatsUp[];
 extern const u8 BattleScript_EatEffectBankBerry[];
 extern const u8 BattleScript_SetTerrain[];
 extern const u8 BattleScript_MaxMoveRaiseStatTeam[];

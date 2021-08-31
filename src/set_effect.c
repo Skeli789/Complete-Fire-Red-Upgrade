@@ -672,10 +672,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_ALL_STATS_UP:
 				if (gCurrentMove != MOVE_CLANGOROUS_SOULBLAZE || !gNewBS->secondaryEffectApplied) //Hits two targets but only gets effect once
 				{
-					gNewBS->secondaryEffectApplied = TRUE;
-					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = BattleScript_AllStatsUp;
+					if (ViableMonCountFromBank(FOE(gEffectBank)) == 0) //End of battle so don't bother
+						gBattlescriptCurrInstr++;
+					else
+					{
+						gNewBS->secondaryEffectApplied = TRUE;
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_AllStatsUp;
+					}
 				}
+				else
+					gBattlescriptCurrInstr++;
 				break;
 
 			case MOVE_EFFECT_RAPIDSPIN:
