@@ -665,4 +665,10 @@
 ##Battle BG
 087803A5 3
 
+##Set Pokdex Seen Flags in BFD
+#ifdef BATTLE_TOWER_DEMO
+08013248 00 00 00 00
+08013324 00 00 00 00
+0801365E 00 00 00 00
+#endif
 #endif
