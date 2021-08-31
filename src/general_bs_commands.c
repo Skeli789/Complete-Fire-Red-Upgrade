@@ -4015,6 +4015,12 @@ void atkB0_trysetspikes(void)
 		gBattleStringLoader = (u8*) sEntryHazardsStrings[stringcase];
 }
 
+void atkB1_setforesight(void)
+{
+	gBattleMons[gBattlerTarget].status2 |= STATUS2_FORESIGHT;
+	++gBattlescriptCurrInstr;
+}
+
 void atkB2_trysetperishsong(void)
 {
 	s32 i;

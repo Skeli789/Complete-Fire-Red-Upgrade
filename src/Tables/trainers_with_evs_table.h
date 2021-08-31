@@ -1290,6 +1290,16 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
         .ball = TRAINER_EV_CLASS_BALL,
         .ability = Ability_1,
     },
+	[130] =
+	{	//Anabelle Insane Mawile
+        .nature = NATURE_ADAMANT,
+        .ivs = 31,
+        .hpEv = 172,
+        .atkEv = 252,
+        .spdEv = 84,
+        .ball = TRAINER_EV_CLASS_BALL,
+        .ability = Ability_2, //Initimidate
+    },
 #endif
 };
 #endif

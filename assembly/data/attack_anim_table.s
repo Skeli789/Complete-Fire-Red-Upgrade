@@ -4129,6 +4129,7 @@ ANIM_SNARL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_STRUGGLEBUG:
 	loadparticle ANIM_TAG_MOVEMENT_WAVES
 	loadparticle ANIM_TAG_IMPACT
@@ -4142,14 +4143,17 @@ ANIM_STRUGGLEBUG:
 	soundcomplex 0x9B SOUND_PAN_ATTACKER 0x8 0x2
 	waitanimation
 	playsound2 0x7F SOUND_PAN_TARGET
-	launchtemplate 0x83e7c68 TEMPLATE_TARGET | 2, 0x4 bank_target 0x0 0x0 0x3
-	launchtemplate 0x83e7c68 TEMPLATE_TARGET | 2, 0x4 target_partner 0x0 0x0 0x3
+	launchtemplate STRUGGLE_BUG_HIT TEMPLATE_TARGET | 2, 0x4 bank_target 0x0 0x0 0x3
+	launchtemplate STRUGGLE_BUG_HIT TEMPLATE_TARGET | 2, 0x4 target_partner 0x0 0x0 0x3
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 bank_target 0x3 0x0 0xc 0x4
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 target_partner 0x3 0x0 0xc 0x4 
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x9 0x0 0x0a1f
 	waitanimation
 	pokespritefromBG bank_target
 	endanimation
+
+.align 2
+STRUGGLE_BUG_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_HitSplatOnMonEdgeDoubles
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

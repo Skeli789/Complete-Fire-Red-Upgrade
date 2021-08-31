@@ -2133,7 +2133,7 @@ BS_112_Spikes:
 .global BS_113_Foresight
 BS_113_Foresight:
 	jumpifmove MOVE_MIRACLEEYE MiracleEyeBS
-	
+
 ForesightBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0

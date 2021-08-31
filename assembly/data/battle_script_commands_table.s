@@ -191,7 +191,7 @@ gBattleScriptingCommandsTable:
 .word atkAE_healpartystatus		@healpartystatus
 .word atkAF_cursetarget
 .word atkB0_trysetspikes
-.word 0x802aaa5					@setforesight
+.word atkB1_setforesight
 .word atkB2_trysetperishsong	@setperishsong
 .word atkB3_rolloutdamagecalculation
 .word atkB4_jumpifconfusedandstatmaxed

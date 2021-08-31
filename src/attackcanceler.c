@@ -1278,7 +1278,7 @@ static u8 IsMonDisobedient(void)
 		obedienceLevel = gBattleMons[gBankAttacker].level - obedienceLevel;
 
 		calc = (Random() & 255);
-		if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker, FALSE))
+		if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker, gBankAttacker, FALSE))
 		{
 			// try putting asleep
 			int i;

@@ -450,6 +450,7 @@ void __attribute__((long_call)) TranslateMonSpriteLinearFixedPoint(struct Sprite
 void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
 u32 __attribute__((long_call)) SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
 void __attribute__((long_call)) TryShinyAnimation(u8 bank, struct Pokemon *mon);
+void __attribute__((long_call)) AnimHitSplatOnMonEdge(struct Sprite *sprite);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

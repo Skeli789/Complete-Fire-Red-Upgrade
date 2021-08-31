@@ -758,6 +758,7 @@ AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
 SpriteCB_SpiderWeb = 0x80B42C1 | 1;
 SpriteCB_AnimMissileArcStep = 0x80B4510 | 1;
 UnpackSelectedBattleAnimPalettes = 0x80B9A14 | 1;
+AnimHitSplatOnMonEdge = 0x80BA6C8 | 1;
 SpriteCB_80BA7BC = 0x80BA7BC | 1;
 StartBlendAnimSpriteColor = 0x80BAA4C | 1;
 ChooseMoveUsedParticle = 0x80D86C8 | 1;

@@ -27,7 +27,7 @@ battle_util.c
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 
 static void TryRemoveUnburdenBoost(u8 bank);
-static bool8 CanBeGeneralStatused(u8 bankDef, u8 bankAtk, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil);
+static bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil);
 
 u8 GetBankForBattleScript(u8 caseId)
 {
@@ -1837,7 +1837,7 @@ bool8 DoesSleepClausePrevent(u8 bank)
 	return FALSE;
 }
 
-static bool8 CanBeGeneralStatused(u8 bankDef, u8 bankAtk, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)
+static bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil)
 {
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
@@ -1889,7 +1889,7 @@ bool8 CanBePutToSleep(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 
-	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
+	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
@@ -2046,7 +2046,7 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 
-	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
+	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
@@ -2075,7 +2075,7 @@ bool8 CanBeParalyzed(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 
-	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
+	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
 	if (IsOfType(bankDef, TYPE_ELECTRIC))
@@ -2097,7 +2097,7 @@ bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 
-	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
+	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
 	if (IsOfType(bankAtk, TYPE_FIRE))
@@ -2120,7 +2120,7 @@ bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 
-	if (!CanBeGeneralStatused(bankDef, bankAtk, defAbility, atkAbility, checkFlowerVeil))
+	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
 	if (IsOfType(bankDef, TYPE_ICE))

@@ -1035,7 +1035,7 @@ bank_t LoadBattleAnimTarget(u8 arg)
 	}
 	else
 	{
-		if (gBattleAnimArgs[arg] == ANIM_ATTACKER)
+		if (gBattleAnimArgs[arg] == ANIM_ATTACKER || gBattleAnimArgs[arg] == ANIM_ATK_PARTNER)
 			battler = gBattleAnimAttacker;
 		else
 			battler = gBattleAnimTarget;
@@ -3007,6 +3007,26 @@ void SpriteCB_LeechLifeNeedle(struct Sprite *sprite)
 
 	sprite->callback = StartAnimLinearTranslation;
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+//Creates the hit splat for Struggle Bug
+void SpriteCB_HitSplatOnMonEdgeDoubles(struct Sprite *sprite)
+{	
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		sprite->data[0] = gBattlerSpriteIds[target];
+		sprite->pos1.x = gSprites[sprite->data[0]].pos1.x + gSprites[sprite->data[0]].pos2.x;
+		sprite->pos1.y = gSprites[sprite->data[0]].pos1.y + gSprites[sprite->data[0]].pos2.y;
+		sprite->pos2.x = gBattleAnimArgs[1];
+		sprite->pos2.y = gBattleAnimArgs[2];
+		StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
+		StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+		sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
+	}
 }
 
 //Targeted fire in Doubles for Incinerate
