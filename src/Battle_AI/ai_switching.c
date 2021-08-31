@@ -1491,6 +1491,11 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 		u8 moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
 		LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
 
+		if (IsValidMovePrediction(gActiveBattler, foe1) == MOVE_HEARTSWAP)
+			return FALSE; //Don't switch if going to trade the bad stats away
+		else if (IS_DOUBLE_BATTLE && IsValidMovePrediction(gActiveBattler, foe2) == MOVE_HEARTSWAP)
+			return FALSE; //Don't switch if going to trade the bad stats away
+
 		//Check physical and special moves
 		for (i = 0, hasPhysicalMove = FALSE, hasSpecialMove = FALSE; i < MAX_MON_MOVES; ++i)
 		{

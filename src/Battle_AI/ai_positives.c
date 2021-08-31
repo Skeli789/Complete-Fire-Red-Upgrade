@@ -2221,39 +2221,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case MOVE_HEARTSWAP: ;
-					bool8 hasHigherStat = FALSE;
+					s16 goodToGetRidOf = CountUsefulBoosts(bankDef) + CountUsefulDebuffs(bankAtk);
+					s16 badToGetRidOf = CountUsefulDebuffs(bankDef) + CountUsefulBoosts(bankAtk);
 
-					//Use if the attacker has no buffs and the target has +2 in anything
-					//Basically to prevent set ups
-					for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
-					{
-						if (STAT_STAGE(bankAtk, i) > 7) //Attacker has seriously invested at all
-							break;
-
-						if (STAT_STAGE(bankDef, i) >= 6 + 2) //Target is at a +2 set-up
-							hasHigherStat = TRUE;
-					}
-
-					if (hasHigherStat && i == BATTLE_STATS_NO) //Attacker has no buffs and target has at least one +2 buff
-					{
+					if (goodToGetRidOf - badToGetRidOf >= 2) //At least 2 points of stat stage difference
 						INCREASE_STATUS_VIABILITY(2); //Steal their buff
-						break;
-					}
-
-					hasHigherStat = FALSE;
-
-					//Only use if all target stats are >= attacker stats to prevent infinite loop
-					for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
-					{
-						if (STAT_STAGE(bankDef, i) < STAT_STAGE(bankAtk, i))
-							break;
-
-						if (STAT_STAGE(bankDef, i) > STAT_STAGE(bankAtk, i))
-							hasHigherStat = TRUE;
-					}
-
-					if (hasHigherStat && i == BATTLE_STATS_NO)
-						INCREASE_STATUS_VIABILITY(1);
 					break;
 
 				case MOVE_SPEEDSWAP:

@@ -2631,15 +2631,17 @@ SKIP_CHECK_TARGET:
 						
 						goto AI_SUBSTITUTE_CHECK;
 
-					case MOVE_HEARTSWAP: ;
-						u8 attackerPositiveStages = CountBanksPositiveStatStages(bankAtk);
-						u8 attackerNegativeStages = CountBanksNegativeStatStages(bankAtk);
-						u8 targetPositiveStages = CountBanksPositiveStatStages(bankDef);
-						u8 targetNegativeStages = CountBanksNegativeStatStages(bankDef);
+					case MOVE_HEARTSWAP:
+						if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Not dumb AI
+						{
+							s16 goodToGetRidOf = CountUsefulBoosts(bankDef) + CountUsefulDebuffs(bankAtk);
+							s16 badToGetRidOf = CountUsefulDebuffs(bankDef) + CountUsefulBoosts(bankAtk);
 
-						if (attackerPositiveStages >= targetPositiveStages
-						&&  attackerNegativeStages <= targetNegativeStages)
-							DECREASE_VIABILITY(10);
+							if (goodToGetRidOf < badToGetRidOf) //More stats should be kept than traded
+								DECREASE_VIABILITY(10);
+							else
+								goto AI_SUBSTITUTE_CHECK;
+						}
 						else
 							goto AI_SUBSTITUTE_CHECK;
 						break;
