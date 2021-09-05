@@ -564,11 +564,11 @@ void atk52_switchineffects(void)
 					gNewBS->ai.typeAbsorbSwitchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
 				}
 
-				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gBankSwitching))])) //There was no change on the other side of the field
+				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gActiveBattler))])) //There was no change on the other side of the field
 				{
-					++gNewBS->ai.switchesInARow[gBankSwitching];
-					if (ABILITY(gBankSwitching) == ABILITY_INTIMIDATE) //Don't allow Intimidate cheesing
-						++gNewBS->ai.switchesInARow[gBankSwitching];
+					++gNewBS->ai.switchesInARow[gActiveBattler];
+					if (ABILITY(gActiveBattler) == ABILITY_INTIMIDATE) //Don't allow Intimidate cheesing
+						++gNewBS->ai.switchesInARow[gActiveBattler];
 				}
 			}
 			else //A foe just switched in
@@ -579,6 +579,7 @@ void atk52_switchineffects(void)
 				gNewBS->ai.switchesInARow[bank] = 0; //Using for helping treat AI abuse
 				gNewBS->ai.previousMonIn[bank] = 0xFF;
 				gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
+				
 				if (IS_DOUBLE_BATTLE)
 				{
 					bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
@@ -592,6 +593,9 @@ void atk52_switchineffects(void)
 				gNewBS->revealedEnemyMons |= gBitTable[gBattlerPartyIndexes[gActiveBattler]]; //Add to team preview
 			}
 
+			gNewBS->ai.pivotTo[FOE(gActiveBattler)] = PARTY_SIZE; //Throw the old pivot out the window if the mon to be pivoted against has changed
+			if (IS_DOUBLE_BATTLE)
+				gNewBS->ai.pivotTo[PARTNER(FOE(gActiveBattler))] = PARTY_SIZE;
 			++gNewBS->switchInEffectsState;
 			//Fallthrough
 

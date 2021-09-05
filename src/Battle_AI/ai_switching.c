@@ -2113,8 +2113,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						if (isOneFoeOnField && AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Only smart AI gets this calc to not slow down regular Trainers
 						{
 							u32 firstHitDmg, otherHitsDmg;
-							firstHitDmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
-							otherHitsDmg = firstHitDmg;
+							firstHitDmg = otherHitsDmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, consideredMon, &foeDamageData); //VERY SLOW
 
 							//Check if KO in one shot
 							if (IsAffectedByDisguse(foeDamageData.defAbility, foeDamageData.defSpecies, foeDamageData.moveSplit))

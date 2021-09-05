@@ -991,7 +991,7 @@ struct NewBattleStruct
 		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
 		bool8 goodToPivot;
-		u8 pivotTo[PARTY_SIZE];
+		u8 pivotTo[PARTY_SIZE]; //Should be MAX_BATTLERS_COUNT
 		u8 playerSwitchedCount;
 		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //Used for anti-AI cheesing
 		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
