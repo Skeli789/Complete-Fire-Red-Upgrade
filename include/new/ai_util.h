@@ -40,6 +40,7 @@ bool8 ResistsAllMovesAtFullHealth(const u8 bankAtk, const u8 bankDef);
 void ForceSpecificDamageRecalculation(const u8 bankAtk, const u8 bankDef, const u8 movePos);
 void ForceCompleteDamageRecalculation(const u8 bankAtk);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
+bool8 MonMoveWillHit(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);
 bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankDef);
 bool8 IsUsefulToFlinchTarget(u8 bankDef);
