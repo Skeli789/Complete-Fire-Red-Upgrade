@@ -1976,16 +1976,19 @@ void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 		data->atkStatus3 = 0;
 		data->atkIsGrounded = CheckMonGrounding(monAtk);
 
-		if (monAtk->condition == 0
-		&& gSideTimers[side].tspikesAmount > 0
-		&& data->atkIsGrounded
-		&& !IsMonOfType(monAtk, TYPE_POISON)
-		&& data->atkItemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Affected by hazards
-		&& !BankSideHasSafeguard(bankAtk)
-		&& CanPartyMonBePoisoned(monAtk))
-			data->atkStatus1 = STATUS1_POISON; //Will be poisoned - relevant for Facade
-		else
-			data->atkStatus1 = monAtk->condition;
+		data->atkStatus1 = monAtk->condition;
+		if (data->atkStatus1 == 0)
+		{
+			if (gSideTimers[side].tspikesAmount > 0
+			&& data->atkIsGrounded
+			&& !IsMonOfType(monAtk, TYPE_POISON)
+			&& data->atkItemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Affected by hazards
+			&& !BankSideHasSafeguard(bankAtk)
+			&& CanPartyMonBePoisoned(monAtk))
+				data->atkStatus1 = STATUS1_POISON; //Will be poisoned - relevant for Facade
+			//else //TO-DO Flame Orb when switching in
+			//	data->atkStatus1 = GetMonPotentialStatus1(monAtk, data->atkItemEffect);
+		}
 	}
 	else //Load from bank
 	{

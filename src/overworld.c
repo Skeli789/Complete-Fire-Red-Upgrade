@@ -208,6 +208,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define Tileset_DeharaCity (struct Tileset*) 0x82D4B3C
 	#define Tileset_GurunTown (struct Tileset*) 0x82D4B24
 	#define Tileset_Route17 (struct Tileset*) 0x82D4B9C
+	#define Tileset_MagnoliaTown (struct Tileset*) 0x82D4D04
 	#define Tileset_FlowerParadise (struct Tileset*) 0x8B56314
 	#define Tileset_Forest (struct Tileset*) 0x82D5004
 	#define Tileset_Snow (struct Tileset*) 0x8725AB4
@@ -423,6 +424,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x2FD, METATILE_Route17_LandEdgeBottomLeft, Tileset_Route17},
 	{0x2FE, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
 	{0x2FF, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
+	{0x30D, METATILE_General_TreeTopRight, Tileset_MagnoliaTown},
 
 	{0x1, 0x0, Tileset_Snow},
 	{0x4, 0x2, Tileset_Snow},

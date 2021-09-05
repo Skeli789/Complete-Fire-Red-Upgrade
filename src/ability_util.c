@@ -20,6 +20,7 @@ extern const u8 gText_AbilityName_SolidRock[];
 extern const u8 gText_AbilityName_Turboblaze[];
 extern const u8 gText_AbilityName_Teravolt[];
 extern const u8 gText_AbilityName_ChillingNeigh[];
+extern const u8 gText_AbilityName_HoneyGuard[];
 extern const u8 gText_AbilityName_Libero[];
 extern const u8 gText_AbilityName_TanglingHair[];
 extern const u8 gText_AbilityName_WimpOut[];
@@ -97,6 +98,15 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#ifdef NATIONAL_DEX_GLASTRIER
 				case NATIONAL_DEX_GLASTRIER:
 					return gText_AbilityName_ChillingNeigh;
+				#endif
+			}
+			break;
+		case ABILITY_FURCOAT:
+			switch (dexNum)
+			{
+				#ifdef NATIONAL_DEX_VESPIQUEN
+				case NATIONAL_DEX_VESPIQUEN:
+					return gText_AbilityName_HoneyGuard;
 				#endif
 			}
 			break;

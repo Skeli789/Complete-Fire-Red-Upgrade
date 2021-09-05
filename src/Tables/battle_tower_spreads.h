@@ -22400,7 +22400,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_QUEENLYMAJESTY
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HONEYGUARD
 		.item = ITEM_ROCKY_HELMET,
 		.moves =
 		{
@@ -22426,7 +22426,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_QUEENLYMAJESTY
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_HONEYGUARD
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -22452,7 +22452,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 252,
 		.spdEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.ability = FRONTIER_ABILITY_2, //ABILITY_QUEENLYMAJESTY
 		.item = ITEM_THROAT_SPRAY,
 		.moves =
 		{
@@ -22478,7 +22478,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_QUEENLYMAJESTY
+		.ability = FRONTIER_ABILITY_2, //ABILITY_QUEENLYMAJESTY
 		.item = ITEM_GHOSTIUM_Z,
 		.moves =
 		{

@@ -25,6 +25,7 @@ void __attribute__((long_call)) PlayCollisionSoundIfNotFacingWarp(u8 a);
 void __attribute__((long_call)) HandleEnforcedLookDirectionOnPlayerStopMoving(void);
 void __attribute__((long_call)) StopPlayerAvatar(void);
 void __attribute__((long_call)) SetPlayerAvatarFieldMove(void);
+void __attribute__((long_call)) PlayerFaceDirection(u8 direction);
 
 //In Engine
 u16 GetPlayerAvatarGraphicsIdByStateIdAndGender(u8 state, u8 gender);

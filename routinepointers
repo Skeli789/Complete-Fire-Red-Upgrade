@@ -266,4 +266,6 @@ FieldUseFunc_AbilityCapsule 887CA9C
 #ifdef UNBOUND
 CB2_NewGame 812EB54
 FieldUseFunc_VsSeeker 887A054
+CB2_PartyMenuFromField 801D7FC
+CB2_ItemMenuFromField 801D800
 #endif

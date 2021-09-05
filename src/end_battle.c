@@ -671,19 +671,21 @@ static void RecalcAllStats(void)
 {
 	for (int i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
 			CalculateMonStats(&gPlayerParty[i]); //Only recalc Pokemon that need to be recalced
 	}
 }
 
 static void BringBackTheDead(void)
-{ //Used after Multi Battles that you lost, but your partner won
+{
+	//Used after Multi Battles that you lost, but your partner won
 	if (ViableMonCount(gPlayerParty) == 0)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (gPlayerParty[i].species != 0 && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0))
+			u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
 			{
 				gPlayerParty[i].hp = 1;
 				break;

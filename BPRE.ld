@@ -1089,6 +1089,7 @@ PlayerGoSpeed1 = 0x805C104 | 1;
 PlayerGoSpeed2 = 0x805C11C | 1;
 PlayerRideWaterCurrent = 0x805C14C | 1;
 PlayerGoSpeed4 = 0x805C164 | 1;
+PlayerFaceDirection = 0x805C1F4 | 1;
 HandleEnforcedLookDirectionOnPlayerStopMoving = 0x805C270 | 1;
 PlayCollisionSoundIfNotFacingWarp = 0x805C438 | 1;
 GetXYCoordsOneStepInFrontOfPlayer = 0x805C4F4 | 1;
