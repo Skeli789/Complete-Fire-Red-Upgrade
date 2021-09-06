@@ -1559,6 +1559,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case ABILITY_QUEENLYMAJESTY: //Cannot use
 					#endif
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0
+						&& !gSpecialMoveFlags[move].gSpecialWholeFieldMoves
+						&& !(gBattleMoves[move].target & MOVE_TARGET_OPPONENTS_FIELD) //Spikes are never affected
 						&& (IS_SINGLE_BATTLE || bank != PARTNER(gBankAttacker))) //Partner can still hit
 							effect = 2;
 						break;

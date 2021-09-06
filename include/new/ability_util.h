@@ -30,6 +30,7 @@ bool8 IsHPAbsorptionAbility(u8 ability);
 bool8 IsElectricAbsorptionAblity(u8 ability);
 bool8 IsPlusMinusAbility(u8 ability);
 bool8 IsMultiscaleAbility(u8 ability);
+bool8 IsPriorityBlockingAbility(u8 ability);
 bool8 IsUnnerveAbility(u8 ability);
 bool8 UnnerveOnOpposingField(u8 bank);
 bool8 AbilityIncreasesWildItemChance(u8 ability);

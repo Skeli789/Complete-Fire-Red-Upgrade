@@ -925,6 +925,8 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& gBankAttacker != gBankTarget
 			&& (IS_SINGLE_BATTLE || gBankTarget != PARTNER(gBankAttacker)) //Can still hit partner
 			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
+			&& !gSpecialMoveFlags[gCurrentMove].gSpecialWholeFieldMoves
+			&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD) //Spikes are never affected
 			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
 			{

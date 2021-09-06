@@ -359,8 +359,16 @@ BattleScript_FlowerShieldCantRaiseStats:
 	goto BattleScript_FlowerShieldLoop
 
 BattleScript_FlowerShieldDidntWork:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 BattleScript_FlowerShieldDidntWork_ShowAbility
 	printfromtable gFlowerShieldStringIds
 	waitmessage DELAY_1SECOND
+	goto BattleScript_FlowerShieldLoop
+
+BattleScript_FlowerShieldDidntWork_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BattleScript_FlowerShieldLoop
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3027,7 +3035,7 @@ BS_SecondTurnSemiInvulnerable:
 	setbyte ANIM_TURN, 0x1
 	clearstatus BANK_ATTACKER
 	orword HIT_MARKER HITMARKER_NO_PPDEDUCT
-	jumpifmove MOVE_SKYDROP SkyDropDropBS
+	jumpifmove MOVE_SKYDROP SkyDropDropTurn2
 	jumpifnotmove MOVE_BOUNCE BS_SemiInvulnerableTryHit
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 
@@ -4182,8 +4190,16 @@ RototillerStatsWontGoHigher:
 	goto BattleScript_RototillerLoop
 
 BattleScript_RototillerDidntWork:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 4 BattleScript_RototillerDidntWork_ShowAbility
 	printfromtable gFlowerShieldStringIds
 	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+BattleScript_RototillerDidntWork_ShowAbility:
+	call BattleScript_AbilityPopUp
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BattleScript_RototillerLoop
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

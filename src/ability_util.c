@@ -389,6 +389,20 @@ bool8 IsMultiscaleAbility(u8 ability)
 	}
 }
 
+bool8 IsPriorityBlockingAbility(u8 ability)
+{
+	switch (ability)
+	{
+		case ABILITY_DAZZLING:
+		#ifdef ABILITY_QUEENLYMAJESTY
+		case ABILITY_QUEENLYMAJESTY:
+		#endif
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 bool8 IsUnnerveAbility(u8 ability)
 {
 	return ability == ABILITY_UNNERVE

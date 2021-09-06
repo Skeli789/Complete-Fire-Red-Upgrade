@@ -15,6 +15,7 @@
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_terrain.h"
@@ -4025,10 +4026,14 @@ void atkB2_trysetperishsong(void)
 {
 	s32 i;
 	s32 notAffectedCount = 0;
+	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
+	bool8 defAbilityBlocksPriority = IsPriorityBlockingAbility(ABILITY(gBankTarget));
 
 	for (i = 0; i < gBattlersCount; ++i)
 	{
-		if (gStatuses3[i] & STATUS3_PERISH_SONG || ABILITY(i) == ABILITY_SOUNDPROOF)
+		if (gStatuses3[i] & STATUS3_PERISH_SONG
+		|| ABILITY(i) == ABILITY_SOUNDPROOF
+		|| (priority > 0 && i != gBankAttacker && ((gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i)) || defAbilityBlocksPriority))) //Not affected by priority moves
 		{
 			notAffectedCount++;
 		}

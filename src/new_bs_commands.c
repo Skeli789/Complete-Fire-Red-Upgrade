@@ -5,9 +5,11 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/attackcanceler_battle_scripts.h"
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/battle_script_util.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
@@ -802,6 +804,8 @@ const u16 gFlowerShieldStringIds[] =
 	STRINGID_PKMNPROTECTEDITSELF,
 	STRINGID_ITDOESNTAFFECT,
 	STRINGID_STATSWONTINCREASE2,
+	STRINGID_ITDOESNTAFFECT, //Protect by Ability - don't change this table index!
+	0x184, //Protected by Psychic Terrain
 };
 
 //flowershieldlooper PLUS_MINUS SUCCESS_ADDRESS FAIL_ADDRESS
@@ -809,6 +813,7 @@ void atkFF1F_flowershieldlooper(void)
 {
 	bool8 plusMinus = gBattlescriptCurrInstr[1];
 	u8 battlerCount = (plusMinus) ? gBattlersCount / 2 : gBattlersCount;
+	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
 
 	for (; gBattleCommunication[0] < battlerCount; ++gBattleCommunication[0])
 	{
@@ -842,6 +847,18 @@ void atkFF1F_flowershieldlooper(void)
 			else if (BATTLER_SEMI_INVULNERABLE(bank) && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(bank) != ABILITY_NOGUARD)
 			{
 				gBattleCommunication[MULTISTRING_CHOOSER] = 0; //Avoided attack
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+			}
+			else if (priority && gBankAttacker != bank && gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(bank))
+			{
+				gBattleStringLoader = PsychicTerrainAttackCancelString;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 5; //Protected by Psychic Terrain
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+			}
+			else if (priority && gBankAttacker != bank && IsPriorityBlockingAbility(ABILITY(bank)))
+			{
+				gBattleScripting.bank = bank;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4; //Protected by Ability
 				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
 			}
 			else if ((!plusMinus && IsOfType(bank, TYPE_GRASS))

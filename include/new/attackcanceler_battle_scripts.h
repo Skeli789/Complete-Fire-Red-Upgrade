@@ -59,3 +59,6 @@ extern const u8 BattleScript_RaidBattleStatNullification[];
 #define BattleScript_IgnoresAndUsesRandomMove (u8*) 0x81D94EA
 #define BattleScript_IgnoresAndFallsAsleep (u8*) 0x81D9504
 #define BattleScript_IgnoresAndHitsItself (u8*) 0x81D951B
+
+//Strings
+extern const u8 PsychicTerrainAttackCancelString[];
