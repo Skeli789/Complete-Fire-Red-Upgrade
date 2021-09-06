@@ -927,7 +927,6 @@ static const struct RockClimbRide sRockClimbMovement[] =
 #define tDestX       data[1]
 #define tDestY       data[2]
 #define tMovementDir data[3]
-#define tOnBike      data[14]
 #define tMonId       data[15]
 
 static u8 CreateRockClimbBlob(void)
@@ -1011,9 +1010,6 @@ static bool8 RockClimb_Init(struct Task *task, struct EventObject* eventObject)
 	gPlayerAvatar->preventStep = TRUE;
 	PlayerGetDestCoords(&task->tDestX, &task->tDestY);
 	MoveCoords(eventObject->movementDirection, &task->tDestX, &task->tDestY);
-
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
-		task->tOnBike = TRUE;
 
 	#ifdef FLAG_BOUGHT_ADM
 	if (FlagGet(FLAG_BOUGHT_ADM))
@@ -1153,8 +1149,6 @@ static bool8 RockClimb_ContinueRideOrEnd(struct Task *task, struct EventObject *
 	}
 
 	ScriptContext2_Enable();
-	gPlayerAvatar->flags &= ~PLAYER_AVATAR_FLAG_SURFING;
-	gPlayerAvatar->flags |= PLAYER_AVATAR_FLAG_ON_FOOT;
 	task->tState++;
 	return FALSE;
 }
@@ -1175,16 +1169,14 @@ static bool8 RockClimb_StopRockClimbInit(struct Task *task, struct EventObject *
 	return TRUE;
 }
 
+extern u16 GetPlayerAvatarGraphicsIdByCurrentState(void);
 static bool8 RockClimb_WaitStopRockClimb(unusedArg struct Task *task, struct EventObject *eventObject)
 {
 	if (EventObjectClearHeldMovementIfFinished(eventObject))
 	{
-		u8 avatarState = (task->tOnBike) ? PLAYER_AVATAR_STATE_BIKE : PLAYER_AVATAR_STATE_NORMAL;
-
-		EventObjectSetGraphicsId(eventObject, GetPlayerAvatarGraphicsIdByStateId(avatarState));
-		EventObjectSetHeldMovement(eventObject, GetFaceDirectionMovementAction(eventObject->facingDirection));
+		EventObjectSetGraphicsId(eventObject, GetPlayerAvatarGraphicsIdByCurrentState());
 		gPlayerAvatar->preventStep = FALSE;
-		ScriptContext2_Disable();
+		EnableBothScriptContexts();
 		DestroySprite(&gSprites[eventObject->fieldEffectSpriteId]);
 		FieldEffectActiveListRemove(FLDEFF_USE_ROCK_CLIMB);
 		eventObject->triggerGroundEffectsOnMove = TRUE;
