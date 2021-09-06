@@ -499,17 +499,16 @@ void atk51_switchhandleorder(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 			{
-				gBattleStruct->field_60[gActiveBattler][0] &= 0xF;
-				gBattleStruct->field_60[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
-				gBattleStruct->field_60[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] &= 0xF;
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
 
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				SwitchPartyOrderInGameMulti(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
-
 			else
 				SwitchPartyOrder(gActiveBattler);
 
@@ -1191,20 +1190,18 @@ static bool8 TryDoForceSwitchOut(void)
 }
 
 static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
-{	//0x8013F6C in FR
+{
 	if (SIDE(bank) != B_SIDE_OPPONENT)
 	{
 		s32 i;
 
-		// gBattleStruct->field_60[0][i]
-
-		for (i = 0; i < 3; i++)
-			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattlePartyCurrentOrder[i] = gBattleStruct->battlerPartyOrders[0][i];
 
 		SwitchPartyMonSlots(GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]), GetBattlePartyIdFromPartyId(monToSwitchIntoId));
 
-		for (i = 0; i < 3; i++)
-			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattleStruct->battlerPartyOrders[0][i] = gBattlePartyCurrentOrder[i];
 	}
 }
 
@@ -1313,32 +1310,34 @@ void PartyMenuSwitchingUpdate(void)
 
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 
-	if (!CanBeTrapped(gActiveBattler))
+	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET) //Being Ghost doesn't get you out of this
+		goto TRAPPED;
+	else if (!CanBeTrapped(gActiveBattler))
 		goto SKIP_SWITCH_BLOCKING_CHECK;
-
-	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
-	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
+	else if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
+	|| (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
 	|| IsFairyLockActive())
 	{
-		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+		TRAPPED:
+		EmitChoosePokemon(0, PARTY_CANT_SWITCH, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
 	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && IsTrappedByAbility(gActiveBattler, ABILITY_SHADOWTAG))
 		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && IsTrappedByAbility(gActiveBattler, ABILITY_ARENATRAP))
 		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsTrappedByAbility(gActiveBattler, ABILITY_MAGNETPULL)))
 	{
-		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
+		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
 	else
 	{
-	SKIP_SWITCH_BLOCKING_CHECK:
+		SKIP_SWITCH_BLOCKING_CHECK:
 		if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 		else if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT
 		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 		else
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
 
 	MarkBufferBankForExecution(gActiveBattler);

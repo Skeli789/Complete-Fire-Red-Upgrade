@@ -2288,6 +2288,9 @@ u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
 
 bool8 IsTrapped(u8 bank, bool8 switching)
 {
+	if (gStatuses3[bank] & (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET))
+		return TRUE; //Can never switch out when in the air
+
 	if (!CanBeTrapped(bank)
 	|| (!switching && ABILITY(bank) == ABILITY_RUNAWAY)
 	|| (!switching && ITEM_EFFECT(bank) == ITEM_EFFECT_CAN_ALWAYS_RUN))
@@ -2298,7 +2301,7 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_SHADOWTAG) && IsTrappedByAbility(bank, ABILITY_SHADOWTAG))
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && IsTrappedByAbility(bank, ABILITY_ARENATRAP))
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsTrappedByAbility(bank, ABILITY_MAGNETPULL))
-		|| gStatuses3[bank] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
+		|| (gStatuses3[bank] & STATUS3_SKY_DROP_TARGET)
 		|| IsFairyLockActive())
 			return TRUE;
 	}

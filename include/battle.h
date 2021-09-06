@@ -642,7 +642,7 @@ struct BattleStruct
 	bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
 	u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
 	u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
-	u8 field_60[4][3];
+	u8 battlerPartyOrders[MAX_BATTLERS_COUNT][3];
 	u8 runTries;
 	u8 caughtMonNick[11]; //0x200007D
 	u8 field_78;
