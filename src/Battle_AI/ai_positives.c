@@ -2605,20 +2605,17 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
-		case EFFECT_LASTRESORT_SKYDROP:
-			if (move == MOVE_SKYDROP)
+		case EFFECT_SKY_DROP:
+			if (IS_SINGLE_BATTLE)
 			{
-				if (IS_SINGLE_BATTLE)
-				{
-					if (IsClassSweeper(class)
-					&& IsTakingSecondaryDamage(bankDef))
-						INCREASE_VIABILITY(3); //Past strongest move
-				}
-				else //Double Battle
-				{
-					if (IsTakingSecondaryDamage(bankDef))
-						IncreaseDoublesDamageViabilityToScore(&viability, class, 5, bankAtk, bankDef);
-				}
+				if (IsClassSweeper(class)
+				&& IsTakingSecondaryDamage(bankDef))
+					INCREASE_VIABILITY(3); //Past strongest move
+			}
+			else //Double Battle
+			{
+				if (IsTakingSecondaryDamage(bankDef))
+					IncreaseDoublesDamageViabilityToScore(&viability, class, 5, bankAtk, bankDef);
 			}
 			break;
 	}

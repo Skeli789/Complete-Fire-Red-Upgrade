@@ -5466,50 +5466,11 @@ BS_241_FlameBurst:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_242_LastResortSkyDrop
-BS_242_LastResortSkyDrop:
-	jumpifmove MOVE_LASTRESORT LastResortBS
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS SkyDropDropBS
-	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropBS
-	
-	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
-	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
-	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
-	ppreduce
-	attackanimation
-	waitanimation
-	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
-	setsemiinvulnerablebit
-	setword BATTLE_STRING_LOADER SkyDropUpString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	orword HIT_MARKER HITMARKER_CHARGING
-	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffectprimary
-	goto BS_MOVE_END
-
-SkyDropDropBS:
-	attackcanceler
-	attackstring
-	pause DELAY_HALFSECOND
-	setmoveeffect MOVE_EFFECT_CHARGING
-	setbyte ANIM_TURN 0x1
-	clearstatus BANK_ATTACKER
-	clearsemiinvulnerablebit
-	makevisible BANK_TARGET
-	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
-	setword BATTLE_STRING_LOADER FreedFromSkyDropString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	goto BS_HIT_FROM_DAMAGE_CALC
-	
-LastResortBS:
+.global BS_242_LastResort
+BS_242_LastResort:
 	attackcanceler
 	callasm LastResortFunc
-	goto 0x81D6927
+	goto BS_STANDARD_HIT + 1
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5565,9 +5526,42 @@ BS_245_Poltergeist:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_246_Blank
-BS_246_Blank:
-	goto BS_STANDARD_HIT
+.global BS_246_SkyDrop
+BS_246_SkyDrop:
+	attackcanceler
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS SkyDropDropTurn2
+	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropTurn2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
+	setsemiinvulnerablebit
+	setword BATTLE_STRING_LOADER SkyDropUpString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	orword HIT_MARKER HITMARKER_CHARGING
+	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
+	seteffectprimary
+	goto BS_MOVE_END
+
+SkyDropDropTurn2:
+	attackstring
+	pause DELAY_HALFSECOND
+	setmoveeffect MOVE_EFFECT_CHARGING
+	setbyte ANIM_TURN 0x1
+	clearstatus BANK_ATTACKER
+	clearsemiinvulnerablebit
+	makevisible BANK_TARGET
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	setword BATTLE_STRING_LOADER FreedFromSkyDropString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

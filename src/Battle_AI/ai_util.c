@@ -4881,7 +4881,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				case EFFECT_SKY_ATTACK:
 				case EFFECT_SKULL_BASH:
 				case EFFECT_SOLARBEAM:
-				case EFFECT_LASTRESORT_SKYDROP:
+				case EFFECT_SKY_DROP:
 					return TRUE;
 			}
 

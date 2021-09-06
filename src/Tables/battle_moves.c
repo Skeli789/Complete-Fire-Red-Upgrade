@@ -10928,7 +10928,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_LASTRESORT] =
 	{
-		.effect = EFFECT_LASTRESORT_SKYDROP,
+		.effect = EFFECT_LAST_RESORT,
 		.power = 140,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -10944,7 +10944,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SKYDROP] =
 	{
-		.effect = EFFECT_LASTRESORT_SKYDROP,
+		.effect = EFFECT_SKY_DROP,
 		.power = 60,
 		.type = TYPE_FLYING,
 		.accuracy = 100,

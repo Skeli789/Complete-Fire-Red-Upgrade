@@ -3082,23 +3082,22 @@ SKIP_CHECK_TARGET:
 				DECREASE_VIABILITY(10);
 			break;
 
-		case EFFECT_LASTRESORT_SKYDROP:
-			switch (move) {
-				case MOVE_LASTRESORT:
-					if (!CanUseLastResort(bankAtk))
-						DECREASE_VIABILITY(10);
-					else
-						goto AI_STANDARD_DAMAGE;
-					break;
+		case EFFECT_LAST_RESORT:
+			if (!CanUseLastResort(bankAtk))
+				DECREASE_VIABILITY(10);
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
 
-			default: //Sky Drop
-				if (WillFaintFromWeatherSoon(bankAtk)
-				||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
-				||  GetActualSpeciesWeight(data->defSpecies, data->defAbility, data->defItemEffect, bankDef, TRUE) >= 2000) //200.0 kg
-					DECREASE_VIABILITY(10);
-				else
-					goto AI_STANDARD_DAMAGE;
-			}
+		case EFFECT_SKY_DROP:
+			if (WillFaintFromWeatherSoon(bankAtk)
+			||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
+			||  GetActualSpeciesWeight(data->defSpecies, data->defAbility, data->defItemEffect, bankDef, TRUE) >= 2000) //200.0 kg
+				DECREASE_VIABILITY(10);
+			else if (PARTNER_MOVE_EFFECT_IS_SAME)
+				DECREASE_VIABILITY(10); //Don't try to pick up the same target if it won't be there
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 
 		case EFFECT_DAMAGE_SET_TERRAIN:

@@ -765,9 +765,11 @@ bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
 
 bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
 {
-	return move == MOVE_SKYDROP
-		|| move == MOVE_SNIPESHOT
-//		|| atkAbility == ABILITY_PROPELLERTAIL
+	return move == MOVE_SNIPESHOT
+		|| gBattleMoves[move].effect == EFFECT_SKY_DROP
+		#ifdef ABILITY_PROPELLERTAIL
+		|| atkAbility == ABILITY_PROPELLERTAIL
+		#endif
 		|| atkAbility == ABILITY_STALWART;
 }
 
@@ -1376,7 +1378,7 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
 {
 	return CheckSoundMove(move)
-		|| (BypassesScreens(atkAbility) && move != MOVE_TRANSFORM && move != MOVE_SKYDROP)
+		|| (BypassesScreens(atkAbility) && move != MOVE_TRANSFORM && gBattleMoves[move].effect != EFFECT_SKY_DROP)
 		|| gSpecialMoveFlags[move].gSubstituteBypassMoves;
 }
 
@@ -1532,9 +1534,9 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
 	||  moveEffect == EFFECT_SKY_ATTACK
 	||  moveEffect == EFFECT_SOLARBEAM
 	||  moveEffect == EFFECT_SEMI_INVULNERABLE
+	||  moveEffect == EFFECT_SKY_DROP
 	||  moveEffect == EFFECT_BIDE
-	||	move == MOVE_GEOMANCY
-	||  move == MOVE_SKYDROP)
+	||	move == MOVE_GEOMANCY)
 	{
 		if (gBattleMons[bank].status2 & STATUS2_MULTIPLETURNS)
 			return 2;

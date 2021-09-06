@@ -752,7 +752,7 @@ void atk06_typecalc(void)
 				else
 					goto RE_ENTER_TYPE_CHECK;
 			}
-			else if ((gCurrentMove == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+			else if ((gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
 			|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, bankDef)))
 			{
 				gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -853,7 +853,7 @@ void atk4A_typecalc2(void)
 		else
 			goto RE_ENTER_TYPE_CHECK_2;
 	}
-	else if ((gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING))
+	else if ((gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP && IsOfType(gBankTarget, TYPE_FLYING))
 	|| (gCurrentMove == MOVE_SYNCHRONOISE && WillSyncronoiseFail(gBankAttacker, gBankTarget)))
 	{
 		gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -943,7 +943,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if ((move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && IsOfType(bankDef, TYPE_FLYING))
 	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAndBank(atkType1, atkType2, atkType3, bankDef)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1015,7 +1015,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
 	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd2DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1098,7 +1098,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
+	else if ((gBattleMoves[move].effect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 	|| (move == MOVE_SYNCHRONOISE && WillSyncronoiseFailByAttackerTypesAnd3DefTypesAndItemEffect(atkType1, atkType2, atkType3, defType1, defType2, defType3, defEffect)))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1130,7 +1130,7 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	if (move == MOVE_STRUGGLE)
 		return 0;
 
-	u8 moveType;
+	u8 moveType, moveEffect;
 	u8 defAbility;
 	u8 defEffect = GetRecordedItemEffect(bankDef);
 	u8 atkAbility, defType1, defType2, defType3;
@@ -1138,6 +1138,7 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 
 	atkAbility = ABILITY(bankAtk);
 	moveType = GetMoveTypeSpecial(bankAtk, move);
+	moveEffect = gBattleMoves[move].effect;
 
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
 	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
@@ -1183,26 +1184,26 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if (gBattleMoves[move].effect == EFFECT_PARALYZE && (defType1 == TYPE_ELECTRIC || defType2 == TYPE_ELECTRIC || defType3 == TYPE_ELECTRIC))
+	else if (moveEffect == EFFECT_PARALYZE && (defType1 == TYPE_ELECTRIC || defType2 == TYPE_ELECTRIC || defType3 == TYPE_ELECTRIC))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if (gBattleMoves[move].effect == EFFECT_WILL_O_WISP && (defType1 == TYPE_FIRE || defType2 == TYPE_FIRE || defType3 == TYPE_FIRE))
+	else if (moveEffect == EFFECT_WILL_O_WISP && (defType1 == TYPE_FIRE || defType2 == TYPE_FIRE || defType3 == TYPE_FIRE))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if ((gBattleMoves[move].effect == EFFECT_POISON || gBattleMoves[move].effect == EFFECT_TOXIC)
+	else if ((moveEffect == EFFECT_POISON || moveEffect == EFFECT_TOXIC)
 	&& atkAbility != ABILITY_CORROSION
 	&& (defType1 == TYPE_POISON || defType2 == TYPE_POISON || defType3 == TYPE_POISON
 	 || defType1 == TYPE_STEEL || defType2 == TYPE_STEEL || defType3 == TYPE_STEEL))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if (gBattleMoves[move].effect == EFFECT_LEECH_SEED && (defType1 == TYPE_GRASS || defType2 == TYPE_GRASS || defType3 == TYPE_GRASS))
+	else if (moveEffect == EFFECT_LEECH_SEED && (defType1 == TYPE_GRASS || defType2 == TYPE_GRASS || defType3 == TYPE_GRASS))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if ((move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING)))
+	else if (moveEffect == EFFECT_SKY_DROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
@@ -1223,7 +1224,7 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	}
 
 	if (CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance)
-	|| gBattleMoves[move].effect == EFFECT_0HKO)
+	|| moveEffect == EFFECT_0HKO)
 		flags &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE); //These moves can't be super/not very effective
 
 	//Wonder Guard Check

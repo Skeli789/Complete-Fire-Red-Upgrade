@@ -340,7 +340,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 //From here on are always done in CMD49
 		case ATK49_UNDO_SKY_DROP: //The attacker can no longer attack while in the air due to paralysis etc.
-			if (gCurrentMove == MOVE_SKYDROP
+			if (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_DROP
 			&& gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE
 			&& gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
 			{

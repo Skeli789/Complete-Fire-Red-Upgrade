@@ -1485,7 +1485,7 @@ bool8 CanUseLastResort(u8 bank)
 	{
 		u16 move = gBattleMons[bank].moves[i];
 
-		if (move == MOVE_LASTRESORT)
+		if (gBattleMoves[move].effect == EFFECT_LAST_RESORT)
 			knowsLastResort = TRUE; //Last Resort can't be called from other moves
 
 		else if (!(gNewBS->usedMoveIndices[bank] & gBitTable[i]))
