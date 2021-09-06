@@ -1390,22 +1390,22 @@ Sorry! I went too far. Do you\nrequire immediate hospitalization?
 
 //Frontier Brains
 #org @sFrontierText_Pat_PlayerWin
-Amazing!\pYou still won, even though the\nPokemon you used were not your own!
+Amazing!\nAgainst all odds, you triumphed!
 
 #org @sFrontierText_Pat_PlayerLose
-It's harder to win when you're not\nused to your Pok\emon, eh?
+Ah, pity!\pTighten your bonds, and come\nchallenge me again!
 
 #org @sFrontierText_Pablo_PlayerWin
-Huh.\pWell whadya know[.]\pSeems like your team is pretty well\nthought out.
+Huh, how about that.\pGuess you do know what you're doing\nafter all.
 
 #org @sFrontierText_Pablo_PlayerLose
-Why am I not surprised[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
+How boring[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
 
 #org @sFrontierText_Paula_PlayerWin
 Bravo! Bravo! Wonderful!\nYou're a true rising star!
 
 #org @sFrontierText_Paula_PlayerLose
-Well, the show must go on\pEven if our young star is not at\nthe forefront[.]
+Ah, too bad!\pLadies and gentlemen, boys and\ngirls, I hope you enjoyed the show!
 
 //Special Trainers
 
