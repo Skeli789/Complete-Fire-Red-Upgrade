@@ -602,11 +602,24 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 								else if (!bestMoveStatRecoil && currMoveStatRecoil)
 									continue; //Check the next move - this move is out
 							}
-						}
 
-						//Pick a move at random.
-						if (Random() & 1)
-							bestMove = currMove;
+							//Pick a move at random
+							if (Random() & 1)
+								bestMove = currMove;
+						}
+						else //Will get locked by using this move
+						{
+							u16 bestAcc = (MoveWillHit(bestMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(bestMove, bankAtk, bankDef);
+							u16 currAcc = (MoveWillHit(currMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(currMove, bankAtk, bankDef);
+
+							if (currAcc == bestAcc || currAcc >= 100)
+							{
+								if (gBattleMoves[currMove].power > gBattleMoves[bestMove].power) //Same accuracy so use move with higher power
+									bestMove = currMove;
+							}
+							else if (currAcc > bestAcc && bestAcc < 100)
+								bestMove = currMove; //Use the move with higher accuracy
+						}
 					}
 				}
 			}
@@ -1462,11 +1475,16 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 								else if (!strongestMoveStatRecoil && currMoveStatRecoil)
 									continue; //Check the next move - this move is out
 							}
-						}
 
-						//Pick a move at random.
-						if (Random() & 1)
-							strongestMove = move;
+							//Finally pick a move at random.
+							if (Random() & 1)
+								strongestMove = move;
+						}
+						else //Will be locked into this move
+						{
+							if (gBattleMoves[move].power > gBattleMoves[strongestMove].power)
+								strongestMove = move; //Same accuracy so use move with higher power (probably will do more in the long run)
+						}
 					}
 				}
 			}
