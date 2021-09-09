@@ -37,7 +37,6 @@ struct SpecialMoveFlags
 	bool8 gHighCriticalChanceMoves : 1;
 	bool8 gAlwaysCriticalMoves : 1;
 	bool8 gMovesThatCallOtherMoves : 1;
-	bool8 gMovesThatRequireRecharging : 1;
 	bool8 gAlwaysHitWhenMinimizedMoves : 1;
 	bool8 gMoldBreakerMoves : 1;
 	bool8 gFlinchChanceMoves : 1;

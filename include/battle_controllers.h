@@ -116,6 +116,7 @@ struct ChooseMoveStruct
 	u8 zMoveResults[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
 	u16 movePowers[MAX_MON_MOVES];
 	u16 moveAcc[MAX_MON_MOVES];
+	bool8 makesContact[MAX_MON_MOVES];
 	u8 monType3;
 	bool8 canMegaEvolve;
 	u8 megaVariance;

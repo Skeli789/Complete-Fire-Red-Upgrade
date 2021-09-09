@@ -3000,8 +3000,8 @@ SKIP_CHECK_TARGET:
 					if (instructedMove == MOVE_NONE
 					||  IsDynamaxed(bankDef)
 					||  gSpecialMoveFlags[instructedMove].gInstructBannedMoves
-					||  gSpecialMoveFlags[instructedMove].gMovesThatRequireRecharging
 					||  gSpecialMoveFlags[instructedMove].gMovesThatCallOtherMoves
+					||  gBattleMoves[instructedMove].effect == EFFECT_RECHARGE
 					|| (IsZMove(instructedMove))
 					|| (gLockedMoves[bankDef] != 0 && gLockedMoves[bankDef] != 0xFFFF)
 					||  gBattleMons[bankDef].status2 & STATUS2_MULTIPLETURNS

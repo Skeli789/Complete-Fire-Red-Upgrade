@@ -1300,6 +1300,16 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
         .ball = TRAINER_EV_CLASS_BALL,
         .ability = Ability_2, //Initimidate
     },
+	[131] =
+	{	//Marlon Aegislash
+        .nature = NATURE_BRAVE,
+        .ivs = 31,
+        .hpEv = 252,
+        .atkEv = 128,
+        .spAtkEv = 128,
+        .ball = TRAINER_EV_CLASS_BALL,
+        .ability = Ability_1, //Stance Change
+    },
 #endif
 };
 #endif

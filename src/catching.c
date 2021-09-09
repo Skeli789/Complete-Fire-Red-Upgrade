@@ -588,6 +588,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 
 void atkF0_givecaughtmon(void)
 {
+	u32 none = 0;
 	struct Pokemon* mon = LoadTargetPartyData();
 
 	if (IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY) && gNewBS->dynamaxData.backupRaidMonItem != ITEM_NONE)
@@ -595,6 +596,10 @@ void atkF0_givecaughtmon(void)
 		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
 		gNewBS->dynamaxData.backupRaidMonItem = ITEM_NONE;
 	}
+
+	#ifdef UNBOUND
+	SetMonData(mon, MON_DATA_PP_BONUSES, &none); //In case it was set for a boss battle
+	#endif
 
 	if (GiveMonToPlayer(mon) != MON_GIVEN_TO_PARTY)
 	{

@@ -1164,8 +1164,8 @@ void TryExecuteInstruct(void)
 	u16 move = gLastPrintedMoves[gBankTarget];
 
 	if (gSpecialMoveFlags[move].gInstructBannedMoves
-	||  gSpecialMoveFlags[move].gMovesThatRequireRecharging
 	||  gSpecialMoveFlags[move].gMovesThatCallOtherMoves
+	|| gBattleMoves[move].effect == EFFECT_RECHARGE
 	|| IsZMove(move)
 	|| IsAnyMaxMove(move)
 	|| IsDynamaxed(gBankTarget)

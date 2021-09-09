@@ -470,7 +470,12 @@ bool8 CanMonNeverMakeContact(struct Pokemon* mon)
 bool8 CanNeverMakeContactByAbilityItemEffect(u8 ability, u8 itemEffect)
 {
 	return ability == ABILITY_LONGREACH
-		|| itemEffect == ITEM_EFFECT_PROTECTIVE_PADS;
+		|| CanNeverMakeContactByItemEffect(itemEffect);
+}
+
+bool8 CanNeverMakeContactByItemEffect(u8 itemEffect)
+{
+	return itemEffect == ITEM_EFFECT_PROTECTIVE_PADS;
 }
 
 bool8 CheckHealingMove(move_t move)

@@ -49,6 +49,7 @@ bool8 CheckContactByMon(u16 move, struct Pokemon* mon);
 bool8 CanNeverMakeContact(u8 bank);
 bool8 CanMonNeverMakeContact(struct Pokemon* mon);
 bool8 CanNeverMakeContactByAbilityItemEffect(u8 ability, u8 itemEffect);
+bool8 CanNeverMakeContactByItemEffect(u8 itemEffect);
 bool8 CheckHealingMove(u16 move);
 bool8 CheckSoundMove(u16 move);
 bool8 CheckRecoil(u16 move);

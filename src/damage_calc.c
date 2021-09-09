@@ -3581,7 +3581,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_TOUGHCLAWS:
 		//1.3x Boost
 			if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT
-			&& data->atkItemEffect != ITEM_EFFECT_PROTECTIVE_PADS)
+			&& !CanNeverMakeContactByItemEffect(data->atkItemEffect)) //Don't check Ability since it's known to be Tough Claws
 				power = (power * 13) / 10;
 			break;
 

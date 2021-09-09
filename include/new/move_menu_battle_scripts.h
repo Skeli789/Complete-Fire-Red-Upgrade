@@ -26,13 +26,16 @@ extern const u8 BattleScript_SelectingNotAllowedMinimize[];
 
 //Strings
 extern const u8 StringNull[];
+extern const u8 gText_BattleUI_SuperEffective[];
+extern const u8 gText_BattleUI_NotVeryEffective[];
+extern const u8 gText_BattleUI_NoEffect[];
+extern const u8 gText_BattleUI_STAB[];
 extern const u8 gText_Power[];
 extern const u8 gText_Acc[];
 extern const u8 gText_NoMiss[];
 extern const u8 gText_OHKO[];
-extern const u8 gText_Physical[];
-extern const u8 gText_Special[];
-extern const u8 gText_Status[];
+extern const u8 gText_Contact[];
+extern const u8 gText_NoContact[];
 extern const u8 gText_ResetStats[];
 extern const u8 gText_StatsPlus[];
 extern const u8 gText_CritHitsPlus[];
