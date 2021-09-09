@@ -106,7 +106,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				if (!gNewBS->usedAmuletCoin && SIDE(bank) == B_SIDE_PLAYER)
 				{
 					gNewBS->usedAmuletCoin = TRUE;
+	
+					#ifdef VAR_AMULET_COIN_LEVEL
+					gBattleStruct->moneyMultiplier *= max(2, VarGet(VAR_AMULET_COIN_LEVEL));
+					#else
 					gBattleStruct->moneyMultiplier *= 2;
+					#endif
 				}
 				break;
 

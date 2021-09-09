@@ -1186,7 +1186,7 @@ struct ListBuffer1
 
 struct ListBuffer2
 {
-	s8 name[LARGEST_POCKET_NUM][24];
+	s8 name[LARGEST_POCKET_NUM][20]; //Really 19 but make it 20 just to be safe
 };
 
 struct BagSlots
@@ -1997,4 +1997,54 @@ void FixCubeCursorDefaultColour(void)
 	gMultiuseListMenuTemplate->cursorPal = 1;
 	gMultiuseListMenuTemplate->cursorShadowPal = 2;
 	#endif
+}
+
+#define sListItemTextColor_TmCase_BerryPouch (const u8*) 0x8452F66
+void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
+{
+	if (itemId == ITEM_TM_CASE || itemId == ITEM_BERRY_POUCH)
+		StringCopy(dest, sListItemTextColor_TmCase_BerryPouch);
+	else
+		dest[0] = EOS; //No special item colour
+
+	dest = StringAppend(dest, ItemId_GetName(itemId));
+
+	u8 levelToAppend = 0;
+	switch (itemId)
+	{
+		#ifdef VAR_MACHO_BRACE_LEVEL
+		case ITEM_MACHO_BRACE:
+			levelToAppend = max(2, VarGet(VAR_MACHO_BRACE_LEVEL));
+			break;
+		#endif
+		#ifdef VAR_POWER_ITEM_LEVEL
+		case ITEM_POWER_WEIGHT:
+		case ITEM_POWER_BRACER:
+		case ITEM_POWER_BELT:
+		case ITEM_POWER_LENS:
+		case ITEM_POWER_BAND:
+		case ITEM_POWER_ANKLET:
+			levelToAppend = max(1, VarGet(VAR_POWER_ITEM_LEVEL));
+			break;
+		#endif
+		#ifdef VAR_AMULET_COIN_LEVEL
+		case ITEM_AMULET_COIN:
+		case ITEM_LUCK_INCENSE:
+			levelToAppend = max(2, VarGet(VAR_AMULET_COIN_LEVEL));
+			break;
+		#endif
+		#ifdef VAR_LUCKY_EGG_LEVEL
+		case ITEM_LUCKY_EGG:
+			levelToAppend = max(1, VarGet(VAR_LUCKY_EGG_LEVEL));
+			break;
+		#endif
+	}
+
+	if (levelToAppend > 0)
+	{
+		dest = StringCopy(dest, sListItemTextColor_TmCase_BerryPouch);
+		*dest++ = CHAR_SPACE;
+		*dest++ = CHAR_LV;
+		ConvertIntToDecimalStringN(dest, levelToAppend, STR_CONV_MODE_LEFT_ALIGN, 2);
+	}
 }

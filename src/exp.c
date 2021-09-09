@@ -200,7 +200,15 @@ void atk23_getexp(void)
 		//Lucky Egg Boost - e
 		eggBoost = 10;
 		if (holdEffect == ITEM_EFFECT_LUCKY_EGG)
+		{
 			eggBoost = 15;
+
+			#ifdef VAR_LUCKY_EGG_LEVEL
+			u16 luckyEggLevel = VarGet(VAR_LUCKY_EGG_LEVEL);
+			if (luckyEggLevel >= 2)
+				eggBoost += (luckyEggLevel - 1); //Increases by 0.1 for each level above 1
+			#endif
+		}
 
 		//Level of Fainted Mon
 		defLevel = gBattleMons[gBankFainted].level;
@@ -768,23 +776,19 @@ u32 GetSpeciesExpToLevel(u16 species, u8 toLevel)
 //////////////////// POWER ITEMS ////////////////////////////////
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 {
-	u8 pkrsMultiplier;
 	u16 evIncrease;
-
 	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 	u8 holdEffect = ItemId_GetHoldEffect(heldItem);
 	u8 itemQuality = ItemId_GetHoldEffectParam(heldItem);
+	u8 pkrsMultiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
 
 	if (GetMonEVCount(mon) >= MAX_TOTAL_EVS)
 		return;
 
-	for (u8 stat = 0; stat < NUM_STATS; ++stat)
+	for (u8 stat = 0; stat < NUM_STATS; ++stat, evIncrease = 0)
 	{
 		if (GetMonData(mon, MON_DATA_HP_EV + stat, NULL) >= EV_CAP)
 			continue;
-
-		evIncrease = 0;
-		pkrsMultiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
 
 		//Get EV yield
 		switch (stat)
@@ -814,12 +818,29 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 
 		//Check Macho Brace
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
+		{
+			#ifdef VAR_MACHO_BRACE_LEVEL
+			evIncrease *= MathMin(max(2, VarGet(VAR_MACHO_BRACE_LEVEL)), EV_CAP);
+			#else
 			evIncrease *= 2;
+			#endif
+		}
 
 		AddEVs(mon, stat, evIncrease);
 
+		//Check Power Item
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
-			AddEVs(mon, stat, POWER_ITEM_EV_YIELD * pkrsMultiplier); //Power items always add to requested stat
+		{
+			evIncrease = POWER_ITEM_EV_YIELD * pkrsMultiplier;
+
+			#ifdef VAR_POWER_ITEM_LEVEL
+			u8 powerItemLevel = VarGet(VAR_POWER_ITEM_LEVEL);
+			if (powerItemLevel >= 2) //At least doubling
+				evIncrease *= MathMin(powerItemLevel, EV_CAP);
+			#endif
+
+			AddEVs(mon, stat, evIncrease); //Power items always add to requested stat
+		}
 	}
 }
 
