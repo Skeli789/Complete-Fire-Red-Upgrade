@@ -633,6 +633,13 @@
 081347FE 02 28 16 D0
 08134822 02 28 04 D0
 
+##Split Icons in Move Reminder UI
+080E535A 00
+080E544E C0 46 C0 46
+
+##Split Icons in TM Case
+0813340E C0 46 C0 46
+
 ##No Giving TMs To Hold By Choosing Party Menu Give
 #ifdef REUSABLE_TMS
 0810A3CC C0 46 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46 C0 46

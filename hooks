@@ -646,6 +646,7 @@ SelectItemFromTMCaseCheck 81323B0 0
 PokeDudeBackupTMCaseHook 8132E76 1
 PokeDudeClearTMCaseHook 8132EB0 0
 PokeDudeRestoreTMCaseHook 813318C 0
+TMCaseSplitIconsHook 81334C4 0
 AllocateBerryPouchSpace 813D1C0 0
 GetBerryNameBerryIdFix 813D33C 0
 ExpandedBerriesFix2 814A490 0
@@ -665,6 +666,7 @@ MoveReminderHook_FixNumRelearnableMoves 080E50E8 2
 MoveReminderHook_FixMoveNameLoading 080E523E 2
 MoveReminderHook_FixDataLoading 080E54D0 1
 MoveReminderHook_FixWindowTemplates 080E46B4 0
+MoveReminderHook_AddSplitIcon 080E5434 0
 
 ##Triple Layer Blocks
 DrawBlockHook 0805A9B8 1

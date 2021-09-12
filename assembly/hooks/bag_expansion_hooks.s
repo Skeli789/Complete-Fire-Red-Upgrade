@@ -307,3 +307,12 @@ RegisterItemHook:
 	bl HandleItemRegistration
 	ldr r0, =0x810A052 | 1
 	bx r0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x81334C4 with r0
+TMCaseSplitIconsHook:
+	mov r0, r7 @Move (type is already in r1)
+	bl PrintTMCaseTypeAndSplitIcons
+	ldr r0, =0x81334CE | 1
+	bx r0

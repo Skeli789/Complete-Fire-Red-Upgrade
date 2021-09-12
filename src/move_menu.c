@@ -586,7 +586,7 @@ static void MoveSelectionDisplayMoveType(void)
 	FillWindowPixelBuffer(8, PIXEL_FILL(15)); //White
 	blit_move_info_icon(8, moveType + 1, 2, 3);
 
-	BlitBitmapToWindow(8, PSSIconsTiles + 24 * 8 * split, 38, 0, 24, 15);
+	BlitBitmapToWindow(8, PSSIconsTiles + 24 * 8 * split, 38, 3, 24, 15);
 	CopyWindowToVram(8, COPYWIN_BOTH);
 	PutWindowTilemap(8);
 }

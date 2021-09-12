@@ -1,7 +1,7 @@
-.text
-.align 2
 .thumb
+.text
 .thumb_func
+.align 2
 
 .include "../asm_defines.s"
 
@@ -10,7 +10,6 @@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - fix move to load data from
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 MoveReminderHook_FixDataLoading:
 	bl GetMoveIdFromRelearnerStruct
@@ -21,7 +20,6 @@ MoveReminderHook_FixDataLoading:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix Move Name Loading
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 MoveReminderHook_FixMoveNameLoading:
 	mov r0, r3	@cursor pos
@@ -33,7 +31,6 @@ MoveReminderHook_FixMoveNameLoading:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix relearnable moves counter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 MoveReminderHook_FixNumRelearnableMoves:
 	push {r4-r7}
@@ -48,7 +45,6 @@ bxr2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix Window Templates and Palette
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 MoveReminderHook_FixWindowTemplates:
 	push {r1-r7}
@@ -63,7 +59,6 @@ ExitMoveRelearnGuiInit:
 	ldr r1, =(0x80E476C +1)
 	bx r1
 
-.align 2
 .pool
 @0x80E4760 with r2
 MoveReminderHook_FixBgPalette:
@@ -80,7 +75,6 @@ MoveReminderHook_FixBgPalette:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder Calloc
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 @ E47A4 via r0
 MoveReminderHook_FixCalloc:
@@ -91,7 +85,6 @@ MoveReminderHook_FixCalloc:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix Move Id Loading
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
 .pool
 MoveReminderHook_FixLoadMoveId1:
 	push {r0, r2-r7}
@@ -102,7 +95,6 @@ MoveReminderHook_FixLoadMoveId1:
 	ldr r2, =(0x080E4AAA +1)
 	bx r2
 
-.align 2
 .pool
 MoveReminderHook_FixLoadMoveId2:
 	push {r0-r3, r5-r7}
@@ -113,7 +105,6 @@ MoveReminderHook_FixLoadMoveId2:
 	ldr r6, =(0x080E4CBC +1)
 	bx r6
 
-.align 2
 .pool
 MoveReminderHook_FixLoadMoveId3:
 	push {r0, r3-r7}	@gMoveRelearnerStruct
@@ -124,7 +115,6 @@ MoveReminderHook_FixLoadMoveId3:
 	ldr r2, =(0x080E4E14 +1)
 	bx r2
 
-.align 2
 .pool
 MoveReminderHook_FixLoadMoveId4:
 	mov r0, r1
@@ -134,9 +124,18 @@ MoveReminderHook_FixLoadMoveId4:
 	ldr r3, =(0x080E4E30 +1)
 	bx r3
 
-.align 2
 .pool
 MoveReminderHook_FixLoadMoveId5:
 	bl InitMoveRelearnerMoveIDs
 	ldr r4, =(0x080E4F9C +1)
 	bx r4
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Move Reminder - Add PSS Icon
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x80E5434 with r0
+MoveReminderHook_AddSplitIcon:
+	mov r0, r5 @Move
+	bl PrintMoveReminderSplitIcon
+	pop {r4, r5, pc}

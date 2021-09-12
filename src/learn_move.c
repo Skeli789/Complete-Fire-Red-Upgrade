@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/daycare.h"
 #include "../include/list_menu.h"
+#include "../include/menu.h"
 #include "../include/move_reminder.h"
 #include "../include/string_util.h"
 #include "../include/constants/moves.h"
@@ -17,6 +18,7 @@ learn_move.c
 */
 
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern const u8 PSSIconsTiles[];
 
 #ifdef EXPAND_MOVESETS
 	extern const struct LevelUpMove* const gLevelUpLearnsets[];
@@ -547,4 +549,17 @@ bool16 InitMoveRelearnerWindows(void)
 void HideMoveReminderBg1Palette(void)
 {
 	Memset(&gPlttBufferFaded[0], RGB_BLACK, sizeof(u16) * 16);
+}
+
+void PrintMoveReminderSplitIcon(u16 move)
+{
+	BlitBitmapToWindow(2, PSSIconsTiles + 24 * 8 * SPLIT(move), 0, 4, 24, 15);
+	CopyWindowToVram(0, COPYWIN_GFX); //Moved type icon
+}
+
+void PrintTMCaseTypeAndSplitIcons(u16 move, u8 type)
+{
+	blit_move_info_icon(4, type, 3, 0);
+	BlitBitmapToWindow(5, PSSIconsTiles + 24 * 8 * SPLIT(move), 1, 0, 24, 15);
+	CopyWindowToVram(4, COPYWIN_GFX); //Moved type icon
 }
