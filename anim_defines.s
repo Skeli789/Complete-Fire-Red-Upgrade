@@ -491,6 +491,8 @@
 .equ AnimTask_CreateRaindrops, 0x80aabc1
 .equ AnimTask_NightShadeClone, 0x80b54e9
 .equ AnimTask_ElectricBolt, 0x80AE221
+.equ AnimTask_GrudgeFlames, 0x80b68c9
+.equ AnimTask_SpiteTargetShadow, 0x80b5aad
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -705,6 +707,7 @@
 .equ PSYBEAM_RINGS, 0x81d0dd4
 .equ DIVE_SET_UP_WATER_DROPLETS, 0x81d41b6
 .equ ICE_BEAM_CRYSTALS, 0x81ce3fc
+.equ DRAGON_CLAW_FIRE_SPIRAL, 0x81d31ad
 
 @supercommands
 

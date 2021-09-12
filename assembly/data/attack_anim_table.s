@@ -2340,12 +2340,7 @@ ANIM_DARKPULSE:
 	loadparticle ANIM_TAG_PURPLE_RING
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	pause 0x4
-	launchtask AnimTask_IsUnbound 0x5 0x0
-	jumpifargmatches 0x0 0x1 DARK_PULSE_UNBOUND_SOUND
-	launchsoundtask SoundTask_LoopSEAdjustPanning 0x7 0xc8, 0xFF00 | SOUND_PAN_ATTACKER, SOUND_PAN_TARGET 0x3 0x4 0x0 0xf  
-
-DARK_PULSE_REJOIN:
-	launchtask AnimTask_FlashAnimTagWithColor 0x2 0x7 ANIM_TAG_ORBS 0x1 0xc 0x1F 0x10 0x0 0x0
+	call PLAY_DARK_PULSE_SOUND
 	call PURPLE_BEAM
 	call PURPLE_BEAM
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x4 0x0 0xF 0x3006
@@ -2382,9 +2377,15 @@ PURPLE_BEAM:
 	pause 0x2
 	return
 
+PLAY_DARK_PULSE_SOUND:
+	launchtask AnimTask_IsUnbound 0x5 0x0
+	jumpifargmatches 0x0 0x1 DARK_PULSE_UNBOUND_SOUND
+	launchsoundtask SoundTask_LoopSEAdjustPanning 0x7 0xc8, 0xFF00 | SOUND_PAN_ATTACKER, SOUND_PAN_TARGET 0x3 0x4 0x0 0xf  
+	return
+
 DARK_PULSE_UNBOUND_SOUND:
 	playsoundpanchange 0x1E0 SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
-	goto DARK_PULSE_REJOIN
+	return
 
 .align 2
 PURPLEPARTICLES: objtemplate ANIM_TAG_PURPLE_RING ANIM_TAG_PURPLE_RING OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix
@@ -4753,8 +4754,6 @@ ANIM_HEX:
 	waitanimation
 	pokespritetoBG bank_target 
 	bankBG_over_partnerBG
-	playsound2 0xb6 SOUND_PAN_ATTACKER 
-	waitbgfadein 
 	launchtask AnimTask_PurpleFlamesOnTarget 0x3 0x0
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x2 0x0 0x25 0x1
 	playsound2 0x72 SOUND_PAN_TARGET
@@ -15451,7 +15450,7 @@ ANIM_EMBARGO:
 	loadBG1 BG_DARK
 	playsound2 0xb6 SOUND_PAN_ATTACKER
 	waitbgfadein
-	launchtask 0x80b68c9 0x3 0x0
+	launchtask AnimTask_GrudgeFlames 0x3 0x0
 	soundcomplex 0x90 SOUND_PAN_ATTACKER 0x10 0x4
 	pause 0x50
 	playsound2 0x72 SOUND_PAN_TARGET
@@ -18327,15 +18326,113 @@ ANIM_THUNDEROUS_KICK:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_FIERY_WRATH:
-	goto 0x81d42c0 @MOVE_OVERHEAT
+	loadparticle ANIM_TAG_SMALL_EMBER
+	loadparticle ANIM_TAG_PURPLE_RING
+	playsound2 0x8f 0xc0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xE 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x4 0x0 0x8 0x1F @Red
+	launchtask AnimTask_move_bank 0x5 0x5 bank_attacker 0x0 0x2 0x20 0x1 
+	call DRAGON_CLAW_FIRE_SPIRAL
+	call DRAGON_CLAW_FIRE_SPIRAL
+	waitanimation
+	call PLAY_DARK_PULSE_SOUND
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x4 0x0 0xF 0x3006
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x4 0x0 0x3C 0x1
+	call FIERY_WRATH_GEYSER
+	call FIERY_WRATH_GEYSER
+	call FIERY_WRATH_GEYSER
+	call FIERY_WRATH_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x8 0x0 0x1F
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x3006
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
+	waitanimation
 	endanimation
+
+FIERY_WRATH_GEYSER:
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	pause 0x0
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	return
+
+.align 2
+DARK_PULSE_GEYSER: objtemplate ANIM_TAG_PURPLE_RING ANIM_TAG_PURPLE_RING OAM_DOUBLE_16x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_EERIE_SPELL:
-	goto 0x81ccbd1 @MOVE_EXTRASENSORY
+	loadparticle ANIM_TAG_PURPLE_FLAME
+	call SET_PSYCHIC_BG
+	waitanimation
+	pokespritetoBG bank_target 
+	bankBG_over_partnerBG
+	soundcomplex 0xb6 0x3f 0x14 0x5
+	launchtask AnimTask_SpiteTargetShadow 0x2 0x0
+	call EERIE_SPELL_FLAMES_CONVERGE
+	call EERIE_SPELL_FLAMES_CONVERGE
+	call EERIE_SPELL_FLAMES_CONVERGE
+	waitanimation
+	pokespritefromBG bank_target
+	call UNSET_SCROLLING_BG
+	waitanimation
 	endanimation
+
+EERIE_SPELL_FLAMES_CONVERGE:
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x0 0xffe0 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x16 0xffea 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x1e 0x0 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x14 0x14 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x0 0x1c 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0xffed 0x13 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0xffe5 0x0 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0xffee 0xffee 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x0 0xffe7 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x11 0xffef 0x10
+	pause 0x2
+	launchtemplate EERIE_SPELL_FLAMES TEMPLATE_TARGET | 2, 0x5 0x1 0x0 0x17 0x0 0x10
+	return
+
+.align 2
+EERIE_SPELL_FLAMES: objtemplate ANIM_TAG_PURPLE_FLAME ANIM_TAG_PURPLE_FLAME OAM_NORMAL_BLEND_16x32 0x83e76dc 0x0 0x83e7604 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
