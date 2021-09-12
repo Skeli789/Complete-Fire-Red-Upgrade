@@ -1197,7 +1197,7 @@ bool8 CanTransferItem(u16 species, u16 item)
 	const struct Evolution* evolutions = gEvolutionTable[species];
 	int i;
 
-	if (IsMail(item))
+	if (item == ITEM_NONE || IsMail(item))
 		return FALSE;
 
 	switch (effect) {

@@ -833,6 +833,7 @@ IsPokemonStorageFull = 0x8040FA0 | 1;
 StorageGetCurrentBox = 0x808B9F4 | 1;
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
+CB2_EnterPSS = 0x808CDE4 | 1;
 RefreshCursorMonData = 0x808F1D0 | 1;
 LoadCursorMonSprite = 0x808F2BC | 1;
 sub_80911D4 = 0x80911D4 | 1;

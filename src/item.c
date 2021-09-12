@@ -2014,7 +2014,7 @@ void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
 	{
 		#ifdef VAR_MACHO_BRACE_LEVEL
 		case ITEM_MACHO_BRACE:
-			levelToAppend = max(2, VarGet(VAR_MACHO_BRACE_LEVEL));
+			levelToAppend = VarGet(VAR_MACHO_BRACE_LEVEL);
 			break;
 		#endif
 		#ifdef VAR_POWER_ITEM_LEVEL
@@ -2024,18 +2024,18 @@ void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
 		case ITEM_POWER_LENS:
 		case ITEM_POWER_BAND:
 		case ITEM_POWER_ANKLET:
-			levelToAppend = max(1, VarGet(VAR_POWER_ITEM_LEVEL));
+			levelToAppend = VarGet(VAR_POWER_ITEM_LEVEL);
 			break;
 		#endif
 		#ifdef VAR_AMULET_COIN_LEVEL
 		case ITEM_AMULET_COIN:
 		case ITEM_LUCK_INCENSE:
-			levelToAppend = max(2, VarGet(VAR_AMULET_COIN_LEVEL));
+			levelToAppend = VarGet(VAR_AMULET_COIN_LEVEL);
 			break;
 		#endif
 		#ifdef VAR_LUCKY_EGG_LEVEL
 		case ITEM_LUCKY_EGG:
-			levelToAppend = max(1, VarGet(VAR_LUCKY_EGG_LEVEL));
+			levelToAppend = VarGet(VAR_LUCKY_EGG_LEVEL);
 			break;
 		#endif
 	}

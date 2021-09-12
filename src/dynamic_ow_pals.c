@@ -72,6 +72,19 @@ u8 FindPalRef(u8 type, u16 palTag)
 	return 0xFF; // not found
 }
 
+void RemovePalRef(u16 palTag)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (sPalRefs[i].PalTag == palTag)
+		{
+			sPalRefs[i].Type = 0;
+			sPalRefs[i].PalTag = 0;
+			sPalRefs[i].Count = 0;
+		}
+	}
+}
+
 u8 GetPalTypeByPaletteOffset(u16 offset)
 {
 	if (&gPlttBufferUnfaded[offset] < gPlttBufferUnfaded2)

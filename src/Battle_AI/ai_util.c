@@ -2743,6 +2743,11 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 		case ABILITY_ROUGHSKIN:
 			badIdea = atkAbility != ABILITY_MAGICGUARD;
 			break;
+		case ABILITY_PICKPOCKET:
+			badIdea = atkAbility != ABILITY_STICKYHOLD
+					&& CanTransferItem(SPECIES(bankAtk), ITEM(bankAtk))
+					&& CanTransferItem(SPECIES(bankDef), ITEM(bankAtk)); //Even if the target is holding an item, it may lose it before the end of the turn
+			break;
 		case ABILITY_MUMMY:
 		case ABILITY_WANDERINGSPIRIT:
 		case ABILITY_COTTONDOWN:
