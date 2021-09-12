@@ -157,16 +157,16 @@ def Repoint(rom: _io.BufferedReader, space: int, repointAt: int, slideFactor=0):
 # These offsets contain the word 0x8900000 - the attack data from
 # Mr. DS's rombase. In order to maintain as much compatibility as
 # possible, the data at these offsets is never modified.
-IGNORED_OFFSETS = [0x3986C0, 0x3986EC, 0xDABDF0]
+IGNORED_OFFSETS = {0x3986C0: True, 0x3986EC: True, 0xDABDF0: True}
 
 
-def RealRepoint(rom: _io.BufferedReader, offsetTuples: [(int, int, str)]):
+def RealRepoint(sourceRom: _io.BufferedReader, targetRom: _io.BufferedReader, offsetTuples: [(int, int, str)], endInsertOffset):
     pointerList = []
     pointerDict = {}
     for tup in offsetTuples:  # Format is (Double Pointer, New Pointer, Symbol)
         offset = tup[0]
-        rom.seek(offset)
-        pointer = ExtractPointer(rom.read(4))
+        sourceRom.seek(offset)
+        pointer = ExtractPointer(sourceRom.read(4))
         pointerList.append(pointer)
         pointerDict[pointer] = (tup[1] + 0x08000000, tup[2])
 
@@ -177,15 +177,20 @@ def RealRepoint(rom: _io.BufferedReader, offsetTuples: [(int, int, str)]):
         if offset in IGNORED_OFFSETS:
             offset += 4
             continue
+        elif OFFSET_TO_PUT <= offset < endInsertOffset:  # Skip insert area
+            offset = endInsertOffset
+            while offset % 4 != 0:  # End insert offset is not divisible by 4
+                offset += 1  # Make divisible by 4
+            continue
 
-        rom.seek(offset)
-        word = ExtractPointer(rom.read(4))
-        rom.seek(offset)
+        sourceRom.seek(offset)
+        word = ExtractPointer(sourceRom.read(4))
+        targetRom.seek(offset)
 
         for pointer in pointerList:
             if word == pointer:
                 offsetList.append((offset, pointerDict[pointer][1]))
-                rom.write(bytes(pointerDict[pointer][0].to_bytes(4, 'little')))
+                targetRom.write(bytes(pointerDict[pointer][0].to_bytes(4, 'little')))
                 break
 
         offset += 4
@@ -292,6 +297,7 @@ def main():
         table = GetSymbols(GetTextSection())
         rom.seek(OFFSET_TO_PUT)
         with open(OUTPUT, 'rb') as binary:
+            endInsertOffset = OFFSET_TO_PUT + os.path.getsize(OUTPUT)
             rom.write(binary.read())
             binary.close()
 
@@ -299,33 +305,65 @@ def main():
         for entry in table:
             table[entry] += OFFSET_TO_PUT
 
-        # Insert byte changes
-        if os.path.isfile(BYTE_REPLACEMENT):
-            with open(BYTE_REPLACEMENT, 'r') as replacelist:
+        # Deal with en masse repoints
+        symbolsRepointed = set()
+        if os.path.isfile(GENERATED_REPOINTS):
+            with open(GENERATED_REPOINTS, 'r') as repointList:
+                for line in repointList:
+                    if line.strip().startswith('#') or line.strip() == '':
+                        continue
+
+                    symbol, address = line.split()
+                    offset = int(address)
+                    try:
+                        code = table[symbol]
+                    except KeyError:
+                        print('Symbol missing:', symbol)
+                        continue
+
+                    symbolsRepointed.add(symbol)
+                    Repoint(rom, code, offset)
+
+        else:
+            with open(GENERATED_REPOINTS, 'w') as repointList:
+                repointList.write('##This is a generated file at runtime. Do not modify it!\n')
+
+        if os.path.isfile(REPOINT_ALL):
+            offsetsToRepointTogether = []
+            with open(REPOINT_ALL, 'r') as repointList:
                 definesDict = {}
                 conditionals = []
-                for line in replacelist:
+                for line in repointList:
                     if TryProcessFileInclusion(line, definesDict):
                         continue
                     if TryProcessConditionalCompilation(line, definesDict, conditionals):
                         continue
                     if line.strip().startswith('#') or line.strip() == '':
                         continue
- 
-                    offset = int(line[:8], 16) - 0x08000000
+
+                    symbol, address = line.split()
+                    offset = int(address, 16) - 0x08000000
+
+                    if symbol in symbolsRepointed:
+                        continue
+
                     try:
-                        ReplaceBytes(rom, offset, line[9:].strip())
-                    except ValueError: #Try loading from the defines dict if unrecognizable character
-                        newNumber = definesDict[line[9:].strip()]
-                        try:
-                            newNumber = int(newNumber)
-                        except ValueError:
-                            newNumber = int(newNumber, 16)
+                        code = table[symbol]
+                    except KeyError:
+                        print('Symbol missing:', symbol)
+                        continue
+                    offsetsToRepointTogether.append((offset, code, symbol))
 
-                        newNumber = str(hex(newNumber)).split('0x')[1]
-                        ReplaceBytes(rom, offset, newNumber) 
+                if offsetsToRepointTogether != []:
+                    with open(SOURCE_ROM, 'rb') as sourceRom: # Repoint from source rom so new data doesn't accidentally get repointed
+                        offsets = RealRepoint(sourceRom, rom, offsetsToRepointTogether, endInsertOffset) # Format is [(offset, symbol), ...]
 
-        # Do Special Inserts
+                        output = open(GENERATED_REPOINTS, 'a')
+                        for tup in offsets:
+                            output.write(tup[1] + ' ' + str(tup[0]) + '\n')
+                        output.close()
+
+        # Do Special Inserts - Before bytereplacement!
         if os.path.isfile(SPECIAL_INSERTS) and os.path.isfile(SPECIAL_INSERTS_OUT):
             with open(SPECIAL_INSERTS, 'r') as file:
                 offsetList = []
@@ -364,6 +402,32 @@ def main():
                             word = ExtractPointer(binFile.read(4))
 
                     ReplaceBytes(rom, originalOffset, dataList.strip())
+
+        # Insert byte changes
+        if os.path.isfile(BYTE_REPLACEMENT):
+            with open(BYTE_REPLACEMENT, 'r') as replacelist:
+                definesDict = {}
+                conditionals = []
+                for line in replacelist:
+                    if TryProcessFileInclusion(line, definesDict):
+                        continue
+                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
+                        continue
+                    if line.strip().startswith('#') or line.strip() == '':
+                        continue
+ 
+                    offset = int(line[:8], 16) - 0x08000000
+                    try:
+                        ReplaceBytes(rom, offset, line[9:].strip())
+                    except ValueError: #Try loading from the defines dict if unrecognizable character
+                        newNumber = definesDict[line[9:].strip()]
+                        try:
+                            newNumber = int(newNumber)
+                        except ValueError:
+                            newNumber = int(newNumber, 16)
+
+                        newNumber = str(hex(newNumber)).split('0x')[1]
+                        ReplaceBytes(rom, offset, newNumber) 
 
         # Read hooks from a file
         if os.path.isfile(HOOKS):
@@ -422,62 +486,6 @@ def main():
                             continue
 
                         Repoint(rom, code, offset, int(slide))
-
-        symbolsRepointed = set()
-        if os.path.isfile(GENERATED_REPOINTS):
-            with open(GENERATED_REPOINTS, 'r') as repointList:
-                for line in repointList:
-                    if line.strip().startswith('#') or line.strip() == '':
-                        continue
-
-                    symbol, address = line.split()
-                    offset = int(address)
-                    try:
-                        code = table[symbol]
-                    except KeyError:
-                        print('Symbol missing:', symbol)
-                        continue
-
-                    symbolsRepointed.add(symbol)
-                    Repoint(rom, code, offset)
-
-        else:
-            with open(GENERATED_REPOINTS, 'w') as repointList:
-                repointList.write('##This is a generated file at runtime. Do not modify it!\n')
-
-        if os.path.isfile(REPOINT_ALL):
-            offsetsToRepointTogether = []
-            with open(REPOINT_ALL, 'r') as repointList:
-                definesDict = {}
-                conditionals = []
-                for line in repointList:
-                    if TryProcessFileInclusion(line, definesDict):
-                        continue
-                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
-                        continue
-                    if line.strip().startswith('#') or line.strip() == '':
-                        continue
-
-                    symbol, address = line.split()
-                    offset = int(address, 16) - 0x08000000
-
-                    if symbol in symbolsRepointed:
-                        continue
-
-                    try:
-                        code = table[symbol]
-                    except KeyError:
-                        print('Symbol missing:', symbol)
-                        continue
-                    offsetsToRepointTogether.append((offset, code, symbol))
-
-                if offsetsToRepointTogether != []:
-                    offsets = RealRepoint(rom, offsetsToRepointTogether) # Format is [(offset, symbol), ...]
-
-                    output = open(GENERATED_REPOINTS, 'a')
-                    for tup in offsets:
-                        output.write(tup[1] + ' ' + str(tup[0]) + '\n')
-                    output.close()
 
         # Read routine repoints from a file
         if os.path.isfile(ROUTINE_POINTERS):
