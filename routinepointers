@@ -187,6 +187,8 @@ sp12D_CompareEnteredPhrase 08160214
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 
+sp1AE_IsUntradableMonInParty 08160418
+
 ## Expanded Text Buffers
 LoadTextBuffer07 08231E8C
 LoadTextBuffer08 08231E90
