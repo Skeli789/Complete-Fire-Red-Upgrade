@@ -176,6 +176,8 @@ sp12D_CompareEnteredPhrase 08160214
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 
+sp1AE_IsUntradableMonInParty 08160418
+
 ##Field Effects
 FldEff_BikeTireTracks 081D98D9
 

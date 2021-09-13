@@ -835,6 +835,49 @@ void sp066_InflictPartyDamage(void) {
 
 //void sp067_GenerateRandomBattleTowerTeam(void) - In "src/build_pokemon.c"
 
+#define OT_ID_EGGLOCKE 0x3CEAB505
+static const u8 sText_EgglockeTrainerName[] = {CHAR_E, CHAR_g, CHAR_g, CHAR_l, CHAR_o, CHAR_c, CHAR_k};
+bool8 sp1AE_IsUntradableMonInParty(void)
+{
+	u8 i, partyCount;
+
+	//No trading when randomizer is active
+	#ifdef FLAG_POKEMON_RANDOMIZER
+	if (FlagGet(FLAG_POKEMON_RANDOMIZER))
+		return TRUE;
+	#endif
+
+	#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+	if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER))
+		return TRUE;
+	#endif
+
+	#ifdef FLAG_ABILITY_RANDOMIZER
+	if (FlagGet(FLAG_ABILITY_RANDOMIZER))
+		return TRUE;
+	#endif
+
+	for (i = 0, partyCount = CalculatePlayerPartyCount(); i < partyCount; ++i)
+	{
+		struct Pokemon* mon = &gPlayerParty[i];
+	
+		//No trading when Bad Egg is in party
+		if (GetMonData(mon, MON_DATA_SANITY_IS_BAD_EGG, NULL))
+			return TRUE;
+
+		//No trading when Egglocke mon is in party
+		if (GetMonData(mon, MON_DATA_OT_ID, NULL) == OT_ID_EGGLOCKE)
+		{
+			//Only compare name once id is confirmed
+			GetMonData(mon, MON_DATA_OT_NAME, gStringVar1); //Put the Trainer name in gStringVar1
+			if (StringCompareN(gStringVar1, sText_EgglockeTrainerName, NELEMS(sText_EgglockeTrainerName)) == 0) //Same string
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 //Key Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
