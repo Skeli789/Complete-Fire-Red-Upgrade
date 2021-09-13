@@ -15,6 +15,8 @@ bool8 IsAutoScrollEnabled(void)
 	return TRUE;
 	#endif
 
+	return TRUE;
+
 	#ifdef FLAG_SANDBOX_MODE
 	if (FlagGet(FLAG_SANDBOX_MODE))
 		return TRUE;
@@ -123,4 +125,10 @@ bool16 TextPrinterWait(struct TextPrinter *textPrinter)
 	}
 
 	return result;
+}
+
+bool8 WaitForAorBPress(void)
+{
+	return JOY_NEW(A_BUTTON | B_BUTTON)
+		|| (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled());
 }
