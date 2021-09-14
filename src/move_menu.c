@@ -2137,16 +2137,29 @@ bool8 CheckCantMoveThisTurn(void)
 bool8 IsBagDisabled(void)
 {
 	#ifdef VAR_GAME_DIFFICULTY
+	u8 itemRestrictions = 0;
 	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
-	
+
+	#ifdef VAR_ITEM_RESTRICTIONS
+	itemRestrictions = VarGet(VAR_ITEM_RESTRICTIONS);
+	#endif
+
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
+		//Determine based on player-set restrictions
+		if (itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS)
+			return TRUE;
+		else if (itemRestrictions == OPTIONS_ITEM_RESTRICTIONS_4_ITEMS
+		&& gNewBS->playerItemUsedCount >= 4)
+			return TRUE;
+
+		//Determine based on difficulty set restrictions
 		if (difficulty == OPTIONS_HARD_DIFFICULTY)
 		{
 			if (gNewBS->playerItemUsedCount >= 4) //Max four items can be used
 				return TRUE;
 		}
-		if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
+		else if (difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Insane players
 			return TRUE;
 	}
 	else
@@ -2154,7 +2167,8 @@ bool8 IsBagDisabled(void)
 		if (!IsRaidBattle()
 		&& !FlagGet(FLAG_SYS_GAME_CLEAR) //Otherwise they can't catch Legendaries
 		&& IsAuraBoss(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Wild boss
-		&& difficulty >= OPTIONS_EXPERT_DIFFICULTY) //No items in battles for Experts
+		&& (difficulty >= OPTIONS_EXPERT_DIFFICULTY //No items in battles for Insane players
+		 || itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS))
 			return TRUE;
 	}
 	#endif

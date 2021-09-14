@@ -88,10 +88,14 @@ void BattleAI_HandleItemUseBeforeAISetup(void)
 
 	// Items are allowed to use in ONLY trainer battles.
 	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_EREADER_TRAINER))
-		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT
-		&& !IsFrontierTrainerId(gTrainerBattleOpponent_A)
-		&& !IsBagDisabled()) //If the player's bag is disabled, the AI's should also be
+	&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_EREADER_TRAINER))
+	&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT
+	&& !IsFrontierTrainerId(gTrainerBattleOpponent_A)
+	&& (!IsBagDisabled() //If the player's bag is disabled, the AI's should also be
+	 #ifdef VAR_ITEM_RESTRICTIONS
+	 || VarGet(VAR_ITEM_RESTRICTIONS) == OPTIONS_ITEM_RESTRICTIONS_AI_ONLY //Unless the player wants the AI to use items
+	 #endif
+	 ))
 	{
 		for (i = 0; i < 4; i++)
 		{
