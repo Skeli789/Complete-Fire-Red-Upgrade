@@ -52,7 +52,8 @@ bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId)
 	u8 availableToSwitch;
 	u32 i;
 
-	if (IsTrapped(gActiveBattler, TRUE))
+	if (IsTrapped(gActiveBattler, TRUE)
+	|| gStatuses3[gActiveBattler] & (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) //Can never switch out when in the air
 		return FALSE;
 
 	availableToSwitch = 0;
@@ -1601,6 +1602,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 
 	u8 ability;
 	u8 foe = FOE(gActiveBattler);
+	u16 randVal;
 
 	if (IS_SINGLE_BATTLE //Not good for Doubles
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
@@ -1633,7 +1635,8 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 			(GetMostSuitableMonToSwitchIntoFlags() & SWITCHING_FLAG_KO_FOE) //The new mon can KO (helps against PP stallers)
 
 			//OPTION B2:
-			|| (AIRandom() & 1 //Do this randomly to throw off opponent.
+			|| ((randVal = AIRandom()) & 1 //Only perform this switch 50% of the time to throw off the player
+			 && (!Can2HKO(gActiveBattler, foe) || (randVal & 2)) //75% of the time only switch if this mon can't KO the foe in 2 turns (the other 25% of the time switch anyway)
 			 && !ResistsAllMoves(foe, gActiveBattler) //It doesn't already resist all of the foe's moves (Since a mon that resists all moves will be chosen, don't get into an infinite loop if this mon already does).
 			 && !IsStrongestMoveHPDrainingMove(gActiveBattler, foe)) //And it can't chip away at the foe's HP by healing off damage it takes
 		))

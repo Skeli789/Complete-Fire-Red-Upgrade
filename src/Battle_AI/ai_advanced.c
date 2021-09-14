@@ -948,14 +948,21 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 
 			//maxHp = baseMaxHP;
 
-			if (gStatuses3[bankAtk] & (STATUS3_ROOTED | STATUS3_AQUA_RING))
+			if (gStatuses3[bankAtk] & STATUS3_ROOTED)
 			{
 				u16 hp = MathMax(1, maxHp / 16);
 				if (itemEffect == ITEM_EFFECT_BIG_ROOT)
 					amountToRecover += (130 * hp) / 100;
 			}
 
-			for (int i = 0; i < gBattlersCount; ++i)
+			if (gStatuses3[bankAtk] & STATUS3_AQUA_RING)
+			{
+				u16 hp = MathMax(1, maxHp / 16);
+				if (itemEffect == ITEM_EFFECT_BIG_ROOT)
+					amountToRecover += (130 * hp) / 100;
+			}
+
+			for (u8 i = 0; i < gBattlersCount; ++i)
 			{
 				if (gStatuses3[i] & STATUS3_LEECHSEED
 				&&  ABILITY(i) != ABILITY_MAGICGUARD
@@ -2501,10 +2508,12 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 
 	switch (class) {
 		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:
-			break; //Only use if good damaging move
+			INCREASE_VIABILITY(15 - decrement);
+			break;
 
 		case FIGHT_CLASS_DOUBLES_SETUP_ATTACKER:
-			break; //Only use if good damaging move
+			INCREASE_VIABILITY(15 - decrement);
+			break;
 
 		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER:
 			if (!IsTrickRoomActive()) //Don't burn a Trick Room turn to use Fake Out

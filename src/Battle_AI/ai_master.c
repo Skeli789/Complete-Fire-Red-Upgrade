@@ -17,6 +17,7 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/frontier.h"
+#include "../../include/new/item.h"
 #include "../../include/new/move_menu.h"
 #include "../../include/new/mega.h"
 #include "../../include/new/multi.h"
@@ -1598,6 +1599,8 @@ static bool8 IsPlayerTryingToCheeseChoiceLockFirstTurn(u8 aiBank)
 {
 	return gBattleResults.battleTurnCounter == 0
 		&& (IsChoiceItemEffectOrAbility(ITEM_EFFECT(aiBank), ABILITY(aiBank))
+		|| IsZCrystal(ITEM(aiBank))
+		|| IsGem(ITEM(aiBank))
 		|| gChosenMovesByBanks[aiBank] == MOVE_FAKEOUT);
 }
 
@@ -1621,7 +1624,8 @@ static u8 IsPlayerTryingToCheeseAI(unusedArg u8 playerBank, unusedArg u8 aiBank)
 	{
 		if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Not fair in Frontier where player doesn't know opponent's lead
 		&& VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY //Only on hardest game mode
-		&& (IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank) || IsPlayerTryingToCheeseChoiceLockFirstTurn(aiBank)))
+		&& (IsPlayerTryingToCheeseWithRepeatedSwitches(playerBank)
+		|| IsPlayerTryingToCheeseChoiceLockFirstTurn(aiBank)))
 			return CHEESING;
 
 		if (ShouldPredictRandomPlayerSwitch(playerBank))
