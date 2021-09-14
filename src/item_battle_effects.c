@@ -941,7 +941,20 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 				if (SPLIT(gCurrentMove) == SPLIT_STATUS)
 				{
-					if (MOVE_HAD_EFFECT)
+					if (IS_DOUBLE_BATTLE)
+					{
+						if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_SPREAD)
+						{
+							//Check affected at least one target
+							//Assumes the status move doesn't do damage (which it shouldn't)
+							throatSprayWork = (BATTLER_ALIVE(gBankTarget) && !(gNewBS->ResultFlags[gBankTarget] & MOVE_RESULT_NO_EFFECT))
+											|| (BATTLER_ALIVE(PARTNER(gBankTarget)) && !(gNewBS->ResultFlags[PARTNER(gBankTarget)] & MOVE_RESULT_NO_EFFECT));
+
+							if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+								throatSprayWork |= (BATTLER_ALIVE(PARTNER(gBankAttacker)) && !(gNewBS->ResultFlags[PARTNER(gBankAttacker)] & MOVE_RESULT_NO_EFFECT));
+						}
+					}
+					else if (MOVE_HAD_EFFECT)
 						throatSprayWork = TRUE;
 				}
 				else //Damaging move
