@@ -618,7 +618,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank], (*gStringInfo)->species[gEffectBank]);
 				break;
 			case B_TXT_TRAINER1_CLASS: // trainer class name
-				if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases
+				if (gTrainerBattleOpponent_A == 0x400) //LOL Secret Bases
 					toCpy = gTrainerClassNames[GetSecretBaseTrainerNameIndex()];
 				else if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
 					toCpy = gTrainerClassNames[sub_80447F0()];
@@ -640,6 +640,13 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 							StringAppend(text, gSaveBlock2->playerName);
 							toCpy = text;
 						}
+						else
+							toCpy = gTrainerClassNames[class];
+					}
+					else if (class == CLASS_LOR_ADMIN)
+					{
+						if (VarGet(VAR_MAIN_STORY) <= 0x25) //MAIN_STORY_LEFT_CUBE
+							toCpy = gTrainerClassNames[CLASS_SHADOW_ADMIN]; //Ivory is still a Shadow Admin at this point
 						else
 							toCpy = gTrainerClassNames[class];
 					}

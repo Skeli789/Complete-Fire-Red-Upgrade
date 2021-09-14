@@ -707,7 +707,6 @@ RunTextPrintersForInstantTextHook 08002DEE 0
 #endif
 TextPrinterWaitWithDownArrow 08005634 1
 TextPrinterWait 8005680 1
-WaitForAorBPress 806B898 0
 
 #ifdef UNBOUND
 GetCurrentLevelCap 801D79C 0

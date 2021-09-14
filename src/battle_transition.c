@@ -773,6 +773,7 @@ const struct BattleTransitionLogo gBattleTransitionLogos[] =
 	{CLASS_LOR, LORBattleLogoTiles, LORBattleLogoPal, LORBattleLogoMap},
 	{CLASS_TERROR_GRANBULL, TerrorGranbullBattleLogoTiles, TerrorGranbullBattleLogoPal, TerrorGranbullBattleLogoMap},
 	{CLASS_BLACK_FERROTHORN, BlackFerrothornBattleLogoTiles, BlackFerrothornBattleLogoPal, BlackFerrothornBattleLogoMap},
+	{CLASS_BLACK_FERROTHORN_BOSS, BlackFerrothornBattleLogoTiles, BlackFerrothornBattleLogoPal, BlackFerrothornBattleLogoMap},
 	{CLASS_BLACK_EMBOAR, BlackEmboarBattleLogoTiles, BlackEmboarBattleLogoPal, BlackEmboarBattleLogoMap},
 	{CLASS_SCIENCE_SOCIETY, ScienceSocietyBattleLogoTiles, ScienceSocietyBattleLogoPal, ScienceSocietyBattleLogoMap},
 	#endif

@@ -1204,6 +1204,7 @@ ScriptContext1_IsScriptSetUp = 0x8069A64 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 IsPaletteNotActive = 0x806A918 | 1;
+WaitForAorBPressOld = 0x806B898 | 1;
 GetVarPointer = 0x806E454 | 1;
 VarGet = 0x806E568 | 1;
 VarSet = 0x806E584 | 1;

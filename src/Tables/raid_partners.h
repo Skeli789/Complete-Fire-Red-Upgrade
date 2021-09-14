@@ -1952,7 +1952,7 @@ const struct MultiRaidTrainer gRaidPartners[] =
 		.trainerClass = CLASS_PKMN_TRAINER_2,
 		.backSpriteId = TRAINER_BACK_PIC_RED_NEW,
 		.gender = MALE,
-		.otId = 0x95746426,
+		.otId = 0x1,
 		.name = sTrainerName_Red,
 		.spreads =
 		{

@@ -11,11 +11,9 @@ bool8 IsAutoScrollEnabled(void)
 	if (gMain.inBattle)
 		return FALSE; //Only in the overworld
 
-	#ifdef AUTOSCROLL_TEXT_BY_HOLDING_R
+	#if (defined AUTOSCROLL_TEXT_BY_HOLDING_R || defined DEBUG_AUTO_SCROLL)
 	return TRUE;
 	#endif
-
-	return TRUE;
 
 	#ifdef FLAG_SANDBOX_MODE
 	if (FlagGet(FLAG_SANDBOX_MODE))
@@ -127,8 +125,11 @@ bool16 TextPrinterWait(struct TextPrinter *textPrinter)
 	return result;
 }
 
+bool8 __attribute__((long_call)) WaitForAorBPressOld(void);
 bool8 WaitForAorBPress(void)
 {
-	return JOY_NEW(A_BUTTON | B_BUTTON)
-		|| (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled());
+	if (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled())
+		return TRUE;
+
+	return WaitForAorBPressOld();
 }

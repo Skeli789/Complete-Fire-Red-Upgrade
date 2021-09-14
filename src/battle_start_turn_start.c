@@ -1708,13 +1708,16 @@ u16 GetMUS_ForBattle(void)
 					return gClassBasedBattleBGM[trainerClass];
 			}
 
-			//Then try loading the song override
-			song = VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE);
-			if (song == BGM_RANDOM_BATTLE_MUSIC)
-				song = GetRandomBattleBGM();
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+			{
+				//Then try loading the song override only in the actual Frontier
+				song = VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE);
+				if (song == BGM_RANDOM_BATTLE_MUSIC)
+					song = GetRandomBattleBGM();
 
-			if (song != 0)
-				return song;
+				if (song != 0)
+					return song;
+			}
 		}
 		else
 		{
