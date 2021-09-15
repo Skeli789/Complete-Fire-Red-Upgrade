@@ -28625,7 +28625,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SUPERLUCK
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RIVALRY
 		.item = ITEM_POWER_HERB,
 		.moves =
 		{
@@ -28677,8 +28677,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_SUPERLUCK
-		.item = ITEM_SCOPE_LENS,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
@@ -53938,7 +53938,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RIVALRY
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RIVALRY
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -65488,7 +65488,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.defEv = 116,
 		.spDefEv = 36,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RIVALRY
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RIVALRY
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{

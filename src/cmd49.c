@@ -599,7 +599,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					{
 						if (gNewBS->zMoveData.active)
 							gLastLandedMoves[bankDef] = gChosenMove;
-
 						else
 							gLastLandedMoves[bankDef] = gCurrentMove;
 

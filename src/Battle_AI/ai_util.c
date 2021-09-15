@@ -37,6 +37,8 @@ static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 nu
 static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move);
 static bool8 IsEffectivePursuit(u16 move, bool8 defCantSwitch, bool8 playerHasSwitchedBefore);
+static u16 PickMoveHumanLikelyToChoose(u16 move1, u16 move2, u8 playerBank, u8 aiBank);
+static bool8 MoveHasUsefulSecondaryEffectToKOWith(u16 move);
 
 u16 AIRandom()
 {
@@ -489,6 +491,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
+	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -603,8 +606,11 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 									continue; //Check the next move - this move is out
 							}
 
-							//Pick a move at random
-							if (Random() & 1)
+							//Pick the move the player as a human would be more likely to pick
+							if (playerIsAttacker)
+								bestMove = PickMoveHumanLikelyToChoose(currMove, bestMove, bankAtk, bankDef);
+							//Otherwise pick a move at random
+							else if (AIRandom() & 1)
 								bestMove = currMove;
 						}
 						else //Will get locked by using this move
@@ -614,8 +620,8 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 
 							if (currAcc == bestAcc || currAcc >= 100)
 							{
-								if (gBattleMoves[currMove].power > gBattleMoves[bestMove].power) //Same accuracy so use move with higher power
-									bestMove = currMove;
+								if (CalcVisualBasePower(bankAtk, 0, currMove, TRUE) > CalcVisualBasePower(bankAtk, 0, bestMove, TRUE))
+									bestMove = currMove; //Same accuracy so use move with higher power
 							}
 							else if (currAcc > bestAcc && bestAcc < 100)
 								bestMove = currMove; //Use the move with higher accuracy
@@ -627,6 +633,81 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	}
 
 	return bestMove;
+}
+
+static u16 PickMoveHumanLikelyToChoose(u16 move1, u16 move2, u8 playerBank, u8 aiBank)
+{
+	u8 ability = ABILITY(playerBank);
+
+	//Assume the player will try to raise their stats if they have a move that does
+	if (MoveHasUsefulSecondaryEffectToKOWith(move1)
+	&& CalcSecondaryEffectChance(playerBank, move1, ability) >= 50)
+	{
+		if (!MoveHasUsefulSecondaryEffectToKOWith(move2)
+		|| CalcSecondaryEffectChance(playerBank, move1, ability) < 50) //Not worth taking a chance for the effect
+			return move1; //Only first move has a good secondary effect with a high chance
+	}
+	else if (MoveHasUsefulSecondaryEffectToKOWith(move2)
+	&& CalcSecondaryEffectChance(playerBank, move2, ability) >= 50)
+		return move2; //Only second move has a good secondary effect with a high chance
+
+
+	//Assume the player will spam A and not bother changing attacks if they used a certain attack on the AI before
+	u16 lastLandedMove = gLastLandedMoves[aiBank];
+
+	if (move1 == lastLandedMove)
+		return move1;
+	else if (move2 == lastLandedMove)
+		return move2;
+
+	u8 effectiveness1 = AI_SpecialTypeCalc(move1, playerBank, aiBank);
+	u8 effectiveness2 = AI_SpecialTypeCalc(move2, playerBank, aiBank);
+
+	//Assume the player will pick the attack that's super effective
+	if (effectiveness1 & MOVE_RESULT_SUPER_EFFECTIVE)
+	{
+		if (!(effectiveness2 & MOVE_RESULT_SUPER_EFFECTIVE))
+			return move1; //Only first move is super effective
+	}
+	else if (effectiveness2 & MOVE_RESULT_SUPER_EFFECTIVE) //Only second move is super effective
+		return move2;
+
+
+	//Assume the player won't pick the attack that's not-very-effective (ignored when both moves are super effective)
+	if (effectiveness1 & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+	{
+		if (!(effectiveness2 & MOVE_RESULT_NOT_VERY_EFFECTIVE))
+			return move2; //Only second move does normal damage so player is less likely to take a risk on the first move
+	}
+	else if (effectiveness2 & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+		return move1; //Only first move does normal damage so player is less likely to take a risk on the second move
+
+
+	//Both moves have the same effectiveness, so a player would be more likely to pick one with STAB
+	u8 typeMove1 = GetMoveTypeSpecial(playerBank, move1);
+	u8 typeMove2 = GetMoveTypeSpecial(playerBank, move2);
+	if (IsOfType(playerBank, typeMove1))
+	{
+		if (!IsOfType(playerBank, typeMove2))
+			return move1; //First move has STAB but second move doesn't
+	}
+	else if (IsOfType(playerBank, typeMove2))
+		return move2; //Second move has STAB but first move doesn't
+
+
+	//Both moves have STAB, so a player is more likely to pick the one with higher base power
+	u16 power1 = CalcVisualBasePower(playerBank, aiBank, move1, FALSE);
+	u16 power2 = CalcVisualBasePower(playerBank, aiBank, move2, FALSE);
+	if (power1 > power2)
+		return move1;
+	else if (power2 > power1)
+		return move2;
+
+	//Both moves are the same in every respect, so it can't be determined which one the player would pick, so pick one at random
+	if (AIRandom() & 1)
+		return move1;
+
+	return move2;
 }
 
 bool8 StrongestMoveGoesFirst(u16 currentMove, u8 bankAtk, u8 bankDef)
@@ -703,7 +784,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 
 	//Check if any foe has Wide Guard
 	bool8 foeHasWideGuard = FALSE;
-	if (Random() % 100 < 75) //75 % chance the AI will care about wide guard this round
+	if (AIRandom() % 100 < 75) //75 % chance the AI will care about wide guard this round
 	{
 		for (j = 0; j < (s32) NELEMS(foes); ++j)
 		{
@@ -1322,22 +1403,23 @@ static void ClearDamageByMove(u8 bankAtk, u8 bankDef, u8 movePos)
 
 static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves, const u16 ignoreMove)
 {
-	u32 predictedDamage;
-	u16 strongestMove = gBattleMons[bankAtk].moves[0];
-	u32 highestDamage = 0;
-	u16 bestMoveAcc = 0;
-	u16 defHP = gBattleMons[bankDef].hp;
+	u32 predictedDamage, highestDamage;
+	u16 strongestMove, bestMoveAcc, defHP;
+
+	if ((defHP = gBattleMons[bankDef].hp) == 0) //Foe KOd
+		return MOVE_NONE;
+
+	predictedDamage = 0;
+	strongestMove = gBattleMons[bankAtk].moves[0];
+	highestDamage = 0;
+	bestMoveAcc = 0;
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
+	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
 	struct DamageCalc damageData = {0};
-
-	if (defHP == 0) //Foe dead
-		return MOVE_NONE;
-
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
-	predictedDamage = 0;
 
 	//Save time and do this now instead of before each move
 	damageData.bankAtk = bankAtk;
@@ -1380,6 +1462,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 			{
 				strongestMove = move;
 				highestDamage = predictedDamage;
+				bestMoveAcc = 0; //Haven't calculated it
 			}
 			else if (predictedDamage == highestDamage //This move does the same as the strongest move so far (they probably just both KO)
 			&& moveEffect != EFFECT_COUNTER
@@ -1392,17 +1475,22 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 				if (IsEffectivePursuit(move, defCantSwitch, playerHasSwitchedBefore)) //Only prioritize Pursuit if the player has shown they like switching and can switch
 				{
 					strongestMove = move;
+					bestMoveAcc = 0; //Haven't calculated it
 				}
 				else if (gBattleMoves[strongestMove].effect == EFFECT_FUTURE_SIGHT //Strongest move is the slowest possible - it takes multiple turns
 				|| ((thisPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, move)) > (bestPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
 				 && gBattleMoves[move].effect != EFFECT_FUTURE_SIGHT)) //And this move isn't as slow as possible (multiple turns)
 				{
 					strongestMove = move;
+					bestMoveAcc = 0; //Haven't calculated it
 				}
 				else if (thisPriority == bestPriority) //Helps exclude negative priority moves - Future Attacks are allowed here
 				{
 					//Find which move has better Acc
 					u16 currAcc = (MoveWillHit(move, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(move, bankAtk, bankDef);
+
+					if (bestMoveAcc == 0) //Never bothered to calculate it before
+						bestMoveAcc = (MoveWillHit(strongestMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(strongestMove, bankAtk, bankDef);
 
 					if (currAcc > bestMoveAcc && bestMoveAcc < 100)
 					{
@@ -1476,13 +1564,16 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 									continue; //Check the next move - this move is out
 							}
 
-							//Finally pick a move at random.
-							if (Random() & 1)
+							//Pick the move the player as a human would be more likely to pick
+							if (playerIsAttacker)
+								strongestMove = PickMoveHumanLikelyToChoose(move, strongestMove, bankAtk, bankDef);
+							//Finally pick a move at random
+							else if (AIRandom() & 1)
 								strongestMove = move;
 						}
 						else //Will be locked into this move
 						{
-							if (gBattleMoves[move].power > gBattleMoves[strongestMove].power)
+							if (CalcVisualBasePower(bankAtk, 0, move, TRUE) > CalcVisualBasePower(bankAtk, 0, strongestMove, TRUE))
 								strongestMove = move; //Same accuracy so use move with higher power (probably will do more in the long run)
 						}
 					}
@@ -2175,6 +2266,21 @@ bool8 IsStatRecoilMove(u16 move)
 	{
 		case EFFECT_SUPERPOWER:
 		case EFFECT_OVERHEAT:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+static bool8 MoveHasUsefulSecondaryEffectToKOWith(u16 move)
+{
+	switch (gBattleMoves[move].effect)
+	{
+		case EFFECT_ATTACK_UP_HIT:
+		case EFFECT_DEFENSE_UP_HIT:
+		case EFFECT_DEFENSE_UP_2_HIT:
+		case EFFECT_SPECIAL_ATTACK_UP_HIT:
+		case EFFECT_SPEED_UP_1_HIT:
 			return TRUE;
 		default:
 			return FALSE;
