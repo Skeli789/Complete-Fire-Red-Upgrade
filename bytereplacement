@@ -178,6 +178,10 @@
 #080D9FFE C0 46
 #080DA154 C0 46
 
+##Main Menu RTC Warnings Helper
+0800C502 01
+08234638 00 01 0F 1C
+
 ##Update Routines##
 ##Update ReloadHealthBar
 08033010 00

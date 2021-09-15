@@ -359,6 +359,7 @@ void PrintChangeSaveTypeErrorStatus(u8 taskId, const u8* str)
 }
 
 extern const u8 gText_MainMenuEnableRTC[];
+extern const u8 gText_MainMenuEnableRTCNoSave[];
 extern const u8 gText_MainMenuTimeSetInFuture[];
 extern bool8 sPrintedRTCWarning;
 bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
@@ -368,8 +369,15 @@ bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 	{
 		if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK)
 		{
+			const u8* warning;
 			sPrintedRTCWarning = TRUE;
-			PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
+			
+			if (gSaveFileStatus == SAVE_STATUS_EMPTY)
+				warning = gText_MainMenuEnableRTCNoSave;
+			else
+				warning = gText_MainMenuEnableRTC;
+			
+			PrintSaveErrorStatus(taskId, warning);
 			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
 			return TRUE;
 		}

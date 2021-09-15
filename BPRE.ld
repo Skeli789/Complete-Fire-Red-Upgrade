@@ -229,6 +229,7 @@ gLastKnownGoodSector = 0x3005388;
 gDamagedSaveSectors = 0x300538C;
 gSaveCounter = 0x3005390;
 gFastSaveSection = 0x3005394;
+gSaveFileStatus = 0x30053A0;
 gRamSaveSectionLocations = 0x30053B0;
 
 /* Palette RAM */
