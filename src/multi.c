@@ -753,6 +753,7 @@ static void PlayerPartnerHandlePrintSelectionString(void)
 		PlayerPartnerBufferExecComplete();
 }
 
+void __attribute__((long_call)) PlayerHandleChoosePokemon(void);
 static void PlayerPartnerHandleChooseAction(void)
 {
 	if (IsMockBattle())
@@ -800,6 +801,12 @@ static void PlayerPartnerHandleChooseAction(void)
 static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
+
+	if (IsMockBattle())
+	{
+		PlayerHandleChoosePokemon(); //Allow the player to choose the Pokemon to switch to
+		return;
+	}
 
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
