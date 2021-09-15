@@ -1055,9 +1055,10 @@ static u8 AtkCanceller_UnableToUseMove(void)
 
 				for (int i = 0; i < PARTY_SIZE; ++i)
 				{
-					if (GetMonData(&party[i], MON_DATA_HP, 0)
-					&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-					&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+					u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, 0);
+					if (species != SPECIES_NONE
+					&& species != SPECIES_EGG
+					&& GetMonData(&party[i], MON_DATA_HP, 0)
 					&& !GetMonData(&party[i], MON_DATA_STATUS, 0))
 						++gMultiHitCounter;
 				}
