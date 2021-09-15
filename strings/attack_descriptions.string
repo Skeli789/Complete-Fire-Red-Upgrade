@@ -1046,7 +1046,7 @@ The user becomes a\nsword and strikes.\nDouble damage on\nDynamaxed targets.
 The user becomes a\nshield and strikes.\nDouble damage on\nDynamaxed targets.
 
 #org @DESC_AURA_WHEEL
-Morpeko raises its\nSpeed and attacks.\nThe move's Type is\nbased on its form.
+Morpeko raises its\nSpeed and attacks.\nThe move's type is\nbased on its form.
 
 #org @DESC_BREAKING_SWIPE
 The user attacks the\nfoes by swinging its\ntail wildly, lowering\ntheir Attack.
@@ -1100,7 +1100,7 @@ It hits two to five\ntimes in a row.\nRaises Speed, but\nlowers Defense.
 In this two-turn move,\nthe user gathers\nspace power and\nincreases Sp. Atk.
 
 #org @DESC_SHELL_SIDE_ARM
-Inflicts the more\neffective of physical\nor special damage. May\npoison the target.
+Inflicts the more\neffective of physical\nor special damage.\nMay poison the foe.
 
 #org @DESC_MISTY_EXPLOSION
 The user explodes\nand faints itself.\nIts power increases\non Misty Terrain.
@@ -1118,7 +1118,7 @@ The move's type\nand power depends on\nthe terrain currently\nused in battle.
 The user skitters\nbehind the target to\nattack. It lowers the\nfoe's Sp.Atk stat.
 
 #org @DESC_BURNING_JEALOUSY
-Inflicts a burn\non targets who's stats\nwere boosted during the\nturn when it is used.
+Inflicts a burn on\ntargets that had\ntheir stats boosted\nduring the turn used.
 
 #org @DESC_LASH_OUT
 The move's power\ndoubles if the user's\nstats have fallen\nduring the turn.
@@ -1163,7 +1163,7 @@ The user delivers\na fierce kick that\nlowers the target's\ndefense stat.
 The user attacks with\nintense, dark flames.\nIt may also make\nthe foe flinch.
 
 #org @DESC_EERIE_SPELL
-The user attacks with\npsychic power that\nremoves 3 PP from the\ntarget's last move.
+The user attacks with\npsychic power that\nremoves 3 PP from\nthe foe's last move.
 
 #org @DESC_THUNDER_CAGE
 A cage made of\nelectricity that traps\nthe target for four\nto five turns.

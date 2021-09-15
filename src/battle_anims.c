@@ -3363,7 +3363,18 @@ void SpriteCB_DragonEnergyShot(struct Sprite* sprite)
 	if (IS_SINGLE_BATTLE || SIDE(gBattleAnimAttacker) == SIDE(gBattleAnimTarget))
 		y = GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET);
 	else
-		y = (GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET) + GetBattlerSpriteCoord(def2, BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+	{
+		y = 0;
+		
+		if (IsBattlerSpritePresent(def1))
+			y = GetBattlerSpriteCoord(def1, BATTLER_COORD_Y_PIC_OFFSET);
+		
+		if (IsBattlerSpritePresent(def2))
+			y += GetBattlerSpriteCoord(def2, BATTLER_COORD_Y_PIC_OFFSET);
+
+		if (IsBattlerSpritePresent(def1) && IsBattlerSpritePresent(def2)) //Both targets are visible
+			y /= 2;
+	}
 
 	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)
 	{
@@ -3376,7 +3387,6 @@ void SpriteCB_DragonEnergyShot(struct Sprite* sprite)
 		finishingX = 0;
 	}
 
-	sprite->oam.priority = 1; //So it always appears above both targets
 	sprite->pos1.x = startingX;
 	sprite->pos1.y = y;
 	sprite->pos2.x = 0;

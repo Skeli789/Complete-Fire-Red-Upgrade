@@ -3625,14 +3625,16 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		#ifdef ABILITY_TRANSISTOR
 		case ABILITY_TRANSISTOR:
 		//1.5x Boost
-			power = (power * 15) / 10;
+			if (data->moveType == TYPE_ELECTRIC)
+				power = (power * 15) / 10;
 			break;
 		#endif
 
 		#ifdef ABILITY_DRAGONSMAW
 		case ABILITY_DRAGONSMAW:
 		//1.5x Boost
-			power = (power * 15) / 10;
+			if (data->moveType == TYPE_DRAGON)
+				power = (power * 15) / 10;
 			break;
 		#endif
 	}

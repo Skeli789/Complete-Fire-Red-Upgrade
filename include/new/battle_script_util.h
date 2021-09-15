@@ -64,6 +64,7 @@ void RemoveStockpileBoosts(void);
 void SetHealingWishLunarDanceFunc(void);
 void FinalGambitDamageCalc(void);
 void AbilityChangeBSFunc(void);
+void EntrainmentSetCorrectTookAbilityFrom(void);
 void LoadStatustoPsychoShiftTransfer(void);
 void PluckBerryEat(void);
 void BurnUpFunc(void);

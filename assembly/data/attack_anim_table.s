@@ -18481,6 +18481,7 @@ THUNDER_CAGE_BOLTS:
 ANIM_DRAGON_ENERGY:
 	loadparticle ANIM_TAG_HYDRO_PUMP
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_HYDRO_PUMP 0x0 0xC 0xC 0x2C5E @;Regidrago Reddish Purple
+	pokespritetobg bank_target
 	playsound2 0x85 SOUND_PAN_ATTACKER
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x4 0x0 0xB 0x7F9F @;Pinkish White
 	waitanimation
@@ -18523,6 +18524,7 @@ ANIM_DRAGON_ENERGY:
 	call DRAGON_ENERGY_SHOT
 	waitanimation
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 10
+	pokespritefrombg bank_target
 	waitanimation
 	endanimation
 

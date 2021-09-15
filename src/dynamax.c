@@ -5,6 +5,7 @@
 #include "../include/random.h"
 #include "../include/pokemon_summary_screen.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -100,7 +101,7 @@ static const struct GMaxMove sGMaxMoveTable[] =
 	{SPECIES_SANDACONDA_GIGA,     TYPE_GROUND,     MOVE_G_MAX_SANDBLAST_P},
 	{SPECIES_TOXTRICITY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
 	{SPECIES_CENTISKORCH_GIGA,    TYPE_FIRE,       MOVE_G_MAX_CENTIFERNO_P},
-	{SPECIES_HATTERENE,           TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
+	{SPECIES_HATTERENE_GIGA,      TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
 	{SPECIES_GRIMMSNARL_GIGA,     TYPE_DARK,       MOVE_G_MAX_SNOOZE_P},
 	{SPECIES_ALCREMIE_GIGA,       TYPE_FAIRY,      MOVE_G_MAX_FINALE_P},
 	{SPECIES_COPPERAJAH_GIGA,     TYPE_STEEL,      MOVE_G_MAX_STEELSURGE_P},
@@ -785,9 +786,9 @@ void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 	if (IsDynamaxed(bank)
 	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
 	{
-		#if (defined SPECIES_CALYREX || defined SPECIES_CALYREX_ICE_RIDER || defined SPECIES_CALYREX_SHADOW_RIDER)
-		if (SPECIES(bank) == SPECIES_CALYREX || SPECIES(bank) == SPECIES_CALYREX_ICE_RIDER || SPECIES(bank) == SPECIES_CALYREX_SHADOW_RIDER)
-			BlendPalette(paletteOffset, 16, 4, RGB(0, 5, 35)); //Dynamax Blue
+		#ifdef NATIONAL_DEX_CALYREX
+		if (SpeciesToNationalPokedexNum(SPECIES(bank)) == NATIONAL_DEX_CALYREX)
+			BlendPalette(paletteOffset, 16, 4, RGB(0, 5, 31)); //Dynamax Blue
 		else
 		#endif
 			BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red

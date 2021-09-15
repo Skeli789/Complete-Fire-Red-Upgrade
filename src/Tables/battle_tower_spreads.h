@@ -5868,7 +5868,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 216,
 		.atkEv = 252,
 		.spdEv = 40,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INNERFOCUS
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_UNSEENFIST
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -5920,7 +5920,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.defEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_IRONFIST
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INNERFOCUS
 		.item = ITEM_SNOWBALL,
 		.moves =
 		{
@@ -25064,7 +25064,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 172,
 		.atkEv = 252,
 		.spdEv = 84,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_OWNTEMPO
+		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -25090,7 +25090,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLOUDNINE
+		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
 		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
@@ -62455,7 +62455,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 116,
 		.atkEv = 236,
 		.defEv = 156,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CLOUDNINE
+		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
 		.item = ITEM_BERRY_JUICE,
 		.moves =
 		{

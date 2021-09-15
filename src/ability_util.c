@@ -26,7 +26,7 @@ extern const u8 gText_AbilityName_TanglingHair[];
 extern const u8 gText_AbilityName_WimpOut[];
 extern const u8 gText_AbilityName_QueenlyMajesty[];
 extern const u8 gText_AbilityName_PowerOfAlchemy[];
-extern const u8 gText_AbilityName_PropellorTail[];
+extern const u8 gText_AbilityName_PropellerTail[];
 extern const u8 gText_AbilityName_SoundWaves[];
 extern const u8 gText_AbilityName_IcySkin[];
 
@@ -82,6 +82,9 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_RHYPERIOR:
 				case NATIONAL_DEX_TIRTOUGA:
 				case NATIONAL_DEX_CARRACOSTA:
+				#ifdef NATIONAL_DEX_STONJOURNER
+				case NATIONAL_DEX_STONJOURNER:
+				#endif
 					return gText_AbilityName_SolidRock;
 				#endif
 			}
@@ -171,7 +174,7 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#if (defined NATIONAL_DEX_ARROKUDA && defined NATIONAL_DEX_BARRASKEWDA)
 				case NATIONAL_DEX_ARROKUDA:
 				case NATIONAL_DEX_BARRASKEWDA:
-					return gText_AbilityName_PropellorTail;
+					return gText_AbilityName_PropellerTail;
 				#endif
 			}
 			break;

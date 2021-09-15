@@ -1366,7 +1366,7 @@ void AbilityChangeBSFunc(void)
 			else
 			{
 				*defAbilityLoc = atkAbility;
-				SetTookAbilityFrom(gBankTarget, gBankAttacker);
+				//SetTookAbilityFrom(gBankTarget, gBankAttacker); //Set after the first Ability pop up
 				gLastUsedAbility = defAbility; //Original ability
 				ResetVarsForAbilityChange(gBankTarget);
 				gBattleStringLoader = EntrainmentString;
@@ -1394,6 +1394,11 @@ void AbilityChangeBSFunc(void)
 
 	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
 		TransferAbilityPopUp(gBankTarget, gLastUsedAbility);
+}
+
+void EntrainmentSetCorrectTookAbilityFrom(void)
+{
+	SetTookAbilityFrom(gBankTarget, gBankAttacker);
 }
 
 void LoadStatustoPsychoShiftTransfer(void)
