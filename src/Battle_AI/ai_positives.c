@@ -1131,7 +1131,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						|| (IS_DOUBLE_BATTLE && AI_THINKING_STRUCT->simulatedRNG[1] < 80) //80% chance of spamming in doubles
 						|| IsClassStall(class) //Best to protect always if you're stalling
 						|| (predictedMove != MOVE_NONE 
-						 && CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
+						 && CheckContact(predictedMove, bankDef, bankAtk) //Enemy will KO with a contact move
 						 && RealPhysicalMoveInMoveset(bankDef))) //The contact move is also physical
 						{
 							if (IsClassStall(class))
@@ -1139,7 +1139,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 								if (!BATTLER_MAX_HP(bankAtk) && data->atkItemEffect == ITEM_EFFECT_LEFTOVERS)
 									INCREASE_VIABILITY(8);
 								else if (predictedMove != MOVE_NONE 
-								&& CheckContact(predictedMove, bankDef) //Enemy will KO with a contact move
+								&& CheckContact(predictedMove, bankDef, bankAtk) //Enemy will KO with a contact move
 								&& RealPhysicalMoveInMoveset(bankDef)) //The contact move is also physical
 									INCREASE_VIABILITY(8);
 								else
@@ -1162,7 +1162,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 				case MOVE_BANEFULBUNKER:
 					if (predictedMove != MOVE_NONE 
-					 && CheckContact(predictedMove, bankDef) //Enemy will hit with a contact move
+					 && CheckContact(predictedMove, bankDef, bankAtk) //Enemy will hit with a contact move
 					 && CanBePoisoned(bankDef, bankAtk, TRUE))
 					{
 						if (IsClassStall(class))

@@ -445,10 +445,10 @@ bool8 HasMonToSwitchTo(u8 bank)
 	return i != lastMonId;
 }
 
-bool8 CheckContact(u16 move, u8 bank)
+bool8 CheckContact(u16 move, u8 bankAtk, unusedArg u8 bankDef)
 {
 	return gBattleMoves[move].flags & FLAG_MAKES_CONTACT
-		&& !CanNeverMakeContact(bank);
+		&& !CanNeverMakeContact(bankAtk);
 }
 
 bool8 CheckContactByMon(u16 move, struct Pokemon* mon)

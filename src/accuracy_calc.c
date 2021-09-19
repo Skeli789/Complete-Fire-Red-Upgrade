@@ -185,7 +185,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 effect = 0;
 	u8 protectFlag = gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED;
 	u8 split = SPLIT(move);
-	u8 contact = CheckContact(move, bankAtk);
+	u8 contact = CheckContact(move, bankAtk, bankDef);
 	u8 target = GetBaseMoveTarget(move, bankAtk);
 	u8 defSide = SIDE(bankDef);
 

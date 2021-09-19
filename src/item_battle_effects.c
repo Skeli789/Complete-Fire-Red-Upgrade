@@ -720,7 +720,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				if (TOOK_DAMAGE(bank)
 				&& MOVE_HAD_EFFECT
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& CheckContact(gCurrentMove, gBankAttacker)
+				&& CheckContact(gCurrentMove, gBankAttacker, bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp)
 				{
@@ -832,7 +832,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 			case ITEM_EFFECT_STICKY_BARB:
 				if (TOOK_DAMAGE(bank)
 				&& MOVE_HAD_EFFECT
-				&& CheckContact(gCurrentMove, gBankAttacker)
+				&& CheckContact(gCurrentMove, gBankAttacker, bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp != 0
 				&& gBattleMons[gBankAttacker].item == ITEM_NONE)

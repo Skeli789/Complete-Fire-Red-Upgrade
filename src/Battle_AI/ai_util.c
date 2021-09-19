@@ -323,7 +323,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 				if (MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
 				{
 					perfectMoves |= gBitTable[i]; //This is one of the best moves
-					perfectMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Make sure at least one perfect move doesn't make contact
+					perfectMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk, bankDef); //Make sure at least one perfect move doesn't make contact
 					bestMovePursuit |= isEffectivePursuit;
 				}
 				else if (perfectMoves == 0) //Only waste time with the other moves if there isn't already a perfect move
@@ -338,7 +338,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 						bestAcc = currAcc;
 						bestPriority = currPriority;
 						goodMoves = gBitTable[i]; //Wipe all previously good moves
-						goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk); //Update whether the "best" move makes contact
+						goodMoveThatDoesntMakeContact = !CheckContact(currMove, bankAtk, bankDef); //Update whether the "best" move makes contact
 						hasNonMultiHitMove = gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
 						bestMovePursuit = isEffectivePursuit;
 					}
@@ -360,7 +360,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 						{
 							//This move has the same priority as pre-existing moves
 							goodMoves |= gBitTable[i];
-							goodMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk); //Update whether at least one good move doesn't make contact
+							goodMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk, bankDef); //Update whether at least one good move doesn't make contact
 							hasNonMultiHitMove |= gBattleMoves[currMove].effect != EFFECT_MULTI_HIT;
 							bestMovePursuit = isEffectivePursuit;
 						}
@@ -370,7 +370,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 		}
 	}
 
-	bool8 moveIsContact = CheckContact(checkMove, bankAtk);
+	bool8 moveIsContact = CheckContact(checkMove, bankAtk, bankDef);
 	bool8 movesToCheck = (perfectMoves == 0) ? goodMoves : perfectMoves;
 	bool8 hasMoveThatDoesntMakeContact = (perfectMoves == 0) ? goodMoveThatDoesntMakeContact : perfectMoveThatDoesntMakeContact;
 
@@ -445,7 +445,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		moveEffect = gBattleMoves[currMove].effect;
 
 		if (!(gBitTable[i] & moveLimitations)
-		&& CheckContact(currMove, bankAtk)
+		&& CheckContact(currMove, bankAtk, bankDef)
 		&& moveEffect != EFFECT_RECHARGE
 		&& moveEffect != EFFECT_COUNTER
 		&& moveEffect != EFFECT_MIRROR_COAT
@@ -547,8 +547,8 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 							//Pick a non-contact move if contact is a bad idea
 							if (badIdeaToMakeContact)
 							{
-								bool8 bestMoveContact = CheckContact(bestMove, bankAtk);
-								bool8 currMoveContact = CheckContact(currMove, bankAtk);
+								bool8 bestMoveContact = CheckContact(bestMove, bankAtk, bankDef);
+								bool8 currMoveContact = CheckContact(currMove, bankAtk, bankDef);
 							
 								if (bestMoveContact && !currMoveContact)
 								{
@@ -1505,8 +1505,8 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 							//Pick a non-contact move if contact is a bad idea
 							if (badIdeaToMakeContact)
 							{
-								bool8 strongestMoveContact = CheckContact(strongestMove, bankAtk);
-								bool8 currMoveContact = CheckContact(move, bankAtk);
+								bool8 strongestMoveContact = CheckContact(strongestMove, bankAtk, bankDef);
+								bool8 currMoveContact = CheckContact(move, bankAtk, bankDef);
 
 								if (strongestMoveContact && !currMoveContact)
 								{
@@ -2883,7 +2883,7 @@ bool8 BadIdeaToRaiseAttackAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 check
 		return TRUE;
 
 	if (checkingOriginalTarget
-	&& MoveInMoveset(MOVE_KINGSSHIELD, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))
+	&& MoveInMoveset(MOVE_KINGSSHIELD, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk, bankDef))
 		return TRUE;
 
 	if (amount <= 1)
@@ -2911,7 +2911,7 @@ bool8 BadIdeaToRaiseDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 chec
 		return TRUE;
 
 	if (checkingOriginalTarget
-	&& MoveInMoveset(MOVE_OBSTRUCT, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk))
+	&& MoveInMoveset(MOVE_OBSTRUCT, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk, bankDef))
 		return TRUE;
 
 	if (amount <= 1)
@@ -4029,7 +4029,7 @@ bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CheckContact(move, bankAtk)
+			if (CheckContact(move, bankAtk, bankDef)
 			&& !(AI_SpecialTypeCalc(move, bankDef, bankAtk) & MOVE_RESULT_NO_EFFECT))
 				return TRUE;
 		}

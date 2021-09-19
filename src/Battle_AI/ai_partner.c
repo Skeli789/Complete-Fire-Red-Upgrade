@@ -38,7 +38,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	s16 viability = originalViability;
 
 	//Get relevant params
-	u8 bankDef = bankAtkPartner;
+	u8 bankDef = bankAtkPartner; //Need for viability macros
 	u16 move = TryReplaceMoveWithZMove(bankAtk, bankAtkPartner, originalMove);
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
@@ -225,7 +225,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				||  atkAbility == ABILITY_SLOWSTART
 				||  atkAbility == ABILITY_DEFEATIST)
 				{
-					if (CheckContact(move, bankAtk) //Mummy will transfer
+					if (CheckContact(move, bankAtk, bankAtkPartner) //Mummy will transfer
 					&& !PARTNER_MOVE_EFFECT_IS_SKILL_SWAP
 					&& !(TypeCalc(move, bankAtk, bankAtkPartner, NULL, FALSE) & MOVE_RESULT_NO_EFFECT) //Move has effect
 					&& IsWeakestContactMoveWithBestAccuracy(move, bankAtk, bankAtkPartner)) //Hit partner with weakest move

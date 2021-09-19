@@ -2441,7 +2441,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//0.75x Decrement
 		#ifdef PORTAL_POWER
 			if ((useMonAtk && !CheckContactByMon(move, data->monAtk))
-			|| (!useMonAtk && !CheckContact(move, bankAtk)))
+			|| (!useMonAtk && !CheckContact(move, bankAtk, bankDef)))
 			{
 				attack = (attack * 75) / 100;
 				spAttack = (spAttack * 75) / 100;
@@ -2815,7 +2815,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				damage *= 2;
 
 			if ((useMonAtk && CheckContactByMon(move, data->monAtk))
-			|| (!useMonAtk && CheckContact(move, bankAtk)))
+			|| (!useMonAtk && CheckContact(move, bankAtk, bankDef)))
 				damage /= 2;
 			break;
 

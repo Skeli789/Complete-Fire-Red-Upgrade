@@ -1201,7 +1201,7 @@ static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 		if ((SPECIES(gActiveBattler) == SPECIES_AEGISLASH || SPECIES(gActiveBattler) == SPECIES_AEGISLASH_BLADE) //Mon to be switched is Aegislash
 		&& gDisableStructs[gActiveBattler].protectUses == 0 //And it didn't use King's Shield last
 		&& defMove != MOVE_NONE //Aegislash would be hit
-		&& CheckContact(defMove, bankDef) //With a contact move
+		&& CheckContact(defMove, bankDef, gActiveBattler) //With a contact move
 		&& RealPhysicalMoveInMoveset(bankDef) //That's probably physical
 		&& ABILITY(gActiveBattler) == ABILITY_STANCECHANGE
 		&& MoveInMoveset(MOVE_KINGSSHIELD, gActiveBattler))

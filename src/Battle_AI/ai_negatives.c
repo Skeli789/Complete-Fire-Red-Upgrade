@@ -2185,7 +2185,8 @@ SKIP_CHECK_TARGET:
 		case EFFECT_FOCUS_PUNCH: ;
 			switch (move) {
 				case MOVE_SHELLTRAP: ;
-					if (!CheckContact(predictedMove, bankDef))
+					if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Not dumb AI
+					&& !CheckContact(predictedMove, bankDef, bankAtk))
 						DECREASE_VIABILITY(10); //Probably better not to use it
 					else
 						goto AI_STANDARD_DAMAGE;

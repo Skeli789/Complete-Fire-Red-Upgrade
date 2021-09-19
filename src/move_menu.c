@@ -448,12 +448,12 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		u16 move = (tempMoveStruct->dynamaxed) ? tempMoveStruct->possibleMaxMoves[i] : originalMove;
 
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
-		tempMoveStruct->makesContact[i] = CheckContact(move, gActiveBattler);
 
 		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
 		{
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, move, TRUE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
+			tempMoveStruct->makesContact[i] = CheckContact(move, gActiveBattler, gActiveBattler);
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
 			{
@@ -486,6 +486,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			u8 foePosition = GetBattlerPosition(foe);
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, move, FALSE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
+			tempMoveStruct->makesContact[i] = CheckContact(move, gActiveBattler, foe);
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
 			{

@@ -44,7 +44,7 @@ bool8 IsMonDamageHalvedDueToFullHP(struct Pokemon* mon, u8 defAbility, u16 move,
 u8 ViableMonCountFromBank(u8 bank);
 u8 ViableMonCountFromBankLoadPartyRange(u8 bank);
 bool8 HasMonToSwitchTo(u8 bank);
-bool8 CheckContact(u16 move, u8 bank);
+bool8 CheckContact(u16 move, u8 bankAtk, u8 bankDef);
 bool8 CheckContactByMon(u16 move, struct Pokemon* mon);
 bool8 CanNeverMakeContact(u8 bank);
 bool8 CanMonNeverMakeContact(struct Pokemon* mon);
