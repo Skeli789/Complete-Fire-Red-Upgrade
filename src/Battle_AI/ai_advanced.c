@@ -1329,7 +1329,7 @@ bool8 MoveSplitOnTeam(u8 bank, u8 split)
 
 			if (alive && pp > 0 && move != MOVE_NONE)
 			{
-				if (CalcMoveSplitFromParty(&party[i], move) == split)
+				if (CalcMoveSplitFromParty(move, &party[i]) == split)
 					return TRUE;
 			}
 		}
@@ -1364,7 +1364,7 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 
 						if (defPhysicalMoveInMoveset && defSpecialMoveInMoveset //Foe has both physical and special moves
 						&& hasLightScreen //Attacker could also use Light Screen instead
-						&& CalcMoveSplit(bankDef, defPrediction) == SPLIT_SPECIAL) //Foe is probably going to hit with a special move
+						&& CalcMoveSplit(defPrediction, bankDef, bankAtk) == SPLIT_SPECIAL) //Foe is probably going to hit with a special move
 							return FALSE; //Use Light Screen to survive longer
 
 						if (defPhysicalMoveInMoveset //Foe just has a physical move
@@ -1384,7 +1384,7 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 
 						if (defPhysicalMoveInMoveset && defSpecialMoveInMoveset //Foe has both physical and special moves
 						&& hasReflect //Attacker could also use Reflect instead
-						&& CalcMoveSplit(bankDef, defPrediction) == SPLIT_PHYSICAL) //Foe is probably going to hit with a physcial move
+						&& CalcMoveSplit(defPrediction, bankDef, bankAtk) == SPLIT_PHYSICAL) //Foe is probably going to hit with a physcial move
 							return FALSE; //Use Reflect to survive longer
 
 						if (defSpecialMoveInMoveset //Foe just has a special move
@@ -1770,12 +1770,12 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 				{
 					if (stat == STAT_STAGE_DEF)
 					{
-						if (CalcMoveSplit(bankDef, GetStrongestMove(bankDef, bankAtk)) == SPLIT_PHYSICAL)
+						if (CalcMoveSplit(GetStrongestMove(bankDef, bankAtk), bankDef, bankAtk) == SPLIT_PHYSICAL)
 							return TRUE; //Maybe increasing defenses will reduce the chance of a 2HKO
 					}
 					else if (stat == STAT_STAGE_SPDEF)
 					{
-						if (CalcMoveSplit(bankDef, GetStrongestMove(bankDef, bankAtk)) == SPLIT_SPECIAL)
+						if (CalcMoveSplit(GetStrongestMove(bankDef, bankAtk), bankDef, bankAtk) == SPLIT_SPECIAL)
 							return TRUE; //Maybe increasing defenses will reduce the chance of a 2HKO
 					}
 				}

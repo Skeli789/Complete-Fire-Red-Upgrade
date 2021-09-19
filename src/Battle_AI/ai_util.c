@@ -1158,7 +1158,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	u8 ability = ABILITY(bankDef);
 
 	if (MoveBlockedBySubstitute(move, bankAtk, bankDef)
-	|| (NO_MOLD_BREAKERS(ABILITY(bankAtk), move) && IsAffectedByDisguse(ability, species, CalcMoveSplit(bankAtk, move))))
+	|| (NO_MOLD_BREAKERS(ABILITY(bankAtk), move) && IsAffectedByDisguse(ability, species, CalcMoveSplit(move, bankAtk, bankDef))))
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
@@ -1226,7 +1226,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move);
 
 	if (MonMoveBlockedBySubstitute(move, monAtk, bankDef)
-	|| (noMoldBreakers && IsAffectedByDisguse(ability, species, CalcMoveSplitFromParty(monAtk, move))))
+	|| (noMoldBreakers && IsAffectedByDisguse(ability, species, CalcMoveSplitFromParty(move, monAtk))))
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
@@ -1377,13 +1377,13 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 
 		switch (move) {
 			case MOVE_COUNTER:
-				if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL)
+				if (CalcMoveSplit(predictedMove, bankDef, bankAtk) == SPLIT_PHYSICAL)
 					predictedDamage *= 2;
 				else
 					predictedDamage = 0;
 				break;
 			case MOVE_MIRRORCOAT:
-				if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_SPECIAL)
+				if (CalcMoveSplit(predictedMove, bankDef, bankAtk) == SPLIT_SPECIAL)
 					predictedDamage *= 2;
 				else
 					predictedDamage = 0;
@@ -3364,7 +3364,7 @@ bool8 PhysicalMoveInMoveset(u8 bank)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplit(bank, move) == SPLIT_PHYSICAL
+			if (CalcMoveSplit(move, bank, bank) == SPLIT_PHYSICAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_COUNTER
 			&& move != MOVE_FAKEOUT) //While physical, it can only be used on the first turn
@@ -3389,7 +3389,7 @@ bool8 RealPhysicalMoveInMoveset(u8 bank)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplit(bank, move) == SPLIT_PHYSICAL
+			if (CalcMoveSplit(move, bank, bank) == SPLIT_PHYSICAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_COUNTER
 			&& move != MOVE_FAKEOUT
@@ -3416,7 +3416,7 @@ bool8 SpecialMoveInMoveset(u8 bank)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplit(bank, move) == SPLIT_SPECIAL
+			if (CalcMoveSplit(move, bank, bank) == SPLIT_SPECIAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_MIRROR_COAT)
 				return TRUE;
@@ -3451,7 +3451,7 @@ bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplitFromParty(mon, move) == SPLIT_PHYSICAL
+			if (CalcMoveSplitFromParty(move, mon) == SPLIT_PHYSICAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_COUNTER)
 				return TRUE;
@@ -3474,7 +3474,7 @@ bool8 SpecialMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplitFromParty(mon, move) == SPLIT_SPECIAL
+			if (CalcMoveSplitFromParty(move, mon) == SPLIT_SPECIAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_MIRROR_COAT)
 				return TRUE;
@@ -3800,7 +3800,7 @@ bool8 StatusMoveInMoveset(u8 bank)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplit(bank, move) == SPLIT_STATUS)
+			if (CalcMoveSplit(move, bank, bank) == SPLIT_STATUS)
 				return TRUE;
 		}
 	}
@@ -4154,7 +4154,7 @@ bool8 MultiHitMoveWithSplitInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 split
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (gBattleMoves[move].effect == EFFECT_MULTI_HIT
-			&& CalcMoveSplit(bankAtk, move) == split
+			&& CalcMoveSplit(move, bankAtk, bankDef) == split
 			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
 			&& !IsDamagingMoveUnusable(move, bankAtk, bankDef))
 				return TRUE;
@@ -4978,7 +4978,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
-			if (noMoldBreakers && IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(bankAtk, zMove)))
+			if (noMoldBreakers && IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(zMove, bankAtk, bankDef)))
 				return FALSE; //Don't waste a Z-Move breaking a disguise
 
 			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT

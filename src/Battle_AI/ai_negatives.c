@@ -107,7 +107,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		data->defAbility = ABILITY_NONE;
 
 	u8 moveEffect = gBattleMoves[move].effect;
-	u8 moveSplit = CalcMoveSplit(bankAtk, move);
+	u8 moveSplit = CalcMoveSplit(move, bankAtk, bankDef);
 	u8 moveTarget = GetBaseMoveTarget(move, bankAtk);
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 	u8 moveFlags = gBattleMoves[move].flags;
@@ -1532,7 +1532,7 @@ SKIP_CHECK_TARGET:
 			&& move != MOVE_METALBURST
 			&& gLastUsedMoves[bankDef] != MOVE_NONE && gLastUsedMoves[bankDef] != 0xFFFF //Player attacked last turn
 			&& gBattleMoves[gLastUsedMoves[bankAtk]].effect == moveEffect //The AI tried using the same move last turn
-			&& CalcMoveSplit(bankDef, gLastUsedMoves[bankDef]) != CalcMoveSplit(bankDef, gNewBS->ai.previousMovePredictions[bankDef][bankAtk]) //But the player used a move split other than what was predicted
+			&& CalcMoveSplit(gLastUsedMoves[bankDef], bankDef, bankAtk) != CalcMoveSplit(gNewBS->ai.previousMovePredictions[bankDef][bankAtk], bankDef, bankAtk) //But the player used a move split other than what was predicted
 			&& AI_THINKING_STRUCT->simulatedRNG[1] & 1) //50% of the time
 			{
 				DECREASE_VIABILITY(8); //It's not unreasonable to think that they'll try something else again

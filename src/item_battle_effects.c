@@ -61,7 +61,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	u8 bankHoldEffect, atkHoldEffect;
 	u8 bankQuality, atkQuality;
 	u16 atkItem;
-	u8 moveSplit = CalcMoveSplit(gBankAttacker, gCurrentMove);
 
 	#ifndef NO_GHOST_BATTLES
 	if (IS_GHOST_BATTLE && SIDE(bank) == B_SIDE_OPPONENT)
@@ -783,7 +782,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& gBattleMons[gBankAttacker].hp
 					&& gBattleMons[bank].hp
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-					&& moveSplit == bankQuality)
+					&& CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == bankQuality)
 					{
 						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
 
@@ -1173,7 +1172,7 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 doPluck) {
 		animId = STAT_ANIM_PLUS2;
 	}
 
-	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gBankAttacker, gCurrentMove) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || doPluck)
+	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || doPluck)
 	&& BATTLER_ALIVE(bank)
 	&& !SheerForceCheck()
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))

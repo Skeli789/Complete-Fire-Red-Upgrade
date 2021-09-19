@@ -195,11 +195,11 @@ move_t GetTypeBasedZMove(u16 move, u8 bank)
 		moveType = GetMoveTypeSpecial(bank, move);
 
 	if (moveType < TYPE_FIRE)
-		return MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + CalcMoveSplit(bank, move);
+		return MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + CalcMoveSplit(move, bank, bank);
 	else if (moveType >= TYPE_FAIRY)
-		return MOVE_TWINKLE_TACKLE_P + ((moveType - TYPE_FAIRY) * 2) + CalcMoveSplit(bank, move);
+		return MOVE_TWINKLE_TACKLE_P + ((moveType - TYPE_FAIRY) * 2) + CalcMoveSplit(move, bank, bank);
 	else
-		return MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + CalcMoveSplit(bank, move);
+		return MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + CalcMoveSplit(move, bank, bank);
 }
 
 move_t GetSpecialZMove(u16 move, u16 species, u16 item)

@@ -1463,19 +1463,16 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 	return FALSE;
 }
 
-u8 CalcMoveSplit(u8 bank, u16 move)
+u8 CalcMoveSplit(u16 move, u8 bankAtk, unusedArg u8 bankDef)
 {
 	if (gSpecialMoveFlags[move].gMovesThatChangePhysicality
 	&&  SPLIT(move) != SPLIT_STATUS)
 	{
-		u32 attack = gBattleMons[bank].attack;
-		u32 spAttack = gBattleMons[bank].spAttack;
-
-		attack = attack * gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_ATK)][0];
-		attack = udivsi(attack, gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_ATK)][1]);
-
-		spAttack = spAttack * gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_SPATK)][0];
-		spAttack = udivsi(spAttack, gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_SPATK)][1]);
+		u32 attack = gBattleMons[bankAtk].attack;
+		u32 spAttack = gBattleMons[bankAtk].spAttack;
+		
+		APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(bankAtk, STAT_STAGE_ATK));
+		APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(bankAtk, STAT_STAGE_SPATK));
 
 		if (spAttack >= attack)
 			return SPLIT_SPECIAL;
@@ -1493,7 +1490,7 @@ u8 CalcMoveSplit(u8 bank, u16 move)
 	#endif
 }
 
-u8 CalcMoveSplitFromParty(struct Pokemon* mon, u16 move)
+u8 CalcMoveSplitFromParty(u16 move, struct Pokemon* mon)
 {
 	if (gSpecialMoveFlags[move].gMovesThatChangePhysicality)
 	{

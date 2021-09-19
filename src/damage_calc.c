@@ -2187,7 +2187,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				TryBoostMonOffensesForTotemBoost(data, bankAtk, FALSE);
 		}
 
-		data->moveSplit = CalcMoveSplitFromParty(monAtk, move);
+		data->moveSplit = CalcMoveSplitFromParty(move, monAtk);
 		data->moveType = GetMonMoveTypeSpecial(monAtk, move);
 
 		/*if (useMonDef) //CAN'T AND SHOULD NOT HAPPEN
@@ -2221,7 +2221,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				data->spAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPATK);
 		}
 
-		data->moveSplit = CalcMoveSplit(bankAtk, move);
+		data->moveSplit = CalcMoveSplit(move, bankAtk, bankDef);
 		data->moveType = GetMoveTypeSpecial(bankAtk, move);
 
 		if (useMonDef)
@@ -3874,7 +3874,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 
 //Load attacker Data
 	PopulateDamageCalcStructWithBaseAttackerData(&data);
-	data.moveSplit = CalcMoveSplit(bankAtk, move);
+	data.moveSplit = CalcMoveSplit(move, bankAtk, bankDef);
 	data.moveType = GetMoveTypeSpecial(bankAtk, move);
 
 //Load target data

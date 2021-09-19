@@ -191,7 +191,7 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 	//Now run actual damage calc
 	u32 predictedDmg = 0;
 	u8 monAbility = GetMonAbility(mon);
-	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(foe, defMove)))
+	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(defMove, foe, activeBattler)))
 	{
 		if (monAbility == ABILITY_DISGUISE) //Disguise only - no Ice Face
 			predictedDmg = mon->maxHP / 8; //Loses an 1/8 of max HP when the disguise is busted
@@ -224,7 +224,7 @@ static bool8 PredictedMoveWontKOMon(u8 activeBattler, struct Pokemon* mon, u8 fo
 	//Now run actual damage calc
 	u32 predictedDmg = 0;
 	u8 monAbility = GetMonAbility(mon);
-	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(foe, defMove)))
+	if (IsAffectedByDisguse(monAbility, mon->species, CalcMoveSplit(defMove, foe, activeBattler)))
 	{
 		if (monAbility == ABILITY_DISGUISE) //Disguise only - no Ice Face
 			predictedDmg = mon->maxHP / 8;
@@ -1507,7 +1507,7 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 			if (!(gBitTable[i] & moveLimitations) //Can use move
 			&& gBattleMoves[move].power != 0) //Move actually does damage
 			{
-				u8 split = CalcMoveSplit(gActiveBattler, move);
+				u8 split = CalcMoveSplit(move, gActiveBattler, foe1);
 
 				if (split == SPLIT_PHYSICAL)
 				{
@@ -2079,7 +2079,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 						if (!(gBitTable[k] & foeMoveLimitations))
 						{
-							u8 split = CalcMoveSplit(foe, move);
+							u8 split = CalcMoveSplit(move, foe, foe);
 							if (split == SPLIT_PHYSICAL)
 								physMoveInMoveset = TRUE;
 							else if (split == SPLIT_SPECIAL)

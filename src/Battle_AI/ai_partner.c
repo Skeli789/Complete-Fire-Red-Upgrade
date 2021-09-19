@@ -52,7 +52,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 	&& gSpecialAbilityFlags[atkPartnerAbility].gMoldBreakerIgnoredAbilities)
 		atkPartnerAbility = ABILITY_NONE;
 
-	u8 moveSplit = CalcMoveSplit(bankAtk, move);
+	u8 moveSplit = CalcMoveSplit(move, bankAtk, bankDef);
 	bool8 partnerProtects = DoesProtectionMoveBlockMove(bankAtk, bankAtkPartner, move, partnerMove);
 	bool8 onlyHitsBothFoes = GetBaseMoveTarget(move, bankAtk) == MOVE_TARGET_BOTH;
 
