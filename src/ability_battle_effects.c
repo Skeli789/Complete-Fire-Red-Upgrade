@@ -1032,11 +1032,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_DOWNLOAD: ;
 			u8 statId;
 			u32 opposingBank = BATTLE_OPPOSITE(bank);
+			u8 defMod = !IsWonderRoomActive() ? STAT_DEF : STAT_SPDEF; //Bug with the official GF code that considers stat stages instead of raw stats under Wonder Room
+			u8 spDefMod = !IsWonderRoomActive() ? STAT_SPDEF : STAT_DEF;
 
 			u32 opposingDef = gBattleMons[opposingBank].defense;
-			APPLY_STAT_MOD(opposingDef, &gBattleMons[opposingBank], opposingDef, STAT_DEF);
+			APPLY_STAT_MOD(opposingDef, &gBattleMons[opposingBank], opposingDef, defMod);
 			u32 opposingSpDef = gBattleMons[opposingBank].spDefense;
-			APPLY_STAT_MOD(opposingSpDef, &gBattleMons[opposingBank], opposingSpDef, STAT_SPDEF);
+			APPLY_STAT_MOD(opposingSpDef, &gBattleMons[opposingBank], opposingSpDef, spDefMod);
 
 			if (IS_DOUBLE_BATTLE)
 			{
@@ -1046,9 +1048,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (gBattleMons[opposingBank].hp)
 				{
 					u32 opposingPartnerDef = gBattleMons[opposingBank].defense;
-					APPLY_STAT_MOD(opposingPartnerDef, &gBattleMons[opposingBank], opposingPartnerDef, STAT_DEF);
+					APPLY_STAT_MOD(opposingPartnerDef, &gBattleMons[opposingBank], opposingPartnerDef, defMod);
 					u32 opposingPartnerSpDef = gBattleMons[opposingBank].spDefense;
-					APPLY_STAT_MOD(opposingPartnerSpDef, &gBattleMons[opposingBank], opposingPartnerSpDef, STAT_SPDEF);
+					APPLY_STAT_MOD(opposingPartnerSpDef, &gBattleMons[opposingBank], opposingPartnerSpDef, spDefMod);
 				}
 
 				opposingDef += opposingPartnerDef;
