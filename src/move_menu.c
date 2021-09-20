@@ -126,7 +126,7 @@ void HandleInputChooseMove(void)
 		else
 			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
 
-		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
+		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
 
 		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)
@@ -453,6 +453,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		{
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, move, TRUE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
+			tempMoveStruct->moveSplit[i] = CalcMoveSplit(move, gActiveBattler, gActiveBattler);
 			tempMoveStruct->makesContact[i] = CheckContact(move, gActiveBattler, gActiveBattler);
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
@@ -486,6 +487,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			u8 foePosition = GetBattlerPosition(foe);
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, move, FALSE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
+			tempMoveStruct->moveSplit[i] = CalcMoveSplit(move, gActiveBattler, foe);
 			tempMoveStruct->makesContact[i] = CheckContact(move, gActiveBattler, foe);
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
@@ -582,7 +584,7 @@ static void MoveSelectionDisplayMoveType(void)
 	else
 		moveType = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].type;
 	#endif
-	split = SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+	split = moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]];
 
 	FillWindowPixelBuffer(8, PIXEL_FILL(15)); //White
 	blit_move_info_icon(8, moveType + 1, 2, 3);
@@ -610,7 +612,7 @@ static void MoveSelectionDisplayMoveEffectiveness(void)
 	#endif
 
 	//Update Palette Fading for Effectiveness
-	split = SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+	split = moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]];
 	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
 	if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && !IS_GHOST_BATTLE) //Don't use this feature in link battles or battles against Ghosts
 	{
@@ -1066,7 +1068,7 @@ static void ZMoveSelectionDisplayPower(void)
 	if (zmove >= MOVE_CATASTROPIKA)
 		power = gBattleMoves[zmove].power;
 
-	if (SPLIT(move) != SPLIT_STATUS)
+	if (moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS)
 	{
 		txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
 		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -1089,7 +1091,6 @@ static void MaxMoveSelectionDisplayPower(void)
 {
 	#ifdef DYNAMAX_FEATURE
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
-	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 
 	#ifdef DISPLAY_REAL_POWER_ON_MENU
 		u16 power = moveInfo->maxMovePowers[gMoveSelectionCursor[gActiveBattler]];
@@ -1097,7 +1098,7 @@ static void MaxMoveSelectionDisplayPower(void)
 		u16 power = gDynamaxMovePowers[move];
 	#endif
 
-	if (SPLIT(move) != SPLIT_STATUS)
+	if (moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS)
 	{
 		BattlePutTextOnWindow(gText_Power, 9);
 		ConvertIntToDecimalStringN(gDisplayedStringBattle, power, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -1271,6 +1272,11 @@ void HandleMoveSwitchingUpdate(void)
 	i = moveInfo->moveAcc[slot1];
 	moveInfo->moveAcc[slot1] = moveInfo->moveAcc[slot2];
 	moveInfo->moveAcc[slot2] = i;
+
+	//Swap Move Split Details
+	i = moveInfo->moveSplit[slot1];
+	moveInfo->moveSplit[slot1] = moveInfo->moveSplit[slot2];
+	moveInfo->moveSplit[slot2] = i;
 
 	//Swap Move Contact Details
 	i = moveInfo->makesContact[slot1];
@@ -1569,7 +1575,7 @@ static void HighlightPossibleTargets(void)
 		else
 			moveTarget = GetBaseMoveTargetByGrounding(chosenMove, moveInfo->atkIsGrounded);
 
-		if (gNewBS->zMoveData.viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
+		if (gNewBS->zMoveData.viewing && moveInfo->moveSplit[gMoveSelectionCursor[gActiveBattler]] != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]]].target;
 
 		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)

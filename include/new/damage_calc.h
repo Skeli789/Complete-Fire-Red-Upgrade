@@ -100,6 +100,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data);
 u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef);
 u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
 u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef);
+void CalculateShellSideArmSplits(void);
 
 u8 GetNaturalGiftMoveType(u16 item);
 u8 GetNaturalGiftMovePower(u16 item);

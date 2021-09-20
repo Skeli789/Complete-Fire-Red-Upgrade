@@ -17535,9 +17535,54 @@ METEOR_BEAM_ROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_DOUBLE_32x32 0x8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_SHELL_SIDE_ARM:
-	goto 0x81cf1e2 @MOVE_SLUDGEBOMB
+	loadparticle ANIM_TAG_POISON_BUBBLE
+	loadparticle ANIM_TAG_POISON_COLUMN
+	launchtask AnimTask_GetShellSideArmSplit 0x2 0x0
+	jumpifargmatches 0x0 SPLIT_PHYSICAL SHELL_SIDE_ARM_PHYSICAL
+
+SHELL_SIDE_ARM_SPECIAL:
+	call SHELL_SIDE_ARM_LAUNCH_SLUDGE
+	call SHELL_SIDE_ARM_LAUNCH_SLUDGE
+	call SHELL_SIDE_ARM_LAUNCH_SLUDGE
+	call SHELL_SIDE_ARM_LAUNCH_SLUDGE
+	pause 5
+	goto SHELL_SIDE_ARM_JOIN
+
+SHELL_SIDE_ARM_PHYSICAL:
+	loadparticle ANIM_TAG_SHELL_RIGHT
+	loadparticle ANIM_TAG_IMPACT
+	playsound2 0x73 SOUND_PAN_TARGET
+	launchtemplate Template_HorizontalLunge TEMPLATE_ATTACKER | 2, 0x2 0x10 0x4
+	launchtemplate SHELL_SIDE_ARM_SHELL TEMPLATE_TARGET | 3, 0x6, -48, 0, 0x40, 0x10, 0xa0, 0x0
+	pause 10
+	launchtemplate PUNISHMENT_PURPLEHIT TEMPLATE_TARGET | 1, 0x4 0x0 0x0 0x1 0x0
+	playsound2 0x84 SOUND_PAN_TARGET
+
+SHELL_SIDE_ARM_JOIN:
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x4 0x0 0x18 0x1
+	call POISON_BUBBLES
+	playsound2 0x13 SOUND_PAN_TARGET
+	launchtemplate POISON_COLUMN_NORMAL_SIZE TEMPLATE_TARGET | 2, 0x5, bank_target, 0, 4, 0x65 0x0
+	pause 0x3
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x2F 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x6038 @;Purple
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x10 0x0 0x6038 @;Purple
+	waitanimation
 	endanimation
+
+SHELL_SIDE_ARM_LAUNCH_SLUDGE:
+	playsound2 0x77 SOUND_PAN_ATTACKER
+	launchtemplate SHELL_SIDE_ARM_BLAST TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x10
+	pause 0x1
+	return
+
+.align 2
+SHELL_SIDE_ARM_BLAST: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 SpriteCB_ShellSideArmBlast
+SHELL_SIDE_ARM_SHELL: objtemplate ANIM_TAG_SHELL_RIGHT ANIM_TAG_SHELL_RIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_ShellSideArm SpriteCB_ShellSideArmSmash
+POISON_COLUMN_NORMAL_SIZE: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gDummySpriteAffineAnimTable SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

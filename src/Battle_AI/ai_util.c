@@ -42,6 +42,9 @@ static bool8 MoveHasUsefulSecondaryEffectToKOWith(u16 move);
 
 u16 AIRandom()
 {
+	if (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE)
+		return Random(); //Use regular random since AI vs AI isn't exploitable
+
     gNewBS->ai.randSeed = 1103515245 * gNewBS->ai.randSeed + 24691; //Seeded every frame no matter what
     return gNewBS->ai.randSeed >> 16;
 }

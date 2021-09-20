@@ -65,6 +65,7 @@ static u16 GetZMovePower(u16 zMove);
 static u16 GetMaxMovePower(u16 maxMove);
 static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
 static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck);
+static u32 ScreensWeakenDamage(u32 damage, bool8 screensUp, u8 atkAbility, u8 bankDef);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
 static void TryBoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 bodyPress);
@@ -2859,27 +2860,10 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	{
 		switch (data->moveSplit) {
 			case SPLIT_PHYSICAL:
-				if ((data->defSideStatus & SIDE_STATUS_REFLECT || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
-				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
-				&& !BypassesScreens(data->atkAbility))
-				{
-					if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
-						damage = (damage * 2) / 3;
-					else
-						damage /= 2;
-				}
+				damage = ScreensWeakenDamage(damage, (data->defSideStatus & SIDE_STATUS_REFLECT) != 0, data->atkAbility, bankDef);
 				break;
-
 			case SPLIT_SPECIAL:
-				if ((data->defSideStatus & SIDE_STATUS_LIGHTSCREEN || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
-				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
-				&& !BypassesScreens(data->atkAbility))
-				{
-					if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
-						damage = (damage * 2) / 3;
-					else
-						damage /= 2;
-				}
+				damage = ScreensWeakenDamage(damage, (data->defSideStatus & SIDE_STATUS_LIGHTSCREEN) != 0, data->atkAbility, bankDef);
 				break;
 		}
 	}
@@ -3580,7 +3564,8 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case ABILITY_TOUGHCLAWS:
 		//1.3x Boost
-			if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT
+			if (((!useMonAtk && IsContactMove(move, bankAtk, bankDef))
+			   || (useMonAtk && gBattleMoves[move].flags & FLAG_MAKES_CONTACT)) //Party mons can't use any fancy calculations for contact moves
 			&& !CanNeverMakeContactByItemEffect(data->atkItemEffect)) //Don't check Ability since it's known to be Tough Claws
 				power = (power * 13) / 10;
 			break;
@@ -4002,6 +3987,20 @@ static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyC
 	return power;
 }
 
+static u32 ScreensWeakenDamage(u32 damage, bool8 screensUp, u8 atkAbility, u8 bankDef)
+{
+	if ((screensUp || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
+	&& gCritMultiplier <= BASE_CRIT_MULTIPLIER && !BypassesScreens(atkAbility))
+	{
+		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankDef, bankDef) >= 2)
+			damage = (damage * 2) / 3;
+		else
+			damage /= 2;
+	}
+
+	return damage;
+}
+
 static void ApplyRandomDmgMultiplier(void)
 {
 	u16 rando = 100 - (Random() & 15);
@@ -4060,6 +4059,54 @@ u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef)
 	}
 
 	return retVal;
+}
+
+void CalculateShellSideArmSplits(void)
+{
+	u8 bankAtk, bankDef;
+	u8 power = gBattleMoves[MOVE_SHELLSIDEARM].power;
+	u8 defMod = !IsWonderRoomActive() ? STAT_STAGE_DEF : STAT_STAGE_SPDEF; //Wonder Room in official games erronously only swaps the stat stages for the calculation
+	u8 spDefMod = !IsWonderRoomActive() ? STAT_STAGE_SPDEF : STAT_STAGE_DEF;
+
+	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+	{
+		if (!BATTLER_ALIVE(bankAtk))
+			continue;
+
+		u8 atkAbility = ABILITY(bankAtk);
+		u8 level = gBattleMons[bankAtk].level;
+		u32 attack = gBattleMons[bankAtk].attack;
+		u32 spAttack = gBattleMons[bankAtk].spAttack;
+		APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(bankAtk, STAT_STAGE_ATK));
+		APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(bankAtk, STAT_STAGE_SPATK));
+
+		for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (bankAtk == bankDef || !BATTLER_ALIVE(bankDef))
+				continue;
+
+			//Factors in raw stats, stat stages, and screens
+			u8 split;
+			u32 defense = gBattleMons[bankDef].defense;
+			u32 spDefense = gBattleMons[bankDef].spDefense;
+			APPLY_QUICK_STAT_MOD(defense, STAT_STAGE(bankDef, defMod));
+			APPLY_QUICK_STAT_MOD(spDefense, STAT_STAGE(bankDef, spDefMod));
+
+			u32 physicalDamage = (((((2 * level) / 5 + 2) * power * attack) / defense) / 50);
+			u32 specialDamage = (((((2 * level) / 5 + 2) * power * spAttack) / spDefense) / 50);
+			physicalDamage = ScreensWeakenDamage(physicalDamage, (gSideStatuses[bankDef] & SIDE_STATUS_REFLECT) != 0, atkAbility, bankDef);
+			specialDamage = ScreensWeakenDamage(specialDamage, (gSideStatuses[bankDef] & SIDE_STATUS_LIGHTSCREEN) != 0, atkAbility, bankDef);
+
+			if (physicalDamage > specialDamage)
+				split = SPLIT_PHYSICAL;
+			else if (specialDamage > physicalDamage)
+				split = SPLIT_SPECIAL;
+			else
+				split = (Random() & 1) ? SPLIT_PHYSICAL : SPLIT_SPECIAL;
+
+			gNewBS->shellSideArmSplit[bankAtk][bankDef] = split; //Calculate for all because any Pokemon could call Shell Side Arm from another move (eg. Metronome)
+		}
+	}
 }
 
 static void TryBoostMonOffensesForTotemBoost(struct DamageCalc* data, u8 bankAtk, bool8 bodyPress)

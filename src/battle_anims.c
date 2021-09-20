@@ -27,6 +27,8 @@ battle_anims.c
 	Functions and structures to modify attack animations.
 */
 
+//TODO: Shell Side Arm in Link battles
+
 #define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
 #define gMonBackPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x800012C))
 #define gMonFrontPicCoords ((const struct MonCoords*) *((u32*) 0x8011F4C))
@@ -862,6 +864,24 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_PoltergeistItem[] =
 	sSpriteAffineAnim_PoltergeistItem,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_ShellSideArmOpponent[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, -64, 1), //Rotate right 90 degrees
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_ShellSideArmPlayer[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 64, 1), //Rotate left 90 degrees
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_ShellSideArm[] =
+{
+	sSpriteAffineAnim_ShellSideArmOpponent,
+	sSpriteAffineAnim_ShellSideArmPlayer,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
 {
 	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
@@ -1144,6 +1164,12 @@ void AnimTask_IsAttackerRayquaza(u8 taskId)
 	#endif
 		gBattleAnimArgs[0] = 0;
 
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_GetShellSideArmSplit(u8 taskId)
+{
+	gBattleAnimArgs[0] = gNewBS->shellSideArmSplit[gBattleAnimAttacker][gBattleAnimTarget];
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -3332,6 +3358,41 @@ void SpriteCB_SteelRoller(struct Sprite* sprite)
 
 	sprite->data[3] = gBattleAnimArgs[2]; //Falling Speed
 	sprite->callback = SpriteCB_SteelRoller_Down;
+}
+
+//Moves the shell horizontally for Shell Side Arm
+//args: Same as Rolling Kick
+void SpriteCB_ShellSideArmSmash(struct Sprite *sprite)
+{
+    if (PARTNER(gBattleAnimAttacker) == gBattleAnimTarget && GetBattlerPosition(gBattleAnimTarget) < B_POSITION_PLAYER_RIGHT)
+        gBattleAnimArgs[0] *= -1;
+
+    InitSpritePosToAnimTarget(sprite, TRUE);
+
+    if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+	{
+        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+		StartSpriteAffineAnim(sprite, 1);
+	}
+
+    sprite->data[0] = gBattleAnimArgs[3];
+    sprite->data[1] = sprite->pos1.x;
+    sprite->data[2] = sprite->pos1.x + gBattleAnimArgs[2];
+    sprite->data[3] = sprite->pos1.y;
+    sprite->data[4] = sprite->pos1.y;
+    InitAnimLinearTranslation(sprite);
+    sprite->data[5] = gBattleAnimArgs[5];
+    sprite->data[6] = gBattleAnimArgs[4];
+    sprite->data[7] = 0;
+    sprite->callback = (void*) (0x80B0CB4 | 1);
+}
+
+//Chooses the sludge animation and launches it towards the target for Shell Side Arm
+//args: Same as Shadow Ball
+void SpriteCB_ShellSideArmBlast(struct Sprite* sprite)
+{
+	StartSpriteAnim(sprite, 2);
+	sprite->callback = (void*) (0x80B563C | 1); //Shadow Ball
 }
 
 //Creates arc impacts for Surging Strikes

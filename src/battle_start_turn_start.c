@@ -626,6 +626,7 @@ void BattleBeginFirstTurn(void)
 				gNewBS->ai.randSeed = Random32(); //So the seed doesn't start at 0
 				#endif
 				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
+				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
 		}
 	}

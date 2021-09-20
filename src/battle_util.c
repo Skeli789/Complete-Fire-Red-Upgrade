@@ -445,9 +445,9 @@ bool8 HasMonToSwitchTo(u8 bank)
 	return i != lastMonId;
 }
 
-bool8 CheckContact(u16 move, u8 bankAtk, unusedArg u8 bankDef)
+bool8 CheckContact(u16 move, u8 bankAtk, u8 bankDef)
 {
-	return gBattleMoves[move].flags & FLAG_MAKES_CONTACT
+	return IsContactMove(move, bankAtk, bankDef)
 		&& !CanNeverMakeContact(bankAtk);
 }
 
@@ -455,6 +455,14 @@ bool8 CheckContactByMon(u16 move, struct Pokemon* mon)
 {
 	return gBattleMoves[move].flags & FLAG_MAKES_CONTACT
 		&& !CanMonNeverMakeContact(mon);
+}
+
+bool8 IsContactMove(u16 move, u8 bankAtk, u8 bankDef)
+{
+	if (move == MOVE_SHELLSIDEARM && bankAtk != bankDef)
+		return gNewBS->shellSideArmSplit[bankAtk][bankDef] == SPLIT_PHYSICAL; //Calculated in advance
+	else
+		return gBattleMoves[move].flags & FLAG_MAKES_CONTACT;
 }
 
 bool8 CanNeverMakeContact(u8 bank)
@@ -1463,7 +1471,7 @@ bool8 IsMoveAffectedByParentalBond(u16 move, u8 bankAtk)
 	return FALSE;
 }
 
-u8 CalcMoveSplit(u16 move, u8 bankAtk, unusedArg u8 bankDef)
+u8 CalcMoveSplit(u16 move, u8 bankAtk, u8 bankDef)
 {
 	if (gSpecialMoveFlags[move].gMovesThatChangePhysicality
 	&&  SPLIT(move) != SPLIT_STATUS)
@@ -1478,6 +1486,11 @@ u8 CalcMoveSplit(u16 move, u8 bankAtk, unusedArg u8 bankDef)
 			return SPLIT_SPECIAL;
 		else
 			return SPLIT_PHYSICAL;
+	}
+	else if (move == MOVE_SHELLSIDEARM
+	&& bankAtk != bankDef) //Indicator to just use the base physicality
+	{
+		return gNewBS->shellSideArmSplit[bankAtk][bankDef];
 	}
 
 	#ifdef OLD_MOVE_SPLIT

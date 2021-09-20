@@ -921,6 +921,7 @@ struct NewBattleStruct
 	u16 knockedOffWildItem;
 	u8 criticalHitsThisBattle[PARTY_SIZE];
 	u8 pickupMonId;
+	u8 shellSideArmSplit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
 
 	//Things for Spread Moves
 	s32 DamageTaken[MAX_BATTLERS_COUNT];
