@@ -2117,7 +2117,7 @@ bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))
 		return FALSE;
 
-	if (IsOfType(bankAtk, TYPE_FIRE))
+	if (IsOfType(bankDef, TYPE_FIRE))
 		return FALSE;
 
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored

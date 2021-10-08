@@ -354,6 +354,11 @@ bool8 IsMonOfType(struct Pokemon* mon, u8 type)
 	return type1 == type || type2 == type;
 }
 
+bool8 IsSpeciesOfType(u16 species, u8 type)
+{
+	return gBaseStats[species].type1 == type || gBaseStats[species].type2 == type;
+}
+
 bool8 IsSpeciesAffectedByScalemons(u16 species)
 {
 	if (species == SPECIES_SHEDINJA) //Shedinja would get OP stats because of its low HP and BST

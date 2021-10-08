@@ -34,7 +34,10 @@ BattleScript_FaintRaidAttacker:
 	pokemonfaintcry BANK_ATTACKER
 	playanimation BANK_ATTACKER ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_ATTACKER
+
+BattleScript_FinishFaintRaidBoss:
 	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
+	callasm IncrementBattleTurnCounter @;Stops Quick Ball from working (from SwSh)
 	callasm FinishTurn
 	return
 
@@ -52,9 +55,7 @@ BattleScript_FaintRaidTarget:
 	pokemonfaintcry BANK_TARGET
 	playanimation BANK_TARGET ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_TARGET
-	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
-	callasm FinishTurn
-	return
+	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_FaintScriptingBank:
 	pokemonfaintcry BANK_SCRIPTING
@@ -71,9 +72,7 @@ BattleScript_FaintRaidScriptingBank:
 	pokemonfaintcry BANK_SCRIPTING
 	playanimation BANK_SCRIPTING ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_SCRIPTING
-	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
-	callasm FinishTurn
-	return
+	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_SuccessBallThrow:
 	jumpifhalfword EQUALS ITEM_BUFFER ITEM_SAFARI_BALL BattleScript_PrintCaughtMonInfo

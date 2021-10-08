@@ -2079,6 +2079,11 @@ void ClearPlayerRechargeMultipleTurns(void)
 	gBattleMons[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)].status2 &= ~(STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
 }
 
+void IncrementBattleTurnCounter(void)
+{
+	++gBattleResults.battleTurnCounter;
+}
+
 void TryFailLifeDew(void)
 {
 	if (!IS_DOUBLE_BATTLE || !BATTLER_ALIVE(PARTNER(gBankAttacker)))

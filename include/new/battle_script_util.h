@@ -116,6 +116,7 @@ void ClearTempIgnoreAnimations(void);
 void FailIfTrappedByNoRetreat(void);
 void FinishTurn(void);
 void ClearPlayerRechargeMultipleTurns(void);
+void IncrementBattleTurnCounter(void);
 void TryFailLifeDew(void);
 void TryFailJungleHealing(void);
 void SetStickyWebActive(void);

@@ -1745,7 +1745,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_FACILITY_NO_RESTRICTIONS:
 						case BATTLE_FACILITY_UBER_CAMOMONS:
 							SPECIAL_UBERS_SPREADS:
-							if (Random() % 100 < 50) //50% chance per mon of being non-legend good for Ubers (in reality a lot lower because standard spreads are much bigger)
+							if (Random() % 100 < 75) //75% chance per mon of being non-legend good for Ubers (in reality a lot lower because standard spreads are much bigger)
 							{
 								spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
 								if (!gSpecialSpeciesFlags[spread->species].goodForUbers //Not a Pokemon that would do well in Ubers

@@ -423,44 +423,44 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 			case ITEM_EFFECT_RANDOM_STAT_UP:
 				if ((PINCH_BERRY_CHECK(bank) || doPluck)
-				&& !((StatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY) || (StatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY)))
+				&& !((MainStatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY)
+				  || (MainStatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY)))
 				{
-					u8 buff = (ABILITY(bank) == ABILITY_RIPEN) ? INCREASE_4 : INCREASE_2;
+					u8 buff = (ABILITY(bank) == ABILITY_RIPEN) ? 4 : 2;
 
 					do
 					{
 						i = RandRange(STAT_STAGE_ATK, NUM_STATS);
 					} while (STAT_STAGE(bank, i) >= STAT_STAGE_MAX);
 
-					i -= 1; //So stat starts at 0
-
-					gBattleTextBuff1[0] = 0xFD;
-					gBattleTextBuff1[1] = 5;
-					gBattleTextBuff1[2] = i + 1;
-					gBattleTextBuff1[3] = EOS;
-
-					gBattleTextBuff2[0] = 0xFD;
-					gBattleTextBuff2[1] = 0;
-					gBattleTextBuff2[2] = 0xD1;
-					gBattleTextBuff2[3] = 0xD1 >> 8;
-					gBattleTextBuff2[4] = 0;
-					gBattleTextBuff2[5] = 0xD2;
-					gBattleTextBuff2[6] = 0xD2 >> 8;
-					gBattleTextBuff2[7] = EOS;
-
-					gEffectBank = bank;
-					gBattleScripting.statChanger = (buff | 1) + i;
-					gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + i;
-					gBattleScripting.animArg2 = 0;
-
-					if (moveTurn || doPluck)
+					if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), i, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 					{
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, i);
+
+						gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+						gBattleTextBuff2[1] = B_BUFF_STRING;
+						gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+						gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+						gBattleTextBuff2[4] = B_BUFF_STRING;
+						gBattleTextBuff2[5] = STRINGID_STATROSE;
+						gBattleTextBuff2[6] = STRINGID_STATROSE >> 8;
+						gBattleTextBuff2[7] = EOS;
+
+						gEffectBank = bank;
+						SET_STATCHANGER(i, buff, FALSE);
+						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + (i - 1);
+						gBattleScripting.animArg2 = 0;
+
+						if (moveTurn || doPluck)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
+						}
+						else
+							BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
+
+						effect = ITEM_STATS_CHANGE;
 					}
-					else
-						BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-					effect = ITEM_STATS_CHANGE;
 				}
 				break;
 

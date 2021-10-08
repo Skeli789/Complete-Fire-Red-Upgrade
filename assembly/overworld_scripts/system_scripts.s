@@ -65,7 +65,7 @@ SystemScript_DisableBikeTurboBoost:
 .global SystemScript_PartyMenuFromField
 SystemScript_PartyMenuFromField:
 	lockall
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitPartyMenuFromField
@@ -75,7 +75,7 @@ SystemScript_PartyMenuFromField:
 .global SystemScript_ItemMenuFromField
 SystemScript_ItemMenuFromField:
 	lockall
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x5 @SE_SELECT
 	fadescreen FADEOUT_BLACK
 	callasm InitBagMenuFromField
@@ -85,7 +85,7 @@ SystemScript_ItemMenuFromField:
 .global SystemScript_MiningScan
 SystemScript_MiningScan:
 	lockall
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0xCA @SE_TWINKLE
 	getplayerpos 0x8000 0x8001
 	setfieldeffectarg 0, 0x8000
@@ -184,7 +184,7 @@ EndScript:
 SystemScript_StartDexNavBattle:
 	lockall
 	call FollowerPositionFixScript
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound 0x15 @;Exclaim
 	applymovement PLAYER PlayerExclaim
 	waitmovement 0x0
@@ -1055,12 +1055,14 @@ SystemScript_DebugMenu:
 	multichoiceoption gText_DebugMenu_GiveItem 1
 	multichoiceoption gText_DebugMenu_Level100Team 2
 	multichoiceoption gText_DebugMenu_MaxCoinage 3
-	multichoice 0x0 0x0 FOUR_MULTICHOICE_OPTIONS 0x0
+	multichoiceoption gText_DebugMenu_ShinyTeam 4
+	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
 	switch LASTRESULT
 	case 0, SystemScript_DebugMenu_SetFlag
 	case 1, SystemScript_DebugMenu_GiveItem
 	case 2, SystemScript_DebugMenu_Level100Team
 	case 3, SystemScript_DebugMenu_MaxCoinage
+	case 4, SystemScript_DebugMenu_ShinyTeam
 SystemScript_DebugMenu_End:
 	releaseall
 	end
@@ -1096,4 +1098,8 @@ SystemScript_DebugMenu_Level100Team:
 
 SystemScript_DebugMenu_MaxCoinage:
 	callasm DebugMenu_MaxMoneyAndCoins
+	goto SystemScript_DebugMenu
+
+SystemScript_DebugMenu_ShinyTeam:
+	callasm DebugMenu_ShinyTeam
 	goto SystemScript_DebugMenu
