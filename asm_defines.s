@@ -1454,11 +1454,12 @@
 .equ weather_harsh_sun, 0x800
 .equ weather_heavy_rain, 0x1000
 .equ weather_air_current, 0x2000
-.equ weather_circus, 0x4000
+.equ weather_vicious_sandstorm, 0x4000
+.equ weather_circus, 0x8000
 
 .equ WEATHER_SUN_ANY, weather_sun | weather_permament_sun | weather_harsh_sun
 .equ WEATHER_RAIN_ANY, weather_rain | weather_downpour | weather_permament_rain | weather_heavy_rain
-.equ WEATHER_SANDSTORM_ANY, weather_sandstorm | weather_permament_sandstorm
+.equ WEATHER_SANDSTORM_ANY, weather_sandstorm | weather_permament_sandstorm | weather_vicious_sandstorm
 .equ WEATHER_HAIL_ANY, weather_hail | weather_permament_hail
 
 @split

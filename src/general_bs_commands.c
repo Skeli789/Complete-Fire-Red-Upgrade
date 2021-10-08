@@ -60,6 +60,8 @@ tables:
 }
 
 //This file's functions:
+static bool8 ProcessPreAttackAnimationFuncs(void);
+static bool8 TryStrongWindsWeakenAttack(u8 bank);
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags);
 static bool8 IsSingleTargetOfDoublesSpreadMove(void);
 static bool8 IsDoubleSpreadMove(void);
@@ -238,6 +240,71 @@ void atk03_ppreduce(void) {
 	gBattlescriptCurrInstr++;
 }
 
+static bool8 ProcessPreAttackAnimationFuncs(void)
+{
+	if (IsDoubleSpreadMove())
+	{
+		if (!gNewBS->printedStrongWindsWeakenedAttack)
+		{
+			for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+			{
+				if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+				|| (bankDef == PARTNER(gBankAttacker) && !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_ALL))
+				|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
+					continue; //Don't bother with this target
+
+				if (TryStrongWindsWeakenAttack(bankDef))
+					return TRUE;
+			}
+		}
+
+		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+			|| (bankDef == PARTNER(gBankAttacker) && !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_ALL))
+			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
+				continue; //Don't bother with this target
+
+			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
+			{
+				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+				return TRUE;
+			}
+		}
+	}
+	else //Single Target Move
+	{
+		if (TryStrongWindsWeakenAttack(gBankTarget))
+			return TRUE;
+
+		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
+		{
+			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+static bool8 TryStrongWindsWeakenAttack(u8 bankDef)
+{
+	//Delta Stream indicates that it weakens all attacks that would normally be super-effective against
+	//Flying-type Pokemon, even if the attack wouldn't normally be super effective
+	if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
+	&& IsOfType(bankDef, TYPE_FLYING)
+	&& gTypeEffectiveness[gBattleStruct->dynamicMoveType][TYPE_FLYING] == TYPE_MUL_SUPER_EFFECTIVE
+	&& !gNewBS->printedStrongWindsWeakenedAttack) //Already checked before in doubles but not in singles
+	{
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_StrongWindsWeakenedttack;
+		gNewBS->printedStrongWindsWeakenedAttack = TRUE;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 {
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_WEAKNESS_BERRY
@@ -331,33 +398,12 @@ static u8 UpdateEffectivenessResultFlagsForDoubleSpreadMoves(u8 resultFlags)
 
 void atk09_attackanimation(void)
 {
-	if (gBattleExecBuffer) return;
+	if (gBattleExecBuffer)
+		return;
 
-	if (IsDoubleSpreadMove())
-	{
-		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
-		{
-			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
-			|| (bankDef == PARTNER(gBankAttacker) && !(GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_ALL))
-			|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
-				continue; //Don't bother with this target
+	if (ProcessPreAttackAnimationFuncs())
+		return;
 
-			if (TryActivateWeakenessBerry(bankDef, gNewBS->ResultFlags[bankDef]))
-			{
-				gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
-				return;
-			}
-		}
-	}
-	else //Single Target Move
-	{
-		if (TryActivateWeakenessBerry(gBankTarget, gMoveResultFlags))
-		{
-			gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
-			return;
-		}
-	}
-	
 	u8 resultFlags = gMoveResultFlags;
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
@@ -3261,6 +3307,7 @@ void atk9B_transformdataexecution(void)
 	}
 	else
 	{
+		gNewBS->backupAbility = ABILITY(gBankAttacker); //For removing primal weathers and neutralizing gas
 		TransformPokemon(gBankAttacker, gBankTarget);
 		gActiveBattler = gBankAttacker;
 		EmitResetActionMoveSelection(0, RESET_MOVE_SELECTION);

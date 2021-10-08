@@ -69,6 +69,7 @@ extern const u8 BattleScript_UproarWokeUp[];
 extern const u8 BattleScript_TransformFailedOnAura[];
 extern const u8 BattleScript_MoveFailedOnAura[];
 extern const u8 BattleScript_ShadowShieldBlocksSubstitute[];
+extern const u8 BattleScript_StrongWindsWeakenedttack[];
 
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];

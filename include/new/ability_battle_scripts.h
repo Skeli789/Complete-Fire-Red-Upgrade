@@ -11,6 +11,8 @@ extern const u8 BattleScript_OverworldWeatherStarts[];
 extern const u8 BattleScript_NewWeatherAbilityActivates[];
 extern const u8 BattleScript_NewWeatherAbilityActivatesCall[];
 extern const u8 BattleScript_AirLock[];
+extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeather[];
+extern const u8 BattleScript_WeatherAbilityBlockedByPrimalWeatherRet[];
 extern const u8 BattleScript_IntimidateActivatesEnd3[];
 extern const u8 BattleScript_TraceActivates[];
 extern const u8 BattleScript_Frisk[];

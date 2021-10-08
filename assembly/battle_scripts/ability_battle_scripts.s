@@ -13,6 +13,9 @@ ability_battle_scripts.s
 .global BattleScript_NewWeatherAbilityActivates
 .global BattleScript_NewWeatherAbilityActivatesCall
 .global BattleScript_AirLock
+.global BattleScript_WeatherAbilityBlockedByPrimalWeather
+.global BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
+.global BattleScript_StrongWindsWeakenedttack
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
 .global BattleScript_Frisk
@@ -130,6 +133,31 @@ BattleScript_AirLock:
 	call BattleScript_AbilityPopUpRevert
 	call 0x81D92DC @;BattleScript_WeatherFormChanges
 	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WeatherAbilityBlockedByPrimalWeather:
+	call BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
+	end3
+
+BattleScript_WeatherAbilityBlockedByPrimalWeatherRet:
+	call BattleScript_AbilityPopUp
+	call BattleScript_TryBlockWeatherWithPrimalWeatherRetSkipPause
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_TryBlockWeatherWithPrimalWeatherRetSkipPause:
+	tryblockweatherwithprimalweather RetSkipPause
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_StrongWindsWeakenedttack:
+	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER gText_StrongWindsWeakenedAttack
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

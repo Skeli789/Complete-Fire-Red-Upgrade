@@ -1466,6 +1466,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gNewBS->rolloutFinalHit = FALSE;
 			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = FALSE;
+			gNewBS->printedStrongWindsWeakenedAttack = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
 

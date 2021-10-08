@@ -1192,6 +1192,8 @@ BS_057_Transform:
 	waitanimation
 	printfromtable 0x83FE5B4
 	waitmessage DELAY_1SECOND
+	callasm TryRemovePrimalWeatherAfterTransformation
+	call 0x81D92DC @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
 .global BattleScript_TransformFailedOnAura
@@ -2206,10 +2208,71 @@ BS_115_Sandstorm:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_SANDSTORM_ANY, SandstormSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+SandstormSkipPrimalWeatherCheck:
 	setsandstorm
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ExtremelyHarshSunlightWasNotLessened:
+	call BattleScript_ExtremelyHarshSunlightWasNotLessenedRet
+	goto BS_MOVE_END
+
+BattleScript_NoReliefFromHeavyRain:
+	call BattleScript_NoReliefFromHeavyRainRet
+	goto BS_MOVE_END
+
+BattleScript_MysteriousAirCurrentBlowsOn:
+	call BattleScript_MysteriousAirCurrentBlowsOnRet
+	goto BS_MOVE_END
+
+BattleScript_ViciousSandstormRefusesToLetUp:
+	call BattleScript_ViciousSandstormRefusesToLetUpRet
+	goto BS_MOVE_END
+
+.global BattleScript_ExtremelyHarshSunlightWasNotLessenedRet
+.global BattleScript_ExtremelyHarshSunlightWasNotLessenedRetSkipPause
+BattleScript_ExtremelyHarshSunlightWasNotLessenedRet:
+	pause DELAY_HALFSECOND
+BattleScript_ExtremelyHarshSunlightWasNotLessenedRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_HarshSunStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+.global BattleScript_NoReliefFromHeavyRainRet
+.global BattleScript_NoReliefFromHeavyRainRetSkipPause
+BattleScript_NoReliefFromHeavyRainRet:
+	pause DELAY_HALFSECOND
+BattleScript_NoReliefFromHeavyRainRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_HeavyRainStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+.global BattleScript_MysteriousAirCurrentBlowsOnRet
+.global BattleScript_MysteriousAirCurrentBlowsOnRetSkipPause
+BattleScript_MysteriousAirCurrentBlowsOnRet:
+	pause DELAY_HALFSECOND
+BattleScript_MysteriousAirCurrentBlowsOnRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_AirCurrentStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+.global BattleScript_ViciousSandstormRefusesToLetUpRet
+.global BattleScript_ViciousSandstormRefusesToLetUpRetSkipPause
+BattleScript_ViciousSandstormRefusesToLetUpRet:
+	pause DELAY_HALFSECOND
+BattleScript_ViciousSandstormRefusesToLetUpRetSkipPause:
+	setword BATTLE_STRING_LOADER gText_ViciousSandstormStopsWeatherChange
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BattleScript_EnduredMsg
@@ -2708,6 +2771,9 @@ BS_136_RainDance:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_RAIN_ANY, RainDanceSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+RainDanceSkipPrimalWeatherCheck:
 	setrain
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
@@ -2719,6 +2785,9 @@ BS_137_SunnyDay:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_SUN_ANY, SunnyDaySkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+SunnyDaySkipPrimalWeatherCheck:
 	setsunny
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
@@ -3208,6 +3277,9 @@ BS_164_SetHail:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	jumpifweather WEATHER_HAIL_ANY, HailSkipPrimalWeatherCheck @;Fails normally
+	tryblockweatherwithprimalweather
+HailSkipPrimalWeatherCheck:
 	sethail
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE

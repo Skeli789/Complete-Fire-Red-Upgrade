@@ -1792,3 +1792,10 @@
 	.macro waitfanfare battler:req
 	various \battler, VARIOUS_WAIT_FANFARE
 	.endm
+
+.macro tryblockweatherwithprimalweather suffix
+	jumpifweather weather_harsh_sun, BattleScript_ExtremelyHarshSunlightWasNotLessened\suffix 
+	jumpifweather weather_heavy_rain, BattleScript_NoReliefFromHeavyRain\suffix
+	jumpifweather weather_air_current, BattleScript_MysteriousAirCurrentBlowsOn\suffix
+	jumpifweather weather_vicious_sandstorm, BattleScript_ViciousSandstormRefusesToLetUp\suffix
+.endm

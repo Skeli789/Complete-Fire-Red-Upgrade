@@ -1816,6 +1816,12 @@ void TryRemovePrimalWeatherAfterAbilityChange(void)
 		gBattlescriptCurrInstr -= 5;
 }
 
+void TryRemovePrimalWeatherAfterTransformation(void)
+{
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, gNewBS->backupAbility))
+		gBattlescriptCurrInstr -= 5;
+}
+
 void UndoAbilityEffectsForNeutralizingGas(void)
 {
 	gBattleStringLoader = NULL;

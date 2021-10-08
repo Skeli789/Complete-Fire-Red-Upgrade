@@ -55,6 +55,21 @@ The sunlight turned extremely harsh!
 #org @gText_DeltaStream
 Mysterious strong winds are protecting\nFlying-type Pok\emon!
 
+#org @gText_StrongWindsWeakenedAttack
+The mysterious strong winds\nweakened the attack!
+
+#org @gText_HarshSunStopsWeatherChange
+But the extremely harsh sunlight\nwas not lessened at all!
+
+#org @gText_HeavyRainStopsWeatherChange
+But there is no relief from the\nheavy rain!
+
+#org @gText_AirCurrentStopsWeatherChange
+But the mysterious strong winds\nblow on regardless!
+
+#org @gText_ViciousSandstormStopsWeatherChange
+But the vicious sandstorm refuses\nto let up!
+
 #org @gText_SlowStartEnd
 [SCRIPTING_BANK] got its\nact together!
 
