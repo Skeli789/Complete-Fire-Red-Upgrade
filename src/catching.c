@@ -136,9 +136,9 @@ void atkEF_handleballthrow(void)
 		u8 catchRate;
 
 		if (ballType == BALL_TYPE_SAFARI_BALL)
-			catchRate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
+			catchRate = (gBattleStruct->safariCatchFactor * 1275) % 100;
 		else
-			catchRate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
+			catchRate = gBaseStats[GetMonData(GetBankPartyData(gBankTarget), MON_DATA_SPECIES, NULL)].catchRate; //Uses party data b/c Transform update Gen 5+
 
 		if (ballType >= BALL_TYPE_NET_BALL)
 		{
@@ -159,8 +159,8 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_NEST_BALL:
-					if (gBattleMons[gBankTarget].level <= 29)
-						ballMultiplier = MathMax(10, 41 - defLevel);
+					if (gBattleMons[gBankTarget].level < 31)
+						ballMultiplier = 41 - defLevel; //At lowest 11
 					else
 						ballMultiplier = 10;
 					break;
@@ -197,7 +197,7 @@ void atkEF_handleballthrow(void)
 
 				case BALL_TYPE_LURE_BALL:
 					if (gFishingByte)
-						ballMultiplier = 50;
+						ballMultiplier = 40;
 					else
 						ballMultiplier = 10;
 					break;
@@ -323,8 +323,8 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_DREAM_BALL:
-					if (gBattleMons[gBankTarget].status1 & STATUS1_SLEEP)
-						ballMultiplier = 30;
+					if (gBattleMons[gBankTarget].status1 & STATUS1_SLEEP || ABILITY(gBankTarget) == ABILITY_COMATOSE)
+						ballMultiplier = 40;
 					else
 						ballMultiplier = 10;
 					break;
@@ -339,6 +339,11 @@ void atkEF_handleballthrow(void)
 		}
 		else
 			ballMultiplier = sBallCatchBonuses[ballType - BALL_TYPE_ULTRA_BALL];
+
+		#ifdef VAR_CATCH_RATE_BONUS
+		if (VarGet(VAR_CATCH_RATE_BONUS) > 0)
+			ballMultiplier += (ballMultiplier * VarGet(VAR_CATCH_RATE_BONUS)) / 100; //Percent increase - Eg. Var is set to 10, and multiplier is 5x, then final multiplier will be 5.5 (55)
+		#endif
 
 		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ballType != BALL_TYPE_BEAST_BALL)
 			ballMultiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
@@ -362,11 +367,21 @@ void atkEF_handleballthrow(void)
 		}
 		#endif
 
+		//Low-Level Modifier - from SwSh
+		if (defLevel <= 20)
+			odds = (odds * (30 - defLevel)) / 10;
+
+		//Status Modifier
 		if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
 			odds = (odds * 25) / 10;
 		if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
 			odds = (odds * 15) / 10;
 
+		//Difficulty Modifier - from SwSh
+		if (!FlagGet(FLAG_SYS_GAME_CLEAR) && atkLevel < defLevel)
+			odds /= 10;
+
+		//Raid Modifier
 		if (IsRaidBattle()) //Dynamax Raid Pokemon can be caught easier
 			odds *= 4;
 
@@ -496,33 +511,43 @@ static const struct CriticalCaptureOdds sCriticalCaptureSpeciesCounts[] =
 
 static bool8 CriticalCapture(unusedArg u32 odds)
 {
-	#ifndef CRITICAL_CAPTURE
-		gNewBS->criticalCapture = FALSE;
-		return FALSE;
-	#else
-	u16 pokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+	if (IsRaidBattle())
+		return FALSE; //Critical Captures can't happen in Raids
+
+	#ifdef CRITICAL_CAPTURE
+	//Adjust Original Catch Odds - X
+	u8 baseOdds = MathMin(odds, 255);
+
+	//Pokedex Modifier - P
+	u8 pokedexMultiplier = 0;
+	u16 speciesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 
 	for (u32 i = 0; i < NELEMS(sCriticalCaptureSpeciesCounts); ++i)
 	{
-		if (pokesCaught <= sCriticalCaptureSpeciesCounts[i].numCaught)
+		if (speciesCaught <= sCriticalCaptureSpeciesCounts[i].numCaught)
 		{
-			u8 multiplier = sCriticalCaptureSpeciesCounts[i].oddsMultiplier;
-			#ifdef ITEM_CATCHING_CHARM
-			if (CheckBagHasItem(ITEM_CATCHING_CHARM, 1) > 0)
-				multiplier += 5; //Temp value until the real one becomes known
-			#endif
-			odds = (odds * multiplier) / 10;
+			pokedexMultiplier = sCriticalCaptureSpeciesCounts[i].oddsMultiplier;
 			break;
 		}
 	}
 
-	odds /= 6;
-	gNewBS->criticalCaptureSuccess = FALSE;
-	if (Random() % 0xFF < odds)
-		return gNewBS->criticalCapture = TRUE;
-	else
-		return gNewBS->criticalCapture = FALSE;
+	//Catching Charm Modifier - Ch
+	u8 catchingCharmModifier = 1;
+
+	#ifdef ITEM_CATCHING_CHARM
+	if (CheckBagHasItem(ITEM_CATCHING_CHARM, 1))
+		catchingCharmModifier = 2;
 	#endif
+
+	//Final Calculation
+	odds = ((baseOdds * pokedexMultiplier * catchingCharmModifier) / 10) / 6;
+
+	gNewBS->criticalCaptureSuccess = FALSE;
+	if (Random() % 0x100 < odds) //0 to 255 inclusive
+		return gNewBS->criticalCapture = TRUE;
+	#endif
+
+	return gNewBS->criticalCapture = FALSE;
 }
 
 bool8 IsCriticalCapture(void)
