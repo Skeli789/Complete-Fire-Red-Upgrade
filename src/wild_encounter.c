@@ -141,6 +141,19 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 			break;
 	}
 
+	#ifdef FLAG_HARD_LEVEL_CAP
+	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+	if (FlagGet(FLAG_HARD_LEVEL_CAP))
+	{
+		u8 levelCap = GetCurrentLevelCap();
+		if (max > levelCap)
+			max = levelCap; //Prevent wild Pokemon above the level cap from appearing
+	}
+	#endif
+
+	if (min > max)
+		max = min;
+
 	//Check ability for max level mon
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{

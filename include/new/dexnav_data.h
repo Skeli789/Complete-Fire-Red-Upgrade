@@ -62,6 +62,7 @@ extern const u8 gText_DexNav_NoInfo[];
 extern const u8 gText_DexNav_CaptureToSee[];
 extern const u8 gText_DexNav_Walk[];
 extern const u8 gText_DexNav_Surf[];
+extern const u8 gText_DexNav_LavaSurf[];
 extern const u8 gText_DexNav_Fish[];
 extern const u8 gText_DexNav_OldRod[];
 extern const u8 gText_DexNav_GoodRod[];

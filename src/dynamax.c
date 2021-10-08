@@ -59,6 +59,7 @@ static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit);
 static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species, bool8 canGigantamax);
 static u8 GetRaidMapSectionId(void);
 static u32 GetRaidRandomNumber(void);
+static void ModifyNormalRaidBattleSpecies(void);
 static bool8 ShouldTryGigantamaxRaidMon(void);
 
 static const item_t sDynamaxBandTable[] =
@@ -128,7 +129,7 @@ const u8 gRaidBattleLevelRanges[RAID_STAR_COUNT][2] =
 {
 	[ONE_STAR_RAID]   = {15, 20},
 	[TWO_STAR_RAID]   = {25, 30},
-	[THREE_STAR_RAID] = {35, 40},
+	[THREE_STAR_RAID] = {36, 40},
 	[FOUR_STAR_RAID]  = {50, 55},
 	[FIVE_STAR_RAID]  = {55, 62},
 	[SIX_STAR_RAID]   = {75, 90},
@@ -1833,6 +1834,20 @@ static u32 GetRaidRandomNumber(void)
 	return ((hour * (day + month) * lastMapGroup * (lastMapNum + lastWarpId + lastPos)) + ((hour * (day + month)) ^ dayOfWeek) + offset) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
 }
 
+static void ModifyNormalRaidBattleSpecies(void)
+{
+	switch (gRaidBattleSpecies)
+	{
+		case SPECIES_WORMADAM:
+			//Change based on the house
+			if ((gClock.hour % 3) == 1)
+				gRaidBattleSpecies = SPECIES_WORMADAM_SANDY;
+			else if ((gClock.hour % 3) == 2)
+				gRaidBattleSpecies = SPECIES_WORMADAM_TRASH;
+			break;
+	}
+}
+
 static bool8 ShouldTryGigantamaxRaidMon(void)
 {
 	return gRaidBattleStars >= 6 //6-star Raid
@@ -1905,6 +1920,8 @@ void DetermineRaidSpecies(void)
 	{
 		index = GetRaidRandomNumber() % raid->amount;
 		gRaidBattleSpecies = raid->data[index].species;
+
+		ModifyNormalRaidBattleSpecies(); //Adjusts things like Wormadam
 
 		if (ShouldTryGigantamaxRaidMon())
 		{

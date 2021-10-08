@@ -7,8 +7,9 @@
 
 #include "../include/new/ability_tables.h"
 #include "../include/new/ability_util.h"
-#include "../include/new/move_tables.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/util.h"
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 extern const u8 gText_AbilityName_AirLock[];
@@ -20,15 +21,30 @@ extern const u8 gText_AbilityName_SolidRock[];
 extern const u8 gText_AbilityName_Turboblaze[];
 extern const u8 gText_AbilityName_Teravolt[];
 extern const u8 gText_AbilityName_ChillingNeigh[];
-extern const u8 gText_AbilityName_HoneyGuard[];
 extern const u8 gText_AbilityName_Libero[];
 extern const u8 gText_AbilityName_TanglingHair[];
 extern const u8 gText_AbilityName_WimpOut[];
 extern const u8 gText_AbilityName_QueenlyMajesty[];
 extern const u8 gText_AbilityName_PowerOfAlchemy[];
 extern const u8 gText_AbilityName_PropellerTail[];
+
+//Unbound Custom Abilities
+extern const u8 gText_AbilityName_NineLives[];
+extern const u8 gText_AbilityName_FocusBelt[];
+extern const u8 gText_AbilityName_FieryNeigh[];
+extern const u8 gText_AbilityName_ShockingNeigh[];
+extern const u8 gText_AbilityName_Pride[];
+extern const u8 gText_AbilityName_Multieye[];
+extern const u8 gText_AbilityName_TanglingWool[];
+extern const u8 gText_AbilityName_BrainBond[];
+extern const u8 gText_AbilityName_CottonCloud[];
+extern const u8 gText_AbilityName_Bellow[];
 extern const u8 gText_AbilityName_SoundWaves[];
 extern const u8 gText_AbilityName_IcySkin[];
+extern const u8 gText_AbilityName_DustyScales[];
+extern const u8 gText_AbilityName_HoneyArmor[];
+extern const u8 gText_AbilityName_FaceShield[];
+extern const u8 gText_AbilityName_RoyalRoar[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -64,13 +80,21 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			}
 			break;
 		case ABILITY_ROUGHSKIN:
+			if (IsSpeciesOfType(species, TYPE_STEEL)) //Species original type is Steel - Assumes Ferroseed, Ferrothorn, and Togedemaru types haven't changed
+				return gText_AbilityName_IronBarbs; //Gives all Steel-types with Rough Skin in randomizers Iron Barbs instead
+			break;
+		case ABILITY_STURDY:
 			switch (dexNum)
 			{
-				#if (defined NATIONAL_DEX_FERROSEED && defined NATIONAL_DEX_FERROTHORN && defined NATIONAL_DEX_TOGEDEMARU)
-				case NATIONAL_DEX_FERROSEED:
-				case NATIONAL_DEX_FERROTHORN:
-				case NATIONAL_DEX_TOGEDEMARU:
-					return gText_AbilityName_IronBarbs;
+				#if (defined NATIONAL_DEX_MEOWTH && defined NATIONAL_DEX_PERSIAN)
+				case NATIONAL_DEX_MEOWTH:
+				case NATIONAL_DEX_PERSIAN:
+					return gText_AbilityName_NineLives;
+				#endif
+				#if (defined NATIONAL_DEX_MACHOKE && defined NATIONAL_DEX_MACHAMP)
+				case NATIONAL_DEX_MACHOKE:
+				case NATIONAL_DEX_MACHAMP:
+					return gText_AbilityName_FocusBelt;
 				#endif
 			}
 			break;
@@ -102,14 +126,31 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_GLASTRIER:
 					return gText_AbilityName_ChillingNeigh;
 				#endif
+				#if (defined NATIONAL_DEX_PONYTA && defined NATIONAL_DEX_RAPIDASH)
+				case NATIONAL_DEX_PONYTA:
+				case NATIONAL_DEX_RAPIDASH:
+					return gText_AbilityName_FieryNeigh;
+				#endif
+				#if (defined NATIONAL_DEX_BLITZLE && defined NATIONAL_DEX_ZEBSTRIKA)
+				case NATIONAL_DEX_BLITZLE:
+				case NATIONAL_DEX_ZEBSTRIKA:
+					return gText_AbilityName_ShockingNeigh;
+				#endif
+				#if (defined NATIONAL_DEX_PIDOVE && defined NATIONAL_DEX_TRANQUILL && defined NATIONAL_DEX_UNFEZANT)
+				case NATIONAL_DEX_PIDOVE:
+				case NATIONAL_DEX_TRANQUILL:
+				case NATIONAL_DEX_UNFEZANT:
+					return gText_AbilityName_Pride;
+				#endif
 			}
 			break;
-		case ABILITY_FURCOAT:
+		case ABILITY_MULTISCALE:
 			switch (dexNum)
 			{
-				#ifdef NATIONAL_DEX_VESPIQUEN
-				case NATIONAL_DEX_VESPIQUEN:
-					return gText_AbilityName_HoneyGuard;
+				#if (defined NATIONAL_DEX_BALTOY && defined NATIONAL_DEX_CLAYDOL)
+				case NATIONAL_DEX_BALTOY:
+				case NATIONAL_DEX_CLAYDOL:
+					return gText_AbilityName_Multieye;
 				#endif
 			}
 			break;
@@ -132,6 +173,23 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_DUGTRIO:
 					return gText_AbilityName_TanglingHair;
 				#endif
+				#if (defined NATIONAL_DEX_MAREEP && defined NATIONAL_DEX_FLAAFFY && defined NATIONAL_DEX_AMPHAROS)
+				case NATIONAL_DEX_MAREEP:
+				case NATIONAL_DEX_FLAAFFY:
+				case NATIONAL_DEX_AMPHAROS:
+					return gText_AbilityName_TanglingWool;
+				#endif
+			}
+			break;
+		case ABILITY_PARENTALBOND:
+			switch (dexNum)
+			{
+				default:
+					break;
+				#ifdef NATIONAL_DEX_GIRAFARIG
+				case NATIONAL_DEX_GIRAFARIG:
+				#endif
+					return gText_AbilityName_BrainBond;
 			}
 			break;
 		case ABILITY_EMERGENCYEXIT:
@@ -146,8 +204,11 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_DAZZLING:
 			switch (dexNum)
 			{
+				default:
+					break;
 				#ifdef NATIONAL_DEX_TSAREENA
 				case NATIONAL_DEX_TSAREENA:
+				#endif
 				#ifdef NATIONAL_DEX_NIDOQUEEN
 				case NATIONAL_DEX_NIDOQUEEN:
 				#endif
@@ -155,7 +216,6 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_VESPIQUEN:
 				#endif
 					return gText_AbilityName_QueenlyMajesty;
-				#endif
 			}
 			break;
 		case ABILITY_RECEIVER:
@@ -178,9 +238,25 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#endif
 			}
 			break;
+		case ABILITY_COTTONDOWN:
+			switch (dexNum)
+			{
+				#if (defined NATIONAL_DEX_SWABLU && defined NATIONAL_DEX_ALTARIA)
+				case NATIONAL_DEX_SWABLU:
+				case NATIONAL_DEX_ALTARIA:
+					return gText_AbilityName_CottonCloud;
+				#endif
+			}
+			break;
 		case ABILITY_PUNKROCK:
 			switch (dexNum)
 			{
+				#if (defined NATIONAL_DEX_WHISMUR && defined NATIONAL_DEX_LOUDRED && defined NATIONAL_DEX_EXPLOUD)
+				case NATIONAL_DEX_WHISMUR:
+				case NATIONAL_DEX_LOUDRED:
+				case NATIONAL_DEX_EXPLOUD:
+					return gText_AbilityName_Bellow;
+				#endif
 				#if (defined NATIONAL_DEX_VIBRAVA && defined NATIONAL_DEX_FLYGON)
 				case NATIONAL_DEX_VIBRAVA:
 				case NATIONAL_DEX_FLYGON:
@@ -191,14 +267,47 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_ICESCALES:
 			switch (dexNum)
 			{
-				#if (defined NATIONAL_DEX_GLACEON && defined NATIONAL_DEX_SMOOCHUM && defined NATIONAL_DEX_JYNX)
+				default:
+					break;
+				#ifdef NATIONAL_DEX_GLACEON
 				case NATIONAL_DEX_GLACEON:
+				#endif
+				#if (defined NATIONAL_DEX_SMOOCHUM && defined NATIONAL_DEX_JYNX)
 				case NATIONAL_DEX_SMOOCHUM:
 				case NATIONAL_DEX_JYNX:
 					return gText_AbilityName_IcySkin;
 				#endif
+				#ifdef NATIONAL_DEX_DUSTOX
+				case NATIONAL_DEX_DUSTOX:
+					return gText_AbilityName_DustyScales;
+				#endif
 			}
 			break;
+		case ABILITY_DAUNTLESSSHIELD:
+			switch (dexNum)
+			{
+				#if (defined NATIONAL_DEX_SHIELDON && defined NATIONAL_DEX_BASTIODON)
+				case NATIONAL_DEX_SHIELDON:
+				case NATIONAL_DEX_BASTIODON:
+					return gText_AbilityName_FaceShield;
+				#endif
+				#ifdef NATIONAL_DEX_VESPIQUEN
+				case NATIONAL_DEX_VESPIQUEN:
+					return gText_AbilityName_HoneyArmor;
+				#endif
+			}
+			break;
+		case ABILITY_GRIMNEIGH:
+			switch (dexNum)
+			{
+				#if (defined NATIONAL_DEX_LITLEO && defined NATIONAL_DEX_PYROAR)
+				case NATIONAL_DEX_LITLEO:
+				case NATIONAL_DEX_PYROAR:
+					return gText_AbilityName_RoyalRoar;
+				#endif
+			}
+			break;
+			
 	}
 
 	return NULL;

@@ -2507,7 +2507,10 @@ static void PrintGUIEncounterMethod(u8 encounterMethod)
 				text = gText_DexNav_Walk;
 				break;
 			case ENCOUNTER_METHOD_WATER:
-				text = gText_DexNav_Surf;
+				if (IsCurrentAreaVolcano())
+					text = gText_DexNav_LavaSurf;
+				else
+					text = gText_DexNav_Surf;
 				break;
 			case ENCOUNTER_METHOD_OLD_ROD:
 				text = gText_DexNav_OldRod;
@@ -2630,6 +2633,11 @@ static void DexNavDisplaySpeciesData(void)
 
 			if (IsFishingEncounterMethod(newMethod))
 				method = newMethod;
+
+			#ifdef UNBOUND
+			if (GetCurrentRegionMapSectionId() == MAPSEC_FLOWER_PARADISE)
+				method = ENCOUNTER_METHOD_GRASS;
+			#endif
 		}
 	}
 	else //Land

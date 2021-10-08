@@ -206,25 +206,25 @@ void atk23_getexp(void)
 			#ifdef VAR_LUCKY_EGG_LEVEL
 			u16 luckyEggLevel = VarGet(VAR_LUCKY_EGG_LEVEL);
 			if (luckyEggLevel >= 2)
-				eggBoost += (luckyEggLevel - 1); //Increases by 0.1 for each level above 1
+				eggBoost += (luckyEggLevel - 1) * 5; //Increases by 0.5 for each level above 1
 			#endif
 		}
 
-		//Level of Fainted Mon
+		//Level of Fainted Mon - L
 		defLevel = gBattleMons[gBankFainted].level;
 
-		//Level of Victorious Mon
+		//Level of Victorious Mon - Lp
 		pokeLevel = gPlayerParty[gBattleStruct->expGetterMonId].level;
 
 		//Pass Power Bonus - Not implemented
 		passPower = 1;
 
-		//Affection Boost
+		//Affection Boost - f
 		affection = 10;
 		if (MonGetsAffectionBoost(&gPlayerParty[gBattleStruct->expGetterMonId]))
 			affection = 12;
 
-		//Evolution Boost
+		//Evolution Boost - v
 		evolutionBoost = 10;
 		if (CouldHaveEvolvedViaLevelUp(&gPlayerParty[gBattleStruct->expGetterMonId]))
 			evolutionBoost = 12;

@@ -2010,11 +2010,13 @@ void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
 	dest = StringAppend(dest, ItemId_GetName(itemId));
 
 	u8 levelToAppend = 0;
+	u8 minUpgradedLevel = 1;
 	switch (itemId)
 	{
 		#ifdef VAR_MACHO_BRACE_LEVEL
 		case ITEM_MACHO_BRACE:
 			levelToAppend = VarGet(VAR_MACHO_BRACE_LEVEL);
+			minUpgradedLevel = 3;
 			break;
 		#endif
 		#ifdef VAR_POWER_ITEM_LEVEL
@@ -2025,22 +2027,25 @@ void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
 		case ITEM_POWER_BAND:
 		case ITEM_POWER_ANKLET:
 			levelToAppend = VarGet(VAR_POWER_ITEM_LEVEL);
+			minUpgradedLevel = 2;
 			break;
 		#endif
 		#ifdef VAR_AMULET_COIN_LEVEL
 		case ITEM_AMULET_COIN:
 		case ITEM_LUCK_INCENSE:
 			levelToAppend = VarGet(VAR_AMULET_COIN_LEVEL);
+			minUpgradedLevel = 3;
 			break;
 		#endif
 		#ifdef VAR_LUCKY_EGG_LEVEL
 		case ITEM_LUCKY_EGG:
 			levelToAppend = VarGet(VAR_LUCKY_EGG_LEVEL);
+			minUpgradedLevel = 2;
 			break;
 		#endif
 	}
 
-	if (levelToAppend > 0)
+	if (levelToAppend >= minUpgradedLevel)
 	{
 		dest = StringCopy(dest, sListItemTextColor_TmCase_BerryPouch);
 		*dest++ = CHAR_SPACE;
