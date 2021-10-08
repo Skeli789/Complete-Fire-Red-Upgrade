@@ -2551,42 +2551,47 @@ bool8 sp196_TryCopyTMNameToBuffer1(void)
 	return FALSE;
 }
 
+static void MakeStringPlural(u8* stringVar, u32 length)
+{
+	switch (stringVar[length - 1])
+	{
+		case PC_y:
+			stringVar[length - 1] = PC_i;
+			stringVar[length + 0] = PC_e;
+			stringVar[length + 1] = PC_s;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_Y:
+			stringVar[length - 1] = PC_I;
+			stringVar[length + 0] = PC_E;
+			stringVar[length + 1] = PC_S;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_x:
+			stringVar[length + 0] = PC_e;
+			stringVar[length + 1] = PC_s;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_X:
+			stringVar[length + 0] = PC_E;
+			stringVar[length + 1] = PC_S;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_s:
+		case PC_S:
+			break; //Already S on end of string
+		default:
+			stringVar[length + 0] = PC_s;
+			stringVar[length + 1] = EOS;
+	}
+}
+
 void TryAppendSOntoEndOfItemString(void)
 {
 	if (Var8005 > 1)
 	{
-		u8 length = StringLength(gStringVar2);
-
-		switch (gStringVar2[length - 1]) {
-			case PC_y:
-				gStringVar2[length - 1] = PC_i;
-				gStringVar2[length + 0] = PC_e;
-				gStringVar2[length + 1] = PC_s;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_Y:
-				gStringVar2[length - 1] = PC_I;
-				gStringVar2[length + 0] = PC_E;
-				gStringVar2[length + 1] = PC_S;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_x:
-				gStringVar2[length + 0] = PC_e;
-				gStringVar2[length + 1] = PC_s;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_X:
-				gStringVar2[length + 0] = PC_E;
-				gStringVar2[length + 1] = PC_S;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_s:
-			case PC_S:
-				break; //Already S on end of string
-			default:
-				gStringVar2[length + 0] = PC_s;
-				gStringVar2[length + 1] = EOS;
-		}
+		u32 length = StringLength(gStringVar2);
+		MakeStringPlural(gStringVar2, length);
 	}
 }
 
@@ -2710,6 +2715,22 @@ void sp0CF_BufferAbilityName(void)
 {
 	const u8* name = GetAbilityName(Var8000, Var8001);
 	StringCopy(sScriptStringVars[Var8002], name);
+}
+
+bool8 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
+{
+	u8 stringVarIndex = ScriptReadByte(ctx);
+	u16 itemId = VarGet(ScriptReadHalfword(ctx));
+	u16 quantity = VarGet(ScriptReadHalfword(ctx));
+
+	CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
+	if (quantity >= 2)
+	{
+		u32 length = StringLength(sScriptStringVars[stringVarIndex]);
+		MakeStringPlural(sScriptStringVars[stringVarIndex], length);
+	}
+
+	return FALSE;
 }
 
 //////////////////EXPANDED COINS///////////////////////
