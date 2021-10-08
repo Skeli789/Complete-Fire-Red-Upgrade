@@ -989,7 +989,8 @@ void RunTurnActionsFunctions(void)
 
 				if (action == ACTION_USE_ITEM)
 					continue;
-				else if (action == ACTION_SWITCH && ITEM_EFFECT(bank) == ITEM_EFFECT_CUSTAP_BERRY) //Only Quick Claw activates on the switch
+				else if (ITEM_EFFECT(bank) == ITEM_EFFECT_CUSTAP_BERRY
+				&& (action == ACTION_USE_ITEM || action == ACTION_SWITCH || action == ACTION_RUN)) //Only Quick Claw activates on the switch
 					continue;
 
 				gBattleScripting.bank = bank;
@@ -2070,10 +2071,14 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 	return priority;
 }
 
+bool8 QuickClawActivatesThisTurn(u8 bank)
+{
+	return gNewBS->quickClawRandomNumber[bank] < ITEM_QUALITY(bank);
+}
+
 s32 BracketCalc(u8 bank, u8 action, u16 move)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
-	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
 
 	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
@@ -2095,7 +2100,7 @@ s32 BracketCalc(u8 bank, u8 action, u16 move)
 
 			switch (itemEffect) {
 				case ITEM_EFFECT_QUICK_CLAW:
-					if (gNewBS->quickClawRandomNumber[bank] < itemQuality)
+					if (QuickClawActivatesThisTurn(bank))
 					{
 						gNewBS->quickClawCustapIndicator |= gBitTable[bank];
 						return 1;

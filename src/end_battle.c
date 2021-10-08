@@ -10,6 +10,7 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
@@ -527,6 +528,12 @@ bool8 TryRunFromBattle(u8 bank)
 	{
 		++effect;
 	}
+	#ifdef QUICK_CLAW_PROCING_ALWAYS_ALLOWS_FLEEING
+	else if (ITEM_EFFECT(bank) == ITEM_EFFECT_QUICK_CLAW && QuickClawActivatesThisTurn(bank))
+	{
+		++effect;
+	}
+	#endif
 	else
 	{
 		if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
