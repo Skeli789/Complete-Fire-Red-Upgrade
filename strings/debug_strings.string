@@ -10,6 +10,9 @@ Level 100 Team
 #org @gText_DebugMenu_MaxCoinage
 Max Coinage
 
+#org @gText_DebugMenu_ShinyTeam
+Shiny Team
+
 #org @gText_DebugMenu_AllBadges
 All Badges
 

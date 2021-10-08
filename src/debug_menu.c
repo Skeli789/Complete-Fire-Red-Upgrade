@@ -5,6 +5,7 @@
 #include "../include/item.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/build_pokemon.h"
 #include "../include/new/item.h"
 #include "../include/new/util.h"
 
@@ -162,4 +163,14 @@ void DebugMenu_MaxMoneyAndCoins(void)
 {
 	AddMoney(&gSaveBlock1->money, 0xFFFFFFFF);
 	SetCoins(999999999);
+}
+
+void DebugMenu_ShinyTeam(void)
+{
+	for (u32 i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+			ForceMonShiny(&gPlayerParty[i]);
+	}
 }
