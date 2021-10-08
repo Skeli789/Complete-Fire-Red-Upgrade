@@ -599,7 +599,8 @@ static void MoveSelectionDisplayMoveEffectiveness(void)
 	u8 *txtPtr, moveType, split;
 	const u8* string;
 	bool8 stab = FALSE;
-	u8 palIndex = 5 * 0x10 + 8;
+	u8 stabPalIndex = 5 * 0x10 + 6;
+	u8 palIndex = stabPalIndex + 2;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
@@ -687,11 +688,14 @@ static void MoveSelectionDisplayMoveEffectiveness(void)
 	txtPtr = StringCopy(txtPtr, string);
 
 	if (stab)
+	{
+		gPlttBufferUnfaded[stabPalIndex + 0] = RGB(27, 27, 27); //Copy over PP colours so it's unaffected by low PP
+		gPlttBufferUnfaded[stabPalIndex + 1] = RGB(4, 4, 4);
 		StringCopy(txtPtr, gText_BattleUI_STAB);
+	}
 
     BattlePutTextOnWindow(gDisplayedStringBattle, 7);
-	CpuCopy16(&gPlttBufferUnfaded[palIndex + 0], &gPlttBufferFaded[palIndex + 0], sizeof(u16));
-	CpuCopy16(&gPlttBufferUnfaded[palIndex + 1], &gPlttBufferFaded[palIndex + 1], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[stabPalIndex], &gPlttBufferFaded[stabPalIndex], sizeof(u16) * 4);
 }
 
 static bool8 MoveSelectionDisplayZMove(void)
