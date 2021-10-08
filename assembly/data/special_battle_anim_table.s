@@ -490,7 +490,7 @@ ANIM_RED_PRIMAL_REVERSION:
 	loadparticle ANIM_TAG_OMEGA_STONE
 	loadparticle ANIM_TAG_OMEGA_SYMBOL
 	loadparticle ANIM_TAG_SMALL_EMBER
-	pokespritetoBG side_attacker
+	pokespritetoBG bank_attacker
 	setblends 0x80c
 	playsound2 0xc2 SOUND_PAN_ATTACKER
 	launchtemplate RED_PRIMAL_OMEGA TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x4 0x0 0x0 0x0 0x0
@@ -498,12 +498,7 @@ ANIM_RED_PRIMAL_REVERSION:
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_OMEGA_STONE 0x4 0x0 0x10 0x7fff
 	waitanimation @;Wait until screen is white
-	leftbankBG_over_partnerBG bank_attacker
-	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
-	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe
-	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
-	pause 0x10
+	call PRIMAL_REVERSION_FADE_IN
 	launchtemplate OMEGA_SYMBOL TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x3, 0, 0, bank_attacker
 	call RED_PRIMAL_REVERSION_FIRE_GEYSER
 	call RED_PRIMAL_REVERSION_FIRE_GEYSER
@@ -513,6 +508,19 @@ ANIM_RED_PRIMAL_REVERSION:
 	waitanimation
 	resetblends
 	endanimation
+
+PRIMAL_REVERSION_FADE_IN:
+	pokespritefromBG side_attacker @AnimTask_ReloadAttackerSprite removes it anyway
+	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x10 0x7fff
+	pause 0x1
+	pokespritetoBG bank_attacker
+	leftbankBG_over_partnerBG bank_attacker
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff
+	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe
+	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
+	pause 0x10
+	return
 
 RED_PRIMAL_REVERSION_FIRE_GEYSER:
 	launchtemplate FIRE_GEYSER TEMPLATE_ATTACKER | 2, 0x3 bank_attacker 0xfffc 0x18
@@ -544,12 +552,7 @@ ANIM_BLUE_PRIMAL_REVERSION:
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ALPHA_STONE 0x4 0x0 0x10 0x7fff
 	waitanimation @;Wait until screen is white
-	leftbankBG_over_partnerBG bank_attacker
-	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
-	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe
-	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
-	pause 0x10
+	call PRIMAL_REVERSION_FADE_IN
 	launchtemplate ALPHA_SYMBOL TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x3, 0, 0, bank_attacker
 	call BLUE_PRIMAL_REVERSION_WATER_GEYSER
 	call BLUE_PRIMAL_REVERSION_WATER_GEYSER
@@ -776,6 +779,8 @@ ANIM_MEGA_EVOLUTION:
 	loadparticle ANIM_TAG_MEGA_RAINBOW
 	loadparticle ANIM_TAG_MEGA_STONE
 	loadparticle ANIM_TAG_MEGA_SYMBOL
+	loadparticle ANIM_TAG_ELECTRICITY
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0xC 0xC 0x74DB @Reddish Purple
 	pokespritetoBG side_attacker
 	setblends 0x80c
 	soundcomplex 0x85 SOUND_PAN_ATTACKER 0xd 0x3
@@ -790,15 +795,12 @@ ANIM_MEGA_EVOLUTION:
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_MEGA_STONE 0x4 0x0 0x10 0x7fff
 	waitanimation @;Wait until screen is white
+	call PRIMAL_REVERSION_FADE_IN
 	resetblends
-	leftbankBG_over_partnerBG bank_attacker
-	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
-	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe
-	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
-	pause 0x10
 	pokespritefromBG side_attacker
 	launchtemplate MEGA_SYMBOL TEMPLATE_ATTACKER | 3, 0x3, 0, 0, bank_attacker
+	pause 0x2
+	call MEGA_EVO_SMOKE_UP
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x7FFF
 	waitanimation
@@ -821,10 +823,26 @@ BRING_IN_RAINBOWS_BALLS:
 	pause 0x3
 	return
 
+MEGA_EVO_SMOKE_UP:
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0xc 0x210 0x1e 0xd 0x32 0x0
+	pause 0x2
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0x0 0x1e0 0x14 0x10 0xffd2 0x0
+	pause 0x2
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0x1 0x240 0x14 0x8 0x2a 0x0
+	pause 0x2
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0xf 0x190 0x19 0xb 0xffd6 0x0
+	pause 0x2
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0xc 0x200 0x19 0x10 0x2e 0x0
+	pause 0x2
+	launchtemplate MEGA_EVO_SMOKE TEMPLATE_ATTACKER | 2, 0x7 0x0 0x1 0x1d0 0x1e 0xf 0xffce 0x0
+	pause 0x2
+	return
+
 .align 2
 RAINBOW_BALL: objtemplate ANIM_TAG_MEGA_RAINBOW ANIM_TAG_MEGA_RAINBOW OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
 MEGA_STONE: objtemplate ANIM_TAG_MEGA_STONE ANIM_TAG_MEGA_STONE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7144 0x8075D9D
 MEGA_SYMBOL: objtemplate ANIM_TAG_MEGA_SYMBOL ANIM_TAG_MEGA_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PrimalSymbol SpriteCB_AnimSpriteOnSelectedMonPos
+MEGA_EVO_SMOKE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_ELECTRICITY OAM_OFF_32x32 0x83E6200 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -852,18 +870,23 @@ ANIM_ULTRA_BURST:
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0x7FFF
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WHITE_CIRCLE_OF_LIGHT 0x2 0x0 0x10 0x7FFF
 	waitanimation @;Wait until screen is white
+	pokespritefromBG side_attacker @AnimTask_ReloadAttackerSprite removes it anyway
+	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x10 0x7fff
+	pause 0x1
+	pokespritetoBG bank_attacker
 	leftbankBG_over_partnerBG bank_attacker
 	launchtemplate ULTRA_BURST_SYMBOL TEMPLATE_ATTACKER | 3, 0x3, 0, 0, bank_attacker
 	pause 0x10
-	launchtask AnimTask_ReloadAttackerSprite 0x2 0x0
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7FFF
 	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe
 	launchtask AnimTask_PlayAttackerCry 0x1 0x2 0x0 0xff
 	pause 0x10
-	pokespritefromBG side_attacker
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x0 0x0 0x0 0x7FFF
 	waitanimation
+	pokespritefromBG side_attacker
+	resetblends
 	endanimation
 
 .align 2
