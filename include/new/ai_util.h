@@ -167,6 +167,7 @@ bool8 MultiHitMoveWithSplitInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 split
 bool8 OHKOMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef, struct AIScript* aiScriptData);
 bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef);
 bool8 HazingMoveInMoveset(u8 bank);
+bool8 PhazingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
 bool8 HasUsedMove(u8 bankAtk, u16 move);
 bool8 HasUsedMoveWithEffect(u8 bankAtk, u8 effect);
 bool8 HasUsedMoveWithEffectHigherThanChance(u8 bank, u8 effect, u8 chance);

@@ -420,7 +420,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 150) / 100; //1.5x overall boost
+			damage = (damage * 15) / 10; //1.5x overall boost
 		#else
 			damage = (damage * 125) / 100; //1.25x overall boost
 		#endif
@@ -518,7 +518,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 150) / 100; //1.5x overall boost
+			damage = (damage * 15) / 10; //1.5x overall boost
 		#else
 			damage = (damage * 125) / 100; //1.25x overall boost
 		#endif
@@ -621,7 +621,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
 	{
 		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 150) / 100; //1.5x overall boost
+			damage = (damage * 15) / 10; //1.5x overall boost
 		#else
 			damage = (damage * 125) / 100; //1.25x overall boost
 		#endif
@@ -921,12 +921,13 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		defAbility = ABILITY_NONE; //Ignore Ability
 
 	//Check stab
-	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType
+	|| atkAbility == ABILITY_PROTEAN) //Will change type to get STAB
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 15, 10);
 	}
 
 	//Check Special Ground Immunities
@@ -993,12 +994,13 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 		defAbility = ABILITY_NONE; //Ignore Ability
 
 	//Check STAB
-	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType
+	|| atkAbility == ABILITY_PROTEAN) //Will change type to get STAB
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
+			gBattleMoveDamage = udivsi(gBattleMoveDamage * 15, 10);
 	}
 
 	//Check Special Ground Immunities
@@ -1076,12 +1078,13 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		defAbility = ABILITY_NONE; //Ignore Ability
 
 	//Check STAB
-	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType
+	|| atkAbility == ABILITY_PROTEAN) //Will change type to get STAB
 	{
 		if (atkAbility == ABILITY_ADAPTABILITY)
 			gBattleMoveDamage *= 2;
 		else
-			gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
+			gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 	}
 
 	//Check Special Ground Immunities

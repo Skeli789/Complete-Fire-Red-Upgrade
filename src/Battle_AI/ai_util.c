@@ -495,6 +495,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
+	bool8 atkAbility = ABILITY(bankAtk);
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -595,6 +596,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 							}
 
 							//Pick a non-stat recoil move preferably
+							if (atkAbility != ABILITY_CONTRARY)
 							{
 								bool8 bestMoveStatRecoil = IsStatRecoilMove(bestMove);
 								bool8 currMoveStatRecoil = IsStatRecoilMove(currMove);
@@ -1178,6 +1180,11 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 		if (numHits > 0)
 			numHits = 1; //Only can be used once before fainting
 	}
+	else if (gBattleMoves[move].effect == EFFECT_RECHARGE)
+	{
+		if (numHits > 0)
+			numHits -= 1; //Takes at least a turn to recharge
+	}
 
 	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
 	{
@@ -1421,6 +1428,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
+	bool8 atkAbility = ABILITY(bankAtk);
 	struct DamageCalc damageData = {0};
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
@@ -1553,6 +1561,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 							}
 
 							//Pick a non-stat recoil move preferably
+							if (atkAbility != ABILITY_CONTRARY)
 							{
 								bool8 strongestMoveStatRecoil = IsStatRecoilMove(strongestMove);
 								bool8 currMoveStatRecoil = IsStatRecoilMove(move);
@@ -4270,6 +4279,47 @@ bool8 HazingMoveInMoveset(u8 bank)
 	return FALSE;
 }
 
+static bool8 IsUsablePhazingMove(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u8 effect = gBattleMoves[move].effect;
+
+	if (effect == EFFECT_ROAR
+	&& !IsDynamaxed(bankDef)
+	&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Contains just Soundproof check for Roar
+		return TRUE;
+
+	if (effect == EFFECT_HAZE || move == MOVE_TOPSYTURVY)
+		return TRUE;
+
+	if (effect == EFFECT_REMOVE_TARGET_STAT_CHANGES
+	&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
+	&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
+		return TRUE;
+
+	return FALSE;
+}
+
+bool8 PhazingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (IsUsablePhazingMove(move, bankAtk, bankDef))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 bool8 HasUsedMove(u8 bank, u16 move)
 {
     u32 i;
@@ -4336,19 +4386,7 @@ bool8 HasUsedPhazingMoveThatAffects(u8 bankAtk, u8 bankDef)
 		if (!MoveInMovesetAndUsable(move, bankAtk))
 			continue;
 
-		u8 effect = gBattleMoves[move].effect;
-
-		if (effect == EFFECT_ROAR
-		&& !IsDynamaxed(bankDef)
-		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Contains just Soundproof check for Roar
-			return TRUE;
-
-		if (effect == EFFECT_HAZE || move == MOVE_TOPSYTURVY)
-			return TRUE;
-
-		if (effect == EFFECT_REMOVE_TARGET_STAT_CHANGES
-		&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
-		&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
+		if (IsUsablePhazingMove(move, bankAtk, bankDef))
 			return TRUE;
 	}
 
@@ -5015,7 +5053,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			}
 
 			if (gBattleMoves[move].effect != EFFECT_OVERHEAT //Base move won't lower user stats
-			&& gBattleMoves[move].effect != EFFECT_SUPERPOWER
+			&& (!IsStatRecoilMove(move) || atkAbility == ABILITY_CONTRARY)
 			&& (atkAbility == ABILITY_MAGICGUARD || !CheckRecoil(move)) //Base move won't do recoil
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
 			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit

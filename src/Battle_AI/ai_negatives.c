@@ -581,7 +581,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	{
 		if (moveSplit == SPLIT_STATUS
 		&& !(moveTarget & (MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)) //Directly strikes target
-		&& IsOfType(bankDef, TYPE_DARK))
+		&& IsOfType(bankDef, TYPE_DARK)
+		&& SIDE(bankAtk) != SIDE(bankDef)) //Affects allies but not foes
 		{
 			DECREASE_VIABILITY(10);
 			return viability;

@@ -328,6 +328,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					|| IsBankIncapacitated(bankDef) //Not a bad idea to use both turns
 					|| (!CanKnockOut(bankDef, bankAtk) && HighChanceOfBeingImmobilized(bankDef))) //Most likely will be done setting up and still be alive
 					{
+						if (PhazingMoveInMovesetThatAffects(bankDef, bankAtk))
+							break; //For a two-turn setup specifically, it's important to consider if the foe has a phazing move from the get-go (and not just after they used it)
+
 						if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 							goto AI_SPEED_PLUS;
 						else if (GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
