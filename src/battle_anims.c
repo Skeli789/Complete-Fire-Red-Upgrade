@@ -2234,7 +2234,6 @@ static void InitSpritePositionForPyroBall(struct Sprite* sprite)
 
 	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
 		sprite->pos1.y += 20; //Move below the text box
-
 }
 
 void SpriteCB_PyroBallRockBounce(struct Sprite* sprite)
@@ -2257,7 +2256,7 @@ void SpriteCB_PyroBallLaunch(struct Sprite* sprite)
 {
 	InitSpritePositionForPyroBall(sprite);
 
-	if (SIDE(gBattleAnimAttacker))
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
 		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
 
 	sprite->data[0] = gBattleAnimArgs[4];
@@ -2880,6 +2879,54 @@ void SpriteCB_WakeUpSlap(struct Sprite *sprite)
 	}
 }
 
+//Launches the projectile's for Volt Switch
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: wave amplitude
+static void SpriteCB_VoltSwitch_Step(struct Sprite* sprite);
+void SpriteCB_VoltSwitch(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, 0);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+	else
+		sprite->pos1.y += 10; //Move slightly down
+
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+
+	sprite->callback = SpriteCB_VoltSwitch_Step;
+}
+
+static void SpriteCB_VoltSwitch_Step(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite))
+	{
+		//Merge coords into one
+		sprite->pos1.x += sprite->pos2.x;
+		sprite->pos1.y += sprite->pos2.y;
+		sprite->pos2.x = 0;
+		sprite->pos2.y = 0;
+
+		//Come straight back to the attacker
+		sprite->data[0] = 0x14; //Duration
+		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
 //Destroys the chains for Fairy Lock
 void SpriteCB_FairyLockChain(struct Sprite *sprite)
 {
@@ -3056,7 +3103,6 @@ void SpriteCB_HitSplatOnMonEdgeDoubles(struct Sprite *sprite)
 }
 
 //Targeted fire in Doubles for Incinerate
-
 //Launches a projectile from the attacker to the target's centre.
 //arg 0: initial x pixel offset
 //arg 1: initial y pixel offset

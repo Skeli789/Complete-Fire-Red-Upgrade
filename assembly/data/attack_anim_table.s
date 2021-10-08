@@ -4420,6 +4420,7 @@ CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM OAM_OFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_LEAFSTORM:
 	loadparticle ANIM_TAG_LEAF
 	loadparticle ANIM_TAG_SEED
@@ -4530,6 +4531,7 @@ STONEEDGE_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_PAYBACK:
 	loadparticle ANIM_TAG_ORBS
 	loadparticle ANIM_TAG_POISON_JAB
@@ -4585,6 +4587,7 @@ PAYBACK_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_FIREFANG:
 	loadparticle ANIM_TAG_SHARP_TEETH
 	loadparticle ANIM_TAG_IMPACT
@@ -4607,6 +4610,7 @@ ANIM_FIREFANG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_ICEFANG:
 	loadparticle ANIM_TAG_SHARP_TEETH
 	loadparticle ANIM_TAG_IMPACT
@@ -4630,6 +4634,7 @@ ANIM_ICEFANG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_THUNDERFANG:
 	loadparticle ANIM_TAG_SHARP_TEETH
 	loadparticle ANIM_TAG_IMPACT
@@ -4664,6 +4669,7 @@ ANIM_THUNDERFANG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_FLAREBLITZ:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SMALL_EMBER
@@ -4760,6 +4766,7 @@ ANIM_INFERNO:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_HEX:
 	loadparticle ANIM_TAG_PURPLE_FLAME
 	loadparticle ANIM_TAG_GHOSTLY_SPIRIT
@@ -4834,6 +4841,7 @@ ANIM_DOUBLEHIT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_COTTONGUARD:
 	loadparticle ANIM_TAG_SPORE
 	pokespritetoBG side_attacker
@@ -4869,6 +4877,7 @@ COTTONGUARD_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_ACROBATICS:
 	loadparticle ANIM_TAG_IMPACT
 	pokespritetoBG bank_target
@@ -4928,6 +4937,7 @@ FLAME_BURST_SPREAD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_UTURN:
 	loadparticle ANIM_TAG_SMALL_BUBBLES
 	loadparticle ANIM_TAG_RAZOR_LEAF
@@ -4954,36 +4964,44 @@ BALLBACK: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 g
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_VOLTSWITCH:
 	loadparticle ANIM_TAG_SHADOW_BALL
-	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
-	loadparticle ANIM_TAG_SPARK_2
 	loadparticle ANIM_TAG_IONS
-	pokespritetoBG bank_attacker
-	setblends 0x80c
-	playsound2 0xce SOUND_PAN_ATTACKER
-	launchtemplate Template_GrowingShockWaveOrb 0x2 0x0
+	loadparticle ANIM_TAG_SPARK_2
+	playsound2 0x6f SOUND_PAN_ATTACKER
+	launchtemplate VOLT_SWITCH_VOLT, TEMPLATE_TARGET | 3, 0x6, 0, 0, 0, 0, 0x20, 20
+	pause 0x1E
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x3 0x0 0x8 0x1
+	call VOLT_SWITCH_ELECTRIC_FLASHES
+	pause 0x2
+	playsound2 0x6f SOUND_PAN_ATTACKER
+	launchtemplate VOLT_SWITCH_VOLT TEMPLATE_TARGET | 3, 0x6, 0, 0, 0, 0, 0x20, -20
+	pause 0x4
+	call VOLT_SWITCH_ELECTRIC_FLASHES
+	pause 0x18
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x3 0x0 0x8 0x1
+	call VOLT_SWITCH_ELECTRIC_FLASHES
+	pause 0x6
+	call VOLT_SWITCH_ELECTRIC_FLASHES
 	waitanimation
-	pokespritefromBG bank_attacker
-	pause 0x1
-	pokespritetoBG bank_target
-	playsound2 0x6f SOUND_PAN_TARGET
-	launchtemplate VOLTSWITCH_VOLT 0x2 0x4 0x0 0x0 0x30 0x0
-	pause 0x20
-	playsound2 0x6f SOUND_PAN_TARGET
-	launchtemplate VOLTSWITCH_VOLT 0x2 0x4 0x0 0x0 0x30 0x0
-	pause 0xC
-	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0x28 0x1
-	call PARALYZE_CHANCE_ANIM
-	pause 0x8
-	call PARALYZE_CHANCE_ANIM
-	waitanimation
-	pokespritefromBG bank_target
-	resetblends
+	stopmusic
 	endanimation
 
+VOLT_SWITCH_ELECTRIC_FLASHES:
+	playsound2 0x70 SOUND_PAN_TARGET 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0x5 0x0 0x5 0x0 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0xfffb 0xa 0x5 0x1 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0xf 0x14 0x5 0x2 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0xfff1 0xfff6 0x5 0x0 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0x19 0x0 0x5 0x1 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0xfff8 0x8 0x5 0x2 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0x2 0xfff8 0x5 0x0 
+	launchtemplate Template_Electricity TEMPLATE_TARGET | 2, 0x4 0xffec 0xf 0x5 0x1 
+	return
+
 .align 2
-VOLTSWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 0x80B563D
+VOLT_SWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7604 SpriteCB_VoltSwitch
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
