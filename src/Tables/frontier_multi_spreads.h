@@ -583,7 +583,7 @@ const struct BattleTowerSpread gMultiTowerSpread_Marlon[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DESTINYBOND
+		.ability = FRONTIER_ABILITY_2, //ABILITY_PRANKSTER
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{

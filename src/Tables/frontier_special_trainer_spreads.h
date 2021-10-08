@@ -6598,7 +6598,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWSHIELD
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -6624,7 +6624,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWSHIELD
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_COLBUR_BERRY,
 		.moves =
 		{
@@ -6650,7 +6650,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHADOWSHIELD
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -7987,7 +7987,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Skeli[] =
 		.atkEv = 36,
 		.defEv = 236,
 		.spDefEv = 196,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -8014,14 +8014,14 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Skeli[] =
 		.spAtkEv = 196,
 		.spDefEv = 36,
 		.spdEv = 236,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_PSYCHIUM_Z,
 		.moves =
 		{
 			MOVE_EARTHPOWER,
 			MOVE_PSYCHIC,
 			MOVE_SHADOWBALL,
-			MOVE_ROCKPOLISH,
+			MOVE_SHOREUP,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,
 		.forSingles = TRUE,
@@ -8040,7 +8040,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Skeli[] =
 		.defEv = 60,
 		.spDefEv = 196,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MULTIEYE
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -20583,9 +20583,9 @@ const struct BattleTowerSpread gSpecialTowerSpread_Giovanni[] =
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
+			MOVE_HEADSMASH,
 			MOVE_THUNDERPUNCH,
 			MOVE_FIREPUNCH,
-			MOVE_DOUBLEEDGE,
 		},
 		.ball = BALL_TYPE_MASTER_BALL,
 		.forSingles = TRUE,
@@ -20604,12 +20604,12 @@ const struct BattleTowerSpread gSpecialTowerSpread_Giovanni[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_BATTLEARMOR
-		.item = ITEM_GROUNDIUM_Z,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SKILLLINK
+		.item = ITEM_THICK_CLUB,
 		.moves =
 		{
-			MOVE_EARTHQUAKE,
-			MOVE_FIREPUNCH,
+			MOVE_BONERUSH,
+			MOVE_ROCKBLAST,
 			MOVE_THUNDERPUNCH,
 			MOVE_SWORDSDANCE,
 		},
@@ -20630,11 +20630,11 @@ const struct BattleTowerSpread gSpecialTowerSpread_Giovanni[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_BATTLEARMOR
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SKILLLINK
 		.item = ITEM_THICK_CLUB,
 		.moves =
 		{
-			MOVE_STOMPINGTANTRUM,
+			MOVE_BONERUSH,
 			MOVE_ROCKSLIDE,
 			MOVE_KNOCKOFF,
 			MOVE_PROTECT,
