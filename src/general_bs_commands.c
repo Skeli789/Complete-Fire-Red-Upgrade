@@ -2849,7 +2849,10 @@ void atk91_givepaydaymoney(void)
 		for (i = 0; i < PARTY_SIZE; ++i)
 			money += (gPlayerParty[i].level * 5) * gNewBS->PayDayByPartyIndices[i];
 		money *= gBattleStruct->moneyMultiplier;
-		money += MathMin(gNewBS->maxGoldrushMoney * gBattleStruct->moneyMultiplier, 99999); //Gold Rush caps at $99 999
+		money += gNewBS->maxGoldrushMoney * gBattleStruct->moneyMultiplier;
+		#ifdef PAYDAY_MONEY_CAP
+		money = MathMin(money, 99999); //Pay Day and Gold Rush cap at $99999
+		#endif
 
 		if (money > 0)
 		{
@@ -4028,12 +4031,14 @@ void atkB2_trysetperishsong(void)
 	s32 notAffectedCount = 0;
 	bool8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0;
 	bool8 defAbilityBlocksPriority = IsPriorityBlockingAbility(ABILITY(gBankTarget));
+	bool8 attackerIsPrankster = ABILITY(gBankAttacker) == ABILITY_PRANKSTER;
 
 	for (i = 0; i < gBattlersCount; ++i)
 	{
 		if (gStatuses3[i] & STATUS3_PERISH_SONG
 		|| ABILITY(i) == ABILITY_SOUNDPROOF
-		|| (priority > 0 && i != gBankAttacker && ((gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i)) || defAbilityBlocksPriority))) //Not affected by priority moves
+		|| (priority > 0 && i != gBankAttacker && ((gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i)) || defAbilityBlocksPriority)) //Not affected by priority moves
+		|| (attackerIsPrankster && IsOfType(i, TYPE_DARK))) //Not affected by Prankster
 		{
 			notAffectedCount++;
 		}
