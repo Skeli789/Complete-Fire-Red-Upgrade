@@ -144,6 +144,9 @@ Neither Pok\emon can run away!
 #org @gText_CloakedInLight
 [ATTACKER] became\ncloaked in light!
 
+#org @gText_NotAffectedBecauseOfItem
+[TARGET] is not affected\nthanks to its [LAST_ITEM]!
+
 #org @gText_ItemPumpedMon
 [SCRIPTING_BANK] used the\n[LAST_ITEM] to get pumped!
 

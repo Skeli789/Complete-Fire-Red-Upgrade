@@ -5279,6 +5279,8 @@ EmbargoBS:
 PowderBS:
 	jumpifcounter BANK_TARGET POWDER_TIMERS NOTEQUALS 0x0 FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
+	typecalc2
+	jumpifmovehadnoeffect CottonSporeNoEffect
 	attackstring
 	ppreduce
 	attackanimation

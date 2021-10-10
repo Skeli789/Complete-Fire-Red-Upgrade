@@ -108,9 +108,10 @@ enum
 
 extern const struct BattleMove gBattleMoves[];
 extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
-#define BattleScript_MoveEnd (u8*) 0x81D694E
-#define BattleScript_Atk49 (u8*) 0x81D6954
+#define BattleScript_MoveEnd (const u8*) 0x81D694E
+#define BattleScript_Atk49 (const u8*) 0x81D6954
 extern u8 BattleScript_ButItFailed[];
+#define BattleScript_NotAffected (const u8*) 0x81D7E04
 
 typedef u8 TrainerClassNames_t[13];
 #define gTrainerClassNames ((TrainerClassNames_t*) *((u32*) 0x811B4B4)) //0x823E558

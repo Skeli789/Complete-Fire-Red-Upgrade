@@ -11,7 +11,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 //Scripts
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8
 #define BattleScript_MoveFaint (u8*) 0x81D6947
-#define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_ButItDoesntAffect (u8*) 0x81D7E04
 #define BattleScript_Pausex20 (u8*) 0x81D89F1
 #define BattleScript_MoveMissedPause (u8*) 0x81D695E

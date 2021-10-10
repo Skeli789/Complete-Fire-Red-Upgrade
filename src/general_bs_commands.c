@@ -81,6 +81,7 @@ const u16 gMissStringIds[] =
 	0x184, //Quick Guard
 	0x184, //Wide Guard
 	0x184, //Raid Shield
+	0x184, //Safety Goggles
 };
 
 static const u8* const sEntryHazardsStrings[] =
@@ -91,6 +92,17 @@ static const u8* const sEntryHazardsStrings[] =
 	StickyWebLayString,
 	gText_SteelsurgeLay,
 };
+
+
+void TrySetMissStringForSafetyGoggles(u8 bankDef)
+{
+	if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_SAFETY_GOGGLES)
+	{
+		gLastUsedItem = ITEM(bankDef);
+		gBattleStringLoader = gText_NotAffectedBecauseOfItem;
+		gNewBS->missStringId[ bankDef] = 10;
+	}
+}
 
 bool8 TryActivateGemBattlescript(void)
 {
@@ -1492,6 +1504,7 @@ void atk1B_cleareffectsonfaint(void) {
 						CancelMultiTurnMoves(bankToFree);
 						gNewBS->skyDropAttackersTarget[bankToFree] = 0;
 						gNewBS->skyDropTargetsAttacker[gActiveBattler] = 0;
+						gNewBS->NoMoreMovingThisTurn |= gBitTable[bankToFree]; //So it doesn't try using Sky Drop again
 						gActiveBattler = bankToFree;
 						EmitSpriteInvisibility(0, FALSE);
 						MarkBufferBankForExecution(gActiveBattler);

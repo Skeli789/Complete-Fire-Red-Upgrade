@@ -739,9 +739,10 @@ void atk06_typecalc(void)
 				}
 				else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
 				{
-					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 					gLastLandedMoves[bankDef] = 0;
 					gLastHitByType[bankDef] = 0xFF;
+					TrySetMissStringForSafetyGoggles(bankDef);
 					RecordItemEffectBattle(bankDef, defEffect);
 				}
 				else if (IsOfType(bankDef, TYPE_GRASS))
@@ -842,8 +843,9 @@ void atk4A_typecalc2(void)
 		}
 		else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
 		{
-			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+			gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
+			TrySetMissStringForSafetyGoggles(gBankTarget);
 			RecordItemEffectBattle(gBankTarget, defEffect);
 		}
 		else if (IsOfType(gBankTarget, TYPE_GRASS))
@@ -1013,8 +1015,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef)
 	{
 		flags = MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE;
 	}
-	else if (gSpecialMoveFlags[move].gPowderMoves
-	&& (defAbility == ABILITY_OVERCOAT || defEffect == ITEM_EFFECT_SAFETY_GOGGLES || defType1 == TYPE_GRASS || defType2 == TYPE_GRASS))
+	else if (gSpecialMoveFlags[move].gPowderMoves && !IsAffectedByPowderByDetails(defType1, defType2, 0xFF, defAbility, defEffect))
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
