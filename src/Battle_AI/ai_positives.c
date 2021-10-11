@@ -2399,6 +2399,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					 && GetMoveTypeSpecial(bankDef, predictedMove) == TYPE_NORMAL)
 						INCREASE_STATUS_VIABILITY(2);
 					break;
+
+				case MOVE_COURTCHANGE:
+					if (SIDE(bankAtk) != SIDE(bankDef)
+					&& ShouldCourtChange(bankAtk, bankDef) && !ShouldCourtChange(bankDef, bankAtk)) //Only swap field effects if you won't get anything negative
+						INCREASE_STATUS_VIABILITY(2);
+					break;
 			}
 			break;
 

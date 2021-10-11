@@ -469,7 +469,7 @@ BattleScript_MaxMoveSpite:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MaxMoveSetGravity:
-	callasm DoFieldEffect
+	callasm DoBattleFieldEffect
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	callasm BringDownMons

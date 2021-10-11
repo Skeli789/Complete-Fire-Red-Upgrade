@@ -43,7 +43,7 @@ void CaptivateFunc(void);
 void MeFirstFunc(void);
 void LoadPledgeScript(void);
 void SetPledgeEffect(void);
-void DoFieldEffect(void);
+void DoBattleFieldEffect(void);
 void BringDownMons(void);
 void TryFling(void);
 void CheckTelekinesisFail(void);

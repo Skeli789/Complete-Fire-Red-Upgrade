@@ -2789,6 +2789,15 @@ SKIP_CHECK_TARGET:
 
 				case MOVE_PLASMAFISTS:
 					goto AI_STANDARD_DAMAGE;
+
+				case MOVE_COURTCHANGE:
+					if (PARTNER_MOVE_IS_SAME_NO_TARGET
+					|| SIDE(bankDef) == SIDE(bankAtk)) //Never try to use when considering mon on attacker's side
+						DECREASE_VIABILITY(10);
+					else if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE
+					&& (!ShouldCourtChange(bankAtk, bankDef) || ShouldCourtChange(bankDef, bankAtk))) //No benefit to attacker or benefit to foe
+						DECREASE_VIABILITY(10); //Only ever Court Change when it's a good idea to
+					break;
 			}
 			break;
 

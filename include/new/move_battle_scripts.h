@@ -198,6 +198,7 @@ extern const u8 gText_TransformFailsOnWildBosses[];
 #define gText_TargetAlreadyPoisoned (u8*) 0x83FB5F8
 
 extern const u8 IonDelugeShowerString[];
+extern const u8 gText_CourtChange[];
 extern const u8 TargetStatsResetString[];
 extern const u8 TerrainEndString[];
 extern const u8 RoastedBerryString[];

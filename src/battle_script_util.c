@@ -716,7 +716,41 @@ void SetPledgeEffect(void)
 	gNewBS->PledgeHelper = 0;
 }
 
-void DoFieldEffect(void)
+static void SwapBytes(u8* data1, u8* data2)
+{
+	u8 temp = *data1;
+	*data1 = *data2;
+	*data2 = temp;
+}
+
+static void SwapHalfWords(u16* data1, u16* data2)
+{
+	u16 temp = *data1;
+	*data1 = *data2;
+	*data2 = temp;
+}
+
+static void SwapSideTimers(u8* timers)
+{
+	SwapBytes(&timers[B_SIDE_PLAYER], &timers[B_SIDE_OPPONENT]);
+}
+
+static void SwapVanillaSideTimers(void)
+{
+	//Swap the timer values
+	struct SideTimer temp = gSideTimers[B_SIDE_PLAYER];
+	gSideTimers[B_SIDE_PLAYER] = gSideTimers[B_SIDE_OPPONENT];
+	gSideTimers[B_SIDE_OPPONENT] = temp;
+
+	//Swap the status flags
+	SwapHalfWords(&gSideStatuses[B_SIDE_PLAYER], &gSideStatuses[B_SIDE_OPPONENT]);
+
+	//These shouldn't have been switched in the first place
+	SwapBytes(&gSideTimers[B_SIDE_PLAYER].followmeTimer, &gSideTimers[B_SIDE_OPPONENT].followmeTimer);
+	SwapBytes(&gSideTimers[B_SIDE_PLAYER].followmeTarget, &gSideTimers[B_SIDE_OPPONENT].followmeTarget);
+}
+
+void DoBattleFieldEffect(void)
 {
 	u32 i;
 
@@ -806,12 +840,25 @@ void DoFieldEffect(void)
 
 		case MOVE_IONDELUGE:
 			if (!IsIonDelugeActive())
-			{
 				gNewBS->IonDelugeTimer = 1;
-			}
 
 			//Doesn't fail even if already Ion Deluge
 			gBattleStringLoader = IonDelugeShowerString;
+			break;
+
+		case MOVE_COURTCHANGE:
+			SwapSideTimers(gNewBS->SeaOfFireTimers);
+			SwapSideTimers(gNewBS->SwampTimers);
+			SwapSideTimers(gNewBS->RainbowTimers);
+			SwapSideTimers(gNewBS->LuckyChantTimers);
+			SwapSideTimers(gNewBS->TailwindTimers);
+			SwapSideTimers(gNewBS->AuroraVeilTimers);
+			SwapSideTimers(gNewBS->maxVineLashTimers);
+			SwapSideTimers(gNewBS->maxWildfireTimers);
+			SwapSideTimers(gNewBS->maxCannonadeTimers);
+			SwapSideTimers(gNewBS->maxVolcalithTimers);
+			SwapVanillaSideTimers();
+			gBattleStringLoader = gText_CourtChange;
 			break;
 	}
 }

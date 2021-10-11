@@ -1631,6 +1631,49 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	return DONT_PIVOT;
 }
 
+static bool8 GoodIdeaToSwapVanillaTimers(u8 timerAtk, u8 timerDef, bool8 wantToKeep)
+{
+	if (wantToKeep)
+		return timerAtk == 0 && timerDef != 0; //Steal it if foe has it but attacker doesn't
+	else //Want to get rid of
+		return timerDef == 0 && timerAtk != 0; //Give it away if attacker has it but foe doesn't
+}
+
+static bool8 GoodIdeaToSwapTimers(u8* timers, u8 sideAtk, u8 sideDef, bool8 wantToKeep)
+{
+	return GoodIdeaToSwapVanillaTimers(timers[sideAtk], timers[sideDef], wantToKeep);
+}
+
+bool8 ShouldCourtChange(u8 bankAtk, u8 bankDef)
+{
+	#define GOOD_IDEA(timer, wantToKeep) (GoodIdeaToSwapTimers(gNewBS->timer, sideAtk, sideDef, wantToKeep))
+	#define GOOD_IDEA_VANILLA(timer, wantToKeep) (GoodIdeaToSwapVanillaTimers(gSideTimers[sideAtk].timer, gSideTimers[sideDef].timer, wantToKeep))
+
+	u8 sideAtk = SIDE(bankAtk);
+	u8 sideDef = SIDE(bankDef);
+
+	return GOOD_IDEA(SeaOfFireTimers, FALSE)
+		|| GOOD_IDEA(SwampTimers, FALSE)
+		|| GOOD_IDEA(RainbowTimers, TRUE)
+		|| GOOD_IDEA(LuckyChantTimers, TRUE)
+		|| GOOD_IDEA(TailwindTimers, TRUE)
+		|| GOOD_IDEA(AuroraVeilTimers, TRUE)
+		|| GOOD_IDEA(maxVineLashTimers, FALSE)
+		|| GOOD_IDEA(maxWildfireTimers, FALSE)
+		|| GOOD_IDEA(maxCannonadeTimers, FALSE)
+		|| GOOD_IDEA(maxVolcalithTimers, FALSE)
+		|| GOOD_IDEA_VANILLA(reflectTimer, TRUE)
+		|| GOOD_IDEA_VANILLA(lightscreenTimer, TRUE)
+		|| GOOD_IDEA_VANILLA(safeguardTimer, TRUE)
+		|| GOOD_IDEA_VANILLA(mistTimer, TRUE)
+		|| GOOD_IDEA_VANILLA(spikesAmount, FALSE)
+		|| GOOD_IDEA_VANILLA(srAmount, FALSE)
+		|| GOOD_IDEA_VANILLA(stickyWeb, FALSE)
+		|| GOOD_IDEA_VANILLA(steelsurge, FALSE);
+
+	#undef GOOD_IDEA
+	#undef GOOD_IDEA_VANILLA
+}
 
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class)
 {

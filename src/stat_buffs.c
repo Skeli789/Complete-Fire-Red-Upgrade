@@ -31,11 +31,13 @@ void atk13_printfromtable(void)
 	gBattleCommunication[MSG_DISPLAY] = 1;
 
 	if (stringId == STRINGID_PKMNSSTATCHANGED4)
-	{	
+	{
+		u8 defSide = SIDE(gBankTarget);
+
 		if (gNewBS->intimidateActive
-		|| gNewBS->stickyWebActive
-		|| SIDE(gBankTarget) != SIDE(gBankAttacker))
-			DefiantActivation(); //Stat Fell From Enemy
+		|| (gNewBS->stickyWebActive && SIDE(gSideTimers[defSide].stickyWebBank) != defSide) //Was set by foe and not Court Change
+		|| defSide != SIDE(gBankAttacker))
+			DefiantActivation(); //Stat fell from enemy
 	}
 }
 

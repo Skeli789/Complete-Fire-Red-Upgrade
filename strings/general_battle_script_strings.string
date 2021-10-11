@@ -168,6 +168,9 @@ Neither Pok\emon can run away!
 #org @gText_CorrodedItem
 [ATTACKER] corroded\n[TARGET]'s [LAST_ITEM]!
 
+#org @gText_CourtChange
+[ATTACKER] swapped\nthe battle effects affecting each\lside of the field!
+
 //Status Strings
 
 #org @gText_TargetStaysAwake

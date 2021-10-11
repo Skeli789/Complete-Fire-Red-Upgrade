@@ -11183,8 +11183,8 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_COURTCHANGE] =
-	{	//ANIM TOOD
-		.effect = EFFECT_FIELD_EFFECTS, //EFFECT TODO
+	{
+		.effect = EFFECT_FIELD_EFFECTS,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,

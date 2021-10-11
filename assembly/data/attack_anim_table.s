@@ -34,6 +34,9 @@ attack_anim_table.s
 .equ FALSE, 0
 .equ TRUE, 1
 
+.equ B_SIDE_PLAYER, 0
+.equ B_SIDE_OPPONENT, 1
+
 /* attack animation table */
 .align 2
 
@@ -16430,10 +16433,92 @@ FISHIOUS_TEETH: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH sFishiousR
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+@Credits to Skeli
 ANIM_COURT_CHANGE:
-	goto ANIM_TRICKROOM @;Transparent balls going upwards on the player's side, followed by transparent balls falling on the opponent side, and then the same but swapped
+	loadparticle ANIM_TAG_BLUEGREEN_ORB
+	loadparticle ANIM_TAG_RED_HEART
+	soundcomplex 0xd2 SOUND_PAN_ABOVE 0x18 0x3
+	call COURT_CHANGE_BALLS_UP
+	call COURT_CHANGE_BALLS_UP
+	call COURT_CHANGE_BALLS_UP
+	waitanimation
+	soundcomplex 0xd2 SOUND_PAN_ABOVE 0x18 0x3
+	call COURT_CHANGE_BALLS_DOWN
+	call COURT_CHANGE_BALLS_DOWN
+	call COURT_CHANGE_BALLS_DOWN
 	endanimation
+
+COURT_CHANGE_BALLS_UP:
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, 35, 15, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, 35, 15, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, -30, 23, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, -30, 23, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, 27, 10, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, 27, 10, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, -20, 5, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, -20, 5, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, 33, 13, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, 33, 13, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, -12, 13, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, -12, 13, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, 19, 15, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, 19, 15, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, -38, 13, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, -38, 13, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, 5, 15, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, 5, 15, B_SIDE_PLAYER
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_UP  TEMPLATE_TARGET | 2, 0x3, -23, -5, B_SIDE_OPPONENT
+	launchtemplate COURT_CHANGE_BLUE_BALL_UP TEMPLATE_TARGET | 2, 0x3, -23, -5, B_SIDE_PLAYER
+	pause 0x2
+	return
+
+COURT_CHANGE_BALLS_DOWN:
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, 35, 0x3c, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, 35, 0x3c, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, -30, 0x44, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, -30, 0x44, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, 27, 0x37, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, 27, 0x37, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, -20, 0x32, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, -20, 0x32, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, 33, 0x3a, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, 33, 0x3a, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, -12, 0x3a, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, -12, 0x3a, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, 19, 0x3c, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, 19, 0x3c, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, -38, 0x3a, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, -38, 0x3a, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, 5, 0x3c, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, 5, 0x3c, 4, B_SIDE_OPPONENT
+	pause 0x2
+	launchtemplate COURT_CHANGE_RED_BALL_DOWN  TEMPLATE_TARGET | 2, 0x4, -23, 0x28, 4, B_SIDE_PLAYER
+	launchtemplate COURT_CHANGE_BLUE_BALL_DOWN TEMPLATE_TARGET | 2, 0x4, -23, 0x28, 4, B_SIDE_OPPONENT
+	pause 0x2
+	return
+
+.align 2
+COURT_CHANGE_BLUE_BALL_UP: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB gCourtChangeBallOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SideGeyser
+COURT_CHANGE_RED_BALL_UP: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART gCourtChangeBallOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SideGeyser
+COURT_CHANGE_BLUE_BALL_DOWN: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB gCourtChangeBallOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObjectOnSideCentre
+COURT_CHANGE_RED_BALL_DOWN: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART gCourtChangeBallOam gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObjectOnSideCentre
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -2407,20 +2407,25 @@ void SpriteCB_FallingObjectPlayAnimOnEnd(struct Sprite *sprite)
 	}
 }
 
-//Causes an object to fall from the sky on the centre of the side.
-//arg 0: initial x pixel offset
-//arg 1: initial y pixel offset
-//arg 2: speed
-void SpriteCB_FallingObjectOnTargetCentre(struct Sprite *sprite)
+const struct OamData gCourtChangeBallOam =
 {
-	sprite->pos1.x = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_X);
-	sprite->pos1.y = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_Y);
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 1, //Above sprites
+};
+
+static void FallingObjectOnSideCentre(struct Sprite* sprite, u8 side)
+{
+	sprite->pos1.x = GetProperCentredCoord(GetBattlerAtPosition(side), BATTLER_COORD_X);
+	sprite->pos1.y = GetProperCentredCoord(GetBattlerAtPosition(side), BATTLER_COORD_Y);
 
 	sprite->pos2.x = gBattleAnimArgs[0];
 	sprite->pos1.y = gBattleAnimArgs[1];
 	sprite->pos2.y = -gBattleAnimArgs[1];
 
-	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+	if (side == B_SIDE_PLAYER)
 	{
 		sprite->pos1.y += 45;
 		sprite->pos2.y -= 45;
@@ -2429,6 +2434,25 @@ void SpriteCB_FallingObjectOnTargetCentre(struct Sprite *sprite)
 	sprite->data[3] = gBattleAnimArgs[2]; //Speed
 	sprite->callback = SpriteCB_FallingObjectStep;
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+//Causes an object to fall from the sky on the centre of the side.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: speed
+void SpriteCB_FallingObjectOnTargetCentre(struct Sprite *sprite)
+{
+	FallingObjectOnSideCentre(sprite, SIDE(gBattleAnimTarget));
+}
+
+//Causes an object to fall from the sky on the centre of the side.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: speed
+//arg 3: side
+void SpriteCB_FallingObjectOnSideCentre(struct Sprite *sprite)
+{
+	FallingObjectOnSideCentre(sprite, gBattleAnimArgs[3]);
 }
 
 //Throws acid at a single target.
@@ -3834,6 +3858,21 @@ void SpriteCB_Geyser(struct Sprite* sprite)
 	}
 
 	sprite->data[0] = gBattleAnimArgs[1] > 0 ? 1 : -1;
+	sprite->callback = (void*) (0x80B8DE8 | 1); //AnimMudSportDirtRising
+}
+
+//Launches an object upwards like they were being shot from a geyser from a specific side
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: side
+void SpriteCB_SideGeyser(struct Sprite* sprite)
+{
+	u8 side = gBattleAnimArgs[2];
+	u8 bank = GetBattlerAtPosition(side);
+
+	sprite->pos1.x = GetProperCentredCoord(bank, BATTLER_COORD_X) + gBattleAnimArgs[0];
+	sprite->pos1.y = GetProperCentredCoord(bank, BATTLER_COORD_Y) + gBattleAnimArgs[1];
+	sprite->data[0] = bank > 0 ? 1 : -1;
 	sprite->callback = (void*) (0x80B8DE8 | 1); //AnimMudSportDirtRising
 }
 

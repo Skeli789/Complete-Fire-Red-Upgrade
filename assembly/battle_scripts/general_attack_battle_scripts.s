@@ -5168,7 +5168,7 @@ BS_228_FieldEffects:
 	attackcanceler
 	attackstring
 	ppreduce
-	callasm DoFieldEffect
+	callasm DoBattleFieldEffect
 	attackanimation
 	waitanimation
 	printstring 0x184
