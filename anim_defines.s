@@ -493,6 +493,7 @@
 .equ AnimTask_ElectricBolt, 0x80AE221
 .equ AnimTask_GrudgeFlames, 0x80b68c9
 .equ AnimTask_SpiteTargetShadow, 0x80b5aad
+.equ AnimTask_DrillPeckHitSplats, 0x80b2869
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -678,6 +679,7 @@
 
 .equ SET_PSYCHIC_BG, 0x81D59BB
 .equ UNSET_SCROLLING_BG, 0x81D59C7
+.equ SET_SKY_BG, 0x81d59cf
 .equ UNSET_SKY_BG, 0x81d59ff
 .equ BURN_CHANCE_ANIM, 0x81D0950
 .equ FREEZE_CHANCE_ANIM, 0x81D540A

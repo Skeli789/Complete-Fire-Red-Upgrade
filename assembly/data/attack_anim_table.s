@@ -1911,26 +1911,46 @@ ANIM_LEECHFANG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+.equ AIR_SLASH_FLIGHT_TIME, 0x18
+.equ AIR_SLASH_GAP_TIME, 0x5
+
+@Credits to Skeli
 ANIM_AIRSLASH:
-	call 0x81d59cf
-	loadparticle ANIM_TAG_CUT
-	loadparticle ANIM_TAG_SPLASH
+	loadparticle ANIM_TAG_PUNISHMENT_BLADES
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_PUNISHMENT_BLADES 0x0 0xC 0xC 0x7FFF @;White
+	call SET_SKY_BG
 	pokespritetoBG bank_target
-	setblends 0x80c
-	playsound2 0x79 SOUND_PAN_TARGET
-	launchtemplate AIR_SLASH_CUT 0x2 0x3 0x28 0xffe0 0x0
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x7FFF  @;Quick fade to white
-	pause 0x5
-	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x0 0x3 0xa 0x1
-	waitanimation
-	pokespritefromBG bank_target
-	resetblends
+	leftbankBG_over_partnerBG bank_target
+	setblends 0x80C
+	soundcomplex 0x99 SOUND_PAN_ATTACKER, AIR_SLASH_GAP_TIME, 3
+	call AIR_SLASH_BLADE_FIRE
+	pause AIR_SLASH_GAP_TIME
+	call AIR_SLASH_BLADE_FIRE
+	pause AIR_SLASH_GAP_TIME
+	call AIR_SLASH_BLADE_FIRE
+	pause AIR_SLASH_FLIGHT_TIME - AIR_SLASH_GAP_TIME - AIR_SLASH_GAP_TIME - AIR_SLASH_GAP_TIME
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x3 0x0 0x14 0x1
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x1 0x2 0x0 0xb 0x7FFF  @;Quick fade to white
+	soundcomplex 0x81 SOUND_PAN_TARGET, AIR_SLASH_GAP_TIME, 3
 	waitanimation
 	call UNSET_SCROLLING_BG
+	pokespritefromBG bank_target
+	stopmusic
 	endanimation
 
+AIR_SLASH_BLADE_FIRE:
+	launchtask AnimTask_IsTargetPlayerSide 0x2 0x0
+	jumpifargmatches 0x7 bank_target AIR_SLASH_OPPONENT_ATTACK
+	launchtemplate AIR_SLASH_BLADE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 AIR_SLASH_FLIGHT_TIME
+	return
+
+AIR_SLASH_OPPONENT_ATTACK:
+	launchtemplate AIR_SLASH_BLADE_OPPONENT TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 AIR_SLASH_FLIGHT_TIME
+	return
+
 .align 2
-AIR_SLASH_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH OAM_OFF_BLEND_32x32 0x83E3290 0x0 gDummySpriteAffineAnimTable 0x80A44E1
+AIR_SLASH_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_GrowingFist 0x80B563D
+AIR_SLASH_BLADE_OPPONENT: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PsychoCutOpponent 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11128,38 +11148,27 @@ POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NOR
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Lixdel
-@ charge-up anim
+@Credits to Skeli
 ANIM_BEAKBLAST:
-	loadparticle ANIM_TAG_SMALL_EMBER @Fire
-	playsound2 0xa4 SOUND_PAN_ATTACKER
-	pause 0x3
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x2 0x2 0x0 0xb 0x1f
-	launchtemplate Template_FireSpiralOutward 0x3 0x4 0x0 0x0 0x38 0x0
-	waitanimation
-	endanimation
-
-@ attack anim
-.align 2
-BEAK_BLAST_ANIM:
 	loadparticle ANIM_TAG_IMPACT
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x0 0x9 0x1F
-	waitanimation
-	launchtemplate Template_BowMon 0x2 0x1 0x0
+	loadparticle ANIM_TAG_SMALL_EMBER
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x8 0x8 0x001F @;Red
 	playsound2 0x9b SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x0 0x9 0x1F
+	launchtemplate Template_BowMon 0x2 0x1 0x0
+	call FLAME_BUFF
 	waitanimation
-	pause 0x2
 	launchtemplate Template_BowMon 0x2 0x1 0x1
 	pause 0x2
 	soundcomplex 0x9f SOUND_PAN_TARGET 0x4 0x8
-	launchtask 0x80B2869 0x5 0x0
+	launchtask AnimTask_DrillPeckHitSplats 0x5 0x0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x12 0x1
 	waitanimation
 	launchtemplate Template_BowMon 0x2 0x1 0x2
 	waitanimation
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x6
 	waitanimation
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x9 0x0 0x1F
+	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x1 0x9 0x0 0x1F
 	waitanimation
 	endanimation
 
