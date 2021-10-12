@@ -1177,10 +1177,9 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Palmer1[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 156,
-		.atkEv = 140,
-		.spDefEv = 116,
-		.spdEv = 96,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.atkEv = 252,
+		.spDefEv = 102,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -1206,7 +1205,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{

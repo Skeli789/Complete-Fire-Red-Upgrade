@@ -163,6 +163,7 @@ gAnimScriptActive = 0x2037EE1;
 gAnimVisualTaskCount = 0x2037EE2;
 gAnimScriptCallback = 0x2037EDC;
 gBattleAnimArgs = 0x2037F02;
+gAnimMovePower = 0x2037EEC;
 sAnimMoveIndex = 0x2037F18;
 gBattleAnimAttacker = 0x2037F1A;
 gBattleAnimTarget = 0x2037F1B;

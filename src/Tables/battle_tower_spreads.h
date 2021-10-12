@@ -27323,7 +27323,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -27349,7 +27349,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -27375,7 +27375,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -27402,7 +27402,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 64,
 		.defEv = 84,
 		.spDefEv = 112,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SLOWSTART
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STALL
 		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{

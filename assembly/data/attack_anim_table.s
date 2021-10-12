@@ -4708,22 +4708,22 @@ ANIM_FLAREBLITZ:
 	call UNSET_SCROLLING_BG
 	endanimation
 
-	launchtemplate Template_Hit 0x2 0x4 0x15 0x0 0x1 0x0
-	launchtemplate Template_Hit 0x2 0x4 0x0 0x15 0x1 0x0
-	launchtemplate Template_Hit 0x2 0x4 0xFFFA 0xFFF0 0x1 0x0
-	launchtemplate Template_Hit 0x2 0x4 0xFFF0 0x10 0x1 0x0
-	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_ATTACKER | 2, 0x4 0x15 0x0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_ATTACKER | 2, 0x4 0x0 0x15 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_ATTACKER | 2, 0x4 0xFFFA 0xFFF0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_ATTACKER | 2, 0x4 0xFFF0 0x10 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_ATTACKER | 2, 0x4 0x0 0x0 0x1 0x0
 
 FLAME_BUFF:
-	launchtemplate FLAREBLITZ_BUFF 0x2 0x5 bank_attacker 0xffe8 0x1a 0x2 0x16
+	launchtemplate FLAREBLITZ_BUFF TEMPLATE_ATTACKER | 2, 0x5 bank_attacker 0xffe8 0x1a 0x2 0x16
 	pause 0x4
-	launchtemplate FLAREBLITZ_BUFF 0x2 0x5 bank_attacker 0xe 0x1c 0x1 0x16
+	launchtemplate FLAREBLITZ_BUFF TEMPLATE_ATTACKER | 2, 0x5 bank_attacker 0xe 0x1c 0x1 0x16
 	pause 0x4
-	launchtemplate FLAREBLITZ_BUFF 0x2 0x5 bank_attacker 0xfffb 0xa 0x2 0x16
+	launchtemplate FLAREBLITZ_BUFF TEMPLATE_ATTACKER | 2, 0x5 bank_attacker 0xfffb 0xa 0x2 0x16
 	pause 0x4
-	launchtemplate FLAREBLITZ_BUFF 0x2 0x5 bank_attacker 0x1c 0x1a 0x3 0x16
+	launchtemplate FLAREBLITZ_BUFF TEMPLATE_ATTACKER | 2, 0x5 bank_attacker 0x1c 0x1a 0x3 0x16
 	pause 0x4
-	launchtemplate FLAREBLITZ_BUFF 0x2 0x5 bank_attacker 0xfff4 0x0 0x1 0x16
+	launchtemplate FLAREBLITZ_BUFF TEMPLATE_ATTACKER | 2, 0x5 bank_attacker 0xfff4 0x0 0x1 0x16
 	return
 
 FLARE_BLITZ_HITS:
@@ -9628,121 +9628,157 @@ V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE OAM_O
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Lixdel
+.equ FUSION_FLARE_PAUSE_AFTER_GROW, 2
+.equ FUSION_FLARE_ARC_DURATION, 16
+
+@Credits to Skeli
 ANIM_FUSIONFLARE:
-	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
-	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @ball
-	loadparticle ANIM_TAG_VERTICAL_HEX @ball palette
-	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @flame palette
-	loadparticle ANIM_TAG_SMALL_BUBBLES @particles
-	loadparticle ANIM_TAG_THIN_RING @ring
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SMALL_BUBBLES 0x0 0xD 0xD 0x015B @;Reddish Orange
-	pokespritetoBG bank_target
-	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
-	waitanimation
-	playsound2 0x85 SOUND_PAN_ATTACKER
-	call FF_BUFF_EFFECT
-	pause 0x8
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x2 0x2 0x0 0xb 0x1F
-	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1
-	launchtemplate Template_VerticalDip 0x2 0x3 0x8 0x1 bank_attacker
-	pause 0x8
+	loadparticle ANIM_TAG_SMALL_EMBER
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	pokespritetobg bank_attacker
+	soundcomplex 0x85 SOUND_PAN_ATTACKER 0xd 0x3
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ATK 0x7 0x0 0xB 0x001F @;Red
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x7 0x0 0xC 0x0 @;Black
+	launchtemplate FUSION_FLARE_BALL TEMPLATE_TARGET | 3, 0x5, 0, -40, FUSION_FLARE_PAUSE_AFTER_GROW, FUSION_FLARE_ARC_DURATION, -20
+	launchtask AnimTask_IsPoweredUpFusionMove 0x2 0x0
+	jumpifargmatches 0x0 0x1 FUSION_FLARE_POWERED_UP_INTRO
+	call FLAME_BUFF
+	pause 4
+	call FLAME_BUFF
+	pause 4
+	call FLAME_BUFF
+
+FUSION_FLARE_REJOIN:
+	pause 36
 	playsound2 0xBA SOUND_PAN_ATTACKER
-	launchtemplate FF_REDBALLUP 0x2 0x0
-	pause 0x20
-	launchtemplate FF_REDBALL 0x3 0x3 0x0 0xffA0 0x2F
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x64 0x64 0x8 0x1 0x14 0x28 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x14 0x64 0x10 0x2 0xa 0x23 0x1
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0xc8 0x50 0x8 0x1 0x28 0x14 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x50 0x3c 0xa 0x3 0x14 0x32 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x8c 0x64 0x10 0x1 0x14 0x1e 0x1
-	pause 0x29
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x1F
-	pause 0x5
-	launchtemplate FF_REDRING 0x3 0x6 0x1 0x1 0x1 0x1 0x1F 0x8
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x64 0x64 0x8 0x1 0x14 0x28 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x14 0x64 0x10 0x2 0xa 0x23 0x1
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0xc8 0x50 0x8 0x1 0x28 0x14 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x50 0x3c 0xa 0x3 0x14 0x32 0x0
-	launchtemplate FF_REDPARTICLES 0x42 0x7 0x8c 0x64 0x10 0x1 0x14 0x1e 0x1
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x2 0x10
-	pause 0x5
-	playsound2 0xAB SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ATK 0x1 0xB 0x0 0x001F @;From red
+	pause FUSION_FLARE_ARC_DURATION + 12
+	pokespritefrombg bank_attacker
+	pause 1
+	pokespritetobg bank_target
+	leftbankBG_over_partnerBG bank_target
+	playsound2 0xAB SOUND_PAN_TARGET
+	launchtemplate FUSION_FLARE_EXPLOSION TEMPLATE_TARGET | 1, 0x4, 0, 0, bank_target, FALSE
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 1
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x1 0x0 0xB 0x001F @;Red
+	launchtask AnimTask_IsPoweredUpFusionMove 0x2 0x0
+	jumpifargmatches 0x0 0x1 FUSION_FLARE_POWERED_UP_FINALE
+	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x12 0x1 0x0
+
+FUSION_FLARE_END:
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x1 0xB 0x0 0x001F @;From red
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0 @;From black
 	waitanimation
-	pokespritefromBG bank_target
+	pokespritefrombg bank_target
 	resetblends
 	endanimation
-FF_BUFF_EFFECT:
-	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0xffe8 0x1a 0x2
-	pause 0x4
-	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0xe 0x1c 0x1
-	pause 0x4
-	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0xfffb 0xa 0x2
-	pause 0x4
-	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0x1c 0x1a 0x3
-	pause 0x4
-	launchtemplate Template_EndureEnergy 0x2 0x4 0x0 0xfff4 0x0 0x1
+
+FUSION_FLARE_POWERED_UP_INTRO:
+	loadparticle ANIM_TAG_THIN_RING
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_THIN_RING 0x0 0xA 0xA 0x1F @;Red
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	call FLAME_BUFF
+	pause 4
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	call FLAME_BUFF
+	pause 4
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	call FLAME_BUFF
+	goto FUSION_FLARE_REJOIN
+
+FUSION_FLARE_POWERED_UP_FINALE:
+	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x20 0x1 0x0
+	call FUSION_FLARE_FIRE_GEYSER
+	call FUSION_FLARE_FIRE_GEYSER
+	call FUSION_FLARE_FIRE_GEYSER
+	call FUSION_FLARE_FIRE_GEYSER
+	goto FUSION_FLARE_END
+
+FUSION_FLARE_FIRE_GEYSER:
+	launchtemplate FIRE_GEYSER TEMPLATE_TARGET | 2, 0x3 bank_target 0xfffc 0x18
+	pause 0x1
+	launchtemplate FIRE_GEYSER TEMPLATE_TARGET | 2, 0x3 bank_target 0x100D 0x18
+	pause 0x1
+	launchtemplate FIRE_GEYSER TEMPLATE_TARGET | 2, 0x3 bank_target 0x4 0x18
+	pause 0x1
+	launchtemplate FIRE_GEYSER TEMPLATE_TARGET | 2, 0x3 bank_target 0xfff0 0x18
+	pause 0x1
 	return
 
 .align 2
-FF_REDBALLUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x807729D
-FF_REDBALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B0D59
-FF_REDPARTICLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_8x8 0x83E5B10 0x0 gDummySpriteAffineAnimTable 0x80AC625
-FF_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
+FUSION_FLARE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FusionBall SpriteCB_FusionFlareBall
+FUSION_FLARE_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FusionFlareExplosion SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+.equ FUSION_BOLT_PAUSE_AFTER_ARC, 60
+.equ FUSION_BOLT_ARC_DURATION, FUSION_FLARE_ARC_DURATION
+
 ANIM_FUSIONBOLT:
-	loadparticle ANIM_TAG_SPARK
+	loadparticle ANIM_TAG_SPARK_2
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_ELECTRICITY
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPARK 0x0 0xC 0xC 0x7960 @;Blue Electricity
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPARK_2 0x0 0xC 0xC 0x7960 @;Blue Electricity
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0xC 0xC 0x7960 @;Blue Electricity
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0xC 0xC 0x7960 @;Blue Electricity
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0
-	waitanimation
-	launchtemplate Template_VoltTackleOrbSlide 0x1 0x0
 	playsound2 0xCE SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ATK 0x2 0x0 0xB 0x7960 @;Blue Electricity
+	launchtask AnimTask_IsPoweredUpFusionMove 0x2 0x0
+	jumpifargmatches 0x0 0x1 FUSION_BOLT_POWERED_UP_INTRO
+	pause 0x2A
+
+FUSION_BOLT_REJOIN:
+	playsound2 0xBA SOUND_PAN_ATTACKER
 	makebankinvisible bank_attacker
-	waitanimation
-	pause 0x8
-	launchtask AnimTask_VoltTackleBolt 0x5 0x1 0x0
-	playsound2 0x6F SOUND_PAN_ATTACKER
-	waitanimation
-	launchtask AnimTask_VoltTackleBolt 0x5 0x1 0x1
-	playsound2 0x6F SOUND_PAN_TARGET
-	waitanimation
-	launchtask AnimTask_VoltTackleBolt 0x5 0x1 0x2
-	playsound2 0x6F SOUND_PAN_ATTACKER
-	waitanimation
-	launchtask AnimTask_VoltTackleBolt 0x5 0x1 0x3
-	playsound2 0x6F SOUND_PAN_TARGET
-	waitanimation
-	launchtemplate FUSION_BOLT_BALL TEMPLATE_TARGET | 2, 0x1 0x10
-	playsound2 0x6F SOUND_PAN_ATTACKER
-	pause 0x8
-	launchtask 0x8098B1D 0x2 0x5 0x1 0xa 0x0 0x12 0x1
-	playsound2 0xAA SOUND_PAN_TARGET
-	launchtemplate Template_ElectricPuff 0x2 0x3 0x1 0x10 0x10
-	pause 0x2
-	launchtemplate Template_ElectricPuff 0x2 0x3 0x1 0xfff0 0xfff0
-	pause 0x8
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ATK 0x0 0x0 0x0 0x7960 @;From blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xC 0x0 @;Black
+	launchtemplate FUSION_BOLT_BALL TEMPLATE_TARGET | 3, 0x7, 0, 0, 20, -40, FUSION_BOLT_PAUSE_AFTER_ARC, FUSION_BOLT_ARC_DURATION, -20
+	pause FUSION_BOLT_ARC_DURATION
+	soundcomplex 0xce SOUND_PAN_ABOVE 0xA 5
+	pause 15 + FUSION_BOLT_PAUSE_AFTER_ARC - FUSION_BOLT_ARC_DURATION
+	@;Ball starts moving downward
+	pause (FUSION_BOLT_ARC_DURATION / 2) + 5
+	pokespritetobg bank_target
+	leftbankBG_over_partnerBG bank_target
+	playsound2 0xAB SOUND_PAN_TARGET
+	launchtemplate FUSION_BOLT_EXPLOSION TEMPLATE_TARGET | 1, 0x4, 0, 0, bank_target, FALSE
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 1
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x1 0x0 0xB 0x7960 @;Blue Electricity
 	launchtask AnimTask_VoltTackleAttackerReappear 0x5 0x0
+	launchtask AnimTask_IsPoweredUpFusionMove 0x2 0x0
+	jumpifargmatches 0x0 0x1 FUSION_BOLT_POWERED_UP_FINALE
+	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x12 0x1 0x0
+
+FUSION_BOLT_END:
 	waitanimation
-	launchtask 0x8098B1D 0x2 0x5 0x0 0x3 0x0 0x9 0x1
-	playsound2 0x70 SOUND_PAN_ATTACKER
-	launchtemplate Template_ElectricPuff 0x2 0x3 0x0 0x10 0x10
-	pause 0x2
-	launchtemplate Template_ElectricPuff 0x2 0x3 0x0 0xfff0 0xfff0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0xE 0x0 0x0
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x1 0xB 0x0 0x7960 @;From blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0 @;From black
 	waitanimation
+	pokespritefrombg bank_target
+	resetblends
 	endanimation
 
+FUSION_BOLT_POWERED_UP_INTRO:
+	loadparticle ANIM_TAG_THIN_RING
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_THIN_RING 0x0 0xA 0xA 0x7960 @;Blue Electricity
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	pause 15
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	pause 15
+	launchtemplate Template_Ring 0x3 0x4 0x0 0x0 0x0 0x0
+	pause 20
+	goto FUSION_BOLT_REJOIN
+
+FUSION_BOLT_POWERED_UP_FINALE:
+	launchtask AnimTask_ShakeTargetBasedOnMovePowerOrDmg 0x2 0x5 0x0 0x1 0x20 0x1 0x0
+	call SPARKSURF_SPARK_GEYSER
+	goto FUSION_BOLT_END
+
 .align 2
-FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 gDummySpriteAnimTable 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FusionBall SpriteCB_FusionBoltBall
+FUSION_BOLT_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_FusionFlareExplosion SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

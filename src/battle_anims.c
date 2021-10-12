@@ -1205,6 +1205,12 @@ void AnimTask_IsHailstormRockLoaded(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_IsPoweredUpFusionMove(u8 taskId)
+{
+	gBattleAnimArgs[0] = gAnimMovePower > gBattleMoves[sAnimMoveIndex].power; //Power has been changed from what it is normally
+	DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 {
 	switch (gBattleSpritesDataPtr->animationData->animArg) {
@@ -2547,6 +2553,201 @@ void SpriteCB_MoongeistCharge(struct Sprite *sprite)
 	sprite->callback = SpriteCB_AnimMissileArcStep;
 }
 
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: pause before flying downwards
+//arg 3: fly down duration
+//arg 4: wave amplitude
+static void SpriteCB_FusionFlareBall_Step1(struct Sprite* sprite);
+static void SpriteCB_FusionFlareBall_Step2(struct Sprite* sprite);
+static void SpriteCB_FusionFlareBall_Step3(struct Sprite* sprite);
+static void SpriteCB_FusionFlareBall_Step4(struct Sprite* sprite);
+void SpriteCB_FusionFlareBall(struct Sprite* sprite)
+{		
+	InitSpritePosToAnimAttacker(sprite, 0);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+		sprite->pos1.y -= 20; //Make it higher because more space
+
+	//Set data for pause after growing
+	sprite->data[6] = gBattleAnimArgs[2];
+
+	//Set data for horizontal arc downwards
+	sprite->data[0] = gBattleAnimArgs[3];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2); //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET); //Target Y
+	sprite->data[5] = gBattleAnimArgs[4];
+
+	sprite->callback = SpriteCB_FusionFlareBall_Step1;
+}
+
+static void SpriteCB_FusionFlareBall_Step1(struct Sprite* sprite)
+{
+	if (sprite->affineAnimEnded)
+	{
+		StartSpriteAffineAnim(sprite, 1); //Spin
+		sprite->callback = SpriteCB_FusionFlareBall_Step2;
+	}
+}
+
+static void SpriteCB_FusionFlareBall_Step2(struct Sprite* sprite)
+{
+	if (sprite->data[7]++ >= sprite->data[6]) //Wait duration
+	{
+		sprite->data[6] = 0; //Reset
+		sprite->data[7] = 0;  //Reset
+		InitAnimArcTranslation(sprite);
+		sprite->callback = SpriteCB_FusionFlareBall_Step3;
+	}
+}
+
+static void SpriteCB_FusionFlareBall_Step3(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite)) //Arc down is done
+	{
+		StartSpriteAffineAnim(sprite, 2); //Shrink on target
+		sprite->callback = SpriteCB_FusionFlareBall_Step4;
+	}
+}
+
+static void SpriteCB_FusionFlareBall_Step4(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (sprite->affineAnimEnded)
+		DestroyAnimSprite(sprite);
+}
+
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: fly to x offset after initial grow
+//arg 3: fly to y offset after initial grow
+//arg 4: pause before flying downwards
+//arg 5: fly down duration
+//arg 6: wave amplitude
+static void SpriteCB_FusionBoltBall_Step1(struct Sprite* sprite);
+static void SpriteCB_FusionBoltBall_Step2(struct Sprite* sprite);
+static void SpriteCB_FusionBoltBall_Step3(struct Sprite* sprite);
+static void SpriteCB_FusionBoltBall_Step4(struct Sprite* sprite);
+void SpriteCB_FusionBoltBall(struct Sprite* sprite)
+{
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[2] *= -1; //Move the other direction
+
+	StartSpriteAffineAnim(sprite, 4); //Fusion Bolt grow
+	InitSpritePosToAnimAttacker(sprite, 0);
+
+	//Set data for horizontal arc downwards
+	sprite->data[0] = gBattleAnimArgs[5];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[6];
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+		sprite->data[4] -= 40; //Make it higher because more space
+
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_FusionBoltBall_Step1;
+}
+
+static void SpriteCB_FusionBoltBall_Step1(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite)) //Arc up is done
+		sprite->callback = SpriteCB_FusionBoltBall_Step2;
+}
+
+static void SpriteCB_FusionBoltBall_Step2(struct Sprite* sprite)
+{
+	if (sprite->affineAnimEnded)
+	{
+		StartSpriteAffineAnim(sprite, 1);
+		sprite->data[1] = 0; //Reset timer
+		sprite->callback = SpriteCB_FusionBoltBall_Step3;
+	}
+}
+
+static void SpriteCB_FusionBoltBall_Step3(struct Sprite* sprite)
+{
+	if (sprite->data[1]++ >= gBattleAnimArgs[4]) //Wait duration - should still be there
+	{
+		sprite->pos1.x += sprite->pos2.x; //Merge to prepare for second arc
+		sprite->pos1.y += sprite->pos2.y;
+		sprite->pos2.x = 0;
+		sprite->pos2.y = 0;
+		sprite->data[0] = gBattleAnimArgs[5] / 2; //Reset - should still be there
+		sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2); //Target X
+		sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET); //Target Y
+		sprite->data[5] = (gBattleAnimArgs[6] - 10) * -1; //Reset - should still be there
+		InitAnimArcTranslation(sprite);
+		sprite->callback = SpriteCB_FusionBoltBall_Step4;
+	}
+}
+
+static void SpriteCB_FusionBoltBall_Step4(struct Sprite* sprite)
+{
+	sprite->invisible = FALSE;
+
+	if (TranslateAnimHorizontalArc(sprite)) //Arc up is done
+	{
+		StartSpriteAffineAnim(sprite, 2); //Shrink on target
+		sprite->callback = SpriteCB_FusionFlareBall_Step4; //Wait until affine anim is over then destroy
+	}
+}
+
+static const union AffineAnimCmd sSpriteAffineAnimTable_FusionFlareGrow[] =
+{
+    AFFINEANIMCMD_FRAME(32, 8, 0, 0), //Start small - slightly stretched horizontally and compressed vertically
+    AFFINEANIMCMD_FRAME(2, 2, -4, 120),
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnimTable_FusionFlareSpin[] =
+{
+	AFFINEANIMCMD_FRAME(272, 256, 0, 0), //Keep shape from before
+    AFFINEANIMCMD_FRAME(0, 0, -8, 1),
+	AFFINEANIMCMD_JUMP(1)
+};
+
+static const union AffineAnimCmd sSpriteAffineAnimTable_FusionFlareShrinkOnTarget[] =
+{
+	AFFINEANIMCMD_FRAME(272, 256, -64, 0), //Keep shape from before
+	AFFINEANIMCMD_FRAME(-60,-60, -8, 4), //Shrink in size
+	AFFINEANIMCMD_FRAME(0, 0, -8, 4), //Pause
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnimTable_FusionFlareGrowOnTarget[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+	AFFINEANIMCMD_FRAME(16, 16, 0, 30), //Double in size
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnimTable_FusionBoltGrow[] =
+{
+    AFFINEANIMCMD_FRAME(32, 8, 0, 0), //Start small - slightly stretched horizontally and compressed vertically
+    AFFINEANIMCMD_FRAME(16, 16, -4, 15),
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_FusionBall[] =
+{
+	sSpriteAffineAnimTable_FusionFlareGrow,
+	sSpriteAffineAnimTable_FusionFlareSpin,
+	sSpriteAffineAnimTable_FusionFlareShrinkOnTarget,
+	sSpriteAffineAnimTable_FusionFlareGrowOnTarget,
+	sSpriteAffineAnimTable_FusionBoltGrow,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_FusionFlareExplosion[] =
+{
+	sSpriteAffineAnimTable_FusionFlareGrowOnTarget,
+};
+
 static const union AnimCmd sAnimCmdWaterDropletDrip[] =
 {
 	ANIMCMD_FRAME(0, 3),
@@ -2626,7 +2827,7 @@ void SpriteCB_AnimSpriteOnSelectedMonPos(struct Sprite *sprite)
 			DestroyAnimSprite(sprite);
 		else
 		{
-			InitSpritePosToGivenTarget(sprite, target);
+			InitSpritePosToGivenTargetRespectPicOffsets(sprite, target);
 			sprite->data[0]++;
 		}
 	}
@@ -5431,6 +5632,32 @@ void AnimTask_SingleBankFromBg(u8 taskId)
 	}
 
 	DestroyAnimVisualTask(taskId);
+}
+
+static void AnimTask_FadeOutParticlesHelper(u8 taskId)
+{
+	if (gTasks[taskId].data[1] == 0) //Target reached
+	{
+		DestroyAnimVisualTask(taskId);
+	}
+	else if (gTasks[taskId].data[4]++ >= gTasks[taskId].data[3])
+	{
+		gTasks[taskId].data[4] = 0; //Reset timer
+		gTasks[taskId].data[1]--;
+		gTasks[taskId].data[2]++;
+		SetGpuReg(REG_OFFSET_BLDALPHA, (gTasks[taskId].data[2] * 256) + gTasks[taskId].data[1]);
+	}
+}
+
+void AnimTask_FadeOutParticles(u8 taskId)
+{
+	SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+	SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL); //Blend sprites out
+	gTasks[taskId].data[1] = 16;
+	gTasks[taskId].data[2] = 0;
+	gTasks[taskId].data[3] = gBattleAnimArgs[0]; //Delay
+	gTasks[taskId].data[4] = 0; //Delay Timer
+	gTasks[taskId].func = AnimTask_FadeOutParticlesHelper;
 }
 
 static void SetHiddenHealthboxFlag(u8 spriteId)
