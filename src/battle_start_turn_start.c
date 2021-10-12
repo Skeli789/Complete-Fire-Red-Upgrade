@@ -42,27 +42,29 @@ battle_start_turn_start.c
 
 enum BattleBeginStates
 {
-	BackupPartyItems,
-	GetTurnOrder,
-	ThirdTypeRemoval,
-	RaidBattleReveal,
-	DynamaxUsableIndicator,
-	BadThoughtsBattleMessage,
-	TailwindBattleMessage,
-	MagnetRiseBattleMessage,
-	TrickRoomBattleMessage,
-	WeightSpeedBattleMessage,
-	ShadowShieldBattleMessage,
-	PixieBattleMessage,
-	PixieBattleBuffs,
-	RainbowBattleMessage,
-	NeutralizingGas,
-	SwitchInAbilities,
-	Intimidate,
-	AmuletCoin_WhiteHerb,
-	AirBalloon,
-	TotemPokemon,
-	StartTurnEnd,
+	BTSTART_BACKUP_PARTY_ITEMS,
+	BTSTART_GET_TURN_ORDER,
+	BTSTART_ACTIVATE_OW_WEATHER,
+	BTSTART_ACTIVATE_OW_TERRAIN,
+	BTSTART_PRIMAL_REVERSION,
+	BTSTART_THIRD_TYPE_REMOVAL,
+	BTSTART_RAID_BATTLE_REVEAL,
+	BTSTART_DYNAMAX_USABLE_INDICATOR,
+	BTSTART_BAD_THOUGHTS_BATTLE,
+	BTSTART_TAILWIND_BATTLE,
+	BTSTART_MAGNET_RISE_BATTLE,
+	BTSTART_TRICK_ROOM_BATTLE,
+	BTSTART_WEIGHT_SPEED_BATTLE,
+	BTSTART_SHADOW_SHIELD_BATTLE,
+	BTSTART_PIXIE_BATTLE,
+	BTSTART_PIXIE_BATTLE_BUFFS,
+	BTSTART_RAINBOW_BATTLE,
+	BTSTART_NEUTRALIZING_GAS,
+	BTSTART_SWITCH_IN_ABILITIES,
+	BTSTART_SWITCH_IN_ITEMS,
+	BTSTART_AIR_BALLOON,
+	BTSTART_TOTEM_POKEMON,
+	BTSTART_END,
 };
 
 enum SpeedWarResults
@@ -180,7 +182,7 @@ void BattleBeginFirstTurn(void)
 	if (!gBattleExecBuffer) //Inlclude Safari Check Here?
 	{
 		switch(*state) {
-			case BackupPartyItems:
+			case BTSTART_BACKUP_PARTY_ITEMS:
 				#ifdef FLAG_SEMI_SHIFT
 				if (FlagGet(FLAG_SEMI_SHIFT))
 					gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SEMI_SHIFT;
@@ -188,7 +190,8 @@ void BattleBeginFirstTurn(void)
 				SavePartyItems();
 				++*state;
 				break;
-			case GetTurnOrder:
+
+			case BTSTART_GET_TURN_ORDER:
 				gNewBS->skipBankStatAnim = 0xFF;
 				for (i = 0; i < gBattlersCount; ++i)
 				{
@@ -204,18 +207,28 @@ void BattleBeginFirstTurn(void)
 							SwapTurnOrder(i, j);
 					}
 				}
+				++*state;
+				break;
 
-				//OW Weather
+			case BTSTART_ACTIVATE_OW_WEATHER:
 				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
 				{
 					gBattleStruct->overworldWeatherDone = TRUE;
 					return;
 				}
 
-				//OW Terrain
+				++*state;
+				break;
+
+			case BTSTART_ACTIVATE_OW_TERRAIN:
 				if (TryActivateOWTerrain())
 					return;
 
+				++*state;
+				*bank = 0;
+				break;
+
+			case BTSTART_PRIMAL_REVERSION:
 				//Primal Reversion
 				if (!(gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE))
 				&& !IsMegaZMoveBannedBattle())
@@ -224,7 +237,7 @@ void BattleBeginFirstTurn(void)
 					{
 						const u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
 
-						if(script != NULL)
+						if (script != NULL)
 						{
 							BattleScriptPushCursorAndCallback(script);
 							gBankAttacker = gBattleScripting.bank = gBanksByTurnOrder[*bank];
@@ -238,7 +251,7 @@ void BattleBeginFirstTurn(void)
 				*bank = 0;
 				break;
 
-			case ThirdTypeRemoval:
+			case BTSTART_THIRD_TYPE_REMOVAL:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
@@ -288,7 +301,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case RaidBattleReveal:
+			case BTSTART_RAID_BATTLE_REVEAL:
 				if (IsRaidBattle())
 				{
 					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without
@@ -319,7 +332,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case DynamaxUsableIndicator:
+			case BTSTART_DYNAMAX_USABLE_INDICATOR:
 				#ifdef DYNAMAX_FEATURE
 				gBattleScripting.bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 				if (DynamaxEnabled(gBattleScripting.bank))
@@ -331,7 +344,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case BadThoughtsBattleMessage:
+			case BTSTART_BAD_THOUGHTS_BATTLE:
 				#ifdef FLAG_BAD_THOUGHTS_BATTLE
 				if (FlagGet(FLAG_BAD_THOUGHTS_BATTLE)) //Only print the message when the flag is set, not in Battle Circus
 				{
@@ -343,7 +356,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case TailwindBattleMessage:
+			case BTSTART_TAILWIND_BATTLE:
 				#ifdef FLAG_TAILWIND_BATTLE
 				if (FlagGet(FLAG_TAILWIND_BATTLE))
 				{
@@ -354,7 +367,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case MagnetRiseBattleMessage:
+			case BTSTART_MAGNET_RISE_BATTLE:
 				if (IsMagnetRiseBattle())
 				{
 					for (; *bank < gBattlersCount; ++*bank)
@@ -372,7 +385,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case TrickRoomBattleMessage:
+			case BTSTART_TRICK_ROOM_BATTLE:
 				#ifdef FLAG_TRICK_ROOM_BATTLE
 				if (FlagGet(FLAG_TRICK_ROOM_BATTLE))
 				{
@@ -383,7 +396,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case WeightSpeedBattleMessage:
+			case BTSTART_WEIGHT_SPEED_BATTLE:
 				#ifdef FLAG_WEIGHT_SPEED_BATTLE
 				if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
 				{
@@ -394,7 +407,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case ShadowShieldBattleMessage:
+			case BTSTART_SHADOW_SHIELD_BATTLE:
 				#ifdef FLAG_SHADOW_SHIELD_BATTLE
 				if (FlagGet(FLAG_SHADOW_SHIELD_BATTLE))
 				{
@@ -405,7 +418,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case PixieBattleMessage:
+			case BTSTART_PIXIE_BATTLE:
 				#ifdef FLAG_PIXIE_BATTLE
 				if (FlagGet(FLAG_PIXIE_BATTLE)) //Only print the message when the flag is set, not in Battle Circus
 				{
@@ -417,7 +430,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case PixieBattleBuffs:
+			case BTSTART_PIXIE_BATTLE_BUFFS:
 				if (IsPixieBattle())
 				{
 					for (; *bank < gBattlersCount; ++*bank)
@@ -439,7 +452,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case RainbowBattleMessage:
+			case BTSTART_RAINBOW_BATTLE:
 				#ifdef FLAG_RAINBOW_BATTLE
 				if (FlagGet(FLAG_RAINBOW_BATTLE))
 				{
@@ -450,7 +463,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case NeutralizingGas:
+			case BTSTART_NEUTRALIZING_GAS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (ABILITY(gBanksByTurnOrder[*bank]) == ABILITY_NEUTRALIZINGGAS
@@ -465,7 +478,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case SwitchInAbilities:
+			case BTSTART_SWITCH_IN_ABILITIES:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
@@ -479,17 +492,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case Intimidate:
-			/*
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0))
-					return;
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE2, 0, 0, 0, 0))
-					return;
-			*/
-				++*state;
-				break;
-
-			case AmuletCoin_WhiteHerb:
+			case BTSTART_SWITCH_IN_ITEMS:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
@@ -503,7 +506,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case AirBalloon:
+			case BTSTART_AIR_BALLOON:
 				for (; *bank < gBattlersCount; ++*bank)
 				{
 					#ifndef NO_GHOST_BATTLES
@@ -526,7 +529,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case TotemPokemon: ;
+			case BTSTART_TOTEM_POKEMON:
 				if (InBattleSands() //The only battle facility to utilize totem boosts
 				|| !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
@@ -568,7 +571,7 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
-			case StartTurnEnd:
+			case BTSTART_END:
 				for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 				{
 					gBattleStruct->monToSwitchIntoId[i] = PARTY_SIZE;
