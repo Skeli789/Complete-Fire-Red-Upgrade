@@ -1,3 +1,4 @@
+@All credits to Skeli for anims in this file
 .thumb
 .text
 .align 2
@@ -499,6 +500,7 @@ ANIM_RED_PRIMAL_REVERSION:
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_OMEGA_STONE 0x4 0x0 0x10 0x7fff
 	waitanimation @;Wait until screen is white
 	call PRIMAL_REVERSION_FADE_IN
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 2
 	launchtemplate OMEGA_SYMBOL TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x3, 0, 0, bank_attacker
 	call RED_PRIMAL_REVERSION_FIRE_GEYSER
 	call RED_PRIMAL_REVERSION_FIRE_GEYSER
@@ -554,6 +556,7 @@ ANIM_BLUE_PRIMAL_REVERSION:
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ALPHA_STONE 0x4 0x0 0x10 0x7fff
 	waitanimation @;Wait until screen is white
 	call PRIMAL_REVERSION_FADE_IN
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 2
 	launchtemplate ALPHA_SYMBOL TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x3, 0, 0, bank_attacker
 	call BLUE_PRIMAL_REVERSION_WATER_GEYSER
 	call BLUE_PRIMAL_REVERSION_WATER_GEYSER
@@ -842,7 +845,7 @@ MEGA_EVO_SMOKE_UP:
 .align 2
 RAINBOW_BALL: objtemplate ANIM_TAG_MEGA_RAINBOW ANIM_TAG_MEGA_RAINBOW OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
 MEGA_STONE: objtemplate ANIM_TAG_MEGA_STONE ANIM_TAG_MEGA_STONE OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E7144 0x8075D9D
-MEGA_SYMBOL: objtemplate ANIM_TAG_MEGA_SYMBOL ANIM_TAG_MEGA_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PrimalSymbol SpriteCB_AnimSpriteOnSelectedMonPos
+MEGA_SYMBOL: objtemplate ANIM_TAG_MEGA_SYMBOL ANIM_TAG_MEGA_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_MegaSymbol SpriteCB_AnimSpriteOnSelectedMonPos
 MEGA_EVO_SMOKE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_ELECTRICITY OAM_OFF_32x32 0x83E6200 0x0 gDummySpriteAffineAnimTable 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -877,6 +880,7 @@ ANIM_ULTRA_BURST:
 	pause 0x1
 	pokespritetoBG bank_attacker
 	leftbankBG_over_partnerBG bank_attacker
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 4
 	launchtemplate ULTRA_BURST_SYMBOL TEMPLATE_ATTACKER | 3, 0x3, 0, 0, bank_attacker
 	pause 0x10
 	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x10 0x0 0x7FFF
@@ -891,7 +895,7 @@ ANIM_ULTRA_BURST:
 	endanimation
 
 .align 2
-ULTRA_BURST_SYMBOL: objtemplate ANIM_TAG_ULTRA_BURST_SYMBOL ANIM_TAG_ULTRA_BURST_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PrimalSymbol SpriteCB_AnimSpriteOnSelectedMonPos
+ULTRA_BURST_SYMBOL: objtemplate ANIM_TAG_ULTRA_BURST_SYMBOL ANIM_TAG_ULTRA_BURST_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_UltraBurstSymbol SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
