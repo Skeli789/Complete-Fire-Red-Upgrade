@@ -2089,7 +2089,8 @@ bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
 //Pointer+1 at 083E23D0, orig func at 0809F11C
 bool8 KeyboardKeyHandler_Character(u8 event)
 {
-	sub_809E518(3, 0, 0);
+	NamingScreen_TryStartButtonFlash(3, 0, 0);
+
 	if (event == KBEVENT_PRESSED_A)
 	{
 		if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER)
@@ -2118,7 +2119,7 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 			gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
 		#endif
 
-		sub_809EAA8();
+		NamingScreen_SquishCursor();
 		if (atMaxChars)
 		{
 			SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason

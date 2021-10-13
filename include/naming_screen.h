@@ -92,13 +92,13 @@ enum
 };
 
 u8 __attribute__((long_call)) DoNamingScreen(u8 caseId, u8* dst, u16 monSpecies, u8 monGender, u32 monPersonality, void (*callback)(void));
-void __attribute__((long_call)) sub_809E518(u8, u8, u8);
+void __attribute__((long_call)) NamingScreen_TryStartButtonFlash(u8, u8, u8);
 bool8 __attribute__((long_call)) NameChooserSelectLetter(void);
-void __attribute__((long_call)) sub_809EAA8(void);
+void __attribute__((long_call)) NamingScreen_SquishCursor(void);
 void __attribute__((long_call)) SetInputState(u8);
 bool8 __attribute__((long_call)) MainState_StartPageSwap(void);
 u8 __attribute__((long_call)) GetKeyRoleAtCursorPos(void);
-bool8 __attribute__((long_call)) sub_809F1F0(void);
+bool8 __attribute__((long_call)) NamingScreen_TriggerKeyboardChange(void);
 void __attribute__((long_call)) MoveCursorToOKButton(void);
 void __attribute__((long_call)) DeleteTextCharacter(void);
 bool8 __attribute__((long_call)) KeyboardKeyHandler_Page(u8);

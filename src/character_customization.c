@@ -445,9 +445,9 @@ void PlayerHandleDrawTrainerPic(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -3; //-2; //Speed scrolling in
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn; //sub_805D7AC in Emerald
 
-	gBattlerControllerFuncs[gActiveBattler] = sub_802F730;
+	gBattlerControllerFuncs[gActiveBattler] = Player_CompleteOnBattlerSpriteCallbackDummy;
 }
 
 void PlayerHandleTrainerSlide(void)
@@ -464,9 +464,9 @@ void PlayerHandleTrainerSlide(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
-	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
 
-	gBattlerControllerFuncs[gActiveBattler] = sub_802F768;
+	gBattlerControllerFuncs[gActiveBattler] = Player_CompleteOnBattlerSpriteCallbackDummy2;
 }
 
 u16 GetBackspriteId(void)

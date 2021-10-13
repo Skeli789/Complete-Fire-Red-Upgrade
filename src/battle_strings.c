@@ -621,7 +621,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				if (gTrainerBattleOpponent_A == 0x400) //LOL Secret Bases
 					toCpy = gTrainerClassNames[GetSecretBaseTrainerNameIndex()];
 				else if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
-					toCpy = gTrainerClassNames[sub_80447F0()];
+					toCpy = gTrainerClassNames[GetUnionRoomTrainerClass()];
 				else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
 					toCpy = gTrainerClassNames[GetTrainerTowerTrainerClassId()];
 				else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)

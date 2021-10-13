@@ -74,7 +74,7 @@ void CB2_DoHallOfFameScreenDontSaveData(void);
 void CB2_DoHallOfFamePC(void);
 void sub_8175280(void);
 
-void __attribute__((long_call)) sub_8112450(void);
+void __attribute__((long_call)) SaveQuestLogData(void);
 bool8 __attribute__((long_call)) InitHallOfFameScreen(void);
 void __attribute__((long_call)) Task_Hof_SetMonDisplayTask(u8 taskId);
 void __attribute__((long_call)) Task_Hof_TrySaveData(u8 taskId);

@@ -5,9 +5,9 @@
 /*
 void __attribute__((long_call)) AllocateBattleSpritesData(void);
 void __attribute__((long_call)) FreeBattleSpritesData(void);
-void __attribute__((long_call)) SpriteCB_WaitForBattlerBallReleaseAnim(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_WaitForBattlerBallReleaseAnim(struct Sprite *sprite);*/
 void __attribute__((long_call)) SpriteCB_TrainerSlideIn(struct Sprite *sprite);
-void __attribute__((long_call)) InitAndLaunchChosenStatusAnimation(bool8 isStatus2, u32 status);
+/*void __attribute__((long_call)) InitAndLaunchChosenStatusAnimation(bool8 isStatus2, u32 status);
 bool8 __attribute__((long_call)) TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 atkBattler, u8 defBattler, u8 tableId, u16 argument);*/
 void __attribute__((long_call)) InitAndLaunchSpecialAnimation(u8 activeBattler, u8 atkBattler, u8 defBattler, u8 tableId);
 /*bool8 __attribute__((long_call)) IsMoveWithoutAnimation(u16 moveId, u8 animationTurn);

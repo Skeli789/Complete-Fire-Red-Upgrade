@@ -1538,7 +1538,7 @@ extern u16 gChosenMovesByBanks[MAX_BATTLERS_COUNT];
 extern u8 gMoveResultFlags;
 extern u32 gHitMarker;
 extern u8 gTakenDmgBanks[MAX_BATTLERS_COUNT];
-extern u8 gUnknown_2023DDC;
+extern u8 gUnusedFirstBattleVar2;
 extern u16 gSideStatuses[2];
 extern struct SideTimer gSideTimers[2];
 extern u32 gStatuses3[MAX_BATTLERS_COUNT];

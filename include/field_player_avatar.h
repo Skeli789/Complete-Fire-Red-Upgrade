@@ -11,7 +11,7 @@ void __attribute__((long_call)) PlayerGetDestCoords(s16* x, s16* y);
 u8 __attribute__((long_call)) GetPlayerMovementDirection(void);
 u8 __attribute__((long_call)) PlayerGetZCoord(void);
 void __attribute__((long_call)) SetPlayerAvatarStateMask(u8 a);
-void __attribute__((long_call)) sub_8150498(u8 state);
+void __attribute__((long_call)) QuestLogCallUpdatePlayerSprite(u8 state);
 void __attribute__((long_call)) ClearPlayerAvatarInfo(void);
 void __attribute__((long_call)) GetXYCoordsOneStepInFrontOfPlayer(s16* xPtr, s16* yPtr);
 bool32 __attribute__((long_call)) PlayerIsMovingOnRockStairs(u8 direction);

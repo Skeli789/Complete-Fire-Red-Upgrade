@@ -468,7 +468,7 @@ void RestorePartyFromTempTeam(u8 firstId, u8 numPokes)
 	}
 }
 
-u16 __attribute__((long_call)) sub_80911D4(u16 species);
+u16 __attribute__((long_call)) PSS_TryLoadMonIconTiles(u16 species);
 void __attribute__((long_call)) LoadCursorMonSprite(void);
 void __attribute__((long_call)) RefreshCursorMonData(void);
 void PlaceBoxMonIcon(u8 boxId, u8 position)
@@ -487,7 +487,7 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
 		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC
 		if (species == SPECIES_HOOPA || species == SPECIES_SHAYMIN)
 		{
-			u16 tileNum = sub_80911D4(species); //Gets the tile number of the mon icon
+			u16 tileNum = PSS_TryLoadMonIconTiles(species); //Gets the tile number of the mon icon
 			if (tileNum != 0xFFFF)
 			{
 				//Update mon Icon

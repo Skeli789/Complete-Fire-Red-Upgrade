@@ -2664,7 +2664,7 @@ bool8 MetatileBehavior_IsUnableToEmerge(u8 metatileBehavior)
 
 void PlayerAvatarTransition_Underwater(void)
 {
-	sub_8150498(4);
+	QuestLogCallUpdatePlayerSprite(4);
 }
 
 void PlayerAvatarTransition_HandleUnderwater(void)

@@ -530,7 +530,7 @@ void atk52_switchineffects(void)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 	
 	gActiveBattler = GetBankForBattleScript(arg);
-	sub_80174B8(gActiveBattler);
+	UpdateSentPokesToOpponentValue(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);

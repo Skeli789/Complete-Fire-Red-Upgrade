@@ -31,7 +31,7 @@ void atk01_accuracycheck(void)
 ACCURACY_CHECK_START:
 	if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
 	{
-		if (!sub_80EB2E0(1) && SPLIT(move) != SPLIT_STATUS)
+		if (!BtlCtrl_OakOldMan_TestState2Flag(1) && SPLIT(move) != SPLIT_STATUS)
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 			{
@@ -40,7 +40,7 @@ ACCURACY_CHECK_START:
 			}
 		}
 
-		if (!sub_80EB2E0(2) && SPLIT(move) == SPLIT_STATUS)
+		if (!BtlCtrl_OakOldMan_TestState2Flag(2) && SPLIT(move) == SPLIT_STATUS)
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 			{

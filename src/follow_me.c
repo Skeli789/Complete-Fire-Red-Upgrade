@@ -1036,7 +1036,7 @@ void Task_PlayerExitDoor(u8 taskId)
 			SetPlayerVisibility(FALSE);
 			FreezeEventObjects();
 			DoOutwardBarnDoorWipe();
-			sub_807DBAC();
+			FadeInFromWhite();
 			++task->data[0];
 			break;
 		case 1:
