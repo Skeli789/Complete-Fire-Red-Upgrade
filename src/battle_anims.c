@@ -1660,6 +1660,57 @@ void SpriteCB_SearingShotRock(struct Sprite* sprite)
 }
 
 
+//Shell Smash//
+static const union AffineAnimCmd sShellSmashShrinkAffineAnimCmds[] =
+{
+	AFFINEANIMCMD_FRAME(64, 64, 0, 16), //Flatten
+	AFFINEANIMCMD_FRAME(0, 0, 0, 48),
+	AFFINEANIMCMD_FRAME(-64, -64, 0, 16),
+	AFFINEANIMCMD_END,
+};
+
+//Shrinks the attacker, pauses, then scales up the attacker again
+void AnimTask_ShellSmashShrinkAttacker(u8 taskId)
+{
+	struct Task* task = &gTasks[taskId];
+	
+	task->data[0] = gBattleAnimArgs[0]; //Pause
+
+	u8 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+	PrepareAffineAnimInTaskData(task, spriteId, sShellSmashShrinkAffineAnimCmds);
+	task->func = AnimTask_DynamaxGrowthStep;
+}
+
+//Moves the shells towards the attacker and leaves them there until they fade out
+//arg 0: Initial x-pos
+//arg 1: Final x-pos
+//arg 2: Movement duration
+//arg 3: Affine anim
+static void SpriteCB_ShellSmashShell_DestroyDuringFadeOut(struct Sprite* sprite);
+void SpriteCB_ShellSmashShell(struct Sprite* sprite)
+{
+	//Init Position
+	sprite->pos1.x = GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+	sprite->pos1.y = GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + 2; //2 to slightly encompass the entire sprite
+
+	//Prepare linear movement
+	sprite->data[0] = gBattleAnimArgs[2]; //Duration
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
+	sprite->data[4] = sprite->pos1.y;
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, SpriteCB_ShellSmashShell_DestroyDuringFadeOut);
+
+	//Rotate properly
+	StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
+}
+
+static void SpriteCB_ShellSmashShell_DestroyDuringFadeOut(struct Sprite* sprite)
+{
+	if (GetGpuReg(REG_OFFSET_BLDALPHA) >= BLDALPHA_BLEND(0, 8)) //Fade out 1/2 done
+		DestroyAnimSprite(sprite);
+}
+
+
 //Struggle Bug//
 
 //Creates the hit splat for Struggle Bug

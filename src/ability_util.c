@@ -262,6 +262,11 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_FLYGON:
 					return gText_AbilityName_SoundWaves;
 				#endif
+				#if (defined NATIONAL_DEX_NOIBAT && defined NATIONAL_DEX_NOIVERN)
+				case NATIONAL_DEX_NOIBAT:
+				case NATIONAL_DEX_NOIVERN:
+					return gText_AbilityName_SoundWaves;
+				#endif
 			}
 			break;
 		case ABILITY_ICESCALES:
