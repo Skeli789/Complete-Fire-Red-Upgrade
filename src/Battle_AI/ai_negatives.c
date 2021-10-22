@@ -1648,18 +1648,13 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_MEAN_LOOK:
-			switch (move) {
-				case MOVE_SPIRITSHACKLE:
-				case MOVE_ANCHORSHOT:
-					goto AI_STANDARD_DAMAGE;
+			if (moveSplit != SPLIT_STATUS)
+				goto AI_STANDARD_DAMAGE;
 
-				default: //Mean look
-					if (IsTrapped(bankDef, TRUE)
-					|| PARTNER_MOVE_EFFECT_IS_SAME
-					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_MEAN_LOOK))
-						DECREASE_VIABILITY(10);
-					break;
-			}
+			if (IsTrapped(bankDef, TRUE)
+			|| PARTNER_MOVE_EFFECT_IS_SAME
+			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_MEAN_LOOK))
+				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_NIGHTMARE:

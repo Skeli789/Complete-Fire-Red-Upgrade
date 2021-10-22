@@ -483,6 +483,13 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+static bool8 ShouldUseHumanLikelyMove(u8 bankAtk, u8 bankDef)
+{
+	return IsPlayerInControl(bankAtk)
+		|| IsTrapped(bankDef, TRUE) //No point in beating around the bush if the foe can't switch out anyway
+		|| ViableMonCountFromBankLoadPartyRange(bankDef) <= 1;
+}
+
 static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 {
 	u32 i;
@@ -494,7 +501,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
-	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
+	bool8 playerIsAttacker = ShouldUseHumanLikelyMove(bankAtk, bankDef);
 	bool8 atkAbility = ABILITY(bankAtk);
 
 	struct DamageCalc damageData = {0};
@@ -665,10 +672,11 @@ static u16 PickMoveHumanLikelyToChoose(u16 move1, u16 move2, u8 playerBank, u8 a
 	else if (move2 == lastLandedMove)
 		return move2;
 
+
+	//Assume the player will pick the attack that's super effective
 	u8 effectiveness1 = AI_SpecialTypeCalc(move1, playerBank, aiBank);
 	u8 effectiveness2 = AI_SpecialTypeCalc(move2, playerBank, aiBank);
 
-	//Assume the player will pick the attack that's super effective
 	if (effectiveness1 & MOVE_RESULT_SUPER_EFFECTIVE)
 	{
 		if (!(effectiveness2 & MOVE_RESULT_SUPER_EFFECTIVE))
@@ -1427,7 +1435,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
-	bool8 playerIsAttacker = IsPlayerInControl(bankAtk);
+	bool8 playerIsAttacker = ShouldUseHumanLikelyMove(bankAtk, bankDef);
 	bool8 atkAbility = ABILITY(bankAtk);
 	struct DamageCalc damageData = {0};
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
