@@ -4172,14 +4172,32 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 			SetMonData(&mon, MON_DATA_HP_IV + i, &ivs[i]);
 
 		if (nature >= NUM_NATURES)
-			nature = Random() % NUM_NATURES;
+		{
+			#ifdef SYNCHRONIZE_GIFT_POKEMON
+			if (GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE) //Lead has Synchronize
+				nature = GetNature(&gPlayerParty[0]); //Match lead
+			else
+			#endif
+				nature = Random() % NUM_NATURES;
+		}
 
 		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny, FALSE, FALSE);
 		CalculateMonStats(&mon);
-		HealMon(&mon);
 	}
+	else
 	#endif
+	{
+		#ifdef SYNCHRONIZE_GIFT_POKEMON
+		if (GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE) //Lead has Synchronize
+		{
+			u8 nature = GetNature(&gPlayerParty[0]); //Match lead
+			GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, IsMonShiny(&mon), FALSE, FALSE);
+			CalculateMonStats(&mon);
+		}
+		#endif
+	}
 
+	HealMon(&mon);
 	sentToPc = GiveMonToPlayer(&mon);
 
 	switch(sentToPc) {

@@ -1021,7 +1021,8 @@ static bool8 ShouldSwitchWhenYawned(void)
 				return FALSE; //Don't switch if this mon can do some major damage to the enemy side
 		}
 
-		if (IsSleepClauseInEffect(gActiveBattler)) //Foe can only put one Pokemon to sleep
+		if (IsSleepClauseInEffect(gActiveBattler) //AI can only have one Pokemon to sleep
+		&& !DoesSleepClausePrevent(gActiveBattler)) //And AI mon will actually fall asleep
 		{
 			u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
 			u8 wantedFlags = (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_OUTSPEEDS); //We don't want a slow resist mon here because the player could just keep spamming yawn to force switches
