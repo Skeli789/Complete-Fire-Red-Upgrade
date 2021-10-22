@@ -524,6 +524,9 @@ static u16 GetDevolution(u16 originalSpecies, u16 backupSpecies)
 				found = TRUE;
 				break;
 			}
+
+			if (gEvolutionTable[j][k].method == EVO_NONE)
+				break; //Likely no more entries, so break here to save time
 		}
 
 		if (found)
@@ -570,6 +573,9 @@ u8 GetMinimumLevel(u16 species)
 				else if (EvolutionMethodRequiresLevelUp(method))
 					increase = 1; //Must have leveled up at least once to evolve
 			}
+
+			if (gEvolutionTable[devolutionSpecies][i].method == EVO_NONE)
+				break; //Likely no more entries, so break here to save time
 		}
 
 		species = devolutionSpecies; //Go another round down
