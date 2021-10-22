@@ -1838,6 +1838,7 @@ static void ModifyNormalRaidBattleSpecies(void)
 {
 	switch (gRaidBattleSpecies)
 	{
+		#if (defined SPECIES_WORMADAM && defined SPECIES_WORMADAM_SANDY && defined SPECIES_WORMADAM_TRASH)
 		case SPECIES_WORMADAM:
 			//Change based on the house
 			if ((gClock.hour % 3) == 1)
@@ -1845,6 +1846,7 @@ static void ModifyNormalRaidBattleSpecies(void)
 			else if ((gClock.hour % 3) == 2)
 				gRaidBattleSpecies = SPECIES_WORMADAM_TRASH;
 			break;
+		#endif
 	}
 }
 
@@ -2221,6 +2223,20 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 	return item;
 }
 
+static bool8 IsFoughtRaidSpecies(u16 species)
+{
+	if (species == gRaidBattleSpecies)
+		return TRUE;
+
+	#ifdef NATIONAL_DEX_WORMADAM //Special exception for Wormadam since one species can become all three for the battle
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	if (dexNum == NATIONAL_DEX_WORMADAM && SpeciesToNationalPokedexNum(gRaidBattleSpecies) == dexNum) //Both are Wormadam
+		return TRUE; //Give the items for Wormadam
+	#endif
+
+	return FALSE;
+}
+
 //Input: VAR_TEMP_0 = 0
 void sp11C_GiveRaidBattleRewards(void)
 {
@@ -2233,7 +2249,7 @@ void sp11C_GiveRaidBattleRewards(void)
 	{
 		for (i = 0; i < raid->amount; ++i)
 		{
-			if (raid->data[i].species == gRaidBattleSpecies) //Max one species per dataset
+			if (IsFoughtRaidSpecies(raid->data[i].species)) //Max one species per dataset
 			{
 				for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 				{

@@ -139,14 +139,14 @@ static const struct WildPokemonInfo sGrimWoods_LandMonsInfoNight = {15, sGrimWoo
 
 static const struct WildPokemon sRoute5_LandMonsNight[] =
 {
-	{15, 18, SPECIES_ZUBAT},
+	{15, 18, SPECIES_PURRLOIN},
 	{15, 18, SPECIES_MURKROW},
 	{15, 18, SPECIES_NIDORAN_M},
 	{15, 18, SPECIES_NIDORAN_F},
 	{16, 19, SPECIES_HOUNDOUR},
-	{15, 18, SPECIES_ZUBAT},
 	{15, 18, SPECIES_PURRLOIN},
-	{15, 18, SPECIES_PURRLOIN},
+	{17, 19, SPECIES_LICKITUNG},
+	{17, 19, SPECIES_LICKITUNG},
 	{17, 19, SPECIES_VENONAT},
 	{17, 19, SPECIES_VENONAT},
 	{19, 19, SPECIES_DITTO},
@@ -157,11 +157,11 @@ static const struct WildPokemonInfo sRoute5_LandMonsInfoNight = {15, sRoute5_Lan
 
 static const struct WildPokemon sRoute6_LandMonsMorning[] =
 {
-	{20, 22, SPECIES_ZIGZAGOON},
+	{20, 22, SPECIES_BUNNELBY},
 	{20, 22, SPECIES_LEDYBA},
 	{20, 22, SPECIES_SHINX},
 	{20, 22, SPECIES_DEERLING},
-	{20, 22, SPECIES_ZIGZAGOON},
+	{20, 22, SPECIES_BUNNELBY},
 	{20, 22, SPECIES_KRICKETOT},
 	{21, 22, SPECIES_KRICKETOT},
 	{21, 22, SPECIES_KRICKETOT},
@@ -175,11 +175,11 @@ static const struct WildPokemonInfo sRoute6_LandMonsInfoMorning = {15, sRoute6_L
 
 static const struct WildPokemon sRoute6_LandMonsNight[] =
 {
-	{20, 22, SPECIES_ZIGZAGOON},
+	{20, 22, SPECIES_BUNNELBY},
 	{20, 22, SPECIES_SPINARAK},
 	{20, 22, SPECIES_SHINX},
 	{20, 22, SPECIES_DEERLING},
-	{20, 22, SPECIES_ZIGZAGOON},
+	{20, 22, SPECIES_BUNNELBY},
 	{20, 22, SPECIES_KRICKETOT},
 	{21, 22, SPECIES_KRICKETOT},
 	{21, 22, SPECIES_KRICKETOT},
