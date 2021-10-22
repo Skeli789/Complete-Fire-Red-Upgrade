@@ -2149,7 +2149,7 @@ static void DexNavPopulateEncounterList(void)
 	sDexNavGUIPtr->numLandMons = grassIndex;
 	sDexNavGUIPtr->numWaterMons = waterIndex;
 
-	if (sDexNavGUIPtr->numLandMons == 0 && sDexNavGUIPtr->numWaterMons != 0)
+	if (GetTotalLandMonCount() == 0 && GetTotalWaterMonCount() != 0)
 		sDexNavGUIPtr->selectedArea = AREA_WATER; //Start with water selected because no searchable land mons anyway
 }
 
