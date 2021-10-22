@@ -1811,11 +1811,12 @@ void ClearBankStatus(u8 bank)
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
-bool8 DoesSleepClausePrevent(u8 bank)
+bool8 IsSleepClauseInEffect(unusedArg u8 bankToPutToSleep)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-		switch (VarGet(VAR_BATTLE_FACILITY_TIER)) {
+		switch (VarGet(VAR_BATTLE_FACILITY_TIER))
+		{
 			case BATTLE_FACILITY_OU:
 			case BATTLE_FACILITY_UBER:
 			case BATTLE_FACILITY_LITTLE_CUP:
@@ -1831,25 +1832,37 @@ bool8 DoesSleepClausePrevent(u8 bank)
 			case BATTLE_FACILITY_UU:
 			case BATTLE_FACILITY_RU:
 			case BATTLE_FACILITY_NU:
-			#ifdef VAR_GAME_DIFFICULTY
-			SLEEP_ON_TEAM_CHECK:
-			#endif
-				; u8 firstId, lastId;
-				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
-
-				for (int i = 0; i < PARTY_SIZE; ++i)
-				{
-					if (GetMonData(&party[i], MON_DATA_HP, NULL) != 0
-					&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
-					&& GetMonData(&party[i], MON_DATA_STATUS, NULL) & STATUS_SLEEP) //Someone on team is already asleep
-						return TRUE;
-				}
+				return TRUE;
 		}
 	}
 	#ifdef VAR_GAME_DIFFICULTY
 	else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY && !FlagGet(FLAG_SYS_GAME_CLEAR)) //Insane before game cleared
-		goto SLEEP_ON_TEAM_CHECK;
+	{
+		if (SIDE(bankToPutToSleep) == B_SIDE_OPPONENT) //Bank to be put to sleep
+			return TRUE; //Only player is affected by the sleep clause
+	}
 	#endif
+
+	return FALSE;
+}
+
+bool8 DoesSleepClausePrevent(u8 bankToPutToSleep)
+{
+	if (IsSleepClauseInEffect(bankToPutToSleep))
+	{
+		u8 i, firstId, lastId;
+		struct Pokemon* party = LoadPartyRange(bankToPutToSleep, &firstId, &lastId);
+
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
+
+			if (species != SPECIES_NONE && species != SPECIES_EGG
+			&& GetMonData(&party[i], MON_DATA_HP, NULL) > 0
+			&& GetMonData(&party[i], MON_DATA_STATUS, NULL) & STATUS_SLEEP) //Someone on team is already asleep
+				return TRUE;
+		}
+	}
 
 	return FALSE;
 }

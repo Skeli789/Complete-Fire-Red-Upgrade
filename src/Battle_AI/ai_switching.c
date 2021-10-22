@@ -34,7 +34,7 @@ static u8 GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(u8 opposingBattle
 static bool8 RunAllSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 opposingBattler2, bool8 checkLockedMoves);
 static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLockedMoves);
 static bool8 CanStopLockedMove(void);
-static bool8 IsYawned(void);
+static bool8 ShouldSwitchWhenYawned(void);
 static bool8 ShouldSwitchWhileAsleep(struct Pokemon* party);
 static bool8 IsTakingAnnoyingSecondaryDamage(struct Pokemon* party);
 static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party);
@@ -73,9 +73,10 @@ bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId)
 
 	for (i = firstId; i < lastId; ++i)
 	{
-		if (party[i].hp == 0
-		||	GetMonData(&party[i], MON_DATA_SPECIES2, 0) == SPECIES_NONE
-		|| 	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+		u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, 0);
+
+		if (SPECIES_CANT_BATTLE(species)
+		|| 	party[i].hp == 0
 		||	i == gBattlerPartyIndexes[battlerIn1]
 		||	i == gBattlerPartyIndexes[battlerIn2]
 		||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
@@ -103,7 +104,7 @@ bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId)
 		return TRUE;
 	if (SemiInvulnerableTroll())
 		return TRUE;
-	if (IsYawned())
+	if (ShouldSwitchWhenYawned())
 		return TRUE;
 	if (ShouldSwitchWhileAsleep(party))
 		return TRUE;
@@ -927,7 +928,7 @@ static bool8 CanStopLockedMove(void)
 	return FALSE;
 }
 
-static bool8 IsYawned(void)
+static bool8 ShouldSwitchWhenYawned(void)
 {
 	u8 itemEffect;
 
@@ -939,6 +940,7 @@ static bool8 IsYawned(void)
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4 //Don't bother saving a mon with less than 25% of HP
 	&& CanBePutToSleep(gActiveBattler, gActiveBattler, FALSE)) //Could have been yawned and then afflicted with another status condition
 	{
+		u8 i;
 		u8 battlerIn1, battlerIn2;
 		u8 foe1, foe2;
 		LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
@@ -959,15 +961,13 @@ static bool8 IsYawned(void)
 			}
 		}
 
-		//Don't switch if there's an enemy taking trap damage from this mon
+		//Don't switch if there's an enemy being trapped while taking secondary damage
 		u8 activeSide = SIDE(gActiveBattler);
-		for (int i = 0; i < gBattlersCount; ++i)
+		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (SIDE(i) != activeSide)
 			{
-				if (gBattleMons[i].status2 & STATUS2_WRAPPED
-				&& ABILITY(i) != ABILITY_MAGICGUARD //Taking trap damage
-				&& gBattleStruct->wrappedBy[i] == gActiveBattler)
+				if (IsTrapped(i, TRUE) && IsTakingSecondaryDamage(i))
 					return FALSE;
 			}
 		}
@@ -980,15 +980,14 @@ static bool8 IsYawned(void)
 
 		//Don't switch if you can fight through the sleep
 		u8 ability = ABILITY(gActiveBattler);
-		u8 itemEffect = ITEM_EFFECT(gActiveBattler);
-		if (itemEffect == ITEM_EFFECT_CURE_SLP
+		if (/*itemEffect == ITEM_EFFECT_CURE_SLP //Checked above
 		|| itemEffect == ITEM_EFFECT_CURE_STATUS
-		|| ability == ABILITY_EARLYBIRD
+		||*/ ability == ABILITY_EARLYBIRD
 		|| ability == ABILITY_SHEDSKIN
 		|| MoveEffectInMoveset(EFFECT_SNORE, gActiveBattler)
 		|| MoveEffectInMoveset(EFFECT_SLEEP_TALK, gActiveBattler)
-		|| (CheckGrounding(gActiveBattler)
-		 && (MoveInMoveset(MOVE_ELECTRICTERRAIN, gActiveBattler) || MoveInMoveset(MOVE_MISTYTERRAIN, gActiveBattler))))
+		|| (MoveInMoveset(MOVE_ELECTRICTERRAIN, gActiveBattler) && IsAffectedByElectricTerrain(gActiveBattler))
+		|| (MoveInMoveset(MOVE_MISTYTERRAIN, gActiveBattler) && CheckGrounding(gActiveBattler)))
 			return FALSE;
 
 		//Check if can do major damage instead of switching
@@ -1022,10 +1021,20 @@ static bool8 IsYawned(void)
 				return FALSE; //Don't switch if this mon can do some major damage to the enemy side
 		}
 
+		if (IsSleepClauseInEffect(gActiveBattler)) //Foe can only put one Pokemon to sleep
+		{
+			u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
+			u8 wantedFlags = (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_OUTSPEEDS); //We don't want a slow resist mon here because the player could just keep spamming yawn to force switches
+
+			if ((switchFlags & wantedFlags) != wantedFlags) //Best switching mon can't just come in and KO the yawner
+				return FALSE; //Let this mon fall asleep and deal with the consequences later
+		}
+
 		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 		return TRUE;
 	}
+
 	return FALSE;
 }
 
