@@ -21717,7 +21717,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_WATERFALL,
 			MOVE_QUICKATTACK,
-			MOVE_CURSE,
+			MOVE_NORETREAT,
 			MOVE_REST,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -39837,8 +39837,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_IRONFIST
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_CRABBYTACTICS
+		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
 			MOVE_ICEHAMMER,
@@ -39862,7 +39862,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spdIv = 31,
 		.hpEv = 252,
 		.defEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_HYPERCUTTER
+		.ability = FRONTIER_ABILITY_2, //ABILITY_IRONFIST
 		.item = ITEM_CHESTO_BERRY,
 		.moves =
 		{
@@ -39888,7 +39888,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_IRONFIST
+		.ability = FRONTIER_ABILITY_1, //ABILITY_HYPERCUTTER
 		.item = ITEM_ICY_ROCK,
 		.moves =
 		{

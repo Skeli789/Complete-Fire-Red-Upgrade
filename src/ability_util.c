@@ -42,6 +42,7 @@ extern const u8 gText_AbilityName_Bellow[];
 extern const u8 gText_AbilityName_SoundWaves[];
 extern const u8 gText_AbilityName_IcySkin[];
 extern const u8 gText_AbilityName_DustyScales[];
+extern const u8 gText_AbilityName_CrabbyTactics[];
 extern const u8 gText_AbilityName_HoneyArmor[];
 extern const u8 gText_AbilityName_FaceShield[];
 extern const u8 gText_AbilityName_RoyalRoar[];
@@ -288,6 +289,14 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#endif
 			}
 			break;
+		case ABILITY_GORILLATACTICS:
+			switch (dexNum)
+			{
+				#ifdef NATIONAL_DEX_CRABOMINABLE
+				case NATIONAL_DEX_CRABOMINABLE:
+					return gText_AbilityName_CrabbyTactics;
+				#endif
+			}
 		case ABILITY_DAUNTLESSSHIELD:
 			switch (dexNum)
 			{
