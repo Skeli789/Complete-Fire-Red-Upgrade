@@ -1409,6 +1409,9 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 			default: //Metal Burst
 				predictedDamage = (predictedDamage * 3) / 2;
 		}
+
+		if (ABILITY(bankAtk) == ABILITY_PARENTALBOND)
+			predictedDamage *= 2; //Does full damage twice
 	}
 
 	return predictedDamage;

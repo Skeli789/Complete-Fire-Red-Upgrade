@@ -3502,13 +3502,13 @@ void atk9E_metronome(void)
 
 void atkA0_psywavedamageeffect(void)
 {
-	gBattleMoveDamage = GetPsywaveDamage(Random() % 101);
+	gBattleMoveDamage = GetPsywaveDamage(gBattleMons[gBankAttacker].level, Random() % 101);
 	++gBattlescriptCurrInstr;
 }
 
-s32 GetPsywaveDamage(u8 randDamage)
+s32 GetPsywaveDamage(u8 level, u8 randDamage)
 {
-	return MathMax(1, (gBattleMons[gBankAttacker].level * (randDamage + 50)) / 100);
+	return MathMax(1, (level * (randDamage + 50)) / 100);
 }
 
 void atkA1_counterdamagecalculator(void) {

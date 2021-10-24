@@ -10,7 +10,7 @@
 //Exported Functions
 void TrySetMissStringForSafetyGoggles(u8 bankDef);
 bool8 TryDoBenjaminButterfree(u8 scriptOffset);
-s32 GetPsywaveDamage(u8 randDamage);
+s32 GetPsywaveDamage(u8 level, u8 randDamage);
 bool8 TrySpitePPReduce(u8 bank, u8 lostPP);
 bool8 SetSunnyWeather(void);
 bool8 SetRainyWeather(void);

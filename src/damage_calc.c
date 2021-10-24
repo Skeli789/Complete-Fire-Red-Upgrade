@@ -332,6 +332,28 @@ static u8 GetNumHitsBasedOnMove(u16 move, u8 atkAbility, unusedArg u16 atkSpecie
 	return numHits;
 }
 
+static u16 GetAIParentalBondMultiplierForMove(u16 move, u8 bankAtk, u8 numHits, u8 ability)
+{
+	u16 multiplier = 0;
+
+	if (numHits <= 1
+	&& ability == ABILITY_PARENTALBOND
+	&& IsMoveAffectedByParentalBond(move, bankAtk)) //Parental Bond can have effect on move
+	{
+		#ifdef OLD_PARENTAL_BOND_DAMAGE
+			multiplier = 150; //1.5x overall boost
+			if (move == MOVE_ASSURANCE)
+				multiplier = 200; //Basically winds up being 2x
+		#else
+			multiplier = 125; //1.25x overall boost
+			if (move == MOVE_ASSURANCE)
+				multiplier = 150; //Basically winds up being 1.5x
+		#endif
+	}
+
+	return multiplier;
+}
+
 static u8 AdjustNumHitsForContactDamage(u8 numHits, s32 currHP, u32 contactDamage)
 {
 	if (contactDamage > 0)
@@ -354,31 +376,47 @@ static u8 AdjustNumHitsForContactDamage(u8 numHits, s32 currHP, u32 contactDamag
 
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData)
 {
+	u32 damage;
 	u8 resultFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef);
+
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT && resultFlags & MOVE_RESULT_NO_EFFECT)
 		return 0;
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
-			return GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			damage = GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage += GetBaseCurrentHP(bankDef) / 4; //75 % of base HP
+			return damage;
 		case EFFECT_DRAGON_RAGE:
-			return 40;
+			damage = 40;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_SONICBOOM:
-			return 20;
+			damage = 20;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			return gBattleMons[bankAtk].level;
+			damage = gBattleMons[bankAtk].level;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_PSYWAVE:
-			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
+			damage = GetPsywaveDamage(gBattleMons[bankAtk].level, 50); //On average, 50 will be selected as the random number
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
 			if (move == MOVE_FINALGAMBIT)
 				return gBattleMons[bankAtk].hp;
 			return 0;
-		case EFFECT_ENDEAVOR: ;
-			s32 dmg;
-			dmg = GetBaseCurrentHP(bankDef) - GetBaseCurrentHP(bankAtk);
-			if (dmg <= 0)
+		case EFFECT_ENDEAVOR:
+			damage = GetBaseCurrentHP(bankDef) - GetBaseCurrentHP(bankAtk);
+			if (damage <= 0)
 				return 0;
-			return dmg;
+			return damage;
 		case EFFECT_PAIN_SPLIT: ;
 			u16 finalHp = (GetBaseCurrentHP(bankAtk) + GetBaseCurrentHP(bankDef)) / 2;
 
@@ -390,12 +428,12 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	if (SPLIT(move) == SPLIT_STATUS) //At this point we don't care about Status moves anymore
 		return 0;
 
-	u32 damage = 0;
+	damage = 0;
 	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, NULL, NULL); //Return 0 if none, 1 if always, 2 if 50%
-	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
+	if (gCritMultiplier != 0 && AIRandom() % gCritMultiplier == 0)
 		gCritMultiplier = CRIT_MULTIPLIER;
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
@@ -417,15 +455,9 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	damage = (damage * 93) / 100; //Roll 93% damage - about halfway between min & max damage
 
 	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
-	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
-	{
-		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 15) / 10; //1.5x overall boost
-		#else
-			damage = (damage * 125) / 100; //1.25x overall boost
-		#endif
-		return damage;
-	}
+	u16 multiplier = GetAIParentalBondMultiplierForMove(move, bankAtk, numHits, damageData->atkAbility);
+	if (multiplier != 0) //Move affected by Parental Bond
+		return (damage * multiplier) / 100;
 
 	//Try to reduce the number of hits for a multi-hit move if the attacker won't be able to finish because it will be KOd by the contact recoil first
 	if (numHits >= 2)
@@ -452,22 +484,39 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct DamageCalc* damageData)
 {
+	u32 damage;
 	u8 resultFlags = TypeCalc(move, bankAtk, bankDef, monAtk, TRUE);
+
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
 	&& (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT))
 		return 0;
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
-			return GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			damage = GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage += GetBaseCurrentHP(bankDef) / 4; //75 % of base HP
+			return damage;
 		case EFFECT_DRAGON_RAGE:
-			return 40;
+			damage = 40;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_SONICBOOM:
-			return 20;
+			damage = 20;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			return monAtk->level;
+			damage = monAtk->level;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_PSYWAVE:
-			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
+			damage = GetPsywaveDamage(monAtk->level, 50); //On average, 50 will be selected as the random number
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
 			if (move == MOVE_FINALGAMBIT)
 				return monAtk->hp;
@@ -487,12 +536,12 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	if (SPLIT(move) == SPLIT_STATUS) //At this point we don't care about Status moves anymore
 		return 0;
 
-	u32 damage = 0;
+	damage = 0;
 	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, monAtk, NULL); //Return 0 if none, 1 if always, 2 if 50%
-	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
+	if (gCritMultiplier != 0 && AIRandom() % gCritMultiplier == 0)
 		gCritMultiplier = CRIT_MULTIPLIER;
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
@@ -515,15 +564,9 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
 	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
-	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
-	{
-		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 15) / 10; //1.5x overall boost
-		#else
-			damage = (damage * 125) / 100; //1.25x overall boost
-		#endif
-		return damage;
-	}
+	u16 multiplier = GetAIParentalBondMultiplierForMove(move, bankAtk, numHits, damageData->atkAbility);
+	if (multiplier != 0) //Move affected by Parental Bond
+		return (damage * multiplier) / 100;
 
 	//Try to reduce the number of hits for a multi-hit move if the attacker won't be able to finish because it will be KOd by the contact recoil first
 	if (numHits > 1)
@@ -550,22 +593,39 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, struct DamageCalc* damageData)
 {
+	u32 damage;
 	u8 resultFlags = AI_TypeCalc(move, bankAtk, monDef);
+
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
 	&& (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT))
 		return 0;
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
-			return monDef->hp / 2; //50 % of base HP
+			damage = monDef->hp / 2; //50 % of base HP
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage += monDef->hp / 4; //75 % of base HP
+			return damage;
 		case EFFECT_DRAGON_RAGE:
-			return 40;
+			damage = 40;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_SONICBOOM:
-			return 20;
+			damage = 20;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			return gBattleMons[bankAtk].level;
+			damage = gBattleMons[bankAtk].level;
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_PSYWAVE:
-			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number
+			damage = GetPsywaveDamage(gBattleMons[bankAtk].level, 50); //On average, 50 will be selected as the random number
+			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+				damage *= 2;
+			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
 			if (move == MOVE_FINALGAMBIT)
 				return gBattleMons[bankAtk].hp;
@@ -590,12 +650,12 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 			break;
 	}
 
-	u32 damage = 0;
+	damage = 0;
 	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, NULL, monDef); //Return 0 if none, 1 if always, 2 if 50%
-	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
+	if (gCritMultiplier != 0 && AIRandom() % gCritMultiplier == 0)
 		gCritMultiplier = CRIT_MULTIPLIER;
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
@@ -618,15 +678,9 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
 	u8 numHits = GetNumHitsBasedOnMove(move, damageData->atkAbility, damageData->atkSpecies);
-	if (numHits <= 1 && damageData->atkAbility == ABILITY_PARENTALBOND && IsMoveAffectedByParentalBond(move, bankAtk))
-	{
-		#ifdef OLD_PARENTAL_BOND_DAMAGE
-			damage = (damage * 15) / 10; //1.5x overall boost
-		#else
-			damage = (damage * 125) / 100; //1.25x overall boost
-		#endif
-		return damage;
-	}
+	u16 multiplier = GetAIParentalBondMultiplierForMove(move, bankAtk, numHits, damageData->atkAbility);
+	if (multiplier != 0) //Move affected by Parental Bond
+		return (damage * multiplier) / 100;
 
 	//Try to reduce the number of hits for a multi-hit move if the attacker won't be able to finish because it will be KOd by the contact recoil first
 	if (numHits > 1)
