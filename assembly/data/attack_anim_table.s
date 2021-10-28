@@ -10836,97 +10836,89 @@ ANIM_PARABOLICCHARGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Lixdel
+@Credits to Skeli
 ANIM_SEARINGSHOT:
-	loadparticle ANIM_TAG_SPARK_2 @yellow color
-	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
-	loadparticle ANIM_TAG_ELECTRIC_ORBS @charge
-	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
-	loadparticle ANIM_TAG_WARM_ROCK @eruption
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x0E3E @;Orange
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_WARM_ROCK 0x0 0xB 0xB 0x01BE @;Orange
-	pokespritetoBG bank_attacker
-	setblends 0x808
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @Charge Circle
+	loadparticle ANIM_TAG_VERTICAL_HEX @Red charge ball colour
+	loadparticle ANIM_TAG_ELECTRIC_ORBS @Charge Balls
+	loadparticle ANIM_TAG_WARM_ROCK @Eruption rock
+	loadparticle ANIM_TAG_SMALL_EMBER
+	pokespritetoBG side_target
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x0 0xB 0x115E @;Orangish Red
+	launchtask AnimTask_Splash 0x2 0x2 bank_attacker 0x3
+	soundcomplex 0x89 SOUND_PAN_ATTACKER 0x2 32
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
+	call RED_PRIMAL_REVERSION_FIRE_GEYSER
 	waitanimation
-	launchtask AnimTask_ChargeBalls 0x2 0x4 bank_attacker 0x3c 0x2 0xc
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x0 0x9 0x1F
-	playsound2 0xce SOUND_PAN_ATTACKER
-	pause 0x1e
-	playsound2 0xce SOUND_PAN_ATTACKER
-	pause 0x1e
-	playsound2 0xce SOUND_PAN_ATTACKER
-	launchtemplate SS_REDCHARGE 0x2 0x1 0x0
-	pause 0x19
-	playsound2 0xce SOUND_PAN_ATTACKER
-	pause 0x14
-	playsound2 0xce SOUND_PAN_ATTACKER
-	pause 0xf
-	playsound2 0xce SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x1 0x0 0xB 0x1F @;Red
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x44 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x4 0x44 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 attacker_partner 0x0 0x4 0x44 0x1
+	call SEARING_SHOT_PARTNER
+	call SEARING_SHOT_FLAMES_FALL
+	call SEARING_SHOT_PARTNER
+	call SEARING_SHOT_FLAMES_FALL
+	call SEARING_SHOT_PARTNER
+	call SEARING_SHOT_FLAMES_FALL
 	waitanimation
-	playsound2 0x8A SOUND_PAN_ATTACKER
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x0 0x1e 0x19 0xffec
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x20 0x1e 0x19 0xffec
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x40 0x1e 0x19 0xffec
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x60 0x1e 0x19 0xffec
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x80 0x1e 0x19 0xffec
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xa0 0x1e 0x19 0xffec
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 SOUND_PAN_ATTACKER 0x1e 0x19 0xffec
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xe0 0x1e 0x19 0xffec
-	pause 0xF
-	playsound2 0x8A SOUND_PAN_ATTACKER
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x0 0x1e 0x19 0x0
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x20 0x1e 0x19 0x0
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x40 0x1e 0x19 0x0
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x60 0x1e 0x19 0x0
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x80 0x1e 0x19 0x0
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xa0 0x1e 0x19 0x0
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 SOUND_PAN_ATTACKER 0x1e 0x19 0x0
-	pause 0x2
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xe0 0x1e 0x19 0x0
-	pause 0x15
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x1 0xB 0x0 0x1F @;From red
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0xB 0x0 0x115E @;From Orangish Red
 	waitanimation
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x9 0x0 0x1F
-	pokespritefromBG bank_attacker
-	loadbg1 BG_FIRE
-	waitbgfadeout
-	launchtask AnimTask_scroll_background 0x5 0x4 0xA00 0x0 0x1 0xffff
-	waitbgfadein
-	pause 0x1E
-	pokespritetoBG side_attacker
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK_PARTNER | PAL_DEF | PAL_DEF_PARTNER 0x2 0x0 0x9 0x1F
-	playsound2 0xab SOUND_PAN_ATTACKER
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x1B 0x1
-	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x1B 0x1
-	launchtask AnimTask_move_bank 0x2 0x5 attacker_partner 0x3 0x0 0x1B 0x1
-	playsound2 0x8C SOUND_PAN_TARGET
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E bank_target
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E bank_target
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E target_partner
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E target_partner
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E attacker_partner
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E attacker_partner
-	pause 0x1E
-	playsound2 0xab SOUND_PAN_ATTACKER
-	waitanimation
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK_PARTNER | PAL_DEF | PAL_DEF_PARTNER 0x2 0x9 0x0 0x1F
-	pause 0x1E
-	call UNSET_SCROLLING_BG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
-	pokespritefromBG side_attacker
-	resetblends
+	pokespritefromBG side_target
 	endanimation
 
+SEARING_SHOT_FLAMES_FALL:
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, 35, 0x3c, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, -30, 0x44, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, 27, 0x37, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, -20, 0x32, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, 33, 0x3a, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, -12, 0x3a, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, 19, 0x3c, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, -38, 0x3a, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, 5, 0x3c, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	pause 0x2
+	launchtemplate SEARING_SHOT_FALLING_FIRE TEMPLATE_TARGET | 2, 0x3, -23, 0x28, 4
+	playsound2 0x89 SOUND_PAN_TARGET
+	return
+
+SEARING_SHOT_PARTNER:
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xc0 0xb0 0x28 attacker_partner
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xff40 0xf0 0x28 attacker_partner
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xc0 0xff60 0x28 attacker_partner
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xff40 0xff90 0x28 attacker_partner
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xa0 0x30 0x28 attacker_partner
+	launchtemplate SEARING_SHOT_PARTNER_FIRE_SPREAD TEMPLATE_ATTACKER | 1, 0x6 0x0 0xa 0xff20 0xffe0 0x28 attacker_partner
+	return
+	
 .align 2
-SS_REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E61C8 0x80AE71D
-SS_ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80B77E5
-SS_ERUPTIONHIT: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_SearingShotRock SpriteCB_SearingShotRock
+SEARING_SHOT_FALLING_FIRE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_DOUBLE_32x32 0x83E5DB8 0x0 gSpriteAffineAnimTable_SearingShotFlyingFlame SpriteCB_FallingObjectOnTargetCentre
+SEARING_SHOT_PARTNER_FIRE_SPREAD: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E5BD8 0x0 gDummySpriteAffineAnimTable SpriteCB_TargetedFireSpread
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -1578,7 +1578,10 @@ void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(5);
 	
-	if (!IsBattlerSpriteVisible(target))
+	if (IS_SINGLE_BATTLE
+	&& (gBattleAnimArgs[5] == ANIM_ATK_PARTNER || gBattleAnimArgs[5] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as partner
+		DestroyAnimSprite(sprite);
+	else if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -1629,35 +1632,16 @@ const union AnimCmd *const gAnimCmdTable_QuickGuard[] =
 
 
 //Searing Shot//
-static const union AffineAnimCmd sSpriteAffineAnim_SearingShotRock[] =
+static const union AffineAnimCmd sSpriteAffineAnim_SearingShotFlyingFlame[] =
 {
-	AFFINEANIMCMD_FRAME(8, 8, 9, 15),
-	AFFINEANIMCMD_FRAME(-8, -8, 9, 15),
-	AFFINEANIMCMD_END,
+	AFFINEANIMCMD_FRAME(16, 16, 20, 16), //Double in size and spin
+	AFFINEANIMCMD_END
 };
 
-const union AffineAnimCmd* const gSpriteAffineAnimTable_SearingShotRock[] =
+const union AffineAnimCmd* const gSpriteAffineAnimTable_SearingShotFlyingFlame[] =
 {
-	sSpriteAffineAnim_SearingShotRock,
+	sSpriteAffineAnim_SearingShotFlyingFlame,
 };
-
-void SpriteCB_SearingShotRock(struct Sprite* sprite)
-{
-	u8 target = LoadBattleAnimTarget(4);
-
-	if (!IsBattlerSpriteVisible(target))
-		DestroyAnimSprite(sprite);
-	else
-	{
-		InitSpritePosToGivenTarget(sprite, target);
-
-		StartSpriteAnim(sprite, gBattleAnimArgs[2]);
-		sprite->data[0] = gBattleAnimArgs[3];
-
-		sprite->callback = WaitAnimForDuration;
-		StoreSpriteCallbackInData6(sprite, AnimSpinningKickOrPunchFinish);
-	}
-}
 
 
 //Shell Smash//
@@ -2795,7 +2779,10 @@ void SpriteCB_FallingObject(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(3);
 
-	if (!IsBattlerSpriteVisible(target))
+	if (IS_SINGLE_BATTLE
+	&& (gBattleAnimArgs[3] == ANIM_ATK_PARTNER || gBattleAnimArgs[3] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as partner
+		DestroyAnimSprite(sprite);
+	else if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -6070,6 +6057,10 @@ static void AnimTask_FadeOutParticlesHelper(u8 taskId)
 
 void AnimTask_FadeOutParticles(u8 taskId)
 {
+	u8 existingTaskId = FindTaskIdByFunc(AnimTask_FadeOutParticlesHelper);
+	if (existingTaskId != 0xFF)
+		DestroyAnimVisualTask(existingTaskId); //Can only have one of these tasks going at a time
+
 	SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
 	SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL); //Blend sprites out
 	gTasks[taskId].data[1] = 16;
