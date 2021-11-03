@@ -2451,6 +2451,11 @@ static void PrintGUIAreaDescriptors(void)
 		landText = gText_Sand;
 		waterText = gText_DexNavWater;
 	}
+	else if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+	{
+		landText = gText_DexNavReeds;
+		waterText = gText_DexNavDeepWater;
+	}
 	else
 	#endif
 	{

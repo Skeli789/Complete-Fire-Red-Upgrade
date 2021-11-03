@@ -50,6 +50,8 @@ extern const u8 gText_PinkAndPurpleFlowers[];
 extern const u8 gText_BlueAndYellowFlowers[];
 extern const u8 gText_Magma[];
 extern const u8 gText_Sand[];
+extern const u8 gText_DexNavReeds[];
+extern const u8 gText_DexNavDeepWater[];
 extern const u8 gText_PokeTools[];
 extern const u8 gText_GotAway[];
 extern const u8 gText_LostSignal[];
