@@ -299,7 +299,7 @@ u8 FindOrLoadPalette(struct SpritePalette* pal) //Hook at 0x8928 via r1
 static void MaskPaletteIfFadingIn(u8 palSlot) //Prevent the palette from flashing briefly before fading starts
 {
 	u8 fadeState = gWeatherPtr->palProcessingState;
-	u8 aboutToFadeIn = gWeatherPtr->unknown_6CA;
+	u8 aboutToFadeIn = gWeatherPtr->fadeInFirstFrame;
 
 	if (fadeState == 1 && aboutToFadeIn)
 	{
