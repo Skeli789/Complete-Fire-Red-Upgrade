@@ -1050,11 +1050,14 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 
 			//Check swarming mon first
 			u8 swarmIndex = GetCurrentSwarmIndex();
-			if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
-			&& species == gSwarmTable[swarmIndex].species)
+			if (IsValidSwarmIndex(swarmIndex))
 			{
-				chance += SWARM_CHANCE;
-				break;
+				if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+				&& species == gSwarmTable[swarmIndex].species)
+				{
+					chance += SWARM_CHANCE;
+					break;
+				}
 			}
 
 			for (i = 0; i < MAX_TOTAL_LAND_MONS; ++i)
@@ -1123,17 +1126,20 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			{
 				//Check swarming mon
 				u8 swarmIndex = GetCurrentSwarmIndex();
-				if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
-				&& species == gSwarmTable[swarmIndex].species)
+				if (IsValidSwarmIndex(swarmIndex))
 				{
-					//Pick index at random and choose min and max from there
-					i = RandRange(0, NELEMS(landMonsInfo->wildPokemon));
-					monData = &landMonsInfo->wildPokemon[i];
-					min = monData->minLevel;
-					max = monData->maxLevel;
-					break;
+					if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+					&& species == gSwarmTable[swarmIndex].species)
+					{
+						//Pick index at random and choose min and max from there
+						i = RandRange(0, NELEMS(landMonsInfo->wildPokemon));
+						monData = &landMonsInfo->wildPokemon[i];
+						min = monData->minLevel;
+						max = monData->maxLevel;
+						break;
+					}
 				}
-				
+
 				return MAX_LEVEL + 1;
 			}
 			break;
@@ -1836,6 +1842,11 @@ static bool8 CapturedAllLandBasedPokemon(void)
 	u8 num = 0;
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 
+	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD)
+		landMonsInfo = NULL; //Wipe data so Giratina doesn't show up in DexNav
+	#endif
+
 	if (landMonsInfo != NULL)
 	{
 		for (i = 0; i < MAX_TOTAL_LAND_MONS; ++i)
@@ -1851,7 +1862,8 @@ static bool8 CapturedAllLandBasedPokemon(void)
 
 		//Check swarming mon
 		u8 swarmIndex = GetCurrentSwarmIndex();
-		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName)
+		if (IsValidSwarmIndex(swarmIndex)
+		&& GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName)
 		{
 			if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(gSwarmTable[swarmIndex].species), FLAG_GET_CAUGHT))
 				return FALSE;
@@ -1870,6 +1882,11 @@ static bool8 CapturedAllWaterBasedPokemon(void)
 	u16 i, species;
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
+
+	#ifdef UNBOUND
+	if (GetCurrentRegionMapSectionId() == MAPSEC_DISTORTION_WORLD)
+		waterMonsInfo = NULL; //Wipe data so Giratina doesn't show up in DexNav
+	#endif
 
 	if (waterMonsInfo == NULL && fishingMonsInfo == NULL)
 		return FALSE; //Can't catch all Pokemon when there are none
@@ -2021,13 +2038,16 @@ static void DexNavPopulateEncounterList(void)
 
 		//Add swarming mon
 		u8 swarmIndex = GetCurrentSwarmIndex();
-		u16 swarmSpecies = gSwarmTable[swarmIndex].species;
-		if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
-		&& grassIndex < NELEMS(sDexNavGUIPtr->grassSpecies)
-		&& TryAddSpeciesToArray(swarmSpecies, ENCOUNTER_METHOD_SWARM, MAX_TOTAL_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
+		if (IsValidSwarmIndex(swarmIndex))
 		{
-			sDexNavGUIPtr->landEncounterMethod[grassIndex] = ENCOUNTER_METHOD_SWARM;
-			sDexNavGUIPtr->grassSpecies[grassIndex++] = swarmSpecies;
+			u16 swarmSpecies = gSwarmTable[swarmIndex].species;
+			if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
+			&& grassIndex < NELEMS(sDexNavGUIPtr->grassSpecies)
+			&& TryAddSpeciesToArray(swarmSpecies, ENCOUNTER_METHOD_SWARM, MAX_TOTAL_LAND_MONS, PickUnownLetter(swarmSpecies, 0)))
+			{
+				sDexNavGUIPtr->landEncounterMethod[grassIndex] = ENCOUNTER_METHOD_SWARM;
+				sDexNavGUIPtr->grassSpecies[grassIndex++] = swarmSpecies;
+			}
 		}
 	}
 

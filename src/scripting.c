@@ -1186,13 +1186,19 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 u16 sp058_BufferSwarmText(void)
 {
 	u8 index = GetCurrentSwarmIndex();
-	u8 mapName = gSwarmTable[index].mapName;
-	u16 species = gSwarmTable[index].species;
 
-	GetMapName(sScriptStringVars[0], mapName, 0);
-	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
+	if (IsValidSwarmIndex(index))
+	{
+		u8 mapName = gSwarmTable[index].mapName;
+		u16 species = gSwarmTable[index].species;
 
-	return species;
+		GetMapName(sScriptStringVars[0], mapName, 0);
+		StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
+		
+		return species;
+	}
+	
+	return SPECIES_NONE;
 }
 
 //@Details: Buffers the map name where the given roamer can be found to buffer1,

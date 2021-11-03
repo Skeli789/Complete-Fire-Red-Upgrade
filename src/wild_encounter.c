@@ -561,6 +561,9 @@ u8 GetCurrentSwarmIndex(void)
 	if (gSwarmTableLength == 0)
 		return 0xFF;
 
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER) //No swarms underwater
+		return 0xFF;
+
 	#ifdef SWARM_CHANGE_HOURLY
 	u8 index;
 
@@ -588,21 +591,28 @@ u8 GetCurrentSwarmIndex(void)
 	return index;
 }
 
+bool8 IsValidSwarmIndex(u8 index)
+{
+	return index < gSwarmTableLength;
+}
+
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 {
 	if (gSwarmTableLength == 0)
 		return FALSE;
 
-	u8 index =  GetCurrentSwarmIndex();
-	u8 mapName = gSwarmTable[index].mapName;
-	u16 species = gSwarmTable[index].species;
-
-	if (mapName == GetCurrentRegionMapSectionId()
-	&& gMapHeader.mapType != MAP_TYPE_UNDERWATER //No swarms underwater
-	&&  Random() % 100 < SWARM_CHANCE)
+	u8 index = GetCurrentSwarmIndex();
+	if (IsValidSwarmIndex(index))
 	{
-		CreateWildMon(species, level, wildMonIndex, purgeParty);
-		return TRUE;
+		u8 mapName = gSwarmTable[index].mapName;
+		u16 species = gSwarmTable[index].species;
+
+		if (mapName == GetCurrentRegionMapSectionId()
+		&& Random() % 100 < SWARM_CHANCE)
+		{
+			CreateWildMon(species, level, wildMonIndex, purgeParty);
+			return TRUE;
+		}
 	}
 
 	return FALSE;
