@@ -2233,7 +2233,7 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			{
 				gBattleMons[bank].type1 = type1;
 				gBattleMons[bank].type2 = type2;
-				gBattleMons[bank].type3 = TYPE_BLANK;
+				//Type 3 does not change!
 
 				gBattleScripting.bank = bank;
 				return BattleScript_MimicryReturnedToNormal;
@@ -2245,7 +2245,9 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			|| !IS_BLANK_TYPE(gBattleMons[bank].type3))
 			{
 				gBattleScripting.bank = bank;
-				SET_BATTLER_TYPE(bank, monType);
+				gBattleMons[bank].type1 = monType;
+				gBattleMons[bank].type2 = monType;
+				//Type 3 does not change!
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, monType);
 				return BattleScript_MimicryTransformed;
 			}
