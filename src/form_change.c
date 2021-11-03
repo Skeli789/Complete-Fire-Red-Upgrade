@@ -410,8 +410,9 @@ void TryCrownZacianZamazenta(struct Pokemon* party)
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		u16 newSpecies, newMove;
-		u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
-		u16 itemEffect = ItemId_GetHoldEffect(GetMonData(&party[i], MON_DATA_HELD_ITEM, NULL));
+		struct Pokemon* mon = &party[i];
+		u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+		u16 itemEffect = ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
 		bool8 transform = FALSE;
 
 		if (species == SPECIES_ZACIAN && itemEffect == ITEM_EFFECT_RUSTED_SWORD)
@@ -430,15 +431,16 @@ void TryCrownZacianZamazenta(struct Pokemon* party)
 		if (transform)
 		{
 			party[i].backupSpecies = species;
-			SetMonData(&party[i], MON_DATA_SPECIES, &newSpecies);
-			CalculateMonStats(&party[i]);
+			SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
+			CalculateMonStats(mon);
 
-			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, &party[i]);
+			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, mon);
 			if (moveIndex < MAX_MON_MOVES)
 			{
-				SetMonData(&party[i], MON_DATA_MOVE1 + moveIndex, &newMove); //Iron Head changes when changing forms
-				if (GetMonData(&party[i], MON_DATA_PP1 + moveIndex, NULL) > gBattleMoves[newMove].pp)
-					SetMonData(&party[i], MON_DATA_PP1 + moveIndex, &gBattleMoves[newMove].pp); //Adjust PP
+				u8 newPP = CalculatePPWithBonus(newMove, GetMonData(mon, MON_DATA_PP_BONUSES, NULL), moveIndex);
+				SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove); //Iron Head changes when changing forms
+				if (GetMonData(mon, MON_DATA_PP1 + moveIndex, NULL) > newPP)
+					SetMonData(mon, MON_DATA_PP1 + moveIndex, &newPP); //Adjust PP
 			}
 		}
 	}
