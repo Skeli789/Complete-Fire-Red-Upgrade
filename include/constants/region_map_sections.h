@@ -193,6 +193,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 #define MAPSEC_FERROTHORN_TURF               0xBF
 #define MAPSEC_ROUTE_17                      0x75
 #define MAPSEC_SEAPORT_CITY                  0x77
+#define MAPSEC_BATTLEGROUND                  0xBB
 #define MAPSEC_SS_MARINE                     0xBE
 #define MAPSEC_BATTLE_FRONTIER               0xA7
 #define MAPSEC_BATTLE_TOWER                  0xB3

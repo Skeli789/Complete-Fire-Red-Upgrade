@@ -22,6 +22,7 @@ extern const u8 sText_VegaLastSwitchIn[];
 extern const u8 sText_AliceLastSwitchIn[];
 extern const u8 sText_MelLastSwitchIn[];
 extern const u8 sText_GalavanLastSwitchIn[];
+extern const u8 sText_GalavanLastLowHP[];
 extern const u8 sText_BigMoLastSwitchIn[];
 extern const u8 sText_TessyLastSwitchIn[];
 extern const u8 sText_BenjaminLastSwitchIn[];

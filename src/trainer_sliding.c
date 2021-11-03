@@ -36,34 +36,51 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2D0, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x2D1, sText_MirskleFirstMonDown, NULL, NULL},
 	{0x36, sText_MirskleFirstMonDown, NULL, NULL}, //Post Game
+	{0x48, sText_MirskleFirstMonDown, NULL, NULL}, //Battleground
+	{0x49, sText_MirskleFirstMonDown, NULL, NULL}, //Battleground
 	{0x19F, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D2, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D3, NULL, sText_VegaLastSwitchIn, NULL},
 	{0x2D4, NULL, sText_VegaLastSwitchIn, NULL},
+	{0x4A, NULL, sText_VegaLastSwitchIn, NULL}, //Battleground
+	{0x4B, NULL, sText_VegaLastSwitchIn, NULL}, //Battleground
 	{0x14, NULL, sText_AliceLastSwitchIn, NULL},
 	{0x2D5, NULL, sText_AliceLastSwitchIn, NULL},
 	{0x2D6, NULL, sText_AliceLastSwitchIn, NULL},
 	{0x2D7, NULL, sText_AliceLastSwitchIn, NULL},
+	{0x4C, NULL, sText_AliceLastSwitchIn, NULL}, //Battleground
+	{0x4D, NULL, sText_AliceLastSwitchIn, NULL}, //Battleground
 	{0x1A0, NULL, sText_MelLastSwitchIn, NULL},
 	{0x2D8, NULL, sText_MelLastSwitchIn, NULL},
 	{0x2D9, NULL, sText_MelLastSwitchIn, NULL},
 	{0x2DA, NULL, sText_MelLastSwitchIn, NULL},
+	{0x4E, NULL, sText_MelLastSwitchIn, NULL}, //Battleground
+	{0x4F, NULL, sText_MelLastSwitchIn, NULL}, //Battleground
 	{0x1A2, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DB, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DC, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DD, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x50, NULL, NULL, sText_GalavanLastLowHP}, //Battleground
+	{0x51, NULL, NULL, sText_GalavanLastLowHP}, //Battleground
 	{0x1A3, NULL, sText_BigMoLastSwitchIn, NULL},
 	{0x2E1, NULL, sText_BigMoLastSwitchIn, NULL},
 	{0x2E2, NULL, sText_BigMoLastSwitchIn, NULL},
 	{0x2E3, NULL, sText_BigMoLastSwitchIn, NULL},
+	{0x52, NULL, sText_BigMoLastSwitchIn, NULL}, //Battleground
+	{0x53, NULL, sText_BigMoLastSwitchIn, NULL}, //Battleground
+	{0x54, NULL, sText_BigMoLastSwitchIn, NULL}, //Battleground
 	{0x1A1, NULL, sText_TessyLastSwitchIn, NULL},
 	{0x2DE, NULL, sText_TessyLastSwitchIn, NULL},
 	{0x2DF, NULL, sText_TessyLastSwitchIn, NULL},
 	{0x2E0, NULL, sText_TessyLastSwitchIn, NULL},
+	{0x55, NULL, sText_TessyLastSwitchIn, NULL}, //Battleground
+	{0x56, NULL, sText_TessyLastSwitchIn, NULL}, //Battleground
 	{0x1A4, NULL, sText_BenjaminLastSwitchIn, NULL},
 	{0x2E4, NULL, sText_BenjaminLastSwitchIn, NULL},
 	{0x2E5, NULL, sText_BenjaminLastSwitchIn, NULL},
 	{0x2E6, NULL, sText_BenjaminLastSwitchIn, NULL},
+	{0x57, NULL, sText_BenjaminLastSwitchIn, NULL}, //Battleground
+	{0x58, NULL, sText_BenjaminLastSwitchIn, NULL}, //Battleground
 	{0x19A, NULL, NULL, sText_MolemanLastLowHP},
 	{0x2C0, NULL, NULL, sText_MolemanLastLowHP},
 	{0x2C1, NULL, NULL, sText_MolemanLastLowHP},

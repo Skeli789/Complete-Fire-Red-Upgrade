@@ -22,7 +22,7 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 u8 GetLevelUpMovePairsBySpecies(u16 species, struct MovePair* moves);
 u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves);
 u16 BuildTMMoveset(struct Pokemon* mon, struct MovePair* moves);
-u16 BuildTutorMoveset(struct Pokemon* mon, u16* moves);
+u16 BuildTutorMoveset(struct Pokemon* mon, struct MovePair* moves);
 u16 RandomizeMove(u16 move);
 
 //Functions Hooked In

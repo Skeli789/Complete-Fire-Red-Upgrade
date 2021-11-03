@@ -353,7 +353,7 @@ u16 BuildTMMoveset(struct Pokemon* mon, struct MovePair* moves)
 	return numTotalMoves;
 }
 
-u16 BuildTutorMoveset(struct Pokemon* mon, u16* moves)
+u16 BuildTutorMoveset(struct Pokemon* mon, struct MovePair* moves)
 {
 	u16 numTotalMoves = 0;
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
@@ -370,12 +370,14 @@ u16 BuildTutorMoveset(struct Pokemon* mon, u16* moves)
 		|| (tutRet > TRUE && tutRet == dexNum))
 		{
 			#ifdef EXPANDED_MOVE_TUTORS
-			*moves = GetExpandedTutorMove(i);
+			moves->move = GetExpandedTutorMove(i);
+			moves->num = i;
 			#else
-			*moves = GetTutorMove(i);
+			moves->move = GetTutorMove(i);
+			moves->num = i;
 			#endif
 
-			if (*moves != MOVE_NONE)
+			if (moves->move != MOVE_NONE)
 			{
 				++numTotalMoves;
 				++moves; //Increase Ptr

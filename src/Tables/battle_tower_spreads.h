@@ -675,9 +675,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
-			MOVE_DEFOG,
+			MOVE_MIRRORMOVE,
+			MOVE_FEATHERDANCE,
 			MOVE_ROOST,
-			MOVE_TAILWIND,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
