@@ -3,6 +3,7 @@
 #include "../include/battle_anim.h"
 #include "../include/pokeball.h"
 #include "../include/random.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/ability_battle_effects.h"
@@ -2524,4 +2525,12 @@ void FailSubstituteInShadowShieldBattle(void)
 {
 	if (IsShadowShieldBattle() && !IsAffectedByShadowShieldBattle(gBankAttacker))
 		gBattlescriptCurrInstr = BattleScript_ShadowShieldBlocksSubstitute - 5;	
+}
+
+void TryFailAuraWheel(void)
+{
+	#ifdef NATIONAL_DEX_MORPEKO
+	if (SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) != NATIONAL_DEX_MORPEKO)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+	#endif
 }

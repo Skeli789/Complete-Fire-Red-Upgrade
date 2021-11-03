@@ -151,4 +151,5 @@ void ClearInPivotingMove(void);
 void ShowSOSMon(void);
 void ShowSOSMonHealthbox(void);
 void FailSubstituteInShadowShieldBattle(void);
+void TryFailAuraWheel(void);
 

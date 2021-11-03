@@ -1838,7 +1838,13 @@ BS_095_Sketch:
 .global BS_096_RaiseAttackerSpd1Chance
 BS_096_RaiseAttackerSpd1Chance:
 	setmoveeffect MOVE_EFFECT_SPD_PLUS_1 | MOVE_EFFECT_AFFECTS_USER
+	jumpifmove MOVE_AURAWHEEL AuraWheelBS
 	goto BS_STANDARD_HIT
+
+AuraWheelBS:
+	attackcanceler
+	callasm TryFailAuraWheel
+	goto BS_STANDARD_HIT + 1
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -414,12 +414,6 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					}
 					#endif
 					break;
-				case MOVE_AURAWHEEL:
-					#ifdef SPECIES_MORPEKO
-					if (species != SPECIES_MORPEKO && species != SPECIES_MORPEKO_HANGRY)
-						effect = 1;
-					#endif
-					break;
 			}
 
 			if (effect)
