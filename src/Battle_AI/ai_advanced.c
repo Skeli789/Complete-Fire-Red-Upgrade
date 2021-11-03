@@ -2959,6 +2959,15 @@ void IncreaseHealPartnerViability(s16* originalViability, u8 class, u8 partner)
 	&& gBattleMons[partner].hp > ((gBattleMons[partner].maxHP * 2) / 3)) //Only try heal if 2/3 or less HP
 		return;
 
+	if (gChosenActionByBank[partner] == ACTION_USE_ITEM) //Item is being used on partner
+	{
+		u16 item = gBattleBufferB[partner][1] | (gBattleBufferB[partner][2] << 8);
+		u8 itemType = GetAI_ItemType(item, gItemEffectTable[item - ITEM_POTION]);
+
+		if (itemType == AI_ITEM_FULL_RESTORE || itemType == AI_ITEM_HEAL_HP)
+			return; //Don't heal with move when item is already being used to heal
+	}
+
 	switch (class) {
 		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:
 			INCREASE_VIABILITY(7); //Heal through abilities that absorb damage

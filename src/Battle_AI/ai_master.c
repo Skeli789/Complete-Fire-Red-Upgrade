@@ -68,7 +68,6 @@ static void UpdateMegaPotential(void);
 static void UpdateStrongestMoves(void);
 static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
-static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
 static bool8 ShouldAIUseItem(void);
 #ifdef VAR_GAME_DIFFICULTY
 static void TryRechooseAIMoveIfPlayerSwitchCheesed(u8 aiBank, u8 playerBank);
@@ -239,8 +238,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 {
 	u16 savedCurrentMove = gCurrentMove;
 	u8 ret;
-	struct AIScript aiScriptData = {0}; //Do this now to save time during the processing
-	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, gBankAttacker);
+	struct AIScript aiScriptData = {0};
 
 	struct BattlePokemon backupBattleMons[gBattlersCount];
 	u8* backupAbilities = gNewBS->ai.backupAbilities;
@@ -248,6 +246,8 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	//UpdateMegaPotential(); //Mega potential already updated before switching
 	TryTempMegaEvolveAllBanks(backupBattleMons, backupSpecies, backupAbilities); //Mega Evolve everyone on the field during the processing
 
+	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, gBankAttacker); //Do this now to save time during the processing - done after Mega Evo intentionally
+ 
 	if (IS_SINGLE_BATTLE)
 	{
 		ret = ChooseMoveOrAction_Singles(&aiScriptData);
@@ -1312,7 +1312,7 @@ static u32 GetMaxByteIndexInList(const u8 array[], const u32 size)
 	return maxIndex;
 }
 
-static u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect) //Fixed from vanilla
+u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect) //Fixed from vanilla
 {
     if (itemId == ITEM_FULL_RESTORE)
         return AI_ITEM_FULL_RESTORE;

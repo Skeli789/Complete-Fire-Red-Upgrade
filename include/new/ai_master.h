@@ -18,6 +18,7 @@ void PopulateAIScriptStructWithBaseAttackerData(struct AIScript* data, u8 bankAt
 void PopulateAIScriptStructWithBaseDefenderData(struct AIScript* data, u8 bankDef);
 void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 void CalculateAIPredictions(void);
+u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
 void ClearCachedAIData(void);
 void RechooseAIMoveAfterSwitchIfNecessary(void);
 void TryChangeMoveTargetToCounterPlayerProtectCheese(void);
