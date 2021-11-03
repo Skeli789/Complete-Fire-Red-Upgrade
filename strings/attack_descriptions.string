@@ -674,7 +674,7 @@ The user attacks with\na wave that crawls\nalong the ground.\nThose hit can't fl
 The user attacks\neverything around it.\nThe user's HP is\nrestored by half the\ndamage.
 
 #org @DESC_SEARINGSHOT
-The user torches\neverything around it\nin an inferno of\nscarlet flames. It\nmay burn the foes.
+The user torches\neverything around it\nin an inferno of\nscarlet flames.\nIt may cause burns.
 
 #org @DESC_SEEDFLARE
 The user emits a\nshock wave from its\nbody. This may also\nharshly lower the\ntarget's Sp. Def.
