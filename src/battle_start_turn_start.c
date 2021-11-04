@@ -141,6 +141,7 @@ void HandleNewBattleRamClearBeforeBattle(void)
 		SavePlayerParty(); //Backup party to be restored after the battle
 	#endif
 
+	gNewBS->isTrainerBattle = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) != 0; //Used as part of the anti-catch-Trainer-Pokemon cheat
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
 

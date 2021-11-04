@@ -84,7 +84,7 @@ void atkEF_handleballthrow(void)
 	)
 		gLastUsedBall = gLastUsedItem;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (gNewBS->isTrainerBattle) //Doesn't use BATTLE_TYPE_TRAINER because that's removed by the Catch Trainers Pokemon cheat
 	{
 		#ifdef FLAG_CATCH_TRAINERS_POKEMON
 			if (FlagGet(FLAG_CATCH_TRAINERS_POKEMON))

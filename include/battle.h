@@ -901,6 +901,7 @@ struct NewBattleStruct
 	bool8 inPivotingMove : 1;
 	bool8 triedToTakeWildItem : 1;
 	bool8 printedStrongWindsWeakenedAttack : 1;
+	bool8 isTrainerBattle : 1;
 
 	//Other
 	u16 LastUsedMove;
