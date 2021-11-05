@@ -4225,13 +4225,14 @@ ANIM_STORMTHROW:
 	launchtask AnimTask_TranslateMonEllipticalRespectSide 0x2 0x5 bank_attacker 0xc 0x4 0x1 0x2
 	waitanimation
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x14 0x0 0x0 0x4
-	pause 0x2
-	launchtemplate Template_Hit 0x3 0x4 0x0 0x0 0x1 0x1
+	pause 0x1
 	launchtemplate STORM_THROW_RING 0x3 0x4 0x0 0x0 0x100 0x0
+	pause 0x1
+	launchtemplate STORM_THROW_RING 0x3 0x4 0x0 0x0 0x100 0x0
+	launchtemplate Template_Hit 0x3 0x4 0x0 0x0 0x1 0x0
 	playsound2 0x74 SOUND_PAN_TARGET
 	pause 0x1
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xffe8 0x0 0x0 0x4
-	launchtemplate STORM_THROW_RING 0x3 0x4 0x0 0x0 0x100 0x0
 	waitanimation
 	pause 0x3
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x7
@@ -10119,7 +10120,7 @@ ANIM_COREENFORCER:
 	pokespritefromBG bank_attacker
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0xD 0xD 0x079F @;Yellow
 	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_ORBS 0x0 0xA 0xA 0x7501 @;Royal Blue
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SNORE_Z 0x0 0xA 0xA 0x0688 @;Green
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SNORE_Z 0x0 0xB 0xB 0x57F3 @;Light Green
 	pause 0x10
 	pokespritetoBG bank_target
 	launchtask 0x80A2501 0x5 0x0
@@ -10216,7 +10217,7 @@ CE_greenring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x6
 CE_circlecharge: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 OAM_NORMAL_32x32 0x83E6030 0x0 0x83E7BF8 0x80BA781
 CE_bluecharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D
 CE_greencharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80ADD4D
-CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_CentredSpiderWeb
+CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_CentredSpiderWeb
 CE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 0x83E7BF8 SpriteCB_CoreEnforcerHits
 CE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 gDummySpriteAffineAnimTable SpriteCB_CoreEnforcerBeam
 
@@ -13339,7 +13340,7 @@ ANIM_STRENGTHSAP:
 	loadparticle ANIM_TAG_RED_HEART @heart color
 	loadparticle ANIM_TAG_PINK_PETAL @pink color
 	loadparticle ANIM_TAG_ORBS @absorb
-	loadparticle ANIM_TAG_SPARKLE_2 @stars
+	loadparticle ANIM_TAG_BLUE_STAR @Healing circle
 	pokespritetoBG side_target
 	playsound2 0xAA SOUND_PAN_TARGET
 	launchtemplate SAP_REDSMOKES TEMPLATE_TARGET | 2, 0x4, 0x8 0x3 0x1 0x0
@@ -13394,9 +13395,9 @@ ANIM_STRENGTHSAP:
 	playsound2 0x87 SOUND_PAN_TARGET
 	launchtemplate SAP_PINKABSORB 0x3 0x4 0x5 0xffee 0xffec 0x23
 	waitanimation
+	call HEALING_ANIM
+	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x3 0x0 0x07FD
-	soundcomplex 0xBC SOUND_PAN_ATTACKER 0x10 0x3
-	call HEALING_STARS
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
