@@ -2386,9 +2386,12 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 		#ifdef UNBOUND
 		&& (FlagGet(FLAG_ABILITY_RANDOMIZER)
 		 || SpeciesToNationalPokedexNum(species) != NATIONAL_DEX_ZYGARDE) //Must be given with Power Construct
+		&& (FlagGet(FLAG_SYS_GAME_CLEAR) //Can be given once the game is cleared
+		 || VarGet(VAR_GAME_DIFFICULTY) < OPTIONS_EXPERT_DIFFICULTY //Or if the player is not on a crazy difficulty
+		 || gBaseStats[species].hiddenAbility != ABILITY_IMPOSTER) //Don't allow Imposter until the post-game
 		#endif
 		)
-			changeTo = hiddenAbility;
+			changeTo = hiddenAbility; //Set the Hidden Ability
 	}
 	else //Regular ability capsule
 	{
