@@ -78,7 +78,7 @@ bool8 WillFaintFromContactDamage(u8 bankAtk, u8 bankDef, u16 move);
 bool8 HighChanceOfBeingImmobilized(u8 bank);
 u16 CalcSecondaryEffectChance(u8 bank, u16 move, u8 ability);
 u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef);
-bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential);
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential, bool8 runDamageCalcs);
 bool8 ShouldPredictBankToMegaEvolve(u8 bank);
 void ClearMovePredictionsOnBank(u8 bank);
 

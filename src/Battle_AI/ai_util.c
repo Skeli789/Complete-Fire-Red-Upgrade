@@ -2045,7 +2045,7 @@ u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 
 	if (ability != ABILITY_NONE //Ability has effect
 	&& gNewBS->ai.backupAbilities[bankAtk] != ABILITY_NONE //Is temp Mega Evolved
-	&& ShouldAIDelayMegaEvolution(bankAtk, bankDef, move, TRUE))
+	&& ShouldAIDelayMegaEvolution(bankAtk, bankDef, move, TRUE, FALSE)) //Don't run damage calcs to prevent endless loop due to AI_SpecialTypeCalc calling GetAIAbility in the damage calc
 		ability = gNewBS->ai.backupAbilities[bankAtk]; //Base form Ability
 
 	return ability;
@@ -2617,15 +2617,23 @@ u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	return acc;
 }
 
-bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential)
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimizeAndLookAtMegaPotential, bool8 runDamageCalcs)
 {
 	u8 atkAbility, megaAbility;
 	
 	if (optimizeAndLookAtMegaPotential && gNewBS->ai.megaPotential[bankAtk] == NULL)
 		return TRUE; //This bank can't Mega Evolve
 
-	atkAbility = ABILITY(bankAtk);
-	megaAbility = GetBankMegaFormAbility(bankAtk, bankDef);
+	if (gNewBS->ai.backupAbilities[bankAtk] != ABILITY_NONE) //Is already temp Mega Evolved
+	{
+		atkAbility = gNewBS->ai.backupAbilities[bankAtk]; //Original Ability
+		megaAbility = ABILITY(bankAtk);
+	}
+	else
+	{
+		atkAbility = ABILITY(bankAtk);
+		megaAbility = GetBankMegaFormAbility(bankAtk, bankDef);
+	}
 
 	if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 		return TRUE; //Can't Mega Evolve this turn
@@ -2634,7 +2642,8 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 	||  megaAbility == ABILITY_NONE) //Can't Mega evolve or ability suppressed
 		return FALSE;
 
-	switch (atkAbility) {
+	switch (atkAbility)
+	{
 		case ABILITY_SPEEDBOOST:
 		case ABILITY_MOODY:
 			switch (move) {
@@ -2642,19 +2651,24 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 				case MOVE_DETECT:
 				case MOVE_SPIKYSHIELD:
 				case MOVE_KINGSSHIELD:
+				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
-/* With these uncommented, the game winds up in an endless loop due to AI_SpecialTypeCalc calling GetAIAbility in the damage calc
-		case ABILITY_MOXIE:
-		case ABILITY_BEASTBOOST:
-		case ABILITY_SOULHEART: ;
-			if (MoveWouldHitFirst(move, bankAtk, bankDef)
-			&&  MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
-				return TRUE; //Get that Moxie boost
-			break;
-*/
+	}
+
+	if (runDamageCalcs)
+	{
+		if (IsMoxieAbility(atkAbility)
+		&& MoveWouldHitFirst(move, bankAtk, bankDef) //AI would attack first
+		&& CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, 1)) //AI would KO in it's BASE FORM before foe has chance to do anything
+			return TRUE; //Delay the Mega Evolution to activate the Moxie
+
+		if (IsAffectedBySturdy(atkAbility, bankAtk)
+		&& !MoveWouldHitFirst(move, bankAtk, bankDef) //AI wouldn't attack first
+		&& MoveKnocksOutXHits(IsValidMovePrediction(bankDef, bankAtk), bankDef, bankAtk, 1)) //And foe would KO AI in it's MEGA FORM before AI has chance to do anything
+			return TRUE; //Delay the Mega Evolution to survive a hit with Sturdy
 	}
 
 	return FALSE;

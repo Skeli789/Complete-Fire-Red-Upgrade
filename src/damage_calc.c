@@ -376,37 +376,41 @@ static u8 AdjustNumHitsForContactDamage(u8 numHits, s32 currHP, u32 contactDamag
 
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData)
 {
-	u32 damage;
+	u32 damage = 0;
 	u8 resultFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef);
 
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT && resultFlags & MOVE_RESULT_NO_EFFECT)
 		return 0;
 
+	struct DamageCalc data = {0};
+
+	if (damageData == NULL)
+		damageData = &data;
+
+	damageData->bankAtk = bankAtk;
+	damageData->bankDef = bankDef;
+	damageData->move = move;
+	damageData->specialFlags |= FLAG_AI_CALC;
+
+	bool8 parentalBond = (damageData->atkAbility == ABILITY_PARENTALBOND);
+
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_SUPER_FANG:
 			damage = GetBaseCurrentHP(bankDef) / 2; //50 % of base HP
-			if (damageData->atkAbility == ABILITY_PARENTALBOND)
+			if (parentalBond)
 				damage += GetBaseCurrentHP(bankDef) / 4; //75 % of base HP
 			return damage;
 		case EFFECT_DRAGON_RAGE:
-			damage = 40;
-			if (damageData->atkAbility == ABILITY_PARENTALBOND)
-				damage *= 2;
+			damage = 40 * (parentalBond ? 2 : 1);
 			return damage;
 		case EFFECT_SONICBOOM:
-			damage = 20;
-			if (damageData->atkAbility == ABILITY_PARENTALBOND)
-				damage *= 2;
+			damage = 20 * (parentalBond ? 2 : 1);
 			return damage;
 		case EFFECT_LEVEL_DAMAGE:
-			damage = gBattleMons[bankAtk].level;
-			if (damageData->atkAbility == ABILITY_PARENTALBOND)
-				damage *= 2;
+			damage = gBattleMons[bankAtk].level * (parentalBond ? 2 : 1);
 			return damage;
 		case EFFECT_PSYWAVE:
-			damage = GetPsywaveDamage(gBattleMons[bankAtk].level, 50); //On average, 50 will be selected as the random number
-			if (damageData->atkAbility == ABILITY_PARENTALBOND)
-				damage *= 2;
+			damage = GetPsywaveDamage(gBattleMons[bankAtk].level, 50) * (parentalBond ? 2 : 1); //On average, 50 will be selected as the random number
 			return damage;
 		case EFFECT_MEMENTO: //Final Gambit
 			if (move == MOVE_FINALGAMBIT)
@@ -428,8 +432,6 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	if (SPLIT(move) == SPLIT_STATUS) //At this point we don't care about Status moves anymore
 		return 0;
 
-	damage = 0;
-	struct DamageCalc data = {0};
 	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, NULL, NULL); //Return 0 if none, 1 if always, 2 if 50%
@@ -438,13 +440,6 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
 
-	if (damageData == NULL)
-		damageData = &data;
-
-	damageData->bankAtk = bankAtk;
-	damageData->bankDef = bankDef;
-	damageData->move = move;
-	damageData->specialFlags |= FLAG_AI_CALC;
 	damage = CalculateBaseDamage(damageData);
 
 	gBattleMoveDamage = MathMin(0x7FFFFFFF, damage);
@@ -2203,7 +2198,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	//Create new variables so original values stay constant
 	defense = data->defense;
 	spDefense = data->spDefense;
-	
+
 //Load attacker Data
 	if (useMonAtk)
 	{

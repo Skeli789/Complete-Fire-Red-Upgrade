@@ -114,7 +114,7 @@ void OpponentHandleChooseMove(void)
 				}
 				else if (moveInfo->canMegaEvolve)
 				{
-					if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove, FALSE))
+					if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove, FALSE, TRUE))
 					{
 						if (moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
 							gNewBS->megaData.chosen[gActiveBattler] = TRUE;
