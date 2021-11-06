@@ -1999,7 +1999,10 @@ bool8 FasterThanEntireTeam(u16 atkSpeed, u8 opposingBank)
 bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy)
 {
 	u8 oldSpeedStage = STAT_STAGE(bankDef, STAT_STAGE_SPEED); //Backup current stat stage before modification
-	
+
+	if (ABILITY(bankDef) == ABILITY_SIMPLE)
+		reduceBy *= 2;
+
 	//Emulate speed drop
 	if (reduceBy > STAT_STAGE(bankDef, STAT_STAGE_SPEED))
 		STAT_STAGE(bankDef, STAT_STAGE_SPEED) = 0;
@@ -2008,6 +2011,22 @@ bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy)
 
 	bool8 faster = SpeedCalc(bankAtk) <= SpeedCalc(bankDef); //Check speeds now
 	STAT_STAGE(bankDef, STAT_STAGE_SPEED) = oldSpeedStage; //Restore speed from backup
+	return faster;
+}
+
+bool8 WillBeFasterAfterMoveSpeedBuff(u8 bankAtk, u8 bankDef, u16 move)
+{
+	u8 oldSpeedStage = STAT_STAGE(bankAtk, STAT_STAGE_SPEED); //Backup current stat stage before modification
+	u8 increaseBy = (gBattleMoves[move].effect == EFFECT_SPEED_UP_2 || move == MOVE_SHELLSMASH || move == MOVE_GEOMANCY) ? 2 : 1;
+
+	if (ABILITY(bankAtk) == ABILITY_SIMPLE)
+		increaseBy *= 2;
+
+	//Emulate speed buff
+	STAT_STAGE(bankAtk, STAT_STAGE_SPEED) = min(increaseBy + STAT_STAGE(bankAtk, STAT_STAGE_SPEED), STAT_STAGE_MAX);
+
+	bool8 faster = SpeedCalc(bankAtk) >= SpeedCalc(bankDef); //Check speeds now
+	STAT_STAGE(bankAtk, STAT_STAGE_SPEED) = oldSpeedStage; //Restore speed from backup
 	return faster;
 }
 

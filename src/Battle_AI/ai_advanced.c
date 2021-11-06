@@ -1804,8 +1804,9 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 
 			u16 foePrediction = IsValidMovePrediction(bankDef, bankAtk);
 			if (stat == STAT_STAGE_SPEED && STAT_STAGE(bankAtk, stat) < statLimit //Trying to raise Speed
-			&& !MoveKnocksOutXHits(foePrediction, bankDef, bankAtk, 1)) //Opponent won't KO with its next move
-				return TRUE; //Opponent goes first now,	but maybe boosting speed will make you faster
+			&& !MoveKnocksOutXHits(foePrediction, bankDef, bankAtk, 1) //Opponent won't KO with its next move
+			&& WillBeFasterAfterMoveSpeedBuff(bankAtk, bankDef, move))
+				return TRUE; //Opponent goes first now,	but boosting speed will make you faster
 
 			if (Can2HKO(bankDef, bankAtk)) //Foe can 2HKO AI
 			{

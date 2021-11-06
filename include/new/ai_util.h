@@ -55,6 +55,7 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank);
 u16 GetTeamMaxSpeed(u8 bank);
 bool8 FasterThanEntireTeam(u16 atkSpeed, u8 opposingBank);
 bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy);
+bool8 WillBeFasterAfterMoveSpeedBuff(u8 bankAtk, u8 bankDef, u16 move);
 
 u16 GetBattleMonMove(u8 bank, u8 index);
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
