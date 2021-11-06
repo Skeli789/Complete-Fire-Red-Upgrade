@@ -1618,7 +1618,7 @@ bool8 ShouldCreateRaidShields(u8 bank)
 	{
 		u16 cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
 
-		if (i == healthRatio)
+		if (i == healthRatio) //Last loop iteration
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
 
 		if (gBattleMons[bank].hp <= cutOff + (gBattleMons[bank].maxHP / 16) //Give some leeway for throwing up a shield
@@ -1645,8 +1645,8 @@ u16 GetNextRaidShieldHP(u8 bank)
 		prevCutOff = cutOff;
 		cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
 
-		if (i == healthRatio)
-			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
+		if (i == healthRatio) //Last loop iteration
+			return prevCutOff; //Can never have cut off at full HP
 
 		if (gBattleMons[bank].hp == cutOff && gNewBS->dynamaxData.turnStartHP != cutOff) //Fix multi-hit moves
 			return cutOff;
