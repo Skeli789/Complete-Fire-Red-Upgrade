@@ -23,8 +23,12 @@ ai_partner.c
 */
 
 #define PARTNER_MOVE_EFFECT_IS_SKILL_SWAP (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-										&& gBattleStruct->moveTarget[bankAtkPartner] == bankAtk \
-										&& gBattleMoves[partnerMove].effect == EFFECT_SKILL_SWAP)
+                                        && gBattleStruct->moveTarget[bankAtkPartner] == bankAtk \
+                                        && gBattleMoves[partnerMove].effect == EFFECT_SKILL_SWAP)
+
+#define GOOD_IDEA_TO_RAISE_PARTNER_SPEED(amount) (AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED) \
+                                              && (GoodIdeaToRaiseSpeedAgainst(bankAtkPartner, data->foe1, amount, SpeedCalc(bankAtkPartner), SpeedCalc(data->foe1)) \
+                                               || GoodIdeaToRaiseSpeedAgainst(bankAtkPartner, data->foe2, amount, SpeedCalc(bankAtkPartner), SpeedCalc(data->foe2)))) //Usually it'd be &&, but since the partner isn't raising the speed themself, they don't have to worry about wasting a turn getting it lowered again
 
 extern move_effect_t gStatLoweringMoveEffects[];
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
@@ -68,8 +72,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 			case ABILITY_MOTORDRIVE:
 				if (moveType == TYPE_ELECTRIC
 				&&  !IsClassDoublesTotalTeamSupport(partnerClass) //Don't help out a partner that's meant to be doing the helping out
-				&&  SpecialMoveInMoveset(bankAtkPartner)
-				&&  AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
+				&&  GOOD_IDEA_TO_RAISE_PARTNER_SPEED(1))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
@@ -149,7 +152,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				&& (moveEffect != EFFECT_KNOCK_OFF || atkPartnerAbility == ABILITY_STICKYHOLD || !CanKnockOffItem(bankAtkPartner))
 				&& (moveEffect != EFFECT_EAT_BERRY || atkPartnerAbility == ABILITY_STICKYHOLD || !IsBerry(ITEM(bankAtkPartner)))
 				&& !IsTrickRoomActive()
-				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&& GOOD_IDEA_TO_RAISE_PARTNER_SPEED(1)
 				&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
 					IncreaseHelpingHandViability(&viability, class);
@@ -160,7 +163,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				&&  !IsClassDoublesTotalTeamSupport(partnerClass)
 				&& (moveType == TYPE_WATER || moveType == TYPE_FIRE)
 				&& !IsTrickRoomActive()
-				&& AI_STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&& GOOD_IDEA_TO_RAISE_PARTNER_SPEED(6)
 				&& !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				{
 					IncreaseHelpingHandViability(&viability, class);

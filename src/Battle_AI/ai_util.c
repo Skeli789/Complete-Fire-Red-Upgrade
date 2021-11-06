@@ -3103,6 +3103,9 @@ bool8 GoodIdeaToRaiseSpDefenseAgainst(u8 bankAtk, u8 bankDef, u8 amount)
 
 bool8 GoodIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, u16 atkSpeed, u16 defSpeed)
 {
+	if (!BATTLER_ALIVE(bankDef))
+		return FALSE;
+
 	if (!BadIdeaToRaiseSpeedAgainst(bankAtk, bankDef, amount, TRUE))
 	{
 		if (AI_THINKING_STRUCT->aiFlags <= AI_SCRIPT_SEMI_SMART)
