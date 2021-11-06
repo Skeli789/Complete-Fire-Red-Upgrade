@@ -35,6 +35,7 @@ extern const u8 gText_AbilityName_FieryNeigh[];
 extern const u8 gText_AbilityName_ShockingNeigh[];
 extern const u8 gText_AbilityName_Pride[];
 extern const u8 gText_AbilityName_Multieye[];
+extern const u8 gText_AbilityName_Subterfuge[];
 extern const u8 gText_AbilityName_TanglingWool[];
 extern const u8 gText_AbilityName_BrainBond[];
 extern const u8 gText_AbilityName_CottonCloud[];
@@ -163,6 +164,10 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_RABOOT:
 				case NATIONAL_DEX_CINDERACE:
 					return gText_AbilityName_Libero;
+				#endif
+				#ifdef NATIONAL_DEX_MOTHIM
+				case NATIONAL_DEX_MOTHIM:
+					return gText_AbilityName_Subterfuge;
 				#endif
 			}
 			break;

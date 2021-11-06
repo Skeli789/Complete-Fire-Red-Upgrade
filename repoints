@@ -94,6 +94,7 @@ gText_AbilityPreventsSpecificStatLoss 083FE3E0
 gText_ItemPumpedMon 083FE424
 gText_AbilityBlocksHealBell 083FE484
 gText_AbilityCuredStatusProblem 083FE49C
+gText_BattleMenu 080EA760
 
 sText_GotMoneyForWinning 083FDF84
 sText_OutofUsablePokemon 083FDF88

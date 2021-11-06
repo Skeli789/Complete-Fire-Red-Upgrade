@@ -1836,7 +1836,7 @@ bool8 IsSleepClauseInEffect(unusedArg u8 bankToPutToSleep)
 		}
 	}
 	#ifdef VAR_GAME_DIFFICULTY
-	else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY && !FlagGet(FLAG_SYS_GAME_CLEAR)) //Insane before game cleared
+	else if (VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY) //Insane
 	{
 		if (SIDE(bankToPutToSleep) == B_SIDE_OPPONENT) //Bank to be put to sleep
 			return TRUE; //Only player is affected by the sleep clause

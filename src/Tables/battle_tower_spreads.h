@@ -1598,7 +1598,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_EARTHPOWER,
-			MOVE_SLUDGEWAVE,
+			MOVE_SHELLSIDEARM,
 			MOVE_THUNDERBOLT,
 			MOVE_SHADOWBALL,
 		},
@@ -1623,7 +1623,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
-			MOVE_POISONJAB,
+			MOVE_SHELLSIDEARM,
 			MOVE_EARTHQUAKE,
 			MOVE_SUPERPOWER,
 			MOVE_ROCKSLIDE,
@@ -8043,9 +8043,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_BLIZZARD,
+			MOVE_GLACIATE,
 			MOVE_TOXIC,
 			MOVE_AURORAVEIL,
-			MOVE_TAILWIND,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -22296,7 +22296,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_COMPOUNDEYES
+		.ability = FRONTIER_ABILITY_1, //ABILITY_ADAPTABILITY
 		.item = ITEM_HEAVY_DUTY_BOOTS,
 		.moves =
 		{
@@ -22322,7 +22322,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ADAPTABILITY
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUBTERFUGE
 		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
@@ -22348,7 +22348,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_COMPOUNDEYES
+		.ability = FRONTIER_ABILITY_2, //ABILITY_COMPOUNDEYES
 		.item = ITEM_BUGINIUM_Z,
 		.moves =
 		{
@@ -22374,7 +22374,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ADAPTABILITY
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SUBTERFUGE
 		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{

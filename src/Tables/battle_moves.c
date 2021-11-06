@@ -8917,9 +8917,17 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_GLACIATE] =
 	{
 		.effect = EFFECT_SPEED_DOWN_HIT,
+		#ifdef UNBOUND
+		.power = 75,
+		#else
 		.power = 65,
+		#endif
 		.type = TYPE_ICE,
+		#ifdef UNBOUND
+		.accuracy = 100,
+		#else
 		.accuracy = 95,
+		#endif
 		.pp = 10,
 		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_BOTH,
