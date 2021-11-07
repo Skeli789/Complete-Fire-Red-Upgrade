@@ -75,6 +75,9 @@ Swarm
 #org @gText_DexNav_NoInfo
 --------
 
+#org @gText_DexNav_Unavailable
+Unavailable
+
 #org @gText_DexNav_ListMenuRegister
 Register
 

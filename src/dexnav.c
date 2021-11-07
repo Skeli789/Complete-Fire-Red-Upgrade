@@ -2606,28 +2606,37 @@ static void PrintGUIHeldItems(u16 species)
 
 	if (species != SPECIES_NONE)
 	{
-		u16 dexNum = SpeciesToNationalPokedexNum(species);
-
-		if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) //Only display items if Pokemon has been caught
+		#ifdef FLAG_UNLOCKED_DEXNAV_HELD_ITEMS
+		if (!FlagGet(FLAG_UNLOCKED_DEXNAV_HELD_ITEMS))
 		{
-			if (species != SPECIES_NONE)
-			{
-				u16 item1 = gBaseStats[species].item1;
-				u16 item2 = gBaseStats[species].item2;
-
-				if (item1 != ITEM_NONE)
-				{
-					item1Text = ItemId_GetName(item1);
-
-					if (item2 != ITEM_NONE && item1 != item2)
-						item2Text = ItemId_GetName(item2);
-				}
-				else if (item2 != ITEM_NONE)
-					item2Text = ItemId_GetName(item2);
-			}
+			item1Text = gText_DexNav_Unavailable;
 		}
 		else
-			item1Text = gText_DexNav_CaptureToSee;
+		#endif
+		{
+			u16 dexNum = SpeciesToNationalPokedexNum(species);
+
+			if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) //Only display items if Pokemon has been caught
+			{
+				if (species != SPECIES_NONE)
+				{
+					u16 item1 = gBaseStats[species].item1;
+					u16 item2 = gBaseStats[species].item2;
+
+					if (item1 != ITEM_NONE)
+					{
+						item1Text = ItemId_GetName(item1);
+
+						if (item2 != ITEM_NONE && item1 != item2)
+							item2Text = ItemId_GetName(item2);
+					}
+					else if (item2 != ITEM_NONE)
+						item2Text = ItemId_GetName(item2);
+				}
+			}
+			else
+				item1Text = gText_DexNav_CaptureToSee;
+		}
 	}
 
 	WindowPrint(WIN_HELD_ITEMS, 0, 4, 2, GetSpeciesDetailsTextColour(), 0, item1Text);

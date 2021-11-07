@@ -62,6 +62,7 @@ extern const u8 gText_TooDarkForDexNav[];
 extern const u8 gText_DexNav_Chain[];
 extern const u8 gText_DexNav_NoInfo[];
 extern const u8 gText_DexNav_CaptureToSee[];
+extern const u8 gText_DexNav_Unavailable[];
 extern const u8 gText_DexNav_Walk[];
 extern const u8 gText_DexNav_Surf[];
 extern const u8 gText_DexNav_LavaSurf[];
