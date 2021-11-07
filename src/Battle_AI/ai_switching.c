@@ -26,7 +26,7 @@ ai_switching.c
 //This file's functions:
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(struct Pokemon* party);
 static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, u8 lastId);
-static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot);
+static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot, u8 foe);
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party);
 static bool8 PassOnWish(struct Pokemon* party, u8 firstId, u8 lastId);
 static bool8 SemiInvulnerableTroll(void);
@@ -237,6 +237,19 @@ static bool8 PredictedMoveWontKOMon(u8 activeBattler, struct Pokemon* mon, u8 fo
 		return FALSE; //Don't switch and sack your other mon
 
 	return TRUE;
+}
+
+static bool8 PredictedMoveKOsSelfDueToContact(u8 activeBattler, struct Pokemon* mon, u8 foe)
+{	
+	u16 defMove = IsValidMovePrediction(foe, activeBattler);
+
+	if (CheckContact(defMove, foe, activeBattler))
+	{
+		u32 contactDamage = GetContactDamageMonDef(foe, mon);
+		return contactDamage >= gBattleMons[foe].hp;
+	}
+
+	return FALSE;
 }
 
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(struct Pokemon* party)
@@ -551,11 +564,14 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 	return FALSE;
 }
 
-static bool8 SwitchToBestResistMonHelper(bool8 willPivot, u8 monId, u8 switchFlags)
+static bool8 SwitchToBestResistMonHelper(bool8 willPivot, const struct Pokemon* party, u8 monId, u8 switchFlags, u8 foe)
 {
 	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
 	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
-	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/) //And can KO foe
+	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/ //And can KO foe
+	|| (foe != 0xFF //Actually check what move the foe is using
+	 && PredictedMoveKOsSelfDueToContact(gActiveBattler, (struct Pokemon*) &party[monId], foe) //The switch in will KO the foe when it takes contact damage from the switched-in mon
+	 && PredictedMoveWontKOMon(gActiveBattler, (struct Pokemon*) &party[monId], foe))) //And the switchd-in mon won't faint due to the contact hit
 	{
 		ConfirmAISwitch(monId, willPivot);
 		return TRUE;
@@ -564,18 +580,18 @@ static bool8 SwitchToBestResistMonHelper(bool8 willPivot, u8 monId, u8 switchFla
 	return FALSE;
 }
 
-static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot)
+static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot, u8 foe)
 {
 	//Check best switching option
 	u8 bestMonId = GetMostSuitableMonToSwitchIntoByParty(party);
 	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
-	if (SwitchToBestResistMonHelper(willPivot, bestMonId, switchFlags))
+	if (SwitchToBestResistMonHelper(willPivot, party, bestMonId, switchFlags, foe))
 		return TRUE;
 
 	//Check second best switching option
 	u8 secondBestMonId = GetSecondMostSuitableMonToSwitchIntoByParty(party);
 	switchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
-	if (SwitchToBestResistMonHelper(willPivot, secondBestMonId, switchFlags))
+	if (SwitchToBestResistMonHelper(willPivot, party, secondBestMonId, switchFlags, foe))
 		return TRUE;
 
 	//Check the rest of the switching options
@@ -585,7 +601,7 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot)
 		if (i == bestMonId || i == secondBestMonId) //Skip the mons already checked
 			continue;
 
-		if (SwitchToBestResistMonHelper(willPivot, i, gNewBS->ai.monIdToSwitchIntoFlags[side][i]))
+		if (SwitchToBestResistMonHelper(willPivot, party, i, gNewBS->ai.monIdToSwitchIntoFlags[side][i], foe))
 			return TRUE;
 	}
 
@@ -669,7 +685,7 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party)
 			return FALSE;
 	}
 
-	if (SwitchToBestResistMon(party, FALSE))
+	if (SwitchToBestResistMon(party, FALSE, 0xFF))
 		return TRUE; //Mon has already been found
 
 	struct Pokemon* mostSuitableMon = &party[GetMostSuitableMonToSwitchIntoByParty(party)]; //Mon to be switched to
@@ -1178,7 +1194,11 @@ static bool8 ShouldSwitchToAvoidDeathHelper(struct Pokemon* party, u8 bankDef, u
 	||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
 		&& ((switchFlags & (SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES)) //Walls foe
 		 || (switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & SWITCHING_FLAG_OUTSPEEDS)) //Or can go first and KO
-		&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, mon, bankDef, switchFlags))) //Move will affect but not do too much damage
+		&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, mon, bankDef, switchFlags)) //Move will affect but not do too much damage
+
+	//OPTION C
+	|| (PredictedMoveKOsSelfDueToContact(gActiveBattler, mon, bankDef) //The switch in will KO the foe when it takes contact damage from the switched-in mon
+	 && PredictedMoveWontKOMon(gActiveBattler, mon, bankDef))) //The switched-in mon can survive the hit
 	{
 		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monId;
 		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -1578,6 +1598,23 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 	return FALSE;
 }
 
+static bool8 ShouldSaveSweeperForLaterHelper(struct Pokemon* party, u8 bestMonId, u8 switchFlags, u8 foe, bool8 willPivot)
+{
+	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
+	struct Pokemon* mon = &party[bestMonId];
+
+	if ((wantedFlags == (switchFlags & wantedFlags) //New mon will go first and KO
+	&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, mon, foe, switchFlags)) //And it can take the predicted hit
+	|| (PredictedMoveKOsSelfDueToContact(gActiveBattler, mon, foe) //The switch in will KO the foe when it takes contact damage from the switched-in mon
+	 && PredictedMoveWontKOMon(gActiveBattler, mon, foe))) //The switched-in mon can survive the hit
+	{
+		ConfirmAISwitch(bestMonId, willPivot);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static bool8 ShouldSaveChoiceSweeper(u8 monId, u8 switchFlags, struct Pokemon* party)
 {
 	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
@@ -1613,6 +1650,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	u8 ability;
 	u8 foe = FOE(gActiveBattler);
 	u16 randVal;
+	
 
 	if (IS_SINGLE_BATTLE //Not good for Doubles
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
@@ -1661,28 +1699,19 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon
 		{
 			//Try to switch out to the best mon
-			u8 bestMonId, secondBestMonId, switchFlags, secondBestSwitchFlags, wantedFlags;
-			wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
+			u8 bestMonId, secondBestMonId, switchFlags, secondBestSwitchFlags;
 
 			//Check best mon can come in and KO the foe
 			bestMonId = GetMostSuitableMonToSwitchIntoByParty(party);
 			switchFlags = GetMostSuitableMonToSwitchIntoFlags();
-			if ((switchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
-			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMonId], foe, switchFlags))
-			{
-				ConfirmAISwitch(bestMonId, willPivot);
+			if (ShouldSaveSweeperForLaterHelper(party, bestMonId, switchFlags, foe, willPivot))
 				return TRUE;
-			}
 
 			//Check second best mon can come in and KO the foe
 			secondBestMonId = GetSecondMostSuitableMonToSwitchIntoByParty(party);
 			secondBestSwitchFlags = GetSecondMostSuitableMonToSwitchIntoFlags();
-			if ((secondBestSwitchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
-			&& PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[secondBestMonId], foe, secondBestSwitchFlags))
-			{
-				ConfirmAISwitch(secondBestMonId, willPivot);
+			if (ShouldSaveSweeperForLaterHelper(party, secondBestMonId, secondBestSwitchFlags, foe, willPivot))
 				return TRUE;
-			}
 
 			//Check if it's worth breaking a Choice Lock
 			if (CHOICED_MOVE(gActiveBattler) != MOVE_NONE //The AI is choice locked
@@ -1707,7 +1736,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 			}
 		}
 
-		if (SwitchToBestResistMon(party, willPivot))
+		if (SwitchToBestResistMon(party, willPivot, foe))
 			return TRUE;
 	}
 
