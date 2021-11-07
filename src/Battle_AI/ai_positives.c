@@ -17,6 +17,7 @@
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
+
 /*
 ai_positives.c
 	all possible additions to an AIs move viability
@@ -146,21 +147,21 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			switch (move)
 			{
 				case MOVE_COPYCAT:
-					if (MoveWouldHitFirst(move, bankAtk, bankDef))
+					if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Copycat would go first
 					{
-					COPYCAT_CHECK_LAST_MOVE:
-						if (gNewBS->LastUsedMove != MOVE_NONE
+						COPYCAT_CHECK_LAST_MOVE:
+						if (gNewBS->LastUsedMove != MOVE_NONE //Copycat can be used
 						&& gNewBS->LastUsedMove != 0xFFFF
 						&& !gSpecialMoveFlags[gNewBS->LastUsedMove].gCopycatBannedMoves
 						&& !MoveInMovesetAndUsable(gNewBS->LastUsedMove, bankAtk)) //If you have the move, use it directly
-							return AIScript_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data);
+							return AIScript_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability, data); //Run logic on the last used move instead
 					}
-					else
+					else //Copycat would go second
 					{
 						if (predictedMove == MOVE_NONE)
 							goto COPYCAT_CHECK_LAST_MOVE;
 						else if (!gSpecialMoveFlags[predictedMove].gCopycatBannedMoves
-							 &&  !MoveInMovesetAndUsable(predictedMove, bankAtk))
+							 &&  !MoveInMovesetAndUsable(predictedMove, bankAtk)) //If you have the move, use it directly
 						{
 							return AIScript_Positives(bankAtk, bankDef, predictedMove, originalViability, data);
 						}
@@ -168,8 +169,21 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				default: //Mirror Move
-					if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != MOVE_NONE)
-						return AIScript_Positives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
+					if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Mirror Move would go first
+					{
+						MIRROR_MOVE_CHECK_LAST_MOVE:
+						if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != MOVE_NONE //Mirror Move can be used
+						&& !MoveInMovesetAndUsable(gNewBS->LastUsedMove, bankAtk)) //If you have the move, use it directly
+							return AIScript_Positives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability, data);
+					}
+					else //MIrror Move would go second
+					{
+						if (predictedMove == MOVE_NONE)
+							goto MIRROR_MOVE_CHECK_LAST_MOVE;
+						else if (!MoveInMovesetAndUsable(predictedMove, bankAtk)) //If you have the move, use it directly
+							return AIScript_Positives(bankAtk, bankDef, predictedMove, originalViability, data);
+					}
+					break;
 			}
 			break;
 
