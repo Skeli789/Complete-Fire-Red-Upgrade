@@ -3409,7 +3409,7 @@ static struct Raid sRoute7Raids1Star[] =
 		{
 			/*100 %*/ ITEM_DUSK_BALL,
 			/* 80 %*/ ITEM_ORAN_BERRY,
-			/* 80 %*/ ITEM_CHESTO_JUICE,
+			/* 80 %*/ ITEM_CHESTO_BERRY,
 			/* 50 %*/ ITEM_NONE,
 			/* 50 %*/ ITEM_NONE,
 			/* 30 %*/ ITEM_SUPER_POTION,

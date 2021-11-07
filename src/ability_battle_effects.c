@@ -1445,11 +1445,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_BADDREAMS:
-					if (gBattleMons[FOE(bank)].status1 & STATUS_SLEEP
-					|| ABILITY(FOE(bank)) == ABILITY_COMATOSE
-					|| gBattleMons[PARTNER(FOE(bank))].status1 & STATUS_SLEEP
-					|| ABILITY(PARTNER(FOE(bank))) == ABILITY_COMATOSE)
+					if (IsAffectedByBadDreams(FOE(bank))
+					|| (IS_DOUBLE_BATTLE && IsAffectedByBadDreams(PARTNER(FOE(bank)))))
 					{
+						gBankTarget = FOE(bank);
 						BattleScriptPushCursorAndCallback(BattleScript_BadDreams);
 						++effect;
 					}

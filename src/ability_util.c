@@ -619,6 +619,14 @@ bool8 IsAffectedByDisguse(unusedArg u8 defAbility, unusedArg u16 defSpecies, unu
 	return FALSE;
 }
 
+bool8 IsAffectedByBadDreams(u8 bank)
+{
+	return BATTLER_ALIVE(bank)
+		&& (gBattleMons[bank].status1 & STATUS_SLEEP
+		 || ABILITY(FOE(bank)) == ABILITY_COMATOSE)
+		&& ABILITY(bank) != ABILITY_MAGICGUARD;
+}
+
 bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
 {
 	if (!CanBeTrapped(bankDef))

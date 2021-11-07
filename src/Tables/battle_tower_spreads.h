@@ -9964,66 +9964,14 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_COTTONDOWN
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SIMPLE
 		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
 			MOVE_SEEDBOMB,
 			MOVE_ACROBATICS,
-			MOVE_UTURN,
+			MOVE_SWORDSDANCE,
 			MOVE_SLEEPPOWDER,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_JUMPLUFF,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 4,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
-		.item = ITEM_LEFTOVERS,
-		.moves =
-		{
-			MOVE_INFESTATION,
-			MOVE_LEECHSEED,
-			MOVE_SLEEPPOWDER,
-			MOVE_SUBSTITUTE,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = FALSE,
-	},
-	{
-		.species = SPECIES_JUMPLUFF,
-		.nature = NATURE_BOLD,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 4,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
-		.item = ITEM_BIG_ROOT,
-		.moves =
-		{
-			MOVE_GIGADRAIN,
-			MOVE_LEECHSEED,
-			MOVE_TOXIC,
-			MOVE_SYNTHESIS,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -10042,8 +9990,60 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
+		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
 		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_INFESTATION,
+			MOVE_LEECHSEED,
+			MOVE_SLEEPPOWDER,
+			MOVE_SUBSTITUTE,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
+		.species = SPECIES_JUMPLUFF,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.spDefEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SIMPLE
+		.item = ITEM_BIG_ROOT,
+		.moves =
+		{
+			MOVE_STRENGTHSAP,
+			MOVE_LEECHSEED,
+			MOVE_TOXIC,
+			MOVE_COTTONGUARD,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},
+	{
+		.species = SPECIES_JUMPLUFF,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
@@ -52246,14 +52246,14 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SIMPLE
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
 			MOVE_LEECHSEED,
 			MOVE_TOXIC,
-			MOVE_SUBSTITUTE,
+			MOVE_COTTONGUARD,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -52262,17 +52262,17 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_SKIPLOOM,
-		.nature = NATURE_ADAMANT,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.hpEv = 4,
 		.atkEv = 252,
-		.defEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SIMPLE
 		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
@@ -61514,7 +61514,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.atkEv = 236,
 		.defEv = 36,
 		.spDefEv = 156,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SIMPLE
 		.item = ITEM_FLYING_GEM,
 		.moves =
 		{
@@ -61540,12 +61540,12 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.hpEv = 236,
 		.defEv = 36,
 		.spDefEv = 236,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PRANKSTER
+		.ability = FRONTIER_ABILITY_2, //ABILITY_INFILTRATOR
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_TOXIC,
 			MOVE_LEECHSEED,
+			MOVE_TOXIC,
 			MOVE_STRENGTHSAP,
 			MOVE_SUBSTITUTE,
 		},

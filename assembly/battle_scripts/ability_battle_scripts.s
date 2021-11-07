@@ -468,44 +468,20 @@ MoodyRegularP2:
 
 BattleScript_BadDreams:
 	call BattleScript_AbilityPopUp
-	setbyte SEED_HELPER 0x0
-	jumpifbyte ANDS USER_BANK 0x1 BadDreams_OpponentSidePlayer1
+	call BattleScript_BadDreams_TryHurt
+	callasm SetTargetFoePartner
+	call BattleScript_BadDreams_TryHurt
+	callasm TryHideActiveAbilityPopUps
+	end3
 
-BadDreams_PlayerSideOpponent1:
-	setbyte TARGET_BANK 0x1
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	addbyte SEED_HELPER 0x1
-BadDreams_PlayerSideOpponent2:
-	jumpifbyte NOTEQUALS NUM_POKEMON 0x4 BadDreams_end @not double battle
-	setbyte TARGET_BANK 0x3
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	goto BadDreams_end
+BattleScript_BadDreams_TryHurt:
+	jumpifstatus BANK_TARGET STATUS_SLEEP BattleScript_BadDreams_Hurt
+	jumpifability BANK_TARGET ABILITY_COMATOSE BattleScript_BadDreams_Hurt
+	return
 
-BadDreams_OpponentSidePlayer1:
-	setbyte SEED_HELPER 0x2
-	setbyte TARGET_BANK 0x0
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	addbyte SEED_HELPER 0x1
-	BadDreams_OpponentSidePlayer2:
-	jumpifbyte NOTEQUALS NUM_POKEMON 0x4 BadDreams_end @not double battle
-	setbyte TARGET_BANK 0x2
-	jumpifstatus BANK_TARGET STATUS_SLEEP BadDreams_callhurt
-	jumpifability BANK_TARGET ABILITY_COMATOSE BadDreams_callhurt
-	goto BadDreams_end
-
-BadDreams_callhurt:
-	call BadDreams_hurt
-	jumpifbyte EQUALS SEED_HELPER 0x1 BadDreams_PlayerSideOpponent2
-	jumpifbyte EQUALS SEED_HELPER 0x2 BadDreams_end
-	jumpifbyte EQUALS SEED_HELPER 0x3 BadDreams_OpponentSidePlayer2
-	jumpifbyte EQUALS SEED_HELPER 0x4 BadDreams_end
-	goto BadDreams_end
-
-BadDreams_hurt:
-	jumpifability BANK_TARGET ABILITY_MAGICGUARD BadDreams_return
+BattleScript_BadDreams_Hurt:
+	jumpiffainted BANK_TARGET .LReturn
+	jumpifability BANK_TARGET ABILITY_MAGICGUARD .LReturn
 	setdamagetobankhealthfraction BANK_TARGET 8 0x0 @;1/8 of base HP
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
@@ -514,14 +490,8 @@ BadDreams_hurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	BadDreams_return:
-	addbyte SEED_HELPER 0x1
+.LReturn:
 	return
-
-BadDreams_end:
-	setbyte SEED_HELPER 0x0
-	callasm TryHideActiveAbilityPopUps
-	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
