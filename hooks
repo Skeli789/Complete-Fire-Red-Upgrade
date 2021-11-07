@@ -530,6 +530,7 @@ GetLevelAfterDaycareSteps 804574C 2
 DaycareLevelCapHook 8045690 0
 GetAllEggMoves 801D784 3
 GetMonDevolution 801D78C 1
+SkipEggHatchNicknameHook 80474F6 0
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0

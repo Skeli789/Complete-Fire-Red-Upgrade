@@ -523,6 +523,23 @@ TimeToHatchEgg:
 	bx r0
 
 .pool
+@0x80474F6 with r0
+SkipEggHatchNicknameHook:
+	bl ShouldSkipOfferEggHatchNickname
+	cmp r0, #0x0
+	beq SkipEggHatchNicknameReturn
+	ldr r0, =sEggHatchData
+	ldr r0, [r0]
+	mov r1, #11 @;Fade out
+	strb r1, [r0, #0x2]
+	ldr r0, =0x8047684 | 1
+	bx r0
+
+SkipEggHatchNicknameReturn:
+	ldr r0, =0x80474E8 | 1
+	bx r0
+
+.pool
 @0x8046314 with r1
 OvalCharmHook:
 	bl ModifyBreedingScoreForOvalCharm
