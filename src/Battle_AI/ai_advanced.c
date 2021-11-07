@@ -1882,9 +1882,41 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 	}
 }
 
+static bool8 ShouldMaxStatBuffLimit(u8 bankAtk, u8 bankDef, u16 move, u8 stat)
+{
+	if (IS_SINGLE_BATTLE)
+	{
+		//Set up on non-threatening foe fighting style
+		u8 defFightingStyle = GetBankFightingStyle(bankDef);
+		if ((IsClassStall(defFightingStyle) || IsClassTeamSupport(defFightingStyle)) //Generally non-threatening
+		&& (gLastUsedMoves[bankDef] == MOVE_NONE || gLastUsedMoves[bankDef] == 0xFFFF || SPLIT(gLastUsedMoves[bankDef]) == SPLIT_STATUS)) //Didn't try to damage last turn
+		{
+			if (stat == STAT_STAGE_ATK || stat == STAT_STAGE_SPATK)
+				return TRUE; //Take advantage and set up more on the non-threatening mon
+		}
+
+		//Set up on foe predicted to switch out
+		if (IsPredictedToSwitch(bankDef, bankAtk))
+			return TRUE;
+	}
+
+	//Set up when Raid Boss
+	if (IsRaidBattle()
+	&& bankAtk == BANK_RAID_BOSS
+	&& SPLIT(move) == SPLIT_STATUS //Inherent setup move, and not side effect
+	&& GetRaidBattleRepeatedAttackChance(bankAtk) >= 50 //50% chance of attacking again
+	&& (HasRaidShields(bankAtk) || GetNextRaidShieldHP(bankAtk) > 0)) //Shields need to be broken before the Raid Boss will faint
+		return TRUE; //Raid Boss should use the fact that it'll set up multiple times to its advantage
+
+	return FALSE;
+}
+
 void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit)
 {
 	s16 viability = *originalViability;
+
+	if (statLimit < STAT_STAGE_MAX && ShouldMaxStatBuffLimit(bankAtk, bankDef, move, stat))
+		statLimit = STAT_STAGE_MAX; //Try to boost until stats can't go any higher
 
 	switch (class) {
 		case FIGHT_CLASS_SWEEPER_KILL:

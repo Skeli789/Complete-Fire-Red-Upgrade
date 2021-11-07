@@ -2663,7 +2663,8 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 	if (IS_SINGLE_BATTLE) //Single Battle or only 1 target left
 	{
 		//Every spread type has the same viability increases for these two
-		if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
+		if (!IsPredictedToSwitch(bankDef, bankAtk) //No point in going for a speedy kill if the foe is probably going to switch
+		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
 		&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
 		 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
 		 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
@@ -2679,7 +2680,8 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 					INCREASE_VIABILITY(9);
 			}
 		}
-		else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+		else if (!IsPredictedToSwitch(bankDef, bankAtk) //No point in going for kill if the foe is probably going to switch
+		&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 		&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
 		&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE) //Don't check going first
 		&& ((!WillFaintFromSecondaryDamage(bankDef) && !WillFaintFromContactDamage(bankDef, bankAtk, predictedMove)) //Won't faint on it's own
