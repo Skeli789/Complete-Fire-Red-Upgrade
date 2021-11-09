@@ -9,7 +9,7 @@
 #define GAME_STAT_PLANTED_BERRIES            3 //Unused
 #define GAME_STAT_TRADED_BIKES               4 //Unused
 #define GAME_STAT_STEPS                      5
-#define GAME_STAT_GOT_INTERVIEWED            6 //Unused
+#define GAME_STAT_PICKUP_ITEMS               6 //NEW
 #define GAME_STAT_TOTAL_BATTLES              7
 #define GAME_STAT_WILD_BATTLES               8
 #define GAME_STAT_TRAINER_BATTLES            9

@@ -511,7 +511,7 @@ BattleScript_CalcDamage:
 	critcalc
 	callasm TryUseGemFutureSight
 	callasm FutureSightDamageCalc
-	typecalc
+	callasm FutureSightTypeCalc
 	adjustnormaldamage2
 	callasm TryActivateWeakenessBerryFutureSight
 	jumpifmove MOVE_DOOMDESIRE BattleScript_FutureHitAnimDoomDesire

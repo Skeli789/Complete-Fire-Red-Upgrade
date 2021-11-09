@@ -129,8 +129,11 @@ bool8 TryActivateGemBattlescript(void)
 
 void TryUseGemFutureSight(void)
 {
-	if (TryActivateGemBattlescript())
-		gBattlescriptCurrInstr -= 5;
+	if (gBattlerPartyIndexes[gBankAttacker] == gWishFutureKnock.futureSightPartyIndex[gBankTarget]) //Original user of Future Sight
+	{
+		if (TryActivateGemBattlescript())
+			gBattlescriptCurrInstr -= 5;
+	}
 }
 
 void atk02_attackstring(void)
@@ -4611,10 +4614,10 @@ void atkC2_selectfirstvalidtarget(void) {
 	gBattlescriptCurrInstr++;
 }
 
-void atkC3_trysetfutureattack(void) {
+void atkC3_trysetfutureattack(void)
+{
 	if (gWishFutureKnock.futureSightCounter[gBankTarget] != 0)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
 	else
 	{
 		gWishFutureKnock.futureSightMove[gBankTarget] = gCurrentMove;
@@ -5199,6 +5202,8 @@ void atkE5_pickupitemcalculation(void)
 
 		if (Random() % 100 < chance)
 		{
+			IncrementGameStat(GAME_STAT_PICKUP_ITEMS);
+
 			#ifdef PICKUP_ITEMS_STRAIGHT_TO_BAG
 			if (CheckBagHasSpace(item, 1))
 			{
