@@ -242,7 +242,31 @@ BattleScript_Frisk:
 	
 BattleScript_FriskEnd:
 	call BattleScript_AbilityPopUpRevert
-	end3	
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BattleScript_PastelVeil
+BattleScript_PastelVeil:
+	call BattleScript_AbilityPopUp
+	call BattleScript_PastelVeil_TryHeal @;Check User
+	callasm SetScriptingBankPartner @;Swap banks
+	call BattleScript_PastelVeil_TryHeal @;Check Partner
+	callasm SetScriptingBankPartner @;Revert
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+BattleScript_PastelVeil_TryHeal:
+	jumpiffainted BANK_SCRIPTING .LReturn
+	jumpifstatus BANK_SCRIPTING STATUS_POISON_ANY BattleScript_PastelVeil_Heal
+	return
+
+BattleScript_PastelVeil_Heal:
+	cureprimarystatus BANK_SCRIPTING .LReturn
+	printstring 0x164 @;STRINGID_PKMNSXCUREDITSYPROBLEM
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_SCRIPTING
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

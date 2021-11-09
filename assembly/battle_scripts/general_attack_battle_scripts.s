@@ -71,6 +71,16 @@ BattleScript_TeamProtectedByFlowerVeil:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
+.global BattleScript_TeamProtectedByPastelVeil
+BattleScript_TeamProtectedByPastelVeil:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_PastelVeilProtects
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
 .global BattleScript_ProtectedByAbility
 BattleScript_ProtectedByAbility:
 	pause 0x10
@@ -4371,7 +4381,7 @@ PlayNice_SpAtk:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 VenomDrenchBS:
-	jumpifstatus BANK_TARGET STATUS_POISON | STATUS_BAD_POISON DoVenomDrench
+	jumpifstatus BANK_TARGET STATUS_POISON_ANY DoVenomDrench
 	goto NOEFFECT
 
 DoVenomDrench:

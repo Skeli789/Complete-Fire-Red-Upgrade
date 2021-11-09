@@ -1021,9 +1021,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
 			break;
 
-		//case ABILITY_PASTELVEIL:
-		//	effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
-		//	break;
+		case ABILITY_PASTELVEIL:
+			if (gBattleMons[bank].status1 & STATUS1_PSN_ANY
+			|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bank)) && gBattleMons[PARTNER(bank)].status1 & STATUS1_PSN_ANY))
+			{
+				StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
+				gBattleScripting.bank = bank;
+				BattleScriptPushCursorAndCallback(BattleScript_PastelVeil);
+				effect++;
+			}
+			break;
 
 		case ABILITY_LIMBER:
 			effect = ImmunityAbilityCheck(bank, STATUS1_PARALYSIS, gStatusConditionString_Paralysis);

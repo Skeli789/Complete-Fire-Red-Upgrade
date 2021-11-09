@@ -56,6 +56,11 @@ void SetAttackerPartner(void)
 	gBankAttacker = PARTNER(gBankAttacker);
 }
 
+void SetScriptingBankPartner(void)
+{
+	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
+}
+
 bool8 CheckCraftyShield(u8 bank)
 {
 	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
