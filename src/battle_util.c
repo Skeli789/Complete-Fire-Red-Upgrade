@@ -702,7 +702,7 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 	{
 		return TRUE;
 	}
-	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS && check & MOVE_LIMITATION_TAUNT)
+	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && IsMoveBannedByAssaultVest(move) && check & MOVE_LIMITATION_TAUNT)
 		return TRUE;
 	#ifdef FLAG_SKY_BATTLE
 	else if (gSpecialMoveFlags[move].gSkyBattleBannedMoves && FlagGet(FLAG_SKY_BATTLE) && check & MOVE_LIMITATION_ENCORE)
@@ -734,7 +734,7 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 			unusableMoves |= gBitTable[i];
 		else if (GetMonData(mon, MON_DATA_PP1 + i, NULL) == 0 && check & MOVE_LIMITATION_PP)
 			unusableMoves |= gBitTable[i];
-		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && IsMoveBannedByAssaultVest(move))
 			unusableMoves |= gBitTable[i];
 		#ifdef FLAG_SKY_BATTLE
 		else if (check & MOVE_LIMITATION_ENCORE && FlagGet(FLAG_SKY_BATTLE) && gSpecialMoveFlags[move].gSkyBattleBannedMoves)
@@ -762,6 +762,11 @@ void CancelMultiTurnMoves(u8 battler)
 
 	gDisableStructs[battler].rolloutTimer = 0;
 	gDisableStructs[battler].furyCutterCounter = 0;
+}
+
+bool8 IsMoveBannedByAssaultVest(u16 move)
+{
+	return SPLIT(move) == SPLIT_STATUS && move != MOVE_MEFIRST;
 }
 
 bool8 IsMoveRedirectedByFollowMe(u16 move, u8 bankAtk, u8 defSide)
