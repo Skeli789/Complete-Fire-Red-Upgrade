@@ -1451,7 +1451,7 @@ void atk1B_cleareffectsonfaint(void) {
 			__attribute__ ((fallthrough));
 
 			case Faint_PrimalWeather:
-				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
+				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 					return;
 
 				++gNewBS->faintEffectsState;

@@ -1852,7 +1852,7 @@ void TryRemovePrimalWeatherOnPivot(void)
 {
 	RestoreOriginalAttackerAndTarget();
 	gNewBS->skipBankStatAnim = gBankAttacker; //Helps with Neutralizing Gas and Intimidate
-	if (HandleSpecialSwitchOutAbilities(gBankAttacker, ABILITY(gBankAttacker)))
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, ABILITY(gBankAttacker), TRUE))
 		gBattlescriptCurrInstr -= 5;
 	else
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -1862,7 +1862,7 @@ void TryRemovePrimalWeatherSwitchingBank(void)
 {
 	RestoreOriginalAttackerAndTarget();
 	gNewBS->skipBankStatAnim = gBankSwitching; //Helps with Neutralizing Gas and Intimidate
-	if (HandleSpecialSwitchOutAbilities(gBankSwitching, ABILITY(gBankSwitching)))
+	if (HandleSpecialSwitchOutAbilities(gBankSwitching, ABILITY(gBankSwitching), TRUE))
 		gBattlescriptCurrInstr -= 5;
 	else
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -1871,13 +1871,13 @@ void TryRemovePrimalWeatherSwitchingBank(void)
 void TryRemovePrimalWeatherAfterAbilityChange(void)
 {
 	RestoreOriginalAttackerAndTarget();
-	if (HandleSpecialSwitchOutAbilities(gBankTarget, gNewBS->backupAbility))
+	if (HandleSpecialSwitchOutAbilities(gBankTarget, gNewBS->backupAbility, FALSE))
 		gBattlescriptCurrInstr -= 5;
 }
 
 void TryRemovePrimalWeatherAfterTransformation(void)
 {
-	if (HandleSpecialSwitchOutAbilities(gBankAttacker, gNewBS->backupAbility))
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, gNewBS->backupAbility, FALSE))
 		gBattlescriptCurrInstr -= 5;
 }
 

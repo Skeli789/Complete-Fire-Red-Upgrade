@@ -3688,6 +3688,7 @@ BS_178_RolePlay:
 	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
+	callasm RestoreOriginalAttackerAndTarget
 	tryactivateswitchinability BANK_ATTACKER
 	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END
@@ -4038,6 +4039,7 @@ SimpleBeamBS:
 	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
+	callasm RestoreOriginalAttackerAndTarget
 	tryactivateswitchinability BANK_TARGET
 	callasm RestoreOriginalAttackerAndTarget
 	goto BS_MOVE_END

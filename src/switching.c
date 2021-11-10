@@ -64,7 +64,7 @@ enum SwitchInStates
 
 //This file's functions:
 static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
-static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability);
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
@@ -132,10 +132,10 @@ void atkE2_switchoutabilities(void)
 	}
 }
 
-bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
+bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability, bool8 leftField)
 {
 	return TryRemovePrimalWeather(bank, ability)
-		|| TryRemoveNeutralizingGas(bank, ability)
+		|| TryRemoveNeutralizingGas(bank, ability, leftField)
 		|| TryRemoveUnnerve(bank)
 		|| TryActivateFlowerGift(bank);
 }
@@ -186,7 +186,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField)
 {
 	if (ability == ABILITY_NEUTRALIZINGGAS)
 	{
@@ -201,8 +201,9 @@ static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability)
 			gBattlerPositions[bank] = 0xFF; //So there are no issues with animations like Drought - will still cause problem in Link Battles
 			return TRUE;
 		}
-		
-		gBattleMons[bank].hp = 0; //So Switch-In Abilities like Intimidate don't affect the mon that's now gone
+
+		if (leftField)
+			gBattleMons[bank].hp = 0; //So Switch-In Abilities like Intimidate don't affect the mon that's now gone
 
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
@@ -308,7 +309,7 @@ void atk61_drawpartystatussummary(void)
 		RestoreOriginalAttackerAndTarget(); //I'm not sure if this function is even necessary anymore, but I'd rather not remove it and cause bugs
 	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
-	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
+	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 		return;
 
 	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
