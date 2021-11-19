@@ -46,6 +46,7 @@ enum Parents
 static s32 GetSlotToInheritNature(struct DayCare* daycare);
 static void DetermineEggParentSlots(struct DayCare* daycare, u8* parentSlots);
 static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots, u32 personality);
+static u16 GetOverrideEggSpecies(u16 eggSpecies);
 static u8 CheckPowerItem(u16 item);
 static void InheritIVs(struct Pokemon* egg, struct DayCare* daycare);
 static void AlterEggSpeciesWithIncenseItem(u16* species, struct DayCare* daycare);
@@ -277,18 +278,14 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 	}
 
 	eggSpecies = GetEggSpecies(motherSpecies);
+	eggSpecies = GetOverrideEggSpecies(eggSpecies);
+
 	switch(SpeciesToNationalPokedexNum(eggSpecies))
 	{
 		#if (defined NATIONAL_DEX_NIDORAN_F && defined SPECIES_NIDORAN_M)
 		case NATIONAL_DEX_NIDORAN_F:
 			if (personality & 0x8000)
 				eggSpecies = SPECIES_NIDORAN_M;
-			break;
-		#endif
-
-		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
-		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
-			eggSpecies = SPECIES_PICHU;
 			break;
 		#endif
 
@@ -307,6 +304,32 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 		#if (defined NATIONAL_DEX_MANAPHY && defined SPECIES_PHIONE)
 		case NATIONAL_DEX_MANAPHY:
 			eggSpecies = SPECIES_PHIONE;
+			break;
+		#endif
+	}
+
+	// Make Ditto the "mother" slot if the other daycare mon is male/genderless).
+	#ifdef SPECIES_DITTO
+	if (species[parentSlots[1]] == SPECIES_DITTO && GetBoxMonGender(&daycare->mons[parentSlots[0]].mon) != MON_FEMALE)
+	{
+		u8 temp = parentSlots[1];
+		parentSlots[1] = parentSlots[0];
+		parentSlots[0] = temp;
+	}
+	#endif
+
+	return eggSpecies;
+}
+
+static u16 GetOverrideEggSpecies(u16 eggSpecies)
+{
+	//Gets the proper species for Pokemon that may not have an Egg species
+
+	switch(SpeciesToNationalPokedexNum(eggSpecies))
+	{
+		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
+		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
+			eggSpecies = SPECIES_PICHU;
 			break;
 		#endif
 
@@ -328,16 +351,6 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 			break;
 		#endif
 	}
-
-	// Make Ditto the "mother" slot if the other daycare mon is male/genderless).
-	#ifdef SPECIES_DITTO
-	if (species[parentSlots[1]] == SPECIES_DITTO && GetBoxMonGender(&daycare->mons[parentSlots[0]].mon) != MON_FEMALE)
-	{
-		u8 temp = parentSlots[1];
-		parentSlots[1] = parentSlots[0];
-		parentSlots[0] = temp;
-	}
-	#endif
 
 	return eggSpecies;
 }
@@ -951,6 +964,7 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 	bool8 moveInList[MOVES_COUNT] = {FALSE};
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 eggSpecies = GetEggSpecies(species);
+	eggSpecies = GetOverrideEggSpecies(eggSpecies);
 
 	SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
 	numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);

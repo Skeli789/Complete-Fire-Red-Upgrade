@@ -40,6 +40,12 @@ AM
 #org @gText_StartMenu_PM
 PM
 
+#org @gText_StartMenu_RedText
+[MAIN_COLOUR][0C][SHADOW_COLOUR][0D]
+
+#org @gText_StartMenu_NormalText
+[MAIN_COLOUR][0E][SHADOW_COLOUR][0F]
+
 #org @gText_StartMenu_Sunday
 Sun
 
