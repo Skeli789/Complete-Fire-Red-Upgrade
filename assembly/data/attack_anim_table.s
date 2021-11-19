@@ -4973,6 +4973,7 @@ ANIM_UTURN:
 	loadparticle ANIM_TAG_RAZOR_LEAF
 	loadparticle ANIM_TAG_IMPACT
 	pokespritetoBG bank_target
+	leftbankBG_over_partnerBG bank_target
 	setblends 0x80C
 	makebankinvisible bank_attacker
 	playsound2 0x88 SOUND_PAN_ATTACKER
