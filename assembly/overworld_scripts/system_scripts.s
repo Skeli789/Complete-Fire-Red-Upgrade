@@ -773,7 +773,7 @@ EventScript_UseFlash:
 	checksound
 	sound 0xC8
 	animateflash 0x0
-	setflashradius 0x0
+	setflashlevel 0x0
 	releaseall
 	end
 

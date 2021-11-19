@@ -16,6 +16,7 @@
 .equ PLAYER, 0xFF
 .equ PLAYERFACING, 0x800C
 .equ LASTRESULT, 0x800D
+.equ CHOSEN_ITEM, 0x800E
 .equ LASTTALKED, 0x800F
 
 .equ look_down, 0x0
