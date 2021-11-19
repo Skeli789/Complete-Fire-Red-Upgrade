@@ -171,6 +171,14 @@ static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
 	gClock.hour = ConvertBcdToBinary(rtc->hour);
 	gClock.minute = ConvertBcdToBinary(rtc->minute);
 	gClock.second = ConvertBcdToBinary(rtc->second);
+
+	if (gInvertAMPM)
+	{
+		if (gClock.hour >= 12)
+			gClock.hour -= 12;
+		else
+			gClock.hour += 12;
+	}
 }
 
 void __attribute__((long_call)) break_func();
