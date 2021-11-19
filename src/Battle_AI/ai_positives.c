@@ -489,10 +489,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_TICKLE:
-			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && RealPhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
-				goto AI_DEFENSE_MINUS;
-			else
-				goto AI_ATTACK_MINUS;
+			if (GoodIdeaToLowerAttack(bankDef, bankAtk, move)
+			|| GoodIdeaToLowerDefense(bankDef, bankAtk, move))
+				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_HAZE:

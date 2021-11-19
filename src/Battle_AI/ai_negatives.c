@@ -96,7 +96,6 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	s16 viability = originalViability;
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
 
-
 	u16 move = TryReplaceMoveWithZMove(bankAtk, bankDef, originalMove);
 
 	data->atkAbility = GetAIAbility(bankAtk, bankDef, move);
@@ -644,6 +643,12 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (HasUsedMove(bankDef, MOVE_IONDELUGE) && AI_THINKING_STRUCT->simulatedRNG[0] < 75 && IsElectricAbsorptionAblity(data->defAbility))
 			{
 				//Don't use Normal-type move 75% of the time
+				DECREASE_VIABILITY(19);
+				return viability;
+			}
+			else if (gLastResultingMoves[bankDef] == MOVE_PLASMAFISTS && IsElectricAbsorptionAblity(data->defAbility)) //Based on the last move the target used - not prediction
+			{
+				//Don't use Normal-type move
 				DECREASE_VIABILITY(19);
 				return viability;
 			}

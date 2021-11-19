@@ -3166,6 +3166,9 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
 		return FALSE; //Don't bother lowering stats if can kill enemy.
 
+	if (WillFaintFromSecondaryDamage(bankDef))
+		return FALSE; //No point in lowering stats of an enemy that's about to faint anyway
+
 	u8 defAbility = ABILITY(bankDef);
 
 	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && RealPhysicalMoveInMoveset(bankDef)
