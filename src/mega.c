@@ -185,6 +185,7 @@ const u8* DoMegaEvolution(u8 bank)
 		//[BUFFER][00]'s [LAST_ITEM]\nis reacting to [PLAYER_NAME]'s [BUFFER][01]!
 		PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, bank, gBattlerPartyIndexes[bank]);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
+		PREPARE_SPECIES_BUFFER(gBattleTextBuff3, SPECIES(bank));
 
 		if (evolutions->unknown == MEGA_VARIANT_WISH)
 			return BattleScript_MegaWish;
