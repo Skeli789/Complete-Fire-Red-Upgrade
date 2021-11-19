@@ -4339,50 +4339,17 @@ BattleScript_GearUpDidntWork:
 	printfromtable gFlowerShieldStringIds
 	waitmessage DELAY_1SECOND
 	goto BattleScript_GearUpLoop
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_203_PlayNice
-BS_203_PlayNice:
+.global BS_202_VenomDrench
+BS_202_VenomDrench:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
 	accuracycheck BS_MOVE_MISSED + 2 0x0
 	setbyte STAT_ANIM_PLAYED 0x0
-	jumpifmove MOVE_VENOMDRENCH VenomDrenchBS
-	jumpifstatcanbelowered BANK_TARGET STAT_ATK PlayNice_Atk
-	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PlayNice_Atk
-	pause 0x10
-	goto PlayNice_SkipAnim
-
-PlayNice_Atk:
-	attackanimation
-	waitanimation
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	
-PlayNice_SkipAnim:
-	setbyte FORM_COUNTER 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
-	setstatchanger STAT_ATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR PlayNice_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PlayNice_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
-	printfromtable gStatDownStringIds
-	waitmessage DELAY_1SECOND
-
-PlayNice_SpAtk:
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
-	setstatchanger STAT_SPATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
-	printfromtable gStatDownStringIds
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-VenomDrenchBS:
 	jumpifstatus BANK_TARGET STATUS_POISON_ANY DoVenomDrench
 	goto NOEFFECT
 
@@ -4422,6 +4389,45 @@ VenomDrench_SpAtk:
 VenomDrench_Spd:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPD, STAT_ANIM_DOWN
 	setstatchanger STAT_SPD | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_203_PlayNice
+BS_203_PlayNice:
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	attackstring
+	ppreduce
+	accuracycheck BS_MOVE_MISSED + 2 0x0
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpifstatcanbelowered BANK_TARGET STAT_ATK PlayNice_Atk
+	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PlayNice_Atk
+	pause 0x10
+	goto PlayNice_SkipAnim
+
+PlayNice_Atk:
+	attackanimation
+	waitanimation
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	
+PlayNice_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
+	setstatchanger STAT_ATK | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+
+PlayNice_SpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
+	setstatchanger STAT_SPATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable gStatDownStringIds

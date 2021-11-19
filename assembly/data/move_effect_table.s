@@ -217,7 +217,7 @@ gBattleScriptsForMoveEffects:
 .word BS_199_RaiseUserAtkAcc
 .word BS_200_Blank	@was blaze kick
 .word BS_201_MudSport
-.word BS_202_Blank	@was poison fang
+.word BS_202_VenomDrench	@was poison fang
 .word BS_203_PlayNice	@was weather ball
 .word BS_204_Overheat
 .word BS_205_Tickle
