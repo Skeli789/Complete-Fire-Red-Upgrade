@@ -182,6 +182,10 @@ gEventObjects = 0x2036E38;
 gSprites = 0x202063C;
 sSpritePriorities = 0x2021780;
 sSpriteOrder = 0x2021800;
+gShouldProcessSpriteCopyRequests = 0x2021840;
+gOamLimit = 0x2021B44;
+gSpriteCoordOffsetX = 0x2021BC8;
+gSpriteCoordOffsetY = 0x2021BCA;
 gAffineCoefficients = 0x2021BCC;
 gMultiuseSpriteTemplate = 0x20244DC;
 template_0203AD40 = 0x203AD40;
@@ -324,6 +328,7 @@ sTradeData = 0x2031DAC;
 
 /* Other RAM */
 sWarpDestination = 0x2031DBC;
+sTitleScreenTimerTaskId = 0x2037F30;
 gPSSData = 0x20397B0;
 sItemUseOnFieldCB = 0x2039998;
 sRegionMap = 0x20399D4;
@@ -353,6 +358,7 @@ gItemUseCB = 0x3005E98;
 gIconPals = 0x808AB40;
 gStdScripts = 0x8160450;
 gStdScriptsEnd = 0x8160478;
+gDummyOamData = 0x8231CE4;
 gDummySpriteAnimTable = 0x8231CF0;
 gDummySpriteAffineAnimTable = 0x8231CFC;
 gOamDimensions = 0x8231DA8;

@@ -605,6 +605,7 @@
 #define MAP_MAGNOLIA_FIELDS     ((3 << 8) | 4)
 #define MAP_REDWOOD_VILLAGE     ((3 << 8) | 5)
 #define MAP_REDWOOD_FOREST      ((1 << 8) | 98)
+#define MAP_CUBE_CORP           ((3 << 8) | 6)
 
 #define MAP_FULLMOON_ISLAND_A	((1 << 8) | 0)
 #define MAP_FULLMOON_ISLAND_B	((1 << 8) | 1)
@@ -693,6 +694,7 @@
 #define MAP_VICTORY_ROAD_ICE_CAVE_B   ((55 << 8) | 8)
 
 #define MAP_UNDERWATER_VIVILL_TOWN    ((32 << 8) | 4)
+#define MAP_UNDERWATER_ROUTE_17       ((32 << 8) | 6)
 
 //Interior
 #define MAP_PLAYER_ROOM 		((4 << 8) | 1)
@@ -737,6 +739,9 @@
 #define MAP_ANTISIS_SEWERS_EAST_TUNNEL	((1 << 8) | 71)
 #define MAP_ANTISIS_SEWERS_ROOM			((1 << 8) | 72)
 
+#define MAP_SEAPORT_WAREHOUSE_WEST_1F   ((33 << 8) | 15)
+#define MAP_SEAPORT_WAREHOUSE_WEST_B1F  ((33 << 8) | 16)
+
 #define MAP_POLDER_TOWN_GYM ((34 << 8) | 4)
 
 #define MAP_REDWOOD_VILLAGE_GYM_ROOM_1 ((36 << 8) | 7)
@@ -744,14 +749,20 @@
 #define MAP_REDWOOD_VILLAGE_GYM_ROOM_3 ((36 << 8) | 9)
 #define MAP_REDWOOD_VILLAGE_GYM_ROOM_4 ((36 << 8) | 10)
 
-#define MAP_POKEMON_LEAGUE_E4_HALL         (74 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_MOLEMAN_ROOM    (75 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_ELIAS_ROOM      (76 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_ANABELLE_ROOM   (77 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_PENNY_ROOM      (78 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_CHAMP_ROOM      (79 | (1 << 8))
-#define MAP_POKEMON_LEAGUE_HALL_OF_FAME    (80 | (1 << 8))
+#define MAP_POKEMON_LEAGUE_E4_HALL         ((1 << 8) | 74)
+#define MAP_POKEMON_LEAGUE_MOLEMAN_ROOM    ((1 << 8) | 75)
+#define MAP_POKEMON_LEAGUE_ELIAS_ROOM      ((1 << 8) | 76)
+#define MAP_POKEMON_LEAGUE_ANABELLE_ROOM   ((1 << 8) | 77)
+#define MAP_POKEMON_LEAGUE_PENNY_ROOM      ((1 << 8) | 78)
+#define MAP_POKEMON_LEAGUE_CHAMP_ROOM      ((1 << 8) | 79)
+#define MAP_POKEMON_LEAGUE_HALL_OF_FAME    ((1 << 8) | 80)
 
-#define MAP_HISTORY_CUTSCENE			((31 << 8) | 5)
+#define MAP_BATTLE_MINE_ROOM    ((2 << 8) | 4)
+#define MAP_BATTLE_CIRCUS_SALON ((2 << 8) | 6)
+#define MAP_BATTLE_TOWER_SALON  ((2 << 8) | 7)
+
+#define MAP_THE_NIGHTMARE       ((2 << 8) | 36)
+
+#define MAP_HISTORY_CUTSCENE    ((31 << 8) | 5)
 
 #endif

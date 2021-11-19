@@ -2073,6 +2073,12 @@ void sp119_SetRaidBattleFlag(void)
 	FlagSet(FIRST_RAID_BATTLE_FLAG + GetRaidMapSectionId());
 }
 
+void ClearAllRaidBattleFlags(void)
+{
+	for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
+		FlagClear(FIRST_RAID_BATTLE_FLAG + i);
+}
+
 //Input: Var8000 - 0: This Flag Only
 //				   1: All Flags
 void sp11A_ClearRaidBattleFlag(void)
@@ -2082,8 +2088,7 @@ void sp11A_ClearRaidBattleFlag(void)
 			FlagClear(FIRST_RAID_BATTLE_FLAG + GetRaidMapSectionId());
 			break;
 		case 1: //Clear all flags:
-			for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
-				FlagClear(FIRST_RAID_BATTLE_FLAG + i);
+			ClearAllRaidBattleFlags();
 			break;
 	}
 }

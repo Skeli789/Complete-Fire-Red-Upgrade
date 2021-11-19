@@ -588,12 +588,15 @@ void BattleBeginFirstTurn(void)
 						gNewBS->ai.previousMonIn[i] = 0xFF;
 						gNewBS->ai.secondPreviousMonIn[i] = 0xFF;
 
-						switch (ABILITY(i))
+						if (IsPlayerInControl(i))
 						{
-							//These Abilities are commonly switched out of on the first turn
-							case ABILITY_INTIMIDATE:
-								gNewBS->ai.switchesInARow[i] = 2; //So the AI gets smart if the player immediately switches out
-								break;
+							switch (ABILITY(i))
+							{
+								//These Abilities are commonly switched out of on the first turn
+								case ABILITY_INTIMIDATE:
+									gNewBS->ai.switchesInARow[i] = 2; //So the AI gets smart if the player immediately switches out
+									break;
+							}
 						}
 					}
 				}

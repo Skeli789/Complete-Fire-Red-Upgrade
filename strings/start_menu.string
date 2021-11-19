@@ -31,6 +31,15 @@ Exit  [DPAD_LEFT]
 #org @gText_StartMenu_TimeBase
 [BUFFER][0C]. [BUFFER1]:[BUFFER2]:[BUFFER3]
 
+#org @gText_StartMenu_TimeBase_12Hr
+[BUFFER][0C]. [BUFFER1]:[BUFFER2] [BUFFER3]
+
+#org @gText_StartMenu_AM
+AM
+
+#org @gText_StartMenu_PM
+PM
+
 #org @gText_StartMenu_Sunday
 Sun
 

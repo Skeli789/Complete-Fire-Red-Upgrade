@@ -72,6 +72,7 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners);
 u8 GetRaidSpeciesAbilityNum(u16 species);
 u8 GetRaidEggMoveChance(void);
 bool8 HasRaidBattleAlreadyBeenDone(void);
+void ClearAllRaidBattleFlags(void);
 
 //Functions Called Via Assembly
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset);

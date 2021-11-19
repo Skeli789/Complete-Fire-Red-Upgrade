@@ -1046,6 +1046,68 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Cube Corp Building
+		.tilesetPointer = 0x82D4D4C, //Tileset 29
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{1, RGB(13, 29, 17)},
+			{2, RGB(5, 25, 17)},
+			{3, RGB(5, 17, 12)},
+			{4, RGB(4, 17, 12)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Cube Corp Lamp
+		.tilesetPointer = 0x82D4D4C, //Tileset 29
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{6, RGB(29, 13, 20)},
+			{7, RGB(27, 5, 14)},
+			{14, RGB(31, 30, 1)},
+			{15, RGB(31, 31, 16)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Cube Corp Service Stand
+		.tilesetPointer = 0x82D4D4C, //Tileset 29
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{12, RGB(4, 17, 12)},
+			{13, RGB(6, 25, 17)},
+			{14, RGB(13, 29, 17)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Cube Corp Water
+		.tilesetPointer = 0x82D4D4C, //Tileset 29
+		.paletteNumToFade = 10,
+		.paletteIndicesToFade =
+		{
+			{1, RGB(17, 23, 28)},
+			{2, RGB(19, 24, 28)},
+			{3, RGB(18, 25, 30)},
+			{4, RGB(20, 25, 30)},
+			{5, RGB(23, 26, 29)},
+			{6, RGB(25, 27, 28)},
+			{7, RGB(27, 29, 29)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Cube Corp Doors
+		.tilesetPointer = 0x82D4D4C, //Tileset 29
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{10,  RGB(31, 27, 5)},
+			{12,  RGB(29, 24, 5)},
+			{13,  RGB(29, 22, 5)},
+			{14,  RGB(26, 20, 3)},
+			TILESET_PAL_FADE_END
+		},
+	},
 };
 
 #endif

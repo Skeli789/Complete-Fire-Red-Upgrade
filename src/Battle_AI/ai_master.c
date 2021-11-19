@@ -1603,8 +1603,7 @@ static bool8 IsPlayerTryingToCheeseChoiceLockFirstTurn(u8 aiBank)
 {
 	return gBattleResults.battleTurnCounter == 0
 		&& (IsChoiceItemEffectOrAbility(ITEM_EFFECT(aiBank), ABILITY(aiBank))
-		|| IsZCrystal(ITEM(aiBank))
-		|| IsGem(ITEM(aiBank))
+		|| (IsZCrystal(ITEM(aiBank)) && gNewBS->zMoveData.toBeUsed[aiBank])
 		|| gChosenMovesByBanks[aiBank] == MOVE_FAKEOUT);
 }
 

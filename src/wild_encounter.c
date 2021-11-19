@@ -493,6 +493,10 @@ static void ClearDailyEventFlags(void)
 	for (u32 i = FLAG_DAILY_EVENTS_START; i < FLAG_DAILY_EVENTS_START + 0x100; ++i)
 		FlagClear(i);
 	#endif
+
+	#ifdef UNBOUND
+	ClearAllRaidBattleFlags();
+	#endif
 }
 #endif
 

@@ -85,18 +85,18 @@ static const struct WildPokemonInfo sRoute2_LandMonsInfoNight = {15, sRoute2_Lan
 
 static const struct WildPokemon sRoute3_LandMonsNight[] =
 {
-	{10, 12, SPECIES_WINGULL},
-	{10, 12, SPECIES_BIDOOF},
-	{10, 12, SPECIES_SLOWPOKE},
-	{10, 12, SPECIES_SLOWPOKE},
-	{10, 12, SPECIES_SHELLOS},
-	{10, 12, SPECIES_SURSKIT},
-	{10, 12, SPECIES_SURSKIT},
-	{10, 12, SPECIES_BUIZEL},
-	{11, 12, SPECIES_KRABBY},
-	{11, 12, SPECIES_KRABBY},
-	{12, 12, SPECIES_KRABBY},
-	{12, 12, SPECIES_KRABBY},
+	{9, 12, SPECIES_WINGULL},
+	{9, 12, SPECIES_BIDOOF},
+	{9, 12, SPECIES_SLOWPOKE},
+	{9, 12, SPECIES_SLOWPOKE},
+	{9, 12, SPECIES_SHELLOS},
+	{9, 12, SPECIES_SURSKIT},
+	{9, 12, SPECIES_SURSKIT},
+	{9, 12, SPECIES_BUIZEL},
+	{10, 12, SPECIES_POLIWAG},
+	{10, 12, SPECIES_POLIWAG},
+	{10, 12, SPECIES_POLIWAG},
+	{10, 12, SPECIES_POLIWAG},
 };
 
 static const struct WildPokemonInfo sRoute3_LandMonsInfoNight = {15, sRoute3_LandMonsNight};

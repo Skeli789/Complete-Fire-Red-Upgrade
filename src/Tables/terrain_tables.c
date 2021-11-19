@@ -300,7 +300,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.camouflageType = TYPE_ICE,
 			.secretPowerEffect = MOVE_EFFECT_FREEZE,
 			.secretPowerAnim = MOVE_AVALANCHE,
-			.naturePowerMove = MOVE_FROSTBREATH,
+			.naturePowerMove = MOVE_ICEBEAM,
 			.burmyForm = SPECIES_NONE,
 		},
 
@@ -480,7 +480,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.camouflageType = TYPE_ICE,
 			.secretPowerEffect = MOVE_EFFECT_FREEZE,
 			.secretPowerAnim = MOVE_AVALANCHE,
-			.naturePowerMove = MOVE_FROSTBREATH,
+			.naturePowerMove = MOVE_ICEBEAM,
 			.burmyForm = SPECIES_BURMY,
 		},
 

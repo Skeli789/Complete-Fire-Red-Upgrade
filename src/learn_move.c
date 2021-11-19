@@ -359,7 +359,7 @@ u16 BuildTutorMoveset(struct Pokemon* mon, struct MovePair* moves)
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 
-	for (u32 i = 0; i < NUM_TMSHMS; ++i)
+	for (u32 i = 0; i < NUM_MOVE_TUTORS; ++i)
 	{
 		#ifdef EXPANDED_MOVE_TUTORS
 		u8 tutRet = CanMonLearnTutorMove(mon, i);
