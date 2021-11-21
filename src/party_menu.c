@@ -1543,7 +1543,8 @@ void Task_ClosePartyMenuAfterText(u8 taskId)
 
 void InitPartyMenuAfterCancellingLearnMove(TaskFunc task)
 {
-	InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, gPartyMenu.action, TRUE, PARTY_MSG_NONE, task, gPartyMenu.exitCallback);
+	u8 action = (gPartyMenu.action == PARTY_ACTION_USE_ITEM) ? PARTY_ACTION_USE_ITEM : PARTY_ACTION_CHOOSE_MON; //Eg. after Rare Candy. Prevents returning to the Bag
+	InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, action, TRUE, PARTY_MSG_NONE, task, gPartyMenu.exitCallback);
 }
 
 static bool8 IsUsePartyMenuItemHPEVModifier(struct Pokemon* mon, u16 oldHP, u16 item)
