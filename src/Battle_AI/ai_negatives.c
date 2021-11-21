@@ -2249,12 +2249,8 @@ SKIP_CHECK_TARGET:
 					break;
 
 				default: //Trick
-					if ((data->atkItem == ITEM_NONE && data->defItem == ITEM_NONE)
-					|| !CanTransferItem(data->atkSpecies, data->atkItem)
-					|| !CanTransferItem(data->atkSpecies, data->defItem)
-					|| !CanTransferItem(data->defSpecies, data->atkItem)
-					|| !CanTransferItem(data->defSpecies, data->defItem)
-					|| (data->defAbility == ABILITY_STICKYHOLD))
+					if (!CanSwapItems(bankAtk, bankDef)
+					|| data->defAbility == ABILITY_STICKYHOLD)
 						DECREASE_VIABILITY(10);
 					else
 						goto AI_SUBSTITUTE_CHECK;

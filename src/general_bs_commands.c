@@ -4864,6 +4864,27 @@ void atkD0_settaunt(void)
 	}
 }
 
+bool8 CanSwapItems(u8 bankAtk, u8 bankDef)
+{
+	u16 atkItem = ITEM(bankAtk);
+	u16 defItem = ITEM(bankDef);
+	u16 atkSpecies = SPECIES(bankAtk);
+	u16 defSpecies = SPECIES(bankDef);
+
+	//Can't swap if two pokemon don't have an item
+	//Or if either of them is a forbidden item
+	if ((atkItem == ITEM_NONE && defItem == ITEM_NONE) //Neither holding items
+	|| (atkItem != ITEM_NONE && !CanTransferItem(atkSpecies, atkItem))
+	|| (defItem != ITEM_NONE && !CanTransferItem(atkSpecies, defItem))
+	|| (defItem != ITEM_NONE && !CanTransferItem(defSpecies, defItem))
+	|| (atkItem != ITEM_NONE && !CanTransferItem(defSpecies, atkItem))
+	|| (gNewBS->corrodedItems[SIDE(bankAtk)] & gBitTable[gBattlerPartyIndexes[bankAtk]])
+	|| (gNewBS->corrodedItems[SIDE(bankDef)] & gBitTable[gBattlerPartyIndexes[bankDef]]))
+		return FALSE;
+	
+	return TRUE;
+}
+
 void atkD2_tryswapitems(void) //Trick
 {
 	// Wild Pokemon can't swap items with player
@@ -4874,15 +4895,7 @@ void atkD2_tryswapitems(void) //Trick
 	}
 	else
 	{
-		// can't swap if two pokemon don't have an item
-		// or if either of them is a forbidden item
-		if ((gBattleMons[gBankAttacker].item == 0 && gBattleMons[gBankTarget].item == 0)
-		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankAttacker].item)
-		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankTarget].item)
-		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankTarget].item)
-		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankAttacker].item)
-		|| (gNewBS->corrodedItems[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]])
-		|| (gNewBS->corrodedItems[SIDE(gBankTarget)] & gBitTable[gBattlerPartyIndexes[gBankTarget]]))
+		if (!CanSwapItems(gBankAttacker, gBankTarget))
 		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		}
@@ -4897,8 +4910,8 @@ void atkD2_tryswapitems(void) //Trick
 			u16 oldItemAtk, *newItemAtk;
 
 			newItemAtk = &gBattleStruct->changedItems[gBankAttacker];
-			oldItemAtk = gBattleMons[gBankAttacker].item;
-			*newItemAtk = gBattleMons[gBankTarget].item;
+			oldItemAtk = ITEM(gBankAttacker);
+			*newItemAtk = ITEM(gBankTarget);
 
 			gBattleMons[gBankAttacker].item = *newItemAtk;
 			gBattleMons[gBankTarget].item = oldItemAtk;

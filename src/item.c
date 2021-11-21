@@ -1398,7 +1398,9 @@ u16 CountTMsInBag(void)
 
 	for (i = 0, count = 0; i < amount; ++i)
 	{
-		if (itemMem[i].itemId != ITEM_NONE && itemMem[i].quantity > 0)
+		if (itemMem[i].itemId != ITEM_NONE
+		&& itemMem[i].quantity > 0
+		&& TMIdFromItemId(itemMem[i].itemId) <= NUM_TMS)
 			++count;
 	}
 
