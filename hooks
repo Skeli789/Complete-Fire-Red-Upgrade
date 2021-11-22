@@ -110,6 +110,7 @@ BattleAI_HandleItemUseBeforeAISetup 080C6D0C 0
 ##Mega Hooks
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
+MoveSelectionDisplayMoveEffectiveness 80308A8 0
 InitMoveSelectionsVarsAndStrings 08032CB4 0
 PlayerHandleStatusIconUpdateHook 803301C 1
 OpponentHandleStatusIconUpdateHook 8038974 1
