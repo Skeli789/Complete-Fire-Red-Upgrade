@@ -11,7 +11,7 @@ extern u8 sRTCFrameCount;
 extern struct SiiRtcInfo sRtc; //0x3005E88
 
 // const rom
-static const struct SiiRtcInfo sRtcDummy = {.year = 0, .month = MONTH_JAN, .day = 1, .hour = 0x20}; // 2000 Jan 1, 8:00 PM (hex is intentional)
+static const struct SiiRtcInfo sRtcDummy = {.year = 0, .month = MONTH_JAN, .day = 1, .hour = 0x10}; // 2000 Jan 1, 10:00 AM (hex is intentional)
 
 static const s32 sNumDaysInMonths[12] =
 {
