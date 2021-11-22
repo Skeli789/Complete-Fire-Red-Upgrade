@@ -2228,6 +2228,11 @@ bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk)
 		&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0);
 }
 
+bool8 CanFlinch(u8 bank, u8 ability)
+{
+	return ability != ABILITY_INNERFOCUS && !IsDynamaxed(bank);
+}
+
 bool8 CanBeChoiceLocked(u8 bank)
 {
 	return IsChoiceItemEffectOrAbility(ITEM_EFFECT(bank), ABILITY(bank));

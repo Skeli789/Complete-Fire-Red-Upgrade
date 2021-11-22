@@ -722,4 +722,5 @@ GetHiddenAbility 801D7E4 1
 GetAbilityName 801D7EC 2
 CountTMsInBag 801D7F4 0
 GetEventObjectGraphicsId 801D804 1
+PrepMiningWarp 801D80C 0
 #endif

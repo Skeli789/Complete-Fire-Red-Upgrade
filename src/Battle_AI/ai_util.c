@@ -1918,6 +1918,20 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 	return FALSE;
 }
 
+bool8 CanBeFlinched(u8 bankDef, u8 bankAtk, u8 defAbility, u16 move)
+{
+	if (!CanFlinch(bankDef, defAbility))
+		return FALSE;
+
+	if (defAbility == ABILITY_SHIELDDUST)
+		return FALSE; //Flinching is only caused by a secondary effect
+
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef))
+		return FALSE; //Have to go first to flinch
+
+	return !MoveBlockedBySubstitute(move, bankAtk, bankDef); //Can't flinch a Substitute
+}
+
 u8 CountBanksPositiveStatStages(u8 bank)
 {
 	u8 positiveStages = 0;
@@ -5061,10 +5075,15 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			u8 atkAbility = ABILITY(bankAtk);
 			u8 defAbility = ABILITY(bankDef);
 			u16 defSpecies = SPECIES(bankDef);
-			bool8 noMoldBreakers = NO_MOLD_BREAKERS(atkAbility, zMove);
 
-			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
+			if (IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Don't factor in the Z-Move
+				defAbility = ABILITY_NONE;
+
+			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef, defAbility))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
+
+			if (IsTargetAbilityIgnored(defAbility, atkAbility, zMove)) //This time account for the Z-Move
+				defAbility = ABILITY_NONE;
 
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
 			|| (defMovePrediction == MOVE_SUBSTITUTE
@@ -5072,7 +5091,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
-			if (noMoldBreakers && IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(zMove, bankAtk, bankDef)))
+			if (IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(zMove, bankAtk, bankDef)))
 				return FALSE; //Don't waste a Z-Move breaking a disguise
 
 			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT

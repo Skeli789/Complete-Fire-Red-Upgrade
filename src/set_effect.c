@@ -335,7 +335,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_FLINCH:
-				if (ABILITY(gEffectBank) == ABILITY_INNERFOCUS || IsDynamaxed(gEffectBank))
+				if (!CanFlinch(gEffectBank, ABILITY(gEffectBank)))
 					gBattlescriptCurrInstr++;
 				else
 				{

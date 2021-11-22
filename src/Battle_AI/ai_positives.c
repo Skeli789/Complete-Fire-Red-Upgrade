@@ -36,7 +36,7 @@ extern const struct FlingStruct gFlingTable[];
 #define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
 #define PRIORITY_MOVE_BUT_NORMALLY_SLOWER (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0 && data->atkSpeed < data->defSpeed)
 
-static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, struct AIScript* data);
+static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, u8 defAbility, struct AIScript* data);
 
 u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
@@ -51,8 +51,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 
-	if (IS_MOLD_BREAKER(atkAbility, move)
-	&& gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities)
+	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
 		defAbility = ABILITY_NONE;
 
 	u8 moveEffect = gBattleMoves[move].effect;
@@ -565,9 +564,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_FLINCH_HIT:
 		AI_FLINCH_CHECKS:
-			if (defAbility == ABILITY_INNERFOCUS
-			||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
-			||  !MoveWouldHitFirst(move, bankAtk, bankDef))
+			if (!CanBeFlinched(bankDef, bankAtk, defAbility, move))
 				break;
 			else if (atkAbility == ABILITY_SERENEGRACE
 			|| data->defStatus1 & STATUS1_PARALYSIS
@@ -1708,7 +1705,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_FAKE_OUT:
 			if (move == MOVE_FAKEOUT
-			&& ShouldUseFakeOut(bankAtk, bankDef))
+			&& ShouldUseFakeOut(bankAtk, bankDef, defAbility))
 			{
 				IncreaseFakeOutViability(&viability, class, bankAtk, bankDef, move);
 			}
@@ -1759,7 +1756,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_TORMENT:
-			if (IsChoiceItemEffectOrAbility(data->defItemEffect, data->defAbility))
+			if (IsChoiceItemEffectOrAbility(data->defItemEffect, defAbility))
 				INCREASE_STATUS_VIABILITY(2);
 			else
 				INCREASE_STATUS_VIABILITY(0);
@@ -2643,7 +2640,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	}
 
 	if (moveSplit != SPLIT_STATUS)
-		viability = DamageMoveViabilityIncrease(bankAtk, bankDef, move, viability, class, predictedMove, atkAbility, data);
+		viability = DamageMoveViabilityIncrease(bankAtk, bankDef, move, viability, class, predictedMove, atkAbility, defAbility, data);
 
 	if (data->atkStatus1 & STATUS1_FREEZE && gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)
 	{
@@ -2657,7 +2654,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	return min(viability, 255);
 }
 
-static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, struct AIScript* data)
+static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 viability, u8 class, u16 predictedMove, u8 atkAbility, u8 defAbility, struct AIScript* data)
 {
 	if (IS_SINGLE_BATTLE) //Single Battle or only 1 target left
 	{
@@ -2700,7 +2697,7 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 		&& (!IsClassPhazer(class) || PRIORITY_MOVE_BUT_NORMALLY_SLOWER) //Or phaze/set up hazards
 		&& (!IsClassStall(class) || PRIORITY_MOVE_BUT_NORMALLY_SLOWER) //Or do residual damage
 		&& !(gNewBS->ai.goodToPivot & gBitTable[bankAtk]) //Don't use a desperate move if you should pivot out
-		&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
+		&& (!MoveInMovesetAndUsable(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef, defAbility))) //Prefer Fake Out if it'll do something
 		{
 			if (gBattleMoves[predictedMove].effect != EFFECT_SUCKER_PUNCH //AI shouldn't prioritize damaging move if foe is going to try to KO with Sucker Punch
 			|| IsClassDamager(class) //Unless their purpose is to dish out damage - helps recover from incorrect predictions
@@ -2854,7 +2851,10 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		if (SPLIT(move) != SPLIT_STATUS)
 		{
 			viability = DamageMoveViabilityIncrease(bankAtk, bankDef, move, viability, GetBankFightingStyle(bankAtk),
-			                                        IsValidMovePrediction(bankDef, bankAtk), GetAIAbility(bankAtk, bankDef, move), data);
+			                                        IsValidMovePrediction(bankDef, bankAtk),
+													GetAIAbility(bankAtk, bankDef, move),
+													GetAIAbility(bankDef, bankAtk, IsValidMovePrediction(bankDef, bankAtk)),
+													data);
 		}
 
 		if (data->atkStatus1 & STATUS1_FREEZE && gSpecialMoveFlags[move].gMovesCanUnfreezeAttacker)

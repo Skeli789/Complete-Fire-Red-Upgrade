@@ -1399,13 +1399,11 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 	return FALSE;
 }
 
-bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
+bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef, u8 defAbility)
 {
 	if (gDisableStructs[bankAtk].isFirstTurn
 	&& IsUsefulToFlinchTarget(bankDef)
-	&& ABILITY(bankDef) != ABILITY_INNERFOCUS
-	&& ABILITY(bankDef) != ABILITY_SHIELDDUST
-	&& !MoveBlockedBySubstitute(MOVE_FAKEOUT, bankAtk, bankDef))
+	&& CanBeFlinched(bankDef, bankAtk, defAbility, MOVE_FAKEOUT))
 	{
 		if (IS_DOUBLE_BATTLE)
 		{

@@ -144,6 +144,7 @@ bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
 bool8 CanBeConfused(u8 bankDef, u8 bankAtk, u8 checkSafeguard);
 bool8 CanBeTormented(u8 bank);
 bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk);
+bool8 CanFlinch(u8 bank, u8 ability);
 bool8 CanBeChoiceLocked(u8 bank);
 
 bool8 IsTrickRoomActive(void);

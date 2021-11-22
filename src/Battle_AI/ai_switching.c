@@ -1649,8 +1649,8 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 
 	u8 ability;
 	u8 foe = FOE(gActiveBattler);
+	u16 foeMovePrediction = IsValidMovePrediction(foe, gActiveBattler);
 	u16 randVal;
-	
 
 	if (IS_SINGLE_BATTLE //Not good for Doubles
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
@@ -1662,7 +1662,18 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	&& (!(gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS) //Better to not try to save paralyzed target
 	 || ((ability = ABILITY(gActiveBattler)) == ABILITY_QUICKFEET || ability == ABILITY_GUTS)) //Unless it has Quick Feet or Guts
 	&& IsClassDamager(GetBankFightingStyle(gActiveBattler)) //Role is to dish out as much damage as possible
-	&& !CanKnockOut(gActiveBattler, foe) //But this powerhouse can't KO right now
+	&&
+	(
+		//OPTION A:
+		!CanKnockOut(gActiveBattler, foe) //But this powerhouse can't KO right now
+
+		//OPTION B:
+		|| (foeMovePrediction == MOVE_FAKEOUT //The AI can KO but the foe will go first with Fake Out
+	     && CanBeFlinched(gActiveBattler, foe,
+		                  IsTargetAbilityIgnored(ABILITY(gActiveBattler), ABILITY(foe), foeMovePrediction) ? ABILITY_NONE : ABILITY(gActiveBattler),
+		                  foeMovePrediction) //Fake Out will cause a flinch
+	     && GetFinalAIMoveDamage(foeMovePrediction, foe, gActiveBattler, 1, NULL) >= gBattleMons[gActiveBattler].maxHP / 2) //And deal a ton of damage
+	)
 	&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe, gActiveBattler)) //It's not behind a Substitute
 	&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4) //Will take less than 25% damage on reentry
 	&& !(IsTrapped(foe, TRUE) && IsTakingSecondaryDamage(foe)) //This mon isn't keeping the foe locked in taking damage
@@ -1691,7 +1702,8 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	))
 	{
 		u16 movePrediction = IsValidMovePrediction(gActiveBattler, foe);
-		if (movePrediction == MOVE_FAKEOUT || gBattleMoves[movePrediction].effect == EFFECT_PROTECT)
+		if ((movePrediction == MOVE_FAKEOUT && CanFlinch(foe, ABILITY(foe))) //Assume it was chosen because Flinching would work
+		|| gBattleMoves[movePrediction].effect == EFFECT_PROTECT)
 			return FALSE; //Use the move and then switch
 
 		bool8 willPivot = FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe); //U-Turn/Volt Switch switch on their own

@@ -46,7 +46,7 @@ u8 ShouldProtect(u8 bankAtk, u8 bankDef, u16 move);
 bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move);
-bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef);
+bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef, u8 defAbility);
 bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldCourtChange(u8 bankAtk, u8 bankDef);
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class);

@@ -373,10 +373,10 @@ static const struct SpriteFrameImage sTrainerBackPicTable_Galavan[] =
 static const struct SpriteFrameImage sTrainerBackPicTable_BigMo[] =
 {
 	{gTrainerBackPic_BigMoTiles, 			0x800, 0},
-	{gTrainerBackPic_BigMoTiles,			0x800, 0},
+	{gTrainerBackPic_BigMoTiles ,			0x800, 0},
 	{gTrainerBackPic_BigMoTiles + 0x0800, 	0x800, 0},
 	{gTrainerBackPic_BigMoTiles + 0x1000, 	0x800, 0},
-	{gTrainerBackPic_BigMoTiles + 0x1000, 	0x800, 0},
+	{gTrainerBackPic_BigMoTiles + 0x1800, 	0x800, 0},
 };
 
 static const struct SpriteFrameImage sTrainerBackPicTable_Tessy[] =
