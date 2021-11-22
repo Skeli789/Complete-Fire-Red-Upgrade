@@ -886,18 +886,6 @@ SKIP_CHECK_TARGET:
 				}
 			}
 			break;
-		
-		case EFFECT_ATK_ACC_UP: //Hone Claws
-			if (GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				if (data->atkAbility == ABILITY_CONTRARY
-				|| (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
-				&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))))
-					DECREASE_VIABILITY(10);
-			}
-			break;
 
 		case EFFECT_DEFENSE_UP:
 		case EFFECT_DEFENSE_UP_2:
@@ -951,42 +939,6 @@ SKIP_CHECK_TARGET:
 				DECREASE_VIABILITY(10);
 			break;
 
-		case EFFECT_ATK_SPATK_UP:
-			if (GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				switch (move)
-				{
-					case MOVE_ROTOTILLER:
-						if (TARGETING_PARTNER) //Handled in ai_partner.c
-							break;
-
-						if (!IsOfType(bankAtk, TYPE_GRASS) || !CheckGrounding(bankAtk))
-							DECREASE_VIABILITY(10);
-						else
-							goto AI_ATK_SPATK_UP;
-						break;
-
-					case MOVE_GEARUP:
-						if (!IsPlusMinusAbility(data->atkAbility) && !TARGETING_PARTNER) //Wouldn't affect user
-						{
-							DECREASE_VIABILITY(10);
-							break;
-						}
-						//Fallthrough
-
-					default:
-					AI_ATK_SPATK_UP:
-						if (data->atkAbility == ABILITY_CONTRARY
-						|| ((!AI_STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
-						 && (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))))
-							DECREASE_VIABILITY(10);
-						break;
-				}
-			}
-			break;
-
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 			if (GOOD_AI_MOVE_LOCKED)
@@ -1035,6 +987,185 @@ SKIP_CHECK_TARGET:
 			}
 			break;
 
+		case EFFECT_ATK_SPATK_UP:
+			if (GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				switch (move)
+				{
+					case MOVE_ROTOTILLER:
+						if (TARGETING_PARTNER) //Handled in ai_partner.c
+							break;
+
+						if (!IsOfType(bankAtk, TYPE_GRASS) || !CheckGrounding(bankAtk))
+							DECREASE_VIABILITY(10);
+						else
+							goto AI_ATK_SPATK_UP;
+						break;
+
+					case MOVE_GEARUP:
+						if (!IsPlusMinusAbility(data->atkAbility) && !TARGETING_PARTNER) //Wouldn't affect user
+						{
+							DECREASE_VIABILITY(10);
+							break;
+						}
+						//Fallthrough
+
+					default:
+					AI_ATK_SPATK_UP:
+						if (data->atkAbility == ABILITY_CONTRARY
+						|| ((!AI_STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						 && (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))))
+							DECREASE_VIABILITY(10);
+						break;
+				}
+			}
+			break;
+
+		case EFFECT_ATK_ACC_UP: //Hone Claws
+			if (GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				if (data->atkAbility == ABILITY_CONTRARY
+				|| (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
+				&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))))
+					DECREASE_VIABILITY(10);
+			}
+			break;
+
+		case EFFECT_COSMIC_POWER:
+			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				if (move == MOVE_MAGNETICFLUX)
+				{
+					if (TARGETING_PARTNER)
+						break;
+
+					if (!IsPlusMinusAbility(data->atkAbility))
+					{
+						DECREASE_VIABILITY(10);
+						break;
+					}
+				}
+
+				AI_COSMIC_POWER:
+				if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+					DECREASE_VIABILITY(10);
+			}
+			break;
+
+		case EFFECT_BULK_UP:
+			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				switch (move) {
+					case MOVE_COIL:
+						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
+						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
+							DECREASE_VIABILITY(10);
+						break;
+
+					default:
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
+							DECREASE_VIABILITY(10);
+				}
+			}
+			break;
+
+		case EFFECT_CALM_MIND:
+			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				switch (move) {
+					case MOVE_QUIVERDANCE:
+					case MOVE_GEOMANCY:
+						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)
+						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+							DECREASE_VIABILITY(10);
+						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
+							DECREASE_VIABILITY(10);
+						break;
+
+					default:
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+							DECREASE_VIABILITY(10);
+				}
+			}
+			break;
+
+		case EFFECT_DRAGON_DANCE:
+			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else
+			{
+				switch (move) {
+					case MOVE_SHELLSMASH:
+						if (data->atkAbility == ABILITY_CONTRARY)
+							goto AI_COSMIC_POWER;
+
+						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
+						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
+							DECREASE_VIABILITY(10);
+						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
+							DECREASE_VIABILITY(10);
+						break;
+
+					default: //Dragon Dance + Shift Gear
+						if (data->atkAbility == ABILITY_CONTRARY
+						|| (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())) //Trick Room not about to end
+							DECREASE_VIABILITY(10);
+						else
+						{
+							if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
+							&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
+								DECREASE_VIABILITY(10);
+						}
+				}
+			}
+			break;
+
+		case EFFECT_EXTREME_EVOBOOST:
+			if (MainStatsMaxed(bankAtk) || GOOD_AI_MOVE_LOCKED)
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
+
+			switch (move) {
+				case MOVE_NORETREAT:
+					if (gNewBS->trappedByNoRetreat & gBitTable[bankAtk])
+						DECREASE_VIABILITY(10);
+					break;
+				case MOVE_CLANGOROUSSOUL:
+					if (gBattleMons[bankAtk].hp <= gBattleMons[bankAtk].maxHP / 3)
+						DECREASE_VIABILITY(10);
+					break;	
+			}
+			break;
+
+		case EFFECT_CHARGE:
+			if (data->atkStatus3 & STATUS3_CHARGED_UP || GOOD_AI_MOVE_LOCKED)
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
+
+			if (!DamagingMoveTypeInMoveset(bankAtk, TYPE_ELECTRIC))
+				goto AI_SPDEF_UP;
+			break;
+
+	//Decreased stat effects
 		case EFFECT_ATTACK_DOWN:
 		case EFFECT_ATTACK_DOWN_2:
 			if (!CanStatBeLowered(STAT_STAGE_ATK, bankDef, bankAtk, data->defAbility) || !RealPhysicalMoveInMoveset(bankDef))
@@ -2209,17 +2340,6 @@ SKIP_CHECK_TARGET:
 		case EFFECT_NATURE_POWER:
 			return AIScript_Negatives(bankAtk, bankDef, GetNaturePowerMove(), originalViability, data);
 
-		case EFFECT_CHARGE:
-			if (data->atkStatus3 & STATUS3_CHARGED_UP || GOOD_AI_MOVE_LOCKED)
-			{
-				DECREASE_VIABILITY(10);
-				break;
-			}
-
-			if (!DamagingMoveTypeInMoveset(bankAtk, TYPE_ELECTRIC))
-				goto AI_SPDEF_UP;
-			break;
-
 		case EFFECT_TAUNT:
 			if (IsTaunted(bankDef)
 			|| data->defAbility == ABILITY_OBLIVIOUS
@@ -2450,129 +2570,10 @@ SKIP_CHECK_TARGET:
 				DECREASE_VIABILITY(10);
 			break;
 
-		case EFFECT_COSMIC_POWER:
-			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				if (move == MOVE_MAGNETICFLUX)
-				{
-					if (TARGETING_PARTNER)
-						break;
-
-					if (!IsPlusMinusAbility(data->atkAbility))
-					{
-						DECREASE_VIABILITY(10);
-						break;
-					}
-				}
-
-				AI_COSMIC_POWER:
-				if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
-					DECREASE_VIABILITY(10);
-			}
-			break;
-
-		case EFFECT_EXTREME_EVOBOOST:
-			if (MainStatsMaxed(bankAtk) || GOOD_AI_MOVE_LOCKED)
-			{
-				DECREASE_VIABILITY(10);
-				break;
-			}
-
-			switch (move) {
-				case MOVE_NORETREAT:
-					if (gNewBS->trappedByNoRetreat & gBitTable[bankAtk])
-						DECREASE_VIABILITY(10);
-					break;
-				case MOVE_CLANGOROUSSOUL:
-					if (gBattleMons[bankAtk].hp <= gBattleMons[bankAtk].maxHP / 3)
-						DECREASE_VIABILITY(10);
-					break;	
-			}
-			break;
-
-		case EFFECT_BULK_UP:
-			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				switch (move) {
-					case MOVE_COIL:
-						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC)
-						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
-						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
-							DECREASE_VIABILITY(10);
-						break;
-
-					default:
-						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
-						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
-							DECREASE_VIABILITY(10);
-				}
-			}
-			break;
-
 		case EFFECT_WATER_SPORT:
 			if (IsWaterSportActive()
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
-			break;
-
-		case EFFECT_CALM_MIND:
-			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				switch (move) {
-					case MOVE_QUIVERDANCE:
-					case MOVE_GEOMANCY:
-						if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)
-						&& (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
-						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
-							DECREASE_VIABILITY(10);
-						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
-							DECREASE_VIABILITY(10);
-						break;
-
-					default:
-						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
-						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
-							DECREASE_VIABILITY(10);
-				}
-			}
-			break;
-
-		case EFFECT_DRAGON_DANCE:
-			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
-				DECREASE_VIABILITY(10);
-			else
-			{
-				switch (move) {
-					case MOVE_SHELLSMASH:
-						if (data->atkAbility == ABILITY_CONTRARY)
-							goto AI_COSMIC_POWER;
-
-						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
-						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
-						&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
-							DECREASE_VIABILITY(10);
-						else if (IsTrickRoomActive() && !IsTrickRoomOnLastTurn()) //Trick Room not about to end
-							DECREASE_VIABILITY(10);
-						break;
-
-					default: //Dragon Dance + Shift Gear
-						if (data->atkAbility == ABILITY_CONTRARY
-						|| (IsTrickRoomActive() && !IsTrickRoomOnLastTurn())) //Trick Room not about to end
-							DECREASE_VIABILITY(10);
-						else
-						{
-							if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) || !RealPhysicalMoveInMoveset(bankAtk))
-							&&  (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED)))
-								DECREASE_VIABILITY(10);
-						}
-				}
-			}
 			break;
 
 		case EFFECT_STAT_SWAP_SPLIT:

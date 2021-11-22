@@ -1248,15 +1248,14 @@ static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 		{
 			u8 bestMonId = GetMostSuitableMonToSwitchIntoByParty(party);
 			u8 secondBestMonId = GetSecondMostSuitableMonToSwitchIntoByParty(party);
-			if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, bestMonId, GetMostSuitableMonToSwitchIntoFlags()))
-				return TRUE;
-			else if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, secondBestMonId, GetSecondMostSuitableMonToSwitchIntoFlags()))
+			if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, bestMonId, GetMostSuitableMonToSwitchIntoFlags())
+			||  ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, secondBestMonId, GetSecondMostSuitableMonToSwitchIntoFlags()))
 				return TRUE;
 
 			u8 side = SIDE(gActiveBattler);
-			for (u32 i = 0; i < PARTY_SIZE; ++i)
+			for (u32 i = 0; i < PARTY_SIZE; ++i) //Run a check on the whole party now
 			{
-				if (i == bestMonId || i == secondBestMonId)
+				if (i == bestMonId || i == secondBestMonId) //Already checked these
 					continue;
 
 				if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, i, gNewBS->ai.monIdToSwitchIntoFlags[side][i]))

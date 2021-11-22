@@ -297,7 +297,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					goto AI_SP_ATTACK_PLUS;
 			}
 			break;
-		
+
 		case EFFECT_ATK_ACC_UP:
 			if (atkAbility != ABILITY_CONTRARY)
 			{
@@ -399,6 +399,52 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
+		case EFFECT_EXTREME_EVOBOOST: ;
+			u8 oldViability = viability;
+
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
+
+			switch (move) {
+				case MOVE_EXTREME_EVOBOOST:
+					for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
+					{
+						INCREASE_STAT_VIABILITY(i, STAT_STAGE_MAX, 3);
+						if (viability != oldViability) //Viability was increased
+							break;
+					}
+					break;
+				case MOVE_CLANGOROUSSOUL:
+					if (MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
+						break;
+					else if (MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 3)
+					&& !MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 2))
+						break; //Will be able to KO after the HP cut
+					//Fallthrough
+				case MOVE_NORETREAT:
+					if (atkAbility == ABILITY_CONTRARY)
+						break;
+
+					//Try to boost either Attack, Sp. Attack, or Speed
+					if (RealPhysicalMoveInMoveset(bankAtk))
+					{
+						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
+						if (viability != oldViability) //Viability was increased
+							break;
+					}
+
+					if (SpecialMoveInMoveset(bankAtk))
+					{
+						INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
+						if (viability != oldViability) //Viability was increased
+							break;
+					}
+
+					INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3); //At least try to boost Speed
+					break;
+			}
+			break;
+
 		case EFFECT_DEFENSE_CURL:
 			if (MoveEffectInMoveset(EFFECT_ROLLOUT, bankAtk) && !(data->atkStatus2 & STATUS2_DEFENSE_CURL))
 				INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, STAT_STAGE_MAX, 5);
@@ -421,7 +467,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				goto AI_COSMIC_POWER;
 			break;
 
-		//Decreased stat effects
+	//Decreased stat effects
 		case EFFECT_ATTACK_DOWN:
 		case EFFECT_ATTACK_DOWN_2:
 		AI_ATTACK_MINUS:
@@ -2155,52 +2201,6 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (DamagingMoveTypeInMoveset(bankDef, TYPE_FIRE) //Foe has Fire move
 			&& !DamagingMoveTypeInMoveset(bankAtk, TYPE_FIRE)) //And AI doesn't
 				INCREASE_STATUS_VIABILITY(1);
-			break;
-
-		case EFFECT_EXTREME_EVOBOOST: ;
-			u8 oldViability = viability;
-
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-				break;
-
-			switch (move) {
-				case MOVE_EXTREME_EVOBOOST:
-					for (i = STAT_STAGE_ATK; i <= STAT_STAGE_SPDEF; ++i)
-					{
-						INCREASE_STAT_VIABILITY(i, STAT_STAGE_MAX, 3);
-						if (viability != oldViability) //Viability was increased
-							break;
-					}
-					break;
-				case MOVE_CLANGOROUSSOUL:
-					if (MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
-						break;
-					else if (MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 3)
-					&& !MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 2))
-						break; //Will be able to KO after the HP cut
-					//Fallthrough
-				case MOVE_NORETREAT:
-					if (atkAbility == ABILITY_CONTRARY)
-						break;
-
-					//Try to boost either Attack, Sp. Attack, or Speed
-					if (RealPhysicalMoveInMoveset(bankAtk))
-					{
-						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
-						if (viability != oldViability) //Viability was increased
-							break;
-					}
-
-					if (SpecialMoveInMoveset(bankAtk))
-					{
-						INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
-						if (viability != oldViability) //Viability was increased
-							break;
-					}
-
-					INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3); //At least try to boost Speed
-					break;
-			}
 			break;
 
 		case EFFECT_STAT_SWAP_SPLIT:
