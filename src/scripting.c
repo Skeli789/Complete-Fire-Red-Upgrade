@@ -2057,9 +2057,15 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 //Fix fadescreens in rain
 bool8 __attribute__((long_call)) IsPaletteNotActive(void);
 
+static bool8 IsPaletteFadeNotActive(void)
+{
+	return IsPaletteNotActive()
+		&& gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_IN; //Used instead of gPaletteFade.active in certain weathers
+}
+
 static bool8 ResetUnfadedPaletteWhenPaletteNotActive(void)
 {
-	if (IsPaletteNotActive())
+	if (IsPaletteFadeNotActive())
 	{
 		CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE); //Restore original unfaded pelette
 		return TRUE;
@@ -2084,7 +2090,7 @@ bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
 		case FADE_FROM_BLACK:
 		case FADE_FROM_WHITE:
 			FadeScreen(mode, 0);
-			SetupNativeScript(ctx, IsPaletteNotActive);
+			SetupNativeScript(ctx, IsPaletteFadeNotActive);
 			break;
 	}
 

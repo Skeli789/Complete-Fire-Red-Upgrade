@@ -16,8 +16,9 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj);
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum);
 const u8* GetTrainerSpritePal(u16 trainerPicId);
+bool8 IsPaletteTagAffectedByCharacterCustomization(u16 tag);
 void ChangeTrainerPicPal(u16 paletteOffset);
-void ChangeEventObjPal(unusedArg u16 paletteOffset);
+void ChangeEventObjPal(u16 paletteOffset, bool8 isPlayer);
 
 //Hooked In Functions
 NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId);

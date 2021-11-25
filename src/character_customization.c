@@ -501,11 +501,18 @@ u16 GetBackspriteId(void)
 }
 
 #ifdef UNBOUND
+bool8 IsPaletteTagAffectedByCharacterCustomization(u16 tag)
+{
+	return tag == EVENT_OBJ_PAL_TAG_DEFAULT
+		|| tag == EVENT_OBJ_PAL_TAG_MOM
+		|| tag == EVENT_OBJ_PAL_TAG_AROS;
+}
+
 #define SKIN_TONE_OFFSET 1
 #define HAIR_COLOUR_OFFSET 4
 #define OUTFIT_OFFSET 7
 #define TRIM_OFFSET 9
-static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset)
+static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 isPlayer)
 {
 	u16 skinTone = VarGet(VAR_PLAYER_SKIN_TONE);
 	u16 hairColour = VarGet(VAR_PLAYER_HAIR_COLOUR);
@@ -526,7 +533,7 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset)
 		CpuCopy16(sPlayerHairColours[hairColour] + HAIR_COLOUR_OFFSET, gPlttBufferFaded + hairOffset, 3 * sizeof(u16));
 	}
 
-	if (outfitColour > 0 && outfitColour < NELEMS(sPlayerOutfitColours))
+	if (isPlayer && outfitColour > 0 && outfitColour < NELEMS(sPlayerOutfitColours))
 	{
 		u16 outfitOffset = paletteOffset + OUTFIT_OFFSET;
 		u8 copyAmount = 2;
@@ -534,7 +541,7 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset)
 		CpuCopy16(sPlayerOutfitColours[outfitColour] + OUTFIT_OFFSET, gPlttBufferFaded + outfitOffset, copyAmount * sizeof(u16));
 	}
 
-	if (trimColour > 0 && trimColour < NELEMS(sPlayerTrimColours))
+	if (isPlayer && trimColour > 0 && trimColour < NELEMS(sPlayerTrimColours))
 	{
 		u16 trimOffset = paletteOffset + TRIM_OFFSET;
 		CpuCopy16(sPlayerTrimColours[trimColour] + TRIM_OFFSET, gPlttBufferUnfaded + trimOffset, 2 * sizeof(u16));
@@ -546,14 +553,14 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset)
 void ChangeTrainerPicPal(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE);
 	#endif
 }
 
-void ChangeEventObjPal(unusedArg u16 paletteOffset)
+void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg bool8 isPlayer)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, isPlayer);
 	#endif
 }
 
@@ -598,7 +605,7 @@ void TryUpdateRegionMapIconPal(void)
 	#ifdef UNBOUND
 	u8 paletteSlot = IndexOfSpritePaletteTag(1);
 	if (paletteSlot != 0xFF)
-		ChangeEventObjPal(0x100 + paletteSlot * 16);
+		ChangeEventObjPal(0x100 + paletteSlot * 16, TRUE);
 	#endif
 }
 

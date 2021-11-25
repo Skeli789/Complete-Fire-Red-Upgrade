@@ -26,7 +26,6 @@ Credit to Navenatox
 
 #define FOG_FADE_COLOUR TintColor(RGB(28, 31, 28))
 #define FOG_BRIGHTEN_INTENSITY 12
-#define EVENT_OBJ_PAL_TAG_DEFAULT 0x1100
 
 struct PalRef
 {
@@ -345,8 +344,8 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 
 	LoadNPCPalette(palTag, palSlot);
 	#ifdef UNBOUND
-	if (palTag == EVENT_OBJ_PAL_TAG_DEFAULT)
-		ChangeEventObjPal(0x100 + palSlot * 16);
+	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag == EVENT_OBJ_PAL_TAG_DEFAULT);
 	#endif
 	FogBrightenPalettes(FOG_BRIGHTEN_INTENSITY);
 	MaskPaletteIfFadingIn(palSlot);
@@ -366,8 +365,8 @@ u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
 
 	LoadNPCPalette(palTag, palSlot);
 	#ifdef UNBOUND
-	if (palTag == EVENT_OBJ_PAL_TAG_DEFAULT)
-		ChangeEventObjPal(0x100 + palSlot * 16);
+	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag == EVENT_OBJ_PAL_TAG_DEFAULT);
 	#endif
 	BlendPalettes(gBitTable[(palSlot + 16)], 6, RGB(12, 20, 27)); //Make it blueish
 	BrightenReflection(palSlot); //And a little brighter
@@ -500,8 +499,11 @@ u8 sub_805F510(const struct SpritePalette *spritePalette)
 
 	u8 palSlot = LoadSpritePalette(spritePalette);
 	#ifdef UNBOUND
-	if (palSlot != 0xFF && spritePalette->tag == EVENT_OBJ_PAL_TAG_DEFAULT)
-		ChangeEventObjPal(0x100 + palSlot * 16);
+	if (palSlot != 0xFF)
+	{
+		if (IsPaletteTagAffectedByCharacterCustomization(spritePalette->tag))
+			ChangeEventObjPal(0x100 + palSlot * 16, spritePalette->tag == EVENT_OBJ_PAL_TAG_DEFAULT);
+	}
 	#endif
 	return palSlot;
 }

@@ -61922,7 +61922,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_ROCKSLIDE,
+			MOVE_STONEEDGE,
 			MOVE_KNOCKOFF,
 			MOVE_RAPIDSPIN,
 			MOVE_STEALTHROCK,
