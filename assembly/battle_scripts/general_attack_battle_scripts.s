@@ -1664,6 +1664,7 @@ BS_086_Disable:
 	attackstringnoprotean
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
+	callasm FailMoveIfAura
 	disablelastusedattack BANK_TARGET FAILED
 	tryactivateprotean
 	attackanimation
@@ -1745,6 +1746,7 @@ BS_090_Encore:
 	attackstringnoprotean
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
+	callasm FailMoveIfAura
 	setencore FAILED
 	tryactivateprotean
 	attackanimation
@@ -1890,6 +1892,7 @@ BS_098_DestinyBond:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	callasm FailMoveIfAura
 	destinybondeffect
 	tryactivateprotean
 	attackanimation
@@ -3309,6 +3312,7 @@ BS_165_Torment:
 	attackstringnoprotean
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
+	callasm FailMoveIfAura
 	settorment FAILED
 	tryactivateprotean
 	attackanimation
@@ -3973,6 +3977,7 @@ SkillSwapBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
+	callasm FailMoveIfAura
 	abilityswap FAILED
 	attackanimation
 	waitanimation
@@ -4012,14 +4017,23 @@ GastroAcidBS:
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
-WorrySeedBS:
 EntrainmentBS:
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstringnoprotean
+	ppreduce
+	callasm FailMoveIfAura
+	goto WorrySeedBS_ChangeAbility
+
+WorrySeedBS:
 SimpleBeamBS:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstringnoprotean
 	ppreduce
+WorrySeedBS_ChangeAbility:
 	callasm AbilityChangeBSFunc
 	tryactivateprotean
 	attackanimation
