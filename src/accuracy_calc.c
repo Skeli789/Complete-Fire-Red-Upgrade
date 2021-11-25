@@ -268,12 +268,10 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		gBattleStringLoader = WideGuardProtectedString;
 		gNewBS->missStringId[bankDef] = gBattleCommunication[6] = 8;
 	}
-	else if (IsRaidBattle()
-	&& split == SPLIT_STATUS
-	&& !gSpecialMoveFlags[move].gMovesThatCallOtherMoves //Moves like Nature Power are still allowed
+	else if (split == SPLIT_STATUS
 	&& gBankAttacker != bankDef
-	&& bankDef == BANK_RAID_BOSS
-	&& gNewBS->dynamaxData.raidShieldsUp)
+	&& HasRaidShields(bankDef)
+	&& !gSpecialMoveFlags[move].gMovesThatCallOtherMoves) //Moves like Nature Power are still allowed
 	{
 		effect = 1;
 		gBattleStringLoader = gText_RaidShieldProtected;

@@ -214,9 +214,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-	if (gNewBS->dynamaxData.raidShieldsUp
+	if (HasRaidShields(gEffectBank)
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
-	&& gEffectBank == BANK_RAID_BOSS
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
 		++gBattlescriptCurrInstr;
@@ -891,7 +890,7 @@ bool8 SetMoveEffect2(void)
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN
 
-	if (gNewBS->dynamaxData.raidShieldsUp
+	if (HasRaidShields(gEffectBank)
 	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN

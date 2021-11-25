@@ -760,7 +760,7 @@ void atk0C_datahpupdate(void)
 				}
 
 				u32 hpDealt = gHpDealt;
-				if (IsRaidBattle() && gActiveBattler == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
+				if (HasRaidShields(gActiveBattler)) //Raid Shields can be used outside of Raid Battles now
 					hpDealt = MathMax(1, hpDealt); //Because damage can get heavily reduced to 0
 				if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
 					gSpecialStatuses[gActiveBattler].moveturnLostHP = hpDealt;
@@ -2985,12 +2985,13 @@ void atk93_tryKO(void)
 
 		if (gBattleMons[bankAtk].level >= gBattleMons[bankDef].level)
 		{
-			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS)
+			if (HasRaidShields(gBankTarget)) //Shields can be used outside of Raid Battles now
 			{
-				if (!gNewBS->dynamaxData.raidShieldsUp)
-					chance = FALSE; //Never works on regular raid mon
-				else
-					chance = TRUE; //Always breaks 2 raid shields
+				chance = TRUE; //Always breaks 2 raid shields
+			}
+			else if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS)
+			{
+				chance = FALSE; //Never works on regular raid mon
 			}
 			else if (IsDynamaxed(gBankTarget))
 			{
@@ -3021,7 +3022,7 @@ void atk93_tryKO(void)
 
 		if (chance)
 		{
-			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
+			if (HasRaidShields(gBankTarget))
 			{
 				//Just break shields
 			}
@@ -3038,7 +3039,7 @@ void atk93_tryKO(void)
 				gNewBS->EnduranceHelper[gBankTarget] = ENDURE_FOCUS_SASH;
 			}
 
-			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
+			if (HasRaidShields(gBankTarget))
 			{
 				//Just break shields
 			}
@@ -3316,7 +3317,7 @@ void atk9B_transformdataexecution(void)
 	|| SPECIES(gBankTarget) == SPECIES_SHADOW_WARRIOR
 	#endif
 	|| (IsDynamaxed(gBankAttacker) && IsBannedDynamaxSpecies(SPECIES(gBankTarget)))
-	|| (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
+	|| HasRaidShields(gBankTarget)) //Shields can be used outside of a Raid Battle now
 	{
 		gMoveResultFlags |= MOVE_RESULT_FAILED;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -3985,7 +3986,7 @@ void atkAF_cursetarget(void)
 {
 	if (gBattleMons[gBankTarget].status2 & STATUS2_CURSED
 	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove))
-	|| (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
+	|| HasRaidShields(gBankTarget)) //Shields can be used outside of Raid Battles now
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
 	{

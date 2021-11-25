@@ -980,9 +980,7 @@ void atkFF2F_setmaxmoveeffect(void)
 {
 	gBattlescriptCurrInstr += 1;
 
-	if (IsRaidBattle()
-	&& gBankTarget == BANK_RAID_BOSS
-	&& gNewBS->dynamaxData.raidShieldsUp)
+	if (HasRaidShields(gBankTarget)) //Shields can be used outside of Raid Battles now
 		return; //No special effect when move is blocked by shields
 
 	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
@@ -1559,7 +1557,7 @@ bool8 IsCatchableRaidBattle(void)
 
 bool8 HasRaidShields(u8 bank)
 {
-	return GetBattlerPosition(bank) == B_POSITION_OPPONENT_LEFT
+	return bank == BANK_RAID_BOSS
 		&& gNewBS->dynamaxData.raidShieldsUp;
 }
 
@@ -1573,11 +1571,19 @@ u8 GetNumRaidShieldsUp(void)
 
 bool8 ShouldStartWithRaidShieldsUp(void)
 {
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		return FALSE; //Only for wild battles
+
 	#if (defined FLAG_RAID_BATTLE_NO_FORCE_END && defined VAR_GAME_DIFFICULTY)
 	if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END) && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
 		return TRUE;
 	#endif
 
+	#ifdef FLAG_START_WITH_RAID_SHIELDS
+	if (FlagGet(FLAG_START_WITH_RAID_SHIELDS))
+		return TRUE;
+	#endif
+	
 	return FALSE;
 }
 

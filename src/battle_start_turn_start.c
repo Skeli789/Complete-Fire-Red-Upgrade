@@ -303,19 +303,19 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case BTSTART_RAID_BATTLE_REVEAL:
+				if (ShouldStartWithRaidShieldsUp() && !gNewBS->dynamaxData.raidShieldsUp) //Can be done outside of Raid Battles now
+				{
+					//Start with shields for harder Raids
+					gNewBS->dynamaxData.raidShieldsUp = TRUE;
+					gNewBS->dynamaxData.shieldsDestroyed = 0;
+					gBattleScripting.bank = BANK_RAID_BOSS;
+					BattleScriptPushCursorAndCallback(BattleScript_RaidShieldsBattleStart);
+				}
+
 				if (IsRaidBattle())
 				{
 					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without
 
-					if (ShouldStartWithRaidShieldsUp() && !gNewBS->dynamaxData.raidShieldsUp)
-					{
-						//Start with shields for harder Raids
-						gNewBS->dynamaxData.raidShieldsUp = TRUE;
-						gNewBS->dynamaxData.shieldsDestroyed = 0;
-						gBattleScripting.bank = BANK_RAID_BOSS;
-						BattleScriptPushCursorAndCallback(BattleScript_RaidShieldsBattleStart);
-					}
-					else
 					#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 					if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
 					{

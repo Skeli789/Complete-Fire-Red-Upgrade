@@ -356,16 +356,24 @@ static u8 AtkCanceller_UnableToUseMove(void)
 
 		case CANCELLER_RAID_BATTLES_FAILED_MOVES:
 		case CANCELLER_RAID_BATTLES_FAILED_MOVES_2:
-			if (IsRaidBattle()
-			&& (gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedMoves
-			 || (gCurrentMove == MOVE_TRANSFORM && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
-			&& !gNewBS->zMoveData.active) //Raid Battles stop status Z-Moves, so there will be a second check later on
+			if ((IsRaidBattle() 
+			&& gSpecialMoveFlags[gCurrentMove].gRaidBattleBannedMoves
+			&& !gNewBS->zMoveData.active)) //Raid Battles stop status Z-Moves, so there will be a second check later on
+			{
+				gBattlescriptCurrInstr = BattleScript_MoveUsedRaidBattlePrevents;
+				effect = 1;
+			}
+			else if (gCurrentMove == MOVE_TRANSFORM && HasRaidShields(gBankTarget)) //Shields can be used outside Raid Battles now
+			{
+				gBattlescriptCurrInstr = BattleScript_MoveUsedRaidShieldPrevents;
+				effect = 1;
+			}
+
+			if (effect)
 			{
 				gBattleScripting.bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
-				gBattlescriptCurrInstr = BattleScript_MoveUsedRaidBattlePrevents;
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
-				effect = 1;
 			}
 
 			gBattleStruct->atkCancellerTracker++;

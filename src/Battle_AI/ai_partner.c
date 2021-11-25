@@ -506,7 +506,8 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				else if (partnerMove != MOVE_NONE
 				&& !partnerProtects
 				&&  SPLIT(partnerMove) != SPLIT_STATUS
-				&& (!IsRaidBattle() || !gNewBS->dynamaxData.raidShieldsUp))
+				&& (!IsRaidBattle()
+				 || !gNewBS->dynamaxData.raidShieldsUp)) //If it is a Raid, don't bother using Helping Hand when the shields take priority in being destroyed
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}

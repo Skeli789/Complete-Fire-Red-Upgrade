@@ -32,49 +32,49 @@ ai_negatives.c
 
 #define TARGETING_PARTNER (bankDef == bankAtkPartner)
 #define PARTNER_MOVE_EFFECT_IS_SAME (IS_DOUBLE_BATTLE \
-									&& gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& gBattleStruct->moveTarget[bankAtkPartner] == bankDef)
+                                    && gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && gBattleStruct->moveTarget[bankAtkPartner] == bankDef)
 #define PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET (IS_DOUBLE_BATTLE \
-									&& gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
+                                    && gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
 #define PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET PartnerMoveEffectIsStatusSameTarget(data, move, bankDef)
 
 #define PARTNER_MOVE_EFFECT_IS_WEATHER (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& (gBattleMoves[partnerMove].effect == EFFECT_SUNNY_DAY \
-									 || gBattleMoves[partnerMove].effect == EFFECT_RAIN_DANCE \
-									 || gBattleMoves[partnerMove].effect == EFFECT_SANDSTORM \
-									 || gBattleMoves[partnerMove].effect == EFFECT_HAIL \
-									 || IsMaxMoveWithWeatherEffect(partnerMove)))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && (gBattleMoves[partnerMove].effect == EFFECT_SUNNY_DAY \
+                                     || gBattleMoves[partnerMove].effect == EFFECT_RAIN_DANCE \
+                                     || gBattleMoves[partnerMove].effect == EFFECT_SANDSTORM \
+                                     || gBattleMoves[partnerMove].effect == EFFECT_HAIL \
+                                     || IsMaxMoveWithWeatherEffect(partnerMove)))
 #define PARTNER_MOVE_EFFECT_IS_TERRAIN (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& (gBattleMoves[partnerMove].effect == EFFECT_SET_TERRAIN \
-									 || IsMaxMoveWithTerrainEffect(partnerMove)))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && (gBattleMoves[partnerMove].effect == EFFECT_SET_TERRAIN \
+                                     || IsMaxMoveWithTerrainEffect(partnerMove)))
 #define PARTNER_MOVE_IS_TAILWIND_TRICKROOM (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& (partnerMove == MOVE_TAILWIND || partnerMove == MOVE_TRICKROOM))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && (partnerMove == MOVE_TAILWIND || partnerMove == MOVE_TRICKROOM))
 
 #define PARTNER_MOVE_IS_CONFUSION_MAX_MOVE (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& IsMaxMoveWithConfusionEffect(partnerMove))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && IsMaxMoveWithConfusionEffect(partnerMove))
 #define PARTNER_MOVE_IS_TRAP_DAMAGE_MAX_MOVE (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& IsMaxMoveWithTrapDamageEffect(partnerMove))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && IsMaxMoveWithTrapDamageEffect(partnerMove))
 #define PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(effect) (IS_DOUBLE_BATTLE \
-									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& IsMaxMoveWithEffect(partnerMove, effect))
+                                    && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    && IsMaxMoveWithEffect(partnerMove, effect))
 
 #define PARTNER_MOVE_IS_SAME (IS_DOUBLE_BATTLE \
-							  && move == partnerMove \
-						   	  && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-							  && gBattleStruct->moveTarget[bankAtkPartner] == bankDef)
+                              && move == partnerMove \
+							  && gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                              && gBattleStruct->moveTarget[bankAtkPartner] == bankDef)
 #define PARTNER_MOVE_IS_SAME_NO_TARGET (IS_DOUBLE_BATTLE \
-										&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-										&& move == partnerMove)
+                                    	&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+                                    	&& move == partnerMove)
 
 #define GOOD_AI_MOVE_LOCKED (GOOD_AI \
-							   && (IsChoiceItemEffectOrAbility(data->atkItemEffect, data->atkAbility) || gDisableStructs[bankAtk].encoreTimer > 0))
+                               && (IsChoiceItemEffectOrAbility(data->atkItemEffect, data->atkAbility) || gDisableStructs[bankAtk].encoreTimer > 0))
 
 #define ATTACKER_ASLEEP (data->atkStatus1 & STATUS1_SLEEP && data->atkStatus1 > 1)
 #define TARGET_ASLEEP (data->defStatus1 & STATUS1_SLEEP && data->defStatus1 > 1)
@@ -691,15 +691,14 @@ SKIP_CHECK_TARGET:
 
 		if (bankAtk == BANK_RAID_BOSS && specialMoveFlags->gRaidBattleBannedRaidMonMoves)
 			return 0; //This move really shouldn't be used
+	}
 
-		if (bankAtk != bankDef
-		&& bankDef == BANK_RAID_BOSS
-		&& gNewBS->dynamaxData.raidShieldsUp
-		&& moveSplit == SPLIT_STATUS) //Status moves can't be used while Raid Shields are up
-		{
-			DECREASE_VIABILITY(10);
-			return viability;
-		}
+	if (HasRaidShields(bankDef) //Can be used without a Raid battle
+	&& bankAtk != bankDef
+	&& moveSplit == SPLIT_STATUS) //Status moves can't be used while Raid Shields are up
+	{
+		DECREASE_VIABILITY(10);
+		return viability;
 	}
 
 	//Primal Weather Check
@@ -1470,7 +1469,7 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_0HKO:
-			if ((IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS)) //Only Dynamaxed foe that can be hit is one with shields up
+			if ((IsDynamaxed(bankDef) && !HasRaidShields(bankDef)) //Only Dynamaxed foe that can be hit is one with shields up
 			|| AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED)
 			|| (NO_MOLD_BREAKERS(data->atkAbility, move) && data->defAbility == ABILITY_STURDY)
 			|| gBattleMons[bankAtk].level < gBattleMons[bankDef].level

@@ -640,21 +640,22 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_RAID_SHIELD_BREAK: //Here b/c multi-hit moves only break one shield
 		#ifdef FLAG_RAID_BATTLE
-			if (IsRaidBattle()
-			&& GetBattlerPosition(gBankTarget) == B_POSITION_OPPONENT_LEFT
+			if (HasRaidShields(gBankTarget)
+			//&& IsRaidBattle() //Can be used outside of Raid Battles now
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
-			&& gNewBS->dynamaxData.raidShieldsUp
 			&& (gMultiHitCounter <= 1 //Multi-Hit moves break the shield on the last strike
 				|| !BATTLER_ALIVE(gBankAttacker) //Or if the attacker fainted early
 				|| GetNumRaidShieldsUp() == 1)) //Or immediately if there's only one shield left
 			{
 				DestroyRaidShieldSprite();
+
 				if (IsAnyMaxMove(gCurrentMove)
 				|| IsZMove(gCurrentMove)
 				|| gBattleMoves[gCurrentMove].effect == EFFECT_0HKO
 				|| gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK) //Unofficial addition
 					DestroyRaidShieldSprite();
+
 				if (IsZMove(gCurrentMove))
 					DestroyRaidShieldSprite(); //Z-Moves destroy 3 shields
 

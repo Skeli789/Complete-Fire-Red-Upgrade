@@ -30,6 +30,7 @@ extern const u8 BattleScript_CantUseSignatureMove[];
 extern const u8 BattleScript_HoopaCantUseHyperspaceFury[];
 extern const u8 BattleScript_MoveUsedDynamaxPrevents[];
 extern const u8 BattleScript_MoveUsedRaidBattlePrevents[];
+extern const u8 BattleScript_MoveUsedRaidShieldPrevents[];
 extern const u8 BattleScript_DampStopsExplosion[];
 extern const u8 BattleScript_TookAttack[];
 extern const u8 BattleScript_RaidBattleStatNullification[];

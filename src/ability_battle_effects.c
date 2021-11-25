@@ -1110,7 +1110,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#ifdef UNBOUND
 			&& SPECIES(transformBank) != SPECIES_SHADOW_WARRIOR
 			#endif
-			&& !(IsRaidBattle() && transformBank == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
+			&& !HasRaidShields(transformBank))
 			{
 				gBankAttacker = bank;
 				gBankTarget = transformBank;

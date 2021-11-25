@@ -1948,7 +1948,7 @@ void AdjustDamage(bool8 checkFalseSwipe)
 		if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef))
 			goto END;
 
-		if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
+		if (bankDef == BANK_RAID_BOSS)
 		{
 			if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
 			{
@@ -1959,7 +1959,7 @@ void AdjustDamage(bool8 checkFalseSwipe)
 					damage = gBattleMons[bankDef].hp - 1; //Can't KO while shields are up
 				goto END;
 			}
-			else
+			else if (IsRaidBattle()) //Shields can start in a non-Dynamax battle, but they can only respawn in a Raid Battle
 			{
 				u16 cutOff = GetNextRaidShieldHP(bankDef);
 				if (cutOff > 0 && gBattleMons[bankDef].hp - damage < cutOff)
@@ -2050,7 +2050,7 @@ void AdjustDamage(bool8 checkFalseSwipe)
 //Only for the AI
 u32 TryAdjustDamageForRaidBoss(u8 bankDef, u32 damage)
 {
-	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
+	if (bankDef == BANK_RAID_BOSS)
 	{
 		if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
 		{
@@ -2058,7 +2058,7 @@ u32 TryAdjustDamageForRaidBoss(u8 bankDef, u32 damage)
 			if (damage >= gBattleMons[bankDef].hp)
 				damage = gBattleMons[bankDef].hp - 1; //Can't KO while shields are up
 		}
-		else
+		else if (IsRaidBattle()) //Shields can start in a non-Dynamax battle, but they can only respawn in a Raid Battle
 		{
 			u16 cutOff = GetNextRaidShieldHP(bankDef);
 			if (cutOff > 0 && gBattleMons[bankDef].hp - damage < cutOff)

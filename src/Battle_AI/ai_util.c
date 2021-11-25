@@ -1194,7 +1194,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			numHits -= 1; //Takes at least a turn to recharge
 	}
 
-	if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
+	if (HasRaidShields(bankDef)) //Doesn't necessarilly need to be a Raid Battle to have shields
 	{
 		u8 shieldsUp = GetNumRaidShieldsUp();
 		if (shieldsUp >= numHits)
@@ -1473,7 +1473,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 				if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level
 				|| (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 				|| (ABILITY(bankDef) == ABILITY_STURDY)
-				|| (IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS)) //Not hitting Raid shield
+				|| (IsDynamaxed(bankDef) && !HasRaidShields(bankDef)) //Not hitting Raid shield
 				|| !(MoveWillHit(move, bankAtk, bankDef))) //Never worth the risk unless it's a sure hit
 					continue;
 			}
@@ -2182,7 +2182,7 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 				return TRUE;
 			if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 				return TRUE;
-			if (IsDynamaxed(bankDef) && !(gNewBS->dynamaxData.raidShieldsUp && bankDef == BANK_RAID_BOSS))
+			if (IsDynamaxed(bankDef) && !HasRaidShields(bankDef))
 				return TRUE;
 			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move) && ABILITY(bankDef) == ABILITY_STURDY)
 				return TRUE;
@@ -5098,7 +5098,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))
 				return FALSE; //Don't waste a Z-Move on a Protect
 
-			if (IsRaidBattle() && gNewBS->dynamaxData.raidShieldsUp && SIDE(bankAtk) == B_SIDE_PLAYER && SIDE(bankDef) == B_SIDE_OPPONENT) //Partner AI on Raid Pokemon with shields up
+			if (IsRaidBattle() && HasRaidShields(bankDef) && SIDE(bankAtk) == B_SIDE_PLAYER) //Raid Partner AI on Raid Pokemon with shields up
 			{
 				if (GetNumRaidShieldsUp() <= 2 //Less than 3 shields left
 				&& gNewBS->dynamaxData.stormLevel < 3) //The Raid boss hasn't almost won

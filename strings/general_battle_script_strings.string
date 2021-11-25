@@ -443,7 +443,7 @@ Dynamax Energy gathered\naround you!
 [ATTACKER] shook its\nhead.\pIt seems like it can't use\nthis move[.]
 
 #org @gText_RaidBattleAttackCancel
-The move was blocked by the\npower of Dynamax!
+But the move was blocked by the\npower of Dynamax!
 
 #org @gText_DynamaxItemBlock
 The item was blocked by the\npower of Dynamax!
@@ -464,7 +464,7 @@ A storm started brewing above you.
 A mysterious barrier appeared in\nfront of [SCRIPTING_BANK]\land is protecting it from attacks!
 
 #org @gText_RaidShieldProtected
-The mysterious barrier is\nprotecting [TARGET]\lfrom the impacts of the move!
+But the mysterious barrier\nprotected [TARGET]\lfrom the impacts of the move!
 
 #org @gText_RaidShieldBroke
 The mysterious barrier that was\nprotecting [SCRIPTING_BANK]\ldisappeared!
