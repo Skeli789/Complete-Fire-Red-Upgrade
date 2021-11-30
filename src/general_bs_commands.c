@@ -307,6 +307,7 @@ static bool8 TryStrongWindsWeakenAttack(u8 bankDef)
 	//Delta Stream indicates that it weakens all attacks that would normally be super-effective against
 	//Flying-type Pokemon, even if the attack wouldn't normally be super effective
 	if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
+	&& SPLIT(gCurrentMove) != SPLIT_STATUS
 	&& IsOfType(bankDef, TYPE_FLYING)
 	&& gTypeEffectiveness[gBattleStruct->dynamicMoveType][TYPE_FLYING] == TYPE_MUL_SUPER_EFFECTIVE
 	&& !gNewBS->printedStrongWindsWeakenedAttack) //Already checked before in doubles but not in singles
