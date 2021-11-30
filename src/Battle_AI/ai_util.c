@@ -1277,6 +1277,19 @@ static bool8 MoveKnocksOutAfterDynamax(u16 move, u8 bankAtk, u8 bankDef)
 	return ret;
 }
 
+static u32 AdjustFinalAIDamageForNumHits(u32 dmg, u16 move, u8 bankDef, u8 atkAbility, u8 defAbility, u8 numHits)
+{
+	u32 firstTurnDmg = dmg;
+	u32 endTurnDmg = GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
+	--numHits; //Add first turn damage in seperately
+
+	if (IsDamageHalvedDueToFullHP(bankDef, defAbility, move, atkAbility))
+		dmg *= 2; //Adjust damage on subsequent hits
+
+	dmg = firstTurnDmg + (dmg * numHits) + endTurnDmg;
+	return dmg;
+}
+
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
 {
 	if (move == MOVE_NONE || numHits == 0 || gBattleMoves[move].power == 0)
@@ -1306,14 +1319,9 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct D
 	{
 		u8 atkAbility = (damageData != NULL) ? damageData->atkAbility : ABILITY(bankAtk); //Would be loaded in by the damage calc prior
 		u8 defAbility = (damageData != NULL) ? damageData->defAbility : ABILITY(bankDef); //Would be loaded in by the damage calc prior
-		u32 endTurnDmg = GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
-
-		if (IsDamageHalvedDueToFullHP(bankDef, defAbility, move, atkAbility))
-			dmg = dmg + (dmg * 2 * (numHits - 1)) + endTurnDmg; //Adjust damage on subsequent hits
-		else
-			dmg = dmg * numHits + endTurnDmg;
+		dmg = AdjustFinalAIDamageForNumHits(dmg, move, bankDef, atkAbility, defAbility, numHits);
 	}
-	else
+	else //Either 0 or 1
 		dmg *= numHits;
 
 	return min(dmg, gBattleMons[bankDef].hp);
@@ -1332,21 +1340,14 @@ u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct Da
 			damage = gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData);
 
 		if (numHits >= 2)
-		{
-			u32 endTurnDmg = GetSecondaryEffectDamage(bankDef) * (numHits - 1); //Eg Hit, Secondary Damage, Hit
-
-			if (IsDamageHalvedDueToFullHP(bankDef, ABILITY(bankDef), move, ABILITY(bankAtk)))
-				damage = damage + (damage * 2 * (numHits - 1)); //Only half damage on first hit
-			else
-				damage = damage * numHits + endTurnDmg;
-		}
-		else
+			damage = AdjustFinalAIDamageForNumHits(damage, move, bankDef, ABILITY(bankAtk), ABILITY(bankDef), numHits);
+		else //Either 0 or 1
 			damage *= numHits;
 
 		return min(damage, gBattleMons[bankDef].hp);
 	}
 
-	return CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData) * numHits;
+	return CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits, damageData);
 }
 
 static u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
