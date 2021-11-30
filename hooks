@@ -44,6 +44,7 @@ OpenPartyScreenBatonPassExplosionFix 8024C16 0
 CalcMonHiddenPowerType 802B678 1
 SpriteCB_SlideInTrainer 8033EEC 1
 HealthBarChangeAmountHook 804A00C 4
+ExpBarChangeAmountHook 804A066 1
 ReshowBattleScreenMonSpriteHook1 8077CD2 0
 ReshowBattleScreenMonSpriteHook2 8077ECA 0
 ReshowBattleScreenHealthboxSpriteHook 8078104 0

@@ -1100,6 +1100,27 @@ HealthBarChangeAmountHook:
 	bx r4
 
 .pool
+@0x804A066 with r1
+ExpBarChangeAmountHook:
+	lsl r0, r0, #0x10
+	lsr r5, r0, #0x10
+	mov r0, r8 @Bank
+	bl ShouldFillExpBarToMax
+	cmp r0, #0x0
+	beq ExpBarNormalChangeAmount
+	mov r0, #0x1
+	neg r4, r0
+	ldr r0, =0x804A080 | 1
+	bx r0
+
+ExpBarNormalChangeAmount:
+	ldr r0, [r4, #0x4]
+	ldr r1, [r4, #0x8]
+	mov r3, r4
+	ldr r2, =0x804A070 | 1
+	bx r2
+
+.pool
 @0x81E381C with r0
 ActivateMGBAPrint:
 	add sp, #0x10

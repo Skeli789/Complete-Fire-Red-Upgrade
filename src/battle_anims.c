@@ -6295,6 +6295,23 @@ u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 }
 
 
+//Faster EXP Bar Change//
+
+bool8 ShouldFillExpBarToMax(unusedArg u8 bank)
+{
+	#ifdef FASTER_EXP_BAR_CHANGE
+	struct BattleBarInfo* expBar = &gBattleSpritesDataPtr->battleBars[bank];
+
+	if (expBar->oldValue == 0 && abs(expBar->receivedValue) >= expBar->maxValue)
+	{
+		expBar->currValue = expBar->maxValue;
+		return TRUE;
+	}
+	#endif
+
+	return FALSE;
+}
+
 //Get Battler Y-Position//
 
 //The original function would run through gBattlerSpriteIds until it found a spriteId
