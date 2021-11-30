@@ -20,6 +20,7 @@ void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 void CalculateAIPredictions(void);
 u8 GetAI_ItemType(u16 itemId, const u8 *itemEffect); //Fixed from vanilla
 void ClearCachedAIData(void);
+void ClearMonCachedDamageCalcs(void);
 void RechooseAIMoveAfterSwitchIfNecessary(void);
 void TryChangeMoveTargetToCounterPlayerProtectCheese(void);
 void PickRaidBossRepeatedMove(u8 moveLimitations);

@@ -1145,6 +1145,29 @@ struct Pokemon* GetIllusionPartyData(u8 bank)
 	return &party[GetIllusionPartyNumber(bank)];
 }
 
+void GetMonIdAndSideByMon(struct Pokemon* mon, u32* monId, u32* side)
+{
+	u32 tempMonId;
+
+	if ((u32) mon >= (u32) gPlayerParty && (u32) mon <= (u32) &gPlayerParty[PARTY_SIZE - 1])
+	{
+		tempMonId = (u32) mon - (u32) gPlayerParty;
+		*monId = tempMonId / sizeof(struct Pokemon);
+		*side = B_SIDE_PLAYER;
+	}
+	else if ((u32) mon >= (u32) gEnemyParty && (u32) mon <= (u32) &gEnemyParty[PARTY_SIZE - 1])
+	{
+		tempMonId = (u32) mon - (u32) gEnemyParty;
+		*monId = tempMonId / sizeof(struct Pokemon);
+		*side = B_SIDE_OPPONENT;
+	}
+	else
+	{
+		//This mon is probably on the stack
+		*monId = 0xFF;
+		*side = 0xFF;
+	}
+}
 
 u16 GetWishHPRecovery(u8 bank, bool8 ignoreWishTimer)
 {

@@ -754,7 +754,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOutXHitsFromParty(move, monAtk, bankDef, 1, damageData))
+			if (MoveKnocksOutFromParty(move, monAtk, bankDef, damageData))
 				return TRUE;
 		}
 	}
@@ -1237,7 +1237,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	return CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits);
 }
 
-bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
+bool8 MoveKnocksOutFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
 {
 	u8 ability = ABILITY(bankDef);
 	u16 species = SPECIES(bankDef);
@@ -1245,12 +1245,9 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 
 	if (MonMoveBlockedBySubstitute(move, monAtk, bankDef)
 	|| (noMoldBreakers && IsAffectedByDisguse(ability, species, CalcMoveSplitFromParty(move, monAtk))))
-	{
-		if (numHits > 0)
-			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
-	}
+		return FALSE;
 
-	if (CalcFinalAIMoveDamageFromParty(move, monAtk, bankDef, numHits, damageData) >= gBattleMons[bankDef].hp)
+	if (GetFinalAIMoveDamageFromParty(move, monAtk, bankDef, damageData) >= gBattleMons[bankDef].hp)
 		return TRUE;
 
 	return FALSE;
@@ -1352,7 +1349,7 @@ u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct Da
 	return CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData) * numHits;
 }
 
-u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
+static u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
 {
 	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
 		return 0;
@@ -1371,9 +1368,32 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 			return 1; //Assume the move does damage, but the player probably won't click it
 	}
 
-	u32 dmg = AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData) * numHits;
+	u32 dmg = AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData);
 	dmg = TryAdjustDamageForRaidBoss(bankDef, dmg);
 	return MathMin(dmg, gBattleMons[bankDef].maxHP);
+}
+
+
+u16 GetFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
+{
+	u32 finalDamage, monId, side, movePos;
+	GetMonIdAndSideByMon(monAtk, &monId, &side);
+	movePos = FindMovePositionInMonMoveset(move, monAtk);
+
+	if (monId < PARTY_SIZE
+	&& side < NUM_BATTLE_SIDES
+	&& movePos < MAX_MON_MOVES
+	&& gNewBS->ai.monDamageByMove[side][monId][bankDef][movePos] != 0xFFFFFFFF)
+		finalDamage = gNewBS->ai.monDamageByMove[side][monId][bankDef][movePos]; //Get cached data
+	else
+	{
+		finalDamage = gNewBS->ai.monDamageByMove[side][monId][bankDef][movePos] = CalcFinalAIMoveDamageFromParty(move, monAtk, bankDef, damageData);
+
+		if (finalDamage > gNewBS->ai.monMaxDamage[side][monId][bankDef])
+			gNewBS->ai.monMaxDamage[side][monId][bankDef] = finalDamage;
+	}
+
+	return finalDamage;
 }
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
@@ -4515,7 +4535,6 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 	u16 move;
 	u32 dmg;
 	u8 numDamageMoves = 0;
-	bool8 hasSuperEffectiveMove = FALSE;
 
 	if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE) //Only basic AI
 		return FALSE; //The dumb AI doesn't get to switch like this
@@ -4542,9 +4561,6 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 				if (gBattleMoves[move].effect == EFFECT_KNOCK_OFF
 				&&  CanKnockOffItem(bankDef))
 					return FALSE; //Using Knock-Off is good even if it does minimal damage
-
-				if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_SUPER_EFFECTIVE)
-					hasSuperEffectiveMove = TRUE;
 
 				++numDamageMoves; //By default can't be a status move here
 			}
@@ -4611,37 +4627,44 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 				u8 backupActiveBattler = gActiveBattler;
 				gActiveBattler = bankAtk;
 				u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
-				if (switchFlags & SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE)
+				gActiveBattler = backupActiveBattler;
+
+				/*if (switchFlags & SWITCHING_FLAG_CAN_2HKO) //EDIT: Super effective now means "can mon 2HKO", so this is no longer relevant
 				{
-					gActiveBattler = backupActiveBattler;
 					if (hasSuperEffectiveMove)
 						return FALSE; //Don't switch to another Pokemon just because they have a Super-Effective move if you have one too.
 
-					if ((switchFlags & SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE) == SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE //Only a single flag set
+					if ((switchFlags & SWITCHING_FLAG_CAN_2HKO) == SWITCHING_FLAG_CAN_2HKO //Only a single flag set
 					&& WallsFoe(bankDef, bankAtk))
 						return FALSE; //Tough it out
+
+					if (CanLikelyDoMoreDamageWithBankOnField(dmg, GetMostSuitableMonToSwitchInto(), bankDef, SIDE(bankAtk)))
+						return FALSE; //Don't bother switching because of low damage if the new mon can do even less
 				}
-				else if (switchFlags == 0)
+				else*/ if (switchFlags == 0)
 				{
-					gActiveBattler = backupActiveBattler;
-					return FALSE;
+					return FALSE; //No advantage of new mon over this one
+				}
+				else if (switchFlags & (SWITCHING_FLAG_KO_FOE | SWITCHING_FLAG_CAN_2HKO))
+				{
+					//Pass - new mon has advantage
+				}
+				else if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES)
+				{
+					if (ResistsAllMoves(bankDef, gActiveBattler)) //Current mon resists all moves too
+						return FALSE; //Tough it out
 				}
 				else if (switchFlags & SWITCHING_FLAG_WALLS_FOE)
 				{
-					gActiveBattler = backupActiveBattler;
 					//Check if current mon can't wall
-					bool8 canWall = WallsFoe(bankDef, bankAtk);
-
-					if (canWall) //Current mon can wall
+					if (WallsFoe(bankDef, bankAtk)) //Current mon can wall too
 						return FALSE; //Tough it out
 				}
-				else
-					gActiveBattler = backupActiveBattler;
-			}
-			else
-				return FALSE; //Don't switch if you can KO the opponent
 
-			return TRUE;
+				return TRUE; //Only bad moves left
+			}
+
+			return FALSE; //Don't switch if you can KO the opponent			
 		}
 	}
 

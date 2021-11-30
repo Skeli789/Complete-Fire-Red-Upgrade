@@ -1768,19 +1768,19 @@ In order:
 39: KO Foe + Revenge Kill
 38: KO Foe + Revenge Kill + Weak to Move
 33: KO Foe + Walls Foe
-32: Resist/Immune to All Moves + Outspeeds + Has Super-Effective Move
+ || Resist/Immune to All Moves + Outspeeds + 2HKO Foe
 31: KO Foe
-	Resist/Immune to All Moves + Outspeeds
+ || Resist/Immune to All Moves + Outspeeds
 30: KO Foe + Weak to Move
-18: Resist/Immune to All Moves + Has Super-Effective Move
+19: Resist/Immune to All Moves + 2HKO Foe
+18: Outspeeds + 2HKO Foe + Walls Foe
 17: Resist/Immune to All Moves
-17: Outspeeds + Has Super-Effective Move + Walls Foe
-15: Outspeeds + Has Super-Effective Move
-14: Outspeeds + Has Super-Effective Move + Weak to Move
-	Outspeeds
-3: Walls Foe + Has Super-Effective Move
-2: Walls Foe
-1: Has Super-Effective Move
+16: Outspeeds + 2HKO Foe
+15: Outspeeds + 2HKO Foe + Weak to Move
+14: Outspeeds
+04: Walls Foe + 2HKO Foe
+02: Walls Foe
+ || 2HKO Foe
 */
 
 //Add logic about switching in a partner to resist spread move in doubles
@@ -2040,7 +2040,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								|| move == MOVE_PURSUIT //KOs the foe before it can switch out
 								|| (SPLIT(move) != SPLIT_STATUS && PriorityCalcMon(consideredMon, move) > 0)) //Priority move that KOs
 								{
-									if (MoveKnocksOutXHitsFromParty(move, consideredMon, foe, 1, &damageData))
+									if (MoveKnocksOutFromParty(move, consideredMon, foe, &damageData))
 									{
 										scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
 										flags[i] |= SWITCHING_FLAG_REVENGE_KILL;
@@ -2073,10 +2073,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 							if (move != MOVE_NONE
 							&& SPLIT(move) != SPLIT_STATUS
-							&& TypeCalc(move, gActiveBattler, foe, consideredMon, TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
+							//&& TypeCalc(move, gActiveBattler, foe, consideredMon, TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
+							&& gNewBS->ai.monMaxDamage[SIDE(gActiveBattler)][i][foe] >= gBattleMons[foe].hp / 2) //Move can 2HKO
 							{
-								scores[i] += SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE; //Only checked if can't KO
-								flags[i] |= SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE;
+								scores[i] += SWITCHING_INCREASE_CAN_2HKO; //Only checked if can't KO
+								flags[i] |= SWITCHING_FLAG_CAN_2HKO;
 								break;
 							}
 						}

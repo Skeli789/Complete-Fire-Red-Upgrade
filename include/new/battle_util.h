@@ -81,6 +81,7 @@ bool8 IsUproarBeingMade(void);
 u8 GetIllusionPartyNumber(u8 bank);
 u8 GetIllusionPartyNumberForShiftSwitch(struct Pokemon* party, u8 monId, u8 firstId, u8 lastId);
 struct Pokemon* GetIllusionPartyData(u8 bank);
+void GetMonIdAndSideByMon(struct Pokemon* mon, u32* monId, u32* side);
 u16 GetWishHPRecovery(u8 bank, bool8 ignoreWishTimer);
 bool8 BankMovedBefore(u8 bank1, u8 bank2);
 bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2);

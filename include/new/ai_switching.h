@@ -29,7 +29,7 @@ void ShouldDoAIShiftSwitch(void);
 #define SWITCHING_INCREASE_RESIST_ALL_MOVES 17
 #define SWITCHING_INCREASE_REVENGE_KILL 8 //Can only happen if can KO in the first place
 #define SWITCHING_INCREASE_WALLS_FOE 2 //Can only wall if no Super-Effective moves against foe
-#define SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE 1
+#define SWITCHING_INCREASE_CAN_2HKO 2
 #define SWITCHING_INCREASE_CAN_REMOVE_HAZARDS (SWITCHING_SCORE_MAX + 1)
 #define SWITCHING_INCREASE_OUTSPEEDS 14
 
@@ -43,7 +43,7 @@ void ShouldDoAIShiftSwitch(void);
 #define SWITCHING_FLAG_RESIST_ALL_MOVES         (1 << 1) //0x2
 #define SWITCHING_FLAG_REVENGE_KILL             (1 << 2) //0x4
 #define SWITCHING_FLAG_WALLS_FOE                (1 << 3) //0x8
-#define SWITCHING_FLAG_HAS_SUPER_EFFECTIVE_MOVE (1 << 4) //0x10
+#define SWITCHING_FLAG_CAN_2HKO                 (1 << 4) //0x10
 #define SWITCHING_FLAG_CAN_REMOVE_HAZARDS       (1 << 5) //0x20
 #define SWITCHING_FLAG_OUTSPEEDS                (1 << 6) //0x40
 #define SWITCHING_FLAG_FAINTS_FROM_FOE          (1 << 7) //0x80

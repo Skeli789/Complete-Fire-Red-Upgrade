@@ -602,6 +602,7 @@ void BattleBeginFirstTurn(void)
 				}
 
 				ClearCachedAIData();
+				ClearMonCachedDamageCalcs();
 				TurnValuesCleanUp(0);
 				SpecialStatusesClear();
 				gBattleStruct->field_91 = gAbsentBattlerFlags;
@@ -635,6 +636,7 @@ void BattleBeginFirstTurn(void)
 				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
 				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
+				//gBattleOutcome = B_OUTCOME_WON; //For Debugging
 		}
 	}
 }

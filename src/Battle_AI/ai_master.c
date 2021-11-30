@@ -1550,6 +1550,12 @@ void ClearCachedAIData(void)
 	}
 }
 
+void ClearMonCachedDamageCalcs(void)
+{
+	Memset(gNewBS->ai.monDamageByMove, 0xFF, sizeof(gNewBS->ai.monDamageByMove));
+	Memset(gNewBS->ai.monMaxDamage, 0x0, sizeof(gNewBS->ai.monMaxDamage));
+}				
+
 //People have a tendency to cheese the AI by doing one of the following things:
 //1. Leading with a deceiving Pokemon and immediately switching it out to either PP stall the opponent or lock it into a bad move.
 //2. Constantly switching Pokemon out when they know they'll constantly be immune to PP stall the AI.
