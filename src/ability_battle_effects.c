@@ -2638,66 +2638,25 @@ static void Task_FreeAbilityPopUpGfx(u8 taskId);
 
 static const struct OamData sOamData_AbilityPopUp =
 {
-	.y = 0,
-	.affineMode = 0,
-	.objMode = 0,
-	.mosaic = 0,
-	.bpp = 0,
-	.shape = ST_OAM_H_RECTANGLE,
-	.x = 0,
-	.matrixNum = 0,
-	.size = 3,
-	.tileNum = 0,
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x32),
+	.size = SPRITE_SIZE(64x32),
 	.priority = 0,
-	.paletteNum = 0,
-	.affineParam = 0,
 };
 
-static const union AnimCmd sSpriteAnim_AbilityPopUp1[] =
-{
-	ANIMCMD_FRAME(0, 0),
-	ANIMCMD_END
-};
-
-static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp1[] =
-{
-	sSpriteAnim_AbilityPopUp1
-};
-
-static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp1 =
+static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp =
 {
 	.tileTag = ANIM_TAG_ABILITY_POP_UP,
 	.paletteTag = ANIM_TAG_ABILITY_POP_UP,
 	.oam = &sOamData_AbilityPopUp,
-	.anims = sSpriteAnimTable_AbilityPopUp1,
+	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCb_AbilityPopUp
 };
 
-static const union AnimCmd sSpriteAnim_AbilityPopUp2[] =
-{
-	ANIMCMD_FRAME(32, 0),
-	ANIMCMD_END
-};
-
-static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp2[] =
-{
-	sSpriteAnim_AbilityPopUp2
-};
-
-static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp2 =
-{
-	.tileTag = ANIM_TAG_ABILITY_POP_UP,
-	.paletteTag = ANIM_TAG_ABILITY_POP_UP,
-	.oam = &sOamData_AbilityPopUp,
-	.anims = sSpriteAnimTable_AbilityPopUp2,
-	.images = NULL,
-	.affineAnims = gDummySpriteAffineAnimTable,
-	.callback = SpriteCb_AbilityPopUp
-};
-
-#define ABILITY_POP_UP_POS_X_DIFF 64
+#define ABILITY_POP_UP_POS_X_DIFF (64 - 7) //Hide second sprite underneath to gain proper letter spacing
 #define ABILITY_POP_UP_POS_X_SLIDE 68
 
 static const s16 sAbilityPopUpCoordsDoubles[MAX_BATTLERS_COUNT][2] =
@@ -2714,11 +2673,14 @@ static const s16 sAbilityPopUpCoordsSingles[MAX_BATTLERS_COUNT][2] =
 	{186, 57}, // opponent
 };
 
-static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32 y, u32 color1, u32 color2, u32 color3, u32* windowId)
+#define POPUP_WINDOW_WIDTH 8
+#define MAX_POPUP_STRING_WIDTH (POPUP_WINDOW_WIDTH * 8)
+
+static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, s32 x, s32 y, u32 color1, u32 color2, u32 color3, u32* windowId)
 {
 	u8 color[3] = {color1, color2, color3};
 	struct WindowTemplate winTemplate = {0};
-	winTemplate.width = 8;
+	winTemplate.width = POPUP_WINDOW_WIDTH;
 	winTemplate.height = 2;
 
 	*windowId = AddWindow(&winTemplate);
@@ -2728,10 +2690,10 @@ static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32
 	return (u8*)(GetWindowAttribute(*windowId, WINDOW_TILE_DATA));
 }
 
-static void TextIntoAbilityPopUp(void *dest, u8 *windowTileData, s32 arg2, bool32 arg3)
+static void TextIntoAbilityPopUp(void *dest, u8 *windowTileData, s32 xTileAmount, bool32 arg3)
 {
-	CpuCopy32(windowTileData + 256, dest + 256, arg2 * 32);
-	if (arg2 > 0)
+	CpuCopy32(windowTileData + 256, dest + 256, xTileAmount * 32);
+	if (xTileAmount > 0)
 	{
 		do
 		{
@@ -2740,43 +2702,25 @@ static void TextIntoAbilityPopUp(void *dest, u8 *windowTileData, s32 arg2, bool3
 			else
 				CpuCopy32(windowTileData + 20, dest + 20, 12);
 			dest += 32, windowTileData += 32;
-			arg2--;
-		} while (arg2 != 0);
+			xTileAmount--;
+		} while (xTileAmount != 0);
 	}
 }
 
-#define MAX_CHARS_PRINTED 12
-
 static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTileData2, u32 x1, u32 x2, u32 y, u32 color1, u32 color2, u32 color3)
 {
-	u32 windowId, i;
-	u8 *windowTileData;
-	u8 text1[MAX_CHARS_PRINTED];
-	u8 text2[MAX_CHARS_PRINTED];
+	u32 windowId;
+	u8* windowTileData;
 
-	for (i = 0; i < MAX_CHARS_PRINTED; i++)
-	{
-		text1[i] = str[i];
-		if (text1[i] == EOS)
-			break;
-	}
-	text1[i] = EOS;
-
-	windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(text1, x1, y, color1, color2, color3, &windowId);
+	windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(str, x1, y, color1, color2, color3, &windowId);
 	TextIntoAbilityPopUp(spriteTileData1, windowTileData, 8, (y == 0));
 	RemoveWindow(windowId);
 
-	if (i == MAX_CHARS_PRINTED)
-	{
-		for (i = 0; i < MAX_CHARS_PRINTED; i++)
-		{
-			text2[i] = str[MAX_CHARS_PRINTED + i];
-			if (text2[i] == EOS)
-				break;
-		}
-		text2[i] = EOS;
+	u16 width = GetStringWidth(0, str, 0);
 
-		windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(text2, x2, y, color1, color2, color3, &windowId);
+	if (width > MAX_POPUP_STRING_WIDTH)
+	{
+		windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(str, x2 - MAX_POPUP_STRING_WIDTH, y, color1, color2, color3, &windowId);
 		TextIntoAbilityPopUp(spriteTileData2, windowTileData, 3, (y == 0));
 		RemoveWindow(windowId);
 	}
@@ -2806,7 +2750,7 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 	lastChar = *(textPtr - 1);
 
 	//Make the string say "[NAME]'s" instead of "[NAME]"
-	textPtr[0] = 0xB4; //'
+	textPtr[0] = CHAR_SGL_QUOT_RIGHT; //'
 	++textPtr;
 	if (lastChar != PC_S && lastChar != PC_s) //Proper grammar for names ending in "s"
 	{
@@ -2830,7 +2774,7 @@ static void PrintAbilityOnAbilityPopUp(u32 ability, u16 species, u8 spriteId1, u
 	PrintOnAbilityPopUp(abilityName,
 						(void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,
 						(void*)(OBJ_VRAM0) + (gSprites[spriteId2].oam.tileNum * 32) + 256,
-						5, 1,
+						5, 12,
 						4,
 						7, 9, 1);
 }
@@ -2896,7 +2840,7 @@ static const u16 sOverwrittenPixelsTable[][2] =
 	{PIXEL_COORDS_TO_OFFSET(0, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(0, 46), 8},
 	{PIXEL_COORDS_TO_OFFSET(0, 47), 8},
-	{PIXEL_COORDS_TO_OFFSET(0, 48), 8},
+	//{PIXEL_COORDS_TO_OFFSET(0, 48), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 46), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 47), 8},
@@ -2971,34 +2915,32 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 
 	if ((battlerPosition & BIT_SIDE) == B_SIDE_PLAYER)
 	{
-		spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp1,
+		spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp,
 								coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE,
 								coords[battlerPosition][1], 0);
-		spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2,
+		spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp,
 								coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF,
-								coords[battlerPosition][1], 0);
-
-		gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
-		gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
+								coords[battlerPosition][1], 1); //Appears below
 
 		gSprites[spriteId1].tRightToLeft = TRUE;
 		gSprites[spriteId2].tRightToLeft = TRUE;
 	}
 	else
 	{
-		spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp1,
+		spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp,
 								coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE,
 								coords[battlerPosition][1], 0);
-		spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2,
+		spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp,
 								coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF,
-								coords[battlerPosition][1], 0);
-
-		gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
-		gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
+								coords[battlerPosition][1], 1); //Appears below
 
 		gSprites[spriteId1].tRightToLeft = FALSE;
 		gSprites[spriteId2].tRightToLeft = FALSE;
 	}
+
+	gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
+	gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
+	gSprites[spriteId2].oam.tileNum += (8 * 4); //Second half of pop up
 
 	gNewBS->abilityPopUpIds[gBattleAnimAttacker][0] = spriteId1;
 	gNewBS->abilityPopUpIds[gBattleAnimAttacker][1] = spriteId2;
