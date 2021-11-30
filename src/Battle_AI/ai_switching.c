@@ -43,7 +43,7 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party);
 static bool8 ShouldSaveSweeperForLater(struct Pokemon* party);
 static void CalcMostSuitableMonSwitchIfNecessary(void);
 #ifdef VAR_GAME_DIFFICULTY
-static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe);
+static bool8 IsGoodIdeaToDoShiftSwitch(u8 aiBank, u8 foe);
 #endif
 
 bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId)
@@ -1109,12 +1109,13 @@ static bool8 ShouldSwitchWhileAsleep(struct Pokemon* party)
 static bool8 AnnoyingSecondaryDamageSwitchCheck(u8 monId, u8 switchFlags, struct Pokemon* party, bool8 urgent)
 {
 	u8 foe = FOE(gActiveBattler);
-	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
 	bool8 goodToSwitch = FALSE;
 
 	if (urgent)
 		goodToSwitch = TRUE;
-	else if ((switchFlags & wantedFlags) == wantedFlags //New mon will go first and KO
+	else if (switchFlags & SWITCHING_FLAG_OUTSPEEDS //New mon will go first
+	&& ((switchFlags & SWITCHING_FLAG_KO_FOE) //Can KO 
+	 || (switchFlags & SWITCHING_FLAG_CAN_2HKO && !(switchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE))) //Or 2HKO and survive a hit
 	&& (IS_DOUBLE_BATTLE
 	 || PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[monId], foe, switchFlags))) //And won't take a lot of damage on the switch in
 		goodToSwitch = TRUE;
@@ -2426,30 +2427,43 @@ void RemoveBestMonToSwitchInto(u8 bank)
 }
 
 #ifdef VAR_GAME_DIFFICULTY
-static bool8 IsGoodIdeaToDoShiftSwitch(u8 switchBank, u8 foe)
+static bool8 IsGoodIdeaToDoShiftSwitch(u8 aiBank, u8 playerBank)
 {
 	u8 switchFlags = GetMostSuitableMonToSwitchIntoFlags();
 
-	if (!WillTakeSignificantDamageFromEntryHazards(switchBank, 2)) //50% health loss
+	if (!WillTakeSignificantDamageFromEntryHazards(aiBank, 2)) //50% health loss
 	{
-		if (OnlyBadMovesLeftInMoveset(switchBank, foe)) //AI mon has nothing good against this new foe
+		if (OnlyBadMovesLeftInMoveset(aiBank, playerBank)) //AI mon has nothing good against this new foe
 			return TRUE;
 
-		if (!CanKnockOut(switchBank, foe)) //Current mon out can't KO new mon being switched in
+		if (!CanKnockOut(aiBank, playerBank)) //Current mon out can't KO new mon being switched in
 		{
 			if (switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_RESIST_ALL_MOVES))
 				return TRUE;
 		}
+		
+		if (!Can2HKO(aiBank, playerBank)) //Current mon out can't 2HKO new mon being switched in
+		{
+			if (switchFlags & SWITCHING_INCREASE_CAN_2HKO //AI can 2HKO with new mon
+			&& switchFlags & SWITCHING_FLAG_OUTSPEEDS //New AI mon would go before new player mon
+			&& !(switchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE)) //Can live a hit and fire back with a 2HKO
+				return TRUE;
+		}
 
-		if (SpeedCalc(switchBank) < SpeedCalc(foe) //New foe will outspeed
-		&& CanKnockOut(foe, switchBank) //And KO the AI
-		&& !PriorityMoveInMoveset(switchBank)) //And the AI can't use a priority move to hit before that happens
+		if (SpeedCalc(aiBank) < SpeedCalc(playerBank) //New foe will outspeed AI mon currently on field
+		&& CanKnockOut(playerBank, aiBank) //And KO the AI mon currently on field
+		&& !PriorityMoveInMoveset(aiBank)) //And the AI can't use a priority move to hit before that happens
 		{
 			if (switchFlags & SWITCHING_FLAG_KO_FOE && switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_RESIST_ALL_MOVES | SWITCHING_FLAG_WALLS_FOE))
 				return TRUE; //New AI mon can KO and either outspeeds or walls
 
 			if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES)
 				return TRUE; //New AI mon can't KO but can resist all moves
+
+			if (switchFlags & SWITCHING_INCREASE_CAN_2HKO
+			&& switchFlags & SWITCHING_FLAG_OUTSPEEDS
+			&& !(switchFlags & SWITCHING_FLAG_FAINTS_FROM_FOE))
+				return TRUE; //New AI mon can live to 2HKO
 		}
 	}
 
