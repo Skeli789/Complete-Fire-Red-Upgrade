@@ -1918,11 +1918,13 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 
 	switch (class) {
 		case FIGHT_CLASS_SWEEPER_KILL:
-			if (stat == STAT_STAGE_ATK //For moves like Power-Up Punch
-			|| stat == STAT_STAGE_SPATK
-			|| stat == 0xFF //Spectral Thief
+			if (stat == 0xFF //Spectral Thief
 			|| ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_VIABILITY(3 + boost);
+			else if (SPLIT(move) != SPLIT_STATUS
+			&& (stat == STAT_STAGE_ATK //For moves like Power-Up Punch
+			 || stat == STAT_STAGE_SPATK))
+				INCREASE_VIABILITY(1); //Slight boost, but not much since it's not a good idea
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
