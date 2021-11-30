@@ -17,8 +17,10 @@ u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum);
 const u8* GetTrainerSpritePal(u16 trainerPicId);
 bool8 IsPaletteTagAffectedByCharacterCustomization(u16 tag);
+bool8 IsPaletteTagAffectedByHairCharacterCustomization(u16 tag);
+bool8 IsPaletteTagAffectedByOutfitCharacterCustomization(u16 tag);
 void ChangeTrainerPicPal(u16 paletteOffset);
-void ChangeEventObjPal(u16 paletteOffset, bool8 isPlayer);
+void ChangeEventObjPal(u16 paletteOffset, bool8 changeSkin, bool8 changeHair);
 
 //Hooked In Functions
 NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId);

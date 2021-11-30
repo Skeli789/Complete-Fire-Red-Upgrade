@@ -508,11 +508,22 @@ bool8 IsPaletteTagAffectedByCharacterCustomization(u16 tag)
 		|| tag == EVENT_OBJ_PAL_TAG_AROS;
 }
 
+bool8 IsPaletteTagAffectedByHairCharacterCustomization(u16 tag)
+{
+	return tag == EVENT_OBJ_PAL_TAG_DEFAULT
+		|| tag == EVENT_OBJ_PAL_TAG_MOM;
+}
+
+bool8 IsPaletteTagAffectedByOutfitCharacterCustomization(u16 tag)
+{
+	return tag == EVENT_OBJ_PAL_TAG_DEFAULT;
+}
+
 #define SKIN_TONE_OFFSET 1
 #define HAIR_COLOUR_OFFSET 4
 #define OUTFIT_OFFSET 7
 #define TRIM_OFFSET 9
-static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 isPlayer)
+static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 changeHair, bool8 changeOutfit)
 {
 	u16 skinTone = VarGet(VAR_PLAYER_SKIN_TONE);
 	u16 hairColour = VarGet(VAR_PLAYER_HAIR_COLOUR);
@@ -526,14 +537,14 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 isPla
 		CpuCopy16(sPlayerSkinColours[skinTone] + SKIN_TONE_OFFSET, gPlttBufferFaded + skinOffset, 3 * sizeof(u16));
 	}
 
-	if (hairColour > 0 && hairColour < NELEMS(sPlayerHairColours))
+	if (changeHair && hairColour > 0 && hairColour < NELEMS(sPlayerHairColours))
 	{
 		u16 hairOffset = paletteOffset + HAIR_COLOUR_OFFSET;
 		CpuCopy16(sPlayerHairColours[hairColour] + HAIR_COLOUR_OFFSET, gPlttBufferUnfaded + hairOffset, 3 * sizeof(u16));
 		CpuCopy16(sPlayerHairColours[hairColour] + HAIR_COLOUR_OFFSET, gPlttBufferFaded + hairOffset, 3 * sizeof(u16));
 	}
 
-	if (isPlayer && outfitColour > 0 && outfitColour < NELEMS(sPlayerOutfitColours))
+	if (changeOutfit && outfitColour > 0 && outfitColour < NELEMS(sPlayerOutfitColours))
 	{
 		u16 outfitOffset = paletteOffset + OUTFIT_OFFSET;
 		u8 copyAmount = 2;
@@ -541,7 +552,7 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 isPla
 		CpuCopy16(sPlayerOutfitColours[outfitColour] + OUTFIT_OFFSET, gPlttBufferFaded + outfitOffset, copyAmount * sizeof(u16));
 	}
 
-	if (isPlayer && trimColour > 0 && trimColour < NELEMS(sPlayerTrimColours))
+	if (changeOutfit && trimColour > 0 && trimColour < NELEMS(sPlayerTrimColours))
 	{
 		u16 trimOffset = paletteOffset + TRIM_OFFSET;
 		CpuCopy16(sPlayerTrimColours[trimColour] + TRIM_OFFSET, gPlttBufferUnfaded + trimOffset, 2 * sizeof(u16));
@@ -553,14 +564,14 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 isPla
 void ChangeTrainerPicPal(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE, TRUE);
 	#endif
 }
 
-void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg bool8 isPlayer)
+void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg bool8 changeHair, unusedArg bool8 changeOutfit)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, isPlayer);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, changeHair, changeOutfit);
 	#endif
 }
 
@@ -605,7 +616,7 @@ void TryUpdateRegionMapIconPal(void)
 	#ifdef UNBOUND
 	u8 paletteSlot = IndexOfSpritePaletteTag(1);
 	if (paletteSlot != 0xFF)
-		ChangeEventObjPal(0x100 + paletteSlot * 16, TRUE);
+		ChangeEventObjPal(0x100 + paletteSlot * 16, TRUE, TRUE);
 	#endif
 }
 
