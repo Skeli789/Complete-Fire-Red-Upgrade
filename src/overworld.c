@@ -1761,6 +1761,24 @@ static bool8 PlayerIsMovingOnSidewaysStairs(u8 direction)
 	return FALSE;
 }
 
+static bool8 MovingFastOnWater(void)
+{
+	if (gFollowerState.inProgress) //Probably would cause a whole host of issues otherwise
+		return FALSE;
+
+	#ifdef FLAG_SURF_TURBO_BOOST
+	if (FlagGet(FLAG_SURF_TURBO_BOOST))
+	{
+		if (JOY_HELD(B_BUTTON))
+			return FALSE; //Hold B to move normal speed
+		
+		return TRUE;
+	}
+	#endif
+
+	return JOY_HELD(B_BUTTON);
+}
+
 s16 GetPlayerSpeed(void)
 {
 	s16 exp[] = { 1, 2, 4 };
@@ -1774,7 +1792,14 @@ s16 GetPlayerSpeed(void)
 		return exp[gPlayerAvatar->bikeFrameCounter];
 	else if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_ACRO_BIKE)
 		return 3;
-	else if (gPlayerAvatar->flags & (PLAYER_AVATAR_FLAG_SURFING | PLAYER_AVATAR_FLAG_DASH))
+	else if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_SURFING)
+	{
+		if (MovingFastOnWater())
+			return 4;
+		else
+			return 2;
+	}
+	else if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_DASH)
 		return 2;
 	else
 		return 1;
@@ -1798,6 +1823,14 @@ void MoveOnBike(u8 direction)
 	#endif
 	else
 		PlayerRideWaterCurrent(direction);
+}
+
+void MovePlayerWhileSurfing(u8 direction)
+{
+	if (MovingFastOnWater())
+		PlayerGoSpeed4(direction);
+	else
+		PlayerGoSpeed2(direction);
 }
 
 void PlayerOnBikeCollide(u8 direction)

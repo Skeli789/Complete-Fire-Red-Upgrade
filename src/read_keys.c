@@ -50,6 +50,8 @@ extern const u8 SystemScript_EnableAutoRun[];
 extern const u8 SystemScript_DisableAutoRun[];
 extern const u8 SystemScript_EnableBikeTurboBoost[];
 extern const u8 SystemScript_DisableBikeTurboBoost[];
+extern const u8 SystemScript_EnableSurfTurboBoost[];
+extern const u8 SystemScript_DisableSurfTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
 extern const u8 SystemScript_MiningScan[];
@@ -202,6 +204,26 @@ bool8 StartLButtonFunc(void)
 			{
 				FlagSet(FLAG_BIKE_TURBO_BOOST);
 				ScriptContext1_SetupScript(SystemScript_EnableBikeTurboBoost);
+			}
+			
+			return TRUE;
+		}
+		else
+		#endif
+		#ifdef FLAG_SURF_TURBO_BOOST
+		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+		{
+			DismissMapNamePopup();
+
+			if (FlagGet(FLAG_SURF_TURBO_BOOST))
+			{
+				FlagClear(FLAG_SURF_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_DisableSurfTurboBoost);
+			}
+			else
+			{
+				FlagSet(FLAG_SURF_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_EnableSurfTurboBoost);
 			}
 			
 			return TRUE;

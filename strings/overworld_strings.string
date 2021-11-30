@@ -31,6 +31,12 @@ Turbo boost has been [GREEN]activated[BLACK].
 #org @gText_BikeTurboBoostDisable
 Turbo boost has been [GREEN]deactivated[BLACK].
 
+#org @gText_SurfTurboBoostEnable
+Turbo Surf has been [GREEN]activated[BLACK].
+
+#org @gText_SurfTurboBoostDisable
+Turbo Surf has been [GREEN]deactivated[BLACK].
+
 #org @gText_PoisonSurvial
 [BUFFER][02] survived the Poison.\nThe Poison faded away!
 

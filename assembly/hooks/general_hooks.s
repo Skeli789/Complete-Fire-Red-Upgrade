@@ -1038,7 +1038,9 @@ DiveSpeedHook:
 	bx r0
 
 MoveFasterOnWater:
-	ldr r0, =0x805BA24 | 1
+	mov r0, r4
+	bl MovePlayerWhileSurfing
+	ldr r0, =0x805BAA4 | 1
 	bx r0
 
 /*

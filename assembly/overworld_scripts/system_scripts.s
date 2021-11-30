@@ -60,6 +60,27 @@ SystemScript_DisableBikeTurboBoost:
 	releaseall
 	end
 
+.global SystemScript_EnableSurfTurboBoost
+SystemScript_EnableSurfTurboBoost:
+	lockall
+	special SPECIAL_STOP_SOUNDS
+	sound 0x2
+	signmsg
+	msgboxsign
+	msgbox gText_SurfTurboBoostEnable MSG_SIGN
+	releaseall
+	end
+	
+.global SystemScript_DisableSurfTurboBoost
+SystemScript_DisableSurfTurboBoost:
+	lockall
+	special SPECIAL_STOP_SOUNDS
+	sound 0x3
+	msgboxsign
+	msgbox gText_SurfTurboBoostDisable MSG_SIGN
+	releaseall
+	end
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global SystemScript_PartyMenuFromField
