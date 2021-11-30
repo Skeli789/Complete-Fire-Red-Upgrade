@@ -2014,3 +2014,20 @@ void atkFF35_jumpifmaxchistrikecapped(void)
 	else
 		gBattlescriptCurrInstr += 6;
 }
+
+//atkFF36_trygetcottondowntarget FAIL_ADDRESS
+void atkFF36_trygetcottondowntarget(void)
+{
+	for (; gBankTarget < gBattlersCount; ++gBankTarget)
+	{
+		if (gBankTarget == gBankAttacker)
+			continue;
+		if (!(gAbsentBattlerFlags & gBitTable[gBankTarget]) && BATTLER_ALIVE(gBankTarget))
+			break;
+	}
+
+	if (gBankTarget >= gBattlersCount)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
+}

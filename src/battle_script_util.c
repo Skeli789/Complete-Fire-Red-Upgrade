@@ -1947,6 +1947,11 @@ void RestoreOriginalAttackerAndTarget(void)
 	gBankTarget = gNewBS->originalTargetBackup;
 }
 
+void RestoreOriginalTargetResultFlags(void)
+{
+	gMoveResultFlags = gNewBS->ResultFlags[gBankTarget];
+}
+
 void SetBatonPassSwitchingBit(void)
 {
 	gNewBS->batonPassing = TRUE;

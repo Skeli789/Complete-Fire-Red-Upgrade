@@ -19,6 +19,16 @@ extern u8 BattleScript_MistProtected[];
 extern u8 DrasticallyString[];
 extern u8 SeverelyString[];
 
+static bool8 IsIntimidateActive(void)
+{
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive;
+}
+
+static bool8 IsCottonDownActive(void)
+{
+	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive;
+}
+
 void atk13_printfromtable(void)
 {
 	if (gBattleExecBuffer) return;
@@ -32,11 +42,13 @@ void atk13_printfromtable(void)
 
 	if (stringId == STRINGID_PKMNSSTATCHANGED4)
 	{
+		u8 atkSide = SIDE(gBankAttacker);
 		u8 defSide = SIDE(gBankTarget);
 
-		if (gNewBS->intimidateActive
+		if (IsIntimidateActive()
+		|| (IsCottonDownActive() && defSide != atkSide)
 		|| (gNewBS->stickyWebActive && SIDE(gSideTimers[defSide].stickyWebBank) != defSide) //Was set by foe and not Court Change
-		|| defSide != SIDE(gBankAttacker))
+		|| defSide != atkSide)
 			DefiantActivation(); //Stat fell from enemy
 	}
 }
@@ -53,7 +65,7 @@ bool8 DefiantActivation(void)
 			break;
 
 		case ABILITY_RATTLED:
-			if (gNewBS->intimidateActive)
+			if (IsIntimidateActive())
 				gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
 			else
 				return FALSE;
@@ -158,7 +170,7 @@ void atk48_playstatchangeanimation(void)
 				else if (!BankSideHasMist(gActiveBattler)
 						&& !IsClearBodyAbility(ability)
 						&& !AbilityPreventsLoweringStat(ability, currStat)
-						&& !(AbilityBlocksIntimidate(ability) && gNewBS->intimidateActive)
+						&& !(AbilityBlocksIntimidate(ability) && IsIntimidateActive())
 						&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
 				{
 					if (STAT_STAGE(gActiveBattler, currStat) > STAT_STAGE_MIN)
@@ -370,7 +382,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if (!certain
-		&& (AbilityPreventsLoweringStat(ability, statId) || (gNewBS->intimidateActive && AbilityBlocksIntimidate(ability))))
+		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability))))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -380,7 +392,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if (ability == ABILITY_MIRRORARMOR && gNewBS->intimidateActive && !certain)
+		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive()) && !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{

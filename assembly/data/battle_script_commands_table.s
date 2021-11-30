@@ -326,3 +326,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF33_SetEffectPrimaryScriptingBank
 .word atkFF34_canconfuse
 .word atkFF35_jumpifmaxchistrikecapped
+.word atkFF36_trygetcottondowntarget

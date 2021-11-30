@@ -100,6 +100,7 @@ void TryLoadSecondFriskTargetDoubles(void);
 void BackupSwitchingBank(void);
 void RestoreAllOriginalMoveData(void);
 void RestoreOriginalAttackerAndTarget(void);
+void RestoreOriginalTargetResultFlags(void);
 void SetBatonPassSwitchingBit(void);
 void ClearBatonPassSwitchingBit(void);
 void ReturnOpponentMon2(void);

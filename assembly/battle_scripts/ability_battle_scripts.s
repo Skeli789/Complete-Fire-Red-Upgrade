@@ -89,6 +89,7 @@ ability_battle_scripts.s
 .global BattleScript_AbilityNoSpecificStatLoss
 .global BattleScript_MirrorArmorReflectsIntimidate
 .global BattleScript_CastformChange
+.global BattleScript_CottonDownActivates
 .global BattleScript_PerishBody
 .global BattleScript_SturdyPreventsOHKO
 .global BattleScript_StickyHoldActivates
@@ -1155,6 +1156,43 @@ CastformChangeSkipAbilityPopUp:
 	printstring 0x13A @;STRINGID_PKMNTRANSFORMED
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CottonDownActivates:
+	call BattleScript_AbilityPopUp
+	setbyte TARGET_BANK 0x0
+
+BS_CottonDownActivatesLoop:
+	setstatchanger STAT_SPD | DECREASE_1
+	trygetcottondowntarget BattleScript_CottonDownActivatesReturn
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR CottonDownActivatesLoopIncrement
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_CottonDownPrevented
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+	goto CottonDownActivatesLoopIncrement
+
+BattleScript_CottonDownPrevented:
+	pause DELAY_HALFSECOND
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+
+CottonDownActivatesLoopIncrement:
+	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE BattleScript_CottonDownActivatesReturn
+	addbyte TARGET_BANK 0x1
+	trygetcottondowntarget BattleScript_CottonDownActivatesReturn
+	callasm TryReactiveIntimidatePopUp
+	goto BS_CottonDownActivatesLoop
+
+BattleScript_CottonDownActivatesReturn:
+	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
+	callasm RemoveIntimidateActive
+	callasm RemoveCottonDownActive
+	callasm RestoreOriginalAttackerAndTarget
+	callasm RestoreOriginalTargetResultFlags
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

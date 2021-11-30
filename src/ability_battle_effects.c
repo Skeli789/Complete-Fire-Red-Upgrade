@@ -2041,7 +2041,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_TANGLINGHAIR:
 			#endif
 			case ABILITY_GOOEY:
-			case ABILITY_COTTONDOWN: //TODO REMOVE
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& CheckContact(move, gBankAttacker, bank)
@@ -2132,12 +2131,22 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			/*case ABILITY_COTTONDOWN: //TODO
+			case ABILITY_COTTONDOWN:
 				if (MOVE_HAD_EFFECT
-				&& TOOK_DAMAGE(bank))
+				&& TOOK_DAMAGE(bank)
+				&& gBankAttacker != bank
+				&& (BATTLER_ALIVE(gBankAttacker)
+				 || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker)))
+				 || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bank))))) //At least one mon can be affected
 				{
+					gBankAttacker = bank;
+					gNewBS->intimidateActive = bank + 1;
+					gNewBS->cottonDownActive = TRUE;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_CottonDownActivates;
+					effect++;
 				}
-				break;*/
+				break;
 
 			case ABILITY_SANDSPIT:
 				if (MOVE_HAD_EFFECT
@@ -3148,6 +3157,11 @@ void TryHideActiveAbilityPopUps(void)
 void RemoveIntimidateActive(void)
 {
 	gNewBS->intimidateActive = 0;
+}
+
+void RemoveCottonDownActive(void)
+{
+	gNewBS->cottonDownActive = 0;
 }
 
 void TryReactiveIntimidatePopUp(void)
