@@ -15,7 +15,7 @@
 #define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
 #define VAR_TOTEM 0x5001 //to var + 3 (0x5004)
 #define VAR_BACKSPRITE_SWITCH 0x5006 //This var can be set to a number to change the Player's backsprite
-//#define VAR_BATTLE_BG 0x5007 //Set this var to a custom background id
+#define VAR_BATTLE_BG 0x5007 //Set this var to a custom background id
 #define VAR_SWARM_INDEX 0x5008 //Set by the engine
 #define VAR_SWARM_DAILY_EVENT 0x5009 //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
 #define VAR_DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
