@@ -1725,9 +1725,9 @@ void DoProteanTypeChange(void)
 
 void HarvestActivateBerry(void)
 {
-	gBattlescriptCurrInstr += 5;
-	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE))
-		gBattlescriptCurrInstr -= 5;
+	gBattlescriptCurrInstr += 5; //In case a new battle script is applied on top
+	ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE);
+	gBattlescriptCurrInstr -= 5; //Either so the new battle script plays properly, or revert the shift done above
 }
 
 void TryManipulateDamageForLeechSeedBigRoot(void)
