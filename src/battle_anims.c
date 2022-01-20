@@ -2004,6 +2004,7 @@ void AnimTask_CreateHyperspaceFuryMon(u8 taskId)
 			}
 
 			spriteId = CreateMonPicBattleAnim(species, isBackPic, 0, x, GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y), subpriority, personality, otId, gBattleAnimAttacker, 0);
+			FreeSpriteOamMatrix(&gSprites[spriteId]);
 			gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
 			gSprites[spriteId].affineAnims = sSpriteAffineAnim_HyperspaceFuryMon;
 			CalcCenterToCornerVec(&gSprites[spriteId], gSprites[spriteId].oam.shape, gSprites[spriteId].oam.size, gSprites[spriteId].oam.affineMode);

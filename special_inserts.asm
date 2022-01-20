@@ -257,6 +257,18 @@ MaxLevelChange1:
 	.byte MAX_LEVEL	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Deoxys & Mew Trade Restrictions
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x4FAE0, 0xFF
+RemoveDeoxysMewTradeRestrictions_1:
+	mov r8, r8
+
+.org 0x4FBC8, 0xFF
+RemoveDeoxysMewTradeRestrictions_2:
+	mov r0, #0x0 @Not restricted
+	bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Fix Slow Camera Update
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -148,7 +148,8 @@ void HandleNewBattleRamClearBeforeBattle(void)
 void VBlankCB_Battle(void)
 {
 	#ifndef DEBUG_AI_CHOICES
-	AIRandom(); //Only change AI thinking seed every frame
+	if (!(gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)) //Prevent RNG exploit in Battle Sands
+		AIRandom(); //Change only AI thinking seed every frame
 	#endif
 	SetGpuReg(REG_OFFSET_BG0HOFS, gBattle_BG0_X);
 	SetGpuReg(REG_OFFSET_BG0VOFS, gBattle_BG0_Y);
@@ -636,7 +637,7 @@ void BattleBeginFirstTurn(void)
 				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
 				CalculateShellSideArmSplits(); //Only done at the beginning of each turn
 				*state = 0;
-				//gBattleOutcome = B_OUTCOME_WON; //For Debugging
+				//gBattleOutcome = B_OUTCOME_WON; //For debugging quick battles
 		}
 	}
 }
@@ -686,7 +687,10 @@ bool8 TryActivateOWTerrain(void)
 		}
 
 		if (effect)
+		{
 			gTerrainType = owTerrain;
+			gNewBS->TerrainTimer = 0; //Reset any timers that may have been set before
+		}
 	}
 
 	return effect;
@@ -2275,7 +2279,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 
 	//Calculate adjusted speed stat if Sticky Web is present
 	if (gSideTimers[side].stickyWeb
-	&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+	&& IsMonAffectedByHazards(mon)
 	&& ability != ABILITY_CLEARBODY
 	&& CheckMonGrounding(mon))
 	{

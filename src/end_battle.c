@@ -7,6 +7,7 @@
 #include "../include/load_save.h"
 #include "../include/malloc.h"
 #include "../include/random.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -245,13 +246,19 @@ void HandleEndTurn_BattleWon(void)
 				break;
 			case CLASS_SHADOW:
 			case CLASS_SHADOW_ADMIN:
-			case CLASS_EX_SHADOW_ADMIN:
 			case CLASS_BOSS:
 				PlayBGM(BGM_VICTORY_PLASMA);
 				specialMus = TRUE;
 				break;
-			case CLASS_LOR:
 			case CLASS_LOR_ADMIN:
+				if (VarGet(VAR_MAIN_STORY) <= 0x25) //MAIN_STORY_LEFT_CUBE
+				{
+					PlayBGM(BGM_VICTORY_PLASMA); //Ivory is still a Shadow Admin at this point
+					specialMus = TRUE;
+					break;
+				}
+				//Fallthrough
+			case CLASS_LOR:
 			case CLASS_LOR_LEADER:
 			case CLASS_AGENT:
 				PlayBGM(BGM_VICTORY_GALACTIC);
@@ -262,6 +269,14 @@ void HandleEndTurn_BattleWon(void)
 				break;
 		#endif
 		}
+
+		#ifdef UNBOUND
+		if (MAP_IS(POKEMON_LEAGUE_CHAMP_ROOM))
+		{
+			PlayBGM(BGM_VICTORY_CHAMPION);
+			specialMus = TRUE;
+		}
+		#endif
 
 	SKIP_MUSIC_SELECTION:
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop)
@@ -646,7 +661,11 @@ static void RestoreNonConsumableItems(void)
 	u16 none = ITEM_NONE;
 	u16* items = gNewBS->itemBackup;
 	#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
-	bool8 keepConsumables = FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS);
+	bool8 keepConsumables = FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS)
+			#ifdef FLAG_SANDBOX_MODE
+			|| (FlagGet(FLAG_SANDBOX_MODE) && gBattleTypeFlags & BATTLE_TYPE_TRAINER) //All Trainer battles
+			#endif
+			;
 	#else
 	bool8 keepConsumables = FALSE;
 	#endif

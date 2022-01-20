@@ -14,6 +14,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
 #include "../include/new/util.h"
+
 /*
 frontier.c
 	all supporting and master functions for developing a battle frontier
@@ -1381,6 +1382,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 			if (IsMonBannedInTier(mon, tier))
 			{
 				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
+				Var8004 = i;
 				return;
 			}
 
@@ -1389,6 +1391,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 			if (IsMonBannedInTier(mon, tier))
 			{
 				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
+				Var8004 = i;
 				return;
 			}
 

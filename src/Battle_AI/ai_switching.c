@@ -45,6 +45,7 @@ static void CalcMostSuitableMonSwitchIfNecessary(void);
 #ifdef VAR_GAME_DIFFICULTY
 static bool8 IsGoodIdeaToDoShiftSwitch(u8 aiBank, u8 foe);
 #endif
+extern bool8 AISaveSweeperForLaterDifficultyCheck(void);
 
 bool8 ShouldSwitch(struct Pokemon* party, u8 firstId, u8 lastId)
 {
@@ -566,6 +567,9 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 
 static bool8 SwitchToBestResistMonHelper(bool8 willPivot, const struct Pokemon* party, u8 monId, u8 switchFlags, u8 foe)
 {
+	if (monId >= PARTY_SIZE)
+		return FALSE;
+
 	if (switchFlags & SWITCHING_FLAG_RESIST_ALL_MOVES //New mon resists all moves
 	//&& AIRandom() % 100 < 75 //75 % chance of taking the switch
 	/*&& switchFlags & SWITCHING_FLAG_KO_FOE*/ //And can KO foe
@@ -596,9 +600,18 @@ static bool8 SwitchToBestResistMon(const struct Pokemon* party, bool8 willPivot,
 
 	//Check the rest of the switching options
 	u8 side = SIDE(gActiveBattler);
+	u8 opposingBattler1, opposingBattler2;
+	u8 battlerIn1, battlerIn2;
+	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &opposingBattler1, &opposingBattler2);
+
 	for (u32 i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (i == bestMonId || i == secondBestMonId) //Skip the mons already checked
+		if (i == bestMonId
+		|| i == secondBestMonId //Skip the mons already checked
+		|| i == gBattlerPartyIndexes[battlerIn1]
+		|| i == gBattlerPartyIndexes[battlerIn2]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 			continue;
 
 		if (SwitchToBestResistMonHelper(willPivot, party, i, gNewBS->ai.monIdToSwitchIntoFlags[side][i], foe))
@@ -625,7 +638,7 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party)
 			//Don't switch out if you're poisoned and just going to get poisoned again on switch in
 			if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0
 			&& gBattleMons[gActiveBattler].status1 & STATUS_PSN_ANY
-			&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+			&& IsMonAffectedByHazards(GetBankPartyData(gActiveBattler))
 			&& !IsOfType(gActiveBattler, TYPE_POISON)
 			&& CheckGrounding(gActiveBattler))
 			{
@@ -1111,6 +1124,9 @@ static bool8 AnnoyingSecondaryDamageSwitchCheck(u8 monId, u8 switchFlags, struct
 	u8 foe = FOE(gActiveBattler);
 	bool8 goodToSwitch = FALSE;
 
+	if (monId >= PARTY_SIZE)
+		return FALSE;
+
 	if (urgent)
 		goodToSwitch = TRUE;
 	else if (switchFlags & SWITCHING_FLAG_OUTSPEEDS //New mon will go first
@@ -1184,6 +1200,9 @@ static bool8 IsTakingAnnoyingSecondaryDamage(struct Pokemon* party)
 
 static bool8 ShouldSwitchToAvoidDeathHelper(struct Pokemon* party, u8 bankDef, u16 defMove, u8 monId, u8 switchFlags)
 {
+	if (monId >= PARTY_SIZE)
+		return FALSE;
+
 	struct Pokemon* mon = &party[monId];
 
 	if
@@ -1254,9 +1273,22 @@ static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 				return TRUE;
 
 			u8 side = SIDE(gActiveBattler);
+			u8 battlerIn1, battlerIn2;
+			u8 foe1, foe2;
+			LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+
 			for (u32 i = 0; i < PARTY_SIZE; ++i) //Run a check on the whole party now
 			{
-				if (i == bestMonId || i == secondBestMonId) //Already checked these
+				u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, 0);
+
+				if (SPECIES_CANT_BATTLE(species)
+				|| 	party[i].hp == 0
+				||  i == bestMonId
+				||  i == secondBestMonId //Already checked these
+				||	i == gBattlerPartyIndexes[battlerIn1]
+				||	i == gBattlerPartyIndexes[battlerIn2]
+				||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+				||  i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 					continue;
 
 				if (ShouldSwitchToAvoidDeathHelper(party, bankDef, defMove, i, gNewBS->ai.monIdToSwitchIntoFlags[side][i]))
@@ -1600,6 +1632,9 @@ static bool8 ShouldSwitchWhenOffensiveStatsAreLow(struct Pokemon* party)
 
 static bool8 ShouldSaveSweeperForLaterHelper(struct Pokemon* party, u8 bestMonId, u8 switchFlags, u8 foe, bool8 willPivot)
 {
+	if (bestMonId >= PARTY_SIZE)
+		return FALSE;
+
 	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
 	struct Pokemon* mon = &party[bestMonId];
 
@@ -1617,6 +1652,9 @@ static bool8 ShouldSaveSweeperForLaterHelper(struct Pokemon* party, u8 bestMonId
 
 static bool8 ShouldSaveChoiceSweeper(u8 monId, u8 switchFlags, struct Pokemon* party)
 {
+	if (monId >= PARTY_SIZE)
+		return FALSE;
+
 	u8 wantedFlags = (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_KO_FOE);
 
 	//Check if should switch to the best mon
@@ -1654,8 +1692,8 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 
 	if (IS_SINGLE_BATTLE //Not good for Doubles
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
-	#ifdef VAR_GAME_DIFFICULTY
-	&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY) //This logic is not present on easy
+	#ifdef UNBOUND
+	&& AISaveSweeperForLaterDifficultyCheck() //And allowed to use this logic on the current Difficulty
 	#endif
 	&& !IsDynamaxed(gActiveBattler) //Don't waste the Dynamax
 	&& !(gBattleMons[gActiveBattler].status1 & STATUS1_FREEZE) //Better to not try to save frozen target
@@ -1708,7 +1746,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 
 		bool8 willPivot = FastPivotingMoveInMovesetThatAffects(gActiveBattler, foe); //U-Turn/Volt Switch switch on their own
 
-		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon
+		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon (better than ShouldSwitchToAvoidDeath because this also accounts for slower foes)
 		{
 			//Try to switch out to the best mon
 			u8 bestMonId, secondBestMonId, switchFlags, secondBestSwitchFlags;
@@ -2288,14 +2326,26 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			}
 			else if (bestMonId == PARTY_SIZE //No best mon yet
 			|| scores[i] > scores[bestMonId]
-			|| (scores[i] == scores[bestMonId] && (AIRandom() % 100 < 50))) //50% chance when having similar scores
+			|| (scores[i] == scores[bestMonId] //Same score but
+			 && flags[bestMonId] & SWITCHING_FLAG_FAINTS_FROM_FOE //Best mon faints from foe
+			 && !(flags[i] & SWITCHING_FLAG_FAINTS_FROM_FOE)) //This one isn't KOd immediately
+			|| (scores[i] == scores[bestMonId]
+			 && !(flags[bestMonId] & SWITCHING_FLAG_FAINTS_FROM_FOE)
+			 && !(flags[i] & SWITCHING_FLAG_FAINTS_FROM_FOE)
+			 && (AIRandom() % 100 < 50))) //50% chance when having similar scores and neither can be KOd
 			{
 				secondBestMonId = bestMonId; //If no best mon will still be PARTY_SIZE
 				bestMonId = i;
 			}
 			else if (secondBestMonId == PARTY_SIZE //No second best mon yet
 			|| scores[i] > scores[secondBestMonId] //This mon isn't the best but it's better than the current second best
-			|| (scores[i] == scores[secondBestMonId] && (AIRandom() % 100 < 50))) //50% chance when having similar scores
+			|| (scores[i] == scores[secondBestMonId] //Same score but
+			 && flags[secondBestMonId] & SWITCHING_FLAG_FAINTS_FROM_FOE //Second best mon faints from foe
+			 && !(flags[i] & SWITCHING_FLAG_FAINTS_FROM_FOE)) //Same score but one isn't KOd immediately
+			|| (scores[i] == scores[secondBestMonId]
+			 && !(flags[secondBestMonId] & SWITCHING_FLAG_FAINTS_FROM_FOE)
+			 && !(flags[i] & SWITCHING_FLAG_FAINTS_FROM_FOE)
+			 && (AIRandom() % 100 < 50))) //50% chance when having similar scores and neither can be KOd
 				secondBestMonId = i;
 		}
 

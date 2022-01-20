@@ -16319,7 +16319,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WATERBUBBLE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ADAPTABILITY
 		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
@@ -16345,7 +16345,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_OBLIVIOUS
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ADAPTABILITY
 		.item = ITEM_ZOOM_LENS,
 		.moves =
 		{
@@ -16397,7 +16397,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 252,
 		.spAtkEv = 4,
 		.spDefEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WATERBUBBLE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ADAPTABILITY
 		.item = ITEM_DAMP_ROCK,
 		.moves =
 		{
@@ -45631,7 +45631,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		{
 			MOVE_DRACOMETEOR,
 			MOVE_DRAGONASCENT,
-			MOVE_FIREBLAST,
+			MOVE_HYDROPUMP,
 			MOVE_EXTREMESPEED,
 		},
 		.ball = BALL_TYPE_RANDOM,

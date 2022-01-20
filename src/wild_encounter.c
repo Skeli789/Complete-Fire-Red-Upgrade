@@ -1276,7 +1276,7 @@ void sp138_StartLegendaryBattle(void)
 	#ifdef FLAG_DOUBLE_WILD_BATTLE
 	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE)
 	&& gEnemyParty[1].species != SPECIES_NONE
-	&& ViableMonCount(gPlayerParty) > 1) //At least two alive Pokemon
+	&& (FlagGet(FLAG_TAG_BATTLE) || ViableMonCount(gPlayerParty) > 1)) //At least two alive Pokemon
 	{
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 

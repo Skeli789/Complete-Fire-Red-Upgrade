@@ -371,7 +371,7 @@ Whips up a tailwind\nthat ups the Speed\nof all party Pok\emon\nfor four turns.
 The user emits a\nterrible soundwave\nthat hits everything\naround it.
 
 #org @DESC_INCINERATE
-The user burns\nthe foe completely,\nrendering a held\nBerry useless.
+The user burns\nthe foe completely,\nrendering a held Gem\nor Berry useless.
 
 #org @DESC_WORRYSEED
 A worrying seed is\nplanted on the foe,\nmaking its ability\nInsomnia.
@@ -692,7 +692,7 @@ This move reduces\ndamage from physical\nand special moves for\nfive turns durin
 Aside from protecting\nthe user from attacks,\nthis also poisons\nattackers who make\ncontact.
 
 #org @DESC_BEAKBLAST
-Ther user heats up its\nbeak and attacks the\nfoe. Contact during\nheating causes a burn.
+The user heats up its\nbeak and attacks.\nContact during heating\ncauses a burn.
 
 #org @DESC_BRUTALSWING
 The user swings its\nbody around violently\nto inflict damage on\neverything in its\nvicinity.

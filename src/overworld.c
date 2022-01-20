@@ -424,6 +424,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x2FD, METATILE_Route17_LandEdgeBottomLeft, Tileset_Route17},
 	{0x2FE, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
 	{0x2FF, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
+	{0x345, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
 	{0x30D, METATILE_General_TreeTopRight, Tileset_MagnoliaTown},
 
 	{0x1, 0x0, Tileset_Snow},
@@ -697,7 +698,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 	u8 battleType = scriptPtr[1];
 
 	if (battleType == TRAINER_BATTLE_TWO_OPPONENTS
-	&& (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) || FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))))
+	&& (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) /*|| FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))*/))
 		return FALSE; //If either trainer flag is set
 
 	if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
@@ -1206,8 +1207,8 @@ void SetUpTrainerEncounterMusic(void)
 //special 0x18F
 void SetTrainerFlags(void)
 {
-	if (gTrainerBattleOpponent_B)
-		FlagSet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_B);
+	if (IsTwoOpponentBattle()) //Prevent bugs from happening when the second Trainer wasn't actually fought
+		FlagSet(FLAG_TRAINER_FLAG_START + SECOND_OPPONENT);
 	FlagSet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_A);
 }
 
@@ -1596,7 +1597,7 @@ bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
 
-	if (gQuestLogMode != 3)
+	//if (gQuestLogMode != 3)
 	{
 		const u8* ptr;
 
@@ -1794,7 +1795,7 @@ s16 GetPlayerSpeed(void)
 		return 3;
 	else if (gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_SURFING)
 	{
-		if (MovingFastOnWater())
+		if (MovingFastOnWater() && JOY_HELD(DPAD_UP | DPAD_RIGHT | DPAD_LEFT | DPAD_RIGHT)) //Has to actually be moving
 			return 4;
 		else
 			return 2;
@@ -2783,6 +2784,9 @@ void FieldCheckIfPlayerPressedLButton(struct FieldInput* input, u16 newKeys)
 
 bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 {
+	if (IsDexNavHudActive())
+		return FALSE; //Can't force close this
+
 	if (input->pressedSelectButton && UseRegisteredKeyItemOnField())
     {
         gInputToStoreInQuestLogMaybe.pressedSelectButton = TRUE;
@@ -2900,7 +2904,9 @@ void Task_UseChosenRegisteredItem(u8 taskId)
 		//Check button combos for quick access
 		u16 usedItem = ITEM_NONE;
 	
-		if (JOY_NEW(SELECT_BUTTON))
+		if (JOY_NEW(A_BUTTON | B_BUTTON))
+			usedItem = ITEM_NONE; //Prevent bug with pressing A/B at the same time as choosing an item
+		else if (JOY_NEW(SELECT_BUTTON))
 			usedItem = gSaveBlock1->registeredItems[0];
 		else if (JOY_NEW(L_BUTTON))
 			usedItem = gSaveBlock1->registeredItems[1];

@@ -998,8 +998,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			if (foe != skipFoe && BATTLER_ALIVE(foe) && ITEM(foe))
 			{
 				gLastUsedItem = ITEM(foe);
-				gBankTarget = foe;
-				gBattleScripting.bank = bank;
+				gEffectBank = foe; //gBankTarget can crash the game after Neutralizing Gas wears off, so use gEffectBank instead
 				gBattleStringLoader = gText_FriskActivate;
 				RecordItemEffectBattle(foe, ITEM_EFFECT(foe));
 				BattleScriptPushCursorAndCallback(BattleScript_Frisk);
@@ -1008,8 +1007,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			else if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner) && ITEM(partner) != ITEM_NONE)
 			{
 				gLastUsedItem = ITEM(partner);
-				gBankTarget = partner;
-				gBattleScripting.bank = bank;
+				gEffectBank = partner;
 				gBattleStringLoader = gText_FriskActivate;
 				RecordItemEffectBattle(partner, ITEM_EFFECT(partner));
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
@@ -1932,13 +1930,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				break;
 
 			case ABILITY_CURSEDBODY:
-				if (MOVE_HAD_EFFECT
+				if (umodsi(Random(), 3) == 0
+				&& MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
+				&& gBattleMoves[gCurrentMove].effect != EFFECT_FUTURE_SIGHT //Can never be disabled
 				&& ABILITY(gBankAttacker) != ABILITY_AROMAVEIL
-				&& !(IS_DOUBLE_BATTLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
-				&& umodsi(Random(), 3) == 0)
+				&& !(IS_DOUBLE_BATTLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL))
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_CursedBodyActivates;
@@ -1978,8 +1977,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_WANDERINGSPIRIT:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& (BATTLER_ALIVE(gBankAttacker) || BATTLER_ALIVE(gBankTarget))
+				&& (BATTLER_ALIVE(gBankAttacker) || BATTLER_ALIVE(bank))
 				&& gBankAttacker != bank
+				&& *GetAbilityLocation(gBankAttacker) != gLastUsedAbility //Don't swap same Ability
 				&& CheckContact(move, gBankAttacker, bank))
 				{
 					BattleScriptPushCursor();
@@ -2718,7 +2718,7 @@ static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTi
 
 	u16 width = GetStringWidth(0, str, 0);
 
-	if (width > MAX_POPUP_STRING_WIDTH)
+	if (width > MAX_POPUP_STRING_WIDTH - 5)
 	{
 		windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(str, x2 - MAX_POPUP_STRING_WIDTH, y, color1, color2, color3, &windowId);
 		TextIntoAbilityPopUp(spriteTileData2, windowTileData, 3, (y == 0));
@@ -2844,11 +2844,11 @@ static const u16 sOverwrittenPixelsTable[][2] =
 	{PIXEL_COORDS_TO_OFFSET(8, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 46), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 47), 8},
-	{PIXEL_COORDS_TO_OFFSET(8, 48), 8},
+	//{PIXEL_COORDS_TO_OFFSET(8, 48), 8},
 	{PIXEL_COORDS_TO_OFFSET(16, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(16, 46), 8},
 	{PIXEL_COORDS_TO_OFFSET(16, 47), 8},
-	{PIXEL_COORDS_TO_OFFSET(16, 48), 8},
+	//{PIXEL_COORDS_TO_OFFSET(16, 48), 8},
 };
 
 static inline void CopyPixels(u8 *dest, const u8 *src, u32 pixelCount)

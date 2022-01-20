@@ -65,7 +65,7 @@ void __attribute__((long_call)) HandleChooseActionAfterDma3(void);
 void __attribute__((long_call)) BattleLoadOpponentMonSpriteGfx(struct Pokemon* mon, u8 bank);
 void __attribute__((long_call)) BattleLoadPlayerMonSpriteGfx(struct Pokemon* mon, u8 bank);
 void __attribute__((long_call)) DecompressTrainerFrontPic(u16 frontPicId, u8 battlerId);
-void __attribute__((long_call)) DecompressTrainerBackPic(u16 backPicId, u8 battlerId);
+void __attribute__((long_call)) DecompressTrainerBackPalette(u16 backPicId, u8 battlerId);
 void __attribute__((long_call)) load_gfxc_health_bar(u8);
 void __attribute__((long_call)) LoadBattleMonGfxAndAnimate(u8 battlerId, bool8 loadMonSprite, u8 spriteId);
 void __attribute__((long_call)) HandleLowHpMusicChange(struct Pokemon *mon, u8 battlerId);

@@ -85,6 +85,8 @@ BattleScript_PrintCaughtMonInfo:
 	setbyte EXP_STATE, 0x0
 	getexp BANK_TARGET
 	@;sethword gBattle_BG2_X, 0x0
+	callasm ApplyBallSpecialEffect
+	pickupitemcalculation
 	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
 	printstring 0x10F @;STRINGID_PKMNDATAADDEDTODEX
 	waitstateatk

@@ -7,7 +7,7 @@
 #define GAME_STAT_FIRST_HOF_PLAY_TIME        1
 #define GAME_STAT_STARTED_TRENDS             2 //Unused
 #define GAME_STAT_PLANTED_BERRIES            3 //Unused
-#define GAME_STAT_TRADED_BIKES               4 //Unused
+#define GAME_STAT_CHANGED_IV_NATURE          4 //Unused
 #define GAME_STAT_STEPS                      5
 #define GAME_STAT_PICKUP_ITEMS               6 //NEW
 #define GAME_STAT_TOTAL_BATTLES              7

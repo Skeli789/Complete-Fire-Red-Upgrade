@@ -314,6 +314,8 @@ SetFoughtRoamerInactive 814201C 1
 SaveWriteToFlash 80D97D0 2
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2
+GetSaveValidStatus 80D9F0C 1
+TryLoadSaveSector 80DA120 3
 HandleSavingData 80DA248 1
 LinkTradeSaveHook 805415E 0
 LinkBattleSaveHook 806FC84 0
@@ -348,6 +350,7 @@ LoadMapFromCameraTransition_DNSFixHook2 80558C4 0
 DNSCreateBuyMenuHook 809AC84 0
 RemoveShopModifierCheats 809B18E 0
 DNSEndBuyMenuHook 809C078 1
+Task_ReturnToItemListAfterItemPurchase 809BF68 1
 
 ##Select-From-PC
 #ifdef SELECT_FROM_PC
@@ -378,6 +381,7 @@ NewNpcInfo 805e964 4
 SetPlayerAvatarEventObjectIdAndObjectId 805F02C 2
 EventObjectSetGraphicsIdFix 805F168 0
 NPCMartFix 809BA6C 1
+ContextNpcGetTextColor 80CBE00 0
 CharacterCustomizationUpdateTrainerFrontPic2 810BD64 1
 PlayerGenderToFrontTrainerPicId 810C374 2
 GetPlayerAvatarGraphicsIdByStateIdAndGender 805C7E0 2
@@ -453,6 +457,7 @@ CamomonsSummaryScreenHook 08136168 0
 ChangeSummaryScreenMonSinglesDoubles 0813B20C 1
 ChangeSummaryScreenMonMulti 0813B38C 1
 SummaryScreenOTGenderColour 08136270 3
+SummaryScreen_IsMultiBattlePartner 08138B4C 0
 
 ##Hall of Fame Fix
 CB2_DoHallOfFameScreen 080F1EFC 3
@@ -468,6 +473,7 @@ Task_Hof_InitMonData 080F1F74 3
 HallOfFame_PrintWelcomeText 080F313C 0
 #endif
 HallOfFame_PrintMonInfo 080F3194 3
+ReshowPCMenuAfterHallOfFamePC 080CA5C0 0
 
 ##Unhidden Power
 WriteTypeHook 08030984 0
@@ -517,6 +523,7 @@ PokedexLoadAlternateWeightHook 08105A58 0
 SizeMinigameLoadAlternateHeightHook 080A0774 2
 PokedexScreenStats 08106370 0
 GetVisualBaseStat 0801D77C 2
+FixPokedexCheckNullSpeciesHook 08104ACA 0
 
 ##Daycare
 GiveEggFromDaycare 080460D4 1
@@ -710,6 +717,8 @@ RunTextPrintersForInstantTextHook 08002DEE 0
 #endif
 TextPrinterWaitWithDownArrow 08005634 1
 TextPrinterWait 8005680 1
+AutoScrollBattleLevelUpBoxHook1 8026330 0 
+AutoScrollBattleLevelUpBoxHook2 8026350 0
 
 #ifdef UNBOUND
 GetCurrentLevelCap 801D79C 0
@@ -725,4 +734,11 @@ GetAbilityName 801D7EC 2
 CountTMsInBag 801D7F4 0
 GetEventObjectGraphicsId 801D804 1
 PrepMiningWarp 801D80C 0
+IsLevelUpEvolutionMethod 801D814 1
+IsItemEvolutionMethod 801D81C 1
+GetPlayerAvatarGraphicsIdByCurrentState 801D824 0
+LoadTrainerBackPal 801D82C 2
+#Skip 801D834
+ClearNewGamePlusFlags 801D83C 0
+#Skip 801D844
 #endif

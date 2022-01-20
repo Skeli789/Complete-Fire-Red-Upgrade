@@ -137,7 +137,12 @@ u8 GetBattleTerrainOverride(void)
 	|| gMain.callback2 == CB2_EvolutionSceneUpdate
 	|| gMain.callback2 == CB2_TradeEvolutionSceneUpdate)
 	{
+		bool8 wasRoamerBattle = (gBattleTypeFlags & BATTLE_TYPE_ROAMER) != 0;
 		gBattleTypeFlags = 0;
+
+		if (wasRoamerBattle)
+			gBattleTypeFlags |= BATTLE_TYPE_ROAMER; //Important otherwise the Roamer may not disappear when caught
+
 		gBattleTerrain = BattleSetup_GetTerrainId();
 	}
 

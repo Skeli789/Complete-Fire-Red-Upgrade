@@ -1466,9 +1466,33 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	{
 		if (multiplier == TYPE_MUL_NO_EFFECT && ITEM_EFFECT(bankDef) == ITEM_EFFECT_RING_TARGET)
 			multiplier = TYPE_MUL_NORMAL;
-		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND
-		&& (CheckGrounding(bankDef) || move == MOVE_THOUSANDARROWS))
-			multiplier = TYPE_MUL_NORMAL;
+		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND)
+		{
+			if (CheckGrounding(bankDef))
+				multiplier = TYPE_MUL_NORMAL;
+			else if (move == MOVE_THOUSANDARROWS)
+			{
+				multiplier = TYPE_MUL_NORMAL;
+
+				if (defType == TYPE_FLYING)
+				{
+					//Does neutral damage regardless of secondary type
+
+					if (*flags & MOVE_RESULT_SUPER_EFFECTIVE) //Super Effective on the first type
+					{
+						*flags &= ~MOVE_RESULT_SUPER_EFFECTIVE;
+						multiplier = TYPE_MUL_NOT_EFFECTIVE; //Counteract the boost given earlier
+						goto SKIP_FLAG_CHANGE;
+					}
+					else if (*flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+					{
+						*flags &= ~MOVE_RESULT_NOT_VERY_EFFECTIVE;
+						multiplier = TYPE_MUL_SUPER_EFFECTIVE; //Counteract the boost given earlier
+						goto SKIP_FLAG_CHANGE;
+					}
+				}
+			}
+		}
 	}
 
 	switch (multiplier) {
@@ -1498,6 +1522,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 			break;
 	}
 
+	SKIP_FLAG_CHANGE:
 	if (multiplier != TYPE_MUL_NO_DATA && multiplier != TYPE_MUL_NORMAL)
 	{
 		if (multiplier == TYPE_MUL_NO_EFFECT)
@@ -2102,7 +2127,7 @@ void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 			if (gSideTimers[side].tspikesAmount > 0
 			&& data->atkIsGrounded
 			&& !IsMonOfType(monAtk, TYPE_POISON)
-			&& data->atkItemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Affected by hazards
+			&& IsMonAffectedByHazardsByItemEffect(monAtk, data->atkItemEffect) //Affected by hazards
 			&& !BankSideHasSafeguard(bankAtk)
 			&& CanPartyMonBePoisoned(monAtk))
 				data->atkStatus1 = STATUS1_POISON; //Will be poisoned - relevant for Facade
@@ -2183,7 +2208,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 		&& gSideTimers[side].tspikesAmount > 0
 		&& data->defIsGrounded
 		&& !IsMonOfType(monDef, TYPE_POISON)
-		&& data->defItemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS //Affected by hazards
+		&& IsMonAffectedByHazardsByItemEffect(monDef, data->defItemEffect) //Affected by hazards
 		&& !BankSideHasSafeguard(bankDef)
 		&& CanPartyMonBePoisoned(monDef))
 			data->defStatus1 = STATUS1_POISON; //Will be poisoned - relevant for things like Marvel Scale
@@ -3440,7 +3465,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_RETURN:
 			if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
-			|| IsFrontierRaidBattle())
+			|| IsFrontierRaidBattle()
+			#ifdef FLAG_SANDBOX_MODE
+			|| FlagGet(FLAG_SANDBOX_MODE)
+			#endif
+			)
 				power = (10 * 255) / 25;
 			else if (useMonAtk)
 				power = (10 * (data->monAtk->friendship)) / 25;
@@ -3450,8 +3479,12 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_FRUSTRATION:
 			if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
-			|| IsFrontierRaidBattle())
-				power = (10 * 255) / 25;
+			|| IsFrontierRaidBattle()
+			#ifdef FLAG_SANDBOX_MODE
+			|| FlagGet(FLAG_SANDBOX_MODE)
+			#endif
+			)
+				power = (10 * 255) / 25; //Always max damage
 			else if (useMonAtk)
 				power = (10 * (255 - data->monAtk->friendship)) / 25;
 			else
@@ -3592,25 +3625,28 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 15) / 10;
 			break;
 
-		case ABILITY_RIVALRY: ;
+		case ABILITY_RIVALRY:
 		//1.25x / 0.75x Boost
-			u8 attackerGender, targetGender;
-			if (useMonAtk)
-				attackerGender = GetGenderFromSpeciesAndPersonality(data->atkSpecies, data->monAtk->personality);
-			else
-				attackerGender = GetGenderFromSpeciesAndPersonality(data->atkSpecies, gBattleMons[bankAtk].personality);
-
-			if (useMonDef)
-				targetGender = GetGenderFromSpeciesAndPersonality(data->defSpecies, data->monDef->personality);
-			else
-				targetGender = GetGenderFromSpeciesAndPersonality(data->defSpecies, gBattleMons[bankDef].personality);
-
-			if (attackerGender != 0xFF && targetGender != 0xFF)
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 			{
-				if (attackerGender == targetGender)
-					power = (power * 125) / 100;
+				u8 attackerGender, targetGender;
+				if (useMonAtk)
+					attackerGender = GetGenderFromSpeciesAndPersonality(data->atkSpecies, data->monAtk->personality);
 				else
-					power = (power * 75) / 100;
+					attackerGender = GetGenderFromSpeciesAndPersonality(data->atkSpecies, gBattleMons[bankAtk].personality);
+
+				if (useMonDef)
+					targetGender = GetGenderFromSpeciesAndPersonality(data->defSpecies, data->monDef->personality);
+				else
+					targetGender = GetGenderFromSpeciesAndPersonality(data->defSpecies, gBattleMons[bankDef].personality);
+
+				if (attackerGender != 0xFF && targetGender != 0xFF)
+				{
+					if (attackerGender == targetGender)
+						power = (power * 125) / 100;
+					else
+						power = (power * 75) / 100;
+				}
 			}
 			break;
 

@@ -62,6 +62,7 @@ void __attribute__((long_call)) PrintSaveErrorStatus(u8 taskId, const u8 *str);
 static void LoadSector30And31(void);
 static u8 SaveSector30And31(void);
 static void LoadParasite(void);
+extern bool8 TryPreventIncompleteSaves(u8 taskId);
 
 /* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
 static void LoadSector30And31(void)
@@ -180,7 +181,11 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveBlockChunk* location)
 			gFirstSaveSector = i;
 
 		u16 checksum = CalculateSaveChecksum(gFastSaveSection->data, location[id].size);
-		if (gFastSaveSection->signature == FILE_SIGNATURE
+		if ((gFastSaveSection->signature == FILE_SIGNATURE
+		#ifdef UNBOUND_FILE_SIGNATURE 
+		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
+		#endif
+		)
 		&&  gFastSaveSection->checksum == checksum)
 		{
 			Memcpy(location[id].data, gFastSaveSection->data, location[id].size);
@@ -194,6 +199,167 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveBlockChunk* location)
 		LoadSector30And31();
 
 	return 1;
+}
+
+// 080DA120
+u8 TryLoadSaveSector(u8 sector, u8* data, u16 size)
+{
+	u16 i;
+	struct SaveSection* section = &gSaveDataBuffer;
+
+	DoReadFlashWholeSection(sector, section);
+	if (section->signature == FILE_SIGNATURE
+	#ifdef UNBOUND_FILE_SIGNATURE
+	|| section->signature == UNBOUND_FILE_SIGNATURE
+	#endif
+	)
+	{
+		u16 checksum = CalculateSaveChecksum(section->data, size);
+		if (section->id == checksum)
+		{
+			for (i = 0; i < size; i++)
+				data[i] = section->data[i];
+			return SAVE_STATUS_OK;
+		}
+		else
+		{
+			return SAVE_STATUS_INVALID;
+		}
+	}
+	else
+	{
+		return SAVE_STATUS_EMPTY;
+	}
+}
+
+u8 GetSaveValidStatus(const struct SaveBlockChunk *chunks)
+{
+	u16 sector;
+	bool8 signatureValid;
+	u16 checksum;
+	s32 slot1saveCounter = 0;
+	s32 slot2saveCounter = 0;
+	u8 slot1Status;
+	u8 slot2Status;
+	u32 validSectors;
+	const u32 ALL_SECTORS = (1 << NUM_SECTORS_PER_SAVE_SLOT) - 1;  // bitmask of all saveblock sectors
+
+	// check save slot 1.
+	validSectors = 0;
+	signatureValid = FALSE;
+	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
+	{
+		DoReadFlashWholeSection(sector, gFastSaveSection);
+		if (gFastSaveSection->signature == FILE_SIGNATURE
+		#ifdef UNBOUND_FILE_SIGNATURE
+		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
+		#endif
+		)
+		{
+			signatureValid = TRUE;
+			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
+			if (gFastSaveSection->checksum == checksum)
+			{
+				slot1saveCounter = gFastSaveSection->counter;
+				validSectors |= 1 << gFastSaveSection->id;
+			}
+		}
+	}
+
+	if (signatureValid)
+	{
+		if (validSectors == ALL_SECTORS)
+			slot1Status = SAVE_STATUS_OK;
+		else
+			slot1Status = SAVE_STATUS_ERROR;
+	}
+	else
+	{
+		slot1Status = SAVE_STATUS_EMPTY;
+	}
+
+	// check save slot 2.
+	validSectors = 0;
+	signatureValid = FALSE;
+	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
+	{
+		DoReadFlashWholeSection(NUM_SECTORS_PER_SAVE_SLOT + sector, gFastSaveSection);
+		if (gFastSaveSection->signature == FILE_SIGNATURE
+		#ifdef UNBOUND_FILE_SIGNATURE
+		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
+		#endif
+		)
+		{
+			signatureValid = TRUE;
+			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
+			if (gFastSaveSection->checksum == checksum)
+			{
+				slot2saveCounter = gFastSaveSection->counter;
+				validSectors |= 1 << gFastSaveSection->id;
+			}
+		}
+	}
+
+	if (signatureValid)
+	{
+		if (validSectors == ALL_SECTORS)
+			slot2Status = SAVE_STATUS_OK;
+		else
+			slot2Status = SAVE_STATUS_ERROR;
+	}
+	else
+	{
+		slot2Status = SAVE_STATUS_EMPTY;
+	}
+
+	if (slot1Status == SAVE_STATUS_OK && slot2Status == SAVE_STATUS_OK)
+	{
+		// Choose counter of the most recent save file
+		if ((slot1saveCounter == -1 && slot2saveCounter == 0) || (slot1saveCounter == 0 && slot2saveCounter == -1))
+		{
+			if ((unsigned)(slot1saveCounter + 1) < (unsigned)(slot2saveCounter + 1))
+				gSaveCounter = slot2saveCounter;
+			else
+				gSaveCounter = slot1saveCounter;
+		}
+		else
+		{
+			if (slot1saveCounter < slot2saveCounter)
+				gSaveCounter = slot2saveCounter;
+			else
+				gSaveCounter = slot1saveCounter;
+		}
+		return SAVE_STATUS_OK;
+	}
+
+	if (slot1Status == SAVE_STATUS_OK)
+	{
+		gSaveCounter = slot1saveCounter;
+		if (slot2Status == SAVE_STATUS_ERROR)
+			return SAVE_STATUS_ERROR;
+		else
+			return SAVE_STATUS_OK;
+	}
+
+	if (slot2Status == SAVE_STATUS_OK)
+	{
+		gSaveCounter = slot2saveCounter;
+		if (slot1Status == SAVE_STATUS_ERROR)
+			return SAVE_STATUS_ERROR;
+		else
+			return SAVE_STATUS_OK;
+	}
+
+	if (slot1Status == SAVE_STATUS_EMPTY && slot2Status == SAVE_STATUS_EMPTY)
+	{
+		gSaveCounter = 0;
+		gFirstSaveSector = 0;
+		return SAVE_STATUS_EMPTY;
+	}
+
+	gSaveCounter = 0;
+	gFirstSaveSector = 0;
+	return 2;
 }
 
 // 080D9870
@@ -215,7 +381,12 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* location)
 	Memset(gFastSaveSection, 0, sizeof(struct SaveSection));
 
 	gFastSaveSection->id = chunkId;
+	#ifdef UNBOUND_FILE_SIGNATURE 
+	gFastSaveSection->signature = UNBOUND_FILE_SIGNATURE;
+	#else
 	gFastSaveSection->signature = FILE_SIGNATURE;
+	#endif
+
 	gFastSaveSection->counter = gSaveCounter;
 
 	Memcpy(gFastSaveSection->data, chunkData, chunkSize);
@@ -367,6 +538,14 @@ bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 	#ifdef TIME_ENABLED
 	if (!sPrintedRTCWarning)
 	{
+		#ifdef UNBOUND
+		if (TryPreventIncompleteSaves(taskId))
+		{
+			sPrintedRTCWarning = TRUE;
+			return TRUE;
+		}
+		else
+		#endif
 		if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK)
 		{
 			const u8* warning;

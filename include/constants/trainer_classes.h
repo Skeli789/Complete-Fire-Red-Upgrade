@@ -154,7 +154,6 @@ enum
 #define CLASS_LOR_ADMIN 		0x2E
 #define CLASS_LOR 				0x2F
 #define CLASS_SHADOW_ADMIN 		0x30
-#define CLASS_EX_SHADOW_ADMIN	0x31
 #define CLASS_WORKER 			0x44
 #define CLASS_ROUGHNECK 		0x47
 #define CLASS_BOSS 				0x53

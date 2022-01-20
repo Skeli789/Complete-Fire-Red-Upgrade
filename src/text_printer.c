@@ -8,9 +8,6 @@ extern struct TextPrinter sTextPrinters[];
 
 bool8 IsAutoScrollEnabled(void)
 {
-	if (gMain.inBattle)
-		return FALSE; //Only in the overworld
-
 	#if (defined AUTOSCROLL_TEXT_BY_HOLDING_R || defined DEBUG_AUTO_SCROLL)
 	return TRUE;
 	#endif
@@ -132,4 +129,10 @@ bool8 WaitForAorBPress(void)
 		return TRUE;
 
 	return WaitForAorBPressOld();
+}
+
+bool8 ShouldCloseBattleLevelUpBox(void)
+{
+	return gMain.newKeys
+		|| (JOY_HELD(R_BUTTON) && IsAutoScrollEnabled());
 }

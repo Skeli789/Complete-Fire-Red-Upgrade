@@ -41,6 +41,7 @@
 #include "../include/new/form_change.h"
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
+#include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/util.h"
@@ -497,6 +498,12 @@ s8 ChangeSummaryScreenMonMulti(s8 delta)
 		result = (result + delta) % numMons;
 
 	return sMultiPokemonPartyMenuOrder[result];
+}
+
+bool8 SummaryScreen_IsMultiBattlePartner(void)
+{
+    return IsMultiBattle()
+		&& (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1);
 }
 
 //Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1890,6 +1897,29 @@ void DoItemFormChange(struct Pokemon* mon, u16 species)
 	ScheduleBgCopyTilemapToVram(2);	
 }
 
+static bool8 FormFuseItemMatchesSpecies(u16 item, u16 species)
+{
+	switch (species)
+	{
+		case SPECIES_RESHIRAM:
+		case SPECIES_ZEKROM:
+		case SPECIES_KYUREM:
+		case SPECIES_KYUREM_BLACK:
+		case SPECIES_KYUREM_WHITE:
+			return item == ITEM_DNA_SPLICERS;
+		case SPECIES_NECROZMA:
+			return item == ITEM_N_SOLARIZER || item == ITEM_N_LUNARIZER;
+		case SPECIES_SOLGALEO:
+		case SPECIES_NECROZMA_DUSK_MANE:
+			return item == ITEM_N_SOLARIZER;
+		case SPECIES_LUNALA:
+		case SPECIES_NECROZMA_DAWN_WINGS:
+			return item == ITEM_N_LUNARIZER;
+	}
+
+	return FALSE;
+}
+
 static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 {
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
@@ -2016,6 +2046,9 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 		case ITEM_DNA_SPLICERS:
 		case ITEM_N_SOLARIZER:
 		case ITEM_N_LUNARIZER:
+			if (!FormFuseItemMatchesSpecies(item, species))
+				goto NO_EFFECT;
+
 			#if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA)
 			if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA)
 			{
@@ -2180,7 +2213,8 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 				return;
 			}
 
-			if (DoBaseAndFuseSpeciesMatch(baseSpecies, fuseSpecies))
+			if (DoBaseAndFuseSpeciesMatch(baseSpecies, fuseSpecies)
+			&& FormFuseItemMatchesSpecies(Var800E, fuseSpecies))
 			{
 				//Swap Slot Ids
 				u8 temp = gPartyMenu.slotId;
@@ -2217,6 +2251,10 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].monSpriteId]);
 				DestroySprite(&gSprites[sPartyMenuBoxes[gPartyMenu.slotId2].statusSpriteId]);
 				CompactPartySlots(); //Must be down here so Pokemon don't shift before the empty space is loaded
+				
+				if (gPartyMenu.slotId2 < gPartyMenu.slotId)
+					--gPartyMenu.slotId; //Adjust since second mon is gone
+				
 				gPartyMenuUseExitCallback = FALSE;
 				gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
 			}

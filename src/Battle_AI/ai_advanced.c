@@ -1349,8 +1349,10 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 		else
 		{
 			u16 defPrediction = IsValidMovePrediction(bankDef, bankAtk); //Move foe is probably going to use
-			bool8 defPhysicalMoveInMoveset = RealPhysicalMoveInMoveset(bankDef);
-			bool8 defSpecialMoveInMoveset = SpecialMoveInMoveset(bankDef);
+			
+			//Check movesets of both enemies to determine which move is best to prioritize
+			bool8 defPhysicalMoveInMoveset = RealPhysicalMoveInMoveset(bankDef) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && RealPhysicalMoveInMoveset(PARTNER(bankDef)));
+			bool8 defSpecialMoveInMoveset = SpecialMoveInMoveset(bankDef) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && SpecialMoveInMoveset(PARTNER(bankDef)));
 
 			switch (gBattleMoves[move].effect) {
 				case EFFECT_REFLECT:

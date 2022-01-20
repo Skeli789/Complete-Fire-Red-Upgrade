@@ -4474,7 +4474,7 @@ Tickle_Atk:
 	attackanimation
 	waitanimation
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
-	
+
 Tickle_SkipAnim:
 	setbyte FORM_COUNTER 0x0
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN

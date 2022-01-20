@@ -2358,7 +2358,7 @@ const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[] =
 		.lcSpreadSize = NELEMS(gMultiLittleCupTowerSpread_Milo),
 	},
 	{
-		.owNum = EVENT_OBJ_GFX_MARLON,
+		.owNum = EVENT_OBJ_GFX_MARLON_POST_GAME,
 		.trainerClass = CLASS_SHADOW_ADMIN,
 		.backSpriteId = TRAINER_BACK_PIC_MARLON,
 		.gender = MALE,

@@ -402,6 +402,7 @@ bool8 IsFriendshipEvolutionMethod(u8 method)
 		case EVO_FRIENDSHIP:
 		case EVO_FRIENDSHIP_DAY:
 		case EVO_FRIENDSHIP_NIGHT:
+		case EVO_MOVE_TYPE:
 			return TRUE;
 		default:
 			return FALSE;
@@ -413,7 +414,6 @@ bool8 IsOtherEvolutionMethod(u8 method)
 	switch (method) {
 		case EVO_BEAUTY:
 		case EVO_TRADE:
-		case EVO_MOVE_TYPE:
 		case EVO_MAP:
 		case EVO_MOVE:
 		case EVO_OTHER_PARTY_MON:

@@ -211,7 +211,7 @@ bool8 StartLButtonFunc(void)
 		else
 		#endif
 		#ifdef FLAG_SURF_TURBO_BOOST
-		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) || gMapHeader.mapType == MAP_TYPE_UNDERWATER)
 		{
 			DismissMapNamePopup();
 
@@ -269,7 +269,8 @@ bool8 StartRButtonFunc(void)
 	{
 		DismissMapNamePopup();
 		ChangeBgY(0, 0, 0);
-		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+		if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15))
+			return TRUE; //HUD wasn't enabled and a script was started instead
 		return FALSE; //Don't enable the script context
 	}
 	#else
@@ -279,7 +280,8 @@ bool8 StartRButtonFunc(void)
 			{
 				DismissMapNamePopup();
 				ChangeBgY(0, 0, 0);
-				InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+				if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15))
+					return TRUE; //HUD wasn't enabled and a script was started instead
 				return FALSE; //Don't enable the script context
 			}
 			break;

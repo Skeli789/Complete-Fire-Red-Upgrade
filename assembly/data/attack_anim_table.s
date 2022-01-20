@@ -1399,6 +1399,7 @@ ANIM_IRONTAIL:
 
 TAIL_WHACK_DOWN:
 	launchtemplate Template_Hit 0x83 0x4 0xfff6 0xfff8 0x1 0x1
+TAIL_WHACK_DOWN_SKI_HIT:
 	playsound2 0xcf SOUND_PAN_TARGET
 	launchtemplate Template_RockScatter TEMPLATE_TARGET | 2, 0x4, 0xfff4 0x1b 0x2 0x3
 	launchtemplate Template_RockScatter TEMPLATE_TARGET | 2, 0x4, 0x8 0x1c 0x3 0x4
@@ -6412,8 +6413,8 @@ PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORM
 ANIM_DRAGONRUSH:
 	loadparticle ANIM_TAG_PURPLE_DRAKE
 	loadparticle ANIM_TAG_ROCKS
-	pokespritetoBG bank_target
 	loadBG1 BG_COSMIC
+	pokespritetobg bank_attacker
 	waitbgfadeout
 	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x0 TRUE 0xffff @;Scroll right/left
 	waitbgfadein
@@ -6424,14 +6425,13 @@ ANIM_DRAGONRUSH:
 	pause 0xe
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x680F @;Purple
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0xa 0x0 0x12 0x1
-	call TAIL_WHACK_DOWN @seismic toss
+	call TAIL_WHACK_DOWN_SKI_HIT @seismic toss
 	pause 0x14
 	launchtask AnimTask_AttackerFadeFromInvisible 0x5 0x1 0x1
 	pause 0x2
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x0 0xf 0x0 0x7fff
 	waitanimation
-	makebankvisible bank_attacker
-	pokespritefromBG bank_target
+	pokespritefrombg bank_attacker
 	call UNSET_SCROLLING_BG
 	endanimation
 
@@ -12878,22 +12878,22 @@ ANIM_SMARTSTRIKE:
 	loadparticle ANIM_TAG_POWER_GEM @gem
 	loadparticle ANIM_TAG_AIR_WAVE @sonicboom
 	loadparticle ANIM_TAG_IMPACT @hit
-	loadparticle ANIM_TAG_FLASH_CANNON_BALL @ball
+	loadparticle ANIM_TAG_FLASH_CANNON_BALL @Silver colour
 	loadparticle ANIM_TAG_LOCK_ON
-	launchtemplate 0x83e3518 0x28 0x0
-	launchtemplate 0x83e3530 0x28 0x1 0x1
-	launchtemplate 0x83e3530 0x28 0x1 0x2
-	launchtemplate 0x83e3530 0x28 0x1 0x3
-	launchtemplate 0x83e3530 0x28 0x1 0x4
+	setarg 0x7 0x0
+	launchtemplate Template_LockOnTarget TEMPLATE_ABOVE | 8, 0x0
+	launchtemplate Template_LockOnMoveTarget TEMPLATE_ABOVE | 8, 0x1 0x1
+	launchtemplate Template_LockOnMoveTarget TEMPLATE_ABOVE | 8, 0x1 0x2
+	launchtemplate Template_LockOnMoveTarget TEMPLATE_ABOVE | 8, 0x1 0x3
+	launchtemplate Template_LockOnMoveTarget TEMPLATE_ABOVE | 8, 0x1 0x4
 	pause 0x78
-	setarg 0x7 0xffff
+	setarg 0x7 0xffff @Indicator to destroy lock on sprite
 	waitanimation
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
-	call 0x81c7f12
+	call SONIC_BOOM_PROJECTILE
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x3 0x0 0xa 0x1
-	loadparticle ANIM_TAG_FLASH_CANNON_BALL
 	launchtemplate SMARTSTRIKE_TGT 0x84 0x5 0x0 0x0 0x8 0x1 0x0
 	playsound2 0x74 SOUND_PAN_TARGET
 	launchtemplate SMARTSTRIKE_GEM TEMPLATE_TARGET | 2, 0x5 0x1 0x1 0x0 0xffe8 0xa
@@ -12905,12 +12905,8 @@ ANIM_SMARTSTRIKE:
 	launchtemplate SMARTSTRIKE_GEM TEMPLATE_TARGET | 2, 0x5 0x1 0x1 0xffe8 0x0 0xa
 	launchtemplate SMARTSTRIKE_GEM TEMPLATE_TARGET | 2, 0x5 0x1 0x1 0xffef 0xffef 0xa
 	waitanimation
+	resetblends
 	pokespritefromBG side_target
-	resetblends
-	waitanimation
-	pokespritefromBG bank_attacker
-	resetblends
-	waitanimation
 	endanimation
 
 .align 2
@@ -16625,19 +16621,19 @@ ANIM_DECORATE:
 	loadparticle ANIM_TAG_SPARKLE_2
 	playsound2 0xBC SOUND_PAN_ATTACKER
 	launchtask AnimTask_RockMonBackAndForth 0x5 0x3 bank_attacker 0x3 0x0
-	launchtemplate DECORATE_HEART 0x2 0x5 bank_target, -10, 0, 0x60 0x0
+	launchtemplate DECORATE_HEART TEMPLATE_TARGET | 2, 0x5 bank_target, -10, 0, 0x60 0x0
 	playsound2 0xcd SOUND_PAN_TARGET
 	pause 0x10
-	launchtemplate DECORATE_HEART 0x2 0x5 bank_target, 10, 10, 0x50 0x0
+	launchtemplate DECORATE_HEART TEMPLATE_TARGET | 2, 0x5 bank_target, 10, 10, 0x50 0x0
 	playsound2 0xcd SOUND_PAN_TARGET
 	pause 0x10
-	launchtemplate DECORATE_HEART 0x2 0x5 bank_target, 0, -15, 0x40 0x0
+	launchtemplate DECORATE_HEART TEMPLATE_TARGET | 2, 0x5 bank_target, 0, -15, 0x40 0x0
 	playsound2 0xcd SOUND_PAN_TARGET
 	pause 0x10
-	launchtemplate DECORATE_HEART 0x2 0x5 bank_target, -15, 16, 0x30 0x0
+	launchtemplate DECORATE_HEART TEMPLATE_TARGET | 2, 0x5 bank_target, -15, 16, 0x30 0x0
 	playsound2 0xcd SOUND_PAN_TARGET
 	pause 0x10
-	launchtemplate DECORATE_HEART 0x2 0x5 bank_target, -20, -14 0x20 0x0
+	launchtemplate DECORATE_HEART TEMPLATE_TARGET | 2, 0x5 bank_target, -20, -14 0x20 0x0
 	playsound2 0xcd SOUND_PAN_TARGET
 	waitanimation
 	endanimation

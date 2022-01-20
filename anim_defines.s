@@ -598,6 +598,8 @@
 .equ Template_IngrainOrb, 0x83e2e04
 .equ Template_BlendThinRingExpanding, 0x83e40e0
 .equ Template_ThunderWave, 0x83E60B8
+.equ Template_LockOnTarget, 0x83e3518
+.equ Template_LockOnMoveTarget, 0x83E3530
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 
@@ -710,6 +712,7 @@
 .equ DIVE_SET_UP_WATER_DROPLETS, 0x81d41b6
 .equ ICE_BEAM_CRYSTALS, 0x81ce3fc
 .equ DRAGON_CLAW_FIRE_SPIRAL, 0x81d31ad
+.equ SONIC_BOOM_PROJECTILE, 0x81c7f12
 
 @supercommands
 

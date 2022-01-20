@@ -53,6 +53,7 @@ static void FixTheCapitalizationInDisplayedString(void);
 #ifdef OPEN_WORLD_TRAINERS
 static u8* GetOpenWorldTrainerName(bool8 female);
 #endif
+static const u8* GetTrainerClassName(u8 class, u8* text);
 
 void PrepareStringBattle(u16 stringId, u8 bank)
 {
@@ -618,42 +619,18 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank], (*gStringInfo)->species[gEffectBank]);
 				break;
 			case B_TXT_TRAINER1_CLASS: // trainer class name
-				if (gTrainerBattleOpponent_A == 0x400) //LOL Secret Bases
-					toCpy = gTrainerClassNames[GetSecretBaseTrainerNameIndex()];
+				if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE) //LOL Secret Bases
+					toCpy = GetTrainerClassName(GetSecretBaseTrainerNameIndex(), text);
 				else if (gTrainerBattleOpponent_A == TRAINER_OPPONENT_C00)
-					toCpy = gTrainerClassNames[GetUnionRoomTrainerClass()];
+					toCpy = GetTrainerClassName(GetUnionRoomTrainerClass(), text);
 				else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
-					toCpy = gTrainerClassNames[GetTrainerTowerTrainerClassId()];
+					toCpy = GetTrainerClassName(GetTrainerTowerTrainerClassId(), text);
 				else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-					toCpy = gTrainerClassNames[GetEreaderTrainerClassId()]; //sub_80E7440
+					toCpy = GetTrainerClassName(GetEreaderTrainerClassId(), text);
 				else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_A))
-					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0)];
+					toCpy = GetTrainerClassName(GetFrontierTrainerClassId(gTrainerBattleOpponent_A, 0), text);
 				else
-				{
-					u8 class = gTrainers[gTrainerBattleOpponent_A].trainerClass;
-					#ifdef UNBOUND
-					if (class == CLASS_BLACK_EMBOAR)
-					{
-						if (VarGet(VAR_SQ_BLACK_EMBOAR) >= 4) //Black Emboar changed name
-						{
-							StringCopy(text, gText_BlackPlayerPrefix);
-							StringAppend(text, gSaveBlock2->playerName);
-							toCpy = text;
-						}
-						else
-							toCpy = gTrainerClassNames[class];
-					}
-					else if (class == CLASS_LOR_ADMIN)
-					{
-						if (VarGet(VAR_MAIN_STORY) <= 0x25) //MAIN_STORY_LEFT_CUBE
-							toCpy = gTrainerClassNames[CLASS_SHADOW_ADMIN]; //Ivory is still a Shadow Admin at this point
-						else
-							toCpy = gTrainerClassNames[class];
-					}
-					else
-					#endif
-						toCpy = gTrainerClassNames[class];
-				}
+					toCpy = GetTrainerClassName(gTrainers[gTrainerBattleOpponent_A].trainerClass, text);
 
 				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Trainer Class Names
 					toCpy = T1_READ_PTR(toCpy);
@@ -817,7 +794,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 			case B_TXT_TRAINER2_CLASS: //In FR, Trainer Tower Opponent Defeated Text
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER || IsFrontierTrainerId(gTrainerBattleOpponent_B))
 				{
-					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(VAR_SECOND_OPPONENT), 1)];
+					toCpy = GetTrainerClassName(GetFrontierTrainerClassId(VarGet(VAR_SECOND_OPPONENT), 1), text);
 				}
 				else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
 				{
@@ -825,7 +802,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					CopyTrainerTowerPlayerWonText(gStringVar4, 0);
 				}
 				else
-					toCpy = gTrainerClassNames[gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass];
+					toCpy = GetTrainerClassName(gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass, text);
 
 
 				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Trainer Class Names
@@ -892,7 +869,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				}
 				break;
 			case B_TXT_PARTNER_CLASS:
-				toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(VAR_PARTNER), 2)];
+				toCpy = GetTrainerClassName(GetFrontierTrainerClassId(VarGet(VAR_PARTNER), 2), text);
 				break;
 			case B_TXT_PARTNER_NAME:
 				CopyFrontierTrainerName(text, VarGet(VAR_PARTNER), 2);
@@ -1121,6 +1098,44 @@ static u8* GetOpenWorldTrainerName(bool8 female)
 		return gMaleFrontierNamesTable[nameId % NUM_MALE_NAMES];
 }
 #endif
+
+static const u8* GetTrainerClassName(u8 class, u8* text)
+{
+	const u8* className;
+
+	#ifdef UNBOUND
+	if (class == CLASS_BLACK_EMBOAR)
+	{
+		if (VarGet(VAR_SQ_BLACK_EMBOAR) >= 4) //Black Emboar changed name
+		{
+			StringCopy(text, gText_BlackPlayerPrefix);
+			StringAppend(text, gSaveBlock2->playerName);
+			className = text;
+		}
+		else
+			className = gTrainerClassNames[class];
+	}
+	else if (class == CLASS_SHADOW_ADMIN) //Marlon
+	{
+		extern const u8 gText_TrainerClass_ExShadowAdmin[];
+		if (VarGet(VAR_MAIN_STORY) >= 0x50) //MAIN_STORY_SAVED_BORRIUS_CRYSTAL_PEAK
+			className = gText_TrainerClass_ExShadowAdmin;
+		else
+			className = gTrainerClassNames[class];
+	}
+	else if (class == CLASS_LOR_ADMIN) //Ivory
+	{
+		if (VarGet(VAR_MAIN_STORY) <= 0x25) //MAIN_STORY_LEFT_CUBE
+			className = gTrainerClassNames[CLASS_SHADOW_ADMIN]; //Ivory is still a Shadow Admin at this point
+		else
+			className = gTrainerClassNames[class];
+	}
+	else
+	#endif
+		className = gTrainerClassNames[class];
+
+	return className;
+}
 
 static bool8 IsPunctuation(u8 character)
 {

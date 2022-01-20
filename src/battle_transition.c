@@ -197,13 +197,9 @@ static u8 CreateMugshotTrainerSprite(u8 trainerPicId, s16 x, s16 y, u8 subpriori
 				dest.data = (void*) buffer;
 				dest.tag = gTrainerFrontPicPaletteTable[trainerPicId].tag;
 				unusedArg u8 index = LoadSpritePalette(&dest);
-				
+
 				#ifdef UNBOUND
-				if (trainerPicId == TRAINER_PIC_PLAYER_M || trainerPicId == TRAINER_PIC_PLAYER_F) //Is player sprite
-				{
-					if (index != 0xFF)
-						ChangeTrainerPicPal(0x100 + index * 16);
-				}
+				TryModifyMugshotTrainerPicPal(trainerPicId, index);
 				#endif
 			}
 			break;

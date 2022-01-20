@@ -12,11 +12,14 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/battle_script_util.h"
+#include "../../include/new/catching.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/frontier.h"
 #include "../../include/new/item.h"
+#include "../../include/new/move_menu.h"
+#include "../../include/new/multi.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
 #include "../../include/new/species_tables.h"
@@ -475,9 +478,10 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				break;
 
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+				if (gBattleWeather & WEATHER_SUN_ANY
 				&& data->defItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
-				&& CheckTableForMovesEffect(move, gSetStatusMoveEffects))
+				&& CheckTableForMovesEffect(move, gSetStatusMoveEffects)
+				&& WEATHER_HAS_EFFECT)
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
@@ -702,14 +706,28 @@ SKIP_CHECK_TARGET:
 	}
 
 	//Primal Weather Check
-	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && moveSplit != SPLIT_STATUS)
+	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && moveSplit != SPLIT_STATUS && WEATHER_HAS_EFFECT)
 	{
 		DECREASE_VIABILITY(20);
 		return viability;
 	}
-	else if (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE && moveSplit != SPLIT_STATUS)
+	else if (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE && moveSplit != SPLIT_STATUS && WEATHER_HAS_EFFECT)
 	{
 		DECREASE_VIABILITY(20);
+		return viability;
+	}
+
+	//Shiny Wild Check
+	if (IsTagBattle() //AI partner
+	&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) //Wild
+	&& !IsRaidBattle() //More than one target
+	&& IsMonShiny(GetBankPartyData(bankDef)) //Shiny wild
+	&& !IsPlayerInControl(bankAtk) //AI controlling mon
+	&& !IsBagDisabled() //Bag can be accessed
+	&& !CantCatchBecauseFlag() //Balls can be thrown
+	&& moveSplit != SPLIT_STATUS) //Damaging move
+	{
+		DECREASE_VIABILITY(20); //Try to avoid attacking a shiny wild mon
 		return viability;
 	}
 
@@ -1441,7 +1459,7 @@ SKIP_CHECK_TARGET:
 		case EFFECT_POISON:
 		case EFFECT_TOXIC:
 			if (move == MOVE_TOXICTHREAD
-			&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED)
+			&& CanStatBeLowered(STAT_STAGE_SPEED, bankDef, bankAtk, data->defAbility)
 			&& data->defAbility != ABILITY_CONTRARY)
 				break;
 
@@ -1590,7 +1608,8 @@ SKIP_CHECK_TARGET:
 		//Add check for sound move?
 		case EFFECT_SUBSTITUTE:
 			if (data->atkStatus2 & STATUS2_SUBSTITUTE
-			|| GetHealthPercentage(bankAtk) <= 25)
+			|| GetHealthPercentage(bankAtk) <= 25
+			|| (IsShadowShieldBattle() && !IsAffectedByShadowShieldBattle(bankAtk)))
 				DECREASE_VIABILITY(10);
 			else if (BypassesScreens(data->defAbility)
 			|| SoundMoveInMoveset(bankDef))
@@ -1669,6 +1688,10 @@ SKIP_CHECK_TARGET:
 			if (SPLIT(predictedMove) == SPLIT_STATUS
 			|| predictedMove == MOVE_NONE
 			|| MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
+				DECREASE_VIABILITY(10);
+
+			if (move == MOVE_METALBURST
+			&& MoveWouldHitFirst(move, bankAtk, bankDef)) //Metal Burst has no negative priority, so it can easily go first and fail
 				DECREASE_VIABILITY(10);
 
 			if (GOOD_AI //Semi-Smart/Smart AI only
@@ -1947,6 +1970,10 @@ SKIP_CHECK_TARGET:
 						DECREASE_VIABILITY(10);
 					else if (PARTNER_MOVE_IS_SAME_NO_TARGET && gSideTimers[SIDE(bankDef)].tspikesAmount == 1)
 						DECREASE_VIABILITY(10); //Only one mon needs to set up the last layer of Toxic Spikes
+					else if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Not dumb AI
+					&& gSideTimers[SIDE(bankDef)].tspikesAmount == 1
+					&& HazardClearingMoveInMovesetThatAffects(bankDef, bankAtk))
+						DECREASE_VIABILITY(10); //Don't set a second layer if the foe is just going remove it now that both are up
 					break;
 
 				case MOVE_STICKYWEB:
@@ -1961,6 +1988,10 @@ SKIP_CHECK_TARGET:
 						DECREASE_VIABILITY(10);
 					else if (PARTNER_MOVE_IS_SAME_NO_TARGET && gSideTimers[SIDE(bankDef)].spikesAmount == 2)
 						DECREASE_VIABILITY(10); //Only one mon needs to set up the last layer of Spikes
+					else if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Not dumb AI
+					&& gSideTimers[SIDE(bankDef)].spikesAmount >= 1
+					&& HazardClearingMoveInMovesetThatAffects(bankDef, bankAtk))
+						DECREASE_VIABILITY(10); //Don't set a second or third layer if the foe is just going remove it now that both are up
 					break;
 			}
 			break;
@@ -2043,6 +2074,7 @@ SKIP_CHECK_TARGET:
 
 		case EFFECT_SAFEGUARD:
 			if (BankSideHasSafeguard(bankAtk)
+			|| (IsShadowShieldBattle() && !IsAffectedByShadowShieldBattle(bankAtk))
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
@@ -2076,7 +2108,8 @@ SKIP_CHECK_TARGET:
 				}
 				else
 				{
-					if (!AI_STAT_CAN_FALL(bankDef, STAT_STAGE_ATK) && !AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK))
+					if (CanStatBeLowered(STAT_STAGE_ATK, bankDef, bankAtk, data->defAbility)
+					&& CanStatBeLowered(STAT_STAGE_SPATK, bankDef, bankAtk, data->defAbility))
 					{
 						DECREASE_VIABILITY(10);
 						break;
@@ -2177,7 +2210,7 @@ SKIP_CHECK_TARGET:
 			goto TWO_TURN_ATTACK_CHECK;
 
 		case EFFECT_SOLARBEAM:
-			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+			if (gBattleWeather & WEATHER_SUN_ANY && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA && WEATHER_HAS_EFFECT)
 				goto AI_STANDARD_DAMAGE;
 			//Fallthrough
 
@@ -2376,6 +2409,7 @@ SKIP_CHECK_TARGET:
 
 				default: //Trick
 					if (!CanSwapItems(bankAtk, bankDef)
+					|| data->atkItem == data->defItem //No point in swapping items
 					|| data->defAbility == ABILITY_STICKYHOLD)
 						DECREASE_VIABILITY(10);
 					else
@@ -3115,8 +3149,11 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_DAMAGE_SET_TERRAIN:
-			if (move == MOVE_STEELROLLER && gTerrainType == 0)
-				DECREASE_VIABILITY(10);
+			if (move == MOVE_STEELROLLER)
+			{
+				if (gTerrainType == 0 || PARTNER_MOVE_IS_SAME_NO_TARGET) //If one Pokemon breaks the Terrain, the second will fail
+					DECREASE_VIABILITY(10);
+			}
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;

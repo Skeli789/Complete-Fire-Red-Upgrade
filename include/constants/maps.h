@@ -659,6 +659,7 @@
 #define MAP_THUNDERCAP_MT_3F_1		((53 << 8) | 5)
 #define MAP_THUNDERCAP_MT_3F_1_BACK	((53 << 8) | 6)
 #define MAP_THUNDERCAP_MT_4F_2		((53 << 8) | 9)
+#define MAP_THUNDERCAP_MT_CLIFFSIDE ((53 << 8) | 10)
 
 #define MAP_RIFT_CAVE_B1F	((1 << 8) | 35)
 
@@ -681,6 +682,7 @@
 #define MAP_CRYSTAL_PEAK_1F_LEFT_ROOM  ((56 << 8) | 3)
 #define MAP_CRYSTAL_PEAK_CUBE_ENTRANCE ((56 << 8) | 6)
 #define MAP_CRYSTAL_PEAK_CLIFFSIDE     ((56 << 8) | 7)
+#define MAP_CRYSTAL_PEAK_3F            ((56 << 8) | 9)
 #define MAP_CRYSTAL_PEAK_SUMMIT        ((56 << 8) | 12)
 
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)

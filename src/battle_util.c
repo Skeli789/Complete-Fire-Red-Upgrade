@@ -370,6 +370,16 @@ bool8 IsMonAffectedByShadowShieldBattle(struct Pokemon* mon)
 	return IsShadowShieldBattle() && IsMonOfType(mon, TYPE_GHOST);
 }
 
+bool8 DoesShadowShieldPreventHazardDamage(u8 bank)
+{
+	return IsAffectedByShadowShieldBattle(bank) && BATTLER_MAX_HP(bank);
+}
+
+bool8 DoesShadowShieldPreventMonHazardDamage(struct Pokemon* mon)
+{
+	return IsMonAffectedByShadowShieldBattle(mon) && mon->hp == mon->maxHP;
+}
+
 bool8 IsDamageHalvedDueToFullHP(u8 bank, u8 defAbility, u16 move, u8 atkAbility)
 {
 	if (BATTLER_MAX_HP(bank))
@@ -394,6 +404,28 @@ bool8 IsMonDamageHalvedDueToFullHP(struct Pokemon* mon, u8 defAbility, u16 move,
 	}
 
 	return FALSE;
+}
+
+bool8 ItemEffectPreventsHazards(u8 itemEffect)
+{
+	return itemEffect == ITEM_EFFECT_HEAVY_DUTY_BOOTS;
+}
+
+bool8 IsAffectedByHazards(u8 bank)
+{
+	return !ItemEffectPreventsHazards(ITEM_EFFECT(bank))
+		&& !DoesShadowShieldPreventHazardDamage(bank);
+}
+
+bool8 IsMonAffectedByHazards(struct Pokemon* mon)
+{
+	return IsMonAffectedByHazardsByItemEffect(mon, GetMonItemEffect(mon));
+}
+
+bool8 IsMonAffectedByHazardsByItemEffect(struct Pokemon* mon, u8 itemEffect)
+{
+	return !ItemEffectPreventsHazards(itemEffect)
+		&& !DoesShadowShieldPreventMonHazardDamage(mon);
 }
 
 u8 ViableMonCountFromBank(u8 bank)
@@ -1321,6 +1353,8 @@ bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer
 	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| itemEffect == ITEM_EFFECT_GEM
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
+	|| itemEffect == ITEM_EFFECT_RUSTED_SWORD
+	|| itemEffect == ITEM_EFFECT_RUSTED_SHIELD
 	|| (IsBerry(item) && UnnerveOnOpposingField(bankOnSide))
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
@@ -2101,7 +2135,7 @@ bool8 CanRest(u8 bank)
 
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 {
-	u8 atkAbility = ABILITY(bankAtk);
+	u8 atkAbility = (bankAtk > gBattlersCount) ? 0 : ABILITY(bankAtk); //bankAtk == 0xFF means no attacker - eg. Toxic Spikes
 	u8 defAbility = ABILITY(bankDef);
 
 	if (!CanBeGeneralStatused(bankDef, defAbility, atkAbility, checkFlowerVeil))

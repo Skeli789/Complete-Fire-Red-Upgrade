@@ -57,25 +57,43 @@ Let's do this!\nWe can still come out on top!\p
 #org @sText_Zeph1LowHP
 Impossible[.]\p 
 
-#org @sText_Zeph2LowHP
+#org @sText_Zeph2LastSwitchIn
 No! You won't take[.] anything else\nfrom me!\p 
 
-#org @sText_Zeph3LowHP
+#org @sText_Zeph3LastSwitchIn
 One Pok\emon left[.]\pNow is the time when I show my son\nhow to truly battle!\p 
 
 #org @sText_MaximaLastSwitchIn
 This is your final trial!\nThe last obstacle! Now, focus!\p 
 
 #org @sText_Aklove1LowHP
-Impossible!\pYou[.] you can't do this to me!\p 
+Impossible!\pYou[.] you cannot do this to me!\p 
 
 #org @sText_Aklove2LowHP
 [PLAYER_NAME][.] [PLAYER_NAME]!\nOnly you would dare[.]!\p 
 
 #org @sText_Aklove3LowHP
-No!\n This cannot be my destiny!\p 
+No!\nThis cannot be my destiny!\p 
 
 #org @sText_RogueElectivire_DynamaxMsg
 The power of the Hidden Grottos!\nIt's mine to command!\p 
+
+#org @sText_RivalLeagueLastSwitchIn
+Agh[.] there's gotta be a way to turn\nthis around somehow!
+
+#org @sText_MarlonLeagueLastSwitchIn
+Nothing's over - not until my last\nPok\emon's down for the count!
+
+#org @sText_IvoryLeagueLastSwitchIn
+This feeling[.] so, this is what being\ncornered feels like[.]
+
+#org @sText_JaxPostGameLastLowHP
+The way you always manage to summon\nso much strength[.] it's amazing[.]
+
+#org @sText_MiloLeagueLastLowHP
+This is it! This is where the real\nbattle begins, [PLAYER]!
+
+#org @sText_YoungsterLeagueLastSwitchIn
+Not yet! It's time I showed you what\nwe're really made of!
 
 #endif

@@ -927,7 +927,7 @@ EventScript_HeadbuttTree_SkipAsk:
 	msgbox 0x81BDFD7 MSG_NORMAL
 	doanimation 0x28
 	waitstate
-	checksound
+	special SPECIAL_STOP_SOUNDS
 	sound SE_HEADBUTT
 	setvar 0x8004 0x5 @This controls how far the screen shakes vertically
 	setvar 0x8005 0x0 @This controls how far the screen shakes horizontally

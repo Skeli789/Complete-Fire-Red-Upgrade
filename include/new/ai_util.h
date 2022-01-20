@@ -128,10 +128,12 @@ bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionHPDrainingMove(u8 bankAtk, u8 bankDef);
+bool8 IsMovePredictionHighAccSleepingMove(u8 bankAtk, u8 bankDef);
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move);
 bool8 IsStrongestMoveHPDrainingMove(u8 bankAtk, u8 bankDef);
 
 bool8 MoveInMovesetAndUsable(u16 move, u8 bank);
+bool8 MoveEffectInMovesetAndUsable(u16 move, u8 bank);
 bool8 DamagingMoveInMoveset(u8 bank);
 bool8 PhysicalMoveInMoveset(u8 bank);
 bool8 RealPhysicalMoveInMoveset(u8 bank);
@@ -170,6 +172,7 @@ bool8 OHKOMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef, struct AIScript* aiSc
 bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef);
 bool8 HazingMoveInMoveset(u8 bank);
 bool8 PhazingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
+bool8 HazardClearingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
 bool8 HasUsedMove(u8 bankAtk, u16 move);
 bool8 HasUsedMoveWithEffect(u8 bankAtk, u8 effect);
 bool8 HasUsedMoveWithEffectHigherThanChance(u8 bank, u8 effect, u8 chance);

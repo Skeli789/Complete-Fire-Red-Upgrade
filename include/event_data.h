@@ -56,13 +56,13 @@ void sub_806E6FC(void);
 #define Var800E (*((u16*) 0x203ad30))
 #define Var8014 (*((u16*) 0x20370DE))
 
-
 #define gSpecialVar_LastResult (*((u16*) 0x20370D0)) //extern u16 gSpecialVar_Result; //Var800D
 #define gSpecialVar_LastTalked (*((u16*) 0x20370D2)) //extern u16 gSpecialVar_LastTalked;
 #define gSpecialVar_ItemId (*((u16*) 0x203ad30)) //extern u16 gSpecialVar_ItemId; //Var800E
 #define gSpecialVar_PlayerFacing (*((u16*) 0x20370D4)) //extern u16 gSpecialVar_PlayerFacing;
 #define gSpecialVar_MonBoxId (*((u16*) 0x20370D6)) //extern u16 gSpecialVar_MonBoxId;
 #define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8)) //extern u16 gSpecialVar_MonBoxPos;
+#define gSpecialVar_TextColor (*((u16*) 0x20370DA)) //extern u16 gSpecialVar_TextColor;
 
 /*
 extern u16 gSpecialVar_0x8000;

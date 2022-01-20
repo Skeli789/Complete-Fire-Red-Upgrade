@@ -113,6 +113,9 @@ static void FadeDayNightPalettes(void)
 
 					if (hardFade) //Changed routes and part of the tileset was reloaded
 						DmaCopy16(3, gPlttBufferFaded, (void *)PLTT, 0x20 * 13); //13 tileset palettes
+
+					if (gInShop)
+						BuyMenuDecompressBgGraphics(); //Otherwise the shop palette will get messed up
 				}
 
 				if (coeff == 0)
@@ -138,7 +141,7 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 {
 	u16 paletteOffset;
 
-	for (paletteOffset = 256; selectedPalettes; paletteOffset += 16)
+	for (paletteOffset = 256; selectedPalettes; paletteOffset += 16) //Sprites
 	{
 		if (selectedPalettes & 1)
 		{
@@ -153,6 +156,7 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 					BlendFadedPalette(paletteOffset, 16, coeff, color);
 			}
 		}
+
 		selectedPalettes >>= 1;
 	}
 }

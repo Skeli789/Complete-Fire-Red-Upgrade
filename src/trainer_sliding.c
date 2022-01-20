@@ -56,10 +56,10 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2DA, NULL, sText_MelLastSwitchIn, NULL},
 	{0x4E, NULL, sText_MelLastSwitchIn, NULL}, //Battleground
 	{0x4F, NULL, sText_MelLastSwitchIn, NULL}, //Battleground
-	{0x1A2, NULL, sText_GalavanLastSwitchIn, NULL},
-	{0x2DB, NULL, sText_GalavanLastSwitchIn, NULL},
-	{0x2DC, NULL, sText_GalavanLastSwitchIn, NULL},
-	{0x2DD, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x1A2, NULL, NULL, sText_GalavanLastLowHP},
+	{0x2DB, NULL, NULL, sText_GalavanLastLowHP},
+	{0x2DC, NULL, NULL, sText_GalavanLastLowHP},
+	{0x2DD, NULL, NULL, sText_GalavanLastLowHP},
 	{0x50, NULL, NULL, sText_GalavanLastLowHP}, //Battleground
 	{0x51, NULL, NULL, sText_GalavanLastLowHP}, //Battleground
 	{0x1A3, NULL, sText_BigMoLastSwitchIn, NULL},
@@ -106,11 +106,13 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2A2, NULL, NULL, sText_Zeph1LowHP},
 	{0x2A3, NULL, NULL, sText_Zeph1LowHP},
 	{0x2A4, NULL, NULL, sText_Zeph1LowHP},
-	{0x15E, NULL, NULL, sText_Zeph2LowHP},
-	{0x2B1, NULL, NULL, sText_Zeph2LowHP},
-	{0x2B2, NULL, NULL, sText_Zeph2LowHP},
-	{0x2B3, NULL, NULL, sText_Zeph2LowHP},
-	{0x35, NULL, NULL, sText_Zeph3LowHP},
+	{0x15E, NULL, sText_Zeph2LastSwitchIn, NULL},
+	{0x2B1, NULL, sText_Zeph2LastSwitchIn, NULL},
+	{0x2B2, NULL, sText_Zeph2LastSwitchIn, NULL},
+	{0x2B3, NULL, sText_Zeph2LastSwitchIn, NULL},
+	{0x38, NULL, sText_Zeph3LastSwitchIn, NULL},
+	{0x39, NULL, sText_Zeph3LastSwitchIn, NULL},
+	{0x3A, NULL, sText_Zeph3LastSwitchIn, NULL},
 	{0x180, NULL, NULL, sText_Aklove1LowHP},
 	{0x2B4, NULL, NULL, sText_Aklove1LowHP},
 	{0x2B5, NULL, NULL, sText_Aklove1LowHP},
@@ -125,6 +127,24 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2AB, NULL, sText_MaximaLastSwitchIn, NULL},
 	{0x2AC, NULL, sText_MaximaLastSwitchIn, NULL},
 	{0x2AD, NULL, sText_MaximaLastSwitchIn, NULL},
+
+	//Title Defense
+	{0x3B, NULL, sText_IvoryLeagueLastSwitchIn, NULL},
+	{0x3C, NULL, sText_IvoryLeagueLastSwitchIn, NULL},
+	{0x3D, NULL, sText_MarlonLeagueLastSwitchIn, NULL},
+	{0x3E, NULL, sText_MarlonLeagueLastSwitchIn, NULL},
+	{0x3F, NULL, sText_YoungsterLeagueLastSwitchIn, NULL},
+	{0x40, NULL, sText_YoungsterLeagueLastSwitchIn, NULL},
+	{0x41, NULL, NULL, sText_MiloLeagueLastLowHP},
+	{0x42, NULL, NULL, sText_MiloLeagueLastLowHP},
+	{0x43, NULL, NULL, sText_JaxPostGameLastLowHP},
+	{0x44, NULL, NULL, sText_JaxPostGameLastLowHP},
+	{0x45, NULL, sText_RivalLeagueLastSwitchIn, NULL},
+	{0x46, NULL, sText_RivalLeagueLastSwitchIn, NULL},
+	{0x47, NULL, sText_RivalLeagueLastSwitchIn, NULL},
+	{0x1B0, NULL, sText_RivalLeagueLastSwitchIn, NULL},
+	{0x1B1, NULL, sText_RivalLeagueLastSwitchIn, NULL},
+	{0x1B2, NULL, sText_RivalLeagueLastSwitchIn, NULL},
 	#endif
 };
 

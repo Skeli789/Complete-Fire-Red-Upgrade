@@ -25,6 +25,7 @@
 extern const u8 RaidBattleIntroBGTiles[];
 extern const u8 RaidBattleIntroBGPal[];
 extern const u8 RaidBattleIntroBGMap[];
+extern const u8 RaidBattleIntroBGUnboundPal[];
 extern const u8 RaidBattleStarTiles[];
 extern const u8 RaidBattleStarPal[];
 extern const u8 RaidBattleCursorTiles[];
@@ -668,7 +669,11 @@ static void LoadRaidBattleIntroGfx(void)
 {
 	decompress_and_copy_tile_data_to_vram(2, &RaidBattleIntroBGTiles, 0, 0, 0);
 	LZDecompressWram(RaidBattleIntroBGMap, sRaidBattleIntroPtr->tilemapPtr);
+	#ifdef UNBOUND
+	LoadPalette(RaidBattleIntroBGUnboundPal, 0, 0x20);
+	#else
 	LoadPalette(RaidBattleIntroBGPal, 0, 0x20);
+	#endif
 	LoadMenuElementsPalette(0xC0, 1);
 	Menu_LoadStdPalAt(0xF0);
 }

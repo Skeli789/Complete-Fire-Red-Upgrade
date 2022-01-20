@@ -1303,6 +1303,25 @@ static struct Raid sRoute4Raids4Star[] =
 		},
 	},
 	{
+		.species = SPECIES_GALLADE,
+		.ability = RAID_ABILITY_RANDOM_ALL,
+		.drops =
+		{
+			/*100 %*/ ITEM_LIECHI_BERRY,
+			/* 80 %*/ ITEM_KASIB_BERRY,
+			/* 80 %*/ ITEM_GREPA_BERRY,
+			/* 50 %*/ ITEM_DAWN_STONE,
+			/* 50 %*/ ITEM_NONE,
+			/* 30 %*/ ITEM_NUGGET,
+			/* 30 %*/ ITEM_RARE_CANDY,
+			/* 25 %*/ ITEM_PSYCHIC_GEM,
+			/* 25 %*/ ITEM_HEART_SCALE,
+			/*  5 %*/ ITEM_SCOPE_LENS,
+			/*  4 %*/ ITEM_WISHING_PIECE,
+			/*  1 %*/ ITEM_BOTTLE_CAP,
+		},
+	},
+	{
 		.species = SPECIES_WORMADAM,
 		.ability = RAID_ABILITY_RANDOM_ALL,
 		.drops =
@@ -1491,6 +1510,25 @@ static struct Raid sRoute4Raids5Star[] =
 			/* 30 %*/ ITEM_FAIRY_GEM,
 			/* 25 %*/ ITEM_HEART_SCALE,
 			/* 25 %*/ ITEM_MISTY_SEED,
+			/*  5 %*/ ITEM_WISHING_PIECE,
+			/*  4 %*/ ITEM_BOTTLE_CAP,
+			/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+		},
+	},
+	{
+		.species = SPECIES_GALLADE,
+		.ability = RAID_ABILITY_HIDDEN,
+		.drops =
+		{
+			/*100 %*/ ITEM_LIECHI_BERRY,
+			/* 80 %*/ ITEM_KASIB_BERRY,
+			/* 80 %*/ ITEM_GREPA_BERRY,
+			/* 50 %*/ ITEM_DAWN_STONE,
+			/* 50 %*/ ITEM_BIG_NUGGET,
+			/* 30 %*/ ITEM_RARE_CANDY,
+			/* 30 %*/ ITEM_PSYCHIC_GEM,
+			/* 25 %*/ ITEM_HEART_SCALE,
+			/* 25 %*/ ITEM_SCOPE_LENS,
 			/*  5 %*/ ITEM_WISHING_PIECE,
 			/*  4 %*/ ITEM_BOTTLE_CAP,
 			/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
@@ -7942,7 +7980,7 @@ static struct Raid sRoute14Raids5Star[] =
 		.ability = RAID_ABILITY_HIDDEN,
 		.drops =
 		{
-			/*100 %*/ ITEM_DRAGON_SCALE,
+			/*100 %*/ ITEM_STARF_BERRY,
 			/* 80 %*/ ITEM_ROSELI_BERRY,
 			/* 80 %*/ ITEM_QUALOT_BERRY,
 			/* 50 %*/ ITEM_DRAGON_SCALE,
@@ -11919,7 +11957,7 @@ static struct Raid sThundercapMountainRaids3Star[] =
 		},
 	},
 	{
-		.species = SPECIES_KLINK,
+		.species = SPECIES_KLANG,
 		.ability = RAID_ABILITY_RANDOM_ALL,
 		.drops =
 		{

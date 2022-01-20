@@ -13,10 +13,12 @@
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/daycare.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
+#include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
@@ -24,6 +26,7 @@
 #include "../include/new/learn_move.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/multi.h"
 #include "../include/new/species_tables.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
@@ -422,6 +425,7 @@ void DefogHelperFunc(void)
 {
 	if (gNewBS->AuroraVeilTimers[SIDE(gBankTarget)]
 	|| gTerrainType != 0
+	|| (gBattleWeather & WEATHER_FOG_ANY)
 	|| gSideStatuses[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
 	|| gSideStatuses[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES
 										  | SIDE_STATUS_REFLECT
@@ -1089,6 +1093,9 @@ void FailMoveIfAura(void)
 			gBankTarget = partner;
 		}
 	}
+
+	if (fail && gCurrentMove == MOVE_SKILLSWAP && !CantCatchBecauseFlag()) //Aura boss that can be caught
+		fail = FALSE; //Allow Skill Swap to work
 
 	if (fail)
 		gBattlescriptCurrInstr = BattleScript_MoveFailedOnAura - 5;
@@ -1828,7 +1835,6 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
 	gNewBS->switchInEffectsState = 0;
 }
 
-extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 void ClearSwitchInEffectsState(void)
 {
 	if (!gNewBS->endTurnDone)
@@ -1915,12 +1921,12 @@ void UndoAbilityEffectsForNeutralizingGas(void)
 
 void TryLoadSecondFriskTargetDoubles(void)
 {
-	u8 partner = PARTNER(gBankTarget);
+	u8 partner = PARTNER(gEffectBank);
 
 	if (IsDoubleBattle() && BATTLER_ALIVE(partner) && ITEM(partner))
 	{
 		gLastUsedItem = ITEM(partner);
-		gBankTarget = partner;
+		gEffectBank = partner;
 		return;
 	}
 
@@ -2479,7 +2485,7 @@ void TrySkipBattleNicknameOffer(void)
 	#ifdef FLAG_DONT_OFFER_NICKNAMES_BATTLE
 	if (FlagGet(FLAG_DONT_OFFER_NICKNAMES_BATTLE))
 	{
-		if (CalculatePlayerPartyCount() >= PARTY_SIZE || IsRaidBattle())
+		if (CalculatePlayerPartyCount() >= PARTY_SIZE || IsTagBattle())
 			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNicknameFullParty - 5;
 		else
 			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNickname - 5;
@@ -2543,4 +2549,10 @@ void TryFailAuraWheel(void)
 	if (SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) != NATIONAL_DEX_MORPEKO)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
 	#endif
+}
+
+void SkipUseNextPkmnPromptIfCantRun(void)
+{
+	if (AreAllKindsOfRunningPrevented())
+		gBattlescriptCurrInstr = BattleScript_FaintedMonTryChooseAnother - 5;
 }

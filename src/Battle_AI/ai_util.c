@@ -462,7 +462,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		&& moveEffect != EFFECT_FUTURE_SIGHT
 		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
 		{
-			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
+			currAcc = MoveWillHit(currMove, bankAtk, bankDef) ? 101 : AccuracyCalc(currMove, bankAtk, bankDef);
 			u32 dmg = GetFinalAIMoveDamage(currMove, bankAtk, bankDef, 1, &damageData);
 
 			if (dmg < bestDmg && currAcc > bestAcc)
@@ -1913,10 +1913,11 @@ bool8 WillFaintFromWeatherSoon(u8 bank)
 bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 {
 	u32 dmg = 0;
+	struct Pokemon* mon;
 
 	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_SPIKES
-	&& GetMonAbility(GetBankPartyData(bank)) != ABILITY_MAGICGUARD
-	&& ITEM_EFFECT(bank) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	&& GetMonAbility(mon = GetBankPartyData(bank)) != ABILITY_MAGICGUARD
+	&& IsMonAffectedByHazards(mon))
 	{
 		struct Pokemon* mon = GetBankPartyData(bank);
 
@@ -2227,7 +2228,10 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 	//Primal Weather Check
 	if ((gBattleWeather & WEATHER_SUN_PRIMAL && GetMoveTypeSpecial(bankAtk, move) == TYPE_WATER)
 	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && GetMoveTypeSpecial(bankAtk, move) == TYPE_FIRE))
-		return TRUE;
+	{
+		if (WEATHER_HAS_EFFECT)
+			return TRUE;
+	}
 
 	//Terrain Check
 	switch (gTerrainType) {
@@ -2323,7 +2327,10 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 	//Primal Weather Check
 	if ((gBattleWeather & WEATHER_SUN_PRIMAL && GetMonMoveTypeSpecial(monAtk, move) == TYPE_WATER)
 	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && GetMonMoveTypeSpecial(monAtk, move) == TYPE_FIRE))
-		return TRUE;
+	{
+		//TODO: if (WEATHER_HAS_EFFECT) but include monAtk instead of AI mons
+			return TRUE;
+	}
 
 	//Terrain Check
 	switch (gTerrainType) {
@@ -2714,7 +2721,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 
 	if (runDamageCalcs)
 	{
-		if (IsMoxieAbility(atkAbility)
+		if ((IsMoxieAbility(atkAbility) || atkAbility == ABILITY_SPEEDBOOST) //Nab Moxie or Speed Boost after a KO
 		&& MoveWouldHitFirst(move, bankAtk, bankDef) //AI would attack first
 		&& CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, 1)) //AI would KO in it's BASE FORM before foe has chance to do anything
 			return TRUE; //Delay the Mega Evolution to activate the Moxie
@@ -2961,6 +2968,7 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 bool8 BadIdeaToRaiseStatAgainst(u8 bankAtk, u8 bankDef, bool8 checkDefAbility)
 {
 	return IsMovePredictionPhazingMove(bankDef, bankAtk)
+		|| (IsMovePredictionHighAccSleepingMove(bankDef, bankAtk) && SpeedCalc(bankDef) < SpeedCalc(bankAtk)) //Will put AI to sleep after it sets up
 		|| HasUsedPhazingMoveThatAffects(bankDef, bankAtk)
 		|| (checkDefAbility && ABILITY(bankDef) == ABILITY_UNAWARE && !WillFaintFromSecondaryDamage(bankDef)); //Don't set up if the boosts will just be ignored
 }
@@ -3395,6 +3403,21 @@ bool8 IsMovePredictionHPDrainingMove(u8 bankAtk, u8 bankDef)
 
 	return FALSE;
 }
+
+bool8 IsMovePredictionHighAccSleepingMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		if (effect == EFFECT_SLEEP || effect == EFFECT_YAWN)
+			return MoveWillHit(move, bankAtk, bankDef) || AccuracyCalc(move, bankAtk, bankDef) >= 80;
+	}
+
+	return FALSE;
+}
+
 
 //bankAtk is the protector
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move)
@@ -3925,7 +3948,7 @@ bool8 MoveInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ig
 			||  GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD))
 				continue;
 
-			if (AccuracyCalc(move, bankAtk, bankDef) < acc)
+			if (!MoveWillHit(move, bankAtk, bankDef) && AccuracyCalc(move, bankAtk, bankDef) < acc)
 				return TRUE;
 		}
 	}
@@ -3953,7 +3976,7 @@ bool8 AllMovesInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool
 			||  GetBaseMoveTarget(move, bankAtk) & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD))
 				return FALSE; //At least one move hits
 
-			if (AccuracyCalc(move, bankAtk, bankDef) >= acc)
+			if (MoveWillHit(move, bankAtk, bankDef) || AccuracyCalc(move, bankAtk, bankDef) >= acc)
 				return FALSE; //At least one move hits
 		}
 	}
@@ -4169,8 +4192,11 @@ bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (gBattleMoves[move].effect == EFFECT_SLEEP && AccuracyCalc(move, bankAtk, bankDef) < 85)
-				return TRUE;
+			if (gBattleMoves[move].effect == EFFECT_SLEEP)
+			{
+				if (!MoveWillHit(move, bankAtk, bankDef) && AccuracyCalc(move, bankAtk, bankDef) < 85)
+					return TRUE;
+			}
 		}
 	}
 
@@ -4398,6 +4424,29 @@ bool8 PhazingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (IsUsablePhazingMove(move, bankAtk, bankDef))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 HazardClearingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
+			&& (SPLIT(move) == SPLIT_STATUS || !IsDamagingMoveUnusable(move, bankAtk, bankDef))) //Move is usable
 				return TRUE;
 		}
 	}
@@ -5152,7 +5201,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			&& (!IsStatRecoilMove(move) || atkAbility == ABILITY_CONTRARY)
 			&& (atkAbility == ABILITY_MAGICGUARD || !CheckRecoil(move)) //Base move won't do recoil
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1) //Base move can KO
-			&& AccuracyCalc(move, bankAtk, bankDef) >= 90 //And the move is likely to hit
+			&& (MoveWillHit(move, bankAtk, bankDef) || AccuracyCalc(move, bankAtk, bankDef) >= 90) //And the move is likely to hit
 			&& ViableMonCountFromBank(bankDef) >= 2) //And the foe has another Pokemon left
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move
 

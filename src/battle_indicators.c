@@ -1535,10 +1535,9 @@ void DestroyTypeIcon(struct Sprite* sprite)
 u16 GetLastUsedBall(void)
 {
 	#ifdef UNBOUND
-	if (gBattleResults.battleTurnCounter == 0
-	&& !FlagGet(FLAG_SANDBOX_MODE) //All balls have 100% catch rate so no point in this
-	&& CheckBagHasItem(ITEM_QUICK_BALL, 1))
-		return ITEM_QUICK_BALL;
+	if (!FlagGet(FLAG_SANDBOX_MODE) //All balls have 100% catch rate so no point in this
+	&& FlagGet(FLAG_SHOW_BEST_BALL))
+		return GetBestBallInBag();
 	#endif
 
 	return gLastUsedBall;

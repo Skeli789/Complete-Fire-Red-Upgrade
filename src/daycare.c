@@ -16,6 +16,7 @@
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
 #include "../include/new/exp.h"
+#include "../include/new/form_change.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/item.h"
 #include "../include/new/pokemon_storage_system.h"
@@ -304,6 +305,12 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 		#if (defined NATIONAL_DEX_MANAPHY && defined SPECIES_PHIONE)
 		case NATIONAL_DEX_MANAPHY:
 			eggSpecies = SPECIES_PHIONE;
+			break;
+		#endif
+
+		#ifdef NATIONAL_DEX_MINIOR
+		case NATIONAL_DEX_MINIOR:
+			eggSpecies = GetMiniorCoreFromPersonality(personality);
 			break;
 		#endif
 	}
@@ -827,7 +834,9 @@ static u8 GetEggStepsToSubtract(void)
 	}
 
 	#ifdef UNBOUND
-	if (CheckBagHasItem(ITEM_MAGMA_STONE, 1))
+	if (FlagGet(FLAG_SANDBOX_MODE))
+		steps = 100; //Basically insta-hatch
+	else if (CheckBagHasItem(ITEM_MAGMA_STONE, 1))
 		steps += 1;
 	#endif
 
@@ -989,8 +998,11 @@ u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves
 		//Filter out any egg moves the Pokemon already knows
 		for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
 		{
-			if (!moveInList[eggMovesBuffer[i]] && !MoveInMonMoveset(eggMovesBuffer[i], mon))
-				moves[j++] = eggMovesBuffer[i];
+			if (!moveInList[eggMovesBuffer[i]]) //Move wasn't already added above
+			{
+				if (!ignoreAlreadyKnownMoves || !MoveInMonMoveset(eggMovesBuffer[i], mon))
+					moves[j++] = eggMovesBuffer[i];
+			}
 		}
 	}
 

@@ -213,7 +213,6 @@ LinkNpcFix 0805efe4
 #CB2_InitQuestMenu 0806F534
 
 ##Item Functions
-Task_ReturnToItemListAfterItemPurchase 0809BF64
 ItemUseCB_EvolutionStone 080A1768
 
 ##Nicknaming

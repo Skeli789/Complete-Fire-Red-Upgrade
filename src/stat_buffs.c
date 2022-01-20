@@ -167,11 +167,9 @@ void atk48_playstatchangeanimation(void)
 						changeableStatsCount++;
 					}
 				}
-				else if (!BankSideHasMist(gActiveBattler)
-						&& !IsClearBodyAbility(ability)
-						&& !AbilityPreventsLoweringStat(ability, currStat)
-						&& !(AbilityBlocksIntimidate(ability) && IsIntimidateActive())
-						&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
+				else if (!CanStatNotBeLowered(currStat, gActiveBattler, (gBattlescriptCurrInstr[1] == BS_GET_TARGET) ? gBankAttacker : gActiveBattler, ability)
+					&& !(AbilityBlocksIntimidate(ability) && IsIntimidateActive())
+					&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
 				{
 					if (STAT_STAGE(gActiveBattler, currStat) > STAT_STAGE_MIN)
 					{
@@ -618,9 +616,9 @@ void PrepareStringForAIUsingXItem(void)
 	gBattleTextBuff2[index++] = STRINGID_STATROSE >> 8;
 	gBattleTextBuff2[index] = B_BUFF_EOS;
 
-	while (!(gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] & 1))
+	while (!(gBattleStruct->AI_itemFlags[gBankAttacker >> 1] & 1))
 	{
-		gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] >>= 1;
+		gBattleStruct->AI_itemFlags[gBankAttacker >> 1] >>= 1;
 		++gBattleTextBuff1[2];
 	}
 

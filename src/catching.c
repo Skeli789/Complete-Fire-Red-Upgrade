@@ -64,13 +64,9 @@ void atkEF_handleballthrow(void)
 {
 	if (gBattleExecBuffer) return;
 
-	u8 ballMultiplier = 0;
-
 	gActiveBattler = gBankAttacker;
 	gBankTarget = GetCatchingBattler();
 
-	u16 atkSpecies = gBattleMons[gBankAttacker].species;
-	u16 defSpecies = gBattleMons[gBankTarget].species;
 	u8 atkLevel = gBattleMons[gBankAttacker].level;
 	u8 defLevel = gBattleMons[gBankTarget].level;
 
@@ -132,223 +128,7 @@ void atkEF_handleballthrow(void)
 	}
 	else
 	{
-		u32 odds;
-		u8 catchRate;
-
-		if (ballType == BALL_TYPE_SAFARI_BALL)
-			catchRate = (gBattleStruct->safariCatchFactor * 1275) % 100;
-		else
-			catchRate = gBaseStats[GetMonData(GetBankPartyData(gBankTarget), MON_DATA_SPECIES, NULL)].catchRate; //Uses party data b/c Transform update Gen 5+
-
-		if (ballType >= BALL_TYPE_NET_BALL)
-		{
-			switch (ballType) {
-				case BALL_TYPE_NET_BALL:
-					if (IsOfType(gBankTarget, TYPE_WATER) || IsOfType(gBankTarget, TYPE_BUG))
-						ballMultiplier = 35;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_DIVE_BALL:
-					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
-					|| gFishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-						ballMultiplier = 35;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_NEST_BALL:
-					if (gBattleMons[gBankTarget].level < 31)
-						ballMultiplier = 41 - defLevel; //At lowest 11
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_REPEAT_BALL:
-					if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(defSpecies), FLAG_GET_CAUGHT))
-						ballMultiplier = 35;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_TIMER_BALL:
-					ballMultiplier = MathMax(40, 10 + gBattleResults.battleTurnCounter * 3);
-					break;
-
-				case BALL_TYPE_LUXURY_BALL:
-				case BALL_TYPE_PREMIER_BALL:
-				case BALL_TYPE_CHERISH_BALL:
-				case BALL_TYPE_FRIEND_BALL:
-				case BALL_TYPE_HEAL_BALL:
-					ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_LEVEL_BALL:
-					if (atkLevel <= defLevel)
-						ballMultiplier = 10;
-					else if (atkLevel > defLevel && atkLevel < defLevel * 2)
-						ballMultiplier = 20;
-					else if (atkLevel > defLevel * 2 && atkLevel < defLevel * 4)
-						ballMultiplier = 40;
-					else
-						ballMultiplier = 80;
-					break;
-
-				case BALL_TYPE_LURE_BALL:
-					if (gFishingByte)
-						ballMultiplier = 40;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_MOON_BALL: ;
-					switch (defSpecies) {
-						default:
-							ballMultiplier = 10;
-							break;
-						#ifdef SPECIES_NIDORAN_F
-						case SPECIES_NIDORAN_F:
-						#endif
-						#ifdef SPECIES_NIDORINA
-						case SPECIES_NIDORINA:
-						#endif
-						#ifdef SPECIES_NIDOQUEEN
-						case SPECIES_NIDOQUEEN:
-						#endif
-						#ifdef SPECIES_NIDORAN_M
-						case SPECIES_NIDORAN_M:
-						#endif
-						#ifdef SPECIES_NIDORINO
-						case SPECIES_NIDORINO:
-						#endif
-						#ifdef SPECIES_NIDOKING
-						case SPECIES_NIDOKING:
-						#endif
-						#ifdef SPECIES_CLEFFA
-						case SPECIES_CLEFFA:
-						#endif
-						#ifdef SPECIES_CLEFAIRY
-						case SPECIES_CLEFAIRY:
-						#endif
-						#ifdef SPECIES_CLEFABLE
-						case SPECIES_CLEFABLE:
-						#endif
-						#ifdef SPECIES_IGGLYBUFF
-						case SPECIES_IGGLYBUFF:
-						#endif
-						#ifdef SPECIES_JIGGLYPUFF
-						case SPECIES_JIGGLYPUFF:
-						#endif
-						#ifdef SPECIES_WIGGLYTUFF
-						case SPECIES_WIGGLYTUFF:
-						#endif
-						#ifdef SPECIES_SKITTY
-						case SPECIES_SKITTY:
-						#endif
-						#ifdef SPECIES_DELCATTY
-						case SPECIES_DELCATTY:
-						#endif
-						#ifdef SPECIES_MUNNA
-						case SPECIES_MUNNA:
-						#endif
-						#ifdef SPECIES_MUSHARNA
-						case SPECIES_MUSHARNA:
-						#endif
-							ballMultiplier = 40;
-							break;
-					}
-
-					break;
-
-				case BALL_TYPE_LOVE_BALL:
-					ballMultiplier = 10;
-					if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies))
-					{
-						u8 atkGender = GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[gBankAttacker].personality);
-						u8 defGender = GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[gBankTarget].personality);
-
-						if (atkGender != 0xFF && defGender != 0xFF && atkGender != defGender)
-							ballMultiplier = 80;
-					}
-					break;
-
-				//Heavy Ball modifies the catch rate itself, not the multiplier
-				case BALL_TYPE_HEAVY_BALL:	;
-					ballMultiplier = 10;
-					//Apparently abilities or Float Stone have no affect here
-					u16 defWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(defSpecies), PKDX_GET_WEIGHT);
-					u8 oldCatchRate;
-
-					if (defWeight < 1000)
-					{
-						oldCatchRate = catchRate;
-						catchRate -= 20;
-						if (catchRate > oldCatchRate)
-							catchRate = 1; //New in USUM
-					}
-					else if (defWeight >= 2000 && defWeight < 3000)
-						catchRate += 20;
-					else if (defWeight > 3000)
-						catchRate += 30;
-					break;
-
-				case BALL_TYPE_FAST_BALL:
-					if (gBaseStats[defSpecies].baseSpeed >= 100)
-						ballMultiplier = 40;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_SPORT_BALL:
-					ballMultiplier = 15;
-					break;
-
-				case BALL_TYPE_DUSK_BALL:
-					if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
-						ballMultiplier = DUSK_BALL_MULTIPLIER;
-					#ifdef TIME_ENABLED
-					else if (IsNightTime())
-						ballMultiplier = DUSK_BALL_MULTIPLIER;
-					#endif
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_QUICK_BALL:
-					if (gBattleResults.battleTurnCounter == 0)
-						ballMultiplier = 50;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_DREAM_BALL:
-					if (gBattleMons[gBankTarget].status1 & STATUS1_SLEEP || ABILITY(gBankTarget) == ABILITY_COMATOSE)
-						ballMultiplier = 40;
-					else
-						ballMultiplier = 10;
-					break;
-
-				case BALL_TYPE_BEAST_BALL:
-					if (CheckTableForSpecies(defSpecies, gUltraBeastList))
-						ballMultiplier = 50;
-					else
-						ballMultiplier = 1;
-					break;
-			}
-		}
-		else
-			ballMultiplier = sBallCatchBonuses[ballType - BALL_TYPE_ULTRA_BALL];
-
-		#ifdef VAR_CATCH_RATE_BONUS
-		if (VarGet(VAR_CATCH_RATE_BONUS) > 0)
-			ballMultiplier += (ballMultiplier * VarGet(VAR_CATCH_RATE_BONUS)) / 100; //Percent increase - Eg. Var is set to 10, and multiplier is 5x, then final multiplier will be 5.5 (55)
-		#endif
-
-		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ballType != BALL_TYPE_BEAST_BALL)
-			ballMultiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
-
-		odds = (((catchRate * ballMultiplier) / 10) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)) / (3 * gBattleMons[gBankTarget].maxHP);
+		u32 odds = GetBaseBallCatchOdds(ballType, gBankAttacker, gBankTarget);
 
 		#ifndef NO_HARDER_WILD_DOUBLES
 		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && IS_DOUBLE_BATTLE)
@@ -476,6 +256,232 @@ void atkEF_handleballthrow(void)
 	}
 }
 
+u32 GetBaseBallCatchOdds(u8 ballType, u8 bankAtk, u8 bankDef)
+{
+	u8 catchRate;
+	u8 ballMultiplier = 0;
+	u16 atkSpecies = gBattleMons[bankAtk].species;
+	u16 defSpecies = gBattleMons[bankDef].species;
+	u8 atkLevel = gBattleMons[bankAtk].level;
+	u8 defLevel = gBattleMons[bankDef].level;
+
+	if (ballType == BALL_TYPE_SAFARI_BALL)
+		catchRate = (gBattleStruct->safariCatchFactor * 1275) % 100;
+	else
+		catchRate = gBaseStats[GetMonData(GetBankPartyData(bankDef), MON_DATA_SPECIES, NULL)].catchRate; //Uses party data b/c Transform update Gen 5+
+
+	if (ballType >= BALL_TYPE_NET_BALL)
+	{
+		switch (ballType) {
+			case BALL_TYPE_NET_BALL:
+				if (IsOfType(bankDef, TYPE_WATER) || IsOfType(bankDef, TYPE_BUG))
+					ballMultiplier = 35;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_DIVE_BALL:
+				if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
+				|| gFishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+					ballMultiplier = 35;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_NEST_BALL:
+				if (gBattleMons[bankDef].level < 31)
+					ballMultiplier = 41 - defLevel; //At lowest 11
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_REPEAT_BALL:
+				if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(defSpecies), FLAG_GET_CAUGHT))
+					ballMultiplier = 35;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_TIMER_BALL:
+				ballMultiplier = MathMin(40, 10 + gBattleResults.battleTurnCounter * 3);
+				break;
+
+			case BALL_TYPE_LUXURY_BALL:
+			case BALL_TYPE_PREMIER_BALL:
+			case BALL_TYPE_CHERISH_BALL:
+			case BALL_TYPE_FRIEND_BALL:
+			case BALL_TYPE_HEAL_BALL:
+				ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_LEVEL_BALL:
+				if (atkLevel <= defLevel)
+					ballMultiplier = 10;
+				else if (atkLevel > defLevel && atkLevel < defLevel * 2)
+					ballMultiplier = 20;
+				else if (atkLevel >= defLevel * 2 && atkLevel < defLevel * 4)
+					ballMultiplier = 40;
+				else
+					ballMultiplier = 80;
+				break;
+
+			case BALL_TYPE_LURE_BALL:
+				if (gFishingByte)
+					ballMultiplier = 40;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_MOON_BALL: ;
+				switch (defSpecies) {
+					default:
+						ballMultiplier = 10;
+						break;
+					#ifdef SPECIES_NIDORAN_F
+					case SPECIES_NIDORAN_F:
+					#endif
+					#ifdef SPECIES_NIDORINA
+					case SPECIES_NIDORINA:
+					#endif
+					#ifdef SPECIES_NIDOQUEEN
+					case SPECIES_NIDOQUEEN:
+					#endif
+					#ifdef SPECIES_NIDORAN_M
+					case SPECIES_NIDORAN_M:
+					#endif
+					#ifdef SPECIES_NIDORINO
+					case SPECIES_NIDORINO:
+					#endif
+					#ifdef SPECIES_NIDOKING
+					case SPECIES_NIDOKING:
+					#endif
+					#ifdef SPECIES_CLEFFA
+					case SPECIES_CLEFFA:
+					#endif
+					#ifdef SPECIES_CLEFAIRY
+					case SPECIES_CLEFAIRY:
+					#endif
+					#ifdef SPECIES_CLEFABLE
+					case SPECIES_CLEFABLE:
+					#endif
+					#ifdef SPECIES_IGGLYBUFF
+					case SPECIES_IGGLYBUFF:
+					#endif
+					#ifdef SPECIES_JIGGLYPUFF
+					case SPECIES_JIGGLYPUFF:
+					#endif
+					#ifdef SPECIES_WIGGLYTUFF
+					case SPECIES_WIGGLYTUFF:
+					#endif
+					#ifdef SPECIES_SKITTY
+					case SPECIES_SKITTY:
+					#endif
+					#ifdef SPECIES_DELCATTY
+					case SPECIES_DELCATTY:
+					#endif
+					#ifdef SPECIES_MUNNA
+					case SPECIES_MUNNA:
+					#endif
+					#ifdef SPECIES_MUSHARNA
+					case SPECIES_MUSHARNA:
+					#endif
+						ballMultiplier = 40;
+						break;
+				}
+
+				break;
+
+			case BALL_TYPE_LOVE_BALL:
+				ballMultiplier = 10;
+				if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies))
+				{
+					u8 atkGender = GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[bankAtk].personality);
+					u8 defGender = GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[bankDef].personality);
+
+					if (atkGender != 0xFF && defGender != 0xFF && atkGender != defGender)
+						ballMultiplier = 80;
+				}
+				break;
+
+			//Heavy Ball modifies the catch rate itself, not the multiplier
+			case BALL_TYPE_HEAVY_BALL:	;
+				ballMultiplier = 10;
+				//Apparently abilities or Float Stone have no affect here
+				u16 defWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(defSpecies), PKDX_GET_WEIGHT);
+				u8 oldCatchRate;
+
+				if (defWeight < 1000)
+				{
+					oldCatchRate = catchRate;
+					catchRate -= 20;
+					if (catchRate > oldCatchRate)
+						catchRate = 1; //New in USUM
+				}
+				else if (defWeight >= 2000 && defWeight < 3000)
+					catchRate += 20;
+				else if (defWeight > 3000)
+					catchRate += 30;
+				break;
+
+			case BALL_TYPE_FAST_BALL:
+				if (gBaseStats[defSpecies].baseSpeed >= 100)
+					ballMultiplier = 40;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_SPORT_BALL:
+				ballMultiplier = 15;
+				break;
+
+			case BALL_TYPE_DUSK_BALL:
+				if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
+					ballMultiplier = DUSK_BALL_MULTIPLIER;
+				#ifdef TIME_ENABLED
+				else if (IsNightTime())
+					ballMultiplier = DUSK_BALL_MULTIPLIER;
+				#endif
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_QUICK_BALL:
+				if (gBattleResults.battleTurnCounter == 0)
+					ballMultiplier = 50;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_DREAM_BALL:
+				if (gBattleMons[bankDef].status1 & STATUS1_SLEEP || ABILITY(bankDef) == ABILITY_COMATOSE)
+					ballMultiplier = 40;
+				else
+					ballMultiplier = 10;
+				break;
+
+			case BALL_TYPE_BEAST_BALL:
+				if (CheckTableForSpecies(defSpecies, gUltraBeastList))
+					ballMultiplier = 50;
+				else
+					ballMultiplier = 1;
+				break;
+		}
+	}
+	else
+		ballMultiplier = sBallCatchBonuses[ballType - BALL_TYPE_ULTRA_BALL];
+
+	#ifdef VAR_CATCH_RATE_BONUS
+	if (VarGet(VAR_CATCH_RATE_BONUS) > 0)
+		ballMultiplier += (ballMultiplier * VarGet(VAR_CATCH_RATE_BONUS)) / 100; //Percent increase - Eg. Var is set to 10, and multiplier is 5x, then final multiplier will be 5.5 (55)
+	#endif
+
+	if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ballType != BALL_TYPE_BEAST_BALL)
+		ballMultiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
+
+	u32 odds = (((catchRate * ballMultiplier) / 10) * (gBattleMons[bankDef].maxHP * 3 - gBattleMons[bankDef].hp * 2)) / (3 * gBattleMons[bankDef].maxHP);
+	return odds;
+}
+
 static u8 GetCatchingBattler(void)
 {
 	u8 battler;
@@ -584,21 +590,6 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
 	SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
 
-	if (gMain.inBattle
-	&&  GetPocketByItemId(gLastUsedItem) == POCKET_POKE_BALLS)
-	{
-		u8 ballType = ItemId_GetType(gLastUsedItem);
-
-		if (ballType == BALL_TYPE_HEAL_BALL)
-			HealMon(mon);
-		else if (ballType == BALL_TYPE_FRIEND_BALL)
-			mon->friendship = 200;
-		#ifdef UNBOUND
-		else if (ballType == BALL_TYPE_DREAM_BALL)
-			mon->hiddenAbility = TRUE;
-		#endif
-	}
-
 	u8 freeSlot = GetFreeSlotInPartyForMon();
 	if (freeSlot >= PARTY_SIZE) //Can't add mon
 	{
@@ -610,6 +601,38 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	gPlayerPartyCount = freeSlot + 1;
 	return MON_GIVEN_TO_PARTY;
 }
+
+void ApplyBallSpecialEffect(void)
+{
+	struct Pokemon* mon = LoadTargetPartyData();
+	u8 ballType = ItemId_GetType(gLastUsedItem);
+
+	if (ballType == BALL_TYPE_HEAL_BALL)
+		HealMon(mon);
+	else if (ballType == BALL_TYPE_FRIEND_BALL)
+		mon->friendship = 200;
+	#ifdef UNBOUND
+	else if (ballType == BALL_TYPE_DREAM_BALL)
+		mon->hiddenAbility = TRUE;
+	#endif
+}
+
+#ifdef UNBOUND
+static void FixOverflownPP(struct Pokemon* mon)
+{
+	u32 moveIndex;
+	u32 ppBonuses = GetMonData(mon, MON_DATA_PP_BONUSES, NULL);
+
+	for (moveIndex = 0; moveIndex < MAX_MON_MOVES; ++moveIndex)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + moveIndex, NULL);
+		u8 totalPP = CalculatePPWithBonus(move, ppBonuses, moveIndex);
+
+		if (GetMonData(mon, MON_DATA_PP1 + moveIndex, NULL) > totalPP) //Overflown
+			SetMonData(mon, MON_DATA_PP1 + moveIndex, &totalPP); //Adjust PP
+	}
+}
+#endif
 
 void atkF0_givecaughtmon(void)
 {
@@ -624,6 +647,7 @@ void atkF0_givecaughtmon(void)
 
 	#ifdef UNBOUND
 	SetMonData(mon, MON_DATA_PP_BONUSES, &none); //In case it was set for a boss battle
+	FixOverflownPP(mon);
 	#endif
 
 	if (GiveMonToPlayer(mon) != MON_GIVEN_TO_PARTY)
@@ -896,7 +920,7 @@ static bool8 CantCatchBecauseTwoAlive(void)
 
 static bool8 CantCatchBecauseSemiInvulnerable(u8 pos)
 {
-	return BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(pos));
+	return BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(pos)) != 0;
 }
 
 static bool8 CantCatchBecauseSemiInvulnerableDoubles(void)

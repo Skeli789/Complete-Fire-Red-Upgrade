@@ -424,7 +424,7 @@ void BuildTrainerPartySetup(void)
 	TryCrownZacianZamazenta(gPlayerParty);
 	TryCrownZacianZamazenta(gEnemyParty);
 
-	if (ViableMonCount(gEnemyParty) <= 1 && !IsRaidBattle()) //Error prevention
+	if (ViableMonCount(gEnemyParty) <= 1 && !IsRaidBattle() && !(gBattleTypeFlags & BATTLE_TYPE_LINK)) //Error prevention
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
 }
 
@@ -812,7 +812,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 		#if (defined SCALED_TRAINERS && !defined DEBUG_NO_LEVEL_SCALING)
 		#ifdef VAR_GAME_DIFFICULTY
 		levelScaling = gameDifficulty != OPTIONS_EASY_DIFFICULTY //Don't scale Trainers on easy mode
-					|| trainer->trainerClass == CLASS_ELITE_4 || trainer->trainerClass == CLASS_CHAMPION || trainer->trainerClass == CLASS_RIVAL_2 //Unless you're facing the final bosses
+					|| GetCurrentRegionMapSectionId() == MAPSEC_POKEMON_LEAGUE //Unless you're facing the final bosses
 					#ifdef UNBOUND
 					|| trainerId == 0x223 //Auburn Waterway Hiker needs to scale to confirm you're prepared to face the wild mons below
 					#endif
@@ -986,21 +986,29 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			SetMonData(mon, MON_DATA_POKEBALL, &gClassPokeBalls[trainer->trainerClass]);
 			#endif
 
+			//Try Evolve Randomized Mon
+			#if (defined FLAG_POKEMON_RANDOMIZER && defined FLAG_TEMP_DISABLE_RANDOMIZER && defined VAR_GAME_DIFFICULTY)
+			if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER) && gameDifficulty != OPTIONS_EASY_DIFFICULTY) //Allow Trainers to grow naturally
+				EvolveSpeciesByLevel(&mon->species, mon->level);
+			#endif
+
 			//Give EVs
 			#ifdef TRAINERS_WITH_EVS
 			u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
 
 			#ifdef UNBOUND
-			if ((gTrainers[trainerId].trainerClass == CLASS_RIVAL
-			  || gTrainers[trainerId].trainerClass == CLASS_RIVAL_2)
-			&& gameDifficulty >= OPTIONS_HARD_DIFFICULTY)
+			if ((gTrainers[trainerId].trainerClass == CLASS_RIVAL && gameDifficulty >= OPTIONS_HARD_DIFFICULTY)
+			 || (gTrainers[trainerId].trainerClass == CLASS_RIVAL_2 && gameDifficulty == OPTIONS_HARD_DIFFICULTY)) //Not for Insane
 				spreadNum = GetEVSpreadNumForUnboundRivalChallenge(mon, trainer->aiFlags, gTrainers[trainerId].trainerClass);
 			#endif
 
-			if (gTrainers[trainerId].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
+			if (spreadNum != 0
+			&& spreadNum < NELEMS(gTrainersWithEvsSpreads) //Valid id
+			#ifndef UNBOUND
+			&& gTrainers[trainerId].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
 			&& trainer->aiFlags > 1
-			&& spreadNum != 0
-			&& spreadNum < NELEMS(gTrainersWithEvsSpreads)) //Valid id
+			#endif
+			)
 			{
 				const struct TrainersWithEvs* spread = &gTrainersWithEvsSpreads[spreadNum];
 
@@ -1106,6 +1114,13 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 			#ifdef UNBOUND
 			TryGiveSpecialTrainerStatusCondition(trainerId, mon);
 			#endif
+
+			//Fix Partner Met Locations
+			if (side == B_SIDE_PLAYER) //Partner
+			{
+				u8 metLoc = 0; //Unknown location
+				SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &metLoc); //So they don't the current area
+			}
 		}
 
 		//Set Double battle type if necessary
@@ -1147,7 +1162,6 @@ static u8 GetTrainerMonGender(struct Trainer* trainer)
 		case CLASS_LOR:
 		case CLASS_SUCCESSOR:
 		case CLASS_SHADOW_ADMIN:
-		case CLASS_EX_SHADOW_ADMIN:
 		case CLASS_LOR_ADMIN:
 		case CLASS_LOR_LEADER:
 		case CLASS_AGENT:
@@ -2168,6 +2182,7 @@ static void BuildFrontierMultiParty(u8 multiId)
 	const struct BattleTowerSpread* spread = NULL;
 	const struct MultiBattleTowerTrainer* multiPartner = &gFrontierMultiBattleTrainers[multiId];
 	u8 idOnTeam[multiPartner->regSpreadSize];
+	u8 metLoc = 0; //Unknown location
 
 	//Clear Values
 	for (i = 0; i < multiPartner->regSpreadSize; ++i)
@@ -2248,6 +2263,7 @@ static void BuildFrontierMultiParty(u8 multiId)
 		}
 
 		CreateFrontierMon(&gPlayerParty[i], level, spread, BATTLE_FACILITY_MULTI_TRAINER_TID, 2, multiPartner->gender, FALSE);
+		SetMonData(&gPlayerParty[i], MON_DATA_MET_LOCATION, &metLoc); //So they don't say "Battle Frontier"
 	}
 
 	TryShuffleMovesForCamomons(gPlayerParty, tier, BATTLE_FACILITY_MULTI_TRAINER_TID);
@@ -2282,7 +2298,7 @@ const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numS
 static void BuildRaidMultiParty(void)
 {
 	int i;
-	u8 zero = METLOC_FATEFUL_ENCOUNTER;
+	u8 metLoc = 0;
 	u8 numStars = gRaidBattleStars;
 	u8 multiId = VarGet(VAR_FACILITY_TRAINER_ID_PARTNER);
 
@@ -2291,7 +2307,7 @@ static void BuildRaidMultiParty(void)
 	{
 		const struct BattleTowerSpread* spread = GetRaidMultiSpread(multiId, i, numStars);
 		CreateFrontierMon(&gPlayerParty[i + 3], GetRandomRaidLevel(), spread, RAID_BATTLE_MULTI_TRAINER_TID, 2, gRaidPartners[multiId].gender, FALSE);
-		SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &zero); //So they don't say "Battle Frontier"
+		SetMonData(&gPlayerParty[i + 3], MON_DATA_MET_LOCATION, &metLoc); //So they don't say "Battle Frontier"
 
 		if (!FlagGet(FLAG_BATTLE_FACILITY)
 		#ifdef FLAG_POKEMON_RANDOMIZER
@@ -2311,9 +2327,18 @@ static void BuildRaidMultiParty(void)
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
 {
 	int i, j;
-
-	u16 species = TryAdjustAestheticSpecies(spread->species);
+	u16 species = spread->species;
 	u32 otId;
+
+	#ifdef FLAG_POKEMON_RANDOMIZER
+	if (!FlagGet(FLAG_POKEMON_RANDOMIZER) //Don't try to customize a species that'll change anyway
+	|| FlagGet(FLAG_BATTLE_FACILITY)
+	#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
+	|| FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)
+	#endif
+	)
+	#endif
+		species = TryAdjustAestheticSpecies(species);
 
 	if (trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID)
 		otId = gFrontierMultiBattleTrainers[VarGet(VAR_FACILITY_TRAINER_ID_PARTNER)].otId;
@@ -2705,6 +2730,11 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 			if (BATTLE_FACILITY_NUM == IN_RING_CHALLENGE) //1v1
 			{
+				#ifdef UNBOUND
+				if (species == SPECIES_REGIGIGAS && ability == ABILITY_STALL && !FlagGet(FLAG_ABILITY_RANDOMIZER)) //Too OP 1v1
+					return TRUE;
+				#endif
+
 				if (item == ITEM_FOCUS_SASH) //No Focus Sash in Ring Challenge
 					return TRUE;
 
@@ -4189,7 +4219,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 				nature = Random() % NUM_NATURES;
 		}
 
-		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny, FALSE, FALSE);
+		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny ? TRUE : IsMonShiny(&mon), FALSE, FALSE);
 		CalculateMonStats(&mon);
 	}
 	else

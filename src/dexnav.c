@@ -77,6 +77,7 @@ extern void sp09A_StopSounds(void);
 
 //This file's functions
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
+static u16 TryRandomizePumpkabooForm(u16 species);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static void UpdatePlayerDistances(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
@@ -109,7 +110,6 @@ static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
 static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
 static void DexNavDrawHeldItem(u8* spriteIdAddr);
 static void DexNavDrawIcons(void);
-void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
 
 //GUI Functions
@@ -197,7 +197,7 @@ static void CB2_DexNav(void);
 // ===== Dex Nav Pokemon Generator ===== //
 // ===================================== //
 
-void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain)
+static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain)
 {
 	struct Pokemon* mon = &gEnemyParty[0];
 
@@ -241,6 +241,7 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 	}
 
 	//Create standard wild Pokemon
+	species = TryRandomizePumpkabooForm(species);
 	CreateWildMon(species, level, FindHeaderIndexWithLetter(species, sDexNavHudPtr->unownLetter - 1), TRUE);
 	GiveMonXPerfectIVs(mon, potential);
 
@@ -260,6 +261,54 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	CalculateMonStats(mon);
 	HealMon(mon); //Restore PP and fix HP if IV changed
+}
+
+static u16 TryRandomizePumpkabooForm(u16 species)
+{
+	#ifdef FLAG_POKEMON_RANDOMIZER
+	if (!FlagGet(FLAG_POKEMON_RANDOMIZER))
+	#endif
+	{
+		#if (defined NATIONAL_DEX_PUMPKABOO && defined NATIONAL_DEX_GOURGEIST)
+		u16 dexNum = SpeciesToNationalPokedexNum(species);
+		if (dexNum == NATIONAL_DEX_PUMPKABOO)
+		{
+			switch (Random() % 4)
+			{
+				//case 0:
+				//	break; //Keep same species
+				case 1:
+					species = SPECIES_PUMPKABOO_M;
+					break;
+				case 2:
+					species = SPECIES_PUMPKABOO_L;
+					break;
+				case 3:
+					species = SPECIES_PUMPKABOO_XL;
+					break;
+			}
+		}
+		else if (dexNum == NATIONAL_DEX_GOURGEIST)
+		{
+			switch (Random() % 4)
+			{
+				//case 0:
+				//	break; //Keep same species
+				case 1:
+					species = SPECIES_GOURGEIST_M;
+					break;
+				case 2:
+					species = SPECIES_GOURGEIST_L;
+					break;
+				case 3:
+					species = SPECIES_GOURGEIST_XL;
+					break;
+			}
+		}
+		#endif
+	}
+
+	return species;
 }
 
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter)
@@ -970,7 +1019,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 		return;
 	}
 
-	if (gMain.newKeys & (B_BUTTON | START_BUTTON))
+	if (gMain.newKeys & B_BUTTON)
 	{
 		PlaySE(SE_POKENAV_OFF);
 		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
@@ -1681,8 +1730,14 @@ static void DexNavDrawIcons(void)
 }
 
 extern void sp0AF_DismountBicyle(void);
-void InitDexNavHUD(u16 species, u8 environment)
+bool8 InitDexNavHUD(u16 species, u8 environment)
 {
+	if (Overworld_GetFlashLevel() > 0)
+	{
+		DexNavShowFieldMessage(FIELD_MSG_TOO_DARK);
+		return FALSE;
+	}
+
 	sDexNavHudPtr = Calloc(sizeof(struct DexnavHudData));
 	// assign non-objects to struct
 	sDexNavHudPtr->species = species;
@@ -1710,18 +1765,11 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDexNavHudPtr->searchLevel = searchLevel;
 	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment);
 
-	if (Overworld_GetFlashLevel() > 0)
-	{
-		Free(sDexNavHudPtr);
-		DexNavShowFieldMessage(FIELD_MSG_TOO_DARK);
-		return;
-	}
-
 	if (sDexNavHudPtr->pokemonLevel < 1)
 	{
 		Free(sDexNavHudPtr);
 		DexNavShowFieldMessage(FIELD_MSG_NOT_IN_AREA);
-		return;
+		return FALSE;
 	}
 
 	u8 totalEncounterChance = GetTotalEncounterChance(sDexNavHudPtr->species, environment);
@@ -1736,7 +1784,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 		Free(sDexNavHudPtr);
 		gDexNavCooldown = TRUE; //A Pokemon can't be found until the player takes at least one step or searches for another Pokemon manually
 		DexNavShowFieldMessage(FIELD_MSG_LOOK_IN_OTHER_SPOT);
-		return;
+		return FALSE;
 	}
 
 	//Populate sDexNavHudPtr objects
@@ -1765,6 +1813,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 		gTasks[taskId].data[0] = gSprites[gPlayerAvatar->spriteId].pos1.x;
 
 	IncrementGameStat(GAME_STAT_DEXNAV_SCANNED);
+	return TRUE; //HUD has been started
 }
 
 

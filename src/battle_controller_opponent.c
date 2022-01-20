@@ -300,7 +300,7 @@ void OpponentHandleTrainerSlide(void)
 void OpponentHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
-	
+
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
@@ -339,7 +339,8 @@ void OpponentHandleChoosePokemon(void)
 			chosenMonId = GetMostSuitableMonToSwitchInto();
 		}
 
-		if (chosenMonId == PARTY_SIZE)
+		if (chosenMonId >= PARTY_SIZE
+		|| chosenMonId < firstId || chosenMonId >= lastId) //Trying to pick from partner's team
 		{
 			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
 			{

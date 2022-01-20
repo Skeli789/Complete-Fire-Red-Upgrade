@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/dynamic_placeholder_text_util.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect_helpers.h"
 #include "../include/field_player_avatar.h"
@@ -16,6 +17,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
+
 /*
 character_customization.c
 	functions for altering the player's sprite based on the current sprite/palette selections
@@ -87,13 +89,13 @@ static const u16* sPlayerOutfitColours[] =
 	NULL /*MalePlayer_Trainer_Outfit_RedPal*/, //Defaults are loaded from elsewhere
 	MalePlayer_Trainer_Outfit_BlackPal,
 	MalePlayer_Trainer_Outfit_BluePal,
-	MalePlayer_Trainer_Outfit_GrayPal,
-	MalePlayer_Trainer_Outfit_PurplePal,
-	MalePlayer_Trainer_Outfit_YellowPal,
-	MalePlayer_Trainer_Outfit_GreenPal,
 	MalePlayer_Trainer_Outfit_TealPal,
-	MalePlayer_Trainer_Outfit_BrownPal,
+	MalePlayer_Trainer_Outfit_GrayPal,
+	MalePlayer_Trainer_Outfit_GreenPal,
+	MalePlayer_Trainer_Outfit_YellowPal,
 	MalePlayer_Trainer_Outfit_OrangePal,
+	MalePlayer_Trainer_Outfit_BrownPal,
+	MalePlayer_Trainer_Outfit_PurplePal,
 	MalePlayer_Trainer_Outfit_PinkPal,
 };
 
@@ -111,8 +113,8 @@ static const u16* sPlayerTrimColours[] =
 	MalePlayer_Trainer_Trim_BlackPal,
 	MalePlayer_Trainer_Trim_WhitePal,
 	MalePlayer_Trainer_Trim_BluePal,
-	MalePlayer_Trainer_Trim_LightBluePal,
 	MalePlayer_Trainer_Trim_TealPal,
+	MalePlayer_Trainer_Trim_LightBluePal,
 	MalePlayer_Trainer_Trim_PinkPal,
 	MalePlayer_Trainer_Trim_LightPinkPal,
 	MalePlayer_Trainer_Trim_Purple2Pal,
@@ -208,7 +210,15 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 		switch (spriteId) {
 			case EVENT_OBJ_GFX_RED_BIKE_VS_SEEKER:
 			case EVENT_OBJ_GFX_LEAF_BIKE_VS_SEEKER:
-				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+				if (tableId == 0) //Actually the Vs. Seeker sprites
+				{
+					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+					if (newId != 0) //Actually set to something different
+					{
+						tableId = (newId >> 8) & 0xFF;	// upper byte
+						spriteId = (newId & 0xFF);		// lower byte
+					}
+				}
 				break;
 		}
 
@@ -244,33 +254,33 @@ NPCPtr GetEventObjectGraphicsInfoByEventObj(struct EventObject* eventObj)
 
 static u16 GetCustomGraphicsIdByState(u8 state)
 {
-	u16 spriteId = 0;
+	u16 gfxId = 0;
 
 	switch (state) {
 		case PLAYER_AVATAR_STATE_NORMAL:
-			spriteId = VarGet(VAR_PLAYER_WALKRUN);
+			gfxId = VarGet(VAR_PLAYER_WALKRUN);
 			break;
 		case PLAYER_AVATAR_STATE_BIKE:
-			spriteId = VarGet(VAR_PLAYER_BIKING);
+			gfxId = VarGet(VAR_PLAYER_BIKING);
 			break;
 		case PLAYER_AVATAR_STATE_SURFING:
-			spriteId = VarGet(VAR_PLAYER_SURFING);
+			gfxId = VarGet(VAR_PLAYER_SURFING);
 			break;
 		case PLAYER_AVATAR_STATE_FIELD_MOVE: //HM Use
-			spriteId = VarGet(VAR_PLAYER_HM_USE);
+			gfxId = VarGet(VAR_PLAYER_HM_USE);
 			break;
 		case PLAYER_AVATAR_STATE_VS_SEEKER:
-			spriteId = VarGet(VAR_PLAYER_VS_SEEKER);
+			gfxId = VarGet(VAR_PLAYER_VS_SEEKER);
 			break;
 		case PLAYER_AVATAR_STATE_FISHING:
-			spriteId = VarGet(VAR_PLAYER_FISHING);
+			gfxId = VarGet(VAR_PLAYER_FISHING);
 			break;
 		case PLAYER_AVATAR_STATE_UNDERWATER:
-			spriteId = VarGet(VAR_PLAYER_UNDERWATER);
+			gfxId = VarGet(VAR_PLAYER_UNDERWATER);
 			break;
 	}
 
-	return spriteId;
+	return gfxId;
 }
 
 u16 GetPlayerAvatarGraphicsIdByStateIdAndGender(u8 state, u8 gender)
@@ -359,6 +369,9 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
 		return lowerByte;
 	#endif
 
+	if (upperByte == 0xFF && lowerByte <= 0xF)
+		return VarGet(VAR_RUNTIME_CHANGEABLE + lowerByte); //Runtime changeable
+
 	return lowerByte | (upperByte << 8);
 }
 
@@ -368,6 +381,41 @@ void SetPlayerAvatarEventObjectIdAndObjectId(u8 eventObjectId, u8 spriteId)
     gPlayerAvatar->spriteId = spriteId;
     gPlayerAvatar->gender = GetPlayerAvatarGenderByGraphicsId(GetEventObjectGraphicsId(&gEventObjects[eventObjectId]));
     SetPlayerAvatarExtraStateTransition(GetEventObjectGraphicsId(&gEventObjects[eventObjectId]), 0x20);
+}
+
+static u8 GetColorFromTextColorTableNew(u16 gfxId)
+{
+	#ifdef UNBOUND
+	u8 gender = GetEventObjectGraphicsInfo(gfxId)->gender;
+	return gender == MALE ? 0 : gender == FEMALE ? 1 : 2; //Blue, Red, Black
+	#else
+	return GetColorFromTextColorTable(gfxId);
+	#endif
+}
+
+u8 ContextNpcGetTextColor(void)
+{
+	u16 gfxId;
+
+	if (gSpecialVar_TextColor != 0xFF)
+	{
+		return gSpecialVar_TextColor;
+	}
+	else if (gSelectedEventObject == 0)
+	{
+		return 3;
+	}
+	else
+	{
+		gfxId = GetEventObjectGraphicsId(&gEventObjects[gSelectedEventObject]);
+
+		#ifndef UNBOUND
+		if (gfxId >= EVENT_OBJ_GFX_VAR_0 && gfxId <= 0xFF) //Vanilla dynamic id
+			gfxId = VarGetEventObjectGraphicsId(gfxId - EVENT_OBJ_GFX_VAR_0);
+		#endif
+
+		return GetColorFromTextColorTableNew(gfxId);
+	}
 }
 
 // load trainer card sprite based on variables
@@ -503,15 +551,33 @@ u16 GetBackspriteId(void)
 #ifdef UNBOUND
 bool8 IsPaletteTagAffectedByCharacterCustomization(u16 tag)
 {
-	return tag == EVENT_OBJ_PAL_TAG_DEFAULT
-		|| tag == EVENT_OBJ_PAL_TAG_MOM
-		|| tag == EVENT_OBJ_PAL_TAG_AROS;
+	switch (tag)
+	{
+		case EVENT_OBJ_PAL_TAG_DEFAULT:
+		case EVENT_OBJ_PAL_TAG_MOM:
+		case EVENT_OBJ_PAL_TAG_AROS:
+		case EVENT_OBJ_PAL_TAG_RED_PLAYER:
+		case EVENT_OBJ_PAL_TAG_LEAF_PLAYER:
+		case EVENT_OBJ_PAL_TAG_ETHAN_PLAYER:
+		case EVENT_OBJ_PAL_TAG_LYRA_PLAYER:
+		case EVENT_OBJ_PAL_TAG_LUCAS_PLAYER:
+		case EVENT_OBJ_PAL_TAG_DAWN_PLAYER:
+		case EVENT_OBJ_PAL_TAG_SHADOW_GRUNT_PLAYER:
+		case EVENT_OBJ_PAL_TAG_PLAYER_CHAMPION:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsPaletteTagAffectedBySkinCharacterCustomization(unusedArg u16 tag)
+{
+	return TRUE;
 }
 
 bool8 IsPaletteTagAffectedByHairCharacterCustomization(u16 tag)
 {
-	return tag == EVENT_OBJ_PAL_TAG_DEFAULT
-		|| tag == EVENT_OBJ_PAL_TAG_MOM;
+	return tag != EVENT_OBJ_PAL_TAG_AROS;
 }
 
 bool8 IsPaletteTagAffectedByOutfitCharacterCustomization(u16 tag)
@@ -523,14 +589,14 @@ bool8 IsPaletteTagAffectedByOutfitCharacterCustomization(u16 tag)
 #define HAIR_COLOUR_OFFSET 4
 #define OUTFIT_OFFSET 7
 #define TRIM_OFFSET 9
-static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 changeHair, bool8 changeOutfit)
+static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 changeSkin, bool8 changeHair, bool8 changeOutfit)
 {
 	u16 skinTone = VarGet(VAR_PLAYER_SKIN_TONE);
 	u16 hairColour = VarGet(VAR_PLAYER_HAIR_COLOUR);
 	u16 outfitColour = VarGet(VAR_PLAYER_OUTFIT_COLOUR);
 	u16 trimColour = VarGet(VAR_PLAYER_TRIM_COLOUR);
 
-	if (skinTone > 0 && skinTone < NELEMS(sPlayerSkinColours))
+	if (changeSkin && skinTone > 0 && skinTone < NELEMS(sPlayerSkinColours))
 	{
 		u16 skinOffset = paletteOffset + SKIN_TONE_OFFSET;
 		CpuCopy16(sPlayerSkinColours[skinTone] + SKIN_TONE_OFFSET, gPlttBufferUnfaded + skinOffset, 3 * sizeof(u16));
@@ -564,26 +630,53 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 chang
 void ChangeTrainerPicPal(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE, TRUE);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE, TRUE, TRUE);
 	#endif
 }
 
-void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg bool8 changeHair, unusedArg bool8 changeOutfit)
+void ChangeTrainerPicPalNoOutfit(unusedArg u16 paletteOffset)
 {
 	#ifdef UNBOUND
-	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, changeHair, changeOutfit);
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, TRUE, TRUE, FALSE);
+	#endif
+}
+
+void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg bool8 changeSkin, unusedArg bool8 changeHair, unusedArg bool8 changeOutfit)
+{
+	#ifdef UNBOUND
+	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, changeSkin, changeHair, changeOutfit);
 	#endif
 }
 
 void LoadTrainerBackPal(u16 trainerPicId, u8 battlerId)
 {
-	DecompressTrainerBackPic(trainerPicId, battlerId);
+	DecompressTrainerBackPalette(trainerPicId, battlerId);
 
 	#ifdef UNBOUND
 	//Dynamically changes the palette of the player character in Unbound
-	if (/*GetBattlerPosition(battlerId) == B_POSITION_PLAYER_LEFT
-	&& */(trainerPicId == TRAINER_BACK_PIC_RED || trainerPicId == TRAINER_BACK_PIC_LEAF)) //Is player
-		ChangeTrainerPicPal(0x100 + battlerId * 16);
+	switch (trainerPicId)
+	{
+		case TRAINER_BACK_PIC_RED: //Player M
+		case TRAINER_BACK_PIC_LEAF: //Player F
+			ChangeTrainerPicPal(0x100 + battlerId * 16); //All colours
+			break;
+		case TRAINER_BACK_PIC_MARLON_PLAYER_M:
+		case TRAINER_BACK_PIC_MARLON_PLAYER_F:
+		case TRAINER_BACK_PIC_IVORY_PLAYER_M:
+		case TRAINER_BACK_PIC_IVORY_PLAYER_F:
+			ChangePlayerPaletteByPaletteAndOffset(0x100 + battlerId * 16, TRUE, FALSE, FALSE); //Just skin
+			break;
+		case TRAINER_BACK_PIC_RED_PLAYER:
+		case TRAINER_BACK_PIC_LEAF_PLAYER:
+		case TRAINER_BACK_PIC_ETHAN_PLAYER:
+		case TRAINER_BACK_PIC_LYRA_PLAYER:
+		case TRAINER_BACK_PIC_LUCAS_PLAYER:
+		case TRAINER_BACK_PIC_DAWN_PLAYER:
+		case TRAINER_BACK_PIC_PLAYER_CHAMPION_M:
+		case TRAINER_BACK_PIC_PLAYER_CHAMPION_F:
+			ChangePlayerPaletteByPaletteAndOffset(0x100 + battlerId * 16, TRUE, TRUE, FALSE); //Just skin & hair
+			break;
+	}
 	#endif
 }
 
@@ -592,12 +685,37 @@ const u8* GetTrainerSpritePal(u16 trainerPicId)
 	return gTrainerFrontPicPaletteTable[trainerPicId].data;
 }
 
+#ifdef UNBOUND
+bool8 IsTrainerPicAffectedByCustomization(u16 trainerPicId)
+{
+	return trainerPicId == TRAINER_PIC_PLAYER_M
+		|| trainerPicId == TRAINER_PIC_PLAYER_F
+		|| trainerPicId == TRAINER_PIC_PLAYER_CHAMPION_M
+		|| trainerPicId == TRAINER_PIC_PLAYER_CHAMPION_F
+		|| trainerPicId == TRAINER_PIC_PLAYER_RED
+		|| trainerPicId == TRAINER_PIC_PLAYER_LEAF;
+}
+
+bool8 IsTrainerPicAffectedByOutfitCustomization(u16 trainerPicId)
+{
+	return trainerPicId == TRAINER_PIC_PLAYER_M
+		|| trainerPicId == TRAINER_PIC_PLAYER_F;
+}
+#endif
+
 void TryUpdateTrainerPicPalTrainerCard(u16 trainerPicId, u16 palOffset)
 {
 	LoadCompressedPalette(GetTrainerSpritePal(trainerPicId), palOffset * 16, 0x20);
 	#ifdef UNBOUND
-	if (trainerPicId == TRAINER_PIC_PLAYER_M || trainerPicId == TRAINER_PIC_PLAYER_F)
-		ChangeTrainerPicPal(palOffset * 16);
+	if (IsTrainerPicAffectedByCustomization(trainerPicId))
+	{
+		u32 offset = palOffset * 16;
+
+		if (IsTrainerPicAffectedByOutfitCustomization(trainerPicId))
+			ChangeTrainerPicPal(offset);
+		else
+			ChangeTrainerPicPalNoOutfit(offset);
+	}
 	#endif
 }
 
@@ -605,10 +723,33 @@ u16 CreateTrainerPicSprite(u16 species, bool8 isFrontPic, s16 x, s16 y, u8 palet
 {
     u16 spriteId = CreatePicSprite_HandleDeoxys(species, 0, 0, isFrontPic, x, y, paletteSlot, paletteTag, TRUE);
 	#ifdef UNBOUND
-	if (isFrontPic && (species == TRAINER_PIC_PLAYER_M || species == TRAINER_PIC_PLAYER_F))
-		ChangeTrainerPicPal(0x100 + gSprites[spriteId].oam.paletteNum * 16);
+	if (isFrontPic && IsTrainerPicAffectedByCustomization(species))
+	{
+		u32 offset = 0x100 + gSprites[spriteId].oam.paletteNum * 16;
+
+		if (IsTrainerPicAffectedByOutfitCustomization(species))
+			ChangeTrainerPicPal(offset);
+		else
+			ChangeTrainerPicPalNoOutfit(offset);
+	}
 	#endif
 	return spriteId;
+}
+
+void TryModifyMugshotTrainerPicPal(u16 trainerPicId, u8 index)
+{
+	if (IsTrainerPicAffectedByCustomization(trainerPicId)) //Is player sprite
+	{
+		if (index != 0xFF)
+		{
+			u32 offset = 0x100 + index * 16;
+
+			if (IsTrainerPicAffectedByOutfitCustomization(trainerPicId))
+				ChangeTrainerPicPal(offset);
+			else
+				ChangeTrainerPicPalNoOutfit(offset);
+		}
+	}
 }
 
 void TryUpdateRegionMapIconPal(void)
@@ -616,7 +757,7 @@ void TryUpdateRegionMapIconPal(void)
 	#ifdef UNBOUND
 	u8 paletteSlot = IndexOfSpritePaletteTag(1);
 	if (paletteSlot != 0xFF)
-		ChangeEventObjPal(0x100 + paletteSlot * 16, TRUE, TRUE);
+		ChangeEventObjPal(0x100 + paletteSlot * 16, TRUE, TRUE, TRUE);
 	#endif
 }
 

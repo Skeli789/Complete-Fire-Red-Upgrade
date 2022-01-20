@@ -237,3 +237,9 @@ Would you like to forfeit the match\nand quit now?
 
 #org @gText_BlackPlayerPrefix
 Black 
+
+#org @gText_UnknownLocation
+unknown location
+
+#org @gText_TrainerClass_ExShadowAdmin
+Ex Shadow Admin

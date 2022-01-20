@@ -1,7 +1,11 @@
 #include "defines.h"
 #include "../include/hall_of_fame.h"
+#include "../include/field_weather.h"
 #include "../include/menu.h"
+#include "../include/overworld.h"
 #include "../include/save.h"
+#include "../include/script.h"
+#include "../include/script_menu.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
 
@@ -329,13 +333,13 @@ void Task_HofPC_PrintMonInfo(u8 taskId)
 
 void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2)
 {
-    u8 text[16];
-    u8 text2[24];
-    u16 i;
-    u8 *stringPtr;
-    u16 dexNumber;
-    s32 width;
-    s32 x;
+	u8 text[16];
+	u8 text2[24];
+	u16 i;
+	u8 *stringPtr;
+	u16 dexNumber;
+	s32 width;
+	s32 x;
 	u16 species = currMon->species;
 	
 
@@ -349,16 +353,16 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 		dexNumber = SpeciesToPokedexNum(species);
 		if (dexNumber != 0xFFFF)
 		{
-            text[0] = (dexNumber / 100) + CHAR_0;
-            text[1] = ((dexNumber %= 100) / 10) + CHAR_0;
-            text[2] = (dexNumber % 10) + CHAR_0;
+			text[0] = (dexNumber / 100) + CHAR_0;
+			text[1] = ((dexNumber %= 100) / 10) + CHAR_0;
+			text[2] = (dexNumber % 10) + CHAR_0;
 		}
 		else
 		{
-            text[0] = text[1] = text[2] = CHAR_QUESTION_MARK;
+			text[0] = text[1] = text[2] = CHAR_QUESTION_MARK;
 		}
-        text[3] = EOS;
-        StringAppend(text2, text);
+		text[3] = EOS;
+		StringAppend(text2, text);
 		WindowPrint(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
 	}
 
@@ -403,7 +407,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 			}
 		}
 
-        *stringPtr = EOS;
+		*stringPtr = EOS;
 		WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
 
 		stringPtr = StringCopy(text, gText_Level);
@@ -416,4 +420,17 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 	}
 
 	CopyWindowToVram(0, COPYWIN_BOTH);
+}
+
+void __attribute__((long_call)) Task_HOFPCWaitForPaletteFade(u8 taskId);
+
+void ReshowPCMenuAfterHallOfFamePC(void)
+{
+	ScriptContext2_Enable();
+	Overworld_PlaySpecialMapMusic();
+	CreatePCMenu();
+	ScriptMenu_DisplayPCStartupPrompt();
+	gWeatherPtr->readyForInit = TRUE; //Fixes start menu bug
+	FadeScreen(FADE_FROM_BLACK, 0);
+	CreateTask(Task_HOFPCWaitForPaletteFade, 10);
 }

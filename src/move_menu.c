@@ -11,6 +11,7 @@
 #include "../include/new/ai_util.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/general_bs_commands.h"
@@ -601,12 +602,13 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 	u8 stabPalIndex = 5 * 0x10 + 6;
 	u8 palIndex = stabPalIndex + 2;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
 	moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
 	#else
 	if (!moveInfo->dynamaxed)
-		moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
+		moveType = gBattleMoves[move].type;
 	else
 		moveType = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].type;
 	#endif
@@ -622,7 +624,8 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 		stab = split != SPLIT_STATUS
 			&& (moveType == moveInfo->monType1
 			 || moveType == moveInfo->monType2
-			 || moveType == moveInfo->monType3);
+			 || moveType == moveInfo->monType3)
+			&& !CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance); //These moves can't have STAB
 
 		if (IS_SINGLE_BATTLE)
 		{
@@ -649,7 +652,14 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 			moveResult = moveInfo->moveResults[foePosition][gMoveSelectionCursor[gActiveBattler]];
 
 		SKIP_LOAD_MOVE_RESULT:
-		if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
+		if (moveResult & MOVE_RESULT_NO_EFFECT) //Comes first because overrides all others
+		{
+			gPlttBufferUnfaded[palIndex + 0] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
+			gPlttBufferUnfaded[palIndex + 1] = palPtr[NO_EFFECT_COLOURS + 1];
+			string = gText_BattleUI_NoEffect;
+			stab = FALSE; //No STAB on a move that does no damage
+		}
+		else if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 		{
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[SUPER_EFFECTIVE_COLOURS + 0];
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[SUPER_EFFECTIVE_COLOURS + 1];
@@ -660,13 +670,6 @@ void MoveSelectionDisplayMoveEffectiveness(void)
 			gPlttBufferUnfaded[palIndex + 0] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + 0];
 			gPlttBufferUnfaded[palIndex + 1] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + 1];
 			string = gText_BattleUI_NotVeryEffective;
-		}
-		else if (moveResult & MOVE_RESULT_NO_EFFECT)
-		{
-			gPlttBufferUnfaded[palIndex + 0] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
-			gPlttBufferUnfaded[palIndex + 1] = palPtr[NO_EFFECT_COLOURS + 1];
-			string = gText_BattleUI_NoEffect;
-			stab = FALSE; //No STAB on a move that does no damage
 		}
 		else //Nothing special about move
 		{
@@ -2175,8 +2178,8 @@ bool8 IsBagDisabled(void)
 	else
 	{
 		if (!IsRaidBattle()
-		&& !FlagGet(FLAG_SYS_GAME_CLEAR) //Otherwise they can't catch Legendaries
 		&& IsAuraBoss(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Wild boss
+		&& CantCatchBecauseFlag() //Can't be caught
 		&& (difficulty >= OPTIONS_EXPERT_DIFFICULTY //No items in battles for Insane players
 		 || itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS))
 			return TRUE;

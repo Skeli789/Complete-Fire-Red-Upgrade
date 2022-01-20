@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.h"
+#include "../save.h"
 
 /**
  * \file save.h
@@ -17,3 +18,4 @@ u8 HandleLoadSector(u16 a1, const struct SaveBlockChunk* chunks);
 u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* chunks);
 u8 HandleSavingData(u8 saveType);
 void NewGameWipeNewSaveData(void);
+void PrintChangeSaveTypeErrorStatus(u8 taskId, const u8* str);

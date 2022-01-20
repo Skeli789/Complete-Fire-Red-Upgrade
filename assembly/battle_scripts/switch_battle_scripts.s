@@ -33,6 +33,7 @@ switch_battle_scripts.s
 .global BattleScript_HandleFaintedMonDoublesPart2
 .global BattleScript_HandleFaintedMonDoublesSwitchInEffects
 .global BattleScript_FaintedMonChooseAnotherRejoin
+.global BattleScript_FaintedMonTryChooseAnother
 
 .global BattleScript_EntryHazardsHurtReturn
 
@@ -301,6 +302,7 @@ BattleScript_HandleFaintedMonSingles:
 	jumpifbattletype BATTLE_TRAINER, BattleScript_FaintedMonTryChooseAnother
 	jumpifword NOTANDS, HIT_MARKER, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonTryChooseAnother
 	jumpifbattletype BATTLE_DOUBLE BattleScript_FaintedMonTryChooseAnother
+	callasm SkipUseNextPkmnPromptIfCantRun
 	printstring 337 @;STRINGID_USENEXTPKMN
 	setbyte BATTLE_COMMUNICATION, 0
 	yesnobox

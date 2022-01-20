@@ -93,6 +93,7 @@ extern u16 gSaveSucceeded;
 
 extern struct SaveSection gSaveDataBuffer;
 
+void __attribute__((long_call)) ClearSaveData(void);
 void __attribute__((long_call)) SaveSerializedGame(void);
 void __attribute__((long_call)) UpdateSaveAddresses(void);
 u16 __attribute__((long_call)) CalculateSaveChecksum(void* data, u16 size);
@@ -104,7 +105,6 @@ u8 __attribute__((long_call)) TrySavingData(u8 saveType);
 u8 __attribute__((long_call)) HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
 
 /*
-void ClearSaveData(void);
 void Save_ResetSaveCounters(void);
 bool32 SetSectorDamagedStatus(u8 op, u8 bit);
 u8 HandleWriteSector(u16 a1, const struct SaveBlockChunk *location);

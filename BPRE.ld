@@ -240,6 +240,7 @@ gRamSaveSectionLocations = 0x30053B0;
 gGlobalFieldTintMode = 0x2036E28;
 gPaletteFade = 0x2037AB8;
 gPaletteDecompressionBuffer = 0x2037ACC;
+sPalettesBackup = 0x203AE90;
 
 /* Map/Overworld RAM */
 gMapHeader = 0x2036DFC;
@@ -502,6 +503,7 @@ GetEggMoves = 0x8045C28 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 GetSetPokedexFlag = 0x8088E74 | 1;
 PokedexCount = 0x8088E8C | 1;
+HasAllMons = 0x8088f84 | 1;
 HealPlayerParty = 0x80A0058 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 SizeMinigame_CalculateMonHeight = 0x80A082C | 1;
@@ -640,7 +642,7 @@ SpriteCB_TrainerSlideIn = 0x8033EEC | 1;
 BattleLoadOpponentMonSpriteGfx = 0x8034320 | 1;
 BattleLoadPlayerMonSpriteGfx = 0x8034498 | 1;
 DecompressTrainerFrontPic = 0x80346C4 | 1;
-DecompressTrainerBackPic = 0x8034750 | 1;
+DecompressTrainerBackPalette = 0x8034750 | 1;
 FreeTrainerFrontPicPaletteAndTile = 0x803477C | 1;
 battle_load_health_boxes_unused = 0x80347A8 | 1;
 load_gfxc_health_bar = 0x8034964 | 1;
@@ -989,6 +991,7 @@ PrintMoneyAmount = 0x809FEC4 | 1;
 Task_ShopMenu = 0x809AC10 | 1;
 Task_ReturnToShopMenu = 0x809AD8C | 1;
 CB2_BuyMenu = 0x809ADE4 | 1;
+BuyMenuDecompressBgGraphics = 0x809B080 | 1;
 Task_BuyMenu = 0x809BBC0 | 1;
 //Task_ReturnToItemListAfterItemPurchase = 0x809BF68 | 1;
 BuyMenuReturnToItemList = 0x809BF98 | 1;
@@ -1006,6 +1009,7 @@ BuyMenuPrint = 0x813F6F4 | 1;
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;
 DisableInterrupts = 0x8000B94 | 1;
+UseContinueGameWarp = 0x804C188 | 1;
 Overworld_SetEventObjTemplateMovementType = 0x8055114 | 1;
 ApplyCurrentWarp = 0x8055198 | 1;
 SetWarpData = 0x80551DC | 1;
@@ -1103,6 +1107,7 @@ GetDoorSoundEffect = 0x805B364 | 1;
 DoForcedMovement = 0x805B690 | 1;
 PlayerIsMovingOnRockStairs = 0x805BAAC | 1;
 SetPlayerAvatarTransitionFlags = 0x805BDEC | 1;
+DoPlayerAvatarTransition = 0x805BE08 | 1;
 PlayerAvatarTransition_Normal = 0x805BE60 | 1;
 PlayerSetAnimId = 0x805C024 | 1;
 QL_TryRecordNPCStepWithDuration32 = 0x805C0A4 | 1;
@@ -1180,6 +1185,7 @@ StartTransitionToFlipBikeState = 0x80BD5C8 | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 UpdateJumpImpactEffect = 0x80DCCE0 | 1;
 CB2_Credits = 0x80F39E8 | 1;
+GetColorFromTextColorTable = 0x813CD24 | 1;
 Task_ItemFinderNoResponse_CleanUp = 0x813ED18 | 1;
 HiddenItemIsWithinRangeOfPlayer = 0x813EE14 | 1;
 GetPlayerDirectionTowardsHiddenItem = 0x813F2F0 | 1;
@@ -1229,6 +1235,8 @@ FlagClear = 0x806E6A8 | 1;
 GetFlagPointer = 0x806E5C0 | 1;
 FlagGet = 0x806E6D0 | 1;
 Task_MultichoiceMenu_HandleInput = 0x809CC98 | 1;
+CreatePCMenu = 0x809D040 | 1;
+ScriptMenu_DisplayPCStartupPrompt = 0x809D254 | 1;
 DestroyScriptMenuWindow = 0x809D6B0 | 1;
 HelpSystemDisableOnField = 0x812B478 | 1;
 
@@ -1674,6 +1682,7 @@ GetGameStat = 0x8054EC4 | 1;
 SetGameStat = 0x8054F00 | 1;
 LogCoordsCameraRelative = 0x8063BC4 | 1;
 ResetTrainerCard = 0x8089D0C | 1;
+ClearSaveData = 0x80D972C | 1;
 SetSectorDamagedStatus = 0x80D976C | 1;
 //SaveWriteToFlash = 0x80D97D0 | 1;
 HandleWriteSectorNBytes = 0x80D9960 | 1;
@@ -1830,6 +1839,7 @@ TintPalette_GrayScale = 0x8071544 | 1;
 TintPalette_GrayScale2 = 0x8071594 | 1;
 TintPalette_SepiaTone = 0x80715F4 | 1;
 TintPalette_CustomTone = 0x8071660 | 1;
+sub_80716F8 = 0x80716F8 | 1;
 sub_80717A8 = 0x80717A8 | 1;
 sub_807185C = 0x807185C | 1;
 sub_8071898 = 0x8071898 | 1;
@@ -1977,6 +1987,7 @@ dp13_810BB8C = 0x810BB8C | 1;
 HofPC_CreateWindow = 0x810F558 | 1;
 HofPC_PutText = 0x810F650 | 1;
 SaveQuestLogData = 0x8112450 | 1;
+Task_HOFPCWaitForPaletteFade = 0x80CA5F8 | 1;
 
 /* Pokemon/Trainer Sprite Functions */
 ResetAllPicSprites = 0x810BB8C | 1;
@@ -2013,6 +2024,7 @@ umodsi = 0x81E4684 | 1;
 
 
 /* Debug */
+DoSoftReset = 0x80008D8 | 1;
 AGBPrintInit = 0x81E37A8 | 1;
 AGBPutc = 0x81E391C | 1;
 AGBPrint = 0x81E397C | 1;

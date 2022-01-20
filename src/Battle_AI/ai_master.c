@@ -635,6 +635,7 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 	{
 		//Change the default target
 		mostViableTargetsArray[0] = 1;
+		mostMovePoints = bestMovePointsForTarget[1];
 		firstMovePos = actionOrMoveIndex[mostViableTargetsArray[0]];
 		firstMove = gBattleMons[gBankAttacker].moves[firstMovePos];
 	}
@@ -826,7 +827,8 @@ static u8 ChooseTarget_Doubles(const s16* bestMovePointsForTarget, const u8* act
 		}
 		else if (bestMovePointsForTarget[bankDef] > mostMovePoints) //This target is the best one so far
 		{
-			if (SPLIT(move) == SPLIT_STATUS && move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
+			if (mostMovePoints >= 0 //Chosen move has some viability - helps if initial move had negative score
+			&& SPLIT(move) == SPLIT_STATUS && move != MOVE_QUASH && PartnerWillKOTargetBeforeItCanAttack(gBankAttacker, bankDef))
 			{
 				if (!usingDefaultTarget //Has added new targets
 				|| !HittingTargetWithUselessStatusMove(gBankAttacker, mostViableTargetsArray[0], actionOrMoveIndex)) //The only target (the default target) isn't being targeted with a useless move

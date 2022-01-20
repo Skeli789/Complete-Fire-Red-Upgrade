@@ -709,6 +709,7 @@ BattleScript_WeakArmorActivates:
 
 WeakArmorModDef:
 	call BattleScript_AbilityPopUp
+	jumpifstat BANK_TARGET EQUALS STAT_DEF STAT_MIN WeakArmorModSpd
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE @;Ignored Sheer Force
 	setstatchanger STAT_DEF | DECREASE_1
 	statbuffchange BANK_TARGET | STAT_CERTAIN WeakArmorModSpd

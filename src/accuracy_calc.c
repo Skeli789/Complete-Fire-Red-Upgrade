@@ -69,7 +69,7 @@ ACCURACY_CHECK_START:
 		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		}
-		else if (!JumpIfMoveAffectedByProtect(move, gBankAttacker, gBankTarget, TRUE))
+		else if (!JumpIfMoveAffectedByProtect(gCurrentMove, gBankAttacker, gBankTarget, TRUE)) //Obviousl move shouldn't be used, it's 0xFFFF or 0xFFFE
 		{
 			gBattlescriptCurrInstr += 7;
 		}

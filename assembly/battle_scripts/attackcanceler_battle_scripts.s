@@ -57,7 +57,7 @@ BattleScript_MagicBounce:
 	printstring 0x184
 	waitmessage DELAY_1SECOND	
 	call BattleScript_AbilityPopUpRevert
-	orword 0x2023DD0 0x800C00
+	orword HIT_MARKER, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_x800000
 	various BANK_ATTACKER 0x1
 	return
 

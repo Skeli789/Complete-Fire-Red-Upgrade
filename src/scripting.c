@@ -32,6 +32,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_strings.h"
+#include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dns.h"
@@ -1151,7 +1152,10 @@ bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
 
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL)
 	||  mon->hp == 0
-	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
+	#ifndef UNBOUND
+	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList)
+	#endif
+	)
 		return FALSE;
 
 	if (gBaseStats[species].type1 == TYPE_FLYING
@@ -1191,6 +1195,7 @@ u16 sp058_BufferSwarmText(void)
 	{
 		u8 mapName = gSwarmTable[index].mapName;
 		u16 species = gSwarmTable[index].species;
+		TryRandomizeSpecies(&species);
 
 		GetMapName(sScriptStringVars[0], mapName, 0);
 		StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
@@ -1624,17 +1629,17 @@ bool8 IsTimeInVarInFuture(u16 var)
 {
 	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
 
-	u8 hour = timeData->hour;
-	u8 minute = timeData->minute;
+	//u8 hour = timeData->hour;
+	//u8 minute = timeData->minute; //Changing time within day is acceptable
 	u8 day = timeData->day;
 	u8 month = timeData->month;
 	u32 year = timeData->year + timeData->century * 100;
 
 	return year > gClock.year
 	|| (year == gClock.year && month > gClock.month)
-	|| (year == gClock.year && month == gClock.month && day > gClock.day)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
 }
 
 bool8 IsDayInVarInFuture(u16 var)

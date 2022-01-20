@@ -15,9 +15,9 @@ bool8 __attribute__((long_call)) IsBattleSEPlaying(u8 battlerId);
 void __attribute__((long_call)) BattleLoadOpponentMonSpriteGfx(struct Pokemon *mon, u8 battlerId);
 void __attribute__((long_call)) BattleLoadPlayerMonSpriteGfx(struct Pokemon *mon, u8 battlerId);
 void __attribute__((long_call)) DecompressGhostFrontPic(struct Pokemon *unused, u8 battlerId);
-void __attribute__((long_call)) DecompressTrainerFrontPic(u16 frontPicId, u8 battlerId);
+void __attribute__((long_call)) DecompressTrainerFrontPic(u16 frontPicId, u8 battlerId);*/
 void __attribute__((long_call)) DecompressTrainerBackPalette(u16 a1, u8 a2);
-void __attribute__((long_call)) BattleGfxSfxDummy3(u8 a1);*/
+/*void __attribute__((long_call)) BattleGfxSfxDummy3(u8 a1);*/
 void __attribute__((long_call)) FreeTrainerFrontPicPaletteAndTile(u16 frontPicId);
 /*bool8 __attribute__((long_call)) BattleLoadAllHealthBoxesGfx(u8 state);
 void __attribute__((long_call)) LoadBattleBarGfx(u8 arg0);

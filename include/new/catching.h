@@ -15,6 +15,7 @@ void atkF1_trysetcaughtmondexflags(void);
 
 //Exported Functions
 struct Pokemon* LoadTargetPartyData(void);
+u32 GetBaseBallCatchOdds(u8 ballType, u8 bankAtk, u8 bankDef);
 bool8 IsCriticalCapture(void);
 bool8 IsCriticalCaptureSuccess(void);
 bool8 CantCatchBecauseFlag(void);

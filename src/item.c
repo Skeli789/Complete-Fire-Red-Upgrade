@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
 #include "../include/menu.h"
@@ -18,6 +19,8 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/tutors.h"
 
+#include "../include/new/catching.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/set_z_effect.h"
@@ -1399,9 +1402,12 @@ u16 CountTMsInBag(void)
 	for (i = 0, count = 0; i < amount; ++i)
 	{
 		if (itemMem[i].itemId != ITEM_NONE
-		&& itemMem[i].quantity > 0
-		&& TMIdFromItemId(itemMem[i].itemId) <= NUM_TMS)
-			++count;
+		&& itemMem[i].quantity > 0)
+		{
+			u16 id = TMIdFromItemId(itemMem[i].itemId);
+			if (id < NUM_TMS)
+				++count;
+		}	
 	}
 
 	return count;
@@ -1687,6 +1693,10 @@ static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot*
 	else if (itemSlot2->itemId == ITEM_NONE)
 		return -1;
 
+	#ifdef ANTI_MAX_ITEM_CHEAT
+	ANTI_MAX_ITEM_CHEAT
+	#endif
+
 	if (itemSlot1->quantity == 0)
 	{
 		itemSlot1->itemId = ITEM_NONE; //Remove bugged items
@@ -1948,6 +1958,8 @@ static void TryDestroyItemDescriptionTask(void)
 		DestroyTask(taskId);
 }
 
+#define Task_WaitAB_RedrawAndReturnToBag (void*) (0x8109f44 | 1)
+#define Task_WaitPressAB_AfterSell (void*) (0x810aaf4 | 1)
 void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 {
 	const u8 *description;
@@ -1960,7 +1972,9 @@ void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
 		if (JOY_NEW(DPAD_DOWN | DPAD_UP) //Single item scroll
 		|| itemIndex == 0 //Top of bag
 		|| sItemDescriptionPocket != gBagMenuState.pocket + 1 //Changed pockets so print some description
-		|| sItemDescriptionPocket == 0) //Open bag or post item sort
+		|| sItemDescriptionPocket == 0 //Open bag or post item sort
+		|| FuncIsActiveTask(Task_WaitAB_RedrawAndReturnToBag) //Just finished tossing
+		|| FuncIsActiveTask(Task_WaitPressAB_AfterSell)) //Just finished selling
 		{
 			sItemDescriptionPocket = gBagMenuState.pocket + 1;
 			BagPrintTextOnWindow(1, 2, description, 0, 3, 2, 0, 0, 0); //Print description right away
@@ -2054,4 +2068,35 @@ void BagListMenuGetItemNameColored(u8 *dest, u16 itemId)
 		*dest++ = CHAR_LV;
 		ConvertIntToDecimalStringN(dest, levelToAppend, STR_CONV_MODE_LEFT_ALIGN, 2);
 	}
+}
+
+u16 GetBestBallInBag(void)
+{
+	u32 i, bestOdds;
+	u16 bestBall = ITEM_NONE;
+	u8 bankAtk = (IS_SINGLE_BATTLE || BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))) ? GetBattlerAtPosition(B_POSITION_PLAYER_LEFT) : GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+	u8 bankDef = (IS_SINGLE_BATTLE || BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))) ? GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) : GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+
+	if (IsRaidBattle())
+		bankDef = BANK_RAID_BOSS; //Both foes are "KOd", so pick the one that's actually the target
+
+	for (i = 0, bestOdds = 0; i < NUM_POKE_BALLS; ++i)
+	{
+		u16 item = sBagPokeBalls[i].itemId;
+		
+		if (item == ITEM_MASTER_BALL)
+			continue; //Obviously this is the best, but you don't want to waste it
+		else if (item == ITEM_NONE)
+			continue;
+
+		u32 odds = GetBaseBallCatchOdds(ItemId_GetType(item), bankAtk, bankDef);
+
+		if (odds > bestOdds)
+		{
+			bestBall = item;
+			bestOdds = odds;
+		}
+	}
+
+	return bestBall;
 }

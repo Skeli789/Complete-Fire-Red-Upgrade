@@ -1270,7 +1270,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 								if (GetMonData(&defParty[j], MON_DATA_HP, NULL) > 0
 								&&  GetMonData(&defParty[j], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 								&& !GetMonData(&defParty[j], MON_DATA_IS_EGG, NULL)
-								&&  ItemId_GetHoldEffect(GetMonData(&defParty[j], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+								&&  IsMonAffectedByHazards(&defParty[j])
 								&&  j != gBattlerPartyIndexes[data->foe1]
 								&&  j != gBattlerPartyIndexes[data->foe2]
 								&&  CheckMonGrounding(&defParty[j]) == GROUNDED //Affected by Sticky Web
@@ -1294,7 +1294,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
 						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
-						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+						&&  IsMonAffectedByHazards(&defParty[i])
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2])
 						{
@@ -1310,7 +1310,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
 						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
-						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+						&&  IsMonAffectedByHazards(&defParty[i])
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
 						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)
@@ -1335,7 +1335,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
 						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
-						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+						&&  IsMonAffectedByHazards(&defParty[i])
 						&&  i != gBattlerPartyIndexes[data->foe1]
 						&&  i != gBattlerPartyIndexes[data->foe2]
 						&&  CheckMonGrounding(&defParty[i]) == GROUNDED)

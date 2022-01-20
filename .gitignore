@@ -22,6 +22,7 @@ cfru_thread.txt
 src/Tables/criminon_trainer_spreads.c
 src/start_menu_unbound.c
 src/unbound_util.c
+strings/unbound.string
 Cover Art.png
 
 # generated temporary files

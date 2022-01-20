@@ -1730,6 +1730,7 @@ u8 TurnBasedEffects(void)
 				}
 
 				Memset(gNewBS->ai.pivotTo, PARTY_SIZE, sizeof(gNewBS->ai.pivotTo));
+				Memset(gBattleStruct->switchoutIndex, PARTY_SIZE, sizeof(gBattleStruct->switchoutIndex)); //Fixes bug where it's not cleared for some reason
 				ClearMonCachedDamageCalcs();
 				ClearCachedAIData();
 		}
@@ -1783,7 +1784,7 @@ u32 GetPoisonDamage(u8 bank, bool8 aiCalc)
 			damage *= (status) >> 8;
 		}
 	}
-	else if (ability == ABILITY_POISONHEAL)
+	else if (ability == ABILITY_POISONHEAL && !aiCalc)
 		damage = MathMax(1, GetBaseMaxHP(bank) / 8);
 
 	return damage;
@@ -2188,7 +2189,7 @@ bool8 HandleFaintedMonActions(void)
 			case 8:
 				do
 					{
-						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+						gBankFainted = gBankTarget = gBanksByTurnOrder[gBattleStruct->faintedActionsBank];
 						BackupSwitchingBank();
 						if (gNewBS->handleSetSwitchIns & gBitTable[gBankFainted])
 						{

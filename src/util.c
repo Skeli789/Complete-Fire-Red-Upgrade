@@ -251,20 +251,20 @@ u32 GetBaseStatsTotal(const u16 species)
 	return sum;
 }
 
-static u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
+static u8 TryRandomizeAbility(u8 originalAbility, unusedArg u16 species)
 {
-	u32 newAbility = ability;
+	u32 newAbility = originalAbility;
 
 	#ifdef FLAG_ABILITY_RANDOMIZER
 	if (FlagGet(FLAG_ABILITY_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)
-	&& !gSpecialAbilityFlags[ability].gRandomizerBannedOriginalAbilities) //This Ability can be changed
+	&& !gSpecialAbilityFlags[originalAbility].gRandomizerBannedOriginalAbilities) //This Ability can be changed
 	{
 		u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
 		u16 startAt = (id & 0xFFFF) % (u32) ABILITIES_COUNT;
 		u16 xorVal = (id >> 16) % (u32) 0xFF; //Only set the bits likely to be in the ability
 		u32 numAttempts = 0;
 
-		newAbility = ability + startAt;
+		newAbility = originalAbility + startAt;
 		if (newAbility >= ABILITIES_COUNT)
 		{
 			u16 overflow = newAbility - (ABILITIES_COUNT - 2);
@@ -282,7 +282,9 @@ static u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
 		}
 
 		if (numAttempts >= 100 && gSpecialAbilityFlags[newAbility].gRandomizerBannedNewAbilities) //If the Ability is still banned
-			newAbility = ABILITY_ILLUMINATE; //An Ability that has no beneficial effect
+			newAbility = originalAbility; //Just use the original ability
+		else if (newAbility == ABILITY_NONE) //Somehow wound up with no Ability
+			newAbility = originalAbility; //Just use the original ability
 	}
 	#endif
 
