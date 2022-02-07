@@ -755,6 +755,7 @@ struct NewBattleStruct
 	u8 SlowStartTimers[MAX_BATTLERS_COUNT];
 	u8 StakeoutCounters[MAX_BATTLERS_COUNT];
 	u8 StompingTantrumTimers[MAX_BATTLERS_COUNT];
+	u8 splinterTimer[MAX_BATTLERS_COUNT];
 	u8 NimbleCounters[MAX_BATTLERS_COUNT];
 	u8 DestinyBondCounters[MAX_BATTLERS_COUNT];
 	u8 MetronomeCounter[MAX_BATTLERS_COUNT];
@@ -781,6 +782,7 @@ struct NewBattleStruct
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
 	u8 quickClawRandomNumber[MAX_BATTLERS_COUNT];
 	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
+	u8 powerShifted[MAX_BATTLERS_COUNT];
 	u16 tookAbilityFrom[MAX_BATTLERS_COUNT]; //Helps display the correct Ability when one has been passed around
 
 	//Bit Fields for Banks
@@ -1246,6 +1248,7 @@ struct FlingStruct
 #define B_ANIM_G_MAX_VOLCALITH 0x4D
 #define B_ANIM_AI_ITEM_HEAL 0x4E
 #define B_ANIM_HOOPA_RING_SPAWN 0x4F
+#define B_ANIM_SPLINTER_DAMAGE 0x50
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

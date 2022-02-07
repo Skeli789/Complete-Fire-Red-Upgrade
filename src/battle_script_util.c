@@ -126,41 +126,53 @@ void AcupressureFunc(void)
 
 void SetStatSwapSplit(void)
 {
+	u32 temp, i;
 	u8 bankAtk = gBankAttacker;
 	u8 bankDef = gBankTarget;
-	u32 temp, i;
+	const u8* string = NULL;
 
 	switch (gCurrentMove) {
 		case MOVE_POWERTRICK:
 			temp = gBattleMons[bankAtk].attack;
 			gBattleMons[bankAtk].attack = gBattleMons[bankAtk].defense;
 			gBattleMons[bankAtk].defense = temp;
-
 			gStatuses3[bankAtk] ^= STATUS3_POWER_TRICK;
 
-			gBattleStringLoader = PowerTrickString;
+			string = PowerTrickString;
+			break;
+
+		case MOVE_POWERSHIFT: //Swaps both offenses with both defenses
+			temp = gBattleMons[bankAtk].attack;
+			gBattleMons[bankAtk].attack = gBattleMons[bankAtk].defense;
+			gBattleMons[bankAtk].defense = temp;
+			temp = gBattleMons[bankAtk].spAttack;
+			gBattleMons[bankAtk].spAttack = gBattleMons[bankAtk].spDefense;
+			gBattleMons[bankAtk].spDefense = temp;
+			gNewBS->powerShifted[bankAtk] ^= 1; //Mainly for the AI
+
+			string = gText_PowerShiftSwappedStats;
 			break;
 
 		case MOVE_POWERSWAP:	;
-			u8 atkAtkBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1];
-			u8 atkSpAtkBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1] = gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1] = gBattleMons[bankDef].statStages[STAT_STAGE_SPATK-1];
-			gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1] = atkAtkBuff;
-			gBattleMons[bankDef].statStages[STAT_STAGE_SPATK-1] = atkSpAtkBuff;
+			u8 atkAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_ATK);
+			u8 atkSpAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPATK);
+			STAT_STAGE(bankAtk, STAT_STAGE_ATK) = STAT_STAGE(bankDef, STAT_STAGE_ATK);
+			STAT_STAGE(bankAtk, STAT_STAGE_SPATK) = STAT_STAGE(bankDef, STAT_STAGE_SPATK);
+			STAT_STAGE(bankDef, STAT_STAGE_ATK) = atkAtkBuff;
+			STAT_STAGE(bankDef, STAT_STAGE_SPATK) = atkSpAtkBuff;
 
-			gBattleStringLoader = PowerSwapString;
+			string = PowerSwapString;
 			break;
 
 		case MOVE_GUARDSWAP:	;
-			u8 atkDefBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1];
-			u8 atkSpDefBuff = gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1] = gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1];
-			gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1] = gBattleMons[bankDef].statStages[STAT_STAGE_SPDEF-1];
-			gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1] = atkDefBuff;
-			gBattleMons[bankDef].statStages[STAT_STAGE_SPDEF-1] = atkSpDefBuff;
+			u8 atkDefBuff = STAT_STAGE(bankAtk, STAT_STAGE_DEF);
+			u8 atkSpDefBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPDEF);
+			STAT_STAGE(bankAtk, STAT_STAGE_DEF) = STAT_STAGE(bankDef, STAT_STAGE_DEF);
+			STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) = STAT_STAGE(bankDef, STAT_STAGE_SPDEF);
+			STAT_STAGE(bankDef, STAT_STAGE_DEF) = atkDefBuff;
+			STAT_STAGE(bankDef, STAT_STAGE_SPDEF) = atkSpDefBuff;
 
-			gBattleStringLoader = GuardSwapString;
+			string = GuardSwapString;
 			break;
 
 		case MOVE_SPEEDSWAP:
@@ -168,18 +180,18 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankAtk].speed = gBattleMons[bankDef].speed;
 			gBattleMons[bankDef].speed = temp;
 
-			gBattleStringLoader = SpeedSwapString;
+			string = SpeedSwapString;
 			break;
 
 		case MOVE_HEARTSWAP:
-			for (i = 0; i < BATTLE_STATS_NO-1; ++i)
+			for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
 			{
 				temp = gBattleMons[bankAtk].statStages[i];
 				gBattleMons[bankAtk].statStages[i] = gBattleMons[bankDef].statStages[i];
 				gBattleMons[bankDef].statStages[i] = temp;
 			}
 
-			gBattleStringLoader = HeartSwapString;
+			string = HeartSwapString;
 			break;
 
 		case MOVE_POWERSPLIT:	;
@@ -191,7 +203,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].attack = MathMax(1, newAtk);
 			gBattleMons[bankDef].spAttack = MathMax(1, newSpAtk);
 
-			gBattleStringLoader = PowerSplitString;
+			string = PowerSplitString;
 			break;
 
 		case MOVE_GUARDSPLIT:	;
@@ -203,8 +215,10 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].defense = MathMax(1, newDef);
 			gBattleMons[bankDef].spDefense = MathMax(1, newSpDef);
 
-			gBattleStringLoader = GuardSplitString;
+			string = GuardSplitString;
 	}
+
+	gBattleStringLoader = string;
 }
 
 void ResetTargetStats(void)
@@ -2168,18 +2182,43 @@ void TryFailLifeDew(void)
 		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
 }
 
-void TryFailJungleHealing(void)
+bool8 ShouldJungleHealingFail(u8 bankAtk)
 {
-	if (!BATTLER_MAX_HP(gBankAttacker) || gBattleMons[gBankAttacker].status1 != 0)
-		return; //Success
+	if (!BATTLER_MAX_HP(bankAtk) || gBattleMons[bankAtk].status1 != 0)
+		return FALSE; //It will work
 
-	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker)))
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankAtk)))
 	{
-		if (!BATTLER_MAX_HP(PARTNER(gBankAttacker)) || gBattleMons[PARTNER(gBankAttacker)].status1 != 0)
-			return; //Success
+		u8 partner = PARTNER(bankAtk);
+
+		if (!BATTLER_MAX_HP(partner) || gBattleMons[partner].status1 != 0)
+			return FALSE; //It will work
 	}
 
-	gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+	return TRUE;
+}
+
+void TryFailJungleHealing(void)
+{
+	if (ShouldJungleHealingFail(gBankAttacker))
+		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+}
+
+bool8 ShouldLunarBlessingFail(u8 bankAtk)
+{
+	if (!BATTLER_MAX_HP(bankAtk) || gBattleMons[bankAtk].status1 != 0)
+		return FALSE; //It will work
+
+	if (STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+		return FALSE;
+
+	return TRUE;
+}
+
+void TryFailLunarBlessing(void)
+{
+	if (ShouldLunarBlessingFail(gBankAttacker))
+		gBattlescriptCurrInstr = BattleScript_LunarBlessingFail - 5;
 }
 
 void SetStickyWebActive(void)
@@ -2555,4 +2594,37 @@ void SkipUseNextPkmnPromptIfCantRun(void)
 {
 	if (AreAllKindsOfRunningPrevented())
 		gBattlescriptCurrInstr = BattleScript_FaintedMonTryChooseAnother - 5;
+}
+
+void TryRaiseHigherDefensesOverOffenses(void)
+{
+	if (AreDefensesHigherThanOffenses(gBankAttacker))
+		gBattlescriptCurrInstr = BattleScript_HigherDefensesUp - 5;
+}
+
+void ModifyAttackStatChangeForVictoryDance(void)
+{
+	if (gCurrentMove == MOVE_VICTORYDANCE)
+		gBattleScripting.statChanger += INCREASE_1; //Doubles attack is the same as +1 and 1.5 power boost
+}
+
+bool8 IsSpringtideStormSpDefDown(unusedArg u8 bank)
+{
+	#ifdef SPECIES_ENAMORUS_THERIAN
+	return SPECIES(bank) == SPECIES_ENAMORUS_THERIAN;
+	#else
+	return FALSE;
+	#endif
+}
+
+void ChooseMoveEffectForSpringtideStorm(void)
+{
+	u8 moveEffect;
+
+	if (IsSpringtideStormSpDefDown(gBankAttacker))
+		moveEffect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT;
+	else
+		moveEffect = EFFECT_ALL_STATS_UP_HIT;
+
+	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[moveEffect] - 5;
 }

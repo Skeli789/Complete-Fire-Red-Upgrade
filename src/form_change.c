@@ -312,6 +312,14 @@ bool8 TryFormRevert(struct Pokemon* mon)
 		TryRevertGiratinaOrigin(mon, FALSE);
 	}
 	#endif
+	#if (defined SPECIES_ETERNATUS && defined SPECIES_ETERNATUS_ETERNAMAX)
+	else if (mon->species == SPECIES_ETERNATUS_ETERNAMAX) //If it was hacked in
+	{
+		mon->species = SPECIES_ETERNATUS;
+		CalculateMonStats(mon);
+		return TRUE;
+	}
+	#endif
 
 	return FALSE;
 }

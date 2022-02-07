@@ -325,38 +325,37 @@
 
 enum
 {
-    ANIM_BANK_ATTACKER,
-    ANIM_BANK_TARGET,
-    ANIM_BANK_ATK_PARTNER,
-    ANIM_BANK_DEF_PARTNER,
+	ANIM_BANK_ATTACKER,
+	ANIM_BANK_TARGET,
+	ANIM_BANK_ATK_PARTNER,
+	ANIM_BANK_DEF_PARTNER,
 };
 
 enum
 {
-    BG_ANIM_SCREEN_SIZE,
-    BG_ANIM_AREA_OVERFLOW_MODE,
-    BG_ANIM2,
-    BG_ANIM3,
-    BG_ANIM_PRIORITY,
-    BG_ANIM_5,
-    BG_ANIM_6
+	BG_ANIM_SCREEN_SIZE,
+	BG_ANIM_AREA_OVERFLOW_MODE,
+	BG_ANIM_MOSAIC,
+	BG_ANIM_CHAR_BASE_BLOCK,
+	BG_ANIM_PRIORITY,
+	BG_ANIM_PALETTES_MODE,
+	BG_ANIM_SCREEN_BASE_BLOCK
 };
 
-struct UnknownAnimStruct2
+struct BattleAnimBgData
 {
-    void *unk0;
-    u16 *unk4;
-    u8 unk8;
-    u8 unk9;
-    u16 unkA;
-    u16 unkC;
+	u8 *bgTiles;
+	u16 *bgTilemap;
+	u8 paletteId;
+	u8 bgId;
+	u16 tilesOffset;
+	u16 unused;
 };
-
 struct BattleAnimBackground
 {
-    void *image;
-    void *palette;
-    void *tilemap;
+	void *image;
+	void *palette;
+	void *tilemap;
 };
 
 #define ANIM_ARGS_COUNT 8
@@ -370,22 +369,22 @@ void __attribute__((long_call)) SetAverageBattlerPositions(u8 battlerId, bool8 r
 
 enum
 {
-    BATTLER_COORD_X,
-    BATTLER_COORD_Y,
-    BATTLER_COORD_X_2,
-    BATTLER_COORD_Y_PIC_OFFSET,
-    BATTLER_COORD_Y_PIC_OFFSET_DEFAULT,
+	BATTLER_COORD_X,
+	BATTLER_COORD_Y,
+	BATTLER_COORD_X_2,
+	BATTLER_COORD_Y_PIC_OFFSET,
+	BATTLER_COORD_Y_PIC_OFFSET_DEFAULT,
 };
 
 enum
 {
-    BATTLER_COORD_ATTR_HEIGHT,
-    BATTLER_COORD_ATTR_WIDTH,
-    BATTLER_COORD_ATTR_TOP,
-    BATTLER_COORD_ATTR_BOTTOM,
-    BATTLER_COORD_ATTR_LEFT,
-    BATTLER_COORD_ATTR_RIGHT,
-    BATTLER_COORD_ATTR_RAW_BOTTOM,
+	BATTLER_COORD_ATTR_HEIGHT,
+	BATTLER_COORD_ATTR_WIDTH,
+	BATTLER_COORD_ATTR_TOP,
+	BATTLER_COORD_ATTR_BOTTOM,
+	BATTLER_COORD_ATTR_LEFT,
+	BATTLER_COORD_ATTR_RIGHT,
+	BATTLER_COORD_ATTR_RAW_BOTTOM,
 };
 
 u8 __attribute__((long_call)) GetBattlerSpriteCoord(u8 battlerId, u8 attributeId);
@@ -451,6 +450,12 @@ void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
 u32 __attribute__((long_call)) SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
 void __attribute__((long_call)) TryShinyAnimation(u8 bank, struct Pokemon *mon);
 void __attribute__((long_call)) AnimHitSplatOnMonEdge(struct Sprite *sprite);
+void __attribute__((long_call)) SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
+s32 __attribute__((long_call)) GetAnimBgAttribute(u8 bgId, u8 attributeId);
+void __attribute__((long_call)) GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData);
+void __attribute__((long_call)) AnimLoadCompressedBgTilemap(u32 bgId, const u32 *src);
+void __attribute__((long_call)) AnimLoadCompressedBgGfx(u32 bgId, const u32 *src, u32 tilesOffset);
+void __attribute__((long_call)) RelocateBattleBgPal(u16 paletteNum, u16 *dest, s32 offset, u8 largeScreen);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

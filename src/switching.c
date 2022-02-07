@@ -1273,6 +1273,8 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->chiStrikeCritBoosts[bank] = 0;
 	gNewBS->sandblastCentiferno[bank] = 0;
 	gNewBS->disguisedAs[bank] = 0;
+	gNewBS->powerShifted[bank] = 0;
+	gNewBS->splinterTimer[bank] = 0;
 	gNewBS->tookAbilityFrom[bank] = 0;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
@@ -1368,28 +1370,38 @@ u32 CalcStealthRockDamage(u8 bank)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (!IsAffectedByHazards(bank))
-		return 0;
-
 	TypeDamageModification(0, bank, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, gBattleMons[bank].maxHP / divisor);
 }
 
-u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
+u32 GetStealthRockDamage(u8 bank)
+{
+	if (!IsAffectedByHazards(bank))
+		return 0;
+
+	return CalcStealthRockDamage(bank);
+}
+
+u32 CalcMonStealthRockDamage(struct Pokemon* mon)
 {
 	u8 flags;
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (!IsMonAffectedByHazards(mon))
-		return 0;
-
 	TypeDamageModificationPartyMon(0, mon, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
+}
+
+u32 GetStealthRockDamagePartyMon(struct Pokemon* mon)
+{
+	if (!IsMonAffectedByHazards(mon))
+		return 0;
+
+	return CalcMonStealthRockDamage(mon);
 }
 
 u32 CalcSteelsurgeDamage(u8 bank)
@@ -1461,7 +1473,7 @@ u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side)
 	&& IsMonAffectedByHazards(mon)) //Has Klutz or not holding boots
 	{
 		if (gSideTimers[side].srAmount > 0)
-			dmg += CalcStealthRockDamagePartyMon(mon);
+			dmg += CalcMonStealthRockDamage(mon);
 
 		if (gSideTimers[side].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);

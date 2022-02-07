@@ -66,6 +66,7 @@ bool8 MainStatsMaxed(u8 bank);
 bool8 StatsMinned(u8 bank);
 bool8 MainStatsMinned(u8 bank);
 bool8 AnyStatGreaterThan(u8 bank, u8 amount);
+bool8 AreDefensesHigherThanOffenses(u8 bank);
 u8 CountBoosts(u8 bank);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffect, u16 choicedMove);

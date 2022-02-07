@@ -6860,7 +6860,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_VENOSHOCK] =
 	{
-		.effect = EFFECT_HIT,
+		.effect = EFFECT_HIT, //Also double damage on poisoned foes
 		.power = 65,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -11623,8 +11623,8 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_SHELLSIDEARM] =
-	{	//ANIM TODO
-		.effect = EFFECT_HIT, //EFFECT TODO
+	{
+		.effect = EFFECT_HIT,
 		.power = 90,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -11943,7 +11943,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_FIERYWRATH] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_FLINCH_HIT,
 		.power = 90,
 		.type = TYPE_DARK,
@@ -11959,7 +11959,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_EERIESPELL] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_SPITE,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
@@ -12038,6 +12038,435 @@ const struct BattleMove gBattleMoves[] =
 		.z_move_effect = 0
 	},
 
+	[MOVE_DIRECLAW] =
+	{
+		.effect = EFFECT_TRI_ATTACK,
+		.power = 60,
+		.type = TYPE_POISON,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 50,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_PSYSHIELDBASH] =
+	{
+		.effect = EFFECT_DEFENSE_UP_HIT,
+		.power = 70,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_POWERSHIFT] =
+	{
+		.effect = EFFECT_STAT_SWAP_SPLIT,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_ATK_UP_1
+	},
+
+	[MOVE_STONEAXE] =
+	{
+		.effect = EFFECT_SPLINTER,
+		.power = 65,
+		.type = TYPE_ROCK,
+		.accuracy = 90,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_MYSTICALPOWER] =
+	{
+		.effect = EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT, //Atk/Sp. Atk up, or Def./Sp.Def up
+		.power = 70,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_RAGINGFURY] =
+	{
+		.effect = EFFECT_RAMPAGE,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 90,
+		.z_move_power = 175,
+		#else
+		.power = 120, //Other rampage moves also had power reduced to 90 in PLA
+		.z_move_power = 190,
+		#endif
+		.type = TYPE_FIRE,
+		.accuracy = 85,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_RANDOM,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_WAVECRASH] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 75,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 1, //"Raises user's action speed" is said about PLA's equivalent to Priority moves
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_CHLOROBLAST] =
+	{
+		.effect = EFFECT_HIT, //Has the same recoil as Mind Blown and Steel Beam
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 120,
+		.z_move_power = 190,
+		#else
+		.power = 150,
+		.z_move_power = 200,
+		#endif
+		.type = TYPE_GRASS,
+		.accuracy = 95,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_MOUNTAINGALE] =
+	{
+		.effect = EFFECT_FLINCH_HIT,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 100,
+		.z_move_power = 180,
+		#else
+		.power = 110,
+		.z_move_power = 185,
+		#endif
+		.type = TYPE_ICE,
+		.accuracy = 85,
+		.pp = 5,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_VICTORYDANCE] =
+	{
+		.effect = EFFECT_BULK_UP,
+		.power = 0,
+		.type = TYPE_FIGHTING,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_ATK_UP_1
+	},
+
+	[MOVE_HEADLONGRUSH] =
+	{
+		.effect = EFFECT_SUPERPOWER, //-Def, -Sp. Def
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 100,
+		.z_move_power = 180,
+		#else
+		.power = 120,
+		.z_move_power = 190,
+		#endif
+		.type = TYPE_GROUND,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_BARBBARRAGE] =
+	{
+		.effect = EFFECT_POISON_HIT, //Also double damage on poisoned foes
+		.power = 60,
+		.type = TYPE_POISON,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_ESPERWING] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 75,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 1, //"Raises user's action speed" is said about PLA's equivalent to Priority moves
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_BITTERMALICE] =
+	{
+		.effect = EFFECT_FREEZE_HIT, //Also double damage on frozen foes
+		.power = 60,
+		.type = TYPE_GHOST,
+		.accuracy = 100,
+		.pp = 15,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.secondaryEffectChance = 30,
+		#else
+		.secondaryEffectChance = 20, //30% Freeze chance is way too OP (it's Frostbite - an altered Freeze - in PLA)
+		#endif
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_SHELTER] =
+	{
+		.effect = EFFECT_DEF_EVSN_UP,
+		.power = 0,
+		.type = TYPE_STEEL,
+		.accuracy = 0,
+		.pp = 20,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_SPDEF_UP_1
+	},
+
+	[MOVE_TRIPLEARROWS] =
+	{
+		.effect = EFFECT_DEFENSE_DOWN_HIT, //Also raises crit chance
+		.power = 50,
+		.type = TYPE_FIGHTING,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 100,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_INFERNALPARADE] =
+	{
+		.effect = EFFECT_BURN_HIT, //Also double damage on burned foes
+		.power = 60,
+		.type = TYPE_GHOST,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_CEASELESSEDGE] =
+	{
+		.effect = EFFECT_SPLINTER,
+		.power = 65,
+		.type = TYPE_DARK,
+		.accuracy = 90,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_BLEAKWINDSTORM] =
+	{
+		.effect = EFFECT_FREEZE_HIT,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 95,
+		#else
+		.power = 105,
+		#endif
+		.type = TYPE_FLYING,
+		.accuracy = 80,
+		.pp = 5,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.secondaryEffectChance = 30,
+		#else
+		.secondaryEffectChance = 20, //30% Freeze chance is way too OP (it's Frostbite - an altered Freeze - in PLA)
+		#endif
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_WILDBOLTSTORM] =
+	{
+		.effect = EFFECT_PARALYZE_HIT,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 95,
+		#else
+		.power = 105,
+		#endif
+		.type = TYPE_ELECTRIC,
+		.accuracy = 80,
+		.pp = 5,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_SANDSEARSTORM] =
+	{
+		.effect = EFFECT_BURN_HIT,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 95,
+		#else
+		.power = 105,
+		#endif
+		.type = TYPE_GROUND,
+		.accuracy = 80,
+		.pp = 5,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_SPRINGTIDESTORM] =
+	{
+		.effect = EFFECT_SPRINGTIDE_STORM, //Omniboost for Incarnate, Lower foe Sp. Def for Therian
+		#ifdef ACTUAL_PLA_MOVE_POWERS
+		.power = 95,
+		#else
+		.power = 105,
+		#endif
+		.type = TYPE_FAIRY,
+		.accuracy = 80,
+		.pp = 5,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_LUNARBLESSING] =
+	{
+		.effect = EFFECT_RESTORE_HP,
+		.power = 0,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_TRIAGE_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RESET_STATS
+	},
+
+	[MOVE_TAKEHEART] =
+	{
+		.effect = EFFECT_CALM_MIND, //Also heals status conditions
+		.power = 0,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 0,
+		.pp = 20,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RECOVER_HP
+	},
+
+	//Z-Moves//
 	[MOVE_BREAKNECK_BLITZ_P] =
 	{
 		.effect = EFFECT_HIT,
@@ -15008,7 +15437,7 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_METEORASSAULT] = 100,
 	[MOVE_ETERNABEAM] = 150,
 	[MOVE_STEELBEAM] = 140,
-	[MOVE_EXPANDINGFORCE] = 130, //from here down are placeholders
+	[MOVE_EXPANDINGFORCE] = 130,
 	[MOVE_STEELROLLER] = 140,
 	[MOVE_SCALESHOT] = 130,
 	[MOVE_METEORBEAM] = 140,
@@ -15035,5 +15464,31 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_DRAGONENERGY] = 150,
 	[MOVE_ASTRALBARRAGE] = 140,
 	[MOVE_GLACIALLANCE] = 140,
+	[MOVE_DIRECLAW] = 110,
+	[MOVE_PSYSHIELDBASH] = 120,
+	[MOVE_STONEAXE] = 120,
+	[MOVE_MYSTICALPOWER] = 120,
+	#ifdef ACTUAL_PLA_MOVE_POWERS
+	[MOVE_RAGINGFURY] = 130,
+	[MOVE_CHLOROBLAST] = 140,
+	[MOVE_MOUNTAINGALE] = 130,
+	[MOVE_HEADLONGRUSH] = 130,
+	#else
+	[MOVE_RAGINGFURY] = 140,
+	[MOVE_CHLOROBLAST] = 150,
+	[MOVE_MOUNTAINGALE] = 140,
+	[MOVE_HEADLONGRUSH] = 140,
+	#endif
+	[MOVE_WAVECRASH] = 130,
+	[MOVE_BARBBARRAGE] = 80,
+	[MOVE_ESPERWING] = 130,
+	[MOVE_BITTERMALICE] = 110,
+	[MOVE_TRIPLEARROWS] = 75,
+	[MOVE_INFERNALPARADE] = 110,
+	[MOVE_CEASELESSEDGE] = 120,
+	[MOVE_BLEAKWINDSTORM] = 130,
+	[MOVE_WILDBOLTSTORM] = 130,
+	[MOVE_SANDSEARSTORM] = 130,
+	[MOVE_SPRINGTIDESTORM] = 130,
 };
 #endif

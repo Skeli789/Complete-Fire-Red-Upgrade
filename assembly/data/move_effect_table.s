@@ -156,7 +156,7 @@ gBattleScriptsForMoveEffects:
 .word BS_138_AttackerRaiseDef1Chance
 .word BS_139_AttackerRaiseAtk1Chance
 .word BS_140_AttackerRaiseAllStatsChance
-.word BS_141_Blank
+.word BS_141_AttackerHitRaiseHigherOffensesDefenses
 .word BS_142_BellyDrum
 .word BS_143_PsychUp
 .word BS_144_MirrorCoat
@@ -165,14 +165,14 @@ gBattleScriptsForMoveEffects:
 .word BS_147_Earthquake
 .word BS_148_FutureSight
 .word BS_149_Gust
-.word BS_150_Blank
+.word BS_150_Splinters
 .word BS_151_Solarbeam
 .word BS_152_Thunder
 .word BS_153_Teleport
 .word BS_154_BeatUp
 .word BS_155_Fly
 .word BS_156_DefenseCurl
-.word BS_157_Blank	@was softboiled
+.word BS_157_SpringtideStorm	@was softboiled
 .word BS_158_FakeOut
 .word BS_159_Uproar
 .word BS_160_Stockpile
@@ -215,7 +215,7 @@ gBattleScriptsForMoveEffects:
 .word BS_197_SecretPower
 .word BS_198_RaiseUserAtkSpAtk
 .word BS_199_RaiseUserAtkAcc
-.word BS_200_Blank	@was blaze kick
+.word BS_200_RaiseUserDefEvsn	@was blaze kick
 .word BS_201_MudSport
 .word BS_202_VenomDrench	@was poison fang
 .word BS_203_PlayNice	@was weather ball

@@ -3207,6 +3207,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_VENOSHOCK:
+		case MOVE_BARBBARRAGE:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_PSN_ANY)
 				power *= 2;
@@ -3215,6 +3216,18 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_WAKEUPSLAP:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_SLEEP)
+				power *= 2;
+			break;
+
+		case MOVE_INFERNALPARADE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+			&& data->defStatus1 & STATUS_BURN)
+				power *= 2;
+			break;
+
+		case MOVE_BITTERMALICE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+			&& data->defStatus1 & STATUS_FREEZE)
 				power *= 2;
 			break;
 
@@ -3652,7 +3665,10 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case ABILITY_RECKLESS:
 		//1.2x Boost
-			if (gSpecialMoveFlags[move].gRecklessBoostedMoves)
+			if (gBattleMoves[move].effect == EFFECT_RECOIL_IF_MISS
+			|| gSpecialMoveFlags[move].gPercent25RecoilMoves
+			|| gSpecialMoveFlags[move].gPercent33RecoilMoves
+			|| gSpecialMoveFlags[move].gPercent50RecoilMoves)
 				power = (power * 12) / 10;
 			break;
 

@@ -97,6 +97,7 @@ gBattleAnims_General:
 .word ANIM_G_MAX_VOLCALITH
 .word ANIM_AI_ITEM_HEAL
 .word ANIM_HOOPA_RING_SPAWN
+.word ANIM_SPLINTER_DAMAGE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -463,14 +464,14 @@ ANIM_LUNAR_DANCE_HEAL:
 	launchtemplate LUNARDANCE_RING 0x2 0x0
 	pause 0x4
 	launchtemplate LUNARDANCE_RING 0x2 0x0
-	pause 0x40
 	waitanimation
 	pokespritefromBG side_attacker
 	resetblends
 	endanimation
 
 .align 2
-LUNARDANCE_RING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER 0x83ACBE0 gDummySpriteAnimTable 0x0 0x83E44D4 0x80AAAE5
+.global LUNARDANCE_RING
+LUNARDANCE_RING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER 0x83ACBE0 gDummySpriteAnimTable 0x0 0x83E44D4 SpriteCB_SurroundingRing
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1136,6 +1137,30 @@ ANIM_HOOPA_RING_SPAWN:
 
 .align 2
 HOOPA_RING_SPAWNER: objtemplate ANIM_TAG_HOOPA_RING_LARGE ANIM_TAG_HOOPA_RING_LARGE OAM_NORMAL_64x64 gAnimCmdTable_LargeHoopaRing 0x0 gSpriteAffineAnimTable_LargeHoopaRing SpriteCB_SpriteOnMonUntilAffineAnimEnds
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+.equ SPLINTER_PAUSE, 0x4
+
+ANIM_SPLINTER_DAMAGE:
+	loadparticle ANIM_TAG_ICICLE_SPEAR
+	loadparticle ANIM_TAG_ROCKS @Brown colour
+	soundcomplex 0x7c SOUND_PAN_TARGET, SPLINTER_PAUSE, 0x4
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x13 0x1
+	call SPLINTERS_IN
+	call SPLINTERS_IN
+	waitanimation
+	endanimation
+
+SPLINTERS_IN:
+	launchtemplate SPLINTER TEMPLATE_TARGET | 2, 0x4, bank_target, 22, -22, 0x10
+	pause SPLINTER_PAUSE
+	launchtemplate SPLINTER TEMPLATE_TARGET | 2, 0x4, bank_target, -22, -22, 0x10
+	pause SPLINTER_PAUSE
+	return
+
+.align 2
+SPLINTER: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_SplinterIn
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

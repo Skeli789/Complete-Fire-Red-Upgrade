@@ -21,6 +21,7 @@ u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
 u32 GetSeaOfFireDamage(u8 bank);
 u32 GetBadDreamsDamage(u8 bank);
+u32 GetSplintersDamage(u8 bank);
 u32 GetBadThoughtsDamage(u8 bank);
 u32 GetGMaxVineLashDamage(u8 bank);
 u32 GetGMaxWildfireDamage(u8 bank);

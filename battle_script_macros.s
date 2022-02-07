@@ -16,7 +16,6 @@
 .equ BS_HIT_FROM_ATTACKANIMATION, 0x81D6934
 .equ BS_STANDARD_HIT, 0x81D6926
 .equ BS_FLUSH_MESSAGE_BOX, 0x81D96A8
-.equ BattleScript_AllStatsUp, 0x81D8D55
 
 @String Tables
 .equ gStatUpStringIds, 0x83FE57C

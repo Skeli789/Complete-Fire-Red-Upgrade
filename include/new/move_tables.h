@@ -43,14 +43,13 @@ struct SpecialMoveFlags
 	bool8 gMovesCanUnfreezeAttacker : 1;
 	bool8 gMovesCanUnfreezeTarget : 1;
 	bool8 gMovesThatChangePhysicality : 1;
+	bool8 gDoubleDamageOnStatus : 1;
 	bool8 gTwoToFiveStrikesMoves : 1;
 	bool8 gTwoStrikesMoves : 1;
 	bool8 gPercent25RecoilMoves : 1;
 	bool8 gPercent33RecoilMoves : 1;
 	bool8 gPercent50RecoilMoves : 1;
-	bool8 gPercent66RecoilMoves : 1;
-	bool8 gPercent75RecoilMoves : 1;
-	bool8 gPercent100RecoilMoves : 1;
+	bool8 gHalfMaxHealthRecoilMoves : 1;
 	bool8 gIgnoreInAirMoves : 1;
 	bool8 gIgnoreUndergoundMoves : 1;
 	bool8 gIgnoreUnderwaterMoves : 1;

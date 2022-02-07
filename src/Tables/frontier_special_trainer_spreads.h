@@ -10363,7 +10363,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Gail[] =
 		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
-			MOVE_DISCHARGE,
+			MOVE_WILDBOLTSTORM,
 			MOVE_FLASHCANNON,
 			MOVE_INCINERATE,
 			MOVE_PSYCHIC,
@@ -18082,10 +18082,10 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_DISCHARGE,
+			MOVE_WILDBOLTSTORM,
 			MOVE_SLUDGEBOMB,
-			MOVE_SUBSTITUTE,
 			MOVE_VOLTSWITCH,
+			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
 		.forSingles = FALSE,

@@ -530,15 +530,11 @@ bool8 CheckSoundMove(move_t move)
 
 bool8 CheckRecoil(u16 move)
 {
-	return move == MOVE_MINDBLOWN
-		|| move == MOVE_STEELBEAM
-		|| move == MOVE_STRUGGLE
+	return move == MOVE_STRUGGLE
 		|| gSpecialMoveFlags[move].gPercent25RecoilMoves
 		|| gSpecialMoveFlags[move].gPercent33RecoilMoves
 		|| gSpecialMoveFlags[move].gPercent50RecoilMoves
-		|| gSpecialMoveFlags[move].gPercent66RecoilMoves
-		|| gSpecialMoveFlags[move].gPercent75RecoilMoves
-		|| gSpecialMoveFlags[move].gPercent100RecoilMoves;
+		|| gSpecialMoveFlags[move].gHalfMaxHealthRecoilMoves; //Eg. Mind Blown, Steel Beam
 }
 
 bool8 SheerForceCheck(void)
@@ -682,6 +678,16 @@ u8 CountBoosts(u8 bank)
 	}
 
 	return sum;
+}
+
+bool8 AreDefensesHigherThanOffenses(u8 bank)
+{
+	u16 atk = gBattleMons[bank].attack;
+	u16 spAtk = gBattleMons[bank].spAttack;
+	u16 def = gBattleMons[bank].defense;
+	u16 spDef = gBattleMons[bank].spDefense;
+
+	return def + spDef > atk + spAtk;
 }
 
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)

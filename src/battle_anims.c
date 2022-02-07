@@ -3672,6 +3672,223 @@ void AnimTask_GetTerrainType(u8 taskId)
 
 
 ///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////PLA//////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+//Bitter Malice//
+
+#define gBattleAnim_ScaryFaceGfx (void*) 0x8D24BCC
+#define gBattleAnim_ScaryFacePal (void*) 0x8D24BA4
+#define gBattleAnimBgTilemap_ScaryFaceOnOpponent (void*) 0x8E7F4AC
+#define gBattleAnimBgTilemap_ScaryFaceOnPlayer (void*) 0x8E7f690
+#define ScaryFace_Step (void*) (0x80AA024 | 1)
+void AnimTask_ScaryFaceOnAttacker(u8 taskId)
+{
+	struct BattleAnimBgData animBg;
+
+	SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND);
+	SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(0, 16));
+	SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
+	SetAnimBgAttribute(1, BG_ANIM_SCREEN_SIZE, 0);
+	SetAnimBgAttribute(1, BG_ANIM_CHAR_BASE_BLOCK, 1);
+
+	gBattle_BG1_X = 0;
+	gBattle_BG1_Y = 0;
+
+	if (IS_DOUBLE_BATTLE) //By default is in the centre of both Pokemon
+	{
+		switch (GetBattlerPosition(gBattleAnimAttacker))
+		{
+			case B_POSITION_PLAYER_LEFT:
+				gBattle_BG1_X = 30;
+				break;
+			case B_POSITION_PLAYER_RIGHT:
+				gBattle_BG1_X = -20;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+				gBattle_BG1_X = -20;
+				break;
+			case B_POSITION_OPPONENT_RIGHT:
+				gBattle_BG1_X = 25;
+				break;
+		}
+	}
+
+	SetGpuReg(REG_OFFSET_BG1HOFS, gBattle_BG1_X);
+	SetGpuReg(REG_OFFSET_BG1VOFS, gBattle_BG1_Y);
+	GetBattleAnimBg1Data(&animBg);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+		AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBgTilemap_ScaryFaceOnPlayer);
+	else
+		AnimLoadCompressedBgTilemap(animBg.bgId, gBattleAnimBgTilemap_ScaryFaceOnOpponent);
+
+	AnimLoadCompressedBgGfx(animBg.bgId, gBattleAnim_ScaryFaceGfx, animBg.tilesOffset);
+	LoadCompressedPalette(gBattleAnim_ScaryFacePal, animBg.paletteId * 16, 32);
+	RelocateBattleBgPal(animBg.paletteId, animBg.bgTilemap, 0, 0);
+
+	gTasks[taskId].func = ScaryFace_Step;
+}
+
+
+//Ceaseless Edge//
+
+#define AnimFalseSwipeSliceStep3 (void*) (0x80A5A8C | 1)
+
+//Creates slashes that can be flipped.
+//arg 0: x pixel offset (from target)
+//arg 1: y pixel offset (from target)
+//arg 2: flip x
+//arg 3: flip y
+void SpriteCB_FlippableSlash(struct Sprite* sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+
+	if (gBattleAnimArgs[2]) //Flip X
+		sprite->hFlip = TRUE;
+
+	if (gBattleAnimArgs[3]) //Flip Y
+		sprite->vFlip = TRUE;
+
+	sprite->data[0] = 0;
+	sprite->data[1] = 0;
+	StoreSpriteCallbackInData6(sprite, AnimFalseSwipeSliceStep3);
+	sprite->callback = RunStoredCallbackWhenAnimEnds;
+}
+
+
+//Mystical Power//
+
+static const union AffineAnimCmd sSpriteAffineAnim_MysticalPowerRing[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start small
+	AFFINEANIMCMD_FRAME(16, 16, 0, 15), //Grow sprite
+    AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_MysticalPowerRing[] =
+{
+	sSpriteAffineAnim_MysticalPowerRing,
+};
+
+
+//Power Shift//
+
+//Launches the stat ball for Power Shift
+//arg 0: X starting offset
+//arg 1: Y starting offset
+//arg 2: X finishing offset
+//arg 3: Y finishing offset
+//arg 4: Duration
+//arg 5: Wave Amplitude
+static void SpriteCB_PowerShiftBallStep(struct Sprite *sprite);
+void SpriteCB_PowerShiftBall(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		gBattleAnimArgs[2] *= -1; //Flip X
+
+	sprite->data[0] = gBattleAnimArgs[4]; //Duration
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
+	sprite->data[5] = gBattleAnimArgs[5]; //Wave Amplitude
+
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PowerShiftBallStep;
+}
+
+static void SpriteCB_PowerShiftBallStep(struct Sprite* sprite) //Also used by Triple Arrows
+{
+	if (TranslateAnimHorizontalArc(sprite))
+		DestroySpriteAndMatrix(sprite);
+}
+
+
+//Stone Axe//
+
+static const union AnimCmd sAnimCmdFlippedX[] =
+{
+	ANIMCMD_FRAME(0, 1, .hFlip = TRUE),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_FlippedX[] =
+{
+	sAnimCmdFlippedX,
+};
+
+//Same args as AnimNeedleArmSpike
+#define AnimNeedleArmSpikeStep (void*) (0x80A43A0 | 1)
+void SpriteCB_SplinterIn(struct Sprite* sprite)
+{
+	s16 targetX, targetY, initialX, initialY, rot;
+	u8 target = LoadBattleAnimTarget(0);
+
+	if (gBattleAnimArgs[3] == 0 || !IsBattlerSpriteVisible(target))
+	{
+		DestroyAnimSprite(sprite);
+		return;
+	}
+
+	//Aim the splinters towards the target
+	sprite->data[0] = gBattleAnimArgs[3];
+	targetX = sprite->data[5] = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2);
+	targetY = sprite->data[6] = GetBattlerSpriteCoord(target, BATTLER_COORD_Y_PIC_OFFSET);
+	initialX = sprite->pos1.x = gBattleAnimArgs[1] + targetX;
+	initialY = sprite->pos1.y = gBattleAnimArgs[2] + targetY;
+
+	sprite->data[1] = initialX * 16;
+	sprite->data[2] = initialY * 16;
+	sprite->data[3] = (targetX - initialX) * 16 / gBattleAnimArgs[3];
+	sprite->data[4] = (targetY - initialY) * 16 / gBattleAnimArgs[3];
+	rot = ArcTan2Neg(targetX - initialX, targetY - initialY);
+	rot += 0xC000;
+
+	TrySetSpriteRotScale(sprite, 0, 0x100, 0x100, rot);
+	sprite->callback = AnimNeedleArmSpikeStep;
+}
+
+
+//Triple Arrows//
+
+//Delivers a rainbow kick for Triple Arrows
+//arg 0: Initial x pixel offset
+//arg 1: Initial y pixel offset
+//arg 2: Duration
+//arg 3: Wave Amplitude
+void SpriteCB_TripleArrowKick(struct Sprite* sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+	StartSpriteAnim(sprite, 1); //Feet
+
+	sprite->data[0] = gBattleAnimArgs[2];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2); //Target X
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET); //Target Y
+	sprite->data[5] = gBattleAnimArgs[3];
+
+	InitAnimArcTranslation(sprite);
+	sprite->callback = SpriteCB_PowerShiftBallStep; //Arc until complete
+}
+
+
+//Wildbolt Storm//
+
+static const union AnimCmd sAnimCmdAnimatedSpark2[] =
+{
+	ANIMCMD_FRAME((16 * 16) / (8 * 8) * 0, 8),
+	ANIMCMD_FRAME((16 * 16) / (8 * 8) * 1, 8),
+	ANIMCMD_FRAME((16 * 16) / (8 * 8) * 2, 8),
+	ANIMCMD_JUMP(0)
+};
+
+const union AnimCmd *const gAnimCmdTable_AnimatedSpark2[] =
+{
+	sAnimCmdAnimatedSpark2,
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////Z-Moves////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3745,7 +3962,7 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
 }
 
 
-//Clangorous Soulblaze
+//Clangorous Soulblaze//
 
 //Moves the rings for Clangorous Soulblaze
 //arg 0: initial x offset
@@ -3792,7 +4009,7 @@ void SpriteCB_TranslateAnimSpriteToTargetsCentre(struct Sprite* sprite)
 }
 
 
-//Continental Crush
+//Continental Crush//
 void AnimTask_GetTimeOfDay(u8 taskId)
 {
 	gBattleAnimArgs[0] = 0; //Daytime
@@ -3839,7 +4056,7 @@ void SpriteCB_GenesisSupernovaOrbUp(struct Sprite* sprite)
 }
 
 
-//Let's Snuggle Forever
+//Let's Snuggle Forever//
 
 //Scales up the target mon sprite
 //Used in Let's Snuggle Forever
@@ -3877,7 +4094,8 @@ const struct OamData sGeyserOam =
 
 bool8 DoesMoveHaveGeyserOnTarget(void)
 {
-	return sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S
+	return sAnimMoveIndex == MOVE_HEADLONGRUSH
+		|| sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S
 		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P      || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
 		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P         || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
 		|| sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
@@ -4190,7 +4408,9 @@ static void SpriteCB_MaxFlutterbyStep1(struct Sprite* sprite)
 {
 	if (!FuncIsActiveTask(AnimTask_DynamaxGrowthStep))
 	{
-		PlaySE(0x98); //Shadow Ball hit
+		if (sAnimMoveIndex != MOVE_INFERNALPARADE)
+			PlaySE(0x98); //Shadow Ball hit
+
 		StartSpriteAffineAnim(sprite, 1);
 		InitAnimArcTranslation(sprite);
 		sprite->callback = SpriteCB_MaxFlutterbyStep2;
@@ -4203,7 +4423,12 @@ static void SpriteCB_MaxFlutterbyStep2(struct Sprite* sprite)
 	sprite->invisible = FALSE;
 
 	if (TranslateAnimHorizontalArc(sprite))
+	{
+		if (sAnimMoveIndex == MOVE_INFERNALPARADE)
+			PlaySE(0x8A); //Fire
+
 		DestroySpriteAndMatrix(sprite);
+	}
 }
 
 

@@ -54,6 +54,7 @@ enum EndTurnEffects
 	ET_Item_Effects7,
 	ET_Switch_Out_Abilities7,
 	ET_Trap_Damage,
+	ET_Splinters,
 	ET_Octolock,
 	ET_Item_Effects8,
 	ET_Switch_Out_Abilities8,
@@ -791,6 +792,28 @@ u8 TurnBasedEffects(void)
 					//Must be placed afterwards so the trap damage still has an effect on the last turn
 					if (setBrokeFreeMessage)
 						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
+				}
+				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
+				break;
+
+			case ET_Splinters:
+				if (BATTLER_ALIVE(gActiveBattler) && gNewBS->splinterTimer[gActiveBattler] > 0)
+				{
+					if (--gNewBS->splinterTimer[gActiveBattler] == 0)
+					{
+						gBattleStringLoader = gText_SplintersEnded;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+						effect++;
+					}
+					else
+					{
+						gBattleMoveDamage = GetSplintersDamage(gActiveBattler);
+						if (gBattleMoveDamage != 0)
+						{
+							BattleScriptExecute(BattleScript_SplintersTurnDmg);
+							effect++;
+						}
+					}
 				}
 				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 				break;
@@ -1888,6 +1911,17 @@ u32 GetBadDreamsDamage(u8 bank) //Not actually used in calculation - mainly used
 		damage = MathMax(1, GetBaseMaxHP(bank) / 8);
 		damage *= AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, bank, ABILITY_BADDREAMS, 0, 0);
 	}
+
+	return damage;
+}
+
+u32 GetSplintersDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (gNewBS->splinterTimer[bank] > 0
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+		damage = CalcStealthRockDamage(bank);
 
 	return damage;
 }

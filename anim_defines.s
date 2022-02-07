@@ -93,6 +93,7 @@
 .equ BG_HYPER_BEAM, 0x49
 .equ BG_DYNAMAX_CANNON, 0x4A
 .equ BG_AURA_SPHERE, 0x4B
+.equ BG_CHLOROBLAST, 0x4C
 
 @pals for pal fading tasks
 .equ PAL_BG, 0x1
@@ -420,6 +421,7 @@
 .equ AnimTask_sprite_transform, 0x80DF9BD
 .equ AnimTask_play_growling_cry, 0x80DD149
 .equ AnimTask_BlendParticle, 0x80BAA21
+.equ AnimTask_BlendPalInAndOutByTag, 0x8076289
 .equ AnimTask_pal_fade, 0x80BA7F9
 .equ AnimTask_pal_fade_complex, 0x80B9BDD
 .equ AnimTask_BlendNonAttackerPalettes, 0x80bb7dd
@@ -494,6 +496,14 @@
 .equ AnimTask_GrudgeFlames, 0x80b68c9
 .equ AnimTask_SpiteTargetShadow, 0x80b5aad
 .equ AnimTask_DrillPeckHitSplats, 0x80b2869
+.equ AnimTask_ScaryFace, 0x80a9f11
+.equ AnimTask_TeeterDanceMovement, 0x80e4161
+.equ AnimTask_DragonDanceWaver, 0x80b75e1
+.equ AnimTask_AlphaFadeIn, 0x8076049
+.equ AnimTask_FadeScreenBlue, 0x80A5FC1
+.equ AnimTask_StartSinAnimTimer, 0x80ab101
+.equ AnimTask_TransparentCloneGrowAndShrink, 0x80b3c79
+.equ AnimTask_ExtrasensoryDistortion, 0x80b3a59
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -600,6 +610,15 @@
 .equ Template_ThunderWave, 0x83E60B8
 .equ Template_LockOnTarget, 0x83e3518
 .equ Template_LockOnMoveTarget, 0x83E3530
+.equ Template_SwirlingDirt, 0x83E73E4
+.equ Template_FlyingSand, 0x83E7450
+.equ Template_OpeningEye, 0x83FEE5C
+.equ Template_SlashSlice, 0x83e35a4
+.equ Template_Moon, 0x83E3734
+.equ Template_MoonlightSparkle, 0x83E3764
+.equ Template_FastFlyingMusicNotes, 0x83E38C8
+.equ Template_DragonDanceOrb, 0x83e7848
+.equ Template_PsywaveRing, 0x83e59e8
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 

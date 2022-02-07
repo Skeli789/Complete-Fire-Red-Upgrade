@@ -994,7 +994,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 
 			//Give EVs
 			#ifdef TRAINERS_WITH_EVS
-			u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
+			u8 spreadNum = (gTrainers[trainerId].partyFlags & PARTY_FLAG_CUSTOM_MOVES) ? trainer->party.NoItemCustomMoves[i].iv : trainer->party.NoItemDefaultMoves[i].iv;
 
 			#ifdef UNBOUND
 			if ((gTrainers[trainerId].trainerClass == CLASS_RIVAL && gameDifficulty >= OPTIONS_HARD_DIFFICULTY)
@@ -2703,8 +2703,12 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 	u8 ability;
 	const u16* moveLoc;
 
-	if (species == SPECIES_EGG)
-		return 1;
+	if (species == SPECIES_EGG
+	#ifdef SPECIES_ETERNATUS_ETERNAMAX
+	|| species == SPECIES_ETERNATUS_ETERNAMAX
+	#endif
+	) //Hackmon
+		return TRUE;
 
 	u16 battleFormat = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
 

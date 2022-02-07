@@ -2048,7 +2048,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Red_Rank6[] =
 		.moves =
 		{
 			MOVE_ZENHEADBUTT,
-			MOVE_POWERUPPUNCH,
+			MOVE_BRICKBREAK,
 			MOVE_POISONJAB,
 			MOVE_RECOVER,
 		},

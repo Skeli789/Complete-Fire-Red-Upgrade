@@ -46,6 +46,7 @@ extern const u8 BattleScript_GrassyTerrainHeal[];
 extern const u8 BattleScript_AquaRing[];
 extern const u8 BattleScript_LeechSeedTurnDrain[];
 extern const u8 BattleScript_PoisonHeal[];
+extern const u8 BattleScript_SplintersTurnDmg[];
 extern const u8 BattleScript_BadThoughtsTurnDmg[];
 extern const u8 BattleScript_YawnMakesAsleep[];
 extern const u8 BattleScript_MagnetRiseEnd[];
@@ -91,6 +92,7 @@ extern const u8 BattleScript_LoseRaidBattle[];
 
 //Strings
 extern const u8 gText_SideStatusWoreOff[];
+extern const u8 gText_SplintersEnded[];
 extern const u8 gText_TauntWoreOff[];
 extern const u8 gText_RaidBattleKO1[];
 extern const u8 gText_RaidBattleKO2[];

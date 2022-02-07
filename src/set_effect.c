@@ -376,13 +376,24 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_TRI_ATTACK:
-				if (gBattleMons[gEffectBank].status1)
+				if (gBattleMons[gEffectBank].status1 != 0)
 				{
 					gBattlescriptCurrInstr++;
 				}
 				else
 				{
-					gBattleCommunication[MOVE_EFFECT_BYTE] = umodsi(Random(), 3) + 3;
+					gBattleCommunication[MOVE_EFFECT_BYTE] = (Random() % 3);
+
+					if (gCurrentMove == MOVE_DIRECLAW)
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] += MOVE_EFFECT_SLEEP; //Sleep, Poison, Paralysis
+						
+						if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN)
+							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS; //Paralyzes, doesn't burn
+					}
+					else
+						gBattleCommunication[MOVE_EFFECT_BYTE] += MOVE_EFFECT_BURN; //Burn, Freeze, Paralysis
+
 					SetMoveEffect(FALSE, 0);
 				}
 				break;
@@ -684,6 +695,16 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattlescriptCurrInstr++;
 				break;
 
+			case MOVE_EFFECT_HIGHER_OFFENSES_DEFENSES_UP_1:
+				if (ViableMonCountFromBank(FOE(gEffectBank)) == 0) //End of battle so don't bother
+					gBattlescriptCurrInstr++;
+				else
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattlescriptCurrInstr = BattleScript_HigherOffensesDefensesUp;
+				}
+				break;
+
 			case MOVE_EFFECT_RAPIDSPIN:
 				BattleScriptPush(gBattlescriptCurrInstr + 1);
 				gBattlescriptCurrInstr = BattleScript_RapidSpinAway;
@@ -821,6 +842,18 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gActiveBattler = 0;
 					EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 					MarkBufferBankForExecution(gActiveBattler);
+				}
+				else
+					gBattlescriptCurrInstr++;
+				break;
+
+			case MOVE_EFFECT_SPLINTERS:
+				if (gNewBS->splinterTimer[gEffectBank] == 0)
+				{
+					gNewBS->splinterTimer[gEffectBank] = 4; //3 turns of splinters
+					BattleScriptPush(gBattlescriptCurrInstr + 1);
+					gBattleStringLoader = gText_EffectBankAfflictedBySplinters;
+					gBattlescriptCurrInstr = BattleScript_PrintCustomString;	
 				}
 				else
 					gBattlescriptCurrInstr++;

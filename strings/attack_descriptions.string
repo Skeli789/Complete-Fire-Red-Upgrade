@@ -44,7 +44,7 @@ The user strikes\nwith a tough punch\nthat is certain to\nstrike first.
 The user fires a\nload of electricity\nthat may raise the\nuser's Sp. Atk.  
 
 #org @DESC_CLOSECOMBAT
-The foe is fought\nup close. This cuts\nthe user's Defense\nand Sp. Def.
+The foe is fought\nup close. This cuts\nthe user's Defense\nand Sp. Def stats.
 
 #org @DESC_CROSSPOISON
 An attack with a\nhigh critical-hit\nratio. It may also\npoison the foe.
@@ -1176,6 +1176,79 @@ A frightful amount of\nsmall ghosts are sent\nto attack opposing\nPok\emon.
 
 #org @DESC_GLACIAL_LANCE
 The user attacks by\nhurling a blizzard-\ncloaked icicle lance\nat opposing Pok\emon.
+
+#org @DESC_DIRE_CLAW
+A slash that may\npoison, paralyze, or\nsleep the foe. It\nhas a high crit ratio.
+
+#org @DESC_PSYSHIELD_BASH
+The user slams into\nthe foe with psychic\nenergy. It raises the\nuser's Defense too.
+
+#org @DESC_POWER_SHIFT
+The user swaps its\noffensive and\ndefensive stats.
+
+#org @DESC_STONE_AXE
+The foe is hit with\nan axe that leaves\nbehind splinters. It\nhas a high crit ratio.
+
+#org @DESC_MYSTICAL_POWER
+After dealing damage,\nthe user raises the\nhigher stats of its\noffenses or defenses.
+
+#org @DESC_RAGING_FURY
+The user rampages\nand spews vicious\nflames for two to\nthree turns.
+
+#org @DESC_WAVE_CRASH
+The user slams into\nthe target, hurting\nitself a little. This\nmove strikes first.
+
+#org @DESC_CHLOROBLAST
+The user launches its\namassed chlorophyll\nat the foe. This also\nhurts the user.
+
+#org @DESC_MOUNTAIN_GALE
+The user hurls giant\nchunks of ice at\nthe foe that may\ncause it to flinch.
+
+#org @DESC_VICTORY_DANCE
+The user dances to\nusher in victory.\nThis raises the user's\nAttack and Defense.
+
+#org @DESC_HEADLONG_RUSH
+The user smashes into\nthe foe. This cuts\nthe user's Defense\nand Sp. Def stats.
+
+#org @DESC_BARB_BARRAGE
+Barbs that may poison\nare shot at the foe.\nIts power doubles if\nthe foe is poisoned.
+
+#org @DESC_ESPER_WING
+//The foe is slashed\nwith wings of light.\nThis has a high crit\nratio and goes first.
+The foe is slashed\nwith wings of light.\nThis goes first and\nhas a high crit ratio.
+
+#org @DESC_BITTER_MALICE
+Resentment that may\nfreeze hits the foe.\nIts power doubles if\nthe foe is frozen.
+
+#org @DESC_SHELTER
+The user makes its\nskin iron-hard to\nraise its Defense\nand its evasiveness.
+
+#org @DESC_TRIPLE_ARROWS
+The foe is shot with\narrows that raise the\ncrit ratio and lower\nthe foe's Defense.
+
+#org @DESC_INFERNAL_PARADE
+Myriad fireballs that\nmay burn hit the foe.\nIts power doubles if\nthe foe is burned.
+
+#org @DESC_CEASELESS_EDGE
+The foe is slashed.\nThis has a high crit\nratio and may leave\nbehind splinters.
+
+#org @DESC_BLEAKWIND_STORM
+The user attacks\nwith savagely cold\nwinds. This may\nfreeze the foe.
+
+#org @DESC_WILDBOLT_STORM
+The user savagely\nattacks with wind\nand lightning. This\nmay cause paralysis.
+
+#org @DESC_SANDSEAR_STORM
+The user attacks\nwith fierce winds\nand hot sand. This\nmay cause a burn.
+
+#org @DESC_SPRINGTIDE_STORM
+The user attacks by\nwith love and hate.\nThe effects depend\non the user's form.
+
+#org @DESC_LUNAR_BLESSING
+The user heals its\nown statuses and\nrestores HP. It also\nraises evasiveness.
+
+#org @DESC_TAKE_HEART
+The user heals its\nown statuses and\nraises its Sp. Atk\nand Sp. Def.
 
 #org @DESC_MAX_GUARD
 Enables the user to\nevade all attacks.\nIt may fail if used\nin succession.

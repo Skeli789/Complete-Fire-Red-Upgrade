@@ -17,6 +17,8 @@ set_effect_battle_scripts.s
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner
 .global BattleScript_AllStatsUp
+.global BattleScript_HigherOffensesDefensesUp
+.global BattleScript_HigherDefensesUp
 .global BattleScript_MaxMoveRaiseStatTeam
 .global BattleScript_MaxMoveLowerStatFoes
 .global BattleScript_EatEffectBankBerry
@@ -175,6 +177,57 @@ BattleScript_AllStatsUpSpeed:
 	waitmessage DELAY_1SECOND
 
 BattleScript_AllStatsUpRet:
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HigherOffensesDefensesUp:
+	callasm TryRaiseHigherDefensesOverOffenses
+
+BattleScript_HigherOffensesUp:
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_ATK, STAT_MAX, BattleScript_HigherOffensesUp_Atk
+	jumpifstat BANK_ATTACKER, EQUALS, STAT_SPATK, STAT_MAX, BattleScript_HigherOffensesDefensesUpRet
+
+BattleScript_HigherOffensesUp_Atk:
+	setbyte STAT_ANIM_PLAYED, 0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesUp_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesUp_SpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherOffensesUp_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesDefensesUpRet
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesDefensesUpRet
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherOffensesDefensesUpRet:
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HigherDefensesUp:
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_DEF, STAT_MAX, BattleScript_HigherDefensesUp_Def
+	jumpifstat BANK_ATTACKER, EQUALS, STAT_SPDEF, STAT_MAX, BattleScript_HigherOffensesDefensesUpRet
+
+BattleScript_HigherDefensesUp_Def:
+	setbyte STAT_ANIM_PLAYED, 0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_UP
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherDefensesUp_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherDefensesUp_SpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherDefensesUp_SpDef:
+	setstatchanger STAT_SPDEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesDefensesUpRet
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesDefensesUpRet
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

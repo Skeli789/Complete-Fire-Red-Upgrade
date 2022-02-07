@@ -1060,6 +1060,13 @@ SKIP_CHECK_TARGET:
 			}
 			break;
 
+		case EFFECT_DEF_EVSN_UP: //Shelter
+			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
+				DECREASE_VIABILITY(10);
+			else if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+				DECREASE_VIABILITY(10);
+			break;
+
 		case EFFECT_COSMIC_POWER:
 			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
 				DECREASE_VIABILITY(10);
@@ -1123,7 +1130,12 @@ SKIP_CHECK_TARGET:
 					default:
 						if ((!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK) || !SpecialMoveInMoveset(bankAtk))
 						&&  !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+						{
+							if (move == MOVE_TAKEHEART && data->atkStatus1 != 0)
+								break; //Can heal status condition
+
 							DECREASE_VIABILITY(10);
+						}
 				}
 			}
 			break;
@@ -1426,14 +1438,25 @@ SKIP_CHECK_TARGET:
 						break;
 					}
 					else if (bankDef == bankAtkPartner)
-						break; //Always heal your ally
+						break; //Always can heal your ally (actual possibility checked in ai_partner.c)
 					else if (GetHealthPercentage(bankAtk) == 100)
 						DECREASE_VIABILITY(10);
 					else if (GetHealthPercentage(bankAtk) >= 90)
 						DECREASE_VIABILITY(8); //No point in healing, but should at least do it if nothing better
 					break;
 
+				case MOVE_JUNGLEHEALING:
+					if (!ShouldJungleHealingFail(bankAtk))
+						break; //If it'll work, no point in not using it
+					goto DEFAULT_RECOVERY; //Even if it'll fail due to full HP, there may be logic to use it preemptively
+
+				case MOVE_LUNARBLESSING:
+					if (!ShouldLunarBlessingFail(bankAtk))
+						break; //If it'll work, no point in not using it
+					goto DEFAULT_RECOVERY; //Even if it'll fail due to full HP, there may be logic to use it preemptively
+
 				default:
+					DEFAULT_RECOVERY:
 					if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE) //Very smart AI
 					{
 						if (IS_SINGLE_BATTLE && IsTakingSecondaryDamage(bankDef))
@@ -1524,13 +1547,7 @@ SKIP_CHECK_TARGET:
 				recoilDmg = MathMax(1, recoilDmg / 3);
 			else if (specialMoveFlags->gPercent50RecoilMoves)
 				recoilDmg = MathMax(1, recoilDmg / 2);
-			else if (specialMoveFlags->gPercent66RecoilMoves)
-				recoilDmg = MathMax(1, (recoilDmg * 2) / 3);
-			else if (specialMoveFlags->gPercent75RecoilMoves)
-				recoilDmg = MathMax(1, (recoilDmg * 3) / 4);
-			else if (specialMoveFlags->gPercent100RecoilMoves)
-				recoilDmg = MathMax(1, recoilDmg);
-			else if (move == MOVE_MINDBLOWN || move == MOVE_STEELBEAM)
+			else if (specialMoveFlags->gHalfMaxHealthRecoilMoves) //Mind Blown, Steel Beam
 			{
 				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				{
@@ -2632,6 +2649,11 @@ SKIP_CHECK_TARGET:
 							DECREASE_VIABILITY(10);
 						break;
 
+					case MOVE_POWERSHIFT:
+						if (gNewBS->powerShifted[bankAtk]) //Prevent the AI from getting in a loop
+							DECREASE_VIABILITY(10);
+						break;
+
 					case MOVE_POWERSWAP: //Don't use if attacker's stat stages are higher than opponents
 						if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) >= STAT_STAGE(bankDef, STAT_STAGE_SPATK)
 						&&  STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= STAT_STAGE(bankDef, STAT_STAGE_SPATK))
@@ -3068,9 +3090,9 @@ SKIP_CHECK_TARGET:
 																		| MOVE_TARGET_BOTH
 																		| MOVE_TARGET_ALL
 																		| MOVE_TARGET_OPPONENTS_FIELD)
-						&& instructedMove != MOVE_MINDBLOWN && instructedMove != MOVE_STEELBEAM)
+						&& !gSpecialMoveFlags[instructedMove].gHalfMaxHealthRecoilMoves)
 							DECREASE_VIABILITY(10); //Don't force the enemy to attack you again unless it can kill itself with Mind Blown
-						else if (instructedMove != MOVE_MINDBLOWN)
+						else if (!gSpecialMoveFlags[instructedMove].gHalfMaxHealthRecoilMoves)
 							DECREASE_VIABILITY(5); //Do something better
 					}
 					break;

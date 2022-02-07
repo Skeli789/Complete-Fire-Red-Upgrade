@@ -25,6 +25,7 @@ et_battle_scripts.s
 .global BattleScript_AquaRing
 .global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
+.global BattleScript_SplintersTurnDmg
 .global BattleScript_BadThoughtsTurnDmg
 .global BattleScript_YawnMakesAsleep
 .global BattleScript_MagnetRiseEnd
@@ -236,6 +237,15 @@ BattleScript_PoisonHeal:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SplintersTurnDmg:
+	playanimation BANK_ATTACKER ANIM_SPLINTER_DAMAGE 0x0
+	setword BATTLE_STRING_LOADER gText_HurtBySplinters
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BattleScript_DoTurnDmg
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -10,6 +10,7 @@
 #include "../../include/new/ai_scripts.h"
 #include "../../include/new/ai_switching.h"
 #include "../../include/new/ai_util.h"
+#include "../../include/new/battle_script_util.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
@@ -959,6 +960,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 									goto DEFAULT_CHECK;
 								case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
 								case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
+								SP_DEF_CHECK:
 									if (CALC && GoodIdeaToLowerSpDef(currTarget, bankAtk, move))
 										break;
 									goto DEFAULT_CHECK;
@@ -978,9 +980,20 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 									if (CALC && CanBeConfused(currTarget, bankAtk, TRUE))
 										break;
 									goto DEFAULT_CHECK;
+								case EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT:
+									if (AreDefensesHigherThanOffenses(bankAtk)) //Don't care about boosting defenses
+										goto DEFAULT_CHECK;
+									//Fallthrough
 								case EFFECT_SPEED_UP_1_HIT:
 								case EFFECT_ATTACK_UP_HIT:
+								case EFFECT_SPECIAL_ATTACK_UP_HIT:
 									if (CALC)
+										break;
+									goto DEFAULT_CHECK;
+								case EFFECT_SPRINGTIDE_STORM:
+									if (IsSpringtideStormSpDefDown(bankAtk))
+										goto SP_DEF_CHECK;
+									else if (CALC) //Omniboost
 										break;
 									goto DEFAULT_CHECK;
 
@@ -1922,7 +1935,7 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 		struct Pokemon* mon = GetBankPartyData(bank);
 
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
-			dmg += CalcStealthRockDamagePartyMon(mon);
+			dmg += CalcMonStealthRockDamage(mon);
 
 		if (gSideTimers[SIDE(bank)].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);
@@ -2365,6 +2378,9 @@ static bool8 MoveHasUsefulSecondaryEffectToKOWith(u16 move)
 		case EFFECT_DEFENSE_UP_2_HIT:
 		case EFFECT_SPECIAL_ATTACK_UP_HIT:
 		case EFFECT_SPEED_UP_1_HIT:
+		case EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT:
+		case EFFECT_ABSORB:
+		case EFFECT_DREAM_EATER:
 			return TRUE;
 		default:
 			return FALSE;
@@ -2535,6 +2551,7 @@ static u32 CalcSecondaryEffectDamage(u8 bank)
 			+ GetCurseDamage(bank)
 			+ GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
 			+ GetBadDreamsDamage(bank)
+			+ GetSplintersDamage(bank)
 			+ GetBadThoughtsDamage(bank)
 			+ GetGMaxVineLashDamage(bank)
 			+ GetGMaxWildfireDamage(bank)
@@ -2645,6 +2662,9 @@ bool8 HighChanceOfBeingImmobilized(u8 bank)
 
 u16 CalcSecondaryEffectChance(u8 bank, u16 move, u8 ability)
 {
+	if (ability == ABILITY_SHEERFORCE && gSpecialMoveFlags[move].gSheerForceBoostedMoves)
+		return 0;
+
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
 
 	if (gSpecialMoveFlags[move].gFlinchChanceMoves)
@@ -2796,7 +2816,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		||  defAbility == ABILITY_SHEDSKIN
 		||  defAbility == ABILITY_POISONHEAL
-		|| (defAbility == ABILITY_MAGICGUARD && !MoveInMoveset(MOVE_HEX, bankAtk) && !MoveInMoveset(MOVE_VENOSHOCK, bankAtk))
+		|| (defAbility == ABILITY_MAGICGUARD && !DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef) && !MoveInMoveset(MOVE_VENOSHOCK, bankAtk))
 		||  defAbility == ABILITY_QUICKFEET
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePoisoned(bankAtk, bankDef, TRUE) && !GoodIdeaToPoisonSelf(bankAtk))
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
@@ -2867,7 +2887,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_BRN) //Don't use this logic in general battles
 		||  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && defItemEffect == ITEM_EFFECT_CURE_STATUS) //Don't use this logic in general battles
 		||  defAbility == ABILITY_SHEDSKIN
-		|| (defAbility == ABILITY_MAGICGUARD && !MoveInMoveset(MOVE_HEX, bankAtk))
+		|| (defAbility == ABILITY_MAGICGUARD && !DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef))
 		||  defAbility == ABILITY_QUICKFEET
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, bankDef, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
 		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
@@ -4342,13 +4362,18 @@ bool8 OffensiveSetupMoveInMoveset(u8 bankAtk, u8 bankDef)
 				case EFFECT_BELLY_DRUM:
 					return TRUE;
 
+				case EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT:
+					if (AreDefensesHigherThanOffenses(bankAtk))
+						continue; //This move boosts defenses, not offenses
+					//Fallthrough
 				case EFFECT_ATTACK_UP_HIT:
 				case EFFECT_SPECIAL_ATTACK_UP_HIT:
 				case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
 				case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
 				case EFFECT_DEFENSE_DOWN_HIT:
-					if (CalcSecondaryEffectChance(bankAtk, move, ABILITY(bankAtk)) >= 50)
-						return TRUE;
+				case EFFECT_SPRINGTIDE_STORM: //Both effects
+					if (CalcSecondaryEffectChance(bankAtk, move, ABILITY(bankAtk)) < 50)
+						continue; //Not worth the chance
 
 				CHECK_AFFECTS:
 					if (!(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
@@ -4447,6 +4472,29 @@ bool8 HazardClearingMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 			if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
 			&& (SPLIT(move) == SPLIT_STATUS || !IsDamagingMoveUnusable(move, bankAtk, bankDef))) //Move is usable
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 DoubleDamageWithStatusMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gSpecialMoveFlags[move].gDoubleDamageOnStatus
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT) //Move affects
+			&& !IsDamagingMoveUnusable(move, bankAtk, bankDef)) //Move is usable
 				return TRUE;
 		}
 	}

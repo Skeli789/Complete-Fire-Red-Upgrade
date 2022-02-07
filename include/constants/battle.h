@@ -260,7 +260,7 @@
 #define MOVE_EFFECT_PAYDAY              0xB
 #define MOVE_EFFECT_CHARGING            0xC
 #define MOVE_EFFECT_WRAP                0xD
-#define MOVE_EFFECT_BLANK_E          	0xE //Was recoil 25
+#define MOVE_EFFECT_HIGHER_OFFENSES_DEFENSES_UP_1 0xE //Was recoil 25
 #define MOVE_EFFECT_ATK_PLUS_1          0xF
 #define MOVE_EFFECT_DEF_PLUS_1          0x10
 #define MOVE_EFFECT_SPD_PLUS_1          0x11
@@ -284,7 +284,7 @@
 #define MOVE_EFFECT_RAPIDSPIN           0x23
 #define MOVE_EFFECT_REMOVE_PARALYSIS    0x24
 #define MOVE_EFFECT_ATK_DEF_DOWN        0x25
-#define MOVE_EFFECT_BLANK_26           	0x26 //Was recoil 33
+#define MOVE_EFFECT_SPLINTERS           0x26 //Was recoil 33
 #define MOVE_EFFECT_ATK_PLUS_2          0x27
 #define MOVE_EFFECT_DEF_PLUS_2          0x28
 #define MOVE_EFFECT_SPD_PLUS_2          0x29

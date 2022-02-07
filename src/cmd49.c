@@ -1068,7 +1068,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&&  !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 			{
-				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
+				if (gSpecialMoveFlags[gCurrentMove].gHalfMaxHealthRecoilMoves //Eg. Mind Blown, Steel Beam
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& !(gMoveResultFlags & MOVE_RESULT_FAILED)) //From no targets
@@ -1128,27 +1128,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					else if (gSpecialMoveFlags[gCurrentMove].gPercent50RecoilMoves)
 					{
 						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven / 2);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
-					else if (gSpecialMoveFlags[gCurrentMove].gPercent66RecoilMoves)
-					{
-						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 2) / 3);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
-					else if (gSpecialMoveFlags[gCurrentMove].gPercent75RecoilMoves)
-					{
-						gBattleMoveDamage = MathMax(1, (gNewBS->totalDamageGiven * 3) / 4);
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_Recoil;
-						effect = 1;
-					}
-					else if (gSpecialMoveFlags[gCurrentMove].gPercent100RecoilMoves)
-					{
-						gBattleMoveDamage = MathMax(1, gNewBS->totalDamageGiven);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Recoil;
 						effect = 1;

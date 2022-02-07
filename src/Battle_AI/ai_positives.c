@@ -10,6 +10,7 @@
 #include "../../include/new/ai_master.h"
 #include "../../include/new/ai_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_script_util.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/frontier.h"
@@ -291,6 +292,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_ATK_SPATK_UP:
 			if (atkAbility != ABILITY_CONTRARY)
 			{
+				AI_WORK_UP:
 				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
 					goto AI_ATTACK_PLUS;
 				else if (SpecialMoveInMoveset(bankAtk) && GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 1))
@@ -308,6 +310,16 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
+		case EFFECT_DEF_EVSN_UP:
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				if (GoodIdeaToRaiseEvasionAgainst(bankAtk, bankDef, 1))
+					goto AI_EVASION_PLUS;
+				else if ((defRet = GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1)))
+					goto AI_DEFENSE_PLUS;
+			}
+			break;
+
 		case EFFECT_COSMIC_POWER:
 			if (atkAbility != ABILITY_CONTRARY)
 			{
@@ -322,7 +334,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_BULK_UP:
 			if (atkAbility != ABILITY_CONTRARY)
 			{
-				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+				u8 atkBoostAmount = (move == MOVE_VICTORYDANCE) ? 2 : 1;
+
+				if (RealPhysicalMoveInMoveset(bankAtk) && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, atkBoostAmount))
 					goto AI_ATTACK_PLUS;
 				else if (GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1))
 					INCREASE_STAT_VIABILITY(STAT_STAGE_DEF, 8, 1); //Normally checks for 10 Def
@@ -366,6 +380,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						goto AI_SP_ATTACK_PLUS;
 					else if (GoodIdeaToRaiseSpDefenseAgainst(bankAtk, bankDef, 1))
 						INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 8, 1); //Normally checks for 10 Sp. Def
+					else if (move == MOVE_TAKEHEART)
+						goto AI_REFRESH;
 			}
 			break;
 
@@ -642,6 +658,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				else
 					INCREASE_STATUS_VIABILITY(3);
 			}
+			else if (move == MOVE_JUNGLEHEALING || move == MOVE_LUNARBLESSING)
+				goto AI_REFRESH; //Although Lunar Blessing also raises evasion, it's better for the AI to treat it strictly as a recovery move and not spam it like Double Team
 			break;
 
 		case EFFECT_TOXIC:
@@ -650,10 +668,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (!BadIdeaToPoison(bankDef, bankAtk))
 			{
 				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
+				||  MoveInMoveset(MOVE_BARBBARRAGE, bankAtk)
 				||  MoveEffectInMoveset(EFFECT_VENOM_DRENCH, bankAtk)
 				||  atkAbility == ABILITY_MERCILESS)
 					INCREASE_STATUS_VIABILITY(2);
-				else if (MoveInMoveset(MOVE_HEX, bankAtk)
+				else if ((DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef) || (IS_DOUBLE_BATTLE && DoubleDamageWithStatusMoveInMovesetThatAffects(data->bankAtkPartner, bankDef)))
 					&& MoveEffectInMoveset(EFFECT_WILL_O_WISP, bankAtk) //Can either poison or burn
 					&& (!PhysicalMoveInMoveset(bankDef) || BadIdeaToBurn(bankDef, bankAtk) || defAbility == ABILITY_FLASHFIRE)) //Preferably burn if target is physical attack and can be burned
 					INCREASE_STATUS_VIABILITY(2);
@@ -779,7 +798,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				else if ((data->defSpeed >= data->atkSpeed && data->defSpeed / 2 < data->atkSpeed) //You'll go first after paralyzing foe
-				|| MoveInMoveset(MOVE_HEX, bankAtk)
+				|| DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef)
+				|| (IS_DOUBLE_BATTLE && DoubleDamageWithStatusMoveInMovesetThatAffects(data->bankAtkPartner, bankDef))
 				|| FlinchingMoveInMoveset(bankAtk)
 				|| data->defStatus2 & STATUS2_INFATUATION
 				|| IsConfused(bankDef))
@@ -834,6 +854,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 		case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
 		case EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT:
+		AI_SP_DEF_DOWN_HIT:
 			if (STAT_DOWN_HIT_CHECK)
 				goto AI_SPECIAL_DEFENSE_MINUS;
 			break;
@@ -1665,6 +1686,16 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
+		case EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT:
+			if (atkAbility != ABILITY_CONTRARY && CalcSecondaryEffectChance(bankAtk, move, atkAbility) >= 75)
+			{
+				if (AreDefensesHigherThanOffenses(bankAtk))
+					goto AI_COSMIC_POWER;
+				else
+					goto AI_WORK_UP;
+			}
+			break;
+
 		case EFFECT_BELLY_DRUM:
 			if (atkAbility != ABILITY_CONTRARY && RealPhysicalMoveInMoveset(bankAtk))
 			{
@@ -1824,8 +1855,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				else if (CalcMoveSplit(predictedMove, bankDef, bankAtk) == SPLIT_PHYSICAL
 				&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
 					INCREASE_STATUS_VIABILITY(3); //If the enemy can kill with a physical move, try burning them so they can't anymore
-				else if (MoveInMoveset(MOVE_HEX, bankAtk)
-				|| MoveInMoveset(MOVE_HEX, data->bankAtkPartner)
+				else if (DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef)
+				|| (IS_DOUBLE_BATTLE && DoubleDamageWithStatusMoveInMovesetThatAffects(data->bankAtkPartner, bankDef))
+				|| MoveInMoveset(MOVE_INFERNALPARADE, bankAtk)
 				|| PhysicalMoveInMoveset(bankDef))
 					INCREASE_STATUS_VIABILITY(2);
 				else
@@ -2104,6 +2136,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_REFRESH:
+		AI_REFRESH:
 			switch (move) {
 				case MOVE_PSYCHOSHIFT:
 					if (data->atkStatus1 & STATUS1_PSN_ANY)
@@ -2116,7 +2149,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						goto AI_SLEEP_CHECKS;
 					break;
 
-				case MOVE_REFRESH:
+				default:
 					if (data->atkStatus1 & STATUS1_ANY)
 						INCREASE_STATUS_VIABILITY(3);
 					break;
@@ -2166,6 +2199,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				case MOVE_EFFECT_EVS_MINUS_1:
 					goto AI_EVASION_MINUS;
 				case MOVE_EFFECT_ALL_STATS_UP:
+				AI_OMNIBOOST:
 					if (atkAbility == ABILITY_CONTRARY)
 						break;
 
@@ -2190,6 +2224,11 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 			}
 			break;
+
+		case EFFECT_SPRINGTIDE_STORM:
+			if (IsSpringtideStormSpDefDown(bankAtk))
+				goto AI_SP_DEF_DOWN_HIT;
+			goto AI_OMNIBOOST;
 
 		case EFFECT_MUD_SPORT:
 			if (DamagingMoveTypeInMoveset(bankDef, TYPE_ELECTRIC) //Foe has electric move
@@ -2231,6 +2270,13 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 							INCREASE_STATUS_VIABILITY(2);
 						break;
 					}
+					break;
+
+				case MOVE_POWERSHIFT:
+					if (IsClassDamager(class) //Moveset is set up to dish out damage
+					&& ((data->atkDefense > data->atkAttack && RealPhysicalMoveInMoveset(bankAtk))
+					 || (data->atkSpDef > data->atkSpAtk && SpecialMoveInMoveset(bankAtk))))
+						INCREASE_STATUS_VIABILITY(2);
 					break;
 
 				case MOVE_HEARTSWAP: ;
@@ -2821,6 +2867,7 @@ u8 AIScript_SemiSmart(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case EFFECT_ATTRACT:
 			case EFFECT_BATON_PASS:
 			case EFFECT_ATTACK_UP_HIT:
+			case EFFECT_HIGHER_OFFENSES_DEFENSES_UP_HIT:
 			case EFFECT_BELLY_DRUM:
 			case EFFECT_SEMI_INVULNERABLE:
 			case EFFECT_DEFENSE_CURL:
