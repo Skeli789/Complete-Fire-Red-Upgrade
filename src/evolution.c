@@ -216,8 +216,19 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					}
 					#endif
 					break;
+				
+				case EVO_MOVE_MALE:
+					if (GetMonGender(mon) != MON_MALE)
+						break;
+					goto REGULAR_EVO_MOVE;
+				
+				case EVO_MOVE_FEMALE:
+					if (GetMonGender(mon) != MON_FEMALE)
+						break;
+					//Fallthrough
 
 				case EVO_MOVE:
+				REGULAR_EVO_MOVE:
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
 						if (gEvolutionTable[species][i].param == mon->moves[j])
@@ -286,6 +297,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				//case EVO_DAMAGE_LOCATION:
+
+				case EVO_LEVEL_HOLD_ITEM: //Level up to level while holding item
+					if (level >= gEvolutionTable[species][i].param && heldItem == gEvolutionTable[species][i].unknown)
+					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						#ifdef EVO_HOLD_ITEM_REMOVAL
+							FlagSet(FLAG_REMOVE_EVO_ITEM);
+						#endif
+					}
+					break;
 			}
 		}
 		break;
@@ -316,7 +337,9 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 	case EVO_MODE_ITEM_CHECK:	// using items
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if ((gEvolutionTable[species][i].method == EVO_ITEM || gEvolutionTable[species][i].method == EVO_ITEM_LOCATION)
+			if ((gEvolutionTable[species][i].method == EVO_ITEM
+			 || gEvolutionTable[species][i].method == EVO_ITEM_LOCATION
+			 || gEvolutionTable[species][i].method == EVO_ITEM_HOLD_ITEM)
 			 && gEvolutionTable[species][i].param == evolutionItem)
 			{
 				if (evolutionItem == ITEM_DAWN_STONE && GetMonGender(mon) != gEvolutionTable[species][i].unknown)
@@ -330,6 +353,15 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 
 					if (behaviour != gEvolutionTable[species][i].unknown) //Not standing on the correct kind of tile
 						continue;				
+				}
+				else if (gEvolutionTable[species][i].method == EVO_ITEM_HOLD_ITEM)
+				{
+					if (heldItem != gEvolutionTable[species][i].unknown) //Not holding the correct item
+						continue;
+
+					#ifdef EVO_HOLD_ITEM_REMOVAL
+						FlagSet(FLAG_REMOVE_EVO_ITEM);
+					#endif
 				}
 
 				targetSpecies = gEvolutionTable[species][i].targetSpecies;
@@ -376,6 +408,7 @@ bool8 IsLevelUpEvolutionMethod(u8 method)
 		case EVO_LEVEL_SPECIFIC_TIME_RANGE:
 		case EVO_NATURE_HIGH:
 		case EVO_NATURE_LOW:
+		case EVO_LEVEL_HOLD_ITEM:
 			return TRUE;
 		default:
 			return FALSE;
@@ -387,6 +420,7 @@ bool8 IsItemEvolutionMethod(u8 method)
 	switch (method) {
 		case EVO_ITEM:
 		case EVO_ITEM_LOCATION:
+		case EVO_ITEM_HOLD_ITEM:
 		case EVO_TRADE_ITEM:
 		case EVO_HOLD_ITEM_NIGHT:
 		case EVO_HOLD_ITEM_DAY:
@@ -416,6 +450,8 @@ bool8 IsOtherEvolutionMethod(u8 method)
 		case EVO_TRADE:
 		case EVO_MAP:
 		case EVO_MOVE:
+		case EVO_MOVE_MALE:
+		case EVO_MOVE_FEMALE:
 		case EVO_OTHER_PARTY_MON:
 		case EVO_FLAG_SET:
 		case EVO_CRITICAL_HIT:
@@ -434,6 +470,8 @@ bool8 EvolutionMethodRequiresLevelUp(u8 method)
 		|| method == EVO_MOVE_TYPE
 		|| method == EVO_MAP
 		|| method == EVO_MOVE
+		|| method == EVO_MOVE_MALE
+		|| method == EVO_MOVE_FEMALE
 		|| method == EVO_OTHER_PARTY_MON
 		|| method == EVO_FLAG_SET;
 }

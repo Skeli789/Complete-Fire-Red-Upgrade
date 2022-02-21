@@ -1966,6 +1966,14 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 					species = SPECIES_LANDORUS;
 					break;	
 				#endif
+				#if (defined SPECIES_ENAMORUS && defined SPECIES_ENAMORUS_THERIAN)
+				case SPECIES_ENAMORUS:
+					species = SPECIES_ENAMORUS_THERIAN;
+					break;
+				case SPECIES_ENAMORUS_THERIAN:
+					species = SPECIES_ENAMORUS;
+					break;	
+				#endif
 				default:
 					goto NO_EFFECT;
 			}
