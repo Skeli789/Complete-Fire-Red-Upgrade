@@ -371,14 +371,7 @@ static bool8 DoesBankNegateDamage(u8 bank, unusedArg u16 move)
 	unusedArg u16 species = SPECIES(bank);
 	unusedArg u8 ability = ABILITY(bank);
 
-	return FALSE
-			#ifdef SPECIES_MIMIKYU
-			|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && !IS_TRANSFORMED(bank))
-			#endif
-			#ifdef SPECIES_EISCUE
-			|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && !IS_TRANSFORMED(bank))
-			#endif
-			;
+	return !IS_TRANSFORMED(bank) && IsAffectedByDisguse(ability, species, SPLIT(move));
 }
 
 static u8 UpdateEffectivenessResultFlagsForDoubleSpreadMoves(u8 resultFlags)
@@ -1456,6 +1449,7 @@ void atk1B_cleareffectsonfaint(void) {
 				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 					return;
 
+				mon = GetBankPartyData(gActiveBattler); //Mon gets overwritten by Neutralizing Gas for some reason
 				++gNewBS->faintEffectsState;
 			__attribute__ ((fallthrough));
 
