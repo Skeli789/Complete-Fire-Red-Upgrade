@@ -189,7 +189,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 	if (IsOfType(gEffectBank, TYPE_GRASS)
 	&& (ABILITY(gEffectBank) == ABILITY_FLOWERVEIL || (IS_DOUBLE_BATTLE && ABILITY(PARTNER(gEffectBank)) == ABILITY_FLOWERVEIL))
 	&& gEffectBank != gBankAttacker
-	&& (gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_CONFUSION
+	&& (gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_TOXIC //Note: Confusion not stopped by Flower Veil
 	 || (gBattleCommunication[MOVE_EFFECT_BYTE] >= MOVE_EFFECT_ATK_MINUS_1 && gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_EVS_MINUS_1)
 	 || (gBattleCommunication[MOVE_EFFECT_BYTE] >= MOVE_EFFECT_ATK_MINUS_2 && gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_EVS_MINUS_2)))
 	{
