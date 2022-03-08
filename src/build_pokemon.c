@@ -262,7 +262,7 @@ void BuildTrainerPartySetup(void)
 				
 				for (i = 0, k = 0; i < PARTY_SIZE; ++i)
 				{
-					u16 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
+					u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
 					if (species != SPECIES_NONE && species != SPECIES_EGG) //Prevent Eggs from getting in
 					{
 						gEnemyParty[k] = gPlayerParty[i];
