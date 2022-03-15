@@ -274,6 +274,7 @@ BattleScript_PastelVeil_Heal:
 BattleScript_TerrainFromAbility:
 	call BattleScript_AbilityPopUp
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation2 BANK_SCRIPTING ANIM_ARG_1 0x0
 	copyarray BATTLE_STRING_LOADER SEED_HELPER 0x4
 	printstring 0x184

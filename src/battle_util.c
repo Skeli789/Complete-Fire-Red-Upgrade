@@ -80,6 +80,18 @@ u8 GetBankForBattleScript(u8 caseId)
 	return ret;
 }
 
+u8 GetFirstAliveActiveBattler(void)
+{
+	u32 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (BATTLER_ALIVE(i))
+			return i;
+	}
+
+	return 1; //If no choice, use opponent because if SIDE is called on it, the position returned will be 0xFF, and that defaults to opponent side
+}
 
 ability_t GetBankAbility(u8 bank) //Not actually used anymore
 {

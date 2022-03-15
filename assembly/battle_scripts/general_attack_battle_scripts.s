@@ -5251,6 +5251,7 @@ BS_226_Terrain:
 	ppreduce
 	setterrain FAILED
 	callasm TransferTerrainData
+	waitstateatk
 	tryactivateprotean
 	attackanimation
 	waitanimation
@@ -5718,6 +5719,7 @@ BS_243_DamageSetTerrain:
 BattleScript_SetTerrain:
 	setterrain BattleScript_SetTerrainReturn
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND

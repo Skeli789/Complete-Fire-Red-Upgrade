@@ -368,6 +368,7 @@ BattleScript_GravityEnd:
 BattleScript_TerrainEnd:
 	setbyte TERRAIN_BYTE 0x0
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation 0x0 ANIM_LOAD_DEFAULT_BG 0x0
 	setword BATTLE_STRING_LOADER TerrainEndString
 	printstring 0x184

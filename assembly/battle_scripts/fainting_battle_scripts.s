@@ -58,20 +58,22 @@ BattleScript_FaintRaidTarget:
 	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_FaintScriptingBank:
-	pokemonfaintcry BANK_SCRIPTING
+	copybyte FAINTED_BANK, BATTLE_SCRIPTING_BANK @;Using BANK_SCRIPTING can cause problems in cleareffectsonfaint
+	pokemonfaintcry BANK_FAINTED
 	pause 0x30
-	dofaintanimation BANK_SCRIPTING
+	dofaintanimation BANK_FAINTED
 	setword BATTLE_STRING_LOADER ScriptingBankFainted
 	printstring 0x184
-	cleareffectsonfaint BANK_SCRIPTING
+	cleareffectsonfaint BANK_FAINTED
 	printstring 0x130
-	trytrainerslidefirstdownmsg BANK_SCRIPTING
+	trytrainerslidefirstdownmsg BANK_FAINTED
 	return
 
 BattleScript_FaintRaidScriptingBank:
-	pokemonfaintcry BANK_SCRIPTING
-	playanimation BANK_SCRIPTING ANIM_POWDER_EXPLOSION 0x0
-	cleareffectsonfaint BANK_SCRIPTING
+	copybyte FAINTED_BANK, BATTLE_SCRIPTING_BANK @;Using BANK_SCRIPTING can cause problems in cleareffectsonfaint
+	pokemonfaintcry BANK_FAINTED
+	playanimation BANK_FAINTED ANIM_POWDER_EXPLOSION 0x0
+	cleareffectsonfaint BANK_FAINTED
 	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_SuccessBallThrow:

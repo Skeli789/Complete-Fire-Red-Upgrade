@@ -11,6 +11,7 @@
 
 //Exported Functions
 u8 GetBankForBattleScript(u8 caseId);
+u8 GetFirstAliveActiveBattler(void);
 ability_t GetBankAbility(u8 bank);
 ability_t GetRecordedAbility(u8 bank);
 ability_t CopyAbility(u8 bank);

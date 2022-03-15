@@ -1621,7 +1621,7 @@ void TransferTerrainData(void)
 		gBattlescriptCurrInstr -= 5;
 	else
 	{
-		gActiveBattler = 0;
+		gActiveBattler = GetFirstAliveActiveBattler(); //Must be alive otherwise handler function may set controller to wrong bank (eg. to opponent)
 		EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 		MarkBufferBankForExecution(gActiveBattler);
 	}
@@ -1832,7 +1832,7 @@ void TransferLastUsedItem(void)
 		gBattlescriptCurrInstr -= 5;
 	else
 	{
-		gActiveBattler = 0;
+		gActiveBattler = GetFirstAliveActiveBattler();
 		EmitDataTransfer(0, &gLastUsedItem, 2, &gLastUsedItem);
 		MarkBufferBankForExecution(gActiveBattler);
 	}
