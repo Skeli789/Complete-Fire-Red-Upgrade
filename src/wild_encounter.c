@@ -1069,6 +1069,16 @@ void HeadbuttWildEncounter(void)
 		gSpecialVar_LastResult = FALSE;
 }
 
+static void TrySetDoubleSweetScentBattle(void)
+{
+	#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
+	if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set
+	&& Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE
+	&& ViableMonCount(gPlayerParty) >= 2) //Player has two Pokeon that can battle on their own
+		FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
+	#endif
+}
+
 bool8 SweetScentWildEncounter(void)
 {
 	s16 x, y;
@@ -1100,14 +1110,8 @@ bool8 SweetScentWildEncounter(void)
 			return TRUE;
 		}
 
-		#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
-		if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set
-		&& Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE
-		&& ViableMonCount(gPlayerParty) >= 2) //Player has two Pokeon that can battle on their own
-			FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
-		#endif
+		TrySetDoubleSweetScentBattle();
 		TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
-
 		BattleSetup_StartWildBattle();
 		return TRUE;
 	}
@@ -1122,10 +1126,7 @@ bool8 SweetScentWildEncounter(void)
 			return TRUE;
 		}
 
-		#ifdef SWEET_SCENT_WILD_DOUBLE_BATTLES
-		if (Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
-			FlagSet(FLAG_DOUBLE_WILD_BATTLE); //Sweet Scent can trigger a wild double battle
-		#endif
+		TrySetDoubleSweetScentBattle();
 		TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, 0);
 		BattleSetup_StartWildBattle();
 		return TRUE;
@@ -1151,7 +1152,6 @@ bool8 StartRandomWildEncounter(bool8 waterMon)
 		}
 
 		TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
-
 		BattleSetup_StartWildBattle();
 		return TRUE;
 	}
