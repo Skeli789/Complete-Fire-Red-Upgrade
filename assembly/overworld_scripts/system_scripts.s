@@ -238,9 +238,28 @@ SystemScript_WaitForFollower:
 
 .equ SPECIAL_SHOW_ITEM_SPRITE_ON_FIND_OBTAIN, 0xE4
 .equ SPECIAL_CLEAR_ITEM_SPRITE_AFTER_FIND_OBTAIN, 0xE5
+.equ Systemcript_BufferPocketNameTryFanfare, 0x81A66BC
+.equ SystemScript_NoRoomToPickUpItem, 0x81A682D
 
-.global SystemScript_FindItemMessage
-SystemScript_FindItemMessage:
+SystemScript_FindItem: @Originally at 0x81A67B3
+	lock
+	pause 0x10 @;Give time for the click sound to play when talking to a Poke Ball
+	special SPECIAL_STOP_SOUNDS @;In case the bike jingle is playing at the same time
+	copyvar 0x8004, 0x8000
+	copyvar 0x8005, 0x8001
+	checkitemspace 0x8000, 0x8001
+	copyvar 0x8007, LASTRESULT
+	bufferitem 1, 0x8000
+	checkitemtype 0x8000
+	call Systemcript_BufferPocketNameTryFanfare
+	compare 0x8007, TRUE
+	if equal _call SystemScript_PickUpItem
+	compare 0x8007, FALSE
+	if equal _call SystemScript_NoRoomToPickUpItem
+	release
+	return
+
+SystemScript_PickUpItem:
 	textcolor BLACK
 	hidesprite LASTTALKED
 	pause 0x1
