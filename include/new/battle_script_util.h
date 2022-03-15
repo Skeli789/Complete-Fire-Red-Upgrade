@@ -92,6 +92,7 @@ void RestoreBanksFromSynchronize(void);
 void TrySetAlternateFlingEffect(void);
 void TransferLastUsedItem(void);
 void TryToStopNewMonFromSwitchingInAfterSRHurt(void);
+void WipeSwitchInEffectsState(void);
 void ClearSwitchInEffectsState(void);
 void UpdatePrimalAbility(void);
 void ClearAttackerDidDamageOnce(void);

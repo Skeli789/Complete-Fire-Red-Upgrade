@@ -827,7 +827,7 @@ void atk52_switchineffects(void)
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
 				&&  gBattleMons[gActiveBattler].hp + gNewBS->DamageTaken[gActiveBattler] > gBattleMons[gActiveBattler].maxHP / 2)
 				{
-					gBattleScripting.bank = gActiveBattler;
+					gBattleScripting.bank = gBankSwitching = gActiveBattler;
 					BattleScriptPush(gBattlescriptCurrInstr + 2);
 					gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 					return;

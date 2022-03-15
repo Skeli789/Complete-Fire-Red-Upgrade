@@ -1252,7 +1252,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  BATTLER_ALIVE(bank)
 						&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
 						&&  gBattleMons[bank].hp + gNewBS->turnDamageTaken[bank] > gBattleMons[bank].maxHP / 2 //Fell this turn
-						&&  HasMonToSwitchTo(bank))
+						&&  (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || HasMonToSwitchTo(bank))) //Should always flee in a wild battle
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
@@ -1271,7 +1271,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						&&  BATTLER_ALIVE(bank)
 						&&  (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 || gNewBS->lessThanHalfHPBeforeShellBell) //Ignore Shell Bell Recovery
 						&&  gBattleMons[bank].hp + gNewBS->selfInflictedDamage > gBattleMons[bank].maxHP / 2 //Fell this turn
-						&&  HasMonToSwitchTo(bank))
+						&&  (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || HasMonToSwitchTo(bank))) //Should always flee in a wild battle
 						{
 							if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 								gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch

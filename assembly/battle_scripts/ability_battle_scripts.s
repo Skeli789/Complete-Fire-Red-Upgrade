@@ -418,6 +418,7 @@ EmergencyExitSwitchBS:
 	printstring 0x3
 	switchinanim BANK_SWITCHING 0x1
 	waitstateatk
+	callasm WipeSwitchInEffectsState @;In case Emergency Exit activated because of hazards damage
 	switchineffects BANK_SWITCHING
 	callasm SetNoMoreMovingThisTurnSwitchingBank @;New Pokemon can't attack after being switched in
 

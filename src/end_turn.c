@@ -153,6 +153,7 @@ u8 TurnBasedEffects(void)
 	{
 		u8 sideBank;
 		gActiveBattler = gBankAttacker = gBankTarget = gBanksByTurnOrder[gBattleStruct->turnEffectsBank];
+		gBattleMoveDamage = 0; //So Emergency Exit works properly
 
 		switch (gBattleStruct->turnEffectsTracker) {
 			case ET_Order:
@@ -1446,6 +1447,7 @@ u8 TurnBasedEffects(void)
 										RecordItemEffectBattle(gActiveBattler, itemEffect);
 
 										gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gActiveBattler) / 8);
+										gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 										BattleScriptExecute(BattleScript_BlackSludgeHurt);
 										++effect;
 									}
