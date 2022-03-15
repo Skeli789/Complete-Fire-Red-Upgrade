@@ -266,7 +266,7 @@ BattleScript_DoSwitchOut:
 	waitstateatk
 	switchineffects BANK_SWITCHING
 	callasm RechooseAIMoveAfterSwitchIfNecessary
-	
+
 HandleActionSwitchEnd:
 BattleScript_EntryHazardsHurtReturn:
 	end2

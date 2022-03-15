@@ -5186,6 +5186,9 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
 		return FALSE; //No need to waste a Z-Move on your partner
 
+	if (gNewBS->zMoveData.used[bankAtk])
+		return FALSE; //Can't use more than one Z-Move a battle
+
 	u16 zMove = CanUseZMove(bankAtk, 0xFF, move);
 	u16 defMovePrediction = IsValidMovePrediction(bankDef, bankAtk);
 
