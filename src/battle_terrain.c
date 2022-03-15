@@ -16,6 +16,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/frontier.h"
+#include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
 /*
@@ -138,10 +139,14 @@ u8 GetBattleTerrainOverride(void)
 	|| gMain.callback2 == CB2_TradeEvolutionSceneUpdate)
 	{
 		bool8 wasRoamerBattle = (gBattleTypeFlags & BATTLE_TYPE_ROAMER) != 0;
+		bool8 wasTwoOpponentBattle = IsTwoOpponentBattle();
 		gBattleTypeFlags = 0;
 
 		if (wasRoamerBattle)
-			gBattleTypeFlags |= BATTLE_TYPE_ROAMER; //Important otherwise the Roamer may not disappear when caught
+			gBattleTypeFlags |= BATTLE_TYPE_ROAMER; //Needed otherwise the Roamer may not disappear when caught
+
+		if (wasTwoOpponentBattle)
+			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS); //Needed otherwise the second opponent will battle the player again
 
 		gBattleTerrain = BattleSetup_GetTerrainId();
 	}
