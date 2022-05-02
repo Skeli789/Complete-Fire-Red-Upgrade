@@ -950,7 +950,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Alford_Rank3[] =
 {
 	{
 		.species = SPECIES_PYROAR,
-		.nature = NATURE_QUIET,
+		.nature = NATURE_BRAVE,
 		.hpIv = 25,
 		.atkIv = 20,
 		.defIv = 25,
@@ -962,7 +962,7 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Alford_Rank3[] =
 		.item = ITEM_NONE,
 		.moves =
 		{
-			MOVE_INCINERATE,
+			MOVE_FIREFANG,
 			MOVE_ECHOEDVOICE,
 			MOVE_CRUNCH,
 			MOVE_PROTECT,

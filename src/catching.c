@@ -67,7 +67,6 @@ void atkEF_handleballthrow(void)
 	gActiveBattler = gBankAttacker;
 	gBankTarget = GetCatchingBattler();
 
-	u8 atkLevel = gBattleMons[gBankAttacker].level;
 	u8 defLevel = gBattleMons[gBankTarget].level;
 
 	u8 ballType = ItemId_GetType(gLastUsedItem);
@@ -158,8 +157,10 @@ void atkEF_handleballthrow(void)
 			odds = (odds * 15) / 10;
 
 		//Difficulty Modifier - from SwSh
-		if (!FlagGet(FLAG_SYS_GAME_CLEAR) && atkLevel < defLevel)
+		#ifdef SWSH_CATCHING_DIFFICULTY_MODIFIER
+		if (!FlagGet(FLAG_SYS_GAME_CLEAR) && gBattleMons[gBankAttacker].level < defLevel)
 			odds /= 10;
+		#endif
 
 		//Raid Modifier
 		if (IsRaidBattle()) //Dynamax Raid Pokemon can be caught easier

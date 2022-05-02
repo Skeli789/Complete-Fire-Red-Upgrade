@@ -2607,12 +2607,6 @@ void TryRaiseHigherDefensesOverOffenses(void)
 		gBattlescriptCurrInstr = BattleScript_HigherDefensesUp - 5;
 }
 
-void ModifyAttackStatChangeForVictoryDance(void)
-{
-	if (gCurrentMove == MOVE_VICTORYDANCE)
-		gBattleScripting.statChanger += INCREASE_1; //Doubles attack is the same as +1 and 1.5 power boost
-}
-
 bool8 IsSpringtideStormSpDefDown(unusedArg u8 bank)
 {
 	#ifdef SPECIES_ENAMORUS_THERIAN

@@ -16823,12 +16823,12 @@ BEHEMOTH_BLADE_REJOIN:
 	resetblends
 	launchtemplate BEHEMOTH_BLADE_CUT 0x2 0x3, 0x3C, -0x30, 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_BG 0x1 0x10 0x10 0x7FFF @;Screen flash white
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_ATK_PARTNER | PAL_DEF_PARTNER | PAL_BG 0x1 0x10 0x10 0x7FFF @;Screen flash white
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x20 0x1
 	call LARGE_EXPLOSION
 	call LARGE_EXPLOSION
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_BG 0x1 0x10 0x0 0x7FFF @;Screen revert from white
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_ATK_PARTNER | PAL_DEF_PARTNER | PAL_BG 0x1 0x10 0x0 0x7FFF @;Screen revert from white
 	pokespritefromBG bank_target
 	resetblends
 	endanimation

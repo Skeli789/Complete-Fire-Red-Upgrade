@@ -2080,17 +2080,25 @@ bool8 IsAnimMoveKingsShield(void)
 void AnimTask_TargetedLightning(u8 taskId)
 {
 	struct Task *task = &gTasks[taskId];
-	u8 target = LoadBattleAnimTarget(0);
-
-	if (!IsBattlerSpriteVisible(target))
-	{
-		DestroyAnimVisualTask(taskId);
-		return;
-	}
 
 	switch (task->data[0])
 	{
-		case 0:
+		case 0: ;
+			u8 target = LoadBattleAnimTarget(0);
+
+			if (IS_SINGLE_BATTLE
+			&& (gBattleAnimArgs[0] == ANIM_ATK_PARTNER || gBattleAnimArgs[0] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as user
+			{
+				DestroyAnimVisualTask(taskId);
+				return;
+			}
+
+			if (!IsBattlerSpriteVisible(target))
+			{
+				DestroyAnimVisualTask(taskId);
+				return;
+			}
+
 			task->data[15] = GetBattlerSpriteCoord(target, BATTLER_COORD_Y) + 32;
 			task->data[14] = task->data[15];
 			while (task->data[14] > 16)
@@ -2781,7 +2789,7 @@ void SpriteCB_FallingObject(struct Sprite *sprite)
 	u8 target = LoadBattleAnimTarget(3);
 
 	if (IS_SINGLE_BATTLE
-	&& (gBattleAnimArgs[3] == ANIM_ATK_PARTNER || gBattleAnimArgs[3] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as partner
+	&& (gBattleAnimArgs[3] == ANIM_ATK_PARTNER || gBattleAnimArgs[3] == ANIM_DEF_PARTNER)) //These targets don't exist and LoadBattleAnimTarget will treat as user
 		DestroyAnimSprite(sprite);
 	else if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);

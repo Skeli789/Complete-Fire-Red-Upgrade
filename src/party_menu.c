@@ -506,6 +506,13 @@ bool8 SummaryScreen_IsMultiBattlePartner(void)
 		&& (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1);
 }
 
+bool32 SummaryScreenMonIsFromGBA(void)
+{
+    u8 version = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_GAME, 0);
+	return version == VERSION_FIRE_RED; //Not compatible with any other game
+}
+
+
 //Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern u8 gOtherText_NoMoreOnePoke[];

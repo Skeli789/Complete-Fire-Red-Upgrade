@@ -4754,6 +4754,7 @@ BS_208_BulkUp:
 	attackstring
 	ppreduce
 	jumpifmove MOVE_COIL CoilBS
+	jumpifmove MOVE_VICTORYDANCE VictoryDanceBS
 	
 BulkUpBS:
 	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX BulkUp_Atk
@@ -4765,7 +4766,6 @@ BulkUp_Atk:
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_DEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_ATK | INCREASE_1
-	callasm ModifyAttackStatChangeForVictoryDance @;Changes to INCREASE_2
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BulkUp_Def
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BulkUp_Def
 	printfromtable gStatUpStringIds
@@ -4806,6 +4806,39 @@ Coil_Def:
 
 Coil_Acc:
 	setstatchanger STAT_ACC | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+VictoryDanceBS: @;Physical Quiver Dance
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX VictoryDance_Atk
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX VictoryDance_Atk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
+
+VictoryDance_Atk:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_DEF | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN VictoryDance_Def
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VictoryDance_Def
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+VictoryDance_Def:
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN VictoryDance_Speed
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VictoryDance_Speed
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+VictoryDance_Speed:
+	setstatchanger STAT_SPD | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable gStatUpStringIds

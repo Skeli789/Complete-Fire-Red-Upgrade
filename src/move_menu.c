@@ -2178,7 +2178,6 @@ bool8 IsBagDisabled(void)
 	else
 	{
 		if (!IsRaidBattle()
-		&& IsAuraBoss(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Wild boss
 		&& CantCatchBecauseFlag() //Can't be caught
 		&& (difficulty >= OPTIONS_EXPERT_DIFFICULTY //No items in battles for Insane players
 		 || itemRestrictions >= OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS))

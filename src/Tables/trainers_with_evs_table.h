@@ -1415,8 +1415,8 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_1,
 	},
 	[141] =
-	{	//Mixed offensive BH Set Specially Oriented, Ability 1
-		.nature = NATURE_TIMID,
+	{	//Mixed offensive BH Set Physically Oriented, Ability 1
+		.nature = NATURE_JOLLY,
 		.ivs = 31,
 		.hpEv = 252,
 		.atkEv = 252,
