@@ -865,7 +865,6 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 	u16 amountToRecover = 0;
 	u16 curHp = GetBaseCurrentHP(bankAtk);
 	u16 maxHp = GetBaseMaxHP(bankAtk);
-	u8 itemEffect = ITEM_EFFECT(bankAtk);
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_RESTORE_HP:
@@ -876,18 +875,29 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			break;
 
 		case EFFECT_MORNING_SUN:
+			if (gBattleWeather == 0 || gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL || !WEATHER_HAS_EFFECT)
+			{
+				amountToRecover = MathMax(1, maxHp / 2);
+				break;
+			}
+
 			switch (move) {
 				case MOVE_SHOREUP:
-					if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT)
+					if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 						amountToRecover = maxHp;
 					else
 						amountToRecover = MathMax(1, maxHp / 2);
 					break;
 
 				default:
-					if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
-						amountToRecover = maxHp;
-					else if (gBattleWeather && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA) //Not sunny
+					if (gBattleWeather & WEATHER_SUN_ANY)
+					{
+						if (AffectedBySun(bankAtk))
+							amountToRecover = maxHp;
+						else
+							amountToRecover = MathMax(1, maxHp / 2);
+					}
+					else if (gBattleWeather != 0) //Weather other than sunny
 						amountToRecover = MathMax(1, maxHp / 4);
 					else
 						amountToRecover = MathMax(1, maxHp / 2);
@@ -984,7 +994,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 				amountToRecover += MathMax(1, maxHp / 2);
 			}
 
-			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && AffectedByRain(bankAtk))
 			{
 				if (ability == ABILITY_RAINDISH)
 					amountToRecover += MathMax(1, maxHp / 16);

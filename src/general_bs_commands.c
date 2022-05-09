@@ -2512,10 +2512,24 @@ bool8 SetRainyWeather(void)
 
 void atk7D_setrain(void)
 {
-	if (!SetRainyWeather())
-		gMoveResultFlags |= MOVE_RESULT_FAILED;
+	u8 bank;
 
-	gBattlescriptCurrInstr++;
+	if (!SetRainyWeather())
+	{
+		gMoveResultFlags |= MOVE_RESULT_FAILED;
+		gBattlescriptCurrInstr++;
+	}
+	else if ((bank = BankOnFieldHasEvaporate()))
+	{
+		//Undo weather
+		gBattleWeather = 0;
+		gWishFutureKnock.weatherDuration = 0;
+		gMoveResultFlags |= MOVE_RESULT_FAILED;
+		gBattleScripting.bank = bank - 1;
+		gBattlescriptCurrInstr = BattleScript_RainDanceBlockedByEvaporate;
+	}
+	else
+		gBattlescriptCurrInstr++;
 }
 
 void atk7E_setreflect(void) {
@@ -4571,15 +4585,15 @@ void atkC0_recoverbasedonsunlight(void)
 			else
 				gBattleMoveDamage = GetBaseMaxHP(gBankAttacker) / 2;
 		}
-		else if (gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
+		else if (gBattleWeather & WEATHER_SUN_ANY)
 		{
-			gBattleMoveDamage = (2 * GetBaseMaxHP(gBankAttacker)) / 3;
+			if (AffectedBySun(gBankAttacker))
+				gBattleMoveDamage = (2 * GetBaseMaxHP(gBankAttacker)) / 3;
+			else
+				goto NO_WEATHER_EFFECT;
 		}
 		else //Not Sunny Weather
 		{
-			if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_UTILITY_UMBRELLA)
-				goto NO_WEATHER_EFFECT;
-
 			gBattleMoveDamage = GetBaseMaxHP(gBankAttacker) / 4;
 		}
 
@@ -5296,7 +5310,7 @@ void atkE7_trycastformdatachange(void)
 			case SPECIES_CHERRIM:
 				if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 				&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY
-				&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				&& AffectedBySun(bank))
 				{
 					DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
 					BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
@@ -5306,7 +5320,7 @@ void atkE7_trycastformdatachange(void)
 			case SPECIES_CHERRIM_SUN:
 				if (ABILITY(bank) != ABILITY_FLOWERGIFT
 				|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)
-				|| ITEM_EFFECT(bank) == ITEM_EFFECT_UTILITY_UMBRELLA)
+				|| !AffectedBySun(bank))
 				{
 					if (!IS_TRANSFORMED(bank))
 					{
@@ -5322,9 +5336,8 @@ void atkE7_trycastformdatachange(void)
 u8 CastformDataTypeChange(unusedArg u8 bank)
 {
 	u8 formChange = CASTFORM_NO_CHANGE;
-	#ifdef SPECIES_CASTFORM
-	u8 itemEffect = ITEM_EFFECT(bank);
 
+	#ifdef SPECIES_CASTFORM
 	if (SPECIES(bank) != SPECIES_CASTFORM || !BATTLER_ALIVE(bank))
 		return formChange;
 
@@ -5341,7 +5354,7 @@ u8 CastformDataTypeChange(unusedArg u8 bank)
 	}
 	else if (weatherHasEffect && ability == ABILITY_FORECAST)
 	{
-		if (gBattleWeather & WEATHER_SUN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		if (gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 		{
 			if (gBattleMonForms[bank] != CASTFORM_SUN)
 			{
@@ -5349,7 +5362,7 @@ u8 CastformDataTypeChange(unusedArg u8 bank)
 				formChange = CASTFORM_TO_FIRE;
 			}
 		}
-		else if (gBattleWeather & WEATHER_RAIN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		else if (gBattleWeather & WEATHER_RAIN_ANY && AffectedByRain(bank))
 		{
 			if (gBattleMonForms[bank] != CASTFORM_RAIN)
 			{

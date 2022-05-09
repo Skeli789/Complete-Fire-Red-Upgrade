@@ -15,6 +15,8 @@ ability_battle_scripts.s
 .global BattleScript_AirLock
 .global BattleScript_WeatherAbilityBlockedByPrimalWeather
 .global BattleScript_WeatherAbilityBlockedByPrimalWeatherRet
+.global BattleScript_WeatherAbilityBlockedByEvaporate
+.global BattleScript_EvaporateOnSwitchIn
 .global BattleScript_StrongWindsWeakenedttack
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
@@ -95,6 +97,7 @@ ability_battle_scripts.s
 .global BattleScript_StickyHoldActivates
 .global BattleScript_DampStopsExplosion
 .global BattleScript_TookAttack
+.global BattleScript_EvaporatedAttack
 .global BattleScript_AvoidedMoveWithAbility
 .global BattleScript_MimicryTransformed
 .global BattleScript_MimicryReturnedToNormal
@@ -150,6 +153,40 @@ BattleScript_WeatherAbilityBlockedByPrimalWeatherRet:
 BattleScript_TryBlockWeatherWithPrimalWeatherRetSkipPause:
 	tryblockweatherwithprimalweather RetSkipPause
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WeatherAbilityBlockedByEvaporate:
+	call BattleScript_AbilityPopUp
+	callasm TryHideActiveAbilityPopUps
+	copybyte BATTLE_SCRIPTING_BANK, TARGET_BANK @;Evaporate bank
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_ButAbilityEvaporatesRain
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ EVAPORATE_STAT_BOOST, STAT_SPATK | INCREASE_1
+
+BattleScript_EvaporateOnSwitchIn:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_AbilityEvaporatedRain
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setstatchanger EVAPORATE_STAT_BOOST
+	statbuffchange BANK_ATTACKER BattleScript_EvaporateOnSwitchInReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_EvaporateOnSwitchInReturn
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printstring 0xD8 @;STRINGID_PKMNSSTATCHANGED4
+	waitmessage DELAY_1SECOND
+BattleScript_EvaporateOnSwitchInReturn:
+	call BattleScript_AbilityPopUpRevert
+	call 0x81D92DC @;BattleScript_WeatherFormChanges
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1257,6 +1294,17 @@ BattleScript_TookAttack:
 	pause 0x10
 	call BattleScript_AbilityPopUp
 	printstring 0x14E @;STRINGID_PKMNSXTOOKATTACK
+	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	orword HIT_MARKER HITMARKER_ATTACKSTRING_PRINTED
+	return
+
+BattleScript_EvaporatedAttack:
+	call BattleScript_AttackstringBackupScriptingBank
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_AbilityEvaporatedAttack
+	printstring 0x184
 	waitmessage DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert
 	orword HIT_MARKER HITMARKER_ATTACKSTRING_PRINTED

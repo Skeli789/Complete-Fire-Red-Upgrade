@@ -2026,12 +2026,23 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 						++priority;
 					break;
 
-				case ABILITY_GALEWINGS:
-					if (GetMoveTypeSpecial(bank, move) == TYPE_FLYING
+				case ABILITY_GALEWINGS: ;
+					u16 species = GetProperAbilityPopUpSpecies(bank);
+					if (SpeciesHasGrassDash(species))
+					{
+						if (GetMoveTypeSpecial(bank, move) == TYPE_GRASS)
+							++priority;
+					}
+					else if (SpeciesHasSlipperyTail(species))
+					{
+						if (gSpecialMoveFlags[move].gTailMoves)
+							++priority;
+					}
+					else if (GetMoveTypeSpecial(bank, move) == TYPE_FLYING
 					#ifndef OLD_GALE_WINGS
 					&& BATTLER_MAX_HP(bank)
 					#endif
-					)
+					) //Gale Wings
 					{
 						++priority;
 					}
@@ -2066,7 +2077,17 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 				break;
 
 			case ABILITY_GALEWINGS:
-				if (GetMonMoveTypeSpecial(mon, move) == TYPE_FLYING
+				if (SpeciesHasGrassDash(mon->species))
+				{
+					if (GetMonMoveTypeSpecial(mon, move) == TYPE_GRASS)
+						++priority;
+				}
+				else if (SpeciesHasSlipperyTail(mon->species))
+				{
+					if (gSpecialMoveFlags[move].gTailMoves)
+						++priority;
+				}
+				else if (GetMonMoveTypeSpecial(mon, move) == TYPE_FLYING
 				#ifndef OLD_GALE_WINGS
 				&& GetMonData(mon, MON_DATA_HP, NULL) == GetMonData(mon, MON_DATA_MAX_HP, NULL)
 				#endif
@@ -2079,6 +2100,7 @@ s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 			case ABILITY_TRIAGE:
 				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 					priority += 3;
+				break;
 		}
 	}
 
@@ -2146,11 +2168,11 @@ static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed)
 	if (WEATHER_HAS_EFFECT) {
 		switch (ability) {
 			case ABILITY_SWIFTSWIM:
-				if (gBattleWeather & WEATHER_RAIN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(itemEffect))
 					speed *= 2;
 				break;
 			case ABILITY_CHLOROPHYLL:
-				if (gBattleWeather & WEATHER_SUN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(itemEffect))
 					speed *= 2;
 				break;
 			case ABILITY_SANDRUSH:

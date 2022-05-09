@@ -816,12 +816,16 @@ Alchemic Power
 #org @gText_AbilityName_PropellerTail
 Propeller Tail
 
-//Unbound Custom Abilities
+//Unbound Custom Abilities//
+
 #org @gText_AbilityName_NineLives
 Nine Lives
 
 #org @gText_AbilityName_FocusBelt
 Focus Belt
+
+#org @gText_AbilityName_Evaporate
+Evaporate
 
 #org @gText_AbilityName_FieryNeigh
 Fiery Neigh
@@ -846,6 +850,15 @@ Tangling Wool
 
 #org @gText_AbilityName_BrainBond
 Brain Bond
+
+#org @gText_AbilityName_GrassDash
+Grass Dash
+
+#org @gText_AbilityName_SlipperyTail
+Slippery Tail
+
+#org @gText_AbilityName_DrillBeak
+Drill Beak
 
 #org @gText_AbilityName_CottonCloud
 Cotton Cloud

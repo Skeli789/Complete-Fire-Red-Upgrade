@@ -379,6 +379,7 @@ u8 TurnBasedEffects(void)
 						case ABILITY_DRYSKIN:
 						case ABILITY_ICEBODY:
 						case ABILITY_SOLARPOWER:
+						case ABILITY_EVAPORATE:
 							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 								effect++;
 							break;
@@ -1486,7 +1487,6 @@ u8 TurnBasedEffects(void)
 					u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 					u16 newSpecies = SPECIES_NONE;
 					u8 ability = ABILITY(gActiveBattler);
-					u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 					bool8 changedForm = FALSE;
 					bool8 reloadType = FALSE;
 					bool8 reloadStats = FALSE;
@@ -1612,7 +1612,7 @@ u8 TurnBasedEffects(void)
 								case SPECIES_CHERRIM:
 									if (WEATHER_HAS_EFFECT
 									&& (gBattleWeather & WEATHER_SUN_ANY)
-									&& itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+									&& AffectedBySun(gActiveBattler))
 									{
 										newSpecies = SPECIES_CHERRIM_SUN;
 										changedForm = TRUE;
@@ -1623,7 +1623,7 @@ u8 TurnBasedEffects(void)
 									if (!WEATHER_HAS_EFFECT
 									|| !(gBattleWeather & WEATHER_SUN_ANY)
 									//|| ability != ABILITY_FLOWERGIFT //Not neccessary
-									|| itemEffect == ITEM_EFFECT_UTILITY_UMBRELLA)
+									|| !AffectedBySun(gActiveBattler))
 									{
 										newSpecies = SPECIES_CHERRIM;
 										changedForm = TRUE;
@@ -1666,8 +1666,17 @@ u8 TurnBasedEffects(void)
 				gBattleStruct->turnEffectsBank = gBattlersCount;
 				if (gBattleWeather == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
 				{
-					++effect;
-					return effect;
+					if (RainCanBeEvaporated() && BankOnFieldHasEvaporate())
+					{
+						//Prevent rain from returning
+						gBattleWeather = 0;
+						gWishFutureKnock.weatherDuration = 0;
+					}
+					else
+					{
+						++effect;
+						return effect;
+					}
 				}
 				break;
 

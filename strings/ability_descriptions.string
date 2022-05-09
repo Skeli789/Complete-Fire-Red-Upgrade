@@ -121,7 +121,7 @@ Only damaged by attacks.
 Avoids ball and bomb moves.
 
 #org @DESC_GALEWINGS
-Flying moves hit first.
+Flying-type moves hit first.
 
 #org @DESC_MOXIE
 #org @DESC_CHILLINGNEIGH
@@ -165,7 +165,7 @@ Boosts biting moves.
 Raises own and ally's accuracy.
 
 #org @DESC_STORMDRAIN
-Draws in Water-type moves.
+Draws in water to up Sp. Atk.
 
 #org @DESC_DARKAURA
 Powers up Dark-type moves.
@@ -562,3 +562,17 @@ Sometimes moves quicker.
 
 #org @DESC_CURIOUSMEDICINE
 Resets ally's stat changes.
+
+//Unbound Custom Abilities//
+
+#org @gText_AbilityDescription_Evaporate
+Nullifies all water to up Sp. Atk.
+
+#org @gText_AbilityDescription_GrassDash
+Grass-type moves hit first.
+
+#org @gText_AbilityDescription_SlipperyTail
+Tail moves hit first.
+
+#org @gText_AbilityDescription_DrillBeak
+Drill moves land critical hits.

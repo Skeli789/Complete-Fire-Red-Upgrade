@@ -33,6 +33,7 @@ extern const u8 BattleScript_MoveUsedRaidBattlePrevents[];
 extern const u8 BattleScript_MoveUsedRaidShieldPrevents[];
 extern const u8 BattleScript_DampStopsExplosion[];
 extern const u8 BattleScript_TookAttack[];
+extern const u8 BattleScript_EvaporatedAttack[];
 extern const u8 BattleScript_RaidBattleStatNullification[];
 
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8

@@ -12,6 +12,7 @@
 #include "../include/new/util.h"
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
+extern const u8* gAbilityDescriptions[];
 extern const u8 gText_AbilityName_AirLock[];
 extern const u8 gText_AbilityName_VitalSpirit[];
 extern const u8 gText_AbilityName_WhiteSmoke[];
@@ -31,6 +32,7 @@ extern const u8 gText_AbilityName_PropellerTail[];
 //Unbound Custom Abilities
 extern const u8 gText_AbilityName_NineLives[];
 extern const u8 gText_AbilityName_FocusBelt[];
+extern const u8 gText_AbilityName_Evaporate[];
 extern const u8 gText_AbilityName_FieryNeigh[];
 extern const u8 gText_AbilityName_ShockingNeigh[];
 extern const u8 gText_AbilityName_Pride[];
@@ -38,6 +40,9 @@ extern const u8 gText_AbilityName_Multieye[];
 extern const u8 gText_AbilityName_Subterfuge[];
 extern const u8 gText_AbilityName_TanglingWool[];
 extern const u8 gText_AbilityName_BrainBond[];
+extern const u8 gText_AbilityName_GrassDash[];
+extern const u8 gText_AbilityName_SlipperyTail[];
+extern const u8 gText_AbilityName_DrillBeak[];
 extern const u8 gText_AbilityName_CottonCloud[];
 extern const u8 gText_AbilityName_Bellow[];
 extern const u8 gText_AbilityName_SoundWaves[];
@@ -47,6 +52,11 @@ extern const u8 gText_AbilityName_CrabbyTactics[];
 extern const u8 gText_AbilityName_HoneyArmor[];
 extern const u8 gText_AbilityName_FaceShield[];
 extern const u8 gText_AbilityName_RoyalRoar[];
+
+extern const u8 gText_AbilityDescription_Evaporate[];
+extern const u8 gText_AbilityDescription_GrassDash[];
+extern const u8 gText_AbilityDescription_SlipperyTail[];
+extern const u8 gText_AbilityDescription_DrillBeak[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -120,6 +130,10 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				return gText_AbilityName_Turboblaze;
 			else if (SpeciesHasTeravolt(species))
 				return gText_AbilityName_Teravolt;
+			break;
+		case ABILITY_STORMDRAIN:
+			if (SpeciesHasEvaporate(species))
+				return gText_AbilityName_Evaporate;
 			break;
 		case ABILITY_MOXIE:
 			switch (dexNum)
@@ -198,6 +212,12 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 					return gText_AbilityName_BrainBond;
 			}
 			break;
+		case ABILITY_GALEWINGS:
+			if (SpeciesHasGrassDash(species))
+				return gText_AbilityName_GrassDash;
+			else if (SpeciesHasSlipperyTail(species))
+				return gText_AbilityName_SlipperyTail;
+			break;
 		case ABILITY_EMERGENCYEXIT:
 			switch (dexNum)
 			{
@@ -233,6 +253,10 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 					return gText_AbilityName_PowerOfAlchemy;
 				#endif
 			}
+			break;
+		case ABILITY_MERCILESS:
+			if (SpeciesHasDrillBeak(species))
+				return gText_AbilityName_DrillBeak;
 			break;
 		case ABILITY_STALWART:
 			switch (dexNum)
@@ -302,6 +326,7 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 					return gText_AbilityName_CrabbyTactics;
 				#endif
 			}
+			break;
 		case ABILITY_DAUNTLESSSHIELD:
 			switch (dexNum)
 			{
@@ -326,7 +351,6 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#endif
 			}
 			break;
-			
 	}
 
 	return NULL;
@@ -346,9 +370,47 @@ const u8* GetAbilityName(const u8 ability, const u16 species)
 	return ptr;
 }
 
+const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements new Abilities
+{
+	switch (ability)
+	{
+		case ABILITY_STORMDRAIN:
+			if (SpeciesHasEvaporate(species))
+				return gText_AbilityDescription_Evaporate;
+			break;
+		case ABILITY_GALEWINGS:
+			if (SpeciesHasGrassDash(species))
+				return gText_AbilityDescription_GrassDash;
+			else if (SpeciesHasSlipperyTail(species))
+				return gText_AbilityDescription_SlipperyTail;
+			break;
+		case ABILITY_MERCILESS:
+			if (SpeciesHasDrillBeak(species))
+				return gText_AbilityDescription_DrillBeak;
+			break;
+	}
+
+	return NULL;
+}
+
+const u8* GetAbilityDescription(const u8 ability, unusedArg const u16 species)
+{	
+	const u8* override = GetAbilityDescriptionOverride(ability, species);
+	if (override != NULL)
+		return override;
+
+	const u8* desc = gAbilityDescriptions[ability];
+	return desc;
+}
+
 void CopyAbilityName(u8* dst, const u8 ability, const u16 species)
 {
 	StringCopy(dst, GetAbilityName(ability, species));
+}
+
+void CopyAbilityDescription(u8* dst, const u8 ability, const u16 species)
+{
+	StringCopy(dst, GetAbilityDescription(ability, species));
 }
 
 u16 GetProperAbilityPopUpSpecies(u8 bank)
@@ -396,7 +458,7 @@ bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
 	return IsMoldBreakerAbility(atkAbility) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
 }
 
-bool8 SpeciesHasTurboblaze(u16 species)
+bool8 SpeciesHasTurboblaze(unusedArg u16 species)
 {
 	#if (defined SPECIES_RESHIRAM && defined SPECIES_KYUREM_WHITE)
 	return species == SPECIES_RESHIRAM
@@ -406,11 +468,47 @@ bool8 SpeciesHasTurboblaze(u16 species)
 	#endif
 }
 
-bool8 SpeciesHasTeravolt(u16 species)
+bool8 SpeciesHasTeravolt(unusedArg u16 species)
 {
 	#if (defined SPECIES_ZEKROM && defined SPECIES_KYUREM_BLACK)
 	return species == SPECIES_ZEKROM
 		|| species == SPECIES_KYUREM_BLACK;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasDrillBeak(unusedArg u16 species) //Custom Unbound Ability
+{
+	#if (defined SPECIES_SPEAROW && defined SPECIES_FEAROW)
+	return species == SPECIES_SPEAROW || species == SPECIES_FEAROW;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGrassDash(unusedArg u16 species) //Custom Unbound Ability
+{
+	#ifdef SPECIES_SUNFLORA
+	return species == SPECIES_SUNFLORA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasEvaporate(unusedArg u16 species) //Custom Unbound Ability
+{
+	#ifdef SPECIES_MAGCARGO
+	return species == SPECIES_MAGCARGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSlipperyTail(unusedArg u16 species) //Custom Unbound Ability
+{
+	#ifdef SPECIES_SEVIPER
+	return species == SPECIES_SEVIPER;
 	#else
 	return FALSE;
 	#endif
@@ -643,6 +741,27 @@ bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility)
 		default:
 			return FALSE;
 	}
+}
+
+bool8 BankHasEvaporate(u8 bank)
+{
+	return ABILITY(bank) == ABILITY_EVAPORATE
+		&& SpeciesHasEvaporate(GetProperAbilityPopUpSpecies(bank));
+}
+
+bool8 BankOnFieldHasEvaporate(void)
+{
+	for (u32 i = 0; i < gBattlersCount; ++i)
+	{
+		u8 bank = gBanksByTurnOrder[i];
+
+		if (BATTLER_ALIVE(bank)
+		&& BankHasEvaporate(bank)
+		&& AffectedByRain(bank))
+			return bank + 1;
+	}
+
+	return FALSE;
 }
 
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species)

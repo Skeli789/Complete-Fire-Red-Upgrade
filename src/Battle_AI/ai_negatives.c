@@ -479,7 +479,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			case ABILITY_LEAFGUARD:
 				if (gBattleWeather & WEATHER_SUN_ANY
-				&& data->defItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+				&& !ItemEffectIgnoresSunAndRain(data->defItemEffect)
 				&& CheckTableForMovesEffect(move, gSetStatusMoveEffects)
 				&& WEATHER_HAS_EFFECT)
 				{
@@ -495,7 +495,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			//Target Partner Ability Check
 			switch (data->defPartnerAbility) {
 				case ABILITY_LIGHTNINGROD:
-					if (moveType == TYPE_ELECTRIC && !IsMoveRedirectionPrevented(move, data->atkAbility))
+					if (moveType == TYPE_ELECTRIC
+					&& !(moveTarget & MOVE_TARGET_USER)
+					&& !IsMoveRedirectionPrevented(move, data->atkAbility))
 					{
 						DECREASE_VIABILITY(20);
 						return viability;
@@ -503,7 +505,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					break;
 
 				case ABILITY_STORMDRAIN:
-					if (moveType == TYPE_WATER && !IsMoveRedirectionPrevented(move, data->atkAbility))
+					if (moveType == TYPE_WATER
+					&& !(moveTarget & MOVE_TARGET_USER)
+					&& !IsMoveRedirectionPrevented(move, data->atkAbility))
 					{
 						DECREASE_VIABILITY(20);
 						return viability;
@@ -561,7 +565,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				//Make sure partner isn't going to steal move
 				switch (data->atkPartnerAbility) {
 					case ABILITY_LIGHTNINGROD:
-						if (moveType == TYPE_ELECTRIC && !IsMoveRedirectionPrevented(move, data->atkAbility))
+						if (moveType == TYPE_ELECTRIC
+						&& !(moveTarget & MOVE_TARGET_USER)
+						&& !IsMoveRedirectionPrevented(move, data->atkAbility))
 						{
 							DECREASE_VIABILITY(10); //Only 10 because wouldn't be so bad to hit partner
 							return viability;
@@ -569,7 +575,9 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break;
 
 					case ABILITY_STORMDRAIN:
-						if (moveType == TYPE_WATER && !IsMoveRedirectionPrevented(move, data->atkAbility))
+						if (moveType == TYPE_WATER
+						&& !(moveTarget & MOVE_TARGET_USER)
+						&& !IsMoveRedirectionPrevented(move, data->atkAbility))
 						{
 							DECREASE_VIABILITY(10);
 							return viability;
@@ -2184,6 +2192,7 @@ SKIP_CHECK_TARGET:
 
 		case EFFECT_RAIN_DANCE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)
+			|| BankHasEvaporate(bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
@@ -2227,7 +2236,7 @@ SKIP_CHECK_TARGET:
 			goto TWO_TURN_ATTACK_CHECK;
 
 		case EFFECT_SOLARBEAM:
-			if (gBattleWeather & WEATHER_SUN_ANY && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA && WEATHER_HAS_EFFECT)
+			if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(data->atkItemEffect) && WEATHER_HAS_EFFECT)
 				goto AI_STANDARD_DAMAGE;
 			//Fallthrough
 

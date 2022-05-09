@@ -22,6 +22,10 @@ bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility);
 
 bool8 SpeciesHasTurboblaze(u16 species);
 bool8 SpeciesHasTeravolt(u16 species);
+bool8 SpeciesHasDrillBeak(u16 species);
+bool8 SpeciesHasGrassDash(u16 species);
+bool8 SpeciesHasEvaporate(u16 species);
+bool8 SpeciesHasSlipperyTail(u16 species);
 bool8 IsClearBodyAbility(u8 ability);
 bool8 IsMoldBreakerAbility(u8 ability);
 bool8 IsMoxieAbility(u8 ability);
@@ -42,5 +46,7 @@ bool8 IsAffectedBySturdy(u8 defAbility, u8 bankDef);
 bool8 IsAffectedByDisguse(u8 defAbility, u16 defSpecies, u8 moveSplit);
 bool8 IsAffectedByBadDreams(u8 bank);
 bool8 IsTrappedByAbility(u8 bankDef, u8 trapAbility);
+bool8 BankHasEvaporate(u8 bank);
+bool8 BankOnFieldHasEvaporate(void);
 bool8 IsWhiteSmokeAbility(u8 ability, u16 species);
 bool8 IsVitalSpiritAbility(u8 ability, u16 species);

@@ -1444,7 +1444,7 @@ void atkFF29_trysetsleep(void)
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1555,7 +1555,7 @@ void atkD7_setyawn(void)
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1666,7 +1666,7 @@ void atkFF2A_trysetparalysis(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1754,7 +1754,7 @@ void atkFF2B_trysetburn(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1864,7 +1864,7 @@ void atkFF2C_trysetpoison(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;

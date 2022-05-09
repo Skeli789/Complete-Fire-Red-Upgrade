@@ -366,7 +366,7 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	}
 	else if (WEATHER_HAS_EFFECT)
 	{
-		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && AffectedByRain(bankDef))
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
 		{
 			//JumpIfMoveFailed(7, move);
@@ -429,7 +429,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	//Check Thunder + Hurricane in sunny weather
 	if (WEATHER_HAS_EFFECT
 	&& (gBattleWeather & WEATHER_SUN_ANY)
-	&& defEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+	&& !ItemEffectIgnoresSunAndRain(defEffect)
 	&& gSpecialMoveFlags[move].gAlwaysHitInRainMoves)
 		moveAcc = 50;
 
@@ -533,7 +533,7 @@ u32 VisualAccuracyCalc(u16 move, u8 bankAtk, u8 bankDef)
 		acc = 0xFFFF; //No Miss
 	else if (WEATHER_HAS_EFFECT)
 	{
-		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && defEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && gSpecialMoveFlags[move].gAlwaysHitInRainMoves && !ItemEffectIgnoresSunAndRain(defEffect))
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
 			acc = 0xFFFF; //No Miss
 	}

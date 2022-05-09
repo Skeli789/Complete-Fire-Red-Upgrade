@@ -206,6 +206,7 @@ Task_ClosePartyMenuAfterText 81255BC 1
 PartyMenuAfterCancelLearnMoveHook 8125EEE 1
 CanPokemonSelectedBeEnteredInBattleTower 81275F8 0
 ExpandedAbilityNamesSummaryScreen 8136714 1
+ExpandedAbilityDescriptionsSummaryScreen 8136728 1
 FieldMoveBadgeHook 812461C 0
 ItemUseCB_MedicineStep 81253B0 2
 Task_DoLearnedMoveFanfareAfterText 8125CF4 1

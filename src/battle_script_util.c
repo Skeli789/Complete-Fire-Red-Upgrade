@@ -89,7 +89,7 @@ void ModifyGrowthInSun(void)
 	if (gCurrentMove == MOVE_GROWTH
 	&& WEATHER_HAS_EFFECT
 	&& gBattleWeather & WEATHER_SUN_ANY
-	&& ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
+	&& AffectedBySun(gBankAttacker))
 		gBattleScripting.statChanger += INCREASE_1;
 }
 

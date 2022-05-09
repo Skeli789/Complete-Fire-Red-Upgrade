@@ -2852,6 +2852,16 @@ RainDanceSkipPrimalWeatherCheck:
 	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
 
+.global BattleScript_RainDanceBlockedByEvaporate
+BattleScript_RainDanceBlockedByEvaporate:
+	pause 0x20
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_ButAbilityEvaporatesRain
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_137_SunnyDay

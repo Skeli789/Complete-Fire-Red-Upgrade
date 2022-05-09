@@ -70,6 +70,7 @@ extern const u8 BattleScript_TransformFailedOnAura[];
 extern const u8 BattleScript_MoveFailedOnAura[];
 extern const u8 BattleScript_ShadowShieldBlocksSubstitute[];
 extern const u8 BattleScript_StrongWindsWeakenedttack[];
+extern const u8 BattleScript_RainDanceBlockedByEvaporate[];
 
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];

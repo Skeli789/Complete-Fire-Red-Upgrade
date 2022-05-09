@@ -7,6 +7,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/ability_tables.h"
+#include "../include/new/ability_util.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/ai_switching.h"
 #include "../include/new/attackcanceler.h"
@@ -167,7 +168,11 @@ void atk00_attackcanceler(void)
 		gSpecialStatuses[gBankTarget].lightningRodRedirected = 0;
 		gBattleScripting.bank = gBankTarget;
 		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_TookAttack;
+
+		if (BankHasEvaporate(gBankTarget))
+			gBattlescriptCurrInstr = BattleScript_EvaporatedAttack;
+		else
+			gBattlescriptCurrInstr = BattleScript_TookAttack;
 	}
 	else if (ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
 	 && (gCurrentMove != MOVE_CURSE || IsOfType(gBankAttacker, TYPE_GHOST))

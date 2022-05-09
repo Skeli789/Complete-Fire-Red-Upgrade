@@ -595,8 +595,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_DRIZZLE:
 			if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
 			{
+				u8 evaporateBank;
 				effect = ActivateWeatherAbility(WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY,
 												ITEM_EFFECT_DAMP_ROCK, bank, B_ANIM_RAIN_CONTINUES, 0, FALSE);
+				
+				if (effect && (evaporateBank = BankOnFieldHasEvaporate()))
+				{
+					//Undo weather
+					gBattleWeather = 0;
+					gWishFutureKnock.weatherDuration = 0;
+					gBankTarget = evaporateBank - 1;
+					gBattlescriptCurrInstr = BattleScript_WeatherAbilityBlockedByEvaporate;
+				}
 			}
 			else if (gBattleWeather & WEATHER_PRIMAL_ANY && !(gBattleWeather & WEATHER_RAIN_ANY))
 			{
@@ -1181,8 +1191,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				switch(SPECIES(bank)) {
 					case SPECIES_CHERRIM:
-						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
-						&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY) && AffectedBySun(bank))
 						{
 							DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
@@ -1191,8 +1200,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						break;
 
 					case SPECIES_CHERRIM_SUN:
-						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)
-						|| ITEM_EFFECT(bank) == ITEM_EFFECT_UTILITY_UMBRELLA)
+						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || !AffectedBySun(bank))
 						{
 							DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
@@ -1281,6 +1289,27 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			gBattleStringLoader = gText_NeutralizingGasActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_NeutralizingGas);
 			effect++;
+			break;
+
+		case ABILITY_EVAPORATE:
+			if (BankHasEvaporate(bank) && AffectedByRain(bank))
+			{
+				if (RainCanBeEvaporated())
+				{
+					//Remove weather
+					gBankAttacker = bank;
+					gBattleWeather = 0;
+					gWishFutureKnock.weatherDuration = 0;
+					BattleScriptPushCursorAndCallback(BattleScript_EvaporateOnSwitchIn);
+					effect++;
+				}
+				else if (gBattleWeather & WEATHER_PRIMAL_ANY)
+				{
+					BattleScriptPushCursorAndCallback(BattleScript_WeatherAbilityBlockedByPrimalWeather);
+					effect++;
+				}
+			}
+			break;
 		}
 
 		switch (gLastUsedAbility) { //These abilities should always activate if they can
@@ -1304,7 +1333,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				{
 				case ABILITY_RAINDISH:
 					if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY)
-					&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA
+					&& AffectedByRain(bank)
 					&& !BATTLER_MAX_HP(bank))
 					{
 						BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
@@ -1315,16 +1344,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_DRYSKIN:
-					if (WEATHER_HAS_EFFECT && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+					if (WEATHER_HAS_EFFECT)
 					{
-						if (gBattleWeather & WEATHER_RAIN_ANY && !BATTLER_MAX_HP(bank))
+						if (gBattleWeather & WEATHER_RAIN_ANY && !BATTLER_MAX_HP(bank) && AffectedByRain(bank))
 						{
 							gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
 							gBattleMoveDamage *= -1;
 							BattleScriptPushCursorAndCallback(BattleScript_RainDishActivates);
 							effect++;
 						}
-						else if (gBattleWeather & WEATHER_SUN_ANY)
+						else if (gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 						{
 							gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
 							BattleScriptPushCursorAndCallback(BattleScript_DrySkinDamage);
@@ -1345,7 +1374,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 				case ABILITY_SOLARPOWER:
 					if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
-					&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+					&& AffectedBySun(bank))
 					{
 						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
 						BattleScriptExecute(BattleScript_SolarPowerDamage);
@@ -1364,7 +1393,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 				case ABILITY_HYDRATION:
 					if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY)
-					&& ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA
+					&& AffectedByRain(bank)
 					&& gBattleMons[bank].status1 & STATUS_ANY)
 					{
 						ClearBankStatus(bank);
@@ -1469,7 +1498,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				case ABILITY_HARVEST:
 					if (gItems[(SAVED_CONSUMED_ITEMS(bank))].pocket == POCKET_BERRY_POUCH)
 					{
-						if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA) //Yeah...that'll never happen
+						if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && AffectedBySun(bank))
 						{
 							//100% chance
 						}
@@ -1554,6 +1583,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 					gNewBS->turnDamageTaken[bank] = 0; //Reset to prevent accidental triggering
 				}
+				
+				case ABILITY_EVAPORATE:
+					if (RainCanBeEvaporated() && BankHasEvaporate(bank) && AffectedByRain(bank))
+					{
+						gBattleWeather = 0;
+						gWishFutureKnock.weatherDuration = 0;
+						BattleScriptPushCursorAndCallback(BattleScript_EvaporateOnSwitchIn);
+						effect++;
+					}
+					break;
 			}
 			break;
 

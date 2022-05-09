@@ -2464,7 +2464,7 @@ s32 GetMonPassiveRecovery(struct Pokemon* mon, unusedArg u8 bank)
 			amountToRecover -= MathMax(1, maxHp / 8); //Damage
 	}
 
-	if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && !ItemEffectIgnoresSunAndRain(itemEffect))
 	{
 		if (ability == ABILITY_RAINDISH)
 			amountToRecover += MathMax(1, maxHp / 16);

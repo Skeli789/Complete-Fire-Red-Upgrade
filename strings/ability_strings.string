@@ -114,3 +114,12 @@ The effects of Neutralizing Gas\nwore off!
 
 #org @gText_SymbiosisTransfer
 [SCRIPTING_BANK] shared its\n[LAST_ITEM] with [EFFECT_BANK]!
+
+#org @gText_AbilityEvaporatedAttack
+But [TARGET] evaporated\nthe attack!
+
+#org @gText_AbilityEvaporatedRain
+[SCRIPTING_BANK] evaporated\nthe rain!
+
+#org @gText_ButAbilityEvaporatesRain
+But [SCRIPTING_BANK] evaporates\nrain!

@@ -726,6 +726,22 @@
 		"MOVE_OVERDRIVE"
 	],
 
+	"gTailMoves": [
+		"MOVE_TAILWHIP",
+		"MOVE_IRONTAIL",
+		"MOVE_TAILGLOW",
+		"MOVE_POISONTAIL",
+		"MOVE_AQUATAIL",
+		"MOVE_DRAGONTAIL",
+		"MOVE_TAILSLAP"
+	],
+
+	"gDrillMoves": [
+		"MOVE_DRILLPECK",
+		"MOVE_HORNDRILL",
+		"MOVE_DRILLRUN"
+	],
+
 	"gSubstituteBypassMoves": [
 		"MOVE_WHIRLWIND",
 		"MOVE_DISABLE",

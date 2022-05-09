@@ -670,7 +670,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
 				||  MoveInMoveset(MOVE_BARBBARRAGE, bankAtk)
 				||  MoveEffectInMoveset(EFFECT_VENOM_DRENCH, bankAtk)
-				||  atkAbility == ABILITY_MERCILESS)
+				|| (atkAbility == ABILITY_MERCILESS && !SpeciesHasDrillBeak(GetProperAbilityPopUpSpecies(bankAtk))))
 					INCREASE_STATUS_VIABILITY(2);
 				else if ((DoubleDamageWithStatusMoveInMovesetThatAffects(bankAtk, bankDef) || (IS_DOUBLE_BATTLE && DoubleDamageWithStatusMoveInMovesetThatAffects(data->bankAtkPartner, bankDef)))
 					&& MoveEffectInMoveset(EFFECT_WILL_O_WISP, bankAtk) //Can either poison or burn
@@ -699,7 +699,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			|| (gBattleWeather & WEATHER_RAIN_ANY
 			  && gWishFutureKnock.weatherDuration != 1 //Rain won't wear off before Hydration activates
 			  && atkAbility == ABILITY_HYDRATION
-			  && data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)) //Hydration will heal
+			  && !ItemEffectIgnoresSunAndRain(data->atkItemEffect))) //Hydration will heal
 			{
 				goto AI_RECOVER; //Treat like Recover
 			}
@@ -1605,7 +1605,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			&& atkAbility == ABILITY_SWIFTSWIM)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
-			else if (data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			else if (!ItemEffectIgnoresSunAndRain(data->atkItemEffect)
 			&& (atkAbility == ABILITY_SWIFTSWIM
 			 || atkAbility == ABILITY_FORECAST
 			 || atkAbility == ABILITY_HYDRATION
@@ -1637,7 +1637,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			&& atkAbility == ABILITY_CHLOROPHYLL)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
-			else if (data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			else if (!ItemEffectIgnoresSunAndRain(data->atkItemEffect)
 			&& (atkAbility == ABILITY_CHLOROPHYLL
 			 || atkAbility == ABILITY_FLOWERGIFT
 			 || atkAbility == ABILITY_FORECAST
@@ -1969,6 +1969,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 							case ABILITY_FLOWERGIFT:
 								if (gBattleWeather & WEATHER_SUN_ANY)
 									INCREASE_STATUS_VIABILITY(3); //Slow 'em down
+								break;
+							case ABILITY_EVAPORATE:
+								if (BankHasEvaporate(bankDef))
+									INCREASE_STATUS_VIABILITY(2); //Prevent it from absorbing the rain
 								break;
 						}
 					}

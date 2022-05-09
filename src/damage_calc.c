@@ -110,8 +110,9 @@ void atk04_critcalc(void)
 		{
 			confirmedCrit = FALSE;
 		}
-		else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY))
-		|| IsLaserFocused(gBankAttacker)
+		else if (IsLaserFocused(gBankAttacker)
+		|| (atkAbility == ABILITY_MERCILESS && !SpeciesHasDrillBeak(GetProperAbilityPopUpSpecies(gBankAttacker)) && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY))
+		|| (atkAbility == ABILITY_DRILLBEAK && SpeciesHasDrillBeak(GetProperAbilityPopUpSpecies(gBankAttacker)) && gSpecialMoveFlags[gCurrentMove].gDrillMoves) //Drill moves always crit
 		|| gSpecialMoveFlags[gCurrentMove].gAlwaysCriticalMoves)
 		{
 			confirmedCrit = TRUE;
@@ -158,7 +159,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 {
 	u8 atkAbility;
 	u8 defAbility;
-	u16 atkSpecies;
+	u16 atkSpecies, atkAbilitySpecies;
 	u32 atkStatus2;
 	u32 defStatus1;
 
@@ -168,7 +169,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	if (monAtk != NULL)
 	{
 		atkAbility = GetMonAbilityAfterTrace(monAtk, bankDef);
-		atkSpecies = monAtk->species;
+		atkSpecies = atkAbilitySpecies = monAtk->species;
 		atkEffect = GetMonItemEffect(monAtk);
 		atkStatus2 = 0;
 	}
@@ -177,6 +178,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		atkAbility = ABILITY(bankAtk);
 		atkEffect = ITEM_EFFECT(bankAtk);
 		atkSpecies = gBattleMons[bankAtk].species;
+		atkAbilitySpecies = GetProperAbilityPopUpSpecies(bankAtk);
 		atkStatus2 = gBattleMons[bankAtk].status2;
 	}
 
@@ -202,8 +204,9 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	{
 		return FALSE;
 	}
-	else if ((atkAbility == ABILITY_MERCILESS && (defStatus1 & STATUS_PSN_ANY))
-	|| (IsLaserFocused(bankAtk) && monAtk == NULL)
+	else if ((IsLaserFocused(bankAtk) && monAtk == NULL)
+	|| (atkAbility == ABILITY_MERCILESS && !SpeciesHasDrillBeak(atkAbilitySpecies) && (defStatus1 & STATUS_PSN_ANY))
+	|| (atkAbility == ABILITY_DRILLBEAK && SpeciesHasDrillBeak(atkAbilitySpecies) && gSpecialMoveFlags[move].gDrillMoves) //Drill moves always crit
 	|| gSpecialMoveFlags[move].gAlwaysCriticalMoves)
 	{
 		return TRUE;
@@ -1684,11 +1687,11 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 		case MOVE_WEATHERBALL:
 			if (WEATHER_HAS_EFFECT)
 			{
-				if (gBattleWeather & WEATHER_RAIN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect))
 					moveType = TYPE_WATER;
 				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 					moveType = TYPE_ROCK;
-				else if (gBattleWeather & WEATHER_SUN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect))
 					moveType = TYPE_FIRE;
 				else if (gBattleWeather & WEATHER_HAIL_ANY)
 					moveType = TYPE_ICE;
@@ -1808,11 +1811,11 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 		case MOVE_WEATHERBALL:
 			if (gMain.inBattle && WEATHER_HAS_EFFECT)
 			{
-				if (gBattleWeather & WEATHER_RAIN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect))
 					moveType = TYPE_WATER;
 				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 					moveType = TYPE_ROCK;
-				else if (gBattleWeather & WEATHER_SUN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
+				else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect))
 					moveType = TYPE_FIRE;
 				else if (gBattleWeather & WEATHER_HAIL_ANY)
 					moveType = TYPE_ICE;
@@ -2327,6 +2330,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 					else
 						data->spAtkBuff = 7;
 				}
+				else if (data->atkAbility == ABILITY_EVAPORATE
+				&& RainCanBeEvaporated()
+				&& SpeciesHasEvaporate(data->atkSpecies)
+				&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect))
+					data->spAtkBuff = 7;
 
 				TryBoostMonOffensesForTotemBoost(data, bankAtk, FALSE);
 		}
@@ -2452,7 +2460,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_FLOWERGIFT:
 		//1.5x Boost
 			if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
-			&& data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect))
 				attack = (attack * 15) / 10;
 			break;
 
@@ -2477,7 +2485,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_SOLARPOWER:
 		//1.5x Boost
 			if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
-			&& data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect))
 				spAttack = (spAttack * 15) / 10;
 			break;
 
@@ -2548,7 +2556,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	switch (data->atkPartnerAbility) {
 		case ABILITY_FLOWERGIFT:
 			if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
-			&& ITEM_EFFECT(PARTNER(bankAtk)) != ITEM_EFFECT_UTILITY_UMBRELLA)
+			&& !ItemEffectIgnoresSunAndRain(ITEM_EFFECT(PARTNER(bankAtk))))
 				attack = (attack * 15) / 10;
 			break;
 	}
@@ -2835,7 +2843,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case MOVE_SOLARBEAM:
 		case MOVE_SOLARBLADE:
 			if (WEATHER_HAS_EFFECT
-			&& data->atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect)
 			&& gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY | WEATHER_AIR_CURRENT_PRIMAL))
 				damage /= 2; //Any weather except sun weakens Solar Beam
 			break;
@@ -2861,7 +2869,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		damage = (damage * 15) / 10;
 
 	//Weather Boost
-	if (WEATHER_HAS_EFFECT && data->defItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (WEATHER_HAS_EFFECT && !ItemEffectIgnoresSunAndRain(data->defItemEffect))
 	{
 		if (gBattleWeather & WEATHER_RAIN_ANY)
 		{
@@ -4054,7 +4062,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 		case MOVE_SOLARBLADE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY | WEATHER_AIR_CURRENT_PRIMAL)
 			&& WEATHER_HAS_EFFECT
-			&& data.atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+			&& !ItemEffectIgnoresSunAndRain(data.atkItemEffect))
 				power /= 2; //Any weather except sun weakens Solar Beam
 			break;
 		case MOVE_DYNAMAXCANNON:

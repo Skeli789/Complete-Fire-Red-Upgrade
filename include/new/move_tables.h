@@ -31,6 +31,8 @@ struct SpecialMoveFlags
 	bool8 gDanceMoves : 1;
 	bool8 gPowderMoves : 1;
 	bool8 gSoundMoves : 1;
+	bool8 gTailMoves : 1;
+	bool8 gDrillMoves : 1;
 	bool8 gSubstituteBypassMoves : 1;
 	bool8 gTypeChangeExceptionMoves : 1;
 	bool8 gIgnoreStatChangesMoves : 1;

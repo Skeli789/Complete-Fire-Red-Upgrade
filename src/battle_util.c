@@ -1493,7 +1493,7 @@ bool8 BypassesScreens(u8 ability)
 bool8 BypassesFog(unusedArg u8 ability, unusedArg u8 itemEffect)
 {
 	#ifdef UNBOUND
-	return BypassesScreens(ability) || ability == ABILITY_KEENEYE || itemEffect == ITEM_EFFECT_UTILITY_UMBRELLA;
+	return BypassesScreens(ability) || ability == ABILITY_KEENEYE || ItemEffectIgnoresSunAndRain(itemEffect);
 	#else
 	return FALSE;
 	#endif
@@ -1866,6 +1866,32 @@ bool8 WeatherHasEffect(void)
 	return TRUE;
 }
 
+bool8 RainCanBeEvaporated(void)
+{
+	return gBattleWeather & WEATHER_RAIN_ANY
+		&& !(gBattleWeather & (WEATHER_PRIMAL_ANY | WEATHER_CIRCUS));
+}
+
+bool8 ItemEffectIgnoresSunAndRain(u8 itemEffect)
+{
+	return itemEffect == ITEM_EFFECT_UTILITY_UMBRELLA;
+}
+
+bool8 IgnoresSunAndRain(u8 bank)
+{
+	return ItemEffectIgnoresSunAndRain(ITEM_EFFECT(bank));
+}
+
+bool8 AffectedBySun(u8 bank)
+{
+	return !IgnoresSunAndRain(bank);
+}
+
+bool8 AffectedByRain(u8 bank)
+{
+	return !IgnoresSunAndRain(bank);
+}
+
 bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability)
 {
 	return itemEffect == ITEM_EFFECT_CHOICE_BAND || IsChoiceAbility(ability);
@@ -1956,7 +1982,7 @@ static bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool
 				return FALSE;
 
 			case ABILITY_LEAFGUARD:
-				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bankDef))
 					return FALSE;
 				break;
 
@@ -2056,7 +2082,7 @@ bool8 CanBeYawned(u8 bankDef, u8 bankAtk)
 			case ABILITY_COMATOSE:
 				return FALSE;
 			case ABILITY_LEAFGUARD:
-				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bankDef))
 					return FALSE;
 				break;
 			case ABILITY_FLOWERVEIL:
@@ -2133,7 +2159,7 @@ bool8 CanRest(u8 bank)
 		case ABILITY_COMATOSE:
 			return FALSE;
 		case ABILITY_LEAFGUARD:
-			if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+			if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bank))
 				return FALSE;
 			break;
 		case ABILITY_FLOWERVEIL:
@@ -2244,7 +2270,7 @@ bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 		}
 	}
 
-	if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankDef) != ITEM_EFFECT_UTILITY_UMBRELLA)
+	if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bankDef))
 		return FALSE;
 
 	return TRUE;

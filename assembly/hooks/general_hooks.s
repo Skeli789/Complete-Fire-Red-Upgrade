@@ -675,7 +675,7 @@ ExpandedAbilityNamesBattle2:
 .pool
 @0x8136714 with r1
 ExpandedAbilityNamesSummaryScreen:
-	mov r1, r4
+	mov r1, r4 @;Ability
 	push {r0-r1}
 	ldr r0, [r6]
 	add r0, r8
@@ -686,6 +686,22 @@ ExpandedAbilityNamesSummaryScreen:
 	pop {r0-r1}
 	bl CopyAbilityName
 	ldr r0, =0x8136720 | 1
+	bx r0
+
+.pool
+@0x8136728 with r1
+ExpandedAbilityDescriptionsSummaryScreen:
+	mov r1, r4 @;Ability
+	push {r0-r1}
+	ldr r0, [r6]
+	add r0, r8
+	mov r1, #11 @;MON_DATA_SPECIES
+	ldr r2, =GetMonData
+	bl bxr2
+	mov r2, r0 @;Species
+	pop {r0-r1}
+	bl CopyAbilityDescription
+	ldr r0, =0x8136732 | 1
 	bx r0
 
 .pool
