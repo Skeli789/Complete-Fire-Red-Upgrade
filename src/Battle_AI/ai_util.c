@@ -2072,8 +2072,14 @@ bool8 WillBeFasterAfterSpeedDrop(u8 bankAtk, u8 bankDef, u8 reduceBy)
 
 bool8 WillBeFasterAfterMoveSpeedBuff(u8 bankAtk, u8 bankDef, u16 move)
 {
+	s8 increaseBy = 1;
 	u8 oldSpeedStage = STAT_STAGE(bankAtk, STAT_STAGE_SPEED); //Backup current stat stage before modification
-	u8 increaseBy = (gBattleMoves[move].effect == EFFECT_SPEED_UP_2 || move == MOVE_SHELLSMASH || move == MOVE_GEOMANCY) ? 2 : 1;
+	u8 moveEffect = gBattleMoves[move].effect;
+
+	if (moveEffect == EFFECT_SPEED_UP_2 || move == MOVE_SHELLSMASH || move == MOVE_GEOMANCY)
+		increaseBy = 2;
+	else if (moveEffect == EFFECT_PSYCH_UP && move != MOVE_SPECTRALTHIEF)
+		increaseBy = max(0, STAT_STAGE(bankDef, STAT_STAGE_SPEED) - STAT_STAGE(bankAtk, STAT_STAGE_SPEED)); //Difference in stats
 
 	if (ABILITY(bankAtk) == ABILITY_SIMPLE)
 		increaseBy *= 2;
@@ -3334,6 +3340,13 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
 		&& defAbility != ABILITY_CONTRARY;
+}
+
+bool8 GoodIdeaToSwapStatStages(u8 bankAtk, u8 bankDef)
+{
+	s16 goodToGetRidOf = CountUsefulBoostsOfBankForBank(bankDef, bankAtk) + CountUsefulDebuffsOfBankForBank(bankAtk, bankAtk);
+	s16 badToGetRidOf = CountUsefulDebuffsOfBankForBank(bankDef, bankAtk) + CountUsefulBoostsOfBankForBank(bankAtk, bankAtk);
+	return goodToGetRidOf - badToGetRidOf >= 2; //At least 2 points of stat stage difference
 }
 
 //Move Prediction Code
@@ -5043,14 +5056,14 @@ bool8 AnyStatIsRaised(u8 bank)
 	return FALSE;
 }
 
-static u8 CountUsefulStatChanges(u8 bank, bool8 debuff)
+static u8 CountUsefulStatChanges(u8 bankWithBuffs, u8 bankToGetBuffs, bool8 debuff)
 {
 	u8 buffs = 0;
-	bool8 storedPowerInMoveset = !debuff && (MoveInMovesetAndUsable(MOVE_STOREDPOWER, bank) || MoveInMovesetAndUsable(MOVE_POWERTRIP, bank));
+	bool8 storedPowerInMoveset = !debuff && (MoveInMovesetAndUsable(MOVE_STOREDPOWER, bankToGetBuffs) || MoveInMovesetAndUsable(MOVE_POWERTRIP, bankToGetBuffs));
 
 	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
 	{
-		s8 statVal = STAT_STAGE(bank, statId) - 6;
+		s8 statVal = STAT_STAGE(bankWithBuffs, statId) - 6;
 		bool8 cond = (debuff) ? statVal < 0 : statVal > 0;
 
 		if (cond)
@@ -5064,20 +5077,20 @@ static u8 CountUsefulStatChanges(u8 bank, bool8 debuff)
 				switch (statId)
 				{
 					case STAT_STAGE_ATK:
-						if (RealPhysicalMoveInMoveset(bank))
+						if (RealPhysicalMoveInMoveset(bankToGetBuffs))
 							add = TRUE;
 						break;
 					case STAT_STAGE_DEF:
-						if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL)
-						|| MoveInMoveset(MOVE_BODYPRESS, bank))
+						if (MoveSplitOnTeam(FOE(bankToGetBuffs), SPLIT_PHYSICAL)
+						|| MoveInMoveset(MOVE_BODYPRESS, bankToGetBuffs))
 							add = TRUE;
 						break;
 					case STAT_STAGE_SPATK:
-						if (SpecialMoveInMoveset(bank))
+						if (SpecialMoveInMoveset(bankToGetBuffs))
 							add = TRUE;
 						break;
 					case STAT_STAGE_SPDEF:
-						if (MoveSplitOnTeam(FOE(bank), SPLIT_SPECIAL))
+						if (MoveSplitOnTeam(FOE(bankToGetBuffs), SPLIT_SPECIAL))
 							add = TRUE;
 						break;
 					case STAT_STAGE_SPEED:
@@ -5102,12 +5115,22 @@ static u8 CountUsefulStatChanges(u8 bank, bool8 debuff)
 
 u8 CountUsefulBoosts(u8 bank)
 {
-	return CountUsefulStatChanges(bank, FALSE);
+	return CountUsefulStatChanges(bank, bank, FALSE);
 }
 
 u8 CountUsefulDebuffs(u8 bank)
 {
-	return CountUsefulStatChanges(bank, TRUE);
+	return CountUsefulStatChanges(bank, bank, TRUE);
+}
+
+u8 CountUsefulBoostsOfBankForBank(u8 bankWithBuffs, u8 bankToGetBuffs)
+{
+	return CountUsefulStatChanges(bankWithBuffs, bankToGetBuffs, FALSE);
+}
+
+u8 CountUsefulDebuffsOfBankForBank(u8 bankWithDefuffs, u8 bankToGetDebuffs)
+{
+	return CountUsefulStatChanges(bankWithDefuffs, bankToGetDebuffs, TRUE);
 }
 
 bool8 AnyUsefulStatIsRaised(u8 bank)

@@ -3048,6 +3048,53 @@ void IncreaseHealPartnerViability(s16* originalViability, u8 class, u8 partner)
 	*originalViability = MathMin(viability, 255);
 }
 
+void IncreasePsychUpViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
+{
+	if (GoodIdeaToSwapStatStages(bankAtk, bankDef))
+	{
+		u8 statsToCheck[] = {STAT_STAGE_ATK, STAT_STAGE_SPATK, STAT_STAGE_SPEED,
+							 STAT_STAGE_ACC, STAT_STAGE_EVASION, STAT_STAGE_DEF,
+							 STAT_STAGE_SPDEF}; //Priotitize checking offensive stats first
+		s16 viability = *originalViability;
+		u16 move = MOVE_PSYCHUP; //Needed for INCREASE_STAT_VIABILITY
+
+		//Increase the viability by the stat that's going to be raised
+		for (u32 i = 0; i < NELEMS(statsToCheck); ++i)
+		{
+			u8 stat = statsToCheck[i];
+			u8 defStatStage = STAT_STAGE(bankDef, stat);
+			u8 atkStatStage =  STAT_STAGE(bankAtk, stat);
+			s8 statStageDifference = defStatStage - atkStatStage;
+		
+			if (statStageDifference > 0) //Partner's stat is higher
+			{
+				if (stat == STAT_STAGE_ATK && RealPhysicalMoveInMoveset(bankAtk))
+				{
+					INCREASE_STAT_VIABILITY(viability, 8, statStageDifference);
+					break;
+				}
+				else if (stat == STAT_STAGE_SPATK && SpecialMoveInMoveset(bankAtk))
+				{
+					INCREASE_STAT_VIABILITY(stat, 8, statStageDifference);
+					break;
+				}
+				else if (stat == STAT_STAGE_ACC || stat == STAT_STAGE_EVASION || stat == STAT_STAGE_SPEED)
+				{
+					INCREASE_STAT_VIABILITY(stat, 8, statStageDifference);
+					break;
+				}
+				else if (IsClassStall(class)) //Defense and Sp. Defense
+				{
+					INCREASE_STAT_VIABILITY(stat, 8, statStageDifference);
+					break;
+				}
+			}
+		}
+		
+		*originalViability = MathMin(viability, 255);
+	}
+}
+
 bool8 IncreaseViabilityForSpeedControl(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
 {
 	s16 viability = *originalViability;

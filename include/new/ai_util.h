@@ -120,6 +120,8 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy);
 bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move);
 bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, u16 move);
 
+bool8 GoodIdeaToSwapStatStages(u8 bankAtk, u8 bankDef);
+
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef);
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move);
@@ -188,6 +190,8 @@ bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
 u8 CountUsefulBoosts(u8 bank);
 u8 CountUsefulDebuffs(u8 bank);
+u8 CountUsefulBoostsOfBankForBank(u8 bankWithBuffs, u8 bankToGetBuffs);
+u8 CountUsefulDebuffsOfBankForBank(u8 bankWithDefuffs, u8 bankToGetDebuffs);
 bool8 AnyStatIsRaised(u8 bank);
 bool8 AnyUsefulStatIsRaised(u8 bank);
 bool8 AnyUsefulOffseniveStatIsRaised(u8 bank);

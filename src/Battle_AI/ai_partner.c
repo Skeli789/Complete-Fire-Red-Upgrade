@@ -514,6 +514,11 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				}
 			}
 			break;
+		
+		case EFFECT_PSYCH_UP:
+			if (move != MOVE_SPECTRALTHIEF)
+				IncreasePsychUpViability(&viability, class, bankAtk, bankAtkPartner);
+			break;
 
 		case EFFECT_SKILL_SWAP:
 		case EFFECT_ROLE_PLAY:

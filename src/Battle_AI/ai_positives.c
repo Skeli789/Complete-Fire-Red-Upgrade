@@ -1712,33 +1712,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		case EFFECT_PSYCH_UP:
 			if (move != MOVE_SPECTRALTHIEF)
 			{
-				//Copy positive stat changes
-				for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
-				{
-					if (STAT_STAGE(bankDef, i) > STAT_STAGE(bankAtk, i))
-					{
-						if (i == STAT_STAGE_ATK && (RealPhysicalMoveInMoveset(bankAtk)))
-						{
-							INCREASE_STATUS_VIABILITY(1);
-							break;
-						}
-						else if (i == STAT_STAGE_SPATK && (SpecialMoveInMoveset(bankAtk)))
-						{
-							INCREASE_STATUS_VIABILITY(1);
-							break;
-						}
-						else if (i == STAT_STAGE_ACC || i == STAT_STAGE_EVASION || i == STAT_STAGE_SPEED)
-						{
-							INCREASE_STATUS_VIABILITY(1);
-							break;
-						}
-						else if (IsClassStall(class)) //Defense and Sp. Defense
-						{
-							INCREASE_STATUS_VIABILITY(1);
-							break;
-						}
-					}
-				}
+				IncreasePsychUpViability(&viability, class, bankAtk, bankDef);
 			}
 			else if (atkAbility != ABILITY_CONTRARY) //Spectral Thief
 			{
@@ -2283,11 +2257,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 
-				case MOVE_HEARTSWAP: ;
-					s16 goodToGetRidOf = CountUsefulBoosts(bankDef) + CountUsefulDebuffs(bankAtk);
-					s16 badToGetRidOf = CountUsefulDebuffs(bankDef) + CountUsefulBoosts(bankAtk);
-
-					if (goodToGetRidOf - badToGetRidOf >= 2) //At least 2 points of stat stage difference
+				case MOVE_HEARTSWAP:
+					if (GoodIdeaToSwapStatStages(bankAtk, bankDef))
 						INCREASE_STATUS_VIABILITY(2); //Steal their buff
 					break;
 

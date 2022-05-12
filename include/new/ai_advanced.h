@@ -68,6 +68,7 @@ void IncreaseTeamProtectionViability(s16* viability, u8 class);
 void IncreaseTailwindViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseHelpingHandViability(s16* originalViability, u8 class);
 void IncreaseHealPartnerViability(s16* originalViability, u8 class, u8 partner);
+void IncreasePsychUpViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 bool8 IncreaseViabilityForSpeedControl(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseDoublesDamageViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseDoublesDamageViabilityToScore(s16* originalViability, u8 class, u8 score, u8 bankAtk, u8 bankDef);
