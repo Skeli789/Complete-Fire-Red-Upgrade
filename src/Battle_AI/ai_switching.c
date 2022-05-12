@@ -264,6 +264,9 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(struct Pokemon* party)
 
 	if (IS_DOUBLE_BATTLE)
 	{
+		if (gBattleMons[gActiveBattler].status2 & STATUS2_DESTINY_BOND)
+			return FALSE; //Don't switch at all because both foes could combine attacks to KO - any number of things could happen
+
 		if ((!BATTLER_ALIVE(foe1) || OnlyBadMovesLeftInMoveset(gActiveBattler, foe1))
 		&&  (!BATTLER_ALIVE(foe2) || OnlyBadMovesLeftInMoveset(gActiveBattler, foe2)))
 		{
@@ -274,6 +277,13 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(struct Pokemon* party)
 	}
 	else
 	{
+		u16 foePredictedMove = IsValidMovePrediction(foe1, gActiveBattler);
+
+		if (gBattleMons[gActiveBattler].status2 & STATUS2_DESTINY_BOND
+		&& MoveKnocksOutXHits(foePredictedMove, foe1, gActiveBattler, 1)
+		&& MoveWouldHitFirst(foePredictedMove, foe1, gActiveBattler))
+			return FALSE; //Don't swap out if foe is going to activate the Destiny Bond
+
 		if (OnlyBadMovesLeftInMoveset(gActiveBattler, foe1))
 		{
 			u8 bestMon, secondBestMon, switchFlags, secondBestSwitchFlags;
@@ -1234,6 +1244,9 @@ static bool8 ShouldSwitchToAvoidDeath(struct Pokemon* party)
 	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
 		return FALSE;
 
+	if (gBattleMons[gActiveBattler].status2 & STATUS2_DESTINY_BOND)
+		return FALSE; //It's honestly better to die
+
 	if (IS_SINGLE_BATTLE
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
@@ -1749,6 +1762,18 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 
 		if (CanKnockOut(foe, gActiveBattler)) //Only in case where foe can KO AI mon (better than ShouldSwitchToAvoidDeath because this also accounts for slower foes)
 		{
+			//Confirm AI's Destiny Bond isn't active and won't be active
+			if (MoveWouldHitFirst(movePrediction, gActiveBattler, foe))
+			{
+				if (gBattleMoves[movePrediction].effect == EFFECT_DESTINY_BOND)
+					return FALSE; //Take the L and bring the foe down with you
+			}
+			else //Slower
+			{
+				if (gBattleMons[gActiveBattler].status2 & STATUS2_DESTINY_BOND) //Destiny Bond already active
+					return FALSE; //Take the L and bring the foe down with you
+			}
+
 			//Try to switch out to the best mon
 			u8 bestMonId, secondBestMonId, switchFlags, secondBestSwitchFlags;
 

@@ -3848,9 +3848,11 @@ void atkA9_trychoosesleeptalkmove(void)
 
 void atkAA_setdestinybond(void) {
 	if (gNewBS->DestinyBondCounters[gBankAttacker])
+	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed + 2;
-
-	else {
+	}
+	else
+	{
 		gNewBS->DestinyBondCounters[gBankAttacker] = 2;
 		gBattleMons[gBankAttacker].status2 |= STATUS2_DESTINY_BOND;
 		gBattlescriptCurrInstr++;
