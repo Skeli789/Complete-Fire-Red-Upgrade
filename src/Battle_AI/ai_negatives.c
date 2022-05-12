@@ -1467,7 +1467,7 @@ SKIP_CHECK_TARGET:
 					DEFAULT_RECOVERY:
 					if (AI_THINKING_STRUCT->aiFlags & AI_SCRIPT_CHECK_GOOD_MOVE) //Very smart AI
 					{
-						if (IS_SINGLE_BATTLE && IsTakingSecondaryDamage(bankDef))
+						if (IS_SINGLE_BATTLE && IsTakingSecondaryDamage(bankDef, TRUE))
 						{
 							if (GetHealthPercentage(bankAtk) == 100)
 								DECREASE_VIABILITY(1); //Can heal to stall out opponent even if at full health
@@ -1904,7 +1904,7 @@ SKIP_CHECK_TARGET:
 					break;
 
 				case MOVE_ENDURE:
-					if (gBattleMons[bankAtk].hp == 1 || IsTakingSecondaryDamage(bankAtk)) //Don't use Endure if you'll die after using it
+					if (gBattleMons[bankAtk].hp == 1 || IsTakingSecondaryDamage(bankAtk, FALSE)) //Don't use Endure if you'll die after using it
 					{
 						DECREASE_VIABILITY(10);
 						decreased = TRUE;

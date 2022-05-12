@@ -1007,7 +1007,7 @@ static bool8 ShouldSwitchWhenYawned(void)
 		{
 			if (SIDE(i) != activeSide)
 			{
-				if (IsTrapped(i, TRUE) && IsTakingSecondaryDamage(i))
+				if (IsTrapped(i, TRUE) && IsTakingSecondaryDamage(i, TRUE))
 					return FALSE;
 			}
 		}
@@ -1728,7 +1728,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	)
 	&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe, gActiveBattler)) //It's not behind a Substitute
 	&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4) //Will take less than 25% damage on reentry
-	&& !(IsTrapped(foe, TRUE) && IsTakingSecondaryDamage(foe)) //This mon isn't keeping the foe locked in taking damage
+	&& !(IsTrapped(foe, TRUE) && IsTakingSecondaryDamage(foe, TRUE)) //This mon isn't keeping the foe locked in taking damage
 	&&
 	(
 		//OPTION A:
@@ -1738,7 +1738,7 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 		//OPTION B:
 		|| (!AnyUsefulOffseniveStatIsRaised(gActiveBattler) //It isn't invested in useful buffs
 		 && STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) < 6 + 3 //Including +3 Evasion
-		 && !(IsTakingSecondaryDamage(foe) && IsTrapped(foe, TRUE)) //And it isn't necessary to stay in so the foe will take trap damage
+		 && !(IsTakingSecondaryDamage(foe, TRUE) && IsTrapped(foe, TRUE)) //And it isn't necessary to stay in so the foe will take trap damage
 		 && !OffensiveSetupMoveInMoveset(gActiveBattler, foe) //It can't set up stats either
 		 &&
 		 (

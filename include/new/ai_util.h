@@ -72,7 +72,7 @@ s32 GetMonPassiveRecovery(struct Pokemon* mon, u8 bank);
 u16 GetAIChosenMove(u8 bankAtk, u8 bankDef);
 bool8 IsTrapped(u8 bank, bool8 switching);
 u32 GetSecondaryEffectDamage(u8 bank);
-bool8 IsTakingSecondaryDamage(u8 bank);
+bool8 IsTakingSecondaryDamage(u8 bank, bool8 checkConfusion);
 bool8 WillFaintFromSecondaryDamage(u8 bank);
 u32 GetContactDamage(u16 move, u16 bankAtk, u16 bankDef);
 u32 GetContactDamageMonAtk(struct Pokemon* monAtk, u16 bankDef);

@@ -685,7 +685,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (ResistsAllMovesAtFullHealth(bankDef, bankAtk) //Can tank hits while sitting there useless
 			&& !OffensiveSetupMoveInMoveset(bankDef, bankAtk)) //Foe can't set up while AI is asleep
 			{
-				if (!BATTLER_MAX_HP(bankAtk) && IsTakingSecondaryDamage(bankDef))
+				if (!BATTLER_MAX_HP(bankAtk) && IsTakingSecondaryDamage(bankDef, FALSE))
 					goto AI_RECOVER_VIABILITY_INCREASE; //Go right to the recovery increase
 				else
 					goto AI_RECOVER; //Treat like Recover
@@ -703,7 +703,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				goto AI_RECOVER; //Treat like Recover
 			}
-			else if (IsTakingSecondaryDamage(bankDef) && IsClassStall(class)) //Healing is lower priority than setting status for stallers, so once the status is set then stall the foe out
+			else if (IsTakingSecondaryDamage(bankDef, FALSE) && IsClassStall(class)) //Healing is lower priority than setting status for stallers, so once the status is set then stall the foe out
 			{
 				goto AI_RECOVER_VIABILITY_INCREASE; //Go right to the recovery increase
 			}
@@ -2649,12 +2649,12 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (IS_SINGLE_BATTLE)
 			{
 				if (IsClassSweeper(class)
-				&& IsTakingSecondaryDamage(bankDef))
+				&& IsTakingSecondaryDamage(bankDef, FALSE))
 					INCREASE_VIABILITY(3); //Past strongest move
 			}
 			else //Double Battle
 			{
-				if (IsTakingSecondaryDamage(bankDef))
+				if (IsTakingSecondaryDamage(bankDef, FALSE))
 					IncreaseDoublesDamageViabilityToScore(&viability, class, 5, bankAtk, bankDef);
 			}
 			break;
@@ -2711,7 +2711,7 @@ static s16 DamageMoveViabilityIncrease(u8 bankAtk, u8 bankDef, u16 move, s16 via
 		&& (!gNewBS->ai.usingDesperateMove[bankAtk]  //Didn't use a desperate move last turn
 		 || AI_THINKING_STRUCT->simulatedRNG[3] < ((gLastPrintedMoves[bankDef] != MOVE_NONE && SPLIT(gLastPrintedMoves[bankDef]) == SPLIT_STATUS) ? 25 : 75)) //Or allowed consecutive desperate moves (higher chance if opponent last used an attacking move)
 		&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk) //Attacker doesn't know Protect
-		&& !((IsTakingSecondaryDamage(bankDef) || HighChanceOfBeingImmobilized(bankDef)) && CanHealFirstToPreventKnockOut(bankAtk, bankDef)) //Could potentially stall to survive while hurting the foe
+		&& !((IsTakingSecondaryDamage(bankDef, FALSE) || HighChanceOfBeingImmobilized(bankDef)) && CanHealFirstToPreventKnockOut(bankAtk, bankDef)) //Could potentially stall to survive while hurting the foe
 		&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
 		&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Then use the strongest fast move
 		&& (!IsClassEntryHazards(class) || (AI_THINKING_STRUCT->simulatedRNG[3] & 1) || NoUsableHazardsInMoveset(bankAtk, bankDef, data)) //If your goal isn't to get up hazards or no more hazards can be set up

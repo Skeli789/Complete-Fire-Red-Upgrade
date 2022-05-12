@@ -2592,9 +2592,9 @@ u32 GetSecondaryEffectDamage(u8 bank)
 	return gNewBS->ai.secondaryEffectDamage[bank];
 }
 
-bool8 IsTakingSecondaryDamage(u8 bank)
+bool8 IsTakingSecondaryDamage(u8 bank, bool8 checkConfusion)
 {
-	return GetSecondaryEffectDamage(bank) > 0;
+	return GetSecondaryEffectDamage(bank) > 0 || (checkConfusion && IsConfused(bank));
 }
 
 bool8 WillFaintFromSecondaryDamage(u8 bank)
@@ -4699,7 +4699,7 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 		{
 			if (IS_BEHIND_SUBSTITUTE(bankAtk)
 			&& !DamagingMoveThaCanBreakThroughSubstituteInMoveset(bankDef, bankAtk)
-			&& IsTakingSecondaryDamage(bankDef))
+			&& IsTakingSecondaryDamage(bankDef, FALSE))
 				return FALSE; //Don't switch out on a foe who's taking damage even if you literally have no good moves
 
 			if (ShouldAIFreeChoiceLockWithDynamax(bankAtk, bankDef)) //AI is locked into some move
