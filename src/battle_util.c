@@ -1897,6 +1897,41 @@ bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability)
 	return itemEffect == ITEM_EFFECT_CHOICE_BAND || IsChoiceAbility(ability);
 }
 
+u8 GetImposterBank(u8 bank)
+{
+	u8 transformBank;
+
+	if (IS_SINGLE_BATTLE)
+		transformBank = FOE(bank);
+	else if (IsRaidBattle())
+	{
+		if (SIDE(bank) == B_SIDE_PLAYER)
+			transformBank = BANK_RAID_BOSS;
+		else //Raid boss always transforms into player's Pokemon
+			transformBank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+	}
+	else //Standard double battle
+		transformBank = GetBattlerAtPosition(PARTNER(BATTLE_OPPOSITE(GetBattlerPosition(bank)))); //Directly in front of in doubles
+
+	return transformBank;
+}
+
+bool8 ImposterWorks(u8 bankAtk, bool8 checkingMonAtk) //bankAtk here is mainly used for the battle slot
+{
+	u8 targetBank = GetImposterBank(bankAtk);
+
+	return BATTLER_ALIVE(targetBank)
+		&& !(gBattleMons[targetBank].status2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE))
+		&& !(gStatuses3[targetBank] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION))
+		&& (checkingMonAtk || !IS_TRANSFORMED(bankAtk)) //Obviously a party mon can't be transformed
+		#ifdef UNBOUND
+		&& SPECIES(targetBank) != SPECIES_SHADOW_WARRIOR
+		&& (SPECIES(targetBank) < SPECIES_CELEBI || SPECIES(targetBank) > SPECIES_TREECKO) //Those Pokemon in between are used for Fakemon bosses
+		#endif
+		&& !HasRaidShields(targetBank)
+		&& !ABILITY_ON_FIELD(ABILITY_NEUTRALIZINGGAS);
+}
+
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))

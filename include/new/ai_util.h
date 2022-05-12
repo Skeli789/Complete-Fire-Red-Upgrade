@@ -62,6 +62,7 @@ u16 GetBattleMonMove(u8 bank, u8 index);
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef);
 u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe);
+u8 TryReplaceImposterAbility(u8 ability, u8 monBank);
 bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 IsStatRecoilMove(u16 move);

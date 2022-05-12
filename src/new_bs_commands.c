@@ -1371,7 +1371,7 @@ void atkFF29_trysetsleep(void)
 	{
 		return;
 	}
-	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		TrySetMissStringForSafetyGoggles(bank);
 		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1610,13 +1610,13 @@ void atkFF2A_trysetparalysis(void)
 	{
 		return;
 	}
-	else if (gCurrentMove == MOVE_THUNDERWAVE && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	else if (gCurrentMove == MOVE_THUNDERWAVE && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
 		return;
 	}
-	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		TrySetMissStringForSafetyGoggles(bank);
 		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -1801,7 +1801,7 @@ void atkFF2C_trysetpoison(void)
 	{
 		return;
 	}
-	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	else if (gSpecialMoveFlags[gCurrentMove].gPowderMoves && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		TrySetMissStringForSafetyGoggles(bank);
 		gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);

@@ -229,7 +229,7 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				{
 					if (CheckContact(move, bankAtk, bankAtkPartner) //Mummy will transfer
 					&& !PARTNER_MOVE_EFFECT_IS_SKILL_SWAP
-					&& !(TypeCalc(move, bankAtk, bankAtkPartner, NULL, FALSE) & MOVE_RESULT_NO_EFFECT) //Move has effect
+					&& !(TypeCalc(move, bankAtk, bankAtkPartner, NULL) & MOVE_RESULT_NO_EFFECT) //Move has effect
 					&& IsWeakestContactMoveWithBestAccuracy(move, bankAtk, bankAtkPartner)) //Hit partner with weakest move
 						IncreaseDoublesDamageViabilityToScore(&viability, class, BEST_DOUBLES_KO_SCORE, bankAtk, bankAtkPartner); //Best move to use
 				}

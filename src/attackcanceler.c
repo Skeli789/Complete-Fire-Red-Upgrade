@@ -1055,7 +1055,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 								gNewBS->noResultString[i] = 2; //Indicator to factor in Accuracy checks
 							}
 							else
-								gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, NULL, FALSE);
+								gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, NULL);
 						}
 						else
 						{
@@ -1313,7 +1313,7 @@ bool8 CanTargetPartner(u8 bankDef)
 
 bool8 TargetFullyImmuneToCurrMove(u8 bankDef)
 {
-	return TypeCalc(gCurrentMove, gBankAttacker, bankDef, 0, FALSE) & MOVE_RESULT_NO_EFFECT
+	return TypeCalc(gCurrentMove, gBankAttacker, bankDef, NULL) & MOVE_RESULT_NO_EFFECT
 		 || ProtectAffects(gCurrentMove, gBankAttacker, bankDef, FALSE)
 		 || BATTLER_SEMI_INVULNERABLE(bankDef)
 		 || DoesTargetHaveAbilityImmunity();

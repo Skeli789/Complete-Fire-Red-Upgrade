@@ -350,6 +350,7 @@ static bool8 TypeAbosorbingSwitchAbilityCheck(struct Pokemon* mon, u8 monId, u16
 	}
 
 	u8 monAbility = GetMonAbilityAfterTrace(mon, FOE(gActiveBattler));
+	monAbility = TryReplaceImposterAbility(monAbility, gActiveBattler);
 
 	if (monAbility == absorbingTypeAbility1
 	||  monAbility == absorbingTypeAbility2
@@ -911,7 +912,7 @@ static u8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLocke
 			||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 				continue;
 
-			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags)
+			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, &party[i]) & flags)
 			{
 				return i;
 			}
@@ -1208,7 +1209,7 @@ static bool8 ShouldSwitchToAvoidDeathHelper(struct Pokemon* party, u8 bankDef, u
 	if
 	//OPTION A
 		((switchFlags & (SWITCHING_FLAG_OUTSPEEDS | SWITCHING_FLAG_WALLS_FOE | SWITCHING_FLAG_RESIST_ALL_MOVES) //Will either not waste the switch or can wall
-		&& (AI_TypeCalc(defMove, bankDef, mon) & MOVE_RESULT_NO_EFFECT)) //Move will have no effect on switched in mon
+		&& (AI_TypeCalc(defMove, bankDef, gActiveBattler, mon) & MOVE_RESULT_NO_EFFECT)) //Move will have no effect on switched in mon
 
 	//OPTION B
 	||  (!(gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) //Death is only a figment of the imagination in this format
@@ -1513,7 +1514,7 @@ static bool8 ShouldSwitchIfWonderGuard(struct Pokemon* party, u8 firstId, u8 las
 			if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
 				continue;
 
-			moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, &party[i], TRUE);
+			moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, &party[i]);
 			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
 				// we found a mon
@@ -2013,6 +2014,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			u8 foes[] = {foe1, foe2};
 			u8 moveLimitations = CheckMoveLimitationsFromParty(consideredMon, 0, 0xFF);
 			u8 ability = GetMonAbilityAfterTrace(consideredMon, foe1);
+			ability = TryReplaceImposterAbility(ability, gActiveBattler);
 			u32 speed = SpeedCalcMon(SIDE(gActiveBattler), consideredMon);
 			bool8 isOneFoeOnField = IS_SINGLE_BATTLE || ViableMonCountFromBank(foe1) == 1;
 			secondLastValidMon = lastValidMon;
@@ -2064,7 +2066,10 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (gBitTable[k] & moveLimitations)
 									continue;
 
-								move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
+								if (damageData.atkImposter)
+									move = GetBattleMonMove(damageData.atkImposterBank, k);
+								else
+									move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
 
 								if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 								&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
@@ -2098,7 +2103,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							if (gBitTable[k] & moveLimitations)
 								continue;
 
-							move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
+							if (damageData.atkImposter)
+								move = GetBattleMonMove(damageData.atkImposterBank, k);
+							else
+								move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
+
 							hasUsableMove = TRUE;
 
 							if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
@@ -2112,7 +2121,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 
 							if (move != MOVE_NONE
 							&& SPLIT(move) != SPLIT_STATUS
-							//&& TypeCalc(move, gActiveBattler, foe, consideredMon, TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
+							//&& TypeCalc(move, gActiveBattler, foe, consideredMon) & MOVE_RESULT_SUPER_EFFECTIVE)
 							&& gNewBS->ai.monMaxDamage[SIDE(gActiveBattler)][i][foe] >= gBattleMons[foe].hp / 2) //Move can 2HKO
 							{
 								scores[i] += SWITCHING_INCREASE_CAN_2HKO; //Only checked if can't KO
@@ -2246,7 +2255,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						}
 						else //In Doubles or regular Trainers use type matchups because too slow otherwise
 						{
-							typeEffectiveness = AI_TypeCalc(move, foe, consideredMon);
+							typeEffectiveness = AI_TypeCalc(move, foe, gActiveBattler, consideredMon);
 
 							if (typeEffectiveness & MOVE_RESULT_SUPER_EFFECTIVE)
 							{

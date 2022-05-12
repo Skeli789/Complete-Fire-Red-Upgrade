@@ -36,6 +36,7 @@ ai_util.c
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
+static bool8 ShouldUseHumanLikelyMove(u8 bankAtk, u8 bankDef);
 static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move);
 static bool8 IsEffectivePursuit(u16 move, bool8 defCantSwitch, bool8 playerHasSwitchedBefore);
 static u16 PickMoveHumanLikelyToChoose(u16 move1, u16 move2, u8 playerBank, u8 aiBank);
@@ -303,6 +304,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
+	bool8 playerIsAttacker = ShouldUseHumanLikelyMove(bankAtk, bankDef);
 	bool8 playerHasSwitchedBefore = !IsPlayerInControl(bankDef) || gNewBS->ai.playerSwitchedCount != 0; //The AI bank is always considered to have switched before
 	bool8 goodMoveThatDoesntMakeContact = FALSE;
 	bool8 hasNonMultiHitMove = FALSE;
@@ -324,7 +326,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 			{
 				bool8 isEffectivePursuit = IsEffectivePursuit(currMove, defCantSwitch, playerHasSwitchedBefore);
 
-				if (MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
+				if (!playerIsAttacker && MoveWillHit(currMove, bankAtk, bankDef)) //This is a sure-hit move like with No Guard
 				{
 					perfectMoves |= gBitTable[i]; //This is one of the best moves
 					perfectMoveThatDoesntMakeContact |= !CheckContact(currMove, bankAtk, bankDef); //Make sure at least one perfect move doesn't make contact
@@ -332,7 +334,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 				}
 				else if (perfectMoves == 0) //Only waste time with the other moves if there isn't already a perfect move
 				{
-					u16 currAcc = CalcAIAccuracy(currMove, bankAtk, bankDef);
+					u16 currAcc = (playerIsAttacker && MoveWillHit(currMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(currMove, bankAtk, bankDef); //Players generally aren't more likely to use a sure hit move over a move that has 100 Acc
 					s8 currPriority = PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove);
 
 					if (goodMoves == 0 //No good moves yet
@@ -737,6 +739,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc
 	int i;
 	u16 move;
 	bool8 isAsleep = GetMonData(monAtk, MON_DATA_STATUS, NULL) & STATUS_SLEEP;
+	bool8 imposter = damageData != NULL && damageData->atkImposter;
 
 	if (gAbsentBattlerFlags & (gBitTable[bankDef]))
 		return FALSE;
@@ -745,7 +748,10 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		move = GetMonData(monAtk, MON_DATA_MOVE1 + i, NULL);
+		if (imposter)
+			move = GetBattleMonMove(damageData->atkImposterBank, i);
+		else
+			move = GetMonData(monAtk, MON_DATA_MOVE1 + i, NULL);
 
 		if (move == MOVE_NONE)
 			break;
@@ -1252,12 +1258,13 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 
 bool8 MoveKnocksOutFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
 {
-	u8 ability = ABILITY(bankDef);
+	u8 atkAbility = (damageData != NULL) ? damageData->atkAbility : GetMonAbilityAfterTrace(monAtk, bankDef);
+	u8 defAbility = ABILITY(bankDef);
 	u16 species = SPECIES(bankDef);
-	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move);
+	bool8 noMoldBreakers = NO_MOLD_BREAKERS(atkAbility, move);
 
 	if (MonMoveBlockedBySubstitute(move, monAtk, bankDef)
-	|| (noMoldBreakers && IsAffectedByDisguse(ability, species, CalcMoveSplitFromParty(move, monAtk))))
+	|| (noMoldBreakers && IsAffectedByDisguse(defAbility, species, CalcMoveSplitFromParty(move, monAtk))))
 		return FALSE;
 
 	if (GetFinalAIMoveDamageFromParty(move, monAtk, bankDef, damageData) >= gBattleMons[bankDef].hp)
@@ -2138,6 +2145,14 @@ u8 GetMonAbilityAfterTrace(struct Pokemon* mon, u8 foe)
 		if (!gSpecialAbilityFlags[foeAbility].gTraceBannedAbilities)
 			ability = foeAbility; //What the Ability will become
 	}
+
+	return ability;
+}
+
+u8 TryReplaceImposterAbility(u8 ability, u8 monBank) //monBank is the bank the mon that's sent out will become
+{
+	if (ability == ABILITY_IMPOSTER && ImposterWorks(monBank, TRUE))
+		return ABILITY(GetImposterBank(monBank));
 
 	return ability;
 }

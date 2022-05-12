@@ -242,6 +242,7 @@ BattleScript_ZMoveActivateDamaging:
 BattleScript_TryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
+	call BS_FLUSH_MESSAGE_BOX
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
 	callasm ClearScriptingBankDisguisedAs
 	reloadhealthbar BANK_SCRIPTING

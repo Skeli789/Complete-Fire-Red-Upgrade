@@ -63,6 +63,11 @@ struct DamageCalc
 	u8 resultFlags;
 	u8 basePower;
 
+	u8 atkImposterBank;
+	u8 defImposterBank;
+	bool8 atkImposter;
+	bool8 defImposter;
+
 	u8 specialFlags;
 	bool8 attackerLoaded;
 	bool8 defenderLoaded;
@@ -73,8 +78,8 @@ void atk04_critcalc(void);
 
 void atk06_typecalc(void);
 void atk4A_typecalc2(void);
-u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 CheckParty);
-u8 AI_TypeCalc(move_t, u8 bankAtk, struct Pokemon* monDef);
+u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk);
+u8 AI_TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monDef);
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* flags);

@@ -141,6 +141,8 @@ bool8 IgnoresSunAndRain(u8 bank);
 bool8 AffectedBySun(u8 bank);
 bool8 AffectedByRain(u8 bank);
 bool8 IsChoiceItemEffectOrAbility(u8 itemEffect, u8 ability);
+u8 GetImposterBank(u8 bank);
+bool8 ImposterWorks(u8 bankAtk, bool8 checkingMonAtk);
 
 void ClearBankStatus(u8 bank);
 bool8 IsSleepClauseInEffect(u8 bankToPutToSleep);
