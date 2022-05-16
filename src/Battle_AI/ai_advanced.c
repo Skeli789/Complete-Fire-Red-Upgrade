@@ -254,7 +254,7 @@ bool8 IsClassDoublesPhazer(u8 class)
 bool8 IsClassPhazer(u8 class)
 {
 	return class == FIGHT_CLASS_TEAM_SUPPORT_PHAZING
-	    || IsClassDoublesPhazer(class);
+		|| IsClassDoublesPhazer(class);
 }
 
 bool8 IsClassEntryHazards(u8 class)
@@ -301,12 +301,12 @@ bool8 IsClassDoublesTotalTeamSupport(u8 class)
 bool8 IsClassDoublesSpecific(u8 class)
 {
 	return class == FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER
-	    || class == FIGHT_CLASS_DOUBLES_SETUP_ATTACKER
-	    || class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
-	    || class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP
-	    || class == FIGHT_CLASS_DOUBLES_UTILITY
-	    || class == FIGHT_CLASS_DOUBLES_PHAZING
-	    || class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT
+		|| class == FIGHT_CLASS_DOUBLES_SETUP_ATTACKER
+		|| class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
+		|| class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP
+		|| class == FIGHT_CLASS_DOUBLES_UTILITY
+		|| class == FIGHT_CLASS_DOUBLES_PHAZING
+		|| class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT
 		|| class == FIGHT_CLASS_DOUBLES_TOTAL_TEAM_SUPPORT;
 }
 
@@ -1264,18 +1264,29 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 {
-	int i;
+	u32 i;
 	u8 firstId, lastId;
 	struct Pokemon* party;
 	bool8 hasStatus = FALSE;
 	bool8 needHealing = FALSE;
-
 	party = LoadPartyRange(bankAtk, &firstId, &lastId);
 
-	if (ViableMonCountFromBank(bankAtk) <= 1
-	&& (CanKnockOut(bankDef, bankAtk) || WillFaintFromSecondaryDamage(bankAtk)))
-		return FALSE; //Don't heal if last mon and will faint after getting KOd
+	//Check if last attacking mon should even bother
+	if (gBattleMoves[move].effect == EFFECT_WISH && ViableMonCountFromBank(bankAtk) <= 1)
+	{
+		//Don't bother using Wish if last mon and will faint before getting healed
+		if ((Can2HKO(bankDef, bankAtk) //Foe would KO before Wish would take effect at the end of next turn
+		 && !HasProtectionMoveInMoveset(bankAtk, CHECK_REGULAR_PROTECTION)) //And there's no protecting against that attack
+		|| WillFaintFromSecondaryDamage(bankAtk))
+			return FALSE;
+	}
 
+	//Check if fighting last foe mon
+	if (CanKnockOut(bankAtk, bankDef)
+	&& ViableMonCountFromBank(bankDef) <= 1)
+		return FALSE; //Don't waste a turn wishing and just KO the enemy
+
+	//Check if move will have effect
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		u16 curHp = GetMonData(&party[i], MON_DATA_HP, NULL);
@@ -1299,7 +1310,8 @@ bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 	if (IS_SINGLE_BATTLE && IsClassCleric(class))
 	{
-		switch (gBattleMoves[move].effect) {
+		switch (gBattleMoves[move].effect)
+		{
 			case EFFECT_WISH:
 				if (needHealing)
 					return TRUE;
@@ -1312,7 +1324,8 @@ bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	}
 	else if (IS_DOUBLE_BATTLE)
 	{
-		switch (gBattleMoves[move].effect) {
+		switch (gBattleMoves[move].effect)
+		{
 			case EFFECT_WISH:
 				return ShouldRecover(bankAtk, bankDef, move); //Switch recovery isn't good idea in doubles
 
@@ -2095,23 +2108,30 @@ void IncreaseSleepViability(s16* originalViability, u8 class, u8 bankAtk, u8 ban
 					 && !BadIdeaToPutToSleep(PARTNER(bankDef), bankAtk);
 
 	//Check if Yawn shouldn't be used
-	if (gBattleMoves[move].effect == EFFECT_YAWN
-	&& ABILITY(bankDef) != ABILITY_TRUANT
-	&& ViableMonCountFromBank(bankAtk) == 1 //Yawner is the last mon
-	&& !HasProtectionMoveInMoveset(bankAtk, CHECK_REGULAR_PROTECTION)) //Can't protect from the follow up attack after Yawn
+	if (gBattleMoves[move].effect == EFFECT_YAWN)
 	{
-		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Yawn would go first
-		{
-			if (CanKnockOut(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
-				return; //Don't waste your last turn alive using Yawn
+		if (CanKnockOut(bankAtk, bankDef) //Could KO the foe this turn
+		&& !IsMovePredictionHealingMove(bankDef, bankAtk) //And the foe isn't going to try to heal
+		&& !IsPredictedToSwitch(bankDef, bankAtk)) //And the foe's going to stay in
+			return; //Just KO the foe, don't waste the turn
 
-			if (Can2HKO(bankDef, bankAtk) && !HealingMoveInMoveset(bankAtk)) //Opponent can KO before Yawn takes effect and attacker can't stall until it does
-				return; //Don't waste your second last turn alive using Yawn
-		}
-		else //Yawn would go second
+		if (ABILITY(bankDef) != ABILITY_TRUANT
+		&& ViableMonCountFromBank(bankAtk) == 1 //Yawner is the last mon
+		&& !HasProtectionMoveInMoveset(bankAtk, CHECK_REGULAR_PROTECTION)) //Can't protect from the follow up attack after Yawn
 		{
-			if (Can2HKO(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
-				return; //Don't waste your last turn alive using Yawn
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Yawn would go first
+			{
+				if (CanKnockOut(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
+					return; //Don't waste your last turn alive using Yawn
+
+				if (Can2HKO(bankDef, bankAtk) && !HealingMoveInMoveset(bankAtk)) //Opponent can KO before Yawn takes effect and attacker can't stall until it does
+					return; //Don't waste your second last turn alive using Yawn
+			}
+			else //Yawn would go second
+			{
+				if (Can2HKO(bankDef, bankAtk)) //Opponent can KO right after being hit with Yawn
+					return; //Don't waste your last turn alive using Yawn
+			}
 		}
 	}
 
@@ -2729,6 +2749,15 @@ void IncreasePivotViability(s16* originalViability, u8 class, u8 bankAtk, unused
 	*originalViability = MathMin(viability, 255);
 }
 
+static bool8 BetterToKOLastFoeMon(u8 bankAtk, u8 bankDef) //Prerequisite being bankAtk is slower than bankDef, and bankAtk's considered move KOs bankDef
+{
+	if ((CanKnockOut(bankDef, bankAtk) || Can2HKO(bankDef, bankAtk)) //Foe will KO soon so attacker will be able to get max 1 attack off before then
+	&& ViableMonCountFromBank(bankDef) <= 1) //But it's also the foe's last mon
+		return TRUE;
+
+	return FALSE;
+}
+
 //Only for single battles
 void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef)
 {
@@ -2743,7 +2772,10 @@ void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
-			INCREASE_VIABILITY(6);
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(8);
+			else
+				INCREASE_VIABILITY(6);
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
@@ -2751,18 +2783,25 @@ void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk
 			break;
 
 		case FIGHT_CLASS_STALL:
-			INCREASE_VIABILITY(8);
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else
+				INCREASE_VIABILITY(8);
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
-			if (!Can2HKO(bankDef, bankAtk))
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else if (!Can2HKO(bankDef, bankAtk))
 				INCREASE_VIABILITY(3);
 			else
 				INCREASE_VIABILITY(8);
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
-			if (!Can2HKO(bankDef, bankAtk))
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else if (!Can2HKO(bankDef, bankAtk))
 				INCREASE_VIABILITY(6);
 			else
 				INCREASE_VIABILITY(7);
@@ -2770,18 +2809,25 @@ void IncreaseViabilityForSlowKOMove(s16* originalViability, u8 class, u8 bankAtk
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
 		case FIGHT_CLASS_SWEEPER_SETUP_SCREENS:
-			if (!Can2HKO(bankDef, bankAtk))
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else if (!Can2HKO(bankDef, bankAtk))
 				INCREASE_VIABILITY(6); //Get the screens up first
 			else
 				INCREASE_VIABILITY(9); //KO now before you die
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
-			INCREASE_VIABILITY(8);
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else
+				INCREASE_VIABILITY(8);
 			break;
 
 		case FIGHT_CLASS_ENTRY_HAZARDS:
-			if (!Can2HKO(bankDef, bankAtk))
+			if (BetterToKOLastFoeMon(bankAtk, bankDef))
+				INCREASE_VIABILITY(9); //Assumed it's the only damaging move and no priority move will also have a 9
+			else if (!Can2HKO(bankDef, bankAtk))
 				INCREASE_VIABILITY(3);
 			else
 				INCREASE_VIABILITY(6);
