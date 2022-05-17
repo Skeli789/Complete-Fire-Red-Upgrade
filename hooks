@@ -453,13 +453,14 @@ DynamicWhiteoutMap 080BFD54 0
 WhiteoutScreenFix 0807F542 0
 FieldCB_RushInjuredPokemonToCenter 0807F5F0 0
 
-## Summary Screen
+##Summary Screen
 CamomonsSummaryScreenHook 08136168 0
 ChangeSummaryScreenMonSinglesDoubles 0813B20C 1
 ChangeSummaryScreenMonMulti 0813B38C 1
 SummaryScreenOTGenderColour 08136270 3
 SummaryScreen_IsMultiBattlePartner 08138B4C 0
 SummaryScreenMonIsFromGBA 0813B7F8 0
+SummaryScreen_TradeMonMetLocationHook 08137776 2
 
 ##Hall of Fame Fix
 CB2_DoHallOfFameScreen 080F1EFC 3

@@ -512,6 +512,14 @@ bool32 SummaryScreenMonIsFromGBA(void)
 	return version == VERSION_FIRE_RED; //Not compatible with any other game
 }
 
+bool8 TryReplaceSummaryScreenLocationWithFarAwayLocation(struct Pokemon* mon, u8 metLocation)
+{
+	if (IsTradedMon(mon) && !SummaryScreen_IsMultiBattlePartner())
+		metLocation = 0; //Forces "met in a trade"
+
+	return metLocation;
+}
+
 
 //Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
