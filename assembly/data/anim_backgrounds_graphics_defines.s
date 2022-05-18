@@ -140,3 +140,6 @@ definitions for battle backgrounds
 .equ BG_AURA_SPHERE_IMG, Focus_BlastTiles
 .equ BG_AURA_SPHERE_PAL, Aura_Sphere_BGPal
 .equ BG_AURA_SPHERE_RAW, Focus_BlastMap
+.equ BG_GLITCH_CITY_IMG, Glitch_CityTiles
+.equ BG_GLITCH_CITY_PAL, Glitch_CityPal
+.equ BG_GLITCH_CITY_RAW, Glitch_CityMap

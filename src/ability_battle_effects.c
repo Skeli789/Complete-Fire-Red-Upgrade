@@ -20,7 +20,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/text.h"
 /*
@@ -52,7 +52,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_AURABREAK] = 3,
 	[ABILITY_BADDREAMS] = 4,
 	[ABILITY_BATTERY] = 0,
-	[ABILITY_BATTLEARMOR] = 2,
+	[ABILITY_TRANSISTOR] = 2,
 	[ABILITY_BATTLEBOND] = 6,
 	[ABILITY_BEASTBOOST] = 7,
 	[ABILITY_BERSERK] = 5,
@@ -74,7 +74,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_DAMP] = 2,
 	[ABILITY_DANCER] = 5,
 	[ABILITY_DARKAURA] = 6,
-	[ABILITY_DAZZLING] = 5,
+	[ABILITY_IRONKICK] = 6,
 	[ABILITY_DEFEATIST] = -1,
 	[ABILITY_DEFIANT] = 5,
 	[ABILITY_DELTASTREAM] = 10,
@@ -128,7 +128,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_INNERFOCUS] = 2,
 	[ABILITY_INSOMNIA] = 4,
 	[ABILITY_INTIMIDATE] = 7,
-	[ABILITY_IRONBARBS] = 6,
+	[ABILITY_GRIMNEIGH] = 7,
 	[ABILITY_IRONFIST] = 6,
 	[ABILITY_JUSTIFIED] = 4,
 	[ABILITY_KEENEYE] = 1,
@@ -176,7 +176,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_POISONTOUCH] = 4,
 	[ABILITY_PORTALPOWER] = 8,
 	[ABILITY_POWERCONSTRUCT] = 10,
-	[ABILITY_POWEROFALCHEMY] = 0,
+	[ABILITY_QUICKDRAW] = 0,
 	[ABILITY_PRANKSTER] = 8,
 	[ABILITY_PRESSURE] = 5,
 	[ABILITY_PRIMORDIALSEA] = 10,
@@ -205,7 +205,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_SCHOOLING] = 6,
 	[ABILITY_SCRAPPY] = 6,
 	[ABILITY_SERENEGRACE] = 8,
-	[ABILITY_SHADOWSHIELD] = 8,
+	[ABILITY_DRAGONSMAW] = 8,
 	[ABILITY_SHADOWTAG] = 10,
 	[ABILITY_SHEDSKIN] = 7,
 	[ABILITY_SHEERFORCE] = 8,
@@ -245,7 +245,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_SYMBIOSIS] = 0,
 	[ABILITY_SYNCHRONIZE] = 4,
 	[ABILITY_TANGLEDFEET] = 2,
-	[ABILITY_TANGLINGHAIR] = 5,
+	[ABILITY_UNSEENFIST] = 5,
 	[ABILITY_TECHNICIAN] = 8,
 	[ABILITY_TELEPATHY] = 0,
 	[ABILITY_TERAVOLT] = 7,
@@ -301,7 +301,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 
 const bool8 gMoldBreakerIgnoredAbilities[] =
 {
-	[ABILITY_BATTLEARMOR] =		TRUE,
+	//[ABILITY_TRANSISTOR] =		TRUE,
 	[ABILITY_CLEARBODY] =		TRUE,
 	[ABILITY_DAMP] =			TRUE,
 	[ABILITY_DRYSKIN] =			TRUE,
@@ -359,7 +359,7 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_FURCOAT] =			TRUE,
 	[ABILITY_OVERCOAT] =		TRUE,
 	[ABILITY_SWEETVEIL] =		TRUE,
-	[ABILITY_DAZZLING] =		TRUE,
+	//[ABILITY_DAZZLING] =		TRUE,
 	[ABILITY_DISGUISE] =		TRUE,
 	[ABILITY_FLUFFY] =			TRUE,
 	[ABILITY_QUEENLYMAJESTY] =	TRUE,
@@ -754,7 +754,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_SLOWSTART:
-			gNewBS->SlowStartTimers[bank] = 5;
+			gNewBS->SlowStartTimers[bank] = 3;
 			gBattleStringLoader = gText_SlowStartActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
@@ -1491,7 +1491,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							effect = 1;
 						break;
 
-					case ABILITY_DAZZLING: //Cannot use
+					//case ABILITY_DAZZLING: //Cannot use
 					case ABILITY_QUEENLYMAJESTY: //Cannot use
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
 							effect = 2;
@@ -1522,7 +1522,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			if (gBankAttacker != PARTNER(bank)) //Can't block against partner
 			{
 				switch (gLastUsedAbility) {
-					case ABILITY_DAZZLING:
+					//case ABILITY_DAZZLING:
 					case ABILITY_QUEENLYMAJESTY:
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
 							effect = 1;
@@ -1660,7 +1660,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_IRONBARBS:
+			//case ABILITY_IRONBARBS:
 			case ABILITY_ROUGHSKIN:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
@@ -1941,7 +1941,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_TANGLINGHAIR:
+			//case ABILITY_TANGLINGHAIR:
 			case ABILITY_GOOEY:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
@@ -2702,9 +2702,9 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 						2, 7, 1);
 }
 
-static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2)
+static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2, u16 species)
 {
-	const u8* abilityName = GetAbilityName(ability);
+	const u8* abilityName = GetAbilityNameByMon(ability, species);
 
 	PrintOnAbilityPopUp(abilityName,
 						(void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,
@@ -2892,8 +2892,10 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 	StartSpriteAnim(&gSprites[spriteId1], 0);
 	StartSpriteAnim(&gSprites[spriteId2], 0);
 
+	u16 species = GetBankPartyData(gBattleAnimAttacker)->species;
+
 	PrintBattlerOnAbilityPopUp(gBattleAnimAttacker, spriteId1, spriteId2);
-	PrintAbilityOnAbilityPopUp(ability, spriteId1, spriteId2);
+	PrintAbilityOnAbilityPopUp(ability, spriteId1, spriteId2, species);
 	RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32));
 
 	DestroyAnimVisualTask(taskId);

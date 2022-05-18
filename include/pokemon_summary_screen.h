@@ -58,50 +58,50 @@ enum PokemonSummaryScreenStat
 
 struct PokemonSummaryScreenData
 {
-    u16 unk0[0x800];
-    u16 unk1000[0x800];
-    u16 unk2000[0x800];
-    u8 ALIGNED(4) unk3000[7];
+    u16 bg1TilemapBuffer[0x800];
+    u16 bg2TilemapBuffer[0x800];
+    u16 bg3TilemapBuffer[0x800];
+    u8 ALIGNED(4) windowIds[7];
 
     u8 ALIGNED(4) unk3008;
-    u8 ALIGNED(4) caughtBallSpriteId;
-    u8 ALIGNED(4) unk3010;
-    u8 ALIGNED(4) unk3014;
+    u8 ALIGNED(4) ballIconSpriteId;
+    u8 ALIGNED(4) monPicSpriteId;
+    u8 ALIGNED(4) monIconSpriteId;
 
-    u8 ALIGNED(4) unk3018;
-    u8 ALIGNED(4) unk301C;
+    u8 ALIGNED(4) inputHandlerTaskId;
+    u8 ALIGNED(4) inhibitPageFlipInput;
 
-    u8 ALIGNED(4) unk3020;
+    u8 ALIGNED(4) numMonPicBounces;
 
     bool32 isEnemyParty; /* 0x3024 */
 
     struct PokeSummary
     {
-        u8 ALIGNED(4) unk3028[POKEMON_NAME_LENGTH];
-        u8 ALIGNED(4) unk3034[POKEMON_NAME_LENGTH + 1];
-        u8 ALIGNED(4) unk3040[12];
-        u8 ALIGNED(4) unk304C[2][12];
+        u8 ALIGNED(4) speciesNameStrBuf[POKEMON_NAME_LENGTH];
+        u8 ALIGNED(4) nicknameStrBuf[POKEMON_NAME_LENGTH + 1];
+        u8 ALIGNED(4) otNameStrBuf[12];
+        u8 ALIGNED(4) otNameStrBufs[2][12];
 
-        u8 ALIGNED(4) unk3064[5];
+        u8 ALIGNED(4) dexNumStrBuf[5];
         u8 ALIGNED(4) unk306C[7];
-        u8 ALIGNED(4) unk3074[ITEM_NAME_LENGTH + 1];
+        u8 ALIGNED(4) itemNameStrBuf[ITEM_NAME_LENGTH + 1];
 
-        u8 ALIGNED(4) unk3084[3];
-        u8 ALIGNED(4) unk3088[7];
-        u8 ALIGNED(4) unk3090[9];
-        u8 ALIGNED(4) unk309C[5][5];
+        u8 ALIGNED(4) genderSymbolStrBuf[3];
+        u8 ALIGNED(4) levelStrBuf[7];
+        u8 ALIGNED(4) curHpStrBuf[9];
+        u8 ALIGNED(4) statValueStrBufs[5][5];
 
-        u8 ALIGNED(4) unk30B8[5][11];
-        u8 ALIGNED(4) unk30F0[5][11];
-        u8 ALIGNED(4) unk3128[5][MOVE_NAME_LENGTH + 1];
-        u8 ALIGNED(4) unk316C[5][5];
-        u8 ALIGNED(4) unk3188[5][5];
+        u8 ALIGNED(4) moveCurPpStrBufs[5][11];
+        u8 ALIGNED(4) moveMaxPpStrBufs[5][11];
+        u8 ALIGNED(4) moveNameStrBufs[5][MOVE_NAME_LENGTH + 1];
+        u8 ALIGNED(4) movePowerStrBufs[5][5];
+        u8 ALIGNED(4) moveAccuracyStrBufs[5][5];
 
-        u8 ALIGNED(4) unk31A4[9];
-        u8 ALIGNED(4) unk31B0[9];
+        u8 ALIGNED(4) expPointsStrBuf[9];
+        u8 ALIGNED(4) expToNextLevelStrBuf[9];
 
-        u8 ALIGNED(4) unk31BC[13];
-        u8 ALIGNED(4) unk31CC[52];
+        u8 ALIGNED(4) abilityNameStrBuf[13];
+        u8 ALIGNED(4) abilityDescStrBuf[52];
     } summary;
 
     u8 ALIGNED(4) isEgg; /* 0x3200 */
@@ -134,7 +134,7 @@ struct PokemonSummaryScreenData
     u8 ALIGNED(4) unk3264; /* 0x3264 */
     u8 ALIGNED(4) unk3268; /* 0x3268 */
 
-    u8 ALIGNED(4) unk326C; /* 0x326C */
+    u8 ALIGNED(4) curMonStatusAilment; /* 0x326C */
 
     u8 ALIGNED(4) state3270; /* 0x3270 */
     u8 ALIGNED(4) unk3274; /* 0x3274 */

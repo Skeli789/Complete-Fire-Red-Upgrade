@@ -1,0 +1,11 @@
+#org @gText_R5MayBefore
+[RED]May: Oops! Sorry!\nOh, [PLAYER], its you!\p[GREEN]Barry[RED] told me you had a battle, and\nyou won! He said you are really\lstrong! But I've been training hard.\pLets have a battle!
+
+#org @gText_R5MayLose
+Wow! You really are strong!
+
+#org @gText_R5MayAfter
+[RED]May: That was fun!\nDon't tell Dad, but I have an item\pfor you. It's called a [GREEN]Mega Ring[RED].\nDad said only to give it to gym leaders\lbut I have a spare for you!
+
+#org @gText_R5MayGtg
+[RED]May: Well, I have to go deliver the\nrest of these Mega Rings. Bye!

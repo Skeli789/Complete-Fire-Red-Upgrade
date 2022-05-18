@@ -49,6 +49,12 @@ Change [BUFFER1]'s Ability\nto [BUFFER2]?
 #org @gText_AbilityCapsuleChangedAbility
 [BUFFER1]'s Ability has been\nchanged to [BUFFER2].[PAUSE_UNTIL_PRESS]
 
+#org @gText_AbilityPatchOfferChange
+Change [BUFFER1]'s Ability\nto [BUFFER2]?
+
+#org @gText_AbilityPatchChangedAbility
+[BUFFER1]'s Ability has been\nchanged to [BUFFER2].[PAUSE_UNTIL_PRESS]
+
 #org @gText_MaxPowderOfferGive
 Give the Gigantamax factor to\n[BUFFER1]?
 
@@ -60,3 +66,12 @@ Remove the Gigantamax factor from\n[BUFFER1]?
 
 #org @gText_MaxPowderRemovesGigantamax
 [BUFFER1] can no longer Gigantamax.[PAUSE_UNTIL_PRESS]
+
+#org @gText_Slash
+/
+
+#org @gText_PkmnElevatedToLvVar2
+[BUFFER1] was elevated to\nLv. [BUFFER2].
+
+#org @gText_PastCap
+You are at the level cap![PAUSE_UNTIL_PRESS]

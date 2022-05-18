@@ -138,6 +138,8 @@ CreateSummaryScreenGigantamaxIconHook 8139D2C 3
 SummaryScreen_ChangeCaughtBallSpriteVisibility 8139D54 1
 SummaryScreen_DestroyCaughtBallSprite 8139D90 0
 
+PokeSum_PrintAbilityNameAndDesc 8137C18 0
+
 BatonPassEffects 08012850 0
 
 GiveMonToPlayer 8040B14 1
@@ -406,6 +408,9 @@ FindPalette 080089E8 1
 FindOrLoadPalette 08008928 1
 PaletteNeedsFogBrightening 0807A748 1
 LoadCloudOrSandstormPalette 0807ABC0 1
+LoadObjectEventPalette 0805F4B0 1
+PatchObjectPalette 0805F538 1
+FindObjectEventPaletteIndexByTag 0805F5A0 1
 
 ##Whiteout Hack
 DynamicWhiteoutMap 080BFD54 0
@@ -525,6 +530,7 @@ ReloadMartList 0809BECA 0
 SetUpStartMenu 0806ed54 0
 StartCB_HandleInput 0806F280 0
 FixStartMenuSize 080f78f4 0
+DestroySafariZoneStatsWindow 0806ef18 0
 
 ##Pokemon Storage System
 SendMonToPC 8040B90 1
@@ -643,3 +649,13 @@ ActivateMGBAPrint 81E381C 0
 FixInstantTextOptionSpeed 08002D10 0
 RunTextPrintersForInstantTextHook 08002DEE 0
 #endif
+
+ItemUseCB_RareCandy 081262AC 2
+
+##DoSetUpTMCaseUI 081318C0 0
+DrawMoveInfoUIMarkers 08133404 0
+TMCase_MoveCursor_UpdatePrintedDescription 08131F0C 1
+CreateTMSprite 0813368c 1
+PlaceHMTileInWindow 081335b0 3
+##TMCase_ItemPrintFunc 08131e68 3
+GetTMNumberAndMoveString 08131d48 2

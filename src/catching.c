@@ -2,7 +2,7 @@
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
-#include "../include/field_player_avatar.h"
+#include "../include/field_player_avatar.h" 
 #include "../include/field_specials.h"
 #include "../include/item.h"
 #include "../include/overworld.h"
@@ -16,9 +16,10 @@
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/base_stats.h"
 /*
 catching.c
 	handles the catch probability logic, expands pokeballs, etc.
@@ -125,7 +126,7 @@ void atkEF_handleballthrow(void)
 		if (ballType == BALL_TYPE_SAFARI_BALL)
 			catchRate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
 		else
-			catchRate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
+			catchRate = gBaseStats2[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
 
 		if (ballType >= BALL_TYPE_NET_BALL)
 		{
@@ -284,7 +285,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_FAST_BALL:
-					if (gBaseStats[defSpecies].baseSpeed >= 100)
+					if (gBaseStats2[defSpecies].baseSpeed >= 100)
 						ballMultiplier = 40;
 					break;
 

@@ -15,3 +15,11 @@ gBallParticlePalettes 080F05E8
 gBallOpenParticleAnimationFuncs 080F066C
 gBallParticleSpriteTemplates 080F0784
 gBallOpenMonFadePal 080F1284
+
+gBaseStats2 080001BC
+
+##EventScript_Cut 083B3218
+##EventScript_RockSmash 083B14F0
+##EventScript_Strength 083AF550
+
+EventScript_PC 0806D214

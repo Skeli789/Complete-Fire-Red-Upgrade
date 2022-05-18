@@ -6,7 +6,8 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/item.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
+#include "../include/base_stats.h"
 
 void DebugMenu_ProcessSetFlag(void)
 {
@@ -150,7 +151,7 @@ void DebugMenu_SetTeamToLevel100(void)
 		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
 		if (species != SPECIES_NONE && species != SPECIES_EGG)
 		{
-			u32 exp = gExperienceTables[gBaseStats[species].growthRate][MAX_LEVEL];
+			u32 exp = gExperienceTables[gBaseStats2[species].growthRate][MAX_LEVEL];
 			SetMonData(&gPlayerParty[i], MON_DATA_EXP, &exp);
 			CalculateMonStats(&gPlayerParty[i]);
 			HealMon(&gPlayerParty[i]);

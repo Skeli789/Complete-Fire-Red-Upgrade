@@ -14,7 +14,7 @@
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 /*
@@ -74,9 +74,6 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	FLAG_RAID_BATTLE_NO_FORCE_END,
-#endif
-#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
-	FLAG_KEEP_CONSUMABLE_ITEMS,
 #endif
 #ifdef FLAG_HIDDEN_ABILITY
 	FLAG_HIDDEN_ABILITY,
@@ -529,6 +526,7 @@ void EndOfBattleThings(void)
 		RestoreNonConsumableItems();
 		RevertDynamax();
 		FormsRevert(gPlayerParty);
+		HeroDuoRevert(gPlayerParty);
 		MegaRevert(gPlayerParty);
 		GigantamaxRevert(gPlayerParty);
 		UpdateBurmy();
@@ -571,11 +569,7 @@ static void RestoreNonConsumableItems(void)
 {
 	u16 none = ITEM_NONE;
 	u16* items = gNewBS->itemBackup;
-	#ifdef FLAG_KEEP_CONSUMABLE_ITEMS
-	bool8 keepConsumables = FlagGet(FLAG_KEEP_CONSUMABLE_ITEMS);
-	#else
-	bool8 keepConsumables = FALSE;
-	#endif
+	bool8 keepConsumables = TRUE;
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{

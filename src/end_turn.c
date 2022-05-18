@@ -15,7 +15,7 @@
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/switching.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 end_turn.c

@@ -19,6 +19,7 @@ cmd49_battle_scripts.s
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
 .global BattleScript_Moxie
+.global BattleScript_GrimNeigh
 .global BattleScript_MindBlownDamage
 .global BattleScript_FaintAttackerForExplosion
 .global BattleScript_ExplosionAnim
@@ -31,6 +32,7 @@ cmd49_battle_scripts.s
 .global BattleScript_RaidShields
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
+.global BattleScript_ScaleShot
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -151,6 +153,19 @@ BattleScript_Moxie:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 MoxieReturnPostBuff:
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_GrimNeigh:
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR GrimNeighReturnPostBuff
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GrimNeighReturnPostBuff
+	call BattleScript_AbilityPopUp
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+GrimNeighReturnPostBuff:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -380,6 +395,25 @@ BattleScript_RaidBattleStatIncrease:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_ScaleShot:
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MoxieReturnPostBuff
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	jumpifstat BANK_ATTACKER GREATERTHAN STAT_DEF STAT_MIN ScaleShot_DropDef
+	return
+
+ScaleShot_DropDef:
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES 
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN, MoxieReturnPostBuff
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MoxieReturnPostBuff
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 PoisonTouchString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xFD, 0x11, 0xAB, 0xFF
 SpikyShieldString: .byte 0xFD, 0x0F, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE8, 0x00, 0xD6, 0xED, 0xFE, 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xCD, 0xE4, 0xDD, 0xDF, 0xED, 0x00, 0xCD, 0xDC, 0xDD, 0xD9, 0xE0, 0xD8, 0xAB, 0xFF

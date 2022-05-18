@@ -91,6 +91,8 @@ enum OverworldNPCSprites
 	EVENT_OBJ_GFX_BLAINE,
 	EVENT_OBJ_GFX_GIOVANNI,
 	EVENT_OBJ_GFX_MOM,
+	EVENT_OBJ_GFX_ASH = 207,
+	EVENT_OBJ_GFX_LYRA = 210,
 };
 
 #define EVENT_OBJ_GFX_RED_UNDERWATER 6 //By default VS. Seeker on bike b\c not used by anything else

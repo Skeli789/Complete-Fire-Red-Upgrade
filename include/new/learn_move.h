@@ -8,6 +8,13 @@
  *		  functions for Evolution moves and the Move Relearner.
  */
 
+
+#ifdef EXPAND_MOVESETS
+	extern const struct LevelUpMove* const gLevelUpLearnsets[];
+#else
+	#define gLevelUpLearnsets ((struct LevelUpMove**) *((u32*) 0x8043E20)) //extern const struct LevelUpMove* const gLevelUpLearnsets[];
+#endif
+
 //Exported Functions
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove);

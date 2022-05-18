@@ -7,7 +7,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_util.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_effects.h"
 #include "../include/new/item_battle_scripts.h"

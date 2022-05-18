@@ -81,7 +81,7 @@ print_ability_one:
 	ldrb r0, [r1]
 	ldrh r1, [sp, #0x1C]
 	bl TryRandomizeAbility
-	bl GetAbilityName
+	bl GetAbilityNameDex
 	mov r2, r0
  
 	ldr r1, [r7]
@@ -113,7 +113,7 @@ print_ability_two:
 	mov r0, r2
 	ldrh r1, [sp, #0x1C]
 	bl TryRandomizeAbility
-	bl GetAbilityName
+	bl GetAbilityNameDex
    	mov r2, r0
 	
 	ldr r1, [r7]

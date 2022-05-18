@@ -45,7 +45,7 @@
 #include "../include/new/item.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/overworld_data.h"
@@ -1090,9 +1090,11 @@ void BattleSetup_StartTrainerBattle(void)
 	}
 
 	#ifdef FLAG_DYNAMAX_BATTLE
-	if (FlagGet(FLAG_DYNAMAX_BATTLE))
+	if(!FlagGet(FLAG_DYNAMAX_ENABLED)) {
+	if (FlagGet(FLAG_DYNAMAX_BATTLE) || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_BOSS || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION) //could also be CLASS_CAMPER, CLASS_RIVAL, etc
 		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
 	#endif
+	}
 
 	gMain.savedCallback = CB2_EndTrainerBattle;
 	StartTheBattle();
@@ -2377,11 +2379,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	else if (IsPlayerFacingRockClimbableWall())
 	{
 		if (HasBadgeToUseRockClimb()
-		&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
+			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
 		{
-			#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 			item = ITEM_HM08_ROCK_CLIMB;
-			#endif
+#endif
 
 			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_ROCKCLIMB, item, 0);
 			if (partyId < PARTY_SIZE)
@@ -2390,9 +2392,9 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				return EventScript_UseRockClimb;
 			}
 		}
-
 		return EventScript_JustRockWall;
 	}
+
 	return NULL;
 }
 
@@ -2415,7 +2417,7 @@ bool8 TrySetupDiveDownScript(void)
 	{
 		u16 item = ITEM_NONE;
 		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
-		item = ITEM_HM05_DIVE;
+		item = ITEM_HM08_ROCK_CLIMB;
 		#endif
 
 		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, SHOULD_BE_SURFING);
@@ -2442,7 +2444,7 @@ bool8 TrySetupDiveEmergeScript(void)
 	{
 		u16 item = ITEM_NONE;
 		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
-		item = ITEM_HM05_DIVE;
+		item = ITEM_HM08_ROCK_CLIMB;
 		#endif
 
 		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, 0);

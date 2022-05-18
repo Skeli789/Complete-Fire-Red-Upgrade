@@ -26,6 +26,7 @@ move_tables.s
 .global gSheerForceBoostedMoves
 .global gRecklessBoostedMoves
 .global gPunchingMoves
+.global gKickingMoves
 .global gPulseAuraMoves
 .global gBitingMoves
 .global gBallBombMoves
@@ -663,6 +664,8 @@ gRecklessBoostedMoves:
 .hword MOVE_VOLTTACKLE
 .hword MOVE_WOODHAMMER
 .hword MOVE_WILDCHARGE
+.hword MOVE_CHLOROBLAST
+.hword MOVE_DRAGONHAMMER
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -687,6 +690,25 @@ gPunchingMoves:
 .hword MOVE_ICEHAMMER
 .hword MOVE_PLASMAFISTS
 .hword MOVE_DOUBLEIRONBASH
+.hword MOVE_SURGINGSTRIKES
+.hword MOVE_WICKEDBLOW
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gKickingMoves:
+.hword MOVE_BLAZEKICK
+.hword MOVE_DOUBLEKICK
+.hword MOVE_HIGHJUMPKICK
+.hword MOVE_JUMPKICK
+.hword MOVE_LOWKICK
+.hword MOVE_MEGAKICK
+.hword MOVE_ROLLINGKICK
+.hword MOVE_STOMP
+.hword MOVE_THUNDEROUSKICK
+.hword MOVE_TRIPLEARROWS
+.hword MOVE_TRIPLEAXEL
+.hword MOVE_TRIPLEKICK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -909,6 +931,7 @@ gHighCriticalChanceMoves:
 .hword MOVE_SPACIALREND
 .hword MOVE_DRILLRUN
 .hword MOVE_SNIPESHOT
+.hword MOVE_DIRECLAW
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -918,6 +941,8 @@ gAlwaysCriticalMoves:
 .hword MOVE_FROSTBREATH
 .hword MOVE_SURGINGSTRIKES
 .hword MOVE_WICKEDBLOW
+.hword MOVE_ZIPPYZAP
+.hword MOVE_STRIPEDDIVE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1033,11 +1058,14 @@ gMovesCanUnfreezeTarget:
 gMovesThatChangePhysicality:
 .hword MOVE_PHOTONGEYSER
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
+.hword MOVE_SHELLSIDEARM
+.hword MOVE_GLACIATE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 gTwoToFiveStrikesMoves:
+.hword MOVE_SURGINGSTRIKES
 .hword MOVE_ARMTHRUST
 .hword MOVE_BARRAGE
 .hword MOVE_BONERUSH
@@ -1076,6 +1104,7 @@ gPercent25RecoilMoves:
 .hword MOVE_SUBMISSION
 .hword MOVE_WILDCHARGE
 .hword MOVE_HEADCHARGE
+.hword MOVE_CHLOROBLAST
 .hword MOVE_TABLES_TERMIN
 
 gPercent33RecoilMoves:
@@ -1084,6 +1113,7 @@ gPercent33RecoilMoves:
 .hword MOVE_FLAREBLITZ
 .hword MOVE_BRAVEBIRD
 .hword MOVE_WOODHAMMER
+.hword MOVE_DRAGONHAMMER
 .hword MOVE_TABLES_TERMIN
 
 gPercent50RecoilMoves:

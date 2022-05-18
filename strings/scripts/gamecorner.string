@@ -1,0 +1,32 @@
+#org @gText_Exchange
+We exchange your Coins for prizes.
+
+#org @gText_NeedCoinCase
+A Coin Case is required[.]
+
+#org @gText_WhatPrize
+Which prize would you like?
+
+#org @gText_WantIt
+So, you want [BUFFER1]?
+
+#org @gText_NeedMoreCoins
+Sorry, you'll need more Coins\nthan that.
+
+#org @gText_GetPokemon
+[PLAYER] recieved the [BUFFER1]!
+
+#org @gText_WelcomeRocketGamecorner
+Welcome to Rocket Game Corner!\pDo you need some game Coins?\nWould you like to buy some?
+
+#org @gText_ComePlaySoon
+No?\nPlease come play sometime!
+
+#org @gText_NeedCoinCase2
+Oh, I'm sorry.\nYou don't have a Coin Case.
+
+#org @gText_NeedMoreMoney
+You can't afford the Coins.
+
+#org @gText_HereCoins
+Thank you.\nHere are your Coins!

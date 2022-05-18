@@ -96,6 +96,16 @@ definitions for animation particles
 .equ TORNADO_IMG, TornadoTiles
 .equ STRAIGHT_BEAM_IMG, Straight_BeamTiles
 .equ DREEPY_IMG, Dreepy_MissileTiles
+.equ SCALE_SHOT_IMG, Scale_ShotTiles
+.equ EXPANDING_FORCE_BALL_IMG, Expanding_Force_BallTiles
+.equ STONE_AXE_IMG, Stone_AxeTiles
+.equ WICKED_ENERGY_IMG, Wicked_EnergyTiles
+.equ SURGING_ENERGY_IMG, Surging_EnergyTiles
+.equ FREEZING_BEAM_IMG, Freezing_Beam2Tiles
+.equ LASH_OUT_IMG, Lash_OutTiles
+.equ BLUE_RAZOR_LEAF_IMG, Blue_Razor_LeafTiles
+.equ SHELL_SIDE_ARM_IMG, Shell_Side_ArmTiles
+.equ SHELL_SIDE_ARM_BALL_IMG, Shell_Side_Arm_BallTiles
 
 @;Palettes
 .equ SWORD_PAL, SwordPal
@@ -115,6 +125,7 @@ definitions for animation particles
 .equ NAIL_PAL, Curse_NailPal
 .equ SPIKES_PAL, SpikesPal
 .equ MONSTER_DOLL_PAL, Substitute_FrontPal
+.equ BLUE_ROCKS_PAL, Blue_RocksPal
 
 .equ IMPACT_PAL, ImpactPal
 .equ WOOD_PAL, WoodPal
@@ -194,3 +205,14 @@ definitions for animation particles
 .equ TORNADO_PAL, TornadoPal
 .equ STRAIGHT_BEAM_PAL, Straight_BeamPal
 .equ DREEPY_PAL, Dreepy_MissilePal
+.equ SCALE_SHOT_PAL, Scale_ShotPal
+.equ EXPANDING_FORCE_BALL_PAL, Expanding_Force_BallPal
+.equ STONE_AXE_PAL, Stone_AxePal
+.equ WICKED_ENERGY_PAL, Wicked_EnergyPal
+.equ SURGING_ENERGY_PAL, Surging_EnergyPal
+.equ FREEZING_BEAM_PAL, Freezing_Beam2Pal
+.equ LASH_OUT_PAL, Lash_OutPal
+.equ BLUE_RAZOR_LEAF_PAL, Blue_Razor_LeafPal
+.equ MISTY_EXPLOSION_PAL, Misty_ExplosionPal
+.equ SHELL_SIDE_ARM_PAL, Shell_Side_ArmPal
+.equ SHELL_SIDE_ARM_BALL_PAL, Shell_Side_Arm_BallPal

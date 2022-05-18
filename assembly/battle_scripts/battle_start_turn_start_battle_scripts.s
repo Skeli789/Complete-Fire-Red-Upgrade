@@ -90,6 +90,8 @@ BattleScript_Primal:
 BattleScript_PrimalSub:
 	jumpifspecies BANK_ATTACKER SPECIES_GROUDON_PRIMAL PGroudonAnim
 	jumpifspecies BANK_ATTACKER SPECIES_KYOGRE_PRIMAL PKyogreAnim
+	jumpifspecies BANK_ATTACKER SPECIES_DIALGA_PRIMAL PKyogreAnim
+	jumpifspecies BANK_ATTACKER SPECIES_PALKIA_PRIMAL PKyogreAnim
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 
 RegularPrimalAnim:
@@ -142,6 +144,7 @@ BattleScript_QuickClaw:
 	setword BATTLE_STRING_LOADER StringNull
 	printstring 0x184
 	setword BATTLE_STRING_LOADER gText_ItemIncreasedSpeedBracket
+	jumpifability BANK_ATTACKER ABILITY_QUICKDRAW QuickDrawBS
 	jumpifhelditemeffect 0xA ITEM_EFFECT_QUICK_CLAW QuickClawBS
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	printstring 0x184
@@ -150,6 +153,13 @@ BattleScript_QuickClaw:
 	end3
 
 QuickClawBS:
+	playanimation 0xA ANIM_ITEM_USE 0x0
+	printstring 0x184
+	waitmessage DELAY_HALFSECOND
+	end3
+
+QuickDrawBS:
+	setword BATTLE_STRING_LOADER gText_AbilityIncreasedSpeedBracket
 	playanimation 0xA ANIM_ITEM_USE 0x0
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND

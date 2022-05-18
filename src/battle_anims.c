@@ -123,6 +123,58 @@ const union AnimCmd *const gAnimCmdTable_DreepyMissile[] =
 	sAnimCmdDreepyMissileOpponent,
 };
 
+static const union AnimCmd sAnimCmdScaleShotPlayer[] =
+{
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnimCmdScaleShotOpponent[] =
+{
+	ANIMCMD_FRAME(16, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const gAnimCmdTable_ScaleShotMissle[] =
+{
+	sAnimCmdScaleShotPlayer,
+	sAnimCmdScaleShotOpponent,
+};
+
+static const union AnimCmd sAnimCmdStoneAxePlayer[] =
+{
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnimCmdStoneAxeOpponent[] =
+{
+	ANIMCMD_FRAME(16, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const gAnimCmdTable_StoneAxe[] =
+{
+	sAnimCmdStoneAxePlayer,
+	sAnimCmdStoneAxeOpponent,
+};
+
+static const union AnimCmd sAnim_BasicRock_0[] =
+{
+	ANIMCMD_FRAME(0, 1),
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_BasicRock_1[] =
+{
+	ANIMCMD_FRAME(16, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const sAnims_BasicRock[] =
+{
+	sAnim_BasicRock_0,
+	sAnim_BasicRock_1,
+};
+
 const struct OamData gPoisonColumnOam =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,
@@ -840,6 +892,58 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_StarfallBeam[] =
 	sSpriteAffineAnim_StarfallBeam,
 };
 
+static const union AnimCmd gWickedEnergyAnimCmds[] =
+{
+	ANIMCMD_FRAME(0, 4),
+	ANIMCMD_FRAME(8, 12),
+	ANIMCMD_FRAME(16, 4),
+	ANIMCMD_FRAME(24, 4),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const gWickedEnergyAnimTable[] =
+{
+	gWickedEnergyAnimCmds,
+};
+
+static const union AnimCmd sAnim_IceCrystalLarge[] =
+{
+	ANIMCMD_FRAME(4, 1),
+	ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_IceCrystalSmall[] =
+{
+	ANIMCMD_FRAME(6, 1),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const sAnims_IceCrystalLarge[] =
+{
+	sAnim_IceCrystalLarge,
+};
+
+const union AnimCmd* const sAnims_IceCrystalSmall[] =
+{
+	sAnim_IceCrystalSmall,
+};
+
+static const union AnimCmd sExplosionAnimCmds[] =
+{
+	ANIMCMD_FRAME(0, 5),
+	ANIMCMD_FRAME(16, 5),
+	ANIMCMD_FRAME(32, 5),
+	ANIMCMD_FRAME(48, 5),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const sExplosionAnimTable[] =
+{
+	sExplosionAnimCmds,
+};
+
+
+
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
@@ -854,6 +958,50 @@ static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId);
 static void AnimTask_GrowStep(u8 taskId);
 static void AnimDracoMeteorRockStep(struct Sprite *sprite);
 static void AnimTask_DynamaxGrowthStep(u8 taskId);
+static void AnimEndureEnergyStep(struct Sprite*);
+
+void AnimRaiseSprite(struct Sprite* sprite)
+{
+	StartSpriteAnim(sprite, gBattleAnimArgs[4]);
+	InitSpritePosToAnimAttacker(sprite, 0);
+	sprite->data[0] = gBattleAnimArgs[3];
+	sprite->data[2] = sprite->pos1.x;
+	sprite->data[4] = sprite->pos1.y + gBattleAnimArgs[2];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+void AnimEndureEnergy(struct Sprite* sprite)
+{
+	if (gBattleAnimArgs[0] == 0)
+	{
+		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + gBattleAnimArgs[1];
+		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y) + gBattleAnimArgs[2];
+	}
+	else
+	{
+		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[1];
+		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + gBattleAnimArgs[2];
+	}
+
+	sprite->data[0] = 0;
+	sprite->data[1] = gBattleAnimArgs[3];
+	sprite->callback = AnimEndureEnergyStep;
+}
+
+static void AnimEndureEnergyStep(struct Sprite* sprite)
+{
+	if (++sprite->data[0] > sprite->data[1])
+	{
+		sprite->data[0] = 0;
+		sprite->pos1.y--;
+	}
+
+	sprite->pos1.y -= sprite->data[0];
+	if (sprite->animEnded)
+		DestroyAnimSprite(sprite);
+}
+
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -961,6 +1109,50 @@ void AnimTask_GetLycanrocForm(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_GetTerrain(u8 taskId)
+{
+	if (CheckGroundingFromPartyData(GetIllusionPartyData(gBattleAnimAttacker)) != GROUNDED) {
+		gBattleAnimArgs[0] = 0;
+	}
+	else {
+		switch (gTerrainType) {
+			case ELECTRIC_TERRAIN:
+				gBattleAnimArgs[0] = 1;
+				break;
+			case GRASSY_TERRAIN:
+				gBattleAnimArgs[0] = 2;
+				break;
+			case MISTY_TERRAIN:
+				gBattleAnimArgs[0] = 3;
+				break;
+			case PSYCHIC_TERRAIN:
+				gBattleAnimArgs[0] = 4;
+				break;
+			default:
+				gBattleAnimArgs[0] = 0;
+
+		}
+	}
+
+	DestroyAnimVisualTask(taskId);
+}
+
+
+void AnimTask_ShellSideArm(u8 taskId)
+{
+	switch(CalcMoveSplit(gBattleAnimAttacker, sAnimMoveIndex)) {
+		case SPLIT_PHYSICAL:
+			gBattleAnimArgs[0] = 0;
+			break;
+		case SPLIT_SPECIAL:
+			gBattleAnimArgs[0] = 1;
+			break;	
+	}
+
+	DestroyAnimVisualTask(taskId);
+}
+
+
 void AnimTask_IsTargetPartner(u8 taskId)
 {
 	if (gBattleAnimTarget == PARTNER(gBattleAnimAttacker))
@@ -1013,6 +1205,18 @@ void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 			break;
 		case MOVE_OCTOLOCK:
 			gBattleAnimArgs[0] = 8;
+			break;
+		case MOVE_THUNDERCAGE:
+			gBattleAnimArgs[0] = 9;
+			break;
+		case MOVE_CEASELESSEDGE:
+			gBattleAnimArgs[0] = 10;
+			break;
+		case MOVE_STONEAXE:
+			gBattleAnimArgs[0] = 11;
+			break;
+		case MOVE_LEAFTORNADO:
+			gBattleAnimArgs[0] = 12;
 			break;
 		default:
 			gBattleAnimArgs[0] = 0;
@@ -1868,6 +2072,7 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	sprite->callback = (void*) 0x807563D;
 }
+
 
 extern const struct SpriteTemplate gDracoMeteorTailSpriteTemplate;
 static void AnimDracoMeteorRockStep(struct Sprite *sprite)
@@ -2855,6 +3060,32 @@ void SpriteCB_TargetedFireSpread(struct Sprite *sprite)
 //arg 1: Target Y-Pos
 //arg 2: Duration
 void SpriteCB_DragonDart(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)
+		StartSpriteAnim(sprite, 1);
+
+	sprite->data[0] = gBattleAnimArgs[2]; //Speed delay
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+void SpriteCB_ScaleShot(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, TRUE);
+	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)
+		StartSpriteAnim(sprite, 1);
+
+	sprite->data[0] = gBattleAnimArgs[2]; //Speed delay
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+	sprite->callback = StartAnimLinearTranslation;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+void SpriteCB_StoneAxe(struct Sprite* sprite)
 {
 	InitSpritePosToAnimAttacker(sprite, TRUE);
 	if (SIDE(gBattleAnimTarget) == B_SIDE_OPPONENT)

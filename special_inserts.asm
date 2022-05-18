@@ -5,6 +5,7 @@
 .include "../asm_defines.s"
 .include "../battle_script_macros.s"
 
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Game Speed Up
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -484,6 +485,8 @@ VeryTallGrassFix:
 .org 0x877BC, 0xff	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10
+
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ GetBagItemQuanity

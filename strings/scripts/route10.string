@@ -1,0 +1,11 @@
+#org @gText_FightingTutorHi
+Hey Kid!\nRock Tunnel is ahead!\pShould I teach one of your Pok\emon\na fighting type move to help you?
+
+#org @gText_FightingTutorNo
+OK! Just come back if you want\nme to teach a move!
+
+#org @gText_SelectMoveFightingTutor
+Which move shall I teach?
+
+#org @gText_FightingTutorComeBack
+Come back if you need me to teach any\nmore fighting moves.

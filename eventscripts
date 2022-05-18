@@ -1,1 +1,634 @@
-##
+
+
+## Pallet Town
+map 4 1 gMapScripts_PalletTown_SecondFloor
+tile 4 1 0 EventScript_PalletTown_Options
+npc 4 3 3 EventScript_ProfOak_0X169595
+sign 4 3 4 EventScript_RotomFormChanger
+sign 4 3 5 EventScript_RotomFormChanger
+sign 4 3 6 EventScript_RotomFormChanger
+sign 4 1 3 EventScript_ShowdownPC
+npc 4 0 0 EventScript_Mum
+sign 4 1 4 EventScript_HealOrDarkrai
+
+## Viridian City
+npc 5 4 0 EventScript_pokecentre_0X16A2CF
+npc 5 4 4 EventScript_AIOMan_0X8037C3
+sign 3 1 5 EventScript_Viridian_PkmSign
+npc 15 0 2 EventScript_DexNav
+tile 15 0 0 EventScript_DexNavTile
+npc 5 0 0 EventScript_AkioUB
+map 5 0 EventScript_AkioLevels
+npc 5 0 3 EventScript_UltraWormhole
+npc 43 3 1 EventScript_UB1WarpBack
+npc 43 4 1 EventScript_UB1WarpBack
+npc 43 5 1 EventScript_UB1WarpBack
+npc 43 6 1 EventScript_UB1WarpBack
+npc 43 7 1 EventScript_UB1WarpBack
+npc 43 8 1 EventScript_UB1WarpBack
+npc 43 9 1 EventScript_UB1WarpBack
+tile 28 0 0 EventScript_CheckBadgeAndRematch
+npc 3 41 1 EventScript_TM54
+npc 3 1 0 EventScript_GiveDreamEaterTM
+
+## Viridian Forest
+sign 43 0 0 EventScript_ButterfreeEnc
+npc 43 0 0 EventScript_Volcarona
+tile 1 0 0 EventScript_MayForestTile
+npc 1 0 12 EventScript_BugBiteTutor
+npc 43 0 4 EventScript_ElectrowebTutor
+npc 1 0 17 EventScript_TM62
+npc 43 0 5 EventScript_TM100
+npc 15 3 3 EventScript_FocusEnergyCeladon
+npc 10 7 4 EventScript_HazardsTerrainTutor
+
+## Route 3
+npc 3 21 11 EventScript_TM67
+
+## Digletts Cave
+npc 1 36 2 EventScript_DiglettTeleport1
+npc 1 38 1 EventScript_DiglettTeleport2
+npc 1 37 6 EventScript_DrillRunTutor
+
+## Pewter City
+npc 6 5 2 EventScript_pokecentre_0X16A2CF
+npc 6 5 7 EventScript_AIOMan_0X8037C3
+npc 6 2 3 EventScript_Trainer_Emma
+npc 3 2 6 EventScript_PewterScientist_0X1662B7_0
+tile 3 2 4 EventScript_PewterScientist_0X1662B7_1
+tile 3 2 5 EventScript_PewterScientist_0X1662B7_2
+tile 3 2 6 EventScript_PewterScientist_0X1662B7_3
+npc 6 2 0 EventScript_Brock
+##npc 3 2 7 EventScript_Ilima
+npc 16 0 1 EventScript_ScamFeebas
+sign 3 2 6 EventScript_TylerSkyBattle
+npc 6 0 5 EventScript_CosmicPowerTutor
+npc 3 2 7 EventScript_TM110
+npc 6 4 3 EventScript_Steven
+npc 3 2 0 EventScript_HealBellTutor
+
+## Route 4
+npc 16 0 0 EventScript_pokecentre_0X16A2CF
+npc 16 0 6 EventScript_AIOMan_0X8037C3
+npc 3 22 6 EventScript_RestoreFossilNPC
+npc 3 22 4 EventScript_ElementalPunches
+npc 3 22 10 EventScript_DeoxysFormChange
+npc 3 22 11 EventScript_TM58
+npc 3 22 12 EventScript_TM94
+map 3 22 EventScript_Route4MapScript
+npc 3 22 13 EventScript_Cresselia
+
+## Mt Moon
+npc 1 1 14 EventScript_MtMoonRootFossil
+npc 1 2 0 EventScript_MtMoonClawFossil
+npc 1 1 15 EventScript_MtMoonSkullFossil
+npc 1 2 1 EventScript_MtMoonArmorFossil
+npc 1 1 16 EventScript_MtMoonCoverFossil
+npc 1 2 2 EventScript_MtMoonPlumeFossil
+npc 1 3 11 EventScript_MtMoonJawFossil
+npc 1 3 12 EventScript_MtMoonSailFossil
+tile 1 3 1 EventScript_MtMoon_Barry
+map 1 2 MapScript_MtMoonPortal
+npc 1 2 3 EventScript_ZygardePortal
+npc 1 1 17 EventScript_TM111
+npc 1 2 7 EventScript_Diancie
+
+## Cerulean City
+npc 7 3 0 EventScript_pokecentre_0X16A2CF
+npc 7 3 7 EventScript_AIOMan_0X8037C3
+npc 3 3 12 EventScript_CeruleanEgg
+npc 7 7 0 EventScript_CeruleanPowerItems
+npc 7 2 1 EventScript_PikachuFormChanger
+npc 7 8 0 EventScript_CeruleanTutor
+npc 7 5 2 EventScript_Misty
+##npc 3 3 13 EventScript_Lana
+map 7 0 EventScript_SideQuest_SaveSlowbroMap
+npc 7 0 0 EventScript_SlowbroQuestMan
+npc 3 44 14 EventScript_SlowbroFind
+npc 7 0 1 EventScript_JustTalkSlowbro
+sign 3 44 5 EventScript_BehindBillHouse
+npc 3 3 13 EventScript_TM87
+npc 7 9 0 EventScript_MySonOldAmber
+
+## Route 5
+tile 3 23 0 EventScript_R5May
+npc 1 31 0 EventScript_TM56
+npc 3 23 4 EventScript_TM78
+npc 3 24 8 EventScript_TM82
+
+## Vermillion City
+npc 9 1 0 EventScript_pokecentre_0X16A2CF
+npc 9 1 7 EventScript_AIOMan_0X8037C3
+npc 9 5 0 EventScript_VermillionBerries
+npc 3 5 5 EventScript_TicketViewer_0X166941
+tile 43 10 0 EventScript_MewForce
+npc 3 5 9 EventScript_MarketBargain
+npc 3 5 8 EventScript_SellBargain
+npc 3 5 10 EventScript_Maractus
+npc 9 6 0 EventScript_Surge
+npc 3 29 15 EventScript_TM77
+npc 3 5 12 EventScript_TrappingMoveTutor
+npc 3 5 6 EventScript_Cut
+
+##npc 9 0 0 EventScript_SpecialItemSeller
+npc 11 4 0 EventScript_IOATutor
+
+npc 9 0 0 EventScript_FangMoveTutor
+npc 9 0 2 EventScript_Raticate
+npc 1 37 4 EventScript_TM57
+npc 1 37 5 EventScript_TM117
+npc 9 3 6 EventScript_ExplosionGuy
+npc 9 3 7 EventScript_RioluBreeder
+npc 3 5 11 EventScript_TM92
+npc 9 7 0 EventScript_RandomBattleMan
+npc 9 5 2 EventScript_KnockOffTutor
+
+## Route 10
+npc 21 0 0 EventScript_pokecentre_0X16A2CF
+npc 21 0 5 EventScript_AIOMan_0X8037C3
+npc 3 28 7 EventScript_Route10FightingTutor
+npc 3 28 9 EventScript_TM74
+npc 3 28 11 EventScript_BeginARaidBattle
+
+## Rock Tunnel
+npc 1 81 11 EventScript_TM68
+npc 1 82 27 EventScript_TM113
+npc 1 82 28 EventScript_Absolite
+npc 1 81 12 EventScript_Aerodactylite
+
+## Lavender Town
+npc 8 0 0 EventScript_pokecentre_0X16A2CF
+npc 8 0 5 EventScript_AIOMan_0X8037C3
+npc 1 91 7 EventScript_Gengarite
+npc 8 4 1 EventScript_BodySlamTutor
+npc 8 0 2 EventScript_UtilityTutor
+
+## Underground Path
+tile 1 34 0 EventScript_UPBarry
+npc 1 30 1 EventScript_TM112
+
+## Celadon City
+npc 10 12 0 EventScript_pokecentre_0X16A2CF
+npc 10 12 4 EventScript_AIOMan_0X8037C3
+npc 10 1 1 EventScript_BattleItemsMart
+npc 10 1 2 EventScript_MiscPokeballsMart
+npc 10 3 2 EventScript_EvoItemsMart
+npc 10 15 5 EventScript_StarterBuy
+npc 10 14 1 EventScript_BuyCoins
+npc 10 15 2 EventScript_PseudoOthersBuy
+npc 3 6 15 EventScript_NatureChanger
+npc 10 18 0 EventScript_BallChanger
+npc 10 5 1 EventScript_LittleGirlPidgeotite
+npc 10 15 3 EventScript_TMShop
+npc 3 6 16 EventScript_TM86
+npc 10 16 6 EventScript_Erika
+sign 30 0 1 EventScript_BillTeleporter
+npc 3 6 17 EventScript_David
+npc 10 17 4 EventScript_FocusEnergyTutor
+npc 10 12 2 EventScript_PledgeTutor
+npc 3 6 6 EventScript_SoftboiledTutor
+sign 10 2 4 EventScript_TVRemake
+
+## Route 16
+npc 3 34 12 EventScript_TM114
+
+## Rock Tunnel
+npc 1 82 8 EventScript_RockSlideTM
+
+## Lavender
+npc 8 4 0 EventScript_MaxIVs
+
+## Route 12
+sign 3 30 5 EventScript_SkyBattleJackson
+
+## Team Rocket Hideout
+tile 1 42 0 EventScript_MayTRH
+npc 1 42 8 EventScript_TM63
+npc 1 43 5 EventScript_TM79
+npc 1 44 5 EventScript_TM84
+npc 1 44 6 EventScript_TM105
+npc 1 45 9 EventScript_TM108
+
+## Ace Trainers
+npc 3 34 10 EventScript_GreenphxBattle1
+npc 3 7 17 EventScript_DanielAceBattle
+
+## Fuschia City
+npc 11 5 0 EventScript_pokecentre_0X16A2CF
+npc 11 5 4 EventScript_AIOMan_0X8037C3
+tile 3 7 0 EventScript_MayFuschia
+npc 11 9 0 EventScript_DracoMeteorTutor
+npc 11 2 1 EventScript_LegendTutor
+npc 3 7 14 EventScript_SubTM
+npc 11 3 6 EventScript_Koga
+map 3 7 EventScript_FuschiaMapScript
+npc 11 7 2 EventScript_Audinite
+npc 11 2 3 EventScript_FuschiaTutor
+npc 11 2 0 EventScript_OldAmberRestore
+
+npc 24 1 0 EventScript_HintdifferentType
+
+## Saffron City
+npc 14 6 0 EventScript_pokecentre_0X16A2CF
+npc 14 6 6 EventScript_AIOMan_0X8037C3
+npc 14 4 1 EventScript_LadyTVStatic
+npc 14 4 2 EventScript_ManTVStatic
+sign 14 4 1 EventScript_RotomTV1
+npc 14 9 10 EventScript_PoipoleGiver
+npc 14 9 11 EventScript_AshGreninjaSwap
+npc 14 9 12 EventScript_BuyAbilityPatch
+npc 14 9 13 EventScript_EVReseter
+npc 14 9 14 EventScript_EggMoveTeacher
+sign 14 9 0 EventScript_RotomFormChanger
+sign 14 9 1 EventScript_RotomFormChanger
+sign 14 9 2 EventScript_RotomFormChanger
+npc 14 2 5 EventScript_FightingDojoMonThroh
+npc 14 2 6 EventScript_FightingDojoMonSawk
+npc 1 48 4 EventScript_GiveThunderWaveTM
+npc 1 49 4 EventScript_TM91
+npc 1 53 1 EventScript_LaprasGuy
+npc 14 2 7 EventScript_TM98
+npc 3 10 15 EventScript_JasmineAceTrainer
+npc 14 8 0 EventScript_MrPsychic
+npc 14 3 6 EventScript_Sabrina
+npc 14 2 8 EventScript_BlockKubfu
+npc 14 2 9 EventScript_KubfuBall
+npc 1 53 11 EventScript_GalarFossilSeller
+npc 14 0 0 EventScript_SaffronTutor
+npc 3 10 8 EventScript_SaffronTutor2
+
+## Cinnabar
+sign 3 8 4 EventScript_MissingNo
+npc 3 8 1 EventScript_Akio1
+map 3 8 EventScript_CinnabarLevels
+npc 12 5 0 EventScript_pokecentre_0X16A2CF
+npc 12 5 7 EventScript_AIOMan_0X8037C3
+tile 3 8 1 EventScript_BarryCinnabar
+npc 3 8 0 EventScript_WaterfallGive
+##npc 12 2 0 EventScript_ArceusFluteMan
+npc 12 0 7 EventScript_Blaine
+npc 12 4 2 EventScript_GiveZygardeCube
+npc 12 2 0 EventScript_SpecialItemSeller
+npc 12 3 0 EventScript_CinnabarTutor
+npc 12 3 1 EventScript_Eeevee8
+npc 12 4 1 EventScript_GiveOtherFossil
+
+## Mega Stones
+npc 3 23 1 EventScript_Beedrillite
+npc 1 37 1 EventScript_Steelixite
+npc 1 94 4 EventScript_Banettite
+npc 1 94 5 EventScript_Sablenite
+npc 43 11 11 EventScript_Cameruptite
+npc 1 41 12 EventScript_Diancite
+npc 1 39 2 EventScript_Garchompite
+npc 1 40 7 EventScript_Salamencite
+npc 3 38 12 EventScript_Galladite
+npc 3 39 8 EventScript_Gardevoirite
+npc 43 12 1 EventScript_Glalitite
+npc 1 64 4 EventScript_Heracronite
+npc 1 63 1 EventScript_Pinsirite
+npc 1 65 3 EventScript_Kangaskhanite
+npc 3 36 5 EventScript_Lopunnite
+npc 3 28 10 EventScript_Manectite
+npc 1 44 7 EventScript_Mawilite
+npc 1 47 1 EventScript_Medichamite
+npc 43 0 6 EventScript_Scizorite
+
+## Groudon Cave
+npc 43 11 10 EventScript_TM93 
+
+## Power Plant
+npc 1 95 9 EventScript_TM99
+
+## Route 21
+npc 3 39 7 EventScript_TM119
+
+## Route 22
+map 3 41 EventScript_Route22MapScript
+npc 3 41 2 EventScript_NecrozmaPortal
+
+## Route 23
+tile 3 42 42 EventScript_FinalRivalFight
+tile 3 42 43 EventScript_FinalRivalFight
+npc 3 42 10 EventScript_NurseJoyHeal
+
+## Route 9
+map 3 27 EventScript_Route9MapScript
+npc 3 27 13 EventScript_ZacianPortal
+npc 3 27 14 EventScript_TM16
+npc 3 27 15 EventScript_TM33
+
+
+## Elite 4
+##map 13 0 EventScript_IndigoPlateauMapScript
+npc 13 0 3 EventScript_GirlBlockingDoor
+npc 13 0 8 EventScript_MegaSeller
+npc 13 0 1 EventScript_pokecentre_0X16A2CF
+npc 13 0 9 EventScript_AIOMan_0X8037C3
+npc 1 75 1 EventScript_Chansey
+npc 1 76 1 EventScript_Chansey
+npc 1 77 1 EventScript_Chansey
+npc 1 78 1 EventScript_Chansey
+
+## Guards
+tile 19 0 0 EventScript_guard_1
+tile 19 0 1 EventScript_guard_2
+tile 19 0 2 EventScript_guard_3
+tile 20 0 0 EventScript_guard_4
+tile 20 0 1 EventScript_guard_5
+tile 20 0 2 EventScript_guard_6
+tile 17 1 0 EventScript_guard2_0X16F9D0_4
+tile 17 1 1 EventScript_guard2_0X16F9D0_5
+tile 17 1 2 EventScript_guard2_0X16F9D0_6
+tile 18 0 0 EventScript_guard2_0X16F9D0_1
+tile 18 0 1 EventScript_guard2_0X16F9D0_2
+tile 18 0 2 EventScript_guard2_0X16F9D0_3
+
+## Raids
+npc 3 21 9 EventScript_BeginARaidBattle
+npc 3 43 8 EventScript_BeginARaidBattle
+npc 3 22 7 EventScript_BeginARaidBattle
+npc 3 22 8 EventScript_BeginARaidBattle
+npc 3 22 9 EventScript_BeginARaidBattle
+npc 3 44 13 EventScript_BeginARaidBattle
+npc 3 23 2 EventScript_BeginARaidBattle
+npc 3 24 6 EventScript_BeginARaidBattle
+npc 3 29 13 EventScript_BeginARaidBattle
+npc 1 3 14 EventScript_BeginARaidBattle
+npc 3 27 12 EventScript_BeginARaidBattle
+npc 1 81 10 EventScript_BeginARaidBattle
+npc 3 26 15 EventScript_BeginARaidBattle
+npc 1 91 6 EventScript_BeginARaidBattle
+npc 3 25 1 EventScript_BeginARaidBattle
+npc 3 34 11 EventScript_BeginARaidBattle
+npc 3 30 14 EventScript_BeginARaidBattle
+npc 3 32 15 EventScript_BeginARaidBattle
+npc 3 33 14 EventScript_BeginARaidBattle
+npc 3 37 12 EventScript_BeginARaidBattle
+npc 1 0 16 EventScript_BeginARaidBattle
+
+## Legends
+tile 43 1 0 EventScript_RegicePuzzleForce
+tile 43 1 1 EventScript_RegicePuzzleForce
+sign 43 1 0 EventScript_RegicePuzzleBraille
+sign 43 1 1 EventScript_RegicePuzzle
+npc 43 2 0 EventScript_Regice
+npc 1 82 26 EventScript_Regirock
+npc 43 3 0 EventScript_Nihilego
+npc 43 4 0 EventScript_Buzzwole
+npc 43 5 0 EventScript_Pheremosa
+npc 43 6 0 EventScript_Xurkitree
+npc 43 7 0 EventScript_Celesteela
+npc 43 8 0 EventScript_Kartana
+npc 43 9 0 EventScript_Guzzlord
+npc 1 95 8 EventScript_Registeel
+npc 43 10 0 EventScript_Mew
+npc 43 11 9 EventScript_Groudon
+npc 43 12 0 EventScript_Kyogre
+tile 43 13 0 EventScript_Rayquaza
+npc 1 37 2 EventScript_VictiniHoopaPortal
+npc 43 14 0 EventScript_VictiniHoopaPortalBack
+npc 43 14 1 EventScript_Victini
+npc 1 86 6 EventScript_YveltalPortal
+npc 1 73 13 EventScript_XerneasPortal
+npc 3 39 6 EventScript_PalkiaPortal
+npc 3 21 10 EventScript_DialgaPortal
+npc 3 28 8 EventScript_GiratinaPortal
+npc 3 24 7 EventScript_ReshiramPortal
+npc 3 25 2 EventScript_ZekromPortal
+npc 3 26 16 EventScript_KyuremPortal
+npc 3 36 3 EventScript_SolgaleoPortal
+npc 3 38 11 EventScript_LunalaPortal
+npc 43 15 0 EventScript_Jirachi
+tile 43 16 0 EventScript_ManaphyScript
+npc 43 16 4 EventScript_Manaphy
+map 3 44 EventScript_Route25MapScript
+npc 3 44 15 EventScript_ArceusPortal
+tile 43 18 0 EventScript_ArceusScript
+npc 43 18 0 EventScript_ArceusPortal2
+npc 43 20 0 EventScript_Darkrai
+
+npc 3 30 16 EventScript_ForbidYouEntering
+npc 3 37 13 EventScript_ForbidYouEntering
+ 
+## Seafoam Islands
+map 1 84 EventScript_SeafomIslandsMapScript
+npc 1 84 4 EventScript_BeginARaidBattle
+npc 1 83 3 EventScript_TM72
+npc 1 85 3 EventScript_TM118
+
+## Victory Road
+npc 3 42 7 EventScript_TM52
+npc 1 40 5 EventScript_Moltres
+npc 1 40 12 EventScript_UltiElementTeach
+npc 1 40 13 EventScript_BeginARaidBattle
+
+## Route 21
+map 3 39 EventScript_Route21MapScript
+
+## Route 3
+map 3 21 EventScript_Route3MapScript
+npc 3 21 12 EventScript_TM20
+
+## Route 10
+map 3 28 EventScript_Route10MapScript
+
+## Route 11
+map 3 29 EventScript_Route11MapScript
+npc 3 29 14 EventScript_ZamazentaPortal
+
+## Route 14
+map 3 32 EventScript_Route14MapScript
+npc 3 32 16 EventScript_CalyrexPortal
+
+## Route 6
+map 3 24 EventScript_Route6MapScript
+
+## Route 7
+map 3 25 EventScript_Route7MapScript
+
+## Route 8
+map 3 26 EventScript_Route8MapScript
+npc 3 26 17 EventScript_TM36
+
+## Route 18
+map 3 36 EventScript_Route18MapScript
+npc 3 36 4 EventScript_TM42
+
+## Route 20
+map 3 38 EventScript_Route20MapScript
+
+## Route 13
+npc 3 31 11 EventScript_TM120
+
+## Route 17
+npc 3 35 10 EventScript_Slowbronite
+
+
+npc 1 2 4 EventScript_RockSmash
+npc 1 2 5 EventScript_RockSmash
+npc 1 2 6 EventScript_RockSmash
+
+
+
+
+## Trainer Tips
+sign 3 0 4 EventScript_AutoRunTip
+sign 3 1 2 EventScript_AutoRunWild
+sign 3 1 0 EventScript_TalkPeopleTip
+sign 1 0 5 EventScript_PokedexStats
+sign 3 2 3 EventScript_70NewTms
+sign 1 0 0 EventScript_NewAreaForest
+sign 1 0 1 EventScript_SortBagTip
+sign 1 0 2 EventScript_ManPokecentre
+sign 3 3 3 EventScript_LAEvolve
+
+
+
+
+##Hms
+npc 3 20 0 EventScript_Cut
+npc 3 20 1 EventScript_Cut
+npc 3 20 2 EventScript_Cut
+npc 3 1 1 EventScript_Cut
+npc 3 1 7 EventScript_Cut
+npc 3 2 5 EventScript_Cut
+npc 3 3 8 EventScript_Cut
+npc 3 5 6 EventScript_Cut
+npc 3 6 10 EventScript_Cut
+npc 3 6 9 EventScript_Cut
+npc 3 7 10 EventScript_Cut
+npc 3 7 11 EventScript_Cut
+npc 3 7 12 EventScript_Cut
+npc 3 7 13 EventScript_Cut
+npc 3 26 9 EventScript_Cut
+npc 3 26 10 EventScript_Cut
+npc 3 27 9 EventScript_Cut
+npc 3 28 4 EventScript_Cut
+npc 3 28 5 EventScript_Cut
+npc 3 28 6 EventScript_Cut
+##npc 3 28 9 EventScript_Cut
+npc 3 30 8 EventScript_Cut
+npc 3 30 13 EventScript_Cut
+npc 3 31 10 EventScript_Cut
+npc 3 32 10 EventScript_Cut
+npc 3 32 12 EventScript_Cut
+npc 3 34 6 EventScript_Cut
+npc 3 44 10 EventScript_Cut
+npc 1 36 1 EventScript_Cut
+npc 1 37 0 EventScript_Cut
+npc 10 16 8 EventScript_Cut
+npc 10 16 9 EventScript_Cut
+npc 10 16 10 EventScript_Cut
+npc 1 0 13 EventScript_Cut
+npc 1 0 14 EventScript_Cut
+npc 1 0 15 EventScript_Cut
+npc 43 16 0 EventScript_Cut
+npc 43 16 1 EventScript_Cut
+npc 43 16 2 EventScript_Cut
+npc 1 37 3 EventScript_RockSmash
+npc 1 82 11 EventScript_RockSmash
+npc 1 82 12 EventScript_RockSmash
+npc 1 82 13 EventScript_RockSmash
+npc 1 82 14 EventScript_RockSmash
+npc 1 82 15 EventScript_RockSmash
+npc 1 82 16 EventScript_RockSmash
+npc 1 82 17 EventScript_RockSmash
+npc 1 82 18 EventScript_RockSmash
+npc 1 82 19 EventScript_RockSmash
+npc 1 82 20 EventScript_RockSmash
+npc 1 82 21 EventScript_RockSmash
+npc 1 82 22 EventScript_RockSmash
+npc 1 82 23 EventScript_RockSmash
+npc 1 82 24 EventScript_RockSmash
+npc 1 82 25 EventScript_RockSmash
+npc 1 72 3 EventScript_RockSmash
+npc 1 72 4 EventScript_RockSmash
+npc 1 72 5 EventScript_RockSmash
+npc 1 72 6 EventScript_RockSmash
+npc 1 72 7 EventScript_RockSmash
+npc 1 72 8 EventScript_RockSmash
+npc 1 73 3 EventScript_RockSmash
+npc 1 73 4 EventScript_RockSmash
+npc 1 73 5 EventScript_RockSmash
+npc 1 73 6 EventScript_RockSmash
+npc 1 73 7 EventScript_RockSmash
+npc 1 73 8 EventScript_RockSmash
+npc 1 73 9 EventScript_RockSmash
+npc 1 73 10 EventScript_RockSmash
+npc 1 73 11 EventScript_RockSmash
+npc 1 73 12 EventScript_RockSmash
+npc 1 74 3 EventScript_RockSmash
+npc 1 74 4 EventScript_RockSmash
+npc 1 74 5 EventScript_RockSmash
+npc 1 74 6 EventScript_RockSmash
+npc 1 74 7 EventScript_RockSmash
+npc 1 74 8 EventScript_RockSmash
+npc 1 74 9 EventScript_RockSmash
+npc 1 74 10 EventScript_RockSmash
+npc 1 74 11 EventScript_RockSmash
+npc 43 11 7 EventScript_RockSmash
+npc 43 11 8 EventScript_RockSmash
+npc 43 0 1 EventScript_RockSmash
+npc 43 0 2 EventScript_RockSmash
+npc 43 0 3 EventScript_RockSmash
+npc 1 2 4 EventScript_RockSmash
+npc 1 2 5 EventScript_RockSmash
+npc 1 2 6 EventScript_RockSmash
+npc 43 11 0 EventScript_Strength
+npc 43 11 1 EventScript_Strength
+npc 43 11 2 EventScript_Strength
+npc 43 11 3 EventScript_Strength
+npc 43 11 4 EventScript_Strength
+npc 43 11 5 EventScript_Strength
+npc 43 11 6 EventScript_Strength
+npc 11 7 1 EventScript_Strength
+npc 1 83 0 EventScript_Strength
+npc 1 83 1 EventScript_Strength
+npc 1 84 0 EventScript_Strength
+npc 1 84 1 EventScript_Strength
+npc 1 85 0 EventScript_Strength
+npc 1 85 1 EventScript_Strength
+npc 1 86 0 EventScript_Strength
+npc 1 86 1 EventScript_Strength
+npc 1 86 2 EventScript_Strength
+npc 1 86 3 EventScript_Strength
+npc 1 86 4 EventScript_Strength
+npc 1 86 5 EventScript_Strength
+npc 1 87 0 EventScript_Strength
+npc 1 87 1 EventScript_Strength
+npc 1 39 4 EventScript_Strength
+npc 1 39 5 EventScript_Strength
+npc 1 39 6 EventScript_Strength
+npc 1 40 9 EventScript_Strength
+npc 1 40 10 EventScript_Strength
+npc 1 40 11 EventScript_Strength
+npc 1 41 6 EventScript_Strength
+npc 1 41 7 EventScript_Strength
+npc 1 41 8 EventScript_Strength
+npc 1 41 9 EventScript_Strength
+
+
+## Slot Machines
+sign 10 14 12 EventScript_SlotMachine
+sign 10 14 13 EventScript_SlotMachine
+sign 10 14 14 EventScript_SlotMachine
+sign 10 14 15 EventScript_SlotMachine
+sign 10 14 16 EventScript_SlotMachine
+sign 10 14 17 EventScript_SlotMachine
+sign 10 14 18 EventScript_SlotMachine
+sign 10 14 19 EventScript_SlotMachine
+sign 10 14 20 EventScript_SlotMachine
+sign 10 14 21 EventScript_SlotMachine
+sign 10 14 22 EventScript_SlotMachine
+sign 10 14 23 EventScript_SlotMachine
+sign 10 14 24 EventScript_SlotMachine
+sign 10 14 25 EventScript_SlotMachine
+sign 10 14 26 EventScript_SlotMachine
+sign 10 14 27 EventScript_SlotMachine
+sign 10 14 28 EventScript_SlotMachine
+sign 10 14 29 EventScript_SlotMachine
+sign 10 14 30 EventScript_SlotMachine
+sign 10 14 31 EventScript_SlotMachine
+sign 10 14 32 EventScript_SlotMachine
+sign 10 14 33 EventScript_SlotMachine

@@ -34,7 +34,7 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/item.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
@@ -47,6 +47,7 @@
 #include "../include/new/scrolling_multichoice.h"
 #include "../include/new/Vanilla_functions_battle.h"
 #include "../include/new/wild_encounter.h"
+#include "../include/base_stats.h"
 /*
 scripting.c
 	handles all scripting specials or other functions associated with scripts
@@ -64,6 +65,66 @@ tables to edit:
 	gScrollingSets
 
 */
+
+struct SlotMachineState
+{
+    MainCallback savedCallback;
+    u16 machineidx;
+    u16 currentReel;
+    u16 machineBias;
+    u16 slotRewardClass;
+    u16 biasCooldown;
+    u16 bet;
+    u8 taskId;
+    u8 spinReelsTaskId;
+    bool32 reelIsSpinning[3];
+    s16 reelPositions[3];
+    s16 reelSubpixel[3];
+    s16 destReelPos[3];
+    s16 reelStopOrder[3];
+    u32 reel2BiasInPlay;
+    bool32 winFlags[5];
+    u16 payout;
+};
+
+struct SlotMachineGfxManager
+{
+    u32 field_00[3];
+    struct Sprite * reelIconSprites[3][5];
+    struct Sprite * creditDigitSprites[4];
+    struct Sprite * payoutDigitSprites[4];
+    struct Sprite * clefairySprites[2];
+    vu16 * reelIconAffineParamPtr;
+};
+
+struct SlotMachineSetupTaskDataSub_0000
+{
+    u16 funcno;
+    u8 state;
+    bool8 active;
+};
+
+struct SlotMachineSetupTaskData
+{
+    struct SlotMachineSetupTaskDataSub_0000 tasks[8];
+    u8 reelButtonToPress;
+    // align 2
+    s32 bg1X;
+    bool32 yesNoMenuActive;
+    u16 buttonPressedTiles[3][4];
+    u16 buttonReleasedTiles[3][4];
+    u8 field_005C[0x800];
+    u8 bg0TilemapBuffer[0x800];
+    u8 bg1TilemapBuffer[0x800];
+    u8 bg2TilemapBuffer[0x800];
+    u8 bg3TilemapBuffer[0x800];
+}; // size: 285C
+
+struct LineStateTileIdxList
+{
+    const u16 * tiles;
+    u32 count;
+};
 
 #define POKERUS_CURED 0x10
 
@@ -1174,8 +1235,8 @@ bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
 	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
 		return FALSE;
 
-	if (gBaseStats[species].type1 == TYPE_FLYING
-	||  gBaseStats[species].type2 == TYPE_FLYING
+	if (gBaseStats2[species].type1 == TYPE_FLYING
+	||  gBaseStats2[species].type2 == TYPE_FLYING
 	||  GetMonAbility(mon) == ABILITY_LEVITATE)
 		return TRUE;
 
@@ -1696,6 +1757,7 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 	return toReturn;
 }
 
+
 u32 GetDaysSinceTimeInValue(u32 value)
 {
 	struct DailyEventVar* startTime = (struct DailyEventVar*) &value;
@@ -1846,8 +1908,8 @@ void sp0B0_LoadPartyPokemonTypes(void)
 	u8 mon = Var8000;
 	if (mon < PARTY_SIZE)
 	{
-		Var8000 = gBaseStats[gPlayerParty[mon].species].type1;
-		Var8001 = gBaseStats[gPlayerParty[mon].species].type2;
+		Var8000 = gBaseStats2[gPlayerParty[mon].species].type1;
+		Var8001 = gBaseStats2[gPlayerParty[mon].species].type2;
 	}
 }
 
@@ -1895,8 +1957,8 @@ void sp0B2_PokemonTypeInParty(void)
 		if (species != SPECIES_NONE
 		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL)) //Don't count Egg types
 		{
-			if (type == gBaseStats[species].type1
-			||  type == gBaseStats[species].type2)
+			if (type == gBaseStats2[species].type1
+			||  type == gBaseStats2[species].type2)
 			{
 				gSpecialVar_LastResult = i;
 				return;
@@ -1921,8 +1983,8 @@ void sp0CC_CanLearnDracoMeteorInParty(void)
 		if (species != SPECIES_NONE
 		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL)) //Don't count Egg types
 		{
-			if (gBaseStats[species].type1 == TYPE_DRAGON
-			||  gBaseStats[species].type2 == TYPE_DRAGON)
+			if (gBaseStats2[species].type1 == TYPE_DRAGON
+			||  gBaseStats2[species].type2 == TYPE_DRAGON)
 			{
 				for (j = 0; j < MAX_MON_MOVES; ++j)
 				{
@@ -3110,6 +3172,646 @@ extern const u8 sText_13[];
 extern const u8 sText_14[];
 extern const u8 sText_15[];
 
+extern const u8 sKanto[];
+extern const u8 sJohto[];
+extern const u8 sHoenn[];
+extern const u8 sSinnoh[];
+extern const u8 sUnova[];
+extern const u8 sKalos[];
+extern const u8 sAlola[];
+extern const u8 sGalar[];
+
+extern const u8 sDomeFossil[];
+extern const u8 sHelixFossil[];
+extern const u8 sRootFossil[];
+extern const u8 sClawFossil[];
+extern const u8 sSkullFossil[];
+extern const u8 sArmorFossil[];
+extern const u8 sCoverFossil[];
+extern const u8 sPlumeFossil[];
+extern const u8 sJawFossil[];
+extern const u8 sSailFossil[];
+extern const u8 sExit[];
+
+extern const u8 sFirePunch[];
+extern const u8 sIcePunch[];
+extern const u8 sThunderPunch[];
+
+extern const u8 sLowKick[];
+extern const u8 sSuperpower[];
+extern const u8 sVacuumWave[];
+extern const u8 sAuraSphere[];
+extern const u8 sCloseCombat[];
+
+extern const u8 sBulbasaur[];
+extern const u8 sChikorita[];
+extern const u8 sTreecko[];
+extern const u8 sTurtwig[];
+extern const u8 sSnivy[];
+extern const u8 sChespin[];
+extern const u8 sRowlet[];
+extern const u8 sGrookey[];
+extern const u8 sCharmander[];
+extern const u8 sCyndaquil[];
+extern const u8 sTorchic[];
+extern const u8 sChimchar[];
+extern const u8 sTepig[];
+extern const u8 sFennekin[];
+extern const u8 sLitten[];
+extern const u8 sScorbunny[];
+extern const u8 sSquirtle[];
+extern const u8 sTotodile[];
+extern const u8 sMudkip[];
+extern const u8 sPiplup[];
+extern const u8 sOshawott[];
+extern const u8 sFroakie[];
+extern const u8 sPopplio[];
+extern const u8 sSobble[];
+
+extern const u8 sBuyCoin1[];
+extern const u8 sBuyCoin2[];
+extern const u8 sBuyCoin3[];
+
+extern const u8 sDratini[];
+extern const u8 sLarvitar[];
+extern const u8 sBagon[];
+extern const u8 sBeldum[];
+extern const u8 sGible[];
+extern const u8 sDeino[];
+extern const u8 sGoomy[];
+extern const u8 sJangmoo[];
+extern const u8 sDreepy[];
+extern const u8 sAron[];
+extern const u8 sTrapinch[];
+extern const u8 sRiolu[];
+extern const u8 sAxew[];
+extern const u8 sLarvesta[];
+extern const u8 sZorua[];
+extern const u8 sNoibat[];
+extern const u8 sHonedge[];
+extern const u8 sWimpod[];
+extern const u8 sMimikyu[];
+extern const u8 sPoipole[];
+extern const u8 sMeltan[];
+extern const u8 sPorygon[];
+extern const u8 sRattataA[];
+extern const u8 sRaichuA[];
+extern const u8 sSandshrewA[];
+extern const u8 sVulpixA[];
+extern const u8 sDiglettA[];
+extern const u8 sMeowthA[];
+extern const u8 sGeodudeA[];
+extern const u8 sGrimerA[];
+extern const u8 sExeggutorA[];
+extern const u8 sMarowakA[];
+extern const u8 sMeowthG[];
+extern const u8 sPonytaG[];
+extern const u8 sFarfetchdG[];
+extern const u8 sWeezingG[];
+extern const u8 sMrMimeG[];
+extern const u8 sCorsolaG[];
+extern const u8 sZigzagoonG[];
+extern const u8 sDarumakaG[];
+extern const u8 sYamaskG[];
+extern const u8 sStunfiskG[];
+extern const u8 sSlowpokeG[];
+
+
+extern const u8 sAdamant[];
+extern const u8 sBold[];
+extern const u8 sBrave[];
+extern const u8 sCalm[];
+extern const u8 sCareful[];
+extern const u8 sGentle[];
+extern const u8 sHasty[];
+extern const u8 sImpish[];
+extern const u8 sJolly[];
+extern const u8 sLax[];
+extern const u8 sLonely[];
+extern const u8 sMild[];
+extern const u8 sModest[];
+extern const u8 sNaive[];
+extern const u8 sNaughty[];
+extern const u8 sQuiet[];
+extern const u8 sRash[];
+extern const u8 sRelaxed[];
+extern const u8 sSassy[];
+extern const u8 sTimid[];
+extern const u8 sBashful[];
+extern const u8 sDocile[];
+extern const u8 sQuirky[];
+extern const u8 sHardy[];
+extern const u8 sSerious[];
+
+extern const u8 sAttack[];
+extern const u8 sDefense[];
+extern const u8 sSpAttack[];
+extern const u8 sSpDefense[];
+extern const u8 sSpeed[];
+extern const u8 sHP[];
+
+extern const u8 sPokeball[];
+extern const u8 sGreatball[];
+extern const u8 sUltraball[];
+extern const u8 sMasterball[];
+extern const u8 sFastball[];
+extern const u8 sLevelball[];
+extern const u8 sLureball[];
+extern const u8 sHeavyball[];
+extern const u8 sLoveball[];
+extern const u8 sFriendball[];
+extern const u8 sMoonball[];
+extern const u8 sNetball[];
+extern const u8 sNestball[];
+extern const u8 sRepeatball[];
+extern const u8 sTimerball[];
+extern const u8 sLuxuryball[];
+extern const u8 sPremierball[];
+extern const u8 sDiveball[];
+extern const u8 sDuskball[];
+extern const u8 sHealball[];
+extern const u8 sQuickball[];
+extern const u8 sCherishball[];
+extern const u8 sDreamball[];
+extern const u8 sSafariball[];
+extern const u8 sBeastball[];
+extern const u8 sParkball[];
+extern const u8 sSportball[];
+
+extern const u8 s11F[];
+extern const u8 s10F[];
+extern const u8 s9F[];
+extern const u8 s8F[];
+extern const u8 s7F[];
+extern const u8 s6F[];
+extern const u8 s5F[];
+extern const u8 s4F[];
+extern const u8 s3F[];
+extern const u8 s2F[];
+extern const u8 s1F[];
+
+extern const u8 sRotomNormal[];
+extern const u8 sRotomHeat[];
+extern const u8 sRotomWash[];
+extern const u8 sRotomFrost[];
+extern const u8 sRotomFan[];
+extern const u8 sRotomMow[];
+
+extern const u8 sPikachuNormal[];
+extern const u8 sPikachuSurfing[];
+extern const u8 sPikachuFlying[];
+extern const u8 sPikachuRockstar[];
+extern const u8 sPikachuBelle[];
+extern const u8 sPikachuPopstar[];
+extern const u8 sPikachuPhD[];
+extern const u8 sPikachuLibre[];
+
+extern const u8 NAME_LONG_SECRET_SWORD[];
+extern const u8 NAME_LONG_RELIC_SONG[];
+extern const u8 NAME_LONG_DRAGON_RISE[];
+extern const u8 NAME_LONG_1000_ARROWS[];
+extern const u8 NAME_LONG_1000_WAVES[];
+extern const u8 NAME_LONG_CORE_ENFORCE[];
+
+extern const u8 NAME_LONG_ELECTROWEB[];
+extern const u8 NAME_LONG_ICY_WIND[];
+extern const u8 NAME_LONG_LOW_KICK[];
+extern const u8 NAME_LONG_BOUNCE[];
+extern const u8 NAME_LONG_SIGNAL_BEAM[];
+extern const u8 NAME_LONG_SNORE[];
+extern const u8 NAME_LONG_COVET[];
+extern const u8 NAME_LONG_WORRY_SEED[];
+extern const u8 NAME_LONG_HELPING_HAND[];
+extern const u8 NAME_LONG_IRON_DEFENSE[];
+
+extern const u8 NAME_LONG_EXPANDING_FORCE[];
+extern const u8 NAME_LONG_STEEL_ROLLER[];
+extern const u8 NAME_LONG_SCALE_SHOT[];
+extern const u8 NAME_LONG_METEOR_BEAM[];
+extern const u8 NAME_LONG_MISTY_EXPLOSION[];
+extern const u8 NAME_LONG_GRASSY_GLIDE[];
+extern const u8 NAME_LONG_RISING_VOLTAGE[];
+extern const u8 NAME_LONG_TERRAIN_PULSE[];
+extern const u8 NAME_LONG_SKITTER_SMACK[];
+extern const u8 NAME_LONG_BURNING_JEALOUSY[];
+extern const u8 NAME_LONG_LASH_OUT[];
+extern const u8 NAME_LONG_POLTERGEIST[];
+extern const u8 NAME_LONG_CORROSIVE_GAS[];
+extern const u8 NAME_LONG_COACHING[];
+extern const u8 NAME_LONG_FLIP_TURN[];
+extern const u8 NAME_LONG_TRIPLE_AXEL[];
+extern const u8 NAME_LONG_DUAL_WINGBEAT[];
+extern const u8 NAME_LONG_SCORCHING_SANDS[];
+
+extern const u8 sDracozolt[];
+extern const u8 sDracovish[];
+extern const u8 sArctozolt[];
+extern const u8 sArctovish[];
+extern const u8 sNoThanks[];
+
+extern const u8 NAME_LONG_SUPER_FANG[];
+extern const u8 NAME_LONG_THUNDER_FANG[];
+extern const u8 NAME_LONG_ICE_FANG[];
+extern const u8 NAME_LONG_FIRE_FANG[];
+extern const u8 NAME_LONG_CRUNCH[];
+extern const u8 NAME_LONG_PSYCHIC_FANG[];
+
+extern const u8 NAME_LONG_SPIKES[];
+extern const u8 NAME_LONG_TOXIC_SPIKES[];
+extern const u8 NAME_LONG_GRAS_TERRAIN[];
+extern const u8 NAME_LONG_MIST_TERRAIN[];
+extern const u8 NAME_LONG_ELEC_TERRAIN[];
+extern const u8 NAME_LONG_PSYC_TERRAIN[];
+
+extern const u8 NAME_LONG_IRON_HEAD[];
+extern const u8 NAME_LONG_SEED_BOMB[];
+extern const u8 NAME_LONG_DUAL_CHOP[];
+extern const u8 NAME_LONG_GUNK_SHOT[];
+extern const u8 NAME_LONG_LAST_RESORT[];
+extern const u8 NAME_LONG_AQUA_TAIL[];
+extern const u8 NAME_LONG_BAD_TANTRUM[];
+extern const u8 NAME_LONG_BREAKING_SWIPE[];
+extern const u8 NAME_LONG_RAZOR_SHELL[];
+
+extern const u8 NAME_LONG_ZEN_HEADBUTT[];
+extern const u8 NAME_LONG_FOUL_PLAY[];
+extern const u8 NAME_LONG_GRAVITY[];
+extern const u8 NAME_LONG_SYNTHESIS[];
+extern const u8 NAME_LONG_HEAT_WAVE[];
+extern const u8 NAME_LONG_BODY_PRESS[];
+extern const u8 NAME_LONG_CROSS_POISON[];
+extern const u8 NAME_LONG_HEX[];
+extern const u8 NAME_LONG_DARK_LARIAT[];
+extern const u8 NAME_LONG_HORSEPOWER[];
+extern const u8 NAME_LONG_LEAF_BLADE[];
+extern const u8 NAME_LONG_MUDDY_WATER[];
+
+extern const u8 NAME_LONG_PAIN_SPLIT[];
+extern const u8 NAME_LONG_TAILWIND[];
+extern const u8 NAME_LONG_TRICK[];
+extern const u8 NAME_LONG_WONDER_ROOM[];
+extern const u8 NAME_LONG_MAGIC_ROOM[];
+
+extern const u8 NAME_LONG_LEAF_STORM[];
+extern const u8 NAME_LONG_MEGAHORN[];
+extern const u8 NAME_LONG_POWER_WHIP[];
+extern const u8 NAME_LONG_SOLAR_BLADE[];
+extern const u8 NAME_LONG_FLARE_BLITZ[];
+extern const u8 NAME_LONG_HURRICANE[];
+extern const u8 NAME_LONG_BRAVE_BIRD[];
+extern const u8 NAME_LONG_HYDRO_PUMP[];
+extern const u8 NAME_LONG_WEATHER_BALL[];
+
+extern const u8 NAME_LONG_AIR_SLASH[];
+extern const u8 NAME_LONG_BUG_BUZZ[];
+extern const u8 NAME_LONG_BLAZE_KICK[];
+extern const u8 NAME_LONG_MYSTIC_FIRE[];
+extern const u8 NAME_LONG_PLAY_ROUGH[];
+extern const u8 NAME_LONG_POLLEN_PUFF[];
+extern const u8 NAME_LONG_POWER_GEM[];
+extern const u8 NAME_LONG_PSYCHO_CUT[];
+extern const u8 NAME_LONG_STORED_POWER[];
+extern const u8 NAME_LONG_HYPER_VOICE[];
+extern const u8 NAME_LONG_DRAGON_DANCE[];
+extern const u8 NAME_LONG_AGILITY[];
+extern const u8 NAME_LONG_NASTY_PLOT[];
+
+static const u8* sSaffronTutor2[] = {
+	NAME_LONG_AIR_SLASH,
+	NAME_LONG_BUG_BUZZ,
+	NAME_LONG_BLAZE_KICK,
+	NAME_LONG_MYSTIC_FIRE,
+	NAME_LONG_PLAY_ROUGH,
+	NAME_LONG_POLLEN_PUFF,
+	NAME_LONG_POWER_GEM,
+	NAME_LONG_PSYCHO_CUT,
+	NAME_LONG_STORED_POWER,
+	NAME_LONG_HYPER_VOICE,
+	NAME_LONG_DRAGON_DANCE,
+	NAME_LONG_AGILITY,
+	NAME_LONG_NASTY_PLOT,
+	sNoThanks,
+};
+
+static const u8* sCinnabarTutor[] = {
+	NAME_LONG_LEAF_STORM,
+	NAME_LONG_MEGAHORN,
+	NAME_LONG_POWER_WHIP,
+	NAME_LONG_SOLAR_BLADE,
+	NAME_LONG_FLARE_BLITZ,
+	NAME_LONG_HURRICANE,
+	NAME_LONG_BRAVE_BIRD,
+	NAME_LONG_HYDRO_PUMP,
+	NAME_LONG_WEATHER_BALL,
+	sSuperpower,
+	sCloseCombat,
+	sNoThanks,
+};
+
+static const u8* sUtilityTutor[] = {
+	NAME_LONG_PAIN_SPLIT,
+	NAME_LONG_TAILWIND,
+	NAME_LONG_TRICK,
+	NAME_LONG_WONDER_ROOM,
+	NAME_LONG_MAGIC_ROOM,
+	sNoThanks,
+};
+
+static const u8* sSaffronTutor1[] = {
+	NAME_LONG_ZEN_HEADBUTT,
+	NAME_LONG_FOUL_PLAY,
+	NAME_LONG_GRAVITY,
+	NAME_LONG_SYNTHESIS,
+	NAME_LONG_HEAT_WAVE,
+	NAME_LONG_BODY_PRESS,
+	NAME_LONG_CROSS_POISON,
+	NAME_LONG_HEX,
+	NAME_LONG_DARK_LARIAT,
+	NAME_LONG_HORSEPOWER,
+	NAME_LONG_LEAF_BLADE,
+	NAME_LONG_MUDDY_WATER,
+	sNoThanks,
+};
+
+static const u8* sFuschiaTutor[] = {
+	NAME_LONG_IRON_HEAD,
+	NAME_LONG_SEED_BOMB,
+	NAME_LONG_DUAL_CHOP,
+	NAME_LONG_GUNK_SHOT,
+	NAME_LONG_LAST_RESORT,
+	NAME_LONG_AQUA_TAIL,
+	NAME_LONG_BAD_TANTRUM,
+	NAME_LONG_BREAKING_SWIPE,
+	NAME_LONG_RAZOR_SHELL,
+	sNoThanks,
+};
+
+static const u8* sHazardTerrain[] = {
+	NAME_LONG_SPIKES,
+	NAME_LONG_TOXIC_SPIKES,
+	NAME_LONG_GRAS_TERRAIN,
+	NAME_LONG_MIST_TERRAIN,
+	NAME_LONG_ELEC_TERRAIN,
+	NAME_LONG_PSYC_TERRAIN,
+	sNoThanks,
+};
+
+static const u8* sFangMoveTutor[] = {
+	NAME_LONG_SUPER_FANG,
+	NAME_LONG_THUNDER_FANG,
+	NAME_LONG_ICE_FANG,
+	NAME_LONG_FIRE_FANG,
+	NAME_LONG_CRUNCH,
+	NAME_LONG_PSYCHIC_FANG,
+	sNoThanks,
+};
+
+static const u8* sGalarFossils[] = {
+	sDracozolt,
+	sDracovish,
+	sArctozolt,
+	sArctovish,
+	sNoThanks,
+};
+
+static const u8* sIOATutorMoves[] = {
+	NAME_LONG_EXPANDING_FORCE,
+	NAME_LONG_STEEL_ROLLER,
+	NAME_LONG_SCALE_SHOT,
+	NAME_LONG_METEOR_BEAM,
+	NAME_LONG_MISTY_EXPLOSION,
+	NAME_LONG_GRASSY_GLIDE,
+	NAME_LONG_RISING_VOLTAGE,
+	NAME_LONG_TERRAIN_PULSE,
+	NAME_LONG_SKITTER_SMACK,
+	NAME_LONG_BURNING_JEALOUSY,
+	NAME_LONG_LASH_OUT,
+	NAME_LONG_POLTERGEIST,
+	NAME_LONG_CORROSIVE_GAS,
+	NAME_LONG_COACHING,
+	NAME_LONG_FLIP_TURN,
+	NAME_LONG_TRIPLE_AXEL,
+	NAME_LONG_DUAL_WINGBEAT,
+	NAME_LONG_SCORCHING_SANDS,
+	sExit,
+};
+
+static const u8* sCeruleanTutorMoves[] = {
+	NAME_LONG_ELECTROWEB,
+	NAME_LONG_ICY_WIND,
+	NAME_LONG_LOW_KICK,
+	NAME_LONG_BOUNCE,
+	NAME_LONG_SIGNAL_BEAM,
+	NAME_LONG_SNORE,
+	NAME_LONG_COVET,
+	NAME_LONG_WORRY_SEED,
+	NAME_LONG_HELPING_HAND,
+	NAME_LONG_IRON_DEFENSE,
+	sExit,
+};
+
+static const u8* sLegendMoves[] = {
+	NAME_LONG_SECRET_SWORD,
+	NAME_LONG_RELIC_SONG,
+	NAME_LONG_DRAGON_RISE,
+	NAME_LONG_1000_ARROWS,
+	NAME_LONG_1000_WAVES,
+	NAME_LONG_CORE_ENFORCE,
+	sExit,
+};
+
+static const u8* sPikachuForms[] = {
+	sPikachuNormal,
+	sPikachuSurfing,
+	sPikachuFlying,
+	sPikachuRockstar,
+	sPikachuBelle,
+	sPikachuPopstar,
+	sPikachuPhD,
+	sPikachuLibre,
+	sExit,
+};
+
+static const u8* sRotomForms[] =
+{
+	sRotomHeat,
+	sRotomWash,
+	sRotomFrost,
+	sRotomFan,
+	sRotomMow,
+	sRotomNormal,
+	sExit,
+};
+
+static const u8* sSilphCoElevator[] =
+{
+	s11F,
+	s10F,
+	s9F,
+	s8F,
+	s7F,
+	s6F,
+	s5F,
+	s4F,
+	s3F,
+	s2F,
+	s1F,
+	sExit,
+};
+
+static const u8* sPokeballs[] = {
+	sMasterball,
+	sUltraball,
+	sGreatball,
+	sPokeball,
+	sSafariball,
+	sNetball,
+	sDiveball,
+	sNestball,
+	sRepeatball,
+	sTimerball,
+	sLuxuryball,
+	sPremierball,
+	sDuskball,
+	sHealball,
+	sQuickball,
+	sCherishball,
+	sParkball,
+	sFastball,
+	sLevelball,
+	sLureball,
+	sHeavyball,
+	sLoveball,
+	sFriendball,
+	sMoonball,
+	sSportball,
+	sBeastball,
+	sDreamball,
+	sExit,
+};
+
+static const u8* sIVs[] = {
+	sHP,
+	sAttack,
+	sDefense,
+	sSpAttack,
+	sSpDefense,
+	sSpeed,
+	sExit,
+};
+
+static const u8* sNatures[] =
+{
+	sHardy,
+	sLonely,
+	sBrave,
+	sAdamant,
+	sNaughty,
+	sBold,
+	sDocile,
+	sRelaxed,
+	sImpish,
+	sLax,
+	sTimid,
+	sHasty,
+	sSerious,
+	sJolly,
+	sNaive,
+	sModest,
+	sMild,
+	sQuiet,
+	sBashful,
+	sRash,
+	sCalm,
+	sGentle,
+	sSassy,
+	sCareful,
+	sQuirky,
+};
+
+
+static const u8* sBuyPseudoOther[] = {
+	sDratini,
+	sLarvitar,
+	sBagon,
+	sBeldum,
+	sGible,
+	sDeino,
+	sGoomy,
+	sJangmoo,
+	sDreepy,
+	sAron,
+	sTrapinch,
+	sRiolu,
+	sAxew,
+	sLarvesta,
+	sZorua,
+	sNoibat,
+	sHonedge,
+	sWimpod,
+	sMimikyu,
+	//sPoipole,
+	sMeltan,
+	sPorygon,
+	sRattataA,
+	sRaichuA,
+	sSandshrewA,
+	sVulpixA,
+	sDiglettA,
+	sMeowthA,
+	sGeodudeA,
+	sGrimerA,
+	sExeggutorA,
+	sMarowakA,
+	sMeowthG,
+	sPonytaG,
+	sFarfetchdG,
+	sWeezingG,
+	sMrMimeG,
+	sCorsolaG,
+	sZigzagoonG,
+	sDarumakaG,
+	sYamaskG,
+	sStunfiskG,
+	sSlowpokeG,
+	sExit,
+};
+
+static const u8* sBuyCoins[] = {
+	sBuyCoin1,
+	sBuyCoin2,
+	sBuyCoin3,
+	sExit,
+};
+
+static const u8* sStarters[] = {
+	sBulbasaur,
+	sChikorita,
+	sTreecko,
+	sTurtwig,
+	sSnivy,
+	sChespin,
+	sRowlet,
+	sGrookey,
+	sCharmander,
+	sCyndaquil,
+	sTorchic,
+	sChimchar,
+	sTepig,
+	sFennekin,
+	sLitten,
+	sScorbunny,
+	sSquirtle,
+	sTotodile,
+	sMudkip,
+	sPiplup,
+	sOshawott,
+	sFroakie,
+	sPopplio,
+	sSobble,
+	sExit,
+};
+
 //Scrolling Lists
 static const u8* sMultichoiceSet1[] =
 {
@@ -3139,11 +3841,77 @@ static const u8* sMultichoiceSet2[] =
 	sExampleText_10,
 };
 
+static const u8* sRegions[] = {
+	sKanto,
+	sJohto,
+	sHoenn,
+	sSinnoh,
+	sUnova,
+	sKalos,
+	sAlola,
+	sGalar,
+};
+
+static const u8* sFossilsPreGen8[] = {
+	sDomeFossil,
+	sHelixFossil,
+	sRootFossil,
+	sClawFossil,
+	sSkullFossil,
+	sArmorFossil,
+	sCoverFossil,
+	sPlumeFossil,
+	sJawFossil,
+	sSailFossil,
+	sExit,
+};
+
+static const u8* sElementalPunches[] = {
+	sFirePunch,
+	sIcePunch,
+	sThunderPunch,
+	sExit,
+};
+
+static const u8* sFightingTutor[] = {
+	sLowKick,
+	//sSuperpower,
+	sVacuumWave,
+	sAuraSphere,
+	//sCloseCombat,
+	sExit,
+};
+
+
 // Multichoice Lists
 const struct ScrollingMulti gScrollingSets[] =
 {
 	{sMultichoiceSet1, ARRAY_COUNT(sMultichoiceSet1)},
 	{sMultichoiceSet2, ARRAY_COUNT(sMultichoiceSet2)},
+	{sRegions, ARRAY_COUNT(sRegions)},
+	{sFossilsPreGen8, ARRAY_COUNT(sFossilsPreGen8)},
+	{sElementalPunches, ARRAY_COUNT(sElementalPunches)},
+	{sFightingTutor, ARRAY_COUNT(sFightingTutor)},
+	{sStarters, ARRAY_COUNT(sStarters)},
+	{sBuyCoins, ARRAY_COUNT(sBuyCoins)},
+	{sBuyPseudoOther, ARRAY_COUNT(sBuyPseudoOther)},
+	{sNatures, ARRAY_COUNT(sNatures)},
+	{sIVs, ARRAY_COUNT(sIVs)},
+	{sPokeballs, ARRAY_COUNT(sPokeballs)},
+	{sSilphCoElevator, ARRAY_COUNT(sSilphCoElevator)},
+	{sRotomForms, ARRAY_COUNT(sRotomForms)},
+	{sPikachuForms, ARRAY_COUNT(sPikachuForms)},
+	{sLegendMoves, ARRAY_COUNT(sLegendMoves)},
+	{sCeruleanTutorMoves, ARRAY_COUNT(sCeruleanTutorMoves)},
+	{sIOATutorMoves, ARRAY_COUNT(sIOATutorMoves)},
+	{sGalarFossils, ARRAY_COUNT(sGalarFossils)},
+	{sFangMoveTutor, ARRAY_COUNT(sFangMoveTutor)},
+	{sHazardTerrain, ARRAY_COUNT(sHazardTerrain)},
+	{sFuschiaTutor, ARRAY_COUNT(sFuschiaTutor)},
+	{sSaffronTutor1, ARRAY_COUNT(sSaffronTutor1)},
+	{sUtilityTutor, ARRAY_COUNT(sUtilityTutor)},
+	{sCinnabarTutor, ARRAY_COUNT(sCinnabarTutor)},
+	{sSaffronTutor2, ARRAY_COUNT(sSaffronTutor2)},
 };
 
 //Link number of opts shown at once to the box height

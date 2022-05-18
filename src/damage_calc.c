@@ -14,11 +14,12 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
 
 #include "Tables/type_tables.h"
+#include "../include/base_stats.h"
 
 /*
 damage_calc.c
@@ -93,8 +94,8 @@ void atk04_critcalc(void)
 
 		u8 defAbility = ABILITY(bankDef);
 
-		if (defAbility == ABILITY_BATTLEARMOR
-		||  defAbility == ABILITY_SHELLARMOR
+		//if (defAbility == ABILITY_BATTLEARMOR
+		if  (defAbility == ABILITY_SHELLARMOR
 		||  CantScoreACrit(gBankAttacker, NULL)
 		||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
 		||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
@@ -182,8 +183,8 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		defStatus1 = gBattleMons[bankDef].status1;
 	}
 
-	if (defAbility == ABILITY_BATTLEARMOR
-	||  defAbility == ABILITY_SHELLARMOR
+	//if (defAbility == ABILITY_BATTLEARMOR
+	  if (defAbility == ABILITY_SHELLARMOR
 	||  CantScoreACrit(bankAtk, monAtk)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
 	||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
@@ -567,6 +568,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 		#endif
 		return damage;
 	}
+	
 
 	//Multi hit moves skip these checks
 	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
@@ -967,8 +969,8 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
 		u16 fakeSpecies = GetMonData(illusionMon, MON_DATA_SPECIES, NULL);
 		defAbility = GetMonAbility(illusionMon);
-		defType1 = gBaseStats[fakeSpecies].type1;
-		defType2 = gBaseStats[fakeSpecies].type2;
+		defType1 = gBaseStats2[fakeSpecies].type1;
+		defType2 = gBaseStats2[fakeSpecies].type2;
 	}
 	else
 	{
@@ -1172,6 +1174,12 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	}
 
 	if (move == MOVE_FREEZEDRY && defType == TYPE_WATER) //Always Super-Effective, even in Inverse Battles
+		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+
+	if (move == MOVE_DARKINTENTS && defType == TYPE_FAIRY) //Always Super-Effective, even in Inverse Battles
+		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+
+	if (move == MOVE_STRENGTH && defType == TYPE_ROCK) //Always Super-Effective, even in Inverse Battles
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
 	if (moveType == TYPE_FIRE && gNewBS->tarShotBits & gBitTable[bankDef]) //Fire always Super-Effective if covered in tar
@@ -2105,6 +2113,23 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				spAttack = (spAttack * 15) / 10;
 			}
 			break;
+		case ABILITY_TRANSISTOR:
+			//1.5x Boost
+			if (data->moveType == TYPE_ELECTRIC)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
+
+		case ABILITY_DRAGONSMAW:
+			//1.5x Boost
+			if (data->moveType == TYPE_DRAGON)
+			{
+				attack = (attack * 15) / 10;
+				spAttack = (spAttack * 15) / 10;
+			}
+			break;
 
 		case ABILITY_GORILLATACTICS:
 		//1.5x Boost
@@ -2205,7 +2230,24 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			}
 			break;
 		#endif
-
+		#ifdef SPECIES_RAICHU
+			//1.5x Boost
+			if (data->atkSpecies == SPECIES_RAICHU)
+			{
+				attack *= 1.5;
+				spAttack *= 1.5;
+			}
+			break;
+		#endif
+		#ifdef SPECIES_RAICHU_A
+			//1.5x Boost
+			if (data->atkSpecies == SPECIES_RAICHU_A)
+			{
+				attack *= 1.5;
+				spAttack *= 1.5;
+			}
+			break;
+		#endif
 		#ifdef SPECIES_CLAMPERL
 		case ITEM_EFFECT_DEEP_SEA_TOOTH:
 		//2x Boost
@@ -2287,6 +2329,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SANDSTORM_ANY)
 	&& ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK))))
 		data->spDefense = (15 * data->spDefense) / 10;
+
+//Hail Def Increase
+	if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY)
+		&& ((!useMonDef && IsOfType(bankDef, TYPE_ICE)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ICE))))
+		data->defense = (15 * data->defense) / 10;
 
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
@@ -2500,7 +2547,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			break;
 
 		case ABILITY_MULTISCALE:
-		case ABILITY_SHADOWSHIELD:
+		//case ABILITY_SHADOWSHIELD:
 		//0.5x Decrement
 			if (data->defHP >= data->defMaxHP)
 				damage /= 2;
@@ -2664,17 +2711,16 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
-		case MOVE_BRINE:
-			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
-			&& data->defHP < data->defMaxHP / 2)
-				power *= 2;
-			break;
-
 		case MOVE_ECHOEDVOICE:
 			power = MathMin(200, power + (40 * gNewBS->EchoedVoiceDamageScale));
 			break;
 
 		case MOVE_FACADE:
+			if (data->atkStatus1 & STATUS_ANY)
+				power *= 2;
+			break;
+
+		case MOVE_FAIRYWIND:
 			if (data->atkStatus1 & STATUS_ANY)
 				power *= 2;
 			break;
@@ -2706,6 +2752,30 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_HEX:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_ANY)
+				power *= 2;
+			break;
+
+		case MOVE_BRINE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_ANY)
+				power *= 2;
+			break;
+
+		case MOVE_BARBBARRAGE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_ANY)
+				power *= 2;
+			break;
+
+		case MOVE_INFERNALPARADE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_ANY)
+				power *= 2;
+			break;
+
+		case MOVE_BITTERMALICE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_ANY)
 				power *= 2;
 			break;
 
@@ -2746,6 +2816,24 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
+		case MOVE_PARABOLICCHARGE:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_PARALYSIS)
+				power *= 2;
+			break;
+
+		case MOVE_FORCEPALM:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_PARALYSIS)
+				power *= 2;
+			break;
+
+		case MOVE_DREAMEATER:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
+				&& data->defStatus1 & STATUS_SLEEP)
+				power *= 2;
+			break;
+
 		case MOVE_WAKEUPSLAP:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defStatus1 & STATUS_SLEEP)
@@ -2771,7 +2859,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_ROLLOUT:
-		case MOVE_ICEBALL:
+		//case MOVE_ICEBALL:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
 			{
 				if (gBattleMons[bankAtk].status2 & STATUS2_DEFENSE_CURL)
@@ -2887,6 +2975,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_ERUPTION:
 		case MOVE_WATERSPOUT:
+		case MOVE_DRAGONENERGY:
 			power = MathMax(1, (150 * data->atkHP) / data->atkMaxHP);
 			break;
 
@@ -2917,7 +3006,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_CRUSHGRIP:
 		case MOVE_WRINGOUT:
-		case MOVE_DRAGONENERGY:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 				power = MathMax(1, (data->defHP * 120) / data->defMaxHP);
 			break;
@@ -3029,7 +3117,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_BEATUP:
 			if (useMonAtk || (data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)))
-				power = (gBaseStats[data->atkSpecies].baseAttack / 10) + 5;
+				power = (gBaseStats2[data->atkSpecies].baseAttack / 10) + 5;
 			else
 			{
 				struct Pokemon* party;
@@ -3038,7 +3126,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 				else
 					party = gEnemyParty;
 
-				power = (gBaseStats[party[gBattleCommunication[0] - 1].species].baseAttack / 10) + 5;
+				power = (gBaseStats2[party[gBattleCommunication[0] - 1].species].baseAttack / 10) + 5;
 			}
 			break;
 
@@ -3174,6 +3262,11 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_IRONFIST:
 		//1.2x Boost
 			if (CheckTableForMove(move, gPunchingMoves))
+				power = (power * 12) / 10;
+			break;
+		case ABILITY_IRONKICK:
+		//1.2x Boost
+			if (CheckTableForMove(move, gKickingMoves))
 				power = (power * 12) / 10;
 			break;
 
@@ -3315,7 +3408,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 12) / 10;
 			break;
 
-		#ifdef SPECIES_DIALGA
+		/*#ifdef SPECIES_DIALGA
 		case ITEM_EFFECT_ADAMANT_ORB:
 		//1.2x Boost
 			if (data->atkSpecies == SPECIES_DIALGA && (data->moveType == TYPE_STEEL || data->moveType == TYPE_DRAGON))
@@ -3329,7 +3422,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			if (data->atkSpecies == SPECIES_PALKIA && (data->moveType == TYPE_WATER || data->moveType == TYPE_DRAGON))
 				power = (power * 12) / 10;
 			break;
-		#endif
+		#endif*/
 
 		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
 		case ITEM_EFFECT_GRISEOUS_ORB:

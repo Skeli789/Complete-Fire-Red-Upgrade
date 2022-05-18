@@ -1,0 +1,50 @@
+#org @gText_ChangeIVsHello
+Hello there. I can max your\nPok\emon's IVs for [GREEN]\$5000[BLUE].\pWhat do you think?
+
+#org @gText_SelectIVs
+Which of [GREEN][BUFFER1]'s[BLUE] IVs should I\nchange?
+
+#org @gText_IVMaxerNotEnough
+Sorry, you don't have enough money.
+
+#org @gText_IVChangerBye
+Your Pok\emon's IV has been maxed.\nCome back soon!
+
+#org @gText_AcerolaHi
+Hey there!\nMy name's [GREEN]Acerola[RED], what's yours?\pIt's [PLAYER]?\nNice to meet you, [PLAYER]!\pSo, what's up? Need some help with\nGhost type Pok\emon? Their my\lfavourite!\p[.]\nOh, you want a battle?\lWell, I don't battle much, but,\lsure! Let's have a battle.
+
+#org @gText_AcerolaLose
+No[.]\nHow could my ghost types lose[.]?
+
+#org @gText_Acerola
+Acerola
+
+#org @gText_AcerolaBye
+Wow! You're so strong, just like a\nperson I know back in Alola[.]\pOops, I almost drifted off. Take\nthis Mega Stone, as an award for\lbeating me.
+
+#org @gText_AcerolaBye2
+Well, I'm gonna go now. See ya!
+
+#org @gText_BodySlamTutorAsk
+Ready?\nBoing!\pWe're having a Body Slam match\nto see who wimps out first.\pIf you were to join us, you'd be\nsquashed like a bug, though[.]\pHow about I teach Body Slam to\na Pok\emon of yours instead?
+
+#org @gText_WhichBodySlam
+Which Pok\emon wants to learn how\nto Body Slam?
+
+#org @gText_NoBodySlam
+Come again!\nBoing!
+
+#org @gText_ThatsAnEgg
+That's an egg[.]
+
+#org @gText_SeeYouNextTimeMaxIVS
+See you next time.
+
+#org @gText_UtilityTutor
+My utility moves can help you out\nimmensely in battle.\pMay I teach one of them to your\nPok\emon?
+
+#org @gText_WhichMoveUtility
+Which move shall I teach to your\nPok\emon?
+
+#org @gText_HopeYouEnjoyMove
+Hope you enjoy using that move.

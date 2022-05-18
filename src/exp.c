@@ -13,7 +13,8 @@
 #include "../include/new/dns.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/exp.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
+#include "../include/base_stats.h"
 
 /*
 exp.c
@@ -53,6 +54,47 @@ static void Task_GiveExpToMon(u8 taskId);
 static void sub_80300F4(u8 taskId);
 static u32 GetExpToLevel(u8 toLevel, u8 growthRate);
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
+
+u8 GetBadgeCount() {
+	u8 badgeCount = 0;
+	if (FlagGet(FLAG_BADGE01_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE02_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE03_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE04_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE05_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE06_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE07_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE08_GET)) {
+		badgeCount++;
+	}
+	return badgeCount;
+}
+
+const u16 LevelCap[] = {
+	16,
+	28,
+	34,
+	55,
+	63,
+	70,
+	76,
+	78,
+	100,
+};
 
 ///////////////////// GAIN EXPERIENCE //////////////////////
 void atk23_getexp(void)
@@ -187,7 +229,7 @@ void atk23_getexp(void)
 		#ifdef GEN_7_BASE_EXP_YIELD
 			baseExp = gBaseExpBySpecies[gBattleMons[gBankFainted].species];
 		#else
-			baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
+			baseExp = gBaseStats2[gBattleMons[gBankFainted].species].expYield;
 		#endif
 
 		//Lucky Egg Boost - e
@@ -249,8 +291,12 @@ void atk23_getexp(void)
 
 	SKIP_EXP_CALC:
 		calculatedExp = MathMax(1, calculatedExp);
+		u8 badge = GetBadgeCount();
+		u8 cap = LevelCap[badge];
+		if (pokeLevel >= cap) {
+			calculatedExp = 1;
+		}
 		gBattleMoveDamage = calculatedExp;
-
 		gBattleScripting.expStateTracker++;
 	__attribute__ ((fallthrough));
 
@@ -600,7 +646,7 @@ static void Task_GiveExpToMon(u8 taskId)
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 	u32 currExp = GetMonData(mon, MON_DATA_EXP, NULL);
-	u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats[species].growthRate);
+	u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats2[species].growthRate);
 
 	if (IS_DOUBLE_BATTLE || monId != gBattlerPartyIndexes[bank]) //Give exp without moving the expbar.
 	{
@@ -632,7 +678,7 @@ static void Task_GiveExpToMon(u8 taskId)
 	}
 	else //Single Battle
 	{
-		u32 currLvlExp = GetExpToLevel(level, gBaseStats[species].growthRate);
+		u32 currLvlExp = GetExpToLevel(level, gBaseStats2[species].growthRate);
 		u32 totalExpToNextLvl = nextLvlExp - currLvlExp;
 
 		PlaySE(SE_EXP);
@@ -661,7 +707,7 @@ static void sub_80300F4(u8 taskId)
 			u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 			u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 			u32 currExp = GetMonData(mon, MON_DATA_EXP, NULL);
-			u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats[species].growthRate);
+			u32 nextLvlExp = GetExpToLevel(level + 1, gBaseStats2[species].growthRate);
 
 			m4aSongNumStop(SE_EXP);
 
@@ -720,22 +766,22 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 		switch (stat)
 		{
 			case STAT_HP:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_HP;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_HP;
 				break;
 			case STAT_ATK:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Attack;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_Attack;
 				break;
 			case STAT_DEF:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Defense;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_Defense;
 				break;
 			case STAT_SPEED:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Speed;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_Speed;
 				break;
 			case STAT_SPATK:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_SpAttack;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_SpAttack;
 				break;
 			case STAT_SPDEF:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_SpDefense;
+				evIncrease = gBaseStats2[defeatedSpecies].evYield_SpDefense;
 				break;
 		}
 
@@ -745,11 +791,18 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 		//Check Macho Brace
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
 			evIncrease *= 2;
-
-		AddEVs(mon, stat, evIncrease);
-
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
-			AddEVs(mon, stat, POWER_ITEM_EV_YIELD); //Power items always add to requested stat
+		{
+			if (FlagGet(FLAG_NO_GRINDING_EV)) {
+				AddEVs(mon, stat, 252); //Power items always add to requested stat
+			}
+			else {
+				AddEVs(mon, stat, POWER_ITEM_EV_YIELD); //Power items always add to requested stat
+			}
+		}
+		else {
+			AddEVs(mon, stat, evIncrease);
+		}
 	}
 }
 

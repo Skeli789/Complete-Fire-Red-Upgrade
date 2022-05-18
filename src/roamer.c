@@ -13,7 +13,7 @@
 #include "../include/constants/species.h"
 
 #include "../include/new/battle_start_turn_start.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
 /*

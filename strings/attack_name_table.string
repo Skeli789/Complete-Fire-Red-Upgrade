@@ -2222,163 +2222,286 @@ Thunder Cage
 #org @NAME_DRAGON_ENERGY
 DragonEnergy
 
-#org @Z_Move_1
+#org @NAME_ASTRAL_BARRAGE
+Astral Barr.
+
+#org @NAME_GLACIAL_LANCE 
+GlacialLance
+
+#org @NAME_EERIESPELL
+Eerie Spell
+
+#org @NAME_ZIPPYZAP
+Zippy Zap
+
+#org @NAME_SAPPYSEED
+Sappy Seed
+
+#org @NAME_FREEZYFROST
+Freezy Frost
+
+#org @NAME_SPARKLYSWIRL
+SparklySwirl
+
+#org @NAME_BOUNCYBUBBLE
+BouncyBubble
+
+#org @NAME_FLOATYFALL
+Floaty Fall
+
+#org @NAME_BUZZYBUZZ
+Buzzy Buzz
+
+#org @NAME_GLITZYGLOW
+Glitzy Glow
+
+#org @NAME_SIZZLYSLIDE
+Sizzly Slide
+
+#org @NAME_BADDYBAD
+Baddy Bad
+
+#org @NAME_DARKINTENTS
+Dark Intents
+
+#org @NAME_FIERYDOOM
+Fiery Doom
+
+#org @NAME_SPLISHYSPLASH
+SplishSplash
+
+#org @NAME_REALITYSHIFT
+RealityShift
+
+#org @NAME_STRIPEDDIVE
+Striped Dive
+
+#org @NAME_PSYSHIELDBASH
+Psyshld Bash
+
+#org @NAME_CHLOROBLAST
+Chloroblast
+
+#org @NAME_HEADLONGRUSH
+HeadlongRush
+
+#org @NAME_ESPERWING
+Esper Wing
+
+#org @NAME_BARBBARRAGE
+Barb Barrage
+
+#org @NAME_TRIPLEARROWS
+TripleArrows
+
+#org @NAME_CEASELESSEDGE
+CeaselesEdge
+
+#org @NAME_INFERNALPARADE
+Infer.Parade
+
+#org @NAME_DIRECLAW
+Dire Claw
+
+#org @NAME_BITTERMALICE
+BitterMalice
+
+#org @NAME_RAGINGFURY
+Raging Fury
+
+#org @NAME_WAVECRASH
+Wave Crash
+
+#org @NAME_STONEAXE
+Stone Axe
+
+#org @NAME_SHADOWSTORM
+Shadow Storm
+
+#org @NAME_MOUNTAINGALE
+MountainGale
+
+#org @NAME_VICTORYDANCE
+VictoryDance
+
+#org @NAME_SHELTER
+Shelter
+
+#org @NAME_SPRINGTIDESTORM
+Spring Storm
+
+#org @NAME_SANDSEARSTORM
+SandsearStrm
+
+#org @NAME_PLACE17
+Placeholder
+
+#org @NAME_PLACE18
+Placeholder
+
+#org @NAME_PLACE19
+Placeholder
+
+#org @NAME_PLACE20
+Placeholder
+
+#org @Z_Long_Move_1
 Z-Move 1
 
-#org @Z_Move_2
+#org @Z_Long_Move_2
 Z-Move 2
 
-#org @Z_Move_3
+#org @Z_Long_Move_3
 Z-Move 3
 
-#org @Z_Move_4
+#org @Z_Long_Move_4
 Z-Move 4
 
-#org @Z_Move_5
+#org @Z_Long_Move_5
 Z-Move 5
 
-#org @Z_Move_6
+#org @Z_Long_Move_6
 Z-Move 6
 
-#org @Z_Move_7
+#org @Z_Long_Move_7
 Z-Move 7
 
-#org @Z_Move_8
+#org @Z_Long_Move_8
 Z-Move 8
 
-#org @Z_Move_9
+#org @Z_Long_Move_9
 Z-Move 9
 
-#org @Z_Move_10
+#org @Z_Long_Move_10
 Z-Move 10
 
-#org @Z_Move_11
+#org @Z_Long_Move_11
 Z-Move 11
 
-#org @Z_Move_12
+#org @Z_Long_Move_12
 Z-Move 12
 
-#org @Z_Move_13
+#org @Z_Long_Move_13
 Z-Move 13
 
-#org @Z_Move_14
+#org @Z_Long_Move_14
 Z-Move 14
 
-#org @Z_Move_15
+#org @Z_Long_Move_15
 Z-Move 15
 
-#org @Z_Move_16
+#org @Z_Long_Move_16
 Z-Move 16
 
-#org @Z_Move_17
+#org @Z_Long_Move_17
 Z-Move 17
 
-#org @Z_Move_18
+#org @Z_Long_Move_18
 Z-Move 18
 
-#org @Z_Move_19
+#org @Z_Long_Move_19
 Z-Move 19
 
-#org @Z_Move_20
+#org @Z_Long_Move_20
 Z-Move 20
 
-#org @Z_Move_21
+#org @Z_Long_Move_21
 Z-Move 21
 
-#org @Z_Move_22
+#org @Z_Long_Move_22
 Z-Move 22
 
-#org @Z_Move_23
+#org @Z_Long_Move_23
 Z-Move 23
 
-#org @Z_Move_24
+#org @Z_Long_Move_24
 Z-Move 24
 
-#org @Z_Move_25
+#org @Z_Long_Move_25
 Z-Move 25
 
-#org @Z_Move_26
+#org @Z_Long_Move_26
 Z-Move 26
 
-#org @Z_Move_27
+#org @Z_Long_Move_27
 Z-Move 27
 
-#org @Z_Move_28
+#org @Z_Long_Move_28
 Z-Move 28
 
-#org @Z_Move_29
+#org @Z_Long_Move_29
 Z-Move 29
 
-#org @Z_Move_30
+#org @Z_Long_Move_30
 Z-Move 30
 
-#org @Z_Move_31
+#org @Z_Long_Move_31
 Z-Move 31
 
-#org @Z_Move_32
+#org @Z_Long_Move_32
 Z-Move 32
 
-#org @Z_Move_33
+#org @Z_Long_Move_33
 Z-Move 33
 
-#org @Z_Move_34
+#org @Z_Long_Move_34
 Z-Move 34
 
-#org @Z_Move_35
+#org @Z_Long_Move_35
 Z-Move 35
 
-#org @Z_Move_36
+#org @Z_Long_Move_36
 Z-Move 36
 
-#org @Z_Move_37
+#org @Z_Long_Move_37
 Z-Move 37
 
-#org @Z_Move_38
+#org @Z_Long_Move_38
 Z-Move 38
 
-#org @Z_Move_39
+#org @Z_Long_Move_39
 Z-Move 39
 
-#org @Z_Move_40
+#org @Z_Long_Move_40
 Z-Move 40
 
-#org @Z_Move_41
+#org @Z_Long_Move_41
 Z-Move 41
 
-#org @Z_Move_42
+#org @Z_Long_Move_42
 Z-Move 42
 
-#org @Z_Move_43
+#org @Z_Long_Move_43
 Z-Move 43
 
-#org @Z_Move_44
+#org @Z_Long_Move_44
 Z-Move 44
 
-#org @Z_Move_45
+#org @Z_Long_Move_45
 Z-Move 45
 
-#org @Z_Move_46
+#org @Z_Long_Move_46
 Z-Move 46
 
-#org @Z_Move_47
+#org @Z_Long_Move_47
 Z-Move 47
 
-#org @Z_Move_48
+#org @Z_Long_Move_48
 Z-Move 48
 
-#org @Z_Move_49
+#org @Z_Long_Move_49
 Z-Move 49
 
-#org @Z_Move_50
+#org @Z_Long_Move_50
 Z-Move 50
 
-#org @Z_Move_51
+#org @Z_Long_Move_51
 Z-Move 51
 
-#org @Z_Move_52
+#org @Z_Long_Move_52
 Z-Move 52
 
-#org @Z_Move_53
+#org @Z_Long_Move_53
 Z-Move 53
 
 #org @NAME_MAX_GUARD
@@ -2689,3 +2812,4 @@ Rapid Flow
 
 #org @NAME_G_MAX_RAPID_FLOW_S
 Rapid Flow
+

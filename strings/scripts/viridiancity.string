@@ -1,0 +1,104 @@
+#org @gText_ViridianSign
+[RED]Viridian City's[BLACK] wild Alola & Galar \nPok\emon
+
+#org @gText_IntroAid
+[BLUE]Oh, [PLAYER]!\nI'm one of [RED]Prof Oak's Aides[BLUE].\pProf Oak told me to upgrade your\nPokedex for you.\pGive me your Pokedex for a sec.
+
+#org @gText_Upgraded
+[BLACK][PLAYER]'s Pokedex was upgraded!\nThey can now use Dexnav!
+
+#org @gText_HaveToGo
+[BLUE]Well, I got to go!
+
+#org @gText_LetterOak
+[BLACK]There is a letter attached.\nIt reads: [PLAYER], how are you?\pTo use the DexNav feature\npress [START_BUTTON], then [ARROW_RIGHT], then DexNav!\pFrom Prof Oak.
+
+#org @gText_AkioNicknames
+Coming up with nicknames is fun,\nbut it's not so easy to do.\pClever names are nice, but simple\nnames are easier to remember.
+
+#org @gText_AkioAsk
+Akio: Hello there.\nHave you found MissingNo yet? Let\lme see it.
+
+#org @gText_AkioNoMissingNo
+Akio: You haven't found it yet?\nTry searching on Cinnabar. Remember\lthat he can not be seen unless\lbattling, so try to interact with\lthe air.
+
+#org @gText_AkioYesMissingNo
+Akio: Ah, there it is. Well, you must\nbe strong enough. Let me show you\lsomething.
+
+#org @gText_AkioUBSay
+Akio: That, my friend, is an [GREEN]Ultra\nWormhole[BLUE].\pOnce a day, you will be able to\nenter it. It will bring you to a\ldifferent dimension, and there will\lbe a Pok\emon you would never be\lable to see in our dimension.\pIf you want, you can enter now.\nGood luck.
+
+#org @gText_AkioUBClosed
+Akio: It seems that the Ultra\nWormhole is closed. If my memory\lis correct, you entered it [BUFFER1]\lhours ago.
+
+#org @gText_AkioUBOpen
+Akio: It seems that the Ultra\nWormhole is open.
+
+#org @gText_UltraWormholeClosed
+[BLACK]You can't see anything in the\nwormhole.
+
+#org @gText_UltraWormholeEnter
+[BLACK]You can see land in the wormhole.\nWant to enter?
+
+#org @gText_AllWormholesEntered
+[BLACK]You can't see anything in the\nwormhole, but something\lfeels different.
+
+#org @gText_FlagsCleared
+Flags Cleared
+
+#org @gText_AkioAllWormholes
+Akio: It seems that you've entered\nevery Wormhole. Congratulations!
+
+#org @gText_BoulderBadge
+Boulder Badge
+
+#org @gText_PokemonLeagueRebuilt
+That is the Boulder Badge, but the\nPok\emon League is currently being\lrebuilt.\pI heard the gym leaders are offering\nrematches to trainers. Why don't\lyou go do that while you're\lwaiting?
+
+#org @gText_PokemonLeagueNoPerm1
+That is the Boulder Badge, go on\nahea-[PAUSE][20]\pWait[.] do you have parental\npermission? It's required to\lchallenge the Pok\emon League.\p[.] [PAUSE][20] [.]
+
+#org @gText_PokemonLeagueNoPerm2
+You don't? [PAUSE][40]\pWell, you know what to do.\nGet permission!
+
+#Org @gText_GiveDreamEaterTM
+Yawn!\nI must have dozed off in the sun.\pI had this weird dream about\na Drowzee eating my dream.\pAnd[.]\nI learned how to eat dreams[.]\pWhen I woke up, I found this TM\nhere[.]\pI'm no trainer though, so you can\nhave it.
+
+#org @gText_HasDreamEater
+[.]ZZZ[.]\nI[.]can't eat[.]anymore[.]
+
+#org @gText_NoBadge
+Only truly skilled Trainers are\nallowed through.\pYou don't have the Boulder Badge\nyet!
+
+#org @gText_HaveBadge
+You can pass here only if you have\nthe Boulder Badge.\pOh! That is the\nBoulder Badge!\pOkay, then.\nPlease, go right ahead.
+
+#org @gText_WaitUpPlayer2
+[BLUE]???: [PLAYER]!\n[RED]???: We finally found you!
+
+#org @gText_BarryBattleE4
+[BLUE]Barry: We heard you were going to\nthe Indigo Plateau so we went\lsearching for you!\p[RED]May: Yeah! I'm glad we finally\nfound you.\p[BLUE]Barry: Since you are about to\nchallenge the Elite Four, let me\lsee if you are strong enough!
+
+#org @gText_BarryLoseE4
+You are certainly ready for the\nElite Four!
+
+#org @gText_BarryHeal
+[BLUE]Barry: Here, let me heal your\nPokemon.
+
+#org @gText_MayE4
+[RED]May: That looked fun! Let me battle\nyou too!
+
+#org @gText_MayGiveMega
+[BLUE]Barry: Wow, you beat both of us!\p[RED]May: You certainly can beat the\nElite Four! Before you go, take\lthese Mega Stones! They'll be\luseful for the Legendaries you\lmight have found!
+
+#org @gText_MayByeBarryBye
+[BLUE]Barry: Well, we are going to go now.\nSee ya!\p[RED]May: Bye [PLAYER]!
+
+#org @gText_MayLoseE4
+Wow[.] So strong!
+
+#org @gText_TakeARestJoy
+You look tired. Here, take a rest.
+
+#org @gText_StaySafeJourney
+Good luck on your journey! Stay\nsafe!

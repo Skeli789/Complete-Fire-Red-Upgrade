@@ -7,10 +7,11 @@
 #include "../include/string_util.h"
 
 #include "../include/new/build_pokemon.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/base_stats.h"
 /*
 frontier.c
 	all supporting and master functions for developing a battle frontier
@@ -654,7 +655,8 @@ bool8 Is350CupBattle(void)
 
 bool8 IsScaleMonsBattle(void)
 {
-	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS;
+	//return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS;
+	return FlagGet(FLAG_SCALEMONS);
 }
 
 bool8 IsCamomonsBattle(void)
@@ -1535,7 +1537,7 @@ void sp073_ModifyTeamForBattleTower(void)
 		Memcpy(&enteredMons[i], &gPlayerParty[gSelectedOrderFromParty[i] - 1], sizeof(struct Pokemon));
 
 		u16 species = enteredMons[i].species;
-		SetMonData(&enteredMons[i], MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
+		SetMonData(&enteredMons[i], MON_DATA_EXP, &gExperienceTables[gBaseStats2[species].growthRate][level]);
 		CalculateMonStats(&enteredMons[i]);
 		HealMon(&enteredMons[i]);
 	}

@@ -17,12 +17,6 @@ learn_move.c
 
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
-#ifdef EXPAND_MOVESETS
-	extern const struct LevelUpMove* const gLevelUpLearnsets[];
-#else
-	#define gLevelUpLearnsets ((struct LevelUpMove**) *((u32*) 0x8043E20)) //extern const struct LevelUpMove* const gLevelUpLearnsets[];
-#endif
-
 //#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)

@@ -219,8 +219,8 @@ struct UCoords16
 
 struct Coords32
 {
-    s32 x;
-    s32 y;
+	s32 x;
+	s32 y;
 };
 
 struct UCoords32
@@ -318,14 +318,14 @@ struct BattleTowerPokemon //From R/S
 	/*0x12*/ u8 spAttackEV;
 	/*0x13*/ u8 spDefenseEV;
 	/*0x14*/ u32 otId;
-	/*0x18*/ u32 hpIV:5;
-			 u32 attackIV:5;
-			 u32 defenseIV:5;
-			 u32 speedIV:5;
-			 u32 spAttackIV:5;
-			 u32 spDefenseIV:5;
-			 u32 gap:1;
-			 u32 abilityNum:1;
+	/*0x18*/ u32 hpIV : 5;
+	u32 attackIV : 5;
+	u32 defenseIV : 5;
+	u32 speedIV : 5;
+	u32 spAttackIV : 5;
+	u32 spDefenseIV : 5;
+	u32 gap : 1;
+	u32 abilityNum : 1;
 	/*0x1C*/ u32 personality;
 	/*0x20*/ u8 nickname[11];
 	/*0x2B*/ u8 friendship;
@@ -366,8 +366,8 @@ struct BattleTowerData // Leftover from R/S
 	/*0x03DC, 0x048C*/ u8 defeatedByTrainerName[8];
 	/*0x03E4, 0x0494*/ u8 firstMonNickname[POKEMON_NAME_LENGTH]; // nickname of the first pokemon in the player's battle tower party
 	/*0x03F0, 0x04A0*/ struct BattleTowerEReaderTrainer ereaderTrainer;
-	/*0x04AC, 0x055C*/ u8 battleTowerLevelType:1; // 0 = level 50; 1 = level 100
-	/*0x04AC, 0x055C*/ u8 unk_554:1;
+	/*0x04AC, 0x055C*/ u8 battleTowerLevelType : 1; // 0 = level 50; 1 = level 100
+	/*0x04AC, 0x055C*/ u8 unk_554 : 1;
 	/*0x04AD, 0x055D*/ u8 battleOutcome;
 	/*0x04AE, 0x055E*/ u8 var_4AE[2];
 	/*0x04B0, 0x0560*/ u16 curChallengeBattleNum[2]; // 1-based index of battle in the current challenge. (challenges consist of 7 battles)
@@ -395,12 +395,12 @@ struct SaveBlock2 //0x2024588
 	/*0x011*/ u8 playTimeSeconds;
 	/*0x012*/ u8 playTimeVBlanks;
 	/*0x013*/ u8 optionsButtonMode;  // OPTIONS_BUTTON_MODE_[NORMAL/LR/L_EQUALS_A]
-	/*0x014*/ u16 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
-			  u16 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
-	/*0x15*/  u16 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
-			  u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
-			  u16 optionsBattleSceneOff:1; // whether battle animations are disabled
-			  u16 regionMapZoom:1; // whether the map is zoomed in
+	/*0x014*/ u16 optionsTextSpeed : 3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
+	u16 optionsWindowFrameType : 5; // Specifies one of the 20 decorative borders for text boxes
+	/*0x15*/  u16 optionsSound : 1; // OPTIONS_SOUND_[MONO/STEREO]
+	u16 optionsBattleStyle : 1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
+	u16 optionsBattleSceneOff : 1; // whether battle animations are disabled
+	u16 regionMapZoom : 1; // whether the map is zoomed in
 	/*0x018*/ struct Pokedex pokedex;
 	/*0x028*/ u8 filler_28[0x70];
 	/*0x098*/ struct Time localTimeOffset;
@@ -579,8 +579,8 @@ struct DayCareMail
 	struct MailStructDaycare message;
 	u8 OT_name[PLAYER_NAME_LENGTH + 1];
 	u8 monName[POKEMON_NAME_LENGTH + 1];
-	u8 gameLanguage:4;
-	u8 monLanguage:4;
+	u8 gameLanguage : 4;
+	u8 monLanguage : 4;
 };
 
 struct DaycareMon
@@ -608,9 +608,9 @@ struct RecordMixingDayCareMail
 
 struct MENewsJisanStruct
 {
-	u8 unk_0_0:2;
-	u8 unk_0_2:3;
-	u8 unk_0_5:3;
+	u8 unk_0_0 : 2;
+	u8 unk_0_2 : 3;
+	u8 unk_0_5 : 3;
 	u8 berry;
 };
 
@@ -618,10 +618,10 @@ struct MENewsJisanStruct
 
 struct FameCheckerSaveData
 {
-	/*3a54*/ u16 pickState:2;
-			 u16 flavorTextFlags:12;
-			 u16 unk_0_E:2;
-			 u16 _;
+	/*3a54*/ u16 pickState : 2;
+	u16 flavorTextFlags : 12;
+	u16 unk_0_E : 2;
+	u16 _;
 };
 
 #define NUM_EASY_CHAT_EXTRA_PHRASES 33
@@ -647,9 +647,9 @@ struct MEWonderCardData
 	u16 cardId;
 	u16 unk_02;
 	u32 unk_04;
-	u8 unk_08_0:2;
-	u8 unk_08_2:4;
-	u8 shareState:2;
+	u8 unk_08_0 : 2;
+	u8 unk_08_2 : 4;
+	u8 shareState : 2;
 	u8 recvMonCapacity;
 	u8 unk_0A[40];
 	u8 unk_32[40];
@@ -696,12 +696,12 @@ struct TrainerTower
 	u32 bestTime;
 	u8 floorsCleared;
 	u8 unk9;
-	bool8 receivedPrize:1;
-	bool8 checkedFinalTime:1;
-	bool8 spokeToOwner:1;
-	bool8 hasLost:1;
-	bool8 unkA_4:1;
-	bool8 validated:1;
+	bool8 receivedPrize : 1;
+	bool8 checkedFinalTime : 1;
+	bool8 spokeToOwner : 1;
+	bool8 hasLost : 1;
+	bool8 unkA_4 : 1;
+	bool8 validated : 1;
 };
 
 struct TrainerRematchState
@@ -771,9 +771,9 @@ struct SaveBlock1 //0x202552C
 	/*0x30EC*/ struct EnigmaBerry enigmaBerry;
 	/*0x3120*/ struct MEventBuffers mysteryEventBuffers;
 	/*0x348C*/ struct Pokemon fusedReshiram;
-	/*0x34F0*/ struct Pokemon fusedZekrom;	
+	/*0x34F0*/ struct Pokemon fusedZekrom;
 	/*0x3554*/ struct Pokemon fusedSolgaleo;
-	/*0x35B8*/ struct Pokemon fusedLunala;	
+	/*0x35B8*/ struct Pokemon fusedLunala;
 	/*0x361C*/ struct RamScript ramScript;
 	/*0x3A08*/ u8 filler_3A08[0x44];
 	/*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
@@ -801,8 +801,8 @@ struct MapPosition
 struct Bitmap           // TODO: Find a better spot for this
 {
 	u8* pixels;
-	u32 width:16;
-	u32 height:16;
+	u32 width : 16;
+	u32 height : 16;
 };
 
 extern u8 gReservedSpritePaletteCount;

@@ -1,0 +1,149 @@
+#org @gText_EmmaBefore
+You will never face Brock!\nYou have to beat me first!
+
+#org @gText_EmmaBeat
+You are so strong!\nGood luck challenging Brock!
+
+#org @gText_EmmaAfter
+Brock is strong, but you\nmight be stronger!
+
+#org @gText_PewterScientist_0X17E902
+Oh, [PLAYER]!
+
+#org @gText_PewterScientist_0X17E90C
+I'm glad I caught up to you.\nI'm Prof. Oak's Aide.\pProf Oak wanted me to give this\nEevee to you.\pEevee can evolve into many different\nPok\emon. Here you go.
+
+#org @gText_PewterScientist_0X17E970
+[PLAYER] received the\nRunning Shoes from the Aide.
+
+#org @gText_NameEeveeQuestion
+Would you like to give a\nnickname to Eevee?
+
+#org @gText_RecieveEevee
+[PLAYER] recieved an Eevee\nfrom the Aid!
+
+#org @gText_PewterScientist_0X17EA06
+Well, I must be going back to\nthe Lab.\pBye-bye!
+
+#org @gText_BrockBeforeBattle
+So, you're here. I'm Brock.\nI'm Pewter's Gym Leader.\pMy rock-hard willpower is evident\neven in my Pok\emon.\pMy Pok\emon are all rock hard, and\nhave true-grit determination.\pThat's right - my Pok\emon are all\nthe Rock type!\pFuhaha! You're going to challenge\nme knowing that you'll lose?\pThat's the Trainer's honor that\ncompels you to challenge me.\pFine, then!\nShow me your best!
+
+#org @gText_BrockBeforeRematch
+So, you're back?\nWhat happened after you left?\p[.] [.] [.]\n[.] [.]\pAh, so you got all 8 gym badges!\nThat must mean you're here for a\lrematch.\pMy rock Pok\emon and I will take you\ndown!
+
+#org @gText_BrockRematchLose
+I can't believe I lost[.] again!
+
+#org @gText_BrockRematchAfter2
+I can't believe I lost to you twice[.]\n[PLAYER], I believe you can become\lthe new champion of Kanto!
+
+#org @gText_BrockRematchAfter1
+Before you go, take these items.\nThey aren't useful to me.
+
+#org @gText_IlimaHello
+Oh, hello there.\nMy name's [GREEN]Ilima[BLUE], and I come from\lthe [GREEN]Alola[BLUE] region.\pMy friend, Kukui, asked me to travel to\nKanto and report on the Pok\emon\lhere. Pretty diverse, isn't it? I've\lfound Pok\emon from every region.\pAnyways, what's your name?\n[.]\pSo it's [PLAYER]. You seem promising,\nbut first, let's have a battle!
+
+#org @gText_IlimaLost
+Well done!
+
+#org @gText_IlimaAfter
+That was a good battle, you battle\nlike a friend I know back in Alola.\pWell, [PLAYER], I got to get going.\nBye!
+
+#org @gText_WantBuyFeebas
+Hey there[.]\nWant to buy a super rare and\lpowerful Pok\emon for \$1000?
+
+#org @gText_NoFeebas
+You're missing out on an amazing\ndeal! The deal of the century!
+
+#org @gText_FeebasNoMoney
+You don't have enough money!
+
+#org @gText_RecieveFeebas
+[BLACK][PLAYER] paid \$1000 and recieved a\nFeebas[.]
+
+#org @gText_GtgFeebas
+What? Feebas isn't powerful?\nNonsense!
+
+#org @gText_HiTylerSky
+[BLUE]Hey there newbie!\nMy name's [GREEN]Tyler[BLUE] and I'm the\lgreatest trainer ever!\pWhy's that? Because I use elegant\nflying Pok\emon! Care for a [GREEN]Sky\lBattle[BLUE]? It's only fair if we both\luse flying types!
+
+#org @gText_NoTylerSky
+[BLUE]Hah! You're too weak!
+
+#org @gText_NoSkyTylerSky
+[BLUE]Bruh[.] you have no flying Pok\emon?\nHow weak can you be?
+
+#org @gText_PrepareTylerSky
+[BLUE]Prepare to be thrown to the ground!
+
+#org @gText_TylerSkyLose
+Wha?\nDo you have a GameShark? You must\lbe cheating! I'm the best trainer!
+
+#org @gText_TylerGiveTm
+[BLUE][.]\nWell, I suppose you can have this\lTM.
+
+#org @gText_TylerExplainRoost
+[BLUE]TM51 contains the move Roost.\nIt heals your Pok\emon's health, but\lremoves the flying type from it.
+
+#org @gText_AskCosmicPower
+The secrets of space[.]\nThe mysteries of earth[.]\pThere are so many things about\nwhich we know so little.\pBut that should spur us to study\nharder, not just give up.\pThe cosmic power of space is\nincredible, don't you think?\pAnyways, speaking of cosmic power, I\ncan teach the move Cosmic Power to\lany of your Pok\emon.\pShould I teach that to a Pok\emon?
+
+#org @gText_NoCosmicPower
+Is that so?\nI'm sure you'll be back for it.
+
+#org @gText_WhichMonCosmicPower
+Which Pok\emon wants to learn\nCosmic Power?
+
+#org @gText_NowKnowsCosmicPower
+Your Pok\emon now knows Cosmic Power.\
+
+#org @gText_StevenHiWeak
+Hi.\nMy name's Steven. I'm staying here\lin Kanto for a while with my Dad.\pI would battle you, but you seem a\nbit weak. Come back when you are\lstronger.
+
+#org @gText_StevenHiStrong
+Hi.\nMy name's Steven. I'm staying here\lin Kanto for a while with my Dad.\pYou seem strong. Do you want to\nhave a battle? I won't go easy!
+
+#org @gText_StevenNoBattle
+Alright, then. Come back later.
+
+#org @gText_StevenBattleBefore
+Let's do this!
+
+#org @gText_StevenLose
+I, the Hoenn Champion, fall in\ndefeat[.] Kudos to you, [PLAYER]!\lYou are truly a Noble Pok\emon\lTrainer!
+
+#org @gText_StevenAfterGive
+You remind me of a kid back in\nHoenn who also beat me, you kids\lare so strong these days[.]\pAnyways,\nyou'll probably need these Mega\lStones. They aren't of any use to\lme.
+
+#org @gText_StevenGiveItems1
+Also, you might already have these\nitems, but they could be useful if\lyou don't.
+
+#org @gText_StevenGiveMeta
+And finally, a Mega Stone for my\nfavourite Pok\emon. Don't worry, I\lhave multiple.
+
+#org @gText_StevenExplain
+The Mega Stone is for Metagross.\nWhen it mega evolves, it becomes\lsuper powerful, and gains the\lability Tough Claws.
+
+#org @gText_ICanTeachHealBell
+Hi! If you want, I can teach the\nmove [GREEN]Heal Bell[RED] to any of your\lPok\emon.\pIt'll cost, though. [GREEN]\$500[RED]. Do you\nwant it?
+
+#org @gText_No500Money
+You don't even have \$500[.]\nI feel bad for you. Come back\lanother time then.
+
+#org @gText_WhichLearnHealBell
+Which Pok\emon wants to learn Heal\nBell?
+
+#org @gText_NoHealBell
+How could you ever decline a deal\nlike that? Whatever[.]
+
+#org @gText_GotHealBell
+There you go. You now have the move\n[GREEN]Heal Bell[RED].
+
+#org @gText_Now500
+Now, the \$500, please.
+
+#org @gText_YouGave500To
+[BLACK]You gave \$500 to the girl!
+
+#org @gText_ComeBackHealBell
+Come back if you need [GREEN]Heal\nBell[RED] taught to any other Pok\emon.

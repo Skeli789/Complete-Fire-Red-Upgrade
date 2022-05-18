@@ -21,10 +21,14 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
+#include "../include/base_stats.h"
 
 extern const u8 RaidBattleIntroBGTiles[];
+extern const u8 RaidBattleIntroBGRedTiles[];
 extern const u8 RaidBattleIntroBGPal[];
 extern const u8 RaidBattleIntroBGMap[];
+extern const u8 RaidBattleIntroBGRedPal[];
+extern const u8 RaidBattleIntroBGRedMap[];
 extern const u8 RaidBattleStarTiles[];
 extern const u8 RaidBattleStarPal[];
 extern const u8 RaidBattleCursorTiles[];
@@ -575,8 +579,8 @@ static void ShowRaidPokemonSprite(void)
 static void ShowRaidPokemonTypes(void)
 {
 	u16 species = sRaidBattleIntroPtr->species;
-	u8 type1 = gBaseStats[species].type1;
-	u8 type2 = gBaseStats[species].type2;
+	u8 type1 = gBaseStats2[species].type1;
+	u8 type2 = gBaseStats2[species].type2;
 
 	blit_move_info_icon(WIN_TYPE_1, type1 + 1, 0, 2);
 	if (type1 != type2)
@@ -664,9 +668,16 @@ static void InitRaidBattleIntro(void)
 
 static void LoadRaidBattleIntroGfx(void)
 {
-	decompress_and_copy_tile_data_to_vram(2, &RaidBattleIntroBGTiles, 0, 0, 0);
-	LZDecompressWram(RaidBattleIntroBGMap, sRaidBattleIntroPtr->tilemapPtr);
-	LoadPalette(RaidBattleIntroBGPal, 0, 0x20);
+	if (FlagGet(FLAG_RED_RAID_BG)) {
+		decompress_and_copy_tile_data_to_vram(2, &RaidBattleIntroBGRedTiles, 0, 0, 0);
+		LZDecompressWram(RaidBattleIntroBGRedMap, sRaidBattleIntroPtr->tilemapPtr);
+		LoadPalette(RaidBattleIntroBGRedPal, 0, 0x20);
+	}
+	else {
+		decompress_and_copy_tile_data_to_vram(2, &RaidBattleIntroBGTiles, 0, 0, 0);
+		LZDecompressWram(RaidBattleIntroBGMap, sRaidBattleIntroPtr->tilemapPtr);
+		LoadPalette(RaidBattleIntroBGPal, 0, 0x20);
+	}
 	LoadMenuElementsPalette(0xC0, 1);
 	Menu_LoadStdPalAt(0xF0);
 }

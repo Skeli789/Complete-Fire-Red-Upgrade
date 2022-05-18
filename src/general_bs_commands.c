@@ -34,7 +34,7 @@
 #include "../include/new/stat_buffs.h"
 #include "../include/new/switching.h"
 #include "../include/new/set_z_effect.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 general_bs_commands.c
@@ -113,7 +113,6 @@ void TryUseGemFutureSight(void)
 	if (TryActivateGemBattlescript())
 		gBattlescriptCurrInstr -= 5;
 }
-
 void atk02_attackstring(void)
 {
 	u8 moveType = gBattleStruct->dynamicMoveType;
@@ -1330,7 +1329,7 @@ void atk1B_cleareffectsonfaint(void) {
 				u8 partnerAbility = ABILITY(partner);
 
 				if (IS_DOUBLE_BATTLE
-				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
+				&& (partnerAbility == ABILITY_RECEIVER)
 				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities))
 				{
 					gLastUsedAbility = partnerAbility;
@@ -1374,7 +1373,7 @@ void atk1B_cleareffectsonfaint(void) {
 					if (gCurrentMove != MOVE_STRUGGLE && Random() % 100 < GetRaidBattleRepeatedAttackChance(raidBank))
 						gNewBS->dynamaxData.attackAgain = TRUE; //Set indicator to attack again after CMD49 finishes
 
-					if ((Random() & 1)) //50 % Chance
+					/*if ((Random() & 1)) //50 % Chance
 					{
 						u8 statId, increase;
 						increase = GetRaidBattleKOStatIncreaseAmount(raidBank);
@@ -1400,7 +1399,7 @@ void atk1B_cleareffectsonfaint(void) {
 							}
 							gBankAttacker = backup;
 						}
-					}
+					}*/
 
 					#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 					if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END))
@@ -2540,7 +2539,7 @@ void atk87_stockpiletohpheal(void)
 }
 
 void atk88_negativedamage(void) {
-	if (gCurrentMove == MOVE_OBLIVIONWING || MOVE_DRAININGKISS)
+	if (gCurrentMove == MOVE_OBLIVIONWING || gCurrentMove == MOVE_DRAININGKISS)
 		gBattleMoveDamage = udivsi(75 * gHpDealt, 100);
 	else
 		gBattleMoveDamage = (gHpDealt / 2);
@@ -3511,10 +3510,18 @@ void atkAA_setdestinybond(void) {
 
 void atkAD_tryspiteppreduce(void)
 {
-	if (TrySpitePPReduce(gBankTarget, 4))
-		gBattlescriptCurrInstr += 5;
-	else
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	if (gCurrentMove == MOVE_EERIESPELL) {
+		if (TrySpitePPReduce(gBankTarget, 3))
+			gBattlescriptCurrInstr += 5;
+		else
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
+	else {
+		if (TrySpitePPReduce(gBankTarget, 4))
+			gBattlescriptCurrInstr += 5;
+		else
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
 }
 
 bool8 TrySpitePPReduce(u8 bank, u8 lostPP)
@@ -4768,24 +4775,30 @@ void atkE5_pickupitemcalculation(void) {
 	for (int i = 0; i < 6; ++i)
 	{
 		if (gPlayerParty[i].species == SPECIES_NONE) break;
-		if (gPlayerParty[i].item != ITEM_NONE) continue;
 		if (GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) continue;
 
 		u8 level = gPlayerParty[i].level;
+		if (gPlayerParty[i].item == ITEM_NONE) { 
+			switch (GetMonAbility(&gPlayerParty[i])) {
+				case ABILITY_PICKUP:
+					chance = 10; // ~10% chance of pickup to activate
+					item = ChoosePickupItem(level);
+					break;
 
-		switch (GetMonAbility(&gPlayerParty[i])) {
-			case ABILITY_PICKUP:
-				chance = 10; // ~10% chance of pickup to activate
-				item = ChoosePickupItem(level);
-				break;
+				case ABILITY_HONEYGATHER:
+					chance = 5 + 5 * udivsi((level - 1), 10);
+					item = ITEM_HONEY;
+					break;
 
-			case ABILITY_HONEYGATHER:
-				chance = 5 + 5 * udivsi((level - 1), 10);
-				item = ITEM_HONEY;
+				default:
+					chance = 0;
+					item = ITEM_NONE;
+			}
+			if (Random() % 100 < chance)
+				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
 		}
 
-		if (Random() % 100 < chance)
-			SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
+
 	}
 
 	++gBattlescriptCurrInstr;
@@ -5035,4 +5048,10 @@ void atkEE_removelightscreenreflect(void) { //Brick Break
 		gBattleScripting.animTargetsHit = 0;
 	}
 	gBattlescriptCurrInstr++;
+}
+
+void TargetHasItem(void) {
+	if (GetBankPartyData(gBankTarget)->item == ITEM_NONE) {
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 1;
+	}
 }

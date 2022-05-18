@@ -16,7 +16,7 @@
 #include "../include/new/item.h"
 #include "../include/new/overworld.h"
 #include "../include/new/read_keys.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 read_keys.c

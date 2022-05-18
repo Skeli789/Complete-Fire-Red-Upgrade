@@ -19,7 +19,7 @@
 #include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
-#include "../../include/new/util.h"
+#include "../../include/new/util2.h"
 
 /*
 ai_negatives.c
@@ -190,6 +190,12 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 		return viability; //Move Fails
 	}
 
+	//don't use poltergeist if target has no item
+	if (data->defItem == ITEM_NONE && move == MOVE_POLTERGEIST) {
+		DECREASE_VIABILITY(20);
+		return viability;
+	}
+
 	//Target Ability Checks
 	if (NO_MOLD_BREAKERS(data->atkAbility, move))
 	{
@@ -300,7 +306,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
-			case ABILITY_DAZZLING:
+			//case ABILITY_DAZZLING:
 			case ABILITY_QUEENLYMAJESTY:
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
@@ -488,7 +494,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					}
 					break;
 
-				case ABILITY_DAZZLING:
+				//case ABILITY_DAZZLING:
 				case ABILITY_QUEENLYMAJESTY:
 					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 					{
@@ -1348,7 +1354,7 @@ MOVESCR_CHECK_0:
 				case MOVE_LASERFOCUS:
 					if (IsLaserFocused(bankAtk))
 						DECREASE_VIABILITY(10);
-					else if (data->defAbility == ABILITY_SHELLARMOR || data->defAbility == ABILITY_BATTLEARMOR)
+					else if (data->defAbility == ABILITY_SHELLARMOR)
 						DECREASE_VIABILITY(8);
 					break;
 

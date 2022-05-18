@@ -14,6 +14,7 @@
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/base_stats.h"
 /*
 mega.c
 	functions that support mega evolution logic and execution
@@ -139,13 +140,13 @@ ability_t GetBankMegaFormAbility(u8 bank)
 		evos = CanMegaEvolve(bank, FALSE);
 		if (evos != NULL)
 		{
-			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Megas can only have 1 ability
+			return TryRandomizeAbility(gBaseStats2[evos->targetSpecies].ability1, evos->targetSpecies); //Megas can only have 1 ability
 		}
 
 		evos = CanMegaEvolve(bank, TRUE);
 		if (evos != NULL)
 		{
-			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Ultra Necrozma only has 1 ability
+			return TryRandomizeAbility(gBaseStats2[evos->targetSpecies].ability1, evos->targetSpecies); //Ultra Necrozma only has 1 ability
 		}
 	}
 
@@ -390,7 +391,7 @@ bool8 IsMegaSpecies(u16 species)
 bool8 IsBluePrimalSpecies(unusedArg u16 species)
 {
 	#ifdef SPECIES_KYOGRE_PRIMAL
-	return species == SPECIES_KYOGRE_PRIMAL;
+	return (species == SPECIES_KYOGRE_PRIMAL || species == SPECIES_DIALGA_PRIMAL || species == SPECIES_PALKIA_PRIMAL);
 	#else
 	return FALSE;
 	#endif

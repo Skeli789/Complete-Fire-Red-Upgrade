@@ -8,6 +8,15 @@ Time to Dynamax!\p
 #org @gText_TestTrainerDynamaxMsg
 I now shall unleash the power\nof Dynamax!\p 
 
+#org @sText_BrockRematchFirstMonDown
+Did Mega-Diance surprise you?
+
+#org @sText_BrockRematchLastSwitchIn
+C'mon my final rock type, let's win\nthis!
+
+#org @sText_BrockRematchLastLowHP
+I can't believe I'm about to lose!
+
 //For Pokemon Unbound - Feel free to remove, and do not place strings below
 #ifdef UNBOUND
 
@@ -39,3 +48,42 @@ No!\nI can't lose again!\p
 The power of Mega Evolution[.]\nCan you feel it within your reach?\p 
 
 #endif
+
+#org @gText_BrockDynamax
+It's not the end!\nTime to smash!
+
+#org @gText_MistyDynamax
+It's time for the ultimate offense of\nWater-type Pok\emon!\pDive in, my Pok\emon!
+
+#org @gText_LtSurgeDynamax
+It's not over yet. It's just\nbeginning!\pZap them with your power!
+
+#org @gText_ErikaDynamax
+I won't go easy on you!\nBloom, my precious Pok\emon!
+
+#org @gText_KogaDynamax
+I've been counting on this one from\nthe very beginning!\pLet's see how you like this!
+
+#org @gText_SabrinaDynamax
+It's time!\nWitness our power!
+
+#org @gText_BlaineDynamax
+I'll show you the spirit of my\ninferno!\pTime to Incinerate you!
+
+#org @gText_GiovanniDynamax
+I never hold back!\nI'll crush you!
+
+#org @gText_LoreleiDynamax
+Prepare yourself.\pI'll freeze you solid with my power!
+
+#org @gText_BrunoDynamax
+Fight as hard as you can 'til you\nfaint!\pHoo[.] Hah!
+
+#org @gText_AgathaDynamax
+Put your back into it!\nWoohoo!
+
+#org @gText_LanceDynamax
+All right! I thought this would\nnever happen!\pHere we come!
+
+#org @gText_ChampionDynamax
+It's not over yet!\nHere it goes!

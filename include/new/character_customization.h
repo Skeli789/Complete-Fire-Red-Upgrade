@@ -11,6 +11,9 @@
 //Exported Types
 typedef const struct EventObjectGraphicsInfo* NPCPtr;
 
+//Exported constants
+extern const struct SpritePalette* const gObjectEventSpritePalettesSwitcher[255];
+
 //Exported Functions
 u16 GetEventObjectGraphicsId(struct EventObject* eventObj);
 u16 GetBackspriteId(void);

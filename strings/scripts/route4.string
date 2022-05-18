@@ -1,0 +1,44 @@
+#org @gText_RestoreFossilsHello
+Hello! I can restore fossils for you.\nWhich fossil should I restore?
+
+#org @gText_DontHaveFossil
+Sorry, you need [GREEN]1x [BUFFER1][RED].
+
+#org @gText_GetFossilMon
+[BLACK][PLAYER] recieved the [BUFFER1] from \nthe scientist!
+
+#org @gText_ElementalPunchesHi
+Hello.\nI am the master of elemental punches.\pI can teach your Pok\emon any of the\nelemental punches. And the best part?\pI can teach the moves as many \ntimes as you want! So, shall I?
+
+#org @gText_ElementalPunchNo
+You are missing out on the power\nof the elemental punches!
+
+#org @gText_ElementalPunchSelect
+Which elemental punch should I teach?
+
+#org @gText_StrangeMeteorite
+[BLACK]It's a strange meteorite.
+
+#org @gText_DeoxysReact
+Deoxys is reacting to the meteorite[.]
+
+#org @gText_BringDeoxys
+Would you like to bring the Deoxys\nin your party closer to the\lmeteorite?
+
+#org @gText_DeoxysAttack
+Deoxys changed to have superior\nstats for attacking.
+
+#org @gText_DeoxysDefense
+Deoxys changed to have superior\nstats for defending.
+
+#org @gText_DeoxysSpeed
+Deoxys changed to have superior\nstats to out-speed other Pok\emon.
+
+#org @gText_DeoxysNormal
+Deoxys changed to have balanced\nstats.
+
+#org @gText_GiveRockSlide
+When you're up on a rocky mountain\nlike this, rockslides are a threat.\pCan you imagine?\nBoulders tumbling down on you?\pThat'd be, like, waaaaaaaaaaah!\nTotal terror!\pYou don't seem to be scared.\nHere's a TM for Rock Slide.
+
+#org @gText_HasRockSlide
+It might be scary to use it in this\ntunnel[.]

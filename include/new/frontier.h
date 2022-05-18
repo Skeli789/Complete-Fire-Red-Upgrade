@@ -210,6 +210,7 @@ struct BattleTowerSpread
 	u8 modifyMovesDoubles : 1;
 	u8 ability : 2;
 	u8 gigantamax : 1;
+	u16 level;
 };
 
 extern const struct BattleTowerSpread gFrontierSpreads[];
@@ -289,6 +290,9 @@ struct MultiRaidTrainer
 
 extern const struct MultiRaidTrainer gRaidPartners[];
 extern const u8 gNumRaidPartners;
+
+extern const struct MultiRaidTrainer gExpertBossBattles[];
+extern const u8 gNumExpertBossBattles;
 
 struct BattleSandsStreak
 {

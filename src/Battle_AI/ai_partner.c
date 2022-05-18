@@ -13,7 +13,7 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
 #include "../../include/new/general_bs_commands.h"
-#include "../../include/new/util.h"
+#include "../../include/new/util2.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
 /*

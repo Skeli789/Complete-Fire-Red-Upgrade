@@ -10,6 +10,8 @@
  *		  Values after battle.
  */
 
+extern const u16 LevelCap[];
+
 //Exported Functions
 bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd);
 

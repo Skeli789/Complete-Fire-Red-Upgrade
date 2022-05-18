@@ -31,4 +31,6 @@ void RtcReset(void);
 void RtcCalcLocalTime(void);
 void ForceClockUpdate(void);
 
+u8 __attribute__((long_call)) GetStartMenuWindowId(void);
+
 #endif // GUARD_RTC_UTIL_H

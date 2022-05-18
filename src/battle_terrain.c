@@ -14,7 +14,7 @@
 #include "../include/new/dns.h"
 #include "../include/new/frontier.h"
 #include "../include/new/overworld.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 /*
 battle_terrain.c
 	functions responsible for checking/loading/removing battle terrain

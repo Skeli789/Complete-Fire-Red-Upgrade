@@ -1,0 +1,128 @@
+#org @gText_MartHi
+Hello!\nHow may I help you?
+
+//#org @gText_MartBye
+//I hope to see you again!
+
+#org @gText_NatureChangerGreeting
+Psst!\nHey kid! Come here for a sec.\pI can change your Pok\emon's nature\nfor [RED]Free![BLUE]\pHow about it?
+
+#org @gText_NatureChangerNo
+You're missing out on a great\nopportunity!
+
+#org @gText_NatureChangerPkm
+What Pokemon should I change?
+
+#org @gText_NatureChangerAsk
+Which nature do you want?
+
+#org @gText_NatureChangerBye
+Your Pok\emon's nature has been \nchanged. Come back soon!
+
+#org @gText_NatureChangerComeBackSoon
+Come back soon!
+
+#org @gText_BallChangerAsk
+What ball should I change to?
+
+#org @gText_DontHaveBall
+Sorry, you do not have at least\n1 [BUFFER1]
+
+#org @gText_BallChanged
+[BUFFER1]'s ball was changed to a\n[BUFFER2]!
+
+#org @gText_AskBallChanger
+Hello there. I am the master of\nPok\eballs, I can change any\lPok\emon's ball to another if you\lhave it.\pWould you like me to do it?
+
+#org @gText_BallSelectAPokemon
+Select a Pok\emon.
+
+#org @gText_LittleGirlFoundShiny
+I found a shiny stone on the floor,\nbut I don't know what it does.\pDo you want it?
+
+#org @gText_GetPidgeotite
+[BLACK][PLAYER] recieved the Pidgeotite from\nthe little girl!
+
+#org @gText_LittleGirlTalk
+Have you found out what it does?
+
+#org @gText_TMShopHi
+Welcome!\pHow may I help you?
+
+#org @gText_TMShopBye
+Please come again!
+
+#org @gText_MallowBefore
+I wonder if there's a forest here in\nKanto[.]
+
+#org @gText_MallowHiThere
+Oh, hi there!\nWho are you?\p[.] [.] [.] [.]\nYou're [PLAYER]? Nice to meet you!\lI'm [GREEN]Mallow[RED] and I come from the\l[GREEN]Alola[RED] region!\pI'm searching for forests here in the\nKanto region, but there seems to\lbe none.\p[.] [.] [.] [.]\nWait, there's a forest here called\lViridian Forest? Cool! Where is it?\p[.] [.]\nYou want to battle first? Sure!
+
+#org @gText_MallowLose
+Oh no! I lost!
+
+#org @gText_MallowGiveTM
+So, where's Viridian Forest?\n[.] [.] [.]\pIt's near Viridian and Pewter City?\nThanks! You can have this TM\lsince you helped me.
+
+#org @gText_MallowBye
+I'm going to go to Viridian Forest\nnow. See ya!
+
+#org @gText_ErikaRematchLose
+[.] I must've dozed off mid-battle[.]\nHow'd I lose again?
+
+#org @gText_ErikaBeforeRematch
+Hello[.]\nLovely weathe-\pWait, you're [PLAYER], aren't you?\nIt's been so long since we last\lbattled[.]\pSo, do you want to have a rematch?
+
+#org @gText_ErikaNoBattle
+No? okay, then[.]
+
+#org @gText_ErikaRematchAfter1
+Oh[.] you beat me again[.]\nTake these items, I don't need them\lanymore.
+
+#org @gText_ErikaRematchAfter2
+Have you tried challenging the Elite\nFour yet?\pThey may be strong but you could be\nstronger[.]
+
+#org @gText_DavidBefore
+Hi. I'm David, and I'm a Dragon\nMaster.\pMy Dragon types can eliminate any\nother Pok\emon.\pInfact, I've never lost a battle.\nWant to try me?
+
+#org @gText_DavidNo
+Guess I'll keep my win streak then.
+
+#org @gText_DavidLose
+My first loss[.]
+
+#org @gText_DavidGive
+[.]\pWell, since you were the first to\nbeat me, I guess you can have this\lMega Stone.
+
+#org @gText_DavidExplain
+The Altarianite allows Altaria to\nMega Evolved.\pWhen Mega Evolved, Altaria becomes\nstronger both offensively and\ldefensively, and also gains the\lFairy Type.
+
+#org @gText_CantEggNature
+I can't change an egg's nature!
+
+#org @gText_TeachFocusEnergy
+Hello. I can teach the move [GREEN]Focus\nEnergy[BLUE] to your Pok\emon.\pMay I?
+
+#org @gText_HazardTutor
+I can teach hazard moves and\nterrain moves to your Pok\emon.\pDo you want me to?
+
+#org @gText_ComeBackPowerful
+Come back if you need these powerful\nmoves!
+
+#org @gText_PledgeTutor
+Moves that only select Pok\emon can\nlearn[.]\pThey are called battle-combo\nmoves.\pDo you want your Pok\emon to learn\none of them?
+
+#org @gText_SeeYouNextTime
+I see[.]\nWell, see you next time.
+
+#org @gText_WhatMoveLearn
+What move do you want to learn?
+
+#org @gText_WhichMovePledge
+Which Pok\emon should learn my move?
+
+#org @gText_YesPledge
+Battle-combo moves[.]\pHow you combine them with eachother\nis the key to using them well! 
+
+#org @gText_ItsASlotMachine
+A slot machine!\pYou're underage, though.

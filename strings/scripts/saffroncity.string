@@ -1,0 +1,260 @@
+#org @gText_LadyTVStatic
+Our TV hasn't been working for over\na week.\pCould you try and fix it?
+
+#org @gText_ManTVStatic
+Our TV is broken. I payed a man to\nfix it, but he just left and\lscammed me!\pCould you fix our TV trainer?
+
+#org @gText_RotomThump
+[BLACK]Inside the TV[.]\nThere appears to be a Pok\emon?[.]\pThe Pok\emon appears as if it will\ncome out. Want to thump the TV?
+
+#org @gText_RotomThumped
+[BLACK][PLAYER] thumped the TV set!
+
+#org @gText_TVOn
+[BLACK]The TV turned on!
+
+#org @gText_TV
+[BLACK]There are multiple Pok\emon on the\nTV.
+
+#org @gText_LadyTVStaticOff
+Thank you so much for helping fix\nour TV!
+
+#org @gText_ManTVStaticOff
+So, there was a Pok\emon in the TV?\nInteresting.
+
+#org @gText_RotomComeBackSoon
+Come back soon!
+
+#org @gText_RotomNotRotom
+Sorry, but that is not a Rotom.
+
+#org @gText_NotARotom
+Sorry, that is not a\n[GREEN]Rotom.
+
+#org @gText_RotomSpecialMove
+Would you like [GREEN]Rotom [BLUE]to learn it's\n[GREEN]Special Move[BLUE]?\pThis will overwrite move slot 4.
+
+#org @gText_RotomAsk
+Hello there. I can change\n[GREEN]Rotom's [BLUE]Form. Do you want me to do\lit?
+
+#org @gText_SelectRotom
+Please select [GREEN]Rotom [BLUE]or a form of\n[GREEN]Rotom[BLUE].
+
+#org @gText_SelectRotomForm
+What form should [GREEN]Rotom [BLUE]Change into?
+
+#org @gText_ChangedForm
+[GREEN]Rotom [BLUE]changed form!
+
+#org @gText_RotomLearnt
+[BLACK][BUFFER1] learnt [BUFFER2]!
+
+#org @gText_PoipoleGiverAsk
+Oh, hello there.\nWould you be kind enough to\llisten to me talk about a Pok\emon?
+
+#org @gText_PoipoleGiverTalk
+This is the Pok\emon [GREEN]Poipole[RED].\nIt is a Poison type\lPok\emon. It is also an ultra beast.\pIt has the unique ability "Beast\nBoost\", which boosts the highest\lstat after a faint.\pI also hear it can evolve, but that\nmight be false.\pI found this poor guy lying on the\nroad, but i'm no trainer. Could you\ltake care of him for me?
+
+#org @gText_PoipoleGiverRecieve
+[BLACK][PLAYER] recieved the Poipole!
+
+#org @gText_HasPoipole
+How is Poipole going?\nHas it evolved yet?
+
+#org @gText_GreninjaAsk
+Oh, hello there. They call me the\nmaster of [GREEN]Greninja[BLUE].\pI can change [GREEN]Greninja[BLUE]'s ability to\n[GREEN]Battle Bond[BLUE] if you have [GREEN]Protean\l[BLUE]or [GREEN]Torrent[BLUE], or vice versa.\pDo you want me to do it?
+
+#org @gText_ComeBackGreninja
+Oh, okay then. Come back when you\nneed a [GREEN]Battle Bond Greninja[BLUE].
+
+#org @gText_ThatsNoGreninja
+That's no [GREEN]Greninja[BLUE]!
+
+#org @gText_AbilityBattlebond
+[BLACK]Greninja's ability was changed to\nBattle Bond!
+
+#org @gText_AbilityProtean
+[BLACK]Greninja's ability was changed to\nProtean!
+
+#org @gText_AbilityTorrent
+[BLACK]Greninja's ability is Torrent[.]\nIt must be Battle Bond or Protean.
+
+#org @gText_BuyAbilityPatch
+Hi! I've made 2 items, the [GREEN]Ability\nPatch [BLUE]and the [GREEN]Ability Pill[BLUE]!\pI'm selling them. Want to buy one?
+
+#org @gText_EVResetAsk
+Hi there!\nI can reset the [GREEN]EVs [BLUE]of any\lPok\emon.\pDo you need [GREEN]EVs[BLUE] reset?
+
+#org @gText_EVResetComeBack
+Come back when you need [GREEN]EVs[BLUE] reset!
+
+#org @gText_EVResetAskMon
+What Pok\emon should I reset?
+
+#org @gText_EVReset
+Your Pok\emon's [GREEN]EV[BLUE] has been reset!\nCome back when you need [GREEN]EVs[BLUE] reset!
+
+#org @gText_EggMoveHi
+Hi there! I can teach a Pok\emon its\negg moves. Do you need any egg\lmoves?
+
+#org @learn_special_move_string
+[BUFFER1] learned [BUFFER2]!
+
+#org @forgot_special_move_string
+[BUFFER1] forgot [BUFFER2]!
+
+#org @try_to_learn_move_string
+[BUFFER1] is trying to\nlearn [BUFFER2].\pBut, it can't learn\nmore than 4 moves.\pDelete a move to make\nroom for [BUFFER2]?
+
+#org @pff_move_string
+.
+
+#org @gText_RotomBoxes
+[BLACK]It's full of cardboard boxes with\nelectrical appliances in them.
+
+#org @gText_RotomInvestigate
+[BLACK]Oh? Rotom would like to investiage the\nmotors of the electrical appliances[.]\pIs that OK?
+
+#org @gText_SelectMotor
+[BLACK]Which appliance's motor will you allow\nRotom to enter?
+
+#org @gText_RotomEntered
+[BLACK]Rotom entered the motor.
+
+#org @gText_LearnSpace
+[BLACK]Rotom is trying to learn\n[BUFFER1], but it can't learn\lmore than 4 moves.\pDelete a move to make room\nfor [BUFFER1]?
+
+#org @gText_RotomLearned
+[BLACK]Rotom learned [BUFFER1]!
+
+#org @gText_RotomEmerged
+[BLACK]Rotom emerged from the motor.
+
+#org @gText_RotomForgot
+[BLACK]Rotom forgot the move[.]
+
+#org @gText_RotomLearned2
+[BLACK]and learned [BUFFER1] instead!
+
+#org @gText_WantChangePikachu
+Hi There!\nDid you know Pikachu had multiple\lforms? Each of these learn\lexclusive moves!\pI can change Pikachu's form. Want me\nto do it?
+
+#org @gText_ChoosePikachu
+Please select Pikachu or a form of\nPikachu.
+
+#org @gText_ComeBackPikachu
+Come back if you need Pikachu's form\nchanged!
+
+#org @gText_ThatsNoPikachu
+That's not a Pikachu!
+
+#org @gText_SelectPikachuForm
+[BLACK]Which form should Pikachu change to?
+
+#org @gText_PikachuChangedForms
+[BLACK]Pikachu changed forms!
+
+#org @gText_LearnSpacePikachu
+[BLACK]Pikachu is trying to learn\n[BUFFER1], but it can't learn\lmore than 4 moves.\pDelete a move to make room\nfor [BUFFER1]?
+
+#org @gText_PikachuLearned
+[BLACK]Pikachu learned [BUFFER1]!
+
+#org @gText_PikachuForgot
+[BLACK]Pikachu forgot the move[.]
+
+#org @gText_PikachuLearned2
+[BLACK]and learned [BUFFER1] instead!
+
+#org @gText_PikachuChangedBack
+[BLACK]Pikachu returned to it's default form.
+
+#org @gText_WantThroh
+You want Throh?
+
+#org @gText_WantSawk
+You want Sawk?
+
+#org @gText_GiveThunderWaveTM
+Eeek!\nNo! Stop! Help!\pOh, you're not with Team Rocket.\nI'm sorry, I thought[.]\pWill you forgive me if I teach\nyou the Thunder Wave technique?
+
+#org @gText_ThunderWaveNO
+Oh[.]\nBut Thunder Wave is convenient[.]
+
+#org @gText_ThunderWaveTalk
+Thunder Wave causes paralysis in\nthe target Pok\emon.\pA paralyzed Pok\emon may be unable\nto move in battle.\pIt's an Electric-type move, so it\nwon't work on some Pok\emon.
+
+#org @gText_JasmineLose
+I can't believe my Trick Room team\nwas defeated[.]
+
+#org @gText_JasmineBefore
+Heya!\nThe name's Jasmine. I love the move\lTrick Room. I have over 30 TMs of\lit, it's just simply amazing, isn't\lit?\pIf you can beat me, I'll give you\none of those TMs. What do you\lthink?
+
+#org @gText_JasmineNo
+You sure you don't want that TM?
+
+#org @gText_JasmineHereTM
+Here's the TM.
+
+#org @gText_ExplainTrickRoom
+Trick Room is a move that makes\nslower Pok\emon move first for 5\lturns. It's pretty cool, and\lpowerful if you design a team\laround it.
+
+#org @gText_UWantedThisMrPsychic
+And you also wanted this!
+
+#org @gText_GotAlakazite
+[PLAYER] received an Alakazite\nfrom Mr. Psychic.
+
+#org @gText_AlakaziteExplain
+You already know, don't you?\nThe Alakazite is a Mega Stone.\pIt's used to Mega Evolve Alakazam.\nWhen Mega Evolved, Alakazam\lbecomes even more powerful!
+
+#org @gText_SabrinaBeforeRematch
+I had a vision of your arrival, once\nagain.\pIt seems you want to have another\nbattle.\pThis time, I shall show you all of\nmy power!
+
+#org @gText_SabrinaRematchLose
+Just as I thought. When I had the\nvision of your arrival, I also had\la vision of you winning. I tried as\lhard as I could, but a loss is a\lloss.
+
+#org @gText_SabrinaRematchAfter2
+TM104 contains the move Psyshock.\nPsyshock deals damage based on\lDefense, not Special Defense.
+
+#org @gText_SabrinaRematchAfter1
+Wait, before you go, take this TM,\nand battle items.
+
+#org @gText_ThatsAnEgg2
+That's an egg.
+
+#org @gText_ScramKubfu
+I've been told to not let anyone\nthrough, unless they are strong\lenough. Scram!
+
+#org @gText_GoThroughKubfu
+I've been told to not let\nanyone through, unless they are\lstrong enough.\p[.]\nYou have 8 badges? Let me see!\p[.] [PAUSE][20] [.]\nWow, you really do[.]\lWell, go ahead. You seem strong\lenough.
+
+#org @gText_KubfuBall
+[BLACK]This Pok\eball contains the Pok\emon\n[GREEN]Kubfu[BLACK]. Do you want to take it?
+
+#org @gText_PlayerObtainedKubfu
+[PLAYER] obtained a Kubfu!
+
+#org @gText_GalarFossil
+Hi there[.]\nA while ago I found a bunch of\lfossils and combined them to make\lnew Pok\emon, but all my friends say\lthey are abominations[.]\pI think they're pretty cool though.\pI've got a bunch of them and I'm a\nlittle low on cash. Would you like\lto buy any of them?
+
+#org @gText_WhichFossilGalar
+Which of these Pok\emon would you\nlike to buy?
+
+#org @gText_NevermindGalarFossil
+Oh[.]\nCome back if you ever need an\lextra Pok\emon then[.]
+
+#org @gText_SoBuyBuffer1
+So you'd like to buy a [BUFFER1]?\nIt costs \$15,000.
+
+#org @gText_NotEnoughBuyBuffer1
+Sorry, you don't have enough money\nto buy a [BUFFER1].
+
+#org @gText_PlayerRecievedBuffer1
+[PLAYER] received a [BUFFER1]!
+
+#org @gText_HopeYOuEnjoyBuffer1
+Hope you enjoy using [BUFFER1]!
+
+#org @gText_ImbestTutor
+I'm the best move tutor!\pCompared to others, they are\nnothing!\pMay I teach your Pok\emon a move?

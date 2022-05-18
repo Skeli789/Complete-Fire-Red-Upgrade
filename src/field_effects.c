@@ -12,7 +12,7 @@
 
 #include "../include/new/dexnav.h"
 #include "../include/new/overworld.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 #define gFieldEffectObjectPaletteInfo1 (void*) 0x83A5348
 #define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)

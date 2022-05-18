@@ -8,7 +8,7 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/move_battle_scripts.h"
 /*
@@ -186,6 +186,11 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 contact = CheckContact(move, bankAtk);
 	u8 target = gBattleMoves[move].target;
 	u8 defSide = SIDE(bankDef);
+
+	if (contact && ABILITY(bankAtk) == ABILITY_UNSEENFIST)
+	{
+		protectFlag = 0;
+	}
 
 	if (ProtectedByMaxGuard(bankDef, move))
 	{

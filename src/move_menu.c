@@ -21,8 +21,9 @@
 #include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/text.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/z_move_effects.h"
+#include "../include/base_stats.h"
 
 /*
 move_menu.c
@@ -71,16 +72,16 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 	[B_POSITION_PLAYER_LEFT] =
 	{
 		[TRUE] = {221, 86}, 	//Single Battle
-		[FALSE] = {144, 70},	//Double Battle
+		[FALSE] = {142, 71},	//Double Battle
 	},
 	[B_POSITION_OPPONENT_LEFT] =
 	{
 		[TRUE] = {20, 26}, 		//Single Battle
-		[FALSE] = {97, 14},		//Double Battle
+		[FALSE] = {100, 15},		//Double Battle
 	},
 	[B_POSITION_PLAYER_RIGHT] =
 	{
-		[FALSE] = {156, 96},	//Double Battle
+		[FALSE] = {154, 96},	//Double Battle
 	},
 	[B_POSITION_OPPONENT_RIGHT] =
 	{
@@ -1895,6 +1896,22 @@ void HandleInputChooseAction(void)
 			ActionSelectionCreateCursorAt(gActionSelectionCursor[gActiveBattler], 0);
 		}
 	}
+	else if (gMain.newKeys & R_BUTTON)
+	{
+		PlaySE(SE_SELECT);
+
+
+		if ((IS_DOUBLE_BATTLE)
+			&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+			&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+			&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
+			&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
+			goto CANCEL_PARTNER;
+
+		EmitTwoReturnValues(1, ACTION_RUN, 0);
+
+		PlayerBufferExecCompleted();
+	}
 	else if (gMain.newKeys & B_BUTTON)
 	{
 		if ((IS_DOUBLE_BATTLE)
@@ -1949,6 +1966,9 @@ bool8 IsBagDisabled(void)
 
 static void TryLoadTypeIcons(void)
 {
+	//if (IsRaidBattle() || IS_DOUBLE_BATTLE) {
+	//	return;
+	//}
 	#ifndef HEALTHBAR_TYPE_ICONS
 	if (((gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
 	#ifdef FLAG_HEALTHBAR_TYPE_ICONS
@@ -1977,7 +1997,7 @@ static void TryLoadTypeIcons(void)
 
 				u8* type1Ptr;
 				if (gStatuses3[GetBattlerAtPosition(position)] & STATUS3_ILLUSION && !(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS))
-					type1Ptr = &gBaseStats[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
+					type1Ptr = &gBaseStats2[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
 				else
 					type1Ptr = &gBattleMons[GetBattlerAtPosition(position)].type1;
 

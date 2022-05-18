@@ -19,7 +19,7 @@
 #include "../include/new/item.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/overworld.h"
 
 /**

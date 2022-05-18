@@ -23,8 +23,9 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/overworld.h"
 #include "../include/new/roamer.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/wild_encounter.h"
+#include "../include/base_stats.h"
 /*
 wild_encounter.c
 	handles functions related to wild encounter probability and associated features
@@ -73,10 +74,23 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u
 static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex, u8 monsCount);
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
+static u8 GetAverageLevel(void);
+
 
 #ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
 static u8 GetLowestMonLevel(const struct Pokemon* const party);
 #endif
+
+static u8 GetAverageLevel(void)
+{
+	u8 average = 0;
+	u8 count = gPlayerPartyCount;
+	for (int i = 0; i < count; i++) {
+		average += gPlayerParty[i].level;
+	}
+	average /= count;
+	return average;
+}
 
 static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 {
@@ -86,14 +100,20 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	u8 rand;
 	u8 fluteBonus;
 
-	#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
-	if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
+	//#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
+	//if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
 	{
-		min = GetLowestMonLevel(gPlayerParty);
-		max = GetLowestMonLevel(gPlayerParty);
+		if (gPlayerPartyCount == 1) {
+			min = GetLowestMonLevel(gPlayerParty) - 3;
+			min = GetLowestMonLevel(gPlayerParty) - 2;
+		}
+		else {
+			min = GetAverageLevel() - 3;
+			max = GetAverageLevel() - 2;
+		}
 	}
-	else
-	#endif
+	//else
+	//#endif
 	//Make sure minimum level is less than maximum level
 	if (wildPokemon->maxLevel >= wildPokemon->minLevel)
 	{
@@ -128,7 +148,21 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 				min = 1;
 			break;
 	}
-
+	u16 level;
+	for (int i = 0; i < gPlayerPartyCount; i++) {
+		level += gPlayerParty[i].level;
+	}
+	level /= gPlayerPartyCount;
+	if(min <= level && max <= level) {
+		min = level - 3;
+		max = level - 2;
+		if (min == 1 || min == 0) {
+			min = 2;
+		}
+		if (max == 1 || max == 0 || max == 2) {
+			max = 3;
+		}
+	}
 	//Check ability for max level mon
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{
@@ -142,7 +176,6 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 				--rand;
 		}
 	}
-
 	return min + rand;
 }
 
@@ -162,13 +195,13 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void)
 		u32 i;
 
 		const struct WildPokemonHeader* headerTable = NULL;
-
-		if (IsNightTime())
-			headerTable = gWildMonNightHeaders;
-		else if (IsMorning())
+		
+		if (IsMorning() || IsDayTime()) {
 			headerTable = gWildMonMorningHeaders;
-		else if (IsEvening())
+		}
+		if (IsEvening() || IsNightTime()) {
 			headerTable = gWildMonEveningHeaders;
+		}
 
 		if (headerTable != NULL) //Not Daytime
 		{
@@ -271,7 +304,7 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	else
 		enemyMonIndex = 1;
 
-	switch (gBaseStats[species].genderRatio) {
+	switch (gBaseStats2[species].genderRatio) {
 		case MON_MALE:
 		case MON_FEMALE:
 		case MON_GENDERLESS:
@@ -1050,7 +1083,7 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u
 
 	for (validMonCount = 0, i = 0; i < numMon; i++)
 	{
-		if (gBaseStats[wildMon[i].species].type1 == type || gBaseStats[wildMon[i].species].type2 == type)
+		if (gBaseStats2[wildMon[i].species].type1 == type || gBaseStats2[wildMon[i].species].type2 == type)
 			validIndexes[validMonCount++] = i;
 	}
 

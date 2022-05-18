@@ -1,0 +1,104 @@
+#org @gText_CeruleanEggHi
+Hello. Do you want to buy a Pok\emon\negg for \$5000?
+
+#org @gText_CeruleanEggBye
+Okay, bye then.
+
+#org @gText_CeruleanEggNoMoney
+Sorry, you don't have enough money.
+
+#org @gText_GetEgg
+[BLACK][PLAYER] recieved the egg from the\nold man.
+
+#org @gText_MartHelpYou
+Hi, there!\nMay I help you?
+
+#org @gText_MartBye
+Please come again!
+
+#org @gText_CeruleanTutorAsk
+Hello there trainer!\n[GREEN]Misty[BLUE]'s gym is up next, you'll\lprobably need some powerful moves\lto beat her.\pI can teach said powerful moves to\nyour Pok\emon, want to?
+
+#org @gText_TutorWhichMove
+What move do you want?
+
+#org @gText_RematchAskMisty
+[PLAYER], you've finally visited me!\nAre you back for a rematch? My\lPok\emon and I are dying for a\lrematch!
+
+#org @gText_MistyLoseRematch
+Washed out again!
+
+#org @gText_MistyLoseAfter2
+Good luck challenging the Elite 4,\n[PLAYER]!
+
+#org @gText_MistyLoseAfter1
+[.]\nYou beat me again!\pWell, I have some items that might\nbe of value to you. Here you go!
+
+#org @gText_RecieveScald
+[BLACK][PLAYER] recieved TM83\nfrom Misty.
+
+#org @gText_ScaldDesc
+TM83 teaches Scald. It sometimes\nburns the opposing Pok\emon.\pUse it on an aquatic Pok\emon!
+
+#org @gText_LanaBeforeBattle
+Oh[.] hi there.\nWhat am I doing in someone's\lbackyard? Um[.] umm don't ask.\pSo, what's your name? I'm [GREEN]Lana[RED].\n[.] [.]\pYou're [PLAYER]? N-nice to meet you.\nSo, w-want to battle?
+
+#org @gText_LanaLose
+Well! You certainly reeled me in.
+
+#org @gText_LanaGiveItem
+Well, I got to go now, but before\nI go, take this item. It powers up\lwater moves.
+
+#org @gText_AskHelpSlowbro
+Hello there trainer, please, can you\nhelp me?
+
+#org @gText_NoHelpSlowbro
+Please[.]
+
+#org @gText_QuestSlowbro
+My Pok\emon and friend, Slowbro, has\ngone missing.\pEver since my wife died, he's all\nI've had. She caught a Slowpoke as\la pet 6 years ago. I can't lose\lhim forever, I just wouldn't know\lwhat to do[.]\pSo, please find Slowbro. Take his\npokeball, he loves being in there.
+
+#org @gText_RecieveBallSlowbro
+[BLACK][PLAYER] recieved Slowbro's\nPok\eball!
+
+#org @gText_IllGive50000
+Please find Slowbro, if you find him,\ni'll give you [GREEN]\$50,000[BLUE].
+
+#org @gText_SlowbroTalk
+Sloow[.]?
+
+#org @gText_SlowbroInBall
+[BLACK]Slowbro got in the Pok\eball!
+
+#org @gText_SlowbroFound
+What's that?\nYou found Slowbro?!\pTake him out of his ball!
+
+#org @gText_Heres50000
+It really is him!\nThank you so much[.]\pHere's the \$50,000 I promised.
+
+#org @gText_50000
+[BLACK][PLAYER] recieved \$50,000!
+
+#org @gText_ThnaksSlowbro
+Thank you so much for finding\nSlowbro!
+
+#org @gText_GoBehindBillsHouse
+[BLACK]There seems to be a hidden area\nbehind Bill's house. You can just\lbarely crawl in.\pWant to?
+
+#org @gText_trade_Thanksalot
+Thanks man!\nI really mean it!
+
+#org @gText_trade_Not2
+That's not [BUFFER1]\nYou have it or not?
+
+#org @gText_trade_Too2
+Darn, I wanted one [BUFFER1]!
+
+#org @gText_trade_Yesno
+Hey there!\nDo you have a [BUFFER1]?\lWant to trade it for my\l[BUFFER2]?
+
+#org @gText_trade_Old
+I miss [BUFFER2]\nYour [BUFFER1] is doing fine.
+
+#org @gText_MySonOldAmber
+My son in [GREEN]Fuschia City[BLUE] can turn Old\nAmbers into Pok\emon.\pIf you ever find an Old Amber, you\nshould ask him to restore it.

@@ -6,8 +6,10 @@
 #include "../include/new/dns.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/base_stats.h"
+#include "../include/constants/items.h"
 /*
 form_change.c
 	functions/structures/arrays that handle species that change form
@@ -43,6 +45,72 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_MINIOR_SHIELD,
 	SPECIES_TABLES_TERMIN
 };
+
+void HeroDuoFormsInit(pokemon_t* party)
+{
+	u8 i, j;
+	for(i = 0; i < PARTY_SIZE; ++i)
+	{
+		pokemon_t* mon = &party[i];
+		if(mon->species == SPECIES_ZACIAN && mon->item == ITEM_RUSTED_SWORD)
+		{
+			mon->species = SPECIES_ZACIAN_CROWNED;
+			CalculateMonStats(mon);
+			for (j = 0; j < MAX_MON_MOVES; ++j)
+			{
+				if (mon->moves[j] == MOVE_IRONHEAD)
+					break;
+			}
+			if (j != MAX_MON_MOVES) //Zacian knows Iron Head
+			{
+				SetMonMoveSlot(mon, MOVE_BEHEMOTHBLADE, j);
+			}
+		}
+		if(mon->species == SPECIES_ZAMAZENTA && mon->item == ITEM_RUSTED_SHIELD)
+		{
+			mon->species = SPECIES_ZAMAZENTA_CROWNED;
+			CalculateMonStats(mon);
+			for (j = 0; j < MAX_MON_MOVES; ++j)
+			{
+				if (mon->moves[j] == MOVE_IRONHEAD)
+					break;
+			}
+			if (j != MAX_MON_MOVES) //Zacian knows Iron Head
+			{
+				SetMonMoveSlot(mon, MOVE_BEHEMOTHBASH, j);
+			}
+		}
+	}
+}
+
+void HeroDuoRevert(pokemon_t* party)
+{
+	u8 i, j;
+	for(i = 0; i < PARTY_SIZE; ++i)
+	{
+		pokemon_t* mon = &party[i];
+		if(mon->species == SPECIES_ZACIAN_CROWNED)
+		{
+			mon->species = SPECIES_ZACIAN;
+			CalculateMonStats(mon);
+			for (j = 0; j < MAX_MON_MOVES; ++j)
+			{
+				if (mon->moves[j] == MOVE_BEHEMOTHBLADE)
+					SetMonMoveSlot(mon, MOVE_IRONHEAD, j);
+			}
+		}
+		if(mon->species == SPECIES_ZAMAZENTA_CROWNED)
+		{
+			mon->species = SPECIES_ZAMAZENTA;
+			CalculateMonStats(mon);
+			for (j = 0; j < MAX_MON_MOVES; ++j)
+			{
+				if (mon->moves[j] == MOVE_BEHEMOTHBASH)
+					SetMonMoveSlot(mon, MOVE_IRONHEAD, j);
+			}
+		}
+	}
+}
 
 //This file's functions:
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility)
@@ -81,8 +149,8 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 			UpdateTypesForCamomons(bank);
 		else
 		{
-			gBattleMons[bank].type1 = gBaseStats[species].type1;
-			gBattleMons[bank].type2 = gBaseStats[species].type2;
+			gBattleMons[bank].type1 = gBaseStats2[species].type1;
+			gBattleMons[bank].type2 = gBaseStats2[species].type2;
 		}
 
 		gBattleMons[bank].type3 = TYPE_BLANK;
@@ -369,6 +437,22 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 	u8 type = ItemId_GetHoldEffectParam(item);
 
 	switch(species) {
+		case SPECIES_DIALGA:
+			if (itemEffect == ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA_PRIMAL;
+			break;
+		case SPECIES_DIALGA_PRIMAL:
+			if (itemEffect != ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA;
+			break;
+		case SPECIES_PALKIA:
+			if (itemEffect == ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA_PRIMAL;
+			break;
+		case SPECIES_PALKIA_PRIMAL:
+			if (itemEffect != ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA;
+			break;
 		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
 		case SPECIES_GIRATINA:
 			if (itemEffect == ITEM_EFFECT_GRISEOUS_ORB)

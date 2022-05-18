@@ -9,3 +9,57 @@ Battle ends if:\n4 Pok\emon faint\n10 turns pass
 
 #org @gText_RaidBattleChoosePartner
 Available Partners
+
+#org @gText_PartnerTeamedUp
+[BLACK]A wild Pok\emon come out of the den!
+
+#org @gText_StartRaidBattle
+[BLACK]The den emits mysterious energy[.]\nWant to look inside?
+
+#org @sTrainerName_Greg
+Greg
+
+#org @sTrainerName_Catherine
+Catherine
+
+#org @sTrainerName_Tasha
+Tasha
+
+#org @gText_DenEmpty
+[BLACK]The den is empty.
+
+#org @sTrainerName_Ash
+Ash
+
+#org @sTrainerName_Lyra
+Lyra
+
+#org @sTrainerName_Fox
+Fox
+
+#org @sTrainerName_Talia
+Talia
+
+#org @gText_JoinedYouTake
+[BLACK]Pok\emon Trainer [BUFFER1]\njoined you to take on [BUFFER2]!
+
+#org @sTrainerName_Juniper
+Juniper
+
+#org @sTrainerName_Kai
+Kai
+
+#org @sTrainerName_Skye
+Skye
+
+#org @sTrainerName_Cynthia
+Cynthia
+
+#org @sTrainerName_Mei
+Mei
+
+#org @sTrainerName_Fernando
+Fernando
+
+#org @sTrainerName_May
+May

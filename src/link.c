@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/link.h"
 /*
 link.c

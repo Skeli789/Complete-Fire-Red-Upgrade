@@ -19,7 +19,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 cmd49.c
@@ -649,6 +649,20 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				++gBattleScripting.multihitString[4];
 				if (--gMultiHitCounter == 0)
 				{
+					if (gCurrentMove == MOVE_SCALESHOT && !SheerForceCheck()) {
+						if (STAT_CAN_RISE(gBankAttacker, STAT_STAGE_SPEED)) {
+							PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
+							gEffectBank = gBankAttacker;
+							gBattleScripting.bank = gBankAttacker;
+							gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
+							gBattleScripting.animArg1 = 0xE + STAT_STAGE_SPEED;
+							gBattleScripting.animArg2 = 0;
+
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ScaleShot;
+							effect = 1;
+						}
+					}
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
 					effect = 1;
@@ -798,6 +812,29 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Moxie;
+						effect = 1;
+					}
+					break;
+
+				case ABILITY_GRIMNEIGH:
+					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
+						&& gBattleMons[bankDef].hp == 0
+						&& BATTLER_ALIVE(gBankAttacker)
+						&& TOOK_DAMAGE(bankDef)
+						&& MOVE_HAD_EFFECT
+						&& STAT_CAN_RISE(gBankAttacker, STAT_STAGE_SPATK)
+						&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
+					{
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
+
+						gEffectBank = gBankAttacker;
+						gBattleScripting.bank = gBankAttacker;
+						gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPATK;
+						gBattleScripting.animArg1 = 0xE + STAT_STAGE_SPATK;
+						gBattleScripting.animArg2 = 0;
+
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_GrimNeigh;
 						effect = 1;
 					}
 					break;

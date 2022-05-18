@@ -150,6 +150,9 @@ Neither Pok\emon can run away!
 #org @gText_ItemIncreasedSpeedBracket
 [SCRIPTING_BANK] can act\nfaster, thanks to its [LAST_ITEM]!
 
+#org @gText_AbilityIncreasedSpeedBracket
+[SCRIPTING_BANK] can act\nfaster, thanks to Quick Draw!
+
 #org @gText_MeteorBeamCharge
 [ATTACKER] is\noverflowing with space power!
 
@@ -373,3 +376,11 @@ The storm is getting too strong to\nwithstand!
 #org @gText_RaidMonRanAway
 [PLAY_SE][11][00][FD][06] disappeared\nsomewhere[.]\p
 
+#org @gText_TargetTrappedThunderCage
+[ATTACKER] trapped [TARGET]!
+
+#org @gText_TargetSplinters
+Jagged splinters dug into\n[TARGET]!
+
+#org @gText_StormOfLeaves
+A storm of leaves surrounded\n[TARGET]!

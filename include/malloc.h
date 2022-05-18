@@ -22,4 +22,6 @@ void Free(void *pointer);
 void InitHeap(void *pointer, u32 size);
 */
 
+void __attribute__((long_call)) *Alloc(u32);
+
 #endif // GUARD_MALLOC_H

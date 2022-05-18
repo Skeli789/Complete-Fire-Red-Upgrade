@@ -1,5 +1,8 @@
 #include "src/config.h"
 
+#org @DESC_TRANSISTOR
+Powers up Electric-type moves.
+
 #org @DESC_SWEETVEIL
 Keeps user and allies awake.
 
@@ -133,14 +136,16 @@ Fainting damages the foe.
 May disable a foe's move.
 
 #org @DESC_GOOEY
-#org @DESC_TANGLINGHAIR
 Lowers the foe's Speed if hit.
+
+#org @DESC_UNSEENFIST
+Contact moves break protection.
 
 #org @DESC_MUMMY
 Spreads with contact.
 
-#org @DESC_IRONBARBS
-Hurts to touch.
+#org @DESC_GRIMNEIGH
+Knockouts boost Sp.Attack.
 
 #org @DESC_SANDRUSH
 Raises Speed in a sandstorm.
@@ -270,8 +275,8 @@ Changes type to match Memory.
 #org @DESC_SCHOOLING
 Schools up with high HP.
 
-#org @DESC_SHADOWSHIELD
-Reduces damage at full HP.
+#org @DESC_DRAGONSMAW
+Powers up Dragon-type moves.
 
 #org @DESC_SHIELDSDOWN
 Lowers shields below half HP.
@@ -420,8 +425,8 @@ Blocks priority moves.
 #org @DESC_INNARDSOUT
 Fainting damages the foe.
 
-#org @DESC_DAZZLING
-Blocks priority moves.
+#org @DESC_IRONKICK
+Boosts kicking moves.
 
 #org @DESC_GLUTTONY
 Eats Berries early.
@@ -462,8 +467,8 @@ Powers up allies.
 #org @DESC_RECEIVER
 Takes over a KOed ally's Ability.
 
-#org @DESC_POWEROFALCHEMY
-Takes over a KOed ally's Ability.
+#org @DESC_QUICKDRAW
+Occasionally moves first.
 
 #org @DESC_NEUROFORCE
 Powers up super-effective hits.

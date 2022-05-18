@@ -4,6 +4,30 @@
 #org @DESC_NO_MOVE
 No move information.
 
+#org @DESC_FLASH
+A blast of light\nthat deals damage.\nIt also illuminates\ncaves.
+
+#org @DESC_STRENGTH
+The foe is slugged\nat maximum power.\nThis move is super\neffective on Rock\ntypes.
+
+#org @DESC_ICEBALL
+The user hurls a\nchunk of ice at the\ntarget. It also ups\nthe user's Speed.   
+
+#org @DESC_DREAMEATER
+A harsh attack\nthat absorbs half\nthe damage it\ninflicted to restore\nHP.
+
+#org @DESC_BLASTBURN
+The foe is hit with\na huge explosion.\nThis move always\ngoes last.
+
+#org @DESC_HYDROCANNON
+The foe is hit with\na watery cannon.\nThis move always\ngoes last.
+
+#org @DESC_FRENZYPLANT
+The foe is hit with\nan enormous branch.\nThis move always\ngoes last.
+
+#org @DESC_DRILLPECK
+An attack that also\nbreaks any barrier\nlike Light Screen\nand Reflect.
+
 #org @DESC_LEECHFANG
 An attack that\nabsorbs half the\ndamage it inflicted\nto restore HP.
 
@@ -65,10 +89,10 @@ The foe is blasted\nwith natural energy.\nIt may also lower\nthe foe's Sp. Def.
 The user unleashes\nits power. It may\nalso lower the\nfoe's Sp. Def.
 
 #org @DESC_FORCEPALM
-The foe is attacked\nwith a shock wave\nthat may also leave\nit paralyzed.
+The foe is attacked\nwith a shock wave\nthat may also leave\nit paralyzed. It's\npower doubles if the\ntarget is paralyzed.
 
 #org @DESC_GIGAIMPACT
-A severely damaging\nattack that makes\nthe user rest on\nthe next turn.
+A severely damaging\nattack that always\ngoes last.
 
 #org @DESC_GRASSKNOT
 Grass snares and\ntrips the foe. It\ndoes more damage\nto heavier foes.
@@ -122,7 +146,7 @@ A charging attack\nthat may confuse\nthe foe. Can also be\nused to scale walls.
 The user polishes\nits body to sharply\nboost its Speed.
 
 #org @DESC_ROCKWRECKER
-The foe is hit with\na huge boulder.\nThe user can't move\non the next turn.
+The foe is hit with\na huge boulder.\nThis move always\ngoes last.
 
 #org @DESC_ROOST
 A self-healing move\nthat restores HP by\nup to half of the\nuser's maximum HP.
@@ -320,10 +344,10 @@ This move allows\nthe user to strike\nfirst, if the foe is\nreadying an attack.
 Boiling water is\nshot at the foe.\nIt may also cause\na burn.
 
 #org @DESC_BRINE
-If the foe's HP is\ndown to half, this\nattack does double\ndamage.
+This attack does\ndouble damage to a\ntarget affected by\na status problem.
 
 #org @DESC_FAIRYWIND
-The user stirs up\na fairy wind and\nstrikes the foe\nwith it.
+This attack move\ndoubles its power if\nthe user is\npoisoned, burned, or\nparalyzed.
 
 #org @DESC_BABYDOLLEYES
 A cute stare that\nlowers the foe's\nAttack stat. It is\nsure to go first.
@@ -341,7 +365,7 @@ A sweet kiss that\nabsorbs over half\nthe damage inflicted\nto restore HP.
 The user damages\nopposing Pok\emon\nby emitting a\npowerful flash.
 
 #org @DESC_DISARMINGVOICE
-The user lets out\na charming cry\nthat cannot be\nevaded.
+The user lets out\na charming cry.\nThis move always goes\nfirst.
 
 #org @DESC_STEALTHROCK
 Levitating rocks\nare laid around the\nfoe's party to hurt\nfoes switching in.
@@ -416,7 +440,7 @@ Stirs up a violent\npetal blizzard,\nhitting everything\naround it.
 The target loses\nits will to fight.\nThis lowers its\nAttack.
 
 #org @DESC_ROAROFTIME
-An attack which\ndistorts time. The\nuser must rest on\nthe next turn.
+An attack which\ndistorts time. This\nmove always goes last.
 
 #org @DESC_SPACIALREND
 An attack that\ntears the space\naround it. Critical\nhits land more\neasily.
@@ -587,7 +611,7 @@ The user sings an\nancient song and\nattacks the hearts of\nthe listeners. It\nm
 The user cuts with\nits long horn. The\nodd power in the\nhorn does physical\ndamage to the foe.
 
 #org @DESC_GLACIATE
-The user attacks by\nblowing freezing cold\nair at opposing\nPok\emon. This lowers\ntheir Speed.
+The user attacks by\nblowing freezing cold\nair at the foe.\nDeals damage based\non the user's better\nstat.
 
 #org @DESC_BOLTSTRIKE
 The user surrounds\nitself with abundant\nelectricity that can\nparalyze and charges\nits target.
@@ -662,7 +686,7 @@ This move also hits\nopposing Pok\emon in\nthe air. They are\nknocked down to th
 The user attacks with\na wave that crawls\nalong the ground.\nThose hit can't flee\nfrom battle.
 
 #org @DESC_PARABOLICCHARGE
-The user attacks\neverything around it.\nThe user's HP is\nrestored by half the\ndamage.
+The user attacks\neverything around it.\nThis restores HP.\nIts power doubles if\nthe foe is paralyzed.
 
 #org @DESC_SEARINGSHOT
 The user torches\neverything around it\nin an inferno of\nscarlet flames. It\nmay burn the foes.
@@ -698,7 +722,7 @@ The user rubs its\nscales and makes a\nhuge noise to\nattack. The user's\nDef st
 The user swings both\narms and hits the\ntarget. The target's\nstat changes are\nignored.
 
 #org @DESC_DRAGONHAMMER
-The user uses its\nbody like a hammer\nto attack the target\nand inflict damage.
+The user uses its\nbody like a hammer\nto attack the target.\nThis hurts the user.
 
 #org @DESC_FIRELASH
 The user strikes the\ntarget with a burning\nlash. This also\nlowers the target's\nDefense stat.
@@ -749,7 +773,7 @@ The user attacks the\nfoe with exploding\npollen puff. If\ntarget is an ally, it
 The user boasts its\nstrength. The more\nthe user's stats are\nraised, the greater\nthe power.
 
 #org @DESC_PRISMATICLASER
-The user shoots\npowerful lasers using\nprism power. The\nuser can't move on\nthe next turn.
+The user shoots\npowerful lasers using\nprism power. The\nuser will move\nlast.
 
 #org @DESC_PSYCHICFANGS
 The user bites the\ntarget with psychic\ncapabilities. This\ndestroys Light\nScreen and Reflect.
@@ -776,7 +800,7 @@ The user stabs the\ntarget with a sharp\nhorn. This attack\nnever misses.
 In this two-turn move,\nthe user gathers\nlight and fills a\nblade with light's\nenergy to attack.
 
 #org @DESC_SPARKLINGARIA
-The user bursts into\nsong, emitting\nbubbles. Any burnt\nPok\emon will be\nhealed.
+The user bursts into\nsong, emitting\nbubbles. Any statused\nPok\emon will be\nhealed.
 
 #org @DESC_SPECTRALTHIEF
 The user hides in\nthe target's shadow,\nsteals the target's\nstat boosts,and\nthen attacks.
@@ -977,7 +1001,7 @@ The user and an\nally hold hands.\nThis makes them\nvery happy.
 The user unleashes\na strong beam that\ndeals double damage\nto Dynamaxed targets.
 
 #org @DESC_SNIPE_SHOT
-The user ignores\nthe effects of moves\nand Abilities that\ndraw in moves.
+The user ignores\nthe effects of moves\nand Abilities that\ndraw in moves. It\nhas a high critical-\nhit ratio. 
 
 #org @DESC_JAW_LOCK
 The user bites down,\npreventing itself\nand the target from\nswitching out.
@@ -1070,10 +1094,10 @@ The user protects\nitself, and harshly\nlowers the foe's\nDefense on contact.
 The user bows,\nthen uses its hair\nto stab the foe.\nIt never misses.
 
 #org @DESC_METEOR_ASSAULT
-The user attacks\nwith its thick leek.\nThe user must rest\non the next turn.
+The user attacks\nwith its thick leek.\nThe user will always\nmove last.
 
 #org @DESC_ETERNABEAM
-Eternatus's most\npowerful attack.\nThe user must rest\non the next turn.
+Eternatus's most\npowerful attack.\nThe user will always\nmove last.
 
 #org @DESC_STEEL_BEAM
 It fires a beam\nof steel from its\nbody, which also\nhurts the user.
@@ -1106,13 +1130,13 @@ The user attacks\nwith voltage from the\nground. It doubles in\npower on Electri
 The move's type\nand power depends on\nthe terrain currently\nused in battle.
 
 #org @DESC_SKITTER_SMACK
-The user skitters\nbehind the target to\nattack. It lowers the\nfoe's Sp.Atk stat.
+The user skitters\nbehind the target to\nattack. It lowers the\nfoe's Evasion stat.
 
 #org @DESC_BURNING_JEALOUSY
 Inflicts a burn\non targets who's stats\nwere boosted during the\nturn when it is used.
 
 #org @DESC_LASH_OUT
-The move's power\ndoubles if the user's\nstats have been lowered\nduring the turn.
+The move's power\ndoubles if the user's\nstats have been\nlowered during the\nturn.
 
 #org @DESC_POLTERGEIST
 The user controls\nthe target's item to\nattack. Fails if\nthe target has no item.
@@ -1158,6 +1182,117 @@ A cage made of\nelectricity that traps\nthe target for four\nto five turns.
 
 #org @DESC_DRAGON_ENERGY
 The higher the\nuser's HP, the\nmore powerful this\nattack becomes.
+
+#org @DESC_ASTRAL_BARRAGE 
+The user attacks\nby sending a fright-\nful amount of small\nghosts.
+
+#org @DESC_GLACIAL_LANCE
+The user attacks\nby hurling an ice-\ncloaked lance.
+
+#org @DESC_EERIESPELL
+The user attacks with\nits psychic power. This\nremoves 3 PP from \nthe target's last move.
+
+#org @DESC_ZIPPY_ZAP
+The user bursts with\nelectricity, going\nfirst and always\nresulting in a\ncritical hit. 
+
+#org @DESC_SAPPY_SEED
+The user scatters\nseeds to attack,\ndraining the target's\nHP every turn.
+
+#org @DESC_FREEZY_FROST
+The user attacks\nwith a large crystal\nthat removes all stat\nchanges on the field.
+
+#org @DESC_SPARKLY_SWIRL
+The user attacks\nwith a whirlwind that\nheals status problems\non the user's party.
+
+#org @DESC_BOUNCY_BUBBLE
+The user attacks\nwith water bubbles\nthat drains half the\ndamage it inflicted.
+
+#org @DESC_FLOATY_FALL
+The user floats \nin the air, and then \ndives at a steep angle \nto attack the target. \nThis may also make \nthe target flinch.
+
+#org @DESC_BUZZY_BUZZ
+The user shoots \na jolt of electricity \nto attack the target. \nThis also leaves the \ntarget with paralysis.
+
+#org @DESC_GLITZY_GLOW
+The user attacks \nthe foe with psychic \nforce. A wall of light \nis put up that weakens \nopposing Special \nMoves.
+
+#org @DESC_SIZZLY_SLIDE
+The user cloaks \nitself in fire and \ncharges at the target. \nThis also leaves the \ntarget with a burn.
+
+#org @DESC_BADDY_BAD
+The user acts bad \nand attacks the \ntarget. A wall of light \nis put up that weakens \nopposing Physical \nMoves.
+
+#org @DESC_DARK_INTENTS
+The user attacks with\nintentions so\ndark Fairies take super-\neffective damage from \nit.
+
+#org @DESC_FIERY_DOOM
+The user attacks with\na deadly flaming\nfire spin. This has\na high chance to\nburn.
+
+#org @DESC_SPLISH_SPLASH
+The user charges \na wave with electricity \nand hits the target \nwith the wave. This \nmay also leave the \ntarget with paralysis.
+
+#org @DESC_REALITY_SHIFT
+Using the power of\nthe glitch realm,\nthe user attacksssssssss\nError 404:\nDESC.REALITY.SHIFT\nnot found.
+
+#org @DESC_STRIPED_DIVE
+The user uses\nthe stripes on it's\nbody to dive\nunderwater and attack.\nThis always results\nin a critical hit.
+
+#org @DESC_PSYSHIELD_BASH
+Cloaking itself in\npsychic energy, the\nuser slams into the \ntarget.\nThis may also raise\nthe user's Defense.
+
+#org @DESC_CHLORO_BLAST
+The user launches\nits amassed chlorophyll\nto inflict damage on\nthe target. This also\ndamages the user.
+
+#org @DESC_HEADLONG_RUSH
+The user smashes into\nthe target in a\nfull-body tackle. This\nalso lowers the user's\ndefensive stats.
+
+#org @DESC_ESPER_WING
+The user slashes the\ntarget with aura-\nenriched wings. This\nalso raises the\nuser's speed.
+
+#org @DESC_BARB_BARRAGE
+The user launches\ncountless toxic barbs to\ninflict damage. This\nmay also poison the\ntarget.
+
+#org @DESC_TRIPLE_ARROWS
+The user delivers\nan axe kick, then\nfires three arrows.\nThis raises it's\ncritical hit ratio.
+
+#org @DESC_CEASELESS_EDGE
+The user slashes\nits shell blade at\nthe target. Splinters\nleft behind will\ncontinue to damage\nthe target.
+
+#org @DESC_INFERNAL_PARADE
+The user attacks\nwith myriad fireballs.\nThis may also leave the\ntarget with a burn. 
+
+#org @DESC_DIRE_CLAW
+The user lashes\nout at the target\nwith ruinous claws,\naiming to land a\ncritical hit.
+
+#org @DESC_BITTER_MALICE
+The user attacks\nits target with spine\n-chilling resentment.\nThis may also freeze\nthe target.
+
+#org @DESC_RAGING_FURY
+The user rampages\nand spews vicious\nflames to inflict\ndamage on the target,\nthen becomes confused
+
+#org @DESC_WAVE_CRASH
+The user shrouds\nitself in water\nand slams into the\ntarget to inflict\ndamage. This raises\nthe user's speed.
+
+#org @DESC_STONE_AXE
+The user swings\nits stone axes at\nthe target. Splinters\nleft behind will continue\nto damage the target.
+
+#org @DESC_SHADOW_STORM
+A shadowy aura\nis used to whip\nup a vicious tornado.
+
+#org @DESC_MOUNTAIN_GALE
+The user hurls\ngiant chunks of\nice at the target\nto inflict damage.
+
+#org @DESC_VICTORY_DANCE
+The user performs\na dance to usher in\nvictory, raising its\nAtk, Def, and Speed.
+
+#org @DESC_SHELTER
+The user makes its\nskin as hard as an\niron shield, raising\nits Def and\nevasiveness.
+
+#org @DESC_SPRINGTIDE_STORM
+Fierce winds brimming\nwith love and hate\nare used to attack.\nIt may also raise\nall the user's stats.
+
+#org @DESC_SANDSEAR_STORM
+Fierce winds and\nsearingly hot sand\nare used to attack.\nThis may also leave\nthe target with a burn.
 
 #org @DESC_MAX_GUARD
 Enables the user to\nevade all attacks.\nIt may fail if used\nin succession.
@@ -1314,3 +1449,8 @@ G-Max Single Strike\nUrshifu's signature move.\nIt bypasses the\nuse of Max Guar
 
 #org @DESC_G_MAX_RAPID_FLOW
 G-Max Rapid Strike\nUrshifu's signature move.\nIt bypasses the\nuse of Max Guard.
+
+
+
+
+

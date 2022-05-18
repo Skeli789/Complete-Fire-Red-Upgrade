@@ -2,6 +2,8 @@
 #include "../include/rtc.h"
 #include "../include/script.h"
 #include "../include/new/ram_locs.h"
+#include "../include/string_util.h"
+#include "../include/start_menu.h"
 
 extern u16 sRTCErrorStatus;
 extern u8 sRTCProbeResult;
@@ -162,7 +164,7 @@ u16 RtcCheckInfo(struct SiiRtcInfo *rtc)
 	return errorFlags;
 }
 
-static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
+static void UpdateClockFromRtc(struct SiiRtcInfo* rtc)
 {
 	gClock.year = ConvertBcdToBinary(rtc->year) + 2000; //Base year is 2000
 	gClock.month = ConvertBcdToBinary(rtc->month);
@@ -171,6 +173,7 @@ static void UpdateClockFromRtc(struct SiiRtcInfo *rtc)
 	gClock.hour = ConvertBcdToBinary(rtc->hour);
 	gClock.minute = ConvertBcdToBinary(rtc->minute);
 	gClock.second = ConvertBcdToBinary(rtc->second);
+
 }
 
 extern const u8 SystemScript_StopZooming[];
@@ -194,6 +197,7 @@ void RtcCalcLocalTime(void)
 	}
 	else if (sRTCFrameCount >= 60) //Update once a second
 	{
+		//DrawTime();
 		sRTCFrameCount = 0;
 		return;
 	}

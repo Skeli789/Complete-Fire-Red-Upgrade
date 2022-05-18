@@ -11,6 +11,7 @@
 
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
+#include "../include/base_stats.h"
 /*
 evolution.c
 	handles old and new evolution methods
@@ -140,8 +141,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 							break;
 						for (j = 0; j < gPlayerPartyCount; ++j)
 						{
-							if (gBaseStats[gPlayerParty[j].species].type1 == typeCheck
-							||  gBaseStats[gPlayerParty[j].species].type2 == typeCheck)
+							if (gBaseStats2[gPlayerParty[j].species].type1 == typeCheck
+							||  gBaseStats2[gPlayerParty[j].species].type2 == typeCheck)
 							{
 								targetSpecies = gEvolutionTable[species][i].targetSpecies;
 								break;

@@ -20,7 +20,7 @@
 #include "../include/new/multi.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 new_bs_commands.c

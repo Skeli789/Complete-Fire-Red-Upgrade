@@ -1,0 +1,28 @@
+MAX_LENGTH=16
+FILL_FF=True
+
+#org @gReplaceAbilityNames
+
+#org @NAME_ABILITY_CHILLING_NEIGH
+Chilling Neigh
+
+#org @NAME_ABILITY_IRON_BARBS
+Iron Barbs
+
+#org @NAME_ABILITY_TANGLING_HAIR
+Tangling Hair
+
+#org @NAME_ABILITY_BATTLE_ARMOR
+Battle Armor
+
+#org @NAME_ABILITY_SHADOW_SHIELD
+Shadow Shield
+
+#org @NAME_ABILITY_LIBERO
+Libero
+
+#org @NAME_POWER_OF_ALCHEMY
+Power Of Alchemy
+
+#org @NAME_DAZZLING
+Dazzling

@@ -1,0 +1,59 @@
+#org @gText_LookInsideButterfree
+You feel [RED]mysterious energy[BLACK] coming \nfrom the entrance. Look inside?
+
+#org @gText_PokemonCameOut
+A wild Pokemon came out!
+
+#org @gText_VolcaronaCry
+[RED]Vraahhbrbrbrbr!
+
+#org @gText_AlreadyBattledButterfree
+It's just a hole.
+
+#org @gText_MayBeforeBattle
+[RED]Oh, you're [PLAYER], right?\nMy dad has told me a bunch about you!\pI'm May. You are a trainer, right?\nLet's have a battle!
+
+#org @gText_MayLose1
+Wow! You're super strong!
+
+#org @gText_MayAfter1
+[RED]Dad told me to give this to [GREEN]you[RED],\na guy called [GREEN][RIVAL][RED], and my\lfriend [GREEN]Brendan[RED].
+
+#org @gText_MayGtg
+[RED]Well, I have to go now. Bye!
+
+#org @gText_AskWhyBugBite
+My Bug Pok\emon are the best!\nWant to know why?
+
+#org @gText_AskTeachBugBite
+Because they all know the move [GREEN]Bug\nBite[BLUE]! I can teach that to your\lPok\emon. Shall I?
+
+#org @gText_NoBugBite
+Oww, okay then.
+
+#org @gText_BugBiteSelect
+Select a Pok\emon!
+
+#org @gText_ElectrowebAsk1
+Do you like cobwebs?
+
+#org @gText_ElectrowebNoCobweb
+Oh, I like them.
+
+#org @gText_ElectrowebYesCobweb
+You do? Nice! I like them too.
+
+#org @gText_ElectrowebAsk2
+Anyways, speaking of cobwebs, I can\nteach the special move [GREEN]Electroweb[BLUE]\lto any of your Pok\emon.\pWhat's [GREEN]Electroweb[BLUE]? It's a Electric-\ntype move which always slows the\lenemy!\pSo, do any of your Pok\emon want to\nlearn it? It's completely free!
+
+#org @gText_WhichElectroweb
+Which of your Pok\emon want to learn\n[GREEN]Electroweb[BLUE]?
+
+#org @gText_NoTeachWeb
+Oh[.] okay.
+
+#org @gText_TaughtWeb
+There you go.\nYour Pok\emon now knows [GREEN]Electroweb[BLUE]!
+
+#org @gText_FocusEnergyCeladon
+[GREEN]Focus Energy[BLUE] allows Pok\emon to land\ncritical hits more often.\pMy brother in [GREEN]Celadon City[BLUE] can teach\nit to your Pok\emon.

@@ -358,17 +358,17 @@ EventScript_ChooseSelectItem:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.equ FLAG_AUTO_HMS, 0x902 @For Unbound
+.equ FLAG_AUTO_HMS, 0x998 @For Unbound
 .equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
 .global EventScript_UseRockClimb
 EventScript_UseRockClimb:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_ROCKCLIMB
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseRockClimb_SkipAsk
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
 	if equal _goto EventScript_UseRockClimb_Ask
-	checkflag FLAG_AUTO_HMS
-	if SET _goto EventScript_UseRockClimb_SkipAsk
 
 EventScript_UseRockClimb_Ask:
 	msgbox gText_WantToScaleCliff MSG_YESNO
@@ -535,11 +535,11 @@ EventScript_UseLavaSurf:
 	copyvar 0x8004 LASTRESULT
 EventScript_UseLavaSurf_Debug:
 	bufferpartypokemon 0x0 0x8004
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseLavaSurf_SkipAsk
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
 	if equal _goto EventScript_UseLavaSurf_Ask
-	checkflag FLAG_AUTO_HMS
-	if SET _goto EventScript_UseLavaSurf_SkipAsk
 
 EventScript_UseLavaSurf_Ask:
 	msgbox gText_LikeToLavaSurf MSG_YESNO
@@ -568,11 +568,11 @@ EventScript_LavaSurfEnd:
 EventScript_UseWaterfall:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_WATERFALL
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseWaterfall_SkipAsk
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
 	if equal _goto EventScript_UseWaterfall_Ask
-	checkflag FLAG_AUTO_HMS
-	if SET _goto EventScript_UseWaterfall_SkipAsk
 
 EventScript_UseWaterfall_Ask:
 	msgbox 0x81BE33F MSG_YESNO
@@ -608,11 +608,11 @@ EventScript_WallOfWater:
 EventScript_UseSurf:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_SURF
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseSurf_SkipAsk
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
 	if equal _goto EventScript_UseSurf_Ask
-	checkflag FLAG_AUTO_HMS
-	if SET _goto EventScript_UseSurf_SkipAsk
 
 EventScript_UseSurf_Ask:
 	callasm IsCurrentAreaSwampToVar
@@ -654,11 +654,11 @@ EventScript_WaterMurkyBrown:
 EventScript_UseDive:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_DIVE
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseDive_SkipAsk
 	callasm IsUnboundToVar
 	compare LASTRESULT 0x0
 	if equal _goto EventScript_UseDive_Ask
-	checkflag FLAG_AUTO_HMS
-	if SET _goto EventScript_UseDive_SkipAsk
 
 EventScript_UseDive_Ask:
 	msgbox gText_WantToDive MSG_YESNO

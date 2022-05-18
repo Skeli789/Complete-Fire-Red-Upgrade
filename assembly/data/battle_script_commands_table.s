@@ -168,7 +168,7 @@ gBattleScriptingCommandsTable:
 .word atk97_tryinfatuating		@tryinfatuatebank
 .word 0x8029049					@refreshhpbar
 .word atk99_setmist				@setmisteffect
-.word 0x8029279					@setincreasedcriticalchance
+.word atk9A_setfocusenergy				@setincreasedcriticalchance
 .word atk9B_transformdataexecution
 .word 0x8029475					@setsubstituteeffect
 .word atk9D_mimicattackcopy		@copyattack
@@ -326,3 +326,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF33_SetEffectPrimaryScriptingBank
 .word atkFF34_canconfuse
 .word atkFF35_jumpifmaxchistrikecapped
+

@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 import _io
 
-OFFSET_TO_PUT = 0x900000
+OFFSET_TO_PUT = 0x1400000
 SOURCE_ROM = "BPRE0.gba"
 ROM_NAME = "test.gba"
 
@@ -388,40 +388,6 @@ def main():
 
                     Hook(rom, code, offset, int(register))
 
-        # Read repoints from a file
-        if os.path.isfile(REPOINTS):
-            with open(REPOINTS, 'r') as repointList:
-                definesDict = {}
-                conditionals = []
-                for line in repointList:
-                    if TryProcessFileInclusion(line, definesDict):
-                        continue
-                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
-                        continue
-                    if line.strip().startswith('#') or line.strip() == '':
-                        continue
-
-                    if len(line.split()) == 2:
-                        symbol, address = line.split()
-                        offset = int(address, 16) - 0x08000000
-                        try:
-                            code = table[symbol]
-                        except KeyError:
-                            print('Symbol missing:', symbol)
-                            continue
-
-                        Repoint(rom, code, offset)
-
-                    if len(line.split()) == 3:
-                        symbol, address, slide = line.split()
-                        offset = int(address, 16) - 0x08000000
-                        try:
-                            code = table[symbol]
-                        except KeyError:
-                            print('Symbol missing:', symbol)
-                            continue
-
-                        Repoint(rom, code, offset, int(slide))
 
         symbolsRepointed = set()
         if os.path.isfile(GENERATED_REPOINTS):
@@ -478,6 +444,40 @@ def main():
                     for tup in offsets:
                         output.write(tup[1] + ' ' + str(tup[0]) + '\n')
                     output.close()
+        # Read repoints from a file
+        if os.path.isfile(REPOINTS):
+            with open(REPOINTS, 'r') as repointList:
+                definesDict = {}
+                conditionals = []
+                for line in repointList:
+                    if TryProcessFileInclusion(line, definesDict):
+                        continue
+                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
+                        continue
+                    if line.strip().startswith('#') or line.strip() == '':
+                        continue
+
+                    if len(line.split()) == 2:
+                        symbol, address = line.split()
+                        offset = int(address, 16) - 0x08000000
+                        try:
+                            code = table[symbol]
+                        except KeyError:
+                            print('Symbol missing:', symbol)
+                            continue
+
+                        Repoint(rom, code, offset)
+
+                    if len(line.split()) == 3:
+                        symbol, address, slide = line.split()
+                        offset = int(address, 16) - 0x08000000
+                        try:
+                            code = table[symbol]
+                        except KeyError:
+                            print('Symbol missing:', symbol)
+                            continue
+
+                        Repoint(rom, code, offset, int(slide))
 
         # Read routine repoints from a file
         if os.path.isfile(ROUTINE_POINTERS):

@@ -13,7 +13,7 @@
 #include "../include/new/character_customization.h"
 #include "../include/new/follow_me.h"
 #include "../include/new/multi.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 /*
 character_customization.c
 	functions for altering the player's sprite based on the current sprite/palette selections
@@ -23,6 +23,8 @@ tables to edit:
 	sPlayerAvatarGfxIds
 
 */
+
+
 
 #ifdef UNBOUND
 extern const u8 TS_Male_Player_White_Brunette_BlackPal[];
@@ -93,12 +95,33 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 
 #else //Modify this
 	// create 255 OW tables
+
+	extern const struct EventObjectGraphicsInfo gEventObjectGraphicsInfo_Cresselia;
+	extern const u8 gEventObjectPic_CresseliaPal[];
+	extern const struct EventObjectGraphicsInfo gEventObjectGraphicsInfo_Darkrai;
+	extern const u8 gEventObjectPic_DarkraiPal[];
+
+	static NPCPtr sOverworldTable2[] = { 
+		&gEventObjectGraphicsInfo_Cresselia,
+		&gEventObjectGraphicsInfo_Darkrai,
+	};
+
 	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[255] =
 	{
-		(NPCPtr*) 0x839FDB0,
+		(NPCPtr*) 0x8EB1000,
+		sOverworldTable2,
 		(NPCPtr*) 0x0,
 		// etc...
 		// please note that this method makes compatability with OW Manager challenging
+	};
+	static const struct SpritePalette sObjectEventSpritePalettes12[] = {
+		{gEventObjectPic_CresseliaPal, 0x1201},
+		{gEventObjectPic_DarkraiPal, 0x1202},
+		{NULL, 0x11FF},
+	};
+	const struct SpritePalette* const gObjectEventSpritePalettesSwitcher[255] = {
+		[0x11] = (const struct SpritePalette*)0x8F15E70,
+		[0x12] = sObjectEventSpritePalettes12,
 	};
 #endif
 

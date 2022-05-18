@@ -3,6 +3,14 @@
 ##Tables
 gMoveDescriptions 080E5440
 gMoveDescriptions 08137BC8
+gLongMoveNames 080BFAA4
+gLongMoveNames 08125BE4
+gLongMoveNames 08125CE0
+gLongMoveNames 0812606C
+gLongMoveNames 08126128
+gLongMoveNames 081261FC
+gLongMoveNames 0812627C
+gLongMoveNames 08126E64
 gAbilityDescriptions 080001C4
 gAbilityDescriptions 081367A8
 gMoveAnimations 080725D0
@@ -270,3 +278,165 @@ gText_TextSpeedMid 083cc330
 gText_TextSpeedFast 083cc334
 gText_TextSpeedInstant 083cc338
 #endif
+
+##Items
+GalarWreathTiles 093C8870
+GalarWreathPal 093C8874
+CatchingCharmTiles 093C97E8
+CatchingCharmPal 093C97EC
+Fairy_TM_DiskPal 093C8E5C
+Bag_Reins_of_Unity_SpriteTiles 093C97F0
+Bag_Reins_of_Unity_SpritePal 093C97F4
+Bag_Zygarde_Cube_SpriteTiles 093C97F8
+Bag_Zygarde_Cube_SpritePal 093C97FC
+Bag_Black_Augurite_SpriteTiles 093C9800
+Bag_Black_Augurite_SpritePal 093C9804
+
+
+##Other
+IVs2Tiles 08900990
+##IVs2Pal 08900800
+
+##Trainer Sprites
+BrockTiles 823991C
+BrockPal 8239DBC
+
+MistyTiles 8239924
+MistyPal 8239DC4
+
+SurgeTiles 823992C
+SurgePal 8239DCC
+
+ErikaTiles 8239934
+ErikaPal 8239DD4
+
+KogaTiles 823993C
+KogaPal 8239DDC
+
+BlaineTiles 8239944
+BlainePal 8239DE4
+
+SabrinaTiles 823994C
+SabrinaPal 8239DEC
+
+GiovanniTiles 82398DC
+GiovanniPal 8239D7C
+
+BrunoTiles 8239904
+BrunoPal 8239DA4
+
+LanceTiles 8239914
+LancePal 8239DB4
+
+GentlemanTiles 8239954
+GentlemanPal 8239DF4
+
+BugCatcherTiles 8239814
+BugCatcherPal 8239CB4
+
+LassTiles 823981C
+LassPal 8239CBC
+
+ScientistTiles 82398D4
+ScientistPal 8239D74
+
+CooltrainerMaleTiles 82398EC
+CooltrainerMalePal 8239D8C
+
+CooltrainerFemaleTiles 82398F4
+CooltrainerFemalePal 8239D94
+
+TwinsTiles 8239974
+TwinsPal 8239E14
+
+YoungsterTiles 823980C
+YoungsterPal 8239CAC
+
+BlackBeltTiles 82398C4
+BlackBeltPal 8239D64
+
+BurglarTiles 823985C
+BurglarPal 8239CFC
+
+JugglerTiles 82398AC
+JugglerPal 8239D4C
+
+ChannelerTiles 823996C
+ChannelerPal 8239E0C
+
+BeautyTiles 823988C
+BeautyPal 8239D2C
+
+BikerTiles 823987C
+BikerPal 8239D1C
+
+SwimmerMaleTiles 8239874
+SwimmerMalePal 8239D14
+
+SwimmerFemaleTiles 8239894
+SwimmerFemalePal 8239D34
+
+BirdkeeperTiles 82398BC
+BirdkeeperPal 8239D5C
+
+YoungCoupleTiles 8239984
+YoungCouplePal 8239E24
+
+PokemaniacTiles 823983C
+PokemaniacPal 8239CDC
+
+SuperNerdTiles 8239844
+SuperNerdPal 8239CE4
+
+CamperTiles 823982C
+CamperPal 8239CCC
+
+PicnickerTiles 8239834
+PicnickerPal 8239CD4
+
+CueballTiles 823987C
+CueballPal 8239D1C
+
+FisherTiles 823986C
+FisherPal 8239D0C
+
+##GamerTiles 8239884
+##GamerPal 8239D24
+
+HikerTiles 823984C
+HikerPal  8239CEC
+
+TeamRocketMaleTiles 82398E4
+TeamRocketMalePal 8239D84
+
+MayTiles 8239594 
+MayPal 8239A34
+
+BarryTiles 823959C
+BarryPal 8239A3C
+
+IlimaTiles 823957C
+IlimaPal 8239A1C
+
+Lana2Tiles 8239584
+Lana2Pal 8239A24
+
+KiaweTiles 823958C
+KiawePal 8239A2C
+
+Mallow2Tiles 82395A4
+Mallow2Pal 8239A44
+
+AcerolaTiles 82395AC
+AcerolaPal 8239A4C
+
+BreederFTiles 82399E4
+BreederFPal 8239E84
+
+StevenStoneTiles 82396A4
+StevenStonePal 8239B44
+
+AceTrainerBothTiles 823997C
+AceTrainerBothPal 8239E1C 
+
+##gEventObjectGraphicsInfo_Bug_Catcher 8EB1050

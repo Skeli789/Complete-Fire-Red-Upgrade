@@ -11,6 +11,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/dexnav.h"
+#include "../include/string_util.h"
 
 /*
 start_menu.c
@@ -55,6 +56,7 @@ extern const u8 gText_DexNav[];
 extern const u8 gText_MissionLog[];
 extern const u8 gText_MenuBag[];
 extern const u8 gText_MenuCube[];
+extern const u8 gText_Time[];
 #ifdef UNBOUND
 #define gText_MenuBag gText_MenuCube
 #endif
@@ -70,7 +72,7 @@ extern const u8 gText_RetireDescription[];
 extern const u8 gText_PlayerDescription[];
 extern const u8 gText_DexNavDescription[];
 
-extern bool8 (*sStartMenuCallback)(void);
+extern bool8(*sStartMenuCallback)(void);
 extern u8 sStartMenuCursorPos;
 extern u8 sNumStartMenuItems;
 extern u8 sStartMenuOrder[];
@@ -93,12 +95,12 @@ bool8 __attribute__((long_call)) StartMenuSafariZoneRetireCallback(void);
 bool8 __attribute__((long_call)) StartMenuLinkModePlayerCallback(void);
 bool8 __attribute__((long_call)) StartMenuQuestLogCallback(void);
 void __attribute__((long_call)) AppendToStartMenuItems(u8 action);
-void __attribute__((long_call)) DestroySafariZoneStatsWindow(void);
+//void __attribute__((long_call)) DestroySafariZoneStatsWindow(void);
 s8 __attribute__((long_call)) PrintStartMenuItems(s8* cursor_p, u8 nitems);
 void __attribute__((long_call)) StartMenu_FadeScreenIfLeavingOverworld(void);
 bool8 __attribute__((long_call)) StartMenuPokedexSanityCheck(void);
 void __attribute__((long_call)) CloseStartMenu(void);
-void __attribute__((long_call)) PrintTextOnHelpMessageWindow(const u8 * text, u8 mode);
+void __attribute__((long_call)) PrintTextOnHelpMessageWindow(const u8* text, u8 mode);
 
 //Exported functions:
 void BuildStartMenuActions(void);
@@ -110,6 +112,21 @@ static void BuildPokeToolsMenu(void);
 static bool8 CloseAndReloadStartMenu(void);
 static bool8 ReloadStartMenu(void);
 static bool8 ReloadStartMenuItems(void);
+void DestroySafariZoneStatsWindow();
+
+void DrawTime(void);
+
+extern u8 sSafariZoneStatsWindowId;
+
+static const struct WindowTemplate sSafariZoneStatsWindowTemplate = {
+	.bg = 0,
+	.tilemapLeft = 1,
+	.tilemapTop = 1,
+	.width = 10,
+	.height = 2,
+	.paletteNum = 15,
+	.baseBlock = 0x008
+};
 
 const struct MenuAction sStartMenuActionTable[] =
 {
@@ -124,7 +141,7 @@ const struct MenuAction sStartMenuActionTable[] =
 	[STARTMENU_PLAYER_LINK] = {gText_MenuPlayer, {.u8_void = StartMenuLinkModePlayerCallback}},
 	[STARTMENU_DEXNAV] = {gText_DexNav, {.u8_void = StartMenuDexNavCallback}},
 	#ifdef FLAG_SYS_QUEST_LOG
-	[STARTMENU_QUEST_LOG] = {gText_MissionLog, {.u8_void = (void*) (0x801D768 | 1)}},
+	[STARTMENU_QUEST_LOG] = {gText_MissionLog, {.u8_void = (void*)(0x801D768 | 1)}},
 	#endif
 	[STARTMENU_EXIT_RIGHT] = {gText_MenuExitRight, {.u8_void = StartMenuExitCallback}},
 	[STARTMENU_EXIT_LEFT] = {gText_MenuExitLeft, {.u8_void = StartMenuExitCallback}},
@@ -149,46 +166,48 @@ const u8* const sStartMenuDescPointers[] =
 
 static bool8 CanSetUpSecondaryStartMenu(void)
 {
-	#ifdef FLAG_SYS_DEXNAV
+#ifdef FLAG_SYS_DEXNAV
 	if (FlagGet(FLAG_SYS_DEXNAV) && FlagGet(FLAG_SYS_POKEDEX_GET))
 		return TRUE;
-	#endif
+#endif
 
-	#ifdef FLAG_SYS_QUEST_LOG
+#ifdef FLAG_SYS_QUEST_LOG
 	if (FlagGet(FLAG_SYS_QUEST_LOG))
 		return TRUE;
-	#endif
+#endif
 
 	return FALSE;
 }
 
 static void SetUpStartMenu_NormalField(void)
 {
+	DrawTime();
+
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
 		AppendToStartMenuItems(STARTMENU_POKEDEX);
 
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
 		AppendToStartMenuItems(STARTMENU_POKEMON);
 
-	#ifdef FLAG_SYS_BAG_HIDE
-		if (!FlagGet(FLAG_SYS_BAG_HIDE))
-	#endif
-			AppendToStartMenuItems(STARTMENU_BAG);
+#ifdef FLAG_SYS_BAG_HIDE
+	if (!FlagGet(FLAG_SYS_BAG_HIDE))
+#endif
+		AppendToStartMenuItems(STARTMENU_BAG);
 
-	#ifdef FLAG_SYS_PLAYER_HIDE
-		if (!FlagGet(FLAG_SYS_PLAYER_HIDE))
-	#endif
-			AppendToStartMenuItems(STARTMENU_PLAYER);
+#ifdef FLAG_SYS_PLAYER_HIDE
+	if (!FlagGet(FLAG_SYS_PLAYER_HIDE))
+#endif
+		AppendToStartMenuItems(STARTMENU_PLAYER);
 
-	#ifdef FLAG_SYS_SAVE_HIDE
-		if (!FlagGet(FLAG_SYS_SAVE_HIDE))
-	#endif
-			AppendToStartMenuItems(STARTMENU_SAVE);
+#ifdef FLAG_SYS_SAVE_HIDE
+	if (!FlagGet(FLAG_SYS_SAVE_HIDE))
+#endif
+		AppendToStartMenuItems(STARTMENU_SAVE);
 
 	//These two are always present
 	AppendToStartMenuItems(STARTMENU_OPTION);
 
-	if  (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
+	if (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
 		AppendToStartMenuItems(STARTMENU_EXIT_RIGHT);
 	else
 		AppendToStartMenuItems(STARTMENU_EXIT);
@@ -201,24 +220,24 @@ static void SetUpStartMenu_SafariZone(void)
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
 		AppendToStartMenuItems(STARTMENU_POKEDEX);
 
-	#ifdef FLAG_SYS_POKEMON_GET
+#ifdef FLAG_SYS_POKEMON_GET
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
-	#endif
+#endif
 		AppendToStartMenuItems(STARTMENU_POKEMON);
 
-	#ifdef FLAG_SYS_BAG_GET
-		if (FlagGet(FLAG_SYS_BAG_GET))
-	#endif
-			AppendToStartMenuItems(STARTMENU_BAG);
+#ifdef FLAG_SYS_BAG_GET
+	if (FlagGet(FLAG_SYS_BAG_GET))
+#endif
+		AppendToStartMenuItems(STARTMENU_BAG);
 
-	#ifdef FLAG_SYS_PLAYER_GET
-		if (FlagGet(FLAG_SYS_PLAYER_GET))
-	#endif
-			AppendToStartMenuItems(STARTMENU_PLAYER);
+#ifdef FLAG_SYS_PLAYER_GET
+	if (FlagGet(FLAG_SYS_PLAYER_GET))
+#endif
+		AppendToStartMenuItems(STARTMENU_PLAYER);
 
 	AppendToStartMenuItems(STARTMENU_OPTION);
 
-	if  (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
+	if (sStartMenuOpen == START_MENU_NORMAL && CanSetUpSecondaryStartMenu())
 		AppendToStartMenuItems(STARTMENU_EXIT_RIGHT);
 	else
 		AppendToStartMenuItems(STARTMENU_EXIT);
@@ -227,16 +246,18 @@ static void SetUpStartMenu_SafariZone(void)
 static void BuildPokeToolsMenu(void)
 {
 	sNumStartMenuItems = 0;
+	DestroySafariZoneStatsWindow();
+	DrawTime();
 
-	#ifdef FLAG_SYS_DEXNAV
+#ifdef FLAG_SYS_DEXNAV
 	if (FlagGet(FLAG_SYS_DEXNAV) && FlagGet(FLAG_SYS_POKEDEX_GET))
-	#endif
+#endif
 		AppendToStartMenuItems(STARTMENU_DEXNAV);
 
-	#ifdef FLAG_SYS_QUEST_LOG
+#ifdef FLAG_SYS_QUEST_LOG
 	if (FlagGet(FLAG_SYS_QUEST_LOG))
 		AppendToStartMenuItems(STARTMENU_QUEST_LOG);
-	#endif
+#endif
 
 	AppendToStartMenuItems(STARTMENU_EXIT_LEFT);
 }
@@ -261,27 +282,37 @@ bool8 StartCB_HandleInput(void)
 {
 	ForceClockUpdate(); //To help with the clock in the start menu routine
 
+	if (!FlagGet(FLAG_SYS_SAFARI_MODE) && (sStartMenuOpen == START_MENU_NORMAL || (sSafariZoneStatsWindowId != 0 && sSafariZoneStatsWindowId != 0xFF))) {
+		ConvertIntToDecimalStringN(gStringVar1, gClock.hour, STR_CONV_MODE_LEFT_ALIGN, 3);
+		ConvertIntToDecimalStringN(gStringVar2, gClock.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
+		ConvertIntToDecimalStringN(gStringVar3, gClock.second, STR_CONV_MODE_LEADING_ZEROS, 2);
+		StringExpandPlaceholders(gStringVar4, gText_Time);
+		//ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, 1);
+		AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 3, 0xFF, NULL);
+		CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
+	}
+
 	if (JOY_NEW(DPAD_UP))
 	{
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(-1);
-		#ifndef UNBOUND
+#ifndef UNBOUND
 		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}
-		#endif
+#endif
 	}
 	else if (JOY_NEW(DPAD_DOWN))
 	{
 		PlaySE(SE_SELECT);
 		sStartMenuCursorPos = Menu_MoveCursor(+1);
-		#ifndef UNBOUND
+#ifndef UNBOUND
 		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]], 2);
 		}
-		#endif
+#endif
 	}
 	else if (JOY_NEW(DPAD_RIGHT))
 	{
@@ -341,20 +372,41 @@ static bool8 ReloadStartMenu(void)
 	return FALSE;
 }
 
+void DrawTime(void) {
+	sSafariZoneStatsWindowId = AddWindow(&sSafariZoneStatsWindowTemplate);
+	PutWindowTilemap(sSafariZoneStatsWindowId);
+	DrawStdWindowFrame(sSafariZoneStatsWindowId, FALSE);
+	ConvertIntToDecimalStringN(gStringVar1, gClock.hour, STR_CONV_MODE_LEFT_ALIGN, 3);
+	ConvertIntToDecimalStringN(gStringVar2, gClock.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
+	ConvertIntToDecimalStringN(gStringVar3, gClock.second, STR_CONV_MODE_LEADING_ZEROS, 2);
+	StringExpandPlaceholders(gStringVar4, gText_Time);
+	FillWindowPixelBuffer(sSafariZoneStatsWindowId, PIXEL_FILL(1));
+	AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 3, 0xFF, NULL);
+	CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
+}
+
 static bool8 ReloadStartMenuItems(void)
 {
 	if (PrintStartMenuItems(&sDrawStartMenuState[1], 2))
 	{
 		sStartMenuCursorPos = Menu_InitCursor(GetStartMenuWindowId(), 2, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
-		#ifndef UNBOUND
+#ifndef UNBOUND
 		if (!MenuHelpers_LinkSomething() && InUnionRoom() != TRUE)
 		{
 			DrawHelpMessageWindowWithText(sStartMenuDescPointers[sStartMenuOrder[sStartMenuCursorPos]]);
 		}
-		#endif
+#endif
 		CopyWindowToVram(GetStartMenuWindowId(), 1);
 		sStartMenuCallback = StartCB_HandleInput;
 	}
 
 	return FALSE;
+}
+
+
+void DestroySafariZoneStatsWindow(void)
+{
+	ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, FALSE);
+	CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
+	RemoveWindow(sSafariZoneStatsWindowId);
 }

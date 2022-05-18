@@ -26,7 +26,7 @@ struct DynamaxTrainerSlide
 
 static const struct TrainerSlide sTrainerSlides[] =
 {
-	{},
+	//{0xD, sText_BrockRematchFirstMonDown, sText_BrockRematchLastSwitchIn, sText_BrockRematchLastLowHP},
 
 	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
 	{0x6, sText_MirskleFirstMonDown, NULL, NULL},
@@ -72,7 +72,31 @@ static const struct TrainerSlide sTrainerSlides[] =
 
 static const struct DynamaxTrainerSlide sDynamaxTrainerSlides[] =
 {
-	{0x17, gText_TestTrainerDynamaxMsg}, //Test data
+	{0x17, gText_DefaultTrainerDynamaxMsg},
+	{414, gText_BrockDynamax}, 
+	{415, gText_MistyDynamax},
+	{416, gText_LtSurgeDynamax},
+	{417, gText_ErikaDynamax},
+	{418, gText_KogaDynamax},
+	{420, gText_SabrinaDynamax},
+	{419, gText_BlaineDynamax},
+	{13, gText_BrockDynamax}, 
+	{14, gText_MistyDynamax},
+	{15, gText_LtSurgeDynamax},
+	{16, gText_ErikaDynamax},
+	{17, gText_KogaDynamax},
+	{18, gText_SabrinaDynamax},
+	{19, gText_BlaineDynamax},
+	{348, gText_GiovanniDynamax},
+	{349, gText_GiovanniDynamax},
+	{350, gText_GiovanniDynamax},
+	{410, gText_LoreleiDynamax},
+	{411, gText_BrunoDynamax},
+	{412, gText_AgathaDynamax},
+	{413, gText_LanceDynamax},
+	{438, gText_ChampionDynamax},
+	{439, gText_ChampionDynamax},
+	{440, gText_ChampionDynamax},
 };
 
 //This file's functions:

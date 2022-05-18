@@ -94,7 +94,14 @@ gBattleAnims_General:
 .word ANIM_G_MAX_CANNONADE
 .word ANIM_G_MAX_VOLCALITH
 
+.word ANIM_LEECHSEED2
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+ANIM_LEECHSEED2:
+	goto 0x81c7c23
+	endanimation
+
 .pool
 ANIM_USEITEM:
 	loadparticle ANIM_TAG_THIN_RING
@@ -144,6 +151,10 @@ ANIM_WRAPPED_END_TURN:
 	jumpifargmatches 0x0 0x6 ANIM_INFESTATION
 	jumpifargmatches 0x0 0x7 ANIM_SNAP_TRAP
 	jumpifargmatches 0x0 0x8 ANIM_OCTOLOCK
+	jumpifargmatches 0x0 0x9 0x81c7faa
+	jumpifargmatches 0x0 0xA ANIM_CEASELESSEDGE_WRAP
+	jumpifargmatches 0x0 0xB ANIM_CEASELESSEDGE_WRAP
+	jumpifargmatches 0x0 0xC ANIM_LEAFTORNADO
 	goto 0x81d5c8b
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

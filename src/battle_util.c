@@ -14,7 +14,8 @@
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
+#include "../include/base_stats.h"
 
 /*
 battle_util.c
@@ -94,9 +95,9 @@ ability_t GetRecordedAbility(u8 bank)
 		return BATTLE_HISTORY->abilities[bank];
 
 	u16 species = species;
-	u8 ability1 = TryRandomizeAbility(gBaseStats[species].ability1, species);
-	u8 ability2 = TryRandomizeAbility(gBaseStats[species].ability2, species);
-	u8 hiddenAbility = TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+	u8 ability1 = TryRandomizeAbility(gBaseStats2[species].ability1, species);
+	u8 ability2 = TryRandomizeAbility(gBaseStats2[species].ability2, species);
+	u8 hiddenAbility = TryRandomizeAbility(gBaseStats2[species].hiddenAbility, species);
 
 	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
 		return ability1;
@@ -299,8 +300,8 @@ bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
 		return GROUNDED;
 
 	else if  (GetMonAbility(mon) == ABILITY_LEVITATE
-		|| gBaseStats[species].type1 == TYPE_FLYING
-		|| gBaseStats[species].type2 == TYPE_FLYING)
+		|| gBaseStats2[species].type1 == TYPE_FLYING
+		|| gBaseStats2[species].type2 == TYPE_FLYING)
 			return IN_AIR;
 	return GROUNDED;
 }

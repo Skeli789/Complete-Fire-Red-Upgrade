@@ -1,0 +1,29 @@
+#org @gText_GreenphxHello
+???: Oh, [PLAYER]!\nI'm [GREEN]Greenphx[BLUE], the creator of this [GREEN]rom\phack[BLUE]. Can we have a battle?\nI'll use my favourite Pok\emon!
+
+#org @gText_GreenphxNo
+Oh, okay then.
+
+#org @gText_GreenphxLose
+That was a great fight!
+
+#org @gText_GreenphxAfter
+[GREEN]Greenphx: [BLUE]In a future update, I'll\nbattle you with my full team.
+
+#org @gText_DanielHello
+[BLUE]Daniel: Hello, I am Daniel.\nI assume you are looking for a\lchallenge?\pIf so, you've come to the best\nperson around. Would you like to\lhave a battle?
+
+#org @gText_DanielBefore
+[BLUE]My Pok\emon and I will burn you into\nashes!
+
+#org @gText_DanielNo
+[BLUE]So you're not strong enough? Come\nback later then.
+
+#org @gText_DanielLose
+Wow, I can't believe you're stronger\nthan me.
+
+#org @gText_DanielAfter
+[BLUE]Daniel: Since I lost, you can have\nthese items. I wasn't going to use\lthem anyway.
+
+#org @gText_DanielAlreadyBattled
+[BLUE]Daniel: You're super strong. You\ncould probably become a new Kanto\lChampion if you trained enough.

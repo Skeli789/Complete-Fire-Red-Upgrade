@@ -38,7 +38,10 @@
 #include "../include/new/item.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
+#include "../include/base_stats.h"
+#include "../include/new/exp.h"
+
 
 /*
 party_menu.c
@@ -1378,9 +1381,14 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId);
 static struct Pokemon* GetBaseMonForFusedSpecies(u16 species);
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func);
 static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon);
+static void ItemUseCB_AbilityPatch(u8 taskId, TaskFunc func);
+static u8 GetAbilityPatchNewAbility(struct Pokemon* mon);
 static void Task_OfferAbilityChange(u8 taskId);
 static void Task_HandleAbilityChangeYesNoInput(u8 taskId);
 static void Task_ChangeAbility(u8 taskId);
+static void Task_OfferAbilityChange2(u8 taskId);
+static void Task_HandleAbilityChangeYesNoInput2(u8 taskId);
+static void Task_ChangeAbility2(u8 taskId);
 static void ItemUseCB_MaxPowder(u8 taskId, TaskFunc func);
 static void Task_OfferGigantamaxChange(u8 taskId);
 static void Task_HandleGigantamaxChangeYesNoInput(u8 taskId);
@@ -1798,6 +1806,14 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 					species = SPECIES_LANDORUS;
 					break;	
 				#endif
+				#if (defined SPECIES_ENAMORUS && defined SPECIES_ENAMORUS_THERIAN)
+				case SPECIES_ENAMORUS:
+					species = SPECIES_ENAMORUS_THERIAN;
+					break;
+				case SPECIES_ENAMORUS_THERIAN:
+					species = SPECIES_ENAMORUS;
+					break;	
+				#endif
 				default:
 					goto NO_EFFECT;
 			}
@@ -1805,6 +1821,42 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			DoItemFormChange(mon, species);
 			gTasks[taskId].func = func;
 			break;
+		case ITEM_ZYGARDE_CUBE:
+			switch (species) {
+			case SPECIES_ZYGARDE:
+				species = SPECIES_ZYGARDE_10;
+				break;
+			case SPECIES_ZYGARDE_10:
+				species = SPECIES_ZYGARDE;
+				break;
+			default:
+				goto NO_EFFECT;
+			}
+		DoItemFormChange(mon, species);
+		gTasks[taskId].func = func;
+		break;
+
+		case ITEM_REINS_OF_UNITY:
+			switch (species) {
+			case SPECIES_GLASTRIER:
+				species = SPECIES_CALYREX_ICE_RIDER;
+				break;
+			case SPECIES_CALYREX_ICE_RIDER:
+				species = SPECIES_GLASTRIER;
+				break;
+			case SPECIES_SPECTRIER:
+				species = SPECIES_CALYREX_SHADOW_RIDER;
+				break;
+			case SPECIES_CALYREX_SHADOW_RIDER:
+				species = SPECIES_SPECTRIER;
+				break;
+			default:
+				goto NO_EFFECT;
+			}
+			DoItemFormChange(mon, species);
+			gTasks[taskId].func = func;
+			break;
+
 		case ITEM_PRISON_BOTTLE:
 			#if (defined SPECIES_HOOPA && defined SPECIES_HOOPA_UNBOUND)
 			if (species == SPECIES_HOOPA)
@@ -1869,8 +1921,8 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 		case ITEM_DNA_SPLICERS:
 		case ITEM_N_SOLARIZER:
 		case ITEM_N_LUNARIZER:
-			#if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA)
-			if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA)
+			#if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA && defined SPECIES_CALYREX)
+			if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA || species == SPECIES_CALYREX)
 			{
 				DisplayPartyMenuStdMessage(MSG_FUSE); //Show "Fuse with which Pokemon?" in bottom left
 				AnimatePartySlot(gPartyMenu.slotId, 1); //Update color of first selected box
@@ -1882,7 +1934,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 			else
 			#endif
 			#if (defined SPECIES_KYUREM_BLACK && defined SPECIES_KYUREM_WHITE && defined SPECIES_NECROZMA_DUSK_MANE && defined SPECIES_NECROZMA_DAWN_WINGS)
-				if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE || species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS)
+				if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE || species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS || species == SPECIES_CALYREX_ICE_RIDER || species == SPECIES_CALYREX_SHADOW_RIDER)
 			{
 				u8 slotId;
 				for (slotId = 0; GetMonData(&gPlayerParty[slotId], MON_DATA_SPECIES, NULL) != SPECIES_NONE && slotId < PARTY_SIZE; ++slotId);
@@ -1909,8 +1961,10 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 
 					if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE)
 						species = SPECIES_KYUREM;
-					else
+					else if (species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS)
 						species = SPECIES_NECROZMA;
+					else
+						species == SPECIES_CALYREX;
 					DoItemFormChange(mon, species);
 					gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
 				}
@@ -2055,6 +2109,12 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
 					case SPECIES_LUNALA:
 						baseSpecies = SPECIES_NECROZMA_DAWN_WINGS;
 						break;
+					case SPECIES_SPECTRIER:
+						baseSpecies = SPECIES_CALYREX_SHADOW_RIDER;
+						break;
+					case SPECIES_GLASTRIER:
+						baseSpecies = SPECIES_CALYREX_ICE_RIDER;
+						break;
 				}
 				DoItemFormChange(mon, baseSpecies);
 
@@ -2196,6 +2256,12 @@ void FieldUseFunc_AbilityCapsule(u8 taskId)
 	SetUpItemUseCallback(taskId);
 }
 
+void FieldUseFunc_AbilityPatch(u8 taskId)
+{
+	gItemUseCB = ItemUseCB_AbilityPatch;
+	SetUpItemUseCallback(taskId);
+}
+
 extern const u8 gText_AbilityCapsuleOfferChange[];
 extern const u8 gText_AbilityCapsuleChangedAbility[];
 static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
@@ -2207,7 +2273,7 @@ static void ItemUseCB_AbilityCapsule(u8 taskId, TaskFunc func)
 	if (changeTo != ABILITY_NONE) //Ability can be changed
 	{
 		GetMonNickname(mon, gStringVar1);
-		CopyAbilityName(gStringVar2, changeTo);
+		CopyAbilityNameByMon(gStringVar2, changeTo, mon->species);
 		StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleOfferChange);
 		DisplayPartyMenuMessage(gStringVar4, TRUE);
 		ScheduleBgCopyTilemapToVram(2);
@@ -2232,25 +2298,68 @@ static u8 GetAbilityCapsuleNewAbility(struct Pokemon* mon)
 
 	if (abilityType != 0) //Hidden Ability Capsule
 	{
-		if (ability != gBaseStats[species].hiddenAbility
-		&& gBaseStats[species].hiddenAbility != ABILITY_NONE)
-			changeTo = gBaseStats[species].hiddenAbility;
+		if (ability != gBaseStats2[species].hiddenAbility
+		&& gBaseStats2[species].hiddenAbility != ABILITY_NONE)
+			changeTo = gBaseStats2[species].hiddenAbility;
 	}
 	else //Regular ability capsule
 	{
-		if (ability == gBaseStats[species].ability1)
+		if (ability == gBaseStats2[species].ability1)
 		{
-			if (ability != gBaseStats[species].ability2
-			&& gBaseStats[species].ability2 != ABILITY_NONE)
-				changeTo = gBaseStats[species].ability2;
+			if (ability != gBaseStats2[species].ability2
+			&& gBaseStats2[species].ability2 != ABILITY_NONE)
+				changeTo = gBaseStats2[species].ability2;
 		}
-		else if (ability == gBaseStats[species].ability2) //Explicit check just in case the Pokemon has its Hidden Ability
+		else if (ability == gBaseStats2[species].ability2) //Explicit check just in case the Pokemon has its Hidden Ability
 		{
-			if (gBaseStats[species].ability1 != ABILITY_NONE)
-				changeTo = gBaseStats[species].ability1;
+			if (gBaseStats2[species].ability1 != ABILITY_NONE)
+				changeTo = gBaseStats2[species].ability1;
 		}
 	}
 	
+	return changeTo;
+}
+
+extern const u8 gText_AbilityPatchOfferChange[];
+extern const u8 gText_AbilityPatchChangedAbility[];
+static void ItemUseCB_AbilityPatch(u8 taskId, TaskFunc func)
+{
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	u8 changeTo = GetAbilityPatchNewAbility(mon); //Pick Ability to change to
+
+	PlaySE(SE_SELECT);
+	if (changeTo != ABILITY_NONE) //Ability can be changed
+	{
+		GetMonNickname(mon, gStringVar1);
+		CopyAbilityNameByMon(gStringVar2, changeTo, mon->species);
+		StringExpandPlaceholders(gStringVar4, gText_AbilityPatchOfferChange);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_OfferAbilityChange2;
+	}
+	else //No Effect
+	{
+		gPartyMenuUseExitCallback = FALSE;
+		DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = func;
+	}
+}
+
+static u8 GetAbilityPatchNewAbility(struct Pokemon* mon)
+{
+	u16 item = Var800E;
+	u8 abilityType = ItemId_GetHoldEffectParam(item);
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u8 ability = GetMonAbility(mon);
+	u8 changeTo = ABILITY_NONE;
+
+		if (ability != gBaseStats2[species].hiddenAbility
+			&& gBaseStats2[species].hiddenAbility != ABILITY_NONE)
+			changeTo = gBaseStats2[species].hiddenAbility;
+		if (ability == gBaseStats2[species].hiddenAbility
+			&& gBaseStats2[species].ability1 != ABILITY_NONE)
+			changeTo = gBaseStats2[species].ability1;
 	return changeTo;
 }
 
@@ -2331,7 +2440,56 @@ static void Task_ChangeAbility(u8 taskId)
 	}
 
 	GetMonNickname(mon, gStringVar1);
-	CopyAbilityName(gStringVar2, GetMonAbility(mon));
+	CopyAbilityNameByMon(gStringVar2, GetMonAbility(mon), mon->species);
+	StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleChangedAbility);
+	DisplayPartyMenuMessage(gStringVar4, TRUE);
+	ScheduleBgCopyTilemapToVram(2);
+	gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+	RemoveBagItem(item, 1);
+}
+
+static void Task_OfferAbilityChange2(u8 taskId)
+{
+	if (IsPartyMenuTextPrinterActive() != TRUE)
+	{
+		PartyMenuDisplayYesNoMenu();
+		gTasks[taskId].func = Task_HandleAbilityChangeYesNoInput2;
+	}
+}
+
+static void Task_HandleAbilityChangeYesNoInput2(u8 taskId)
+{
+	switch (Menu_ProcessInputNoWrapClearOnChoose())
+	{
+	case 0:
+		gTasks[taskId].func = Task_ChangeAbility2;
+		break;
+	case MENU_B_PRESSED:
+		PlaySE(SE_SELECT);
+		// Fallthrough
+	case 1:
+		gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+		break;
+	}
+}
+
+static void Task_ChangeAbility2(u8 taskId)
+{
+	u16 item = Var800E;
+	u8 abilityType = ItemId_GetHoldEffectParam(item);
+	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+	PlaySE(SE_USE_ITEM);
+	
+
+	if (mon->hiddenAbility == TRUE) {
+		mon->hiddenAbility = FALSE;
+	}
+	else {
+		mon->hiddenAbility = TRUE;
+	}
+
+	GetMonNickname(mon, gStringVar1);
+	CopyAbilityNameByMon(gStringVar2, GetMonAbility(mon), mon->species);
 	StringExpandPlaceholders(gStringVar4, gText_AbilityCapsuleChangedAbility);
 	DisplayPartyMenuMessage(gStringVar4, TRUE);
 	ScheduleBgCopyTilemapToVram(2);
@@ -2457,3 +2615,60 @@ void FieldUseFunc_VsSeeker(u8 taskId)
     }
 }
 #endif
+
+extern const u8 gText_PkmnElevatedToLvVar2[];
+extern const u8 gText_PastCap[];
+
+
+void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 item = gSpecialVar_ItemId;
+    bool8 noEffect;
+	struct PartyMenuInternal *ptr = sPartyMenuInternal;
+    s16 *arrayPtr = ptr->data;
+    u8 level;
+	u8 badge = GetBadgeCount();
+	u8 cap = LevelCap[badge];
+	bool8 pastCap = FALSE;
+
+    if (GetMonData(mon, MON_DATA_LEVEL, 0) != MAX_LEVEL)
+        noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
+    else
+        noEffect = TRUE;
+
+	if(GetMonData(mon, MON_DATA_LEVEL, 0) >= cap)
+		pastCap = TRUE;
+
+    PlaySE(SE_SELECT);
+    if (noEffect)
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = func;
+    }else if(pastCap) {
+		gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_PastCap, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = func;
+	}
+    else
+    {
+		GetMonLevelUpWindowStats(mon, arrayPtr);
+		ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0);
+		GetMonLevelUpWindowStats(mon, &ptr->data[NUM_STATS]);
+		gPartyMenuUseExitCallback = TRUE;
+		//ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
+		PlayFanfareByFanfareNum(0);
+		UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon);
+		RemoveBagItem(gSpecialVar_ItemId, 1);
+		GetMonNickname(mon, gStringVar1);
+		level = GetMonData(mon, MON_DATA_LEVEL, 0);
+		ConvertIntToDecimalStringN(gStringVar2, level, STR_CONV_MODE_LEFT_ALIGN, 3);
+		StringExpandPlaceholders(gStringVar4, gText_PkmnElevatedToLvVar2);
+		DisplayPartyMenuMessage(gStringVar4, TRUE);
+		ScheduleBgCopyTilemapToVram(2);
+		gTasks[taskId].func = Task_DisplayLevelUpStatsPg1;
+    }
+}

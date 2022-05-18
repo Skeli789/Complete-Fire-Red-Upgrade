@@ -12,7 +12,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 
 /*
 set_effect.c
@@ -96,7 +96,7 @@ static const u32 sStatusFlagsForMoveEffects[] =
 
 const u16 gTrappingMoves[] =
 {
-	MOVE_BIND, MOVE_WRAP, MOVE_FIRESPIN, MOVE_CLAMP, MOVE_WHIRLPOOL, MOVE_SANDTOMB, MOVE_MAGMASTORM, MOVE_INFESTATION, MOVE_SNAPTRAP, MOVE_OCTOLOCK, 0xFFFF
+	MOVE_BIND, MOVE_WRAP, MOVE_FIRESPIN, MOVE_CLAMP, MOVE_WHIRLPOOL, MOVE_SANDTOMB, MOVE_MAGMASTORM, MOVE_INFESTATION, MOVE_SNAPTRAP, MOVE_OCTOLOCK, MOVE_THUNDERCAGE, MOVE_CEASELESSEDGE, MOVE_STONEAXE, MOVE_LEAFTORNADO, 0xFFFF
 };
 
 const u16 gWrappedStringIds[] =
@@ -387,8 +387,26 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleCommunication[MOVE_EFFECT_BYTE] = umodsi(Random(), 3) + 3;
-					SetMoveEffect(FALSE, 0);
+					if (gCurrentMove == MOVE_DIRECLAW)
+					{
+						u8 effect = umodsi(Random(), 2);
+						switch (effect)
+						{
+						case 0:
+							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
+							SetMoveEffect(FALSE, 0);
+							break;
+						case 1:
+							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+							SetMoveEffect(FALSE, 0);
+							break;
+						}
+					}
+					else
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] = umodsi(Random(), 3) + 3;
+						SetMoveEffect(FALSE, 0);
+					}
 				}
 				break;
 
@@ -447,6 +465,18 @@ void SetMoveEffect(bool8 primary, u8 certain)
 							break;
 						case MOVE_SNAPTRAP:
 							gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
+							break;
+						case MOVE_THUNDERCAGE:
+							gBattleStringLoader = gText_TargetTrappedThunderCage;
+							break;
+						case MOVE_CEASELESSEDGE:
+							gBattleStringLoader = gText_TargetSplinters;
+							break;
+						case MOVE_STONEAXE:
+							gBattleStringLoader = gText_TargetSplinters;
+							break;
+						case MOVE_LEAFTORNADO:
+							gBattleStringLoader = gText_StormOfLeaves;
 							break;
 						case MOVE_G_MAX_CENTIFERNO_P:
 						case MOVE_G_MAX_CENTIFERNO_S:

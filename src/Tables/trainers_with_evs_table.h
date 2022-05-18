@@ -1,4 +1,4 @@
-#ifdef TRAINERS_WITH_EVS
+//#ifdef TRAINERS_WITH_EVS
 /*
 trainers_with_evs_table.h
 	defining the EV/IV/ability/ball type to be assigned to trainer pokemon
@@ -7,7 +7,7 @@ trainers_with_evs_table.h
 const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 {
 	[0] = {0}, //Empty Spread
-	[1] =
+	/*[1] =
 	{ //Physical Sweeper: Power Based
 		.nature = NATURE_ADAMANT,
 		.ivs = 31,
@@ -1230,9 +1230,205 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+	},*/
+	[121] = {
+		.nature = NATURE_MODEST,
+		.ivs = 25,
+		.ability = Ability_2,
+	},
+	[122] = {
+		.nature = NATURE_MODEST,
+		.ivs = 25,
+		.ability = Ability_Hidden,
+	},
+	[123] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 25,
+		.ability = Ability_1,
+	},
+	[124] = {
+		.nature = NATURE_ADAMANT,
+		.ivs = 25,
+		.ability = Ability_2,
+	},
+	[125] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 25,
+		.ability = Ability_Hidden,
+	},
+	[126] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[127] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[128] = {
+		.nature = NATURE_BOLD,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[129] = {
+		.nature = NATURE_IMPISH,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[130] = {
+		.nature = NATURE_RELAXED,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[131] = {
+		.nature = NATURE_MODEST,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[132] = {
+		.nature = NATURE_ADAMANT,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[133] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[134] = {
+		.nature = NATURE_MODEST,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[135] = {
+		.nature = NATURE_ADAMANT,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[136] = {
+		.nature = NATURE_ADAMANT,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[137] = {
+		.nature = NATURE_TIMID,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[138] = {
+		.nature = NATURE_JOLLY,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[139] = {
+		.nature = NATURE_ADAMANT,
+		.ivs = 18,
+		.ability = Ability_2,
+	},
+	[140] = {
+		.nature = NATURE_HASTY,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[141] = {
+		.nature = NATURE_RELAXED,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[142] = {
+		.nature = NATURE_TIMID,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	//For Trial Captains
+	[143] = {
+		.nature = NATURE_DOCILE,
+		.ivs = 31,
+		.ability = Ability_Random_1_2,
+	},
+	[144] = {
+		.nature = NATURE_DOCILE,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[145] = {
+		.nature = NATURE_DOCILE,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[146] = {
+		.nature = NATURE_CAREFUL,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[147] = {
+		.nature = NATURE_BOLD,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[148] = {
+		.nature = NATURE_CAREFUL,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[149] = {
+		.nature = NATURE_CALM,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[150] = {
+		.nature = NATURE_BRAVE,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[151] = {
+		.nature = NATURE_SASSY,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[152] = {
+		.nature = NATURE_BOLD,
+		.ivs = 31,
+		.ability = Ability_Hidden,
+	},
+	[153] = {
+		.nature = NATURE_CALM,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[154] = {
+		.nature = NATURE_CALM,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[155] = {
+		.nature = NATURE_TIMID,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[156] = {
+		.nature = NATURE_CAREFUL,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[157] = {
+		.nature = NATURE_MODEST,
+		.ivs = 31,
+		.ability = Ability_2,
+	},
+	[158] = {
+		.nature = NATURE_IMPISH,
+		.ivs = 31,
+		.ability = Ability_1,
+	},
+	[159] = {
+		.nature = NATURE_NAIVE,
+		.ivs = 31,
+		.ability = Ability_Hidden,
 	},
 };
-#endif
+//#endif
 
 #ifndef UNBOUND //Modify this
 const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
@@ -1287,6 +1483,7 @@ const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
 	[CLASS_RUIN_MANIAC] = 10,
 	[CLASS_LADY] =  20,
 	[CLASS_PAINTER] =  10,
+	[CLASS_CHAMPION_RS] = 31,
 };
 #else //For Pokemon Unbound
 const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =

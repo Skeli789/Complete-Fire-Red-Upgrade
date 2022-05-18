@@ -2,6 +2,7 @@
 
 #include "../../src/defines.h"
 #include "../../src/defines_battle.h"
+#include "../base_stats.h"
 
 /**
  * \file build_pokemon_2.h
@@ -18,9 +19,7 @@
 	personalityValue += nameHash << 8;																														\
 																																							\
 	u8 lvl = structure[i].lvl;																																\
-	if (FlagGet(FLAG_SCALE_TRAINER_LEVELS)																													\
-	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																										\
-		lvl = GetHighestMonLevel(gPlayerParty);																												\
+	lvl = ScaleLevel(lvl);																																	\
 																																							\
 	if (levelScaling && (side == B_SIDE_OPPONENT || !firstTrainer))																							\
 	{																																						\
@@ -84,9 +83,9 @@
 
 struct TrainersWithEvs
 {
-    u8 nature;
-    u8 ivs;
-    u8 hpEv;
+	u8 nature;
+	u8 ivs;
+	u8 hpEv;
 	u8 atkEv;
 	u8 defEv;
 	u8 spdEv;

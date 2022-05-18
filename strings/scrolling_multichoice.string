@@ -32,4 +32,495 @@ Example 9
 #org @sExampleText_10
 Example 10
 
+#org @sKanto
+Kanto
+
+#org @sJohto
+Johto
+
+#org @sHoenn
+Hoenn
+
+#org @sSinnoh
+Sinnoh
+
+#org @sUnova
+Unova
+
+#org @sKalos
+Kalos
+
+#org @sAlola
+Alola
+
+#org @sGalar
+Galar
+
+#org @sDomeFossil
+Dome Fossil
+#org @sHelixFossil
+Helix Fossil
+#org @sRootFossil
+Root Fossil
+#org @sClawFossil
+Claw Fossil
+#org @sSkullFossil
+Skull Fossil
+#org @sArmorFossil
+Armor Fossil
+#org @sCoverFossil
+Cover Fossil
+#org @sPlumeFossil
+Plume Fossil
+#org @sJawFossil
+Jaw Fossil
+#org @sSailFossil
+Sail Fossil
+#org @sExit
+Exit
+
+#org @sFirePunch
+Fire Punch
+
+#org @sIcePunch
+Ice Punch
+
+#org @sThunderPunch
+Thunder Punch
+
+#org @sLowKick
+Low Kick
+
+#org @sSuperpower
+Superpower
+
+#org @sVacuumWave
+Vacuum Wave
+
+#org @sAuraSphere
+Aura Sphere
+
+#org @sCloseCombat
+Close Combat
+
+#org @sBulbasaur
+[GREEN]Bulbasaur [BLACK]- [SHRINK]2000 Coins
+
+#org @sChikorita
+[GREEN]Chikorita [BLACK]- [SHRINK]2000 Coins
+
+#org @sTreecko
+[GREEN]Treecko [BLACK]- [SHRINK]2000 Coins
+
+#org @sTurtwig
+[GREEN]Turtwig [BLACK]- [SHRINK]2000 Coins
+
+#org @sSnivy
+[GREEN]Snivy [BLACK]- [SHRINK]2000 Coins
+
+#org @sChespin
+[GREEN]Chespin [BLACK]- [SHRINK]2000 Coins
+
+#org @sRowlet
+[GREEN]Rowlet [BLACK]- [SHRINK]2000 Coins
+
+#org @sGrookey
+[GREEN]Grookey [BLACK]- [SHRINK]2000 Coins
+
+#org @sCharmander
+[RED]Charmander [BLACK]- [SHRINK]2000 Coins
+
+#org @sCyndaquil
+[RED]Cyndaquil [BLACK]- [SHRINK]2000 Coins
+
+#org @sTorchic
+[RED]Torchic [BLACK]- [SHRINK]2000 Coins
+
+#org @sChimchar
+[RED]Chimchar [BLACK]- [SHRINK]2000 Coins
+
+#org @sTepig
+[RED]Tepig [BLACK]- [SHRINK]2000 Coins
+
+#org @sFennekin
+[RED]Fennekin [BLACK]- [SHRINK]2000 Coins
+
+#org @sLitten
+[RED]Litten [BLACK]- [SHRINK]2000 Coins
+
+#org @sScorbunny
+[RED]Scorbunny [BLACK]- [SHRINK]2000 Coins
+
+#org @sSquirtle
+[BLUE]Squirtle [BLACK]- [SHRINK]2000 Coins
+
+#org @sTotodile
+[BLUE]Totodile [BLACK]- [SHRINK]2000 Coins
+
+#org @sMudkip
+[BLUE]Mudkip [BLACK]- [SHRINK]2000 Coins
+
+#org @sPiplup
+[BLUE]Piplup [BLACK]- [SHRINK]2000 Coins
+
+#org @sOshawott
+[BLUE]Oshawott [BLACK]- [SHRINK]2000 Coins
+
+#org @sFroakie
+[BLUE]Froakie [BLACK]- [SHRINK]2000 Coins
+
+#org @sPopplio
+[BLUE]Popplio [BLACK]- [SHRINK]2000 Coins
+
+#org @sSobble
+[BLUE]Sobble [BLACK]- [SHRINK]2000 Coins
+
+#org @sBuyCoin1
+[SHRINK]  50 - \$250
+
+#org @sBuyCoin2
+[SHRINK] 500 - \$2500
+
+#org @sBuyCoin3
+[SHRINK]5000 - \$25000
+
+#org @sDratini
+Dratini - [SHRINK]4000 Coins
+
+#org @sLarvitar
+Larvitar - [SHRINK]4000 Coins
+
+#org @sBagon
+Bagon - [SHRINK]4000 Coins
+
+#org @sBeldum
+Beldum - [SHRINK]4000 Coins
+
+#org @sGible
+Gible - [SHRINK]4000 Coins
+
+#org @sDeino
+Deino - [SHRINK]4000 Coins
+
+#org @sGoomy
+Goomy - [SHRINK]4000 Coins
+
+#org @sJangmoo
+Jangmo-o - [SHRINK]4000 Coins
+
+#org @sDreepy
+Dreepy - [SHRINK]4000 Coins
+
+#org @sAron
+Aron - [SHRINK]3000 Coins
+
+#org @sTrapinch
+Trapinch - [SHRINK]3000 Coins
+
+#org @sRiolu
+Riolu - [SHRINK]3000 Coins
+
+#org @sAxew
+Axew - [SHRINK]3000 Coins
+
+#org @sLarvesta
+Larvesta - [SHRINK]3000 Coins
+
+#org @sZorua
+Zorua - [SHRINK]3000 Coins
+
+#org @sNoibat
+Noibat - [SHRINK]3000 Coins
+
+#org @sHonedge
+Honedge - [SHRINK]3000 Coins
+
+#org @sWimpod
+Wimpod - [SHRINK]3000 Coins
+
+#org @sMimikyu
+Mimikyu - [SHRINK]3000 Coins
+
+#org @sPoipole
+Poipole - [SHRINK]3000 Coins
+
+#org @sMeltan
+Meltan - [SHRINK]3000 Coins
+
+#org @sPorygon
+Porygon - [SHRINK]3000 Coins
+
+#org @sRattataA
+A-Rattata - [SHRINK]2500 Coins
+
+#org @sRaichuA
+A-Raichu - [SHRINK]2500 Coins
+
+#org @sSandshrewA
+A-Sandshrew - [SHRINK]2500 Coins
+
+#org @sVulpixA
+A-Vulpix - [SHRINK]2500 Coins
+
+#org @sDiglettA
+A-Diglett - [SHRINK]2500 Coins
+
+#org @sMeowthA
+A-Meowth - [SHRINK]2500 Coins
+
+#org @sGeodudeA
+A-Geodude - [SHRINK]2500 Coins
+
+#org @sGrimerA
+A-Grimer - [SHRINK]2500 Coins
+
+#org @sExeggutorA
+A-Exeggutor - [SHRINK]2500 Coins
+
+#org @sMarowakA
+A-Marowak - [SHRINK]2500 Coins
+
+#org @sMeowthG
+G-Meowth - [SHRINK]2500 Coins
+
+#org @sPonytaG
+G-Ponyta - [SHRINK]2500 Coins
+
+#org @sFarfetchdG
+G-Farfetch'd - [SHRINK]2500 Coins
+
+#org @sWeezingG
+G-Weezing - [SHRINK]2500 Coins
+
+#org @sMrMimeG
+G-Mr Mime - [SHRINK]2500 Coins
+
+#org @sCorsolaG
+G-Corsola - [SHRINK]2500 Coins
+
+#org @sZigzagoonG
+G-Zigzagoon - [SHRINK]2500 Coins
+
+#org @sDarumakaG
+G-Darumaka - [SHRINK]2500 Coins
+
+#org @sYamaskG
+G-Yamask - [SHRINK]2500 Coins
+
+#org @sStunfiskG
+G-Stunfisk - [SHRINK]2500 Coins
+
+#org @sSlowpokeG
+G-Slowpoke - [SHRINK]2500 Coins
+
+#org @sAdamant
+Adamant [SHRINK][RED] +Attack [BLUE]-Sp. Atk
+#org @sBold
+Bold [SHRINK][RED]+Defense [BLUE]-Attack
+#org @sBrave
+Brave [SHRINK][RED]+Attack [BLUE]-Speed
+#org @sCalm
+Calm [SHRINK][RED]+Sp. Def [BLUE]-Attack
+#org @sCareful
+Careful [SHRINK][RED]+Sp. Def [BLUE]-Sp. Atk
+#org @sGentle
+Gentle [SHRINK][RED]+Sp. Def [BLUE]-Defense
+#org @sHasty
+Hasty [SHRINK][RED]+Speed [BLUE]-Defense
+#org @sImpish
+Impish [SHRINK][RED]+Defense [BLUE]-Sp. Atk
+#org @sJolly
+Jolly [SHRINK][RED]+Speed [BLUE]-Sp. Atk
+#org @sLax
+Lax [SHRINK][RED]+Defense [BLUE]-Sp. Def
+#org @sLonely
+Lonely [SHRINK][RED]+Attack [BLUE]-Defense
+#org @sMild
+Mild [SHRINK][RED]+Sp. Atk [BLUE]-Defense
+#org @sModest
+Modest [SHRINK][RED]+Sp. Atk [BLUE]-Attack
+#org @sNaive
+Naive [SHRINK][RED]+Speed [BLUE]-Sp. Def
+#org @sNaughty
+Naughty [SHRINK][RED]+Attack [BLUE]-Sp. Def
+#org @sQuiet
+Quiet [SHRINK][RED]+Sp. Atk [BLUE]-Speed
+#org @sRash
+Rash [SHRINK][RED]+Sp. Atk [BLUE]-Sp. Def
+#org @sRelaxed
+Relaxed [SHRINK][RED]+Defense [BLUE]-Speed
+#org @sSassy
+Sassy [SHRINK][RED]+Sp. Def [BLUE]-Speed
+#org @sTimid
+Timid [SHRINK][RED]+Speed [BLUE]-Attack
+#org @sBashful
+Bashful [SHRINK]No Stat Changes
+#org @sDocile
+Docile [SHRINK]No Stat Changes
+#org @sHardy
+Hardy [SHRINK]No Stat Changes
+#org @sQuirky
+Quirky [SHRINK]No Stat Changes
+#org @sSerious
+Serious [SHRINK]No Stat Changes
+
+#org @sAttack
+[RED]Attack 
+
+#org @sDefense
+[BLUE]Defense
+
+#org @sSpAttack
+[RED]Special Attack
+
+#org @sSpDefense
+[BLUE]Special Defense
+
+#org @sSpeed
+[GREEN]Speed
+
+#org @sHP
+[GREEN]HP
+
+#org @sPokeball
+Pok\e Ball
+#org @sGreatball
+Great Ball
+#org @sUltraball
+Ultra Ball
+#org @sMasterball
+Master Ball
+#org @sFastball
+Fast Ball
+#org @sLevelball
+Level Ball
+#org @sLureball
+Lure Ball
+#org @sHeavyball
+Heavy Ball
+#org @sLoveball
+Love Ball
+#org @sFriendball
+Friend Ball
+#org @sMoonball
+Moon Ball
+#org @sNetball
+Net Ball
+#org @sNestball
+Nest Ball
+#org @sRepeatball
+Repeat Ball
+#org @sTimerball
+Timer Ball
+#org @sLuxuryball
+Luxury Ball
+#org @sPremierball
+Premier Ball
+#org @sDiveball
+Dive Ball
+#org @sDuskball
+Dusk Ball
+#org @sHealball
+Heal Ball
+#org @sQuickball
+Quick Ball
+#org @sCherishball
+Cherish Ball
+#org @sDreamball
+Dream Ball
+#org @sSafariball
+Safari Ball
+#org @sBeastball
+Beast Ball
+#org @sParkball
+Park Ball
+#org @sSportball
+Sport Ball
+
+#org @s11F
+11[SHRINK]F
+#org @s10F
+10[SHRINK]F
+#org @s9F
+9[SHRINK]F
+#org @s8F
+8[SHRINK]F
+#org @s7F
+7[SHRINK]F
+#org @s6F
+6[SHRINK]F
+#org @s5F
+5[SHRINK]F
+#org @s4F
+4[SHRINK]F
+#org @s3F
+3[SHRINK]F
+#org @s2F
+2[SHRINK]F
+#org @s1F
+1[SHRINK]F
+
+#org @sRotomNormal
+Recall
+
+#org @sRotomHeat
+Microwave oven
+
+#org @sRotomWash
+Washing machine
+
+#org @sRotomFrost
+Refrigerator
+
+#org @sRotomFan
+Electric fan
+
+#org @sRotomMow
+Lawnmower
+
+#org @sFixRaidBug
+Fix Raid Bug
+
+#org @sPikachuNormal
+Pikachu (Normal)
+
+#org @sPikachuSurfing
+Surfing Pikachu
+
+#org @sPikachuFlying
+Flying Pikachu
+
+#org @sPikachuRockstar
+Rock Star Pikachu
+
+#org @sPikachuBelle
+Belle Pikachu
+
+#org @sPikachuPopstar
+Pop Star Pikachu
+
+#org @sPikachuPhD
+PhD Pikachu
+
+#org @sPikachuLibre
+Libre Pikachu
+
+#org @sSecretSword
+Secret Sword
+
+#org @sDracozolt
+Dracozolt
+
+#org @sDracovish
+Dracovish
+
+#org @sArctozolt
+Arctozolt
+
+#org @sArctovish
+Arctovish
+
+#org @sNoThanks
+Nevermind
+
 #endif

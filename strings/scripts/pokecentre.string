@@ -1,0 +1,125 @@
+#org @gText_pokecentre_0X1A5483
+Welcome to our Pok\emon Center!\pWould you like me to heal your\nPok\emon back to perfect health?
+
+#org @gText_pokecentre_0X1A54E1
+Okay, I'll take your Pok\emon for a\nfew seconds.
+
+#org @gText_pokecentre_0X1A5511
+We hope to see you again!
+
+#org @gText_pokecentre_0X1A552B
+Thank you for waiting.\nWe've restored your Pok\emon to\lfull health.
+
+#org @gText_pokecentre_0X1BCCCA
+It appears as if [BUFFER1] is playing\nright now.\lGo for it!
+
+#org @gText_GivePocketCentre
+Before I heal your Pok\emon, you're\na new trainer, right?\pI have an item for new trainers.\nIt is called the Pock\etCentre.\pWhen used, it will heal all your\nPok\emon for free, but you need to\lrefill it at a Pok\ecentre.
+
+#org @gText_AIOMan_0X803472
+Hello! How may I help you?
+
+#org @gText_AIOMan_0X80348F
+Relearn a forgotten move
+
+#org @gText_AIOMan_0X803742
+Delete a move
+
+#org @gText_AIOMan_0X803C60
+Rate a Nickname
+
+#org @gText_AIOMan_0X8034AA
+Exit
+
+#org @gText_AIOMan_0X1A2CC3
+Which Pok\emon needs tutoring?
+
+#org @gText_AIOMan_0X199421
+Which Pok\emon should forget a\nmove?
+
+#org @gText_AIOMan_0X199445
+Which move should be forgotten?
+
+#org @gText_AIOMan_0X199485
+Hm! [BUFFER1]'s [BUFFER2]?\nThat move should be forgotten?
+
+#org @gText_AIOMan_0X193AA6
+Which Pok\emon's nickname should\nI critique?
+
+#org @gText_AIOMan_0X8034B1
+I hope to see you again!
+
+#org @gText_AIOMan_0X1A2E20
+Hunh? There isn't a single move\nthat I can teach an Egg.
+
+#org @gText_AIOMan_0X1A2CFC
+Sorry[.]\pIt doesn't appear as if I have a\nmove I can teach that Pok\emon.
+
+#org @gText_AIOMan_0X1A2CE1
+Which move should I teach?
+
+#org @gText_AIOMan_0X1994EA
+Come again if there are other\nmoves to be forgotten.
+
+#org @gText_AIOMan_0X19951F
+What?\nNo Egg should know any moves.
+
+#org @gText_AIOMan_0X199465
+[BUFFER1] seems to know only one\nmove[.]
+
+#org @gText_AIOMan_0X1994B1
+It worked to perfection!\p[BUFFER1] has forgotten\n[BUFFER2] completely.
+
+#org @gText_AIOMan_0X193AD2
+[BUFFER1], is it?\nThat is a decent nickname!\pBut, would you like me to give it\na nicer name?\pHow about it?
+
+#org @gText_AIOMan_0X193CC4
+Now, now.\nThat is merely an Egg!
+
+#org @gText_AIOMan_0X193C82
+[BUFFER1], is it?\nThat is a truly impeccable name!\pTake good care of [BUFFER1]!
+
+#org @gText_AIOMan_0X193B36
+Ah, good. Then, what shall the new\nnickname be?
+
+#org @gText_AIOMan_0X193BF0
+Done! From now on, this Pok\emon\nshall be known as [BUFFER1]!\pIt looks no different from before,\nand yet, this is vastly superior!\pHow fortunate for you!
+
+#org @gText_AIOMan_0X193B66
+Done! From now on, this Pok\emon\nshall be known as [BUFFER1]!\pIt is a better name than before!\nHow fortunate for you!
+
+#org @gText_AIOMan_FixSpritesAfterUpdate
+Fix Sprites After Updating
+
+#org @gText_AIOMan_SpritesFixed
+Sprites have been fixed.\nEnjoy the game!
+
+#org @gText_RaidAlreadyFixed
+Sorry, you have already used this!\nIf this is a mistake, contact\lGreenphx on discord\l(Greenphx(hashtag)5428)
+
+#org @gText_RaidBugFixed
+Raid Bug has been fixed.
+
+#org @gText_ChangeR
+Change R Button Mode
+
+#org @gText_DexNavEnc
+DexNav Encounter
+
+#org @gText_PokemonMenu
+Party / PKM Menu
+
+#org @gText_ItemMenu
+Item Bag
+
+#org @gText_WhatHappenR
+When the R button is pressed, what\nshould happen / open?
+
+#org @gText_DexNavEnc2
+The R Button will now try to start a\nDexNav encounter.
+
+#org @gText_PkmMenu
+The R Button will now open your\nparty of Pok\emon.
+
+#org @gText_ItemBag
+The R Button will now open your\nitem bag.

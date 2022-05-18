@@ -1,0 +1,2815 @@
+MAX_LENGTH=16
+FILL_FF=True
+
+#org @gLongMoveNames
+#org @NAME_LONG_MOVE_NONE
+-
+
+#org @NAME_LONG_POUND
+Pound
+
+#org @NAME_LONG_KARATE_CHOP
+Karate Chop
+
+#org @NAME_LONG_DOUBLESLAP
+Double Slap
+
+#org @NAME_LONG_COMET_PUNCH
+Comet Punch
+
+#org @NAME_LONG_MEGA_PUNCH
+Mega Punch
+
+#org @NAME_LONG_PAY_DAY
+Pay Day
+
+#org @NAME_LONG_FIRE_PUNCH
+Fire Punch
+
+#org @NAME_LONG_ICE_PUNCH
+Ice Punch
+
+#org @NAME_LONG_THUNDERPUNCH
+Thunder Punch
+
+#org @NAME_LONG_SCRATCH
+Scratch
+
+#org @NAME_LONG_VISE_GRIP
+Vise Grip
+
+#org @NAME_LONG_GUILLOTINE
+Guillotine
+
+#org @NAME_LONG_RAZOR_WIND
+Razor Wind
+
+#org @NAME_LONG_SWORDS_DANCE
+Swords Dance
+
+#org @NAME_LONG_CUT
+Cut
+
+#org @NAME_LONG_GUST
+Gust
+
+#org @NAME_LONG_WING_ATTACK
+Wing Attack
+
+#org @NAME_LONG_WHIRLWIND
+Whirlwind
+
+#org @NAME_LONG_FLY
+Fly
+
+#org @NAME_LONG_BIND
+Bind
+
+#org @NAME_LONG_SLAM
+Slam
+
+#org @NAME_LONG_VINE_WHIP
+Vine Whip
+
+#org @NAME_LONG_STOMP
+Stomp
+
+#org @NAME_LONG_DOUBLE_KICK
+Double Kick
+
+#org @NAME_LONG_MEGA_KICK
+Mega Kick
+
+#org @NAME_LONG_JUMP_KICK
+Jump Kick
+
+#org @NAME_LONG_ROLLING_KICK
+Rolling Kick
+
+#org @NAME_LONG_SAND_ATTACK
+Sand Attack
+
+#org @NAME_LONG_HEADBUTT
+Headbutt
+
+#org @NAME_LONG_HORN_ATTACK
+Horn Attack
+
+#org @NAME_LONG_FURY_ATTACK
+Fury Attack
+
+#org @NAME_LONG_HORN_DRILL
+Horn Drill
+
+#org @NAME_LONG_TACKLE
+Tackle
+
+#org @NAME_LONG_BODY_SLAM
+Body Slam
+
+#org @NAME_LONG_WRAP
+Wrap
+
+#org @NAME_LONG_TAKE_DOWN
+Take Down
+
+#org @NAME_LONG_THRASH
+Thrash
+
+#org @NAME_LONG_DOUBLE_EDGE
+Double-Edge
+
+#org @NAME_LONG_TAIL_WHIP
+Tail Whip
+
+#org @NAME_LONG_POISON_STING
+Poison Sting
+
+#org @NAME_LONG_TWINEEDLE
+Twineedle
+
+#org @NAME_LONG_PIN_MISSILE
+Pin Missile
+
+#org @NAME_LONG_LEER
+Leer
+
+#org @NAME_LONG_BITE
+Bite
+
+#org @NAME_LONG_GROWL
+Growl
+
+#org @NAME_LONG_ROAR
+Roar
+
+#org @NAME_LONG_SING
+Sing
+
+#org @NAME_LONG_SUPERSONIC
+Supersonic
+
+#org @NAME_LONG_SONIC_BOOM
+Sonic Boom
+
+#org @NAME_LONG_DISABLE
+Disable
+
+#org @NAME_LONG_ACID
+Acid
+
+#org @NAME_LONG_EMBER
+Ember
+
+#org @NAME_LONG_FLAMETHROWER
+Flamethrower
+
+#org @NAME_LONG_MIST
+Mist
+
+#org @NAME_LONG_WATER_GUN
+Water Gun
+
+#org @NAME_LONG_HYDRO_PUMP
+Hydro Pump
+
+#org @NAME_LONG_SURF
+Surf
+
+#org @NAME_LONG_ICE_BEAM
+Ice Beam
+
+#org @NAME_LONG_BLIZZARD
+Blizzard
+
+#org @NAME_LONG_PSYBEAM
+Psybeam
+
+#org @NAME_LONG_BUBBLE_BEAM
+Bubble Beam
+
+#org @NAME_LONG_AURORA_BEAM
+Aurora Beam
+
+#org @NAME_LONG_HYPER_BEAM
+Hyper Beam
+
+#org @NAME_LONG_PECK
+Peck
+
+#org @NAME_LONG_DRILL_PECK
+Drill Peck
+
+#org @NAME_LONG_SUBMISSION
+Submission
+
+#org @NAME_LONG_LOW_KICK
+Low Kick
+
+#org @NAME_LONG_COUNTER
+Counter
+
+#org @NAME_LONG_SEISMIC_TOSS
+Seismic Toss
+
+#org @NAME_LONG_STRENGTH
+Strength
+
+#org @NAME_LONG_ABSORB
+Absorb
+
+#org @NAME_LONG_MEGA_DRAIN
+Mega Drain
+
+#org @NAME_LONG_LEECH_SEED
+Leech Seed
+
+#org @NAME_LONG_GROWTH
+Growth
+
+#org @NAME_LONG_RAZOR_LEAF
+Razor Leaf
+
+#org @NAME_LONG_SOLAR_BEAM
+Solar Beam
+
+#org @NAME_LONG_POISONPOWDER
+PoisonPowder
+
+#org @NAME_LONG_STUN_SPORE
+Stun Spore
+
+#org @NAME_LONG_SLEEP_POWDER
+Sleep Powder
+
+#org @NAME_LONG_PETAL_DANCE
+Petal Dance
+
+#org @NAME_LONG_STRING_SHOT
+String Shot
+
+#org @NAME_LONG_DRAGON_RAGE
+Dragon Rage
+
+#org @NAME_LONG_FIRE_SPIN
+Fire Spin
+
+#org @NAME_LONG_THUNDERSHOCK
+ThunderShock
+
+#org @NAME_LONG_THUNDERBOLT
+Thunderbolt
+
+#org @NAME_LONG_THUNDER_WAVE
+Thunder Wave
+
+#org @NAME_LONG_THUNDER
+Thunder
+
+#org @NAME_LONG_ROCK_THROW
+Rock Throw
+
+#org @NAME_LONG_EARTHQUAKE
+Earthquake
+
+#org @NAME_LONG_FISSURE
+Fissure
+
+#org @NAME_LONG_DIG
+Dig
+
+#org @NAME_LONG_TOXIC
+Toxic
+
+#org @NAME_LONG_CONFUSION
+Confusion
+
+#org @NAME_LONG_PSYCHIC
+Psychic
+
+#org @NAME_LONG_HYPNOSIS
+Hypnosis
+
+#org @NAME_LONG_MEDITATE
+Meditate
+
+#org @NAME_LONG_AGILITY
+Agility
+
+#org @NAME_LONG_QUICK_ATTACK
+Quick Attack
+
+#org @NAME_LONG_RAGE
+Rage
+
+#org @NAME_LONG_TELEPORT
+Teleport
+
+#org @NAME_LONG_NIGHT_SHADE
+Night Shade
+
+#org @NAME_LONG_MIMIC
+Mimic
+
+#org @NAME_LONG_SCREECH
+Screech
+
+#org @NAME_LONG_DOUBLE_TEAM
+Double Team
+
+#org @NAME_LONG_RECOVER
+Recover
+
+#org @NAME_LONG_HARDEN
+Harden
+
+#org @NAME_LONG_MINIMIZE
+Minimize
+
+#org @NAME_LONG_SMOKESCREEN
+Smokescreen
+
+#org @NAME_LONG_CONFUSE_RAY
+Confuse Ray
+
+#org @NAME_LONG_WITHDRAW
+Withdraw
+
+#org @NAME_LONG_DEFENSE_CURL
+Defense Curl
+
+#org @NAME_LONG_BARRIER
+Barrier
+
+#org @NAME_LONG_LIGHT_SCREEN
+Light Screen
+
+#org @NAME_LONG_HAZE
+Haze
+
+#org @NAME_LONG_REFLECT
+Reflect
+
+#org @NAME_LONG_FOCUS_ENERGY
+Focus Energy
+
+#org @NAME_LONG_BIDE
+Bide
+
+#org @NAME_LONG_METRONOME
+Metronome
+
+#org @NAME_LONG_MIRROR_MOVE
+Mirror Move
+
+#org @NAME_LONG_SELFDESTRUCT
+Selfdestruct
+
+#org @NAME_LONG_EGG_BOMB
+Egg Bomb
+
+#org @NAME_LONG_LICK
+Lick
+
+#org @NAME_LONG_SMOG
+Smog
+
+#org @NAME_LONG_SLUDGE
+Sludge
+
+#org @NAME_LONG_BONE_CLUB
+Bone Club
+
+#org @NAME_LONG_FIRE_BLAST
+Fire Blast
+
+#org @NAME_LONG_WATERFALL
+Waterfall
+
+#org @NAME_LONG_CLAMP
+Clamp
+
+#org @NAME_LONG_SWIFT
+Swift
+
+#org @NAME_LONG_SKULL_BASH
+Skull Bash
+
+#org @NAME_LONG_SPIKE_CANNON
+Spike Cannon
+
+#org @NAME_LONG_CONSTRICT
+Constrict
+
+#org @NAME_LONG_AMNESIA
+Amnesia
+
+#org @NAME_LONG_KINESIS
+Kinesis
+
+#org @NAME_LONG_SOFT_BOILED
+Soft-Boiled
+
+#org @NAME_LONG_HI_JUMP_KICK
+Hi Jump Kick
+
+#org @NAME_LONG_GLARE
+Glare
+
+#org @NAME_LONG_DREAM_EATER
+Dream Eater
+
+#org @NAME_LONG_POISON_GAS
+Poison Gas
+
+#org @NAME_LONG_BARRAGE
+Barrage
+
+#org @NAME_LONG_LEECH_LIFE
+Leech Life
+
+#org @NAME_LONG_LOVELY_KISS
+Lovely Kiss
+
+#org @NAME_LONG_SKY_ATTACK
+Sky Attack
+
+#org @NAME_LONG_TRANSFORM
+Transform
+
+#org @NAME_LONG_BUBBLE
+Bubble
+
+#org @NAME_LONG_DIZZY_PUNCH
+Dizzy Punch
+
+#org @NAME_LONG_SPORE
+Spore
+
+#org @NAME_LONG_FLASH
+Flash
+
+#org @NAME_LONG_PSYWAVE
+Psywave
+
+#org @NAME_LONG_SPLASH
+Splash
+
+#org @NAME_LONG_ACID_ARMOR
+Acid Armor
+
+#org @NAME_LONG_CRABHAMMER
+Crabhammer
+
+#org @NAME_LONG_EXPLOSION
+Explosion
+
+#org @NAME_LONG_FURY_SWIPES
+Fury Swipes
+
+#org @NAME_LONG_BONEMERANG
+Bonemerang
+
+#org @NAME_LONG_REST
+Rest
+
+#org @NAME_LONG_ROCK_SLIDE
+Rock Slide
+
+#org @NAME_LONG_HYPER_FANG
+Hyper Fang
+
+#org @NAME_LONG_SHARPEN
+Sharpen
+
+#org @NAME_LONG_CONVERSION
+Conversion
+
+#org @NAME_LONG_TRI_ATTACK
+Tri Attack
+
+#org @NAME_LONG_SUPER_FANG
+Super Fang
+
+#org @NAME_LONG_SLASH
+Slash
+
+#org @NAME_LONG_SUBSTITUTE
+Substitute
+
+#org @NAME_LONG_STRUGGLE
+Struggle
+
+#org @NAME_LONG_SKETCH
+Sketch
+
+#org @NAME_LONG_TRIPLE_KICK
+Triple Kick
+
+#org @NAME_LONG_THIEF
+Thief
+
+#org @NAME_LONG_SPIDER_WEB
+Spider Web
+
+#org @NAME_LONG_MIND_READER
+Mind Reader
+
+#org @NAME_LONG_NIGHTMARE
+Nightmare
+
+#org @NAME_LONG_FLAME_WHEEL
+Flame Wheel
+
+#org @NAME_LONG_SNORE
+Snore
+
+#org @NAME_LONG_CURSE
+Curse
+
+#org @NAME_LONG_FLAIL
+Flail
+
+#org @NAME_LONG_CONVERSION_2
+Conversion 2
+
+#org @NAME_LONG_AEROBLAST
+Aeroblast
+
+#org @NAME_LONG_COTTON_SPORE
+Cotton Spore
+
+#org @NAME_LONG_REVERSAL
+Reversal
+
+#org @NAME_LONG_SPITE
+Spite
+
+#org @NAME_LONG_POWDER_SNOW
+Powder Snow
+
+#org @NAME_LONG_PROTECT
+Protect
+
+#org @NAME_LONG_MACH_PUNCH
+Mach Punch
+
+#org @NAME_LONG_SCARY_FACE
+Scary Face
+
+#org @NAME_LONG_FEINT_ATTACK
+Feint Attack
+
+#org @NAME_LONG_SWEET_KISS
+Sweet Kiss
+
+#org @NAME_LONG_BELLY_DRUM
+Belly Drum
+
+#org @NAME_LONG_SLUDGE_BOMB
+Sludge Bomb
+
+#org @NAME_LONG_MUD_SLAP
+Mud-Slap
+
+#org @NAME_LONG_OCTAZOOKA
+Octazooka
+
+#org @NAME_LONG_SPIKES
+Spikes
+
+#org @NAME_LONG_ZAP_CANNON
+Zap Cannon
+
+#org @NAME_LONG_FORESIGHT
+Foresight
+
+#org @NAME_LONG_DESTINY_BOND
+Destiny Bond
+
+#org @NAME_LONG_PERISH_SONG
+Perish Song
+
+#org @NAME_LONG_ICY_WIND
+Icy Wind
+
+#org @NAME_LONG_DETECT
+Detect
+
+#org @NAME_LONG_BONE_RUSH
+Bone Rush
+
+#org @NAME_LONG_LOCK_ON
+Lock-On
+
+#org @NAME_LONG_OUTRAGE
+Outrage
+
+#org @NAME_LONG_SANDSTORM
+Sandstorm
+
+#org @NAME_LONG_GIGA_DRAIN
+Giga Drain
+
+#org @NAME_LONG_ENDURE
+Endure
+
+#org @NAME_LONG_CHARM
+Charm
+
+#org @NAME_LONG_ROLLOUT
+Rollout
+
+#org @NAME_LONG_FALSE_SWIPE
+False Swipe
+
+#org @NAME_LONG_SWAGGER
+Swagger
+
+#org @NAME_LONG_MILK_DRINK
+Milk Drink
+
+#org @NAME_LONG_SPARK
+Spark
+
+#org @NAME_LONG_FURY_CUTTER
+Fury Cutter
+
+#org @NAME_LONG_STEEL_WING
+Steel Wing
+
+#org @NAME_LONG_MEAN_LOOK
+Mean Look
+
+#org @NAME_LONG_ATTRACT
+Attract
+
+#org @NAME_LONG_SLEEP_TALK
+Sleep Talk
+
+#org @NAME_LONG_HEAL_BELL
+Heal Bell
+
+#org @NAME_LONG_RETURN
+Return
+
+#org @NAME_LONG_PRESENT
+Present
+
+#org @NAME_LONG_FRUSTRATION
+Frustration
+
+#org @NAME_LONG_SAFEGUARD
+Safeguard
+
+#org @NAME_LONG_PAIN_SPLIT
+Pain Split
+
+#org @NAME_LONG_SACRED_FIRE
+Sacred Fire
+
+#org @NAME_LONG_MAGNITUDE
+Magnitude
+
+#org @NAME_LONG_DYNAMICPUNCH
+DynamicPunch
+
+#org @NAME_LONG_MEGAHORN
+Megahorn
+
+#org @NAME_LONG_DRAGONBREATH
+DragonBreath
+
+#org @NAME_LONG_BATON_PASS
+Baton Pass
+
+#org @NAME_LONG_ENCORE
+Encore
+
+#org @NAME_LONG_PURSUIT
+Pursuit
+
+#org @NAME_LONG_RAPID_SPIN
+Rapid Spin
+
+#org @NAME_LONG_SWEET_SCENT
+Sweet Scent
+
+#org @NAME_LONG_IRON_TAIL
+Iron Tail
+
+#org @NAME_LONG_METAL_CLAW
+Metal Claw
+
+#org @NAME_LONG_VITAL_THROW
+Vital Throw
+
+#org @NAME_LONG_MORNING_SUN
+Morning Sun
+
+#org @NAME_LONG_SYNTHESIS
+Synthesis
+
+#org @NAME_LONG_MOONLIGHT
+Moonlight
+
+#org @NAME_LONG_HIDDEN_POWER
+Hidden Power
+
+#org @NAME_LONG_CROSS_CHOP
+Cross Chop
+
+#org @NAME_LONG_TWISTER
+Twister
+
+#org @NAME_LONG_RAIN_DANCE
+Rain Dance
+
+#org @NAME_LONG_SUNNY_DAY
+Sunny Day
+
+#org @NAME_LONG_CRUNCH
+Crunch
+
+#org @NAME_LONG_MIRROR_COAT
+Mirror Coat
+
+#org @NAME_LONG_PSYCH_UP
+Psych Up
+
+#org @NAME_LONG_EXTREMESPEED
+Extremespeed
+
+#org @NAME_LONG_ANCIENTPOWER
+AncientPower
+
+#org @NAME_LONG_SHADOW_BALL
+Shadow Ball
+
+#org @NAME_LONG_FUTURE_SIGHT
+Future Sight
+
+#org @NAME_LONG_ROCK_SMASH
+Rock Smash
+
+#org @NAME_LONG_WHIRLPOOL
+Whirlpool
+
+#org @NAME_LONG_BEAT_UP
+Beat Up
+
+#org @NAME_LONG_FAKE_OUT
+Fake Out
+
+#org @NAME_LONG_UPROAR
+Uproar
+
+#org @NAME_LONG_STOCKPILE
+Stockpile
+
+#org @NAME_LONG_SPIT_UP
+Spit Up
+
+#org @NAME_LONG_SWALLOW
+Swallow
+
+#org @NAME_LONG_HEAT_WAVE
+Heat Wave
+
+#org @NAME_LONG_HAIL
+Hail
+
+#org @NAME_LONG_TORMENT
+Torment
+
+#org @NAME_LONG_FLATTER
+Flatter
+
+#org @NAME_LONG_WILL_O_WISP
+Will-O-Wisp
+
+#org @NAME_LONG_MEMENTO
+Memento
+
+#org @NAME_LONG_FACADE
+Facade
+
+#org @NAME_LONG_FOCUS_PUNCH
+Focus Punch
+
+#org @NAME_LONG_SMELLINGSALT
+SmellingSalt
+
+#org @NAME_LONG_FOLLOW_ME
+Follow Me
+
+#org @NAME_LONG_NATURE_POWER
+Nature Power
+
+#org @NAME_LONG_CHARGE
+Charge
+
+#org @NAME_LONG_TAUNT
+Taunt
+
+#org @NAME_LONG_HELPING_HAND
+Helping Hand
+
+#org @NAME_LONG_TRICK
+Trick
+
+#org @NAME_LONG_ROLE_PLAY
+Role Play
+
+#org @NAME_LONG_WISH
+Wish
+
+#org @NAME_LONG_ASSIST
+Assist
+
+#org @NAME_LONG_INGRAIN
+Ingrain
+
+#org @NAME_LONG_SUPERPOWER
+Superpower
+
+#org @NAME_LONG_MAGIC_COAT
+Magic Coat
+
+#org @NAME_LONG_RECYCLE
+Recycle
+
+#org @NAME_LONG_REVENGE
+Revenge
+
+#org @NAME_LONG_BRICK_BREAK
+Brick Break
+
+#org @NAME_LONG_YAWN
+Yawn
+
+#org @NAME_LONG_KNOCK_OFF
+Knock Off
+
+#org @NAME_LONG_ENDEAVOR
+Endeavor
+
+#org @NAME_LONG_ERUPTION
+Eruption
+
+#org @NAME_LONG_SKILL_SWAP
+Skill Swap
+
+#org @NAME_LONG_IMPRISON
+Imprison
+
+#org @NAME_LONG_REFRESH
+Refresh
+
+#org @NAME_LONG_GRUDGE
+Grudge
+
+#org @NAME_LONG_SNATCH
+Snatch
+
+#org @NAME_LONG_SECRET_POWER
+Secret Power
+
+#org @NAME_LONG_DIVE
+Dive
+
+#org @NAME_LONG_ARM_THRUST
+Arm Thrust
+
+#org @NAME_LONG_CAMOUFLAGE
+Camouflage
+
+#org @NAME_LONG_TAIL_GLOW
+Tail Glow
+
+#org @NAME_LONG_LUSTER_PURGE
+Luster Purge
+
+#org @NAME_LONG_MIST_BALL
+Mist Ball
+
+#org @NAME_LONG_FEATHERDANCE
+FeatherDance
+
+#org @NAME_LONG_TEETER_DANCE
+Teeter Dance
+
+#org @NAME_LONG_BLAZE_KICK
+Blaze Kick
+
+#org @NAME_LONG_MUD_SPORT
+Mud Sport
+
+#org @NAME_LONG_ICE_BALL
+Ice Ball
+
+#org @NAME_LONG_NEEDLE_ARM
+Needle Arm
+
+#org @NAME_LONG_SLACK_OFF
+Slack Off
+
+#org @NAME_LONG_HYPER_VOICE
+Hyper Voice
+
+#org @NAME_LONG_POISON_FANG
+Poison Fang
+
+#org @NAME_LONG_CRUSH_CLAW
+Crush Claw
+
+#org @NAME_LONG_BLAST_BURN
+Blast Burn
+
+#org @NAME_LONG_HYDRO_CANNON
+Hydro Cannon
+
+#org @NAME_LONG_METEOR_MASH
+Meteor Mash
+
+#org @NAME_LONG_ASTONISH
+Astonish
+
+#org @NAME_LONG_WEATHER_BALL
+Weather Ball
+
+#org @NAME_LONG_AROMATHERAPY
+Aromatherapy
+
+#org @NAME_LONG_FAKE_TEARS
+Fake Tears
+
+#org @NAME_LONG_AIR_CUTTER
+Air Cutter
+
+#org @NAME_LONG_OVERHEAT
+Overheat
+
+#org @NAME_LONG_ODOR_SLEUTH
+Odor Sleuth
+
+#org @NAME_LONG_ROCK_TOMB
+Rock Tomb
+
+#org @NAME_LONG_SILVER_WIND
+Silver Wind
+
+#org @NAME_LONG_METAL_SOUND
+Metal Sound
+
+#org @NAME_LONG_GRASSWHISTLE
+Grasswhistle
+
+#org @NAME_LONG_TICKLE
+Tickle
+
+#org @NAME_LONG_COSMIC_POWER
+Cosmic Power
+
+#org @NAME_LONG_WATER_SPOUT
+Water Spout
+
+#org @NAME_LONG_SIGNAL_BEAM
+Signal Beam
+
+#org @NAME_LONG_SHADOW_PUNCH
+Shadow Punch
+
+#org @NAME_LONG_EXTRASENSORY
+Extrasensory
+
+#org @NAME_LONG_SKY_UPPERCUT
+Sky Uppercut
+
+#org @NAME_LONG_SAND_TOMB
+Sand Tomb
+
+#org @NAME_LONG_SHEER_COLD
+Sheer Cold
+
+#org @NAME_LONG_MUDDY_WATER
+Muddy Water
+
+#org @NAME_LONG_BULLET_SEED
+Bullet Seed
+
+#org @NAME_LONG_AERIAL_ACE
+Aerial Ace
+
+#org @NAME_LONG_ICICLE_SPEAR
+Icicle Spear
+
+#org @NAME_LONG_IRON_DEFENSE
+Iron Defense
+
+#org @NAME_LONG_BLOCK
+Block
+
+#org @NAME_LONG_HOWL
+Howl
+
+#org @NAME_LONG_DRAGON_CLAW
+Dragon Claw
+
+#org @NAME_LONG_FRENZY_PLANT
+Frenzy Plant
+
+#org @NAME_LONG_BULK_UP
+Bulk Up
+
+#org @NAME_LONG_BOUNCE
+Bounce
+
+#org @NAME_LONG_MUD_SHOT
+Mud Shot
+
+#org @NAME_LONG_POISON_TAIL
+Poison Tail
+
+#org @NAME_LONG_COVET
+Covet
+
+#org @NAME_LONG_VOLT_TACKLE
+Volt Tackle
+
+#org @NAME_LONG_MAGICAL_LEAF
+Magical Leaf
+
+#org @NAME_LONG_WATER_SPORT
+Water Sport
+
+#org @NAME_LONG_CALM_MIND
+Calm Mind
+
+#org @NAME_LONG_LEAF_BLADE
+Leaf Blade
+
+#org @NAME_LONG_DRAGON_DANCE
+Dragon Dance
+
+#org @NAME_LONG_ROCK_BLAST
+Rock Blast
+
+#org @NAME_LONG_SHOCK_WAVE
+Shock Wave
+
+#org @NAME_LONG_WATER_PULSE
+Water Pulse
+
+#org @NAME_LONG_DOOM_DESIRE
+Doom Desire
+
+#org @NAME_LONG_PSYCHO_BOOST
+Psycho Boost
+
+#org @NAME_LONG_LEECH_FANG
+Leech Fang
+
+#org @NAME_LONG_AIR_SLASH
+Air Slash
+
+#org @NAME_LONG_AQUA_JET
+Aqua Jet
+
+#org @NAME_LONG_AQUA_TAIL
+Aqua Tail
+
+#org @NAME_LONG_AURA_SPHERE
+Aura Sphere
+
+#org @NAME_LONG_AVALANCHE
+Avalanche
+
+#org @NAME_LONG_BRAVE_BIRD
+Brave Bird
+
+#org @NAME_LONG_BUG_BUZZ
+Bug Buzz
+
+#org @NAME_LONG_BULLET_PUNCH
+Bullet Punch
+
+#org @NAME_LONG_CHARGE_BEAM
+Charge Beam
+
+#org @NAME_LONG_CLOSE_COMBAT
+Close Combat
+
+#org @NAME_LONG_CROSS_POISON
+Cross Poison
+
+#org @NAME_LONG_DARK_PULSE
+Dark Pulse
+
+#org @NAME_LONG_DISCHARGE
+Discharge
+
+#org @NAME_LONG_DRACO_METEOR
+Draco Meteor
+
+#org @NAME_LONG_DRAGON_PULSE
+Dragon Pulse
+
+#org @NAME_LONG_DRAIN_PUNCH
+Drain Punch
+
+#org @NAME_LONG_EARTH_POWER
+Earth Power
+
+#org @NAME_LONG_ENERGY_BALL
+Energy Ball
+
+#org @NAME_LONG_FOCUS_BLAST
+Focus Blast
+
+#org @NAME_LONG_FORCE_PALM
+Force Palm
+
+#org @NAME_LONG_GIGA_IMPACT
+Giga Impact
+
+#org @NAME_LONG_GRASS_KNOT
+Grass Knot
+
+#org @NAME_LONG_GUNK_SHOT
+Gunk Shot
+
+#org @NAME_LONG_HAMMER_ARM
+Hammer Arm
+
+#org @NAME_LONG_HEAD_SMASH
+Head Smash
+
+#org @NAME_LONG_ICE_SHARD
+Ice Shard
+
+#org @NAME_LONG_IRON_HEAD
+Iron Head
+
+#org @NAME_LONG_LAVA_PLUME
+Lava Plume
+
+#org @NAME_LONG_MAGNET_BOMB
+Magnet Bomb
+
+#org @NAME_LONG_MUD_BOMB
+Mud Bomb
+
+#org @NAME_LONG_NASTY_PLOT
+Nasty Plot
+
+#org @NAME_LONG_NIGHT_SLASH
+Night Slash
+
+#org @NAME_LONG_OMINOUS_WIND
+Ominous Wind
+
+#org @NAME_LONG_POWER_GEM
+Power Gem
+
+#org @NAME_LONG_POWER_WHIP
+Power Whip
+
+#org @NAME_LONG_PSYCHO_CUT
+Psycho Cut
+
+#org @NAME_LONG_ROCK_CLIMB
+Rock Climb
+
+#org @NAME_LONG_ROCK_POLISH
+Rock Polish
+
+#org @NAME_LONG_ROCK_WRECKER
+Rock Wrecker
+
+#org @NAME_LONG_ROOST
+Roost
+
+#org @NAME_LONG_SEED_BOMB
+Seed Bomb
+
+#org @NAME_LONG_SHADOW_CLAW
+Shadow Claw
+
+#org @NAME_LONG_SHADOW_SNEAK
+Shadow Sneak
+
+#org @NAME_LONG_VACUUM_WAVE
+Vacuum Wave
+
+#org @NAME_LONG_X_SCISSOR
+X-Scissor
+
+#org @NAME_LONG_ZEN_HEADBUTT
+Zen Headbutt
+
+#org @NAME_LONG_SWITCHEROO
+Switcheroo
+
+#org @NAME_LONG_DRILL_RUN
+Drill Run
+
+#org @NAME_LONG_BULLDOZE
+Bulldoze
+
+#org @NAME_LONG_ELECTROWEB
+Electroweb
+
+#org @NAME_LONG_FLAME_CHARGE
+Flame Charge
+
+#org @NAME_LONG_FROST_BREATH
+Frost Breath
+
+#org @NAME_LONG_HEART_STAMP
+Heart Stamp
+
+#org @NAME_LONG_HONE_CLAWS
+Hone Claws
+
+#org @NAME_LONG_HORN_LEECH
+Horn Leech
+
+#org @NAME_LONG_COIL
+Coil
+
+#org @NAME_LONG_HURRICANE
+Hurricane
+
+#org @NAME_LONG_ICICLE_CRASH
+Icicle Crash
+
+#org @NAME_LONG_WORK_UP
+Work Up
+
+#org @NAME_LONG_QUIVER_DANCE
+Quiver Dance
+
+#org @NAME_LONG_LEAF_TORNADO
+Leaf Tornado
+
+#org @NAME_LONG_LOW_SWEEP
+Low Sweep
+
+#org @NAME_LONG_SNARL
+Snarl
+
+#org @NAME_LONG_STRUGGLE_BUG
+Struggle Bug
+
+#org @NAME_LONG_STEAMROLLER
+Steamroller
+
+#org @NAME_LONG_STORM_THROW
+Storm Throw
+
+#org @NAME_LONG_VENOSHOCK
+Venoshock
+
+#org @NAME_LONG_WILD_CHARGE
+Wild Charge
+
+#org @NAME_LONG_POISON_JAB
+Poison Jab
+
+#org @NAME_LONG_ACID_SPRAY
+Acid Spray
+
+#org @NAME_LONG_FIERY_DANCE
+Fiery Dance
+
+#org @NAME_LONG_CLEAR_SMOG
+Clear Smog
+
+#org @NAME_LONG_LEAF_STORM
+Leaf Storm
+
+#org @NAME_LONG_STONE_EDGE
+Stone Edge
+
+#org @NAME_LONG_PAYBACK
+Payback
+
+#org @NAME_LONG_FIRE_FANG
+Fire Fang
+
+#org @NAME_LONG_ICE_FANG
+Ice Fang
+
+#org @NAME_LONG_THUNDER_FANG
+Thunder Fang
+
+#org @NAME_LONG_FLARE_BLITZ
+Flare Blitz
+
+#org @NAME_LONG_INFERNO
+Inferno
+
+#org @NAME_LONG_HEX
+Hex
+
+#org @NAME_LONG_DUAL_CHOP
+Dual Chop
+
+#org @NAME_LONG_DOUBLE_HIT
+Double Hit
+
+#org @NAME_LONG_COTTON_GUARD
+Cotton Guard
+
+#org @NAME_LONG_ACROBATICS
+Acrobatics
+
+#org @NAME_LONG_FLAME_BURST
+Flame Burst
+
+#org @NAME_LONG_U_TURN
+U-turn
+
+#org @NAME_LONG_VOLT_SWITCH
+Volt Switch
+
+#org @NAME_LONG_DRAGON_TAIL
+Dragon Tail
+
+#org @NAME_LONG_CIRCLE_THROW
+Circle Throw
+
+#org @NAME_LONG_MIRROR_SHOT
+Mirror Shot
+
+#org @NAME_LONG_WOOD_HAMMER
+Wood Hammer
+
+#org @NAME_LONG_HEAL_PULSE
+Heal Pulse
+
+#org @NAME_LONG_FLASH_CANNON
+Flash Cannon
+
+#org @NAME_LONG_BUG_BITE
+Bug Bite
+
+#org @NAME_LONG_PLUCK
+Pluck
+
+#org @NAME_LONG_SHELL_SMASH
+Shell Smash
+
+#org @NAME_LONG_RAGE_POWDER
+Rage Powder
+
+#org @NAME_LONG_WAKE_UP_SLAP
+Wake-Up Slap
+
+#org @NAME_LONG_RAZOR_SHELL
+Razor Shell
+
+#org @NAME_LONG_COPYCAT
+Copycat
+
+#org @NAME_LONG_MIRACLE_EYE
+Miracle Eye
+
+#org @NAME_LONG_SUCKER_PUNCH
+Sucker Punch
+
+#org @NAME_LONG_SCALD
+Scald
+
+#org @NAME_LONG_BRINE
+Brine
+
+#org @NAME_LONG_FAIRY_WIND
+Fairy Wind
+
+#org @NAME_LONG_DOLL_EYES
+Baby Doll Eyes
+
+#org @NAME_LONG_PLAY_ROUGH
+Play Rough
+
+#org @NAME_LONG_MOONBLAST
+Moonblast
+
+#org @NAME_LONG_DRAIN_KISS
+Draining Kiss
+
+#org @NAME_LONG_DAZZLE_GLEAM
+Dazzling Gleam
+
+#org @NAME_LONG_DISARM_CRY
+Disarming Cry
+
+#org @NAME_LONG_STEALTH_ROCK
+Stealth Rock
+
+#org @NAME_LONG_TOXIC_SPIKES
+Toxic Spikes
+
+#org @NAME_LONG_HEALING_WISH
+Healing Wish
+
+#org @NAME_LONG_LUNAR_DANCE
+Lunar Dance
+
+#org @NAME_LONG_TAILWIND
+Tailwind
+
+#org @NAME_LONG_BOOMBURST
+Boomburst
+
+#org @NAME_LONG_INCINERATE
+Incinerate
+
+#org @NAME_LONG_WORRY_SEED
+Worry Seed
+
+#org @NAME_LONG_GASTRO_ACID
+Gastro Acid
+
+#org @NAME_LONG_GEOMANCY
+Geomancy
+
+#org @NAME_LONG_FLOWER_GUARD
+Flower Guard
+
+#org @NAME_LONG_ROTOTILLER
+Rototiller
+
+#org @NAME_LONG_SHIFT_GEAR
+Shift Gear
+
+#org @NAME_LONG_STICKY_WEB
+Sticky Web
+
+#org @NAME_LONG_STORED_POWER
+Stored Power
+
+#org @NAME_LONG_ACUPRESSURE
+Acupressure
+
+#org @NAME_LONG_PUNISHMENT
+Punishment
+
+#org @NAME_LONG_ASSURANCE
+Assurance
+
+#org @NAME_LONG_DRAGON_RUSH
+Dragon Rush
+
+#org @NAME_LONG_DARK_VOID
+Dark Void
+
+#org @NAME_LONG_FEINT
+Feint
+
+#org @NAME_LONG_PHANTOM_FORCE
+Phantom Force
+
+#org @NAME_LONG_PETAL_STORM
+Petal Storm
+
+#org @NAME_LONG_PLAY_NICE
+Play Nice
+
+#org @NAME_LONG_ROAR_OF_TIME
+Roar of Time
+
+#org @NAME_LONG_SPACIAL_REND
+Spacial Rend
+
+#org @NAME_LONG_MAGMA_STORM
+Magma Storm
+
+#org @NAME_LONG_FINAL_GAMBIT
+Final Gambit
+
+#org @NAME_LONG_SHADOW_FORCE
+Shadow Force
+
+#org @NAME_LONG_NUZZLE
+Nuzzle
+
+#org @NAME_LONG_RETALIATE
+Retaliate
+
+#org @NAME_LONG_METAL_BASH
+Metal Bash
+
+#org @NAME_LONG_JUDGMENT
+Judgment
+
+#org @NAME_LONG_FREEZE_DRY
+Freeze-Dry
+
+#org @NAME_LONG_PSYSHOCK
+Psyshock
+
+#org @NAME_LONG_ROUND
+Round
+
+#org @NAME_LONG_TAIL_SLAP
+Tail Slap
+
+#org @NAME_LONG_GEAR_GRIND
+Gear Grind
+
+#org @NAME_LONG_NATURAL_GIFT
+Natural Gift
+
+#org @NAME_LONG_CHIP_AWAY
+Chip Away
+
+#org @NAME_LONG_SMACK_DOWN
+Smack Down
+
+#org @NAME_LONG_SPACE_HOLE
+Hyperspace Hole
+
+#org @NAME_LONG_GYRO_BALL
+Gyro Ball
+
+#org @NAME_LONG_SPACE_FURY
+Hyperspace Fury
+
+#org @NAME_LONG_ATTACK_ORDER
+Attack Order
+
+#org @NAME_LONG_DEFEND_ORDER
+Defend Order
+
+#org @NAME_LONG_HEAL_ORDER
+Heal Order
+
+#org @NAME_LONG_CAPTIVATE
+Captivate
+
+#org @NAME_LONG_DEFOG
+Defog
+
+#org @NAME_LONG_ORIGIN_PULSE
+Origin Pulse
+
+#org @NAME_LONG_CLIFF_BLADES
+Precipice Blades
+
+#org @NAME_LONG_GUARD_SWAP
+Guard Swap
+
+#org @NAME_LONG_STEAM_PUMP
+Steam Eruption
+
+#org @NAME_LONG_METAL_BURST
+Metal Burst
+
+#org @NAME_LONG_ME_FIRST
+Me First
+
+#org @NAME_LONG_POWER_SWAP
+Power Swap
+
+#org @NAME_LONG_POWER_TRICK
+Power Trick
+
+#org @NAME_LONG_PSYCHO_SHIFT
+Psycho Shift
+
+#org @NAME_LONG_WRING_OUT
+Wring Out
+
+#org @NAME_LONG_KINGS_SHIELD
+Kings Shield
+
+#org @NAME_LONG_PSYSTRIKE
+Psystrike
+
+#org @NAME_LONG_AUTOTOMIZE
+Autotomize
+
+#org @NAME_LONG_DIAMOND_STORM
+Diamond Storm
+
+#org @NAME_LONG_SLUDGE_WAVE
+Sludge Wave
+
+#org @NAME_LONG_HEAVY_SLAM
+Heavy Slam
+
+#org @NAME_LONG_SYNCHRONOISE
+Synchronoise
+
+#org @NAME_LONG_ELECTRO_BALL
+Electro Ball
+
+#org @NAME_LONG_FOUL_PLAY
+Foul Play
+
+#org @NAME_LONG_ENTRAINMENT
+Entrainment
+
+#org @NAME_LONG_NIGHT_DAZE
+Night Daze
+
+#org @NAME_LONG_ECHOED_VOICE
+Echoed Voice
+
+#org @NAME_LONG_LAND'S_WRATH
+Land's Wrath
+
+#org @NAME_LONG_OBLIVIONWING
+Oblivion Wing
+
+#org @NAME_LONG_HEART_SWAP
+Heart Swap
+
+#org @NAME_LONG_CRUSH_GRIP
+Crush Grip
+
+#org @NAME_LONG_SACRED_SWORD
+Sacred Sword
+
+#org @NAME_LONG_HEAT_CRASH
+Heat Crash
+
+#org @NAME_LONG_HEAD_CHARGE
+Head Charge
+
+#org @NAME_LONG_TECHNO_BLAST
+Techno Blast
+
+#org @NAME_LONG_RELIC_SONG
+Relic Song
+
+#org @NAME_LONG_SECRET_SWORD
+Secret Sword
+
+#org @NAME_LONG_GLACIATE
+Glaciate
+
+#org @NAME_LONG_BOLT_STRIKE
+Bolt Strike
+
+#org @NAME_LONG_BLUE_FLARE
+Blue Flare
+
+#org @NAME_LONG_FREEZE_SHOCK
+Freeze Shock
+
+#org @NAME_LONG_ICE_BURN
+Ice Burn
+
+#org @NAME_LONG_V_CREATE
+V-create
+
+#org @NAME_LONG_FUSION_FLARE
+Fusion Flare
+
+#org @NAME_LONG_FUSION_BOLT
+Fusion Bolt
+
+#org @NAME_LONG_FELL_STINGER
+Fell Stinger
+
+#org @NAME_LONG_NOBLE_ROAR
+Noble Roar
+
+#org @NAME_LONG_DRAGON_RISE
+Dragon Ascent
+
+#org @NAME_LONG_PARTING_SHOT
+Parting Shot
+
+#org @NAME_LONG_TOPSY_TURVY
+Topsy-Turvy
+
+#org @NAME_LONG_CORE_ENFORCE
+Core Enforcer
+
+#org @NAME_LONG_CHATTER
+Chatter
+
+#org @NAME_LONG_CONFIDE
+Confide
+
+#org @NAME_LONG_WATER_STAR
+Water Shuriken
+
+#org @NAME_LONG_MYSTIC_FIRE
+Mystical Fire
+
+#org @NAME_LONG_SPIKY_SHIELD
+Spiky Shield
+
+#org @NAME_LONG_EERIEIMPULSE
+Eerie Impulse
+
+#org @NAME_LONG_HOLD_BACK
+Hold Back
+
+#org @NAME_LONG_INFESTATION
+Infestation
+
+#org @NAME_LONG_POWER_UP_HIT
+Power-Up Punch
+
+#org @NAME_LONG_1000_ARROWS
+Thousand Arrows
+
+#org @NAME_LONG_1000_WAVES
+Thousand Waves
+
+#org @NAME_LONG_PARA_CHARGE
+Parabolic Charge
+
+#org @NAME_LONG_SEARING_SHOT
+Searing Shot
+
+#org @NAME_LONG_SEED_FLARE
+Seed Flare
+
+#org @NAME_LONG_ACCELEROCK
+Accelerock
+
+#org @NAME_LONG_ANCHOR_SHOT
+Anchor Shot
+
+#org @NAME_LONG_AURORA_VEIL
+Aurora Veil
+
+#org @NAME_LONG_BANEFUL_BUNK
+Baneful Bunker
+
+#org @NAME_LONG_BEAK_BLAST
+Beak Blast
+
+#org @NAME_LONG_BRUTAL_SWING
+Brutal Swing
+
+#org @NAME_LONG_BURN_UP
+Burn Up
+
+#org @NAME_LONG_CLANG_SCALES
+ClangorousScales
+
+#org @NAME_LONG_DARK_LARIAT
+Darkest Lariat
+
+#org @NAME_LONG_DRACO_HAMMER
+Dragon Hammer
+
+#org @NAME_LONG_FIRE_LASH
+Fire Lash
+
+#org @NAME_LONG_FIRST_PRESS
+First Impression
+
+#org @NAME_LONG_FLEUR_CANNON
+Fleur Cannon
+
+#org @NAME_LONG_FLORAL_HEAL
+Floral Heal
+
+#org @NAME_LONG_GEAR_UP
+Gear Up
+
+#org @NAME_LONG_HORSEPOWER
+High Horsepower
+
+#org @NAME_LONG_ICE_HAMMER
+Ice Hammer
+
+#org @NAME_LONG_LASER_FOCUS
+Laser Focus
+
+#org @NAME_LONG_LEAFAGE
+Leafage
+
+#org @NAME_LONG_LIQUIDATION
+Liquidation
+
+#org @NAME_LONG_LUNGE
+Lunge
+
+#org @NAME_LONG_GEIST_BEAM
+Moongeist Beam
+
+#org @NAME_LONG_MULTI_ATTACK
+Multi-Attack
+
+#org @NAME_LONG_NATURE'S_MAD
+Nature's Madness
+
+#org @NAME_LONG_POLLEN_PUFF
+Pollen Puff
+
+#org @NAME_LONG_POWER_TRIP
+Power Trip
+
+#org @NAME_LONG_PRISM_LASER
+Prismatic Laser
+
+#org @NAME_LONG_PSYCHIC_FANG
+Psychic Fangs
+
+#org @NAME_LONG_PURIFY
+Purify
+
+#org @NAME_LONG_REVEL_DANCE
+Revelation Dance
+
+#org @NAME_LONG_SHADOW_BONE
+Shadow Bone
+
+#org @NAME_LONG_SHELL_TRAP
+Shell Trap
+
+#org @NAME_LONG_SHORE_UP
+Shore Up
+
+#org @NAME_LONG_SMART_STRIKE
+Smart Strike
+
+#org @NAME_LONG_SOLAR_BLADE
+Solar Blade
+
+#org @NAME_LONG_SPARKLE_ARIA
+Sparkling Aria
+
+#org @NAME_LONG_SPECT_THIEF
+Spectral Thief
+
+#org @NAME_LONG_SPEED_SWAP
+Speed Swap
+
+#org @NAME_LONG_SPIRIT_LOCK
+Spirit Lock
+
+#org @NAME_LONG_SPOTLIGHT
+Spotlight
+
+#org @NAME_LONG_BAD_TANTRUM
+Stomping Tantrum
+
+#org @NAME_LONG_STRENGTH_SAP
+Strength Sap
+
+#org @NAME_LONG_SUNSTEEL_RAM
+Sunsteel Strike
+
+#org @NAME_LONG_TEARY_LOOK
+Tearful Look
+
+#org @NAME_LONG_THROAT_CHOP
+Throat Chop
+
+#org @NAME_LONG_TOXIC_THREAD
+Toxic Thread
+
+#org @NAME_LONG_TROP_KICK
+Trop Kick
+
+#org @NAME_LONG_ZING_ZAP
+Zing Zap
+
+#org @NAME_LONG_ELEC_TERRAIN
+Electric Terrain
+
+#org @NAME_LONG_GRAS_TERRAIN
+Grassy Terrain
+
+#org @NAME_LONG_MIST_TERRAIN
+Misty Terrain
+
+#org @NAME_LONG_PSYC_TERRAIN
+Psychic Terrain
+
+#org @NAME_LONG_GRASS_PLEDGE
+Grass Pledge
+
+#org @NAME_LONG_FIRE_PLEDGE
+Fire Pledge
+
+#org @NAME_LONG_WATER_PLEDGE
+Water Pledge
+
+#org @NAME_LONG_TRICK_ROOM
+Trick Room
+
+#org @NAME_LONG_MAGIC_ROOM
+Magic Room
+
+#org @NAME_LONG_WONDER_ROOM
+Wonder Room
+
+#org @NAME_LONG_CRAFTY_GUARD
+Crafty Guard
+
+#org @NAME_LONG_MAT_BLOCK
+Mat Block
+
+#org @NAME_LONG_QUICK_GUARD
+Quick Guard
+
+#org @NAME_LONG_WIDE_GUARD
+Wide Guard
+
+#org @NAME_LONG_AQUA_RING
+Aqua Ring
+
+#org @NAME_LONG_AROMA_MIST
+Aroma Mist
+
+#org @NAME_LONG_BELCH
+Belch
+
+#org @NAME_LONG_BESTOW
+Bestow
+
+#org @NAME_LONG_FLING
+Fling
+
+#org @NAME_LONG_FLYING_PRESS
+Flying Press
+
+#org @NAME_LONG_GRAVITY
+Gravity
+
+#org @NAME_LONG_GUARD_SPLIT
+Guard Split
+
+#org @NAME_LONG_HEAL_BLOCK
+Heal Block
+
+#org @NAME_LONG_ION_DELUGE
+Ion Deluge
+
+#org @NAME_LONG_LUCKY_CHANT
+Lucky Chant
+
+#org @NAME_LONG_MAGNET_RISE
+Magnet Rise
+
+#org @NAME_LONG_MAGNET_FLUX
+Magnet Flux
+
+#org @NAME_LONG_POWDER
+Powder
+
+#org @NAME_LONG_POWER_SPLIT
+Power Split
+
+#org @NAME_LONG_REFLECT_TYPE
+Reflect Type
+
+#org @NAME_LONG_SIMPLE_BEAM
+Simple Beam
+
+#org @NAME_LONG_SOAK
+Soak
+
+#org @NAME_LONG_TELEKINESIS
+Telekinesis
+
+#org @NAME_LONG_TRICKOTREAT
+Trick o Treat
+
+#org @NAME_LONG_VENOM_DRENCH
+Venom Drench
+
+#org @NAME_LONG_WOODS_CURSE
+Forest Curse
+
+#org @NAME_LONG_MIND_BLOWN
+Mind Blown
+
+#org @NAME_LONG_PHOTONGEYSER
+Photon Geyser
+
+#org @NAME_LONG_PLASMA_FISTS
+Plasma Fists
+
+#org @NAME_LONG_ELECTRIFY
+Electrify
+
+#org @NAME_LONG_EMBARGO
+Embargo
+
+#org @NAME_LONG_FAIRY_LOCK
+Fairy Lock
+
+#org @NAME_LONG_LIGHT_O_RUIN
+Light of Ruin
+
+#org @NAME_LONG_TRUMP_CARD
+Trump Card
+
+#org @NAME_LONG_AFTER_YOU
+After You
+
+#org @NAME_LONG_INSTRUCT
+Instruct
+
+#org @NAME_LONG_QUASH
+Quash
+
+#org @NAME_LONG_HAPPY_HOUR
+Happy Hour
+
+#org @NAME_LONG_DOUBLE_IRON
+Double Iron Bash
+
+#org @NAME_LONG_LAST_RESORT
+Last Resort
+
+#org @NAME_LONG_SKY_DROP
+Sky Drop
+
+#org @NAME_LONG_CELEBRATE
+Celebrate
+
+#org @NAME_LONG_HOLD_HANDS
+Hold Hands
+
+#org @NAME_LONG_DYNAMAX_CANNON
+Dynamax Cannon
+
+#org @NAME_LONG_SNIPE_SHOT
+Snipe Shot
+
+#org @NAME_LONG_JAW_LOCK
+Jaw Lock
+
+#org @NAME_LONG_STUFF_CHEEKS
+Stuff Cheeks
+
+#org @NAME_LONG_NO_RETREAT
+No Retreat
+
+#org @NAME_LONG_TAR_SHOT
+Tar Shot
+
+#org @NAME_LONG_MAGIC_POWDER
+Magic Powder
+
+#org @NAME_LONG_DRAGON_DARTS
+Dragon Darts
+
+#org @NAME_LONG_TEATIME
+Teatime
+
+#org @NAME_LONG_OCTOLOCK
+Octolock
+
+#org @NAME_LONG_BOLT_BEAK
+Bolt Beak
+
+#org @NAME_LONG_FISHIOUS_REND
+Fishious Rend
+
+#org @NAME_LONG_COURT_CHANGE
+Court Change
+
+#org @NAME_LONG_CLANGOROUS_SOUL
+Clangorous Soul
+
+#org @NAME_LONG_BODY_PRESS
+Body Press
+
+#org @NAME_LONG_DECORATE
+Decorate
+
+#org @NAME_LONG_DRUM_BEATING
+Drum Beating
+
+#org @NAME_LONG_SNAP_TRAP
+Snap Trap
+
+#org @NAME_LONG_PYRO_BALL
+Pyro Ball
+
+#org @NAME_LONG_BEHEMOTH_BLADE
+Behemoth Blade
+
+#org @NAME_LONG_BEHEMOTH_BASH
+Behemoth Bash
+
+#org @NAME_LONG_AURA_WHEEL
+Aura Wheel
+
+#org @NAME_LONG_BREAKING_SWIPE
+Breaking Swipe
+
+#org @NAME_LONG_BRANCH_POKE
+Branch Poke
+
+#org @NAME_LONG_OVERDRIVE
+Overdrive
+
+#org @NAME_LONG_APPLE_ACID
+Apple Acid
+
+#org @NAME_LONG_GRAV_APPLE
+Grav Apple
+
+#org @NAME_LONG_SPIRIT_BREAK
+Spirit Break
+
+#org @NAME_LONG_STRANGE_STEAM
+Strange Steam
+
+#org @NAME_LONG_LIFE_DEW
+Life Dew
+
+#org @NAME_LONG_OBSTRUCT
+Obstruct
+
+#org @NAME_LONG_FALSE_SURRENDER
+False Surrender
+
+#org @NAME_LONG_METEOR_ASSAULT
+Meteor Assault
+
+#org @NAME_LONG_ETERNABEAM
+Eternabeam
+
+#org @NAME_LONG_STEEL_BEAM
+Steel Beam
+
+#org @NAME_LONG_EXPANDING_FORCE
+Expanding Force
+
+#org @NAME_LONG_STEEL_ROLLER
+Steel Roller
+
+#org @NAME_LONG_SCALE_SHOT
+Scale Shot
+
+#org @NAME_LONG_METEOR_BEAM
+Meteor Beam
+
+#org @NAME_LONG_SHELL_SIDE_ARM
+Shell Side Arm
+
+#org @NAME_LONG_MISTY_EXPLOSION
+Misty Explosion
+
+#org @NAME_LONG_GRASSY_GLIDE
+Grassy Glide
+
+#org @NAME_LONG_RISING_VOLTAGE
+Rising Voltage
+
+#org @NAME_LONG_TERRAIN_PULSE
+Terrain Pulse
+
+#org @NAME_LONG_SKITTER_SMACK
+Skitter Smack
+
+#org @NAME_LONG_BURNING_JEALOUSY
+Buring Jealousy
+
+#org @NAME_LONG_LASH_OUT
+Lash Out
+
+#org @NAME_LONG_POLTERGEIST
+Poltergeist
+
+#org @NAME_LONG_CORROSIVE_GAS
+Corrosive Gas
+
+#org @NAME_LONG_COACHING
+Coaching
+
+#org @NAME_LONG_FLIP_TURN
+Flip Turn
+
+#org @NAME_LONG_TRIPLE_AXEL
+Triple Axel
+
+#org @NAME_LONG_DUAL_WINGBEAT
+Dual Wingbeat
+
+#org @NAME_LONG_SCORCHING_SANDS
+Scorching Sands
+
+#org @NAME_LONG_JUNGLE_HEALING
+Jungle Healing
+
+#org @NAME_LONG_WICKED_BLOW
+Wicked Blow
+
+#org @NAME_LONG_SURGING_STRIKES
+Surging Strikes
+
+#org @NAME_LONG_FREEZING_GLARE
+Freezing Glare
+
+#org @NAME_LONG_THUNDEROUS_KICK
+Thunderous Kick
+
+#org @NAME_LONG_FIERY_WRATH
+Fiery Wrath
+
+#org @NAME_LONG_THUNDER_CAGE
+Thunder Cage
+
+#org @NAME_LONG_DRAGON_ENERGY
+Dragon Energy
+
+#org @NAME_LONG_ASTRAL_BARRAGE
+Astral Barrage
+
+#org @NAME_LONG_GLACIAL_LANCE 
+Glacial Lance
+
+#org @NAME_LONG_EERIESPELL
+Eerie Spell
+
+#org @NAME_LONG_ZIPPYZAP
+Zippy Zap
+
+#org @NAME_LONG_SAPPYSEED
+Sappy Seed
+
+#org @NAME_LONG_FREEZYFROST
+Freezy Frost
+
+#org @NAME_LONG_SPARKLYSWIRL
+Sparkly Swirl
+
+#org @NAME_LONG_BOUNCYBUBBLE
+Bouncy Bubble
+
+#org @NAME_LONG_FLOATYFALL
+Floaty Fall
+
+#org @NAME_LONG_BUZZYBUZZ
+Buzzy Buzz
+
+#org @NAME_LONG_GLITZYGLOW
+Glitzy Glow
+
+#org @NAME_LONG_SIZZLYSLIDE
+Sizzly Slide
+
+#org @NAME_LONG_BADDYBAD
+Baddy Bad
+
+#org @NAME_LONG_DARKINTENTS
+Dark Intentions
+
+#org @NAME_LONG_FIERYDOOM
+Fiery Doom
+
+#org @NAME_LONG_SPLISHYSPLASH
+Splishy Splash
+
+#org @NAME_LONG_REALITYSHIFT
+Reality Shift
+
+#org @NAME_LONG_STRIPEDDIVE
+Striped Dive
+
+#org @NAME_LONG_PSYSHIELDBASH
+Psyshield Bash
+
+#org @NAME_LONG_CHLOROBLAST
+Chloroblast
+
+#org @NAME_LONG_HEADLONGRUSH
+Headlong Rush
+
+#org @NAME_LONG_ESPERWING
+Esper Wing
+
+#org @NAME_LONG_BARBBARRAGE
+Barb Barrage
+
+#org @NAME_LONG_TRIPLEARROWS
+Triple Arrows
+
+#org @NAME_LONG_CEASELESSEDGE
+Ceaseless Edge
+
+#org @NAME_LONG_INFERNALPARADE
+Infernal Parade
+
+#org @NAME_LONG_DIRECLAW
+Dire Claw
+
+#org @NAME_LONG_BITTERMALICE
+Bitter Malice
+
+#org @NAME_LONG_RAGINGFURY
+Raging Fury
+
+#org @NAME_LONG_WAVECRASH
+Wave Crash
+
+#org @NAME_LONG_STONEAXE
+Stone Axe
+
+#org @NAME_LONG_SHADOWSTORM
+Shadow Storm
+
+#org @NAME_LONG_MOUNTAINGALE
+Mountain Gale
+
+#org @NAME_LONG_VICTORYDANCE
+Victory Dance
+
+#org @NAME_LONG_PLACE14
+Shelter
+
+#org @NAME_LONG_SPRINGTIDESTORM
+Springtide Storm
+
+#org @NAME_LONG_SANDSEARSTORM
+Sandsear Storm
+
+#org @NAME_LONG_PLACE17
+Placeholder
+
+#org @NAME_LONG_PLACE18
+Placeholder
+
+#org @NAME_LONG_PLACE19
+Placeholder
+
+#org @NAME_LONG_PLACE20
+Placeholder
+
+#org @Z_Move_1
+Z-Move 1
+
+#org @Z_Move_2
+Z-Move 2
+
+#org @Z_Move_3
+Z-Move 3
+
+#org @Z_Move_4
+Z-Move 4
+
+#org @Z_Move_5
+Z-Move 5
+
+#org @Z_Move_6
+Z-Move 6
+
+#org @Z_Move_7
+Z-Move 7
+
+#org @Z_Move_8
+Z-Move 8
+
+#org @Z_Move_9
+Z-Move 9
+
+#org @Z_Move_10
+Z-Move 10
+
+#org @Z_Move_11
+Z-Move 11
+
+#org @Z_Move_12
+Z-Move 12
+
+#org @Z_Move_13
+Z-Move 13
+
+#org @Z_Move_14
+Z-Move 14
+
+#org @Z_Move_15
+Z-Move 15
+
+#org @Z_Move_16
+Z-Move 16
+
+#org @Z_Move_17
+Z-Move 17
+
+#org @Z_Move_18
+Z-Move 18
+
+#org @Z_Move_19
+Z-Move 19
+
+#org @Z_Move_20
+Z-Move 20
+
+#org @Z_Move_21
+Z-Move 21
+
+#org @Z_Move_22
+Z-Move 22
+
+#org @Z_Move_23
+Z-Move 23
+
+#org @Z_Move_24
+Z-Move 24
+
+#org @Z_Move_25
+Z-Move 25
+
+#org @Z_Move_26
+Z-Move 26
+
+#org @Z_Move_27
+Z-Move 27
+
+#org @Z_Move_28
+Z-Move 28
+
+#org @Z_Move_29
+Z-Move 29
+
+#org @Z_Move_30
+Z-Move 30
+
+#org @Z_Move_31
+Z-Move 31
+
+#org @Z_Move_32
+Z-Move 32
+
+#org @Z_Move_33
+Z-Move 33
+
+#org @Z_Move_34
+Z-Move 34
+
+#org @Z_Move_35
+Z-Move 35
+
+#org @Z_Move_36
+Z-Move 36
+
+#org @Z_Move_37
+Z-Move 37
+
+#org @Z_Move_38
+Z-Move 38
+
+#org @Z_Move_39
+Z-Move 39
+
+#org @Z_Move_40
+Z-Move 40
+
+#org @Z_Move_41
+Z-Move 41
+
+#org @Z_Move_42
+Z-Move 42
+
+#org @Z_Move_43
+Z-Move 43
+
+#org @Z_Move_44
+Z-Move 44
+
+#org @Z_Move_45
+Z-Move 45
+
+#org @Z_Move_46
+Z-Move 46
+
+#org @Z_Move_47
+Z-Move 47
+
+#org @Z_Move_48
+Z-Move 48
+
+#org @Z_Move_49
+Z-Move 49
+
+#org @Z_Move_50
+Z-Move 50
+
+#org @Z_Move_51
+Z-Move 51
+
+#org @Z_Move_52
+Z-Move 52
+
+#org @Z_Move_53
+Z-Move 53
+
+#org @NAME_LONG_MAX_GUARD
+Guard
+
+#org @NAME_LONG_MAX_STRIKE_P
+Strike
+
+#org @NAME_LONG_MAX_STRIKE_S
+Strike
+
+#org @NAME_LONG_MAX_KNUCKLE_P
+Knuckle
+
+#org @NAME_LONG_MAX_KNUCKLE_S
+Knuckle
+
+#org @NAME_LONG_MAX_AIRSTREAM_P
+Airstream
+
+#org @NAME_LONG_MAX_AIRSTREAM_S
+Airstream
+
+#org @NAME_LONG_MAX_OOZE_P
+Ooze
+
+#org @NAME_LONG_MAX_OOZE_S
+Ooze
+
+#org @NAME_LONG_MAX_QUAKE_P
+Quake
+
+#org @NAME_LONG_MAX_QUAKE_S
+Quake
+
+#org @NAME_LONG_MAX_ROCKFALL_P
+Rockfall
+
+#org @NAME_LONG_MAX_ROCKFALL_S
+Rockfall
+
+#org @NAME_LONG_MAX_FLUTTERBY_P
+Flutterby
+
+#org @NAME_LONG_MAX_FLUTTERBY_S
+Flutterby
+
+#org @NAME_LONG_MAX_PHANTASM_P
+Phantasm
+
+#org @NAME_LONG_MAX_PHANTASM_S
+Phantasm
+
+#org @NAME_LONG_MAX_STEELSPIKE_P
+Steelspike
+
+#org @NAME_LONG_MAX_STEELSPIKE_S
+Steelspike
+
+#org @NAME_LONG_MAX_FLARE_P
+Flare
+
+#org @NAME_LONG_MAX_FLARE_S
+Flare
+
+#org @NAME_LONG_MAX_GEYSER_P
+Geyser
+
+#org @NAME_LONG_MAX_GEYSER_S
+Geyser
+
+#org @NAME_LONG_MAX_OVERGROWTH_P
+Overgrowth
+
+#org @NAME_LONG_MAX_OVERGROWTH_S
+Overgrowth
+
+#org @NAME_LONG_MAX_LIGHTNING_P
+Lightning
+
+#org @NAME_LONG_MAX_LIGHTNING_S
+Lightning
+
+#org @NAME_LONG_MAX_MINDSTORM_P
+Mindstorm
+
+#org @NAME_LONG_MAX_MINDSTORM_S
+Mindstorm
+
+#org @NAME_LONG_MAX_HAILSTORM_P
+Hailstorm
+
+#org @NAME_LONG_MAX_HAILSTORM_S
+Hailstorm
+
+#org @NAME_LONG_MAX_WYRMWIND_P
+Wyrmwind
+
+#org @NAME_LONG_MAX_WYRMWIND_S
+Wyrmwind
+
+#org @NAME_LONG_MAX_DARKNESS_P
+Darkness
+
+#org @NAME_LONG_MAX_DARKNESS_S
+Darkness
+
+#org @NAME_LONG_MAX_STARFALL_P
+Starfall
+
+#org @NAME_LONG_MAX_STARFALL_S
+Starfall
+
+#org @NAME_LONG_G_MAX_VINE_LASH_P
+Vine Lash
+
+#org @NAME_LONG_G_MAX_VINE_LASH_S
+Vine Lash
+
+#org @NAME_LONG_G_MAX_WILDFIRE_P
+Wildfire
+
+#org @NAME_LONG_G_MAX_WILDFIRE_S
+Wildfire
+
+#org @NAME_LONG_G_MAX_CANNONADE_P
+Cannonade
+
+#org @NAME_LONG_G_MAX_CANNONADE_S
+Cannonade
+
+#org @NAME_LONG_G_MAX_BEFUDDLE_P
+Befuddle
+
+#org @NAME_LONG_G_MAX_BEFUDDLE_S
+Befuddle
+
+#org @NAME_LONG_G_MAX_VOLTCRASH_P
+Voltcrash
+
+#org @NAME_LONG_G_MAX_VOLTCRASH_S
+Voltcrash
+
+#org @NAME_LONG_G_MAX_GOLDRUSH_P
+Goldrush
+
+#org @NAME_LONG_G_MAX_GOLDRUSH_S
+Goldrush
+
+#org @NAME_LONG_G_MAX_CHISTRIKE_P
+Chistrike
+
+#org @NAME_LONG_G_MAX_CHISTRIKE_S
+Chistrike
+
+#org @NAME_LONG_G_MAX_TERROR_P
+Terror
+
+#org @NAME_LONG_G_MAX_TERROR_S
+Terror
+
+#org @NAME_LONG_G_MAX_FOAMBURST_P
+Foamburst
+
+#org @NAME_LONG_G_MAX_FOAMBURST_S
+Foamburst
+
+#org @NAME_LONG_G_MAX_RESONANCE_P
+Resonance
+
+#org @NAME_LONG_G_MAX_RESONANCE_S
+Resonance
+
+#org @NAME_LONG_G_MAX_CUDDLE_P
+Cuddle
+
+#org @NAME_LONG_G_MAX_CUDDLE_S
+Cuddle
+
+#org @NAME_LONG_G_MAX_REPLENISH_P
+Replenish
+
+#org @NAME_LONG_G_MAX_REPLENISH_S
+Replenish
+
+#org @NAME_LONG_G_MAX_MALODOR_P
+Malodor
+
+#org @NAME_LONG_G_MAX_MALODOR_S
+Malodor
+
+#org @NAME_LONG_G_MAX_MELTDOWN_P
+Meltdown
+
+#org @NAME_LONG_G_MAX_MELTDOWN_S
+Meltdown
+
+#org @NAME_LONG_G_MAX_DRUM_SOLO_P
+Drum Solo
+
+#org @NAME_LONG_G_MAX_DRUM_SOLO_S
+Drum Solo
+
+#org @NAME_LONG_G_MAX_FIREBALL_P
+Fireball
+
+#org @NAME_LONG_G_MAX_FIREBALL_S
+Fireball
+
+#org @NAME_LONG_G_MAX_HYDROSNIPE_P
+Hydrosnipe
+
+#org @NAME_LONG_G_MAX_HYDROSNIPE_S
+Hydrosnipe
+
+#org @NAME_LONG_G_MAX_WINDRAGE_P
+Windrage
+
+#org @NAME_LONG_G_MAX_WINDRAGE_S
+Windrage
+
+#org @NAME_LONG_G_MAX_GRAVITAS_P
+Gravitas
+
+#org @NAME_LONG_G_MAX_GRAVITAS_S
+Gravitas
+
+#org @NAME_LONG_G_MAX_STONESURGE_P
+Stonesurge
+
+#org @NAME_LONG_G_MAX_STONESURGE_S
+Stonesurge
+
+#org @NAME_LONG_G_MAX_VOLCALITH_P
+Volcalith
+
+#org @NAME_LONG_G_MAX_VOLCALITH_S
+Volcalith
+
+#org @NAME_LONG_G_MAX_TARTNESS_P
+Tartness
+
+#org @NAME_LONG_G_MAX_TARTNESS_S
+Tartness
+
+#org @NAME_LONG_G_MAX_SWEETNESS_P
+Sweetness
+
+#org @NAME_LONG_G_MAX_SWEETNESS_S
+Sweetness
+
+#org @NAME_LONG_G_MAX_SANDBLAST_P
+Sandblast
+
+#org @NAME_LONG_G_MAX_SANDBLAST_S
+Sandblast
+
+#org @NAME_LONG_G_MAX_STUNSHOCK_P
+Stunshock
+
+#org @NAME_LONG_G_MAX_STUNSHOCK_S
+Stunshock
+
+#org @NAME_LONG_G_MAX_CENTIFERNO_P
+Centiferno
+
+#org @NAME_LONG_G_MAX_CENTIFERNO_S
+Centiferno
+
+#org @NAME_LONG_G_MAX_SMITE_P
+Smite
+
+#org @NAME_LONG_G_MAX_SMITE_S
+Smite
+
+#org @NAME_LONG_G_MAX_SNOOZE_P
+Snooze
+
+#org @NAME_LONG_G_MAX_SNOOZE_S
+Snooze
+
+#org @NAME_LONG_G_MAX_FINALE_P
+Finale
+
+#org @NAME_LONG_G_MAX_FINALE_S
+Finale
+
+#org @NAME_LONG_G_MAX_STEELSURGE_P
+Steelsurge
+
+#org @NAME_LONG_G_MAX_STEELSURGE_S
+Steelsurge
+
+#org @NAME_LONG_G_MAX_DEPLETION_P
+Depletion
+
+#org @NAME_LONG_G_MAX_DEPLETION_S
+Depletion
+
+#org @NAME_LONG_G_MAX_ONE_BLOW_P
+One Blow
+
+#org @NAME_LONG_G_MAX_ONE_BLOW_S
+One Blow
+
+#org @NAME_LONG_G_MAX_RAPID_FLOW_P
+Rapid Flow
+
+#org @NAME_LONG_G_MAX_RAPID_FLOW_S
+Rapid Flow
+

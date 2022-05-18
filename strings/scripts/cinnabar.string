@@ -1,0 +1,83 @@
+#org @gText_MissingNoEnc
+[.][.][.]?
+
+#org @gText_AkioHi
+???: Oh, Hello there.\nMy name is Akio.\pYou probably don't know me. I worked\non a project called Operation:\lMewtwo a long, long time ago.\pThe project was a half success and\nhalf failure. Our goal was to clone\lMew, to make the ultimate Pok\emon.\pIt worked, but we could not control\nhim. In the process of cloning, we\lmade the Pok\emon [GREEN]Ditto [BLUE].\pYou have probably seen them before.\nPurple blobs that can turn into\lother Pok\emon.\pThat's not all, however. One night, I\nwas testing alone, and I made this\lPok\emon that I called MissingNo. It\lwas super powerful, but I couldn't\lcontrol it. It escaped, and I\lbelieve it resides on this island.\pMissingNo cannot be seen unless\nbattling, so I suggest to try and\linteract with the air around the\lisland.\pIf you find it, meet me in Viridian\nCity.\pGood luck.
+
+#org @gText_CinnabarTHUMP
+Thud!!
+
+#org @gText_BarryCinnabarBefore
+[BLUE]Barry: Oh, [PLAYER]! Long time no\nsee! Legend has it that in here\lPok\emon were being cloned!\pBefore you go in, lets have a\nbattle!
+
+#org @gText_BarryLoseCinnabar
+I lost again!
+
+#org @gText_BarryRoamingDogs
+[BLUE]When I searched the mansion, I\ncouldn't find any cloned Pok\emon,\lonly weird trainers.\pOne of those trainers told me there\nwere [GREEN]Legendary Pok\emon [BLUE]roaming\laround Kanto, and when I checked\lmy map, I saw them! Let me add\lthem to your map real quick.
+
+#org @gText_BarryCinnabarBye
+[BLUE][.] [.] [.]\nDone!\pI'm going to go search for\nthose Pok\emon now. See ya!
+
+#org @gText_BarryCinnabarTooMany
+[BLUE]Sorry buddy, you have too many\nPok\emon on your map!
+
+#org @gText_AskWaterfall
+Hi there! I love waterfalls, do you?
+
+#org @gText_WhyWaterfall
+Really? Waterfalls are the best\nthough[.]
+
+#org @gText_AlreadyHaveWaterfall
+Have you tried the HM? You can\nclimb waterfalls with it!
+
+#org @gText_HeresWaterfall
+You'll probably like this HM then!
+
+#org @gText_RecieveWaterfall
+[BLACK][PLAYER] recieved HM07!\nIt contains Waterfall!
+
+#org @gText_NoCreationTrio
+Hi there!\nWould you happen to have a trio of\lPok\emon known as the [GREEN]Creation Trio[BLUE]?\p[.] [PAUSE][20] [.] [PAUSE][20] [.]\nNo? Okay then[.]
+
+#org @gText_HasCreationTrio1
+Hi there!\nWould you happen to have a trio of\lPok\emon known as the [GREEN]Creation Trio[BLUE]?\p[.] [PAUSE][20] [.] [PAUSE][20] [.]
+
+#org @gText_HasCreationTrio2
+You do?\nWow[.] you're the first person ever!\pI've developed this program that\ntheoretically, can force a wild\lbattle against the god himself,\l[GREEN]Arceus[BLUE].\pIt refuses to work without 3 other\nPok\emon, which have to be the\l[GREEN]Creation Trio[BLUE], since Arceus made\lthem!\pLet me try the program now.\p[BLACK]Bzzzt! [PAUSE][20]\nARCEUS Loader v1.3.2 Loaded.[PAUSE][40]\pTrying to summon ARCEUS[.][PAUSE][20]\nDone.
+
+#org @gText_WaitArceus
+Watch out!!!
+
+#org @gText_ArceusDone
+I can't believe it[.]\nThat was really Arceus!\pThanks so much for your help!
+
+#org @gText_BlaineBeforeRematch
+Hah! You're back! You better have a\nBurn Heal! This time I won't be\lgoing easy!
+
+#org @gText_BlaineRematchLose
+Burnt to smithereens!
+
+#org @gText_BlaineRematchAfter1
+Unlike the other leaders, I don't\nhave much to give. I hope these\lHeat Rocks help you on your\ljourney.
+
+#org @gText_BlaineRematchAfter2
+The Heat Rock extends the amount of\nturns that Sunny Day is active for.
+
+#org @gText_IfHaveZygarde
+If you have the legendary Pok\emon\n[GREEN]Zygarde[BLUE], you'll like this item.
+
+#org @gText_PlayerRecievedCube
+[BLACK][PLAYER] received the Zygarde Cube\nfrom the scientist!
+
+#org @gText_ExplainCube
+The [GREEN]Zygarde Cube[BLUE] allows Zygarde to\nchange to it's 10% form and vice\lversa.\pIt's useful if you prefer to use 10%\nZygarde or want a challenge.
+
+#org @gText_Eevee8
+Eevee can evolve into one of eight\nkinds of Pok\emon.
+
+#org @gText_TakeOtherFossil
+My friend gave me this fossil, but\nI'm not sure what to do with it[.]\pNow that I think of it, why don't\nyou take it?\pYou look very similar to the person\nwho got the other fossil in [GREEN]Mt.\lMoon[BLUE].
+
+#org @gText_UsedOtherFossilQuestion
+Have you used the other fossil for\nanything exciting?

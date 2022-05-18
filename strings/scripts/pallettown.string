@@ -1,0 +1,186 @@
+#org @gText_SelectRegion
+What region do you want your\n[RED]starter[BLACK] to be from?
+\e
+#org @gText_KantoSelected
+[RED]Kanto[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_JohtoSelected
+[RED]Johto[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_HoennSelected
+[RED]Hoenn[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_SinnohSelected
+[RED]Sinnoh[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_UnovaSelected
+[RED]Unova[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_KalosSelected
+[RED]Kalos[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_AlolaSelected
+[RED]Alola[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_GalarSelected
+[RED]Galar[BLACK] selected.\nYour rival still has a [RED]kanto starter[BLACK].
+
+#org @gText_AskNoGrindingIV
+Would you like to enable No IV \nGrinding Mode? Every Pokemon will \lhave 31 IVs.
+
+#org @gText_AskNoGrindingIVYes
+No IV Grinding Mode enabled.
+
+#org @gText_AskNoGrindingEV
+Would you like to enable No EV\nGrinding Mode? EV increasing items will \lgive 252 EVs.
+
+#org @gText_AskNoGrindingEVYes
+No EV Grinding Mode enabled.
+
+#org @gText_AskHardMode
+Would you like to enable hard\nmode?\pThis makes gym leaders and bosses\nsmarter.\pIt also gives gym leaders better\nteams, which includes EVs, good\lmovesets, and more.
+
+#org @gText_HardModeEnabled
+Hard Mode enabled.
+
+
+#org @gText_ProfOak_0X18E116
+Oak: Now, [PLAYER].\pInside those three Pok\e Balls are\nPok\emon.\pWhich one will you choose for\nyourself?
+
+#org @gText_ProfOak_0X1A72AD
+Thank you, [PLAYER]!\nSincerely, thank you!\lYou've made my dream a reality!
+
+#org @gText_ProfOak_0X18E871
+Pok\emon around the world wait for\nyou, [PLAYER]!
+
+#org @gText_ProfOak_0X18EDF5
+Ah, now this is excellent!\p[PLAYER], I have another important\nfavor to ask of you.\pI need you to listen closely.
+
+#org @gText_ProfOak_0X18E405
+Oak: Oh, [PLAYER]!\nHow is my old Pok\emon?\pWell, it seems to be growing more\nattached to you.\pYou must be talented as a Pok\emon\nTrainer.\pWhat's that?\nYou have something for me?
+
+#org @gText_ProfOak_0X18E4AF
+[PLAYER] delivered Oak's Parcel.
+
+#org @gText_ProfOak_0X18E4CA
+Ah! \nIt's the custom Pok\e Ball!\pI had it on order.\nThank you!
+
+#org @gText_ProfOak_0X18DE8D
+[RIVAL]: Gramps!
+
+#org @gText_ProfOak_0X18DE99
+[RIVAL]: I almost forgot!\nWhat did you call me for?
+
+#org @gText_ProfOak_0X18E508
+Oak: Oh, right!\nI have a request for you two.
+
+#org @gText_ProfOak_0X18E536
+On the desk there is my invention,\nthe Pok\edex!\pIt automatically records data on\nPok\emon you've seen or caught.\pIt's a high-tech encyclopedia!
+
+#org @gText_ProfOak_0X18E5C5
+Oak: [PLAYER] and [RIVAL].\nTake these with you.
+
+#org @gText_ProfOak_0X18E5EA
+[PLAYER] received the Pok\edex\nfrom Prof. Oak.
+
+#org @gText_ProfOak_0X18E612
+Oak: You can't get detailed data\non Pok\emon by just seeing them.\pYou must catch them to obtain\ncomplete data.\pSo, here are some tools for\ncatching wild Pok\emon.
+
+#org @gText_ProfOak_0X18E6B3
+[PLAYER] received five Pok\e Balls.
+
+#org @gText_ProfOak_0X18E6D0
+When a wild Pok\emon appears,\nit's fair game.\pJust throw a Pok\e Ball at it and\ntry to catch it!\pThis won't always work, however.\pA healthy Pok\emon can escape.\nYou have to be lucky!
+
+#org @gText_ProfOak_0X18E784
+To make a complete guide on all\nthe Pok\emon in the world[.]\pThat was my dream!\pBut, I'm too old.\nI can't get the job done.\pSo, I want you two to fulfill my\ndream for me.\pGet moving, you two.\pThis is a great undertaking in\nPok\emon history!
+
+#org @gText_ProfOak_0X18DEC8
+[RIVAL]: All right, Gramps!\nLeave it all to me!
+
+#org @gText_ProfOak_0X18DEF3
+[PLAYER], I hate to say it, but you\nwon't be necessary for this.\pI know! I'll borrow a Town Map\nfrom my sis!\pI'll tell her not to lend you one,\n[PLAYER]! Hahaha!\pDon't bother coming around to\nmy place after this!
+
+#org @gText_ProfOak_0X18E3AD
+Oak: [PLAYER], raise your young\nPok\emon by making it battle.\pIt has to battle for it to grow.
+
+#org @gText_ProfOak_0X18E330
+Oak: If a wild Pok\emon appears,\nyour Pok\emon can battle it.\pWith it at your side, you should be\nable to reach the next town.
+
+#org @gText_ProfOak_0X1A7291
+Wroooooooaaaaaarrrr!
+
+#org @gText_ProfOak_0X18EE60
+Recently, there have been sightings\nof many rare Pok\emon species.\pI'm talking about Pok\emon that\nhave never been seen in Kanto.\pI would love to go see things for\nmyself, but I'm much too old.\pSince I can't do it, [PLAYER], I'd\nlike you to go in my place.
+
+#org @gText_ProfOak_0X18EF59
+[RIVAL]: Hey, I heard that!\pGramps, what's with favoring\n[PLAYER] over me all the time?\pI went and collected more Pok\emon,\nand faster, too.\pYou should just let me handle\neverything.
+
+#org @gText_ProfOak_0X18F004
+Oak: I know, I know.\nOf course I need your help, too.\pNow, I need to see both your\nPok\edexes.
+
+#org @gText_ProfOak_0X18F062
+Prof. Oak took both Pok\edex\nunits.
+
+#org @gText_ProfOak_0X18F085
+[.] [.] [.] [.] [.] [.]\p[.] [.] [.] [.] [.] [.]\p[.]And that's done!\pNow these units can record data on\na lot more Pok\emon.
+
+#org @gText_ProfOak_0X18F0E8
+[PLAYER]'s Pok\edex was upgraded!
+
+#org @gText_ProfOak_0X18F103
+Now, [PLAYER] and [RIVAL]!\pThis time, you really must work\ntowards filling your Pok\edexes.\pI urge you to make them the best\nand the most complete of all time!\pTruly, this is a monumentally great\nundertaking in Pok\emon history!
+
+#org @gText_ProfOak_0X18F1DB
+[RIVAL]: Gramps, calm down.\nDon't get so excited.\pI'll get the Pok\edex completed,\ndon't you worry about a thing.\pI think I'll try looking around\nOne Island first[.]\pAnyways, I'm outta here!
+
+#org @gText_ProfOak_0X1A72F2
+Oak: Ah, welcome!\pTell me, how is your Pok\edex\ncoming along?\pWahaha!\pActually, I know how it is, but I\nlove seeing it anyway!\pLet's see[.]
+
+#org @gText_ProfOak_0X1A6C51
+Oak: Good to see you!\nHow is your Pok\edex coming along?\pHere, let me take a look.
+
+#org @gText_ProfOak_0X1A6CA3
+The amount of progress you've made\non your Pok\edex is:\p[BUFFER1] Pok\emon seen and\n[BUFFER2] Pok\emon owned.\pProf. Oak's rating:
+
+#org @gText_ProfOak_0X1A71AA
+And your National Pok\edex is:\p[BUFFER1] Pok\emon seen and\n[BUFFER2] Pok\emon owned.
+
+#org @gText_ProfOak_0X18E98E
+Oak: Come see me sometime.\pAfter all, I want to know how your\nPok\edex is coming along.
+
+#org @gText_ProfOak_0X1A71EE
+I'll be looking forward to seeing\nyou fill the National Pok\edex!
+
+#org @gText_ProfOak_0X1A722F
+Finally[.]\pYou've finally completed the\nPok\edex!\pIt's magnificent!\nTruly, this is a fantastic feat!
+
+#org @gText_ProfOak_0X18E89C
+Ah, [PLAYER]!\nHow is your Pok\edex shaping up?\p[RIVAL] has already caught some\nPok\emon and added to the data.\pSo, [PLAYER], let's have a look at\nyour Pok\edex.\p[.]What's the matter?\nYou've added no new data at all.\pI'll give you these, so do try a\nlittle harder.
+
+#org @gText_ShowdownPCOff
+[PLAYER] turned on the PC.\pIt's a computer running Windows 10.\pThe internet is currently off.
+
+#org @gText_MumNews
+Mom: [PLAYER]!\nI heard the news! You beat all\leight gyms!\pThe Professor told me there are\nportals all around the region\lcontaining Legendary Pok\emon! Be\lcareful if you try to take them on.\pAlso, take these 3 items.\nYour dad gave them to me before\lhe left to start his adventure, but\lI feel like you should have them.
+
+#org @gText_MumStaySafe
+Before you go, what's up?\nWhy'd you return home?\p[.][PAUSE][20]\nOh, you need to permission to\lchallenge the Pok\emon League?\lSure! Of course I give you\lpermission, you've come so far!\pGood luck, and stay safe honey!
+
+#org @gText_IRV
+Inflamed Red v1.0
+
+#org @gText_HardModeOn
+Hard Mode
+
+#org @gText_PlayerFellAsleep
+[PLAYER] fell asleep.\p[PLAYER]'s Pok\emon were restored to\nfull health!
+
+#org @gText_PlayerFellASleepDarkrai
+[PLAYER] fell asleep.
+
+#org @gText_DynamaxAsk
+Would you like to be able to\nDynamax?\pIf yes, you will be able to Dynamax\nin-battle against Gym Leaders and\lother boss battles.\pIf no, you won't be able to Dynamax\nin batttle, and other trainers won't\lbe able to either.\pYou will still be able to Dynamax in\nraid battles, however.
+
+#org @gText_DynamaxEnabled
+Dynamax has been enabled.

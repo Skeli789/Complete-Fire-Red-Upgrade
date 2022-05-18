@@ -94,8 +94,8 @@ void __attribute__((long_call)) MakeObjectTemplateFromEventObjectTemplate(struct
 void __attribute__((long_call)) MakeObjectTemplateFromEventObjectGraphicsInfo(u16 graphicsId, void* callback, void* spriteTemplate, void* subspriteTables);
 u8 __attribute__((long_call)) GetMoveDirectionAnimNum(u8 direction);
 u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
-void __attribute__((long_call)) PatchObjectPalette(u16, u8);
-u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);
+/*void __attribute__((long_call)) PatchObjectPalette(u16, u8);
+u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);*/
 struct EventObjectTemplate* __attribute__((long_call)) FindEventObjectTemplateByLocalId(u8 localId, struct EventObjectTemplate* templates, u8 count);
 u8 __attribute__((long_call)) AddPseudoEventObject(u16, void (*)(struct Sprite *), s16 x, s16 y, u8 subpriority);
 void __attribute__((long_call)) SetObjectSubpriorityByZCoord(u8, struct Sprite *, u8);
@@ -117,6 +117,9 @@ void __attribute__((long_call)) OverrideMovementTypeForEventObject(const struct 
 void __attribute__((long_call)) TryOverrideTemplateCoordsForEventObject(const struct EventObject* eventObject, u8 movementType);
 void __attribute__((long_call)) OverrideTemplateCoordsForEventObject(const struct EventObject* eventObject);
 u8 __attribute__((long_call)) GetTrainerFacingDirectionMovementType(u8 direction);
+
+u8 __attribute__((long_call)) TryLoadObjectPalette(const struct SpritePalette* spritePalette);
+void __attribute__((long_call)) ApplyGlobalFieldPaletteTint(u8 paletteIdx);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];

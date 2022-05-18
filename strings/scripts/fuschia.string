@@ -1,0 +1,83 @@
+#org @gText_MayFuschiaBefore
+[RED]May: Oh, hi [PLAYER]! I just gave a\n[GREEN]Mega Ring [RED]to [GREEN]Koga.[RED]\pIf you are going to challenge him,\nlet me make sure you are strong\lenough!
+
+#org @gText_MayFuschiaLose
+You can definitely beat Koga!
+
+#org @gText_MayFuschiaAfter
+[RED]May: I have to go now, need to\ngive [GREEN]Blaine[RED] his [GREEN]Mega Ring[RED].\pSee you later!
+
+#org @gText_AskTeachDraco
+Dragon types are the best, don't you\nthink?\pThey have the highest Base Stat\nTotal of Pok\emon, look cool, and\lcan learn the exclusive move [GREEN]Draco\lMeteor[BLUE].\pSpeaking of [GREEN]Draco Meteor[BLUE], I can\nteach it to any Dragon type you\lhave. Shall I?
+
+#org @gText_SelectDragon
+Select a Dragon type Pok\emon.
+
+#org @gText_MissingOutDraco
+You're missing out on a great move!
+
+#org @gText_NotADragon
+Are you kidding[.]?
+
+#org @gText_CongratsDraco
+Congrats! Your dragon type\nlearnt [GREEN]Draco Meteor[BLUE]! Have fun\ldestroying any non-fairy type!
+
+#org @gText_ICanTeachTutor
+I can teach [GREEN]Keldeo[BLUE], [GREEN]Meloetta[BLUE],\n[GREEN]Rayquaza[BLUE], and [GREEN]Zygarde[BLUE] their\lexclusive moves. Want me to?
+
+#org @gText_WhichLegendMove
+Which move do you need?
+
+#org @gText_MoveTaught
+The move has been taught.\nCome back later if you need any\lmore moves to be taught!
+
+#org @gText_GiveSubTM
+Aww, I wish I was a Kangaskhan\nbaby.\pI'd love to be a substitute for the\nbaby[.]\pAnd snuggle in the mother\nKangaskhan's belly pouch.\pBut only Pok\emon can use the\ntechnique Substitute[.]\pSo take this TM, it contains the move\nSubstitute.
+
+#org @gText_KogaBeforeRematch
+Ah, [PLAYER]! It's been so long.\nI assume you want some help\lregarding Poison-type Pok\emon?\p[.] [.] [.]\n[.]\pNo? You want to have a rematch[.]\nSure! Be prepared! I'm not going\leasy this time!
+
+#org @gText_TalkSubTM
+Boy, what I'd give to crawl inside\na Kangaskhan belly pouch[.]
+
+#org @gText_KogaRematchLose
+Humph! Once again, you defeated me!
+
+#org @gText_KogaRematchAfter2
+TM103 contains the move Sludge\nWave.\pIt's similar to Sludge Bomb, but is\nmore powerful.\pIt has a smaller chance to poison\nthe enemy however, so it's better\lthan Sludge Bomb sometimes, and\lworse at other times.
+
+#org @gText_KogaRematchAfter1
+Since you've beat me again, you\ndeserve a reward. Take this TM,\land these items.
+
+#org @gText_ImAMoveTutor
+I'm a move tutor!\pWant me to teach your Pok\emon a\nmove?
+
+#org @gText_EverInNeedForAMove
+If you ever are in need for a\nmove, come back!
+
+#org @gText_SelectMoveFuschia
+Well, that's just fine!\pPick the move you want me to\nteach!
+
+#org @gText_MayIOldAmber
+Hi! If you have an Old Amber, I\ncan turn it into an [GREEN]Aerodactyl[BLUE].\pMay I?
+
+#org @gText_YouDontHaveOldAmber
+You don't have an Old Amber[.]
+
+#org @gText_HandOverOldAmber
+Please hand over the Old Amber.
+
+#org @gText_HandedOver
+[BLACK][PLAYER] handed the Old Amber over\nto the man.
+
+#org @gText_USeMachineAmber
+Now, I'll use this tiny machine to\nrestore it[.]
+
+#org @gText_HereYouGoAmber
+Here you go!
+
+#org @gText_RecievedAero
+[BLACK][PLAYER] received an Aerodactyl!
+
+#org @gText_DifferentParty
+I heard that some Pok\emon evolve\ninto different formes if you have a\lcertain type in your party.\pWhy don't you try it?

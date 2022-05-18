@@ -16,7 +16,8 @@
 #include "../include/new/daycare.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/item.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
+#include "../include/base_stats.h"
 /*
 daycare.c
 	functions that handle all daycare functions, including attribute inheritance and step counts
@@ -628,7 +629,7 @@ static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality)
 
 	language = GAME_LANGUAGE;
 	SetMonData(mon, MON_DATA_NICKNAME, (const void*) 0x825F83E);
-	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);	//required steps to hatch
+	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats2[species].eggCycles);	//required steps to hatch
 	SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
 	SetMonData(mon, MON_DATA_LANGUAGE, &language);
 	mon->hiddenAbility = hiddenAbility;
@@ -645,7 +646,7 @@ void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the give
 	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, FALSE, 0, FALSE, 0);
 	SetMonData(mon, MON_DATA_POKEBALL, &ball);
 	SetMonData(mon, MON_DATA_NICKNAME, (void*) 0x825F83E);
-	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats2[species].eggCycles);
 	SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
 	SetMonData(mon, MON_DATA_MET_LOCATION, &metLocation);
 	SetMonData(mon, MON_DATA_LANGUAGE, &language);

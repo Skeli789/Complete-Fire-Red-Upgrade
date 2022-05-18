@@ -20,3 +20,5 @@ extern const ability_t gTraceBannedAbilities[];
 extern const ability_t gNeutralizingGasBannedAbilities[];
 extern const bool8 gMoldBreakerIgnoredAbilities[];
 extern const s8 gAbilityRatings[];
+extern const ability_t gAbilityReplacement1[];
+extern const ability_t gAbilityReplacement2[];

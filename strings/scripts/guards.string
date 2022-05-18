@@ -1,0 +1,14 @@
+#org @gText_guard_0X19E2B7
+I'm on guard duty.\nGee, I'm thirsty, though!\pOh, wait there, the road's closed.
+
+#org @gText_guard_0X19E307
+Oh, that Tea[.]\nIt looks awfully tasty[.]
+
+#org @gText_guard_0X19E32D
+Huh? I can have this drink?\nGee, thanks!\l[.] [.]\lGlug, glug[.]\l[.] [.]\lGulp[.]\lIf you want to go to Saffron\lCity[.]\l[.] [.]\lYou can go on through.\pI'll share this Tea with the other\nguards!
+
+#org @gText_guard_Badge
+[BLUE]Hey kid! Let me see your badges.
+
+#org @gText_guard_Badge2
+[BLUE][.] [.] [.] [.]\n[.] [.]\pJust what I thought, you don't have\nthe Soul Badge.\pCome back when you get the\nSoul Badge from Koga!

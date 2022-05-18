@@ -18,7 +18,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
+#include "../include/new/util2.h"
 #include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
@@ -27,6 +27,7 @@
 #include "../include/new/switching.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/z_move_battle_scripts.h"
+#include "../include/base_stats.h"
 /*
 switching.c
 	handles battle switching logic
@@ -339,8 +340,8 @@ void atk4D_switchindataupdate(void)
 	}
 	else
 	{
-		gBattleMons[gActiveBattler].type1 = gBaseStats[gBattleMons[gActiveBattler].species].type1;
-		gBattleMons[gActiveBattler].type2 = gBaseStats[gBattleMons[gActiveBattler].species].type2;
+		gBattleMons[gActiveBattler].type1 = gBaseStats2[gBattleMons[gActiveBattler].species].type1;
+		gBattleMons[gActiveBattler].type2 = gBaseStats2[gBattleMons[gActiveBattler].species].type2;
 	}
 
 	gBattleMons[gActiveBattler].ability = GetMonAbility(GetBankPartyData(gActiveBattler));
@@ -1181,7 +1182,8 @@ void PartyMenuSwitchingUpdate(void)
 	int i;
 
 	if (IsOfType(gActiveBattler, TYPE_GHOST)
-	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
+	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL
+	||  ABILITY(gActiveBattler) == ABILITY_RUNAWAY)
 		goto SKIP_SWITCH_BLOCKING_CHECK;
 
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];

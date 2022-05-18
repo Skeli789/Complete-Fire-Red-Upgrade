@@ -4,6 +4,10 @@
 #include "include/constants/tutors.h"
 #include "include/new/catching.h"
 
+##Fix Shedinja Evo broken by expasion to 16
+080CE762 00 01
+080CE766 00 00
+
 ##Optional Byte Changes##
 ##Don't Count Eggs Healing PKMN Centre
 08083B8E 08 F0 D5 FA
@@ -46,6 +50,16 @@
 ##Faster Bike Speed
 #080BD34C 9E F7 0A FF
 ##End of Optional Byte Changes##
+
+##16-Character Move Name Limiters##
+080BFA7C 11
+08125B7E 11
+08125C92 11
+08126036 11
+081260E8 11
+081261BC 11
+0812624A 11
+08126E0A 11
 
 ##Remove Things##
 ##Remove Help System

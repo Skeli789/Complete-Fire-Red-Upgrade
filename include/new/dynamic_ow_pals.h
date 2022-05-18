@@ -23,6 +23,8 @@ void FogBrightenAndFade(u8 palSlot, u8 fadeIntensity, u16 fadeColor);
 u8 GetDarkeningTypeBySlot(u8 palSlot);
 
 //Hooked In Functions
+void LoadObjectEventPalette(u16 paletteTag);
+void PatchObjectPalette(u16 paletteTag, u8 paletteSlot);
 u8 PaletteNeedsFogBrightening(u8 palSlot);
 u8 FindPalette(u16 palTag);
 void ClearAllPalettes(void);
@@ -31,6 +33,8 @@ u8 SetUpTreeDisguise(void);
 u8 SetUpRockDisguise(void);
 u8 SetUpWeirdDisguise(void);
 void LoadCloudOrSandstormPalette(u16* pal);
+u8 FindObjectEventPaletteIndexByTag(u16 tag);
+u8 GetObjectEventPalettesTableByTag(u16 tag);
 
 //Exported Constants
 #define PalTypeUnused 0

@@ -13,6 +13,7 @@
 void AnimTask_TechnoBlast(u8 taskId);
 void AnimTask_GetTimeOfDay(u8 taskId);
 void AnimTask_GetLycanrocForm(u8 taskId);
+void AnimTask_GetTerrain(u8 taskId);
 void AnimTask_IsTargetPartner(u8 taskId);
 void AnimTask_GetTrappedMoveAnimId(u8 taskId);
 void AnimTask_ReloadAttackerSprite(u8 taskId);

@@ -4,6 +4,16 @@ Dexnav
 #org @gText_MissionLog
 Missions
 
+#org @gText_Time
+Time: [BUFFER1]:[BUFFER2]:[BUFFER3]
+
+
+#org @gText_Hour
+Hour
+
+#org @gText_DiffOptions
+Difficulty Options
+
 #org @gText_MenuExitRight
 Exit  [DPAD_RIGHT]
 
@@ -90,3 +100,6 @@ It's too dark to search for a Pok\emon!
 
 #org @gText_MenuCube
 Cube
+
+#org @gText_ReinsOfUnityName
+Reins Of Unity

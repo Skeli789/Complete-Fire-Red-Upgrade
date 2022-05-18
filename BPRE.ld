@@ -31,6 +31,8 @@ sRtc = 0x3005E88;
 gClock = 0x3005EA0;
 sRTCFrameCount = 0x3005EA9;
 
+teach_move_in_available_slot = 0x0803E8B0|1;
+Special_DD_delete_move = 0x080BFBA8|1;
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
 gPlayerPartyCount = 0x2024029;
@@ -282,6 +284,8 @@ sStartMenuCursorPos = 0x20370F4;
 sNumStartMenuItems = 0x20370F5;
 sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
+sTimeWindowTemplate = 0x83a738c;
+sSafariZoneStatsWindowId = 0x2037101;
 
 /* Other RAM */
 sWarpDestination = 0x2031DBC;
@@ -302,6 +306,8 @@ gTotalCameraPixelOffsetX = 0x300506C;
 gInputToStoreInQuestLogMaybe = 0x3005078;
 gCB2_AfterEvolution = 0x300537C;
 gItemUseCB = 0x3005E98;
+
+sPokedexScreenData = 0x203ACF0;
 
 /*==========================
 ===========ROM==============
@@ -392,6 +398,7 @@ gPokedexEntries = 0x844E850;
 gUnknown_08459FFC = 0x8459FFC;
 MonHoverShadowPal = 0x8D11B84;
 MonHoverShadowSprite = 0x8E7BAD4;
+DexScreen_AddTextPrinterParameterized = 0x81047c8 | 1;
 
 /* Pokemon Function */
 EmitSetMonData = 0x800DFF0 | 1;
@@ -1166,6 +1173,11 @@ GetPlayerTextSpeedDelay = 0x80F78A8 | 1;
 ChoiceSetupSimple = 0x810F7D8 | 1;
 AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 
+GetStartMenuWindowId = 0x80f793c | 1;
+sStartMenuWindowId = 0x203abe0;
+
+StatusToAilment = 0x8138C5C | 1;
+
 
 /* Task Functions */
 nullsub_8 = 0x802E310 | 1;
@@ -1347,6 +1359,11 @@ CB2_ShowPokemonSummaryScreen = 0x8122D78 | 1;
 Task_UpdatePartyMenuHeldItemSprite = 0x8123BF0 | 1;
 PartyMenu_MoveCursorToConfirm = 0x8124258 | 1;
 FieldCallback_PrepareFadeInFromMenu = 0x81248B0 | 1;
+sub_8124DC0 = 0x8124DC0 | 1;
+Task_DisplayLevelUpStatsPg1 = 0x81264c8 | 1;
+PlayFanfareByFanfareNum = 0x8071bc4 | 1;
+GetMonLevelUpWindowStats = 0x811d130 | 1;
+ItemUseCB_RareCandyStep = 0x8126350 | 1;
 IsHPRecoveryItem = 0x8125018 | 1;
 NotUsingHPEVItemOnShedinja = 0x8125218 | 1;
 IsItemFlute = 0x812524C | 1;
@@ -1459,7 +1476,7 @@ IsUpdateLinkStateCBActive = 0x805642C | 1;
 AppendToStartMenuItems = 0x806ED94 | 1;
 SetUpStartMenu_Link = 0x806EE34 | 1;
 SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
-DestroySafariZoneStatsWindow = 0x806EF18 | 1;
+/*DestroySafariZoneStatsWindow = 0x806EF18 | 1;*/
 PrintStartMenuItems = 0x806EF44 | 1;
 DrawStartMenuInOneGo = 0x806F14C | 1;
 task50_startmenu = 0x806F168 | 1;
@@ -1615,10 +1632,12 @@ LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
 CreateHiddenSpriteWithCallback = 0x8044EF8 | 1;
 something_08050969 = 0x8050968 | 1;
 LoadSpriteSheetsForSummaryScreen = 0x8050DE0 | 1;
-PatchObjectPalette = 0x805F538 | 1;
+/*PatchObjectPalette = 0x805F538 | 1;*/
 SetAffineData = 0x8075858 | 1;
 SpawnPokeOrTrainerPic = 0x810BDAC | 1;
 
+TryLoadObjectPalette = 0x805F510 | 1;
+ApplyGlobalFieldPaletteTint = 0x8083598 | 1;
 
 /* Palette Functions */
 BlendPalette = 0x8045274 | 1;
@@ -1664,7 +1683,7 @@ GetEventObjectIdByLocalIdAndMapInternal = 0x805DFF4 | 1;
 GetEventObjectIdByLocalId = 0x805E044 | 1;
 MakeObjectTemplateFromEventObjectGraphicsInfo = 0x805E8E8 | 1;
 MakeObjectTemplateFromEventObjectTemplate = 0x805E960 | 1;
-FindEventObjectPaletteIndexByTag = 0x805F5A0 | 1;
+/*FindEventObjectPaletteIndexByTag = 0x805F5A0 | 1;*/
 GetEventObjectScriptPointerByEventObjectId = 0x805FC38 | 1;
 GetRunningDirectionAnimNum = 0x8063520 | 1;
 npc_apply_anim_looping = 0x8063554 | 1;
@@ -1766,6 +1785,7 @@ Task_HofPC_HandleInput = 0x80F2E8C | 1;
 Task_HofPC_PrintDataIsCorrupted = 0x80F30A4 | 1;
 SpriteCB_GetOnScreenAndAnimate = 0x80F3870 | 1;
 AddTextPrinterParameterized2 = 0x80F6CD0 | 1;
+AddTextPrinterParameterized3 = 0x812E51C | 1;
 NewMenuHelpers_DrawDialogueFrame = 0x80F6EE4 | 1;
 GetFontAttribute = 0x80F79D8 | 1;
 dp13_810BB8C = 0x810BB8C | 1;
@@ -1781,6 +1801,10 @@ CreateTrainerCardMonIconSprite = 0x810C25C | 1;
 CreateTrainerPicSprite = 0x810C2A4 | 1;
 FreeAndDestroyTrainerPicSprite = 0x810C2E8 | 1;
 CreateTrainerCardTrainerPicSprite = 0x810C330 | 1;
+
+GetAbilityBySpecies = 0x840D38 | 1;
+sMonSkillsPrinterXpos = 0x203B144;
+CB2_ReturnToTradeMenuFromSummary = 0x84CF14 | 1;
 
 /* Title Screen Functions */
 sub_8071898 = 0x8071898 | 1;
@@ -1829,3 +1853,43 @@ DMA0_SRC = 0x40000B0;
 DMA0_DST = 0x40000B4;
 DMA0_CNT_L = 0x40000B8;
 DMA0_CNT_H = 0x40000BA;
+
+Alloc = 0x8002b9c | 1;
+
+/* TM CASE */
+SetVBlankHBlankCallbacksToNull = 0x80bf768 | 1;
+ClearScheduledBgCopiesToVram = 0x80f6790 | 1;
+LoadBGTemplates = 0x8131ab8 | 1;
+sTMCaseDynamicResources = 0x203b118;
+InitWindowTemplatesAndPals = 0x8133244 | 1;
+HandleLoadTMCaseGraphicsAndPalettes = 0x8131b20 | 1;
+/*SortPocketAndPlaceHMsFirst = 0x809a5e4 | 1;*/
+TMCaseSetup_GetTMCount = 0x81320bc | 1;
+/*TMCaseSetup_InitListMenuPositions = 0x8132120 | 1;*/
+TMCaseSetup_UpdateVisualMenuOffset = 0x8132170 | 1;
+/*DrawMoveInfoUIMarkers = 0x8133404 | 1;*/
+CreateTMCaseListMenuBuffers = 0x8131c10 | 1;
+InitTMCaseListMenuItems = 0x8131c50 | 1;
+PrintStringTMCaseOnWindow3 = 0x81333c4 | 1;
+sTMCaseStaticResources = 0x203b10c;
+CreateTMCaseScrollIndicatorArrowPair_Main = 0x8132018 | 1;
+/*CreateTMSprite = 0x813368c | 1;*/
+VBlankCB_Idle = 0x8131880 | 1;
+CB2_Idle = 0x8131864 | 1;
+Task_TMCaseDude1 = 0x8132f20 | 1;
+Task_TMCaseMain = 0x81322d4 | 1;
+SetBagItemQuantity = 0x8099dbc | 1;
+SpriteCB_MonIcon = 0x809718c | 1;
+gMonIconPaletteTable = 0x83d4038;
+sSpriteImageSizes = 0x83d40e8;
+gText_TMCaseWillBePutAway = 0x84166e1;
+AddTextPrinterParameterized_ColorByIndex = 0x81332ec | 1;
+gUnknown_8E99118 = 0x8E99118;
+itemid_is_unique = 0x809a990 | 1;
+TMCase_SetWindowBorder2 = 0x8133368 | 1;
+gText_Var1IsSelected = 0x84162ff;
+gText_FontSmall = 0x84166ff;
+sText_ClearTo18 = 0x8463178;
+gText_NumberClear01 = 0x8416226;
+sText_SingleSpace = 0x846317c;
+gText_FontShort = 0x8416703;

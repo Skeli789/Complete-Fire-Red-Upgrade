@@ -28,3 +28,5 @@ u8 __attribute__((long_call)) GetLRKeysPressedAndHeld(void);
 bool8 __attribute__((long_call)) itemid_link_can_give_berry(u16 itemId);
 bool8 __attribute__((long_call)) CanWriteMailHere(u16 itemId);
 void __attribute__((long_call)) ResetVramOamAndBgCntRegs(void);
+void __attribute__((long_call)) ClearScheduledBgCopiesToVram(void);
+void __attribute__((long_call)) LoadBGTemplates(void);

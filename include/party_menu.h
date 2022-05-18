@@ -144,6 +144,8 @@ extern u8 gSelectedMonPartyId;
 extern MainCallback gPostMenuFieldCallback;
 extern void (*gItemUseCB)(u8, TaskFunc);
 
+extern void RareCandiesPostUseFix();
+
 void __attribute__((long_call)) InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback);
 void __attribute__((long_call)) DisplayPartyPokemonSelectData(u8 slot, u8 stringID);
 void __attribute__((long_call)) Task_HandleChooseMonInput(u8 taskId);
@@ -153,6 +155,10 @@ void __attribute__((long_call)) DisplayPartyMenuStdMessage(u32 stringID);
 u8* __attribute__((long_call)) GetMonNickname(struct Pokemon *mon, u8 *dest);
 u8 __attribute__((long_call)) GetCursorSelectionMonId(void);
 bool8 __attribute__((long_call)) FieldCallback_PrepareFadeInFromMenu(void);
+void __attribute__((long_call)) sub_8124DC0(u8 taskId);
+void __attribute__((long_call)) ItemUseCB_RareCandyStep(u8 taskId, UNUSED TaskFunc func);
+void __attribute__((long_call)) Task_DisplayLevelUpStatsPg1(u8);
+void __attribute__((long_call)) GetMonLevelUpWindowStats(struct Pokemon *mon, u16 *currStats);
 
 void __attribute__((long_call)) AnimatePartySlot(u8 slot, u8 b);
 u16 __attribute__((long_call)) PartyMenuButtonHandler(s8 *ptr);

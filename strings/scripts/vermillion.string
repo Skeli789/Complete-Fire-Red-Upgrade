@@ -1,0 +1,230 @@
+#org @gText_TicketViewer_0X17FA22
+Welcome to the S.S. Anne!
+
+#org @gText_TicketViewer_0X17FB10
+The ship set sail.
+
+#org @gText_TicketViewer_0X17FBB8
+Ah, you have a Rainbow Pass.\pWould you like to board\na Seagallop ferry?
+
+#org @gText_TicketViewer_0X17FB23
+Ah, you have a Tri-Pass.\pWould you like to board\na Seagallop ferry?
+
+#org @gText_TicketViewer_0X17FCC1
+Would you like to board\na Seagallop ferry?
+
+#org @gText_TicketViewer_0X17FC00
+Oh! That's a MysticTicket!\nNow that is rare.\pWe'll be happy to take you to\nNavel Rock anytime.
+
+#org @gText_TicketViewer_0X17FCEC
+Okay, everything's in order for you\nto board a special ferry.\pSeagallop Hi-Speed 10 will be\ndeparting immediately.
+
+#org @gText_TicketViewer_0X17FC5F
+Oh! That's an AuroraTicket!\nNow that is rare.\pWe'll be happy to take you to\nBirth Island anytime.
+
+#org @gText_TicketViewer_0X17FD5F
+Okay, everything's in order for you\nto board a special ferry.\pSeagallop Hi-Speed 12 will be\ndeparting immediately.
+
+#org @gText_TicketViewer_0X17FB67
+Okay, everything's in order.\pSeagallop Hi-Speed 7 will be\ndeparting immediately.
+
+#org @gText_TicketViewer_0X1A641B
+All right!\nAll aboard Seagallop Hi-Speed [BUFFER1]!
+
+#org @gText_TicketViewer_CheckBadges
+Hey, kid. You look strong.\nCan I see your badges?\p[.] [.]\n[.]
+
+#org @gText_TicketViewer_CheckAchievements
+Wow, you've got 8 badges? That's\npretty impressive. What else have\lyou done?\l[.] [.] [.]\l[.]
+
+#org @gText_TicketViewer_GiveTickets
+You single-handedly took down a\ncriminal organization? At the age\lof 10? Wow!\pHere, i'm not supposed to give these\nout, but you are super strong, and\li'm impressed. Just pretend this\lnever happened, K?
+
+#org @gText_NavelRock
+Navel Rock
+
+#org @gText_BirthIsland
+Birth Island
+
+#org @gText_PsychicForce
+There's a psychic force blocking you\nfrom moving forward!\pMaybe you have to come back later?
+
+#org @gText_ViewBargain
+Welcome[.] want to view today's\nbargain?
+
+#org @gText_TodayBargain
+Today's bargain is a [GREEN][BUFFER1][BLUE][.]\nIt's [GREEN]\$[BUFFER2][BLUE]. You still want it?
+
+#org @gText_PlayerRecieved
+[BLACK][PLAYER] recieved a\n[BUFFER1]!
+
+#org @gText_BargainNotEnough
+Sorry, you don't have enough\n[GREEN]money[BLUE][.]
+
+#org @gText_ThanksComing
+Thanks for coming, I guess[.]
+
+#org @gText_BargainBye
+Ok, then. Come back later, I guess[.]
+
+#org @gText_AlreadyBoughtBargain
+You've already bought an item today[.]
+
+#org @gText_LookingForItem
+Today I'm buying a [GREEN][BUFFER1][BLUE] for\n[GREEN]\$[BUFFER2][BLUE].
+
+#org @gText_HaveItem
+Oh, looks like you've brought what\nI need there.\pI'll buy that [GREEN][BUFFER1][BLUE] for\n[GREEN]\$[BUFFER2][BLUE].
+
+#org @gText_NotItem
+That's not a [GREEN][BUFFER1][BLUE]!
+
+#org @gText_HeresReward
+Thanks. Here's your reward.
+
+#org @gText_PlayerRecievedCash
+[BLACK][PLAYER] handed over the [BUFFER1]\nand recieved \$[BUFFER2].
+
+#org @gText_ComeBackTomorrowBargain
+Come back tomorrow, and I might\nhave more for you to do, if you're\linterested.
+
+#org @gText_OhOkThen
+Oh, okay then.
+
+#org @gText_Maractus
+Shashakaaay!
+
+#org @gText_DugUpItem
+I dug up a mysterious item, but I've\ngot no clue how it works. Maybe\lyou could find some use for it, kid.\lWhy don't you take it?
+
+#org @gText_DugUpItems
+I dug up some mysterious items, but\nI've got no clue how they work.\lMaybe you could find some use for\lthem, kid. Why don't you take them?
+
+#org @gText_SurgeBeforeRematch
+You're back!\nMy Pok\emon and I have been dying\lfor rematch. This time, I won't\llose!
+
+#org @gText_SurgeRematchLose
+No!\nNot again!
+
+#org @gText_SurgeRematchAfter2
+Considering you completely stomped\nmy electric types, you must be a\lground type! Hah hah[.] Yeah it\lwasn't funny, but I need filler\ltext, y'know?
+
+#org @gText_SurgeRematchAfter1
+You're certainly special, kid. Take\nthese items, they'll be useful to\lyou.
+
+#org @gText_KiaweBefore
+What now? I already told you.\nCharizard isn't fit to bat-
+
+#org @gText_KiaweAskBattle
+Oh, wait, you aren't that lady.\nShe keeps asking me for a battle,\lbut only wants me to use\lCharizard[.] Anyways, what's your\lname? [.]\pIt's [PLAYER]? Cool, my name's [GREEN]Kiawe[BLUE].\nSo, want to have a battle?
+
+#org @gText_KiaweNoBattle
+Alright, then.
+
+#org @gText_KiaweLose
+[.]I cant believe you beat me[.]
+
+#org @gText_KiaweAfter
+Well[.] I'm going to go now, just\nin case those guys come back, but\ltake this TM. It contains the move\l[GREEN]Flame Charge[BLUE].
+
+#org @gText_ArcuesPlateSellerHi
+Yo, dude!\nI'm selling some pretty cool items.\pWait, you look kinda weak. Let me\nsee your badges.
+
+#org @gText_ArcuesPlatesNotEnoguh
+Bhahaha!\nYou don't even have [GREEN]7[BLUE] badges.\pCome back when you have at least 7\nbadges.
+
+#org @gText_SellingArcuesPlates
+Yo, dude!\nWanna buy my rare items?
+
+#org @gText_IOAMoves
+Hiya!\nI can teach your Pok\emon exclusive\lmoves they can't get anywhere else.\pShould I?
+
+#org @gText_IOANo
+Oww[.]\nOkay.
+
+#org @gText_IOAWhichMove
+Which move should I teach?
+
+#org @gText_ExplosionTMShow
+Hello there, young trainer.\nIf you can show me a Pok\emon with\la high base Attack or low base HP,\lI'll give you an exclusive TM.
+
+#org @gText_ExplosionNoTM
+Come back when you need this TM,\nthen.
+
+#org @gText_LetMeSee
+Let me see[.]
+
+#org @gText_NoExplosion
+Sorry, this Pok\emon does not have\nhigh enough Attack or low enough\lHP.
+
+#org @gText_GoodStatsExplosion
+This Pok\emon has a [BUFFER1] base\nAttack and [BUFFER2] base HP.\pThose are good enough stats! Take\nthis TM.
+
+#org @gText_TM64Explain
+TM64 contains the move Explosion. It\ndeals huge damage to all Pok\emon\lon the field, but faints the user.
+
+#org @gText_PokemonBreederAsk
+Hi.\nI'm a Pok\emon Breeder.\pIf you can beat me in a Pok\emon\nbattle, I'll give you an egg and a\lTM.\pDo you want to battle?
+
+#org @gText_BeforePokemonBreederBattle
+I might be a Pok\emon Breeder, but I\ndon't battle with Baby Pok\emon!
+
+#org @gText_PokemonBreederLose
+Wow[.]\nYou're so strong! But how[.]?
+
+#org @gText_BreederHereEgg
+Well, here's the things I promised.\nThe egg, and the TM.
+
+#org @gText_BreederExplain
+The egg contains the Pok\emon\n[GREEN]Riolu[RED]. It's a pretty powerful\lPok\emon, and even more powerful\lwhen it evolves.\pThe TM contains the move [GREEN]Power-up\nPunch[RED]. It deals little damage, but\lalways raises your Pok\emon's\lAttack stat.
+
+#org @gText_ComeBackMegaBreeder
+Come back when you have more\nbadges, and I'll give you a Mega\lStone.
+
+#org @gText_PlayerRecievedEgg
+[BLACK][PLAYER] received an Egg!
+
+#org @gText_BreederHereMega
+Ah, you're back!\nI didn't think you would've\lremembered me.\pHere's the Mega Stone I promised!
+
+#org @gText_ExplainLucarionite
+The Mega Stone I gave you allows\nyou to mega evolve Lucario.\pLucario is super powerful when mega\nevolved, I recommend you try it!
+
+#org @gText_BeatRandomBattle
+Well done.
+
+#org @gText_RandomBattleAsk
+Hey there, my name's Joshua.\pMy team consists of Pok\emon that\ngive lots of EXP.\pDo you want to battle?
+
+#org @gText_ShallTeachKnockOff
+Did you know Pok\emon with the ability\n[GREEN]Sticky Hold[BLUE] can't have their item's\lremoved with a move like Knock\lOff?\p[PAUSE][10][.][PAUSE][10]\nYou don't know what [GREEN]Knock Off [BLUE]is?\pIt's a Dark-type move that removes\nthe foe's item.\pIf you want, I can teach it to any\nof your Pok\emon.\pShall I?
+
+#org @gText_ComeBackKnockOff
+Ok then[.]\nCome back if you ever want me to\lteach the move [GREEN]Knock Off[BLUE].
+
+#org @gText_ThereYaGoKnockOff
+There you go. Now you have the\nmove [GREEN]Knock Off[BLUE].\pHope you like it, it's a useful move.
+
+#org @gText_Raticate
+[BLACK]Raticate!
+
+#org @gText_ShouldTeachFang
+Thanks to my Pok\emon and best friend\nRaticate, I can teach moves that\linvolve biting to Pok\emon.\pShould I teach one of those moves\nto you?
+
+#org @gText_NoFangMove
+But[.] it took so long for me to\nmaster teaching these moves!
+
+#org @gText_WhichFangMove
+Which move should I teach to your\nPok\emon?
+
+#org @gText_ThanksForTeachingFang
+Thanks for letting me teach your\nPok\emon a move.\pEvery other trainer that comes here\njust leaves immediately[.] Do they\lthink I'm useless?
+
+#org @gText_ImMasterTrappingMoves
+Oh, hello there.\nI'm the master of trapping moves.\pI can teach the moves [GREEN]Whirlpool[BLUE],\n[GREEN]Fire Spin[BLUE], and [GREEN]Sand Tomb[BLUE].\pDo you want to learn them? They can\nbe powerful if used right.
+
+#org @gText_WhichTrappingMove
+Which of these trapping moves do you\nwant to learn?
+
+#org @gText_ComeBackAnyTrapping
+Well then, come back if you ever\nneed any trapping moves.

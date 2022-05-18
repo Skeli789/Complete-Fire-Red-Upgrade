@@ -11,7 +11,11 @@
  *		  setting of Pokemon data.
  */
 
-//Exported Functions
+u16 __attribute__((long_call)) teach_move_in_available_slot(struct pokemon*, u16 move);
+void __attribute__ ((long_call)) CB2_ReturnToTradeMenuFromSummary(void);
+u8 __attribute__((long_call)) StatusToAilment(u32 status);
+
+ //Exported Functions
 void sp067_GenerateRandomBattleTowerTeam(void);
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void);
 u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType);
@@ -22,20 +26,21 @@ bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);
 u32 CheckShinyMon(struct Pokemon* mon);
-void CalculateMonStatsNew(struct Pokemon *mon);
+void CalculateMonStatsNew(struct Pokemon* mon);
 u8 GetOpenWorldBadgeCount(void);
 u8 GetScaledWildBossLevel(u8 level);
 void TryRandomizeSpecies(u16* species);
 u8 TryRandomizeAbility(u8 ability, u16 species);
+void PokeSum_PrintAbilityNameAndDesc();
 
 //Functions Hooked In
 void BuildTrainerPartySetup(void);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 void SetMonHeldItem(struct PokemonSubstruct0* data, u16 item, struct Pokemon* mon);
-void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 unownLetter);
-void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, u8 unused, u32 data);
+void SetMonExpWithMaxLevelCheck(struct Pokemon* mon, u16 species, u8 unused, u32 data);
 void UpdatePartyPokerusTime(u16 days);
 u16 GetRandomizedSpecies(u16 species);
 
