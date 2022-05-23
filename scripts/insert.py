@@ -291,6 +291,7 @@ def main():
         print("Inserting code.")
         table = GetSymbols(GetTextSection())
         rom.seek(OFFSET_TO_PUT)
+       
         with open(OUTPUT, 'rb') as binary:
             rom.write(binary.read())
             binary.close()

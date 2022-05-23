@@ -29,6 +29,7 @@ bool8 GetSetItemObtained(u16 item, u8 caseId);
 u8 ReformatItemDescription(u16 item, u8* dest, u8 maxChars);
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm);
+u32 CanSpeciesLearnTMHM(u16 species, u8 tm);
 bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId);
 u16 GetExpandedTutorMove(u8 tutorId);
 void CopyTMName(u8* dst, u16 itemId);

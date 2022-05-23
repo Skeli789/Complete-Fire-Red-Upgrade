@@ -156,12 +156,12 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	if(min <= level && max <= level) {
 		min = level - 3;
 		max = level - 2;
-		if (min == 1 || min == 0) {
-			min = 2;
-		}
-		if (max == 1 || max == 0 || max == 2) {
-			max = 3;
-		}
+	}
+	if (min == 1 || min == 0) {
+		min = 2;
+	}
+	if (max == 1 || max == 0 || max == 2) {
+		max = 3;
 	}
 	//Check ability for max level mon
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))

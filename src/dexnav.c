@@ -1308,7 +1308,9 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 		if (numEggMoves != 0)
 		{
 			u8 index = RandRange(0, numEggMoves);
-			moveLoc[0] = eggMoveBuffer[index];
+			if(!MonKnowsMove(&gEnemyParty[0], eggMoveBuffer[index])) {
+				moveLoc[0] = eggMoveBuffer[index];
+			}
 		}
 	}
 }

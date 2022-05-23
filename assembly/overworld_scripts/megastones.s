@@ -124,3 +124,8 @@ EventScript_Scizorite:
 EventScript_Gengarite:
 	giveitem ITEM_GENGARITE 0x1 MSG_FIND
 	end
+
+.global EventScript_Aggronite
+EventScript_Aggronite:
+	giveitem ITEM_AGGRONITE 0x1 MSG_FIND
+	end

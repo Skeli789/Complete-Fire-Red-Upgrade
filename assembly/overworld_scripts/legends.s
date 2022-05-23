@@ -509,7 +509,7 @@ EventScript_SolgaleoPortal:
 
 EventScript_SolgaleoBattle:
 	wildbattle SPECIES_SOLGALEO 80 0x0
-	hidesprite 3
+	hidesprite 4
 	setflag FLAG_SOLGALEO_GOT
 	setflag FLAG_SOLGALEO_SPRITE
 	release

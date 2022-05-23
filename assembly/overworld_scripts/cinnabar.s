@@ -461,3 +461,27 @@ EventScript_TalkAboutOtherFossil:
 	msgbox gText_UsedOtherFossilQuestion MSG_FACE
 	release
 	end
+
+.global EventScript_MoonblastTutor
+EventScript_MoonblastTutor:
+	lock
+	faceplayer
+	msgbox gText_TeachMoonblast MSG_YESNO
+	compare LASTRESULT 0x1
+	if equal _goto EventScript_TeachMoonblast
+	release
+	end
+
+EventScript_TeachMoonblast:
+	setvar 0x8005 147
+	special 0x18D
+	waitstate
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_End1
+	msgbox gTexst_Moonblast MSG_FACE
+	release
+	end
+
+EventScript_End1:
+	release
+	end

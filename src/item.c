@@ -320,6 +320,48 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 		return 0;
 }
 
+u32 CanSpeciesLearnTMHM(u16 species, u8 tm)
+{
+	if (species == SPECIES_EGG)
+	{
+		return 0;
+	}
+	u16 i;
+
+	for(i = 0; gLevelUpLearnsets[species][i].level != 0xFF; i++) {
+		if(gLevelUpLearnsets[species][i].move == gTMHMMoves[tm]) {
+			return TRUE;
+		}
+	}
+
+	u32 mask;
+	if (tm < 32)
+	{
+		mask = 1 << tm;
+		return (gTMHMLearnsets[species][0] & mask) != 0 ? TRUE : FALSE;
+	}
+	else if (tm >= 32 && tm < 64)
+	{
+		mask = 1 << (tm - 32);
+		return (gTMHMLearnsets[species][1] & mask) != 0 ? TRUE : FALSE;
+	}
+#ifdef EXPANDED_TMSHMS
+	else if (tm >= 64 && tm < 96)
+	{
+		mask = 1 << (tm - 64);
+		return (gTMHMLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
+	}
+	else if (tm >= 96 && tm < 128)
+	{
+		mask = 1 << (tm - 96);
+		return (gTMHMLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
+	}
+#endif
+	else
+		return 0;
+}
+
+
 #ifdef EXPANDED_MOVE_TUTORS
 
 bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)

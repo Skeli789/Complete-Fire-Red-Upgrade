@@ -443,20 +443,17 @@ EventScript_TeachMove:
 EventScript_SoftboiledTutor:
 	lock
 	faceplayer
-	checkflag 0x2C7
-	if 0x1 _goto 0x81C4AE4
 	msgbox 0x8180388 MSG_YESNO
 	compare LASTRESULT 0x0
 	if 0x1 _goto 0x81C4ADA
-	call 0x81C4F37
-	compare LASTRESULT 0x0
-	if 0x1 _goto 0x81C4ADA
+	@@call 0x81C4F37
+	@@compare LASTRESULT 0x0
+	@@if 0x1 _goto 0x81C4ADA
 	msgbox 0x8180484 MSG_KEEPOPEN
 	setvar 0x8005 146
 	call 0x81C4F30
 	compare LASTRESULT 0x0
 	if 0x1 _goto 0x81C4ADA
-	setflag 0x2C7
 	goto 0x81C4AE4
 	release
 	end
@@ -472,6 +469,30 @@ EventScript_TVRemake:
 EventScript_SlotMachine:
 	lock
 	msgbox gText_ItsASlotMachine MSG_FACE
+	release
+	end
+
+.global EventScript_LiquidationTutor
+EventScript_LiquidationTutor:
+	lock
+	faceplayer
+	msgbox gText_LiquidationAsk MSG_YESNO
+	compare LASTRESULT 0x1
+	if equal _goto EventScript_TeachLiquidation
+	release
+	end
+
+EventScript_TeachLiquidation:
+	setvar 0x8005 39
+	special 0x18D
+	waitstate
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_End1
+	msgbox gText_LiquidationTaught MSG_FACE
+	release
+	end
+
+EventScript_End1:
 	release
 	end
 

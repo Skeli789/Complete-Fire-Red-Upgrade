@@ -1233,27 +1233,27 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 	},*/
 	[121] = {
 		.nature = NATURE_MODEST,
-		.ivs = 25,
+		.ivs = 31,
 		.ability = Ability_2,
 	},
 	[122] = {
 		.nature = NATURE_MODEST,
-		.ivs = 25,
+		.ivs = 31,
 		.ability = Ability_Hidden,
 	},
 	[123] = {
 		.nature = NATURE_JOLLY,
-		.ivs = 25,
+		.ivs = 31,
 		.ability = Ability_1,
 	},
 	[124] = {
 		.nature = NATURE_ADAMANT,
-		.ivs = 25,
+		.ivs = 31,
 		.ability = Ability_2,
 	},
 	[125] = {
 		.nature = NATURE_JOLLY,
-		.ivs = 25,
+		.ivs = 31,
 		.ability = Ability_Hidden,
 	},
 	[126] = {

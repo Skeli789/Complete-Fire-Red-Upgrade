@@ -653,9 +653,12 @@ RunTextPrintersForInstantTextHook 08002DEE 0
 ItemUseCB_RareCandy 081262AC 2
 
 ##DoSetUpTMCaseUI 081318C0 0
-DrawMoveInfoUIMarkers 08133404 0
-TMCase_MoveCursor_UpdatePrintedDescription 08131F0C 1
-CreateTMSprite 0813368c 1
-PlaceHMTileInWindow 081335b0 3
+##DrawMoveInfoUIMarkers 08133404 0
+##TMCase_MoveCursor_UpdatePrintedDescription 08131F0C 1
+##CreateTMSprite 0813368c 1
+##PlaceHMTileInWindow 081335b0 3
 ##TMCase_ItemPrintFunc 08131e68 3
-GetTMNumberAndMoveString 08131d48 2
+##GetTMNumberAndMoveString 08131d48 2
+##PrintListMenuCursorAt_WithColorIdx 8131fb0 2
+##InitTMCaseListMenuItems 08131c50 1
+##InitWindowTemplatesAndPals 08133244 1

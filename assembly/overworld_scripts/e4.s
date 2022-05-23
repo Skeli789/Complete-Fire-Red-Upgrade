@@ -10,7 +10,7 @@ EventScript_IndigoPlateauMapScript:
 	.byte MAP_SCRIPT_TERMIN
 
 .global EventScript_GirlBlockingDoor
-EventScript_GirlBlockingDoor:
+EventScript_GirlBlockingDoor: 
 	lock
 	checkflag 0x1008
 	if SET _goto EventScript_DescribeReins
@@ -25,12 +25,8 @@ EventScript_GirlBlockingDoor:
 	closeonkeypress
 	special 0xE5
 	setflag 0x1008
-	msgbox gText_HeresRustySwordShield MSG_KEEPOPEN
-	giveitem ITEM_RUSTED_SWORD 0x1 MSG_OBTAIN
-	giveitem ITEM_RUSTED_SHIELD 0x1 MSG_OBTAIN
-	closeonkeypress
-	setvar 0x8000 MOVE_STEELROLLER
-	setvar 0x8001 MOVE_PSYCHICTERRAIN
+	setvar 0x8000 0x2EC
+	setvar 0x8001 MOVE_WATERPULSE
 	setvar 0x8002 0xFFFF
 	setvar 0x8003 0xFFFF
 	setvar 0x8004 0x0
@@ -41,9 +37,11 @@ EventScript_GirlBlockingDoor:
 	setvar 0x8009 31
 	setvar 0x800A 31
 	setvar 0x800B 31
-	givepokemon SPECIES_BLACEPHALON 100 0x0 0x0 0x1
-	givepokemon SPECIES_GOODRA_H 100 0x0 0x0 0x0
-	givepokemon SPECIES_TYPHLOSION_H 100 0x0 0x0 0x0
+	givepokemon SPECIES_YVELTAL 100 0x0 0x0 0x1
+	msgbox gText_HeresRustySwordShield MSG_KEEPOPEN
+	giveitem ITEM_RUSTED_SWORD 0x1 MSG_OBTAIN
+	giveitem ITEM_RUSTED_SHIELD 0x1 MSG_OBTAIN
+	closeonkeypress
 	goto EventScript_DescribeReins
 	release
 	end

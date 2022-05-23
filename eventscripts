@@ -159,7 +159,6 @@ npc 1 81 12 EventScript_Aerodactylite
 ## Lavender Town
 npc 8 0 0 EventScript_pokecentre_0X16A2CF
 npc 8 0 5 EventScript_AIOMan_0X8037C3
-npc 1 91 7 EventScript_Gengarite
 npc 8 4 1 EventScript_BodySlamTutor
 npc 8 0 2 EventScript_UtilityTutor
 
@@ -188,6 +187,7 @@ npc 10 17 4 EventScript_FocusEnergyTutor
 npc 10 12 2 EventScript_PledgeTutor
 npc 3 6 6 EventScript_SoftboiledTutor
 sign 10 2 4 EventScript_TVRemake
+npc 10 2 0 EventScript_LiquidationTutor
 
 ## Route 16
 npc 3 34 12 EventScript_TM114
@@ -256,6 +256,7 @@ npc 14 2 9 EventScript_KubfuBall
 npc 1 53 11 EventScript_GalarFossilSeller
 npc 14 0 0 EventScript_SaffronTutor
 npc 3 10 8 EventScript_SaffronTutor2
+npc 1 50 8 EventScript_Aggronite
 
 ## Cinnabar
 sign 3 8 4 EventScript_MissingNo
@@ -272,6 +273,7 @@ npc 12 2 0 EventScript_SpecialItemSeller
 npc 12 3 0 EventScript_CinnabarTutor
 npc 12 3 1 EventScript_Eeevee8
 npc 12 4 1 EventScript_GiveOtherFossil
+npc 12 1 1 EventScript_MoonblastTutor
 
 ## Mega Stones
 npc 3 23 1 EventScript_Beedrillite
@@ -293,6 +295,7 @@ npc 3 28 10 EventScript_Manectite
 npc 1 44 7 EventScript_Mawilite
 npc 1 47 1 EventScript_Medichamite
 npc 43 0 6 EventScript_Scizorite
+npc 3 42 11 EventScript_Gengarite
 
 ## Groudon Cave
 npc 43 11 10 EventScript_TM93 

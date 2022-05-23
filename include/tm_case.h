@@ -4,11 +4,11 @@
 #include "global.h"
 
 void __attribute__((long_call)) LoadBGTemplates(void);
-void __attribute__((long_call)) InitWindowTemplatesAndPals(void);
+//void __attribute__((long_call)) InitWindowTemplatesAndPals(void);
 bool8 __attribute__((long_call)) HandleLoadTMCaseGraphicsAndPalettes(void);
-//void __attribute__((long_call)) SortPocketAndPlaceHMsFirst(struct BagPocket * pocket);
+void __attribute__((long_call)) SortPocketAndPlaceHMsFirst(struct BagPocket * pocket);
 void __attribute__((long_call)) TMCaseSetup_GetTMCount(void);
-//void __attribute__((long_call)) TMCaseSetup_InitListMenuPositions(void);
+void __attribute__((long_call)) TMCaseSetup_InitListMenuPositions(void);
 void __attribute__((long_call)) TMCaseSetup_UpdateVisualMenuOffset(void);
 //void __attribute__((long_call)) DrawMoveInfoUIMarkers(void);
 void __attribute__((long_call)) CreateTMCaseListMenuBuffers(void);
@@ -26,5 +26,11 @@ void __attribute__((long_call)) SpriteCB_MonIcon(struct Sprite *);
 void __attribute__((long_call)) AddTextPrinterParameterized_ColorByIndex(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx);
 bool8 __attribute__((long_call)) itemid_is_unique(u16 itemId);
 void __attribute__((long_call)) TMCase_SetWindowBorder2(u8 windowId);
-
+void __attribute__((long_call)) TMCase_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu *list);
+void __attribute__((long_call)) TMCase_ItemPrintFunc(u8 windowId, u32 itemId, u8 y);
+void __attribute__((long_call)) GetTMNumberAndMoveString(u8 * dest, u16 itemId);
+void __attribute__((long_call)) TextWindow_SetUserSelectedFrame(u8 windowId, u16 tileStart, u8 palette);
+void __attribute__((long_call)) TextWindow_LoadResourcesStdFrame0(u8 windowId, u16 tileStart, u8 palette);
+void __attribute__((long_call)) TextWindow_SetStdFrame0_WithPal(u8 windowId, u16 tileStart, u8 palette);
+void __attribute__((long_call)) ListMenuLoadStdPalAt(u8 palOffset, u8 palId);
 #endif //GUARD_PLAYER_TM_CASE_H

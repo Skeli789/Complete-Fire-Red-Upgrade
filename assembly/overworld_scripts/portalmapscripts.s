@@ -165,17 +165,17 @@ EventScript_HideSolgaleoPortal:
 	if SET _goto EventScript_HideSolgaleoPortal2
 	checkflag FLAG_GOT_CHARMS
 	if SET _goto EventScript_ShowSolgaleoPortal
-	hidesprite 3
+	hidesprite 4
 	setflag FLAG_SOLGALEO_SPRITE
 	end
 
 EventScript_ShowSolgaleoPortal:
-	showsprite 3
+	showsprite 4
 	clearflag FLAG_SOLGALEO_SPRITE
 	end
 
 EventScript_HideSolgaleoPortal2:
-	hidesprite 3
+	hidesprite 4
 	setflag FLAG_SOLGALEO_SPRITE
 	end
 

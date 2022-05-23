@@ -126,3 +126,9 @@ Battle-combo moves[.]\pHow you combine them with eachother\nis the key to using 
 
 #org @gText_ItsASlotMachine
 A slot machine!\pYou're underage, though.
+
+#org @gText_LiquidationAsk
+I can teach the move Liquidation to\nyour Pok\emon.\pDo you want me to?
+
+#org @gText_LiquidationTaught
+Your Pok\emon now knows the move\nLiquidation.\pI hope you use it to it's full\npotential.
