@@ -764,7 +764,7 @@ The user shoots\npowerful lasers using\nprism power. The\nuser can't move on\nth
 The user bites the\ntarget with psychic\ncapabilities. This\ndestroys Light\nScreen and Reflect.
 
 #org @DESC_PURIFY
-The user heals the\ntarget's status\ncondition. If the move\nsucceeds, it also\nheals the user's HP.
+The user heals the\ntarget's status\ncondition. If this\nsucceeds, it also\nheals the user's HP.
 
 #org @DESC_REVELATIONDANCE
 The user attacks the\ntarget by dancing\nvery hard. The user's\ntype determines this\nmove's type.

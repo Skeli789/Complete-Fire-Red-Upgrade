@@ -2773,22 +2773,28 @@ ANIM_FOCUSBLAST:
 	waitbgfadeout
 	launchtask AnimTask_scroll_background 0x5 0x4 0xF000 0x0 0x0 0xFFFF
 	waitbgfadein
-	launchtemplate Template_SuperpowerOrb TEMPLATE_ATTACKER | 2 0x1 0x0
+	launchtemplate FOCUS_BLAST_ORB TEMPLATE_ATTACKER | 2 0x0
 	soundcomplex 0x85 SOUND_PAN_ATTACKER 0x20 0x4
-	waitanimation
+	pause 60
+	pause 60
+	pause 60
+	pause 9
 	playsound2 0x8A SOUND_PAN_TARGET
-	launchtemplate FOCUS_RING 0x3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x4 0x0 0x10 0x1
+	launchtemplate FOCUS_RING TEMPLATE_TARGET | 3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
 	pause 0x1
-	launchtemplate FOCUS_RING 0x3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
+	launchtemplate FOCUS_RING TEMPLATE_TARGET | 3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
 	pause 0x1
-	launchtemplate FOCUS_RING 0x3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
+	launchtemplate FOCUS_RING TEMPLATE_TARGET | 3 0x6 0x0 0x0 0x1 0x0 0x1F 0x8
 	waitanimation
+	pause 8
 	pokespritefromBG bank_target
 	resetblends
 	call UNSET_SCROLLING_BG
 	endanimation
 
 .align 2
+FOCUS_BLAST_ORB: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_BLEND_64x64 gDummySpriteAnimTable 0x0 0x83E6860 SpriteCB_FocusBlastOrb 
 FOCUS_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

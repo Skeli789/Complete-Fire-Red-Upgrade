@@ -1334,7 +1334,7 @@ static bool8 ShouldSwitchIfWonderGuard(struct Pokemon* party, u8 firstId, u8 las
 	//Check if pokemon has a super effective move, Mold Breaker Move, or move that can hurt Shedinja
 	u8 bankAtk = gActiveBattler;
 	u8 bankDef = opposingBattler;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetBattleMonMove(gActiveBattler, i);

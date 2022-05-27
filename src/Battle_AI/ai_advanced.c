@@ -1120,7 +1120,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	||  (!isAtkDynamaxed && BankHasAbilityUsefulToProtectFor(bankAtk, bankDef))
 	||  (!isAtkDynamaxed && WillFaintFromSecondaryDamage(bankDef)) //Don't protect if you're Dynamaxed because Max Moves can have beneficial side effects
 	||  (!isAtkDynamaxed && IsTrapped(bankDef, TRUE) && IsTakingSecondaryDamage(bankDef, FALSE)) //Not like the foe will be able to go anywhere
-	||  (IsDynamaxed(bankDef) && (!IsRaidBattle() || bankDef != BANK_RAID_BOSS) && !IsDynamaxed(bankAtk) && !ShouldAIDynamax(bankAtk, bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move and ai won't be dynamaxed
+	||  (IsDynamaxed(bankDef) && (!IsRaidBattle() || bankDef != BANK_RAID_BOSS) && !IsDynamaxed(bankAtk) && !ShouldAIDynamax(bankAtk) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move and ai won't be dynamaxed
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
 	   && gBattleMoves[predictedMove].flags & FLAG_PROTECT_AFFECTED))

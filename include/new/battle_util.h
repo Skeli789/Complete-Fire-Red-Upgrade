@@ -32,7 +32,7 @@ u16 GetBaseMaxHP(u8 bank);
 u8 GetBankFromPartyData(struct Pokemon* mon);
 bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move);
 bool8 CheckGrounding(u8 bank);
-bool8 NonInvasiveCheckGrounding(u8 bank);
+bool8 NonInvasiveCheckGrounding(u8 bank, u8 defAbility, u8 defType1, u8 defType2, u8 defType3);
 bool8 IsFloatingWithMagnetism(u8 bank);
 bool8 IsMonFloatingWithMagnetism(struct Pokemon* mon);
 bool8 CheckMonGrounding(struct Pokemon* mon);

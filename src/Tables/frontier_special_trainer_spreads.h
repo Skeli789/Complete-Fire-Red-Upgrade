@@ -976,6 +976,32 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.modifyMovesDoubles = FALSE,
 	},
 	{
+		.species = SPECIES_GARCHOMP,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_ROUGHSKIN
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_SCALESHOT,
+			MOVE_EARTHQUAKE,
+			MOVE_ROCKSLIDE,
+			MOVE_SWORDSDANCE,
+		},
+		.ball = BALL_TYPE_PREMIER_BALL,
+		.forSingles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
 		.species = SPECIES_GASTRODON_EAST,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,

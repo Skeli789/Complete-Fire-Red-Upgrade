@@ -190,7 +190,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 defSide = SIDE(bankDef);
 
 	#ifdef ABILITY_UNSEENFIST
-	if (protectFlag && contact && ABILITY(bankAtk) == ABILITY_UNSEENFIST)
+	if (protectFlag && IsContactMove(move, bankAtk, bankDef) && ABILITY(bankAtk) == ABILITY_UNSEENFIST) //Uses IsContactMove instead of CheckContact because Protective Pads don't affect this Ability
 		protectFlag = FALSE;
 	#endif
 
@@ -637,7 +637,7 @@ void JumpIfMoveFailed(u8 adder, u16 move)
 	else
 	{
 		TrySetDestinyBondToHappen();
-		if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBattlerTarget, 0, 0, move))
+		if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, move))
 			return;
 	}
 	gBattlescriptCurrInstr = BS_ptr;

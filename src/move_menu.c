@@ -1700,7 +1700,7 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		return FALSE;
 
 	if (IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.toBeUsed[gActiveBattler])
-		move = gCurrentMove = GetMaxMove(gActiveBattler, gBattleBufferB[gActiveBattler][2]);
+		move = gCurrentMove = GetMaxMoveByMove(gActiveBattler, move);
 
 	if (IsAnyMaxMove(move))
 		isAnyMaxMove = TRUE; //Save time later
@@ -1765,8 +1765,16 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	#endif
 	else if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE && IsMoveBannedInRingChallenge(move, gActiveBattler))
 	{
-		PREPARE_TYPE_BUFFER(gBattleTextBuff1, GetMoveTypeSpecial(gActiveBattler, move));
-		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedRingChallenge;
+		if (gBattleMoves[move].effect == EFFECT_PERISH_SONG)
+		{
+			gSelectionBattleScripts[gActiveBattler] = Battlescript_SelectingSpecificMoveNotAllowedInRingChallenge;
+		}
+		else
+		{
+			PREPARE_TYPE_BUFFER(gBattleTextBuff1, GetMoveTypeSpecial(gActiveBattler, move));
+			gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedRingChallenge;
+		}
+	
 		++limitations;
 	}
 	else if (!gNewBS->zMoveData.toBeUsed[gActiveBattler] //Can still use status Z-Moves even during Gravity - they'll just fail after

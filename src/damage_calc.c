@@ -1248,7 +1248,8 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	moveEffect = gBattleMoves[move].effect;
 
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
-	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
+	bool8 underIllusion = monIllusion != GetBankPartyData(bankDef); 
+	if (underIllusion)
 	{
 		u16 defSpecies = GetMonData(monIllusion, MON_DATA_SPECIES, NULL);
 		defAbility = GetMonAbility(monIllusion);
@@ -1259,15 +1260,15 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 
 		defType1 = GetMonType(monIllusion, 0);
 		defType2 = GetMonType(monIllusion, 1);
-		defType3 = TYPE_BLANK;
 	}
 	else
 	{
 		defAbility = GetRecordedAbility(bankDef);
 		defType1 = gBattleMons[bankDef].type1;
 		defType2 = gBattleMons[bankDef].type2;
-		defType3 = gBattleMons[bankDef].type3;
 	}
+
+	defType3 = gBattleMons[bankDef].type3; //Not affected by Illusion
 
 	if (IsTargetAbilityIgnored(defAbility, atkAbility, move))
 		defAbility = ABILITY_NONE; //Ignore Ability
@@ -1278,11 +1279,12 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	}
 	else if (moveType == TYPE_GROUND //Check Special Ground Immunities
 	&& SPLIT(move) != SPLIT_STATUS
-	&& !NonInvasiveCheckGrounding(bankDef)
+	&& !NonInvasiveCheckGrounding(bankDef, defAbility, defType1, defType2, defType3)
 	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move))
 	 || defEffect == ITEM_EFFECT_AIR_BALLOON
 	 || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
-	 || IsFloatingWithMagnetism(bankDef))
+	 || IsFloatingWithMagnetism(bankDef)
+	 || underIllusion) //Needed because ModulateDamageByType doesn't take Illusion into account - will still cause a mistake if Flying-type mon has Illusion, but that case is so rare it doesn't matter
 	&& move != MOVE_THOUSANDARROWS)
 	{
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -1395,7 +1397,7 @@ TYPE_LOOP:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
 	multiplier3 = gTypeEffectiveness[moveType][defType3];
-
+	
 	//If the multiplier is 0, that means normal damage. No effect is 1 (it is modified to 0 later).
 	ModulateDmgByType(multiplier1, move, moveType, defType1, bankDef, atkAbility, flags, monDef);
 
@@ -2333,6 +2335,7 @@ void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
 
 		//Try to "hide" knowledge of Type-Resist Berries so they actually have a use being equipped
 		if (data->defItemEffect == ITEM_EFFECT_WEAKNESS_BERRY
+		&& data->specialFlags & FLAG_AI_CALC
 		&& IsPlayerInControl(bankDef)
 		&& (gBattleTypeFlags & BATTLE_TYPE_FRONTIER //Never allow knowledge in the Frontier
 		#ifdef VAR_GAME_DIFFICULTY
@@ -4175,7 +4178,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	else
 		PopulateDamageCalcStructWithBaseDefenderData(&data);
 
-	data.resultFlags = TypeCalc(move, bankAtk, bankDef, NULL);
+	data.resultFlags = VisualTypeCalc(move, bankAtk, bankDef);
 
 //Load correct move power
 	data.basePower = gBattleMoves[move].power;

@@ -727,7 +727,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 	else if (moveInfo->possibleMaxMoves[chosenMovePos])
 	{
-		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
+		if (ShouldAIDynamax(gActiveBattler))
 			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
 

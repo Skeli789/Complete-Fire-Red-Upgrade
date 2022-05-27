@@ -223,7 +223,7 @@ with the battlefield locked down!\pNo Pok\emon will be able to switch\nout!
 with pixies in the air!\pFairy-type Pok\emon will have their\nlowest defensive stat boosted!
 
 #org @gText_BattleCircusDescriptionBadThoughts
-with negative emotions in the air!\pPok\emon that aren't part Dark-\ntype, Ghost-type, Psychic-type,\lof have one of the Abilities\lUnaware, Oblivious, or Magic Guard\lwill be hurt each turn!
+with negative emotions in the air!\pPok\emon that aren't part Dark-\ntype, Ghost-type, Psychic-type,\lor have one of the Abilities\lUnaware, Oblivious, or Magic Guard\lwill be hurt each turn!
 
 #org @gText_BattleCircusDescriptionInverseBattle
 in an Inverse Battle!\pAll type matchups are reversed!

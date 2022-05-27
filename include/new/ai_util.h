@@ -201,8 +201,8 @@ bool8 ShouldAIUseZMoveByMoveAndMovePos(u8 bankAtk, u8 bankDef, u16 move, u8 move
 void ClearShouldAIUseZMoveByMoveAndMovePos(u8 bankAtk, u8 bankDef, u8 movePos);
 void CalcAIDynamaxMon(u8 bank);
 void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef);
-bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef);
-u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef);
+bool8 ShouldAIDynamax(u8 bankAtk);
+u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk);
 
 void IncreaseViability(s16* viability, u8 amount);
 void DecreaseViability(s16* viability, u16 amount);

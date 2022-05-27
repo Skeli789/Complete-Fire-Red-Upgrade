@@ -124,7 +124,7 @@ gBattleScriptsForMoveEffects:
 .word BS_106_MeanLook
 .word BS_107_Nightmare
 .word BS_108_Minimize
-.word 0x81d774d		@EFFECT_CURSE
+.word BS_109_Curse
 .word BS_110_RaiseAttackerSpAtk1Chance
 .word BS_111_Protect
 .word BS_112_Spikes

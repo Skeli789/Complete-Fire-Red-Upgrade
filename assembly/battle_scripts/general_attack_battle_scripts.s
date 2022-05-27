@@ -2164,10 +2164,19 @@ BS_108_Minimize:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-/*
 .global BS_109_Curse
 BS_109_Curse:
-*/
+	attackcanceler
+	attackstring @;So Protean activates first
+	jumpiftype2 BANK_ATTACKER, TYPE_GHOST, BattleScript_GhostCurse
+	goto 0x81D7756 @;PP Reduce
+
+BattleScript_GhostCurse:
+	jumpifbytenotequal USER_BANK, TARGET_BANK, BattleScript_DoGhostCurse
+	getmovetarget BANK_ATTACKER
+
+BattleScript_DoGhostCurse:
+	goto 0x81D77D8 @;PP Reduce
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5805,6 +5814,7 @@ BS_246_SkyDrop:
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropTurn2
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	jumpiffainted BANK_TARGET FAILED_PRE @;Can't rely on the normal check since this is a two-turn move
 	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring

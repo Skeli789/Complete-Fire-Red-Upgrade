@@ -442,6 +442,9 @@ But the attack's type can't be used\nin this fight!
 #org @gText_RingChallengeBanMoveMenu
 [BUFFER][00]-type moves can't be used\nin this round of the Ring Challenge!\p
 
+#org @gText_RingChallengeBanSpecificMove
+[CURRENT_MOVE] can't be used in\nthe Ring Challenge!\p
+
 #org @gText_DynamaxUsable
 Dynamax Energy gathered\naround you!
 

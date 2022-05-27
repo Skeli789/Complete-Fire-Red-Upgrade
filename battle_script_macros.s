@@ -398,6 +398,10 @@
 	.4byte \rom_address
 	.endm
 
+	.macro jumpifbytenotequal byte1:req, byte2:req, jumpptr:req
+	jumpifarraynotequal \byte1, \byte2, 0x1, \jumpptr
+	.endm
+
 	.macro jumpifhalfword predicate, checkaddr, compare, rom_address
 	.byte 0x2a
 	.byte \predicate

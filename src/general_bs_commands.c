@@ -333,6 +333,7 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 			gLastUsedItem = ITEM(bank);
 			gBattleScripting.bank = bank;
 			BattleScriptPushCursor();
+			gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate - 5;
 			return TRUE;
 		}

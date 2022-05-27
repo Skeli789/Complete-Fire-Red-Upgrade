@@ -91,7 +91,7 @@ bool8 CanKnockOutWithFasterMove(u8 bankAtk, u8 bankDef, u16 defMove)
 	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef) || IsBankIncapacitated(bankAtk))
 		return FALSE; //Can't KO if you're dead or target is dead
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -137,7 +137,7 @@ bool8 GetCan2HKO(u8 bankAtk, u8 bankDef)
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -169,7 +169,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	//Temporarily increase target's hp for calcs
 	u16 backupHp = gBattleMons[bankDef].hp;
@@ -246,7 +246,7 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -301,7 +301,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 	bool8 perfectMoves = 0;
 	bool8 goodMoves = 0;
 	bool8 bestMovePursuit = 0;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
 	bool8 playerIsAttacker = ShouldUseHumanLikelyMove(bankAtk, bankDef);
@@ -405,7 +405,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 checkMove, u8 bankAtk, 
 bool8 HasMoveThatGoesFirstAndKnocksOut(u8 bankAtk, u8 bankDef)
 {
 	u16 currMove;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -433,7 +433,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	u8 bestMoveIndex = 0xFF;
 	u16 bestAcc = 0;
 	u32 bestDmg = 0xFFFFFFFF;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	struct DamageCalc damageData = {0};
 	damageData.bankAtk = bankAtk;
@@ -499,7 +499,7 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 	u16 currMove, bestMove;
 	u32 currDmg;
 	u32 bestDmg = 0;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 	bool8 badIdeaToMakeContact = BadIdeaToMakeContactWith(bankAtk, bankDef);
 	bool8 takesRecoilDamage = ABILITY(bankAtk) != ABILITY_MAGICGUARD;
 	bool8 defCantSwitch = !CAN_SWITCH_OUT(bankDef);
@@ -1482,7 +1482,7 @@ static move_t CalcStrongestMoveIgnoringMove(const u8 bankAtk, const u8 bankDef, 
 	bool8 playerIsAttacker = ShouldUseHumanLikelyMove(bankAtk, bankDef);
 	bool8 atkAbility = ABILITY(bankAtk);
 	struct DamageCalc damageData = {0};
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	//Save time and do this now instead of before each move
 	damageData.bankAtk = bankAtk;
@@ -3844,7 +3844,7 @@ bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType)
 bool8 DamagingMoveTypeInMovesetThatAffects(u8 bankAtk, u8 bankDef, u8 moveType)
 {
 	u16 move;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk));
 
 	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -4824,7 +4824,7 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 			}
 		}
 	}
-	else if (IsDynamaxed(bankAtk) || (!gNewBS->dynamaxData.used[bankAtk] && ShouldAIDynamax(bankAtk, bankDef)))
+	else if (IsDynamaxed(bankAtk) || (!gNewBS->dynamaxData.used[bankAtk] && ShouldAIDynamax(bankAtk)))
 	{
 		if (IsRaidBattle() && bankAtk == BANK_RAID_BOSS && IsRaidBossUsingRegularMove(bankAtk, move))
 			return move; //This turn the raid boss isn't using a Max Move
@@ -5614,14 +5614,19 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 	}
 }
 
-bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef)
+bool8 ShouldAIDynamax(u8 bankAtk)
 {
-	return gNewBS->ai.dynamaxPotential[bankAtk][bankDef];
+	u8 foe1 = FOE(bankAtk);
+	
+	if (BATTLER_ALIVE(foe1) && gNewBS->ai.dynamaxPotential[bankAtk][foe1])
+		return TRUE;
+
+	return IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(foe1)) && gNewBS->ai.dynamaxPotential[bankAtk][PARTNER(foe1)];
 }
 
-u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef)
+u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk)
 {
-	if (ShouldAIDynamax(bankAtk, bankDef)) //AI will Dynamax this turn
+	if (ShouldAIDynamax(bankAtk))
 		return MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP | MOVE_LIMITATION_TAUNT;
 
 	return 0xFF; //All flags by default

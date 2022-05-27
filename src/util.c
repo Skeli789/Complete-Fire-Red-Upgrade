@@ -218,9 +218,10 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 	return FALSE;
 }
 
-void EvolveSpeciesByLevel(u16* species, u8 level)
+bool8 EvolveSpeciesByLevel(u16* species, u8 level)
 {
 	const struct Evolution* evolutions;
+	bool8 evolved = FALSE;
 
 	START:
 	evolutions = gEvolutionTable[*species];
@@ -235,9 +236,12 @@ void EvolveSpeciesByLevel(u16* species, u8 level)
 		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 55))
 		{
 			*species = evolutions[i].targetSpecies;
+			evolved = TRUE;
 			goto START; //Evolve until it can't evolve any more
 		}
 	}
+
+	return evolved;
 }
 
 u32 GetBaseStatsTotal(const u16 species)

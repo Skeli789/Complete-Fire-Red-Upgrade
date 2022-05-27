@@ -1267,8 +1267,8 @@ void InitiateInstruct(void)
 	gCurrentMove = gLastPrintedMoves[gBankTarget];
 	gCurrMovePos = FindMovePositionInMoveset(gCurrentMove, gBankTarget);
 	gChosenMovePos = FindMovePositionInMoveset(gCurrentMove, gBankTarget);
-
 	gBankAttacker = gBankTarget;
+	gNewBS->InstructInProgress = TRUE; //Must be up here so chosen target doesn't get overwritten
 
 	if (gAbsentBattlerFlags & gBitTable[gNewBS->lastTargeted[gBankAttacker]]
 	|| GetBaseMoveTarget(gCurrentMove, gBankAttacker) & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Spread move
@@ -1285,10 +1285,10 @@ void InitiateInstruct(void)
 	ResetDoublesSpreadMoveCalcs();
 	MoveValuesCleanUp();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr = BattleScript_FlushMessageBox - 5;
 	gNewBS->zMoveData.active = FALSE;
-	gNewBS->InstructInProgress = TRUE;
 }
 
 void TrySetMagnetRise(void)

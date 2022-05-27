@@ -604,7 +604,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = text;
 				break;
 			case B_TXT_LAST_ABILITY: // last used ability
-				toCpy = GetAbilityName(gLastUsedAbility, SPECIES_NONE);
+				toCpy = GetAbilityName(gLastUsedAbility, SPECIES(gActiveBattler));
 				break;
 			case B_TXT_ATK_ABILITY: // attacker ability
 				toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker], (*gStringInfo)->species[gBankAttacker]);

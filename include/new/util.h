@@ -26,7 +26,7 @@ u16 GetNationalPokedexCount(u8 caseID);
 bool8 CanSpeciesEvolve(u16 species);
 bool8 CanEvolve(struct Pokemon* mon);
 bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon);
-void EvolveSpeciesByLevel(u16* species, u8 level);
+bool8 EvolveSpeciesByLevel(u16* species, u8 level);
 u32 GetBaseStatsTotal(const u16 species);
 u8 GetAbility1(const u16 species);
 u8 GetAbility2(const u16 species);

@@ -630,7 +630,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_OBEDIENCE:
-			if (!(gHitMarker & HITMARKER_OBEYS) && !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS))
+			if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+				gHitMarker |= HITMARKER_OBEYS; //Second turn always obeys
+			else if (!(gHitMarker & HITMARKER_OBEYS))
 			{
 				switch (IsMonDisobedient()) {
 					case 0:

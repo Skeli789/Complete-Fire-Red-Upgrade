@@ -27,6 +27,7 @@ cmd49_battle_scripts.s
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
 .global BattleScript_MultiHitPrintStrings
+.global BattleScript_MultiHitWaitAttackerSubstitute
 .global BattleScript_ScaleShotBuff
 .global BattleScript_PluckEat
 .global BattleScript_RaidShields
@@ -310,6 +311,12 @@ BattleScript_MultiHitPrintStrings:
 	copyarray 0x2022AB8 MULTIHIT_STRING 0x6
 	printstring 0x22
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MultiHitWaitAttackerSubstitute:
+	pause 0x30 @Wait for the attacker to slide in from the Substitute
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -683,6 +683,7 @@
 #define MAP_CRYSTAL_PEAK_CUBE_ENTRANCE ((56 << 8) | 6)
 #define MAP_CRYSTAL_PEAK_CLIFFSIDE     ((56 << 8) | 7)
 #define MAP_CRYSTAL_PEAK_3F            ((56 << 8) | 9)
+#define MAP_CRYSTAL_PEAK_5F            ((56 << 8) | 11)
 #define MAP_CRYSTAL_PEAK_SUMMIT        ((56 << 8) | 12)
 
 #define MAP_VICTORY_ROAD_CAVE_A	      ((55 << 8) | 0)
@@ -716,6 +717,14 @@
 
 #define MAP_FALLSHORE_CITY_GYM_B1F ((14 << 8) | 15)
 #define MAP_FALLSHORE_CITY_GYM_B2F ((14 << 8) | 14)
+
+#define MAP_DEHARA_DEPT_1F       ((10 << 8) | 0)
+#define MAP_DEHARA_DEPT_2F       ((10 << 8) | 1)
+#define MAP_DEHARA_DEPT_3F       ((10 << 8) | 2)
+#define MAP_DEHARA_DEPT_4F       ((10 << 8) | 3)
+#define MAP_DEHARA_DEPT_5F       ((10 << 8) | 4)
+#define MAP_DEHARA_DEPT_6F       ((10 << 8) | 5)
+#define MAP_DEHARA_DEPT_ELEVATOR ((10 << 8) | 6)
 
 #define MAP_DEHARA_CITY_GYM_1F  ((10 << 8) | 23)
 #define MAP_DEHARA_CITY_GYM_B1F ((10 << 8) | 24)

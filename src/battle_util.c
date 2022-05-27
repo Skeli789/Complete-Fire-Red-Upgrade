@@ -310,7 +310,7 @@ bool8 CheckGrounding(u8 bank)
 	return GROUNDED;
 }
 
-bool8 NonInvasiveCheckGrounding(u8 bank)
+bool8 NonInvasiveCheckGrounding(u8 bank, u8 defAbility, u8 defType1, u8 defType2, u8 defType3)
 {
 	if (BATTLER_SEMI_INVULNERABLE(bank)) //Apparently a thing
 		return IN_AIR;
@@ -322,11 +322,11 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR))
    || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
-   || GetRecordedAbility(bank) == ABILITY_LEVITATE
    || IsFloatingWithMagnetism(bank)
-   || gBattleMons[bank].type3 == TYPE_FLYING
-   || gBattleMons[bank].type1 == TYPE_FLYING
-   || gBattleMons[bank].type2 == TYPE_FLYING)
+   || defAbility == ABILITY_LEVITATE
+   || defType1 == TYPE_FLYING
+   || defType2 == TYPE_FLYING
+   || defType3 == TYPE_FLYING)
 		return IN_AIR;
 
 	return GROUNDED;

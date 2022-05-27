@@ -249,7 +249,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_Autumn_TreeTopRight 0x283
 	#define METATILE_Autumn_TreeTopMiddleLeftJoined 0x28C
 	#define METATILE_Autumn_TreeTopLeftCorner 0x298
-	#define METATILE_Autumn_TreeTopRightCorner 0x299
+	#define METATILE_Autumn_TreeTopRightCorner 0x282
 	#define METATILE_Autumn_TreeSideLeftTop 0x288
 	#define METATILE_Autumn_TreeSideLeftBottom 0x290
 	#define METATILE_Autumn_TreeSideRightTop 0x28B
@@ -1816,7 +1816,8 @@ void MoveOnBike(u8 direction)
 		PlayerRideWaterCurrent(direction);
 	#ifdef FLAG_BIKE_TURBO_BOOST
 	else if (!gFollowerState.inProgress //Probably would cause a whole host of issues otherwise
-			&& (FlagGet(FLAG_BIKE_TURBO_BOOST) || JOY_HELD(B_BUTTON)))
+			&& ((!FlagGet(FLAG_BIKE_TURBO_BOOST) && JOY_HELD(B_BUTTON))
+			  || (FlagGet(FLAG_BIKE_TURBO_BOOST) && !JOY_HELD(B_BUTTON))))
 	{
 		PlayerGoSpeed4(direction);
 		gPlayerAvatar->bikeSpeed = 4;

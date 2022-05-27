@@ -746,6 +746,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+
+						if (gBattleSpritesDataPtr->bankData[gBankAttacker].behindSubstitute
+						&& gBattleSpritesDataPtr->bankData[gBankAttacker].substituteOffScreen)
+						{
+							//Show the Substitute sprite again since it normally only reappears if the multi-hit move was completed fully
+							gBattleSpritesDataPtr->bankData[gBankAttacker].substituteOffScreen = FALSE;
+							InitAndLaunchSpecialAnimation(gBankAttacker, gBankAttacker, gBankAttacker, B_ANIM_MON_TO_SUBSTITUTE); //Slide in before the strings print
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_MultiHitWaitAttackerSubstitute;
+						}
+
 						effect = 1;
 					}
 				}

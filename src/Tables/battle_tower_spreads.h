@@ -12741,7 +12741,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_KINGDRA,
-		.nature = NATURE_JOLLY,
+		.nature = NATURE_TIMID,
 		.hpIv = 31,
 		.atkIv = 1,
 		.defIv = 31,

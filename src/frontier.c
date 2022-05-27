@@ -729,7 +729,7 @@ bool8 IsMegaZMoveBannedBattle(void)
 
 bool8 IsMoveBannedInRingChallenge(u16 move, u8 bank)
 {
-	if (gBattleMoves[move].effect == EFFECT_PERISH_SONG)
+	if (FlagGet(FLAG_BATTLE_FACILITY) && gBattleMoves[move].effect == EFFECT_PERISH_SONG)
 		return TRUE;
 
 	u8 moveType = GetMoveTypeSpecial(bank, move);
@@ -741,7 +741,7 @@ bool8 IsMoveBannedInRingChallenge(u16 move, u8 bank)
 
 bool8 IsMoveBannedInRingChallengeByMon(u16 move, struct Pokemon* mon)
 {
-	if (gBattleMoves[move].effect == EFFECT_PERISH_SONG)
+	if (FlagGet(FLAG_BATTLE_FACILITY) && gBattleMoves[move].effect == EFFECT_PERISH_SONG)
 		return TRUE;
 
 	u8 moveType = GetMonMoveTypeSpecial(mon, move);

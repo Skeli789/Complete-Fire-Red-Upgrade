@@ -4,6 +4,7 @@
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
+#include "../include/field_effect_helpers.h"
 #include "../include/field_message_box.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
@@ -468,69 +469,75 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 {
 	if (DexNavPickTile(environment, xSize, ySize, smallScan))
 	{
+		u8 fieldEffect;
 		u8 metatileBehaviour = MapGridGetMetatileField(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY, 0xFF);
 		gFieldEffectArguments[0] = sDexNavHudPtr->tileX;
 		gFieldEffectArguments[1] = sDexNavHudPtr->tileY;
 		gFieldEffectArguments[2] = 0xFF; //Below everything
 		gFieldEffectArguments[3] = ZCoordToPriority(MapGridGetZCoordAt(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY));
+	
 		switch (environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
 				if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
 					if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
-						FieldEffectStart(FLDEFF_SHAKING_GRASS);
+						fieldEffect = FLDEFF_SHAKING_GRASS;
 					else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
-						FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+						fieldEffect = FLDEFF_SHAKING_LONG_GRASS;
 					else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour))
-						FieldEffectStart(FLDEFF_SAND_HOLE);
+						fieldEffect = FLDEFF_SAND_HOLE;
 					else
-						FieldEffectStart(FLDEFF_CAVE_DUST); //Default in caves is dust
+						fieldEffect = FLDEFF_CAVE_DUST; //Default in caves is dust
 				}
 				else
 				{
 					if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Regular grass
-						FieldEffectStart(FLDEFF_SHAKING_GRASS);
+						fieldEffect = FLDEFF_SHAKING_GRASS;
 					else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
-						FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+						fieldEffect = FLDEFF_SHAKING_LONG_GRASS;
 					else if (MetatileBehavior_IsSandOrShallowFlowingWater(metatileBehaviour)) //Desert Sand
-						FieldEffectStart(FLDEFF_SAND_HOLE);
+						fieldEffect = FLDEFF_SAND_HOLE;
 					else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
-						FieldEffectStart(FLDEFF_CAVE_DUST);
+						fieldEffect = FLDEFF_CAVE_DUST;
 					else //Flowers, etc.
-						FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //Default on land is sparkles
+						fieldEffect = FLDEFF_REPEATING_SPARKLES; //Default on land is sparkles
 				}
 				break;
 			case ENCOUNTER_TYPE_WATER:
 				#ifdef UNBOUND
 				if (GetCurrentRegionMapSectionId() == MAPSEC_FLOWER_PARADISE)
-					FieldEffectStart(FLDEFF_REPEATING_SPARKLES);
+					fieldEffect = FLDEFF_REPEATING_SPARKLES;
 				else
 				#endif
 				if (IsCurrentAreaVolcano())
-					FieldEffectStart(FLDEFF_LAVA_BUBBLES);
+					fieldEffect = FLDEFF_LAVA_BUBBLES;
 				else
-					FieldEffectStart(FLDEFF_SPLASHING_WATER);
+					fieldEffect = FLDEFF_SPLASHING_WATER;
 				break;
 			default:
-				FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //So the game doesn't crash on something useless
+				fieldEffect = FLDEFF_REPEATING_SPARKLES; //So the game doesn't crash on something useless
 				break;
 		}
 
-		//Get spriteId of shaking grass
+		FieldEffectStart(fieldEffect);
+
+		//Get spriteId of field effect
 		for (u32 i = 0; i < MAX_SPRITES; ++i)
 		{
-			if (gSprites[i].callback == (void*) 0x080DCD1D)
+			if (gSprites[i].inUse
+			&& gSprites[i].data[0] == fieldEffect
+			&& gSprites[i].callback == WaitFieldEffectSpriteAnim)
 			{
 				sDexNavHudPtr->spriteIdShakingGrass = i;
-				return TRUE;
+				break;
 			}
 		}
 
 		return TRUE;
 	}
-
-	return FALSE;
+	else
+		return FALSE;
 };
 
  //Causes the game to lag due to interference from DNS :(
