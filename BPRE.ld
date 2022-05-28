@@ -1870,7 +1870,7 @@ TMCaseSetup_UpdateVisualMenuOffset = 0x8132170 | 1;
 /*DrawMoveInfoUIMarkers = 0x8133404 | 1;*/
 CreateTMCaseListMenuBuffers = 0x8131c10 | 1;
 InitTMCaseListMenuItems = 0x8131c50 | 1;
-PrintStringTMCaseOnWindow3 = 0x81333c4 | 1;
+/*PrintStringTMCaseOnWindow3 = 0x81333c4 | 1;*/
 sTMCaseStaticResources = 0x203b10c;
 CreateTMCaseScrollIndicatorArrowPair_Main = 0x8132018 | 1;
 /*CreateTMSprite = 0x813368c | 1;*/
@@ -1906,5 +1906,9 @@ ListMenuLoadStdPalAt = 0x8107d38 | 1;
 gTMCaseMainWindowPalette = 0x841f408;
 sPal3Override = 0x8463180;
 
-spriteIdData = 0x203E200;
-spriteIdPal = 0x203E600;
+spriteIdData = 0x2039934;
+spriteIdPalette = 0x203993A ;
+
+SetMonIconTransparency = 0x808cfc4 | 1;
+gText_TMCase = 0x84166d3;
+SetPartyHPBarSprite = 0x8097414 | 1;

@@ -2555,7 +2555,7 @@ const struct BaseStats gBaseStats2[] =
 	[SPECIES_RAPIDASH] =
 	{
 		.baseHP = 65,
-		.baseAttack = 100,
+		.baseAttack = 110,
 		.baseDefense = 70,
 		.baseSpAttack = 80,
 		.baseSpDefense = 80,
@@ -15491,9 +15491,9 @@ const struct BaseStats gBaseStats2[] =
 	[SPECIES_SPIRITOMB] =
 	{
 		.baseHP = 50,
-		.baseAttack = 92,
+		.baseAttack = 97,
 		.baseDefense = 108,
-		.baseSpAttack = 92,
+		.baseSpAttack = 97,
 		.baseSpDefense = 108,
 		.baseSpeed = 35,
 		.type1 = TYPE_GHOST,
@@ -15515,9 +15515,9 @@ const struct BaseStats gBaseStats2[] =
 		.eggGroup1 = EGG_GROUP_AMORPHOUS,
 		.eggGroup2 = EGG_GROUP_AMORPHOUS,
 		.ability1 = ABILITY_PRESSURE,
-		.ability2 = ABILITY_NONE,
+		.ability2 = ABILITY_INFILTRATOR,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_INFILTRATOR,
+		.hiddenAbility = ABILITY_DARKAURA,
 		.noFlip = TRUE,
 	},
 
@@ -15985,11 +15985,11 @@ const struct BaseStats gBaseStats2[] =
 
 	[SPECIES_LUMINEON] =
 	{
-		.baseHP = 69,
+		.baseHP = 89,
 		.baseAttack = 69,
-		.baseDefense = 76,
-		.baseSpAttack = 69,
-		.baseSpDefense = 86,
+		.baseDefense = 96,
+		.baseSpAttack = 89,
+		.baseSpDefense = 106,
 		.baseSpeed = 91,
 		.type1 = TYPE_WATER,
 		.type2 = TYPE_WATER,
@@ -16012,7 +16012,7 @@ const struct BaseStats gBaseStats2[] =
 		.ability1 = ABILITY_SWIFTSWIM,
 		.ability2 = ABILITY_STORMDRAIN,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_WATERVEIL,
+		.hiddenAbility = ABILITY_QUEENLYMAJESTY,
 		.noFlip = TRUE,
 	},
 
@@ -31229,9 +31229,9 @@ const struct BaseStats gBaseStats2[] =
 
 	[SPECIES_SHIINOTIC] =
 	{
-		.baseHP = 60,
+		.baseHP = 90,
 		.baseAttack = 45,
-		.baseDefense = 80,
+		.baseDefense = 100,
 		.baseSpAttack = 90,
 		.baseSpDefense = 100,
 		.baseSpeed = 30,
@@ -31253,10 +31253,10 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_GRASS,
 		.eggGroup2 = EGG_GROUP_GRASS,
-		.ability1 = ABILITY_ILLUMINATE,
+		.ability1 = ABILITY_RAINDISH,
 		.ability2 = ABILITY_EFFECTSPORE,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_RAINDISH,
+		.hiddenAbility = ABILITY_POISONHEAL,
 		.noFlip = TRUE,
 	},
 
@@ -36014,7 +36014,7 @@ const struct BaseStats gBaseStats2[] =
 
 	[SPECIES_ORBEETLE] =
 	{
-		.baseHP = 60,
+		.baseHP = 70,
 		.baseAttack = 45,
 		.baseDefense = 110,
 		.baseSpAttack = 80,
@@ -36038,10 +36038,10 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_BUG,
 		.eggGroup2 = EGG_GROUP_BUG,
-		.ability1 = ABILITY_SWARM,
+		.ability1 = ABILITY_TELEPATHY,
 		.ability2 = ABILITY_FRISK,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_TELEPATHY,
+		.hiddenAbility = ABILITY_MAGICGUARD,
 		.noFlip = TRUE,
 	},
 
@@ -39182,7 +39182,7 @@ const struct BaseStats gBaseStats2[] =
 	[SPECIES_RAPIDASH_G] =
 	{
 		.baseHP = 65,
-		.baseAttack = 100,
+		.baseAttack = 110,
 		.baseDefense = 70,
 		.baseSpAttack = 80,
 		.baseSpDefense = 80,

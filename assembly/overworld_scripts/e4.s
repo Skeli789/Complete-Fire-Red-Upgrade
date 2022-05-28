@@ -25,8 +25,8 @@ EventScript_GirlBlockingDoor:
 	closeonkeypress
 	special 0xE5
 	setflag 0x1008
-	setvar 0x8000 0x2EC
-	setvar 0x8001 MOVE_WATERPULSE
+	setvar 0x8000 MOVE_DARKPULSE
+	setvar 0x8001 MOVE_CRUNCH
 	setvar 0x8002 0xFFFF
 	setvar 0x8003 0xFFFF
 	setvar 0x8004 0x0
@@ -37,7 +37,7 @@ EventScript_GirlBlockingDoor:
 	setvar 0x8009 31
 	setvar 0x800A 31
 	setvar 0x800B 31
-	givepokemon SPECIES_YVELTAL 100 0x0 0x0 0x1
+	givepokemon SPECIES_SPIRITOMB 100 0x0 0x0 0x1
 	msgbox gText_HeresRustySwordShield MSG_KEEPOPEN
 	giveitem ITEM_RUSTED_SWORD 0x1 MSG_OBTAIN
 	giveitem ITEM_RUSTED_SHIELD 0x1 MSG_OBTAIN

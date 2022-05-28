@@ -1139,6 +1139,7 @@ const u8* GetAbilityNameByMon(u8 ability, u16 species)
 		switch (species)
 		{
 		case SPECIES_BRUXISH:
+		case SPECIES_LUMINEON:
 			ptr = gReplaceAbilityNames[7];
 			break;
 		}

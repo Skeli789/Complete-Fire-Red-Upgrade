@@ -7,6 +7,7 @@ MEMORY {
 
 SECTIONS {
         .text : {
+                
 
                 FILL (0xABCD)
 

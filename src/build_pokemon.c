@@ -4444,6 +4444,7 @@ void DoDuplicateAbiltiyStuff(void) {
 			switch (species)
 			{
 			case SPECIES_BRUXISH:
+			case SPECIES_LUMINEON:
 				StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gReplaceAbilityNames[7]);
 				break;
 			}

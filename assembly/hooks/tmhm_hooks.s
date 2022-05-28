@@ -292,3 +292,19 @@ EndOfCase:
 	ldr r0, =(0x081337A0 +1)
 	bx r0
 
+
+
+.pool
+@0x8131B94 with r0
+CreateTMCaseSpriteHook:
+	bl CreateTMCaseSprite
+	ldr r1, =0x8131BE2 | 1
+bxr1:
+	bx r1
+
+.pool
+@0x8131E5C with r0
+TMCaseMonIconPalChangeHook:
+	mov r0, r5 @Item Id
+	bl ChangeMonIconPalsInTMCase
+	pop {r4-r6, pc}

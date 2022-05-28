@@ -74,4 +74,4 @@ Remove the Gigantamax factor from\n[BUFFER1]?
 [BUFFER1] was elevated to\nLv. [BUFFER2].
 
 #org @gText_PastCap
-You are at the level cap![PAUSE_UNTIL_PRESS]
+It won't have any effect.\n(You're at the level cap).[PAUSE_UNTIL_PRESS]

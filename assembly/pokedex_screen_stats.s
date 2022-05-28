@@ -126,7 +126,6 @@ print_ability_two:
 	mov r3, #0
 	ldr r5, write_method
 	bl call_via_r5
-	b return
 
 unknown_base_stats:
 	mov r0, r1

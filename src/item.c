@@ -285,13 +285,13 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 	{
 		return 0;
 	}
-	u16 i;
+	/*u16 i;
 
 	for(i = 0; gLevelUpLearnsets[species][i].level != 0xFF; i++) {
 		if(gLevelUpLearnsets[species][i].move == gTMHMMoves[tm]) {
 			return TRUE;
 		}
-	}
+	}*/
 
 	u32 mask;
 	if (tm < 32)
