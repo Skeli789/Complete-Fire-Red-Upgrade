@@ -2887,6 +2887,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_ERUPTION:
 		case MOVE_WATERSPOUT:
+		case MOVE_DRAGONENERGY:
 			power = MathMax(1, (150 * data->atkHP) / data->atkMaxHP);
 			break;
 
@@ -2917,7 +2918,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_CRUSHGRIP:
 		case MOVE_WRINGOUT:
-		case MOVE_DRAGONENERGY:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 				power = MathMax(1, (data->defHP * 120) / data->defMaxHP);
 			break;
