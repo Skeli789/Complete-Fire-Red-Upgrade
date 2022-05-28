@@ -1033,6 +1033,7 @@ gMovesCanUnfreezeTarget:
 gMovesThatChangePhysicality:
 .hword MOVE_PHOTONGEYSER
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
+.hword MOVE_SHELLSIDEARM
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
