@@ -11913,7 +11913,7 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_FIERYWRATH] =
 	{	//ANIM TODO
 		.effect = EFFECT_FLINCH_HIT,
-		.power = 90, //PLACEHOLDER DATA
+		.power = 80, //PLACEHOLDER DATA
 		.type = TYPE_DARK,
 		.accuracy = 100,
 		.pp = 10,
