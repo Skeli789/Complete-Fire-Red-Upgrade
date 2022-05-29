@@ -309,7 +309,13 @@ bool8 TryFormRevert(struct Pokemon* mon)
 	#ifdef SPECIES_GIRATINA_ORIGIN
 	else if (mon->species == SPECIES_GIRATINA_ORIGIN)
 	{
-		TryRevertGiratinaOrigin(mon, FALSE);
+		TryRevertOriginFormes(mon, FALSE);
+	}
+	#endif
+	#if (defined SPECIES_DIALGA_ORIGIN && defined SPECIES_PALKIA_ORIGIN)
+	else if (mon->species == SPECIES_DIALGA_ORIGIN || mon->species == SPECIES_PALKIA_ORIGIN)
+	{
+		TryRevertOriginFormes(mon, FALSE);
 	}
 	#endif
 	#if (defined SPECIES_ETERNATUS && defined SPECIES_ETERNATUS_ETERNAMAX)
@@ -344,6 +350,12 @@ bool8 TryFormRevert(struct Pokemon* mon)
 		}
 	}
 	#endif
+	#ifdef SPECIES_SHADOW_WARRIOR
+	else if (mon->species == SPECIES_SHADOW_WARRIOR) //If it was hacked in
+	{
+		ZeroMonData(mon);
+	}
+	#endif
 
 	return FALSE;
 }
@@ -371,25 +383,44 @@ void UpdateBurmy(void)
 	#endif
 }
 
-void TryRevertGiratinaOrigin(unusedArg struct Pokemon* mon, unusedArg bool8 ignoreDistortionWorld)
+void TryRevertOriginFormes(unusedArg struct Pokemon* mon, unusedArg bool8 ignoreDistortionWorld)
 {
-	#ifdef SPECIES_GIRATINA_ORIGIN
-	if (GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_GIRATINA_ORIGIN)
-	{
-		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-		u8 itemEffect = ItemId_GetHoldEffect(item);
+	u16 targetSpecies = SPECIES_NONE;
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+	u8 itemEffect = ItemId_GetHoldEffect(item);
 
-		if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB
-		#ifdef MAPSEC_DISTORTION_WORLD
-		&& (ignoreDistortionWorld || GetCurrentRegionMapSectionId() != MAPSEC_DISTORTION_WORLD)
+	switch (GetMonData(mon, MON_DATA_SPECIES, NULL))
+	{
+		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
+		case SPECIES_GIRATINA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB
+			#ifdef MAPSEC_DISTORTION_WORLD
+			&& (ignoreDistortionWorld || GetCurrentRegionMapSectionId() != MAPSEC_DISTORTION_WORLD)
+			#endif
+			)
+				targetSpecies = SPECIES_GIRATINA;
+			break;
 		#endif
-		)
-		{
-			u16 targetSpecies = SPECIES_GIRATINA;
-			SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
-		}
+
+		#ifdef PLA_HELD_ORIGIN_ORBS
+		#if (defined SPECIES_DIALGA && defined SPECIES_DIALGA_ORIGIN)
+		case SPECIES_DIALGA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA;
+			break;
+		#endif
+
+		#if (defined SPECIES_PALKIA && defined SPECIES_PALKIA_ORIGIN)
+		case SPECIES_PALKIA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA;
+			break;
+		#endif
+		#endif
 	}
-	#endif
+
+	if (targetSpecies != SPECIES_NONE)
+		SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
 }
 
 species_t GetMiniorCoreFromPersonality(u32 personality)
@@ -573,6 +604,32 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			)
 				targetSpecies = SPECIES_GIRATINA;
 			break;
+		#endif
+
+		#ifdef PLA_HELD_ORIGIN_ORBS
+		#if (defined SPECIES_DIALGA && defined SPECIES_DIALGA_ORIGIN)
+		case SPECIES_DIALGA:
+			if (itemEffect == ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA_ORIGIN;
+			break;
+
+		case SPECIES_DIALGA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_ADAMANT_ORB)
+				targetSpecies = SPECIES_DIALGA;
+			break;
+		#endif
+
+		#if (defined SPECIES_PALKIA && defined SPECIES_PALKIA_ORIGIN)
+		case SPECIES_PALKIA:
+			if (itemEffect == ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA_ORIGIN;
+			break;
+
+		case SPECIES_PALKIA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_LUSTROUS_ORB)
+				targetSpecies = SPECIES_PALKIA;
+			break;
+		#endif
 		#endif
 
 		#ifdef SPECIES_GENESECT

@@ -22,6 +22,7 @@ extern const struct StatFractions gAccuracyStageRatios[];
 //This file's functions:
 static bool8 AccuracyCalcHelper(move_t, u8 bankDef);
 static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef, u8 defAbility, u8 defEffect);
+static u8 TryAdjustAccuracyForOriginForms(u8 moveAcc, u16 move, u8 bankAtk);
 
 void atk01_accuracycheck(void)
 {
@@ -425,6 +426,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 		buff = STAT_STAGE_MAX;
 
 	moveAcc = gBattleMoves[move].accuracy;
+	moveAcc = TryAdjustAccuracyForOriginForms(moveAcc, move, bankAtk);
 
 	//Check Thunder + Hurricane in sunny weather
 	if (WEATHER_HAS_EFFECT
@@ -551,8 +553,9 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 moveSplit = SPLIT(move);
 
-	acc = gBattleMons[bankAtk].statStages[STAT_STAGE_ACC-1];
+	acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);
 	moveAcc = gBattleMoves[move].accuracy;
+	moveAcc = TryAdjustAccuracyForOriginForms(moveAcc, move, bankAtk);
 
 	//Check Thunder + Hurricane in sunny weather
 	if (WEATHER_HAS_EFFECT
@@ -641,4 +644,26 @@ void JumpIfMoveFailed(u8 adder, u16 move)
 			return;
 	}
 	gBattlescriptCurrInstr = BS_ptr;
+}
+
+static u8 TryAdjustAccuracyForOriginForms(u8 moveAcc, u16 move, u8 bankAtk)
+{
+	switch (move)
+	{
+		case MOVE_ROAROFTIME:
+			#ifdef SPECIES_DIALGA_ORIGIN
+			if (SPECIES(bankAtk) == SPECIES_DIALGA_ORIGIN)
+				moveAcc = 75;
+			#endif
+			break;
+
+		case MOVE_SPACIALREND:
+			#ifdef SPECIES_PALKIA_ORIGIN
+			if (SPECIES(bankAtk) == SPECIES_PALKIA_ORIGIN)
+				moveAcc = 85;
+			#endif
+			break;	
+	}
+
+	return moveAcc;
 }

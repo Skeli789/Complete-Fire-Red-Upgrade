@@ -594,7 +594,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	u8 freeSlot = GetFreeSlotInPartyForMon();
 	if (freeSlot >= PARTY_SIZE) //Can't add mon
 	{
-		TryRevertGiratinaOrigin(mon, TRUE);
+		TryRevertOriginFormes(mon, TRUE);
 		return SendMonToPC(mon);
 	}
 
