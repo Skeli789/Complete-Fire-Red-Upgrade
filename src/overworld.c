@@ -75,6 +75,9 @@ tables:
 
 extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];
 
+//External functions
+extern void sp09A_StopSounds(void);
+
 //This file's functions:
 static bool8 CheckTrainerSpotting(u8 eventObjId);
 static bool8 GetTrainerFlagFromScriptPointer(const u8* data);
@@ -1494,6 +1497,8 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 		}
 		if (ShouldEggHatch())
 		{
+			sp09A_StopSounds();
+			PlaySE(SE_EXCLAIM);
 			IncrementGameStat(GAME_STAT_HATCHED_EGGS);
 			ScriptContext1_SetupScript(EventScript_EggHatch);
 			return TRUE;
