@@ -53,6 +53,7 @@ static const u16 sCriticalHitChances[] =
 #define FLAG_CHECKING_FROM_MENU 0x4
 #define FLAG_AI_CALC 0x8
 #define FLAG_FUTURE_SIGHT_DAMAGE 0x10
+#define FLAG_SPLINTER_DAMAGE 0x20
 
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
@@ -338,6 +339,56 @@ s32 ConfusionDamageCalc(void)
 	data.move = MOVE_POUND;
 	data.specialFlags |= FLAG_CONFUSION_DAMAGE;
 	gBattleMoveDamage = CalculateBaseDamage(&data);
+	return gBattleMoveDamage;
+}
+
+static bool8 IsSplinterAttackerOnField(u8 bankDef, u8 possibleUser)
+{
+	u8 monIdAttacker = gNewBS->splinterAttackerMonId[bankDef];
+
+	if (BATTLER_ALIVE(possibleUser) && gBattlerPartyIndexes[possibleUser] == monIdAttacker)
+		return TRUE;
+
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(possibleUser)) && gBattlerPartyIndexes[PARTNER(possibleUser)] == monIdAttacker)
+		return TRUE;
+
+	return FALSE;
+}
+
+static u8 GetSplinterBankAttacker(u8 bankDef, u8 possibleUser) //Assumes IsSplinterAttackerOnField returns TRUE
+{
+	u8 monIdAttacker = gNewBS->splinterAttackerMonId[bankDef];
+
+	if (BATTLER_ALIVE(possibleUser) && gBattlerPartyIndexes[possibleUser] == monIdAttacker)
+		return possibleUser;
+
+	return PARTNER(possibleUser);
+}
+
+static struct Pokemon* GetSplinterMon(u8 bankDef, u8 bankAtk)
+{
+	u8 monId = gNewBS->splinterAttackerMonId[bankDef];
+	return SIDE(bankAtk) == B_SIDE_PLAYER ? &gPlayerParty[monId] : &gEnemyParty[monId];
+}
+
+u32 SplintersDamageCalc(u8 bankAtk, u8 bankDef, u16 move)
+{
+	struct DamageCalc data = {0};
+	data.bankAtk = bankAtk;
+	data.bankDef = bankDef;
+	data.move = move;
+	data.specialFlags |= FLAG_FUTURE_SIGHT_DAMAGE | FLAG_SPLINTER_DAMAGE;
+
+	if (!IsSplinterAttackerOnField(bankDef, bankAtk))
+	{
+		//Uses the data from the party if the user of the splinters switched out
+		data.monAtk = GetSplinterMon(bankDef, bankAtk);
+	}
+	else
+		data.bankAtk = GetSplinterBankAttacker(bankDef, bankAtk);
+
+	gBattleMoveDamage = CalculateBaseDamage(&data);
+	TypeCalc(move, data.bankAtk, bankDef, data.monAtk);
 	return gBattleMoveDamage;
 }
 
@@ -2565,6 +2616,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	data->basePower = gBattleMoves[move].power; //Save real base power for later
 
 //Load correct move power
+	if (data->specialFlags & FLAG_SPLINTER_DAMAGE)
+	{
+		power = data->basePower = 25;
+		data->moveType = gBattleMoves[move].type;
+	}
 	if (!(data->specialFlags & FLAG_CONFUSION_DAMAGE))
 	{
 		power = GetBasePower(data);

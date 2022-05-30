@@ -756,6 +756,9 @@ struct NewBattleStruct
 	u8 StakeoutCounters[MAX_BATTLERS_COUNT];
 	u8 StompingTantrumTimers[MAX_BATTLERS_COUNT];
 	u8 splinterTimer[MAX_BATTLERS_COUNT];
+	u8 splinterAttackerBank[MAX_BATTLERS_COUNT];
+	u8 splinterAttackerMonId[MAX_BATTLERS_COUNT];
+	u16 splinterMove[MAX_BATTLERS_COUNT];
 	u8 NimbleCounters[MAX_BATTLERS_COUNT];
 	u8 DestinyBondCounters[MAX_BATTLERS_COUNT];
 	u8 MetronomeCounter[MAX_BATTLERS_COUNT];

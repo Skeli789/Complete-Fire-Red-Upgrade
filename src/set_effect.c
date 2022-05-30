@@ -851,6 +851,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				if (gNewBS->splinterTimer[gEffectBank] == 0)
 				{
 					gNewBS->splinterTimer[gEffectBank] = 4; //3 turns of splinters
+					gNewBS->splinterAttackerBank[gEffectBank] = gBankAttacker;
+					gNewBS->splinterAttackerMonId[gEffectBank] = gBattlerPartyIndexes[gBankAttacker];
+					gNewBS->splinterMove[gEffectBank] = gCurrentMove;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattleStringLoader = gText_EffectBankAfflictedBySplinters;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;	

@@ -1932,7 +1932,7 @@ u32 GetSplintersDamage(u8 bank)
 
 	if (gNewBS->splinterTimer[bank] > 0
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
-		damage = CalcStealthRockDamage(bank);
+		damage = SplintersDamageCalc(gNewBS->splinterAttackerBank[bank], bank, gNewBS->splinterMove[bank]);
 
 	return damage;
 }
