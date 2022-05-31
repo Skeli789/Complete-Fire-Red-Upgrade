@@ -17,10 +17,10 @@ enum
     SAVE_EREADER,
     SAVE_HALL_OF_FAME,
     SAVE_OVERWRITE_DIFFERENT_FILE,
-    SAVE_HALL_OF_FAME_ERASE_BEFORE, // unused
+    SAVE_HALL_OF_FAME_ERASE_BEFORE, //Unused
 };
 
-struct SaveSectionLocation
+struct SaveBlockChunk
 {
     void* data;
     u16 size;
@@ -31,7 +31,7 @@ struct SaveSection
     u8 data[0xFF4];
     u16 id;
     u16 checksum;
-    u32 security;
+    u32 signature;
     u32 counter;
 }; // size is 0x1000
 
@@ -39,20 +39,22 @@ struct SaveSection
 struct UnkSaveSection
 {
     u8 data[0xFF4];
-    u32 security;
+    u32 signature;
 }; // size is 0xFF8
 
-struct SaveSectionOffset
+struct SaveSectionOffsets
 {
     u16 toAdd;
     u16 size;
 };
 
-extern struct SaveSectionLocation gRamSaveSectionLocations[0xE];
+extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
 
 #define UNKNOWN_CHECK_VALUE 0x8012025
 
 #define NUM_SECTORS_PER_SAVE_SLOT 14  // Number of sectors occupied by a save slot
+#define SECTOR_SAVE1(n)  (n)
+#define SECTOR_SAVE2(n)  ((n) + NUM_SECTORS_PER_SAVE_SLOT)
 #define SECTOR_ID_HOF_1 28
 #define SECTOR_ID_HOF_2 29
 #define SECTORS_COUNT 32
@@ -86,36 +88,37 @@ extern u16 gUnknown_3005398;
 extern u16 gSaveUnusedVar;
 extern u16 gSaveFileStatus;
 extern void (*gGameContinueCallback)(void);
-extern u16 gUnknown_3005420;
+extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
+extern u16 gSaveSucceeded;
 
 extern struct SaveSection gSaveDataBuffer;
 
+void __attribute__((long_call)) ClearSaveData(void);
 void __attribute__((long_call)) SaveSerializedGame(void);
 void __attribute__((long_call)) UpdateSaveAddresses(void);
 u16 __attribute__((long_call)) CalculateSaveChecksum(void* data, u16 size);
 u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
-u8 __attribute__((long_call)) SaveWriteToFlash(u16 chunkId, const struct SaveSectionLocation *chunks);
+u8 SaveWriteToFlash(u16 chunkId, const struct SaveBlockChunk *chunks);
 u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
-u8 __attribute__((long_call)) SaveLoadGameData(u8 a1);
+u8 __attribute__((long_call)) Save_LoadGameData(u8 a1);
 u8 __attribute__((long_call)) TrySavingData(u8 saveType);
 u8 __attribute__((long_call)) HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
 
 /*
-void ClearSaveData(void);
 void Save_ResetSaveCounters(void);
 bool32 SetSectorDamagedStatus(u8 op, u8 bit);
-u8 HandleWriteSector(u16 a1, const struct SaveSectionLocation *location);
+u8 HandleWriteSector(u16 a1, const struct SaveBlockChunk *location);
 u8 HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
-u32 RestoreSaveBackupVarsAndIncrement(const struct SaveSectionLocation *location);
-u32 RestoreSaveBackupVars(const struct SaveSectionLocation *location);
-u8 sub_80D9AA4(u16 a1, const struct SaveSectionLocation *location);
-u8 sub_80D9B04(u16 a1, const struct SaveSectionLocation *location);
-u8 ClearSaveData_2(u16 a1, const struct SaveSectionLocation *location);
-u8 sav12_xor_get(u16 a1, const struct SaveSectionLocation *location);
-u8 sub_80D9D88(u16 a1, const struct SaveSectionLocation *location);
-u8 sub_80D9E14(u16 a1, const struct SaveSectionLocation *location);
-u8 sub_80D9E54(u16 a1, const struct SaveSectionLocation *location);
-u8 GetSaveValidStatus(const struct SaveSectionLocation *location);
+u32 RestoreSaveBackupVarsAndIncrement(const struct SaveBlockChunk *location);
+u32 RestoreSaveBackupVars(const struct SaveBlockChunk *location);
+u8 sub_80D9AA4(u16 a1, const struct SaveBlockChunk *location);
+u8 sub_80D9B04(u16 a1, const struct SaveBlockChunk *location);
+u8 ClearSaveData_2(u16 a1, const struct SaveBlockChunk *location);
+u8 sav12_xor_get(u16 a1, const struct SaveBlockChunk *location);
+u8 sub_80D9D88(u16 a1, const struct SaveBlockChunk *location);
+u8 sub_80D9E14(u16 a1, const struct SaveBlockChunk *location);
+u8 sub_80D9E54(u16 a1, const struct SaveBlockChunk *location);
+u8 GetSaveValidStatus(const struct SaveBlockChunk *location);
 u8 sub_80DA120(u8 a1, u8 *data, u16 size);
 u8 HandleSavingData(u8 saveType);
 u8 sub_80DA3AC(void);

@@ -213,8 +213,12 @@ gSaveBlock1 = 0x3005008;
 gSaveBlock2 = 0x300500C;
 gSaveBlock3 = 0x3005010;
 gFirstSaveSector = 0x3005380;
+gPrevSaveCounter = 0x3005384;
+gLastKnownGoodSector = 0x3005388;
+gDamagedSaveSectors = 0x300538C;
 gSaveCounter = 0x3005390;
 gFastSaveSection = 0x3005394;
+gSaveFileStatus = 0x30053A0;
 gRamSaveSectionLocations = 0x30053B0;
 
 /* Palette RAM */
@@ -1069,6 +1073,7 @@ IsMapNamePopupTaskActive = 0x8098320 | 1;
 StartTransitionToFlipBikeState = 0x80BD5C8 | 1;
 BindObj = 0x80DC44C | 1;
 UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
+CB2_Credits = 0x80F39E8 | 1;
 Task_ItemFinderNoResponse_CleanUp = 0x813ED18 | 1;
 HiddenItemIsWithinRangeOfPlayer = 0x813EE14 | 1;
 GetPlayerDirectionTowardsHiddenItem = 0x813F2F0 | 1;
@@ -1513,7 +1518,7 @@ GetGameStat = 0x8054EC4 | 1;
 SetGameStat = 0x8054F00 | 1;
 LogCoordsCameraRelative = 0x8063BC4 | 1;
 ResetTrainerCard = 0x8089D0C | 1;
-SaveWriteToFlash = 0x80D97D0 | 1;
+//SaveWriteToFlash = 0x80D97D0 | 1;
 HandleWriteSectorNBytes = 0x80D9960 | 1;
 TryWriteSector = 0x80D99D8 | 1;
 DoReadFlashWholeSection = 0x80DA190 | 1;
@@ -1776,7 +1781,7 @@ SetPokemonCryStereo = 0x81DE7D4 | 1;
 
 /* Hall of Fame (HoF) Functions */
 SpeciesToPokedexNum = 0x8043F90 | 1;
-SaveLoadGameData = 0x80DA4FC | 1;
+Save_LoadGameData = 0x80DA4FC | 1;
 InitHallOfFameScreen = 0x80F1DDC | 1;
 Task_Hof_TrySaveData = 0x80F2220 | 1;
 Task_Hof_SetMonDisplayTask = 0x80F2294 | 1;

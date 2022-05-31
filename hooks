@@ -294,9 +294,13 @@ UpdateFoughtRoamerHPStatus 8141FE8 1
 SetFoughtRoamerInactive 814201C 1
 
 ##Save Expansion Hooks
+SaveWriteToFlash 80D97D0 2
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2
+GetSaveValidStatus 80D9F0C 1
+TryLoadSaveSector 80DA120 3
 HandleSavingData 80DA248 1
+LinkTradeSaveHook 805415E 0
 LinkBattleSaveHook 806FC84 0
 NewGameSaveClearHook 8054A60 0
 ExpandedVarsHook 806E454 1

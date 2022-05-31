@@ -1,8 +1,14 @@
 #org @gText_ChangeSaveType
-WRONG SAVE TYPE!\nPlease change to Flash 128k.
+WRONG SAVE TYPE!\nPlease change to Flash 128k.\pIf you are using VBA, consider\nswitching to the superior [GREEN]mGBA[BLACK].\pIf you do not wish to, then follow\nthese instructions to fix the Save Type.\p[RED]VBA Instructions[BLACK]:\pFirst, click [GREEN]Options[BLACK] on the top bar.\pNext, under [GREEN]Emulator[BLACK], select the\n[GREEN]Save Type[BLACK] option.\pAnd then, click [GREEN]Flash 128K[BLACK].\pFinally, completely close and restart\nthe emulator.\p[RED]3DS Instructions[BLACK]:\pUse the [GREEN]New Super Ultimate VC Injector\nfor 3DS[BLACK] to create the CIA file.\pOnce open, confirm the [GREEN]ROM Save Type[BLACK]\nis set to the following:\p[GREEN]Flash 1Mbit (Macronix, ID: 0x09C2)\n+ RTC[BLACK].\pThe [GREEN]injection method[BLACK] must also be\nset to [GREEN]GBA Virtual Console[BLACK].\pIf your emulator was not mentioned,\nplease change emulators.
 
 #org @gText_MainMenuEnableRTC
 WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.
+
+#org @gText_MainMenuEnableRTCNoSave
+WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.\pIf you are using VBA, consider\nswitching to the superior [GREEN]mGBA[BLACK].\pIf you do not wish to, then follow\nthese instructions to enable the RTC.\p[RED]VBA Instructions[BLACK]:\pFirst, click [GREEN]Options[BLACK] on the top bar.\pNext, under [GREEN]Emulator[BLACK], select the\n[GREEN]Real Time Clock[BLACK] option.\pFinally, completely close and restart\nthe emulator.\p[RED]3DS Instructions[BLACK]:\pUse the [GREEN]New Super Ultimate VC Injector\nfor 3DS[BLACK] to create the CIA file.\pOnce open, confirm the [GREEN]ROM Save Type[BLACK]\nis set to the following:\p[GREEN]Flash 1Mbit (Macronix, ID: 0x09C2)\n+ RTC[BLACK].\pThe [GREEN]injection method[BLACK] must also be\nset to [GREEN]GBA Virtual Console[BLACK].\p[RED]Delta Instructions[BLACK]:\pUse the premium version of Delta\nor switch to [GREEN]GBA4iOS[BLACK].
+
+#org @gText_MainMenuTimeSetInFuture
+WARNING!\pRTC tampering has been detected\nin your save file!\pThe current ingame date is set to\n[BUFFER1]/[BUFFER2]/[BUFFER3].\pAll daily events such as gifts\nand Raids may cease to function\lproperly until the day after.\pPlease refrain from tampering\nwith the RTC again.
 
 #org @gText_UsedVar2WildStronger
 [BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]

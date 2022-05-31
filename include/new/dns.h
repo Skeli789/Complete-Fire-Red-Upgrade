@@ -24,6 +24,8 @@ u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth);
 u32 GetYearDifference(u32 startYear, u32 endYear);
 u32 GetDaysSinceTimeInValue(u32 var);
 bool8 IsTimeInVarInFuture(u16 var);
+bool8 IsDayInVarInFuture(u16 var);
+void BufferYearMonthDayFromVar(u16 var);
 void UpdateTimeInVars(u16 eventVar);
 
 //Hooked In Functions

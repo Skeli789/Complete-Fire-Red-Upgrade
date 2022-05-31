@@ -1701,17 +1701,43 @@ bool8 IsTimeInVarInFuture(u16 var)
 {
 	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
 
-	u8 hour = timeData->hour;
-	u8 minute = timeData->minute;
+	//u8 hour = timeData->hour;
+	//u8 minute = timeData->minute; //Changing time within day is acceptable
 	u8 day = timeData->day;
 	u8 month = timeData->month;
 	u32 year = timeData->year + timeData->century * 100;
 
 	return year > gClock.year
 	|| (year == gClock.year && month > gClock.month)
-	|| (year == gClock.year && month == gClock.month && day > gClock.day)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+}
+
+bool8 IsDayInVarInFuture(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u8 day = timeData->day;
+	u8 month = timeData->month;
+	u32 year = timeData->year + timeData->century * 100;
+
+	return year > gClock.year
+	|| (year == gClock.year && month > gClock.month)
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+}
+
+void BufferYearMonthDayFromVar(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u32 year = timeData->year + timeData->century * 100;
+	u8 month = timeData->month;
+	u8 day = timeData->day;
+
+	ConvertIntToDecimalStringN(gStringVar1, year, STR_CONV_MODE_LEFT_ALIGN, 4);
+	ConvertIntToDecimalStringN(gStringVar2, month, STR_CONV_MODE_LEFT_ALIGN, 2);
+	ConvertIntToDecimalStringN(gStringVar3, day, STR_CONV_MODE_LEFT_ALIGN, 2);
 }
 
 //@Details: Runs a daily event.
@@ -2142,7 +2168,7 @@ void Task_Hof_InitTeamSaveData(u8 taskId) {
 		Memset(gDecompressionBuffer, 0, 0x2000);
 	else
 	{
-		if (SaveLoadGameData(3) != TRUE)
+		if (Save_LoadGameData(3) != TRUE)
 			Memset(gDecompressionBuffer, 0, 0x2000);
 	}
 
@@ -2244,7 +2270,7 @@ void Task_Hof_TryDisplayAnotherMon(u8 taskId) {
 
 void Task_HofPC_CopySaveData(u8 taskId) {
 	HofPC_CreateWindow(0, 0x1E, 0, 0xC, 0x226);
-	if (SaveLoadGameData(3) != 1) {
+	if (Save_LoadGameData(3) != 1) {
 		gTasks[taskId].func = Task_HofPC_PrintDataIsCorrupted;
 	}
 	else
