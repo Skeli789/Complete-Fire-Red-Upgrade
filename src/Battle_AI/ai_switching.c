@@ -661,7 +661,11 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(struct Pokemon* party)
 					return FALSE;
 			}
 
-			if (gBattleMons[gActiveBattler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
+			if (gBattleMons[gActiveBattler].status1 & (STATUS1_SLEEP
+			#ifndef FROSTBITE
+			| STATUS1_FREEZE
+			#endif
+			))
 				break;
 			if (gBattleMons[gActiveBattler].status1 //Has regular status and over half health
 			&& gBattleMons[gActiveBattler].hp >= gBattleMons[gActiveBattler].maxHP / 2
@@ -1710,7 +1714,9 @@ static bool8 ShouldSaveSweeperForLater(struct Pokemon* party)
 	&& AISaveSweeperForLaterDifficultyCheck() //And allowed to use this logic on the current Difficulty
 	#endif
 	&& !IsDynamaxed(gActiveBattler) //Don't waste the Dynamax
+	#ifndef FROSTBITE
 	&& !(gBattleMons[gActiveBattler].status1 & STATUS1_FREEZE) //Better to not try to save frozen target
+	#endif
 	&& (!(gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS) //Better to not try to save paralyzed target
 	 || ((ability = ABILITY(gActiveBattler)) == ABILITY_QUICKFEET || ability == ABILITY_GUTS)) //Unless it has Quick Feet or Guts
 	&& IsClassDamager(GetBankFightingStyle(gActiveBattler)) //Role is to dish out as much damage as possible
@@ -2030,7 +2036,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 		if (consideredMon->species != SPECIES_NONE
 		&& consideredMon->hp > 0
 		&& !GetMonData(consideredMon, MON_DATA_IS_EGG, NULL)
-		&& (!(consideredMon->condition & (STATUS1_SLEEP | STATUS1_FREEZE)) || consideredMon->condition == 1) //Not asleep or is about to wake up
+		&& (!(consideredMon->condition & (STATUS1_SLEEP
+		#ifndef FROSTBITE
+		                                | STATUS1_FREEZE
+		#endif
+		                                 )) || consideredMon->condition == 1) //Not asleep or is about to wake up
 		&& i != gBattlerPartyIndexes[battlerIn1]
 		&& i != gBattlerPartyIndexes[battlerIn2]
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]

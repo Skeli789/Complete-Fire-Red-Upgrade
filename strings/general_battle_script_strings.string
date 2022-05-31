@@ -209,6 +209,24 @@ Neither Pok\emon can run away!
 #org @gText_SleepClausePrevents
 The sleep clause prevents more\nPok\emon from being put to sleep!
 
+#org @gText_GotFrostbite
+[EFFECT_BANK] got frostbite!
+
+#org @gText_HurtByFrostbite
+[ATTACKER] is hurt\nby its frostbite!
+
+#org @gText_MoveUsedFrostbiteRemoved
+[ATTACKER]'s frostbite\nwas cured by [CURRENT_MOVE]!
+
+#org @gText_RemovedTargetFrostbite
+[TARGET]'s frostbite\nwas cured!
+
+#org @gText_RemovedAttackerFrostbite
+[ATTACKER]'s frostbite\nwas cured!
+
+#org @gText_ItemRemovedFrostbite
+[SCRIPTING_BANK]'s [LAST_ITEM]\ncured its frostbite!
+
 #org @gText_AbilityPreventsStatLoss
 [SCRIPTING_BANK]'s stats were\nnot lowered!
 

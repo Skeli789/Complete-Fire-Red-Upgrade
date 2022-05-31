@@ -42,6 +42,7 @@ enum EndTurnEffects
 	ET_Item_Effects3,
 	ET_Switch_Out_Abilities3,
 	ET_Burn,
+	ET_Frostbite,
 	ET_Item_Effects4,
 	ET_Switch_Out_Abilities4,
 	ET_Nightmare,
@@ -54,10 +55,12 @@ enum EndTurnEffects
 	ET_Item_Effects7,
 	ET_Switch_Out_Abilities7,
 	ET_Trap_Damage,
-	ET_Splinters,
-	ET_Octolock,
 	ET_Item_Effects8,
 	ET_Switch_Out_Abilities8,
+	ET_Splinters,
+	ET_Item_Effects9,
+	ET_Switch_Out_Abilities9,
+	ET_Octolock,
 	ET_Taunt_Timer,
 	ET_Encore_Timer,
 	ET_Disable_Timer,
@@ -68,7 +71,7 @@ enum EndTurnEffects
 	ET_Heal_Block_Timer,
 	ET_Embargo_Timer,
 	ET_Yawn,
-	ET_Item_Effects9,
+	ET_Item_Effects10,
 	ET_Perish_Song,
 	ET_Roost,
 	ET_Reflect,
@@ -629,6 +632,7 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects7:
 			case ET_Item_Effects8:
 			case ET_Item_Effects9:
+			case ET_Item_Effects10:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
@@ -644,6 +648,7 @@ u8 TurnBasedEffects(void)
 			case ET_Switch_Out_Abilities6:
 			case ET_Switch_Out_Abilities7:
 			case ET_Switch_Out_Abilities8:
+			case ET_Switch_Out_Abilities9:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					switch(ABILITY(gActiveBattler)) {
@@ -691,12 +696,26 @@ u8 TurnBasedEffects(void)
 				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 				{
 					gBattleMoveDamage = GetBurnDamage(gActiveBattler);
-
 					BattleScriptExecute(BattleScript_BurnTurnDmg);
 					effect++;
 				}
 				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
 				break;
+
+			case ET_Frostbite:
+				#ifdef FROSTBITE
+				if (gBattleMons[gActiveBattler].status1 & STATUS_FREEZE
+				&& BATTLER_ALIVE(gActiveBattler)
+				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
+				{
+					gBattleMoveDamage = GetFrostbiteDamage(gActiveBattler);
+					BattleScriptExecute(BattleScript_FrostbiteTurnDmg);
+					effect++;
+				}
+				#endif
+				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
+				break;
+				
 
 			case ET_Nightmare:
 				if (gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
@@ -1849,6 +1868,27 @@ u32 GetBurnDamage(u8 bank)
 			#endif
 		}
 	}
+
+	return damage;
+}
+
+u32 GetFrostbiteDamage(unusedArg u8 bank)
+{
+	u32 damage = 0;
+
+	#ifdef FROSTBITE
+	u8 ability = ABILITY(bank);
+
+	if (gBattleMons[bank].status1 & STATUS_FREEZE
+	&& ability != ABILITY_MAGICGUARD)
+	{
+		#ifdef OLD_BURN_DAMAGE
+			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
+		#else
+			damage = MathMax(1, GetBaseMaxHP(bank) / 16);
+		#endif
+	}
+	#endif
 
 	return damage;
 }

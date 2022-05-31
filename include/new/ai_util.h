@@ -92,6 +92,7 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk);
 bool8 GoodIdeaToParalyzeSelf(u8 bankAtk);
 bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk);
 bool8 GoodIdeaToBurnSelf(u8 bankAtk);
+bool8 GoodIdeaToFrostbiteSelf(u8 bankAtk);
 bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk);
 bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef);
 

@@ -1,5 +1,12 @@
 #include "src/config.h"
 
+#org @DESC_MAGMAARMOR
+#ifdef FROSTBITE
+Can't get frostbite.
+#else
+Can't be frozen solid.
+#endif
+
 #org @DESC_SWEETVEIL
 Keeps user and allies awake.
 

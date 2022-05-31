@@ -1345,7 +1345,11 @@ SKIP_CHECK_TARGET:
 		case EFFECT_BIDE:
 			if (!DamagingMoveInMoveset(bankDef)
 			||  GetHealthPercentage(bankAtk) < 30 //Close to death
-			||  data->defStatus1 & (STATUS1_SLEEP | STATUS1_FREEZE)) //No point in biding if can't take damage
+			||  data->defStatus1 & (STATUS1_SLEEP
+			#ifndef FROSTBITE
+			                      | STATUS1_FREEZE
+			#endif
+			                       )) //No point in biding if can't take damage
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;
@@ -2252,7 +2256,11 @@ SKIP_CHECK_TARGET:
 
 			if (GOOD_AI) //Semi-Smart or SMart AI
 			{
-				if (!(data->defStatus1 & (STATUS1_PARALYSIS | STATUS1_FREEZE)) //Target won't randomly not be able to attack
+				if (!(data->defStatus1 & (STATUS1_PARALYSIS
+				#ifndef FROSTBITE
+				                        | STATUS1_FREEZE
+				#endif
+				                         )) //Target won't randomly not be able to attack
 				&& (data->defStatus2 & STATUS2_CONFUSION) < 3 //Foe wouldn't be confused when the attack would hit
 				&& !(data->defStatus2 & STATUS2_INFATUATION) //Foe wouldn't miss the attack since they'll never be immobilized by love
 				&& !TARGET_ASLEEP) //Target is awake (not that they could wake up and protect for the second turn but that's fair and not AI abuse)
@@ -2604,7 +2612,11 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_REFRESH:
-			if (!(data->atkStatus1 & (STATUS1_PSN_ANY | STATUS1_BURN | STATUS1_PARALYSIS)))
+			if (!(data->atkStatus1 & (STATUS1_PSN_ANY | STATUS1_BURN | STATUS1_PARALYSIS
+			#ifdef FROSTBITE
+			                       | STATUS1_FREEZE
+			#endif
+			                         )))
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -2619,6 +2631,15 @@ SKIP_CHECK_TARGET:
 					goto AI_PARALYZE_CHECK;
 				else if (ATTACKER_ASLEEP)
 					goto AI_CHECK_SLEEP;
+				#ifdef FROSTBITE
+				else if (data->atkStatus1 & STATUS1_FREEZE)
+				{
+					if (!CanBeFrozen(bankDef, bankAtk, TRUE)
+					|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
+					|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
+						DECREASE_VIABILITY(10);
+				}
+				#endif
 				else
 					DECREASE_VIABILITY(10);
 			}
@@ -2800,7 +2821,11 @@ SKIP_CHECK_TARGET:
 				&&  gBattleMoves[partnerMove].effect == EFFECT_PLEDGE
 				&&  move != partnerMove) //Different pledge moves
 				{
-					if (gBattleMons[bankAtkPartner].status1 & (STATUS1_SLEEP | STATUS1_FREEZE)
+					if (gBattleMons[bankAtkPartner].status1 & (STATUS1_SLEEP
+					#ifndef FROSTBITE
+					                                         | STATUS1_FREEZE
+					#endif
+					                                          )
 					&&  gBattleMons[bankAtkPartner].status1 != 1) //Will wake up this turn
 						DECREASE_VIABILITY(10); //Don't use combo move if your partner will cause failure
 				}

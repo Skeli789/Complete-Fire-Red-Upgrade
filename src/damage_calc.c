@@ -3213,6 +3213,11 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	&& data->atkAbility != ABILITY_GUTS
 	&& move != MOVE_FACADE)
 		damage /= 2;
+	#ifdef FROSTBITE
+	else if (data->moveSplit == SPLIT_SPECIAL
+	&& data->atkStatus1 & STATUS_FREEZE)
+		damage /= 2;
+	#endif
 
 	//Parental Bond Second Strike
 	if (gNewBS->ParentalBondOn == 1)

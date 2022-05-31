@@ -1024,7 +1024,9 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 			{
 				u8 status1 = gBattleMons[bankAtkPartner].status1;
 				if ((status1 & STATUS1_SLEEP) <= 1 //Partner will be awake to use move
+				#ifndef FROSTBITE
 				&& !(status1 & STATUS1_FREEZE)
+				#endif
 				&& !gDisableStructs[bankAtkPartner].truantCounter)
 				{
 					if (partnerMove != MOVE_NONE) //Partner has chosen a move
@@ -1906,8 +1908,10 @@ bool8 IsBankIncapacitated(u8 bank)
 	if (IsBankAsleep(bank))
 		return TRUE;
 
+	#ifndef FROSTBITE
 	if (gBattleMons[bank].status1 & STATUS1_FREEZE)
 		return TRUE;
+	#endif
 
 	if (gBattleMons[bank].status2 & STATUS2_RECHARGE
 	||  (ABILITY(bank) == ABILITY_TRUANT && gDisableStructs[bank].truantCounter != 0))
@@ -2569,6 +2573,9 @@ static u32 CalcSecondaryEffectDamage(u8 bank)
 			+ GetLeechSeedDamage(bank)
 			+ GetPoisonDamage(bank, TRUE)
 			+ GetBurnDamage(bank)
+			#ifdef FROSTBITE
+			+ GetFrostbiteDamage(bank)
+			#endif
 			+ GetCurseDamage(bank)
 			+ GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
 			+ GetBadDreamsDamage(bank)
@@ -2663,8 +2670,10 @@ bool8 HighChanceOfBeingImmobilized(u8 bank)
 
 	if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
 		odds = (odds * 75) / 100; //75% chance of attacking
+	#ifndef FROSTBITE
 	else if (gBattleMons[bank].status1 & STATUS1_FREEZE)
 		odds = (odds * 20) / 100; //20% chance of attacking
+	#endif
 
 	if (gBattleMons[bank].status2 & STATUS2_INFATUATION)
 		odds = (odds * 50) / 100; //50% chance of attacking
@@ -2701,6 +2710,11 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move, u8 ability)
 		if (BankHasRainbow(bank))
 			chance *= 2;
 	}
+
+	#ifdef FROSTBITE
+	if (gBattleWeather & WEATHER_HAIL_ANY && (move == MOVE_ICEFANG || gBattleMoves[move].effect == EFFECT_FREEZE_HIT) && WEATHER_HAS_EFFECT)
+		chance *= 2;
+	#endif
 
 	return chance;
 }
@@ -2930,6 +2944,17 @@ bool8 GoodIdeaToBurnSelf(u8 bankAtk)
 		 ||  atkAbility == ABILITY_HEATPROOF
 		 ||  atkAbility == ABILITY_MAGICGUARD
 		 || (atkAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
+		 || MoveInMoveset(MOVE_FACADE, bankAtk)
+		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
+}
+
+bool8 GoodIdeaToFrostbiteSelf(u8 bankAtk)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+
+	return CanBeFrozen(bankAtk, bankAtk, FALSE)
+		&&  (atkAbility == ABILITY_QUICKFEET
 		 || (atkAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankAtk))
 		 || MoveInMoveset(MOVE_FACADE, bankAtk)
 		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));

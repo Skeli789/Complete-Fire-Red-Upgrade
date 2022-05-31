@@ -128,6 +128,11 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 #define gStatusConditionString_Sleep ((u8*) 0x825009C)
 #define gStatusConditionString_Paralysis ((u8*) 0x82500A4)
 #define gStatusConditionString_Burn ((u8*) 0x82500AC)
+#ifdef FROSTBITE
+extern const u8 gStatusConditionString_Frostbite[];
+#define gStatusConditionString_Ice gStatusConditionString_Frostbite
+#else
 #define gStatusConditionString_Ice ((u8*) 0x82500B4)
+#endif
 #define gStatusConditionString_Confusion ((u8*) 0x82500BC)
 #define gStatusConditionString_Love ((u8*) 0x82500C4)

@@ -716,7 +716,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					if (BATTLER_ALIVE(gBankAttacker)
 					&& BATTLER_ALIVE(gBankTarget)
 					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
-					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE))
+					#ifndef FROSTBITE
+					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE)
+					#endif
+					)
 					{
 						if (gNewBS->ParentalBondOn)
 							--gNewBS->ParentalBondOn;
@@ -774,7 +777,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&&  gBankAttacker != bankDef
 			&&  MOVE_HAD_EFFECT
 			&&  TOOK_DAMAGE(bankDef)
-			&& (moveType == TYPE_FIRE || gSpecialMoveFlags[gCurrentMove].gMovesCanUnfreezeTarget))
+			&& (gSpecialMoveFlags[gCurrentMove].gMovesCanUnfreezeTarget
+			#ifndef FROSTBITE
+			 || moveType == TYPE_FIRE
+			#else
+			 || gSpecialMoveFlags[gCurrentMove].gMovesCanUnfreezeAttacker //Only moves that can remove Frostbite - not all Fire-type moves
+			#endif
+			))
 			{
 				gBattleMons[bankDef].status1 &= ~(STATUS1_FREEZE);
 				gActiveBattler = bankDef;

@@ -214,6 +214,9 @@ You were overwhelmed by your\ndefeat![FC][09]
 The rest of your team gained Exp.\nPoints thanks to the Exp. Share!
 
 //Other
+#org @gStatusConditionString_Frostbite
+frostbite
+
 #org @gText_CantAimAtTwoTargets
 It's no good! It's impossible to aim\nwhen there are two Pok\emon![FC][09]
 

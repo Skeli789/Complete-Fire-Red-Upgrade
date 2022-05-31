@@ -572,6 +572,8 @@
 .equ Template_GustToTarget, 0x83e6b1c
 .equ Template_SmallDriftingBubbles, 0x83e5ac8
 .equ Template_LargeFlameScatter,  0x83e5c88
+.equ Template_IceCrystalHitLarge, 0x83E63E0
+.equ Template_IceCrystalHitSmall, 0x83E63F8
 .equ Template_IceCrystalSpiralInwardSmall, 0x83E6360
 .equ Template_IceCrystalSpiralInwardLarge, 0x83E6348
 .equ Template_PowerAbsorptionOrb, 0x83E2A58

@@ -25,6 +25,7 @@ et_battle_scripts.s
 .global BattleScript_AquaRing
 .global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
+.global BattleScript_FrostbiteTurnDmg
 .global BattleScript_SplintersTurnDmg
 .global BattleScript_BadThoughtsTurnDmg
 .global BattleScript_YawnMakesAsleep
@@ -69,6 +70,7 @@ et_battle_scripts.s
 
 .global AbilityActivatedString
 
+.equ BattleScript_DoStatusTurnDmg, 0x81d9059
 .equ BattleScript_DoTurnDmg, 0x81D905B
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -237,6 +239,14 @@ BattleScript_PoisonHeal:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_FrostbiteTurnDmg:
+	setword BATTLE_STRING_LOADER gText_HurtByFrostbite
+	printstring 0x184
+	waitmessage 0x40
+	goto BattleScript_DoStatusTurnDmg
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

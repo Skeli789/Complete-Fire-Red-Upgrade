@@ -380,7 +380,7 @@ extern void TransformPokemon(u8 bankAtk, u8 bankDef);
 static u8 CalcMovePowerForForewarn(u16 move);
 static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 stringIndex, bool8 moveTurn);
 static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank);
-static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
+static bool8 ImmunityAbilityCheck(u8 bank, u32 status, const u8* string);
 static bool8 CanBeAffectedByIntimidate(u8 bank);
 static bool8 AllMainStatsButOneAreMinned(u8 bank);
 
@@ -1698,7 +1698,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_FLASHFIRE:
-					if (moveType == TYPE_FIRE && !(gBattleMons[bank].status1 & STATUS1_FREEZE))
+					if (moveType == TYPE_FIRE)
 						effect = 3;
 					break;
 			}
@@ -2569,7 +2569,7 @@ static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 	return effect;
 }
 
-static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
+static bool8 ImmunityAbilityCheck(u8 bank, u32 status, const u8* string)
 {
 	if (gBattleMons[bank].status1 & status)
 	{

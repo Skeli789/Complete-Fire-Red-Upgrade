@@ -16,6 +16,7 @@ u8 CountAliveMonsOnField(void);
 u32 GetLeechSeedDamage(u8 bank);
 u32 GetPoisonDamage(u8 bank, bool8 aiCalc);
 u32 GetBurnDamage(u8 bank);
+u32 GetFrostbiteDamage(u8 bank);
 u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);

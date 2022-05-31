@@ -46,6 +46,7 @@ extern const u8 BattleScript_GrassyTerrainHeal[];
 extern const u8 BattleScript_AquaRing[];
 extern const u8 BattleScript_LeechSeedTurnDrain[];
 extern const u8 BattleScript_PoisonHeal[];
+extern const u8 BattleScript_FrostbiteTurnDmg[];
 extern const u8 BattleScript_SplintersTurnDmg[];
 extern const u8 BattleScript_BadThoughtsTurnDmg[];
 extern const u8 BattleScript_YawnMakesAsleep[];

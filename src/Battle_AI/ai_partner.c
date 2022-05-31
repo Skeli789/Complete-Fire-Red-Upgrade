@@ -319,7 +319,14 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 						}
 						else if (status & STATUS1_FREEZE)
 						{
+							#ifndef FROSTBITE
 							IncreaseHelpingHandViability(&viability, class);
+							#else
+							gBattleMons[bankAtkPartner].status1 = 0; //Temporarily remove status
+							if (!GoodIdeaToFrostbiteSelf(bankAtkPartner)) //Partner shouldn't be frostbitten
+								IncreaseHelpingHandViability(&viability, class);
+							gBattleMons[bankAtkPartner].status1 = status; //Restore from backup
+							#endif
 						}
 						else if (status & STATUS1_SLEEP)
 						{

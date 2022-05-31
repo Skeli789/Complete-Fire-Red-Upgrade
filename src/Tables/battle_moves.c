@@ -8149,7 +8149,11 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_ICE,
 		.accuracy = 100,
 		.pp = 20,
+		#ifndef FROSTBITE
 		.secondaryEffectChance = 10,
+		#else
+		.secondaryEffectChance = 30,
+		#endif
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -11917,7 +11921,11 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_PSYCHIC,
 		.accuracy = 100,
 		.pp = 10,
+		#ifndef FROSTBITE
 		.secondaryEffectChance = 10,
+		#else
+		.secondaryEffectChance = 20,
+		#endif
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -12273,10 +12281,10 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_GHOST,
 		.accuracy = 100,
 		.pp = 15,
-		#ifdef ACTUAL_PLA_MOVE_POWERS
-		.secondaryEffectChance = 30,
+		#ifndef FROSTBITE
+		.secondaryEffectChance = 20, //30% Freeze chance is way too OP
 		#else
-		.secondaryEffectChance = 20, //30% Freeze chance is way too OP (it's Frostbite - an altered Freeze - in PLA)
+		.secondaryEffectChance = 30,
 		#endif
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
@@ -12361,10 +12369,10 @@ const struct BattleMove gBattleMoves[] =
 		.type = TYPE_FLYING,
 		.accuracy = 80,
 		.pp = 5,
-		#ifdef ACTUAL_PLA_MOVE_POWERS
-		.secondaryEffectChance = 30,
+		#ifndef FROSTBITE
+		.secondaryEffectChance = 20, //30% Freeze chance is way too OP
 		#else
-		.secondaryEffectChance = 20, //30% Freeze chance is way too OP (it's Frostbite - an altered Freeze - in PLA)
+		.secondaryEffectChance = 30,
 		#endif
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,

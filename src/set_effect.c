@@ -124,6 +124,11 @@ void atk15_seteffectwithchance(void)
 			percentChance *= 2;
 	}
 
+	#ifdef FROSTBITE
+	if (gBattleWeather & WEATHER_HAIL_ANY && gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_FREEZE && WEATHER_HAS_EFFECT)
+		percentChance *= 2;
+	#endif
+
 	if (!SheerForceCheck() || (gBattleCommunication[MOVE_EFFECT_BYTE] & 0x3F) == MOVE_EFFECT_RAPIDSPIN)
 	{
 		if ((gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) && MOVE_HAD_EFFECT)

@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_string_ids.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
 #include "../include/util.h"
@@ -250,6 +251,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_FROZEN:
+			#ifndef FROSTBITE
 			if (gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE)
 			{
 				if (umodsi(Random(), 5))
@@ -274,6 +276,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				}
 				effect = 2;
 			}
+			#endif
 			gBattleStruct->atkCancellerTracker++;
 			break;
 

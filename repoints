@@ -110,6 +110,15 @@ gText_UsedVar2WildWeaker 080A1AEC
 
 gText_PokemonAreNeeded 0845A32C
 
+#ifdef FROSTBITE
+ANIM_FROSTBITE 081C6E9C
+gText_GotFrostbite 083FDFD0
+gText_RemovedTargetFrostbite 083FDFDC
+gText_RemovedAttackerFrostbite 083FDFE0
+gText_MoveUsedFrostbiteRemoved 083FDFE4
+gText_ItemRemovedFrostbite 083FE3A4
+#endif
+
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
 gEventObjectImageAnim_RunNorth 083A3464
@@ -126,7 +135,9 @@ EventScript_TrainerSpottedInitiate 08080374
 BattleScript_ItemSteal 08020E74
 BattleScript_PoisonedBy 08250634
 BattleScript_BurnedBy 08250638
+#ifndef FROSTBITE
 BattleScript_WasFrozen 0825063C
+#endif
 BattleScript_MoveEffectWrap 08250660
 BattleScript_BadPoisonedBy 08250644
 BattleScript_ActionSwitch 0801640C
@@ -236,6 +247,8 @@ sStartMenuDescPointers 0806F368
 #TestScript 087D67B0
 gWildMonNightHeaders 0801D778
 
+DESC_ICEBEAM 88795D0
+DESC_BLIZZARD 88795FC
 DESC_LEECHFANG 08879C00
 DESC_ROOST 08879c58
 DESC_FOCUSBLAST 08879c84

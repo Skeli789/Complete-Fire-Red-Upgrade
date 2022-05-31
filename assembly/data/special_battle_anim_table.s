@@ -1162,6 +1162,26 @@ SPLINTERS_IN:
 .align 2
 SPLINTER: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_SplinterIn
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+.global ANIM_FROSTBITE
+ANIM_FROSTBITE:
+	loadparticle ANIM_TAG_ICE_CRYSTALS @Ice
+	launchtask AnimTask_move_bank_2, 0x2 0x5, bank_target, 1, 0, 20, 2
+	launchtemplate Template_IceCrystalHitLarge 0x82 0x3 0xfff6 0xfff6 0x0
+	playsound2 0x82 SOUND_PAN_TARGET
+	pause 0x4
+	launchtemplate Template_IceCrystalHitSmall 0x82 0x3 0xa 0x14 0x0
+	playsound2 0x82 SOUND_PAN_TARGET
+	pause 0x4
+	launchtemplate Template_IceCrystalHitLarge 0x82 0x3 0xfffb 0xa 0x0
+	playsound2 0x82 SOUND_PAN_TARGET
+	pause 0x4
+	launchtemplate Template_IceCrystalHitSmall 0x82 0x3 0x11 0xfff4 0x0
+	playsound2 0x82 SOUND_PAN_TARGET
+	waitanimation 
+	endanimation
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 .align 2
