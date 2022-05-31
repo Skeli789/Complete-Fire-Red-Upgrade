@@ -155,7 +155,3 @@ EventScript_Strength_0X1BE179:
 	setflag 0x805
 	msgbox 0x81BE1FA MSG_SIGN 
 	end
-
-
-
-

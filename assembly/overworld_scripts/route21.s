@@ -32,8 +32,3 @@ EventScript_HidePalkiaPortal2:
 	hidesprite 7
 	setflag FLAG_PALKIA_SPRITE
 	end
-
-
-
-
-	
