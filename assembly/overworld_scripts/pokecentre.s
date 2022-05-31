@@ -9,6 +9,8 @@
 .equ SPECIAL_CLEAR_RAID_FLAG, 0x11A
 .equ FLAG_AUTO_HMS, 0x998
 
+.equ EventScript_CableClub_AbortLink, 0x81BB82F
+
 .global EventScript_Pokecentre
 EventScript_pokecentre_0X16A2CF:
 	lock
@@ -216,7 +218,7 @@ RMode_ItemBag:
 
 	@---------------
 EventScript_AIOMan_0X1716BE:
-	msgbox gText_AIOMan_0X1A2CC3 MSG_KEEPOPEN @"Which Pok�mon needs tutoring?"
+	msgbox gText_AIOMan_0X1A2CC3 MSG_KEEPOPEN @"Which Pokemon needs tutoring?"
 	special 0xDB
 	waitstate
 	compare 0x8004 0x6
@@ -230,7 +232,7 @@ EventScript_AIOMan_0X1716BE:
 
 	@---------------
 EventScript_AIOMan_0X16D8B0:
-	msgbox gText_AIOMan_0X199421 MSG_KEEPOPEN @"Which Pok�mon should forget a\nmov..."
+	msgbox gText_AIOMan_0X199421 MSG_KEEPOPEN @"Which Pokemon should forget a\nmov..."
 	special 0x9F
 	waitstate
 	compare 0x8004 0x6
@@ -255,7 +257,7 @@ EventScript_AIOMan_0X16D8B0:
 
 	@---------------
 EventScript_AIOMan_0X16B287:
-	msgbox gText_AIOMan_0X193AA6 MSG_KEEPOPEN @"Which Pok�mon@s nickname should\nI..."
+	msgbox gText_AIOMan_0X193AA6 MSG_KEEPOPEN @"Which Pokemon's nickname should\nI..."
 	special 0x9F
 	waitstate
 	compare 0x8004 0x6
@@ -363,7 +365,7 @@ EventScript_AIOMan_0X16B31B:
 	special 0x7C
 	compare LASTRESULT 0x1
 	if 0x1 _goto EventScript_AIOMan_0X16B345
-	msgbox gText_AIOMan_0X193BF0 MSG_KEEPOPEN @"Done! From now on, this Pok�mon\ns..."
+	msgbox gText_AIOMan_0X193BF0 MSG_KEEPOPEN @"Done! From now on, this Pokemon\ns..."
 	release
 	end
 
@@ -376,7 +378,7 @@ EventScript_AIOMan_0X1A74EB:
 
 	@---------------
 EventScript_AIOMan_0X16B345:
-	msgbox gText_AIOMan_0X193B66 MSG_KEEPOPEN @"Done! From now on, this Pok�mon\ns..."
+	msgbox gText_AIOMan_0X193B66 MSG_KEEPOPEN @"Done! From now on, this Pokemon\ns..."
 	release
 	end
 
@@ -452,8 +454,6 @@ EventScript_TurnOffPC:
 	releaseall
 	end
 
-
-
-
-
-
+EventScript_CableClub_WirelessTrade:
+	msgbox gText_LinkNurse_NoTradingUseUnboundCloud MSG_FACE
+	goto EventScript_CableClub_AbortLink

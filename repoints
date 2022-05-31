@@ -70,6 +70,11 @@ SystemScript_ObtainItem 08160450
 SystemScript_ObtainItemMessage 081A66AC
 SystemScript_PickedUpHiddenItem 081A685E
 
+#Remove Link Trading
+EventScript_CableClub_WirelessTrade 81BB47D
+EventScript_CableClub_WirelessTrade 81BBC01
+EventScript_CableClub_WirelessTrade 81BBC43
+
 ##Wild -> The Wild
 TheWildString 080D7B78
 TheWildString 080D7CA0
