@@ -61,6 +61,7 @@ void IncreaseHealPartnerViability(s16* originalViability, u8 class, u8 partner);
 bool8 IncreaseViabilityForSpeedControl(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseDoublesDamageViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseDoublesDamageViabilityToScore(s16* originalViability, u8 class, u8 score, u8 bankAtk, u8 bankDef);
+bool32 ShouldLowerStat(u8 battler, u16 battlerAbility, u8 stat);
 
 //Exported Constants
 enum ProtectQueries

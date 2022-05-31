@@ -936,6 +936,20 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	u8 foe1, foe2;
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
 
+	if ((STAT_STAGE(gActiveBattler, STAT_STAGE_ATK) <= 4 && PhysicalMoveInMoveset(gActiveBattler)) || ((STAT_STAGE(gActiveBattler, STAT_STAGE_SPATK) <= 4 && SpecialMoveInMoveset(gActiveBattler)))) {
+		u8 firstId, lastId, bestMon;
+		struct Pokemon* party;
+		party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+		bestMon = GetMostSuitableMonToSwitchInto();
+
+		if (PredictedMoveWontDoTooMuchToMon(gActiveBattler, &party[bestMon], foe1))
+		{
+			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			return TRUE;
+		}
+	}
+
 	if (gNewBS->ai.switchingCooldown[gActiveBattler]) //Just switched in
 		return FALSE;
 

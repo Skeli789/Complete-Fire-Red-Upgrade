@@ -7469,10 +7469,10 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_FAIRYWIND] =
 	{
 		.effect = EFFECT_HIT,
-		.power = 70,
+		.power = 55,
 		.type = TYPE_FAIRY,
 		.accuracy = 100,
-		.pp = 30,
+		.pp = 15,
 		.secondaryEffectChance = 30,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,

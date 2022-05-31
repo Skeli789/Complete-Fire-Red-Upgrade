@@ -541,7 +541,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			if (ShouldSetUpScreens(bankAtk, bankDef, move))
 			{
 				if (IsClassScreener(class))
-					INCREASE_VIABILITY(8);
+					INCREASE_VIABILITY(10);
 				else
 					INCREASE_STATUS_VIABILITY(2);
 			}

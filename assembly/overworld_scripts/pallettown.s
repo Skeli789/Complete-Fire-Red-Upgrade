@@ -223,6 +223,28 @@ EventScript_ProfOak_0X169595:
 	release
 	end
 
+.equ RANGE_START, 1
+.equ RANGE_END, 1200
+
+.global GiveAllMons
+GiveAllMons:
+    setvar 0x8002 RANGE_START
+    goto give_all_items
+    return
+
+give_all_items:
+    givepokemon 0x8002 100 0x0 0x0 0x0
+    addvar 0x8002 1
+    compare 0x8002 RANGE_END
+    if equal _goto finish_giving
+    @compare 0x800D TRUE
+    @if equal _goto finish_giving
+    goto give_all_items
+    end
+
+finish_giving:
+    end
+
 	@---------------
 EventScript_ProfOak_0X169600:
 msgbox gText_ProfOak_0X1A72AD MSG_KEEPOPEN @"Thank you, [player]!\nSincerely, t..."

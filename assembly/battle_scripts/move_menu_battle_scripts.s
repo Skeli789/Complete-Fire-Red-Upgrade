@@ -23,7 +23,15 @@ BattleScript_MustSelectEncoredMove:
 	endselectionscript
 	
 BattleScript_SelectingNotAllowedMoveChoiceAbility:
+	jumpifspecies BANK_ATTACKER SPECIES_KINGLER BattleScript_SelectingNotAllowedMoveCrabbyTactics
+	jumpifspecies BANK_ATTACKER SPECIES_KINGLER_GIGA BattleScript_SelectingNotAllowedMoveCrabbyTactics
+	jumpifspecies BANK_ATTACKER SPECIES_CRABOMINABLE BattleScript_SelectingNotAllowedMoveCrabbyTactics
 	setword BATTLE_STRING_LOADER gText_GorillaTacticsMoveMenuBlockage
+	printselectionstring 0x184
+	endselectionscript	
+
+BattleScript_SelectingNotAllowedMoveCrabbyTactics:
+	setword BATTLE_STRING_LOADER gText_CrabbyTacticsMoveMenuBlockage
 	printselectionstring 0x184
 	endselectionscript	
 

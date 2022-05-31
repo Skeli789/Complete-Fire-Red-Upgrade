@@ -1961,6 +1961,13 @@ bool8 IsBagDisabled(void)
 	}
 	#endif
 
+
+	if(FlagGet(FLAG_HARD_MODE)) {
+		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
+			return TRUE;
+		}
+	}
+
 	return FlagGet(FLAG_DISABLE_BAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
 }
 

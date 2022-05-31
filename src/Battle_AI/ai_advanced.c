@@ -851,6 +851,13 @@ bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
 
+	if ((gBattleMons[bankAtk].status1 & STATUS_TOXIC_POISON)
+	&& (ABILITY(bankAtk) != ABILITY_POISONHEAL
+	&& ABILITY(bankAtk) != ABILITY_GUTS
+	&& ABILITY(bankAtk) != ABILITY_TOXICBOOST
+	&& ABILITY(bankAtk) != ABILITY_MAGICGUARD))
+		return FALSE;
+
 	if (GetHealthPercentage(bankAtk) >= 80) //if we're above 80% pointless to heal most of the time
 		return FALSE;
 
@@ -931,6 +938,13 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	u8 predictedMoveEffect = gBattleMoves[predictedMove].effect;
 	u8 defAbility = ABILITY(bankDef);
 	bool8 isAtkDynamaxed = IsDynamaxed(bankAtk);
+
+	if ((gBattleMons[bankAtk].status1 & STATUS_TOXIC_POISON)
+	&& (ABILITY(bankAtk) != ABILITY_POISONHEAL
+	&& ABILITY(bankAtk) != ABILITY_GUTS
+	&& ABILITY(bankAtk) != ABILITY_TOXICBOOST
+	&& ABILITY(bankAtk) != ABILITY_MAGICGUARD))
+		return FALSE;
 
 	if (WillFaintFromSecondaryDamage(bankAtk)
 		&& defAbility != ABILITY_MOXIE
@@ -1532,6 +1546,14 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 		&& !MoveInMoveset(MOVE_STOREDPOWER, bankAtk)
 		&& !MoveInMoveset(MOVE_POWERTRIP, bankAtk))
 		return FALSE; //Don't set up if foe has Unaware
+
+	if ((gBattleMons[bankAtk].status1 & STATUS_TOXIC_POISON)
+	&& (ABILITY(bankAtk) != ABILITY_POISONHEAL
+	&& ABILITY(bankAtk) != ABILITY_GUTS
+	&& ABILITY(bankAtk) != ABILITY_TOXICBOOST
+	&& ABILITY(bankAtk) != ABILITY_MAGICGUARD)
+	&& (GetHealthPercentage(bankAtk) <= 70))
+		return FALSE;
 
 	if (WillFaintFromSecondaryDamage(bankAtk))
 		return FALSE; //Don't set up if you're going to die
@@ -2555,4 +2577,28 @@ void IncreaseDoublesDamageViabilityToScore(s16* originalViability, u8 class, u8 
 
 	INCREASE_VIABILITY(gDoublesDamageViabilityMapping[class - FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER][score]);
 	*originalViability = MathMin(viability, 255);
+}
+
+bool32 ShouldLowerStat(u8 battler, u16 battlerAbility, u8 stat)
+{
+    if ((gBattleMons[battler].statStages[stat] > 0 && battlerAbility != ABILITY_CONTRARY)
+      || (battlerAbility == ABILITY_CONTRARY && gBattleMons[battler].statStages[stat] < 12))
+    {
+        if (battlerAbility == ABILITY_CLEARBODY
+         || battlerAbility == ABILITY_WHITESMOKE)
+            return FALSE;
+
+        if (stat == STAT_ATK && (battlerAbility == ABILITY_HYPERCUTTER || battlerAbility == ABILITY_DEFIANT))
+            return FALSE;
+
+        if (stat == STAT_DEF && battlerAbility == ABILITY_BIGPECKS)
+            return FALSE;
+
+        if (stat == STAT_SPATK && battlerAbility == ABILITY_COMPETITIVE)
+            return FALSE;
+            
+        return TRUE;
+    }
+    
+    return FALSE;
 }

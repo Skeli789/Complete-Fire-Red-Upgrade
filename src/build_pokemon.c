@@ -4449,7 +4449,16 @@ void DoDuplicateAbiltiyStuff(void) {
 				break;
 			}
 			break;
-			
+		case ABILITY_GORILLATACTICS:
+			switch (species)
+			{
+			case SPECIES_KINGLER:
+			case SPECIES_KINGLER_GIGA:
+			case SPECIES_CRABOMINABLE:
+				StringCopy(sMonSummaryScreen->summary.abilityNameStrBuf, gReplaceAbilityNames[8]);
+				break;
+			}
+			break;
 	}
 }
 

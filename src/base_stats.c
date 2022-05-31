@@ -3271,10 +3271,10 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_WATER_3,
 		.eggGroup2 = EGG_GROUP_WATER_3,
-		.ability1 = ABILITY_HYPERCUTTER,
+		.ability1 = ABILITY_SHEERFORCE,
 		.ability2 = ABILITY_SHELLARMOR,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_SHEERFORCE,
+		.hiddenAbility = ABILITY_GORILLATACTICS,
 		.noFlip = TRUE,
 	},
 
@@ -10927,7 +10927,7 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_HUMAN_LIKE,
 		.eggGroup2 = EGG_GROUP_HUMAN_LIKE,
-		.ability1 = ABILITY_HUGEPOWER, //ABILITY_PUREPOWER
+		.ability1 = ABILITY_HUGEPOWER, //-ABILITY_PUREPOWER
 		.ability2 = ABILITY_NONE,
 		.safariZoneFleeRate = 90,
 		.hiddenAbility = ABILITY_TELEPATHY,
@@ -10960,7 +10960,7 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_HUMAN_LIKE,
 		.eggGroup2 = EGG_GROUP_HUMAN_LIKE,
-		.ability1 = ABILITY_HUGEPOWER, //ABILITY_PUREPOWER
+		.ability1 = ABILITY_HUGEPOWER, //-ABILITY_PUREPOWER
 		.ability2 = ABILITY_NONE,
 		.safariZoneFleeRate = 60,
 		.hiddenAbility = ABILITY_TELEPATHY,
@@ -26675,72 +26675,6 @@ const struct BaseStats gBaseStats2[] =
 		.noFlip = TRUE,
 	},
 
-	[SPECIES_ZYGARDE_CELL] =
-	{
-		.baseHP = 50,
-		.baseAttack = 50,
-		.baseDefense = 50,
-		.baseSpAttack = 50,
-		.baseSpDefense = 50,
-		.baseSpeed = 50,
-		.type1 = TYPE_DRAGON,
-		.type2 = TYPE_GROUND,
-		.catchRate = 3,
-		.expYield = 255,
-		.evYield_HP = 1,
-		.evYield_Attack = 0,
-		.evYield_Defense = 0,
-		.evYield_SpAttack = 0,
-		.evYield_SpDefense = 0,
-		.evYield_Speed = 0,
-		.item1 = ITEM_NONE,
-		.item2 = ITEM_NONE,
-		.genderRatio = MON_GENDERLESS,
-		.eggCycles = 120,
-		.friendship = 0,
-		.growthRate = GROWTH_SLOW,
-		.eggGroup1 = EGG_GROUP_UNDISCOVERED,
-		.eggGroup2 = EGG_GROUP_UNDISCOVERED,
-		.ability1 = ABILITY_AURABREAK,
-		.ability2 = ABILITY_NONE,
-		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_NONE,
-		.noFlip = TRUE,
-	},
-
-	[SPECIES_ZYGARDE_CORE] =
-	{
-		.baseHP = 75,
-		.baseAttack = 75,
-		.baseDefense = 75,
-		.baseSpAttack = 75,
-		.baseSpDefense = 75,
-		.baseSpeed = 75,
-		.type1 = TYPE_DRAGON,
-		.type2 = TYPE_GROUND,
-		.catchRate = 3,
-		.expYield = 255,
-		.evYield_HP = 3,
-		.evYield_Attack = 0,
-		.evYield_Defense = 0,
-		.evYield_SpAttack = 0,
-		.evYield_SpDefense = 0,
-		.evYield_Speed = 0,
-		.item1 = ITEM_NONE,
-		.item2 = ITEM_NONE,
-		.genderRatio = MON_GENDERLESS,
-		.eggCycles = 120,
-		.friendship = 0,
-		.growthRate = GROWTH_SLOW,
-		.eggGroup1 = EGG_GROUP_UNDISCOVERED,
-		.eggGroup2 = EGG_GROUP_UNDISCOVERED,
-		.ability1 = ABILITY_AURABREAK,
-		.ability2 = ABILITY_NONE,
-		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_NONE,
-		.noFlip = TRUE,
-	},
-
 	[SPECIES_ZYGARDE_10] =
 	{
 		.baseHP = 54,
@@ -28747,7 +28681,7 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_HUMAN_LIKE,
 		.eggGroup2 = EGG_GROUP_HUMAN_LIKE,
-		.ability1 = ABILITY_HUGEPOWER, //ABILITY_PUREPOWER
+		.ability1 = ABILITY_HUGEPOWER, //-ABILITY_PUREPOWER
 		.ability2 = ABILITY_NONE,
 		.safariZoneFleeRate = 0,
 		.hiddenAbility = ABILITY_NONE,
@@ -30728,7 +30662,7 @@ const struct BaseStats gBaseStats2[] =
 		.ability1 = ABILITY_HYPERCUTTER,
 		.ability2 = ABILITY_IRONFIST,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_ANGERPOINT,
+		.hiddenAbility = ABILITY_GORILLATACTICS,
 		.noFlip = TRUE,
 	},
 
@@ -35612,7 +35546,7 @@ const struct BaseStats gBaseStats2[] =
 		.ability1 = ABILITY_BLAZE,
 		.ability2 = ABILITY_QUICKFEET,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_PROTEAN,
+		.hiddenAbility = ABILITY_PROTEAN, //-ABILITY_LIBERO
 		.noFlip = TRUE,
 	},
 
@@ -35645,7 +35579,7 @@ const struct BaseStats gBaseStats2[] =
 		.ability1 = ABILITY_BLAZE,
 		.ability2 = ABILITY_QUICKFEET,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_PROTEAN,
+		.hiddenAbility = ABILITY_PROTEAN, //-ABILITY_LIBERO
 		.noFlip = TRUE,
 	},
 
@@ -35678,7 +35612,7 @@ const struct BaseStats gBaseStats2[] =
 		.ability1 = ABILITY_BLAZE,
 		.ability2 = ABILITY_QUICKFEET,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_PROTEAN,
+		.hiddenAbility = ABILITY_PROTEAN, //-ABILITY_LIBERO
 		.noFlip = TRUE,
 	},
 
@@ -40129,10 +40063,10 @@ const struct BaseStats gBaseStats2[] =
 		.growthRate = GROWTH_MEDIUM_FAST,
 		.eggGroup1 = EGG_GROUP_WATER_3,
 		.eggGroup2 = EGG_GROUP_WATER_3,
-		.ability1 = ABILITY_HYPERCUTTER,
+		.ability1 = ABILITY_SHEERFORCE,
 		.ability2 = ABILITY_SHELLARMOR,
 		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_SHEERFORCE,
+		.hiddenAbility = ABILITY_GORILLATACTICS,
 		.noFlip = TRUE,
 	},
 
@@ -40960,38 +40894,7 @@ const struct BaseStats gBaseStats2[] =
 		.hiddenAbility = ABILITY_NONE,
 		.noFlip = TRUE,
 	},
-	[SPECIES_MISSINGNO] =
-	{
-		.baseHP = 130,
-		.baseAttack = 19,
-		.baseDefense = 70,
-		.baseSpAttack = 140,
-		.baseSpDefense = 100,
-		.baseSpeed = 29,
-		.type1 = TYPE_FLYING,
-		.type2 = TYPE_MYSTERY,
-		.catchRate = 29,
-		.expYield = 200,
-		.evYield_HP = 0,
-		.evYield_Attack = 0,
-		.evYield_Defense = 0,
-		.evYield_SpAttack = 2,
-		.evYield_SpDefense = 0,
-		.evYield_Speed = 0,
-		.item1 = ITEM_NONE,
-		.item2 = ITEM_NONE,
-		.genderRatio = MON_GENDERLESS,
-		.eggCycles = 0,
-		.friendship = 0,
-		.growthRate = GROWTH_MEDIUM_FAST,
-		.eggGroup1 = EGG_GROUP_UNDISCOVERED,
-		.eggGroup2 = EGG_GROUP_UNDISCOVERED,
-		.ability1 = ABILITY_TRACE,
-		.ability2 = ABILITY_NONE,
-		.safariZoneFleeRate = 0,
-		.hiddenAbility = ABILITY_NONE,
-		.noFlip = TRUE,
-	},
+
 	[SPECIES_WYRDEER] =
 	{
 		.baseHP = 103,

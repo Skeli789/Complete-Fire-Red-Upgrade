@@ -215,6 +215,20 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				}
 				break;
 
+
+			//Ported from Decomp
+			case ABILITY_MAGICGUARD:
+                switch (moveEffect)
+                {
+                case EFFECT_POISON:
+                case EFFECT_WILL_O_WISP:
+                case EFFECT_TOXIC:
+                case EFFECT_LEECH_SEED:
+                    DECREASE_VIABILITY(5);
+                    break;
+                }
+                break;
+
 			// Water
 			case ABILITY_WATERABSORB:
 			case ABILITY_DRYSKIN:
@@ -293,7 +307,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_SOUNDPROOF:
 				if (CheckSoundMove(move))
 				{
-					DECREASE_VIABILITY(10);
+					DECREASE_VIABILITY(20);
 					return viability;
 				}
 				break;
@@ -301,7 +315,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_BULLETPROOF:
 				if (CheckTableForMove(move, gBallBombMoves))
 				{
-					DECREASE_VIABILITY(10);
+					DECREASE_VIABILITY(20);
 					return viability;
 				}
 				break;
@@ -310,7 +324,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_QUEENLYMAJESTY:
 				if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0) //Check if right num
 				{
-					DECREASE_VIABILITY(10);
+					DECREASE_VIABILITY(20);
 					return viability;
 				}
 				break;
@@ -318,7 +332,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_AROMAVEIL:
 				if (CheckTableForMove(move, gAromaVeilProtectedMoves))
 				{
-					DECREASE_VIABILITY(10);
+					DECREASE_VIABILITY(20);
 					return viability;
 				}
 				break;
@@ -593,6 +607,11 @@ MOVESCR_CHECK_0:
 	switch (moveEffect)
 	{
 		case EFFECT_HIT:
+		case EFFECT_POISON_HIT:
+        case EFFECT_BURN_HIT:
+        case EFFECT_FREEZE_HIT:
+        case EFFECT_PARALYZE_HIT:
+        case EFFECT_CONFUSE_HIT:
 			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_SLEEP:
@@ -1423,7 +1442,9 @@ MOVESCR_CHECK_0:
 		case EFFECT_CURSE:
 			if (IsOfType(bankAtk, TYPE_GHOST))
 			{
-				if (data->defStatus2 & STATUS2_CURSED
+				if(data->defAbility == ABILITY_MAGICGUARD || data->atkAbility == ABILITY_MAGICGUARD) //Don't use Curse against a mon with magic guard (not sure if I should use atk or def, so just check both)
+					DECREASE_VIABILITY(10);
+				else if (data->defStatus2 & STATUS2_CURSED
 				|| PARTNER_MOVE_EFFECT_IS_SAME)
 					DECREASE_VIABILITY(10);
 				else if (GetHealthPercentage(bankAtk) <= 50)
@@ -1835,12 +1856,14 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_MEMENTO:
-			if (!BankHasMonToSwitchTo(bankAtk)
+			if (!BankHasMonToSwitchTo(bankAtk) 
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				DECREASE_VIABILITY(10);
 				break;
-			}
+			}else if (!ShouldLowerStat(bankDef, data->defAbility, STAT_ATK) || !ShouldLowerStat(bankDef, data->defAbility, STAT_SPATK))
+				DECREASE_VIABILITY(10);
+				break;
 			switch (move) {
 				case MOVE_HEALINGWISH:
 				case MOVE_LUNARDANCE:
@@ -2663,6 +2686,10 @@ MOVESCR_CHECK_0:
 		case EFFECT_SUCKER_PUNCH: ;
 			if (predictedMove != MOVE_NONE)
 			{
+				if (Random() % 100 < 50) { // Random chance to do something else. Makes AI less exploitable
+                    DECREASE_VIABILITY(5);
+					break;
+				} 
 				if (SPLIT(predictedMove) == SPLIT_STATUS
 				|| !MoveWouldHitFirst(move, bankAtk, bankDef))
 				{
@@ -2816,3 +2843,5 @@ u8 AIScript_FirstBattle(const unusedArg u8 bankAtk, const unusedArg u8 bankDef, 
 
 	return viability;
 }
+
+

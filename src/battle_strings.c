@@ -1144,6 +1144,16 @@ const u8* GetAbilityNameByMon(u8 ability, u16 species)
 			break;
 		}
 		break;
+	case ABILITY_GORILLATACTICS:
+		switch (species)
+		{
+		case SPECIES_KINGLER:
+		case SPECIES_KINGLER_GIGA:
+		case SPECIES_CRABOMINABLE:
+			ptr = gReplaceAbilityNames[8];
+			break;
+		}
+		break;
 	}
 	if (ptr == NULL)
 		ptr = gAbilityNames[ability];
