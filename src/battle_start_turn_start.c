@@ -1462,8 +1462,6 @@ u8 GetTrainerBattleTransition(void)
 {
 	u8 minPartyCount, transitionType, enemyLevel, playerLevel;
 
-	struct Trainer* trainer = &gTrainers[gTrainerBattleOpponent_A];
-
 	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 		return B_TRANSITION_CHAMPION;
 	
@@ -1473,9 +1471,11 @@ u8 GetTrainerBattleTransition(void)
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)
 		return B_TRANSITION_CHAMPION;
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_RIVAL || gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_RIVAL_2)
+	{
 		VarSet(VAR_PRE_BATTLE_MUGSHOT_STYLE, MUGSHOT_TWO_BARS);
 		VarSet(VAR_PRE_BATTLE_MUGSHOT_SPRITE, MUGSHOT_PLAYER);
 		return B_TRANSITION_LORELEI;
+	}
 
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR || !ShouldTrainerMugshot())
 	{
@@ -1720,7 +1720,6 @@ s32 BracketCalc(u8 bank)
 	u8 itemEffect = ITEM_EFFECT(bank);
 	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
-	u16 species = SPECIES(bank);
 
 	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))

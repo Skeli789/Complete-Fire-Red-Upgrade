@@ -1803,7 +1803,7 @@ const struct WildPokemon gFlowerField_LandMons[] =
 
 const struct WildPokemonInfo gFlowerField_LandMonsInfo = { 22, gFlowerField_LandMons };
 
-#pragma region Water
+//Region Water
 const struct WildPokemon gPalletTown_FishingMons [] =
 {
   {5, 5, SPECIES_MAGIKARP},
@@ -2215,9 +2215,7 @@ static const struct WildPokemon gRoute23_SurfMons[] =
 
 static const struct WildPokemonInfo gRoute23_SurfMonsInfo = { 5, gRoute23_SurfMons };
 
-#pragma endregion Water
-
-
+//Region Water
 static const struct WildPokemon gViridianForest_RockSmashMons[] =
 {
 	{15, 15, SPECIES_DWEBBLE},

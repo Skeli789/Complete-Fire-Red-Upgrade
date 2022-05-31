@@ -2002,7 +2002,7 @@ static void TryLoadTypeIcons(void)
 				s16 x = sTypeIconPositions[position][IS_SINGLE_BATTLE].x;
 				s16 y = sTypeIconPositions[position][IS_SINGLE_BATTLE].y + (11 * typeNum); //2nd type is 13px below
 
-				u8* type1Ptr;
+				const u8* type1Ptr;
 				if (gStatuses3[GetBattlerAtPosition(position)] & STATUS3_ILLUSION && !(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS))
 					type1Ptr = &gBaseStats2[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
 				else

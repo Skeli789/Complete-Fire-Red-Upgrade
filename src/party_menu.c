@@ -1964,7 +1964,7 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 					else if (species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS)
 						species = SPECIES_NECROZMA;
 					else
-						species == SPECIES_CALYREX;
+						species = SPECIES_CALYREX;
 					DoItemFormChange(mon, species);
 					gTasks[taskId].func = Task_TryLearnPostFormeChangeMove;
 				}
@@ -2348,8 +2348,6 @@ static void ItemUseCB_AbilityPatch(u8 taskId, TaskFunc func)
 
 static u8 GetAbilityPatchNewAbility(struct Pokemon* mon)
 {
-	u16 item = Var800E;
-	u8 abilityType = ItemId_GetHoldEffectParam(item);
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u8 ability = GetMonAbility(mon);
 	u8 changeTo = ABILITY_NONE;
@@ -2476,7 +2474,7 @@ static void Task_HandleAbilityChangeYesNoInput2(u8 taskId)
 static void Task_ChangeAbility2(u8 taskId)
 {
 	u16 item = Var800E;
-	u8 abilityType = ItemId_GetHoldEffectParam(item);
+	//u8 abilityType = ItemId_GetHoldEffectParam(item);
 	struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
 	PlaySE(SE_USE_ITEM);
 	
@@ -2619,23 +2617,21 @@ void FieldUseFunc_VsSeeker(u8 taskId)
 extern const u8 gText_PkmnElevatedToLvVar2[];
 extern const u8 gText_PastCap[];
 
-
+extern u8 GetBadgeCount(void);
 void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     u16 item = gSpecialVar_ItemId;
     bool8 noEffect;
-	struct PartyMenuInternal *ptr = sPartyMenuInternal;
-    s16 *arrayPtr = ptr->data;
     u8 level;
 	u8 badge = GetBadgeCount();
 	u8 cap = LevelCap[badge];
 	bool8 pastCap = FALSE;
 
     if (GetMonData(mon, MON_DATA_LEVEL, 0) != MAX_LEVEL)
-        noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
+		noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
     else
-        noEffect = TRUE;
+		noEffect = TRUE;
 
 	if(GetMonData(mon, MON_DATA_LEVEL, 0) >= cap)
 		pastCap = TRUE;
@@ -2655,9 +2651,9 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 	}
     else
     {
-		GetMonLevelUpWindowStats(mon, arrayPtr);
+		GetMonLevelUpWindowStats(mon, (u16*) sPartyMenuInternal->data);
 		ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0);
-		GetMonLevelUpWindowStats(mon, &ptr->data[NUM_STATS]);
+		GetMonLevelUpWindowStats(mon, (u16*) &sPartyMenuInternal->data[NUM_STATS]);
 		gPartyMenuUseExitCallback = TRUE;
 		//ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, mon, gSpecialVar_ItemId, 0xFFFF);
 		PlayFanfareByFanfareNum(0);

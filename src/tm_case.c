@@ -44,7 +44,6 @@ extern const u8 gMoveNames[][12 + 1];
 
 static void DrawPartyMonIcons(void);
 static void TintPartyMonIcons(u16 tm);
-static void DestroyPartyMonIcons(void);
 
 //#define spriteIdData ((u8*) 0x203E200);
 //#define spriteIdData ((u8*) *((u8*)0x203E200))
@@ -52,9 +51,6 @@ static void DestroyPartyMonIcons(void);
 //#define spriteIdPalette ((u16*) *((u16*) 0x203E400))
 extern u8    spriteIdData[PARTY_SIZE];
 extern u16   spriteIdPalette[PARTY_SIZE];
-
-extern struct ListMenuItem * sListMenuItemsBuffer = NULL;
-extern u8 (* sListMenuStringsBuffer)[29];
 
 struct UnkStruct_203B10C
 {
@@ -88,36 +84,6 @@ extern struct UnkStruct_203B10C * sTMCaseStaticResources;
 extern const struct SpritePalette gMonIconPaletteTable[6];
 extern const u16 sSpriteImageSizes[3][4];
 
-//would be commented out in decomps
-void CreateTMSprite(u16 itemId) {
-    return;
-}
-
-void SetTMSpriteAnim(struct Sprite * sprite, u8 idx)
-{
-    return;
-}
-
-void TintTMSpriteByType(u8 type)
-{
-    return;
-}
-
-void UpdateTMSpritePosition(struct Sprite * sprite, u8 var)
-{
-    return;
-}
-
-void InitSelectedTMSpriteData(u8 spriteId, u16 itemId)
-{
-    return;
-}
-
-void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite)
-{
-    return;
-}
-
 extern const u8 gText_TMCase[];
 static const u8 sTextColors[][3] = {
     {0, 1, 2},
@@ -125,6 +91,11 @@ static const u8 sTextColors[][3] = {
     {0, 3, 6},
     {0, 14, 10}
 };
+
+void NullFunc(void) //Hooked in
+{
+}
+
 void PrintStringTMCaseOnWindow3(void)
 {
     u32 distance = 100 - GetStringWidth(1, gText_TMCase, 0);
@@ -210,13 +181,6 @@ static void SpriteCb_MonIcon(struct Sprite *sprite)
         UpdateMonIconFrame(sprite);
 }
 #undef sMonIconStill
-
-static void FreeAndDestroyMonIconSprite_(struct Sprite *sprite)
-{
-    struct SpriteFrameImage image = { NULL, sSpriteImageSizes[sprite->oam.shape][sprite->oam.size] };
-    sprite->images = &image;
-    DestroySprite(sprite);
-}
 
 void LoadMonIconPalettesTinted(void)
 {
@@ -314,14 +278,4 @@ static void TintPartyMonIcons(u16 tm)
         }
     }
     
-}
-
-static void DestroyPartyMonIcons(void)
-{
-    u8 i;
-    for (i = 0; i < gPlayerPartyCount; i++)
-    {
-        FreeAndDestroyMonIconSprite(&gSprites[spriteIdData[i]]);
-        FreeMonIconPalettes();
-    }
 }

@@ -97,9 +97,9 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 	// create 255 OW tables
 
 	extern const struct EventObjectGraphicsInfo gEventObjectGraphicsInfo_Cresselia;
-	extern const u8 gEventObjectPic_CresseliaPal[];
+	extern const u16 gEventObjectPic_CresseliaPal[];
 	extern const struct EventObjectGraphicsInfo gEventObjectGraphicsInfo_Darkrai;
-	extern const u8 gEventObjectPic_DarkraiPal[];
+	extern const u16 gEventObjectPic_DarkraiPal[];
 
 	static NPCPtr sOverworldTable2[] = { 
 		&gEventObjectGraphicsInfo_Cresselia,

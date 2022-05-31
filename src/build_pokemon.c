@@ -4138,7 +4138,7 @@ bool8 Has4Moves(void) {
 	return FALSE;
 }
 void TeachMove(void) {
-	teach_move_in_available_slot(&gPlayerParty[Var8006], Var8008);
+	GiveMoveToBoxMon((struct BoxPokemon*) &gPlayerParty[Var8006], Var8008);
 	if (Var8009 == 0) {
 	}
 	else {

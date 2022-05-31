@@ -2,7 +2,6 @@
 #include "../../include/constants/species.h"
 #include "../../include/constants/items.h"
 #include "../../include/new/dynamax.h"
-#include "../util.c"
 
 #ifdef UNBOUND
 

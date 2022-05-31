@@ -11,7 +11,6 @@
  *		  setting of Pokemon data.
  */
 
-u16 __attribute__((long_call)) teach_move_in_available_slot(struct pokemon*, u16 move);
 void __attribute__ ((long_call)) CB2_ReturnToTradeMenuFromSummary(void);
 u8 __attribute__((long_call)) StatusToAilment(u32 status);
 

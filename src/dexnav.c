@@ -1023,9 +1023,10 @@ static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
 		return levelBase + levelBonus;
 }
 
-static u8 DexNavGenerateMonLevelScaled(u16 species, u8 chainLevel, u8 environment)
+static u8 DexNavGenerateMonLevelScaled(unusedArg u16 species, u8 chainLevel, unusedArg u8 environment)
 {
-	u16 levelBase, levelBonus;
+	u16 levelBonus;
+	u16 levelBase = 0;
 
 	for (int i = 0; i < gPlayerPartyCount; i++) {
 		levelBase += gPlayerParty[i].level;
@@ -1434,9 +1435,6 @@ static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr)
 void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 {
 	u32 pid = 0xFFFFFFFF;
-	if (species == SPECIES_NONE) {
-		u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
-	}
 	if (species == SPECIES_UNOWN)
 		pid = GenerateUnownPersonalityByLetter(sDexNavHudPtr->unownLetter - 1);
 
@@ -1447,6 +1445,8 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr)
 	//Create the icon
 	u8 spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 	*spriteIdAddr = spriteId;
+	if (spriteId < MAX_SPRITES)
+		gSprites[spriteId].oam.priority = 0;
 }
 
 void DexNavDrawHeldItem(u8* spriteIdAddr)

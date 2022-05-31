@@ -148,7 +148,7 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 				min = 1;
 			break;
 	}
-	u16 level;
+	u16 level = 0;
 	for (int i = 0; i < gPlayerPartyCount; i++) {
 		level += gPlayerParty[i].level;
 	}
