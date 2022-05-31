@@ -62,7 +62,9 @@ static void FadeDayNightPalettes()
 		case MAP_TYPE_6:
 		case MAP_TYPE_7:
 		default:
-			inOverworld = FuncIsActiveTask(Task_WeatherMain);
+			inOverworld = gMain.callback2 == CB2_Overworld
+						|| gMain.callback2 == CB2_OverworldBasic
+						|| gMain.callback2 == CB2_Credits; //Quicker than checking if Task_WeatherMain is active
 			fadePalettes = inOverworld || gInShop;
 
 			if (fadePalettes)
@@ -185,10 +187,11 @@ static void BlendFadedUnfadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u3
 		s8 g = data1->g;
 		s8 b = data1->b;
 
-		gPlttBufferUnfaded[index] = FadeColourForDNS(data2, coeff, r, g, b);
+		u16 newColour = FadeColourForDNS(data2, coeff, r, g, b);
+		gPlttBufferUnfaded[index] = newColour;
 
 		if (!palFadeActive)
-			gPlttBufferFaded[index] = FadeColourForDNS(data2, coeff, r, g, b);
+			gPlttBufferFaded[index] = newColour;
 	}
 }
 
