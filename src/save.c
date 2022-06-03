@@ -59,12 +59,22 @@ static const u16 sSaveBlockParasiteSizes[3] =
 void __attribute__((long_call)) PrintSaveErrorStatus(u8 taskId, const u8 *str);
 
 //This file's functions:
+static bool8 IsValidFileSignature(u32 signature);
 static void LoadSector30And31(void);
 static u8 SaveSector30And31(void);
 static void LoadParasite(void);
 extern bool8 TryPreventIncompleteSaves(u8 taskId);
 
-/* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
+static bool8 IsValidFileSignature(u32 signature)
+{
+	return signature == FILE_SIGNATURE
+		#ifdef CUSTOM_FILE_SIGNATURE 
+		|| signature == CUSTOM_FILE_SIGNATURE
+		#endif
+		;
+}
+
+//Saving and loading for sector 30 and 31.
 static void LoadSector30And31(void)
 {
 	struct SaveSection* saveBuffer = &gSaveDataBuffer;
@@ -102,8 +112,7 @@ static u8 SaveSector30And31(void)
 	return TryWriteSector(31, saveBuffer->data);
 }
 
-
-/* This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector */
+//This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector
 void SaveParasite(void)
 {
 	struct SaveSection* sector = gFastSaveSection;
@@ -133,7 +142,6 @@ void SaveParasite(void)
 	u16 index = SECTOR_DATA_SIZE - size;
 	Memcpy(&sector->data[index], (u32*) data, size);
 }
-
 
 static void LoadParasite(void)
 {
@@ -181,11 +189,7 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveBlockChunk* location)
 			gFirstSaveSector = i;
 
 		u16 checksum = CalculateSaveChecksum(gFastSaveSection->data, location[id].size);
-		if ((gFastSaveSection->signature == FILE_SIGNATURE
-		#ifdef UNBOUND_FILE_SIGNATURE 
-		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
-		#endif
-		)
+		if (IsValidFileSignature(gFastSaveSection->signature)
 		&&  gFastSaveSection->checksum == checksum)
 		{
 			Memcpy(location[id].data, gFastSaveSection->data, location[id].size);
@@ -208,11 +212,7 @@ u8 TryLoadSaveSector(u8 sector, u8* data, u16 size)
 	struct SaveSection* section = &gSaveDataBuffer;
 
 	DoReadFlashWholeSection(sector, section);
-	if (section->signature == FILE_SIGNATURE
-	#ifdef UNBOUND_FILE_SIGNATURE
-	|| section->signature == UNBOUND_FILE_SIGNATURE
-	#endif
-	)
+	if (IsValidFileSignature(section->signature))
 	{
 		u16 checksum = CalculateSaveChecksum(section->data, size);
 		if (section->id == checksum)
@@ -244,17 +244,13 @@ u8 GetSaveValidStatus(const struct SaveBlockChunk *chunks)
 	u32 validSectors;
 	const u32 ALL_SECTORS = (1 << NUM_SECTORS_PER_SAVE_SLOT) - 1;  // bitmask of all saveblock sectors
 
-	// check save slot 1.
+	//Check save slot 1.
 	validSectors = 0;
 	signatureValid = FALSE;
 	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
 	{
 		DoReadFlashWholeSection(sector, gFastSaveSection);
-		if (gFastSaveSection->signature == FILE_SIGNATURE
-		#ifdef UNBOUND_FILE_SIGNATURE
-		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
-		#endif
-		)
+		if (IsValidFileSignature(gFastSaveSection->signature))
 		{
 			signatureValid = TRUE;
 			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
@@ -278,17 +274,13 @@ u8 GetSaveValidStatus(const struct SaveBlockChunk *chunks)
 		slot1Status = SAVE_STATUS_EMPTY;
 	}
 
-	// check save slot 2.
+	//Check save slot 2.
 	validSectors = 0;
 	signatureValid = FALSE;
 	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
 	{
 		DoReadFlashWholeSection(NUM_SECTORS_PER_SAVE_SLOT + sector, gFastSaveSection);
-		if (gFastSaveSection->signature == FILE_SIGNATURE
-		#ifdef UNBOUND_FILE_SIGNATURE
-		|| gFastSaveSection->signature == UNBOUND_FILE_SIGNATURE
-		#endif
-		)
+		if (IsValidFileSignature(gFastSaveSection->signature))
 		{
 			signatureValid = TRUE;
 			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
@@ -381,8 +373,8 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* location)
 	Memset(gFastSaveSection, 0, sizeof(struct SaveSection));
 
 	gFastSaveSection->id = chunkId;
-	#ifdef UNBOUND_FILE_SIGNATURE 
-	gFastSaveSection->signature = UNBOUND_FILE_SIGNATURE;
+	#ifdef CUSTOM_FILE_SIGNATURE 
+	gFastSaveSection->signature = CUSTOM_FILE_SIGNATURE;
 	#else
 	gFastSaveSection->signature = FILE_SIGNATURE;
 	#endif
