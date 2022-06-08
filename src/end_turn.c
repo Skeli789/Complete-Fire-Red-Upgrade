@@ -1758,7 +1758,6 @@ u8 TurnBasedEffects(void)
 				gNewBS->dynamaxData.repeatedAttacks = 0;
 				gNewBS->ai.sideSwitchedThisRound = 0;
 				gNewBS->ai.goodToPivot = 0;
-				gNewBS->devolveForgotMove = 0;
 
 				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
 					--gNewBS->IonDelugeTimer;

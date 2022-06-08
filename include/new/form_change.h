@@ -28,3 +28,4 @@ void HandleFormChange(void);
 
 //Exported Structs
 extern const species_t gMiniorCores[];
+extern const u16 gTypeToSilvallyForm[];

@@ -1719,7 +1719,7 @@ void DrawLevelUpWindowPg2(u16 windowId, u16 *currStats, u8 bgColor, u8 fgColor, 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc func)
 {
 	PlaySE(SE_SELECT);
-	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], 2, gSpecialVar_ItemId);
+	u16 targetSpecies = GetEvolutionTargetSpecies(&gPlayerParty[gPartyMenu.slotId], EVO_MODE_ITEM_USE, gSpecialVar_ItemId);
 
 	if (targetSpecies == SPECIES_NONE)
 	{

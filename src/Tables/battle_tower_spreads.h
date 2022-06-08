@@ -41863,25 +41863,25 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.modifyMovesDoubles = FALSE,
 	},
 	{
-		.species = SPECIES_SILVALLY,
+		.species = SPECIES_SILVALLY_STEEL,
 		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
+		.hpEv = 252,
+		.spDefEv = 252,
 		.defEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHEERFORCE
-		.item = ITEM_LIFE_ORB,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RKS_SYSTEM
+		.item = ITEM_STEEL_MEMORY,
 		.moves =
 		{
 			MOVE_MULTIATTACK,
-			MOVE_CRUNCH,
-			MOVE_ROCKSLIDE,
-			MOVE_SWORDSDANCE,
+			MOVE_FLAMETHROWER,
+			MOVE_UTURN,
+			MOVE_DEFOG,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -41906,8 +41906,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_SHADOWBALL,
 			MOVE_FLAMETHROWER,
-			MOVE_DEFOG,
 			MOVE_PARTINGSHOT,
+			MOVE_DEFOG,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -41942,7 +41942,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_SILVALLY,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
@@ -41952,7 +41952,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_SHEERFORCE
+		.ability = FRONTIER_ABILITY_1, //ABILITY_RKS_SYSTEM
 		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{

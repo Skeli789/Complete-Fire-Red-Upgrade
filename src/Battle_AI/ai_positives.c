@@ -1508,7 +1508,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						{
 							if (IsStrongestMove(move, bankAtk, bankDef))
 								RecalcStrongestMoveIgnoringMove(bankAtk, bankDef, move);
-							DECREASE_VIABILITY(10); //Bad idea to use this move
+							DECREASE_VIABILITY(9); //Bad idea to use this move - still gets used over any 10s
 						}
 						else if (gWishFutureKnock.wishCounter[bankAtk] > 0
 							  && ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))

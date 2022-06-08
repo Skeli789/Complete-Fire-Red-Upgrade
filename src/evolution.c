@@ -14,6 +14,8 @@
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
+#include "../include/new/form_change.h"
+#include "../include/new/util.h"
 
 /*
 evolution.c
@@ -272,11 +274,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 				case EVO_CRITICAL_HIT:
 					if (gMain.callback2 == BattleMainCB2) //Only after battles
 					{
-						for (j = 0; i < PARTY_SIZE; ++i)
+						for (j = 0; j < PARTY_SIZE; ++j)
 						{
 							if (mon == &gPlayerParty[j] || mon == &gEnemyParty[j]) //Get the correct mon id
 							{
-								if (gScored3CritsInBattle & gBitTable[i])
+								if (gScored3CritsInBattle & gBitTable[j])
 									targetSpecies = gEvolutionTable[species][i].targetSpecies;
 								break;
 							}
@@ -309,6 +311,19 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 			}
 		}
+
+		#ifdef SPECIES_SILVALLY
+		if (targetSpecies == SPECIES_SILVALLY
+		&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) == ITEM_EFFECT_MEMORY
+		&& (!mon->hiddenAbility || gBaseStats[SPECIES_SILVALLY].hiddenAbility == ABILITY_NONE)) //Ensure the new mon will have RKS System
+		{
+			//Evolve into the Silvally of the correct type
+			u8 type = ItemId_GetHoldEffectParam(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
+			if (gTypeToSilvallyForm[type] != SPECIES_NONE)
+				targetSpecies = gTypeToSilvallyForm[type];
+		}
+		#endif
+
 		break;
 
 	case EVO_MODE_TRADE:
@@ -343,7 +358,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 			 && gEvolutionTable[species][i].param == evolutionItem)
 			{
 				if (evolutionItem == ITEM_DAWN_STONE && GetMonGender(mon) != gEvolutionTable[species][i].unknown)
-					break;
+					continue;
 
 				if (gEvolutionTable[species][i].method == EVO_ITEM_LOCATION)
 				{
@@ -360,12 +375,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 						continue;
 
 					#ifdef EVO_HOLD_ITEM_REMOVAL
-						FlagSet(FLAG_REMOVE_EVO_ITEM);
+					FlagSet(FLAG_REMOVE_EVO_ITEM);
 					#endif
 				}
 
 				targetSpecies = gEvolutionTable[species][i].targetSpecies;
-				break;
 			}
 		}
 		break;

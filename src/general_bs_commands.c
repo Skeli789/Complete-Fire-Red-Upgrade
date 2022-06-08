@@ -3500,13 +3500,18 @@ void atk9D_mimicattackcopy(void)
 
 void atk9E_metronome(void)
 {
+	bool8 isMetronomeBattle =
+		(gBattleTypeFlags & BATTLE_TYPE_FRONTIER && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_METRONOME)
+		#ifdef FLAG_METRONOME_BATTLE
+		|| FlagGet(FLAG_METRONOME_BATTLE)
+		#endif
+		;
+
 	do
 	{
 		gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
 	} while (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove)
-		#ifdef FLAG_METRONOME_BATTLE
-		|| (FlagGet(FLAG_METRONOME_BATTLE) && gCurrentMove == MOVE_IMPRISON) //Imprison would seal all Metronome which would be bad
-		#endif
+		|| (isMetronomeBattle && gCurrentMove == MOVE_IMPRISON) //Imprison would seal all Metronome which would be bad
 		|| gSpecialMoveFlags[gCurrentMove].gMetronomeBannedMoves);
 
 	TryUpdateCalledMoveWithZMove();

@@ -12,6 +12,8 @@
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/util.h"
+
 /*
 learn_move.c
 	handles functions for pokemon trying to learn moves
@@ -98,6 +100,14 @@ u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)
 		#endif
 
 		++sLearningMoveTableID;
+
+		#if (defined SPECIES_ZACIAN_CROWNED && defined SPECIES_ZAMAZENTA_CROWNED)
+		if (gMoveToLearn == MOVE_IRONHEAD
+		&& ((species == SPECIES_ZACIAN_CROWNED && MoveInMonMoveset(MOVE_BEHEMOTHBLADE, mon))
+		 || (species == SPECIES_ZAMAZENTA_CROWNED && MoveInMonMoveset(MOVE_BEHEMOTHBASH, mon))))
+			return MON_ALREADY_KNOWS_MOVE; //Prevent learning Iron Head again
+		#endif
+
 		retVal = GiveMoveToMon(mon, gMoveToLearn);
 	}
 

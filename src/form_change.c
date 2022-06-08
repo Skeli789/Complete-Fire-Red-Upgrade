@@ -530,7 +530,7 @@ void TrySetCorrectToxtricityForm(struct BoxPokemon* mon)
 
 //Overworld Form Change Functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
+static const u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 {
 	[TYPE_NORMAL] =		0,
 	[TYPE_FIGHTING] =	SPECIES_ARCEUS_FIGHT,
@@ -555,7 +555,7 @@ static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_FAIRY] =		SPECIES_ARCEUS_FAIRY
 };
 
-static u16 sTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
+const u16 gTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
 {
 	[TYPE_NORMAL] = 	0,
 	[TYPE_FIGHTING] = 	SPECIES_SILVALLY_FIGHT,
@@ -714,11 +714,13 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			if (ability == ABILITY_RKS_SYSTEM) //Only transform if set with proper ability
 			{
 				if (itemEffect == ITEM_EFFECT_MEMORY)
-					targetSpecies = sTypeToSilvallyForm[type];
+					targetSpecies = gTypeToSilvallyForm[type];
 
 				if (targetSpecies == SPECIES_NONE)
 					targetSpecies = SPECIES_SILVALLY;
 			}
+			else
+				targetSpecies = SPECIES_SILVALLY;
 			break;
 		#endif
 	}

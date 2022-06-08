@@ -822,6 +822,7 @@ void CleanUpExtraTurnValues(void)
 	gNewBS->zMoveData.active = FALSE;
 	gNewBS->dynamaxData.active = FALSE;
 	gNewBS->batonPassing = FALSE;
+	gNewBS->devolveForgotMove = 0; //Here and no in end turn because Pokemon can faint and devolve because of hazards after the end turn switch in
 }
 
 void SetActionsAndBanksTurnOrder(void)

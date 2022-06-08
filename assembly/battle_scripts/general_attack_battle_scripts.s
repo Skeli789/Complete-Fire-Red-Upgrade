@@ -122,6 +122,7 @@ BS_003_DrainHP:
 	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifmove MOVE_STRENGTHSAP StrengthSapBS
 	call STANDARD_DAMAGE
+	jumpiffainted BANK_ATTACKER BS_MOVE_FAINT @;Eg. Parabolic Charge activates Destiny Bond before the last target is struck
 	negativedamage
 
 DrainHPBSP2:
