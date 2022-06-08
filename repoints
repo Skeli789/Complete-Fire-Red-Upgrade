@@ -220,6 +220,7 @@ FieldEffectScript_Sparkles 081D9718
 FieldEffectScript_LavaBubbles 081D9768
 FieldEffectScript_MiningScanRing 081D976C
 FieldEffectScript_Explosion 081D977C
+FieldEffectScript_Sparkle 081D9784
 FieldEffectScript_UseRockClimb 081D9788
 FieldEffectScript_RockClimbDust 081D978C
 Wav_grass_footstep_sample 0848EE14

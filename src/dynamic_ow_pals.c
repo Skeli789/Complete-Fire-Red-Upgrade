@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/field_weather.h"
+#include "../include/constants/field_effects.h"
 
 #include "../include/new/character_customization.h"
 #include "../include/new/dynamic_ow_pals.h"
@@ -158,6 +159,9 @@ u8 PaletteNeedsFogBrightening(u8 palSlot) // hook at 0x7A748
 
 static u8 GetPalTypeByPalTag(u16 palTag)
 {
+	if (palTag == FLDEFF_PAL_TAG_SMALL_SPARKLE)
+		return PalTypeOther; //Small sparkle should never be faded by DNS
+
 	if (palTag >= 0x1000 && palTag <= 0x1012)
 		return PalTypeAnimation;
 

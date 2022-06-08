@@ -23,6 +23,7 @@
 
 #define gFieldEffectObjectPaletteInfo0 (void*) 0x83A5340
 #define gFieldEffectObjectPaletteInfo1 (void*) 0x83A5348
+#define gSpritePalette_SmallSparkle (void*) 0x83A5FF8
 #define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)
 
 #define SMOKE_TAG 0x2710
@@ -53,6 +54,7 @@ static void FldEff_ShakingLongGrass(void);
 static void FldEff_ShortGrass(void);
 static void FldEff_SandFootprints(void);
 static void FldEff_BikeTireTracks(void);
+static void FldEff_Sparkle(void);
 static void FldEff_Dust(void);
 static void FldEff_CaveDust(void);
 static void FldEff_Sparkles(void);
@@ -80,10 +82,14 @@ extern const u16 gFieldEffectObjectPic_WinterGrassPal[];
 extern const u8 gFieldEffectObjectPic_SwampLongGrassTiles[];
 extern const u16 gFieldEffectObjectPic_SwampLongGrassPal[];
 extern const u16 gFieldEffectObjectPic_WinterFootprintPal[];
-static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {gFieldEffectObjectPic_AutumnGrassPal, 0x1005};
-static const struct SpritePalette sWinterGrassObjectPaletteInfo = {gFieldEffectObjectPic_WinterGrassPal, 0x1005};
-static const struct SpritePalette sSwampGrassObjectPaletteInfo = {gFieldEffectObjectPic_SwampLongGrassPal, 0x1005};
-static const struct SpritePalette sWinterFootprintPaletteInfo = {gFieldEffectObjectPic_WinterFootprintPal, 0x1004};
+extern const u16 gFieldEffectObjectPic_SmallSparkleUnderwaterPal[];
+extern const u16 gFieldEffectObjectPic_SmallSparkleCrystalPeakPal[];
+static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {gFieldEffectObjectPic_AutumnGrassPal, FLDEFF_PAL_TAG_GENERAL_1};
+static const struct SpritePalette sWinterGrassObjectPaletteInfo = {gFieldEffectObjectPic_WinterGrassPal, FLDEFF_PAL_TAG_GENERAL_1};
+static const struct SpritePalette sSwampGrassObjectPaletteInfo = {gFieldEffectObjectPic_SwampLongGrassPal, FLDEFF_PAL_TAG_GENERAL_1};
+static const struct SpritePalette sWinterFootprintPaletteInfo = {gFieldEffectObjectPic_WinterFootprintPal, FLDEFF_PAL_TAG_GENERAL_0};
+static const struct SpritePalette sSmallSparkleUnderwaterPaletteInfo = {gFieldEffectObjectPic_SmallSparkleUnderwaterPal, FLDEFF_PAL_TAG_SMALL_SPARKLE};
+static const struct SpritePalette sSmallSparkleCrystalPeakPaletteInfo = {gFieldEffectObjectPic_SmallSparkleCrystalPeakPal, FLDEFF_PAL_TAG_SMALL_SPARKLE};
 
 static const struct SpriteFrameImage sFieldEffectObjectPicTable_SwampLongGrass[] = {
 	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
@@ -99,8 +105,8 @@ static const struct SpriteFrameImage sFieldEffectObjectPicTable_ShakingSwampLong
 	overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
 };
 
-static const struct SpriteTemplate sFieldEffectObjectTemplate_SwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5938, sFieldEffectObjectPicTable_SwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DB69C | 1)};
-static const struct SpriteTemplate sFieldEffectObjectTemplate_ShakingSwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5A84, sFieldEffectObjectPicTable_ShakingSwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DCD1D | 1)};
+static const struct SpriteTemplate sFieldEffectObjectTemplate_SwampLongGrass = {0xFFFF, FLDEFF_PAL_TAG_GENERAL_1, (void*) 0x83A36F0, (void*) 0x83A5938, sFieldEffectObjectPicTable_SwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DB69C | 1)};
+static const struct SpriteTemplate sFieldEffectObjectTemplate_ShakingSwampLongGrass = {0xFFFF, FLDEFF_PAL_TAG_GENERAL_1, (void*) 0x83A36F0, (void*) 0x83A5A84, sFieldEffectObjectPicTable_ShakingSwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DCD1D | 1)};
 #endif
 
 static const struct OamData sMiningScanRingOam =
@@ -377,6 +383,24 @@ static void GetSpriteTemplateAndPaletteForFootprintFieldEffect(const struct Spri
 	}
 }
 
+static void GetSpritePaletteForSparkleFieldEffect(const struct SpritePalette** spritePalette)
+{
+	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+	{
+		*spritePalette = &sSmallSparkleUnderwaterPaletteInfo; //Yellow
+	}
+	else if (GetCurrentRegionMapSectionId() == MAPSEC_CRYSTAL_PEAK)
+	{
+		*spritePalette = &sSmallSparkleCrystalPeakPaletteInfo; //Green
+	}
+	else
+	#endif
+	{
+		*spritePalette = gSpritePalette_SmallSparkle; //Blue
+	}
+}
+
 static void FldEff_TallGrass(void)
 {
 	s32 x, y;
@@ -385,7 +409,7 @@ static void FldEff_TallGrass(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	palettePointer = &spritePalette;
@@ -422,7 +446,7 @@ static void FldEff_ShakingTallGrass(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 17);
 	palettePointer = &spritePalette;
@@ -464,7 +488,7 @@ static void FldEff_LongGrass(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
 	palettePointer = &spritePalette;
@@ -512,7 +536,7 @@ static void FldEff_ShakingLongGrass(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForGrassFieldEffect(&spriteTemplate, &spritePalette, 18);
 	palettePointer = &spritePalette;
@@ -568,7 +592,7 @@ static void FldEff_SandFootprints(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 11);
 	palettePointer = &spritePalette;
@@ -597,7 +621,7 @@ static void FldEff_BikeTireTracks(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 27);
 	palettePointer = &spritePalette;
@@ -618,6 +642,30 @@ static void FldEff_BikeTireTracks(void)
 		PlaySE(SE_MUD_SLAP); //Different sound on bike
 }
 
+static void FldEff_Sparkle(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = gFieldEffectArguments[0] + 7;
+	y = gFieldEffectArguments[1] + 7;
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
+
+	spriteTemplate = gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SMALL_SPARKLE];
+	GetSpritePaletteForSparkleFieldEffect(&spritePalette);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 82);
+	if (spriteId != MAX_SPRITES)
+	{
+		gSprites[spriteId].oam.priority = gFieldEffectArguments[2];
+		gSprites[spriteId].coordOffsetEnabled = TRUE;
+	}
+}
+
 static void FldEff_Dust(void)
 {
 	s32 x, y;
@@ -626,7 +674,7 @@ static void FldEff_Dust(void)
 	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 12);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 12);
 
 	GetSpriteTemplateAndPaletteForFootprintFieldEffect(&spriteTemplate, &spritePalette, 9);
 	palettePointer = &spritePalette;
@@ -650,7 +698,7 @@ static void FldEff_CaveDust(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplateDustCloud, x, y, gFieldEffectArguments[2]);
 	if (spriteId != MAX_SPRITES)
@@ -668,7 +716,7 @@ static void FldEff_Sparkles(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplateSparkles, x, y, gFieldEffectArguments[2]);
 	if (spriteId != MAX_SPRITES)
@@ -686,7 +734,7 @@ static u32 FldEff_LavaBubbles(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	spriteId = CreateSpriteAtEnd(&sSpriteTemplateLavaBubbles, x, y, gFieldEffectArguments[2]);
 	if (spriteId != MAX_SPRITES)
@@ -836,7 +884,7 @@ static void FldEff_MiningScanRing(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0] + 7;
 	y = gFieldEffectArguments[1] + 7;
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	LoadCompressedSpriteSheetUsingHeap(&gThinRingSpriteSheet);
 	LoadCompressedSpritePaletteUsingHeap(&gThinRingSpritePalette);
@@ -863,7 +911,7 @@ static void FldEff_Explosion(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0] + 7;
 	y = gFieldEffectArguments[1] + 7;
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	LoadCompressedSpriteSheetUsingHeap(&gExplosionSpriteSheet);
 	LoadCompressedSpritePaletteUsingHeap(&gExplosionSpritePalette);
@@ -935,7 +983,7 @@ static u8 CreateRockClimbBlob(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 8);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
 
 	spriteId = CreateSpriteAtEnd(&gFieldEffectObjectTemplate_RockClimbBlob, x, y, 0x96);
 	if (spriteId != MAX_SPRITES)
@@ -957,7 +1005,7 @@ static u32 FldEff_RockClimbDust(void)
 	u8 spriteId;
 	x = gFieldEffectArguments[0];
 	y = gFieldEffectArguments[1];
-	LogCoordsCameraRelative(&x, &y, 8, 12);
+	SetSpritePosToOffsetMapCoords(&x, &y, 8, 12);
 
 	spriteId = CreateSpriteAtEnd(&gFieldEffectObjectTemplate_RockClimbDust, x, y, 0);
 	if (spriteId != MAX_SPRITES)
@@ -1253,6 +1301,12 @@ const struct FieldEffectScript FieldEffectScript_SandFootprints =
 const struct FieldEffectScript FieldEffectScript_BikeTireTracks =
 {
 	FLDEFF_CALLASM, FldEff_BikeTireTracks,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript FieldEffectScript_Sparkle =
+{
+	FLDEFF_CALLASM, FldEff_Sparkle,
 	FLDEFF_END,
 };
 
