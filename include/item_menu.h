@@ -70,7 +70,7 @@ u8 __attribute__((long_call)) GetBagWindow(u8);
 void __attribute__((long_call)) BagMenu_PrintCursor_(u8 a, u8 b);
 void __attribute__((long_call)) Task_RedrawArrowsAndReturnToBagMenuSelect(u8 taskId);
 void __attribute__((long_call)) BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 *str, u8 left, u8 top, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 h);
-void __attribute__((long_call)) Bag_BuildListMenuTemplate(u8 pocketId);
+//void __attribute__((long_call)) Bag_BuildListMenuTemplate(u8 pocketId);
 void __attribute__((long_call)) BagCreateYesNoMenuBottomRight(u8 a, const struct YesNoFuncTable *funcTable);
 //void __attribute__((long_call)) PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId);
 void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);

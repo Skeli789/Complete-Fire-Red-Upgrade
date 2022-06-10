@@ -1494,7 +1494,7 @@ RemoveShopModifierCheats:
 	ldr r5, =sShopMenuItemStrings
 	ldrh r0, [r4, #0x10]
 	add r0, #0x1
-	mov r1, #0xD
+	mov r1, #20 @Max item name length
 	mul r0, r1
 	ldr r1, =malloc
 	bl bxr1

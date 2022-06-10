@@ -1182,16 +1182,6 @@ void HandleItemRegistration(u16 item)
 #error "The total number of bag items has exceeded 650! Please reduce the possible number of items in the bag."
 #endif
 
-struct ListBuffer1
-{
-	struct ListMenuItem subBuffers[LARGEST_POCKET_NUM];
-};
-
-struct ListBuffer2
-{
-	s8 name[LARGEST_POCKET_NUM][20]; //Really 19 but make it 20 just to be safe
-};
-
 struct BagSlots
 {
 	struct ItemSlot bagPocket_Items[NUM_REGULAR_ITEMS];
@@ -1236,14 +1226,29 @@ void SetMemoryForBagStorage(void)
 	*gBagPockets = sBagPocketArrangement;
 }
 
-#define sListBuffer1 (*((struct ListBuffer1**) 0x203AD18))
-#define sListBuffer2 (*((struct ListBuffer2**) 0x203AD1C))
+extern void* sBagBgTilemapBuffer;
+extern struct ListMenuItem* sBagListMenuItems;
+extern u8 (*sBagListMenuItemStrings)[22];
 
-void AllocateBagItemListBuffers(void)
+bool8 AllocateBagItemListBuffers(void)
 {
 	sItemDescriptionPocket = 0; //Reset item description printer
-	sListBuffer1 = Malloc(sizeof(struct ListBuffer1));
-	sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
+
+	/*if (sBagBgTilemapBuffer != NULL)
+	{
+		Free(sBagBgTilemapBuffer);
+		sBagBgTilemapBuffer = NULL;
+	}*/
+
+	sBagListMenuItems = Malloc((LARGEST_POCKET_NUM + 1) * sizeof(struct ListMenuItem));
+	if (sBagListMenuItems == NULL)
+		return FALSE;
+
+	sBagListMenuItemStrings = Malloc((LARGEST_POCKET_NUM + 1) * sizeof(*sBagListMenuItemStrings));
+	if (sBagListMenuItemStrings == NULL)
+		return FALSE;
+
+	return TRUE;
 }
 
 extern struct ListMenuItem* sBerryPouchListMenuItems;
@@ -1254,6 +1259,65 @@ bool8 AllocateBerryPouchListBuffers(void)
 		return FALSE;
 
 	return TRUE;
+}
+
+#define BagListMenuMoveCursorFunc (void*) (0x081085A4 | 1)
+#define BagListMenuItemPrintFunc (void*) (0x8108654 | 1)
+#define sListItemTextColor_RegularItem (void*) 0x08452F60
+#define gFameCheckerText_Cancel (void*) 0x84161C1
+void Bag_BuildListMenuTemplate(u8 pocket)
+{
+	u32 i, itemCount;
+	struct ItemSlot* itemSlots;
+
+	switch (pocket + 1)
+	{
+		case POCKET_ITEMS:
+		default:
+			itemSlots = gBagPockets->itemRam;
+			break;
+		case POCKET_KEY_ITEMS:
+			itemSlots = gBagPockets->keyItemRam;
+			break;
+		case POCKET_POKE_BALLS:
+			itemSlots = gBagPockets->pokeBallRam;
+			break;
+	}
+
+	for (i = 0, itemCount = GetNumItemsInPocket(pocket); i < itemCount; ++i)
+	{
+		BagListMenuGetItemNameColored(sBagListMenuItemStrings[i], itemSlots[i].itemId);
+		sBagListMenuItems[i].name = sBagListMenuItemStrings[i];
+		sBagListMenuItems[i].id = i;
+	}
+
+	StringCopy(sBagListMenuItemStrings[i], sListItemTextColor_RegularItem);
+	StringAppend(sBagListMenuItemStrings[i], gFameCheckerText_Cancel);
+	sBagListMenuItems[i].name = sBagListMenuItemStrings[i];
+	sBagListMenuItems[i].id = i;
+	gMultiuseListMenuTemplate->items = sBagListMenuItems;
+	gMultiuseListMenuTemplate->totalItems = itemCount + 1;
+	gMultiuseListMenuTemplate->windowId = 0;
+	gMultiuseListMenuTemplate->header_X = 0;
+	gMultiuseListMenuTemplate->item_X = 9;
+	gMultiuseListMenuTemplate->cursor_X = 1;
+	gMultiuseListMenuTemplate->lettersSpacing = 0;
+	gMultiuseListMenuTemplate->itemVerticalPadding = 2;
+	gMultiuseListMenuTemplate->upText_Y = 2;
+	gMultiuseListMenuTemplate->maxShowed = sBagMenuDisplay->maxShowed[pocket];
+	gMultiuseListMenuTemplate->fontId = 2;
+	#ifdef UNBOUND
+	gMultiuseListMenuTemplate->cursorPal = 1;
+	gMultiuseListMenuTemplate->cursorShadowPal = 2;
+	#else
+	gMultiuseListMenuTemplate->cursorPal = 2;
+	gMultiuseListMenuTemplate->cursorShadowPal = 3;
+	#endif
+	gMultiuseListMenuTemplate->fillValue = 0;
+	gMultiuseListMenuTemplate->moveCursorFunc = BagListMenuMoveCursorFunc;
+	gMultiuseListMenuTemplate->itemPrintFunc = BagListMenuItemPrintFunc;
+	gMultiuseListMenuTemplate->cursorKind = 0;
+	gMultiuseListMenuTemplate->scrollMultiple = LIST_MULTIPLE_SCROLL_L_R;
 }
 
 void PocketCalculateInitialCursorPosAndItemsAbove(u8 pocketId)
