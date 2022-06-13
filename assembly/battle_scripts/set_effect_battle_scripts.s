@@ -12,7 +12,7 @@ set_effect_battle_scripts.s
 .global BattleScript_TargetSleepHeal
 .global BattleScript_TargetBurnHeal
 .global BattleScript_StickyHoldActivatesRet
-.global BattleScript_TargetFrozen
+.global BattleScript_WasFrozen
 .global BattleScript_KnockedOff
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner

@@ -75,6 +75,7 @@ extern const u8 BattleScript_StartedSchooling[];
 extern const u8 BattleScript_StoppedSchooling[];
 extern const u8 BattleScript_ShieldsDownToCore[];
 extern const u8 BattleScript_ShieldsDownToMeteor[];
+extern const u8 BattleScript_IceFaceRestoreFace[];
 extern const u8 BattleScript_FlowerGift[];
 extern const u8 BattleScript_FlowerGiftEnd2[];
 extern const u8 BattleScript_HoopaSOS[];

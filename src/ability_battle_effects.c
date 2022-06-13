@@ -1201,6 +1201,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#endif
 			break;
 
+		case ABILITY_ICEFACE:
+			#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
+			if (!IS_TRANSFORMED(bank) && SPECIES(bank) == SPECIES_EISCUE_NOICE
+			&& WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY))
+			{
+				DoFormChange(bank, SPECIES_EISCUE, FALSE, FALSE, FALSE);
+				BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
+				++effect;
+			}
+			#endif
+			break;
+	
 		case ABILITY_ELECTRICSURGE:
 			effect = TryActivateTerrainAbility(ELECTRIC_TERRAIN, B_ANIM_ELECTRIC_SURGE, bank);
 			break;

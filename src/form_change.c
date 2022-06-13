@@ -182,15 +182,6 @@ void SwitchOutFormsRevert(u8 bank)
 			break;
 		#endif
 
-		#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
-		case SPECIES_EISCUE_NOICE:
-			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
-			else
-				DoFormChange(bank, SPECIES_EISCUE, FALSE, TRUE, FALSE);
-			break;
-		#endif
-
 		#if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GULPING && defined SPECIES_CRAMORANT_GORGING)
 		case SPECIES_CRAMORANT_GULPING:
 		case SPECIES_CRAMORANT_GORGING:

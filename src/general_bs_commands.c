@@ -5311,7 +5311,7 @@ void atkE7_trycastformdatachange(void)
 					BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
 					gBattleStruct->castformToChangeInto = form - 1;
 				}
-				return;
+				break;
 			#endif
 
 			#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
@@ -5336,6 +5336,18 @@ void atkE7_trycastformdatachange(void)
 						BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 					}
 				}
+				break;
+			#endif
+
+			#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
+			case SPECIES_EISCUE_NOICE:
+				if (ABILITY(bank) == ABILITY_ICEFACE && !IS_TRANSFORMED(bank)
+				&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_HAIL_ANY)
+				{
+					DoFormChange(bank, SPECIES_EISCUE, FALSE, FALSE, FALSE);
+					BattleScriptPushCursorAndCallback(BattleScript_IceFaceRestoreFace);
+				}
+				break;
 			#endif
 		}
 	}

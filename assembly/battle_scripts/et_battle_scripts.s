@@ -52,6 +52,7 @@ et_battle_scripts.s
 .global BattleScript_StoppedSchooling
 .global BattleScript_ShieldsDownToCore
 .global BattleScript_ShieldsDownToMeteor
+.global BattleScript_IceFaceRestoreFace
 .global BattleScript_FlowerGift
 .global BattleScript_FlowerGiftEnd2
 .global BattleScript_MonTookFutureAttack
@@ -515,6 +516,21 @@ BattleScript_FlowerGift:
 BattleScript_FlowerGiftEnd2:
 	call BattleScript_FlowerGiftRet
 	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_IceFaceRet:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER TransformedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_IceFaceRestoreFace:
+	call BattleScript_IceFaceRet
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
