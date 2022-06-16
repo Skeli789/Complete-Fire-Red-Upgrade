@@ -4104,7 +4104,18 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			//1.2x - 2.0x Boost
 			if (!useMonAtk)
 			{
-				u16 boost = MathMin(200, 100 + gNewBS->MetronomeCounter[bankAtk]);
+				u16 boost;
+
+				if (data->specialFlags & FLAG_CHECKING_FROM_MENU)
+				{
+					if (move == gLastPrintedMoves[bankAtk]) //Viewing the same move as used last turn
+						boost = MathMin(200, 100 + gNewBS->MetronomeCounter[bankAtk] + 20);
+					else
+						break;
+				}
+				else
+					boost = MathMin(200, 100 + gNewBS->MetronomeCounter[bankAtk]);
+
 				power = (power * boost) / 100;
 			}
 			break;
