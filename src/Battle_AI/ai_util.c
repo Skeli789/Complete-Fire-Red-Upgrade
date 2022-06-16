@@ -2426,16 +2426,13 @@ bool8 IsSuckerPunchOkayToUseThisRound(u16 move, u8 bankAtk, u8 bankDef)
 		if (!gNewBS->ai.suckerPunchOkay[bankAtk]) //This turn wasn't randomly chosen to be okay for Sucker Punch
 			return FALSE;
 	}
-	else //Regular Sucker Punch logic
-	{
-		u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
-		if (predictedMove != MOVE_NONE)
-		{
-			if (SPLIT(predictedMove) == SPLIT_STATUS
-			|| !MoveWouldHitFirst(move, bankAtk, bankDef))
-				return FALSE;
-		}
-	}
+	
+	//Regular Sucker Punch logic
+	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+	if (predictedMove == MOVE_NONE //Probably going to switch
+	|| SPLIT(predictedMove) == SPLIT_STATUS
+	|| !MoveWouldHitFirst(move, bankAtk, bankDef))
+		return FALSE;
 
 	return TRUE;
 }

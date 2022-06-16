@@ -517,6 +517,12 @@ u8 AIScript_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origina
 				&& (!IsRaidBattle()
 				 || !gNewBS->dynamaxData.raidShieldsUp)) //If it is a Raid, don't bother using Helping Hand when the shields take priority in being destroyed
 				{
+					if (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE
+					&& SIDE(gBattleStruct->moveTarget[bankAtkPartner]) != SIDE(bankAtkPartner) //Already chose a damaging move on foe
+					&& !(GetBaseMoveTarget(gChosenMovesByBanks[bankAtkPartner], bankAtkPartner) & MOVE_TARGET_SPREAD) //And targetting a single foe
+					&& MoveKnocksOutXHits(gChosenMovesByBanks[bankAtkPartner], bankAtkPartner, gBattleStruct->moveTarget[bankAtkPartner], 1)) //But the partner can already KO
+						break; //Don't waste this turn using Helping Hand
+
 					IncreaseHelpingHandViability(&viability, class);
 				}
 			}

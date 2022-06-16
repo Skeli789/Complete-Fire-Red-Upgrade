@@ -3149,7 +3149,9 @@ SKIP_CHECK_TARGET:
 			break;
 
 		case EFFECT_SUCKER_PUNCH:
-			if (!IsSuckerPunchOkayToUseThisRound(move, bankAtk, bankDef))
+			if (!PhysicalMoveInMoveset(bankDef) && !SpecialMoveInMoveset(bankDef))
+				DECREASE_VIABILITY(10); //Will never work
+			else if (!IsSuckerPunchOkayToUseThisRound(move, bankAtk, bankDef))
 				DECREASE_VIABILITY(9); //Not 10 because still usable if no other moves are viable
 			else
 				goto AI_STANDARD_DAMAGE;

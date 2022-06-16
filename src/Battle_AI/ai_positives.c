@@ -2192,21 +2192,26 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 					//Try to boost either Attack, Sp. Attack, or Speed
 					u8 oldViability = viability;
-					if (RealPhysicalMoveInMoveset(bankAtk) && STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 7)
+					if (RealPhysicalMoveInMoveset(bankAtk)
+					&& STAT_STAGE(bankAtk, STAT_STAGE_ATK) < 7 //Needed because the 7 in INCREASE_STAT_VIABILITY doesn't actually do anything without a specific stat
+					&& GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
 					{
 						INCREASE_STAT_VIABILITY(0xFE, 7, 3);
 						if (viability != oldViability) //Viability was increased
 							break;
 					}
 
-					if (SpecialMoveInMoveset(bankAtk) && STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 7)
+					if (SpecialMoveInMoveset(bankAtk)
+					&& STAT_STAGE(bankAtk, STAT_STAGE_SPATK) < 7
+					&& GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 1))
 					{
 						INCREASE_STAT_VIABILITY(0xFE, 7, 3);
 						if (viability != oldViability) //Viability was increased
 							break;
 					}
 
-					if (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) < 7)
+					if (STAT_STAGE(bankAtk, STAT_STAGE_SPEED) < 7
+					&& GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1, data->atkSpeed, data->defSpeed))
 						INCREASE_STAT_VIABILITY(0xFE, 7, 3); //At least try to boost Speed
 					break;
 			}
