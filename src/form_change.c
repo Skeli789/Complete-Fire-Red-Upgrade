@@ -9,8 +9,10 @@
 #include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/util.h"
+
 /*
 form_change.c
 	functions/structures/arrays that handle species that change form
@@ -487,14 +489,29 @@ void TryCrownZacianZamazenta(struct Pokemon* party)
 			party[i].backupSpecies = species;
 			SetMonData(mon, MON_DATA_SPECIES, &newSpecies);
 			CalculateMonStats(mon);
-
-			u8 moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, mon);
-			if (moveIndex < MAX_MON_MOVES)
+			
+			u8 moveIndex = FindMovePositionInMonMoveset(newMove, mon);
+			if (moveIndex < MAX_MON_MOVES) //Uh, oh... already knows the Behemoth move
 			{
-				u8 newPP = CalculatePPWithBonus(newMove, GetMonData(mon, MON_DATA_PP_BONUSES, NULL), moveIndex);
-				SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove); //Iron Head changes when changing forms
-				if (GetMonData(mon, MON_DATA_PP1 + moveIndex, NULL) > newPP)
-					SetMonData(mon, MON_DATA_PP1 + moveIndex, &newPP); //Adjust PP
+				moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, mon);
+				if (moveIndex < MAX_MON_MOVES) //And also knows Iron Head
+				{
+					SetMonMoveSlot(mon, MOVE_NONE, moveIndex);
+					RemoveMonPPBonus(mon, moveIndex);
+					for (i = moveIndex; i < MAX_MON_MOVES - 1; ++i)
+						ShiftMoveSlot(mon, i, i + 1);
+				}
+			}
+			else
+			{
+				moveIndex = FindMovePositionInMonMoveset(MOVE_IRONHEAD, mon);
+				if (moveIndex < MAX_MON_MOVES)
+				{
+					u8 newPP = CalculatePPWithBonus(newMove, GetMonData(mon, MON_DATA_PP_BONUSES, NULL), moveIndex);
+					SetMonData(mon, MON_DATA_MOVE1 + moveIndex, &newMove); //Iron Head changes when changing forms
+					if (GetMonData(mon, MON_DATA_PP1 + moveIndex, NULL) > newPP)
+						SetMonData(mon, MON_DATA_PP1 + moveIndex, &newPP); //Adjust PP
+				}
 			}
 		}
 	}

@@ -515,6 +515,7 @@ SizeMinigame_CalculateAdjustedHeight = 0x80A0770 | 1;
 SizeMinigame_BufferHeightInches = 0x80A07E4 | 1;
 SizeMinigame_BufferPokeNameSize = 0x80A08CC | 1;
 
+ShiftMoveSlot = 0x80BFAA8 | 1;
 Special_0DD_DeleteMove = 0x80BFBA8 | 1;
 GetStarterChoice = 0x80CBDB0 | 1;
 GetCombinedOTID = 0x80CC1E4 | 1;

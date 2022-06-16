@@ -750,6 +750,7 @@ u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 bool8 __attribute__((long_call)) ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex);
 void __attribute__((long_call)) SetMonMoveSlotOld(struct Pokemon *mon, u16 move, u8 slot);
+void __attribute__((long_call)) ShiftMoveSlot(struct Pokemon *mon, u8 slotTo, u8 slotFrom);
 void __attribute__((long_call)) RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 bool8 __attribute__((long_call)) TryIncrementMonLevel(struct Pokemon *mon);
 u8 __attribute__((long_call)) CheckPartyPokerus(struct Pokemon *party, u8 selection);
