@@ -599,7 +599,7 @@ Using an odd shock\nwave, the user\ndamages same-type\nPok\emon in the\nsurround
 The user hurls an\nelectric orb. The\nfaster the user is\nthan the foe, the\ngreater the damage.
 
 #org @DESC_FOULPLAY
-The user turns the\ntarget's power\nagainst it. Power\nincreases with the\nfoe's Attack stat.
+The user turns the\nfoe's power against\nit. This uses the\nfoe's Attack stat.
 
 #org @DESC_ENTRAINMENT
 The user dances\nwith an odd rhythm,\nmaking the target's\nAbility the same as\nthe user's Ability.
@@ -1267,7 +1267,11 @@ Barbs that may poison\nare shot at the foe.\nIts power doubles if\nthe foe is po
 The foe is slashed\nwith wings of light.\nThis goes first and\nhas a high crit ratio.
 
 #org @DESC_BITTER_MALICE
+#ifdef FROSTBITE
+The user attacks and\nmay inflict the foe\nwith frostbite. Its\npower doubles if the\nfoe has frostbite.
+#else
 Resentment that may\nfreeze hits the foe.\nIts power doubles if\nthe foe is frozen.
+#endif
 
 #org @DESC_SHELTER
 The user makes its\nskin iron-hard to\nraise its Defense\nand its evasiveness.
@@ -1279,10 +1283,14 @@ The foe is shot with\narrows that raise the\ncrit ratio and lower\nthe foe's Def
 Myriad fireballs that\nmay burn hit the foe.\nIts power doubles if\nthe foe is burned.
 
 #org @DESC_CEASELESS_EDGE
-The foe is slashed.\nThis has a high crit\nratio and may leave\nbehind splinters.
+The foe is slashed.\nThis leaves behind\nsplinters. It has a\nhigh crit ratio.
 
 #org @DESC_BLEAKWIND_STORM
+#ifdef FROSTBITE
+The user attacks\nwith savagely cold\nwinds. This may\ncause a frostbite.
+#else
 The user attacks\nwith savagely cold\nwinds. This may\nfreeze the foe.
+#endif
 
 #org @DESC_WILDBOLT_STORM
 The user savagely\nattacks with wind\nand lightning. This\nmay cause paralysis.
