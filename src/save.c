@@ -68,6 +68,9 @@ extern bool8 TryPreventIncompleteSaves(u8 taskId);
 static bool8 IsValidFileSignature(u32 signature)
 {
 	return signature == FILE_SIGNATURE
+		#ifdef CUSTOM_FILE_SIGNATURE_OLD
+		|| signature == CUSTOM_FILE_SIGNATURE_OLD
+		#endif
 		#ifdef CUSTOM_FILE_SIGNATURE 
 		|| signature == CUSTOM_FILE_SIGNATURE
 		#endif
