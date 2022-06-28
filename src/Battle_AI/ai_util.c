@@ -3357,11 +3357,32 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 {
 	u8 defAbility = ABILITY(bankDef);
 
-	return (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
-		&& !IsClearBodyAbility(defAbility)
-		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
-		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+	if (!IsClearBodyAbility(defAbility)
+	&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
+	&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
+	&& defAbility != ABILITY_CONTRARY)
+	{
+		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6)
+			return TRUE;
+
+		if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
+		{
+			if (SpeedCalc(bankAtk) >= SpeedCalc(bankDef)) //Defogger is faster
+			{
+				if (CanKnockOut(bankDef, bankAtk)) //But after lowering evasiveness will probably be KOd
+					return FALSE; //Don't waste a turn lowering evasiveness to hit moves
+			}
+			else //Defogger is slower
+			{
+				if (Can2HKO(bankDef, bankAtk)) //And after lowering evasiveness will probably be KOd
+					return FALSE; //Don't waste a turn lowering evasiveness to hit moves
+			}
+
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 bool8 GoodIdeaToSwapStatStages(u8 bankAtk, u8 bankDef)

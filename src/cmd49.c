@@ -1438,19 +1438,21 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->lessThanHalfHPBeforeShellBell = FALSE;
 			ResetDoublesSpreadMoveCalcs();
 
-			switch (gCurrentMove) {
-				case MOVE_FUSIONFLARE:
-					gNewBS->fusionFlareUsedPrior = TRUE;
-					gNewBS->fusionBoltUsedPrior = FALSE;
-					break;
-				case MOVE_FUSIONBOLT:
-					gNewBS->fusionFlareUsedPrior = FALSE;
-					gNewBS->fusionBoltUsedPrior = TRUE;
-					break;
-				default:
-					gNewBS->fusionFlareUsedPrior = FALSE;
-					gNewBS->fusionBoltUsedPrior = FALSE;
-					break;
+			gNewBS->fusionFlareUsedPrior = FALSE;
+			gNewBS->fusionBoltUsedPrior = FALSE;
+			if (MOVE_HAD_EFFECT && !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
+			{
+				switch (gCurrentMove)
+				{
+					case MOVE_FUSIONFLARE:
+						gNewBS->fusionFlareUsedPrior = TRUE;
+						gNewBS->fusionBoltUsedPrior = FALSE;
+						break;
+					case MOVE_FUSIONBOLT:
+						gNewBS->fusionFlareUsedPrior = FALSE;
+						gNewBS->fusionBoltUsedPrior = TRUE;
+						break;
+				}
 			}
 
 			gNewBS->zMoveData.active = FALSE;

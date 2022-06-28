@@ -1564,7 +1564,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 
 			//At this point no entry hazards are to be removed
-			if (move != MOVE_RAPIDSPIN)
+			if (move == MOVE_DEFOG)
 			{
 				if (gSideStatuses[SIDE(bankDef)] &
 					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
@@ -2027,9 +2027,25 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			break;
 
 		case EFFECT_SUPERPOWER:
-			if (atkAbility != ABILITY_CONTRARY
-			&& data->atkItemEffect == ITEM_EFFECT_EJECT_PACK)
-				goto PIVOT_CHECK;
+			if (atkAbility != ABILITY_CONTRARY)
+			{
+				if (data->atkItemEffect == ITEM_EFFECT_EJECT_PACK)
+					goto PIVOT_CHECK;
+			}
+			else
+			{
+				if ((move == MOVE_HAMMERARM || move == MOVE_ICEHAMMER)
+				&& GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 1, data->atkSpeed, data->defSpeed))
+					goto AI_SPEED_PLUS;
+				else if (move == MOVE_SUPERPOWER && GoodIdeaToRaiseAttackAgainst(bankAtk, bankDef, 1))
+					goto AI_ATTACK_PLUS;
+			}
+			break;
+
+		case EFFECT_OVERHEAT:
+			if (atkAbility == ABILITY_CONTRARY
+			&& GoodIdeaToRaiseSpAttackAgainst(bankAtk, bankDef, 2))
+				goto AI_SP_ATTACK_PLUS;
 			break;
 
 		case EFFECT_MAGIC_COAT:

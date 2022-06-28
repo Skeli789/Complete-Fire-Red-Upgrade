@@ -1746,6 +1746,13 @@ void TryChangeMoveTargetToCounterPlayerProtectCheese(void)
 //The smart AI should actually pick a good move
 void PickRaidBossRepeatedMove(u8 moveLimitations)
 {
+	if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+	{
+		//Use the same move again, but allow the target to be changed up
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, FALSE);
+		return;
+	}
+
 	if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE //Has smart AI
 	#ifdef VAR_GAME_DIFFICULTY
 	&& VarGet(VAR_GAME_DIFFICULTY) != OPTIONS_EASY_DIFFICULTY //And the player doesn't want a challenge

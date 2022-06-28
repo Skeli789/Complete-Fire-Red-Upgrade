@@ -79,6 +79,7 @@ extern void sp09A_StopSounds(void);
 //This file's functions
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
 static u16 TryRandomizePumpkabooForm(u16 species);
+static bool8 SpeciesHasMultipleSearchableForms(u16 species);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static void UpdatePlayerDistances(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
@@ -681,7 +682,10 @@ static void DexNavShowFieldMessage(u8 id)
 	switch(id)
 	{
 		case FIELD_MSG_NOT_IN_AREA:
-			gLoadPointer = gText_CannotBeFound;
+			if (SpeciesHasMultipleSearchableForms(species))
+				gLoadPointer = gText_FormCannotBeFound;
+			else
+				gLoadPointer = gText_CannotBeFound;
 			break;
 		case FIELD_MSG_LOOK_IN_OTHER_SPOT:
 			gLoadPointer = gText_NotFoundNearby;

@@ -15502,7 +15502,7 @@ static struct Raid sCubeCorpRaids5Star[] =
 			/* 50 %*/ ITEM_BLACK_AUGURITE,
 			/* 50 %*/ ITEM_PEARL_STRING,
 			/* 30 %*/ ITEM_RARE_CANDY,
-			/* 30 %*/ ITEM_STEEL_GEM,
+			/* 30 %*/ ITEM_BUG_GEM,
 			/* 25 %*/ ITEM_HEART_SCALE,
 			/* 25 %*/ ITEM_IRON_BALL,
 			/*  5 %*/ ITEM_WISHING_PIECE,

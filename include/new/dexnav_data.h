@@ -57,6 +57,7 @@ extern const u8 gText_GotAway[];
 extern const u8 gText_LostSignal[];
 extern const u8 gText_GotAwayShouldSneak[];
 extern const u8 gText_CannotBeFound[];
+extern const u8 gText_FormCannotBeFound[];
 extern const u8 gText_NotFoundNearby[];
 extern const u8 gText_TooDarkForDexNav[];
 extern const u8 gText_DexNav_Chain[];
@@ -798,3 +799,90 @@ static const struct SpriteSheet sStarDullSpriteSheet = {&gInterfaceGfx_dexnavSta
 #endif
 const struct SpriteSheet gHeldItemSpriteSheet = {(const u8*) 0x845A3AC, (8 * 16) / 2, GFX_TAG_HELD_ITEM};
 const struct SpritePalette gHeldItemSpritePalette = {(const u16*) 0x0845A3EC, GFX_TAG_HELD_ITEM};
+
+static bool8 SpeciesHasMultipleSearchableForms(u16 species)
+{
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	
+	switch (dexNum)
+	{
+		case NATIONAL_DEX_RATTATA:
+		case NATIONAL_DEX_RATICATE:
+		case NATIONAL_DEX_PIKACHU:
+		case NATIONAL_DEX_RAICHU:
+		case NATIONAL_DEX_SANDSHREW:
+		case NATIONAL_DEX_SANDSLASH:
+		case NATIONAL_DEX_VULPIX:
+		case NATIONAL_DEX_NINETALES:
+		case NATIONAL_DEX_DIGLETT:
+		case NATIONAL_DEX_DUGTRIO:
+		case NATIONAL_DEX_MEOWTH:
+		case NATIONAL_DEX_PERSIAN:
+		case NATIONAL_DEX_GROWLITHE:
+		case NATIONAL_DEX_ARCANINE:
+		case NATIONAL_DEX_GEODUDE:
+		case NATIONAL_DEX_GRAVELER:
+		case NATIONAL_DEX_GOLEM:
+		case NATIONAL_DEX_PONYTA:
+		case NATIONAL_DEX_RAPIDASH:
+		case NATIONAL_DEX_SLOWPOKE:
+		case NATIONAL_DEX_SLOWBRO:
+		case NATIONAL_DEX_FARFETCHD:
+		case NATIONAL_DEX_GRIMER:
+		case NATIONAL_DEX_MUK:
+		case NATIONAL_DEX_VOLTORB:
+		case NATIONAL_DEX_ELECTRODE:
+		case NATIONAL_DEX_EXEGGUTOR:
+		case NATIONAL_DEX_MAROWAK:
+		case NATIONAL_DEX_WEEZING:
+		case NATIONAL_DEX_MR_MIME:
+		case NATIONAL_DEX_ARTICUNO:
+		case NATIONAL_DEX_ZAPDOS:
+		case NATIONAL_DEX_MOLTRES:
+		case NATIONAL_DEX_TYPHLOSION:
+		case NATIONAL_DEX_CORSOLA:
+		case NATIONAL_DEX_SLOWKING:
+		case NATIONAL_DEX_UNOWN:
+		case NATIONAL_DEX_QWILFISH:
+		case NATIONAL_DEX_SNEASEL:
+		case NATIONAL_DEX_ZIGZAGOON:
+		case NATIONAL_DEX_LINOONE:
+		case NATIONAL_DEX_DEOXYS:
+		case NATIONAL_DEX_BURMY:
+		case NATIONAL_DEX_WORMADAM:
+		case NATIONAL_DEX_SHELLOS:
+		case NATIONAL_DEX_GASTRODON:
+		case NATIONAL_DEX_SAMUROTT:
+		case NATIONAL_DEX_DARUMAKA:
+		case NATIONAL_DEX_DARMANITAN:
+		case NATIONAL_DEX_LILLIGANT:
+		case NATIONAL_DEX_YAMASK:
+		case NATIONAL_DEX_BASCULIN:
+		case NATIONAL_DEX_ZORUA:
+		case NATIONAL_DEX_ZOROARK:
+		case NATIONAL_DEX_DEERLING:
+		case NATIONAL_DEX_SAWSBUCK:
+		case NATIONAL_DEX_STUNFISK:
+		case NATIONAL_DEX_BRAVIARY:
+		case NATIONAL_DEX_VIVILLON:
+		case NATIONAL_DEX_FLABEBE:
+		case NATIONAL_DEX_FLOETTE:
+		case NATIONAL_DEX_SLIGGOO:
+		case NATIONAL_DEX_GOODRA:
+		case NATIONAL_DEX_AVALUGG:
+		case NATIONAL_DEX_PUMPKABOO:
+		case NATIONAL_DEX_GOURGEIST:
+		case NATIONAL_DEX_DECIDUEYE:
+		case NATIONAL_DEX_ORICORIO:
+		case NATIONAL_DEX_LYCANROC:
+		case NATIONAL_DEX_TOXTRICITY:
+		case NATIONAL_DEX_SINISTEA:
+		case NATIONAL_DEX_POLTEAGEIST:
+		case NATIONAL_DEX_ALCREMIE:
+		case NATIONAL_DEX_URSHIFU:
+		case NATIONAL_DEX_BASCULEGION:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}

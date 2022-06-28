@@ -126,6 +126,9 @@ There is no reaction.\nThe signal was lost!
 #org @gText_CannotBeFound
 [BUFFER1] cannot be found here.
 
+#org @gText_FormCannotBeFound
+That form of [BUFFER1] cannot\nbe found here.
+
 #org @gText_NotFoundNearby
 [BUFFER1] couldn't be found nearby.\nTry looking in a different area!
 
