@@ -1068,10 +1068,10 @@ SKIP_CHECK_TARGET:
 			}
 			break;
 
-		case EFFECT_DEF_EVSN_UP: //Shelter
+		case EFFECT_DEF_SPD_UP: //Shelter
 			if (data->atkAbility == ABILITY_CONTRARY || GOOD_AI_MOVE_LOCKED)
 				DECREASE_VIABILITY(10);
-			else if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+			else if (!AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && !AI_STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
 				DECREASE_VIABILITY(10);
 			break;
 

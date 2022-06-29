@@ -1274,7 +1274,7 @@ Resentment that may\nfreeze hits the foe.\nIts power doubles if\nthe foe is froz
 #endif
 
 #org @DESC_SHELTER
-The user makes its\nskin iron-hard to\nraise its Defense\nand its evasiveness.
+The user makes its\nskin iron-hard to\nraise its Defense\nand its Speed.
 
 #org @DESC_TRIPLE_ARROWS
 The foe is shot with\narrows that raise the\ncrit ratio and lower\nthe foe's Defense.

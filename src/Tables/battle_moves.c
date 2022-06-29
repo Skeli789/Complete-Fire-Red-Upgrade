@@ -12296,7 +12296,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SHELTER] =
 	{
-		.effect = EFFECT_DEF_EVSN_UP,
+		.effect = EFFECT_DEF_SPD_UP,
 		.power = 0,
 		.type = TYPE_STEEL,
 		.accuracy = 0,

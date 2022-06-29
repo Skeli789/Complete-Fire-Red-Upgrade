@@ -215,7 +215,7 @@ gBattleScriptsForMoveEffects:
 .word BS_197_SecretPower
 .word BS_198_RaiseUserAtkSpAtk
 .word BS_199_RaiseUserAtkAcc
-.word BS_200_RaiseUserDefEvsn	@was blaze kick
+.word BS_200_RaiseUserDefSpeed	@was blaze kick
 .word BS_201_MudSport
 .word BS_202_VenomDrench	@was poison fang
 .word BS_203_PlayNice	@was weather ball

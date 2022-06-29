@@ -4303,27 +4303,27 @@ RaiseUserAtkAcc_Acc:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_200_RaiseUserDefEvsn @;Was Blaze Kick
-BS_200_RaiseUserDefEvsn:
+.global BS_200_RaiseUserDefSpeed @;Was Blaze Kick
+BS_200_RaiseUserDefSpeed:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstat BANK_TARGET LESSTHAN STAT_DEF STAT_MAX RaiseUserDefEvsn_Def
-	jumpifstat BANK_TARGET EQUALS STAT_EVSN STAT_MAX BattleScript_CantRaiseMultipleStats
+	jumpifstat BANK_TARGET LESSTHAN STAT_DEF STAT_MAX RaiseUserDefSpeed_Def
+	jumpifstat BANK_TARGET EQUALS STAT_SPD STAT_MAX BattleScript_CantRaiseMultipleStats
 
-RaiseUserDefEvsn_Def:
+RaiseUserDefSpeed_Def:
 	attackanimation
 	waitanimation
 	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF | STAT_ANIM_EVSN, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF | STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_DEF | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN RaiseUserDefEvsn_Evasion
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDefEvsn_Evasion
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN RaiseUserDefSpeed_Evasion
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDefSpeed_Evasion
 	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
-RaiseUserDefEvsn_Evasion:
-	setstatchanger STAT_EVSN | INCREASE_1
+RaiseUserDefSpeed_Evasion:
+	setstatchanger STAT_SPD | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable gStatUpStringIds

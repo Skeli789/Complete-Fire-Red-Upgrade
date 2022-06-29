@@ -315,10 +315,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			}
 			break;
 
-		case EFFECT_DEF_EVSN_UP:
+		case EFFECT_DEF_SPD_UP:
 			if (atkAbility != ABILITY_CONTRARY)
 			{
-				if (GoodIdeaToRaiseEvasionAgainst(bankAtk, bankDef, 1))
+				if (GoodIdeaToRaiseSpeedAgainst(bankAtk, bankDef, 2, data->atkSpeed, data->defSpeed))
 					goto AI_EVASION_PLUS;
 				else if ((defRet = GoodIdeaToRaiseDefenseAgainst(bankAtk, bankDef, 1)))
 					goto AI_DEFENSE_PLUS;

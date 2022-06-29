@@ -489,7 +489,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 				case EFFECT_EVASION_UP:
 				case EFFECT_ATK_SPATK_UP:
 				case EFFECT_ATK_ACC_UP:
-				case EFFECT_DEF_EVSN_UP:
+				case EFFECT_DEF_SPD_UP:
 				case EFFECT_ATTACK_UP_2:
 				case EFFECT_DEFENSE_UP_2:
 				case EFFECT_SPEED_UP_2:
