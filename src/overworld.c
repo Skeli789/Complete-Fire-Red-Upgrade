@@ -90,6 +90,9 @@ static u8 GetPlayerMapObjId(void);
 static u8 GetNPCDirectionFaceToPlayer(u8 eventObj);
 static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
 static void UpdateJPANStepCounters(void);
+#ifdef DEXNAV_DETECTOR_MODE
+static void Task_StartDexNavHUDAfterScript(u8 taskId);
+#endif
 static const u8* GetCustomWalkingScript(void);
 static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
@@ -1488,6 +1491,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 			ScriptContext1_SetupScript(EventScript_VSSeeker);
 			return TRUE;
 		}
+
 		if (UpdatePoisonStepCounter() == TRUE)
 		{
 			#ifndef POISON_1_HP_SURVIVAL
@@ -1495,6 +1499,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 			#endif
 			return TRUE;
 		}
+
 		if (ShouldEggHatch())
 		{
 			sp09A_StopSounds();
@@ -1503,6 +1508,36 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 			ScriptContext1_SetupScript(EventScript_EggHatch);
 			return TRUE;
 		}
+
+		#ifdef DEXNAV_DETECTOR_MODE
+		extern bool8 GetGen8SpeciesForDexNavDetectorMode(u8 blockProperties);
+		if (FlagGet(FLAG_SYS_DEXNAV)
+		&& FlagGet(FLAG_GEN_8_PLACED_IN_GAME)
+		&& VarGet(VAR_R_BUTTON_MODE) == OPTIONS_R_BUTTON_MODE_DEXNAV //Only when player is trying to use the DexNav to find Pokemon
+		&& (Random() % 10) == 0 //Adjust rate so it doesn't happen as often
+		&& Overworld_GetFlashLevel() == 0 //DexNav can't be used here in general
+		&& (VarGet(VAR_REPEL_STEP_COUNT) == 0 || VarGet(VAR_REPEL_STEP_COUNT) >= 50) //Only when the repel isn't on or repel will take time to wear off
+		&& !IsDexNavHudActive())
+		{
+			s16 x, y;
+			PlayerGetDestCoords(&x, &y);
+			u32 currMetatileField = MapGridGetMetatileField(x, y, 0xFF);
+			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(currMetatileField, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
+
+			if ((blockProperties == TILE_FLAG_ENCOUNTER_TILE || blockProperties == TILE_FLAG_SURFABLE) //And only when standing in grass/on water
+			&& GetGen8SpeciesForDexNavDetectorMode(blockProperties))
+			{
+				u8 taskId = CreateTask(Task_StartDexNavHUDAfterScript, 0xFF);
+				if (taskId != 0xFF)
+				{
+					gTasks[taskId].data[0] = Var8000;
+					gTasks[taskId].data[1] = Var8001;
+					ScriptContext1_SetupScript(SystemScript_DexNavDetector);
+					return TRUE;
+				}
+			}
+		}
+		#endif
 
 		const u8* customWalkingScript = GetCustomWalkingScript();
 		if (customWalkingScript != NULL)
@@ -1534,6 +1569,18 @@ static void UpdateJPANStepCounters(void)
 	if (FlagGet(FLAG_SMALL_PEDOMETER_2) && gPedometers->smallTwo < 0xFF)
 		++gPedometers->smallTwo;
 }
+
+#ifdef DEXNAV_DETECTOR_MODE
+static void Task_StartDexNavHUDAfterScript(u8 taskId)
+{
+	if (!ScriptContext2_IsEnabled())
+	{
+		gLastDexNavSpecies = SPECIES_NONE; //Because it's special
+		InitDexNavHUD(gTasks[taskId].data[0], gTasks[taskId].data[1], TRUE);
+		DestroyTask(taskId);
+	}
+}
+#endif
 
 static const u8* GetCustomWalkingScript(void)
 {

@@ -269,7 +269,7 @@ bool8 StartRButtonFunc(void)
 	{
 		DismissMapNamePopup();
 		ChangeBgY(0, 0, 0);
-		if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15))
+		if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15, FALSE))
 			return TRUE; //HUD wasn't enabled and a script was started instead
 		return FALSE; //Don't enable the script context
 	}
@@ -280,7 +280,7 @@ bool8 StartRButtonFunc(void)
 			{
 				DismissMapNamePopup();
 				ChangeBgY(0, 0, 0);
-				if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15))
+				if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15, FALSE))
 					return TRUE; //HUD wasn't enabled and a script was started instead
 				return FALSE; //Don't enable the script context
 			}

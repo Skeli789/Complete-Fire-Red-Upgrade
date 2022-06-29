@@ -135,6 +135,9 @@ That form of [BUFFER1] cannot\nbe found here.
 #org @gText_TooDarkForDexNav
 It's too dark to search for\na Pok\emon!
 
+#org @gText_DexNavDetectedRarePokemon
+Huh? The DexNav is detecting an\nunusual Pok\emon!
+
 #org @gText_DexNav_UpArrow
 [ARROW_UP]
 

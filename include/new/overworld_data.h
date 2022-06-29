@@ -36,6 +36,7 @@ extern const u8 EventScript_TryDoTwoOpponentRematchBattle[];
 extern const u8 SystemScript_PoisonSurvial[];
 extern const u8 EventScript_RepelWoreOff[];
 extern const u8 EventScript_BwRepelWoreOff[];
+extern const u8 SystemScript_DexNavDetector[];
 extern const u8 EventScript_ShowSelectItems[];
 extern const u8 EventScript_TVSwarm[];
 extern const u8 EventScript_LockedDoor[];

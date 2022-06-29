@@ -82,9 +82,9 @@ static u16 TryRandomizePumpkabooForm(u16 species);
 static bool8 SpeciesHasMultipleSearchableForms(u16 species);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static void UpdatePlayerDistances(s16 x, s16 y);
-static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
-static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
-static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
+static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan, bool8 detectorMode);
+static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode);
+static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode);
 //static void DexHUDHBlank(void);
 static void DexNavProximityUpdate(void);
 static void NullSubHBlank(void);
@@ -96,8 +96,8 @@ static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
 static void Task_ManageDexNavHUD(u8 taskId);
 static u8 GetTotalEncounterChance(u16 species, u8 environment);
-static u8 GetEncounterLevel(u16 species, u8 environment);
-static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment);
+static u8 GetEncounterLevel(u16 species, u8 environment, bool8 detectorMode);
+static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment, bool8 detectorMode);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
@@ -111,7 +111,7 @@ static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr);
 static void DexNavHudDrawSpeciesIcon(u16 species, u8* spriteIdAddr);
 static void DexNavDrawHeldItem(u8* spriteIdAddr);
-static void DexNavDrawIcons(void);
+static void DexNavDrawIcons(bool8 detectorMode);
 static void ExecDexNavHUD(void);
 
 //GUI Functions
@@ -341,13 +341,15 @@ static void UpdatePlayerDistances(s16 x, s16 y)
 	sDexNavHudPtr->yProximity = abs(y - (gSaveBlock1->pos.y + 7));
 }
 
-static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan)
+static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan, bool8 detectorMode)
 {
 	// area of map to cover starting from camera position {-7, 7}
-	s16 topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
+	s16 leftX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
 	s16 topY = gSaveBlock1->pos.y - SCANSTART_Y + (smallScan * 5);
-	s16 botX = topX + areaX;
+	s16 rightX = leftX + areaX;
 	s16 botY = topY + areaY;
+	s16 lastGoodX = -1000;
+	s16 lastGoodY = -1000;
 
 	// loop through every tile in area and evaluate
 	while (topY < botY)
@@ -361,24 +363,24 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 		if (topY >= gMapHeader.mapLayout->height)
 			break; //Off map on bottom
 
-		while (topX < botX)
+		while (leftX < rightX)
 		{
-			if (topX < 0) //Off map on left
+			if (leftX < 0) //Off map on left
 			{
-				topX += 1; //Check 1 to the right
+				leftX += 1; //Check 1 to the right
 				continue;
 			}
 
-			if (topX >= gMapHeader.mapLayout->width)
+			if (leftX >= gMapHeader.mapLayout->width)
 				break; //Off map on right
 
-			u32 tileBehaviour = MapGridGetMetatileField(topX + 7, topY + 7, 0xFF);
+			u32 tileBehaviour = MapGridGetMetatileField(leftX + 7, topY + 7, 0xFF);
 			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 			
-			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(topX + 7, topY + 7)))
+			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(leftX + 7, topY + 7)))
 			{
 				//Fix a bug where dust clouds would act weird in caves on sideways stairs
-				topX += 1;
+				leftX += 1;
 				continue;
 			}
 
@@ -386,7 +388,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 			bool8 goNext = FALSE;
 			for (u8 i = 0; i < EVENT_OBJECTS_COUNT; ++i)
 			{
-				if (gEventObjects[i].currentCoords.x == topX + 7 && gEventObjects[i].currentCoords.y == topY + 7)
+				if (gEventObjects[i].currentCoords.x == leftX + 7 && gEventObjects[i].currentCoords.y == topY + 7)
 				{
 					goNext = TRUE;
 					break;
@@ -395,7 +397,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 
 			if (goNext)
 			{
-				topX += 1;
+				leftX += 1;
 				continue;
 			}
 
@@ -409,46 +411,61 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 				if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
 					//Water
-					scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2);
+					scale = 320 - (smallScan * 200) - (GetPlayerDistance(leftX + 7, topY + 7) / 2);
 					scaleMax = 3;
 				}
 				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
 					//Cave basically needs another check to see if the tile is passable
-					scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX + 7, topY + 7) / 2)  - (2 * (topX + topY));
+					scale = 320 - (smallScan * 200) - (GetPlayerDistance(leftX + 7, topY + 7) / 2)  - (2 * (leftX + topY));
 					if (scale < 1) scale = 1;
 					scaleMax = 3;
 				}
 				else //Grass land
 				{
-					scale = 100 - (GetPlayerDistance(topX + 7, topY + 7) * 2);
+					scale = 100 - (GetPlayerDistance(leftX + 7, topY + 7) * 2);
 					scaleMax = 5;
 				}
 
-				weight = Random() % scale <= scaleMax
-					&& !IsZCoordMismatchAt(sDexNavHudPtr->elevation, topX + 7, topY + 7) //Must be on same elevation
-					&& !MapGridIsImpassableAt(topX + 7, topY + 7); //Can walk on tile
+				weight = !IsZCoordMismatchAt(sDexNavHudPtr->elevation, leftX + 7, topY + 7) //Must be on same elevation
+				      && !MapGridIsImpassableAt(leftX + 7, topY + 7); //Can walk on tile
 
 				if (weight)
 				{
-					*xBuff = topX + 7;
-					*yBuff = topY + 7;
+					lastGoodX = leftX + 7;
+					lastGoodY = topY + 7;
+				}
+
+				weight = weight && Random() % scale <= scaleMax;
+
+				if (weight)
+				{
+					*xBuff = lastGoodX;
+					*yBuff = lastGoodY;
 					return TRUE;
 				}
 			}
 
-			topX += 1;
+			leftX += 1;
 		}
 
 		topY += 1;
-		topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
+		leftX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
+	}
+
+	if (detectorMode && lastGoodX != -1000 && lastGoodY != -1000)
+	{
+		//Must alays work
+		*xBuff = lastGoodX;
+		*yBuff = lastGoodY;
+		return TRUE;
 	}
 
 	return FALSE;
 }
 
 
-static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
+static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode)
 {
 	//Pick a specific tile based on environment
 	u8 targetBehaviour;
@@ -462,13 +479,13 @@ static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 			break;
 	}
 
-	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, smallScan);
+	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, smallScan, detectorMode);
 }
 
 
-static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
+static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode)
 {
-	if (DexNavPickTile(environment, xSize, ySize, smallScan))
+	if (DexNavPickTile(environment, xSize, ySize, smallScan, detectorMode))
 	{
 		u8 fieldEffect;
 		u8 metatileBehaviour = MapGridGetMetatileField(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY, 0xFF);
@@ -1049,7 +1066,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	&& sDexNavHudPtr->movementTimes < 2)
 	{
 		StopDexNavFieldEffect();
-		while(!ShakingGrass(sDexNavHudPtr->environment, 8, 8, 1));
+		while(!ShakingGrass(sDexNavHudPtr->environment, 8, 8, 1, FALSE));
 		sDexNavHudPtr->movementTimes += 1;
 	}
 	#endif
@@ -1154,7 +1171,7 @@ static u8 GetTotalEncounterChance(u16 species, u8 environment)
 	return chance;
 }
 
-static u8 GetEncounterLevel(u16 species, u8 environment)
+static u8 GetEncounterLevel(u16 species, u8 environment, bool8 detectorMode)
 {
 	u32 i;
 	const struct WildPokemon* monData;
@@ -1186,12 +1203,17 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			{
 				//Check swarming mon
 				u8 swarmIndex = GetCurrentSwarmIndex();
-				if (IsValidSwarmIndex(swarmIndex))
+				if (detectorMode)
+				{
+					goto PICK_RANDOM_LAND_LEVEL;
+				}
+				else if (IsValidSwarmIndex(swarmIndex))
 				{
 					if (GetCurrentRegionMapSectionId() == gSwarmTable[swarmIndex].mapName
 					&& species == gSwarmTable[swarmIndex].species)
 					{
 						//Pick index at random and choose min and max from there
+						PICK_RANDOM_LAND_LEVEL:
 						i = RandRange(0, NELEMS(landMonsInfo->wildPokemon));
 						monData = &landMonsInfo->wildPokemon[i];
 						min = monData->minLevel;
@@ -1220,6 +1242,15 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 				if (i < NUM_WATER_MONS) //Pokemon found here
 					break;
+
+				if (detectorMode)
+				{
+					i = RandRange(0, NELEMS(waterMonsInfo->wildPokemon));
+					monData = &landMonsInfo->wildPokemon[i];
+					min = monData->minLevel;
+					max = monData->maxLevel;
+					break;
+				}
 			}
 
 			if (fishingMonsInfo != NULL)
@@ -1237,6 +1268,15 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 				if (i < NUM_FISHING_MONS) //Pokemon found here
 					break;
+
+				if (detectorMode)
+				{
+					i = RandRange(0, NELEMS(fishingMonsInfo->wildPokemon));
+					monData = &landMonsInfo->wildPokemon[i];
+					min = monData->minLevel;
+					max = monData->maxLevel;
+					break;
+				}
 			}
 
 			return MAX_LEVEL + 1; //Hidden pokemon should only appear on walkable tiles or surf tiles
@@ -1257,11 +1297,11 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 
 
 extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
-static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
+static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment, bool8 detectorMode)
 {
 	u8 levelBase, levelBonus;
 
-	levelBase = GetEncounterLevel(species, environment);
+	levelBase = GetEncounterLevel(species, environment, detectorMode);
 	if (levelBase > MAX_LEVEL)
 		return 0;
 
@@ -1725,7 +1765,7 @@ void DexNavDrawHeldItem(u8* spriteIdAddr)
 	*spriteIdAddr = spriteId;
 }
 
-static void DexNavDrawIcons(void)
+static void DexNavDrawIcons(bool8 detectorMode)
 {
 	u8 searchLevel = sDexNavHudPtr->searchLevel;
 	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
@@ -1733,15 +1773,27 @@ static void DexNavDrawIcons(void)
 	DexNavDrawChainNumber(&sDexNavHudPtr->spriteIdChainNumber);
 	DexNavDrawSight(sDexNavHudPtr->totalProximity, &sDexNavHudPtr->spriteIdSight);
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
-	DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
-	DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
-	DexNavDrawAbility(sDexNavHudPtr->ability, sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdAbility);
-	DexNavDrawPotential(sDexNavHudPtr->potential, &sDexNavHudPtr->spriteIdPotential[0]);
-	DexNavHudDrawSpeciesIcon(sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdSpecies);
+	
+	if (!detectorMode)
+	{
+		DexNavDrawMove(sDexNavHudPtr->moveId[0], searchLevel, &sDexNavHudPtr->spriteIdMove);
+		DexNavDrawHeldItem(&sDexNavHudPtr->spriteIdItem);
+		DexNavDrawAbility(sDexNavHudPtr->ability, sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdAbility);
+		DexNavDrawPotential(sDexNavHudPtr->potential, &sDexNavHudPtr->spriteIdPotential[0]);
+		DexNavHudDrawSpeciesIcon(sDexNavHudPtr->species, &sDexNavHudPtr->spriteIdSpecies);
+	}
+	else
+	{
+		DexNavHudDrawSpeciesIcon(SPECIES_NONE, &sDexNavHudPtr->spriteIdSpecies); //Show ? instead of species
+		sDexNavHudPtr->spriteIdMove = MAX_SPRITES;
+		sDexNavHudPtr->spriteIdItem = MAX_SPRITES;
+		sDexNavHudPtr->spriteIdAbility = MAX_SPRITES;
+		Memset(sDexNavHudPtr->spriteIdPotential, MAX_SPRITES, sizeof(sDexNavHudPtr->spriteIdPotential));
+	}
 }
 
 extern void sp0AF_DismountBicyle(void);
-bool8 InitDexNavHUD(u16 species, u8 environment)
+bool8 InitDexNavHUD(u16 species, u8 environment, bool8 detectorMode)
 {
 	if (Overworld_GetFlashLevel() > 0)
 	{
@@ -1774,7 +1826,7 @@ bool8 InitDexNavHUD(u16 species, u8 environment)
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	u8 searchLevel = gDexNavSearchLevels[dexNum];
 	sDexNavHudPtr->searchLevel = searchLevel;
-	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment);
+	sDexNavHudPtr->pokemonLevel = DexNavGenerateMonLevel(sDexNavHudPtr->species, gCurrentDexNavChain, environment, detectorMode);
 
 	if (sDexNavHudPtr->pokemonLevel < 1)
 	{
@@ -1787,10 +1839,10 @@ bool8 InitDexNavHUD(u16 species, u8 environment)
 	u8 randVal = (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT)) ? 0 : Random() % 100; //Pokemon already caught are easy to catch again
 	sDexNavHudPtr->elevation = gEventObjects[gPlayerAvatar->eventObjectId].currentElevation; //Constant elevation for all tiles (helps prevent crashes in caves)
 	//*((u8*) 0x2023D70) = randVal; //For debugging
-	if (randVal >= totalEncounterChance * 2 //Harder Pokemon to find in the area are half as hard to find with the DexNav
-	|| gDexNavCooldown
-	|| VarGet(VAR_REPEL_STEP_COUNT) == 1 //1 step remaining on the repel - player takes a step, repel wears off and they can search again
-	|| !ShakingGrass(environment, 12, 12, 0)) //Draw shaking tile
+	if ((!detectorMode && randVal >= totalEncounterChance * 2) //Harder Pokemon to find in the area are half as hard to find with the DexNav
+	|| (!detectorMode && gDexNavCooldown)
+	|| (!detectorMode && VarGet(VAR_REPEL_STEP_COUNT) == 1) //1 step remaining on the repel - player takes a step, repel wears off and they can search again
+	|| !ShakingGrass(environment, 12, 12, 0, detectorMode)) //Draw shaking tile
 	{
 		Free(sDexNavHudPtr);
 		gDexNavCooldown = TRUE; //A Pokemon can't be found until the player takes at least one step or searches for another Pokemon manually
@@ -1806,7 +1858,7 @@ bool8 InitDexNavHUD(u16 species, u8 environment)
 	DexNavProximityUpdate();
 
 	//Draw icons
-	DexNavDrawIcons();
+	DexNavDrawIcons(detectorMode);
 
 	//Hide icons based on proximity and search level
 	DexNavIconsVisionUpdate(sDexNavHudPtr->totalProximity, searchLevel);
@@ -1834,7 +1886,7 @@ static void ExecDexNavHUD(void)
 	if (!gPaletteFade->active && !ScriptContext2_IsEnabled() && gMain.callback2 == CB2_Overworld)
 	{
 		SetMainCallback1(CB1_Overworld);
-		InitDexNavHUD(Var8008, Var8009);
+		InitDexNavHUD(Var8008, Var8009, FALSE);
 	}
 }
 
