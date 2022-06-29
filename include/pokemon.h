@@ -621,6 +621,7 @@ enum EvolutionMethods
 	EVO_ITEM_HOLD_ITEM, // Use and item on a Pokemon while its holding an item
 	EVO_MOVE_MALE, // Knows a given move and is male
 	EVO_MOVE_FEMALE, // Knows a given move and is female
+	EVO_ITEM_NIGHT, // Item is used on it at night
 };
 #define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE
