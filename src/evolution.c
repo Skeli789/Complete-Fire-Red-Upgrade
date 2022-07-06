@@ -233,6 +233,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					}
 					break;
 
+				case EVO_DAMAGE_LOCATION:
+					if((GetMonData(mon, MON_DATA_MAX_HP, NULL) - GetMonData(mon, MON_DATA_HP, NULL) >= gEvolutionTable[species][i].unknown) &&GetMonData(mon, MON_DATA_MAX_HP, NULL) != 0)
+					{
+						if (GetCurrentRegionMapSectionId() == gEvolutionTable[species][i].param) //Based on map name
+						{
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							break;
+						} 
+					}
+					break;
 				case EVO_LEVEL_SPECIFIC_TIME_RANGE: ;
 					#ifdef TIME_ENABLED
 						u8 startTime = (gEvolutionTable[species][i].unknown >> 8) & 0xFF;	//upper byte
