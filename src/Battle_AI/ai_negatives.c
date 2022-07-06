@@ -117,7 +117,7 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 	u16 partnerMove = data->partnerMove;
 	u8 bankAtkPartner = data->bankAtkPartner;
 
-	if(gDisableStructs[gBankAttacker].disabledMove == move)
+	if(gDisableStructs[bankAtk].disabledMove == move)
 	{
 		DECREASE_VIABILITY(20); //Should never use a disabled move
 		return viability;
