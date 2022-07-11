@@ -1426,8 +1426,7 @@ u8 TurnBasedEffects(void)
 						break;
 
 					case ET_Orbz:
-						if (BATTLER_ALIVE(gActiveBattler)
-						&&  gBattleMons[gActiveBattler].status1 == STATUS1_NONE)
+						if (BATTLER_ALIVE(gActiveBattler))
 						{
 							u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 
