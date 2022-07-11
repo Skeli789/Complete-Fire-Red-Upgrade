@@ -960,6 +960,11 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	sPartyMenuInternal->numActions = 0;
 	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
 
+	#ifdef FLAG_SANDBOX_MODE
+	if (FlagGet(FLAG_SANDBOX_MODE) && FlagGet(FLAG_SYS_GAME_CLEAR))
+		goto SKIP_FIELD_MOVES;
+	#endif
+
 	//Add field moves to action list
 	for (i = 0, k = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -1055,6 +1060,7 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	}
 	#endif
 
+SKIP_FIELD_MOVES:
 	if (!ShouldDisablePartyMenuItemsBattleTower())
 	{
 		if (GetMonData(&mons[1], MON_DATA_SPECIES, NULL) != SPECIES_NONE)

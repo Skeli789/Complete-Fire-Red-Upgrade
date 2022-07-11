@@ -1711,7 +1711,11 @@ void atkFF2B_trysetburn(void)
 	{
 		return;
 	}
-	if (IsOfType(bank, TYPE_FIRE))
+	else if (IsOfType(bank, TYPE_FIRE)
+	#ifdef UNBOUND
+	|| SPECIES(bank) == SPECIES_SHADOW_WARRIOR
+	#endif
+	)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;

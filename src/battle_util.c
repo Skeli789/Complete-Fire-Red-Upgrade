@@ -2274,6 +2274,11 @@ bool8 CanBeBurned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 	if (IsOfType(bankDef, TYPE_FIRE))
 		return FALSE;
 
+	#ifdef UNBOUND
+	if (SPECIES(bankDef) == SPECIES_SHADOW_WARRIOR)
+		return FALSE;
+	#endif
+
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{
 		switch (defAbility) {
@@ -2296,6 +2301,11 @@ bool8 CanBeFrozen(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 	if (IsOfType(bankDef, TYPE_ICE))
 		return FALSE;
+
+	#ifdef UNBOUND
+	if (SPECIES(bankDef) == SPECIES_SHADOW_WARRIOR)
+		return FALSE;
+	#endif
 
 	if (!IsTargetAbilityIgnoredNoMove(defAbility, atkAbility)) //Target's Ability is not ignored
 	{

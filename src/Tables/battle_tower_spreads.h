@@ -2104,32 +2104,6 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_WIGGLYTUFF,
-		.nature = NATURE_MODEST,
-		.hpIv = 31,
-		.atkIv = 0,
-		.defIv = 31,
-		.spAtkIv = 31,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.defEv = 128,
-		.spAtkEv = 252,
-		.spDefEv = 128,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_COMPETITIVE
-		.item = ITEM_WEAKNESS_POLICY,
-		.moves =
-		{
-			MOVE_HYPERVOICE,
-			MOVE_FLEURCANNON,
-			MOVE_FIREBLAST,
-			MOVE_THUNDERBOLT,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
-		.species = SPECIES_WIGGLYTUFF,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
@@ -2218,13 +2192,13 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 128,
 		.spAtkEv = 252,
 		.spDefEv = 128,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DAZZLING
+		.ability = FRONTIER_ABILITY_2, //ABILITY_COMPETITIVE
 		.item = ITEM_CHOICE_SPECS,
 		.moves =
 		{
 			MOVE_HYPERVOICE,
-			MOVE_FLEURCANNON,
 			MOVE_DAZZLINGGLEAM,
+			MOVE_THUNDERBOLT,
 			MOVE_INCINERATE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -11895,7 +11869,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_CRUSHGRIP,
+			MOVE_DOUBLEEDGE,
 			MOVE_CLOSECOMBAT,
 			MOVE_ICEPUNCH,
 			MOVE_CRUNCH,

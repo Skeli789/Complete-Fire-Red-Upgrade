@@ -2397,8 +2397,9 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	for (j = 0; j < MAX_MON_MOVES; j++)
 	{
 		mon->moves[j] = spread->moves[j];
-		mon->pp[j] = CalculatePPWithBonus(spread->moves[j], 0xFF, j);
-		mon->ppBonuses = 0xFF; //Max PP
+		if (mon->moves[j] != MOVE_NONE)
+			mon->ppBonuses |= (3 << (j * 2)); //Max PP
+		mon->pp[j] = CalculatePPWithBonus(spread->moves[j], mon->ppBonuses, j);
 	}
 
 	SetMonData(mon, MON_DATA_HELD_ITEM, &spread->item);
@@ -4344,6 +4345,13 @@ void ForceMonShiny(struct Pokemon* mon)
 
 void TryRandomizeSpecies(unusedArg u16* species)
 {
+	u32 speciesCount = NUM_SPECIES_RANDOMIZER;
+
+	#ifdef FLAG_GEN_8_PLACED_IN_GAME
+	if (FlagGet(FLAG_GEN_8_PLACED_IN_GAME))
+		speciesCount = NUM_SPECIES_GEN_8;
+	#endif
+
 	#ifdef FLAG_POKEMON_RANDOMIZER
 	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)
 	#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
@@ -4353,24 +4361,24 @@ void TryRandomizeSpecies(unusedArg u16* species)
 	{
 		u16 newSpecies;
 		u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
-		u16 startAt = (id & 0xFFFF) % (u32) NUM_SPECIES_RANDOMIZER;
+		u16 startAt = (id & 0xFFFF) % (u32) speciesCount;
 		u16 xorVal = (id >> 16) % (u32) 0x400; //Only set the bits likely to be in the species
 		u32 numAttempts = 0;
 
 		newSpecies = *species + startAt;
-		if (newSpecies >= NUM_SPECIES_RANDOMIZER)
+		if (newSpecies >= speciesCount)
 		{
-			u16 overflow = newSpecies - (NUM_SPECIES_RANDOMIZER - 2);
+			u16 overflow = newSpecies - (speciesCount - 2);
 			newSpecies = overflow;
 		}
 
 		newSpecies ^= xorVal;
-		newSpecies %= (u32) NUM_SPECIES_RANDOMIZER; //Prevent overflow
+		newSpecies %= (u32) speciesCount; //Prevent overflow
 		
 		while (gSpecialSpeciesFlags[newSpecies].randomizerBan && numAttempts < 100)
 		{
 			newSpecies *= xorVal;
-			newSpecies %= (u32) NUM_SPECIES_RANDOMIZER;
+			newSpecies %= (u32) speciesCount;
 			++numAttempts;
 		}
 

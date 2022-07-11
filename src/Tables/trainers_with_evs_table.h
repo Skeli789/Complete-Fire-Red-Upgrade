@@ -1249,15 +1249,15 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_1,
 	},
 	[126] =
-	{	//Swampert
-		.nature = NATURE_IMPISH,
+	{	//Insane Jax Arcanine
+		.nature = NATURE_TIMID,
 		.ivs = 31,
 		.hpEv = 252,
-		.atkEv = 252,
+		.spAtkEv = 252,
 		.defEv = 252,
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_2,
+		.ability = Ability_1,
 	},
 	[127] =
 	{	//A-Golem

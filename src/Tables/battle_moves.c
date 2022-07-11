@@ -12097,7 +12097,13 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_STONEAXE] =
 	{
 		.effect = EFFECT_SPLINTER,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 65,
+		.z_move_power = 120,
+		#else
+		.power = 80,
+		.z_move_power = 160,
+		#endif
 		.type = TYPE_ROCK,
 		.accuracy = 90,
 		.pp = 15,
@@ -12105,7 +12111,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 120,
 		.split = SPLIT_PHYSICAL,
 		.z_move_effect = 0
 	},
@@ -12313,7 +12318,13 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_TRIPLEARROWS] =
 	{
 		.effect = EFFECT_DEFENSE_DOWN_HIT, //Also raises crit chance
+		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 50,
+		.z_move_power = 100,
+		#else
+		.power = 60,
+		.z_move_power = 120,
+		#endif
 		.type = TYPE_FIGHTING,
 		.accuracy = 100,
 		.pp = 15,
@@ -12321,7 +12332,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 100,
 		.split = SPLIT_PHYSICAL,
 		.z_move_effect = 0
 	},
@@ -12329,7 +12339,13 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_INFERNALPARADE] =
 	{
 		.effect = EFFECT_BURN_HIT, //Also double damage on burned foes
+		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 60,
+		.z_move_power = 120,
+		#else
+		.power = 75,
+		.z_move_power = 140,
+		#endif
 		.type = TYPE_GHOST,
 		.accuracy = 100,
 		.pp = 15,
@@ -12337,7 +12353,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 120,
 		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
@@ -12345,7 +12360,13 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_CEASELESSEDGE] =
 	{
 		.effect = EFFECT_SPLINTER,
+		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 65,
+		.z_move_power = 120,
+		#else
+		.power = 80,
+		.z_move_power = 160,
+		#endif
 		.type = TYPE_DARK,
 		.accuracy = 90,
 		.pp = 15,
@@ -12353,7 +12374,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 120,
 		.split = SPLIT_PHYSICAL,
 		.z_move_effect = 0
 	},
@@ -12363,8 +12383,10 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_FREEZE_HIT,
 		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 95,
+		.z_move_power = 175,
 		#else
 		.power = 105,
+		.z_move_power = 180,
 		#endif
 		.type = TYPE_FLYING,
 		.accuracy = 80,
@@ -12377,7 +12399,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 175,
 		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
@@ -12387,8 +12408,10 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_PARALYZE_HIT,
 		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 95,
+		.z_move_power = 175,
 		#else
 		.power = 105,
+		.z_move_power = 180,
 		#endif
 		.type = TYPE_ELECTRIC,
 		.accuracy = 80,
@@ -12397,7 +12420,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 175,
 		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
@@ -12407,8 +12429,10 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_BURN_HIT,
 		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 95,
+		.z_move_power = 175,
 		#else
 		.power = 105,
+		.z_move_power = 180,
 		#endif
 		.type = TYPE_GROUND,
 		.accuracy = 80,
@@ -12417,7 +12441,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 175,
 		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
@@ -12427,8 +12450,10 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_SPRINGTIDE_STORM, //Omniboost for Incarnate, Lower foe Sp. Def for Therian
 		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 95,
+		.z_move_power = 175,
 		#else
 		.power = 105,
+		.z_move_power = 180,
 		#endif
 		.type = TYPE_FAIRY,
 		.accuracy = 80,
@@ -12437,7 +12462,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 175,
 		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
@@ -15474,26 +15498,30 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_GLACIALLANCE] = 140,
 	[MOVE_DIRECLAW] = 110,
 	[MOVE_PSYSHIELDBASH] = 120,
-	[MOVE_STONEAXE] = 120,
 	[MOVE_MYSTICALPOWER] = 120,
 	#ifdef ACTUAL_PLA_MOVE_POWERS
 	[MOVE_RAGINGFURY] = 130,
 	[MOVE_CHLOROBLAST] = 140,
 	[MOVE_MOUNTAINGALE] = 130,
 	[MOVE_HEADLONGRUSH] = 130,
+	[MOVE_STONEAXE] = 120,
+	[MOVE_TRIPLEARROWS] = 75,
+	[MOVE_INFERNALPARADE] = 110,
+	[MOVE_CEASELESSEDGE] = 120,
 	#else
 	[MOVE_RAGINGFURY] = 140,
 	[MOVE_CHLOROBLAST] = 150,
 	[MOVE_MOUNTAINGALE] = 140,
 	[MOVE_HEADLONGRUSH] = 140,
+	[MOVE_STONEAXE] = 130,
+	[MOVE_TRIPLEARROWS] = 80,
+	[MOVE_INFERNALPARADE] = 130,
+	[MOVE_CEASELESSEDGE] = 130,
 	#endif
 	[MOVE_WAVECRASH] = 130,
 	[MOVE_BARBBARRAGE] = 80,
 	[MOVE_ESPERWING] = 130,
 	[MOVE_BITTERMALICE] = 110,
-	[MOVE_TRIPLEARROWS] = 75,
-	[MOVE_INFERNALPARADE] = 110,
-	[MOVE_CEASELESSEDGE] = 120,
 	[MOVE_BLEAKWINDSTORM] = 130,
 	[MOVE_WILDBOLTSTORM] = 130,
 	[MOVE_SANDSEARSTORM] = 130,
