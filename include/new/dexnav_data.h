@@ -96,17 +96,10 @@ extern const u8 gText_DexNavHUDChainNumber[];
 #define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
 
-#define TOOL_COUNT 2
-#define priv0 gTasks[taskId].data[0]
-
-#define CPUFSCPY 0
-#define CPUFSSET 1
-#define CPUModeFS(size, mode) ((size >> 2) | (mode << 24))
-
-#define SCANSTART_X 7
-#define SCANSTART_Y 5
-#define SCANSIZE_X 12
-#define SCANSIZE_Y 12
+#define SCAN_SIZE_X_START 7
+#define SCAN_SIZE_Y_START 5
+#define SCAN_SIZE_X_REPEAT 4 //For moving in caves and water
+#define SCAN_SIZE_Y_REPEAT 4 //For moving in caves and water
 
 #define ICON_PAL_TAG 0xDAC0
 #define ICON_GFX_TAG 0xD75A
@@ -145,8 +138,8 @@ extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 //GUI Data
 struct DexNavGUIData
 {
-    u16 grassSpecies[MAX_TOTAL_LAND_MONS];
-    u16 waterSpecies[MAX_TOTAL_WATER_MONS];
+	u16 grassSpecies[MAX_TOTAL_LAND_MONS];
+	u16 waterSpecies[MAX_TOTAL_WATER_MONS];
 	u16 hiddenSpecies[max(MAX_TOTAL_LAND_MONS, MAX_TOTAL_WATER_MONS) + 1];
 	u8 hiddenLandEncounterMethod[MAX_TOTAL_LAND_MONS];
 	u8 hiddenWaterEncounterMethod[MAX_TOTAL_LAND_MONS];
@@ -159,9 +152,9 @@ struct DexNavGUIData
 	u8 numWaterMons;
 	u8 numHiddenLandMons;
 	u8 numHiddenWaterMons;
-    u8 cursorSpriteId;
-    u8 selectedIndex;
-    u8 selectedArea;
+	u8 cursorSpriteId;
+	u8 selectedIndex;
+	u8 selectedArea;
 	u16 landRowScroll;
 	u16 waterRowScroll;
 	u16 waterRowsAbove;
@@ -222,7 +215,7 @@ enum
 static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
 {
 	[WIN_TEXTBOX] =
-    {
+	{
 		.bg = BG_TEXTBOX,
 		.tilemapLeft = 1,
 		.tilemapTop = 15,
@@ -230,177 +223,177 @@ static const struct WindowTemplate sDexNavWinTemplates[WINDOW_COUNT + 1] =
 		.height = 4,
 		.paletteNum = 14,
 		.baseBlock = 1,
-    },
+	},
 	[WIN_CONTEXT_MENU] =
 	{
-        .bg = BG_TEXTBOX,
-        .tilemapLeft = 21,
-        .tilemapTop = 7,
-        .width = 7,
-        .height = 6,
-        .paletteNum = 14,
-        .baseBlock = 113,
+		.bg = BG_TEXTBOX,
+		.tilemapLeft = 21,
+		.tilemapTop = 7,
+		.width = 7,
+		.height = 6,
+		.paletteNum = 14,
+		.baseBlock = 113,
 	},
 	[WIN_SPECIES] =
 	{
-        .bg = BG_TEXT_2, //Above so it doesn't conflict with the type icons
-        .tilemapLeft = 20,
-        .tilemapTop = 2,
-        .width = 9,
-        .height = 3,
-        .paletteNum = 15,
-        .baseBlock = 155,
+		.bg = BG_TEXT_2, //Above so it doesn't conflict with the type icons
+		.tilemapLeft = 20,
+		.tilemapTop = 2,
+		.width = 9,
+		.height = 3,
+		.paletteNum = 15,
+		.baseBlock = 155,
 	},
 	[WIN_SEARCH_LEVEL] =
-    {
-        .bg = BG_TEXT,
-        .tilemapLeft = 20,
-        .tilemapTop = 7,
-        .width = 9,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 182,
-    },
+	{
+		.bg = BG_TEXT,
+		.tilemapLeft = 20,
+		.tilemapTop = 7,
+		.width = 9,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 182,
+	},
 	[WIN_METHOD] =
-    {
-        .bg = BG_TEXT,
-        .tilemapLeft = 20,
-        .tilemapTop = 10,
-        .width = 10,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 200,
-    },
+	{
+		.bg = BG_TEXT,
+		.tilemapLeft = 20,
+		.tilemapTop = 10,
+		.width = 10,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 200,
+	},
 	[WIN_HIDDEN_ABILITY] =
-    {
-        .bg = BG_TEXT,
-        .tilemapLeft = 20,
-        .tilemapTop = 13,
-        .width = 10,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 220,
-    },
+	{
+		.bg = BG_TEXT,
+		.tilemapLeft = 20,
+		.tilemapTop = 13,
+		.width = 10,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 220,
+	},
 	[WIN_HELD_ITEMS] =
-    {
-        .bg = BG_TEXT,
-        .tilemapLeft = 20,
-        .tilemapTop = 16,
-        .width = 10,
-        .height = 4,
-        .paletteNum = 15,
-        .baseBlock = 240,
-    },
+	{
+		.bg = BG_TEXT,
+		.tilemapLeft = 20,
+		.tilemapTop = 16,
+		.width = 10,
+		.height = 4,
+		.paletteNum = 15,
+		.baseBlock = 240,
+	},
 	[WIN_MON_TYPE_1] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 20,
-        .tilemapTop = 4,
-        .width = 5,
-        .height = 2,
-        .paletteNum = 12,
-        .baseBlock = 280,
+		.bg = BG_TEXT,
+		.tilemapLeft = 20,
+		.tilemapTop = 4,
+		.width = 5,
+		.height = 2,
+		.paletteNum = 12,
+		.baseBlock = 280,
 	},
 	[WIN_MON_TYPE_2] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 25,
-        .tilemapTop = 4,
-        .width = 5,
-        .height = 2,
-        .paletteNum = 12,
-        .baseBlock = 290,
+		.bg = BG_TEXT,
+		.tilemapLeft = 25,
+		.tilemapTop = 4,
+		.width = 5,
+		.height = 2,
+		.paletteNum = 12,
+		.baseBlock = 290,
 	},
 	[WIN_WATER] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 0,
-        .tilemapTop = 2,
-        .width = 19,
-        .height = 3,
-        .paletteNum = 15,
-        .baseBlock = 300,
+		.bg = BG_TEXT,
+		.tilemapLeft = 0,
+		.tilemapTop = 2,
+		.width = 19,
+		.height = 3,
+		.paletteNum = 15,
+		.baseBlock = 300,
 	},
 	[WIN_LAND] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 0,
+		.bg = BG_TEXT,
+		.tilemapLeft = 0,
 	#ifdef UNBOUND
-        .tilemapTop = 10,
+		.tilemapTop = 10,
 	#else
-        .tilemapTop = 11,
+		.tilemapTop = 11,
 	#endif
-        .width = 19,
-        .height = 3,
-        .paletteNum = 15,
-        .baseBlock = 357,
+		.width = 19,
+		.height = 3,
+		.paletteNum = 15,
+		.baseBlock = 357,
 	},
 	[WIN_MAP_NAME] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 0,
-        .tilemapTop = 0,
-        .width = 12,
-        .height = 3,
-        .paletteNum = 15,
-        .baseBlock = 414,
+		.bg = BG_TEXT,
+		.tilemapLeft = 0,
+		.tilemapTop = 0,
+		.width = 12,
+		.height = 3,
+		.paletteNum = 15,
+		.baseBlock = 414,
 	},
 	[WIN_CHAIN_LENGTH] =
 	{
-        .bg = BG_TEXT,
-        .tilemapLeft = 22,
-        .tilemapTop = 0,
-        .width = 8,
-        .height = 2,
-        .paletteNum = 15,
-        .baseBlock = 450,
+		.bg = BG_TEXT,
+		.tilemapLeft = 22,
+		.tilemapTop = 0,
+		.width = 8,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 450,
 	},
 	//Base block 500 is used for frame tiles
-    DUMMY_WIN_TEMPLATE
+	DUMMY_WIN_TEMPLATE
 };
 
 static const struct BgTemplate sDexNavBgTemplates[] =
 {
-    [BG_TEXTBOX] =
+	[BG_TEXTBOX] =
 	{
-        .bg = BG_TEXTBOX,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 31,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 0,
-        .baseTile = 0,
-    },
+		.bg = BG_TEXTBOX,
+		.charBaseIndex = 0,
+		.mapBaseIndex = 31,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 0,
+		.baseTile = 0,
+	},
 	[BG_TEXT_2] =
-    {
-        .bg = BG_TEXT_2,
-        .charBaseIndex = 1,
-        .mapBaseIndex = 30,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 1,
-        .baseTile = 0,
-    },
+	{
+		.bg = BG_TEXT_2,
+		.charBaseIndex = 1,
+		.mapBaseIndex = 30,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 1,
+		.baseTile = 0,
+	},
 	[BG_TEXT] =
-    {
-        .bg = BG_TEXT,
-        .charBaseIndex = 2,
-        .mapBaseIndex = 29,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 2,
-        .baseTile = 0,
-    },
+	{
+		.bg = BG_TEXT,
+		.charBaseIndex = 2,
+		.mapBaseIndex = 29,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 2,
+		.baseTile = 0,
+	},
 	[BG_BACKGROUND] =
-    {
-        .bg = BG_BACKGROUND,
-        .charBaseIndex = 3,
-        .mapBaseIndex = 28,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 3,
-        .baseTile = 0,
-    },
+	{
+		.bg = BG_BACKGROUND,
+		.charBaseIndex = 3,
+		.mapBaseIndex = 28,
+		.screenSize = 0,
+		.paletteMode = 0,
+		.priority = 3,
+		.baseTile = 0,
+	},
 };
 
 static const struct ListMenuItem sContextMenuListItems[] =
@@ -533,72 +526,53 @@ static const struct TextColor sBlackText =
 	.shadowColor = TEXT_COLOR_LIGHT_GREY,
 };
 
-#define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
-static const u16 sDexNavGuiTextPal[] =
+static const struct TextColor sLightRedText =
 {
-	rgb5(255, 0, 255), rgb5(248, 248, 248), rgb5(112, 112, 112), rgb5(96, 96, 96),
-	rgb5(208, 208, 208), rgb5(76, 154, 38), rgb5(102, 194, 66), rgb5(168, 75, 76),
-	rgb5(224, 114, 75), rgb5(180, 124, 41), rgb5(241, 188, 60), rgb5(255, 0, 255),
-	rgb5(255, 0, 255), rgb5(255, 0, 255), rgb5(255, 133, 200), rgb5(64, 200, 248)
-};
-
-static const s16 sCursorPositionsLand[] =
-{
-    20 + 24 * 0, 92,
-    20 + 24 * 1, 92,
-    20 + 24 * 2, 92,
-    20 + 24 * 3, 92,
-    20 + 24 * 4, 92,
-    20 + 24 * 5, 92,
-    20 + 24 * 0, 92 + 28,
-    20 + 24 * 1, 92 + 28,
-    20 + 24 * 2, 92 + 28,
-    20 + 24 * 3, 92 + 28,
-    20 + 24 * 4, 92 + 28,
-    20 + 24 * 5, 92 + 28,
-};
-
-static const s16 sCursorPositionsWater[] =
-{
-    30 + 24 * 0, 48,
-    30 + 24 * 1, 48,
-    30 + 24 * 2, 48,
-    30 + 24 * 3, 48,
-    30 + 24 * 4, 48,
+	.bgColor = TEXT_COLOR_TRANSPARENT,
+	.fgColor = TEXT_COLOR_LIGHT_RED,
+	.shadowColor = TEXT_COLOR_RED,
 };
 
 //HUD Data
 
 struct DexnavHudData
 {
-    u16 species;
-    u16 moveId[MAX_MON_MOVES];
-    u16 heldItem;
-    u8 ability;
-    u8 potential;
-    u8 searchLevel;
-    u8 pokemonLevel;
-    u8 moveNameLength;
-    u8 xProximity;
-    u8 yProximity;
-    u8 totalProximity;
-    u8 environment;
+	u16 species;
+	u16 moveId[MAX_MON_MOVES];
+	u16 heldItem;
+	u8 ability;
+	u8 potential;
+	u8 searchLevel;
+	u8 pokemonLevel;
+	u8 moveNameLength;
+	u8 xProximity;
+	u8 yProximity;
+	u8 totalProximity;
+	u8 environment;
 	u8 elevation;
 	u8 unownLetter;
-    s16 tileX; // position of shaking grass
-    s16 tileY;
-    u8 spriteIdSpecies;
-    u8 spriteIdSight;
-    u8 spriteIdBButton;
+	s16 tileX; // position of shaking grass
+	s16 tileY;
+	u8 spriteIdSpecies;
+	u8 spriteIdSight;
+	u8 spriteIdBButton;
 	u8 spriteIdChainNumber;
-    u8 spriteIdAbility;
-    u8 spriteIdMove;
-    u8 spriteIdItem;
-    u8 spriteIdShakingGrass;
-    u8 spriteIdPotential[3];
-    u8 blackBarWindowId;
+	u8 spriteIdChainStar;
+	u8 spriteIdAbility;
+	u8 spriteIdMove;
+	u8 spriteIdItem;
+	u8 spriteIdShakingGrass;
+	u8 spriteIdPotential[3];
+	u8 blackBarWindowId;
 	u8 arrowWindowId;
-    u8 movementTimes;
+	u8 movementTimes;
+	
+	s16 scanLeftX;
+	s16 scanTopY;
+	bool8 reachableTiles[16][16];
+	bool8 impassibleTiles[16][16];
+	s16 scanRightX;
+	s16 scanBottomY;
 };
 
 enum FieldMessages

@@ -38,6 +38,7 @@
 #include "../include/constants/field_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
@@ -82,12 +83,11 @@ static u16 TryRandomizePumpkabooForm(u16 species);
 static bool8 SpeciesHasMultipleSearchableForms(u16 species);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static void UpdatePlayerDistances(s16 x, s16 y);
-static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan, bool8 detectorMode);
-static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode);
-static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode);
+static u8 PickTileScreen(u8 targetBehaviour, u8 widthX, u8 heightY, s16 *xBuff, s16 *yBuff, bool8 mustFindTile);
+static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 mustFindTile);
+static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 mustFindTile);
 //static void DexHUDHBlank(void);
 static void DexNavProximityUpdate(void);
-static void NullSubHBlank(void);
 static void StopDexNavFieldEffect(void);
 static void DexNavFreeHUD(void);
 static void DexNavShowFieldMessage(u8 id);
@@ -104,7 +104,7 @@ static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
 static void DexNavDrawBlackBar(u8* windowId);
 static void DexNavDrawDirectionalArrow(u8* windowId);
-static void DexNavDrawChainNumber(u8* spriteIdAddr);
+static void DexNavDrawChainNumber(u8* spriteIdNumAddr, u8* spriteIdStarAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
 static void DexNavDrawAbility(u8 ability, u16 species, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
@@ -341,131 +341,180 @@ static void UpdatePlayerDistances(s16 x, s16 y)
 	sDexNavHudPtr->yProximity = abs(y - (gSaveBlock1->pos.y + 7));
 }
 
-static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan, bool8 detectorMode)
+static bool8 IsEncounterTile(s16 x, s16 y, u8 targetBehaviour)
 {
-	// area of map to cover starting from camera position {-7, 7}
-	s16 leftX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
-	s16 topY = gSaveBlock1->pos.y - SCANSTART_Y + (smallScan * 5);
-	s16 rightX = leftX + areaX;
-	s16 botY = topY + areaY;
-	s16 lastGoodX = -1000;
-	s16 lastGoodY = -1000;
+	if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(x, y)))
+		return FALSE; //Can't encounter on stairs because it's wonky on side stairs
 
-	// loop through every tile in area and evaluate
-	while (topY < botY)
+	u32 tileBehaviour = MapGridGetMetatileField(x, y, 0xFF);
+	u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
+	return (blockProperties & targetBehaviour) != 0;
+}
+
+static bool8 CanTileBeReachedFromTile(s16 oldX, s16 oldY, s16 newX, s16 newY) //Eg. is there edge between two nodes
+{
+	s16 newXInGrid = newX - sDexNavHudPtr->scanLeftX;
+	s16 newYInGrid = newY - sDexNavHudPtr->scanTopY;
+
+	if (sDexNavHudPtr->reachableTiles[newYInGrid][newXInGrid] //Tile is already reachable so it doesn't need to be reached again
+	|| sDexNavHudPtr->impassibleTiles[newYInGrid][newXInGrid]) //Tile can't be walked on anyway
+		return FALSE;
+
+	u8 behaviour = MapGridGetMetatileBehaviorAt(newX, newY);
+	if (MapGridIsImpassableAt(newX, newY)
+	|| behaviour == MB_MUDDY_SLOPE //Can't actually make it over this tile
+	|| behaviour == MB_CRACKED_FLOOR //Can't actually make it over this tile
+	|| (newX - 7) >= gMapHeader.mapLayout->width //DexNav scan stops when leaving the map
+	|| (newX - 7) < 0
+	|| (newY - 7) >= gMapHeader.mapLayout->height
+	|| (newY - 7) < 0)
 	{
-		if (topY < 0) //Off map upwards
-		{
-			topY += 1; //Check 1 lower
-			continue;
-		}
-		
-		if (topY >= gMapHeader.mapLayout->height)
-			break; //Off map on bottom
-
-		while (leftX < rightX)
-		{
-			if (leftX < 0) //Off map on left
-			{
-				leftX += 1; //Check 1 to the right
-				continue;
-			}
-
-			if (leftX >= gMapHeader.mapLayout->width)
-				break; //Off map on right
-
-			u32 tileBehaviour = MapGridGetMetatileField(leftX + 7, topY + 7, 0xFF);
-			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
-			
-			if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(leftX + 7, topY + 7)))
-			{
-				//Fix a bug where dust clouds would act weird in caves on sideways stairs
-				leftX += 1;
-				continue;
-			}
-
-			//Check NPCs on tile
-			bool8 goNext = FALSE;
-			for (u8 i = 0; i < EVENT_OBJECTS_COUNT; ++i)
-			{
-				if (gEventObjects[i].currentCoords.x == leftX + 7 && gEventObjects[i].currentCoords.y == topY + 7)
-				{
-					goNext = TRUE;
-					break;
-				}
-			}
-
-			if (goNext)
-			{
-				leftX += 1;
-				continue;
-			}
-
-			//Tile must be target behaviour (wild tile) and must be passable
-			if (blockProperties & targetBehaviour)
-			{
-				//Caves and water need to have their encounter values scaled higher
-				u8 weight, scaleMax;
-				s16 scale;
-
-				if (targetBehaviour == TILE_FLAG_SURFABLE)
-				{
-					//Water
-					scale = 320 - (smallScan * 200) - (GetPlayerDistance(leftX + 7, topY + 7) / 2);
-					scaleMax = 3;
-				}
-				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
-				{
-					//Cave basically needs another check to see if the tile is passable
-					scale = 320 - (smallScan * 200) - (GetPlayerDistance(leftX + 7, topY + 7) / 2)  - (2 * (leftX + topY));
-					if (scale < 1) scale = 1;
-					scaleMax = 3;
-				}
-				else //Grass land
-				{
-					scale = 100 - (GetPlayerDistance(leftX + 7, topY + 7) * 2);
-					scaleMax = 5;
-				}
-
-				weight = !IsZCoordMismatchAt(sDexNavHudPtr->elevation, leftX + 7, topY + 7) //Must be on same elevation
-				      && !MapGridIsImpassableAt(leftX + 7, topY + 7); //Can walk on tile
-
-				if (weight)
-				{
-					lastGoodX = leftX + 7;
-					lastGoodY = topY + 7;
-				}
-
-				weight = weight && Random() % scale <= scaleMax;
-
-				if (weight)
-				{
-					*xBuff = lastGoodX;
-					*yBuff = lastGoodY;
-					return TRUE;
-				}
-			}
-
-			leftX += 1;
-		}
-
-		topY += 1;
-		leftX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
+		sDexNavHudPtr->impassibleTiles[newYInGrid][newXInGrid] = TRUE;
+		return FALSE;
 	}
 
-	if (detectorMode && lastGoodX != -1000 && lastGoodY != -1000)
+	return !IsZCoordMismatchAt(MapGridGetZCoordAt(oldX, oldY), newX, newY); //Must be on same elevation
+}
+
+//Only called if a position is actually reachable
+//Not a function to limit necessary function calls
+//The x and y coords are spliced together to make the array writes faster than by writing manually to a Coords16 array
+#define EnqueuePos(queue, queueCount, x, y)                                                          \
+{                                                                                                    \
+	((u32*) queue)[queueCount] = (x) | ((y) << 16);                                                  \
+	sDexNavHudPtr->reachableTiles[y - sDexNavHudPtr->scanTopY][x - sDexNavHudPtr->scanLeftX] = TRUE; \
+}
+
+static void UpdateReachableTiles(s16 startX, s16 startY, u32 totalLengthX, u32 totalLengthY)
+{
+	u32 currQueueIndex = 0;
+	u32 queueCount = 1;
+	struct Coords16 queue[totalLengthX * totalLengthY];
+	Memset(queue, 0x0, sizeof(queue));
+	queue[0].x = startX; //Because they're set here and not in EnqueuePos, the player's tile isn't considered (intended)
+	queue[0].y = startY;
+
+	while (currQueueIndex < queueCount)
 	{
-		//Must alays work
-		*xBuff = lastGoodX;
-		*yBuff = lastGoodY;
+		s16 x = queue[currQueueIndex].x;
+		s16 y = queue[currQueueIndex].y;
+
+		if (x - 1 >= sDexNavHudPtr->scanLeftX
+		&& CanTileBeReachedFromTile(x, y, x - 1, y))
+			EnqueuePos(queue, queueCount++, x - 1, y);
+
+		if (x + 1 <= sDexNavHudPtr->scanRightX
+		&& CanTileBeReachedFromTile(x, y, x + 1, y))
+			EnqueuePos(queue, queueCount++, x + 1, y);
+
+		if (y - 1 >= sDexNavHudPtr->scanTopY
+		&& CanTileBeReachedFromTile(x, y, x, y - 1))
+			EnqueuePos(queue, queueCount++, x, y - 1);
+
+		if (y + 1 <= sDexNavHudPtr->scanBottomY
+		&& CanTileBeReachedFromTile(x, y, x, y + 1))
+			EnqueuePos(queue, queueCount++, x, y + 1);
+
+		++currQueueIndex;
+	}
+
+	/* Recursive DFS Approach - may blow stack (like on water)
+	//This function is only called if a tile is reachable
+	sDexNavHudPtr->reachableTiles[y - sDexNavHudPtr->scanTopY][x - sDexNavHudPtr->scanLeftX] =  TRUE;
+
+	if (x - 1 >= sDexNavHudPtr->scanLeftX
+	&& CanTileBeReachedFromTile(x, y, x - 1, y))
+		UpdateReachableTiles(x - 1, y);
+
+	if (x + 1 <= sDexNavHudPtr->scanRightX
+	&& CanTileBeReachedFromTile(x, y, x + 1, y))
+		UpdateReachableTiles(x + 1, y);
+
+	if (y - 1 >= sDexNavHudPtr->scanTopY
+	&& CanTileBeReachedFromTile(x, y, x, y - 1))
+		UpdateReachableTiles(x, y - 1);
+
+	if (y + 1 <= sDexNavHudPtr->scanBottomY
+	&& CanTileBeReachedFromTile(x, y, x, y + 1))
+		UpdateReachableTiles(x, y + 1);
+	*/
+}
+
+static bool8 PickTileScreen(u8 targetBehaviour, u8 widthX, u8 heightY, s16 *xBuff, s16 *yBuff, bool8 mustFindTile)
+{
+	u32 i, j, totalLengthX, totalLengthY, tileCount, playerX, playerY;
+	playerX = gSaveBlock1->pos.x + 7;
+	playerY = gSaveBlock1->pos.y + 7;
+
+	sDexNavHudPtr->scanLeftX = playerX - widthX;
+	sDexNavHudPtr->scanTopY = playerY - heightY;
+	sDexNavHudPtr->scanRightX = playerX + widthX;
+	sDexNavHudPtr->scanBottomY = playerY + heightY;
+	totalLengthX = sDexNavHudPtr->scanRightX - sDexNavHudPtr->scanLeftX;
+	totalLengthY = sDexNavHudPtr->scanBottomY - sDexNavHudPtr->scanTopY;
+
+	struct Coords16 availableTiles[totalLengthX * totalLengthY];
+	Memset(availableTiles, 0x0, sizeof(availableTiles));
+	Memset(sDexNavHudPtr->reachableTiles, 0x0, sizeof(sDexNavHudPtr->reachableTiles)); //From previous scans if necessary (eg. in caves and on water)
+	Memset(sDexNavHudPtr->impassibleTiles, 0x0, sizeof(sDexNavHudPtr->impassibleTiles));
+
+	//First remove any tiles from consideration that have NPCs on them
+	for (i = 0; i < EVENT_OBJECTS_COUNT; ++i)
+	{
+		if (gEventObjects[i].active
+		&& gEventObjects[i].currentCoords.x >= sDexNavHudPtr->scanLeftX
+		&& gEventObjects[i].currentCoords.x <= sDexNavHudPtr->scanRightX
+		&& gEventObjects[i].currentCoords.y >= sDexNavHudPtr->scanTopY
+		&& gEventObjects[i].currentCoords.y <= sDexNavHudPtr->scanBottomY)
+		{
+			s16 x = gEventObjects[i].currentCoords.x - sDexNavHudPtr->scanLeftX;
+			s16 y = gEventObjects[i].currentCoords.y - sDexNavHudPtr->scanTopY;
+			sDexNavHudPtr->impassibleTiles[y][x] = TRUE;
+		}
+	}
+
+	//Then determine the tiles that can be reached from the player's current position
+	UpdateReachableTiles(playerX, playerY, totalLengthX, totalLengthY);
+
+	//Of the tiles that can be reached, add the encounter tiles to a list
+	for (i = 0, tileCount = 0; i < totalLengthY; ++i)
+	{
+		for (j = 0; j < totalLengthX; ++j)
+		{
+			if (sDexNavHudPtr->reachableTiles[i][j])
+			{
+				s16 x = sDexNavHudPtr->scanLeftX + j;
+				s16 y = sDexNavHudPtr->scanTopY + i;
+
+				if (IsEncounterTile(x, y, targetBehaviour))
+					((u32*) availableTiles)[tileCount++] = x | (y << 16); //Splice them together to make the array write faster
+			}
+		}
+	}
+
+	//Finally pick a random tile of the available tiles
+	if (tileCount > 0)
+	{
+		if (!mustFindTile)
+		{
+			if (tileCount < 5)
+				return FALSE; //Pokemon should never be found in such a small space
+
+			u16 rate = 70 + sDexNavHudPtr->searchLevel; //Pokemon with Search Level 30+ are guaranteed to be found
+			if (Random() % 100 > rate)
+				return FALSE; //Modulate the encounter rate
+		}
+
+		struct Coords16* pos = &availableTiles[Random() % tileCount];
+		*xBuff = pos->x;
+		*yBuff = pos->y;
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-
-static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode)
+static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 mustFindTile)
 {
 	//Pick a specific tile based on environment
 	u8 targetBehaviour;
@@ -479,13 +528,12 @@ static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan,
 			break;
 	}
 
-	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, smallScan, detectorMode);
+	return PickTileScreen(targetBehaviour, xSize, ySize, &sDexNavHudPtr->tileX, &sDexNavHudPtr->tileY, mustFindTile);
 }
 
-
-static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, bool8 detectorMode)
+static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 mustFindTile)
 {
-	if (DexNavPickTile(environment, xSize, ySize, smallScan, detectorMode))
+	if (DexNavPickTile(environment, xSize, ySize, mustFindTile))
 	{
 		u8 fieldEffect;
 		u8 metatileBehaviour = MapGridGetMetatileField(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY, 0xFF);
@@ -493,7 +541,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, b
 		gFieldEffectArguments[1] = sDexNavHudPtr->tileY;
 		gFieldEffectArguments[2] = 0xFF; //Below everything
 		gFieldEffectArguments[3] = ZCoordToPriority(MapGridGetZCoordAt(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY));
-	
+
 		switch (environment)
 		{
 			case ENCOUNTER_TYPE_LAND:
@@ -558,32 +606,10 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan, b
 		return FALSE;
 };
 
- //Causes the game to lag due to interference from DNS :(
-/*static void DexHUDHBlank(void)
-{
-	if (REG_VCOUNT > (160 - 19)) //Fill 19 pixels
-	{
-		REG_BLDY = 0xC;
-		REG_WININ = WININ_WIN0_BG_ALL | WININ_WIN1_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_OBJ | WININ_WIN1_CLR;
-		REG_BLDCNT = (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_EFFECT_DARKEN);
-	}
-	else //Default values from overworld
-	{
-		REG_WININ = WININ_WIN0_BG_ALL | WININ_WIN1_BG_ALL | WININ_WIN0_OBJ | WININ_WIN1_OBJ;
-		REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
-	}
-};*/
-
-
 static void DexNavProximityUpdate(void)
 {
 	sDexNavHudPtr->totalProximity = GetPlayerDistance(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY);
 	UpdatePlayerDistances(sDexNavHudPtr->tileX, sDexNavHudPtr->tileY); //Used by the directional arrow
-}
-
-
-static void NullSubHBlank(void)
-{
 }
 
 static void StopDexNavFieldEffect(void)
@@ -614,18 +640,13 @@ static void DexNavFreeHUD(void)
 	SafeFreeMonIconPalette(sDexNavHudPtr->species);
 	DestroyMonIcon(&gSprites[sDexNavHudPtr->spriteIdSpecies]);
 
-	//Clear black bar
-	CleanWindow(sDexNavHudPtr->blackBarWindowId);
-	CopyWindowToVram(sDexNavHudPtr->blackBarWindowId, COPYWIN_BOTH);
-    ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
-	RemoveWindow(sDexNavHudPtr->blackBarWindowId);
-
 	//Clean arrow
 	CleanWindow(sDexNavHudPtr->arrowWindowId);
 	CopyWindowToVram(sDexNavHudPtr->arrowWindowId, COPYWIN_BOTH);
-    ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
+	ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
 	RemoveWindow(sDexNavHudPtr->arrowWindowId);
 
+	//Clean other sprites
 	if (sDexNavHudPtr->spriteIdSight < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdSight]);
 
@@ -634,6 +655,9 @@ static void DexNavFreeHUD(void)
 
 	if (sDexNavHudPtr->spriteIdChainNumber < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdChainNumber]);
+
+	if (sDexNavHudPtr->spriteIdChainStar < MAX_SPRITES)
+		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdChainStar]);
 
 	if (sDexNavHudPtr->spriteIdAbility < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdAbility]);
@@ -653,6 +677,12 @@ static void DexNavFreeHUD(void)
 	if (sDexNavHudPtr->spriteIdPotential[2] < MAX_SPRITES)
 		FieldEffectFreeGraphicsResources(&gSprites[sDexNavHudPtr->spriteIdPotential[2]]);
 
+	//Clear black bar - last so it doesn't look weird
+	CleanWindow(sDexNavHudPtr->blackBarWindowId);
+	CopyWindowToVram(sDexNavHudPtr->blackBarWindowId, COPYWIN_BOTH);
+	ClearWindowTilemap(sDexNavHudPtr->blackBarWindowId);
+	RemoveWindow(sDexNavHudPtr->blackBarWindowId);
+
 	//Idk what FBI used these tags for
 	//FreeSpriteTilesByTag(0x4736);
 	FreeSpriteTilesByTag(0x61);
@@ -667,22 +697,6 @@ static void DexNavFreeHUD(void)
 	FreeSpritePaletteByTag(0x3039);
 
 	Free(sDexNavHudPtr);
-	DisableInterrupts(2);
-	SetHBlankCallback(NullSubHBlank);
-
-/*
-	// WRITE_REG_WININ(0x1F1F);
-	REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
-							WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
-	//WRITE_REG_BLDCNT(0x401E);
-	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
-
-
-	// WRITE_REG_WININ(0x1F1F);
-	REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
-		WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
-	//WRITE_REG_BLDCNT(0x401E);
-	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);*/
 }
 
 extern const u8 SystemScript_DisplayDexnavMsg[];
@@ -1066,7 +1080,7 @@ static void Task_ManageDexNavHUD(u8 taskId)
 	&& sDexNavHudPtr->movementTimes < 2)
 	{
 		StopDexNavFieldEffect();
-		while(!ShakingGrass(sDexNavHudPtr->environment, 8, 8, 1, FALSE));
+		while(!ShakingGrass(sDexNavHudPtr->environment, SCAN_SIZE_X_REPEAT, SCAN_SIZE_Y_REPEAT, TRUE));
 		sDexNavHudPtr->movementTimes += 1;
 	}
 	#endif
@@ -1589,16 +1603,22 @@ static void DexNavDrawDirectionalArrow(u8* windowId)
 }
 
 
-static void DexNavDrawChainNumber(u8* spriteIdAddr)
+static void DexNavDrawChainNumber(u8* spriteIdNumAddr, u8* spriteIdStarAddr)
 {
-	u8 spriteId = MAX_SPRITES;
+	u8 spriteIdNum = MAX_SPRITES;
+	u8 spriteIdStar = MAX_SPRITES;
+
+	//Allocate both the lit and unlit star to VRAM
+	LoadSpriteSheet(&sStarLitSpriteSheet);
+	LoadSpriteSheet(&sStarDullSpriteSheet);
+	LoadSpritePalette(&gHeldItemSpritePalette);
 
 	if (gCurrentDexNavChain > 0) //Started a chain
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sChainNumberCanvasSpriteSheet);
 		LoadSpritePalette(&gHeldItemSpritePalette);
-		spriteId = CreateSprite(&sChainNumberCanvasTemplate, ICONX + 80, ICONY + 0x12, 0x0);
-		if (spriteId < MAX_SPRITES)
+		spriteIdNum = CreateSprite(&sChainNumberCanvasTemplate, ICONX + 80, ICONY + 0x12, 0x0);
+		if (spriteIdNum < MAX_SPRITES)
 		{
 			//Get Text
 			StringCopy(gStringVar4, gText_DexNavHUDChainNumber);
@@ -1606,13 +1626,13 @@ static void DexNavDrawChainNumber(u8* spriteIdAddr)
 			StringAppend(gStringVar4, gStringVar1);
 
 			//Adjust Position
-			gSprites[spriteId].pos1.x = 205 + (32 / 2);
-			gSprites[spriteId].pos1.y = 137 + (16 / 2);
+			gSprites[spriteIdNum].pos1.x = 205 + (32 / 2);
+			gSprites[spriteIdNum].pos1.y = 137 + (16 / 2);
 
 			if (gCurrentDexNavChain < 10)
-				gSprites[spriteId].pos1.x += 8;
+				gSprites[spriteIdNum].pos1.x += 8;
 			else if (gCurrentDexNavChain < 100)
-				gSprites[spriteId].pos1.x += 4;
+				gSprites[spriteIdNum].pos1.x += 4;
 
 			//Format string so it's even length or if it's odd ends in two spaces
 			u8 len = StringLength(gStringVar4);
@@ -1624,11 +1644,21 @@ static void DexNavDrawChainNumber(u8* spriteIdAddr)
 			}
 
 			//Draw the chain number on a blank sprite
-			OutlinedFontDraw(spriteId, 0, 16 * 8);
+			OutlinedFontDraw(spriteIdNum, 0, 16 * 8);
+
+			//Try create a star if there's a higher chance of a shiny being found
+			if (gCurrentDexNavChain == 50 || gCurrentDexNavChain == 100)
+			{
+				s16 xPos = ICONX + 188;
+				if (gCurrentDexNavChain == 100)
+					xPos -= 4;
+				spriteIdStar = CreateSprite(&sStarLitTemplate, xPos, ICONY - 6, 0x0);
+			}
 		}
 	}
 
-	*spriteIdAddr = spriteId;
+	*spriteIdNumAddr = spriteIdNum;
+	*spriteIdStarAddr = spriteIdStar;
 }
 
 static void DexNavDrawSight(u8 sightLevel, u8* spriteIdAddr)
@@ -1721,12 +1751,7 @@ static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr)
 
 static void DexNavDrawPotential(u8 potential, u8* spriteIdAddr)
 {
-	// allocate both the lit and unlit star to VRAM
-	LoadSpriteSheet(&sStarLitSpriteSheet);
-	LoadSpriteSheet(&sStarDullSpriteSheet);
-	LoadSpritePalette(&gHeldItemSpritePalette);
-
-	// create star objects and space them according to potential 0 - 3
+	//Create star objects and space them according to potential 0 - 3 (sprite sheets and palettes loaded in DexNavDrawChainNumber)
 	u8 i, spriteId;
 	for (i = 0; i < 3; ++i)
 	{
@@ -1770,7 +1795,7 @@ static void DexNavDrawIcons(bool8 detectorMode)
 	u8 searchLevel = sDexNavHudPtr->searchLevel;
 	DexNavDrawBlackBar(&sDexNavHudPtr->blackBarWindowId);
 	DexNavDrawDirectionalArrow(&sDexNavHudPtr->arrowWindowId);
-	DexNavDrawChainNumber(&sDexNavHudPtr->spriteIdChainNumber);
+	DexNavDrawChainNumber(&sDexNavHudPtr->spriteIdChainNumber, &sDexNavHudPtr->spriteIdChainStar);
 	DexNavDrawSight(sDexNavHudPtr->totalProximity, &sDexNavHudPtr->spriteIdSight);
 	DexNavDrawBButton(&sDexNavHudPtr->spriteIdBButton);
 	
@@ -1842,7 +1867,7 @@ bool8 InitDexNavHUD(u16 species, u8 environment, bool8 detectorMode)
 	if ((!detectorMode && randVal >= totalEncounterChance * 2) //Harder Pokemon to find in the area are half as hard to find with the DexNav
 	|| (!detectorMode && gDexNavCooldown)
 	|| (!detectorMode && VarGet(VAR_REPEL_STEP_COUNT) == 1) //1 step remaining on the repel - player takes a step, repel wears off and they can search again
-	|| !ShakingGrass(environment, 12, 12, 0, detectorMode)) //Draw shaking tile
+	|| !ShakingGrass(environment, SCAN_SIZE_X_START, SCAN_SIZE_Y_START, detectorMode)) //Draw shaking tile
 	{
 		Free(sDexNavHudPtr);
 		gDexNavCooldown = TRUE; //A Pokemon can't be found until the player takes at least one step or searches for another Pokemon manually
@@ -1865,10 +1890,6 @@ bool8 InitDexNavHUD(u16 species, u8 environment, bool8 detectorMode)
 
 	//Get off bike so the Pokemon doesn't run away
 	sp0AF_DismountBicyle();
-
-	//Enable Hblank interrupt
-	/*EnableInterrupts(2);
-	SetHBlankCallback(DexHUDHBlank);*/
 
 	// task update HUD
 	u8 taskId = CreateTask(Task_ManageDexNavHUD, 1);
@@ -2507,6 +2528,7 @@ static void PrintGUIAreaName(void)
 static void PrintGUIChainLength(void)
 {
 	u8 chainLength = (gCurrentDexNavChain == 0) ? 0 : gCurrentDexNavChain - 1; //Always 1 less than what's stored internally
+	const struct TextColor* colour = (chainLength == 49 || chainLength == 99) ? &sLightRedText : &sWhiteText;
 
 	CleanWindow(WIN_CHAIN_LENGTH);
 	StringCopy(gStringVar4, gText_DexNav_Chain);
@@ -2514,7 +2536,7 @@ static void PrintGUIChainLength(void)
 	StringAppend(gStringVar4, gStringVar1);
 	s16 x = GetStringRightAlignXOffset(1, gStringVar4, sDexNavWinTemplates[WIN_CHAIN_LENGTH].width * 8) - 4;
 
-	WindowPrint(WIN_CHAIN_LENGTH, 1, x, 0, &sWhiteText, 0, gStringVar4);
+	WindowPrint(WIN_CHAIN_LENGTH, 1, x, 0, colour, 0, gStringVar4);
 	CommitWindow(WIN_CHAIN_LENGTH);
 }
 
@@ -3290,7 +3312,7 @@ static void Task_HandleContextMenu(u8 taskId)
 			gTasks[taskId].func = Task_DexNavWaitForKeyPress;
 			break;
 		case LIST_NOTHING_CHOSEN:
-            break;
+			break;
 		default:
 			switch (input)
 			{
@@ -3588,12 +3610,12 @@ static void LoadDexNavBgGfx(void)
 
 static void ClearTasksAndGraphicalStructs(void)
 {
-    ScanlineEffect_Stop();
-    ResetTasks();
-    ResetSpriteData();
-    ResetTempTileDataBuffers();
-    ResetPaletteFade();
-    FreeAllSpritePalettes();
+	ScanlineEffect_Stop();
+	ResetTasks();
+	ResetSpriteData();
+	ResetTempTileDataBuffers();
+	ResetPaletteFade();
+	FreeAllSpritePalettes();
 }
 
 static void ClearVramOamPlttRegs(void)
@@ -3673,17 +3695,17 @@ static void CB2_DexNav(void)
 
 bool8 StartMenuDexNavCallback(void)
 {
-    if (!gPaletteFade->active)
-    {
-        PlayRainStoppingSoundEffect();
-        DestroySafariZoneStatsWindow();
-        CleanupOverworldWindowsAndTilemaps();
+	if (!gPaletteFade->active)
+	{
+		PlayRainStoppingSoundEffect();
+		DestroySafariZoneStatsWindow();
+		CleanupOverworldWindowsAndTilemaps();
 		sDexNavGUIPtr = Calloc(sizeof(struct DexNavGUIData));
-        SetMainCallback2(CB2_DexNav);
-        return TRUE;
-    }
+		SetMainCallback2(CB2_DexNav);
+		return TRUE;
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 
