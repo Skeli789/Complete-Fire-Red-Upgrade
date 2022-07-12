@@ -165,6 +165,7 @@ static void ModifySpeciesAndLevelForBossBattle(unusedArg u16* species, unusedArg
 #ifdef VAR_GAME_DIFFICULTY
 static void GiveMon2BestBaseStatEVs(struct Pokemon* mon);
 #endif
+static u16 TryReplaceNormalTrainerSpecies(u16 species, unusedArg u16 trainerId);
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void BuildFrontierMultiParty(u8 multiId);
 static void BuildRaidMultiParty(void);
@@ -1494,6 +1495,16 @@ static void GiveMon2BestBaseStatEVs(struct Pokemon* mon)
 	SetMonData(mon, MON_DATA_HP_EV + bestStat2, &maxEV);
 }
 #endif
+
+static u16 TryReplaceNormalTrainerSpecies(u16 species, unusedArg u16 trainerId)
+{
+	#ifdef UNBOUND
+	extern u16 TryReplaceUnboundNormalTrainerSpecies(u16 species, u16 trainerId);
+	return TryReplaceUnboundNormalTrainerSpecies(species, trainerId);
+	#else
+	return species;
+	#endif
+}
 
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side)

@@ -11,7 +11,7 @@
 
 #define MAKE_POKEMON(structure)																																\
 {																																							\
-	u16 speciesToCreate = structure[i].species;																												\
+	u16 speciesToCreate = TryReplaceNormalTrainerSpecies(structure[i].species, trainerId);																	\
 	for (j = 0; gSpeciesNames[speciesToCreate][j] != EOS; ++j)																								\
 		nameHash += gSpeciesNames[speciesToCreate][j];																										\
 																																							\

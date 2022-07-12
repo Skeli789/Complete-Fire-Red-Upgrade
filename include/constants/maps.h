@@ -614,12 +614,14 @@
 
 #define MAP_CINDER_VOLCANO_F1          ((45 << 8) | 3)
 #define MAP_CINDER_VOLCANO_2F          ((45 << 8) | 4)
-#define MAP_CINDER_VOLCANO_SHADOW_F1   ((6 << 8) | 12)
+#define MAP_CINDER_VOLCANO_SHADOW_1F   ((6 << 8) | 12)
 #define MAP_CINDER_VOLCANO_3F_1        ((1 << 8) | 46)
 #define MAP_CINDER_VOLCANO_SUMMIT      ((1 << 8) | 47)
 #define MAP_CINDER_VOLCANO_4F_2        ((1 << 8) | 50)
 #define MAP_CINDER_VOLCANO_SHADOW_B1F  ((1 << 8) | 51)
 #define MAP_CINDER_VOLCANO_SHADOW_B2F  ((1 << 8) | 52)
+#define MAP_CINDER_VOLCANO_SHADOW_STORAGE_1 ((1 << 8) | 53)
+#define MAP_CINDER_VOLCANO_SHADOW_STORAGE_2 ((1 << 8) | 54)
 
 #define MAP_VALLEY_CAVE_A              ((47 << 8) | 0)
 #define MAP_VALLEY_CAVE_B              ((47 << 8) | 1)

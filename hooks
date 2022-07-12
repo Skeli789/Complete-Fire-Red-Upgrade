@@ -745,4 +745,5 @@ LoadTrainerBackPal 801D82C 2
 #Skip 801D834
 ClearNewGamePlusFlags 801D83C 0
 #Skip 801D844
+TryReplaceUnboundNormalTrainerSpecies 801D84C 2
 #endif
