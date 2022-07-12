@@ -270,7 +270,7 @@ u32 GetBaseBallCatchOdds(u8 ballType, u8 bankAtk, u8 bankDef)
 	u8 catchRate;
 	u8 ballMultiplier = 0;
 	u16 atkSpecies = gBattleMons[bankAtk].species;
-	u16 defSpecies = gBattleMons[bankDef].species;
+	u16 defSpecies = GetMonData(GetBankPartyData(bankDef), MON_DATA_SPECIES, NULL); //Can't use gBattleMons because of things like Transform
 	u8 atkLevel = gBattleMons[bankAtk].level;
 	u8 defLevel = gBattleMons[bankDef].level;
 
