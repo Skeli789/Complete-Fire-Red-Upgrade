@@ -1168,6 +1168,14 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 10000;
 	else if ((streakLength % 1000) == 0 && streakLength != 0) //Every 1000 wins give 1000
 		toGive = 1000;
+	else if (streakLength > 10000)
+		toGive = 100;
+	else if (streakLength > 5000)
+		toGive = 75;
+	else if (streakLength > 1000)
+		toGive = 50;
+	else if (streakLength > 500)
+		toGive = 25;
 	else
 		toGive = 10;
 
