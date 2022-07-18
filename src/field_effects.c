@@ -1035,6 +1035,9 @@ bool8 (*const sRockClimbFieldEffectFuncs[])(struct Task*, struct EventObject*) =
 
 bool8 FldEff_UseRockClimb(void)
 {
+	if (FuncIsActiveTask(Task_UseRockClimb))
+		return FALSE; //Prevents autofire A from activating this twice
+
 	u8 taskId = CreateTask(Task_UseRockClimb, 0xFF);
 	if (taskId != 0xFF)
 	{
