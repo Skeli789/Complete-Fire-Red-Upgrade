@@ -2082,6 +2082,13 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					damageData.bankDef = foe;
 					PopulateDamageCalcStructWithBaseDefenderData(&damageData);
 
+					//Check Speed Capabilities
+					if (speed >= SpeedCalc(foe)) //The considered mon is faster than the enemy
+					{
+						scores[i] += SWITCHING_INCREASE_OUTSPEEDS;
+						flags[i] |= SWITCHING_FLAG_OUTSPEEDS;
+					}
+
 					//Check Offensive Capabilities
 					if (CanKnockOutFromParty(consideredMon, foe, &damageData))
 					{
@@ -2096,15 +2103,54 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						}
 						else //No revenge killing Ability, so check moves
 						{
+							u8 numUsableMoves = 0;
+							u16 moves[MAX_MON_MOVES];
+							bool8 isPriority[MAX_MON_MOVES];
+	
+							//First build list of moves with priority moves at the front
 							for (k = 0; k < MAX_MON_MOVES; ++k)
 							{
+								s8 movePriority;
+
 								if (gBitTable[k] & moveLimitations)
 									continue;
 
 								if (damageData.atkImposter)
+								{
 									move = GetBattleMonMove(damageData.atkImposterBank, k);
+									movePriority = PriorityCalc(damageData.atkImposterBank, ACTION_USE_MOVE, move);
+								}
 								else
+								{
 									move = GetMonData(consideredMon, MON_DATA_MOVE1 + k, 0);
+									movePriority = PriorityCalcMon(consideredMon, move);
+								}
+
+								if (movePriority > 0) //Move has priority
+								{
+									//Add move at the beginning of the list
+									for (u8 m = numUsableMoves; m > 0; --m)
+									{
+										moves[m] = moves[m - 1]; //Shift moves down
+										isPriority[m] = isPriority[m - 1];
+									}
+
+									moves[0] = move;
+									isPriority[0] = TRUE;
+									numUsableMoves++;
+								}
+								else //Not priority move
+								{
+									//Tack move on to the end of the list
+									isPriority[numUsableMoves] = FALSE;
+									moves[numUsableMoves++] = move;
+								}
+							}
+
+							//Then go through the moves
+							for (k = 0; k < numUsableMoves; ++k)
+							{
+								move = moves[k];
 
 								if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 								&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
@@ -2115,9 +2161,24 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards
 								}
 
-								if (move == MOVE_FELLSTINGER //Gets an attack boost when a foe is KOd
-								|| move == MOVE_PURSUIT //KOs the foe before it can switch out
-								|| (SPLIT(move) != SPLIT_STATUS && PriorityCalcMon(consideredMon, move) > 0)) //Priority move that KOs
+								if (SPLIT(move) != SPLIT_STATUS
+								&& isPriority[k] > 0
+								&& MoveKnocksOutFromParty(move, consideredMon, foe, &damageData)) //Priority move that KOs
+								{
+									scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
+									flags[i] |= SWITCHING_FLAG_REVENGE_KILL;
+
+									if (!(flags[i] & SWITCHING_FLAG_OUTSPEEDS)) //Doesn't already get the boost for outspeeding
+									{
+										//Make the AI think it outspeeds so it prioritizes this mon
+										scores[i] += SWITCHING_INCREASE_OUTSPEEDS;
+										flags[i] |= SWITCHING_FLAG_OUTSPEEDS;
+									}
+
+									break;
+								}
+								else if (move == MOVE_FELLSTINGER //Gets an attack boost when a foe is KOd
+								|| move == MOVE_PURSUIT) //KOs the foe before it can switch out
 								{
 									if (MoveKnocksOutFromParty(move, consideredMon, foe, &damageData))
 									{
@@ -2170,13 +2231,6 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							scores[i] = -1; //Bad idea to switch to this mon
 							goto CHECK_NEXT_MON;
 						}
-					}
-
-					//Check Speed Capabilities
-					if (speed >= SpeedCalc(foe)) //The considered mon is faster than the enemy
-					{
-						scores[i] += SWITCHING_INCREASE_OUTSPEEDS;
-						flags[i] |= SWITCHING_FLAG_OUTSPEEDS;
 					}
 
 					//Check Defensive Capabilities
@@ -2268,6 +2322,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								&& isPriority[k] > 0 //But the foe has a move that KOs and has priority
 								&& (gTerrainType != PSYCHIC_TERRAIN || !CheckMonGrounding(consideredMon))) //And the mon can be hit by priority
 									flags[i] &= ~SWITCHING_FLAG_OUTSPEEDS; //Then remove the outspeed flag so the AI doesn't think it can outspeed
+									//Potential UB: AI mon outspeed BECAUSE of a priority move it has. If it also outspeeds normally, this shouldn't matter since its priority move will still go first.
+									//TODO fix this
 
 								break; //Only need 1 check for this to pass - priority moves are sorted first so a break here won't cause problems
 							}
