@@ -224,6 +224,14 @@ void atkEF_handleballthrow(void)
 				shakes = maxShakes;
 			else
 			{
+				#ifdef BUTTON_PRESS_INCREASES_CATCH_ODDS
+				if (JOY_HELD(A_BUTTON)
+				|| JOY_REPT(A_BUTTON)
+				|| (JOY_HELD(B_BUTTON) && JOY_HELD(DPAD_DOWN))
+				|| (JOY_REPT(B_BUTTON) && JOY_REPT(DPAD_DOWN)))
+					odds += (Sqrt(odds * 5)); //Bigger gains for lower numbers
+				#endif
+
 				odds = udivsi(0xFFFF0, Sqrt(Sqrt(udivsi(0xFF0000, odds))));
 				for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes) ;
 			}

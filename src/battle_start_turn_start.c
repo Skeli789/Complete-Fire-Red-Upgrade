@@ -7,6 +7,7 @@
 #include "../include/load_save.h"
 #include "../include/random.h"
 #include "../include/scanline_effect.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
@@ -1795,6 +1796,10 @@ u16 GetMUS_ForBattle(void)
 			if (song != 0)
 				return song;
 		#endif
+
+		u16 dexNum = SpeciesToNationalPokedexNum(species);
+		if (dexNum >= NATIONAL_DEX_GROOKEY && dexNum < NATIONAL_DEX_CALYREX)
+			return BGM_BATTLE_GALAR_WILD;
 
 		return BGM_BATTLE_BORRIUS_WILD;
 	#else

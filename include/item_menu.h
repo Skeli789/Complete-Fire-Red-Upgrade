@@ -78,3 +78,4 @@ void __attribute__((long_call)) ItemMenu_StartFadeToExitCallback(u8 taskId);
 void __attribute__((long_call)) ItemMenu_SetExitCallback(void* callbackFunc);
 void __attribute__((long_call)) PrepareOverworldReturn(void);
 void __attribute__((long_call)) ResetBagCursorPositions(void);
+void __attribute__((long_call)) Task_BagMenu_HandleInput(u8 taskId);

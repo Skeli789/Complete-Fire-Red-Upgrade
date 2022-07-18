@@ -1860,11 +1860,19 @@ static void ModifyNormalRaidBattleSpecies(void)
 	{
 		#if (defined SPECIES_WORMADAM && defined SPECIES_WORMADAM_SANDY && defined SPECIES_WORMADAM_TRASH)
 		case SPECIES_WORMADAM:
-			//Change based on the house
+			//Change based on the hour
 			if ((gClock.hour % 3) == 1)
 				gRaidBattleSpecies = SPECIES_WORMADAM_SANDY;
 			else if ((gClock.hour % 3) == 2)
 				gRaidBattleSpecies = SPECIES_WORMADAM_TRASH;
+			break;
+		case SPECIES_ALCREMIE_STRAWBERRY: ;
+			//Change based on the hour
+			u8 numAlcremieForms = 1 + (SPECIES_ALCREMIE_STAR - SPECIES_ALCREMIE_BERRY) + 1;
+			if ((gClock.hour % numAlcremieForms) == 0)
+				break; //Regular Alcremie
+			else
+				gRaidBattleSpecies = SPECIES_ALCREMIE_BERRY + (gClock.hour % (numAlcremieForms - 1));
 			break;
 		#endif
 	}
@@ -1940,10 +1948,29 @@ void DetermineRaidSpecies(void)
 	}
 	else if (raid->data != NULL)
 	{
-		index = GetRaidRandomNumber() % raid->amount;
+		u32 i;
+		u8 amount = raid->amount;
+
+		#ifdef FLAG_GEN_8_PLACED_IN_GAME
+		if (!FlagGet(FLAG_GEN_8_PLACED_IN_GAME))
+		{
+			//Don't spawn Gen 8 mons
+			for (i = 0; i < raid->amount; ++i)
+			{
+				if (raid->data[i].species >= SPECIES_GROOKEY
+				&& raid->data[i].species < NUM_SPECIES_GEN_8)
+				{
+					amount = i;
+					break;
+				}
+			}
+		}
+		#endif
+
+		index = GetRaidRandomNumber() % amount;
 		gRaidBattleSpecies = raid->data[index].species;
 
-		ModifyNormalRaidBattleSpecies(); //Adjusts things like Wormadam
+		ModifyNormalRaidBattleSpecies(); //Adjusts things like Wormadam and Alcremie
 
 		if (ShouldTryGigantamaxRaidMon())
 		{
@@ -2258,11 +2285,34 @@ static bool8 IsFoughtRaidSpecies(u16 species)
 
 	#ifdef NATIONAL_DEX_WORMADAM //Special exception for Wormadam since one species can become all three for the battle
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	if (dexNum == NATIONAL_DEX_WORMADAM && SpeciesToNationalPokedexNum(gRaidBattleSpecies) == dexNum) //Both are Wormadam
-		return TRUE; //Give the items for Wormadam
+	if ((dexNum == NATIONAL_DEX_WORMADAM || dexNum == NATIONAL_DEX_ALCREMIE)
+	&& SpeciesToNationalPokedexNum(gRaidBattleSpecies) == dexNum) //Both are Wormadam/Alcremie
+		return TRUE; //Give the items for Wormadam/Alcremie
 	#endif
 
 	return FALSE;
+}
+
+static u8 TryAlterRaidItemDropRate(u16 item, u8 rate)
+{
+	u32 i;
+
+	#ifdef UNBOUND
+	if (item == ITEM_WISHING_PIECE)
+	{
+		for (i = 0; i < PARTY_SIZE; i++)
+		{
+			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == SPECIES_JIRACHI)
+			{
+				if (rate < 20)
+					rate = 20; //Bump up to 20%
+				break;
+			}
+		}
+	}
+	#endif
+
+	return rate;
 }
 
 //Input: VAR_TEMP_0 = 0
@@ -2282,9 +2332,12 @@ void sp11C_GiveRaidBattleRewards(void)
 				for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 				{
 					u8 dropNum = VarGet(VAR_TEMP_0);
+					u16 dropItem = raid->data[i].drops[dropNum];
+					u8 dropRate = sRaidBattleDropRates[dropNum];
 
-					if (raid->data[i].drops[dropNum] != ITEM_NONE
-					&& Random32() % 100 < sRaidBattleDropRates[dropNum])
+					dropRate = TryAlterRaidItemDropRate(dropItem, dropRate);
+
+					if (dropItem != ITEM_NONE && Random32() % 100 < dropRate)
 					{
 						gSpecialVar_LastTalked = 0xFD; //So no event objects disappear
 						Var8000 = raid->data[i].drops[(*(GetVarPointer(VAR_TEMP_0)))++];

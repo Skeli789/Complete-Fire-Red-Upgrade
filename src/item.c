@@ -1508,6 +1508,25 @@ void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
 	MergeSort(itemSlots, 0, sortAmount, func); //Sort all the null items to the back
 }
 
+static void Task_WipeSingleUseItems(u8 taskId)
+{
+	if (!gTasks[taskId].data[0])
+	{
+		Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS);
+		Memset(sBagPokeBalls, 0, sizeof(struct ItemSlot) * NUM_POKE_BALLS);
+		Memset(sBagBerries, 0, sizeof(struct ItemSlot) * NUM_BERRIES);
+		gTasks[taskId].data[0] = TRUE; //Only wipe once
+	}
+
+	if (FuncIsActiveTask(Task_BagMenu_HandleInput))
+	{
+		//Close bag so it reloads properly
+		DestroyTask(taskId);
+		taskId = FindTaskIdByFunc(Task_BagMenu_HandleInput);
+		gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
+	}
+}
+
 
 //Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define gMenuText_Use (const u8*) 0x84161a0

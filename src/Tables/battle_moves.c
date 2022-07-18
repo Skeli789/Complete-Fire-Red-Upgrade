@@ -12223,7 +12223,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_SNATCH_AFFECTED,
 		.z_move_power = 0,
 		.split = SPLIT_STATUS,
-		.z_move_effect = Z_EFFECT_ATK_UP_1
+		.z_move_effect = Z_EFFECT_RESET_STATS
 	},
 
 	[MOVE_HEADLONGRUSH] =
@@ -12250,7 +12250,13 @@ const struct BattleMove gBattleMoves[] =
 	[MOVE_BARBBARRAGE] =
 	{
 		.effect = EFFECT_POISON_HIT, //Also double damage on poisoned foes
+		#ifdef ACTUAL_PLA_MOVE_POWERS
 		.power = 60,
+		.z_move_power = 120,
+		#else
+		.power = 75,
+		.z_move_power = 140,
+		#endif
 		.type = TYPE_POISON,
 		.accuracy = 100,
 		.pp = 15,
@@ -12258,7 +12264,6 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-		.z_move_power = 120,
 		.split = SPLIT_PHYSICAL,
 		.z_move_effect = 0
 	},
@@ -15508,6 +15513,7 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_TRIPLEARROWS] = 75,
 	[MOVE_INFERNALPARADE] = 110,
 	[MOVE_CEASELESSEDGE] = 120,
+	[MOVE_BARBBARRAGE] = 80,
 	#else
 	[MOVE_RAGINGFURY] = 140,
 	[MOVE_CHLOROBLAST] = 150,
@@ -15517,9 +15523,9 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_TRIPLEARROWS] = 80,
 	[MOVE_INFERNALPARADE] = 130,
 	[MOVE_CEASELESSEDGE] = 130,
+	[MOVE_BARBBARRAGE] = 90,
 	#endif
 	[MOVE_WAVECRASH] = 130,
-	[MOVE_BARBBARRAGE] = 80,
 	[MOVE_ESPERWING] = 130,
 	[MOVE_BITTERMALICE] = 110,
 	[MOVE_BLEAKWINDSTORM] = 130,

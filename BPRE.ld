@@ -967,6 +967,7 @@ DestroyBagMenuResources = 0x8108B04 | 1;
 ItemMenu_StartFadeToExitCallback = 0x8108B50 | 1;
 DisplayItemMessageInBag = 0x8108E70 | 1;
 ItemMenu_SetExitCallback = 0x8108EE0 | 1;
+Task_BagMenu_HandleInput = 0x8108F0C | 1;
 Task_ItemContextMenuByLocation = 0x81090DC | 1;
 Task_RedrawArrowsAndReturnToBagMenuSelect = 0x810910C | 1;
 Task_ReturnToBagFromContextMenu = 0x810A1F8 | 1;

@@ -382,9 +382,9 @@ static const struct WildPokemon sRoute18_LandMonsNight[] =
 	{53, 57, SPECIES_NOCTOWL},
 	{53, 57, SPECIES_SKUNTANK},
 	{53, 57, SPECIES_SUDOWOODO},
-	{53, 57, SPECIES_AUDINO},
 	{53, 57, SPECIES_SUDOWOODO},
-	{53, 57, SPECIES_AUDINO},
+	{53, 57, SPECIES_SUDOWOODO},
+	{53, 57, SPECIES_HAPPINY},
 };
 
 static const struct WildPokemonInfo sRoute18_LandMonsInfoNight = {15, sRoute18_LandMonsNight};
