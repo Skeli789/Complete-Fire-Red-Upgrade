@@ -556,7 +556,20 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 						{
 							continue; //Proceed to next move
 						}
-						else if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
+
+						//Try to pick the move of the two with the best accuracy
+						u16 bestAcc = (MoveWillHit(bestMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(bestMove, bankAtk, bankDef);
+						u16 currAcc = (MoveWillHit(currMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(currMove, bankAtk, bankDef);
+
+						if (currAcc < bestAcc)
+							continue; //Best move already has a better accuracy
+						else if (currAcc > bestAcc && bestAcc < 100)
+						{
+							bestMove = currMove; //Use the move with higher accuracy
+							continue;
+						}
+
+						if (!CanBeChoiceLocked(bankAtk)) //Only care about contact and recoil if not going to be locked into a single move
 						{
 							//Pick a non-contact move if contact is a bad idea
 							if (badIdeaToMakeContact)
@@ -628,18 +641,13 @@ static u16 CalcStrongestMoveGoesFirst(u8 bankAtk, u8 bankDef)
 							else if (AIRandom() & 1)
 								bestMove = currMove;
 						}
-						else //Will get locked by using this move
+						else //Will be choice locked after using this move
 						{
-							u16 bestAcc = (MoveWillHit(bestMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(bestMove, bankAtk, bankDef);
-							u16 currAcc = (MoveWillHit(currMove, bankAtk, bankDef)) ? 100 : CalcAIAccuracy(currMove, bankAtk, bankDef);
-
-							if (currAcc == bestAcc || currAcc >= 100)
+							if (currAcc == bestAcc || currAcc >= 100) //Both moves are pretty much guaranteed to hit
 							{
 								if (CalcVisualBasePower(bankAtk, 0, currMove, TRUE) > CalcVisualBasePower(bankAtk, 0, bestMove, TRUE))
-									bestMove = currMove; //Same accuracy so use move with higher power
+									bestMove = currMove; //Use move with higher power since it'll likely to lead to more damage in the long run
 							}
-							else if (currAcc > bestAcc && bestAcc < 100)
-								bestMove = currMove; //Use the move with higher accuracy
 						}
 					}
 				}
