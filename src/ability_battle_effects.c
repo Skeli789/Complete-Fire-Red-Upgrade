@@ -341,8 +341,8 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_NEUTRALIZINGGAS] = 5,
 	[ABILITY_HUNGERSWITCH] = 2,
 	[ABILITY_PASTELVEIL] = 4,
-	[ABILITY_STEELY_SPIRIT] = 2,
-	[ABILITY_PERISH_BODY] = -1,
+	[ABILITY_STEELYSPIRIT] = 2,
+	[ABILITY_PERISHBODY] = -1,
 	[ABILITY_WANDERINGSPIRIT] = 2,
 	[ABILITY_GORILLATACTICS] = 4,
 };
@@ -2206,7 +2206,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				}
 				break;
 
-			case ABILITY_PERISH_BODY:
+			case ABILITY_PERISHBODY:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& gBankAttacker != bank

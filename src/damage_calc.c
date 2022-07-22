@@ -3969,7 +3969,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			break;
 
 		case ABILITY_STEELWORKER:
-		case ABILITY_STEELY_SPIRIT:
+		case ABILITY_STEELYSPIRIT:
 		//1.5x Boost
 			if (data->moveType == TYPE_STEEL)
 				power = (power * 15) / 10;
@@ -4018,7 +4018,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * 13) / 10;
 			break;
 
-		case ABILITY_STEELY_SPIRIT:
+		case ABILITY_STEELYSPIRIT:
 		//1.5x Boost
 			if (data->moveType == TYPE_STEEL)
 				power = (power * 15) / 10;

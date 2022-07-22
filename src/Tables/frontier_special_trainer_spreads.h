@@ -7377,6 +7377,33 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Skeli[] =
 		.modifyMovesDoubles = FALSE,
 		.shiny = TRUE,
 	},
+	/*{
+		.species = SPECIES_ETERNATUS_ETERNAMAX,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.defEv = 4,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_DRAGONPULSE,
+			MOVE_SLUDGEBOMB,
+			MOVE_FLAMETHROWER,
+			MOVE_RECOVER,
+		},
+		.ball = BALL_TYPE_RANDOM,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = TRUE,
+	},*/
 };
 
 const struct BattleTowerSpread gMiddleCupTowerSpread_Skeli[] =

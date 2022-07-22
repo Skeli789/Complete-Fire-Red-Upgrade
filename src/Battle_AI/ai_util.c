@@ -3023,7 +3023,7 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 		case ABILITY_MUMMY:
 		case ABILITY_WANDERINGSPIRIT:
 		case ABILITY_COTTONDOWN:
-		case ABILITY_PERISH_BODY:
+		case ABILITY_PERISHBODY:
 			return TRUE;
 	}
 
