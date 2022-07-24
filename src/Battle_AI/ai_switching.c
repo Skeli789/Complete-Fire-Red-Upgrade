@@ -1187,8 +1187,10 @@ static bool8 IsTakingAnnoyingSecondaryDamage(struct Pokemon* party)
 	{
 		bool8 trySwitch = FALSE;
 		bool8 urgent = FALSE;
-		
-		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (AIRandom() & 3) == 0) //25% chance to switch out when seeded
+
+		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (AIRandom() & 3) == 0 //25% chance to switch out when seeded
+		&& !AnyUsefulOffseniveStatIsRaised(gActiveBattler) //Unless invested in offensive stat buffs
+		&& !(IS_SINGLE_BATTLE && CanKnockOut(gActiveBattler, FOE(gActiveBattler)))) //Or can KO the foe and not suffer the seed damage
 		{
 			trySwitch = TRUE;
 		}

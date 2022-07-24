@@ -197,6 +197,11 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 
 				gBattleMons[bankDef].hp = (backupHp - dmg) + healAmount; //Deal the damage and then heal it off
 				gBattleMons[bankDef].hp += GetAmountToRecoverBy(bankDef, 0, MOVE_PROTECT); //Then get more HP at the end of the turn
+				u32 secondaryEffectDamage = GetSecondaryEffectDamage(bankDef);
+				if (secondaryEffectDamage >= gBattleMons[bankDef].hp)
+					gBattleMons[bankDef].hp = 0;
+				else
+					gBattleMons[bankDef].hp -= secondaryEffectDamage;
 				gBattleMons[bankDef].hp = MathMin(gBattleMons[bankDef].hp, gBattleMons[bankDef].maxHP);
 
 				if (CalculateMoveKnocksOutXHitsFresh(move, bankAtk, bankDef, numHits)) //Then see if it can KO with the rest of the hits
