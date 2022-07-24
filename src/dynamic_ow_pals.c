@@ -349,9 +349,7 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 	LoadNPCPalette(palTag, palSlot);
 	#ifdef UNBOUND
 	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
-		ChangeEventObjPal(0x100 + palSlot * 16, IsPaletteTagAffectedBySkinCharacterCustomization(palTag),
-		                                        IsPaletteTagAffectedByHairCharacterCustomization(palTag),
-		                                        IsPaletteTagAffectedByOutfitCharacterCustomization(palTag));
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag);
 	#endif
 	FogBrightenPalettes(FOG_BRIGHTEN_INTENSITY);
 	MaskPaletteIfFadingIn(palSlot);
@@ -372,9 +370,7 @@ u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
 	LoadNPCPalette(palTag, palSlot);
 	#ifdef UNBOUND
 	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
-		ChangeEventObjPal(0x100 + palSlot * 16, IsPaletteTagAffectedBySkinCharacterCustomization(palTag),
-		                                        IsPaletteTagAffectedByHairCharacterCustomization(palTag),
-		                                        IsPaletteTagAffectedByOutfitCharacterCustomization(palTag));
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag);
 	#endif
 	BlendPalettes(gBitTable[(palSlot + 16)], 6, RGB(12, 20, 27)); //Make it blueish
 	BrightenReflection(palSlot); //And a little brighter
@@ -510,10 +506,7 @@ u8 sub_805F510(const struct SpritePalette *spritePalette)
 	if (palSlot != 0xFF)
 	{
 		if (IsPaletteTagAffectedByCharacterCustomization(spritePalette->tag))
-			ChangeEventObjPal(0x100 + palSlot * 16,
-			                                    IsPaletteTagAffectedBySkinCharacterCustomization(spritePalette->tag),
-		                                        IsPaletteTagAffectedByHairCharacterCustomization(spritePalette->tag),
-		                                        IsPaletteTagAffectedByOutfitCharacterCustomization(spritePalette->tag));
+			ChangeEventObjPal(0x100 + palSlot * 16, spritePalette->tag);
 	}
 	#endif
 	return palSlot;

@@ -663,6 +663,9 @@
 #define MAP_DISTORTION_WORLD_4         ((1 << 8) | 66)
 #define MAP_DISTORTION_WORLD_5         ((1 << 8) | 67)
 
+#define MAP_ICY_HOLE_1F                ((2 << 8) | 0)
+#define MAP_ICY_HOLE_B1F               ((2 << 8) | 14)
+
 #define MAP_TOMB_OF_BORRIUS_1F         ((1 << 8) | 83)
 #define MAP_TOMB_OF_BORRIUS_B3F        ((1 << 8) | 85)
 #define MAP_TOMB_OF_BORRIUS_1F_BACK    ((1 << 8) | 90)

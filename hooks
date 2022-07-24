@@ -726,7 +726,7 @@ AutoScrollBattleLevelUpBoxHook2 8026350 0
 
 #ifdef UNBOUND
 GetCurrentLevelCap 801D79C 0
-ChangeTrainerPicPal 801D7A4 1
+ChangeTrainerPicPal 801D7A4 2
 GetMinimumLevel 801D7AC 1
 GetLevelUpMovePairsBySpecies 801D7BC 2
 BuildTMMoveset 801D7C4 2
@@ -746,4 +746,8 @@ LoadTrainerBackPal 801D82C 2
 ClearNewGamePlusFlags 801D83C 0
 #Skip 801D844
 TryReplaceUnboundNormalTrainerSpecies 801D84C 2
+GetOutfitStyleByTrainerPic 801D854 1
+ChangeEventObjPal 801D85C 2
+ChangeTrainerBackPal 801D864 2
+#Skip 801D86C
 #endif
