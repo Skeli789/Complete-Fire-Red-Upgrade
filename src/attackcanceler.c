@@ -30,6 +30,11 @@ attackcanceler.c
 
 //TODO: Make sure Powder stops Inferno Overdrive and not Pledge moves
 
+#ifdef UNBOUND
+typedef bool8 (*IsIngameTradeMon_T) (struct Pokemon* mon);
+#define IsIngameTradeMon ((IsIngameTradeMon_T) (0x801D86C |1)) //From Battle Tower Scripts
+#endif
+
 //This file's functions:
 static u8 AtkCanceller_UnableToUseMove(void);
 static bool8 TryActivateMagicCoat(u8 bankDef, u8 bankAtk, u16 currentMove);
@@ -1155,6 +1160,11 @@ static u8 IsMonDisobedient(void)
 	if (!IsOtherTrainer(gBattleMons[gBankAttacker].otId, gBattleMons[gBankAttacker].otName))
 		return 0;
 	#endif
+	
+	#ifdef INGAME_TRADE_MONS_ALWAYS_OBEY
+	if (IsIngameTradeMon(GetBankPartyData(gBankAttacker)))
+		return 0;
+	#endif
 
 	#ifdef OBEDIENCE_BY_BADGE_AMOUNT
 		u8 badgeCount = 0;
@@ -1204,7 +1214,6 @@ static u8 IsMonDisobedient(void)
 			default:
 				return 0;
 		}
-
 	#else
 		if (FlagGet(FLAG_BADGE08_GET))
 			return 0;
