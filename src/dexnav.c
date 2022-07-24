@@ -1229,7 +1229,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment, bool8 detectorMode)
 						//Pick index at random and choose min and max from there
 						PICK_RANDOM_LAND_LEVEL:
 						i = RandRange(0, NELEMS(landMonsInfo->wildPokemon));
-						monData = &landMonsInfo->wildPokemon[i];
+						monData = &landMonsInfo->wildPokemon[Random() % MAX_TOTAL_LAND_MONS];
 						min = monData->minLevel;
 						max = monData->maxLevel;
 						break;
@@ -1260,7 +1260,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment, bool8 detectorMode)
 				if (detectorMode)
 				{
 					i = RandRange(0, NELEMS(waterMonsInfo->wildPokemon));
-					monData = &landMonsInfo->wildPokemon[i];
+					monData = &waterMonsInfo->wildPokemon[Random() % NUM_WATER_MONS];
 					min = monData->minLevel;
 					max = monData->maxLevel;
 					break;
@@ -1286,7 +1286,7 @@ static u8 GetEncounterLevel(u16 species, u8 environment, bool8 detectorMode)
 				if (detectorMode)
 				{
 					i = RandRange(0, NELEMS(fishingMonsInfo->wildPokemon));
-					monData = &landMonsInfo->wildPokemon[i];
+					monData = &fishingMonsInfo->wildPokemon[Random() % NUM_FISHING_MONS];
 					min = monData->minLevel;
 					max = monData->maxLevel;
 					break;
