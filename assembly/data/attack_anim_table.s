@@ -9940,6 +9940,9 @@ ANIM_DRAGONASCENT:
 	launchtask AnimTask_IsAttackerRayquaza 0x2 0x0
 	jumpifargmatches 0x0 0x0 DRAGON_ASCENT_PURPLE_FLY_UP
 	launchtemplate ASCENT_FLYUP TEMPLATE_ATTACKER | 2, 0x7 0x0 0x0 0x400 0x24 0x15 0x1 bank_attacker
+	launchtask AnimTask_IsAttackerShiny 0x2 0x0
+	jumpifargmatches 0x0 0x0 DRAGON_ASCENT_REJOIN_1
+	launchtask AnimTask_GrayscaleParticle 0x5 0x1 ANIM_TAG_DRAGON_ASCENT @;"Black" because shiny Rayqauaza is black
 DRAGON_ASCENT_REJOIN_1:
 	waitanimation
 	launchtask AnimTask_pal_fade, 0xa 0x5, PAL_ATK | PAL_BG | PAL_BG_4 | PAL_BG_5, 4, 0, 14, 0x5400|0x3E0|0x1B	@RGB(21, 31, 27)

@@ -1827,6 +1827,12 @@ void AnimTask_IsAttackerRayquaza(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_IsAttackerShiny(u8 taskId)
+{
+	gBattleAnimArgs[0] = IsMonShiny(GetIllusionPartyData(gBattleAnimAttacker));
+	DestroyAnimVisualTask(taskId);
+}
+
 
 //Fairy Lock//
 bool8 IsAnimMoveFairyLock(void)
