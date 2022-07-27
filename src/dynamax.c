@@ -210,7 +210,7 @@ static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
 static const struct CompressedSpriteSheet sSummaryScreenGigantamaxIconSpriteSheet =    {GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
 static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =          {GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
 #ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
-static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 2) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
+static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 5) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
 static const struct SpritePalette sSummaryScreenMaxFriendshipIconSpritePalette =       {MaxFriendshipSummaryScreenIconPal, GFX_TAG_MAX_FRIENDSHIP_ICON};
 #endif
 
@@ -1485,7 +1485,7 @@ void CreateSummaryScreenGigantamaxIcon(void)
 
 	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
 	u8 friendship = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL);
-	if (friendship >= 220)
+	if (friendship >= 80)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
 		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
@@ -1499,8 +1499,29 @@ void CreateSummaryScreenGigantamaxIcon(void)
 		#endif
 
 		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, x, y, 0);
-		if (friendship < 255 && ballSprite->data[1] < MAX_SPRITES)
-			gSprites[ballSprite->data[1]].oam.tileNum += (8 / 8) * (8 / 8); //Use grayscale heart when can evolve but not max friendship
+		if (ballSprite->data[1] < MAX_SPRITES)
+		{
+			u16 imageNum = 0;
+
+			//Adjust heart colour based on how much friendship
+			switch (friendship)
+			{
+				case 80 ... 129:
+					imageNum = 4;
+					break;
+				case 130 ... 179:
+					imageNum = 3;
+					break;
+				case 180 ... 219:
+					imageNum = 2;
+					break;
+				case 220 ... 254:
+					imageNum = 1;
+					break;
+			}
+
+			gSprites[ballSprite->data[1]].oam.tileNum += (imageNum * (8 / 8) * (8 / 8));
+		}
 	}
 	else
 		ballSprite->data[1] = MAX_SPRITES; //No icon
