@@ -1,4 +1,5 @@
 #include "../include/global.h"
+#include "../include/play_time.h"
 #include "../include/rtc.h"
 #include "../include/script.h"
 #include "../include/new/ram_locs.h"
@@ -7,6 +8,7 @@ extern u16 sRTCErrorStatus;
 extern u8 sRTCProbeResult;
 extern u16 sRTCSavedIme;
 extern u8 sRTCFrameCount;
+extern u32 gLastClockSecond;
 
 extern struct SiiRtcInfo sRtc; //0x3005E88
 
@@ -223,4 +225,40 @@ void DirectClockUpdate(void)
 {
 	sRTCFrameCount = 0;
 	RtcCalcLocalTime();
+}
+
+void PlayTimeCounter_Update(void)
+{
+	if (sPlayTimeCounterState == PLAYTIME_RUNNING)
+	{
+		bool8 secondPassed;
+
+		if (gSaveBlock2->playTimeVBlanks < 0xFF)
+			++gSaveBlock2->playTimeVBlanks;
+
+		if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK)
+			secondPassed = gSaveBlock2->playTimeVBlanks > 59;
+		else
+			secondPassed = gClock.second != gLastClockSecond //Sync clock to RTC
+			            && gSaveBlock2->playTimeVBlanks > 59; //But make sure a second ingame has actually passed and the player didn't just pause the game
+
+		if (secondPassed)
+		{
+			gSaveBlock2->playTimeVBlanks = 0;
+			gLastClockSecond = gClock.second;
+			gSaveBlock2->playTimeSeconds++;
+			if (gSaveBlock2->playTimeSeconds > 59)
+			{
+				gSaveBlock2->playTimeSeconds = 0;
+				gSaveBlock2->playTimeMinutes++;
+				if (gSaveBlock2->playTimeMinutes > 59)
+				{
+					gSaveBlock2->playTimeMinutes = 0;
+					gSaveBlock2->playTimeHours++;
+					if (gSaveBlock2->playTimeHours > 999)
+						PlayTimeCounter_SetToMax();
+				}
+			}
+		}
+	}
 }

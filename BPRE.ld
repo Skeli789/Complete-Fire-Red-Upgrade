@@ -32,6 +32,8 @@ gMultiChoice = 0x203E088;
 gPartyPresetTeamIndices = 0x203E0C0;
 gScored3CritsInBattle = 0x203E0C6;
 ExtensionState = 0x3000F28;
+gLastClockSecond = 0x300539C; /*Can add 3 bytes after this, but make sure to change to u8*/
+sPlayTimeCounterState = 0x3000E7C;
 sRtc = 0x3005E88;
 gClock = 0x3005EA0;
 sRTCFrameCount = 0x3005EA9;
@@ -2015,6 +2017,9 @@ CreateTrainerCardTrainerPicSprite = 0x810C330 | 1;
 SetTitleScreenScene = 0x8078C90 | 1;
 Task_TitleScreen_SlideWin0 = 0x80792C8 | 1;
 TitleScreen_CreateBlankSprite = 0x80799F0 | 1;
+
+/* Playtime Functions */
+PlayTimeCounter_SetToMax = 0x80548D4 | 1;
 
 /* Math Functions */
 Sine = 0x8044E30 | 1;
