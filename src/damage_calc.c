@@ -1542,9 +1542,21 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	{
 		if (multiplier == TYPE_MUL_NO_EFFECT && GetMonItemEffect(monDef) == ITEM_EFFECT_RING_TARGET)
 			multiplier = TYPE_MUL_NORMAL;
-		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND
-		&& (CheckMonGrounding(monDef) || move == MOVE_THOUSANDARROWS))
-			multiplier = TYPE_MUL_NORMAL;
+		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND)
+		{
+			if (move == MOVE_THOUSANDARROWS)
+				multiplier = TYPE_MUL_NORMAL;
+			else if (!gMain.inBattle) //Eg. when called from the Frontier overworld
+			{
+				if (CheckGroundingByDetails(GetMonData(monDef, MON_DATA_SPECIES, NULL), GetMonData(monDef, MON_DATA_HELD_ITEM, NULL), GetMonAbility(monDef)))
+					multiplier = TYPE_MUL_NORMAL;
+			}
+			else
+			{
+				if (CheckMonGrounding(monDef))
+					multiplier = TYPE_MUL_NORMAL;
+			}
+		}
 	}
 	else
 	{
@@ -1766,19 +1778,14 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (WEATHER_HAS_EFFECT)
-			{
-				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect))
-					moveType = TYPE_WATER;
-				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-					moveType = TYPE_ROCK;
-				else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect))
-					moveType = TYPE_FIRE;
-				else if (gBattleWeather & WEATHER_HAIL_ANY)
-					moveType = TYPE_ICE;
-				else
-					moveType = TYPE_NORMAL;
-			}
+			if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect) && WEATHER_HAS_EFFECT)
+				moveType = TYPE_WATER;
+			else if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT)
+				moveType = TYPE_ROCK;
+			else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect) && WEATHER_HAS_EFFECT)
+				moveType = TYPE_FIRE;
+			else if (gBattleWeather & WEATHER_HAIL_ANY && WEATHER_HAS_EFFECT)
+				moveType = TYPE_ICE;
 			break;
 
 		case MOVE_NATURALGIFT:
@@ -1890,18 +1897,16 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (gMain.inBattle && WEATHER_HAS_EFFECT)
+			if (gMain.inBattle)
 			{
-				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect))
+				if (gBattleWeather & WEATHER_RAIN_ANY && !ItemEffectIgnoresSunAndRain(effect) && WEATHER_HAS_EFFECT)
 					moveType = TYPE_WATER;
-				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+				else if (gBattleWeather & WEATHER_SANDSTORM_ANY && WEATHER_HAS_EFFECT)
 					moveType = TYPE_ROCK;
-				else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect))
+				else if (gBattleWeather & WEATHER_SUN_ANY && !ItemEffectIgnoresSunAndRain(effect) && WEATHER_HAS_EFFECT)
 					moveType = TYPE_FIRE;
-				else if (gBattleWeather & WEATHER_HAIL_ANY)
+				else if (gBattleWeather & WEATHER_HAIL_ANY && WEATHER_HAS_EFFECT)
 					moveType = TYPE_ICE;
-				else
-					moveType = TYPE_NORMAL;
 			}
 			break;
 

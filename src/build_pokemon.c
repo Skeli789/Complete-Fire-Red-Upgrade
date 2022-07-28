@@ -33,6 +33,7 @@
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/mega.h"
+#include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
 #include "../include/new/pokemon_storage_system.h"
 #include "../include/new/species_tables.h"
@@ -94,6 +95,8 @@ struct TeamBuilder
 	bool8 moveOnTeam[MOVES_COUNT];
 	bool8 abilityOnTeam[ABILITIES_COUNT];
 	bool8 itemEffectOnTeam[ITEM_EFFECT_COUNT];
+	u8 weaknesses[NUMBER_OF_MON_TYPES];
+	bool8 moveTypeOnPlayerTeam[NUMBER_OF_MON_TYPES];
 	const struct BattleTowerSpread* spreads[PARTY_SIZE];
 	u8 spreadClasses[PARTY_SIZE];
 	u8 partyIndex[NUM_INDEX_CHECKS];
@@ -180,7 +183,11 @@ static bool8 TeamNotAllSameType(const u16 species, const u16 item, const u8 part
 static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
 static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType);
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
-static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder);
+static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder, bool8 forPlayer);
+static void AddPlayerMoveTypesToBuilder(struct TeamBuilder* builder, u8 monsCount);
+static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u8 ability, u16 item, u8 itemEffect, u32 partyId);
+static bool8 CareAboutTeamWeaknessesInTier(u8 tier);
+static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u8 ability);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
 static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread);
@@ -467,7 +474,7 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 			break;
 
 		case 1: //Legendary Pokemon
-			tier = BATTLE_FACILITY_NO_RESTRICTIONS;
+			tier = BATTLE_FACILITY_UBER;
 			break;
 
 		case 2: //Little Cup
@@ -1514,7 +1521,7 @@ static u16 TryReplaceNormalTrainerSpecies(u16 species, unusedArg u16 trainerId)
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side)
 {
-	u32 i, j;
+	u32 i;
 	u8 monsCount;
 	u8 rand;
 
@@ -1529,7 +1536,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 		if (trainerId == TRAINER_SECRET_BASE)
 			return 0;
 		else if (!IsFrontierTrainerId(trainerId))
-			return (CreateNPCTrainerParty(party, trainerId, firstTrainer, side));
+			return CreateNPCTrainerParty(party, trainerId, firstTrainer, side);
 	}
 
 	//Two of the three variables here hold garbage data which is never called.
@@ -1574,11 +1581,17 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 	builder->trainerId = trainerId;
 	Memset(builder->partyIndex, 0xFF, sizeof(builder->partyIndex));
 
+	if (!forPlayer
+	&& !IsRandomBattleTowerBattle() //Player has a random team so ignore it
+	&& CareAboutTeamWeaknessesInTier(tier) //Don't waste time unless this is relevant
+	&& !IsFrontierMulti(battleType)) //Can't do this in Multi battles because player partner's team is not in yet
+		AddPlayerMoveTypesToBuilder(builder, monsCount);
+
 	for (i = 0; i < monsCount; ++i)
 	{
 		bool8 loop = TRUE;
 		u16 species, dexNum, item;
-		u8 ability, itemEffect, class;
+		u8 ability, itemEffect;
 		const struct BattleTowerSpread* spread = NULL;
 
 		do
@@ -1588,7 +1601,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 				case FRONTIER_BRAIN_TID:
 					if (tier == BATTLE_FACILITY_MEGA_BRAWL)
 					{	//Force these trainers to have at least X amount of Mega Pokemon
-						if (monsCount < 6)
+						if (monsCount < PARTY_SIZE)
 						{
 							if (builder->numMegas < 2 && i + (2 - builder->numMegas) >= monsCount)
 								goto GENERIC_RANDOM_SPREADS; //Force at least two megas
@@ -2056,134 +2069,13 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 			&& !PokemonTierBan(species, item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS)
 			&& !(tier == BATTLE_FACILITY_MONOTYPE && TeamNotAllSameType(species, item, monsCount, builder->speciesArray, builder->itemArray))
 			&& !(tier == BATTLE_FACILITY_GS_CUP && !IsFrontierSingles(battleType) && TooManyLegendariesOnGSCupTeam(species, monsCount, builder->speciesArray))
-			&& !((trainerId == BATTLE_TOWER_TID || forPlayer || (trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID && IsRandomBattleTowerBattle())) && TeamDoesntHaveSynergy(spread, builder)))
+			&& !((trainerId == BATTLE_TOWER_TID || forPlayer || (trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID && IsRandomBattleTowerBattle())) && TeamDoesntHaveSynergy(spread, builder, forPlayer)))
 			{
-				class = PredictFightingStyle(spread->moves, ability, itemEffect, 0xFF);
-
-				builder->spreads[i] = spread;
-				builder->speciesArray[i] = species;
-				builder->itemArray[i] = item;
-				builder->abilityOnTeam[ability] = TRUE;
-
-				if (item == ITEM_ULTRANECROZIUM_Z)
-					builder->itemEffectOnTeam[ITEM_EFFECT_Z_CRYSTAL] = TRUE; //Treat like a Z-Crystal
-				else
-					builder->itemEffectOnTeam[itemEffect] = TRUE;
-
-				if (IsChoiceItemEffectOrAbility(itemEffect, ability))
-					++builder->numChoiceItems;
-
-				if (IsMegaStone(item))
-					++builder->numMegas;
-
-				builder->speciesOnTeam[dexNum] = TRUE;
-				for (j = 0; j < MAX_MON_MOVES; ++j)
-				{
-					builder->moveOnTeam[spread->moves[j]] = TRUE;
-
-					switch (spread->moves[j]) {
-						case MOVE_ELECTRICTERRAIN:
-							builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
-							break;
-
-						case MOVE_PSYCHICTERRAIN:
-							builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
-							break;
-
-						//Rain setter and Hail setter are used for Thunder and Blizzard, so it's better to only rely on weather Abilities for those
-					}
-				}
-
-				if (spread->spdEv >= 20)
-					builder->partyIndex[FAST_MON] = i;
-
-				if (gAbilityRatings[ability] < 0)
-					builder->partyIndex[BAD_ABILITY] = i;
-
-				if (IsClassStall(class) || IsClassDoublesUtility(class) || IsClassDoublesTeamSupport(class))
-					++builder->numStalls;
-				else if (IsClassBatonPass(class))
-					builder->partyIndex[BATON_PASSER] = i;
-				else if (IsClassScreener(class))
-					builder->partyIndex[SCREENER] = i;
-				else if (IsClassCleric(class))
-					builder->partyIndex[CLERIC] = i;
-				else if (IsClassEntryHazards(class))
-					builder->partyIndex[HAZARDS_SETUP] = i;
-
-				//Abilities Always
-				switch (ability) {
-					case ABILITY_DRIZZLE:
-						builder->partyIndex[RAIN_SETTER] = i;
-						break;
-
-					case ABILITY_SNOWWARNING:
-						builder->partyIndex[HAIL_SETTER] = i;
-						break;
-
-					case ABILITY_ELECTRICSURGE:
-						builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = i;
-						break;
-
-					case ABILITY_PSYCHICSURGE:
-						builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = i;
-						break;
-				}
-
-				if (!IsFrontierSingles(battleType)) //Doubles or Multi
-				{
-					switch (ability) {
-						case ABILITY_VOLTABSORB:
-						case ABILITY_MOTORDRIVE:
-						case ABILITY_LIGHTNINGROD:
-							builder->partyIndex[ELECTRIC_IMMUNITY] = i;
-							break;
-
-						case ABILITY_WATERABSORB:
-						case ABILITY_DRYSKIN:
-						case ABILITY_STORMDRAIN:
-							builder->partyIndex[WATER_IMMUNITY] = i;
-							break;
-
-						case ABILITY_FLASHFIRE:
-							builder->partyIndex[FIRE_IMMUNITY] = i;
-							break;
-
-						case ABILITY_SAPSIPPER:
-							builder->partyIndex[GRASS_IMMUNITY] = i;
-							break;
-
-						case ABILITY_LEVITATE:
-							if (itemEffect != ITEM_EFFECT_IRON_BALL)
-								builder->partyIndex[GROUND_IMMUNITY] = i;
-							break;
-
-						case ABILITY_SOUNDPROOF:
-							builder->partyIndex[SOUND_IMMUNITY] = i;
-							break;
-
-						case ABILITY_JUSTIFIED:
-							builder->partyIndex[JUSTIFIED_BOOSTED] = i;
-							break;
-					}
-
-					u8 typeDmg;
-					u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 0) : gBaseStats[species].type1;
-					u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 1) : gBaseStats[species].type2;
-
-					for (j = 0; j < ARRAY_COUNT(sImmunities); ++j)
-					{
-						typeDmg = 10;
-						ModulateByTypeEffectiveness(sImmunities[j].type, defType1, defType2, &typeDmg);
-						if (typeDmg == 0 && builder->partyIndex[sImmunities[j].index] == 0xFF)
-							builder->partyIndex[sImmunities[j].index] = i;
-					}
-				}
-
 				loop = FALSE;
 			}
 		} while (loop);
 
+		UpdateBuilderAfterSpread(builder, spread, species, ability, item, itemEffect, i);
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
 	}
 
@@ -3182,8 +3074,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 	u16 streak = GetCurrentBattleTowerStreak();
 	bool8 megasZMovesBannedInTier = AreMegasZMovesBannedInTier(tier) || BATTLE_FACILITY_NUM == IN_RING_CHALLENGE;
 
-	if (!forPlayer && trainerId == BATTLE_TOWER_TID
-	&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
+	if (!forPlayer && trainerId == BATTLE_TOWER_TID && IsStandardTier(tier))
 	{
 		if (megasZMovesBannedInTier
 		&& (IsZCrystal(item) || IsMegaStone(item))) //Don't give the AI Pokemon with bad items
@@ -3216,7 +3107,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 		}
 	}
 	else if ((forPlayer || trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID)
-	&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
+	&& IsStandardTier(tier))
 	{
 		streak = GetMaxBattleTowerStreakForTier(tier);
 
@@ -3249,8 +3140,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 		if (megasZMovesBannedInTier && IsMegaStone(item)) //Don't give special Trainers Pokemon with bad items
 			return TRUE;
 
-		if (streak < 20
-		&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
+		if (streak < 20 && IsStandardTier(tier))
 		{
 			if (IsMegaStone(item)) //Special trainers aren't allowed to Mega Evolve
 				return TRUE;	   //before the player has beaten Palmer in the 20th battle.
@@ -3265,7 +3155,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 	return FALSE;
 }
 
-static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder)
+static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder, bool8 forPlayer)
 {
 	int i;
 
@@ -3273,6 +3163,7 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 			   : ConvertFrontierAbilityNumToAbility(spread->ability, spread->species);
 	u8 itemEffect = (ability == ABILITY_KLUTZ
 				 || (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MAGIC_ROOM)) ? 0 : ItemId_GetHoldEffect(spread->item);
+	u8 battleType = builder->battleType;
 
 	bool8 hasTailwinder = builder->moveOnTeam[MOVE_TAILWIND];
 	bool8 hasTrickRoomer = builder->moveOnTeam[MOVE_TRICKROOM];
@@ -3375,10 +3266,31 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 			break;
 	}
 
+	u8 maxWeaknesses;
 	u8 class = PredictFightingStyle(spread->moves, ability, itemEffect, 0xFF);
 	if (builder->monsCount <= 4)
 	{
-		if (IS_SINGLE_BATTLE)
+		maxWeaknesses = 1; //Don't allow duplicate weaknesses on team
+
+		if (!forPlayer
+		&& !IsFrontierMulti(battleType) //Teams are built seperately, so even though maxWeaknesses is 1, there may be up to 2 with the other team factored in
+		&& gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Streaks are only in Frontier
+		{
+			u16 streak = GetCurrentBattleTowerStreak();
+
+			if (IsStandardTier(builder->tier))
+			{
+				if (streak < 20)
+					maxWeaknesses = 2; //Make teams slightly easier for early standard battles
+			}
+			else if (IS_SINGLE_BATTLE) //3v3 only
+			{
+				if (streak > 50)
+					maxWeaknesses = (Random() & 3) == 0 ? 0 : 1; //Slightly more likely to be Pokemon that have no weaknesses to your team
+			}
+		}
+
+		if (IS_SINGLE_BATTLE) //3v3
 		{
 			if (IsClassStall(class) || IsClassCleric(class))
 			{
@@ -3394,7 +3306,7 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 					return TRUE; //Baton Pass/Hazards/Screener should only be used as leads in 3v3/4v4
 			}
 		}
-		else //Double Battle
+		else //4v4 Double Battle
 		{
 			if (IsChoiceItemEffectOrAbility(itemEffect, ability) && builder->numChoiceItems >= 1)
 				return TRUE; //Max one choiced Pokemon per 4v4 doubles team
@@ -3408,12 +3320,14 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 	}
 	else //5-6 Pokemon
 	{
+		maxWeaknesses = 2; //A well-designed team has at most 2 weaknesses of each type
+
 		if (IS_SINGLE_BATTLE)
 		{
 			if (IsClassStall(class))
 			{
 				if (builder->tier == BATTLE_FACILITY_MONOTYPE
-				|| (IsMiddleCupTier(builder->tier) && IsFrontierSingles(builder->battleType)))
+				|| (IsMiddleCupTier(builder->tier) && IsFrontierSingles(battleType)))
 				{
 					//Let more stally Pokemon in Middle Cup and Monotype
 					if (builder->numStalls >= 4
@@ -3462,7 +3376,276 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 		}
 	}
 
+	//Confirm not too many weaknesses
+	if (CareAboutTeamWeaknessesInTier(builder->tier)
+	&& itemEffect != ITEM_EFFECT_WEAKNESS_POLICY) //Good to have more weaknesses for this item
+	{
+		u8 moveType;
+		u8 defType1 = gBaseStats[spread->species].type1; //Camomons not relevant here since it'll never make it to this point
+		u8 defType2 = gBaseStats[spread->species].type2;
+		for (moveType = 0; moveType < NUMBER_OF_MON_TYPES; ++moveType)
+		{
+			if (moveType > TYPE_DARK && moveType < TYPE_FAIRY)
+				moveType = TYPE_FAIRY; //Skip right to fairy
+
+			if ((builder->moveTypeOnPlayerTeam[moveType] //If the player doesn't have this move type on their team, who cares?
+			 || IsFrontierMulti(battleType) || forPlayer || IsRandomBattleTowerBattle()) //In these cases all move types are considered
+			&& builder->weaknesses[moveType] >= maxWeaknesses
+			&& IsSpreadWeakToType(moveType, defType1, defType2, ability))
+				return TRUE; //Too many weaknesses
+		}
+	}
+
 	return FALSE;
+}
+
+
+static void AddPlayerMoveTypesToBuilder(struct TeamBuilder* builder, u8 monsCount)
+{
+	u32 i, j;
+
+	for (i = 0; i < monsCount; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
+		if (species != SPECIES_NONE && species != SPECIES_EGG)
+		{
+			for (j = 0; j < MAX_MON_MOVES; ++j)
+			{
+				u16 move = GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL);
+
+				switch (move)
+				{
+					case MOVE_NONE:
+						break;
+					case MOVE_WEATHERBALL:
+						//Account for all Weather Ball types
+						builder->moveTypeOnPlayerTeam[gBattleMoves[move].type] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_FIRE] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_WATER] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_ROCK] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_ICE] = TRUE;
+						break;
+					case MOVE_TERRAINPULSE:
+						//Account for all Terrain Pulse types
+						builder->moveTypeOnPlayerTeam[gBattleMoves[move].type] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_ELECTRIC] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_GRASS] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_FAIRY] = TRUE;
+						builder->moveTypeOnPlayerTeam[TYPE_PSYCHIC] = TRUE;
+						break;
+					default:
+						if (SPLIT(move) != SPLIT_STATUS && !CheckTableForMovesEffect(move, gMoveEffectsThatIgnoreWeaknessResistance))
+						{
+							u8 moveType = GetMonMoveTypeSpecial(&gPlayerParty[i], move);
+							builder->moveTypeOnPlayerTeam[moveType] = TRUE;
+						}
+						break;
+				}
+			}
+		}
+	}
+}
+
+static void UpdateBuilderAfterSpread(struct TeamBuilder* builder, const struct BattleTowerSpread* spread, u16 species, u8 ability, u16 item, u8 itemEffect, u32 partyId)
+{
+	u32 j;
+	u8 class = PredictFightingStyle(spread->moves, ability, itemEffect, 0xFF);
+
+	builder->spreads[partyId] = spread;
+	builder->speciesArray[partyId] = species;
+	builder->itemArray[partyId] = item;
+	builder->abilityOnTeam[ability] = TRUE;
+
+	if (item == ITEM_ULTRANECROZIUM_Z)
+		builder->itemEffectOnTeam[ITEM_EFFECT_Z_CRYSTAL] = TRUE; //Treat like a Z-Crystal
+	else
+		builder->itemEffectOnTeam[itemEffect] = TRUE;
+
+	if (IsChoiceItemEffectOrAbility(itemEffect, ability))
+		++builder->numChoiceItems;
+
+	if (IsMegaStone(item))
+		++builder->numMegas;
+
+	builder->speciesOnTeam[SpeciesToNationalPokedexNum(species)] = TRUE;
+	for (j = 0; j < MAX_MON_MOVES; ++j)
+	{
+		builder->moveOnTeam[spread->moves[j]] = TRUE;
+
+		switch (spread->moves[j]) {
+			case MOVE_ELECTRICTERRAIN:
+				builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = partyId;
+				break;
+
+			case MOVE_PSYCHICTERRAIN:
+				builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = partyId;
+				break;
+
+			//Rain setter and Hail setter are used for Thunder and Blizzard, so it's better to only rely on weather Abilities for those
+		}
+	}
+
+	if (spread->spdEv >= 20)
+		builder->partyIndex[FAST_MON] = partyId;
+
+	if (gAbilityRatings[ability] < 0)
+		builder->partyIndex[BAD_ABILITY] = partyId;
+
+	if (IsClassStall(class) || IsClassDoublesUtility(class) || IsClassDoublesTeamSupport(class))
+		++builder->numStalls;
+	else if (IsClassBatonPass(class))
+		builder->partyIndex[BATON_PASSER] = partyId;
+	else if (IsClassScreener(class))
+		builder->partyIndex[SCREENER] = partyId;
+	else if (IsClassCleric(class))
+		builder->partyIndex[CLERIC] = partyId;
+	else if (IsClassEntryHazards(class))
+		builder->partyIndex[HAZARDS_SETUP] = partyId;
+
+	//Abilities Always
+	switch (ability) {
+		case ABILITY_DRIZZLE:
+			builder->partyIndex[RAIN_SETTER] = partyId;
+			break;
+
+		case ABILITY_SNOWWARNING:
+			builder->partyIndex[HAIL_SETTER] = partyId;
+			break;
+
+		case ABILITY_ELECTRICSURGE:
+			builder->partyIndex[ELECTRIC_TERRAIN_SETTER] = partyId;
+			break;
+
+		case ABILITY_PSYCHICSURGE:
+			builder->partyIndex[PSYCHIC_TERRAIN_SETTER] = partyId;
+			break;
+	}
+
+	u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 0) : gBaseStats[species].type1;
+	u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 1) : gBaseStats[species].type2;
+	if (!IsFrontierSingles(builder->battleType)) //Doubles or Multi
+	{
+		switch (ability) {
+			case ABILITY_VOLTABSORB:
+			case ABILITY_MOTORDRIVE:
+			case ABILITY_LIGHTNINGROD:
+				builder->partyIndex[ELECTRIC_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_WATERABSORB:
+			case ABILITY_DRYSKIN:
+			case ABILITY_STORMDRAIN:
+				builder->partyIndex[WATER_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_FLASHFIRE:
+				builder->partyIndex[FIRE_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_SAPSIPPER:
+				builder->partyIndex[GRASS_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_LEVITATE:
+				if (itemEffect != ITEM_EFFECT_IRON_BALL)
+					builder->partyIndex[GROUND_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_SOUNDPROOF:
+				builder->partyIndex[SOUND_IMMUNITY] = partyId;
+				break;
+
+			case ABILITY_JUSTIFIED:
+				builder->partyIndex[JUSTIFIED_BOOSTED] = partyId;
+				break;
+		}
+
+		u8 typeDmg, j;
+
+		//Update mons with immunities
+		for (j = 0; j < ARRAY_COUNT(sImmunities); ++j)
+		{
+			typeDmg = 10;
+			ModulateByTypeEffectiveness(sImmunities[j].type, defType1, defType2, &typeDmg);
+			if (typeDmg == 0 && builder->partyIndex[sImmunities[j].index] == 0xFF)
+				builder->partyIndex[sImmunities[j].index] = partyId;
+		}
+	}
+	
+	//Update mon weaknesses
+	if (CareAboutTeamWeaknessesInTier(builder->tier) && species != SPECIES_DITTO) //Ditto transforms anyway
+	{
+		u8 moveType;
+		for (moveType = 0; moveType < NUMBER_OF_MON_TYPES; ++moveType)
+		{
+			if (moveType > TYPE_DARK && moveType < TYPE_FAIRY)
+				moveType = TYPE_FAIRY; //Skip right to fairy
+
+			if (IsSpreadWeakToType(moveType, defType1, defType2, ability))
+				++builder->weaknesses[moveType];
+		}
+	}
+}
+
+static bool8 CareAboutTeamWeaknessesInTier(u8 tier)
+{
+	return tier != BATTLE_FACILITY_MONOTYPE //Too hard to avoid duplicate weaknesses
+		&& tier != BATTLE_FACILITY_METRONOME //Legit random anyway
+		&& !IsCamomonsTier(tier); //Weaknesses get shuffled anyway
+}
+
+static bool8 IsSpreadWeakToType(u8 moveType, u8 defType1, u8 defType2, u8 ability)
+{
+	u8 typeDmg = 10;
+	ModulateByTypeEffectiveness(moveType, defType1, defType2, &typeDmg);
+
+	switch (ability)
+	{
+		case ABILITY_LEVITATE:
+			if (moveType == TYPE_GROUND)
+				typeDmg = 0; //This assumes there's no Iron Ball on the spread
+			break;
+		case ABILITY_THICKFAT:
+			if (moveType == TYPE_FIRE || moveType == TYPE_ICE)
+				typeDmg /= 2;
+			break;
+		case ABILITY_HEATPROOF:
+		case ABILITY_DRIZZLE:
+			if (moveType == TYPE_FIRE)
+				typeDmg /= 2;
+			break;
+		case ABILITY_FLUFFY:
+			if (moveType == TYPE_FIRE)
+				typeDmg *= 2;
+			break;
+		case ABILITY_DROUGHT:
+			if (moveType == TYPE_WATER)
+				typeDmg /= 2;
+			break;
+		case ABILITY_VOLTABSORB:
+		case ABILITY_MOTORDRIVE:
+		case ABILITY_LIGHTNINGROD:
+			if (moveType == TYPE_ELECTRIC)
+				typeDmg = 0;
+			break;
+		case ABILITY_WATERABSORB:
+		case ABILITY_DRYSKIN:
+		case ABILITY_STORMDRAIN:
+		case ABILITY_DESOLATELAND:
+			if (moveType == TYPE_WATER)
+				typeDmg = 0;
+			break;
+		case ABILITY_FLASHFIRE:
+			if (moveType == TYPE_FIRE)
+				typeDmg = 0;
+			break;
+		case ABILITY_SAPSIPPER:
+			if (moveType == TYPE_GRASS)
+				typeDmg = 0;
+			break;
+	}
+
+	return typeDmg >= 20; //Super effective
 }
 
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads)

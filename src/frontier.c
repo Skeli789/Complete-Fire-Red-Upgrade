@@ -652,6 +652,12 @@ bool8 IsAIControlledBattle(void)
 	return InBattleSands() || (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
 }
 
+bool8 IsStandardTier(u8 tier)
+{
+	return tier == BATTLE_FACILITY_STANDARD
+		|| tier == BATTLE_FACILITY_DYNAMAX_STANDARD;
+}
+
 bool8 IsCamomonsTier(u8 tier)
 {
 	return tier == BATTLE_FACILITY_CAMOMONS

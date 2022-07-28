@@ -12011,7 +12011,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_MAGCARGO,
-		.nature = NATURE_CALM,
+		.nature = NATURE_BOLD,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
@@ -12019,16 +12019,16 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 252,
+		.defEv = 252,
 		.spAtkEv = 4,
-		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_EVAPORATE
-		.item = ITEM_LEFTOVERS,
+		.item = ITEM_SHUCA_BERRY,
 		.moves =
 		{
-			MOVE_INCINERATE,
-			MOVE_CLEARSMOG,
-			MOVE_STEALTHROCK,
-			MOVE_RECOVER,
+			MOVE_HEATWAVE,
+			MOVE_YAWN,
+			MOVE_SWAGGER,
+			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -15934,8 +15934,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_BIND,
 			MOVE_TOXIC,
-			MOVE_RECOVER,
 			MOVE_STEALTHROCK,
+			MOVE_RECOVER,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -15944,23 +15944,23 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_KECLEON,
-		.nature = NATURE_IMPISH,
+		.nature = NATURE_RELAXED,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
-		.spdIv = 31,
+		.spdIv = 0,
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_COLORCHANGE
-		.item = ITEM_LEFTOVERS,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_INCINERATE,
-			MOVE_ICYWIND,
-			MOVE_STEALTHROCK,
+			MOVE_FOULPLAY,
+			MOVE_SWAGGER,
+			MOVE_TRICKROOM,
 			MOVE_RECOVER,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -25563,7 +25563,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_AIR_BALLOON,
 		.moves =
 		{
-			MOVE_INCINERATE,
+			MOVE_LAVAPLUME,
 			MOVE_WILLOWISP,
 			MOVE_CONFUSERAY,
 			MOVE_TAUNT,
@@ -53177,8 +53177,8 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.moves =
 		{
 			MOVE_VCREATE,
-			MOVE_BOLTSTRIKE,
 			MOVE_ZENHEADBUTT,
+			MOVE_BOLTSTRIKE,
 			MOVE_UTURN,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -53240,24 +53240,24 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 	},
 	{
 		.species = SPECIES_VICTINI,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_NAIVE,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.hpEv = 252,
+		.atkEv = 252,
 		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_VICTORYSTAR
-		.item = ITEM_ASSAULT_VEST,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_BLUEFLARE,
-			MOVE_GLACIATE,
-			MOVE_INCINERATE,
-			MOVE_UTURN,
+			MOVE_VCREATE,
+			MOVE_PSYCHIC,
+			MOVE_BOLTSTRIKE,
+			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = FALSE,
@@ -74774,8 +74774,8 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.moves =
 		{
 			MOVE_ROCKSLIDE,
-			MOVE_INCINERATE,
 			MOVE_BLIZZARD,
+			MOVE_TAUNT,
 			MOVE_WIDEGUARD,
 		},
 		.ball = BALL_TYPE_RANDOM,

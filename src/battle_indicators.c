@@ -1708,6 +1708,10 @@ static void DestroyTeamPreviewTrigger(struct Sprite* sprite)
 
 static bool8 CanShowEnemyMonIcon(u8 monId)
 {
+	#ifdef DEBUG_QUICK_BATTLES
+	return TRUE;
+	#endif
+
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		if (!IsRandomBattleTowerBattle()

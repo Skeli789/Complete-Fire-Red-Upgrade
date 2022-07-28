@@ -350,6 +350,18 @@ bool8 CheckMonGrounding(struct Pokemon* mon)
 	return GROUNDED;
 }
 
+bool8 CheckGroundingByDetails(u16 species, u16 item, u8 ability)
+{
+	if (ability != ABILITY_KLUTZ && ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL)
+		return GROUNDED;
+	else if (ability == ABILITY_LEVITATE
+	|| gBaseStats[species].type1 == TYPE_FLYING
+	|| gBaseStats[species].type2 == TYPE_FLYING)
+		return IN_AIR;
+
+	return GROUNDED;
+}
+
 bool8 IsFloatingWithMagnetism(u8 bank)
 {
 	return IsMagnetRiseBattle()
