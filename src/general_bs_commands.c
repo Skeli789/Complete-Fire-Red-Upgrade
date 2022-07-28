@@ -1850,59 +1850,76 @@ static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
 #undef CASE_MULTIPLE_PLUS
 #undef CASE_MULTIPLE_MINUS
 
+static bool8 IsFancyTransformationAnimId(u8 animId)
+{
+	return animId == B_ANIM_MEGA_EVOLUTION
+		|| animId == B_ANIM_BLUE_PRIMAL_REVERSION
+		|| animId == B_ANIM_RED_PRIMAL_REVERSION
+		|| animId == B_ANIM_ULTRA_BURST
+		|| animId == B_ANIM_WISHIWASHI_FISH
+		|| animId == B_ANIM_ZYGARDE_CELL_SWIRL;
+}
+
+static bool8 ShouldAnimBeDoneEvenWithBattleAnimsOff(u8 animId)
+{
+	return animId == B_ANIM_CASTFORM_CHANGE
+		|| animId == B_ANIM_STATS_CHANGE
+		|| animId == B_ANIM_CALL_BACK_POKEMON
+		|| animId == B_ANIM_CALL_BACK_POKEMON_2
+		|| animId == B_ANIM_SNATCH_MOVE
+		|| animId == B_ANIM_SUBSTITUTE_FADE
+		|| animId == B_ANIM_TRANSFORM
+		|| animId == B_ANIM_WISHIWASHI_FISH
+		|| animId == B_ANIM_ZYGARDE_CELL_SWIRL
+		|| animId == B_ANIM_BLUE_PRIMAL_REVERSION
+		|| animId == B_ANIM_RED_PRIMAL_REVERSION
+		|| animId == B_ANIM_MEGA_EVOLUTION
+		|| animId == B_ANIM_ULTRA_BURST
+		|| animId == B_ANIM_ELECTRIC_SURGE
+		|| animId == B_ANIM_GRASSY_SURGE
+		|| animId == B_ANIM_MISTY_SURGE
+		|| animId == B_ANIM_PSYCHIC_SURGE
+		|| animId == B_ANIM_ELECTRIC_TERRAIN_ACTIVE
+		|| animId == B_ANIM_GRASSY_TERRAIN_ACTIVE
+		|| animId == B_ANIM_MISTY_TERRAIN_ACTIVE
+		|| animId == B_ANIM_PSYCHIC_TERRAIN_ACTIVE
+		|| animId == B_ANIM_LOAD_DEFAULT_BG
+		|| animId == B_ANIM_LOAD_ABILITY_POP_UP
+		|| animId == B_ANIM_DESTROY_ABILITY_POP_UP
+		|| animId == B_ANIM_DYNAMAX_START
+		|| animId == B_ANIM_POWDER_EXPLOSION
+		|| animId == B_ANIM_BATON_PASS
+		|| animId == B_ANIM_DRAGON_TAIL_BLOW_AWAY
+		|| animId == B_ANIM_RAID_BATTLE_BLOW_AWAY;
+}
+
 void atk45_playanimation(void)
 {
-	u16* argumentPtr;
+	u16* argumentPtr, animId;
 
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	animId = gBattlescriptCurrInstr[2];
 	argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 
-	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE)
+	if (animId == B_ANIM_STATS_CHANGE)
 		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
 
-	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
+	if (gHitMarker & HITMARKER_NO_ANIMATIONS && IsFancyTransformationAnimId(animId))
+		animId = B_ANIM_TRANSFORM; //Play simplified animation because player wants faster battles
+
+	if (animId == B_ANIM_STATS_CHANGE
 	&&  gActiveBattler == gNewBS->skipBankStatAnim) //The Pokemon has no sprite on the screen, so don't play the stat anim
 	{
 		gNewBS->skipBankStatAnim = 0xFF;
 		gBattlescriptCurrInstr += 7;
 	}
-	else if (gBattlescriptCurrInstr[2] == B_ANIM_CASTFORM_CHANGE
-	||	gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_CALL_BACK_POKEMON
-	||  gBattlescriptCurrInstr[2] == B_ANIM_CALL_BACK_POKEMON_2
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_WISHIWASHI_FISH
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZYGARDE_CELL_SWIRL
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_BLUE_PRIMAL_REVERSION
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_RED_PRIMAL_REVERSION
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZMOVE_ACTIVATE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MEGA_EVOLUTION
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ELECTRIC_SURGE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_GRASSY_SURGE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MISTY_SURGE
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_PSYCHIC_SURGE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_ELECTRIC_TERRAIN_ACTIVE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_GRASSY_TERRAIN_ACTIVE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_MISTY_TERRAIN_ACTIVE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_PSYCHIC_TERRAIN_ACTIVE
-	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEFAULT_BG
-	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_ABILITY_POP_UP
-	||  gBattlescriptCurrInstr[2] == B_ANIM_DESTROY_ABILITY_POP_UP
-	||  gBattlescriptCurrInstr[2] == B_ANIM_DYNAMAX_START
-	||  gBattlescriptCurrInstr[2] == B_ANIM_POWDER_EXPLOSION
-	||  gBattlescriptCurrInstr[2] == B_ANIM_BATON_PASS
-	||  gBattlescriptCurrInstr[2] == B_ANIM_DRAGON_TAIL_BLOW_AWAY
-	||  gBattlescriptCurrInstr[2] == B_ANIM_RAID_BATTLE_BLOW_AWAY)
+	else if (ShouldAnimBeDoneEvenWithBattleAnimsOff(animId))
 	{
-		EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 7;
 	}
-	else if (gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM_MOVE)
+	else if (animId == B_ANIM_TRANSFORM_MOVE)
 	{
 		EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler], 0);
 		MarkBufferBankForExecution(gActiveBattler);
@@ -1918,15 +1935,15 @@ void atk45_playanimation(void)
 		gBattlescriptCurrInstr += 7;
 		gNewBS->tempIgnoreAnimations = FALSE;
 	}
-	else if (gBattlescriptCurrInstr[2] == B_ANIM_RAIN_CONTINUES
-		  || gBattlescriptCurrInstr[2] == B_ANIM_SUN_CONTINUES
-		  || gBattlescriptCurrInstr[2] == B_ANIM_SANDSTORM_CONTINUES
-		  || gBattlescriptCurrInstr[2] == B_ANIM_HAIL_CONTINUES
-		  || gBattlescriptCurrInstr[2] == B_ANIM_STRONG_WINDS_CONTINUE
-		  || gBattlescriptCurrInstr[2] == B_ANIM_FOG_CONTINUES
-		  || gBattlescriptCurrInstr[2] == B_ANIM_RAID_BATTLE_STORM)
+	else if (animId == B_ANIM_RAIN_CONTINUES
+		  || animId == B_ANIM_SUN_CONTINUES
+		  || animId == B_ANIM_SANDSTORM_CONTINUES
+		  || animId == B_ANIM_HAIL_CONTINUES
+		  || animId == B_ANIM_STRONG_WINDS_CONTINUE
+		  || animId == B_ANIM_FOG_CONTINUES
+		  || animId == B_ANIM_RAID_BATTLE_STORM)
 	{
-		EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 7;
 	}
@@ -1936,7 +1953,7 @@ void atk45_playanimation(void)
 	}
 	else
 	{
-		EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 7;
 	}
@@ -1945,52 +1962,25 @@ void atk45_playanimation(void)
 void atk46_playanimation2(void) // animation Id is stored in the first pointer
 {
 	u16* argumentPtr;
-	const u8* animationIdPtr;
+	u8 animId;
 
 	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
-	animationIdPtr = T2_READ_PTR(gBattlescriptCurrInstr + 2);
+	animId = *((const u8*) T2_READ_PTR(gBattlescriptCurrInstr + 2));
 	argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 6);
 
-	if (*animationIdPtr == B_ANIM_STATS_CHANGE)
+	if (animId == B_ANIM_STATS_CHANGE)
 		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
 
-	if (*animationIdPtr == B_ANIM_CASTFORM_CHANGE
-	||	*animationIdPtr == B_ANIM_STATS_CHANGE
-	||  *animationIdPtr == B_ANIM_CALL_BACK_POKEMON
-	||  *animationIdPtr == B_ANIM_CALL_BACK_POKEMON_2
-	|| 	*animationIdPtr == B_ANIM_SNATCH_MOVE
-	|| 	*animationIdPtr == B_ANIM_SUBSTITUTE_FADE
-	|| 	*animationIdPtr == B_ANIM_TRANSFORM
-	|| 	*animationIdPtr == B_ANIM_WISHIWASHI_FISH
-	|| 	*animationIdPtr == B_ANIM_ZYGARDE_CELL_SWIRL
-	|| 	*animationIdPtr == B_ANIM_BLUE_PRIMAL_REVERSION
-	|| 	*animationIdPtr == B_ANIM_RED_PRIMAL_REVERSION
-	|| 	*animationIdPtr == B_ANIM_TRANSFORM
-	|| 	*animationIdPtr == B_ANIM_ZMOVE_ACTIVATE
-	|| 	*animationIdPtr == B_ANIM_MEGA_EVOLUTION
-	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST
-	|| 	*animationIdPtr == B_ANIM_ELECTRIC_SURGE
-	|| 	*animationIdPtr == B_ANIM_GRASSY_SURGE
-	|| 	*animationIdPtr == B_ANIM_MISTY_SURGE
-	|| 	*animationIdPtr == B_ANIM_PSYCHIC_SURGE
-	||  *animationIdPtr == B_ANIM_ELECTRIC_TERRAIN_ACTIVE
-	||  *animationIdPtr == B_ANIM_GRASSY_TERRAIN_ACTIVE
-	||  *animationIdPtr == B_ANIM_MISTY_TERRAIN_ACTIVE
-	||  *animationIdPtr == B_ANIM_PSYCHIC_TERRAIN_ACTIVE
-	||  *animationIdPtr == B_ANIM_LOAD_DEFAULT_BG
-	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
-	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP
-	||  *animationIdPtr == B_ANIM_DYNAMAX_START
-	||  *animationIdPtr == B_ANIM_POWDER_EXPLOSION
-	||  *animationIdPtr == B_ANIM_BATON_PASS
-	||  *animationIdPtr == B_ANIM_DRAGON_TAIL_BLOW_AWAY
-	||  *animationIdPtr == B_ANIM_RAID_BATTLE_BLOW_AWAY)
+	if (gHitMarker & HITMARKER_NO_ANIMATIONS && IsFancyTransformationAnimId(animId))
+		animId = B_ANIM_TRANSFORM; //Play simplified animation because player wants faster battles
+
+	if (ShouldAnimBeDoneEvenWithBattleAnimsOff(animId))
 	{
-		EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 10;
 	}
-	else if (*animationIdPtr == B_ANIM_TRANSFORM_MOVE)
+	else if (animId == B_ANIM_TRANSFORM_MOVE)
 	{
 		EmitMoveAnimation(0, MOVE_TRANSFORM, 0, 1, 1, 0xFF, &gDisableStructs[gActiveBattler], 0);
 		MarkBufferBankForExecution(gActiveBattler);
@@ -2002,14 +1992,14 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 		gNewBS->tempIgnoreAnimations = FALSE;
 		gBattlescriptCurrInstr += 10;
 	}
-	else if (*animationIdPtr == B_ANIM_RAIN_CONTINUES
-			 || *animationIdPtr == B_ANIM_SUN_CONTINUES
-			 || *animationIdPtr == B_ANIM_SANDSTORM_CONTINUES
-			 || *animationIdPtr == B_ANIM_HAIL_CONTINUES
-			 || *animationIdPtr == B_ANIM_STRONG_WINDS_CONTINUE
-			 || *animationIdPtr == B_ANIM_FOG_CONTINUES)
+	else if (animId == B_ANIM_RAIN_CONTINUES
+	      || animId == B_ANIM_SUN_CONTINUES
+	      || animId == B_ANIM_SANDSTORM_CONTINUES
+	      || animId == B_ANIM_HAIL_CONTINUES
+	      || animId == B_ANIM_STRONG_WINDS_CONTINUE
+	      || animId == B_ANIM_FOG_CONTINUES)
 	{
-		EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 10;
 	}
@@ -2019,7 +2009,7 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	}
 	else
 	{
-		EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+		EmitBattleAnimation(0, animId, *argumentPtr);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 10;
 	}
