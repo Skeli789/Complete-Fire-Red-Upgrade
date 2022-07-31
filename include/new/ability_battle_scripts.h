@@ -137,6 +137,7 @@ extern const u8 gText_FriskActivate[];
 extern const u8 gText_ScreenCleanerActivate[];
 extern const u8 gText_NeutralizingGasActivate[];
 extern const u8 gText_NeutralizingGasEnd[];
+extern const u8 gText_CuriousMedicineActivate[];
 extern const u8 ElectricTerrainSetString[];
 extern const u8 GrassyTerrainSetString[];
 extern const u8 MistyTerrainSetString[];
