@@ -1702,8 +1702,8 @@ void CycleScriptingBankHealthBetween0And1(void)
 
 	gActiveBattler = gBattleScripting.bank;
 
-	if (!gBattleMons[gActiveBattler].hp)
-		gBattleMons[gActiveBattler].hp = 1;
+	if (gBattleMons[gActiveBattler].hp == 0)
+		gBattleMons[gActiveBattler].hp = gBattleMons[gActiveBattler].maxHP; //Because 1 causes the low health beeps
 	else
 		gBattleMons[gActiveBattler].hp = 0;
 

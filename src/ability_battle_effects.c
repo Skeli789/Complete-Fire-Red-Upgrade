@@ -2217,6 +2217,35 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					effect++;
 				}
 				break;
+
+			#if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GORGING && defined SPECIES_CRAMORANT_GULPING)
+			case ABILITY_GULPMISSILE:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& gBankAttacker != bank)
+				{
+					u16 species = GetMonData(GetBankPartyData(bank), MON_DATA_SPECIES2, NULL);
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 4);
+
+					if (species == SPECIES_CRAMORANT_GULPING) //Arrokuda
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_DEF_MINUS_1;
+						effect++;
+					}
+					else if (species == SPECIES_CRAMORANT_GORGING) //Pikachu
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+						effect++;
+					}
+
+					if (effect)
+					{
+						DoFormChange(bank, SPECIES_CRAMORANT, TRUE, FALSE, FALSE); //Revert back
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_CramorantSpitPrey;
+					}
+				}
+			#endif
 			}
 			break;
 

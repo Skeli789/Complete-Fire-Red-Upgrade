@@ -409,20 +409,43 @@ static u8 UpdateEffectivenessResultFlagsForDoubleSpreadMoves(u8 resultFlags)
 
 void atk09_attackanimation(void)
 {
-	if (gBattleExecBuffer)
+	bool8 cramorantTransform = FALSE;
+	u16 move = gCurrentMove;
+
+	if (gBattleExecBuffer
+	|| ProcessPreAttackAnimationFuncs())
 		return;
 
-	if (ProcessPreAttackAnimationFuncs())
-		return;
+	#if (defined SPECIES_CRAMORANT && defined SPECIES_CRAMORANT_GORGING && defined SPECIES_CRAMORANT_GULPING)
+	if ((move == MOVE_SURF || move == MOVE_DIVE)
+	&& ABILITY(gBankAttacker) == ABILITY_GULPMISSILE
+	&& !IsDynamaxed(gBankAttacker))
+	{
+		u16 species = GetMonData(GetBankPartyData(gBankAttacker), MON_DATA_SPECIES2, NULL);
+
+		if (species == SPECIES_CRAMORANT)
+		{
+			u16 newSpecies = (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 2) ? SPECIES_CRAMORANT_GORGING : SPECIES_CRAMORANT_GULPING;
+			DoFormChange(gBankAttacker, newSpecies, TRUE, FALSE, FALSE);
+			return;
+		}
+		else if (gBattleScripting.animTurn == 0
+		&& (species == SPECIES_CRAMORANT_GORGING || species == SPECIES_CRAMORANT_GULPING))
+		{
+			gBattleScripting.bank = gBankAttacker;
+			cramorantTransform = TRUE;
+		}
+	}
+	#endif
 
 	u8 resultFlags = gMoveResultFlags;
 	if (IsDoubleSpreadMove())
 		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 
 	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
-	 && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE
-	  && gCurrentMove != MOVE_ELECTRICTERRAIN && gCurrentMove != MOVE_PSYCHICTERRAIN
-	  && gCurrentMove != MOVE_MISTYTERRAIN && gCurrentMove != MOVE_GRASSYTERRAIN)) //Terrain animations always need to play and reload BG
+	 && (move != MOVE_TRANSFORM && move != MOVE_SUBSTITUTE
+	  && move != MOVE_ELECTRICTERRAIN && move != MOVE_PSYCHICTERRAIN
+	  && move != MOVE_MISTYTERRAIN && move != MOVE_GRASSYTERRAIN)) //Terrain animations always need to play and reload BG
 	|| gNewBS->tempIgnoreAnimations)
 	{
 		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -432,6 +455,11 @@ void atk09_attackanimation(void)
 		{
 			gBattlescriptCurrInstr += 1;
 			gNewBS->tempIgnoreAnimations = FALSE;
+		}
+		else if (cramorantTransform)
+		{
+			BattleScriptPush(gBattlescriptCurrInstr + 1);
+			gBattlescriptCurrInstr = BattleScript_CramorantCatchPrey;
 		}
 		else
 		{
@@ -444,7 +472,7 @@ void atk09_attackanimation(void)
 	}
 	else
 	{
-		u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
+		u8 moveTarget = GetBaseMoveTarget(move, gBankAttacker);
 	
 		if (gNewBS->ParentalBondOn == 1)
 		{
@@ -453,9 +481,9 @@ void atk09_attackanimation(void)
 		}
 		else if (gBattleScripting.animTargetsHit > 0
 			&& (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_DEPENDS)
-			  || gCurrentMove == MOVE_DEFOG
-			  || gCurrentMove == MOVE_SHELLSMASH
-			  || gCurrentMove == MOVE_HOWL))
+			  || move == MOVE_DEFOG
+			  || move == MOVE_SHELLSMASH
+			  || move == MOVE_HOWL))
 		{
 			gBattlescriptCurrInstr++;
 			return;
@@ -480,15 +508,21 @@ void atk09_attackanimation(void)
 				multihit = gMultiHitCounter;
 
 			u8 animTurn = gBattleScripting.animTurn;
-			if (gCurrentMove == MOVE_EXPANDINGFORCE && moveTarget & MOVE_TARGET_BOTH)
+			if (move == MOVE_EXPANDINGFORCE && moveTarget & MOVE_TARGET_BOTH)
 				animTurn = 1; //Play doubles animation
 
 			gNewBS->attackAnimationPlayed = TRUE;
-			EmitMoveAnimation(0, gCurrentMove, animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
+			EmitMoveAnimation(0, move, animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
 			gBattleScripting.animTurn += 1;
 			gBattleScripting.animTargetsHit += 1;
 			MarkBufferBankForExecution(gBankAttacker);
 			gBattlescriptCurrInstr++;
+
+			if (cramorantTransform)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_CramorantCatchPrey;
+			}
 		}
 		else if (!IsDoubleSpreadMove() || !gNewBS->calculatedSpreadMoveData)
 		{
