@@ -155,9 +155,17 @@ u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request)
 {
 	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
-		struct BoxPokemon mon;
-		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-		return GetBoxMonData(&mon, request, NULL);
+		if (request == MON_DATA_SPECIES)
+		{
+			//Save time since checking if a slot is empty is very common
+			return sPokemonBoxPtrs[boxId][boxPosition].substruct0.species;
+		}
+		else
+		{
+			struct BoxPokemon mon;
+			CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
+			return GetBoxMonData(&mon, request, NULL);
+		}
 	}
 	else
 		return 0;
