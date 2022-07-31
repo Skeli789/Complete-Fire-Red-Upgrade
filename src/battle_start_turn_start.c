@@ -107,6 +107,9 @@ static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
 static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed, bool8 isDynamaxed);
+#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
+static void TryClearLevelCapKeptOn(void);
+#endif
 
 void HandleNewBattleRamClearBeforeBattle(void)
 {
@@ -176,6 +179,33 @@ static void SavePartyItems(void)
 		gNewBS->itemBackup[i] = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
 }
 
+#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
+static void TryClearLevelCapKeptOn(void)
+{
+	if (!FlagGet(FLAG_SYS_GAME_CLEAR) //Main game
+	&& FlagGet(FLAG_HARD_LEVEL_CAP) //Level Cap is on
+	&& FlagGet(FLAG_KEPT_LEVEL_CAP_ON)) //And it hasn't ever been turned off
+	{
+		u32 i, levelCap;
+		
+		extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+		for (i = 0, levelCap = GetCurrentLevelCap(); i < PARTY_SIZE; ++i)
+		{
+			u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
+			{
+				u8 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+				if (level > levelCap)
+				{
+					FlagClear(FLAG_KEPT_LEVEL_CAP_ON);
+					break;
+				}
+			}
+		}
+	}
+}
+#endif
+
 void BattleBeginFirstTurn(void)
 {
 	int i, j;
@@ -191,6 +221,7 @@ void BattleBeginFirstTurn(void)
 					gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SEMI_SHIFT;
 				#endif
 				SavePartyItems();
+				TryClearLevelCapKeptOn();
 				++*state;
 				break;
 
