@@ -54813,8 +54813,8 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
+			MOVE_SHADOWBALL,
 			MOVE_DESTINYBOND,
-			MOVE_THUNDERWAVE,
 			MOVE_LIGHTSCREEN,
 			MOVE_REFLECT,
 		},

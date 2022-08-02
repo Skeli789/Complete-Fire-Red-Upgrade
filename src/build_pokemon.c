@@ -4001,6 +4001,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 	//Shuffle moves in camomons
 	TryShuffleMovesForCamomons(party, builder->tier, builder->trainerId);
 
+	//Try change lead
 	if (IsFrontierSingles(builder->battleType))
 	{
 		if (builder->partyIndex[HAZARDS_SETUP] != 0xFF)
@@ -4042,7 +4043,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 	}
 	else //Doubles or Multi
 	{
-		for (i = 0; i < PARTY_SIZE; ++i)
+		for (i = 0; i < builder->monsCount; ++i)
 		{
 			if (builder->spreads[i]->modifyMovesDoubles)
 			{
@@ -4184,6 +4185,19 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				SwapMons(party, index++, hazardsIndex);
 		}
 	}
+
+	//Try change last mon
+	if (builder->monsCount >= 3 && GetMonAbility(&party[builder->monsCount - 1]) == ABILITY_ILLUSION)
+	{
+		for (i = IS_SINGLE_BATTLE ? 1 : 2; i < ((u32) builder->monsCount - 1); ++i)
+		{
+			if (GetMonAbility(&party[i]) != ABILITY_ILLUSION)
+			{
+				SwapMons(party, i, builder->monsCount - 1); //Move Illusion mon as close to the front as possible without putting it on the field
+				break;
+			}
+		}
+	}	
 }
 
 static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId)
