@@ -1955,6 +1955,12 @@ s32 DoPoisonFieldEffect(void)
 				{
 					mon->hp = hp;
 					mon->condition = STATUS1_NONE;
+
+					if (mon->friendship >= 200)
+						mon->friendship -= 10;
+					else if (mon->friendship >= 5)
+						mon->friendship -= 5;
+
 					++numSurvived;
 					ScriptContext1_SetupScript(SystemScript_PoisonSurvial);
 					GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, gStringVar1);
