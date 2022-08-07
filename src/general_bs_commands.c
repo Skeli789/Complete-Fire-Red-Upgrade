@@ -3637,19 +3637,28 @@ void atkA3_disablelastusedattack(void)
 	}
 }
 
+bool8 CanLastMoveNotBeEncored(u8 bank)
+{
+	u16 lastUsedMove = gLastUsedMoves[bank];
+	u16 lastPrintedMove = gLastPrintedMoves[bank];
+
+	return lastUsedMove == MOVE_STRUGGLE
+		|| lastUsedMove == MOVE_ENCORE
+		|| lastUsedMove == MOVE_DYNAMAXCANNON
+		|| gSpecialMoveFlags[lastUsedMove].gMovesThatCallOtherMoves
+		|| IsZMove(lastUsedMove)
+		|| IsAnyMaxMove(lastUsedMove)
+		|| IsZMove(lastPrintedMove)
+		|| IsAnyMaxMove(lastPrintedMove)
+		|| IsDynamaxed(bank);
+}
+
 void atkA4_trysetencore(void)
 {
 	int i;
 
-	if (gLastUsedMoves[gBankTarget] == MOVE_STRUGGLE
-	||  gLastUsedMoves[gBankTarget] == MOVE_ENCORE
-	||  gNewBS->playedShellTrapMessage & gBitTable[gBankTarget]
-	||  gSpecialMoveFlags[gLastUsedMoves[gBankTarget]].gMovesThatCallOtherMoves
-	||  IsZMove(gLastUsedMoves[gBankTarget])
-	||  IsAnyMaxMove(gLastUsedMoves[gBankTarget])
-	||  IsZMove(gLastPrintedMoves[gBankTarget])
-	||  IsAnyMaxMove(gLastPrintedMoves[gBankTarget])
-	||  IsDynamaxed(gBankTarget))
+	if (CanLastMoveNotBeEncored(gBankTarget)
+	|| gNewBS->playedShellTrapMessage & gBitTable[gBankTarget])
 	{
 		i = MAX_MON_MOVES;
 	}

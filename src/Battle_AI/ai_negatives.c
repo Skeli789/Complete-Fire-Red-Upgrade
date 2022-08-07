@@ -1742,11 +1742,7 @@ SKIP_CHECK_TARGET:
 			{
 				if (MoveWouldHitFirst(move, bankAtk, bankDef))
 				{
-					if (gLastUsedMoves[bankDef] == MOVE_NONE
-					|| gLastUsedMoves[bankDef] == 0xFFFF
-					|| gSpecialMoveFlags[gLastUsedMoves[bankDef]].gMovesThatCallOtherMoves
-					|| IsZMove(gLastPrintedMoves[bankDef])
-					|| IsAnyMaxMove(gLastPrintedMoves[bankDef]))
+					if (CanLastMoveNotBeEncored(bankDef))
 						DECREASE_VIABILITY(10);
 				}
 				else if (predictedMove == MOVE_NONE)
