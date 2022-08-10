@@ -30,6 +30,7 @@ extern const u8 gInterfaceGfx_dexnavStarsTiles[];
 extern const u8 gInterfaceGfx_dexnavStarsPal[];
 extern const u8 gInterfaceGfx_emptyTiles[];
 extern const u8 gInterfaceGfx_emptyPal[];
+extern const u8 gInterfaceGfx_DexNavRegisteredIconTiles[];
 extern const u8 gInterfaceGfx_CapturedAllPokemonTiles[];
 extern const u8 gInterfaceGfx_CapturedAllPokemonPal[];
 extern const u8 gInterfaceGfx_DexNavNoDataSymbolTiles[];
@@ -105,6 +106,7 @@ extern const u8 gText_DexNavHUDChainNumber[];
 #define ICON_GFX_TAG 0xD75A
 #define SELECTION_CURSOR_TAG 0x200
 #define CAPTURED_ALL_TAG 0xFDF2 //Tag is from Mega Evo and not in use
+#define REGISTERED_ICON_TAG 0xFDF3
 
 #define ICONX 0x10
 #define ICONY 0x92
@@ -155,6 +157,9 @@ struct DexNavGUIData
 	u8 cursorSpriteId;
 	u8 selectedIndex;
 	u8 selectedArea;
+	u8 registeredIndex;
+	u8 registeredArea;
+	bool8 registeredIconVisible;
 	u16 landRowScroll;
 	u16 waterRowScroll;
 	u16 waterRowsAbove;
@@ -435,6 +440,15 @@ static const struct OamData sCursorOam =
 	.priority = 1, //Above other sprites
 };
 
+static const struct OamData sRegisteredIconOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 1, //Above other sprites
+};
+
 static const struct OamData sCapturedAllPokemonSymbolOam =
 {
 	.affineMode = ST_OAM_AFFINE_OFF,
@@ -484,6 +498,18 @@ static const struct SpriteTemplate sGUICursorTemplate =
 	.callback = SpriteCB_GUICursor,
 };
 
+static void SpriteCB_GUIRegisteredIcon(struct Sprite* sprite);
+static const struct SpriteTemplate sRegisteredIconTemplate =
+{
+	.tileTag = REGISTERED_ICON_TAG,
+	.paletteTag = SELECTION_CURSOR_TAG,
+	.oam = &sRegisteredIconOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_GUIRegisteredIcon,
+};
+
 static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate =
 {
 	.tileTag = CAPTURED_ALL_TAG,
@@ -508,6 +534,7 @@ static const struct SpriteTemplate sNoDataIconTemplate =
 
 static const struct SpriteSheet sCursorSpriteSheet = {(void*) 0x83D2BEC, (32 * 32 * 4) / 2, SELECTION_CURSOR_TAG};
 static const struct SpritePalette sCursorSpritePalette = {(void*) 0x83CE7F0, SELECTION_CURSOR_TAG};
+static const struct CompressedSpriteSheet sRegisteredIconSpriteSheet = {gInterfaceGfx_DexNavRegisteredIconTiles, (16 * 16) / 2, REGISTERED_ICON_TAG};
 static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, (8 * 8) / 2, CAPTURED_ALL_TAG};
 static const struct CompressedSpritePalette sCapturedAllPokemonSpritePalette = {gInterfaceGfx_CapturedAllPokemonPal, CAPTURED_ALL_TAG};
 static const struct CompressedSpriteSheet sNoDataIconSpriteSheet = {gInterfaceGfx_DexNavNoDataSymbolTiles, (32 * 32) / 2, ICON_GFX_TAG};

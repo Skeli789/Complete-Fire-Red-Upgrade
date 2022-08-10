@@ -167,6 +167,7 @@ static void ChangeSelectedCol(s8 change);
 static void TrySetSelectedColumnToLastIndex(void);
 static void UpdateSpritePosition(struct Sprite* sprite, u8 rowType, u8 selectedIndex);
 static void SpriteCB_GUICursor(struct Sprite* sprite);
+static void SpriteCB_GUIRegisteredIcon(struct Sprite* sprite);
 static void SpriteCB_LandMonIcon(struct Sprite* sprite);
 static void SpriteCB_WaterMonIcon(struct Sprite* sprite);
 static void Task_DexNavFadeIn(u8 taskId);
@@ -185,6 +186,7 @@ static void DexNavPrintStaticText(void);
 static void DexNavLoadMonIcons(void);
 static void CreateWaterScrollArrows(void);
 static void CreateCursor(void);
+static void CreateRegisteredIcon(void);
 static void DexNavLoadCapturedAllSymbol(void);
 static void InitDexNavGUI(void);
 static void LoadDexNavBgGfx(void);
@@ -2319,6 +2321,11 @@ static void RegisterSpecies(u16 species, u8 taskId)
 	#ifdef VAR_R_BUTTON_MODE
 	VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
 	#endif
+	
+	//Update registered icon details
+	sDexNavGUIPtr->registeredIndex = sDexNavGUIPtr->selectedIndex;
+	sDexNavGUIPtr->registeredArea = sDexNavGUIPtr->selectedArea;
+	sDexNavGUIPtr->registeredIconVisible = TRUE;
 
 	TryRandomizeSpecies(&species);
 	StringCopy(gStringVar1, gSpeciesNames[species]);
@@ -3139,6 +3146,24 @@ static void SpriteCB_GUICursor(struct Sprite* sprite)
 	UpdateSpritePosition(sprite, sDexNavGUIPtr->selectedArea, selectedIndex);
 }
 
+static void SpriteCB_GUIRegisteredIcon(struct Sprite* sprite)
+{
+	if (!sDexNavGUIPtr->registeredIconVisible) //No mon is registered
+	{
+		sprite->invisible = TRUE;
+	}
+	else
+	{
+		u8 index = sDexNavGUIPtr->registeredIndex;
+
+		if (sDexNavGUIPtr->registeredArea == AREA_WATER && sDexNavGUIPtr->waterRowScroll != 0)
+			index = (index % WATER_ROW_LENGTH) + (sDexNavGUIPtr->waterRowsAbove * WATER_ROW_LENGTH); //Adjust for offset
+
+		sprite->invisible = FALSE;
+		UpdateSpritePosition(sprite, sDexNavGUIPtr->registeredArea, index);
+	}
+}
+
 static void SpriteCB_LandMonIcon(struct Sprite* sprite)
 {
 	if (!sprite->data[1]) //Caught mon
@@ -3399,6 +3424,13 @@ static void DexNavLoadMonIcons(void)
 	u32 pid = 0xFFFFFFFF;
 	u8 hiddenLandMons = sDexNavGUIPtr->numHiddenLandMons;
 	u8 hiddenWaterMons = sDexNavGUIPtr->numHiddenWaterMons;
+	u8 registeredArea = VarGet(VAR_DEXNAV) >> 15;
+	u16 registeredSpecies = VarGet(VAR_DEXNAV) & 0x7FFF;
+
+	#ifdef VAR_R_BUTTON_MODE
+	if (VarGet(VAR_R_BUTTON_MODE) != OPTIONS_R_BUTTON_MODE_DEXNAV)
+		registeredSpecies = SPECIES_NONE;
+	#endif
 
 	LoadCompressedSpriteSheetUsingHeap(&sNoDataIconSpriteSheet);
 	LoadMonIconPalettes();
@@ -3431,11 +3463,20 @@ static void DexNavLoadMonIcons(void)
 		{
 			UpdateSpritePosition(&gSprites[spriteId], AREA_LAND, i);
 
-			if (species != SPECIES_NONE
-			&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+			if (species != SPECIES_NONE)
 			{
-				gSprites[spriteId].data[1] = TRUE; //Disallow movement
-				gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+				if (registeredArea == AREA_LAND && registeredSpecies == species && registeredSpecies != SPECIES_NONE)
+				{
+					sDexNavGUIPtr->selectedArea = sDexNavGUIPtr->registeredArea = AREA_LAND;
+					sDexNavGUIPtr->selectedIndex = sDexNavGUIPtr->registeredIndex = i;
+					sDexNavGUIPtr->registeredIconVisible = TRUE;
+				}
+
+				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+				{
+					gSprites[spriteId].data[1] = TRUE; //Disallow movement
+					gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+				}
 			}
 		}
 	}
@@ -3474,11 +3515,24 @@ static void DexNavLoadMonIcons(void)
 			gSprites[spriteId].data[0] = rowNumber;
 			UpdateSpritePosition(&gSprites[spriteId], AREA_WATER, i);
 
-			if (species != SPECIES_NONE
-			&& !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+			if (species != SPECIES_NONE)
 			{
-				gSprites[spriteId].data[1] = TRUE; //Disallow movement
-				gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+				if (registeredArea == AREA_WATER && registeredSpecies == species && registeredSpecies != SPECIES_NONE)
+				{
+					if (!sDexNavGUIPtr->registeredIconVisible
+					|| TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)) //Only override a land mon if actually on water
+					{
+						sDexNavGUIPtr->selectedArea = sDexNavGUIPtr->registeredArea = AREA_WATER;
+						sDexNavGUIPtr->selectedIndex = sDexNavGUIPtr->registeredIndex = i;
+						sDexNavGUIPtr->registeredIconVisible = TRUE;
+					}
+				}
+
+				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Not caught
+				{
+					gSprites[spriteId].data[1] = TRUE; //Disallow movement
+					gSprites[spriteId].oam.paletteNum += 3; //Switch to grayscale pal
+				}
 			}
 		}
 	}
@@ -3515,6 +3569,17 @@ static void CreateCursor(void)
 	}
 }
 
+static void CreateRegisteredIcon(void)
+{
+	LoadCompressedSpriteSheet(&sRegisteredIconSpriteSheet); //Uses the cursor palette
+	u8 spriteId = CreateSprite(&sRegisteredIconTemplate, 0, 0, 1);
+	if (spriteId < MAX_SPRITES)
+	{
+		gSprites[spriteId].pos2.x = -8;
+		gSprites[spriteId].pos2.y = -6;
+	}
+}
+
 static void DexNavLoadCapturedAllSymbol(void)
 {
 	LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
@@ -3547,11 +3612,12 @@ static void InitDexNavGUI(void)
 	CommitWindows();
 
 	DexNavPopulateEncounterList();
+	DexNavLoadMonIcons(); //Must be done before printing text because it can alter the default cursor
 	DexNavDisplaySpeciesData();
 	DexNavPrintStaticText();
-	DexNavLoadMonIcons();
 	CreateWaterScrollArrows();
 	CreateCursor();
+	CreateRegisteredIcon();
 	DexNavLoadCapturedAllSymbol();
 }
 
