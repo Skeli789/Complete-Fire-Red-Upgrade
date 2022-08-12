@@ -13,6 +13,7 @@
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
@@ -399,13 +400,32 @@ void HandleEndTurn_RanFromBattle(void)
 
 bool8 HandleRunActionFrontier(void)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
-	&& gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-	&& gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
+	if (gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
 	{
-		BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
-		gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
-		return TRUE;
+		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+			{
+				BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
+				gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
+				return TRUE;
+			}
+		}
+		else if (!CantCatchBecauseFlag() //Wild battle where mon can be caught
+		&& !IsRunningFromBattleImpossible()) //Can run right now
+		{
+			if ((GetMonData(&gEnemyParty[0], MON_DATA_HP, 0) != 0 && IsMonShiny(&gEnemyParty[0]))
+			|| (IS_DOUBLE_BATTLE && GetMonData(&gEnemyParty[1], MON_DATA_HP, 0) != 0 && IsMonShiny(&gEnemyParty[1]))
+			#ifdef FLAG_LEGENDARY_APPEARED_STRING
+			|| FlagGet(FLAG_LEGENDARY_APPEARED_STRING)
+			#endif
+			)
+			{
+				BattleScriptExecute(BattleScript_ConfirmRunAway);
+				gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
+				return TRUE;
+			}
+		}
 	}
 
 	return FALSE;

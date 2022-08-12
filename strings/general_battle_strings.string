@@ -235,6 +235,9 @@ It's no good!\nThe Pok\emon can't be caught![FC][09]
 #org @sText_QuestionForfeitMatch
 Would you like to forfeit the match\nand quit now?
 
+#org @sText_ConfirmRunAway
+Are you sure you want to run away?
+
 #org @sText_PlayerForfeitedMatch
 [PLAYER_NAME] forfeited the match!
 

@@ -15,6 +15,7 @@ end_battle_battle_scripts.s
 .global BattleScript_LostBattleTower
 .global BattleScript_LostMultiBattleTower
 .global BattleScript_AskIfWantsToForfeitMatch
+.global BattleScript_ConfirmRunAway
 .global BattleScript_LoseRaidBattle
 .global BattleScript_LoseFrontierRaidBattle
 .global BattleScript_RaidMonRanAway
@@ -127,6 +128,15 @@ BattleScript_LostMultiBattleTower:
 
 BattleScript_AskIfWantsToForfeitMatch:
 	setword BATTLE_STRING_LOADER sText_QuestionForfeitMatch
+	printstring 0x184
+	callasm DisplayForfeitYesNoBox
+	callasm HandleForfeitYesNoBox
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ConfirmRunAway:
+	setword BATTLE_STRING_LOADER sText_ConfirmRunAway
 	printstring 0x184
 	callasm DisplayForfeitYesNoBox
 	callasm HandleForfeitYesNoBox
