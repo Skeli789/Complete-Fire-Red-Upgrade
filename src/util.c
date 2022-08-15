@@ -264,7 +264,7 @@ static u8 TryRandomizeAbility(u8 originalAbility, unusedArg u16 species)
 	&& !gSpecialAbilityFlags[originalAbility].gRandomizerBannedOriginalAbilities) //This Ability can be changed
 	{
 		u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
-		u16 startAt = (id & 0xFFFF) % (u32) ABILITIES_COUNT;
+		u16 startAt = (id & 0xFFFF) % (u32) ABILITIES_COUNT + species;
 		u16 xorVal = (id >> 16) % (u32) 0xFF; //Only set the bits likely to be in the ability
 		u32 numAttempts = 0;
 
