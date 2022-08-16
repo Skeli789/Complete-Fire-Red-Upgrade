@@ -392,7 +392,7 @@ void sp117_CreateRaidMon(void)
 		return;
 	}
 
-	u32 i, numEggMoves;
+	u32 numEggMoves;
 	u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
 
 	u8 eggMoveChance = GetRaidEggMoveChance();
@@ -414,19 +414,18 @@ void sp117_CreateRaidMon(void)
 	if (abilityNum == RAID_ABILITY_1 || abilityNum == RAID_ABILITY_2)
 		GiveMonNatureAndAbility(mon, GetNature(mon), abilityNum - RAID_ABILITY_1, IsMonShiny(mon), FALSE, FALSE);
 
+	//Try to give a random Egg move
 	numEggMoves = GetAllEggMoves(mon, eggMoveBuffer, TRUE);
-	for (i = 0; i < MAX_MON_MOVES; ++i)
+	if (numEggMoves != 0 && Random() % 100 < eggMoveChance)
 	{
-		if (numEggMoves != 0 && Random() % 100 < eggMoveChance)
-		{
-			u16 eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
+		u16 eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
 
-			if (MoveInMonMoveset(eggMove, mon)) //Try to reroll once if mon already knows move
-				eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
+		if (MoveInMonMoveset(eggMove, mon)) //Try to reroll once if mon already knows move
+			eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
 
-			if (!MoveInMonMoveset(eggMove, mon) && GiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove) == 0xFFFF)
-				DeleteFirstMoveAndGiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove);
-		}
+		if (!MoveInMonMoveset(eggMove, mon)
+		&& GiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove) == 0xFFFF)
+			DeleteFirstMoveAndGiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove);
 	}
 
 	//Give perfect IVs based on the number of Raid stars

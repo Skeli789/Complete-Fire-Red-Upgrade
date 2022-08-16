@@ -3299,6 +3299,12 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_ACROBATICS:
 			if (data->atkItem == ITEM_NONE)
 				power *= 2;
+			else if (data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
+			{
+				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_GEM
+				&& ITEM_QUALITY(bankAtk) == data->moveType)
+					power *= 2; //The Gem will be used up before the attack
+			}
 			break;
 
 		case MOVE_AVALANCHE:

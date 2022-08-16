@@ -1651,8 +1651,11 @@ bool8 CantLoadTeamPreviewTrigger(void)
 	&& BATTLE_FACILITY_NUM == IN_RING_CHALLENGE)
 		return TRUE; //No point in showing here
 
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+		return FALSE; //TODO: Not unless the player selects it beforehand
+
 	bool8 can = (gBattleTypeFlags & BATTLE_TYPE_FRONTIER) != 0 //Regular Frontier battle
-		|| gBattleTypeFlags & BATTLE_TYPE_LINK
+		//|| gBattleTypeFlags & BATTLE_TYPE_LINK
 		#ifdef FLAG_IN_BATTLE_TEAM_PREVIEW
 		|| FlagGet(FLAG_IN_BATTLE_TEAM_PREVIEW)
 		#endif

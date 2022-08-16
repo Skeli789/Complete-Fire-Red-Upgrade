@@ -170,7 +170,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (i == bank) continue;
-			if (ABILITY(i) == ability) break;
+			if (BATTLER_ALIVE(i) && ABILITY(i) == ability) break;
 		}
 
 		if (i == gBattlersCount)

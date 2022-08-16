@@ -3378,7 +3378,13 @@ BS_164_SetHail:
 HailSkipPrimalWeatherCheck:
 	sethail
 	tryactivateprotean
-	goto BS_MOVE_WEATHER_CHANGE
+	attackanimation @;Don't use BS_MOVE_WEATHER_CHANGE because of special logic for Ice Face
+	waitanimation
+	printfromtable 0x83FE528 @;gMoveWeatherChangeStringIds
+	waitmessage DELAY_1SECOND
+	jumpifmovehadnoeffect BS_MOVE_END @;Prevents Ice Face from activatig on fail
+	call BS_WEATHER_FORM_CHANGES
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

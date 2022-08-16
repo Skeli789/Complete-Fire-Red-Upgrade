@@ -7597,7 +7597,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_STONEEDGE,
-			MOVE_LIQUIDATION,
+			MOVE_AQUATAIL,
 			MOVE_SUPERPOWER,
 			MOVE_RAINDANCE,
 		},
@@ -7622,7 +7622,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_ROCKSLIDE,
+			MOVE_STONEAXE,
 			MOVE_LIQUIDATION,
 			MOVE_AQUAJET,
 			MOVE_SWORDSDANCE,
@@ -7641,13 +7641,13 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.defEv = 252,
+		.hpEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WEAKARMOR
 		.item = ITEM_RINDO_BERRY,
 		.moves =
 		{
-			MOVE_ROCKTOMB,
+			MOVE_STONEAXE,
 			MOVE_RAPIDSPIN,
 			MOVE_TOXIC,
 			MOVE_STEALTHROCK,
@@ -7667,21 +7667,21 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 31,
 		.atkEv = 252,
-		.spDefEv = 128,
-		.spdEv = 128,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_WEAKARMOR
+		.defEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_AQUATAIL,
+			MOVE_ROCKSLIDE,
+			MOVE_WATERFALL,
 			MOVE_KNOCKOFF,
-			MOVE_RAPIDSPIN,
-			MOVE_STEALTHROCK,
+			MOVE_RAINDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
+		.forSingles = FALSE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_AERODACTYL,
@@ -8958,7 +8958,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_ACROBATICS,
 			MOVE_CLOSECOMBAT,
-			MOVE_STRINGSHOT,
+			MOVE_VICTORYDANCE,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -46489,7 +46489,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 			MOVE_DRAINPUNCH,
 			MOVE_POWERUPPUNCH,
 			MOVE_ICEPUNCH,
-			MOVE_PAYBACK,
+			MOVE_AQUAJET,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -71947,7 +71947,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_ACROBATICS,
 			MOVE_ICEPUNCH,
 			MOVE_MACHPUNCH,
-			MOVE_SWORDSDANCE,
+			MOVE_VICTORYDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,

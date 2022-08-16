@@ -844,7 +844,9 @@ static bool8 IsTrainerPicAffectedByCustomization(u16 trainerPicId)
 		|| trainerPicId == TRAINER_PIC_PLAYER_MARLON_M
 		|| trainerPicId == TRAINER_PIC_PLAYER_MARLON_F
 		|| trainerPicId == TRAINER_PIC_PLAYER_RED
-		|| trainerPicId == TRAINER_PIC_PLAYER_LEAF;
+		|| trainerPicId == TRAINER_PIC_PLAYER_LEAF
+		|| trainerPicId == TRAINER_PIC_PLAYER_ETHAN
+		|| trainerPicId == TRAINER_PIC_PLAYER_LYRA;
 }
 
 u8 GetOutfitStyleByTrainerPic(u16 trainerPicId)

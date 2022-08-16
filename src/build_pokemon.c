@@ -4609,6 +4609,11 @@ void TryRandomizeSpecies(unusedArg u16* species)
 	#endif
 }
 
+u16 IsSpeciesBannedFromRandomizer(u16 species) //Exported
+{
+	return gSpecialSpeciesFlags[species].randomizerBan;
+}
+
 u16 GetRandomizedSpecies(u16 species)
 {
 	TryRandomizeSpecies(&species);

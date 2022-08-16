@@ -2231,6 +2231,9 @@ void sp12C_DoEnterPhraseScreen(void)
 		case 2:
 			type = NAMING_SCREEN_ENTER_5_CHAR_PASSWORD;
 			break;
+		case 3:
+			type = NAMING_SCREEN_ENTER_SPECIES_NAME;
+			break;
 		default:
 			type = NAMING_SCREEN_ENTER_PHRASE;
 	}
@@ -2293,6 +2296,18 @@ static const struct NamingScreenTemplate sEnter5CharPasswordNamingScreenTemplate
 	.title = gText_EnterPassword,
 };
 
+extern const u8 gText_EnterSpeciesName[];
+static const struct NamingScreenTemplate sEnterSpeciesNamingScreenTemplate =
+{
+	.copyExistingString = 0,
+	.maxChars = 13,
+	.iconFunction = 0,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterSpeciesName,
+};
+
 const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 {
 	sPlayerNamingScreenTemplate,
@@ -2304,14 +2319,16 @@ const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 	&sEnterPhraseNamingScreenTemplate,
 	&sEnterPasswordNamingScreenTemplate,
 	&sEnter5CharPasswordNamingScreenTemplate,
+	&sEnterSpeciesNamingScreenTemplate,
 };
 
-void (*const sNamingScreenTitlePrintingFuncs[])(void) =
+void (*const sNamingScreenTitlePrintingFuncs[])(void) = //Must be the same length as sNamingScreenTemplates!
 {
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F4F0 | 1),
 	(void*) (0x809F4F0 | 1),
+	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),

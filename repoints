@@ -111,6 +111,8 @@ gText_UsedVar2WildWeaker 080A1AEC
 gText_PokemonAreNeeded 0845A32C
 
 #ifdef FROSTBITE
+PokeSummary_StatusAilmentIcons_FrostbiteTiles 0813A314
+StatusGfx_Icons_FrostbiteTiles 0845A574
 ANIM_FROSTBITE 081C6E9C
 gText_GotFrostbite 083FDFD0
 gText_RemovedTargetFrostbite 083FDFDC

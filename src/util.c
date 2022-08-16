@@ -182,6 +182,23 @@ u16 GetNationalPokedexCount(u8 caseID)
 	return count;
 }
 
+bool8 SpeciesWithDexNumOnTeam(u16 dexNum)
+{
+	u32 i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+
+		if (species != SPECIES_NONE
+		&& species != SPECIES_EGG
+		&& SpeciesToNationalPokedexNum(species) == dexNum)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 bool8 CanSpeciesEvolve(u16 species)
 {
 	const struct Evolution* evolutions = gEvolutionTable[species];

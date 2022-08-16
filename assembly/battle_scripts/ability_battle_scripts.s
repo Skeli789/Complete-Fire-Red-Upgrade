@@ -612,6 +612,7 @@ BattleScript_AttackerCantUseMove:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	orword HIT_MARKER, HITMARKER_UNABLE_TO_USE_MOVE
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
