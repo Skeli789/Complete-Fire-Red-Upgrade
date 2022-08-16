@@ -1508,6 +1508,7 @@ void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
 	MergeSort(itemSlots, 0, sortAmount, func); //Sort all the null items to the back
 }
 
+#ifdef ANTI_MAX_ITEM_CHEAT
 static void Task_WipeSingleUseItems(u8 taskId)
 {
 	if (!gTasks[taskId].data[0])
@@ -1526,6 +1527,7 @@ static void Task_WipeSingleUseItems(u8 taskId)
 		gTasks[taskId].func = ItemMenu_StartFadeToExitCallback;
 	}
 }
+#endif
 
 
 //Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

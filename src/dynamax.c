@@ -1969,14 +1969,13 @@ void DetermineRaidSpecies(void)
 	}
 	else if (raid->data != NULL)
 	{
-		u32 i;
 		u8 amount = raid->amount;
 
 		#ifdef FLAG_GEN_8_PLACED_IN_GAME
 		if (!FlagGet(FLAG_GEN_8_PLACED_IN_GAME))
 		{
 			//Don't spawn Gen 8 mons
-			for (i = 0; i < raid->amount; ++i)
+			for (u32 i = 0; i < raid->amount; ++i)
 			{
 				if (raid->data[i].species >= SPECIES_GROOKEY
 				&& raid->data[i].species < NUM_SPECIES_GEN_8)
@@ -2314,14 +2313,12 @@ static bool8 IsFoughtRaidSpecies(u16 species)
 	return FALSE;
 }
 
-static u8 TryAlterRaidItemDropRate(u16 item, u8 rate)
+static u8 TryAlterRaidItemDropRate(unusedArg u16 item, u8 rate)
 {
-	u32 i;
-
 	#ifdef UNBOUND
 	if (item == ITEM_WISHING_PIECE)
 	{
-		for (i = 0; i < PARTY_SIZE; i++)
+		for (u32 i = 0; i < PARTY_SIZE; i++)
 		{
 			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == SPECIES_JIRACHI)
 			{

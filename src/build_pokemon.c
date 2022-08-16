@@ -4564,6 +4564,7 @@ void ForceMonShiny(struct Pokemon* mon)
 
 void TryRandomizeSpecies(unusedArg u16* species)
 {
+	#ifdef FLAG_POKEMON_RANDOMIZER
 	u32 speciesCount = NUM_SPECIES_RANDOMIZER;
 
 	#ifdef FLAG_GEN_8_PLACED_IN_GAME
@@ -4571,7 +4572,6 @@ void TryRandomizeSpecies(unusedArg u16* species)
 		speciesCount = NUM_SPECIES_GEN_8;
 	#endif
 
-	#ifdef FLAG_POKEMON_RANDOMIZER
 	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)
 	#ifdef FLAG_TEMP_DISABLE_RANDOMIZER
 	&& !FlagGet(FLAG_TEMP_DISABLE_RANDOMIZER)

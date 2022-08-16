@@ -107,9 +107,7 @@ static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
 static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed, bool8 isDynamaxed);
-#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
 static void TryClearLevelCapKeptOn(void);
-#endif
 
 void HandleNewBattleRamClearBeforeBattle(void)
 {
@@ -179,9 +177,9 @@ static void SavePartyItems(void)
 		gNewBS->itemBackup[i] = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
 }
 
-#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
 static void TryClearLevelCapKeptOn(void)
 {
+	#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
 	if (!FlagGet(FLAG_SYS_GAME_CLEAR) //Main game
 	&& FlagGet(FLAG_HARD_LEVEL_CAP) //Level Cap is on
 	&& FlagGet(FLAG_KEPT_LEVEL_CAP_ON)) //And it hasn't ever been turned off
@@ -203,8 +201,8 @@ static void TryClearLevelCapKeptOn(void)
 			}
 		}
 	}
+	#endif
 }
-#endif
 
 void BattleBeginFirstTurn(void)
 {

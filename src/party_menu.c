@@ -1060,7 +1060,9 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	}
 	#endif
 
+#ifdef FLAG_SANDBOX_MODE
 SKIP_FIELD_MOVES:
+#endif
 	if (!ShouldDisablePartyMenuItemsBattleTower())
 	{
 		if (GetMonData(&mons[1], MON_DATA_SPECIES, NULL) != SPECIES_NONE)

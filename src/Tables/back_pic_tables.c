@@ -66,7 +66,7 @@ const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
 
 #ifndef UNBOUND
 	PAL_ENTRY(RED, Red)
-	PAL_ENTRY(RED, Leaf)
+	PAL_ENTRY(LEAF, Leaf)
 #else //For Pokemon Unbound
 	PAL_ENTRY(RED, PlayerMale)
 	PAL_ENTRY(LEAF, PlayerFemale)

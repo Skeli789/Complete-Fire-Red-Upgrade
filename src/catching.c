@@ -653,7 +653,6 @@ static void FixOverflownPP(struct Pokemon* mon)
 
 void atkF0_givecaughtmon(void)
 {
-	u32 none = 0;
 	struct Pokemon* mon = LoadTargetPartyData();
 
 	if (IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY) && gNewBS->dynamaxData.backupRaidMonItem != ITEM_NONE)
@@ -663,6 +662,7 @@ void atkF0_givecaughtmon(void)
 	}
 
 	#ifdef UNBOUND
+	u32 none = 0;
 	SetMonData(mon, MON_DATA_PP_BONUSES, &none); //In case it was set for a boss battle
 	FixOverflownPP(mon);
 	#endif

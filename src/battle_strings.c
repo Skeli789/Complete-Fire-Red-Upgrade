@@ -1104,7 +1104,7 @@ static u8* GetOpenWorldTrainerName(bool8 female)
 }
 #endif
 
-static const u8* GetTrainerClassName(u8 class, u8* text)
+static const u8* GetTrainerClassName(u8 class, unusedArg u8* text)
 {
 	const u8* className;
 

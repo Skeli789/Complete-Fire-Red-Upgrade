@@ -772,7 +772,7 @@ static void ChangePlayerPaletteByPaletteAndOffset(u16 paletteOffset, bool8 chang
 }
 #endif
 
-void ChangeEventObjPal(unusedArg u16 paletteOffset, u16 palTag)
+void ChangeEventObjPal(unusedArg u16 paletteOffset, unusedArg u16 palTag)
 {
 	#ifdef UNBOUND
 	ChangePlayerPaletteByPaletteAndOffset(paletteOffset, IsPaletteTagAffectedBySkinCharacterCustomization(palTag),
@@ -896,8 +896,9 @@ u16 CreateTrainerPicSprite(u16 species, bool8 isFrontPic, s16 x, s16 y, u8 palet
 	return spriteId;
 }
 
-void TryModifyMugshotTrainerPicPal(u16 trainerPicId, u8 index)
+void TryModifyMugshotTrainerPicPal(unusedArg u16 trainerPicId, unusedArg u8 index)
 {
+	#ifdef UNBOUND
 	if (IsTrainerPicAffectedByCustomization(trainerPicId)) //Is player sprite
 	{
 		if (index != 0xFF)
@@ -906,6 +907,7 @@ void TryModifyMugshotTrainerPicPal(u16 trainerPicId, u8 index)
 			ChangeTrainerPicPal(offset, GetOutfitStyleByTrainerPic(trainerPicId));
 		}
 	}
+	#endif
 }
 
 void TryUpdateRegionMapIconPal(void)
