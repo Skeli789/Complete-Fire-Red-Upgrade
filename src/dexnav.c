@@ -91,7 +91,7 @@ static void DexNavProximityUpdate(void);
 static void StopDexNavFieldEffect(void);
 static void DexNavFreeHUD(void);
 static void DexNavShowFieldMessage(u8 id);
-static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size);
+static void OutlinedFontDraw(u8 spriteId, u16 tileNum, u16 size);
 static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
 static void Task_ManageDexNavHUD(u8 taskId);
@@ -740,13 +740,13 @@ static void DexNavShowFieldMessage(u8 id)
 
 //This function sucks
 //It was written by god knows who and is super hard to modify
-static void OutlinedFontDraw(u8 spriteId, u8 tileNum, u16 size)
+static void OutlinedFontDraw(u8 spriteId, u16 tileNum, u16 size)
 {
 	if (spriteId >= MAX_SPRITES)
 		return;
 
-	u8* originalDst, *dst, *toWrite, *strPtr, tile;
-	tile = gSprites[spriteId].oam.tileNum + tileNum;
+	u8* originalDst, *dst, *toWrite, *strPtr;
+	u16 tile = gSprites[spriteId].oam.tileNum + tileNum;
 	toWrite = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
 	originalDst = dst = Calloc(size + TILE_SIZE);
 	strPtr = gStringVar4;
@@ -1629,7 +1629,7 @@ static void DexNavDrawChainNumber(u8* spriteIdNumAddr, u8* spriteIdStarAddr)
 
 			//Adjust Position
 			gSprites[spriteIdNum].pos1.x = 205 + (32 / 2);
-			gSprites[spriteIdNum].pos1.y = 137 + (16 / 2);
+			gSprites[spriteIdNum].pos1.y = 137 + (8 / 2);
 
 			if (gCurrentDexNavChain < 10)
 				gSprites[spriteIdNum].pos1.x += 8;
@@ -3571,12 +3571,15 @@ static void CreateCursor(void)
 
 static void CreateRegisteredIcon(void)
 {
-	LoadCompressedSpriteSheet(&sRegisteredIconSpriteSheet); //Uses the cursor palette
-	u8 spriteId = CreateSprite(&sRegisteredIconTemplate, 0, 0, 1);
-	if (spriteId < MAX_SPRITES)
+	if (AnyPokemonInCurrentArea()) //Don't bother if going to close right away
 	{
-		gSprites[spriteId].pos2.x = -8;
-		gSprites[spriteId].pos2.y = -6;
+		LoadCompressedSpriteSheet(&sRegisteredIconSpriteSheet); //Uses the cursor palette
+		u8 spriteId = CreateSprite(&sRegisteredIconTemplate, 0, 0, 1);
+		if (spriteId < MAX_SPRITES)
+		{
+			gSprites[spriteId].pos2.x = -8;
+			gSprites[spriteId].pos2.y = -6;
+		}
 	}
 }
 

@@ -640,16 +640,6 @@ static const struct OamData sFontOAM =
 	.priority = 0, //Above everything
 };
 
-//32x16 oam with highest priority
-static const struct OamData sSmallerFontOAM =
-{
-	.affineMode = ST_OAM_AFFINE_OFF,
-	.objMode = ST_OAM_OBJ_NORMAL,
-	.shape = SPRITE_SHAPE(32x16),
-	.size = SPRITE_SIZE(32x16),
-	.priority = 0, //Above everything
-};
-
 //8x8 oam with highest priority
 static const struct OamData sHeldItemOam =
 {
@@ -744,7 +734,7 @@ static const struct SpriteTemplate sChainNumberCanvasTemplate =
 {
 	.tileTag = 0x1EE8,
 	.paletteTag = GFX_TAG_HELD_ITEM,
-	.oam = &sSmallerFontOAM,
+	.oam = &sBButtonOam,
 	.anims = gDummySpriteAnimTable,
 	.images = NULL,
 	.affineAnims = gDummySpriteAffineAnimTable,
@@ -788,7 +778,7 @@ static const struct CompressedSpriteSheet sSightSpriteSheet = {DexNavSightTiles,
 static const struct CompressedSpriteSheet sBButtonSpriteSheet = {DexNavBButtonTiles, (32 * 8) / 2, 0x5425};
 static const struct CompressedSpriteSheet sMoveCanvasSpriteSheet = {(u8*) gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x4736};
 static const struct CompressedSpriteSheet sAbilityCanvasSpriteSheet = {gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x1EE7};
-static const struct CompressedSpriteSheet sChainNumberCanvasSpriteSheet = {DexNavHUDChainCanvasTiles, (32 * 16) / 2, 0x1EE8};
+static const struct CompressedSpriteSheet sChainNumberCanvasSpriteSheet = {DexNavHUDChainCanvasTiles, (32 * 8) / 2, 0x1EE8};
 
 #ifdef UNBOUND
 extern const u8 DexNavStarTiles[];
