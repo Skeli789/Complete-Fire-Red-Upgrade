@@ -6,6 +6,7 @@
  */
 
 /*===== Debugging Options =====*/
+//#define DEBUG_QUICK_BATTLES //Battles will end after choosing the first attack
 //#define DEBUG_MEGA //Mega Evolution can always be used
 //#define DEBUG_HMS //HMs can always be used from the party screen, Surf, Waterfall, and Rock Climb can always be used
 //#define DEBUG_OBEDIENCE //Traded Pokemon never have obedience issues
@@ -22,6 +23,7 @@
 #define VAR_DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
 #define VAR_DEXNAV 0x500C //Set by the engine indicating which Pokemon has been registered to find in the OW
 #define VAR_STATUS_INDUCER 0x500D //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
+#define VAR_RAID_PARTNER_RANDOM_NUM 0x500E //A random number set daily to help give more random partners in raids
 
 #define VAR_SECOND_OPPONENT 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define VAR_PARTNER 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -52,6 +54,7 @@
 #define FLAG_AUTO_RUN 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
 #define FLAG_RUNNING_ENABLED 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
 #define FLAG_BIKE_TURBO_BOOST 0x91F //The bike moves extra fast if this flag is set or if the player holds B.
+#define FLAG_SURF_TURBO_BOOST 0x929 //The Surf blob moves extra fast if set
 #define FLAG_DISABLE_BAG 0x915 //The bag can't be used in-battle if this flag is set
 #define FLAG_MOVE_RELEARNER_IGNORE_LEVEL 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
 #define FLAG_EGG_MOVE_RELEARNER 0x917 //When set, the move learner loads egg moves instead
@@ -61,6 +64,7 @@
 #define FLAG_FAST_BATTLE_MESSAGES 0x925 //When set, battle messages have no wait time once they've completed printing
 #define FLAG_FOLLOWER_IGNORE_ACTIVE_SCRIPT 0x926 //If set, the follower will reappear and move even when a script is in progress
 #define FLAG_KEEP_CONSUMABLE_ITEMS 0x927 //If set, consumable items are returned after battles
+#define FLAG_UNLOCKED_DEXNAV_HELD_ITEMS 0x92A //If set, possible held items will be displayed for wild Pokemon on the DexNav UI
 #define FLAG_DAILY_EVENTS_START 0xE00 //To flag + 0xFF, resets every new day.
 
 /*===== Start Menu/Poketools Flags =====*/
@@ -238,6 +242,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define NON_TRAINER_SPOTTING //Comment out if you don't want regular NPCs to be able to spot the player in the oveworld (vanilla only trainers can or the game will crash)
 //#define BIKE_ON_ANY_NON_INSIDE_MAP //Uncomment if you still want to be able to bike on any non-inside map
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncomment to increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
+//#define SHRINK_PLAYER_THROUGH_DOOR //The player sprite will shrink slightly when going through a doorway
 #define EXPAND_MOVE_REMINDER_DESCRIPTION //Keep this defined to have 5 lines for the move description as opposed to 4 in the move reminder menu
 //#define ITEM_PICTURE_ACQUIRE //If uncommented, item images will be shown when the player finds or obtains an item. Breaks FR Game Corner prize room
 //#define ITEM_DESCRIPTION_ACQUIRE //If uncommented, item descriptions will be shown the first time an item is added to the Bag. ITEM_PICTURE_ACQUIRE must be defined to work
@@ -257,6 +262,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define INSTANT_TEXT // Enable Instant Text. Some Hack Authors might want this disabled because of the effects instant text has on pacing
 #define AUTOSCROLL_TEXT_BY_HOLDING_R //Text will scroll automatically by holding R.
 #define DEXNAV_POKEMON_MOVE_IN_CAVES_WATER //DexNav phenomenon move around a couple times on water and in caves before the battle starts (like in ORAS)
+#define SYNCHRONIZE_GIFT_POKEMON //Gift Pokemon can have their natures manipulated with synchronize
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -268,6 +274,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define OLD_MOVE_SPLIT //Uncomment this line to use the Physical/Special split based on move types. Status moves are still set with the split byte.
 //#define OLD_CONFUSION_HEAL_BERRIES //Uncomment this line for berries like Figy and Wiki Berry to restore only 1/8 max HP when HP is below 1/2
 //#define GEN_7_CONFUSION_HEAL_BERRIES //Uncomment this line for berries like Figy and Wiki Berry to restore 1/2 max HP (Gen 8 is 1/3) when HP is below 1/4
+//#define PLA_HELD_ORIGIN_ORBS //Dialga and Palkia change into their Origin forms when they hold their respective orbs
 
 /*===== Ability Options =====*/
 //#define OLD_GALE_WINGS //Uncomment this line if you want Gale Wings to activate regardless of the user's HP
@@ -295,9 +302,9 @@ enum //These vars need to be one after the other (hence the enum)
 /*===== Capturing Pokemon Options =====*/
 //#define NO_HARDER_WILD_DOUBLES //In Gen 5, Pokemon encountered in double wild battles were harder to catch (based on how many species are owned). Uncomment this line to remove the catch rate decrement.
 #define CRITICAL_CAPTURE //Comment this line to remove the Critical Capture feature
+#define SWSH_CATCHING_DIFFICULTY_MODIFIER //Trying to catch a Pokemon that's higher level than your current Pokemon makes it harder to catch
 
 /*===== Exp Gain Options =====*/
-//#define OLD_EXP_SHARE //Uncomment this line to make the Exp. Share work like it did before Gen 6
 //#define TRAINER_EXP_BOOST // Uncomment this line to give the Exp boost for battling a Trainer's Pokemon (Pre Gen 7)
 //#define OLD_EXP_SPLIT //Uncomment this line to split the Exp amongst all participating pokemon (Pre Gen 6)
 //#define FLAT_EXP_FORMULA //Uncomment this line to use a Flat Exp calculation formula (Gens 2 - 4, 6)
@@ -317,12 +324,17 @@ enum //These vars need to be one after the other (hence the enum)
 //#define FOG_IN_BATTLE_3 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_3 (0xA)
 #define HIDE_HEALTHBOXES_DURING_ANIMS //Commenting this line prevents the health boxes from being hidden during move animations and some special animations.
 //#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself (Gen 4).
+#define FASTER_HEALTHBOX_CHANGE //The healthbar increases/decreases at a somewhat constant rate for all Pokemon
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
 //#define HEALTHBAR_TYPE_ICONS //Pokemon types will always be shown next to the healthbar
 #define LAST_USED_BALL_TRIGGER //The player will be given an option to use their last used Poke Ball in wild battles by pressing L
 //#define PICK_UP_KNOCKED_OFF_ITEMS //Items knocked off wild Pokemon will be picked up at the end of battle
 //#define PICKUP_ITEMS_STRAIGHT_TO_BAG //Items obtained with Pickup or Honey Gather are placed right in the bag
+//#define TAKE_WILD_MON_ITEM_ON_CAPTURE //Items held by Wild Pokemon when caught can be placed in the bag at the player's request
+//#define PAYDAY_MONEY_CAP //Pay Day and G-Max Gold Rush should cap at $99999 per battle
+//#define QUICK_CLAW_PROCING_ALWAYS_ALLOWS_FLEEING //Fleeing from wild battles will never fail the turn a Quick Claw activates
+//#define FROSTBITE //Replaces the Freeze status condition with the Frostbite status condition from PLA
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
