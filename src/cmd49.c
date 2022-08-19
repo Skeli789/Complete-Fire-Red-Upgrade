@@ -1374,7 +1374,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_RAID_MON_PREP_MORE_ATTACKS:
 			if (IsRaidBattle()
 			&& BATTLER_ALIVE(gBankAttacker)
-			&& gBankAttacker == BANK_RAID_BOSS)
+			&& gBankAttacker == BANK_RAID_BOSS
+			&& !(gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE))
 			{
 				u8 foe = FOE(gBankAttacker);
 			
