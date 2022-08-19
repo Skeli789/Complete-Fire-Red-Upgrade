@@ -772,7 +772,7 @@ void atkF1_trysetcaughtmondexflags(void)
 		gNewBS->triedToTakeWildItem = TRUE; //Only execute this code once
 		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 
-		if (item != ITEM_NONE && CheckBagHasSpace(item, 1))
+		if (item != ITEM_NONE && !IsFrontierRaidBattle() && CheckBagHasSpace(item, 1))
 		{
 			gLastUsedItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 			PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gBankTarget, gBattlerPartyIndexes[gBankTarget]);

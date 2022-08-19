@@ -251,9 +251,10 @@ static bool8 IsBannedHeldItemForDynamax(u16 item)
 		|| IsPrimalOrb(item);
 }
 
-bool8 IsBannedDynamaxSpecies(u16 species)
+bool8 IsBannedDynamaxBaseSpecies(u16 species)
 {
-	switch (species) {
+	switch (species)
+	{
 		case SPECIES_NONE:
 		#ifdef SPECIES_ZACIAN
 		case SPECIES_ZACIAN:
@@ -271,12 +272,18 @@ bool8 IsBannedDynamaxSpecies(u16 species)
 		case SPECIES_ETERNATUS:
 		#endif
 		#ifdef SPECIES_ETERNATUS_ETERNAMAX
-		case SPECIES_ETERNATUS_ETERNAMAX: //Because people seem to have this as a hackmon
+		//case SPECIES_ETERNATUS_ETERNAMAX: //Technically this one actually should only appear Dynamaxed
 		#endif
 			return TRUE;
 	}
 
-	if (IsMegaSpecies(species)
+	return FALSE;
+}
+
+bool8 IsBannedDynamaxSpecies(u16 species)
+{
+	if (IsBannedDynamaxBaseSpecies(species)
+	||  IsMegaSpecies(species)
 	||  IsRedPrimalSpecies(species)
 	||  IsBluePrimalSpecies(species)
 	||  IsUltraNecrozmaSpecies(species))
@@ -789,7 +796,7 @@ bool8 IsGMaxMove(u16 move)
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 {
 	if (IsDynamaxed(bank)
-	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
+	|| (IsRaidBattle() && bank == BANK_RAID_BOSS && !IsBannedDynamaxBaseSpecies(SPECIES(BANK_RAID_BOSS)))) //So it stays lit up when you try to catch it
 	{
 		#ifdef NATIONAL_DEX_CALYREX
 		if (SpeciesToNationalPokedexNum(SPECIES(bank)) == NATIONAL_DEX_CALYREX)
@@ -1936,7 +1943,7 @@ void DetermineRaidSpecies(void)
 	u8 numStars = gRaidBattleStars;
 	const struct RaidData* raid = &gRaidsByMapSection[GetRaidMapSectionId()][numStars];
 
-	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Tower Demo
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
 	{
 		const struct BattleTowerSpread* spread;
 
@@ -1963,6 +1970,10 @@ void DetermineRaidSpecies(void)
 			altSpecies = GetGigantamaxSpecies(spread->species, TRUE);
 			if (altSpecies != SPECIES_NONE)
 				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
+			#if (defined SPECIES_ETERNATUS && defined SPECIES_ETERNATUS_ETERNAMAX)
+			else if (spread->species == SPECIES_ETERNATUS && gRaidBattleStars >= 6)
+				gRaidBattleSpecies = SPECIES_ETERNATUS_ETERNAMAX; //The only time it's available
+			#endif
 		}
 
 		gPokeBackupPtr = spread; //Save spread pointer for later
@@ -2239,33 +2250,33 @@ u16 GetRaidRewardAmount(u16 item)
 static const u16 s4StarFrontierRaidBattleDrops[] =
 {
 	/*100 %*/ ITEM_PP_UP,
-	/* 80 %*/ ITEM_HP_UP,
-	/* 80 %*/ ITEM_POMEG_BERRY,
-	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 80 %*/ ITEM_SITRUS_BERRY,
+	/* 80 %*/ ITEM_LUM_BERRY,
+	/* 50 %*/ ITEM_FIGY_BERRY,
 	/* 50 %*/ ITEM_FULL_RESTORE,
+	/* 30 %*/ ITEM_LIECHI_BERRY,
 	/* 30 %*/ ITEM_NORMAL_GEM,
-	/* 30 %*/ ITEM_NONE,
-	/* 25 %*/ ITEM_HEART_SCALE,
+	/* 25 %*/ ITEM_NONE,
 	/* 25 %*/ ITEM_NONE,
 	/*  5 %*/ ITEM_LEFTOVERS,
-	/*  4 %*/ ITEM_BOTTLE_CAP,
-	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+	/*  4 %*/ ITEM_WISHING_PIECE,
+	/*  1 %*/ ITEM_WISHING_PIECE,
 };
 
 static const u16 s56StarFrontierRaidBattleDrops[] =
 {
 	/*100 %*/ ITEM_PP_UP,
-	/* 80 %*/ ITEM_HP_UP,
-	/* 80 %*/ ITEM_POMEG_BERRY,
-	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 80 %*/ ITEM_SITRUS_BERRY,
+	/* 80 %*/ ITEM_LUM_BERRY,
+	/* 50 %*/ ITEM_FIGY_BERRY,
 	/* 50 %*/ ITEM_OCCA_BERRY,
+	/* 30 %*/ ITEM_LIECHI_BERRY,
 	/* 30 %*/ ITEM_NORMAL_GEM,
-	/* 30 %*/ ITEM_HEART_SCALE,
 	/* 25 %*/ ITEM_PP_MAX,
 	/* 25 %*/ ITEM_LEFTOVERS,
 	/*  5 %*/ ITEM_WISHING_PIECE,
-	/*  4 %*/ ITEM_BOTTLE_CAP,
-	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+	/*  4 %*/ ITEM_WISHING_PIECE,
+	/*  1 %*/ ITEM_WISHING_PIECE,
 };
 
 static u16 ModifyFrontierRaidDropItem(u16 item)
@@ -2275,6 +2286,9 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 			item += RandRange(0, NUM_STATS);
 			if (item >= ITEM_RARE_CANDY) //For some reason it comes before Zinc
 				item = ITEM_ZINC;
+			break;
+		case ITEM_FIGY_BERRY:
+			item += RandRange(0, NUM_STATS - 1); //Figy - Iapapa
 			break;
 		case ITEM_POMEG_BERRY:
 			item += RandRange(0, NUM_STATS); //Pomeg - Tamato

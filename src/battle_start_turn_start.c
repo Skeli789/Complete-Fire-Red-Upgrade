@@ -121,7 +121,8 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	if (IsRaidBattle())
 	{
 		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
-		gNewBS->dynamaxData.timer[B_POSITION_OPPONENT_LEFT] = -2; //Don't revert
+		if (!IsBannedDynamaxBaseSpecies(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL)))
+			gNewBS->dynamaxData.timer[B_POSITION_OPPONENT_LEFT] = -2; //Don't revert
 		gNewBS->dynamaxData.backupRaidMonItem = GetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, NULL); //For Frontier
 	}
 
@@ -357,7 +358,10 @@ void BattleBeginFirstTurn(void)
 					{
 						gBattleScripting.bank = BANK_RAID_BOSS;
 						gBattleStringLoader = gText_RaidBattleReveal;
-						BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
+						if (IsBannedDynamaxBaseSpecies(SPECIES(BANK_RAID_BOSS)))
+							BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart_NoDynamax);
+						else
+							BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
 					}
 				}
 

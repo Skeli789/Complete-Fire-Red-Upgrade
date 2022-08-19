@@ -796,7 +796,7 @@ u16 sp052_GenerateFacilityTrainer(void)
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
 		return gTowerTrainers[id].owNum;
 	}
-	else if (Var8001 == 1)
+	else if (Var8001 == 1) //Special Trainer
 	{
 		u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 

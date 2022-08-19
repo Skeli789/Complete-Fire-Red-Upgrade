@@ -10,6 +10,7 @@
 
 //Exported Functions
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead);
+bool8 IsBannedDynamaxBaseSpecies(u16 species);
 bool8 IsBannedDynamaxSpecies(u16 species);
 bool8 CanDynamax(u8 bank);
 bool8 CanGigantamax(u8 bank);

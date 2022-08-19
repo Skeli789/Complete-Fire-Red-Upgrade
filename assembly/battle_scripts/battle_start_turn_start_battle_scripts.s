@@ -35,6 +35,7 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_CamomonsTypeRevealEnd3
 .global BattleScript_DynamaxEnergySwirl
 .global BattleScript_RaidBattleStart
+.global BattleScript_RaidBattleStart_NoDynamax
 .global BattleScript_RaidBattleStorm
 .global BattleScript_RaidShieldsBattleStart
 
@@ -272,6 +273,7 @@ BattleScript_RaidBattleStart:
 	playanimation BANK_SCRIPTING ANIM_DYNAMAX_START 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+BattleScript_RaidBattleStart_NoDynamax:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStormStarted
 	call BattleScript_RaidBattleStorm
 	end3
