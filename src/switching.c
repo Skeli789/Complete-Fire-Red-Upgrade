@@ -1020,7 +1020,8 @@ void atk52_switchineffects(void)
 
 			for (i = 0; i < gBattlersCount; ++i)
 			{
-				if (ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK && ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger Eject Packs after Intimidate
+				if ((ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK || ITEM_EFFECT(i) == ITEM_EFFECT_RESTORE_STATS)
+				&& ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger White Herbs or Eject Packs after Intimidate
 					return;
 			}
 		__attribute__ ((fallthrough));
