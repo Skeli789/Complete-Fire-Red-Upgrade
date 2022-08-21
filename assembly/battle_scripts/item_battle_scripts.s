@@ -73,7 +73,7 @@ BattleScript_BerryConfuseHealRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	printstring 0x144
@@ -97,7 +97,7 @@ BattleScript_BerryHealHP_RemoveBerryRet:
 	
 BattleScript_ItemHealHP_RemoveItem_SkipAnim:
 	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	printstring 0x12A
@@ -267,7 +267,7 @@ BattleScript_CheekPouch:
 	setbyte FORM_COUNTER 0x0
 	call BattleScript_AbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER CheekPouchString
