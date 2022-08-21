@@ -2083,11 +2083,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
 	}
 
-	if (forPlayer)
-		PostProcessTeam(gPlayerParty, builder);
-	else
-		PostProcessTeam(gEnemyParty, builder);
-
+	PostProcessTeam(party, builder);
 	Free(builder);
 
 	if (!forPlayer) //Probably best to put these checks somewhere else
@@ -4223,7 +4219,8 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 	//Try change last mon
 	if (builder->monsCount >= 3 && GetMonAbility(&party[builder->monsCount - 1]) == ABILITY_ILLUSION)
 	{
-		for (i = IS_SINGLE_BATTLE ? 1 : 2; i < ((u32) builder->monsCount - 1); ++i)
+		bool8 onePartyMonOnField = IsFrontierSingles(builder->battleType) || IsFrontierMulti(builder->battleType); //Only one mon from the specific team is on the field at a time
+		for (i = onePartyMonOnField ? 1 : 2; i < (u32) (builder->monsCount - 1); ++i) //-1 because we already know the last mon has Illusion and wants to leave that slot
 		{
 			if (GetMonAbility(&party[i]) != ABILITY_ILLUSION)
 			{
@@ -4231,7 +4228,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				break;
 			}
 		}
-	}	
+	}
 }
 
 static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId)

@@ -502,6 +502,11 @@ s8 ChangeSummaryScreenMonMulti(s8 delta)
 
 bool8 SummaryScreen_IsMultiBattlePartner(void)
 {
+	#ifdef FLAG_VIEWING_MULTI_TRAINER_TEAM
+	if (FlagGet(FLAG_VIEWING_MULTI_TRAINER_TEAM))
+		return TRUE;
+	#endif
+
     return IsMultiBattle()
 		&& (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1);
 }
@@ -963,6 +968,10 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 	#ifdef FLAG_SANDBOX_MODE
 	if (FlagGet(FLAG_SANDBOX_MODE) && FlagGet(FLAG_SYS_GAME_CLEAR))
 		goto SKIP_FIELD_MOVES;
+	#endif
+
+	#ifdef NO_FIELD_MOVES
+	goto SKIP_FIELD_MOVES;
 	#endif
 
 	//Add field moves to action list

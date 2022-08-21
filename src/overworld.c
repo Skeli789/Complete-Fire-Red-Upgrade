@@ -140,7 +140,7 @@ static const u8* const sMetatileInteractionScripts[] =
 	[MB_BURGLARY] = (void*) 0x81A7645,
 	[MB_TRAINER_TOWER_RECORD] = (void*) 0x81C549C,
 
-#ifdef UNBOUND
+#if (defined UNBOUND && defined SWARM_CHANGE_HOURLY)
 	[MB_TELEVISION] = EventScript_TVSwarm, //Relates info on the daily swarm
 #else
 	[MB_TELEVISION] = (void*) 0x81A764E,
