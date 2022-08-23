@@ -276,6 +276,7 @@ UpdateNickForIllusionHook 80496C8 2
 UpdatePokeBallForIllusionHook 804A9E0 1
 UpdateCryForOpponentIllusionHook 804B2E6 0
 UpdateCryForPlayerIllusionHook 804B310 0
+LaunchBattleAnimationIllusionHook 8072604 1
 UpdateYDeltaForIllusionHook 8074598 2
 UpdateElevationForIllusionHook 8074750 2
 GetBattlerYDeltaFromSpriteId 80764EC 1

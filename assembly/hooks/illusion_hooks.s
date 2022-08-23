@@ -147,3 +147,9 @@ GetBattlerSpriteCoordAttrEnemyIllusionHook:
 	mov r0, r5
 	ldr r2, =0x08076C3C | 1
 	bx r2
+
+@0x8072604 with r1
+LaunchBattleAnimationIllusionHook:
+	bl GetIllusionPartyData
+	ldr r1, =0x807262C | 1
+	bx r1
