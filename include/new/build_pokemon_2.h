@@ -75,16 +75,6 @@
 	party[i].spDefEv = structure->spDefEv;			\
 }
 
-#define LOAD_TIER_CHECKING_ABILITY										\
-{																		\
-	if (spread->ability == 0 && gBaseStats[species].hiddenAbility != 0)	\
-		ability = GetHiddenAbility(species);							\
-	else if (spread->ability == 2 && gBaseStats[species].ability2 != 0)	\
-		ability = GetAbility2(species);									\
-	else																\
-		ability = GetAbility1(species);									\
-}
-
 struct TrainersWithEvs
 {
     u8 nature;

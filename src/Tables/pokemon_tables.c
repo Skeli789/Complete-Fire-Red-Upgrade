@@ -573,9 +573,10 @@ const item_t gSmogonScalemons_ItemBanList[] =
 
 const u8 gSmogonScalemons_AbilityBanList[] =
 {
+	ABILITY_ARENATRAP,
 	ABILITY_SHADOWTAG,
 	ABILITY_HUGEPOWER,
-	ABILITY_ARENATRAP,
+	ABILITY_MOODY,
 	ABILITY_TABLES_TERMIN
 };
 

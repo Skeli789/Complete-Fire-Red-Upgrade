@@ -19,7 +19,6 @@ const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numS
 void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool8 forceShiny, bool8 keepGender, bool8 keepLetterCore);
 void GiveMonXPerfectIVs(struct Pokemon* mon, u8 totalPerfectStats);
 void CreateFrontierRaidMon(const u16 species);
-bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);
 void ForceMonShiny(struct Pokemon* mon);
