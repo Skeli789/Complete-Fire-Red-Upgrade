@@ -1400,8 +1400,9 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 
 	//Primal Weather Check
-	if ((gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER)
-	|| (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE))
+	if (WEATHER_HAS_EFFECT
+	&& ((gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER)
+	 || (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE)))
 		flags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 
 	return flags;
