@@ -11269,7 +11269,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Lixdel[] =
 		{
 			MOVE_RETURN,
 			MOVE_CLOSECOMBAT,
-			MOVE_QUICKATTACK,
+			MOVE_FEINT,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,
@@ -11321,7 +11321,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Lixdel[] =
 		{
 			MOVE_RETURN,
 			MOVE_EARTHQUAKE,
-			MOVE_QUICKATTACK,
+			MOVE_FEINT,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_CHERISH_BALL,

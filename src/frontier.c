@@ -1289,7 +1289,8 @@ bool8 IsSpeciesBannedInTier(u16 species, u16 tier, u16 battleFormat)
 			goto STANDARD_OU_CHECK;
 
 		case BATTLE_MINE_FORMAT_1:
-			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_OU, battleFormat)
+			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_OU, BATTLE_FACILITY_SINGLE)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_OU, BATTLE_FACILITY_DOUBLE) //OU Doubles has its own ban list
 				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_CAMOMONS, battleFormat)
 				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_BENJAMIN_BUTTERFREE, battleFormat);
 
