@@ -463,8 +463,15 @@ void atk09_attackanimation(void)
 		}
 		else
 		{
-			BattleScriptPush(gBattlescriptCurrInstr + 1);
-			gBattlescriptCurrInstr = BattleScript_Pausex20;
+			#ifdef FLAG_FAST_BATTLE_MESSAGES
+			if (FlagGet(FLAG_FAST_BATTLE_MESSAGES))
+				gBattlescriptCurrInstr++;
+			else
+			#endif
+			{
+				BattleScriptPush(gBattlescriptCurrInstr + 1);
+				gBattlescriptCurrInstr = BattleScript_Pausex20;
+			}
 		}
 
 		gBattleScripting.animTurn++;
@@ -526,8 +533,15 @@ void atk09_attackanimation(void)
 		}
 		else if (!IsDoubleSpreadMove() || !gNewBS->calculatedSpreadMoveData)
 		{
-			BattleScriptPush(gBattlescriptCurrInstr + 1);
-			gBattlescriptCurrInstr = BattleScript_Pausex20;
+			#ifdef FLAG_FAST_BATTLE_MESSAGES
+			if (FlagGet(FLAG_FAST_BATTLE_MESSAGES))
+				gBattlescriptCurrInstr++;
+			else
+			#endif
+			{
+				BattleScriptPush(gBattlescriptCurrInstr + 1);
+				gBattlescriptCurrInstr = BattleScript_Pausex20;
+			}
 		}
 		else
 			gBattlescriptCurrInstr++;
@@ -1961,8 +1975,15 @@ void atk45_playanimation(void)
 	}
 	else if (gHitMarker & HITMARKER_NO_ANIMATIONS)
 	{
-		BattleScriptPush(gBattlescriptCurrInstr + 7);
-		gBattlescriptCurrInstr = BattleScript_Pausex20;
+		#ifdef FLAG_FAST_BATTLE_MESSAGES
+		if (FlagGet(FLAG_FAST_BATTLE_MESSAGES))
+			gBattlescriptCurrInstr += 7;
+		else
+		#endif
+		{
+			BattleScriptPush(gBattlescriptCurrInstr + 7);
+			gBattlescriptCurrInstr = BattleScript_Pausex20;
+		}
 	}
 	else if (gNewBS->tempIgnoreAnimations)
 	{
