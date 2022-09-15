@@ -1309,6 +1309,22 @@ bool8 CanTransferItem(u16 species, u16 item)
 			break;
 		#endif
 
+	#ifdef PLA_HELD_ORIGIN_ORBS
+		#ifdef NATIONAL_DEX_DIALGA
+		case ITEM_EFFECT_ADAMANT_ORB:
+			if (dexNum == NATIONAL_DEX_DIALGA)
+				return FALSE;
+			break;
+		#endif
+
+		#ifdef NATIONAL_DEX_PALKIA
+		case ITEM_EFFECT_LUSTROUS_ORB:
+			if (dexNum == NATIONAL_DEX_PALKIA)
+				return FALSE;
+			break;
+		#endif
+	#endif
+
 		#ifdef NATIONAL_DEX_ARCEUS
 		case ITEM_EFFECT_PLATE:
 			if (dexNum == NATIONAL_DEX_ARCEUS)
