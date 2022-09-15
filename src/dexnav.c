@@ -76,6 +76,7 @@ extern const struct SwarmData gSwarmTable[];
 
 //External functions
 extern void sp09A_StopSounds(void);
+const u8* __attribute__((long_call)) GetCoordEventScriptAtPosition(struct MapHeader * mapHeader, u16 x, u16 y, u8 z);
 
 //This file's functions
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
@@ -347,6 +348,9 @@ static bool8 IsEncounterTile(s16 x, s16 y, u8 targetBehaviour)
 {
 	if (MetatileBehavior_IsStairs(MapGridGetMetatileBehaviorAt(x, y)))
 		return FALSE; //Can't encounter on stairs because it's wonky on side stairs
+
+	if (GetCoordEventScriptAtPosition(&gMapHeader, x - 7, y - 7, MapGridGetZCoordAt(x, y)))
+		return FALSE; //Better not to start an enounter on spot that a script should be activated on
 
 	u32 tileBehaviour = MapGridGetMetatileField(x, y, 0xFF);
 	u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(tileBehaviour, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
@@ -3567,6 +3571,8 @@ static void CreateCursor(void)
 		LoadSpritePalette(&sCursorSpritePalette);
 		sDexNavGUIPtr->cursorSpriteId = CreateSprite(&sGUICursorTemplate, 30, 48, 0);
 	}
+	else
+		sDexNavGUIPtr->cursorSpriteId = MAX_SPRITES;
 }
 
 static void CreateRegisteredIcon(void)

@@ -1168,6 +1168,7 @@ UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
 GetWarpEventAtMapPosition = 0x806DC30 | 1;
 SetupWarp = 0x806DC54 | 1;
+GetCoordEventScriptAtPosition = 0x806DDC0 | 1;
 HandleBoulderFallThroughHole = 0x806DE28 | 1;
 HandleBoulderActivateVictoryRoadSwitch = 0x806DE70 | 1;
 dive_warp = 0x806DF3C | 1;
