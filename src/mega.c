@@ -106,7 +106,7 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 	#else
 
 	const struct Evolution* evolutions = gEvolutionTable[species];
-	int i, j;
+	u32 i, j;
 
 	for (i = 0; i < EVOS_PER_MON; ++i)
 	{
@@ -132,6 +132,27 @@ species_t GetMegaSpecies(unusedArg u16 species, unusedArg u16 item, unusedArg co
 				}
 			}
 		}
+	}
+
+	return SPECIES_NONE;
+	#endif
+}
+
+species_t GetPrimalSpecies(unusedArg u16 species, unusedArg u16 item)
+{
+	#ifndef MEGA_EVOLUTION_FEATURE
+		return SPECIES_NONE;
+	#else
+
+	u32 i;
+	const struct Evolution* evolutions = gEvolutionTable[species];
+
+	for (i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)) //Can Primal Evolve
+			return evolutions[i].targetSpecies;
 	}
 
 	return SPECIES_NONE;
@@ -423,6 +444,11 @@ bool8 IsRedPrimalSpecies(unusedArg u16 species)
 	#else
 	return FALSE;
 	#endif
+}
+
+bool8 IsPrimalSpecies(u16 species)
+{
+	return IsBluePrimalSpecies(species) || IsRedPrimalSpecies(species);
 }
 
 bool8 IsMega(u8 bank)

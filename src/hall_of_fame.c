@@ -9,6 +9,8 @@
 #include "../include/sound.h"
 #include "../include/string_util.h"
 
+#include "../include/new/mega.h"
+
 //Hall of Fame Fix for Expanded Pokemon
 //Based on https://github.com/Sagiri/fame-hall
 
@@ -51,9 +53,24 @@ void Task_Hof_InitMonData(u8 taskId)
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		u8 nick[POKEMON_NAME_LENGTH + 2];
-		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != 0)
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+
+		if (species != SPECIES_NONE)
 		{
-			sHofMonPtr->mon[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			#ifdef SHOW_MEGAS_IN_HOF
+			u16 item = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
+			u16 altSpecies = GetMegaSpecies(species, item, gPlayerParty[i].moves); //Try Mega Evolve the mon
+			if (altSpecies != SPECIES_NONE)
+				species = altSpecies; //Update with Mega Evolved form
+			else
+			{
+				altSpecies = GetPrimalSpecies(species, item);
+				if (altSpecies != SPECIES_NONE)
+					species = altSpecies; //Update with Primal form
+			}
+			#endif
+
+			sHofMonPtr->mon[i].species = species;
 			sHofMonPtr->mon[i].tid = GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL);
 			sHofMonPtr->mon[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
 			sHofMonPtr->mon[i].lvl = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
@@ -341,7 +358,6 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 	s32 width;
 	s32 x;
 	u16 species = currMon->species;
-	
 
 	FillWindowPixelBuffer(0, 0);
 	PutWindowTilemap(0);
