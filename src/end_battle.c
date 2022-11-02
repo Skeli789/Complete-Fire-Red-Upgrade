@@ -171,6 +171,7 @@ const u16 gEndBattleFlagClearTable[] =
 };
 
 //This file's functions:
+static void TryRestoreEnemyTeam(void);
 static void NaturalCureHeal(void);
 static void RestoreNonConsumableItems(void);
 static void RevertDynamax(void);
@@ -633,6 +634,7 @@ void EndOfBattleThings(void)
 {
 	if (gNewBS != NULL) //Hasn't been cleared yet
 	{
+		TryRestoreEnemyTeam();
 		NaturalCureHeal();
 		RestoreNonConsumableItems();
 		RevertDynamax();
@@ -665,6 +667,17 @@ void EndOfBattleThings(void)
 		}
 		#endif
 	}
+}
+
+static void TryRestoreEnemyTeam(void)
+{
+	#ifdef FLAG_BACKUP_ENEMY_TEAM
+	if (FlagGet(FLAG_BACKUP_ENEMY_TEAM))
+	{
+		Memcpy(gEnemyParty, gNewBS->foePartyBackup, sizeof(struct Pokemon) * PARTY_SIZE);
+		Free(gNewBS->foePartyBackup);
+	}
+	#endif
 }
 
 static void NaturalCureHeal(void)

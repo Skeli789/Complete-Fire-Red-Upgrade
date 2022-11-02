@@ -467,6 +467,32 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 	u8 tier, i;
 	struct Pokemon backupMon;
 
+	if (Var8001 == 2)
+	{
+		u8 numEnemyMons = PARTY_SIZE / 2;
+
+		if (IsFrontierMulti(VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE)))
+		{
+			if (VarGet(VAR_BATTLE_FACILITY_POKE_NUM) == 2)
+			{
+				numEnemyMons = 4; //Use both full enemy teams
+
+				if (GetMonData(&gEnemyParty[2], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+					gEnemyParty[2] = gEnemyParty[4]; //Move up last mon on second team since teams are staggared
+			}
+			//else
+				//Otherwise the standard 3
+		}
+
+		//Splice enemy's team into player's team
+		Memcpy(&gPlayerParty[PARTY_SIZE - numEnemyMons], gEnemyParty, sizeof(struct Pokemon) * numEnemyMons);
+		CompactPartySlots();
+		#ifdef FLAG_PRESET_RANDOM_TEAM
+		FlagSet(FLAG_PRESET_RANDOM_TEAM);
+		#endif
+		return;
+	}
+
 	switch (Var8000) {
 		case 0:
 		default:
@@ -490,7 +516,7 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 			break;
 	}
 
-	if (Var8001) //Keep team lead from previous battle
+	if (Var8001 == 1) //Keep team lead from previous battle
 		backupMon = gPlayerParty[0];
 
 	#ifdef FLAG_PRESET_RANDOM_TEAM

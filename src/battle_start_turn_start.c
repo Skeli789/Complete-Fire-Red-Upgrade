@@ -178,6 +178,17 @@ static void SavePartyItems(void)
 		gNewBS->itemBackup[i] = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
 }
 
+static void TryBackupEnemyTeam(void)
+{
+	#ifdef FLAG_BACKUP_ENEMY_TEAM
+	if (FlagGet(FLAG_BACKUP_ENEMY_TEAM))
+	{
+		gNewBS->foePartyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
+		Memcpy(gNewBS->foePartyBackup, gEnemyParty, sizeof(struct Pokemon) * PARTY_SIZE);
+	}
+	#endif
+}
+
 static void TryClearLevelCapKeptOn(void)
 {
 	#if (defined FLAG_HARD_LEVEL_CAP && defined FLAG_KEPT_LEVEL_CAP_ON)
@@ -220,6 +231,7 @@ void BattleBeginFirstTurn(void)
 					gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SEMI_SHIFT;
 				#endif
 				SavePartyItems();
+				TryBackupEnemyTeam();
 				TryClearLevelCapKeptOn();
 				++*state;
 				break;
