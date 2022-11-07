@@ -504,6 +504,7 @@
 .equ AnimTask_StartSinAnimTimer, 0x80ab101
 .equ AnimTask_TransparentCloneGrowAndShrink, 0x80b3c79
 .equ AnimTask_ExtrasensoryDistortion, 0x80b3a59
+.equ AnimTask_SeismicTossBgAccelerateDownAtEnd, 0x80b51ed
 .equ SoundTask_PlaySE2WithPanning, 0x80DD411
 .equ SoundTask_LoopSEAdjustPanning, 0x80dcf39 @;Song Id, Source, Target Pan, Pan Increment, Num Times, Pan Increment Ofteness, Length of One
  
@@ -556,6 +557,7 @@
 .equ Template_JaggedMusicNote, 0x83E4430
 .equ Template_UproarRing, 0x83E4110
 .equ Template_MovementWaves, 0x83E43F8
+.equ Template_RockBlastRock, 0x83E7548
 .equ Template_RockScatter, 0x83e7560
 .equ Template_GrowingShockWaveOrb, 0x83E6290
 .equ Tempate_RazorLeaf, 0x83e2c08
@@ -734,6 +736,8 @@
 .equ ICE_BEAM_CRYSTALS, 0x81ce3fc
 .equ DRAGON_CLAW_FIRE_SPIRAL, 0x81d31ad
 .equ SONIC_BOOM_PROJECTILE, 0x81c7f12
+.equ SEISMIC_TOSS_ROCK_SCATTER_1, 0x81d47c7
+.equ SEISMIC_TOSS_ROCK_SCATTER_2, 0x81d4828
 
 @supercommands
 

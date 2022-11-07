@@ -5953,7 +5953,10 @@ void SpriteCB_Geyser(struct Sprite* sprite)
 	u8 target = LoadBattleAnimTarget(0);
 
 	if (!IsBattlerSpriteVisible(target))
+	{
 		DestroyAnimSprite(sprite);
+		return;
+	}
 	else
 	{
 		sprite->pos1.x = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2) + gBattleAnimArgs[1];

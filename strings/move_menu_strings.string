@@ -159,3 +159,9 @@ Torment Foes
 
 #org @gText_MaxMoveLowerSpeed2
 -- Speed Foes
+
+#org @gText_MaxMoveIgnoreAbility
+Ignore Foe Ability
+
+#org @gText_MaxMoveBypassProtect
+Bypass Protection

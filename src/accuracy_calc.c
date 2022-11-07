@@ -70,7 +70,7 @@ ACCURACY_CHECK_START:
 		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		}
-		else if (!JumpIfMoveAffectedByProtect(gCurrentMove, gBankAttacker, gBankTarget, TRUE)) //Obviousl move shouldn't be used, it's 0xFFFF or 0xFFFE
+		else if (!JumpIfMoveAffectedByProtect(gCurrentMove, gBankAttacker, gBankTarget, TRUE)) //Obviously move shouldn't be used, it's 0xFFFF or 0xFFFE
 		{
 			gBattlescriptCurrInstr += 7;
 		}
@@ -164,6 +164,7 @@ ACCURACY_CHECK_START:
 bool8 JumpIfMoveAffectedByProtect(u16 move, u8 bankAtk, u8 bankDef, bool8 actuallyJump)
 {
 	if ((IsAnyMaxMove(move) && !IsDynamaxed(bankDef)) //Otherwise using a Max Move on Max Guard
+	|| IsMaxMoveWithEffect(move, MAX_EFFECT_BYPASS_PROTECT)
 	|| (gNewBS->zMoveData.active && SPLIT(move) != SPLIT_STATUS))
 		return FALSE;
 

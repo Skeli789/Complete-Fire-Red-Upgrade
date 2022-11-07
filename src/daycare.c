@@ -313,6 +313,12 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 			eggSpecies = GetMiniorCoreFromPersonality(personality);
 			break;
 		#endif
+
+		#if (defined NATIONAL_DEX_INDEEDEE && defined SPECIES_INDEEDEE && defined SPECIES_INDEEDEE_FEMALE)
+		case NATIONAL_DEX_INDEEDEE:
+			eggSpecies = (personality & 0x8000) ? SPECIES_INDEEDEE : SPECIES_INDEEDEE_FEMALE;
+			break;
+		#endif
 	}
 
 	// Make Ditto the "mother" slot if the other daycare mon is male/genderless).

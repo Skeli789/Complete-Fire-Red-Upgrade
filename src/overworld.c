@@ -1524,7 +1524,8 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
 			u32 currMetatileField = MapGridGetMetatileField(x, y, 0xFF);
 			u8 blockProperties = GetMetatileAttributeFromRawMetatileBehavior(currMetatileField, METATILE_ATTRIBUTE_ENCOUNTER_TYPE);
 
-			if ((blockProperties == TILE_FLAG_ENCOUNTER_TILE || blockProperties == TILE_FLAG_SURFABLE) //And only when standing in grass/on water
+			if (((blockProperties == TILE_FLAG_ENCOUNTER_TILE && LoadProperMonsData(LAND_MONS_HEADER) != NULL)
+			|| (blockProperties == TILE_FLAG_SURFABLE && LoadProperMonsData(WATER_MONS_HEADER) != NULL)) //Only when standing in grass/on water and wild Pokemon can be found there
 			&& GetGen8SpeciesForDexNavDetectorMode(blockProperties))
 			{
 				u8 taskId = CreateTask(Task_StartDexNavHUDAfterScript, 0xFF);

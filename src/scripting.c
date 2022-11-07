@@ -1750,8 +1750,8 @@ void sp0A1_UpdateTimeInVars(void)
 //					  2 - Get day difference.
 //					  3 - Get month difference.
 //					  4 - Get year difference.
-//@Returns: The time difference between the current time and the time stored in the given var.
-u32 sp0A2_GetTimeDifference(void)
+//@Returns: The time difference between the current time and the time stored in the given var. Max 65535.
+u16 sp0A2_GetTimeDifference(void)
 {
 	u32 difference = 0;
 	u16 eventVar = Var8000; //Var contained in Var8000
@@ -1780,6 +1780,9 @@ u32 sp0A2_GetTimeDifference(void)
 			difference = GetYearDifference(startYear, gClock.year);
 			break;
 	}
+
+	if (difference > 0xFFFF)
+		difference = 0xFFFF; //Quantize to two bytes
 
 	return difference;
 }

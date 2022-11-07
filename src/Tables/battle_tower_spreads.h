@@ -4381,7 +4381,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RECKLESS
-		.item = ITEM_WIKI_BERRY,
+		.item = ITEM_FIGY_BERRY,
 		.moves =
 		{
 			MOVE_DOUBLEEDGE,
@@ -11948,7 +11948,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_FIREBLAST,
-			MOVE_ANCIENTPOWER,
+			MOVE_POWERGEM,
 			MOVE_EARTHPOWER,
 			MOVE_SHELLSMASH,
 		},
@@ -29094,8 +29094,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_2, //ABILITY_REGENERATOR
-		.item = ITEM_MAGO_BERRY,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_KLUTZ - for Entrainment
+		.item = ITEM_STICKY_BARB,
 		.moves =
 		{
 			MOVE_DAZZLINGGLEAM,
@@ -46038,7 +46038,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
+		.atkEv = 248,
 		.defEv = 8,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_GULPMISSILE
@@ -46498,7 +46498,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_GRAPPLOCT,
-		.nature = NATURE_MILD,
+		.nature = NATURE_IMPISH,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -49480,7 +49480,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_FUTURESIGHT,
-			MOVE_SHELLSIDEARM,
+			MOVE_SLUDGEBOMB,
 			MOVE_EARTHQUAKE,
 			MOVE_FLAMETHROWER,
 		},

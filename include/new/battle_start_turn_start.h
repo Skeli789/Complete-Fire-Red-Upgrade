@@ -13,6 +13,7 @@ u8 GetTotemStat(u8 bank, bool8 multiBoost);
 u8 GetTotemRaiseAmount(u8 bank, bool8 multiBoost);
 s8 TotemRaiseAmountToStatMod(u8 raiseAmount);
 u8 CanActivateTotemBoost(u8 bank);
+void DetermineFirstMultiTarget(void);
 u16 GetMUS_ForBattle(void);
 u8 GetTrainerBattleTransition(void);
 u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities);

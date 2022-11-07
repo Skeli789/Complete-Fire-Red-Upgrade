@@ -427,13 +427,16 @@ void atk09_attackanimation(void)
 		{
 			u16 newSpecies = (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 2) ? SPECIES_CRAMORANT_GORGING : SPECIES_CRAMORANT_GULPING;
 			DoFormChange(gBankAttacker, newSpecies, TRUE, FALSE, FALSE);
+			gNewBS->cramorantTransformed = TRUE; //Indicator so it doesn't transform again in gorging and gulping forms
 			return;
 		}
 		else if (gBattleScripting.animTurn == 0
+		&& gNewBS->cramorantTransformed
 		&& (species == SPECIES_CRAMORANT_GORGING || species == SPECIES_CRAMORANT_GULPING))
 		{
 			gBattleScripting.bank = gBankAttacker;
 			cramorantTransform = TRUE;
+			gNewBS->cramorantTransformed = FALSE;
 		}
 	}
 	#endif
@@ -1471,6 +1474,7 @@ void atk1B_cleareffectsonfaint(void) {
 				&& !gSpecialAbilityFlags[CopyAbility(gActiveBattler)].gReceiverBannedAbilities)
 				{
 					gLastUsedAbility = partnerAbility;
+					SetProperAbilityPopUpSpecies(partner); //Must be set up here before the Ability changes
 					*GetAbilityLocation(partner) = CopyAbility(gActiveBattler);
 					SetTookAbilityFrom(partner, gActiveBattler);
 					gEffectBank = gActiveBattler;
@@ -1480,7 +1484,6 @@ void atk1B_cleareffectsonfaint(void) {
 					gBattlescriptCurrInstr = BattleScript_Receiver;
 
 					gAbilityPopUpHelper = gLastUsedAbility;
-					SetProperAbilityPopUpSpecies(partner);
 					EmitDataTransfer(0, &gAbilityPopUpHelper, 3, &gAbilityPopUpHelper); //Copy Ability and Species
 					MarkBufferBankForExecution(gActiveBattler);
 
@@ -2168,8 +2171,11 @@ static void UpdateMoveStartValuesForCalledMove(void)
 	ResetDoublesSpreadMoveCalcs();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
-	if (GetBaseMoveTarget(gCurrentMove, gBankAttacker) & MOVE_TARGET_USER)
+	u8 moveTarget = GetBaseMoveTarget(gCurrentMove, gBankAttacker);
+	if (moveTarget & MOVE_TARGET_USER)
 		gBankTarget = gBankAttacker;
+	else if (IS_DOUBLE_BATTLE && moveTarget & MOVE_TARGET_ALL)
+		DetermineFirstMultiTarget();
 }
 
 static void TryUpdateCalledMoveWithZMove(void)
@@ -3744,7 +3750,10 @@ void atkA6_settypetorandomresistance(void) //Conversion 2
 	moveType = gNewBS->LastUsedTypes[bankDef];
 
 	if (moveType == TYPE_MYSTERY || moveType == TYPE_BLANK || moveType == TYPE_ROOSTLESS)
+	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		return;
+	}
 
 	for (rands = 0; rands < 1000; ++rands)
 	{
@@ -4957,6 +4966,25 @@ bool8 CanSwapItems(u8 bankAtk, u8 bankDef)
 		return FALSE;
 	
 	return TRUE;
+}
+
+void atkD1_trysethelpinghand(void)
+{
+    gBankTarget = PARTNER(gBankAttacker);
+
+    if (IS_DOUBLE_BATTLE
+	&& !(gAbsentBattlerFlags & gBitTable[gBankTarget])
+	&& !gProtectStructs[gBankAttacker].helpingHand
+	&& !gProtectStructs[gBankTarget].helpingHand
+	&& !BankMovedBefore(gBankTarget, gBankAttacker))
+    {
+        gProtectStructs[gBankTarget].helpingHand = 1;
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
 }
 
 void atkD2_tryswapitems(void) //Trick

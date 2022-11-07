@@ -223,7 +223,7 @@ gBattleScriptingCommandsTable:
 .word atkCE_settorment
 .word atkCF_jumpifnodamage
 .word atkD0_settaunt
-.word 0x802c039					@sethelpinghand
+.word atkD1_trysethelpinghand	@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
 .word atkD4_trywish

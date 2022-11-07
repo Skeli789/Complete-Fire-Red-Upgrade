@@ -921,6 +921,7 @@ static void EndBattleFlagClear(void)
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;
 	gBattleCircusFlags = 0;
+	Memset(gStatuses3, 0, sizeof(gStatuses3));
 }
 
 static void HealPokemonInFrontier(void)

@@ -1155,10 +1155,17 @@ u8 GetIllusionPartyNumber(u8 bank)
 		struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 		useBattleParty = (side == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_LINK));
 		illusionMonId = (useBattleParty) ? GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]) : gBattlerPartyIndexes[bank];
+		bool8 isTagBattle = IsTagBattle();
+	
+		if (useBattleParty && isTagBattle)
+			lastMonId += 1; //Because team is slots 0, 2, 3
 
 		for (u8 i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
 		{
 			u8 monId = i; //Mon id may get overwritten later
+
+			if (i == 1 && useBattleParty && isTagBattle)
+				--i;
 
 			if (monId == illusionMonId) //Finished checking mons after
 				return gBattlerPartyIndexes[bank];

@@ -87,6 +87,7 @@ extern const u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 extern const u8 BattleScript_FaintedMonChooseAnotherRejoin[];
 extern const u8 BattleScript_FaintedMonTryChooseAnother[];
 extern const u8 BattleScript_PrintCustomStringEnd2[];
+extern const u8 BattleScript_End3[];
 extern const u8 BattleScript_MonTookFutureAttack[];
 extern const u8 BattleScript_OctolockTurnDmg[];
 extern const u8 BattleScript_DynamaxEnd[];

@@ -88,6 +88,8 @@ extern const u8 gText_MaxMoveSteelsurge[];
 extern const u8 gText_MaxMoveConfuseFoes[];
 extern const u8 gText_MaxMoveTormentFoes[];
 extern const u8 gText_MaxMoveLowerSpeed2[];
+extern const u8 gText_MaxMoveIgnoreAbility[];
+extern const u8 gText_MaxMoveBypassProtect[];
 
 #define TXT_PLUS 0x2E
 #define TXT_MINUS 0xAE

@@ -198,6 +198,8 @@ const u8* DoMegaEvolution(u8 bank)
 
 	if (evolutions != NULL)
 	{
+		gNewBS->backupAbility = ABILITY(bank); //So Abilities like Delta Stream & Neutralizing Gas are removed properly
+
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE, TRUE);
 
 		gBattleScripting.bank = bank;

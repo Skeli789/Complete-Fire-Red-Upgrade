@@ -1434,7 +1434,7 @@ u16 GetFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 {
-	u16 predictedMove;
+	u16 predictedMove, predictedMoveEffect;
 	u32 predictedDamage = 0;
 	
 	if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
@@ -1445,7 +1445,15 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	else
 		predictedMove = IsValidMovePrediction(bankDef, bankAtk);
 
-	if (predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
+	predictedMoveEffect = gBattleMoves[predictedMove].effect;
+
+	if (predictedMove != MOVE_NONE
+	&& SPLIT(predictedMove) != SPLIT_STATUS
+	&& predictedMoveEffect != EFFECT_COUNTER //Can't counter a Counter
+	&& predictedMoveEffect != EFFECT_MIRROR_COAT //Can't counter a Mirror Coat
+	&& predictedMoveEffect != EFFECT_FUTURE_SIGHT //Can't counter Future Sight
+	&& AttacksThisTurn(bankDef, predictedMove) == 2 //Not charging
+	&& !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 	{
 		predictedDamage = GetFinalAIMoveDamage(predictedMove, bankDef, bankAtk, 1, NULL); //The damage the enemy will do to the AI
 
@@ -1989,6 +1997,23 @@ bool8 CanBeFlinched(u8 bankDef, u8 bankAtk, u8 defAbility, u16 move)
 		return FALSE; //Have to go first to flinch
 
 	return !MoveBlockedBySubstitute(move, bankAtk, bankDef); //Can't flinch a Substitute
+}
+
+bool8 IsCurrentWeatherPartnersWeather(u8 partner, u8 partnerAbility)
+{
+	if (IS_SINGLE_BATTLE)
+		return FALSE;
+
+	if (gBattleWeather & WEATHER_SUN_ANY)
+		return partnerAbility == ABILITY_DROUGHT || MoveEffectInMoveset(EFFECT_SUNNY_DAY, partner);
+	else if (gBattleWeather & WEATHER_RAIN_ANY)
+		return partnerAbility == ABILITY_DRIZZLE || MoveEffectInMoveset(EFFECT_RAIN_DANCE, partner);
+	else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+		return partnerAbility == ABILITY_SANDSTREAM || MoveEffectInMoveset(EFFECT_SANDSTORM, partner);
+	else if (gBattleWeather & WEATHER_HAIL_ANY)
+		return partnerAbility == ABILITY_SNOWWARNING || MoveEffectInMoveset(EFFECT_HAIL, partner);
+
+	return FALSE;
 }
 
 u8 CountBanksPositiveStatStages(u8 bank)
@@ -3438,7 +3463,6 @@ bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef)
 	{
 		u8 effect = gBattleMoves[move].effect;
 		return effect == EFFECT_SEMI_INVULNERABLE;
-
 	}
 
 	return FALSE;

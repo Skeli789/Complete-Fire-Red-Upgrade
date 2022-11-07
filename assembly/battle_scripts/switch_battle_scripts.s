@@ -276,6 +276,7 @@ BattleScript_PursuitDmgOnSwitchOut:
 	orword HIT_MARKER, HITMARKER_OBEYS
 	setbyte FORCE_SWITCH_HELPER 0x0
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
+	callasm SetDynamicTypeForPursuitSwitch
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove

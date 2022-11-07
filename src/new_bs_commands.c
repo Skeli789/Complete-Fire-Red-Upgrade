@@ -970,8 +970,9 @@ void atkFE_prefaintmoveendeffects(void)
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& TOOK_DAMAGE(gBankTarget)
 			&& MOVE_HAD_EFFECT
-			&& gBattleMons[gBankTarget].hp
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
+			&& BATTLER_ALIVE(gBankTarget)
+			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
 			{
 				switch (ABILITY(gBankAttacker)) {
 					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
@@ -982,11 +983,15 @@ void atkFE_prefaintmoveendeffects(void)
 						}
 						break;
 
-					case ABILITY_POISONTOUCH:
+					case ABILITY_POISONTOUCH: ;
+						u8 chance = 30;
+						if (BankHasRainbow(gBankAttacker))
+							chance *= 2;
+
 						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
 						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
-						&& umodsi(Random(), 100) < 30)
+						&& umodsi(Random(), 100) < chance)
 						{
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_PoisonTouch;

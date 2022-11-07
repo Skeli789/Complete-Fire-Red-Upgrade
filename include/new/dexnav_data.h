@@ -55,8 +55,10 @@ extern const u8 gText_DexNavReeds[];
 extern const u8 gText_DexNavDeepWater[];
 extern const u8 gText_PokeTools[];
 extern const u8 gText_GotAway[];
+extern const u8 gText_PokemonGotAway[];
 extern const u8 gText_LostSignal[];
 extern const u8 gText_GotAwayShouldSneak[];
+extern const u8 gText_PokemonGotAwayShouldSneak[];
 extern const u8 gText_CannotBeFound[];
 extern const u8 gText_FormCannotBeFound[];
 extern const u8 gText_NotFoundNearby[];
@@ -608,8 +610,10 @@ enum FieldMessages
 	FIELD_MSG_LOOK_IN_OTHER_SPOT,
 	FIELD_MSG_TOO_DARK,
 	FIELD_MSG_GOT_AWAY,
+	FIELD_MSG_GOT_AWAY_DETECTOR,
 	FIELD_MSG_LOST_SIGNAL,
 	FIELD_MSG_SNEAK_NEXT_TIME,
+	FIELD_MSG_SNEAK_NEXT_TIME_DETECTOR,
 };
 
 static const struct OamData sSightOam =

@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/evolution_scene.h"
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
@@ -505,6 +506,17 @@ bool8 SummaryScreen_IsMultiBattlePartner(void)
 	#ifdef FLAG_VIEWING_MULTI_TRAINER_TEAM
 	if (FlagGet(FLAG_VIEWING_MULTI_TRAINER_TEAM))
 		return TRUE;
+	#endif
+
+	#ifdef FLAG_USE_HALF_PARTNER_TEAM
+	if (FlagGet(FLAG_USE_HALF_PARTNER_TEAM))
+	{
+		u8 multiTrainerId = gTrainers[VarGet(VAR_PARTNER)].encounterMusic;
+
+		if (multiTrainerId > 0
+		&& GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_ID, NULL) == gFrontierMultiBattleTrainers[multiTrainerId - 1].otId)
+			return TRUE;
+	}
 	#endif
 
     return IsMultiBattle()

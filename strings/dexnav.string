@@ -120,6 +120,12 @@ Search for wild Pok\emon in the area\nwith potential special qualities!
 #org @gText_GotAwayShouldSneak
 [BUFFER1] got away!\nTry moving more slowly.
 
+#org @gText_PokemonGotAway
+The Pok\emon got away!
+
+#org @gText_PokemonGotAwayShouldSneak
+The Pok\emon got away!\nTry moving more slowly.
+
 #org @gText_LostSignal
 There is no reaction.\nThe signal was lost!
 

@@ -42,6 +42,8 @@ void EndBattleDynamaxRevert(u8 bank);
 void TryBoostDynamaxHPAfterLevelUp(u8 bank);
 bool8 IsMaxMoveWithWeatherEffect(u16 move);
 bool8 IsMaxMoveWithTerrainEffect(u16 move);
+bool8 IsMaxMoveWithMistyTerrainEffect(u16 move);
+bool8 IsMaxMoveWithElectricTerrainEffect(u16 move);
 bool8 IsMaxMoveWithStatusEffect(u16 move);
 bool8 IsMaxMoveWithConfusionEffect(u16 move);
 bool8 IsMaxMoveWithTrapDamageEffect(u16 move);
@@ -132,6 +134,8 @@ enum MaxMoveEffect
 	MAX_EFFECT_TORMENT_FOES,
 	MAX_EFFECT_LOWER_SPEED_2_FOES,
 	MAX_EFFECT_FIRE_SPIN_FOES,
+	MAX_EFFECT_IGNORE_ABILITY,
+	MAX_EFFECT_BYPASS_PROTECT,
 };
 
 #define MAX_NUM_DROPS 12

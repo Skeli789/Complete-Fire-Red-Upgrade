@@ -1404,6 +1404,32 @@ bool8 IsMaxMoveWithTerrainEffect(u16 move)
 	return FALSE;
 }
 
+bool8 IsMaxMoveWithMistyTerrainEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_MISTY_TERRAIN:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithElectricTerrainEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_ELECTRIC_TERRAIN:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 bool8 IsMaxMoveWithStatusEffect(u16 move)
 {
 	if (IsAnyMaxMove(move))
@@ -1460,7 +1486,10 @@ bool8 IsMaxGuardUp(u8 bank)
 
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 {
-	if (gProtectStructs[bankDef].protected && IsDynamaxed(bankDef) && move != MOVE_FEINT && move != MOVE_MEANLOOK) //Mean Look is probably a GF bug
+	if (gProtectStructs[bankDef].protected && IsDynamaxed(bankDef)
+	&& move != MOVE_FEINT
+	&& move != MOVE_MEANLOOK //Mean Look is probably a GF bug
+	&& !IsMaxMoveWithEffect(move, MAX_EFFECT_BYPASS_PROTECT))
 	{
 		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
 			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;

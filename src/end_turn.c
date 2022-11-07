@@ -1689,12 +1689,12 @@ u8 TurnBasedEffects(void)
 						//Prevent rain from returning
 						gBattleWeather = 0;
 						gWishFutureKnock.weatherDuration = 0;
+						gBattlescriptCurrInstr = BattleScript_End3; //Script must still be played because the cursor was pushed
+						++gBattleStruct->turnEffectsTracker; //Otherwise it's get stuck in an endless rain loop
 					}
-					else
-					{
-						++effect;
-						return effect;
-					}
+
+					++effect;
+					return effect;
 				}
 				break;
 
@@ -2271,19 +2271,19 @@ bool8 HandleFaintedMonActions(void)
 
 			case 8:
 				do
+				{
+					gBankFainted = gBankTarget = gBanksByTurnOrder[gBattleStruct->faintedActionsBank];
+					BackupSwitchingBank();
+					if (gNewBS->handleSetSwitchIns & gBitTable[gBankFainted])
 					{
-						gBankFainted = gBankTarget = gBanksByTurnOrder[gBattleStruct->faintedActionsBank];
-						BackupSwitchingBank();
-						if (gNewBS->handleSetSwitchIns & gBitTable[gBankFainted])
-						{
-							if (ABILITY(gBankFainted) == ABILITY_TRUANT)
-								gDisableStructs[gBankFainted].truantCounter = 1; //So it gets unset during the switch in effects
+						if (ABILITY(gBankFainted) == ABILITY_TRUANT)
+							gDisableStructs[gBankFainted].truantCounter = 1; //So it gets unset during the switch in effects
 
-							gNewBS->handleSetSwitchIns &= ~(gBitTable[gBankFainted]);
-							BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
-							return TRUE;
-						}
-					} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
+						gNewBS->handleSetSwitchIns &= ~(gBitTable[gBankFainted]);
+						BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
+						return TRUE;
+					}
+				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
 				gBattleStruct->faintedActionsState++;
 				__attribute__ ((fallthrough));
 

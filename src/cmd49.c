@@ -173,7 +173,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& TOOK_DAMAGE(gBankTarget)
 			&& MOVE_HAD_EFFECT
 			&& BATTLER_ALIVE(gBankTarget)
-			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
+			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+			&& !gProtectStructs[gBankAttacker].confusionSelfDmg)
 			{
 				switch (ABILITY(gBankAttacker)) {
 					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check

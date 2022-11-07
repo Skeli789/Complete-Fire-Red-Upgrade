@@ -7308,14 +7308,24 @@ ANIM_SMACKDOWN:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_ROCKS
 	playsound2 0x80 SOUND_PAN_ATTACKER
-	launchtemplate 0x83e7548 TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x0 0x0 0x15 0xffe7
+	launchtemplate Template_RockBlastRock TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x0 0x0 0x15 0xffe7
 	waitanimation
-	launchtask AnimTask_SmokescreenImpact 0x8 0x2 0x400 0x1902
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
+	launchtask AnimTask_SmokescreenImpact TEMPLATE_TARGET | 8, 0x2 0x400 0x1902
 	loadBG1 BG_SEISMICTOSS_SKUUPPERCUT
 	waitbgfadeout
-	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x0 0x0 0xffff
-	launchtask 0x80b51ed 0x3 0x0
-	goto 0x81d477f
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xC00 0x0 0xffff
+	waitbgfadein
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	pause 0x20
+	launchtask AnimTask_scroll_background, 0x5, 0x4, 0x0, -0x600, 0x0, 0xffff
+	call SEISMIC_TOSS_ROCK_SCATTER_1
+	pause 0x10
+	launchtask AnimTask_scroll_background, 0x5, 0x4, 0x0, -0x600, 0x0, 0xffff
+	call SEISMIC_TOSS_ROCK_SCATTER_2
+	waitanimation
+	call UNSET_SCROLLING_BG
+	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18629,50 +18639,67 @@ ANIM_FIERY_WRATH:
 	call DRAGON_CLAW_FIRE_SPIRAL
 	waitanimation
 	call PLAY_DARK_PULSE_SOUND
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x4 0x0 0xF 0x3006
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_DEF_PARTNER 0x4 0x0 0xF 0x3006
 	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x4 0x0 0x3C 0x1
+	launchtask AnimTask_move_bank_2 0x2 0x5 target_partner 0x4 0x0 0x3C 0x1
 	call FIERY_WRATH_GEYSER
 	call FIERY_WRATH_GEYSER
 	call FIERY_WRATH_GEYSER
 	call FIERY_WRATH_GEYSER
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x8 0x0 0x1F
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x3006
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_DEF_PARTNER 0x2 0x9 0x0 0x3006
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
 	waitanimation
 	endanimation
 
 FIERY_WRATH_GEYSER:
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfffc 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfffc 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x100D 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x100D 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0x4 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0x4 0x10
 	pause 0x0
 	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 bank_target 0xfff0 0x10
+	launchtemplate DARK_PULSE_GEYSER TEMPLATE_TARGET | 4, 0x3 target_partner 0xfff0 0x10
 	return
 
 .align 2

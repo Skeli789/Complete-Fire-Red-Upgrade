@@ -1004,6 +1004,12 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 			case MAX_EFFECT_LOWER_SPEED_2_FOES:
 				StringCopy(gDisplayedStringBattle, gText_MaxMoveLowerSpeed2);
 				break;
+			case MAX_EFFECT_IGNORE_ABILITY:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveIgnoreAbility);
+				break;
+			case MAX_EFFECT_BYPASS_PROTECT:
+				StringCopy(gDisplayedStringBattle, gText_MaxMoveBypassProtect);
+				break;
 		}
 
 		BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3

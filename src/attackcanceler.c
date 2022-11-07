@@ -1151,6 +1151,10 @@ static u8 IsMonDisobedient(void)
 		return 0;
 	else if (gNewBS->InstructInProgress || gNewBS->DancerInProgress || gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
 		return 0;
+	#ifdef FLAG_USE_HALF_PARTNER_TEAM
+	else if (FlagGet(FLAG_USE_HALF_PARTNER_TEAM))
+		return 0; //Otherwise the partner's Pokemon might disobey
+	#endif
 
 	#ifdef DEBUG_OBEDIENCE
 	return 0;

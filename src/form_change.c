@@ -444,9 +444,21 @@ void HandleFormChange(void)
 {
 	struct Pokemon* mon = GetBankPartyData(gActiveBattler);
 	struct BattlePokemon* battleMon = (struct BattlePokemon*) &gBattleBufferA[gActiveBattler][3];
+	#ifdef UNBOUND
+	u8 oldGender = GetMonGender(mon);
+	#endif
 
 	mon->backupSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	SetMonData(mon, MON_DATA_SPECIES, &battleMon->species);
+
+	#ifdef UNBOUND
+	//Try fix changed genders
+	typedef void (*ChangeMonGender_T) (struct Pokemon*);
+	#define ChangeMonGender ((ChangeMonGender_T) (0x0801D834 |1))
+	if (gBaseStats[mon->backupSpecies].genderRatio != gBaseStats[battleMon->species].genderRatio
+	&& oldGender != GetMonGender(mon))
+		ChangeMonGender(mon);
+	#endif
 
 	SetMonData(mon, MON_DATA_ATK, &battleMon->attack);
 	SetMonData(mon, MON_DATA_DEF, &battleMon->defense);

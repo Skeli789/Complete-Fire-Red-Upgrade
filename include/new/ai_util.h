@@ -50,6 +50,7 @@ bool8 EnduresAHitFromFullHealth(u8 bankDef, u8 defAbility, u8 atkAbility);
 bool8 WillFaintFromWeatherSoon(u8 bank);
 bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction);
 bool8 CanBeFlinched(u8 bankDef, u8 bankAtk, u8 defAbility, u16 move);
+bool8 IsCurrentWeatherPartnersWeather(u8 partner, u8 partnerAbility);
 u8 CountBanksPositiveStatStages(u8 bank);
 u8 CountBanksNegativeStatStages(u8 bank);
 u16 GetPokemonOnSideSpeedAverage(u8 bank);

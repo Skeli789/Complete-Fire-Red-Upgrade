@@ -277,7 +277,9 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			{
 				if (!TARGETING_PARTNER)
 				{
-					if (atkAbility != ABILITY_CONTRARY && !BadIdeaToRaiseStatAgainst(bankAtk, bankDef, TRUE))
+					if (AI_THINKING_STRUCT->simulatedRNG[1] < 25 //25% chance to use on self
+					&& atkAbility != ABILITY_CONTRARY
+					&& !BadIdeaToRaiseStatAgainst(bankAtk, bankDef, TRUE))
 						INCREASE_STAT_VIABILITY(0xFE, STAT_STAGE_MAX, 2); //All stats
 				}
 				break;
@@ -1889,6 +1891,10 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break;
 				}
 			}
+
+			if (IsChoiceItemEffectOrAbility(data->defItemEffect, data->defAbility)
+			&& gBattleStruct->choicedMove[bankDef] == MOVE_NONE) //If they are already locked into a move, Taunt accordingly
+				break; //No point if the player is most likely going to lock themselves into a non-status move
 
 			if (SPLIT(predictedMove) == SPLIT_STATUS
 			|| IsClassGoodToTaunt(GetBankFightingStyle(bankDef)))
