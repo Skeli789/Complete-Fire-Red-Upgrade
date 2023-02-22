@@ -327,7 +327,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define FASTER_HEALTHBOX_CHANGE //The healthbar increases/decreases at a somewhat constant rate for all Pokemon
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
-//#define HEALTHBAR_TYPE_ICONS //Pokemon types will always be shown next to the healthbar
+#define HEALTHBAR_TYPE_ICONS //Pokemon types will always be shown next to the healthbar
 #define TEAM_PREVIEW_TRIGGER //The player will be given an option to see the party Pokemon from enemies in trainer battles by pressing L
 #define FLAG_IN_BATTLE_TEAM_PREVIEW 0xA00 //Enables or disables the Team Preview trigger button
 #define FLAG_ALWAYS_SHOW_LAST_BALL 0xA01 //Enables or disables the last Pokeball used trigger button
