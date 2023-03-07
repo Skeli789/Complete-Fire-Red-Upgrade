@@ -1,3 +1,5 @@
+#This is a fork of CFRU
+##This fork is made by us to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. 
 # Complete Fire Red Upgrade
 
 ## What is this?
