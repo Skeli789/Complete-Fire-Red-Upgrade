@@ -56,6 +56,7 @@ party_menu.c
 #define MENU_DOWN 1
 #define MENU_LEFT -2
 #define MENU_RIGHT 2
+#define MENU_NICKNAME 6
 
 struct PartyMenuBoxInfoRects
 {
@@ -133,6 +134,10 @@ static void FieldCallback_Defog(void);
 static bool8 SetUpFieldMove_Defog(void);
 static void CursorCb_MoveItemCallback(u8 taskId);
 static void CursorCb_MoveItem(u8 taskId);
+
+static void CursorCb_NicknameCallback(u8 taskId);
+static void CursorCb_Nickname(u8 taskId);
+static u8 uniTaskid; //added 
 
 //*highlightedMon = 0 is Player's Pokemon out
 //*highlightedMon = 1 is Link Partner's Pokemon out
@@ -803,6 +808,8 @@ extern const u8 gText_FieldMoveDesc_Dive[];
 extern const u8 EventScript_RockClimb[];
 extern const u8 EventScript_Defog[];
 
+extern const u8 gMenuText_NickName[];
+
 // Field Move IDs
 enum FieldMovesIDs
 {
@@ -851,6 +858,7 @@ struct
 	[MENU_TRADE1] =	{(void*) 0x84169bc, (void*) 0x8124491},
 	[MENU_TRADE2] =	{(void*) 0x84169bc, (void*) 0x81245a1},
 	[MENU_MOVE_ITEM] = {gMenuText_Move, CursorCb_MoveItem},
+	[MENU_NICKNAME] = {gMenuText_NickName, CursorCb_Nickname},
 
 	//Field Moves
 	[MENU_FIELD_MOVES + FIELD_MOVE_FLASH] =	      {gMoveNames[MOVE_FLASH], CursorCb_FieldMove},
@@ -1093,7 +1101,7 @@ SKIP_FIELD_MOVES:
 		else
 			AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_ITEM);
 	}
-
+	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_NICKNAME); //added
 	AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
 }
 
@@ -1516,6 +1524,45 @@ static void CursorCb_MoveItemCallback(u8 taskId)
 			HandleChooseMonCancel(taskId, &gPartyMenu.slotId2);
 			break;
 	}
+}
+
+void NicknameFunc2()
+{
+	SetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_NICKNAME, gStringVar2);
+	// ScheduleBgCopyTilemapToVram(2);
+	// gPartyMenuUseExitCallback = FALSE;
+	// ClearStdWindowAndFrameToTransparent(6, 0);
+	// ScheduleBgCopyTilemapToVram(2);
+	// DestroyTask(uniTaskid);
+	CB2_ReturnToFieldContinueScriptPlayMapMusic();
+	// ReturnToUseOnWhichMon(taskId);
+	// gTasks[unitaskid].func = func;
+}
+
+static void CursorCb_NicknameCallback(unusedArg u8 taskid)
+{
+	void* src =  &gPlayerParty[gPartyMenu.slotId];
+
+	GetMonData(src, MON_DATA_NICKNAME, gStringVar3);
+	GetMonData(src, MON_DATA_NICKNAME, gStringVar2);
+	u16 species = GetMonData(src, MON_DATA_SPECIES, 0);
+	u8 gender = GetMonGender(src);
+	u16 PID = GetMonData(src, MON_DATA_PERSONALITY, 0);
+	uniTaskid = taskid;
+	DoNamingScreen(3, gStringVar2, species, gender, PID, (void*) NicknameFunc2);
+}
+
+static void CursorCb_Nickname(u8 taskId)
+{
+	// struct Pokemon* mon = &gPlayerParty[gPartyMenu.slotId];
+
+	PlaySE(SE_SELECT);
+
+	//Delete old windows
+	PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+	PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+	gTasks[taskId].func = CursorCb_NicknameCallback;
+
 }
 
 static void CursorCb_MoveItem(u8 taskId)

@@ -60,3 +60,6 @@ Remove the Gigantamax factor from\n[BUFFER1]?
 
 #org @gText_MaxPowderRemovesGigantamax
 [BUFFER1] can no longer Gigantamax.[PAUSE_UNTIL_PRESS]
+
+#org @gMenuText_NickName
+Nickname
