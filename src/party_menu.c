@@ -1537,7 +1537,7 @@ void NicknameFunc2()
 	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 	// ReturnToUseOnWhichMon(taskId);
 	// gTasks[unitaskid].func = func;
-}
+} 
 
 static void CursorCb_NicknameCallback(unusedArg u8 taskid)
 {
