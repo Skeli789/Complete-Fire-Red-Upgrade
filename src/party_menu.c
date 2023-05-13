@@ -11,6 +11,7 @@
 #include "../include/item_menu.h"
 #include "../include/menu.h"
 #include "../include/metatile_behavior.h"
+#include "../include/naming_screen.h"
 #include "../include/overworld.h"
 #include "../include/party_menu.h"
 #include "../include/pokemon_icon.h"
