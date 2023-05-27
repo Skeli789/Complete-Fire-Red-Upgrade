@@ -2078,3 +2078,4 @@ spriteIdPalette = 0x203993A ;
 SetMonIconTransparency = 0x808cfc4 | 1;
 gText_TMCase = 0x84166d3;
 SetPartyHPBarSprite = 0x8097414 | 1;
+Task_PrintMainMenuText = 0x800c7a0 | 1;
