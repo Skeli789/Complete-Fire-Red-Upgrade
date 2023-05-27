@@ -768,3 +768,8 @@ NullFunc 081337e4 2
 NullFunc 08133810 1
 CreateTMCaseSpriteHook 8131B94 0
 TMCaseMonIconPalChangeHook 8131E5C 0 
+
+#PrintContinueStats 0800ce58 0
+#PrintMonIcons_hook 0800C6CC 2
+Task_WaitFadeAndPrintMainMenuText 800C780 1
+
