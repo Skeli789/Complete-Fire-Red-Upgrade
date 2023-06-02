@@ -37,6 +37,8 @@ sPlayTimeCounterState = 0x3000E7C;
 sRtc = 0x3005E88;
 gClock = 0x3005EA0;
 sRTCFrameCount = 0x3005EA9;
+sPlayTimeCounterState = 0x3000E7C;
+gLastClockSecond = 0x300539C;
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
@@ -797,7 +799,7 @@ uns_builder_assign_animtable1 = 0x810BD80 | 1;
 
 /* Secret Base Functions */
 GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;
-GetSecretBaseTrainerNameIndex = 0x8040F2C | 1;
+ = 0x8040F2C | 1;
 
 
 /* Trainer Tower Functions */
