@@ -461,5 +461,29 @@ static void RemoveTimeBox(void)
 		RemoveWindow(sTimeWindowId);
 	}
 }
+bool8 StartMenuPCCallback(void)
 
+{
+
+	if (!gPaletteFade->active)    {
+
+        PlayRainStoppingSoundEffect();
+
+        DestroySafariZoneStatsWindow();
+
+		ClearStdWindowAndFrame(GetStartMenuWindowId(), TRUE);
+
+		RemoveStartMenuWindow();
+
+		RemoveTimeBox();
+
+		ScriptContext1_SetupScript(EventScript_PCMainMenu);
+
+        return TRUE;
+
+	}
+
+    return FALSE;
+
+}
 #endif
