@@ -797,9 +797,10 @@ uns_builder_assign_animtable1 = 0x810BD80 | 1;
 //BattleAI_SetupAIData = 0x80C6DA0 | 1;
 //RecordLastUsedMoveByTarget = 0x80C7164 | 1;
 
+
 /* Secret Base Functions */
 GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;
- = 0x8040F2C | 1;
+GetSecretBaseTrainerNameIndex = 0x8040F2C | 1;
 
 
 /* Trainer Tower Functions */
