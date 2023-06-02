@@ -1,0 +1,50 @@
+#org @gText_StartMenu_TimeBase
+[BUFFER][0C]. [BUFFER1]:[BUFFER2]:[BUFFER3]
+
+#org @gText_StartMenu_TimeBase_12Hr
+[BUFFER][0C]. [BUFFER1]:[BUFFER2] [BUFFER3]
+
+#org @gText_StartMenu_AM
+AM
+
+#org @gText_StartMenu_PM
+PM
+
+#org @gText_MenuDexNav
+DexNav
+
+#org @gText_StartMenu_RedText
+[MAIN_COLOUR][0C][SHADOW_COLOUR][0D]
+
+#org @gText_StartMenu_NormalText
+[MAIN_COLOUR][0E][SHADOW_COLOUR][0F]
+
+#org @gText_StartMenu_Sunday
+Sun
+
+#org @gText_StartMenu_Monday
+Mon
+
+#org @gText_StartMenu_Tuesday
+Tue
+
+#org @gText_StartMenu_Wednesday
+Wed
+
+#org @gText_StartMenu_Thursday
+Thu
+
+#org @gText_StartMenu_Friday
+Fri
+
+#org @gText_StartMenu_Saturday
+Sat
+
+#org @gText_StartMenu_Error
+Err
+
+#org @gText_StartMenu_Red
+[RED]
+
+#org @gText_StartMenu_Normal
+[BLACK]
