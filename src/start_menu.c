@@ -407,6 +407,7 @@ extern u8 gText_StartMenu_Friday[];
 extern u8 gText_StartMenu_Saturday[];
 extern u8 gText_StartMenu_Error[];
 
+
 static u8* sDayNames[] =
 {
     gText_StartMenu_Sunday,
@@ -428,16 +429,16 @@ static void UpdateTimeText()
 	ConvertIntToDecimalStringN(gStringVar1, (gClock.hour == 0) ? 12 : (gClock.hour > 12) ? gClock.hour - 12 : gClock.hour, STR_CONV_MODE_RIGHT_ALIGN, 2); //Hour - 12hr format
 	ConvertIntToDecimalStringN(gStringVar2, gClock.minute, STR_CONV_MODE_LEADING_ZEROS, 2); //Minute
 
-	if(FlagGet(FLAG_TIME_TURNER))
+	/*if(FlagGet(FLAG_TIME_TURNER))
 	{
 		StringCopy(gStringVar3, gText_StartMenu_Red);
 		StringAppend(gStringVar3, amPMString);
 		StringAppend(gStringVar3, gText_StartMenu_Normal);
 	}
 	else
-	{
+	{*/
 		StringCopy(gStringVar3, amPMString);
-	}
+	//}
 
 	StringCopy(gStringVarC, (gClock.dayOfWeek >= 7) ? gText_StartMenu_Error : sDayNames[gClock.dayOfWeek]); //Day of Week
 	StringExpandPlaceholders(gStringVar4, gText_StartMenu_TimeBase_12Hr);
