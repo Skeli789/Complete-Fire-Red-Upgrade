@@ -329,6 +329,7 @@ sStartMenuOrder = 0x20370F6;
 sDrawStartMenuState = 0x20370FF;
 sSafariZoneStatsWindowId = 0x2037101;
 sStartMenuWindowId = 0x203ABE0;
+sTimeWindowId = 0x2037101;
 
 /* Trade RAM */
 gSelectedTradeMonPositions = 0x2031DA4;
