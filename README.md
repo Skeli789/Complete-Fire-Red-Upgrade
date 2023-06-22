@@ -4,7 +4,7 @@
 
 # The shiny team #
 (FORK, NOT ORIGINAL MAKERS OF CFRU OBVIOUSLY)
-**Shiny hunter** 
+Shiny hunter
 _ _ Ansh _ _
 Agustin 
 Ereky
@@ -14,7 +14,6 @@ Tabbender
 TheAlest
 Zenith09
 Buffalo (I barely do shit, thats why i am at the bottom. And I'm a tester I guess?)
-############
 
 # Complete Fire Red Upgrade
 ## What is this?
