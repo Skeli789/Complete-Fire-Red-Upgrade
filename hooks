@@ -758,8 +758,24 @@ IsAutoScrollEnabled 801D88C 0
 TierBanScreenFromScript 801D894 0
 #endif
 
+
 ##Ignore Wild Pokemon
 #ifdef IgnoreWildPokemon
 CreateWindowFromRect 0809d654 6
 CreateMonSprite_PicBox 08083970 3
 #endif
+
+## TM Case enhancements courtesy of Greenphx
+## Null out functions that would set the TM disc color, location, and tint according to it''s data
+NullFunc 0813368C 1
+NullFunc 08133714 2
+NullFunc 08133730 1
+NullFunc 08133790 2
+NullFunc 081337e4 2
+NullFunc 08133810 1
+CreateTMCaseSpriteHook 8131B94 0
+TMCaseMonIconPalChangeHook 8131E5C 0 
+
+#PrintContinueStats 0800ce58 0
+#PrintMonIcons_hook 0800C6CC 2
+Task_WaitFadeAndPrintMainMenuText 800C780 1
