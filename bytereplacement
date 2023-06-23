@@ -693,3 +693,30 @@
 08740F45 16 C2 50 32 00 16 00 80 00 00 25 67 00 02
 ##Battle BG
 087803A5 3
+#endif
+
+# TM Case Text Positioning
+08132036 AC
+08463191 0E
+084631A9 02
+
+# Cotinue Screen Mon Icons 
+
+#0800C4E8 00 00 00 00 00 00 00 00
+#0800C4F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+#0800C500 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+#0800C510 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# fuck gpu register blending  (Skull)
+#0800CCEE 00 00 00 00
+
+# expand continue down a bit
+08234624 0e
+# move new game down a bit
+0823462A 11
+# fuck mystery gift
+0806e2bc 70 47
+# move window selection down
+0800CCCA 80
+0800CCCE 80 22 12 02 A0
+0823462E 51 01
