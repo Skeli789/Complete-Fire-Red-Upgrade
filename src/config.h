@@ -252,7 +252,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define HOOPA_CHANGE_IN_PC //Hoopa-Unbound will revert to confined form when placed in or withdrawn from a box
 #define SHAYMIN_CHANGE_IN_PC //Shaymin-Sky will revert to sky from when placed in or withdrawn from a box
 #define HIGH_PITCH_MEGA_PRIMAL_CRY //Mega Pokemon cries will be higher pitched. This is useful if you're using the base form cries for Mega Evolutions
-//#define CUSTOM_MULTICHOICE //Adds JPAN's custom multichoice menus (see documentation)
+#define CUSTOM_MULTICHOICE //Adds JPAN's custom multichoice menus (see documentation)
 //#define SCROLLING_MULTICHOICE //Enables scrolling multichoice menus by using special 0x158.
 //#define REPLACE_SOME_VANILLA_SPECIALS //Replaces the sp07C, sp07D, sp09E, sp156, sp18B, & the Coins scripting commands with modified versions. Breaks vanilla FR compatability.
 #define REPLACE_ASH_WEATHER_WITH_WHITE_SANDSTORM //Replaces the falling ash weather effect with a white version of the sandstorm weather effect
@@ -341,3 +341,10 @@ enum //These vars need to be one after the other (hence the enum)
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
+
+/* Ignore Wild Pokemon */
+#define IgnoreWildPokemon //If defined, it generates a prebattle screen. (Ignore/Engage)
+
+#ifdef IgnoreWildPokemon
+#define FLAG_WILD_POKEMON_PREBATTLE_SCREEN 0xA02 //If set, CreateWindowFromRect starts from tile 0x98 instead of 0x38
+#endif

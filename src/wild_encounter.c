@@ -53,6 +53,10 @@ extern const struct WildPokemonHeader* sSavedWildDataDaytimeHeader;
 extern u8 sSavedWildDataMapGroup;
 extern u8 sSavedWildDataMapNum;
 
+#ifdef IgnoreWildPokemon
+extern const u8 SystemScript_PokemonEncounter[];
+#endif
+
 extern struct EncounterRate sWildEncounterData;
 
 extern u8 sUnownLetterSlots[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
@@ -670,8 +674,29 @@ SKIP_INDEX_SEARCH:
 	else if (flags & WILD_CHECK_KEEN_EYE && !IsAbilityAllowingEncounter(level))
 		return FALSE;
 
-	else if (area != WILD_AREA_LAND || !TryGenerateSwarmMon(level, wildMonIndex, TRUE)) //Swarms can only appear on land
+	else if (area != WILD_AREA_LAND)
+		return FALSE;
+
+	#ifdef IgnoreWildPokemon
+	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+	{
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
+		Var8001 = wildMonInfo->wildPokemon[wildMonIndex].species;
+		Var8000 = 0x7500;
+		Var8002 = 0x030A;
+		Var8003 = 0xFF03;
+		Var8004 = 0x098;
+		FlagSet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
+		ScriptContext1_SetupScript(SystemScript_PokemonEncounter);
+		return FALSE;
+	}
+	#else
+	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+	{
+		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
+	}
+	#endif
+
 
 	#ifdef FLAG_DOUBLE_WILD_BATTLE
 	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))

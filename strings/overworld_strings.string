@@ -288,3 +288,14 @@ Purchased
 
 #org @gText_StopZooming
 Stop zooming!
+
+//Wild Pokemon Encounter Scripts
+
+#org @EncounterScript_option1
+Ignore
+
+#org @EncounterScript_option2
+Engage
+
+#org @EncounterScript_msg
+What will you do?

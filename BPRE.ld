@@ -1625,7 +1625,7 @@ Menu_PrintFormatIntlPlayerName = 0x812E6DC | 1;
 /* PicBox Functions */
 Task_PokemonPicWindow = 0x809D288 | 1;
 TaskDestroyPicBox = 0x809D494 | 1;
-CreateWindowFromRect = 0x809D654 | 1;
+//CreateWindowFromRect = 0x809D654 | 1;
 PicBoxSetter = 0x809D6D4 | 1;
 BoxCreateTask = 0x81119D4 | 1;
 

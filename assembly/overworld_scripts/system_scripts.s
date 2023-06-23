@@ -1154,3 +1154,51 @@ SystemScript_DebugMenu_MaxCoinage:
 SystemScript_DebugMenu_ShinyTeam:
 	callasm DebugMenu_ShinyTeam
 	goto SystemScript_DebugMenu
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_PokemonEncounter
+SystemScript_PokemonEncounter:
+	lock
+	call 0x020370B9
+	callasm CheckIfFirstEnemyMonShiny
+	compare 0x8000 0x1
+	if equal _call PlayShinyJingle
+	setvar 0x8000 0x0
+	setvar 0x8001 0x0
+	setvar 0x8002 0x0
+	setvar 0x8003 0x0
+	preparemsg EncounterScript_msg
+	waitmsg
+	setvar 0x8006 0x0
+	loadpointer 0x0 EncounterScript_option1
+	special 0x25
+	setvar 0x8006 0x1
+	loadpointer 0x0 EncounterScript_option2
+	special 0x25
+	multichoice 0x0 0x0 0x20 0x0
+	compare 0x800D 0x0
+	if equal _goto selectedOption1
+	compare 0x800D 0x1
+	if equal _goto selectedOption2
+	hidepokepic
+	release
+	end
+
+selectedOption1:
+	hidepokepic
+	release
+	end
+
+selectedOption2:
+	hidepokepic
+	dowildbattle
+	release
+	end
+
+PlayShinyJingle:
+	waitcry
+	pause 0x2
+	sound 0x5F
+	waitse
+	return
