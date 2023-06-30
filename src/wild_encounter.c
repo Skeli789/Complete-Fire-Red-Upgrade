@@ -681,13 +681,16 @@ SKIP_INDEX_SEARCH:
 	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
 	{
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
-		Var8001 = wildMonInfo->wildPokemon[wildMonIndex].species;
-		Var8000 = 0x7500;
-		Var8002 = 0x030A;
-		Var8003 = 0xFF03;
-		Var8004 = 0x098;
-		FlagSet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
-		ScriptContext1_SetupScript(SystemScript_PokemonEncounter);
+		if (FlagGet(FLAG_ENABLE_WILD_PMN_PREBATTLE_SCREEN))
+		{
+			Var8001 = wildMonInfo->wildPokemon[wildMonIndex].species;
+			Var8000 = 0x7500;
+			Var8002 = 0x030A;
+			Var8003 = 0xFF03;
+			Var8004 = 0x098;
+			FlagSet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
+			ScriptContext1_SetupScript(SystemScript_PokemonEncounter);
+		}
 		return FALSE;
 	}
 	#else
