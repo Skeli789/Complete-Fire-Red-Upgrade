@@ -1,4 +1,4 @@
-# This is a fork of CFRU
+# This is our own verse of CFRU , not open for any donations something.
 
 ## This fork is made by Shinys team to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. 
 
