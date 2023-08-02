@@ -64,3 +64,5 @@ Remove the Gigantamax factor from\n[BUFFER1]?
 #org @gMenuText_NickName
 Nickname
  
+#org @gText_Slash
+/

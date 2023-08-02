@@ -336,6 +336,12 @@ void __attribute__((long_call)) ResetSpriteData(void);
 u16 __attribute__((long_call)) CreateMonPicSprite_HandleDeoxys(u16 species, u32 otId, u32 personality, u8 flags, s16 x, s16 y, u8 paletteSlot, u16 paletteTag);
 void __attribute__((long_call)) SpriteCbAnimateOnScreen(struct Sprite *sprite);
 void __attribute__((long_call)) SetSpriteOamFlipBits(struct Sprite *sprite, u8 hFlip, u8 vFlip);
+void __attribute__((long_call)) *DecompressAndCopyTileDataToVram(u8 bgId, const void *src, u32 size, u16 offset, u8 mode);
+bool8 __attribute__((long_call)) FreeTempTileDataBuffersIfPossible(void);
+void __attribute__((long_call)) PlayCry7(u16 species, u8 mode);
+u8 __attribute__((long_call)) CreateMonSprite_FieldMove(u16 species, u32 otId, u32 personality, s16 x, s16 y, u8 subpriority);
+void __attribute__((long_call)) FreeResourcesAndDestroySprite(struct Sprite * sprite, u8 spriteId);
+void __attribute__((long_call)) QuestLog_CutRecording(void);
 
 /*
 u16 AllocTilesForSpriteSheet(struct SpriteSheet *sheet);

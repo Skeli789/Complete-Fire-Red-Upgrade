@@ -1159,8 +1159,6 @@ void HandleItemRegistration(u16 item)
 }
 
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define gBagPockets ((struct BagPockets*) 0x203988C)
-
 #define sBagRegularItems ((struct ItemSlot*) 0x203BB20)
 #define sBagKeyItems (sBagRegularItems + NUM_REGULAR_ITEMS)
 #define sBagPokeBalls (sBagKeyItems + NUM_KEY_ITEMS)
@@ -1191,20 +1189,6 @@ struct BagSlots
 	u16 cursorPos[3];
 	u16 registeredItems[NELEMS(gSaveBlock1->registeredItems)];
 	u16 pocket;
-};
-
-struct BagPockets
-{
-	struct ItemSlot* itemRam;
-	u32 itemAmount;
-	struct ItemSlot* keyItemRam;
-	u32 keyItemAmount;
-	struct ItemSlot* pokeBallRam;
-	u32 pokeBallAmount;
-	struct ItemSlot* tmRam;
-	u32 tmAmount;
-	struct ItemSlot* berryRam;
-	u32 berryAmount;
 };
 
 static const struct BagPockets sBagPocketArrangement =

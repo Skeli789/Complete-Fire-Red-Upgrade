@@ -56,6 +56,37 @@ static void sub_80300F4(u8 taskId);
 static u32 GetExpToLevel(u8 toLevel, u8 growthRate);
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 
+u8 GetBadgeCount() {
+	u8 badgeCount = 0;
+
+	if (FlagGet(FLAG_BADGE01_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE02_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE03_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE04_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE05_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE06_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE07_GET)) {
+		badgeCount++;
+	}
+	if (FlagGet(FLAG_BADGE08_GET)) {
+		badgeCount++;
+	}
+
+	return badgeCount;
+}
+
 ///////////////////// GAIN EXPERIENCE //////////////////////
 void atk23_getexp(void)
 {

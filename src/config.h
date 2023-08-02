@@ -13,6 +13,9 @@
 //#define DEBUG_DYNAMAX //Dynamax can be used in Dynamax battles without a Dynamax Band
 //#define DEBUG_AI_CHOICES //Removes the frame-based randomness of the AI's decisions
 
+/*===== EV-IV Screen =====*/
+#define FLAG_STAT_EDITOR_UNLOCKED 0x1203
+
 /*===== General Vars =====*/
 #define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
 #define VAR_TOTEM 0x5001 //to var + 3 (0x5004)

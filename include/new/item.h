@@ -108,11 +108,27 @@ enum ItemObtainFlags
     FLAG_SET_OBTAINED,
 };
 
+struct BagPockets
+{
+	struct ItemSlot* itemRam;
+	u32 itemAmount;
+	struct ItemSlot* keyItemRam;
+	u32 keyItemAmount;
+	struct ItemSlot* pokeBallRam;
+	u32 pokeBallAmount;
+	struct ItemSlot* tmRam;
+	u32 tmAmount;
+	struct ItemSlot* berryRam;
+	u32 berryAmount;
+};
+
 #define REGISTERED_ITEM_COUNT 6
 #define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this
 
 #define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 #define gTutorMoves ((const u16*) *((u32*) 0x8120BE4))
+
+#define gBagPockets ((struct BagPockets*) 0x203988C)
 
 enum ItemType //Sorted in this order
 {
