@@ -14,6 +14,7 @@ gBattleScriptingCommandsTable 08015A28
 gBattleScriptingCommandsTable 08015C6C
 gBattleScriptingCommandsTable 08015C98
 gBattleScriptingCommandsTable 0801D054
+gBattleTerrainTable 0800F320
 
 gSpriteTemplateTable_TrainerBackSprites 0803F8A0
 gTrainerBackAnimsPtrTable 0803F8A4
