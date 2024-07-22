@@ -2074,20 +2074,9 @@ bool8 IsCurrentAreaAutumn(void)
 
 bool8 IsCurrentAreaWinter(void)
 {
-	#ifdef UNBOUND
+	#ifdef NEW_BATTLE_BACKGROUNDS
 		u8 mapSec = GetCurrentRegionMapSectionId();
-		return mapSec == MAPSEC_FROZEN_HEIGHTS
-			|| mapSec == MAPSEC_ROUTE_1
-			|| mapSec == MAPSEC_BELLIN_TOWN
-			|| mapSec == MAPSEC_ICICLE_CAVE
-			|| mapSec == MAPSEC_ROUTE_8
-			|| mapSec == MAPSEC_BLIZZARD_CITY
-			|| mapSec == MAPSEC_FROZEN_FOREST
-			|| mapSec == MAPSEC_POKEMON_LEAGUE
-			|| (mapSec == MAPSEC_VICTORY_ROAD
-			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
-			|| (mapSec == MAPSEC_HIDDEN_GROTTO
-			 && MAP_IS(HIDDEN_GROTTO_WINTER));
+		return mapSec == MAPSEC_ROUTE_12_WEST;
 	#else
 		return FALSE;
 	#endif

@@ -113,9 +113,9 @@ u8 BattleSetup_GetTerrainId(void)
 				terrain = BATTLE_TERRAIN_INSIDE;
 				break;
 
-			case MAP_TYPE_UNDERWATER:
-				terrain = BATTLE_TERRAIN_UNDERWATER;
-				break;
+			// case MAP_TYPE_UNDERWATER:
+			// 	terrain = BATTLE_TERRAIN_UNDERWATER;
+			// 	break;
 
 			case MAP_TYPE_6:
 				if (MetatileBehavior_IsSurfableWaterOrUnderwater(tileBehavior))
@@ -287,7 +287,7 @@ static void LoadBattleBG_EntryOverlay(u8 terrainId)
 
 static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 {
-#ifdef UNBOUND
+#ifdef NEW_BATTLE_BACKGROUNDS
 	u16 tileBehavior;
 	s16 x, y;
 	u8 mapSec = GetCurrentRegionMapSectionId();
@@ -296,75 +296,75 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 
 	switch (terrain) {
-		case BATTLE_TERRAIN_SNOW_CAVE:
-			if (MetatileBehavior_IsIce(tileBehavior))
-				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
-			break;
-		case BATTLE_TERRAIN_PLAIN:
-			if (IsCurrentAreaAutumn())
-				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
-			else if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_FIELD;
-			else if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			else if (mapSec == MAPSEC_DEHARA_CITY)
-				terrain = BATTLE_TERRAIN_SAND;
-			else if (mapSec == MAPSEC_ANTISIS_CITY || mapSec == MAPSEC_ANTISIS_PORT)
-				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
-			else if (IsCurrentAreaSwamp())
-				terrain = BATTLE_TERRAIN_BOG;
-			break;
+		// case BATTLE_TERRAIN_SNOW_CAVE:
+		// 	if (MetatileBehavior_IsIce(tileBehavior))
+		// 		terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
+		// 	break;
+		// case BATTLE_TERRAIN_PLAIN:
+		// 	if (IsCurrentAreaAutumn())
+		// 		terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
+		// 	else if (IsCurrentAreaWinter())
+		// 		terrain = BATTLE_TERRAIN_SNOW_FIELD;
+		// 	else if (IsCurrentAreaDesert())
+		// 		terrain = BATTLE_TERRAIN_DESERT;
+		// 	else if (mapSec == MAPSEC_DEHARA_CITY)
+		// 		terrain = BATTLE_TERRAIN_SAND;
+		// 	else if (mapSec == MAPSEC_ANTISIS_CITY || mapSec == MAPSEC_ANTISIS_PORT)
+		// 		terrain = BATTLE_TERRAIN_ANTISIS_CITY;
+		// 	else if (IsCurrentAreaSwamp())
+		// 		terrain = BATTLE_TERRAIN_BOG;
+		// 	break;
 		case BATTLE_TERRAIN_GRASS:
 			if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+				terrain = BATTLE_TERRAIN_SNOWY;
 			break;
-		case BATTLE_TERRAIN_POND:
-			if (IsCurrentAreaSwamp())
-				terrain = BATTLE_TERRAIN_BOG_WATER;
-			break;
-		case BATTLE_TERRAIN_SNOW_FIELD:
-			if (MetatileBehavior_IsTallGrass(tileBehavior))
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
-			break;
-		case BATTLE_TERRAIN_SAND:
-			if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			break;
-		case BATTLE_TERRAIN_INSIDE:
-			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS || MAP_IS(ANTISIS_CITY_GYM_B1F))
-				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
-			break;
+		// case BATTLE_TERRAIN_POND:
+		// 	if (IsCurrentAreaSwamp())
+		// 		terrain = BATTLE_TERRAIN_BOG_WATER;
+		// 	break;
+		// case BATTLE_TERRAIN_SNOW_FIELD:
+		// 	if (MetatileBehavior_IsTallGrass(tileBehavior))
+		// 		terrain = BATTLE_TERRAIN_SNOW_GRASS;
+		// 	break;
+		// case BATTLE_TERRAIN_SAND:
+		// 	if (IsCurrentAreaDesert())
+		// 		terrain = BATTLE_TERRAIN_DESERT;
+		// 	break;
+		// case BATTLE_TERRAIN_INSIDE:
+		// 	if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS || MAP_IS(ANTISIS_CITY_GYM_B1F))
+		// 		terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
+		// 	break;
 	}
 
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-	{
-		switch (terrain) {
-			case BATTLE_TERRAIN_CAVE:
-				terrain = BATTLE_TERRAIN_WATER_IN_CAVE;
-				break;
-			case BATTLE_TERRAIN_VOLCANO:
-				terrain = BATTLE_TERRAIN_LAVA_IN_VOLCANO;
-				break;
-			case BATTLE_TERRAIN_FOREST:
-				terrain = BATTLE_TERRAIN_WATER_IN_FOREST;
-				break;
-			case BATTLE_TERRAIN_DARK_CAVE:
-				terrain = BATTLE_TERRAIN_DARK_CAVE_WATER;
-				break;
-			case BATTLE_TERRAIN_SNOW_CAVE:
-				terrain = BATTLE_TERRAIN_WATER_IN_SNOW_CAVE;
-				break;
-			case BATTLE_TERRAIN_CRYSTAL_PEAK:
-				terrain = BATTLE_TERRAIN_CRYSTAL_PEAK_WATER;
-				break;
-			case BATTLE_TERRAIN_ANTISIS_SEWERS:
-				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;
-				break;
-			case BATTLE_TERRAIN_BOG:
-				terrain = BATTLE_TERRAIN_BOG_WATER;
-				break;
-		}
-	}
+	// if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+	// {
+	// 	switch (terrain) {
+	// 		case BATTLE_TERRAIN_CAVE:
+	// 			terrain = BATTLE_TERRAIN_WATER_IN_CAVE;
+	// 			break;
+	// 		case BATTLE_TERRAIN_VOLCANO:
+	// 			terrain = BATTLE_TERRAIN_LAVA_IN_VOLCANO;
+	// 			break;
+	// 		case BATTLE_TERRAIN_FOREST:
+	// 			terrain = BATTLE_TERRAIN_WATER_IN_FOREST;
+	// 			break;
+	// 		case BATTLE_TERRAIN_DARK_CAVE:
+	// 			terrain = BATTLE_TERRAIN_DARK_CAVE_WATER;
+	// 			break;
+	// 		case BATTLE_TERRAIN_SNOW_CAVE:
+	// 			terrain = BATTLE_TERRAIN_WATER_IN_SNOW_CAVE;
+	// 			break;
+	// 		case BATTLE_TERRAIN_CRYSTAL_PEAK:
+	// 			terrain = BATTLE_TERRAIN_CRYSTAL_PEAK_WATER;
+	// 			break;
+	// 		case BATTLE_TERRAIN_ANTISIS_SEWERS:
+	// 			terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;
+	// 			break;
+	// 		case BATTLE_TERRAIN_BOG:
+	// 			terrain = BATTLE_TERRAIN_BOG_WATER;
+	// 			break;
+	// 	}
+	// }
 #endif
 
 	return terrain;
