@@ -2781,6 +2781,127 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 	}
 }
 
+extern void MoveCursorToConfirm(void);
+static u16 PartyMenuButtonHandler(s8 *slotPtr);
+static s8 *GetCurrentPartySlotPtr(void);
+extern void HandleChooseMonSelection(u8 taskId, s8 *slotPtr);
+extern void HandleChooseMonCancel(u8 taskId, s8 *slotPtr);
+extern EWRAM_DATA struct PartyMenuInternal * sPartyMenuInternal;
+extern void CursorCB_Switch(u8 taskId);
+extern void UpdateCurrentPartySelection(s8 *slotPtr, s8 movementDir);
+struct PartyMenuInternal 
+ { 
+     TaskFunc task; 
+     MainCallback exitCallback; 
+     u32 chooseHalf:1; 
+     u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns 
+     u32 spriteIdConfirmPokeball:7; 
+     u32 spriteIdCancelPokeball:7; 
+     u32 messageId:14; 
+     u8 windowId[3]; 
+     u8 actions[8]; 
+     u8 numActions; 
+     u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)]; 
+     s16 data[16]; 
+ };
+
+void Task_HandleChooseMonInput(u8 taskId) 
+ { 
+     if (!gPaletteFade.active && sub_80BF748() != TRUE) 
+     { 
+         s8 *slotPtr = GetCurrentPartySlotPtr(); 
+  
+         switch (PartyMenuButtonHandler(slotPtr)) 
+         { 
+         case 1: // Selected mon 
+             HandleChooseMonSelection(taskId, slotPtr); 
+             break; 
+         case 2: // Selected Cancel 
+             HandleChooseMonCancel(taskId, slotPtr); 
+             break; 
+         case 8: // Start button 
+             if (sPartyMenuInternal->chooseHalf) 
+             { 
+                 PlaySE(SE_SELECT); 
+                 MoveCursorToConfirm(); 
+             } 
+             break; 
+         case 9: 
+             DestroyTask(taskId); 
+             break; 
+         } 
+     } 
+ }
+
+
+static u16 PartyMenuButtonHandler(s8 *slotPtr) 
+ { 
+     s8 movementDir; 
+     u8 taskId; 
+  
+     switch (gMain.newAndRepeatedKeys) 
+     { 
+     case DPAD_UP: 
+         movementDir = MENU_DIR_UP; 
+         break; 
+     case DPAD_DOWN: 
+         movementDir = MENU_DIR_DOWN; 
+         break; 
+     case DPAD_LEFT: 
+         movementDir = MENU_DIR_LEFT; 
+         break; 
+     case DPAD_RIGHT: 
+         movementDir = MENU_DIR_RIGHT; 
+         break; 
+     default: 
+         switch (GetLRKeysPressedAndHeld()) 
+         { 
+         case MENU_L_PRESSED: 
+             movementDir = MENU_DIR_UP; 
+             break; 
+         case MENU_R_PRESSED: 
+             movementDir = MENU_DIR_DOWN; 
+             break; 
+         default: 
+             movementDir = 0; 
+             break; 
+         } 
+         break; 
+     } 
+     if (JOY_NEW(START_BUTTON)) 
+         return 8; 
+     if (JOY_NEW(SELECT_BUTTON) && CalculatePlayerPartyCount() > 1) 
+     { 
+         if(gPartyMenu.menuType != PARTY_MENU_TYPE_FIELD) 
+             return 8; 
+         if(*slotPtr == PARTY_SIZE + 1) 
+             return 8; // do nothing if select is pressed on Cancel 
+         if(gPartyMenu.action != PARTY_ACTION_SWITCH) 
+         { 
+             taskId = CreateTask(CursorCB_Switch, 1); 
+             return 9; 
+         } 
+         return 1; //select acts as A button when in switch mode 
+     } 
+     if (movementDir) 
+     { 
+         UpdateCurrentPartySelection(slotPtr, movementDir); 
+         return 0; 
+     } 
+     // Pressed Cancel 
+     if (JOY_NEW(A_BUTTON) && *slotPtr == PARTY_SIZE + 1) 
+         return 2; 
+     return JOY_NEW(A_BUTTON | B_BUTTON); 
+ }
+
+static s8 *GetCurrentPartySlotPtr(void)
+{
+    if (gPartyMenu.action == PARTY_ACTION_SWITCH || gPartyMenu.action == PARTY_ACTION_SOFTBOILED)
+        return &gPartyMenu.slotId2;
+    else
+        return &gPartyMenu.slotId;
+}
+
 #ifdef UNBOUND
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
