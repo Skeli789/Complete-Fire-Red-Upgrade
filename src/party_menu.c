@@ -2781,59 +2781,6 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 	}
 }
 
-extern void MoveCursorToConfirm(void);
-static u16 PartyMenuButtonHandler(s8 *slotPtr);
-static s8 *GetCurrentPartySlotPtr(void);
-extern void HandleChooseMonSelection(u8 taskId, s8 *slotPtr);
-extern void HandleChooseMonCancel(u8 taskId, s8 *slotPtr);
-extern EWRAM_DATA struct PartyMenuInternal * sPartyMenuInternal;
-extern void CursorCB_Switch(u8 taskId);
-extern void UpdateCurrentPartySelection(s8 *slotPtr, s8 movementDir);
-struct PartyMenuInternal 
- { 
-     TaskFunc task; 
-     MainCallback exitCallback; 
-     u32 chooseHalf:1; 
-     u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns 
-     u32 spriteIdConfirmPokeball:7; 
-     u32 spriteIdCancelPokeball:7; 
-     u32 messageId:14; 
-     u8 windowId[3]; 
-     u8 actions[8]; 
-     u8 numActions; 
-     u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)]; 
-     s16 data[16]; 
- };
-
-void Task_HandleChooseMonInput(u8 taskId) 
- { 
-     if (!gPaletteFade.active && sub_80BF748() != TRUE) 
-     { 
-         s8 *slotPtr = GetCurrentPartySlotPtr(); 
-  
-         switch (PartyMenuButtonHandler(slotPtr)) 
-         { 
-         case 1: // Selected mon 
-             HandleChooseMonSelection(taskId, slotPtr); 
-             break; 
-         case 2: // Selected Cancel 
-             HandleChooseMonCancel(taskId, slotPtr); 
-             break; 
-         case 8: // Start button 
-             if (sPartyMenuInternal->chooseHalf) 
-             { 
-                 PlaySE(SE_SELECT); 
-                 MoveCursorToConfirm(); 
-             } 
-             break; 
-         case 9: 
-             DestroyTask(taskId); 
-             break; 
-         } 
-     } 
- }
-
-
 static u16 PartyMenuButtonHandler(s8 *slotPtr) 
  { 
      s8 movementDir; 
