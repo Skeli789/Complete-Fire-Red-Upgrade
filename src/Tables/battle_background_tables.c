@@ -70,6 +70,12 @@ extern const u8 BG_Cave_TormaDepthsPal[];
 extern const u8 BG_Cave_ScaldingTiles[];
 extern const u8 BG_Cave_ScaldingMap[];
 extern const u8 BG_Cave_ScaldingPal[];
+extern const u8 BG_ForestTiles[];
+extern const u8 BG_ForestMap[];
+extern const u8 BG_ForestPal[];
+extern const u8 BG_Forest_PeradonTiles[];
+extern const u8 BG_Forest_PeradonMap[];
+extern const u8 BG_Forest_PeradonPal[];
 
 // Evening (just palettes)
 extern const u8 BG_Grass_EveningPal[];
@@ -263,6 +269,22 @@ const struct BattleBackground gBattleTerrainTable[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_GymPal,
 	},	
+	[BATTLE_TERRAIN_FOREST] =
+	{
+		.tileset = BG_ForestTiles,
+		.tilemap = BG_ForestMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_ForestPal,
+	},
+	[BATTLE_TERRAIN_FOREST_PERADON] =
+	{
+		.tileset = BG_Forest_PeradonTiles,
+		.tilemap = BG_Forest_PeradonMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_Forest_PeradonPal,
+	},	
 };
 
 const struct BattleBackground gBattleTerrainTableEvening[] =
@@ -435,6 +457,22 @@ const struct BattleBackground gBattleTerrainTableEvening[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_GymPal,
 	},	
+	[BATTLE_TERRAIN_FOREST] =
+	{
+		.tileset = BG_ForestTiles,
+		.tilemap = BG_ForestMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_ForestPal,
+	},
+	[BATTLE_TERRAIN_FOREST_PERADON] =
+	{
+		.tileset = BG_Forest_PeradonTiles,
+		.tilemap = BG_Forest_PeradonMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_Forest_PeradonPal,
+	},	
 };
 
 const struct BattleBackground gBattleTerrainTableNight[] =
@@ -606,6 +644,22 @@ const struct BattleBackground gBattleTerrainTableNight[] =
 		.entryTileset = gBattleTerrainAnimTiles_Building,
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_GymPal,
+	},	
+	[BATTLE_TERRAIN_FOREST] =
+	{
+		.tileset = BG_ForestTiles,
+		.tilemap = BG_ForestMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_ForestPal,
+	},
+	[BATTLE_TERRAIN_FOREST_PERADON] =
+	{
+		.tileset = BG_Forest_PeradonTiles,
+		.tilemap = BG_Forest_PeradonMap,
+		.entryTileset = gBattleTerrainAnimTiles_LongGrass,
+		.entryTilemap = gBattleTerrainAnimTilemap_LongGrass,
+		.palette = BG_Forest_PeradonPal,
 	},	
 };
 #endif	

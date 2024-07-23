@@ -325,6 +325,10 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		case BATTLE_TERRAIN_GRASS:
 			if (IsCurrentAreaWinter())
 				terrain = BATTLE_TERRAIN_SNOWY;
+			else if (mapSec == MAPSEC_VARISI_FOREST)
+				terrain = BATTLE_TERRAIN_FOREST;
+			else if (mapSec == MAPSEC_PERADON_FOREST)
+				terrain = BATTLE_TERRAIN_FOREST_PERADON;			
 			break;
 		// case BATTLE_TERRAIN_POND:
 		// 	if (IsCurrentAreaSwamp())
@@ -335,7 +339,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		// 		terrain = BATTLE_TERRAIN_SNOW_GRASS;
 		// 	break;
 		case BATTLE_TERRAIN_INSIDE:
-			if (GetCurrentRegionMapSectionId() == MAPSEC_FORGOTTEN_MANSE)
+			if (mapSec == MAPSEC_FORGOTTEN_MANSE)
 				terrain = BATTLE_TERRAIN_SPOOKY;
 			break;
 		case BATTLE_TERRAIN_INSIDE_4:
