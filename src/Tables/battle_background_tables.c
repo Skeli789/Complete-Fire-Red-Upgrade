@@ -52,12 +52,24 @@ extern const u8 BG_CavePal[];
 extern const u8 BG_IndoorTiles[];
 extern const u8 BG_IndoorMap[];
 extern const u8 BG_IndoorPal[];
+extern const u8 BG_GymTiles[];
+extern const u8 BG_GymMap[];
+extern const u8 BG_GymPal[];
 extern const u8 BG_SpookyTiles[];
 extern const u8 BG_SpookyMap[];
 extern const u8 BG_SpookyPal[];
 extern const u8 BG_DesertTiles[];
 extern const u8 BG_DesertMap[];
 extern const u8 BG_DesertPal[];
+extern const u8 BG_Cave_TormaTiles[];
+extern const u8 BG_Cave_TormaMap[];
+extern const u8 BG_Cave_TormaPal[];
+extern const u8 BG_Cave_TormaDepthsTiles[];
+extern const u8 BG_Cave_TormaDepthsMap[];
+extern const u8 BG_Cave_TormaDepthsPal[];
+extern const u8 BG_Cave_ScaldingTiles[];
+extern const u8 BG_Cave_ScaldingMap[];
+extern const u8 BG_Cave_ScaldingPal[];
 
 // Evening (just palettes)
 extern const u8 BG_Grass_EveningPal[];
@@ -171,6 +183,38 @@ const struct BattleBackground gBattleTerrainTable[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
 	},
+	[BATTLE_TERRAIN_INSIDE_3] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_4] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_5] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_6] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},	
 	[BATTLE_TERRAIN_SPOOKY] =
 	{
 		.tileset = BG_SpookyTiles,
@@ -186,6 +230,38 @@ const struct BattleBackground gBattleTerrainTable[] =
 		.entryTileset = gBattleTerrainAnimTiles_Sand,
 		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
 		.palette = BG_DesertPal,
+	},	
+	[BATTLE_TERRAIN_TORMA] =
+	{
+		.tileset = BG_Cave_TormaTiles,
+		.tilemap = BG_Cave_TormaMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaPal,
+	},
+	[BATTLE_TERRAIN_TORMA_DEPTHS] =
+	{
+		.tileset = BG_Cave_TormaDepthsTiles,
+		.tilemap = BG_Cave_TormaDepthsMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaDepthsPal,
+	},
+	[BATTLE_TERRAIN_SCALDING_SPA] =
+	{
+		.tileset = BG_Cave_ScaldingTiles,
+		.tilemap = BG_Cave_ScaldingMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_ScaldingPal,
+	},	
+	[BATTLE_TERRAIN_GYM] =
+	{
+		.tileset = BG_GymTiles,
+		.tilemap = BG_GymMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_GymPal,
 	},	
 };
 
@@ -279,6 +355,38 @@ const struct BattleBackground gBattleTerrainTableEvening[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
 	},
+	[BATTLE_TERRAIN_INSIDE_3] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_4] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_5] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_6] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},	
 	[BATTLE_TERRAIN_SPOOKY] =
 	{
 		.tileset = BG_SpookyTiles,
@@ -294,6 +402,38 @@ const struct BattleBackground gBattleTerrainTableEvening[] =
 		.entryTileset = gBattleTerrainAnimTiles_Sand,
 		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
 		.palette = BG_Desert_EveningPal,
+	},	
+	[BATTLE_TERRAIN_TORMA] =
+	{
+		.tileset = BG_Cave_TormaTiles,
+		.tilemap = BG_Cave_TormaMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaPal,
+	},
+	[BATTLE_TERRAIN_TORMA_DEPTHS] =
+	{
+		.tileset = BG_Cave_TormaDepthsTiles,
+		.tilemap = BG_Cave_TormaDepthsMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaDepthsPal,
+	},
+	[BATTLE_TERRAIN_SCALDING_SPA] =
+	{
+		.tileset = BG_Cave_ScaldingTiles,
+		.tilemap = BG_Cave_ScaldingMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_ScaldingPal,
+	},	
+	[BATTLE_TERRAIN_GYM] =
+	{
+		.tileset = BG_GymTiles,
+		.tilemap = BG_GymMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_GymPal,
 	},	
 };
 
@@ -387,6 +527,38 @@ const struct BattleBackground gBattleTerrainTableNight[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
 	},	
+	[BATTLE_TERRAIN_INSIDE_3] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_4] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_5] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},
+	[BATTLE_TERRAIN_INSIDE_6] =
+	{
+		.tileset = BG_IndoorTiles,
+		.tilemap = BG_IndoorMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_IndoorPal,
+	},	
 	[BATTLE_TERRAIN_SPOOKY] =
 	{
 		.tileset = BG_SpookyTiles,
@@ -402,6 +574,38 @@ const struct BattleBackground gBattleTerrainTableNight[] =
 		.entryTileset = gBattleTerrainAnimTiles_Sand,
 		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
 		.palette = BG_Desert_NightPal,
+	},	
+	[BATTLE_TERRAIN_TORMA] =
+	{
+		.tileset = BG_Cave_TormaTiles,
+		.tilemap = BG_Cave_TormaMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaPal,
+	},
+	[BATTLE_TERRAIN_TORMA_DEPTHS] =
+	{
+		.tileset = BG_Cave_TormaDepthsTiles,
+		.tilemap = BG_Cave_TormaDepthsMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_TormaDepthsPal,
+	},
+	[BATTLE_TERRAIN_SCALDING_SPA] =
+	{
+		.tileset = BG_Cave_ScaldingTiles,
+		.tilemap = BG_Cave_ScaldingMap,
+		.entryTileset = gBattleTerrainAnimTiles_Cave,
+		.entryTilemap = gBattleTerrainAnimTilemap_Cave,
+		.palette = BG_Cave_ScaldingPal,
+	},	
+	[BATTLE_TERRAIN_GYM] =
+	{
+		.tileset = BG_GymTiles,
+		.tilemap = BG_GymMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_GymPal,
 	},	
 };
 #endif	
