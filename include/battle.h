@@ -117,15 +117,22 @@
 #define BATTLE_TERRAIN_INSIDE       	8
 #define BATTLE_TERRAIN_PLAIN        	9
 #define BATTLE_TERRAIN_INSIDE_2       	0xA
-#define BATTLE_TERRAIN_SPOOKY       	0xB
-#define BATTLE_TERRAIN_INSIDE_4       	0xC
-#define BATTLE_TERRAIN_DESERT	       	0xD
+#define BATTLE_TERRAIN_INSIDE_3       	0xB
+#define BATTLE_TERRAIN_INSIDE_4	       	0xC // Used by gym leaders  TODO: More interesting graphic here
+#define BATTLE_TERRAIN_INSIDE_5	       	0xD
 #define BATTLE_TERRAIN_INSIDE_6       	0xE
 #define BATTLE_TERRAIN_LORLEI       	0xF
 #define BATTLE_TERRAIN_BRUNO 			0x10
 #define BATTLE_TERRAIN_AGATHA       	0x11
 #define BATTLE_TERRAIN_LANCE 			0x12
 #define BATTLE_TERRAIN_CHAMPION       	0x13
+
+#ifdef NEW_BATTLE_BACKGROUNDS
+
+#define BATTLE_TERRAIN_SPOOKY			0x14
+#define BATTLE_TERRAIN_DESERT			0x15
+
+#endif
 
 //For Unbound
 #ifdef UNBOUND

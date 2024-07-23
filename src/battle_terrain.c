@@ -326,14 +326,10 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		// 	if (MetatileBehavior_IsTallGrass(tileBehavior))
 		// 		terrain = BATTLE_TERRAIN_SNOW_GRASS;
 		// 	break;
-		// case BATTLE_TERRAIN_SAND:
-		// 	if (IsCurrentAreaDesert())
-		// 		terrain = BATTLE_TERRAIN_DESERT;
-		// 	break;
-		// case BATTLE_TERRAIN_INSIDE:
-		// 	if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS || MAP_IS(ANTISIS_CITY_GYM_B1F))
-		// 		terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
-		// 	break;
+		case BATTLE_TERRAIN_INSIDE:
+			if (GetCurrentRegionMapSectionId() == MAPSEC_FORGOTTEN_MANSE)
+				terrain = BATTLE_TERRAIN_SPOOKY;
+			break;
 	}
 
 	// if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
@@ -367,7 +363,15 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 	// }
 #endif
 
+	if (MetatileBehavior_IsSand(tileBehavior) && IsCurrentAreaDesert())
+		terrain = BATTLE_TERRAIN_DESERT;
+
 	return terrain;
+}
+
+bool8 MetatileBehavior_IsSand(u8 metatileBehavior)
+{
+	return metatileBehavior == MB_SAND_CAVE;
 }
 
 bool8 MetatileBehavior_IsIce(u8 metatileBehavior)

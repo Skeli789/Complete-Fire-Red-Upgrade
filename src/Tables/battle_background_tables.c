@@ -52,6 +52,12 @@ extern const u8 BG_CavePal[];
 extern const u8 BG_IndoorTiles[];
 extern const u8 BG_IndoorMap[];
 extern const u8 BG_IndoorPal[];
+extern const u8 BG_SpookyTiles[];
+extern const u8 BG_SpookyMap[];
+extern const u8 BG_SpookyPal[];
+extern const u8 BG_DesertTiles[];
+extern const u8 BG_DesertMap[];
+extern const u8 BG_DesertPal[];
 
 // Evening (just palettes)
 extern const u8 BG_Grass_EveningPal[];
@@ -61,6 +67,7 @@ extern const u8 BG_Snow_EveningPal[];
 extern const u8 BG_Water_EveningPal[];
 extern const u8 BG_Pond_EveningPal[];
 extern const u8 BG_Mountain_EveningPal[];
+extern const u8 BG_Desert_EveningPal[];
 
 // Night (just palettes)
 extern const u8 BG_Grass_NightPal[];
@@ -70,6 +77,7 @@ extern const u8 BG_Snow_NightPal[];
 extern const u8 BG_Water_NightPal[];
 extern const u8 BG_Pond_NightPal[];
 extern const u8 BG_Mountain_NightPal[];
+extern const u8 BG_Desert_NightPal[];
 
 const struct BattleBackground gBattleTerrainTable[] =
 {
@@ -163,6 +171,22 @@ const struct BattleBackground gBattleTerrainTable[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
 	},
+	[BATTLE_TERRAIN_SPOOKY] =
+	{
+		.tileset = BG_SpookyTiles,
+		.tilemap = BG_SpookyMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_SpookyPal,
+	},
+	[BATTLE_TERRAIN_DESERT] =
+	{
+		.tileset = BG_DesertTiles,
+		.tilemap = BG_DesertMap,
+		.entryTileset = gBattleTerrainAnimTiles_Sand,
+		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
+		.palette = BG_DesertPal,
+	},	
 };
 
 const struct BattleBackground gBattleTerrainTableEvening[] =
@@ -255,6 +279,22 @@ const struct BattleBackground gBattleTerrainTableEvening[] =
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
 	},
+	[BATTLE_TERRAIN_SPOOKY] =
+	{
+		.tileset = BG_SpookyTiles,
+		.tilemap = BG_SpookyMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_SpookyPal,
+	},
+	[BATTLE_TERRAIN_DESERT] =
+	{
+		.tileset = BG_DesertTiles,
+		.tilemap = BG_DesertMap,
+		.entryTileset = gBattleTerrainAnimTiles_Sand,
+		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
+		.palette = BG_Desert_EveningPal,
+	},	
 };
 
 const struct BattleBackground gBattleTerrainTableNight[] =
@@ -346,6 +386,22 @@ const struct BattleBackground gBattleTerrainTableNight[] =
 		.entryTileset = gBattleTerrainAnimTiles_Building,
 		.entryTilemap = gBattleTerrainAnimTilemap_Building,
 		.palette = BG_IndoorPal,
+	},	
+	[BATTLE_TERRAIN_SPOOKY] =
+	{
+		.tileset = BG_SpookyTiles,
+		.tilemap = BG_SpookyMap,
+		.entryTileset = gBattleTerrainAnimTiles_Building,
+		.entryTilemap = gBattleTerrainAnimTilemap_Building,
+		.palette = BG_SpookyPal,
+	},
+	[BATTLE_TERRAIN_DESERT] =
+	{
+		.tileset = BG_DesertTiles,
+		.tilemap = BG_DesertMap,
+		.entryTileset = gBattleTerrainAnimTiles_Sand,
+		.entryTilemap = gBattleTerrainAnimTilemap_Sand,
+		.palette = BG_Desert_NightPal,
 	},	
 };
 #endif	

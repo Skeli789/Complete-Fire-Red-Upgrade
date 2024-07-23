@@ -8,6 +8,7 @@
  */
 
 //Exported Functions
+bool8 MetatileBehavior_IsSand(u8 metatileBehavior);
 bool8 MetatileBehavior_IsIce(u8 metatileBehavior);
 bool8 MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
 bool8 IsTerrainMoveIndoors(void);
