@@ -119,7 +119,7 @@
 #define BATTLE_TERRAIN_INSIDE_2       	0xA
 #define BATTLE_TERRAIN_SPOOKY       	0xB
 #define BATTLE_TERRAIN_INSIDE_4       	0xC
-#define BATTLE_TERRAIN_BEACH	       	0xD
+#define BATTLE_TERRAIN_DESERT	       	0xD
 #define BATTLE_TERRAIN_INSIDE_6       	0xE
 #define BATTLE_TERRAIN_LORLEI       	0xF
 #define BATTLE_TERRAIN_BRUNO 			0x10

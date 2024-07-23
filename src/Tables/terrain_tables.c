@@ -183,7 +183,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
 
-	[BATTLE_TERRAIN_BEACH + 4] =
+	[BATTLE_TERRAIN_DESERT + 4] =
 		{
 			.camouflageType = TYPE_GROUND,
 			.secretPowerEffect = MOVE_EFFECT_SPD_MINUS_1,

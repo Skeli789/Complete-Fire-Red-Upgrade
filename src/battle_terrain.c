@@ -25,9 +25,9 @@ battle_terrain.c
 */
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
-#ifdef UNBOUND
-#define gBattleTerrainTableEvening ((struct BattleBackground*) *((u32*) 0x88288A0)) //For Unbound
-#define gBattleTerrainTableNight ((struct BattleBackground*) *((u32*) 0x88288A4)) //For Unbound
+#ifdef NEW_BATTLE_BACKGROUNDS
+extern struct BattleBackground gBattleTerrainTableEvening[];
+extern struct BattleBackground gBattleTerrainTableNight[];
 #endif
 
 extern const struct BattleBackground gAttackTerrainTable[];
@@ -246,7 +246,7 @@ void LoadBattleTerrainGfx(u8 terrainId)
 		return;
 	}
 
-	#ifdef UNBOUND //Load different BGs depending on time of day
+	#ifdef NEW_BATTLE_BACKGROUNDS //Load different BGs depending on time of day
 		u8 mapType = GetCurrentMapType();
 		if (!IsMapTypeIndoors(mapType) && IsMapTypeOutdoors(mapType))
 		{
@@ -270,7 +270,7 @@ static void LoadBattleBG_EntryOverlay(u8 terrainId)
 {
 	struct BattleBackground* table = gBattleTerrainTable;
 
-	#ifdef UNBOUND //Load different BGs depending on time of day
+	#ifdef NEW_BATTLE_BACKGROUNDS //Load different BGs depending on time of day
 	u8 mapType = GetCurrentMapType();
 	if (!IsMapTypeIndoors(mapType) && IsMapTypeOutdoors(mapType))
 	{
