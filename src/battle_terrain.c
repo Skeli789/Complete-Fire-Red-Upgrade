@@ -315,7 +315,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		// 		terrain = BATTLE_TERRAIN_BOG;
 		// 	break;
 		case BATTLE_TERRAIN_CAVE:
-			if (MAP_IS(TORMA_CAVE_B1F))
+			if (MAP_IS(TORMA_CAVE_B1F) || MAP_IS(ROUTE10_CAVE))
 				terrain = BATTLE_TERRAIN_TORMA;
 			else if (MAP_IS(TORMA_CAVE_B2F))
 				terrain = BATTLE_TERRAIN_TORMA_DEPTHS;
@@ -325,6 +325,8 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 		case BATTLE_TERRAIN_GRASS:
 			if (IsCurrentAreaWinter())
 				terrain = BATTLE_TERRAIN_SNOWY;
+			else if (MetatileBehavior_IsMountain(tileBehavior))
+				terrain = BATTLE_TERRAIN_MOUNTAIN;			
 			else if (mapSec == MAPSEC_VARISI_FOREST)
 				terrain = BATTLE_TERRAIN_FOREST;
 			else if (mapSec == MAPSEC_PERADON_FOREST)
