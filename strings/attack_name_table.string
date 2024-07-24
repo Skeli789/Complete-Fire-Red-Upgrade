@@ -2303,156 +2303,6 @@ Lunar Bless
 #org @NAME_TAKE_HEART
 Take Heart
 
-#org @NAME_AQUA_CUTTER
-Aqua Cutter
-
-#org @NAME_AQUA_STEP
-Aqua Step
-
-#org @NAME_ARMOR_CANNON
-Armor Cannon
-
-#org @NAME_AXE_KICK
-Axe Kick
-
-#org @NAME_BITTLER_BLADE
-Bitter Blade
-
-#org @NAME_BLAZING_TORGUE
-Blazing Torgue
-
-#org @NAME_CHILLING_WATER
-Chilling Water
-
-#org @NAME_CHILLY_RECEPTION
-Chilly Reception
-
-#org @NAME_COLLISION_COURSE
-Collision Course
-
-#org @NAME_COMBAT_TORGUE
-Combat Torgue
-
-#org @NAME_COME_UPPANCE
-Come Uppance
-
-#org @NAME_DOODLE
-Doodle
-
-#org @NAME_DOUBLE_SHOCK
-Double Shock
-
-#org @NAME_ELECRTO_SHOCK
-Electro Shock
-
-#org @NAME_FILLET_WAY
-Fillet Way
-
-#org @NAME_FLOWER_TRICK
-Flower Trick
-
-#org @NAME_GIGATON_HAMMER
-Gigaton Hammer
-
-#org @NAME_GLAIVE_RUSH
-Glaive Rush
-
-#org @NAME_HYRDRO_STEAM
-Hydro Steam
-
-#org @NAME_HYPER_DRILL
-Hyper Drill
-
-#org @NAME_ICE_SPINNER
-Ice Spinner
-
-#org @NAME_JET_PUNCH
-Jet Punch
-
-#org @NAME_KOW_TOW_CLEAVE
-KowTow Cleave
-
-#org @NAME_LAST_RESPECTS
-Last Respects
-
-#org @NAME_LUMINA_CRASH
-Lumina Crash
-
-#org @NAME_MAGICAL_TORGUE
-Magical Torgue
-
-#org @NAME_MAKE_IT_RAN
-Make-It-Rain
-
-#org @NAME_MORTAL_SPIN
-Mortal Spin
-
-#org @NAME_NOXIOUS_TORGUE
-Noixous Torgue
-
-#org @NAME_ORDER_UP
-Order Up
-
-#org @NAME_POPULATION_BOMB
-Population Bomb
-
-#org @NAME_POUNCE
-Pounce
-
-#org @NAME_PSYBLADE
-Psyblade
-
-#org @NAME_RAGE_FIST
-Rage Fist
-
-#org @NAME_RAGING_BULL
-Raging Bull
-
-#org @NAME_REVIVAL_BLESSING
-Revival Blessing
-
-#org @NAME_RUIN_NANTION
-Ruin Nantion
-
-#org @NAME_SALT_CURE
-Salt Curse
-
-#org @NAME_SHED_TAIL
-Shed Tail
-
-#org @NAME_SILK_TRAP
-Silk Trap
-
-#org @NAME_SNOW_SCAPE
-Snow Scape
-
-#org @NAME_SPICY_EXTRACT
-Spicy Extract
-
-#org @NAME_SPIN_OUT
-Spin Out
-
-#org @NAME_TERRA_BLAST
-Terra-Blast
-
-#org @NAME_TIDY_UP
-Tidy Up
-
-#org @NAME_TORCH_SONG
-Torch Song
-
-#org @NAME_TRAIL_BLAZE
-Trail Blaze
-
-#org @NAME_TRIPLE_DIVE
-Triple Dive
-
-#org @NAME_TWIN_BEAM
-Twin Beam
-
-#org @NAME_WICKED_TORGUE
-Wicked Torgue
-
 #org @Z_Move_1
 Z-Move 1
 
@@ -2920,3 +2770,210 @@ Rapid Flow
 
 #org @NAME_G_MAX_RAPID_FLOW_S
 Rapid Flow
+
+#org @NAME_AQUACUTTER
+Aqua Cutter
+
+#org @NAME_AQUASTEP
+Aqua Step
+
+#org @NAME_ARMORCANNON
+Armor Cannon
+
+#org @NAME_AXEKICK
+Axe Kick
+
+#org @NAME_BITTERBLADE
+Bitter Blade
+
+#org @NAME_BLAZINGTORGUE
+Blaze Torque
+
+#org @NAME_CHILLINGWATER
+Eery Water
+
+#org @NAME_CHILLYRECEPTION
+ChillyRecept
+
+#org @NAME_COLLISIONCOURSE
+Crash Course
+
+#org @NAME_COMBATTORGUE
+CombatTorque
+
+#org @NAME_COMEUPPANCE
+Comeuppance
+
+#org @NAME_DOODLE
+Doodle
+
+#org @NAME_DOUBLESHOCK
+Double Shock
+
+#org @NAME_ELECTROSHIFT
+ElectroDrift
+
+#org @NAME_FILLETWAY
+Fillet Away
+
+#org @NAME_FLOWERTRICK
+Flower Trick
+
+#org @NAME_GIGATONHAMMER
+GigtonHammer
+
+#org @NAME_GLAVIERUSH
+Glaive Rush
+
+#org @NAME_HYDROSTEAM
+Hydro Steam
+
+#org @NAME_HYPERDRILL
+Hyper Drill
+
+#org @NAME_ICESPINNER
+Ice Spinner
+
+#org @NAME_JETPUNCH
+Jet Punch
+
+#org @NAME_KOWTOWCLEAVE
+KowtowKleave
+
+#org @NAME_LASTRESPECTS
+LastRespects
+
+#org @NAME_LUMINACRASH
+Lumina Crash
+
+#org @NAME_MAGICALTORGUE
+Magic Torque
+
+#org @NAME_MAKEITRAIN
+Make It Rain
+
+#org @NAME_MORTALSPIN
+Mortal Spin
+
+#org @NAME_NOXIOUSTORGUE
+Nox Torque
+
+#org @NAME_ORDERUP
+Order Up
+
+#org @NAME_POPULATIONBOMB
+PopulaceBomb
+
+#org @NAME_POUNCE
+Pounce
+
+#org @NAME_PSYBLADE
+Psyblade
+
+#org @NAME_RAGEFIST
+Rage Fist
+
+#org @NAME_RAGINGBULL
+Raging Bull
+
+#org @NAME_REVIVALBLESSING
+Revive Bless
+
+#org @NAME_RUINNATION
+Ruination
+
+#org @NAME_SALTCURE
+Salt Cure
+
+#org @NAME_SHEDTAIL
+Shed Tail
+
+#org @NAME_SILKTRAP
+Silk Trap
+
+#org @NAME_SNOWSCAPE
+Snowscape
+
+#org @NAME_SPICYEXTRACT
+SpicyExtract
+
+#org @NAME_SPINOUT
+Spin Out
+
+#org @NAME_TERABLAST
+Tera Blast
+
+#org @NAME_TIDYUP
+Tidy Up
+
+#org @NAME_TORCHSONG
+Torch Song
+
+#org @NAME_TRAILBLAZE
+Trailblaze
+
+#org @NAME_TRIPLEDIVE
+Triple Dive
+
+#org @NAME_TWINBEAM
+Twin Beam
+
+#org @NAME_WICKEDTORGUE
+WickedTorque
+
+#org @NAME_BLOODMOON
+Blood Moon
+
+#org @NAME_UPPERHAND
+Upper Hand
+
+#org @NAME_MATCHAGOTCHA
+MatchaGotcha
+
+#org @NAME_SYRUPBOMB
+Syrup Bomb
+
+#org @NAME_IVYCUDGEL
+Ivy Cudgel
+
+#org @NAME_ELECTROSHOT
+Electro Shot
+
+#org @NAME_TERASTARSTORM
+Tera S-storm
+
+#org @NAME_FICKLEBEAM
+Fickle Beam
+
+#org @NAME_BURNINGBULWARK
+Burn Bulwark
+
+#org @NAME_MIGHTYCLEAVE
+Might Cleave
+
+#org @NAME_TACHYONCUTTER
+Tachyon Cut
+
+#org @NAME_DRAGONCHEER
+Dragon Cheer
+
+#org @NAME_MALIGNANTCHAIN
+Malign Chain
+
+#org @NAME_THUNDERCLAP
+Thunderclap
+
+#org @NAME_HARDPRESS
+Hard Press
+
+#org @NAME_ALLURINGVOICE
+Allure Voice
+
+#org @NAME_TEMPERFLARE
+Temper Flare
+
+#org @NAME_SUPERCELLSLAM
+S-cell Slam
+
+#org @NAME_PSYCHICNOISE
+PsychicNoise

@@ -1462,3 +1462,210 @@ G-Max Single Strike\nUrshifu's signature move.\nIt bypasses the\nuse of Max Guar
 
 #org @DESC_G_MAX_RAPID_FLOW
 G-Max Rapid Strike\nUrshifu's signature move.\nIt bypasses the\nuse of Max Guard.
+
+#org @DESC_AQUACUTTER
+Expels pressurized\nwater to cut at the\ntarget like a blade.\nHigh critic ratio.
+
+#org @DESC_AQUASTEP
+User toys with the\nfoe attacking with\ndance steps. Boosts\nuser's Speed stat.
+
+#org @DESC_ARMORCANNON
+User shoots its own\narmor out as fiery\nprojectiles. Lowers\nDef and Sp. Def.
+
+#org @DESC_AXEKICK
+A strong kick that\ncauses confision on\nfoe. If it misses,\nthe user is hurt.
+
+#org @DESC_BITTERBLADE
+Focuses its bitter\nfeelings into a \nblade. The half the\ndamage restores HP.
+
+#org @DESC_BLAZINGTORGUE
+Inflicts damage and\nhas a 30[5B] chance of\nburning the target.
+
+#org @DESC_CHILLINGWATER
+Attacks the target\nby bathing it with\ncold water. Lower\nfoe's Attack stat.
+
+#org @DESC_CHILLYRECEPTION
+Switches place with\na party Pokémon in\nwaiting. This\nsummons a snowstorm.
+
+#org @DESC_COLLISIONCOURSE
+Transforms and\ncrashes to ground,\ncausing a massive\nancient explosion.
+
+#org @DESC_COMBATTORGUE
+Inflicts damage and\nhas a 30[5B] chance of\nparalyze the target.
+
+#org @DESC_COMEUPPANCE
+Retaliates the\nopponent that last\ninflicted damage\non it.
+
+#org @DESC_DOODLE
+Changes Abilities\nof the user and its\nally to that of\nthe target.
+
+#org @DESC_DOUBLESHOCK
+Discharges all the\nelectricity from\nits body to perform\na strongest attack.
+
+#org @DESC_ELECTROSHIFT
+Races forward at\nultrafast speeds,\npiercing foe with\nunborn electricity.
+
+#org @DESC_FILLETWAY
+The user sharply\nboosts Atk, Sp Atk,\nand Speed stats by\nusing its own HP.
+
+#org @DESC_FLOWERTRICK
+A rigged bouquet of\nflowers. Never miss\nand always lands a\ncritical hit.
+
+#org @DESC_GIGATONHAMMER
+User swings its\nwhole body around\nto attack with its\nhuge hammer.
+
+#org @DESC_GLAVIERUSH
+The user throws its\nentire body into a\nreckless charge.\nFoes cant miss atk.
+
+#org @DESC_HYDROSTEAM
+Blasts the target\nwith boiling water.\nPower boost 50[5B] in\nSunlight weather.
+
+#org @DESC_HYPERDRILL
+Spins the pointed\npart of its body at\nhigh speed to\npierce the target.
+
+#org @DESC_ICESPINNER
+Covers feet in Ice\nand twirls slams\ninto the foe. Also\ndestroys terrains.
+
+#org @DESC_JETPUNCH
+Summons a torrent\naround its fist.\nThis move always\ngoes first.
+
+#org @DESC_KOWTOWCLEAVE
+Slashes the target\nto make it let down\nits guard. The\nattack Never Misses.
+
+#org @DESC_LASTRESPECTS
+The more defeated\nallies there are in\nthe user's party,\ngreater move power.
+
+#org @DESC_LUMINACRASH
+Unleashes a peculiar\nlight. Also harshly\nlowers target's\nSp. Def stat.
+
+#org @DESC_MAGICALTORGUE
+Inflicts damage and\nhas a 30[5B] chance of\nconfuses the target.
+
+#org @DESC_MAKEITRAIN
+Attacks by throwing\ncoins. Lowers foe\nSp. Atk and earn\nmoney after battle.
+
+#org @DESC_MORTALSPIN
+Great spin attack\nthat can eliminate\nharzards. May also\npoisons foe Pok\emon.
+
+#org @DESC_NOXIOUSTORGUE
+Inflicts damage and\nhas a 30[5B] chance of\npoison the target.
+
+#org @DESC_ORDERUP
+Boosts one of the\nusers stats based\non the\nTatsugiris form. 
+
+#org @DESC_POPULATIONBOMB
+Performes a combo\nattack that hits\ntarget one to ten\ntimes in a row.
+
+#org @DESC_POUNCE
+User attacks by\npouncing on the\ntarget. Also lowers\nfoe's Speed stat.
+
+#org @DESC_PSYBLADE
+If the current\nterrain is Electric\nTerrain, boost power\nby 1.5x.
+
+#org @DESC_RAGEFIST
+User converts its\nrage into energy to\nattack. Ups attack\nif has been hit.
+
+#org @DESC_RAGINGBULL
+The user performs a\ntackle like a raging\nbull. Breaks Light\nScream and Reflect.
+
+#org @DESC_REVIVALBLESSING
+The user bestows a\nloving blessing and\nrevives a party\nPokémon.
+
+#org @DESC_RUINNATION
+The user summons a\nruinous disaster.\nThis cuts the\ntarget's HP in half.
+
+#org @DESC_SALTCURE
+The user inflict\ndamage every turn.\nMore damage against\nSteel or Water type.
+
+#org @DESC_SHEDTAIL
+Creates a substitute\nfor itself using its\nown HP and switch to\na party Pokémon.
+
+#org @DESC_SILKTRAP
+Protect itself from\ndamage. Also lowers\nSpeed stat if foe\nmakes contact.
+
+#org @DESC_SNOWSCAPE
+Summons snowstorm.\nThis boosts the\nDefense stats of\nIce-types.
+
+#org @DESC_SPICYEXTRACT
+Emits an incredibly\nspicy extract. Ups\ntarget's Attack and\nlower it's Defense.
+
+#org @DESC_SPINOUT
+User spins furiously\nagainst foe\ninflicting damage.\nAlso lower Speed.
+
+#org @DESC_TERABLAST
+If the user has\nTerastallized, it\nunleashes energy of\nits Tera Type.
+
+#org @DESC_TIDYUP
+Tidies up and clean\nhazards effects.\nAlso boosts user's\nAttack and Speed.
+
+#org @DESC_TORCHSONG
+Blows out flames as\nif singing a song.\nThis also boosts\nthe user's Sp. Atk.
+
+#org @DESC_TRAILBLAZE
+Attacks suddenly\nas if leaping out\nfrom tall grass.\nAlso boost Speed.
+
+#org @DESC_TRIPLEDIVE
+Performs a perfect\ntimed triple dive.\nHit foe three times\nin a row.
+
+#org @DESC_TWINBEAM
+Shoots mystical\nbeams from its eyes.\nThe target is hit\ntwice in a row.
+
+#org @DESC_WICKEDTORGUE
+Inflicts damage and\nhas a 10[5B] chance of\nput target to sleep.
+
+#org @DESC_BLOODMOON
+Unleashes full brunt\nof its spirit from a\nfull moon that shine\nas red as blood.
+
+#org @DESC_UPPERHAND
+This move allows\nthe user to strike\nfirst, if the foe is\nreadying an attack.
+
+#org @DESC_MATCHAGOTCHA
+User fires a blast\nof tea that mixed.\nUse restore HP and\nmay cause burn.
+
+#org @DESC_SYRUPBOMB
+User sets off an\nexplosion of sticky\ncandy syrup, also\ndecreases foe Speed.
+
+#org @DESC_IVYCUDGEL
+User strikes with an\nivy-wrapped cudgel.\nIt has a high\ncritical-hit ratio.
+
+#org @DESC_ELECTROSHOT
+In this two-turn move,\nthe user gathers\nspace power and\nincreases Sp. Atk.
+
+#org @DESC_TERASTARSTORM
+With the power of\nits crystals, the\nuser bombards and\neliminates the foe.
+
+#org @DESC_FICKLEBEAM
+The user shoots a\nbeam of light to\ninflict damage.\n30% for 2x power.
+
+#org @DESC_BURNINGBULWARK
+Protects the user\nfrom attacks, this\nalso burns attackers\nwho make contact.
+
+#org @DESC_MIGHTYCLEAVE
+A wields the light\nthat has accumulated\natop its head to \ncleave the target.\nBypasses protect.
+
+#org @DESC_TACHYONCUTTER
+The user attacks by\nlaunching particle\nblades at the target\ntwice in a row.\nIt never misses.
+
+#org @DESC_DRAGONCHEER
+The User raises its\nallies morale with\na draconic cry.\nRaises target\ncritical ratio.
+
+#org @DESC_MALIGNANTCHAIN
+User pours toxins\ninto the target by\nwrapping them in a\ntoxic, corrosive\nchain.
+
+#org @DESC_THUNDERCLAP
+This move allows\nthe user to strike\nfirst, if the foe is\nreadying an attack.
+
+#org @DESC_HARDPRESS
+Foe is crushed by\nan arm or a claw.\nMore target HP,\ngreater the power.
+
+#org @DESC_ALLURINGVOICE
+The user attacks\nthe target using\nits angelic voice.
+
+#org @DESC_TEMPERFLARE
+Move's power is\ndoubled if the\nuser's previous\nmove failed.
+
+#org @DESC_SUPERCELLSLAM
+User electrifies\nits body and drops\nonto the target.\nTake damage if fail.
+
+#org @DESC_PSYCHICNOISE
+Foe is prevented\nfrom recovering HP\nfor two turns.
