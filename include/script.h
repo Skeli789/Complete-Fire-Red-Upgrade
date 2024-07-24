@@ -58,7 +58,7 @@ void __attribute__((long_call)) SetupNativeScript(struct ScriptContext *ctx, boo
 u8 CreateWindowFromRect(u8 left, u8 top, u8 width, u8 height);
 void CheckIfFirstEnemyMonShiny();
 #ifdef IgnoreWildPokemon
-u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y, u8 subpriority);
+u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y);
 #endif
 
 /*

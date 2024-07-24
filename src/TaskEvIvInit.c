@@ -448,7 +448,7 @@ static void SandboxChangeAbility(bool8 goingRight)
 {
     struct Pokemon * mon = &gPlayerParty[gCurrentMon];
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u8 currentAbilNum;
+    u8 currentAbilNum = 0;
     u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
     u8 nature = GetNatureFromPersonality(personality);
     bool8 isShiny = IsMonShiny(mon);
@@ -571,7 +571,6 @@ static void ChangeSelectedStat(u8 stat, u8 ev, bool8 increase)
 
     struct Pokemon * mon = &gPlayerParty[gCurrentMon];
     u8 currValue = GetMonData(mon, statToEdit, NULL);
-    u8 maxValue = (ev) ? 252 : 31;
     if(!ev)
     {
         if (currValue > 30 && increase)
