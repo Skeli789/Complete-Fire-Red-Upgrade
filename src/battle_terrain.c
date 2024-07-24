@@ -378,11 +378,10 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 	// 			break;
 	// 	}
 	// }
-#endif
 
 	if (MetatileBehavior_IsSand(tileBehavior) && IsCurrentAreaDesert())
 		terrain = BATTLE_TERRAIN_DESERT;
-
+#endif
 	return terrain;
 }
 
