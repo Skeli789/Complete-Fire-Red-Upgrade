@@ -18,7 +18,7 @@ if used.
 #include "../include/palette.h"
 #include "../include/task.h"
 #include "../include/scanline_effect.h"
-#include "../include/tm_case.h"
+#include "../include/new/ability_util.h"
 #include "../include/new/dns.h"
 #include "../include/main.h"
 #include "../include/new/Vanilla_Functions.h"
@@ -1174,7 +1174,7 @@ static void HidePokemonPic2(u8 taskId)
     task->data[0]++;
 }
 
-static u8 CreateMonSprite_Field(u16 species, u32 otId, u32 personality, s16 x, s16 y, u8 subpriority)
+static u8 CreateMonSprite_Field(u16 species, u32 otId, u32 personality, s16 x, s16 y)
 {
     const struct CompressedSpritePalette * spritePalette = GetMonSpritePalStructFromOtIdPersonality(species, otId, personality);
     u16 spriteId = CreateMonPicSprite_HandleDeoxys(species, otId, personality, 1, x, y, 0, spritePalette->tag);
@@ -1189,7 +1189,7 @@ static void ShowPokemonPic2(u16 species, u32 otId, u32 personality, u8 x, u8 y)
 {
     u8 spriteId;
 
-    spriteId = CreateMonSprite_Field(species, otId, personality, 8 * x + 40, 8 * y + 40, FALSE);
+    spriteId = CreateMonSprite_Field(species, otId, personality, 8 * x + 40, 8 * y + 40);
     gSpriteTaskId = CreateTask(Task_ScriptShowMonPic, 80);
 
     gSprites[spriteId].hFlip = SPRITE_VIEW_DIRECTION;

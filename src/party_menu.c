@@ -846,14 +846,14 @@ struct
 	[MENU_ITEM] =	  {(void*) 0x84161d4, (void*) 0x81236a1},
 	[MENU_GIVE] =	  {(void*) 0x84161b2, (void*) 0x8123705},
 	[MENU_TAKE_ITEM] = {(void*) 0x84161de, (void*) 0x8123c39},
-	[MENU_MAIL] =	  {(void*) 0x84161d9, (void*) 0x8123cf5},
+	//[MENU_MAIL] =	  {(void*) 0x84161d9, (void*) 0x8123cf5},
 	[MENU_TAKE_MAIL] = {(void*) 0x84169b2, (void*) 0x8123e0d},
 	[MENU_READ] =	  {(void*) 0x84169b7, (void*) 0x8123d59},
 	[MENU_CANCEL2] =   {(void*) 0x84161c1, (void*) 0x8124065},
 	[MENU_SHIFT] =	 {(void*) 0x841697e, (void*) 0x81240f5},
 	[MENU_SEND_OUT] =  {(void*) 0x8416984, (void*) 0x81240f5},
 	[MENU_ENTER] =	 {(void*) 0x84169a3, (void*) 0x8124155},
-	[MENU_NO_ENTRY] =  {(void*) 0x84169a9, (void*) 0x8124279},
+	//[MENU_NO_ENTRY] =  {(void*) 0x84169a9, (void*) 0x8124279},
 	[MENU_STORE] =	 {(void*) 0x84161e3, (void*) 0x8124355},
 	[MENU_REGISTER] =  {(void*) 0x841b6f4, (void*) 0x8124385},
 	[MENU_TRADE1] =	{(void*) 0x84169bc, (void*) 0x8124491},
@@ -2779,74 +2779,6 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 	{
 		ItemUseCB_RareCandyStep(taskId, func);
 	}
-}
-
-static u16 PartyMenuButtonHandler(s8 *slotPtr) 
- { 
-     s8 movementDir; 
-     u8 taskId; 
-  
-     switch (gMain.newAndRepeatedKeys) 
-     { 
-     case DPAD_UP: 
-         movementDir = MENU_DIR_UP; 
-         break; 
-     case DPAD_DOWN: 
-         movementDir = MENU_DIR_DOWN; 
-         break; 
-     case DPAD_LEFT: 
-         movementDir = MENU_DIR_LEFT; 
-         break; 
-     case DPAD_RIGHT: 
-         movementDir = MENU_DIR_RIGHT; 
-         break; 
-     default: 
-         switch (GetLRKeysPressedAndHeld()) 
-         { 
-         case MENU_L_PRESSED: 
-             movementDir = MENU_DIR_UP; 
-             break; 
-         case MENU_R_PRESSED: 
-             movementDir = MENU_DIR_DOWN; 
-             break; 
-         default: 
-             movementDir = 0; 
-             break; 
-         } 
-         break; 
-     } 
-     if (JOY_NEW(START_BUTTON)) 
-         return 8; 
-     if (JOY_NEW(SELECT_BUTTON) && CalculatePlayerPartyCount() > 1) 
-     { 
-         if(gPartyMenu.menuType != PARTY_MENU_TYPE_FIELD) 
-             return 8; 
-         if(*slotPtr == PARTY_SIZE + 1) 
-             return 8; // do nothing if select is pressed on Cancel 
-         if(gPartyMenu.action != PARTY_ACTION_SWITCH) 
-         { 
-             taskId = CreateTask(CursorCB_Switch, 1); 
-             return 9; 
-         } 
-         return 1; //select acts as A button when in switch mode 
-     } 
-     if (movementDir) 
-     { 
-         UpdateCurrentPartySelection(slotPtr, movementDir); 
-         return 0; 
-     } 
-     // Pressed Cancel 
-     if (JOY_NEW(A_BUTTON) && *slotPtr == PARTY_SIZE + 1) 
-         return 2; 
-     return JOY_NEW(A_BUTTON | B_BUTTON); 
- }
-
-static s8 *GetCurrentPartySlotPtr(void)
-{
-    if (gPartyMenu.action == PARTY_ACTION_SWITCH || gPartyMenu.action == PARTY_ACTION_SOFTBOILED)
-        return &gPartyMenu.slotId2;
-    else
-        return &gPartyMenu.slotId;
 }
 
 #ifdef UNBOUND

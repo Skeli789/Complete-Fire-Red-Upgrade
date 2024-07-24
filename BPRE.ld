@@ -2137,7 +2137,6 @@ gText_TMCase = 0x84166d3;
 /* Select button to switch pkmn*\
 
 MoveCursorToConfirm = 0x08124258|1;
-PartyMenuButtonHandler = 0x0811fefc|1;
 GetCurrentPartySlotPtr = 0x0811fba4|1;
 sub_80BF748 = 0x080bf748|1;
 HandleChooseMonSelection = 0x0811fbc4|1;

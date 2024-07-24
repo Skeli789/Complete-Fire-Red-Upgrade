@@ -3089,7 +3089,7 @@ u8 CreateWindowFromRect(u8 left, u8 top, u8 width, u8 height) {
     return windowId;
 }
 
-u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y, u8 subpriority)
+u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
 {
 	u16 spriteId;
 	if (FlagGet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN) && IsMonShiny(&gEnemyParty[0])) {

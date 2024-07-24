@@ -248,7 +248,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 		},
 #endif
 	//ADD NEW ENTRIES HERE
-
+#ifdef NEW_BATTLE_BACKGROUNDS
 	[BATTLE_TERRAIN_SPOOKY + 4] =
 		{
 			.camouflageType = TYPE_GHOST,
@@ -320,7 +320,8 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_POWERWHIP,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+#endif
+
 #ifdef UNBOUND //The ones below are for Pokemon Unbound. Feel free to remove.
 	[BATTLE_TERRAIN_MOLEMAN + 4] =
 		{
