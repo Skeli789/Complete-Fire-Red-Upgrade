@@ -210,6 +210,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_FLAGS: // flags clear
 			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_DESTINY_BOND);
 			gStatuses3[gBankAttacker] &= ~(STATUS3_GRUDGE);
+			gStatuses3[gBankAttacker] &= ~(STATUS3_GLAIVERUSH);
 			gBattleScripting.tripleKickPower = 0;
 			gNewBS->ai.zMoveHelper = 0;
 			gBattleStruct->atkCancellerTracker++;

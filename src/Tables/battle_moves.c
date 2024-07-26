@@ -15115,7 +15115,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_CHILLYRECEPTION] =
 	{
-		.effect = EFFECT_TELEPORT,
+		.effect = EFFECT_HAIL,
 		.power = 0,
 		.type = TYPE_ICE,
 		.accuracy = 0,

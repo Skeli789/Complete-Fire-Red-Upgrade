@@ -1256,6 +1256,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->HealBlockTimers[bank] = 0;
 	gNewBS->LaserFocusTimers[bank] = 0;
 	gNewBS->ThroatChopTimers[bank] = 0;
+	gNewBS->GlaiveRushTimers[bank] = 0;
 	gNewBS->StompingTantrumTimers[bank] = 0;
 	gNewBS->MetronomeCounter[bank] = 0;
 	gNewBS->DestinyBondCounters[bank] = 0;

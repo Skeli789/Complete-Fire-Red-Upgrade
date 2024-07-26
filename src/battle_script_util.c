@@ -1475,6 +1475,27 @@ void AbilityChangeBSFunc(void)
 				gBattleStringLoader = SimpleBeamString;
 			}
 			break;
+
+		case MOVE_DOODLE:
+			if (defAbility == ABILITY_NONE
+			||  IsDynamaxed(gBankTarget)
+			||  *defAbilityLoc == *atkAbilityLoc
+			||  gSpecialAbilityFlags[atkAbility].gEntrainmentBannedAbilitiesAttacker
+			||  gSpecialAbilityFlags[defAbility].gEntrainmentBannedAbilitiesTarget)
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else
+			{
+				*atkAbilityLoc = defAbility;
+				//SetTookAbilityFrom(gBankTarget, gBankAttacker); //Set after the first Ability pop up
+				gLastUsedAbility = atkAbility; //Original ability
+				ResetVarsForAbilityChange(gBankAttacker);
+				gBattleStringLoader = EntrainmentString;
+
+				if (gLastUsedAbility == ABILITY_TRUANT)
+					gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
+			}
+			break;
+	}
 	}
 
 	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
@@ -1593,6 +1614,16 @@ bool8 CanUseLastResort(u8 bank)
 		return FALSE;
 
 	return TRUE;
+}
+
+void GigatonHammerFunc(void)
+{
+    if(gLastUsedMoves[gBankAttacker] == MOVE_GIGATONHAMMER)
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+
+	else if(gLastUsedMoves[gBankAttacker] == MOVE_BLOODMOON)
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+    
 }
 
 void SynchronoiseFunc(void)
@@ -2140,6 +2171,12 @@ void SetThroatChopTimer(void)
 {
 	if (!CantUseSoundMoves(gBankTarget))
 		gNewBS->ThroatChopTimers[gBankTarget] = 2;
+}
+
+void GlaiveRushTimer(void)
+{
+	gNewBS->GlaiveRushTimers[gBankAttacker] = 1;
+	gStatuses3[gBankTarget] |= STATUS3_GLAIVERUSH;
 }
 
 void SetNoMoreMovingThisTurnSwitchingBank(void)

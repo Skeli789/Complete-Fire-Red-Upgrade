@@ -156,6 +156,7 @@ extern const u8 WorrySeedString[];
 extern const u8 AbilitySuppressedString[];
 extern const u8 EntrainmentString[];
 extern const u8 SimpleBeamString[];
+extern const u8 DoodleString[];
 extern const u8 gText_SetAuroraVeil[];
 extern const u8 FreedFromSkyDropString[];
 extern const u8 StringEnduredHitWithSturdy[];
