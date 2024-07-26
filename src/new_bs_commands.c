@@ -311,12 +311,6 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
-		case Counters_GlaiveRush:
-			if (gNewBS->GlaiveRushTimers[bank])
-				gNewBS->GlaiveRushTimers[bank] = 0;
-			else
-				failed = TRUE;
-			break;
 		case Counters_Embargo:
 			if (gNewBS->EmbargoTimers[bank])
 				gNewBS->EmbargoTimers[bank] = 0;
@@ -549,9 +543,6 @@ void atkFF0E_setcounter(void)
 			break;
 		case Counters_ThroatChop:
 			gNewBS->ThroatChopTimers[bank] = amount;
-			break;
-		case Counters_GlaiveRush:
-			gNewBS->GlaiveRushTimers[bank] = amount;
 			break;
 		case Counters_Embargo:
 			gNewBS->EmbargoTimers[bank] = amount;

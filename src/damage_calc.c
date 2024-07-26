@@ -3063,10 +3063,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (!(data->specialFlags & FLAG_AI_CALC) && gProtectStructs[bankAtk].helpingHand)
 		damage = (damage * 15) / 10;
 
-	//Glaive Rush Panalty
-	if (data->defStatus3 & STATUS3_GLAIVERUSH)
-		damage *= 2;
-
 	//Weather Boost
 	if (WEATHER_HAS_EFFECT && !ItemEffectIgnoresSunAndRain(data->defItemEffect))
 	{
@@ -3088,9 +3084,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 					damage = (damage * 15) / 10;
 					break;
 				case TYPE_WATER:
-					if (gCurrentMove == MOVE_HYDROSTEAM)
-						damage = (damage * 15) / 10;
-					else
 					damage /= 2;
 					break;
 			}
@@ -3396,13 +3389,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
-		case MOVE_COLLISIONCOUSE:
-		case MOVE_ELECTRODRIFT:
-			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
-			&& data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
-				power *= 15 / 10;
-			break;
-
 		case MOVE_PAYBACK:
 			if (!(data->specialFlags & (FLAG_IGNORE_TARGET | FLAG_CHECKING_FROM_MENU))
 			&& !useMonAtk
@@ -3414,22 +3400,6 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_RETALIATE:
 			if (gNewBS->RetaliateCounters[SIDE(bankAtk)]) //Bank should be accurate for party too
 				power *= 2;
-			break;
-
-		case MOVE_LASTRESPECTS:
-		if (!(data->specialFlags & FLAG_IGNORE_TARGET))
-		{
-			int boost = 50;
-			for(int i = 0; i < gPlayerPartyCount; i++)
-				{
-					struct Pokemon mon = gPlayerParty[i];
-					if(mon.hp == 0)
-					{
-						boost++;
-					}
-				}
-				power = boost;
-		}
 			break;
 
 		case MOVE_ROUND:

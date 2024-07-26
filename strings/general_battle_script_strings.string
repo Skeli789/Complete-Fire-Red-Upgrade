@@ -93,9 +93,6 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 #org @SimpleBeamString
 [TARGET] acquired\n[TARGET_ABILITY]!
 
-#org @DoodleString
-[ATTACKER] acquired\n[TARGET_ABILITY]!
-
 #org @AbilitySuppressedString
 [TARGET]'s Ability\nwas suppressed!
 
