@@ -130,7 +130,7 @@ void CreateTMCaseSprite(void)
 		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
 		if (species != SPECIES_NONE && species != SPECIES_EGG)
 		{
-			s16 x = 1 + (32 / 2) + (counter % 3) * 32;
+			s16 x = 1 + (32/2) + (counter % 3) * 32;
 			s16 y = 29 + (32 / 2);
 			if (counter >= 3)
 				y = 58 + (32 / 2);
@@ -173,4 +173,5 @@ void ChangeMonIconPalsInTMCase(u16 itemId)
 			}
 		}
 	}
-}
+} 
+
