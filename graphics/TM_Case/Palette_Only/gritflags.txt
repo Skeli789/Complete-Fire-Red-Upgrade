@@ -1,0 +1,1 @@
+-gu32 -gzl -gB4 -g! -m! -pu32 -pzl -pn16
