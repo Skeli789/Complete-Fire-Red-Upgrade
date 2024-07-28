@@ -163,3 +163,4 @@ void TryRaiseHigherDefensesOverOffenses(void);
 void ModifyAttackStatChangeForVictoryDance(void);
 bool8 IsSpringtideStormSpDefDown(u8 bank);
 void ChooseMoveEffectForSpringtideStorm(void);
+void GlaiveRushTimer(void);

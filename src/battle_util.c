@@ -780,6 +780,10 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 		return TRUE;
 	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && gSpecialMoveFlags[move].gRaidBattleBannedMoves && check & MOVE_LIMITATION_ENCORE)
 		return TRUE;
+	else if (move == MOVE_GIGATONHAMMER && gNewBS->LastUsedMove == MOVE_GIGATONHAMMER)
+        return TRUE;
+	else if (move == MOVE_BLOODMOON && gNewBS->LastUsedMove == MOVE_BLOODMOON)
+        return TRUE;
 
 	return FALSE;
 }

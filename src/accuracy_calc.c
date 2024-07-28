@@ -196,6 +196,9 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		protectFlag = FALSE;
 	#endif
 
+	if (protectFlag && move == MOVE_HYPERDRILL)
+		protectFlag = FALSE;
+
 	if (ProtectedByMaxGuard(bankDef, move))
 	{
 		effect = 1;
@@ -362,6 +365,7 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	||   (gSpecialMoveFlags[move].gAlwaysHitWhenMinimizedMoves && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	||  ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||	 gBattleMoves[move].accuracy == 0)
+	||  (gStatuses3[bankDef] & STATUS3_GLAIVERUSH)
 	{
 		//JumpIfMoveFailed(7, move);
 		doneStatus = TRUE;

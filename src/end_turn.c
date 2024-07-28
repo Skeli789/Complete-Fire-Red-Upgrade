@@ -184,6 +184,9 @@ u8 TurnBasedEffects(void)
 					if(gNewBS->StompingTantrumTimers[i])
 						--gNewBS->StompingTantrumTimers[i];
 
+					if(gNewBS->GlaiveRushTimers[i])
+						--gNewBS->GlaiveRushTimers[i];
+
 					if (gNewBS->StakeoutCounters[i])
 						--gNewBS->StakeoutCounters[i];
 
