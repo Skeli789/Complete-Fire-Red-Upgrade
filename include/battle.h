@@ -413,6 +413,8 @@ struct ProtectStruct
     u32 flag_x20 : 1;           	// 0x20
     u32 obstruct : 1;           	// 0x40
     u32 obstructDamage : 1;         // 0x80
+	u32 SilkTrap : 1;           	
+    u32 SilkTrapDamage : 1;
     /* field_3 */
     u32 KingsShield : 1;
     u32 SpikyShield : 1;
@@ -800,6 +802,9 @@ struct NewBattleStruct
 	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
 	u8 powerShifted[MAX_BATTLERS_COUNT];
 	u16 tookAbilityFrom[MAX_BATTLERS_COUNT]; //Helps display the correct Ability when one has been passed around
+	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
+	u8 rageFistCounter[MAX_BATTLERS_COUNT];
+	u8 SaltcureTimers[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;

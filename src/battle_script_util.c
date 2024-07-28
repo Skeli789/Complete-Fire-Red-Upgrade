@@ -1570,6 +1570,18 @@ void BurnUpFunc(void)
 		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
 }
 
+void DoubleShockFunc(void)
+{
+	if (gBattleMons[gBankAttacker].type1 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
+
+	if (gBattleMons[gBankAttacker].type2 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
+
+	if (gBattleMons[gBankAttacker].type3 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+}
+
 void SeedRoomServiceLooper(void)
 {
 	for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
@@ -2414,6 +2426,12 @@ void ActivatePerishBody(void)
 void FailClangorousSoulIfLowHP(void)
 {
 	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 3)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+}
+
+void FailShedTailIfLowHP(void)
+{
+	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 2)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 }
 

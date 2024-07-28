@@ -1818,6 +1818,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		//Based on https://bulbapedia.bulbagarden.net/wiki/Revelation_Dance_(move)
+		case MOVE_RAGINGBULL:
 		case MOVE_REVELATIONDANCE: ;
 			u8 atkType1 = gBattleMons[bankAtk].type1;
 			u8 atkType2 = gBattleMons[bankAtk].type2;
@@ -1939,6 +1940,7 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 				moveType = TYPE_NORMAL;
 			break;
 
+		case MOVE_RAGINGBULL:
 		case MOVE_REVELATIONDANCE:
 			moveType = GetMonType(mon, 0);
 			break;
@@ -3396,7 +3398,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
-		case MOVE_COLLISIONCOUSE:
+		case MOVE_COLLISIONCOURSE:
 		case MOVE_ELECTRODRIFT:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)

@@ -2079,6 +2079,24 @@ u32 GetGMaxVolcalithDamage(u8 bank)
 	return damage;
 }
 
+u32 GetSaltCureDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (gBattleMons[bank].status2 & STATUS2_WRAPPED
+	&& !(gNewBS->brokeFreeMessage & gBitTable[bank]) //Trapping isn't about to end
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		if (IsOfType(bank, TYPE_WATER)
+		||  IsOfType(bank, TYPE_STEEL))
+			damage = MathMax(1, GetBaseMaxHP(bank) / 4);
+		else
+			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
+	}
+
+	return damage;
+}
+
 #define FAINTED_ACTIONS_MAX_CASE 11
 
 bool8 HandleFaintedMonActions(void)

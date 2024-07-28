@@ -19,6 +19,7 @@ move_menu_battle_scripts.s
 .global BattleScript_SelectingNotAllowedThroatChop
 .global BattleScript_SelectingNotAllowedHealBlock
 .global BattleScript_SelectingNotAllowedMinimize
+.global BattleScript_SelectingNotAllowedGigatonHammer
 
 BattleScript_MustSelectEncoredMove:
 	setword BATTLE_STRING_LOADER EncoreMoveMenuString
@@ -68,6 +69,11 @@ BattleScript_SelectingNotAllowedHealBlock:
 BattleScript_SelectingNotAllowedMinimize:
 	setword BATTLE_STRING_LOADER gText_NoMinimizeOnInsane
 	printselectionstring 0x184
+	endselectionscript
+
+BattleScript_SelectingNotAllowedGigatonHammer:
+    setword BATTLE_STRING_LOADER GigatonHammerNotAllowedString
+    printselectionstring 0x184
 	endselectionscript
 
 .align 2

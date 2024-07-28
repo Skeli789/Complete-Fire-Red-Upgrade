@@ -5615,3 +5615,21 @@ void atkEE_removelightscreenreflect(void) { //Brick Break
 	}
 	gBattlescriptCurrInstr++;
 }
+
+void setsubstituteonattacker(void)
+{
+    u32 hp;
+    hp = 1;
+    hp = gBattleMons[gBankSwitching].maxHP / 4;
+    if (gBattleMons[gBankSwitching].maxHP / 4 == 0)
+        hp = 1;
+
+    gBattleMoveDamage = hp; 
+    if (gBattleMoveDamage == 0)
+        gBattleMoveDamage = 1;
+
+    gBattleMons[gBankSwitching].status2 |= STATUS2_SUBSTITUTE;
+    gBattleMons[gBankSwitching].status2 &= ~STATUS2_WRAPPED;
+    gDisableStructs[gBankSwitching].substituteHP = gBattleMoveDamage;
+    gBattleSpritesDataPtr->bankData[gBankSwitching].behindSubstitute = 1;
+}

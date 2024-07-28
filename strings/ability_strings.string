@@ -126,3 +126,6 @@ But [TARGET] evaporated\nthe attack!
 
 #org @gText_ButAbilityEvaporatesRain
 But [SCRIPTING_BANK] evaporates\nrain!
+
+#org @GigatonHammerNotAllowedString
+[CURRENT_MOVE] can't be used twice\nin a row!\p
