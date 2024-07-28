@@ -886,6 +886,7 @@ void DoBattleFieldEffect(void)
 			SwapSideTimers(gNewBS->maxWildfireTimers);
 			SwapSideTimers(gNewBS->maxCannonadeTimers);
 			SwapSideTimers(gNewBS->maxVolcalithTimers);
+			SwapSideTimers(gNewBS->SaltcureTimers);
 			SwapVanillaSideTimers();
 			gBattleStringLoader = gText_CourtChange;
 			break;
@@ -1495,7 +1496,6 @@ void AbilityChangeBSFunc(void)
 					gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
 			}
 			break;
-	}
 	}
 
 	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
