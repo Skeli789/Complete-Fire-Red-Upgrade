@@ -145,6 +145,7 @@
 #define STATUS3_IMPRISONED       		0x2000
 #define STATUS3_GRUDGE                  0x4000
 #define STATUS3_CANT_SCORE_A_CRIT       0x8000
+#define STATUS3_GLAIVERUSH      		0x10000
 //#define STATUS3_MUDSPORT                0x10000
 //#define STATUS3_WATERSPORT              0x20000
 #define STATUS3_UNDERWATER              0x40000
