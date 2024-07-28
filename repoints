@@ -306,4 +306,10 @@ gUnknown_841F428 080f78dc
 gText_TextSpeedMid 083cc330
 gText_TextSpeedFast 083cc334
 gText_TextSpeedInstant 083cc338
-#endif
+#endif 
+
+#Repoints TM Case BG gfx resources 
+TMCaseBGTiles 08131B70
+TMCaseBGMap 08131B8C 
+TMCaseBGPal 08131BC8 
+TMCaseBGGirlPal 08131BD8
