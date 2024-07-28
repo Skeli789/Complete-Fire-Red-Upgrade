@@ -14999,6 +14999,1110 @@ const struct BattleMove gBattleMoves[] =
 		.split = SPLIT_SPECIAL,
 		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_BYPASS_PROTECT,
+	},
+	//Gen 9 Moves
+	[MOVE_AQUACUTTER] =
+    {	
+		.effect = EFFECT_HIGH_CRITICAL,
+		.power = 70,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 20,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 140,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_AQUASTEP] =
+    {	
+		.effect = EFFECT_SPEED_UP_1_HIT,
+		.power = 80,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 160,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_ARMORCANNON] =
+    {	
+		.effect = EFFECT_SUPERPOWER,
+		.power = 120,
+		.type = TYPE_FIRE,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 200,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_AXEKICK] =
+    {	
+		.effect = EFFECT_RECOIL_IF_MISS,
+		.power = 120,
+		.type = TYPE_FIGHTING,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 255,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_BITTERBLADE] =
+    {	
+		.effect = EFFECT_ABSORB,
+		.power = 90,
+		.type = TYPE_FIRE,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 160,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_BLAZINGTORQUE] =
+	{
+		.effect = EFFECT_BURN_HIT,
+		.power = 80,
+		.type = TYPE_FIRE,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_CHILLINGWATER] =
+    {	
+		.effect = EFFECT_ATTACK_DOWN_HIT,
+		.power = 50,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 20,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 100,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_CHILLYRECEPTION] =
+	{
+		.effect = EFFECT_TELEPORT,
+		.power = 0,
+		.type = TYPE_ICE,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = 0,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RECOVER_HP
+	},
+
+	[MOVE_COLLISIONCOURSE] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 100,
+		.type = TYPE_FIGHTING,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 250,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_COMBATTORQUE] =
+	{
+		.effect = EFFECT_PARALYZE_HIT,
+		.power = 100,
+		.type = TYPE_FIGHTING,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_COMEUPPANCE] =
+	{
+		.effect = EFFECT_COUNTER,
+		.power = 1,
+		.type = TYPE_DARK,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_DEPENDS,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_DOODLE] =
+	{
+		.effect = EFFECT_SKILL_SWAP,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = 0,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_SPDEF_UP_1
+	},
+
+	[MOVE_DOUBLESHOCK] =
+    {	
+		.effect = EFFECT_BURN_UP,
+		.power = 120,
+		.type = TYPE_ELECTRIC,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 200,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_ELECTRODRIFT] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 100,
+		.type = TYPE_ELECTRIC,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 250,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_FILLETAWAY] =
+    {	
+		.effect = EFFECT_DRAGON_DANCE,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.split = SPLIT_STATUS,
+		.z_move_power = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
+	},
+
+	[MOVE_FLOWERTRICK] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 70,
+		.type = TYPE_GRASS,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 160,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_GIGATONHAMMER] =
+    {	
+		.effect = EFFECT_LAST_RESORT,
+		.power = 160,
+		.type = TYPE_STEEL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 250,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_GLAIVERUSH] =
+    {	
+		.effect = EFFECT_GLAIVE_RUSH,
+		.power = 120,
+		.type = TYPE_DRAGON,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 250,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_HYDROSTEAM] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 80,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 130,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = Z_EFFECT_SPATK_UP_1
+	},
+
+	[MOVE_HYPERDRILL] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 100,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 180,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_ICESPINNER] =
+    {	
+		.effect = EFFECT_DAMAGE_SET_TERRAIN,
+		.power = 80,
+		.type = TYPE_ICE,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 180,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_JETPUNCH] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 60,
+		.type = TYPE_WATER,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 1,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 130,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_KOWTOWCLEAVE] =
+    {	
+		.effect = EFFECT_ALWAYS_HIT,
+		.power = 85,
+		.type = TYPE_DARK,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 180,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_LASTRESPECTS] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 50,
+		.type = TYPE_GHOST,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 200,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_LUMINACRASH] =
+    {	
+		.effect = EFFECT_SPECIAL_DEFENSE_DOWN_2_HIT,
+		.power = 80,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 120,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_MAGICALTORQUE] =
+	{
+		.effect = EFFECT_CONFUSE_HIT,
+		.power = 100,
+		.type = TYPE_FAIRY,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_MAKEITRAIN] =
+    {	
+		.effect = EFFECT_SUPERPOWER,
+		.power = 120,
+		.type = TYPE_STEEL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_OPPONENTS_FIELD,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 220,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_MORTALSPIN] =
+    {	
+		.effect = EFFECT_RAPID_SPIN,
+		.power = 30,
+		.type = TYPE_POISON,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 80,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_NOXIOUSTORQUE] =
+	{
+		.effect = EFFECT_POISON_HIT,
+		.power = 100,
+		.type = TYPE_POISON,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_ORDERUP] =
+	{
+		.effect = EFFECT_ATTACK_UP_HIT,
+		.power = 80,
+		.type = TYPE_DRAGON,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_POPULATIONBOMB] =
+    {	
+		.effect = EFFECT_MULTI_HIT,
+		.power = 20,
+		.type = TYPE_NORMAL,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT |FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 180,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_POUNCE] =
+    {	
+		.effect = EFFECT_SPEED_DOWN_HIT,
+		.power = 50,
+		.type = TYPE_BUG,
+		.accuracy = 100,
+		.pp = 20,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 100,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_PSYBLADE] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 80,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 130,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = Z_EFFECT_ATK_UP_1,
+	},
+
+	[MOVE_RAGEFIST] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 50,
+		.type = TYPE_GHOST,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 180,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_RAGINGBULL] =
+    {	
+		.effect = EFFECT_BRICK_BREAK,
+		.power = 90,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 200,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_REVIVALBLESSING] =
+	{
+		.effect = EFFECT_HEAL_BELL,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 0,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RECOVER_HP
+	},
+
+	[MOVE_RUINATION] =
+    {	
+		.effect = EFFECT_SUPER_FANG,
+		.power = 1,
+		.type = TYPE_DARK,
+		.accuracy = 90,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 160,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_SALTCURE] =
+    {	
+		.effect = EFFECT_SALTCURE,
+		.power = 40,
+		.type = TYPE_ROCK,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 80,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_SHEDTAIL] =
+    {	
+		.effect = EFFECT_SUBSTITUTE,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_SNATCH_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RESET_STATS
+	},
+
+	[MOVE_SILKTRAP] =
+    {	
+		.effect = EFFECT_PROTECT,
+		.power = 0,
+		.type = TYPE_BUG,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 4,
+		.flags = 0,
+		.split = SPLIT_STATUS,
+		.z_move_power = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
+	},
+
+	[MOVE_SNOWSCAPE] =
+	{
+		.effect = EFFECT_HAIL,
+		.power = 0,
+		.type = TYPE_ICE,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = 0,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_SPD_UP_1
+	},
+
+	[MOVE_SPICYEXTRACT] =
+    {	
+		.effect = EFFECT_DEFENSE_DOWN_2,
+		.power = 0,
+		.type = TYPE_GRASS,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_STATUS,
+		.z_move_power = 0,
+		.z_move_effect = Z_EFFECT_SPATK_UP_2,
+	},
+
+	[MOVE_SPINOUT] =
+    {	
+		.effect = EFFECT_SUPERPOWER,
+		.power = 100,
+		.type = TYPE_STEEL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 150,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_TERABLAST] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 80,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 130,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_TIDYUP] =
+    {	
+		.effect = EFFECT_RAPID_SPIN,
+		.power = 0,
+		.type = TYPE_NORMAL,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_ATK_UP_1,
+	},
+
+	[MOVE_TORCHSONG] =
+    {	
+		.effect = EFFECT_SPECIAL_ATTACK_UP_HIT,
+		.power = 80,
+		.type = TYPE_FIRE,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 120,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_TRAILBLAZE] =
+    {	
+		.effect = EFFECT_SPEED_UP_1_HIT,
+		.power = 50,
+		.type = TYPE_GRASS,
+		.accuracy = 100,
+		.pp = 20,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 90,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_TRIPLEDIVE] =
+    {	
+		.effect = EFFECT_TRIPLE_KICK,
+		.power = 30,
+		.type = TYPE_WATER,
+		.accuracy = 95,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_PHYSICAL,
+		.z_move_power = 120,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_TWINBEAM] =
+    {	
+		.effect = EFFECT_DOUBLE_HIT,
+		.power = 40,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 120,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_WICKEDTORQUE] =
+	{
+		.effect = EFFECT_RELIC_SONG,
+		.power = 100,
+		.type = TYPE_DARK,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 10,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_BLOODMOON] =
+    {	
+		.effect = EFFECT_HIT,
+		.power = 140,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 250,
+		.z_move_effect = 0,
+	},
+
+	[MOVE_UPPERHAND] =
+	{
+		.effect = EFFECT_SUCKER_PUNCH,
+		.power = 65,
+		.type = TYPE_FIGHTING,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 3,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 100,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_MATCHAGOTCHA] =
+	{
+		.effect = EFFECT_BURN_HIT,
+		.power = 80,
+		.type = TYPE_GRASS,
+		.accuracy = 90,
+		.pp = 15,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_SYRUPBOMB] =
+	{
+		.effect = EFFECT_SPEED_DOWN_HIT,
+		.power = 60,
+		.type = TYPE_GRASS,
+		.accuracy = 85,
+		.pp = 15,
+		.secondaryEffectChance = 100,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
+		.z_move_power = 120,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_IVYCUDGEL] =
+	{
+		.effect = EFFECT_HIGH_CRITICAL,
+		.power = 100,
+		.type = TYPE_GRASS,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 180,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_ELECTROSHOT] =
+	{
+		.effect = EFFECT_SKULL_BASH,
+		.power = 130,
+		.type = TYPE_ELECTRIC,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 190,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_TERASTARSTORM] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 120,
+		.type = TYPE_NORMAL,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 180,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_FICKLEBEAM] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 80,
+		.type = TYPE_DRAGON,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_BURNINGBULWARK] =
+	{
+		.effect = EFFECT_PROTECT,
+		.power = 0,
+		.type = TYPE_FIRE,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 4,
+		.flags = 0,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_SPDEF_UP_1
+	},
+
+	[MOVE_MIGHTYCLEAVE] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 95,
+		.type = TYPE_ROCK,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 3,
+		.flags = FLAG_MAKES_CONTACT | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 130,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_TACHYONCUTTER] =
+	{
+		.effect = EFFECT_DOUBLE_HIT,
+		.power = 50,
+		.type = TYPE_DRAGON,
+		.accuracy = 0,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 140,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_DRAGONCHEER] =
+	{
+		.effect = EFFECT_HELPING_HAND,
+		.power = 0,
+		.type = TYPE_DRAGON,
+		.accuracy = 0,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_USER,
+		.priority = 0,
+		.flags = 0,
+		.z_move_power = 0,
+		.split = SPLIT_STATUS,
+		.z_move_effect = Z_EFFECT_RESET_STATS
+	},
+
+	[MOVE_MALIGNANTCHAIN] =
+	{
+		.effect = EFFECT_POISON_HIT,
+		.power = 100,
+		.type = TYPE_POISON,
+		.accuracy = 100,
+		.pp = 20,
+		.secondaryEffectChance = 50,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_THUNDERCLAP] =
+	{
+		.effect = EFFECT_SUCKER_PUNCH,
+		.power = 70,
+		.type = TYPE_ELECTRIC,
+		.accuracy = 100,
+		.pp = 5,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 1,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_HARDPRESS] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 1,
+		.type = TYPE_STEEL,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 30,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_ALLURINGVOICE] =
+	{
+		.effect = EFFECT_CONFUSE_HIT,
+		.power = 80,
+		.type = TYPE_FAIRY,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_FOES_AND_ALLY,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_TEMPERFLARE] =
+	{
+		.effect = EFFECT_HIT,
+		.power = 75,
+		.type = TYPE_FIRE,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 160,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_SUPERCELLSLAM] =
+	{
+		.effect = EFFECT_RECOIL_IF_MISS,
+		.power = 100,
+		.type = TYPE_ELECTRIC,
+		.accuracy = 100,
+		.pp = 15,
+		.secondaryEffectChance = 0,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 165,
+		.split = SPLIT_PHYSICAL,
+		.z_move_effect = 0
+	},
+
+	[MOVE_PSYCHICNOISE] =
+	{
+		.effect = EFFECT_ATTACK_BLOCKERS,
+		.power = 90,
+		.type = TYPE_PSYCHIC,
+		.accuracy = 100,
+		.pp = 10,
+		.secondaryEffectChance = 10,
+		.target = MOVE_TARGET_SELECTED,
+		.priority = 0,
+		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+		.z_move_power = 175,
+		.split = SPLIT_SPECIAL,
+		.z_move_effect = 0
 	}
 #endif
 };
@@ -15531,5 +16635,64 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_WILDBOLTSTORM] = 130,
 	[MOVE_SANDSEARSTORM] = 130,
 	[MOVE_SPRINGTIDESTORM] = 130,
+//Gen 9 Moves
+	[MOVE_AQUACUTTER] = 90,
+    [MOVE_AQUASTEP] = 100,
+    [MOVE_ARMORCANNON] = 160,
+    [MOVE_AXEKICK] = 160,
+    [MOVE_BITTERBLADE] = 110,
+    [MOVE_BLAZINGTORQUE] = 120,
+    [MOVE_CHILLINGWATER] = 100,
+    [MOVE_COLLISIONCOURSE] = 140,
+    [MOVE_COMBATTORQUE] = 140,
+    [MOVE_COMEUPPANCE] = 90,
+    [MOVE_DOUBLESHOCK] = 160,
+    [MOVE_ELECTRODRIFT] = 140,
+    [MOVE_FLOWERTRICK] = 120,
+    [MOVE_GIGATONHAMMER] = 180,
+    [MOVE_GLAIVERUSH] = 160,
+    [MOVE_HYDROSTEAM] = 100,
+    [MOVE_HYPERDRILL] = 120,
+    [MOVE_ICESPINNER] = 120,
+    [MOVE_JETPUNCH] = 90,
+    [MOVE_KOWTOWCLEAVE] = 120,
+    [MOVE_LASTRESPECTS] = 90,
+    [MOVE_LUMINACRASH] = 100,
+    [MOVE_MAGICALTORQUE] = 120,
+    [MOVE_MAKEITRAIN] = 160,
+    [MOVE_MORTALSPIN] = 80,
+    [MOVE_NOXIOUSTORQUE] = 120,
+    [MOVE_ORDERUP] = 120,
+    [MOVE_POPULATIONBOMB] = 100,
+    [MOVE_POUNCE] = 110,
+    [MOVE_PSYBLADE] = 120,
+    [MOVE_RAGEFIST] = 90,
+    [MOVE_RAGINGBULL] = 120,
+    [MOVE_RUINATION] = 100,
+    [MOVE_SALTCURE] = 90,
+    [MOVE_SPINOUT] = 140,
+    [MOVE_TERABLAST] = 120,
+    [MOVE_TORCHSONG] = 110,
+    [MOVE_TRAILBLAZE] = 90,
+    [MOVE_TRIPLEDIVE] = 120,
+    [MOVE_TWINBEAM] = 120,
+    [MOVE_WICKEDTORQUE] = 120,
+    [MOVE_BLOODMOON] = 180,
+    [MOVE_UPPERHAND] = 100,
+    [MOVE_MATCHAGOTCHA] = 120,
+    [MOVE_SYRUPBOMB] = 100,
+    [MOVE_IVYCUDGEL] = 140,
+    [MOVE_ELECTROSHOT] = 160,
+    [MOVE_TERASTARSTORM] = 120,
+    [MOVE_FICKLEBEAM] = 120,
+    [MOVE_MIGHTYCLEAVE] = 120,
+    [MOVE_TACHYONCUTTER] = 100,
+    [MOVE_MALIGNANTCHAIN] = 120,
+    [MOVE_THUNDERCLAP] = 110,
+    [MOVE_HARDPRESS] = 120,
+    [MOVE_ALLURINGVOICE] = 120,
+    [MOVE_TEMPERFLARE] = 120,
+    [MOVE_SUPERCELLSLAM] = 140,
+    [MOVE_PSYCHICNOISE] = 120,
 };
 #endif

@@ -1478,7 +1478,7 @@ A strong kick that\ncauses confision on\nfoe. If it misses,\nthe user is hurt.
 #org @DESC_BITTERBLADE
 Focuses its bitter\nfeelings into a \nblade. The half the\ndamage restores HP.
 
-#org @DESC_BLAZINGTORGUE
+#org @DESC_BLAZINGTORQUE
 Inflicts damage and\nhas a 30[5B] chance of\nburning the target.
 
 #org @DESC_CHILLINGWATER
@@ -1490,7 +1490,7 @@ Switches place with\na party Pokémon in\nwaiting. This\nsummons a snowstorm.
 #org @DESC_COLLISIONCOURSE
 Transforms and\ncrashes to ground,\ncausing a massive\nancient explosion.
 
-#org @DESC_COMBATTORGUE
+#org @DESC_COMBATTORQUE
 Inflicts damage and\nhas a 30[5B] chance of\nparalyze the target.
 
 #org @DESC_COMEUPPANCE
@@ -1502,10 +1502,10 @@ Changes Abilities\nof the user and its\nally to that of\nthe target.
 #org @DESC_DOUBLESHOCK
 Discharges all the\nelectricity from\nits body to perform\na strongest attack.
 
-#org @DESC_ELECTROSHIFT
+#org @DESC_ELECTRODRIFT
 Races forward at\nultrafast speeds,\npiercing foe with\nunborn electricity.
 
-#org @DESC_FILLETWAY
+#org @DESC_FILLETAWAY
 The user sharply\nboosts Atk, Sp Atk,\nand Speed stats by\nusing its own HP.
 
 #org @DESC_FLOWERTRICK
@@ -1514,7 +1514,7 @@ A rigged bouquet of\nflowers. Never miss\nand always lands a\ncritical hit.
 #org @DESC_GIGATONHAMMER
 User swings its\nwhole body around\nto attack with its\nhuge hammer.
 
-#org @DESC_GLAVIERUSH
+#org @DESC_GLAIVERUSH
 The user throws its\nentire body into a\nreckless charge.\nFoes cant miss atk.
 
 #org @DESC_HYDROSTEAM
@@ -1538,7 +1538,7 @@ The more defeated\nallies there are in\nthe user's party,\ngreater move power.
 #org @DESC_LUMINACRASH
 Unleashes a peculiar\nlight. Also harshly\nlowers target's\nSp. Def stat.
 
-#org @DESC_MAGICALTORGUE
+#org @DESC_MAGICALTORQUE
 Inflicts damage and\nhas a 30[5B] chance of\nconfuses the target.
 
 #org @DESC_MAKEITRAIN
@@ -1547,7 +1547,7 @@ Attacks by throwing\ncoins. Lowers foe\nSp. Atk and earn\nmoney after battle.
 #org @DESC_MORTALSPIN
 Great spin attack\nthat can eliminate\nharzards. May also\npoisons foe Pok\emon.
 
-#org @DESC_NOXIOUSTORGUE
+#org @DESC_NOXIOUSTORQUE
 Inflicts damage and\nhas a 30[5B] chance of\npoison the target.
 
 #org @DESC_ORDERUP
@@ -1571,7 +1571,7 @@ The user performs a\ntackle like a raging\nbull. Breaks Light\nScream and Reflec
 #org @DESC_REVIVALBLESSING
 The user bestows a\nloving blessing and\nrevives a party\nPokémon.
 
-#org @DESC_RUINNATION
+#org @DESC_RUINATION
 The user summons a\nruinous disaster.\nThis cuts the\ntarget's HP in half.
 
 #org @DESC_SALTCURE
@@ -1610,7 +1610,7 @@ Performs a perfect\ntimed triple dive.\nHit foe three times\nin a row.
 #org @DESC_TWINBEAM
 Shoots mystical\nbeams from its eyes.\nThe target is hit\ntwice in a row.
 
-#org @DESC_WICKEDTORGUE
+#org @DESC_WICKEDTORQUE
 Inflicts damage and\nhas a 10[5B] chance of\nput target to sleep.
 
 #org @DESC_BLOODMOON
