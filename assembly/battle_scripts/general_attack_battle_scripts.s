@@ -5987,9 +5987,14 @@ SkyDropDropTurn2:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_247_Blank
-BS_247_Blank:
-	goto BS_STANDARD_HIT
+.global BS_247_Glaive_Rush
+BS_247_Glaive_Rush:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	callasm GlaiveRushTimer
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
