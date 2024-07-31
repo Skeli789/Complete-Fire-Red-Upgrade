@@ -25,4 +25,6 @@ This contains a list of items/features we want to add to this CFRU.:
 - PokeVial, PokePC
 - Wild pokemon attacks in overworld before the wild battle
 - Maps previews/Pre warp mugshots
+- Craft menu/craft system
+- Repeat item usage (Use 100s of potions without leaving party menu)
 - ..........................................................................................................
