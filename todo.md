@@ -3,7 +3,7 @@ This contains a list of items/features we want to add to this CFRU.:
 - Option menu BW+ a second page
 - Main menu/ Continue Screen BW
 - Costume box
-- ORAS style key item registeration wheel
+- ORAS style key item registeration wheel (or Register items in a list menu given here - https://www.pokecommunity.com/threads/simple-modifications-directory.416647/page-15#post-10380770)
 - Configurable INtro and titlescreen
 - Show pokemon team on Trainer card back
 - Overworld Expansion
@@ -27,4 +27,5 @@ This contains a list of items/features we want to add to this CFRU.:
 - Maps previews/Pre warp mugshots
 - Craft menu/craft system
 - Repeat item usage (Use 100s of potions without leaving party menu)
+- Nuzlocke and other modes
 - ..........................................................................................................
