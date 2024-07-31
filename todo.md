@@ -24,4 +24,5 @@ This contains a list of items/features we want to add to this CFRU.:
 - Pokemon storage expansion to 35 boxes
 - PokeVial, PokePC
 - Wild pokemon attacks in overworld before the wild battle
+- Maps previews/Pre warp mugshots
 - ..........................................................................................................
