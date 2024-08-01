@@ -15,6 +15,7 @@ cmd49_battle_scripts.s
 .global BattleScript_SpikyShield
 .global BattleScript_BanefulBunker
 .global BattleScript_ObstructStatDecrement
+.global BattleScript_SilkTrapStatDecrement
 .global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
@@ -99,6 +100,12 @@ BattleScript_BanefulBunker:
 
 BattleScript_ObstructStatDecrement:
 	setstatchanger STAT_DEF | DECREASE_2
+	goto BattleScript_KingsShieldPostDecrementSet
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SilkTrapStatDecrement:
+	setstatchanger STAT_SPD | DECREASE_1
 	goto BattleScript_KingsShieldPostDecrementSet
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

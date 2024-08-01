@@ -448,7 +448,7 @@ void atk09_attackanimation(void)
 	if (((gHitMarker & HITMARKER_NO_ANIMATIONS)
 	 && (move != MOVE_TRANSFORM && move != MOVE_SUBSTITUTE
 	  && move != MOVE_ELECTRICTERRAIN && move != MOVE_PSYCHICTERRAIN
-	  && move != MOVE_MISTYTERRAIN && move != MOVE_GRASSYTERRAIN)) //Terrain animations always need to play and reload BG
+	  && move != MOVE_MISTYTERRAIN && move != MOVE_GRASSYTERRAIN && move != MOVE_SHEDTAIL)) //Terrain animations always need to play and reload BG
 	|| gNewBS->tempIgnoreAnimations)
 	{
 		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
@@ -2336,6 +2336,7 @@ void atk77_setprotect(void)
 		case MOVE_WIDEGUARD:
 		case MOVE_OBSTRUCT:
 		case MOVE_MAX_GUARD:
+		case MOVE_SILKTRAP:
 			break;
 		default:
 			gDisableStructs[gBankAttacker].protectUses = 0;
@@ -2406,6 +2407,11 @@ void atk77_setprotect(void)
 			case MOVE_ENDURE:
 				gProtectStructs[gBankAttacker].endured = 1;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+				break;
+			
+			case MOVE_SILKTRAP:
+				gProtectStructs[gBankAttacker].SilkTrap = 1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				break;
 
 			default:

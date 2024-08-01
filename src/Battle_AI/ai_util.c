@@ -2804,6 +2804,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 				case MOVE_KINGSSHIELD:
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
+				case MOVE_SILKTRAP:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
@@ -3182,6 +3183,10 @@ bool8 BadIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkP
 
 	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
 	|| HasUsedMoveWithEffect(bankDef, EFFECT_SPEED_DOWN_2))
+		return TRUE;
+
+	if (checkingOriginalTarget
+	&& MoveInMoveset(MOVE_SILKTRAP, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk, bankDef))
 		return TRUE;
 
 	if (amount <= 1)
@@ -3819,6 +3824,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 					case MOVE_KINGSSHIELD:
 					case MOVE_BANEFULBUNKER:
 					case MOVE_OBSTRUCT:
+					case MOVE_SILKTRAP:
 						if (checkType & CHECK_REGULAR_PROTECTION)
 							return TRUE;
 						break;
@@ -3869,6 +3875,7 @@ bool8 HasContactProtectionMoveInMoveset(u8 bank)
 				case MOVE_KINGSSHIELD:
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
+				case MOVE_SILKTRAP:
 					return TRUE;
 			}
 		}
@@ -5328,7 +5335,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				defAbility = ABILITY_NONE;
 
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
-			|| (defMovePrediction == MOVE_SUBSTITUTE
+			|| (defMovePrediction == (MOVE_SUBSTITUTE || MOVE_SHEDTAIL)
 			 && !MoveWouldHitFirst(zMove, bankAtk, bankDef)
 			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
@@ -5336,7 +5343,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			if (IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(zMove, bankAtk, bankDef)))
 				return FALSE; //Don't waste a Z-Move breaking a disguise
 
-			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT
+			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT || defMovePrediction == MOVE_SILKTRAP
 			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))
 				return FALSE; //Don't waste a Z-Move on a Protect
 

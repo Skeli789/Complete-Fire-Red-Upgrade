@@ -98,6 +98,7 @@ gBattleAnims_General:
 .word ANIM_AI_ITEM_HEAL
 .word ANIM_HOOPA_RING_SPAWN
 .word ANIM_SPLINTER_DAMAGE
+.word ANIM_SUBSTITUTE2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1162,6 +1163,12 @@ SPLINTERS_IN:
 .align 2
 SPLINTER: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable SpriteCB_SplinterIn
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_SUBSTITUTE2:
+	goto 0x81d3433		@MOVE_SUBSTITUTE
+	endanimation
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 .global ANIM_FROSTBITE

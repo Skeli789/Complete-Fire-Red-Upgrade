@@ -1852,6 +1852,19 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			#endif
 			break;
 		
+		case MOVE_IVYCUDGEL:
+			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (SPECIES(bankAtk) == SPECIES_OGERPON_CORNERSTONE_MASK)
+				moveType = TYPE_ROCK;
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_WELLSPRING_MASK)
+				moveType = TYPE_WATER;
+			else if (SPECIES(bankAtk) == SPECIES_OGERPON_HEARTHFLAME_MASK)
+				moveType = TYPE_FIRE;
+			else
+				moveType = TYPE_GRASS;
+			#endif
+			break;
+		
 		case MOVE_TERRAINPULSE:
 			if (IsAffectedByElectricTerrain(bankAtk))
 			{
@@ -1952,6 +1965,19 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 			else
 			#endif
 				moveType = TYPE_ELECTRIC;
+			break;
+		
+		case MOVE_IVYCUDGEL:
+			#if (defined SPECIES_OGERPON && SPECIES_OGERPON_WELLSPRING_MASK && SPECIES_OGERPON_HEARTHFLAME_MASK && SPECIES_OGERPON_CORNERSTONE_MASK)
+			if (mon->species == SPECIES_OGERPON_CORNERSTONE_MASK)
+				moveType = TYPE_ROCK;
+			else if (mon->species == SPECIES_OGERPON_WELLSPRING_MASK)
+				moveType = TYPE_WATER;
+			else if (mon->species == SPECIES_OGERPON_HEARTHFLAME_MASK)
+				moveType = TYPE_FIRE;
+			else
+				moveType = TYPE_GRASS;
+			#endif
 			break;
 
 		case MOVE_TERRAINPULSE:

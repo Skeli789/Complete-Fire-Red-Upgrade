@@ -263,6 +263,19 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 			}
 
+			if (gProtectStructs[gBankTarget].SilkTrapDamage)
+			{
+				gProtectStructs[gBankTarget].SilkTrapDamage = FALSE;
+
+				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_SPD))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SilkTrapStatDecrement;
+					effect = TRUE;
+					break;
+				}
+			}
+
 			gBattleScripting.atk49_state++;
 			break;
 

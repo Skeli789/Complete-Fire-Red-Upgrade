@@ -259,6 +259,16 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
+	else if (gProtectStructs[bankDef].SilkTrap && protectFlag)
+	{
+		effect = 1;
+		gNewBS->missStringId[bankDef] = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankDef].SilkTrapDamage = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
 	else if (gSideStatuses[defSide] & SIDE_STATUS_CRAFTY_SHIELD && !(target & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD)) && split == SPLIT_STATUS)
 	{
 		effect = 1;
