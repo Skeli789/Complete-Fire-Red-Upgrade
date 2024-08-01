@@ -1,5 +1,6 @@
 This contains a list of items/features we want to add to this CFRU.:
 - Following pokemon
+- New Mini games and Unbound's mining mini game
 - Option menu BW+ a second page
 - Main menu/ Continue Screen BW
 - Costume box
