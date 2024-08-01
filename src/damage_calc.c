@@ -3460,6 +3460,16 @@ static u16 GetBasePower(struct DamageCalc* data)
 		}
 			break;
 
+		case MOVE_PSYBLADE:
+			if (gTerrainType == ELECTRIC_TERRAIN)
+				power = (power * 15) / 10; //Boosts 1.5x in Electric Terrain
+			break;
+
+		case MOVE_RAGEFIST:
+			if (gNewBS->rageFistCounter[SIDE(bankAtk)])
+				power = 50 * (gNewBS->rageFistCounter[SIDE(bankAtk)]);
+			break;
+
 		case MOVE_ROUND:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
 			&& !useMonAtk

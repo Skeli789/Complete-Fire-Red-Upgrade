@@ -773,6 +773,7 @@ u8 TurnBasedEffects(void)
 					gBattleMons[gActiveBattler].status2 &= ~(STATUS2_WRAPPED);
 					gNewBS->brokeFreeMessage &= ~(gBitTable[gActiveBattler]);
 					gNewBS->sandblastCentiferno[gActiveBattler] = 0;
+					gNewBS->SaltcureTimers[gActiveBattler] = 0;
 
 					gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 					gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
@@ -1929,7 +1930,9 @@ u32 GetTrapDamage(u8 bank)
 	&& !(gNewBS->brokeFreeMessage & gBitTable[bank]) //Trapping isn't about to end
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
 	{
-		if ((gNewBS->sandblastCentiferno[gActiveBattler] & 2) //Trapped by this move and user held Binding Band
+		if (gNewBS->SaltcureTimers[gActiveBattler] && (IsOfType(bank, TYPE_WATER) || IsOfType(bank, TYPE_STEEL)))
+			damage = MathMax(1, GetBaseMaxHP(bank) / 4);
+		else if ((gNewBS->sandblastCentiferno[gActiveBattler] & 2) //Trapped by this move and user held Binding Band
 		|| ITEM_EFFECT(gBattleStruct->wrappedBy[bank]) == ITEM_EFFECT_BINDING_BAND)
 			damage = MathMax(1, GetBaseMaxHP(bank) / 6);
 		else

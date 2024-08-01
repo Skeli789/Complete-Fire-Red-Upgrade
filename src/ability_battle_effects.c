@@ -1788,6 +1788,24 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITYEFFECT_CONTACT: //After being hit by a move. Not necessarilly contact.
 			gBattleScripting.bank = bank;
 
+			if((SPECIES(bank) == SPECIES_PRIMEAPE || SPECIES(bank) == SPECIES_ANNIHILAPE) &&
+			MoveInMoveset(MOVE_RAGEFIST, bank))
+			{
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gBankAttacker != bank
+				&& (SPLIT(move) == SPLIT_PHYSICAL || SPLIT_SPECIAL)
+				&& gNewBS->rageFistCounter[bank] <= 6)
+				{
+					if(gNewBS->rageFistCounter[bank] == 0)
+						gNewBS->rageFistCounter[bank] = 1;
+					gNewBS->rageFistCounter[bank]++;
+					effect++;
+				}
+				break;
+			}
+
 			switch (gLastUsedAbility)
 			{
 			case ABILITY_COLORCHANGE:

@@ -2619,6 +2619,11 @@ bool8 BankSideHasGMaxVolcalith(u8 bank)
 	return gNewBS->maxVolcalithTimers[SIDE(bank)] > 0;
 }
 
+bool8 BankSideHasSaltcure(u8 bank)
+{
+	return gNewBS->SaltcureTimers[SIDE(bank)] > 0;
+}
+
 bool8 IsConfused(u8 bank)
 {
 	return (gBattleMons[bank].status2 & STATUS2_CONFUSION) != 0

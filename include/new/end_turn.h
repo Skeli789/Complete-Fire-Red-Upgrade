@@ -28,6 +28,7 @@ u32 GetGMaxVineLashDamage(u8 bank);
 u32 GetGMaxWildfireDamage(u8 bank);
 u32 GetGMaxCannonadeDamage(u8 bank);
 u32 GetGMaxVolcalithDamage(u8 bank);
+u32 GetSaltCureDamage(u8 bank);
 
 //Functions Hooked In
 u8 TurnBasedEffects(void);

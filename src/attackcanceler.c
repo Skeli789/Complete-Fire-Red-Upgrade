@@ -968,6 +968,28 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				{
 					gMultiHitCounter = 3;
 				}
+				#endif
+				#ifdef SPECIES_MAUSHOLD
+				else if (gCurrentMove == MOVE_POPULATIONBOMB
+				&& SPECIES(gBankAttacker) == SPECIES_MAUSHOLD)
+				{
+					gMultiHitCounter = Random() % 3; //Split into groups of 3
+					switch (gMultiHitCounter)
+					{
+						case 0: //33 %
+							gMultiHitCounter = 4;
+							break;
+						case 1: //33 %
+							gMultiHitCounter = 6;
+							break;
+						case 2: //33 %
+							if ((Random() & 1) == 0) //16.7 %
+								gMultiHitCounter = 8;
+							else //16.7 %
+								gMultiHitCounter = 10;
+							break;
+					}
+				}
 				else
 				#endif
 				{

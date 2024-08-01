@@ -190,6 +190,7 @@ bool8 BankSideHasGMaxVineLash(u8 bank);
 bool8 BankSideHasGMaxWildfire(u8 bank);
 bool8 BankSideHasGMaxCannonade(u8 bank);
 bool8 BankSideHasGMaxVolcalith(u8 bank);
+bool8 BankSideHasSaltcure(u8 bank);
 bool8 IsConfused(u8 bank);
 bool8 IsTaunted(u8 bank);
 bool8 IsTormented(u8 bank);

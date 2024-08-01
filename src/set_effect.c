@@ -462,6 +462,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
 						case MOVE_THUNDERCAGE:
 							gBattleStringLoader = gText_TargetWasTrappedByAttacker;
 							break;
+						case MOVE_SALTCURE:
+							gBattleStringLoader = gText_TargetWasTrappedByAttacker;
+							gNewBS->SaltcureTimers[gEffectBank] = 1;
+							break;
 						case MOVE_G_MAX_CENTIFERNO_P:
 						case MOVE_G_MAX_CENTIFERNO_S:
 						case MOVE_G_MAX_SANDBLAST_P:

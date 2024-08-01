@@ -4542,6 +4542,7 @@ void atkBE_rapidspinfree(void)
 			gBattleMons[bankAtk].status2 &= ~(STATUS2_WRAPPED);
 			gNewBS->brokeFreeMessage &= ~(gBitTable[bankAtk]);
 			gNewBS->sandblastCentiferno[bankAtk] = 0;
+			gNewBS->SaltcureTimers[bankAtk] = 0;
 			gBankTarget = gBattleStruct->wrappedBy[bankAtk];
 
 			PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleStruct->wrappedMove[bankAtk]);

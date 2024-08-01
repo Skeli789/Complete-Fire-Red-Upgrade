@@ -1378,6 +1378,7 @@ SKIP_CHECK_TARGET:
 			||  GetNightmareDamage(bankDef) > 0
 			||  GetCurseDamage(bankDef) > 0
 			||  GetTrapDamage(bankDef) > 0
+			||	GetSaltCureDamage(bankDef) > 0
 			||  GetPoisonDamage(bankDef, TRUE) >= gBattleMons[bankDef].maxHP / 4) //Or is taking Bad secondary damage.
 			{
 				DECREASE_VIABILITY(10);
