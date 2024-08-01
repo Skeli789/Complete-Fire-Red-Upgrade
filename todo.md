@@ -29,4 +29,5 @@ This contains a list of items/features we want to add to this CFRU.:
 - Craft menu/craft system
 - Repeat item usage https://github.com/pret/pokeemerald/wiki/Repeated-Field-Medicine-Use
 - Nuzlocke and other modes
+- Namebox/mini textbox https://github.com/NotToDisturb/pokeemerald/tree/namebox
 - ..........................................................................................................
