@@ -30,4 +30,5 @@ This contains a list of items/features we want to add to this CFRU.:
 - Repeat item usage https://github.com/pret/pokeemerald/wiki/Repeated-Field-Medicine-Use
 - Nuzlocke and other modes
 - Namebox/mini textbox https://github.com/NotToDisturb/pokeemerald/tree/namebox
+- Terracrystlization! https://github.com/rh-hideout/pokeemerald-expansion/commit/84a9d4ffcfb5ac78803830dc7d25805f433fc415
 - ..........................................................................................................
