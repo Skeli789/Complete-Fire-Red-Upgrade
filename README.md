@@ -26,7 +26,7 @@ grilokapu
 - Timebox in menu
 - Skipped Gengar and nidoran cutscene
 - Ev-Iv screen (BW) , can be called by callasm
-- Battle backgrounds with CFRU (grass one added right now but adding more soon)
+- Battle backgrounds with CFRU (added all ,  you'll need to configure them in battle_terrains.c and overworld.c to make them appear properly)
 - Switch Pokémon in Party Menu Screen pressing Select
 - 
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
