@@ -1487,11 +1487,11 @@ CreatePartyMonSprites = 0x811F634 | 1;
 AnimatePartySlot = 0x811F818 | 1;
 Task_ClosePartyMenu = 0x811FA78 | 1;
 GetCursorSelectionMonId = 0x811FB0C | 1;
-Task_HandleChooseMonInput = 0x811FB28 | 1;
+/* Task_HandleChooseMonInput = 0x811FB28 | 1;*/
 GetCurrentPartySlotPtr = 0x811FBA4 | 1;
 HandleChooseMonSelection = 0x811FBC4 | 1;
 HandleChooseMonCancel = 0x811FD88 | 1;
-PartyMenuButtonHandler = 0x811FEFC | 1;
+/* PartyMenuButtonHandler = 0x811FEFC | 1;*/
 GetMedicineItemEffectMessage = 0x8125058 | 1;
 GetNewSlotDoubleLayout = 0x812029C | 1;
 DisplayPartyMenuMessage = 0x81202F8 | 1;
@@ -2137,7 +2137,6 @@ gText_TMCase = 0x84166d3;
 /* Select button to switch pkmn*/
 
 MoveCursorToConfirm = 0x08124258|1;
-PartyMenuButtonHandler = 0x0811fefc|1;
 GetCurrentPartySlotPtr = 0x0811fba4|1;
 sub_80BF748 = 0x080bf748|1;
 HandleChooseMonSelection = 0x0811fbc4|1;

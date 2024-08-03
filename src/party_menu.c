@@ -141,9 +141,9 @@ static void CursorCb_MoveItem(u8 taskId);
 
 static void CursorCb_NicknameCallback(u8 taskId);
 static void CursorCb_Nickname(u8 taskId);
-extern  s8 *GetCurrentPartySlotPtr(void); 
-extern u16 PartyMenuButtonHandler(s8 *ptr); 
-static void Task_HandleChooseMonInput(u8 taskId);
+static s8 *GetCurrentPartySlotPtr(void); 
+u16 PartyMenuButtonHandler(s8 *ptr); 
+void Task_HandleChooseMonInput(u8 taskId);
 static u8 uniTaskid; //added 
 
 //*highlightedMon = 0 is Player's Pokemon out
@@ -2788,7 +2788,7 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
 } 
 
 //Functions related to select button for switching mons
-static void Task_HandleChooseMonInput(u8 taskId) 
+void Task_HandleChooseMonInput(u8 taskId) 
  { 
      if (!gPaletteFade->active && sub_80BF748() != TRUE) 
      { 
@@ -2815,6 +2815,74 @@ static void Task_HandleChooseMonInput(u8 taskId)
          } 
      } 
  }  
+ 
+u16 PartyMenuButtonHandler(s8 *slotPtr) 
+ { 
+     s8 movementDir; 
+     u8 taskId; 
+  
+     switch (gMain.newAndRepeatedKeys) 
+     { 
+     case DPAD_UP: 
+         movementDir = MENU_DIR_UP; 
+         break; 
+     case DPAD_DOWN: 
+         movementDir = MENU_DIR_DOWN; 
+         break; 
+     case DPAD_LEFT: 
+         movementDir = MENU_DIR_LEFT; 
+         break; 
+     case DPAD_RIGHT: 
+         movementDir = MENU_DIR_RIGHT; 
+         break; 
+     default: 
+         switch (GetLRKeysPressedAndHeld()) 
+         { 
+         case MENU_L_PRESSED: 
+             movementDir =MENU_DIR_UP; 
+             break; 
+         case MENU_R_PRESSED: 
+             movementDir = MENU_DIR_DOWN; 
+             break; 
+         default: 
+             movementDir = 0; 
+             break; 
+         } 
+         break; 
+     } 
+     if (JOY_NEW(START_BUTTON)) 
+         return 8; 
+     if (JOY_NEW(SELECT_BUTTON) && CalculatePlayerPartyCount() > 1) 
+     { 
+         if(gPartyMenu.menuType != PARTY_MENU_TYPE_FIELD) 
+             return 8; 
+         if(*slotPtr == PARTY_SIZE + 1) 
+             return 8; // do nothing if select is pressed on Cancel 
+         if(gPartyMenu.action != PARTY_ACTION_SWITCH) 
+         { 
+             taskId = CreateTask(CursorCB_Switch, 1); 
+             return 9; 
+         } 
+         return 1; //select acts as A button when in switch mode 
+     } 
+     if (movementDir) 
+     { 
+         UpdateCurrentPartySelection(slotPtr, movementDir); 
+         return 0; 
+     } 
+     // Pressed Cancel 
+     if (JOY_NEW(A_BUTTON) && *slotPtr == PARTY_SIZE + 1) 
+         return 2; 
+     return JOY_NEW(A_BUTTON | B_BUTTON); 
+ }
+ 
+static s8 *GetCurrentPartySlotPtr(void)
+{
+    if (gPartyMenu.action == PARTY_ACTION_SWITCH || gPartyMenu.action == PARTY_ACTION_SOFTBOILED)
+        return &gPartyMenu.slotId2;
+    else
+        return &gPartyMenu.slotId;
+}
 
 #ifdef UNBOUND
 void FieldUseFunc_VsSeeker(u8 taskId)
