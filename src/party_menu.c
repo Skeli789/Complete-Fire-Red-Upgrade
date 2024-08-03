@@ -141,8 +141,8 @@ static void CursorCb_MoveItem(u8 taskId);
 
 static void CursorCb_NicknameCallback(u8 taskId);
 static void CursorCb_Nickname(u8 taskId);
-static s8 *GetCurrentPartySlotPtr(void); 
-static u16 PartyMenuButtonHandler(s8 *ptr); 
+extern  s8 *GetCurrentPartySlotPtr(void); 
+extern u16 PartyMenuButtonHandler(s8 *ptr); 
 static void Task_HandleChooseMonInput(u8 taskId);
 static u8 uniTaskid; //added 
 
