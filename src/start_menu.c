@@ -345,7 +345,9 @@ bool8 StartCB_HandleInput(void)
 		PlaySE(SE_SELECT);
 		if (!StartMenuPokedexSanityCheck())
 			return FALSE;
-		sStartMenuCallback = sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void;
+		sStartMenuCallback = sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void; 
+		if (sStartMenuCursorPos==STARTMENU_EXIT)
+		    RemoveTimeBox();
 		StartMenu_FadeScreenIfLeavingOverworld();
 		return FALSE;
 	}
