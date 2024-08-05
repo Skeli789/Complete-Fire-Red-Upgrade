@@ -205,7 +205,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 /*===== Pre-existing Offsets =====*/
 //#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table
-#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated. DON'T TOUCH IF YOU DON'T KNOW EXACTLY WHAT THIS IS FOR!
+//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated. DON'T TOUCH IF YOU DON'T KNOW EXACTLY WHAT THIS IS FOR!
 
 /*===== Other General Options =====*/
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
