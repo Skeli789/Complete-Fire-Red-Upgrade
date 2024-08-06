@@ -1644,7 +1644,12 @@ IceBurnEffectBS:
 
 .global BS_076_SetConfusionChance
 BS_076_SetConfusionChance:
+	jumpifmove MOVE_ALLURINGVOICE AlluringVoice_BS
 	setmoveeffect MOVE_EFFECT_CONFUSION
+	goto BS_STANDARD_HIT
+
+AlluringVoice_BS:
+	callasm TrySetAlluringVoiceMoveEffect
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3872,6 +3877,7 @@ BS_176_HelpingHand:
 	attackcanceler
 	jumpifmove MOVE_DECORATE BS_Decorate
 	jumpifmove MOVE_COACHING BS_Coaching
+	jumpifmove MOVE_DRAGONCHEER BS_DragonCheer
 	attackstringnoprotean
 	ppreduce
 	sethelpinghand FAILED
@@ -3937,6 +3943,37 @@ Coaching_Atk:
 
 Coaching_Def:
 	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BS_DragonCheer:
+	jumpifspecialstatusflag BANK_TARGET STATUS3_SEMI_INVULNERABLE 0x0 FAILED
+	jumpiffainted BANK_TARGET FAILED
+	jumpifprotectedbycraftyshield BANK_TARGET FAILED
+	attackstring
+	ppreduce
+	jumpifstat BANK_TARGET LESSTHAN STAT_ATK STAT_MAX DragonCheer_ACC
+	jumpifstat BANK_TARGET EQUALS STAT_SPATK STAT_MAX BattleScript_CantRaiseMultipleTargetStats
+
+DragonCheer_ACC:
+	attackanimation
+	waitanimation
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpiftype BANK_TARGET TYPE_DRAGON DragonCheer_ACC2
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ACC | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+DragonCheer_ACC2:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ACC | INCREASE_2
 	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable gStatUpStringIds
@@ -5752,6 +5789,7 @@ BS_231_AttackBlockers:
 	jumpifmove MOVE_EMBARGO EmbargoBS
 	jumpifmove MOVE_POWDER PowderBS
 	jumpifmove MOVE_TELEKINESIS TelekinesisBS
+	jumpifmove MOVE_PSYCHICNOISE PsychicNoiseBS
 	
 HealBlockBS:
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
@@ -5819,6 +5857,21 @@ ThroatChopBS:
 	callasm SetThroatChopTimer
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	goto BS_MOVE_END
+
+PsychicNoiseBS:
+	jumpifbehindsubstitute BANK_TARGET 0x81D6927
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	callasm PSHealBlockTimer
+	setword BATTLE_STRING_LOADER HealBlockSetString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	faintpokemonaftermove
 	goto BS_MOVE_END
 

@@ -16,6 +16,7 @@ extern const u8 BattleScript_PoisonTouch[];
 extern const u8 BattleScript_KingsShield[];
 extern const u8 BattleScript_SpikyShield[];
 extern const u8 BattleScript_BanefulBunker[];
+extern const u8 BattleScript_BurningBulwark[];
 extern const u8 BattleScript_ObstructStatDecrement[];
 extern const u8 BattleScript_SilkTrapStatDecrement[];
 extern const u8 BattleScript_RageIsBuilding[];

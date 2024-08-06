@@ -166,3 +166,4 @@ void ChooseMoveEffectForSpringtideStorm(void);
 void GlaiveRushTimer(void);
 void FailShedTailIfLowHP(void);
 void DoubleShockFunc(void);
+void TrySetAlluringVoiceMoveEffect(void);

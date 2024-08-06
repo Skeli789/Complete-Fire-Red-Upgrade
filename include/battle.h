@@ -419,9 +419,11 @@ struct ProtectStruct
     u32 KingsShield : 1;
     u32 SpikyShield : 1;
 	u32 BanefulBunker : 1;
+	u32 BurningBulwark : 1;
     u32 kingsshield_damage : 1;
     u32 spikyshield_damage : 1;
     u32 banefulbunker_damage : 1;
+	u32 BurningBulwark_damage : 1;
     u32 enduredSturdy : 1;
     u32 Field3 : 1;
 
@@ -927,6 +929,7 @@ struct NewBattleStruct
 	bool8 isTrainerBattle : 1;
 	bool8 cottonDownActive : 1;
 	bool8 cramorantTransformed : 1;
+	bool8 activateTemperFlare : 1;
 
 	//Other
 	u16 LastUsedMove;

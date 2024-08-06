@@ -230,6 +230,9 @@ u8 TurnBasedEffects(void)
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
 
+				if (gNewBS->activateTemperFlare)
+					--gNewBS->activateTemperFlare;
+
 				gSideStatuses[B_SIDE_PLAYER] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 				gSideStatuses[B_SIDE_OPPONENT] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 

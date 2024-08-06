@@ -1263,6 +1263,23 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 							break;
 						}
 					}
+
+				case MOVE_BURNINGBULWARK:
+					if (predictedMove != MOVE_NONE 
+					 && CheckContact(predictedMove, bankDef, bankAtk) //Enemy will hit with a contact move
+					 && CanBeBurned(bankDef, bankAtk, TRUE))
+					{
+						if (IsClassStall(class))
+						{
+							INCREASE_VIABILITY(8);
+							break;
+						}
+						else if (IS_DOUBLE_BATTLE)
+						{
+							INCREASE_VIABILITY(19);
+							break;
+						}
+					}	
 					//Fallthrough
 
 				default:

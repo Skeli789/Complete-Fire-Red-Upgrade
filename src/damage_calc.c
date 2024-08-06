@@ -3352,6 +3352,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 				power *= 2;
 			break;
 
+		case MOVE_FICKLEBEAM:
+			if (Random() % 100 < 30)
+				power *=2;
+			break;
+
 		case MOVE_BRINE:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET)
 			&& data->defHP < data->defMaxHP / 2)
@@ -3463,6 +3468,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_PSYBLADE:
 			if (gTerrainType == ELECTRIC_TERRAIN)
 				power = (power * 15) / 10; //Boosts 1.5x in Electric Terrain
+			break;
+
+		case MOVE_TEMPERFLARE:
+			if (gNewBS->activateTemperFlare) //Bank should be accurate for party too
+				power *= 2;
 			break;
 
 		case MOVE_RAGEFIST:
@@ -3682,6 +3692,11 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_WRINGOUT:
 			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
 				power = MathMax(1, (data->defHP * 120) / data->defMaxHP);
+			break;
+
+		case MOVE_HARDPRESS:
+			if (!(data->specialFlags & FLAG_IGNORE_TARGET))
+				power = MathMax(1, (data->defHP * 100) / data->defMaxHP);
 			break;
 
 		case MOVE_TRUMPCARD: ;

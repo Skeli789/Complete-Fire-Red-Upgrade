@@ -591,6 +591,7 @@ bool8 LiftProtect(u8 bank)
 	|| gProtectStructs[bank].SpikyShield
 	|| gProtectStructs[bank].BanefulBunker
 	|| gProtectStructs[bank].obstruct
+	|| gProtectStructs[bank].BurningBulwark
 	|| gSideStatuses[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
 	{
 		if (!IsDynamaxed(bank))
@@ -600,6 +601,7 @@ bool8 LiftProtect(u8 bank)
 		gProtectStructs[bank].SpikyShield = 0;
 		gProtectStructs[bank].BanefulBunker = 0;
 		gProtectStructs[bank].obstruct = 0;
+		gProtectStructs[bank].BurningBulwark = 0;
 		gSideStatuses[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 		return TRUE;
 	}
@@ -612,7 +614,8 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 	if (gProtectStructs[bankDef].protected
 	|| gProtectStructs[bankDef].SpikyShield
 	|| gProtectStructs[bankDef].BanefulBunker
-	|| gProtectStructs[bankDef].obstruct)
+	|| gProtectStructs[bankDef].obstruct
+	|| gProtectStructs[bankDef].BurningBulwark)
 	{
 		return TRUE;
 	}

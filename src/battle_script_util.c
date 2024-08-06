@@ -2503,6 +2503,12 @@ void TrySetBurningJealousyMoveEffect(void)
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
 }
 
+void TrySetAlluringVoiceMoveEffect(void)
+{
+	if (gNewBS->statRoseThisRound[gBankTarget])
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
+}
+
 void TryFailPoltergeist(void)
 {
 	u16 item = ITEM(gBankTarget);

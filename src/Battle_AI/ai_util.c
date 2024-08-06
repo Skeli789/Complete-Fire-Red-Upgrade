@@ -2806,6 +2806,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
 				case MOVE_SILKTRAP:
+				case MOVE_BURNINGBULWARK:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
@@ -3826,6 +3827,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 					case MOVE_BANEFULBUNKER:
 					case MOVE_OBSTRUCT:
 					case MOVE_SILKTRAP:
+					case MOVE_BURNINGBULWARK:
 						if (checkType & CHECK_REGULAR_PROTECTION)
 							return TRUE;
 						break;
@@ -3877,6 +3879,7 @@ bool8 HasContactProtectionMoveInMoveset(u8 bank)
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
 				case MOVE_SILKTRAP:
+				case MOVE_BURNINGBULWARK:
 					return TRUE;
 			}
 		}

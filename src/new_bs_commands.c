@@ -1082,6 +1082,24 @@ void atkFE_prefaintmoveendeffects(void)
 					break;
 				}
 			}
+
+			if (gProtectStructs[gBankTarget].BurningBulwark_damage)
+			{
+				gProtectStructs[gBankTarget].BurningBulwark_damage = 0;
+
+				if (BATTLER_ALIVE(gBankAttacker) && CanBeBurned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+				{
+					gBattleMons[gBankAttacker].status1 = STATUS_BURN;
+					gEffectBank = gActiveBattler = gBankAttacker;
+					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+					MarkBufferBankForExecution(gActiveBattler);
+
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BurningBulwark;
+					effect = TRUE;
+					break;
+				}
+			}
 	
 			gNewBS->preFaintEffectsState++;
 			break;
