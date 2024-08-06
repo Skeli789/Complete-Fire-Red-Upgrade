@@ -1263,6 +1263,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 							break;
 						}
 					}
+					goto PROTECT_CHECKS;
 
 				case MOVE_BURNINGBULWARK:
 					if (predictedMove != MOVE_NONE 

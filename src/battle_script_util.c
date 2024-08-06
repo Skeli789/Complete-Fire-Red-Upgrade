@@ -2179,6 +2179,12 @@ void SetHealBlockTimer(void)
 		gNewBS->HealBlockTimers[gBankTarget] = 5;
 }
 
+void PSHealBlockTimer(void)
+{
+	if (!IsHealBlocked(gBankTarget))
+		gNewBS->HealBlockTimers[gBankTarget] = 2;
+}
+
 void SetThroatChopTimer(void)
 {
 	if (!CantUseSoundMoves(gBankTarget))

@@ -167,3 +167,4 @@ void GlaiveRushTimer(void);
 void FailShedTailIfLowHP(void);
 void DoubleShockFunc(void);
 void TrySetAlluringVoiceMoveEffect(void);
+void PSHealBlockTimer(void);
