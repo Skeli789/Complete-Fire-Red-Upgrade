@@ -1,9 +1,9 @@
 # This is our own verse of CFRU , not open for any donations or something. Also note that for wild pokemon encounters, talk to the fat guy in pallet town.
 
-### if you support things like these, come here - https://discord.com/invite/axNX3rhR9K
-## This fork is made by Shinys team to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. Removed excessive og CFRU readme.
+#### if you support things like these, come here - https://discord.com/invite/axNX3rhR9K
+### This fork is made by Shinys team to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. Removed excessive og CFRU readme.
 
-# The shiny's team (actually not a team but collaborators)#
+#### The shiny's team (actually not a team but collaborators)
 (FORK, NOT ORIGINAL MAKERS OF CFRU OBVIOUSLY)
 Shiny hunter,
 ansh860,
@@ -17,7 +17,7 @@ grilokapu
 # Complete Fire Red Upgrade
 ## This is CFRU expansion project and not affiliated to the og CFRU, it is going to be levels higher than CFRU.
 ### The new features (after CFRU dev branch):
--Fixed bugs with dev branch 
+- Fixed bugs with dev branch 
 - Last used pokeball
 - Shows enemy team by L button
 - Auto trigger wild battles
@@ -28,6 +28,7 @@ grilokapu
 - Ev-Iv screen (BW) , can be called by callasm
 - Battle backgrounds with CFRU (added all ,  you'll need to configure them in battle_terrains.c and overworld.c to make them appear properly)
 - Switch Pokémon in Party Menu Screen pressing Select
+- Repeat item usage
 - 
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 ## Skeli's point!!!
