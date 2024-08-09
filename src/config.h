@@ -349,7 +349,7 @@ enum //These vars need to be one after the other (hence the enum)
 //See "include/new/dexnav_config.h"
 
 /* Ignore Wild Pokemon */
-#define IgnoreWildPokemon //If defined, it generates a prebattle screen. (Ignore/Engage)
+//#define IgnoreWildPokemon //If defined, it generates a prebattle screen. (Ignore/Engage)
 
 #ifdef IgnoreWildPokemon
 #define FLAG_WILD_POKEMON_PREBATTLE_SCREEN 0xA02 //If set, CreateWindowFromRect starts from tile 0x98 instead of 0x38
