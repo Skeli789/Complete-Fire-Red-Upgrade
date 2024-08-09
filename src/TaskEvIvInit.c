@@ -183,7 +183,7 @@ struct EvIv
     u16 cursorSpriteId;
 };
 
-extern struct EvIv *gEvIv;
+#define gEvIv (*((struct EvIv**) 0x0203FFF0))
 
 #define gState              gEvIv->state
 #define gGfxStep            gEvIv->gfxStep
@@ -314,7 +314,7 @@ static void CB2_EvIv(void)
 
 void CB2_ShowEvIv(void)
 {
-    gEvIv = AllocZeroed(sizeof(*gEvIv));
+    gEvIv = Calloc(sizeof(struct EvIv));
     gState = 0;
     gGfxStep = 0;
     gCallbackStep = 0;
@@ -1045,7 +1045,7 @@ static void Task_EvIvReturnToOverworld(u8 taskId)
         return;
     DestroyTask(taskId);
     FreeAllWindowBuffers();
-    FREE_AND_SET_NULL(gEvIv);
+    Free(gEvIv);
 #ifdef FIRERED
 //FIRERED
         SetMainCallback2(CB2_ReturnToFieldFromDiploma);
@@ -1621,7 +1621,7 @@ static void PrintWindow0(struct Pokemon *mon)
     //AddTextPrinterParameterized3(WIN_POKEMON_NAME, 2, 0x44, 2, gGrayTextColor, 0, gText_BsEvIv);
 
     GetMonNickname(mon, gStringVar4);
-    AddTextPrinterParameterized3(WIN_POKEMON_NAME, 2, 0x94, 2, gGrayTextColor, 0, gStringVar4);
+    AddTextPrinterParameterized3(WIN_POKEMON_NAME, 2, 0x94, 2, gBlackTextColor, 0, gStringVar4);
 }
 
 static void PrintWindow1(u8 nature, u8 isEgg)
