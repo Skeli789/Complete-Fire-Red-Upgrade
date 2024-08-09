@@ -689,16 +689,13 @@ SKIP_INDEX_SEARCH:
 			Var8003 = 0xFF03;
 			Var8004 = 0x098;
 			FlagSet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
-			ScriptContext1_SetupScript(SystemScript_PokemonEncounter);
+			ScriptContext1_SetupScript(SystemScript_PokemonEncounter); 
+			return FALSE;
 		} 
-		else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+		else
   	{
 		   CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
   	}
-		{
-		  
-		}
-		return FALSE;
 	}
 	#else
 	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
