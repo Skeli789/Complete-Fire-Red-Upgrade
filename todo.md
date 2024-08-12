@@ -1,5 +1,6 @@
 This contains a list of items/features we want to add to this CFRU.:
 - Following pokemon
+- Mid-battle evolutions (https://www.pokecommunity.com/threads/simple-modifications-directory.416647/page-18#post-10464666)
 - New Mini games and Unbound's mining mini game
 - Option menu BW+ a second page
 - Main menu/ Continue Screen BW
