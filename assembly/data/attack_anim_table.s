@@ -30739,7 +30739,7 @@ BULWARK_FLAMES: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_NORMAL
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credits to André Freitas
-ANIM_MIGTHYCLEAVE:
+ANIM_MIGHTYCLEAVE:
 	loadparticle ANIM_TAG_CUT @Cut
 	loadparticle ANIM_TAG_SWORD @Sword
 	loadparticle ANIM_TAG_HYDRO_PUMP @Blue Colour

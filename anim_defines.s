@@ -1129,3 +1129,8 @@ waitbgfadein
 .equ Template_SpotlightTarget, 0x83FF3A0
 .equ AnimTask_FadeWhiteOrBlack, 0x80BAB39
 .equ AnimTask_PlayUserCry, 0x80DD333    @PlayUserCry
+.equ Template_Sparkle, 0x83E6EA4 
+.equ Template_Temp27AB_G, 0x83E5B70
+.equ AnimTask_GetWeather, 0x80E44EB
+.equ Template_GraySmoke, 0x83E36A8
+.equ CoinSound, 0xA7
