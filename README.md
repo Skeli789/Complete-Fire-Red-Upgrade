@@ -5,7 +5,7 @@
 
 #### The shiny's team (actually not a team but collaborators)
 (FORK, NOT ORIGINAL MAKERS OF CFRU OBVIOUSLY)
-Shiny hunter,
+Shiny hunter/Miner,
 ansh860,
 TheAlest,
 Zake,
