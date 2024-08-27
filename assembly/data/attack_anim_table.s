@@ -29935,21 +29935,20 @@ ANIM_SHEDTAIL:
 .pool
 @Credits to -
 ANIM_SILKTRAP:
-	loadparticle ANIM_TAG_PROTECT @protect
-	loadparticle ANIM_TAG_SPIDER_WEB @Web
-	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x0 0x1 0xffff
-	waitbgfadein
-	pokespritetoBG side_target
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPIDER_WEB 0x0 0xC 0xC 0x318C @;Gray
-	launchtemplate CENTRED_WEB 0x2 0x3 0x18 0x0 0x5a
-	pause 0xF
-	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_PROTECT 0x0 0xC 0xC 0x318C @;Gray
-	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
-	launchtemplate 0x83E3354 0x2 0x3 0x18 0x0 0x5a
-	waitanimation
-	stopmusic
-	pokespritefromBG side_target
-	endanimation
+    loadparticle ANIM_TAG_PROTECT @protect
+    loadparticle ANIM_TAG_SPIDER_WEB @Web
+    pokespritetoBG side_target
+    launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_SPIDER_WEB 0x0 0xC 0xC 0x318C @;Gray
+    playsound2 0x7b SOUND_PAN_TARGET
+    launchtemplate CENTRED_WEB 0x2 0x3 0x18 0x0 0x5a
+    waitanimation
+    launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_PROTECT 0x0 0xC 0xC 0x318C @;Gray
+    playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
+    launchtemplate 0x83E3354 0x2 0x3 0x18 0x0 0x5a
+    waitanimation
+    stopmusic
+    pokespritefromBG side_target
+    endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
