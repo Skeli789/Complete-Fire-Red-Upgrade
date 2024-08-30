@@ -782,7 +782,7 @@ The user concentrates\nintensely. The\nattack on the next\nturn always results\n
 The user attacks by\npelting the target\nwith leaves.
 
 #org @DESC_LIQUIDATION
-The user slams into\nthe foe using a\nfull-force water\nblast. This may lower\nthe foe's Defense.
+The user slams into\nthe foe using a\nfull-force water\nblast. It may lower\nthe foe's Defense.
 
 #org @DESC_LUNGE
 The user makes a\nlunge at the foe,\nattacking with full\nforce. This lowers\nthe foe's Attack.
