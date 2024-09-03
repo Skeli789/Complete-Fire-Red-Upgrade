@@ -1,4 +1,4 @@
-# This is our own verse of CFRU , not open for any donations or something. We consider it as stable now.
+# This is our own verse of CFRU , not open for any donations or something.
 
 #### if you support things like these, come here - https://discord.com/invite/axNX3rhR9K
 #### This fork is made by Tha Code Mining hub to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. Removed excessive og CFRU readme.
@@ -35,6 +35,7 @@ grilokapu
 - Repeat item usage
 - Gen 9 moves
 - Nickname by Party menu
+- Item expansion and some gen 9 items! No need to use leon rombase.
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 
 #### [Note: It is advised to use DPE-gen9 with it](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9)
