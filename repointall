@@ -15,3 +15,5 @@ gBallParticlePalettes 080F05E8
 gBallOpenParticleAnimationFuncs 080F066C
 gBallParticleSpriteTemplates 080F0784
 gBallOpenMonFadePal 080F1284
+
+gItemData 0809A8D8

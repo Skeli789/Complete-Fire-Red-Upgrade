@@ -726,3 +726,8 @@
 0823462E 51 01
 ## Remove gengar and nidoran battle scene
 080EC5D0 15 89 07
+
+#ifdef EXPANDED_NEW_ITEMS
+##Item icon Limit##
+08098998 EE 02
+#endif
