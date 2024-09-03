@@ -267,11 +267,11 @@ u8 TMIdFromItemId(u16 itemId)
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
-		return itemId - ITEM_TM01_FOCUS_PUNCH;
+		return itemId - ITEM_TM01;
 	else
 		return tmNum-1;
 	#else
-		return itemId - ITEM_TM01_FOCUS_PUNCH;
+		return itemId - ITEM_TM01;
 	#endif
 }
 
@@ -783,7 +783,7 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 	else
 		StartSpriteAnim(disc, 0);
 	#else
-	if (itemId <= ITEM_TM50_OVERHEAT)
+	if (itemId <= ITEM_TM50)
 		StartSpriteAnim(disc, 0);
 	else
 		StartSpriteAnim(disc, 1);
@@ -815,7 +815,7 @@ bool8 CheckReusableTMs(u16 item)
 		else
 			return FALSE;
 	#else
-		if (item > ITEM_TM50_OVERHEAT)
+		if (item > ITEM_TM50)
 			return TRUE;
 		else
 			return FALSE;

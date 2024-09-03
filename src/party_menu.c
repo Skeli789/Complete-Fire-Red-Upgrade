@@ -1085,7 +1085,7 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
                          #ifdef FLAG_SANDBOX_MODE
                          FlagGet(FLAG_SANDBOX_MODE) ||
                          #endif
-                         (CheckBagHasItem(ITEM_TM28_DIG, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28_DIG, 0) == CAN_LEARN_MOVE))
+                         (CheckBagHasItem(ITEM_TM28, 1) > 0 && CanMonLearnTMTutor(&mons[slotId], ITEM_TM28, 0) == CAN_LEARN_MOVE))
                         #endif
                         )
                         {

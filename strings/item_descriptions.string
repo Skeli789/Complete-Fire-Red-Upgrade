@@ -214,156 +214,6 @@ A special Poké Ball for\nthe Pal Park.
 #org @DESC_Z_POWER_RING
 A mysterious ring that enables\nthe use of Z-Power. It requires the\nwillpower of the trainer wearing it.   
 
-#org @DESC_TM01
-A frenetic dance to uplift\nthe fighting spirit. This\nsharply raises the user's\nAttack stat.
-
-#org @DESC_TM02
-A Normal-type attack. Has\na one-in-three chance\nof paralyzing the target\nif it connects.
-
-#org @DESC_TM03
-The foe is scorched\nwith intense flames.znThe foe may suffer\na burn.
-
-#org @DESC_TM04
-A high volume of\nwater is blasted at the\nfoe under great pressure.
-
-#org @DESC_TM05
-Gathers light on the first\nturn, then fills a blade\nwith the light's energy and\nattacks on the next turn.
-
-#org @DESC_TM06
-The foe is struck\nwith an icy beam.\nIt may freeze the\nfoe solid.
-
-#org @DESC_TM07
-The foe is blasted\nwith a blizzard.\nIt may freeze the\nfoe solid.
-
-#org @DESC_TM08
-A low, tripping\nkick that inflicts\nmore damage on\nheavier foes.
-
-#org @DESC_TM09
-A strong electrical\nattack that may\nalso leave the foe\nparalyzed.
-
-#org @DESC_TM10
-A brutal lightning\nattack that may\nalso leave the foe\nparalyzed.
-
-#org @DESC_TM11
-An earthquake that\nstrikes all Pokemon\nin battle excluding\nthe user.
-
-#org @DESC_TM12
-A strong telekinetic\nattack. It may also\nlower the foe's\nSp. Def stat.
-
-#org @DESC_TM13
-The user relaxes\nand lightens its\nbody to sharply boost\nits Speed.
-
-#org @DESC_TM14
-Spurred by\ndesperation, the user\nattacks the target.
-
-#org @DESC_TM15
-Waggles a finger\nand stimulates the\nbrain into using\nany move at random.
-
-#org @DESC_TM16
-The foe is hit with\nan intense flame.\nIt may leave the\ntarget with a burn.
-
-#org @DESC_TM17
-Enables the user to\nevade all attacks.\nIt may fail if used\nin succession.
-
-#org @DESC_TM18
-Forgets about\nsomething and sharply\nraises Sp. Def.
-
-#org @DESC_TM19
-An attack that\nabsorbs half the\ndamage it inflicted\nto restore HP.
-
-#org @DESC_TM20
-User electrifies its\nbody and drops onto\nthe target to inflict\ndamage.
-
-#org @DESC_TM21
-The user creates a\nsubstitute for itself using\nsome of its HP.
-
-#org @DESC_TM22
-An all-out attack\nthat becomes more\npowerful the less\nHP the user has.
-
-#org @DESC_TM23
-Filthy sludge is\nhurled at the foe.\nIt may poison the\ntarget.
-
-#org @DESC_TM24
-A trap of spikes is\nlaid around the\nfoe's party to hurt\nfoes switching in.
-
-#org @DESC_TM25
-The user thrashes\nabout for two\nto three turns,\nthen becomes confused.
-
-#org @DESC_TM26
-Materializes an odd\npsychic wave to attack\nthe target. This move\ndeals physical damage.
-
-#org @DESC_TM27
-The user attacks\nthe target with\nunpleasant sound\nwaves.
-
-#org @DESC_TM28
-While it is asleep, the\nuser randomly uses\none of the moves it\nknows.
-
-#org @DESC_TM29
-A brutal ramming\nattack delivered\nwith a tough and\nimpressive horn.
-
-#org @DESC_TM30
-The target is crushed\nwith an arm, a claw,\nor the like to inflict\ndamage.
-
-#org @DESC_TM31
-Makes the foe use\nthe move it last\nused repeatedly for\ntwo to six turns.
-
-#org @DESC_TM32
-An attack with a\nsteel-hard tail.\nIt may lower the\nfoe's Defense stat.
-
-#org @DESC_TM33
-The foe is crunched\nwith sharp fangs.\nIt may lower the\nfoe's Sp. Def.
-
-#org @DESC_TM34 
-A shadowy blob is\nhurled at the foe.\nMay also lower the\nfoe's Sp. Def.
-
-#org @DESC_TM35 
-Two turns after\nthis move is used,\nthe foe is attacked\npsychically.
-
-#org @DESC_TM36 
-The user attacks\nin an uproar that\nprevents sleep for\ntwo to five turns
-
-#org @DESC_TM37 
-The user exhales\na heated breath to\nattack. It may also\ninflict a burn.
-
-#org @DESC_TM38 
-The foe is taunted\ninto a rage that\nallows it to use\nonly attack moves.
-
-#org @DESC_TM39 
-User raises allies\nmorale with a\ndraconic cry. Rouses\nDragon-type more.
-
-#org @DESC_TM40 
-A powerful attack,\nbut it also lowers\nthe user's Attack\nand Defense stats.
-
-#org @DESC_TM41 
-The user attacks\nthe target using its\nangelic voice.
-
-#org @DESC_TM42 
-A fiery kick with\na high critical-hit\nratio. It may also\nburn the foe.
-
-#org @DESC_TM43 
-The user lets loose\na horribly loud shout with\nthe power to damage.
-
-#org @DESC_TM44 
-An intense attack\nthat also sharply\nreduces the user's\nSp. Atk stat.
-
-#org @DESC_TM45 
-The user absorbs a\nmystic power to\nraise its Defense\nand Sp. Def.
-
-#org @DESC_TM46 
-The user attacks\nwith muddy water.\nIt may also lower\nthe foe's accuracy.
-
-#org @DESC_TM47 
-The user hardens\nits body's surface\nto sharply raise\nits Defense stat.
-
-#org @DESC_TM48 
-Sharp, huge claws\nhook and slash the\nfoe quickly and with\ngreat power.
-
-#org @DESC_TM49 
-The user bulks\nup its body to boost\nboth its Attack and\nDefense stats.
-
-#org @DESC_TM50 
-The user focuses\nits mind to raise\nthe Sp. Atk and\nSp. Def stats.
-
 #org @DESC_HM01
 A basic attack.\nIt can be used to\ncut down thin trees\nand grass.
 
@@ -394,215 +244,215 @@ A Wishing Star has been affixed\nto it. It lets out a light that allows\nPokémo
 #org @DESC_MEGA_RING
 A ring which enables Pokémon\nholding a Mega Stone to Mega\nEvolve in battle.
 
-#org @DESC_TM51 
-The foe is slashed\nwith a sharp leaf.\nIt has a high critical-hit\nratio.
+#org @DESC_TM51
+The user rests and\nrecovers HP. It also\nremoves status conditions.
 
-#org @DESC_TM52 
-A mystic, powerful\ndance that boosts\nthe user's Attack and\nSpeed stats.
-
-#org @DESC_TM53 
-Tackles the foe with\na high-speed spin.\nThe slower the user,\nthe greater the damage.
-
-#org @DESC_TM54 
-Fights the target up\nclose without guarding\nitself. Cuts user's\nDef and Sp.Def.
-
-#org @DESC_TM55 
-The user lays\na trap of poison\nspikes at the feet\nof the opposing team.
-
-#org @DESC_TM56 
-The user cloaks\nitself in fire and\ncharges the target\nto inflict damage.
-
-#org @DESC_TM57 
-User lets loose a\nblast of aura power\nfrom deep within its\nbody at the target
-
-#org @DESC_TM58 
-The foe is stabbed with\na tentacle or arm\nsteeped in poison. It\nmay also poison the foe.
-
-#org @DESC_TM59 
-User releases a horrible\naura imbued with dark\nthoughts. It may also\nmake the target flinch.
-
-#org @DESC_TM60 
-User slams a barrage\nof hard-shelled\nseeds down on the\nfoe from above.
-
-#org @DESC_TM61 
-User slashes at the foe\nby crossing its scythes\nor claws as if they were\na pair of scissors.
-
-#org @DESC_TM62 
-User vibrates its wings\nto generate a damaging\nsound wave. May\nlow target SpAtk.
-
-#org @DESC_TM63 
-The target is attacked\nwith a shock wave\ngenerated by the user's\ngaping mouth.
-
-#org @DESC_TM64 
-The user attacks with\na ray of light that\nsparkles as if it were\nmade of gemstones.
-
-#org @DESC_TM65 
+#org @DESC_TM52
 The user heightens its\nmental focus and unleashes\nits power. May low\ntarget SpDef stat.
 
-#org @DESC_TM66 
+#org @DESC_TM53
 The user draws power\nfrom nature and fires\nit at the foe. May\nlow target SpDef stat.
 
-#org @DESC_TM67 
-The user tucks in its\nwings and charges\nat a low altitude.\nTake recoil damage.
-
-#org @DESC_TM68 
-user makes the ground\nunder the foe erupt\nwith power. May\nlow foe SpDef stat.
-
-#org @DESC_TM69 
-User stimulates its\nbrain by thinking bad\nthoughts. Sharply boosts\nthe user's SpAtk.
-
-#org @DESC_TM70 
-The user focuses its\nwillpower to its head\nand attacks the target.\nMay causes flinch.
-
-#org @DESC_TM71 
-The user gathers all its\nlight energy and releases\nit at once. May low\nfoe Defense stat.
-
-#org @DESC_TM72 
-The user whips up a\nstorm of leaves around\nthe target. Harshly lower\nuser's SpDef stat.
-
-#org @DESC_TM73 
-The user violently whirls\nits vines, tentacles,\nor the like to lash\nthe target.
-
-#org @DESC_TM74 
-The user shoots filthy\ngarbage at the target\nto attack. May also\npoison the target.
-
-#org @DESC_TM75 
-The user slams the\ntarget with its steel-hard\nhead. May make the\nfoe flinch.
-
-#org @DESC_TM76 
-The user stabs the target\nwith sharpened stones\nfrom below. Critical hits\nland more easily. 
-
-#org @DESC_TM77 
-User lays a trap of\nlevitating stones around\nthe foe. Trap hurts foes\nthat switch into battle.
-
-#org @DESC_TM78 
-User snares the foe with\ngrass and trips it. The\nheavier the foe, the\ngreater the damage. 
-
-#org @DESC_TM79 
-It swamps the area\naround the user with\na giant sludge wave.\nMay also poison the foe.
-
-#org @DESC_TM80 
-The user slams into the\ntarget with its heavy\nbody. More heavy,\ngreater its damage.
-
-#org @DESC_TM81 
-The user hurls an\nelectric orb at the\ntarget. More fast,\ngreater its damage.
-
-#org @DESC_TM82 
-The user turns the\ntarget's power against\nit. Damage based on\nfoes Atk stat.
-
-#org @DESC_TM83 
-The user attacks the\ntarget with stored\npower. Power based on\nusers stat change.
-
-#org @DESC_TM84 
-The user cuts the target\nwith sharp shells to\ninflict damage. May\nlow foes Defense stat.
-
-#org @DESC_TM85 
-The user shoots boiling\nhot water at its target.\nThis may also leave the\ntarget with a burn.
-
-#org @DESC_TM86 
-The user is roused, and\nits Attack and Sp. Atk\nstats increase.
-
-#org @DESC_TM87 
-User shrouds itself in\nelectricity and smashes\ninto its target. It also\ndamages the user a little.
-
-#org @DESC_TM88 
-The user crashes into\nits target while rotating\nits body like a drill.\nHigh critical hit ratio.
-
-#org @DESC_TM89 
-User slams its target\nwith its flame-covered\nbody. More heavy,\ngreater its damage.
-
-#org @DESC_TM90 
-The user attacks by\nwrapping its opponent in\na fierce wind. May\ncause foes confusion.
-
-#org @DESC_TM91 
-The user attacks by\nplaying rough with\nthe target. May low\nfoes Attack stat.
-
-#org @DESC_TM92 
-Foe Pokemon are drenched\nin an odd poisonous liquid.\nLow foe Atk, SpAtk and\nSpeed if poisoned.
-
-#org @DESC_TM93 
-The user damages\nopposing Pokemon by\nemitting a powerful\nflash.
-
-#org @DESC_TM94 
-The user swings both\narms and hits the target.\nDamage not affected by\nstat changes.
-
-#org @DESC_TM95 
-The user fiercely\nattacks the target\nusing its entire body.
-
-#org @DESC_TM96 
-User attacks the foes\nthroat, and the resultant\nsuffering prevents foe use\nsound based moves.
-
-#org @DESC_TM97 
-User attacks the enemy\nwith a pollen puff\nthat explodes. Restore\nally HP instead.
-
-#org @DESC_TM98 
-User attacks by biting\nthe target with its\npsychic capabilities.\nCan also breaks barries.
-
-#org @DESC_TM99 
-User slams into the target\nusing a full-force blast\nof water. May low\nfoes Defense stat.
-
-#org @DESC_TM100
-The user attacks by\nslamming its body into\nthe target. Damage based\non user's defense stat.
-
-#org @DESC_TM101
-User gets revenge for\na fainted ally. Power\ndoubled if ally fainted\nin previous turn.
-
-#org @DESC_TM102
-After making its attack,\nthe user rushes back\nto switch places with\na party Pokemon.
-
-#org @DESC_TM103
-User tramples its target\ninto the ground, dealing\ndamage. Also low foes\nSpeed stat.
-
-#org @DESC_TM104
-user attacks and captures\nopposing Pok\emon using\nan electric net. low\nfoes Speed stat.
-
-#org @DESC_TM105
-The user nimbly strikes\nthe target. Power\ndoubled if user's\nnot holding a item.
-
-#org @DESC_TM106
-The user reacts to\ntarget's movement\nand strikes with the\nheel of its palm.
-
-#org @DESC_TM107
-user yells as if it\nis ranting about something,\nmaking foes SpAtk\nstat decrease.
-
-#org @DESC_TM108
-The user vanishes\nsomewhere, then\nstrikes the target\non the next turn.
-
-#org @DESC_TM109
-The user steals the\ntarget's energy with\na kiss. Turns 50%\ndamage in HP.
-
-#org @DESC_TM110
-User turns the ground to\ngrass. Also Pokemon's HP,\npower up Grass damage\nand Low Ground damage.
-
-#org @DESC_TM111
-User turns the ground\nto mist. Also protect\nPokemon from\nstatus condition.
-
-#org @DESC_TM112
-Protects Pokemon on\nthe ground from priority\nmoves and powers up\nPsychic-type moves.
-
-#org @DESC_TM113
-The user electrifies the\nground. Also power up\nElectric and protect\nfrom Sleep status.
-
-#org @DESC_TM114
-User attacks by breathing\na special, hot fire.\nAlso low foes SpAtk stat.
-
-#org @DESC_TM115
-User's body generates\nan eerie impulse.\nHarshly feel foes\nSpAtk stat.
-
-#org @DESC_TM116
+#org @DESC_TM54
 A restrained attack that\nprevents the foe from\nfainting. The target is\nleft with at least 1 HP.
 
-#org @DESC_TM117
-User attacks with a\nblade of air that slices\neven the sky. May also\nmake foe flinch.
+#org @DESC_TM55
+This move's power is\ndoubled if the\ntarget's HP is at\nhalf or less. 
 
-#org @DESC_TM118
+#org @DESC_TM56
+User sharpens its\nclaws to increase\nits Attack and\nAccuracy.
+
+#org @DESC_TM57
+User attacks with\nbeam of energy that\nmay also raise its\nSpecial Attack.
+
+#org @DESC_TM58
+The user endures any\nhit with 1 HP left.\nIt may fail if used\nin succession. 
+
+#org @DESC_TM59
+The target is attacked\nwith a shock wave\ngenerated by the user's\ngaping mouth.
+
+#org @DESC_TM60
+User attacks with an\nenergy-draining\npunch that restores\nthe user's HP.
+
+#org @DESC_TM61
+The user shoots a\nsinister flame at\nthe target to\ninflict a burn.
+
+#org @DESC_TM62
+The foe is attacked\nwith a silver dust.\nIt may raise all\nthe user's stats. 
+
+#org @DESC_TM63
+The foe is soaked by\na special acid. Its\npower doubles if the\nfoe is poisoned.
+
+#org @DESC_TM64
+The user explodes to\ninflict terrible\ndamage even while\nfainting itself. 
+
+#org @DESC_TM65
+User slashes with a\nsharp claw made from\nshadows. Critical\nhits land easily.
+
+#org @DESC_TM66
+If the user can use\nthis attack after\nthe foe attacks, its\npower is doubled.
+
+#org @DESC_TM67
+A move that recycles\na used item for use\nonce more.
+
+#org @DESC_TM68
+User charges at the\nfoe using every bit\nof its power. Must\nrecharge next turn.
+
+#org @DESC_TM69
+User polishes its\nbody to reduce drag.\nIt can sharply raise\nthe Speed stat.
+
+#org @DESC_TM70
+A blast of light\nthat cuts the foe's\naccuracy. It also\nilluminates caves.
+
+#org @DESC_TM71
+The user stabs the target\nwith sharpened stones\nfrom below. Critical hits\nland more easily.
+
+#org @DESC_TM72
+This move's power is\ndoubled if target has\ninflicted damage on\nuser in same turn.
+
+#org @DESC_TM73
+A weak electric\nshock that is sure\nto cause paralysis\nif it hits. 
+
+#org @DESC_TM74
+Tackles the foe with\na high-speed spin.\nThe slower the user,\nthe greater the damage.
+
+#org @DESC_TM75
+A frenetic dance of\nfighting. It sharply\nraises the Attack\nstat.
+
+#org @DESC_TM76
+Levitating rocks\nare laid around the\nfoe's party to hurt\nfoes switching in.
+
+#org @DESC_TM77
+Cloaking itself in\nflame, the user\nattacks. The user\nraises its Speed stat.
+
+#org @DESC_TM78
+The user attacks\nthe foe's legs,\nlowering its\nSpeed stat.
+
+#org @DESC_TM79
+User releases a horrible\naura imbued with dark\nthoughts. It may also\nmake the target flinch.
+
+#org @DESC_TM80
+Large boulders are\nhurled at the foe.\nIt may make the\nfoe flinch.
+
+#org @DESC_TM81
+The user slashes\nthe foe with crossed\nclaws as if they\nwere scissors.
+
+#org @DESC_TM82
+While asleep, the\nuser randomly uses\none of the moves it\nknows.
+
+#org @DESC_TM83
+Boiling water is\nshot at the foe.\nIt may also cause\na burn.
+
+#org @DESC_TM84
+The foe is stabbed\nby an arm steeped\nin poison. It may\nalso poison the foe.
+
+#org @DESC_TM85
+The user eats the\nfoe's dreams to deal\ndamage and\nrecover HP.
+
+#org @DESC_TM86
+Grass snares and\ntrips the foe. It\ndoes more damage\nto heavier foes.
+
+#org @DESC_TM87
+A move that makes\nthe foe confused,\nbut also sharply\nraises its Attack.
+
+#org @DESC_TM88
+User pecks the foe.\nIf foe is holding a\nBerry, the user\ngains its effect.
+
+#org @DESC_TM89
+After attacking,\nthe user switches\nplaces with a\nparty Pokémon.
+
+#org @DESC_TM90
+The user creates a\nsubstitute for itself using\nsome of its HP.
+
+#org @DESC_TM91
+Light energy is\nshot at the foe.\nIt may also lower\nthe foe's Sp. Def.
+
+#org @DESC_TM92
+After attacking,\nthe user switches\nplaces with a\nparty Pokémon.
+
+#org @DESC_TM93
+The foe is made to\nswitch out with an\nally. In the wild,\nthe battle ends.
+
+#org @DESC_TM94
+If the target is\nholding a Berry, the\nBerry becomes burnt\nup and unusable. 
+
+#org @DESC_TM95
+Resisting, the user\nattacks the opposing\nPokémon. Foe's SpAtk\nstat is reduced.
+
+#org @DESC_TM96
+The user hits all\nPokémon in battle\nby stomping. Lowers\nSpeed of those hit.
+
+#org @DESC_TM97
+User blows a cold\nbreath on target.\nThis attack always\nlands critical hit.
+
+#org @DESC_TM98
+The user rouses\nitself to raise\nits Attack and\nSp. Atk stats.
+
+#org @DESC_TM99
+The user throws an\nelectrified tackle.\nIt hurts the user\na little.
+
+#org @DESC_TM100
+Target is infested\nand attacked for 4\nto 5 turns. Foe cant\nflee during effect.
+
+#org @DESC_TM101
+Striking over and\nover hardens the\nuser's fists.\nRaises Attack.
+
+#org @DESC_TM102
+The user damages\nopposing Pokémon\nby emitting a\npowerful flash.
+
+#org @DESC_TM103
+The user releases a\ntoxic wave that may\nalso poison the foe.
+
+#org @DESC_TM104
+An odd psychic wave\nattacks the target.\nThis attack does\nphysical damage.
+
+#org @DESC_TM105
+User swings its body\naround violently to\ninflict damage on\neverything.
+
+#org @DESC_TM106
 The user stabs the\ntarget with a sharp\nhorn. This attack\nnever misses.
 
+#org @DESC_TM107
+User nimbly strikes\nthe target. Power\ndoubled if user's\nnot holding a item.
+
+#org @DESC_TM108
+User yells as if it\nis ranting about\nsomething, making\nfoes SpAtk decrease.
+
+#org @DESC_TM109
+A strong wind blows\naway foes barriers.\nThis also lowers the\ntargets evasiveness.
+
+#org @DESC_TM110
+If it is the opposite\ngender of the user,\nthe foe is charmed\ninto lower its SpAtk.
+
+#org @DESC_TM111
+User throws a stone\nor projectile. A\nflying Pokémon will\nfall to the ground. 
+
+#org @DESC_TM112
+User emits a musical\nsound. Others can\njoin in the Round to\nboost atk's power.
+
+#org @DESC_TM113
+User releases an\nechoed voice. If move\nis used every turn,\ndoes greater damage.
+
+#org @DESC_TM114
+The user draws power\nto attack by using\nits held Berry.
+
+#org @DESC_TM115
+The user suppresses\nthe target and makes\nits move go last.
+
+#org @DESC_TM116
+The user creates a\nbizarre area in\nwhich slower Pokémon\nget to move first.
+
+#org @DESC_TM117
+The user flings its\nheld item at the foe\nto attack. The Power\ndepends on the item.
+
+#org @DESC_TM118
+This move reduces\ndamage from physical\nand special moves\nfor five turns.
+
 #org @DESC_TM119
-User swings its body\naround violently to inflict\ndamage on everything\nin its vicinity.
+The user takes the\ntarget into the sky,\nthen drops it during\nthe next turn.
 
 #org @DESC_TM120
-User swings its tough\ntail wildly and attacks\nopposing Pokemon.\nLower foes Atk Stat.
+An attack that\nchanges type\ndepending on the\nuser's location.
 
 #org @DESC_OCCA_BERRY
 If held, reduces damage taken from\none super effective Fire-move.

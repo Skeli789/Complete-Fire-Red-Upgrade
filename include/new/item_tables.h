@@ -1657,56 +1657,56 @@ extern const u8 DESC_Z_POWER_RING[];
 #define DESC_ROOT_FOSSIL ((void*)0x083D92BF)
 #define DESC_CLAW_FOSSIL ((void*)0x083D931A)
 #define DESC_DEVON_SCOPE ((void*)0x083D936F)
-extern const u8 DESC_TM01[];
-extern const u8 DESC_TM02[]; 
-extern const u8 DESC_TM03[]; 
-extern const u8 DESC_TM04[]; 
-extern const u8 DESC_TM05[]; 
-extern const u8 DESC_TM06[]; 
-extern const u8 DESC_TM07[]; 
-extern const u8 DESC_TM08[]; 
-extern const u8 DESC_TM09[]; 
-extern const u8 DESC_TM10[];
-extern const u8 DESC_TM11[];
-extern const u8 DESC_TM12[];
-extern const u8 DESC_TM13[];
-extern const u8 DESC_TM14[];
-extern const u8 DESC_TM15[];
-extern const u8 DESC_TM16[];
-extern const u8 DESC_TM17[];
-extern const u8 DESC_TM18[];
-extern const u8 DESC_TM19[];
-extern const u8 DESC_TM20[];
-extern const u8 DESC_TM21[];
-extern const u8 DESC_TM22[];
-extern const u8 DESC_TM23[];
-extern const u8 DESC_TM24[];
-extern const u8 DESC_TM25[];
-extern const u8 DESC_TM26[];
-extern const u8 DESC_TM27[];
-extern const u8 DESC_TM28[];
-extern const u8 DESC_TM29[];
-extern const u8 DESC_TM30[];
-extern const u8 DESC_TM31[];
-extern const u8 DESC_TM32[];
-extern const u8 DESC_TM33[];
-extern const u8 DESC_TM34[];
-extern const u8 DESC_TM35[];
-extern const u8 DESC_TM36[];
-extern const u8 DESC_TM37[];
-extern const u8 DESC_TM38[];
-extern const u8 DESC_TM39[];
-extern const u8 DESC_TM40[];
-extern const u8 DESC_TM41[];
-extern const u8 DESC_TM42[];
-extern const u8 DESC_TM43[];
-extern const u8 DESC_TM44[];
-extern const u8 DESC_TM45[];
-extern const u8 DESC_TM46[];
-extern const u8 DESC_TM47[];
-extern const u8 DESC_TM48[];
-extern const u8 DESC_TM49[];
-extern const u8 DESC_TM50[];
+#define DESC_TM01 ((void*)0x08486EBE)
+#define DESC_TM02 ((void*)0x0848821F)
+#define DESC_TM03 ((void*)0x08488614)
+#define DESC_TM04 ((void*)0x084884C5)
+#define DESC_TM05 ((void*)0x084833DC)
+#define DESC_TM06 ((void*)0x0848400F)
+#define DESC_TM07 ((void*)0x08486D1C)
+#define DESC_TM08 ((void*)0x084882B4)
+#define DESC_TM09 ((void*)0x0848808A)
+#define DESC_TM10 ((void*)0x08486774)
+#define DESC_TM11 ((void*)0x0848687C)
+#define DESC_TM12 ((void*)0x08487014)
+#define DESC_TM13 ((void*)0x0848371F)
+#define DESC_TM14 ((void*)0x08483760)
+#define DESC_TM15 ((void*)0x0848386D)
+#define DESC_TM16 ((void*)0x084845C5)
+#define DESC_TM17 ((void*)0x08485857)
+#define DESC_TM18 ((void*)0x0848683A)
+#define DESC_TM19 ((void*)0x08485DC1)
+#define DESC_TM20 ((void*)0x08486265)
+#define DESC_TM21 ((void*)0x0848621B)
+#define DESC_TM22 ((void*)0x08483BDA)
+#define DESC_TM23 ((void*)0x084865BF)
+#define DESC_TM24 ((void*)0x08483E3E)
+#define DESC_TM25 ((void*)0x08483EC2)
+#define DESC_TM26 ((void*)0x08483F44)
+#define DESC_TM27 ((void*)0x08486187)
+#define DESC_TM28 ((void*)0x08483FC7)
+#define DESC_TM29 ((void*)0x08484098)
+#define DESC_TM30 ((void*)0x08486A1B)
+#define DESC_TM31 ((void*)0x084872F2)
+#define DESC_TM32 ((void*)0x08484353)
+#define DESC_TM33 ((void*)0x08484647)
+#define DESC_TM34 ((void*)0x084885D3)
+#define DESC_TM35 ((void*)0x084835C2)
+#define DESC_TM36 ((void*)0x084859F2)
+#define DESC_TM37 ((void*)0x08485D77)
+#define DESC_TM38 ((void*)0x0848493B)
+#define DESC_TM39 ((void*)0x08487CD2)
+#define DESC_TM40 ((void*)0x084880D0)
+#define DESC_TM41 ((void*)0x08486D64)
+#define DESC_TM42 ((void*)0x08486E79)
+#define DESC_TM43 ((void*)0x0848759A)
+#define DESC_TM44 ((void*)0x0848515E)
+#define DESC_TM45 ((void*)0x084860B7)
+#define DESC_TM46 ((void*)0x0848548B)
+#define DESC_TM47 ((void*)0x0848602B)
+#define DESC_TM48 ((void*)0x0848743C)
+#define DESC_TM49 ((void*)0x08487558)
+#define DESC_TM50 ((void*)0x08487C46)
 extern const u8 DESC_HM01[];
 extern const u8 DESC_HM02[]; 
 extern const u8 DESC_HM03[]; 

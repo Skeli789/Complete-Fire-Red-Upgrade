@@ -1296,64 +1296,64 @@ const struct ItemIconTemplate gItemGraphicsTable[] =
 	{gBag_RootFossilTiles, gBag_RootFossilPal},
 	{gBag_ClawFossilTiles, gBag_ClawFossilPal},
 	{gBag_DevonScopeTiles, gBag_DevonScopePal},
-	{gBag_TMTiles, gBag_TMNormalPal},	//1 
-	{gBag_TMTiles, gBag_TMNormalPal},   //2 
-	{gBag_TMTiles, gBag_TMFirePal},     //3 
-	{gBag_TMTiles, gBag_TMWaterPal},    //4 
-	{gBag_TMTiles, gBag_TMGrassPal},    //5 
-	{gBag_TMTiles, gBag_TMIcePal},      //6 
-	{gBag_TMTiles, gBag_TMIcePal},      //7 
-	{gBag_TMTiles, gBag_TMFightingPal}, //8 
-	{gBag_TMTiles, gBag_TMElectricPal}, //9 
-	{gBag_TMTiles, gBag_TMElectricPal}, //10
-	{gBag_TMTiles, gBag_TMGroundPal},   //11
-	{gBag_TMTiles, gBag_TMPsychicPal},  //12
-	{gBag_TMTiles, gBag_TMPsychicPal},  //13
-	{gBag_TMTiles, gBag_TMFirePal},     //14
-	{gBag_TMTiles, gBag_TMNormalPal},   //15
-	{gBag_TMTiles, gBag_TMFirePal},     //16
-	{gBag_TMTiles, gBag_TMNormalPal},   //17
-	{gBag_TMTiles, gBag_TMPsychicPal},  //18
-	{gBag_TMTiles, gBag_TMBugPal},      //19
-	{gBag_TMTiles, gBag_TMElectricPal}, //20
-	{gBag_TMTiles, gBag_TMNormalPal},   //21
-	{gBag_TMTiles, gBag_TMFightingPal}, //22
-	{gBag_TMTiles, gBag_TMPoisonPal},   //23
-	{gBag_TMTiles, gBag_TMGroundPal},   //24
-	{gBag_TMTiles, gBag_TMDragonPal},   //25
-	{gBag_TMTiles, gBag_TMPsychicPal},  //26
-	{gBag_TMTiles, gBag_TMPsychicPal},  //27
-	{gBag_TMTiles, gBag_TMNormalPal},   //28
-	{gBag_TMTiles, gBag_TMBugPal},      //29
-	{gBag_TMTiles, gBag_TMFightingPal}, //30
-	{gBag_TMTiles, gBag_TMNormalPal},   //31
-	{gBag_TMTiles, gBag_TMSteelPal},    //32
-	{gBag_TMTiles, gBag_TMDarkPal},     //33
-	{gBag_TMTiles, gBag_TMGhostPal},    //34
-	{gBag_TMTiles, gBag_TMPsychicPal},  //35
-	{gBag_TMTiles, gBag_TMNormalPal},   //36
-	{gBag_TMTiles, gBag_TMFirePal},     //37
-	{gBag_TMTiles, gBag_TMDarkPal},     //38
-	{gBag_TMTiles, gBag_TMDragonPal},   //39
-	{gBag_TMTiles, gBag_TMFightingPal}, //40
-	{gBag_TMTiles, gBag_TMFairyPal},    //41
-	{gBag_TMTiles, gBag_TMFirePal},     //42
-	{gBag_TMTiles, gBag_TMNormalPal},   //43
-	{gBag_TMTiles, gBag_TMFirePal},     //44
-	{gBag_TMTiles, gBag_TMPsychicPal},  //45
-	{gBag_TMTiles, gBag_TMWaterPal},    //46
-	{gBag_TMTiles, gBag_TMSteelPal},    //47
-	{gBag_TMTiles, gBag_TMDragonPal},   //48
-	{gBag_TMTiles, gBag_TMFightingPal}, //49
-	{gBag_TMTiles, gBag_TMPsychicPal},  //50
-	{gBag_TMTiles, gBag_TMNormalPal},   //01
-	{gBag_TMTiles, gBag_TMFlyingPal},   //02
-	{gBag_TMTiles, gBag_TMWaterPal},    //03
-	{gBag_TMTiles, gBag_TMNormalPal},   //04
-	{gBag_TMTiles, gBag_TMWaterPal},    //05
-	{gBag_TMTiles, gBag_TMFightingPal}, //06
-	{gBag_TMTiles, gBag_TMWaterPal},    //07
-	{gBag_TMTiles, gBag_TMNormalPal},   //08
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM01_FOCUS_PUNCH - Lutador
+	{gBag_TMTiles, gBag_TMDragonPal},    // ITEM_TM02_DRAGON_CLAW - Dragão
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_TM03_WATER_PULSE - Água
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM04_CALM_MIND - Psíquico
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM05_ROAR - Normal
+	{gBag_TMTiles, gBag_TMPoisonPal},    // ITEM_TM06_TOXIC - Veneno
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM07_HAIL - Gelo
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM08_BULK_UP - Lutador
+	{gBag_TMTiles, gBag_TMGrassPal},     // ITEM_TM09_BULLET_SEED - Grama
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM10_HIDDEN_POWER - Normal
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM11_SUNNY_DAY - Fogo
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM12_TAUNT - Sombrio
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM13_ICE_BEAM - Gelo
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM14_BLIZZARD - Gelo
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM15_HYPER_BEAM - Normal
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM16_LIGHT_SCREEN - Psíquico
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM17_PROTECT - Normal
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_TM18_RAIN_DANCE - Água
+	{gBag_TMTiles, gBag_TMGrassPal},     // ITEM_TM19_GIGA_DRAIN - Grama
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM20_SAFEGUARD - Normal
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM21_FRUSTRATION - Normal
+	{gBag_TMTiles, gBag_TMGrassPal},     // ITEM_TM22_SOLARBEAM - Grama
+	{gBag_TMTiles, gBag_TMSteelPal},     // ITEM_TM23_IRON_TAIL - Aço
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM24_THUNDERBOLT - Elétrico
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM25_THUNDER - Elétrico
+	{gBag_TMTiles, gBag_TMGroundPal},    // ITEM_TM26_EARTHQUAKE - Terra
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM27_RETURN - Normal
+	{gBag_TMTiles, gBag_TMGroundPal},    // ITEM_TM28_DIG - Terra
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM29_PSYCHIC - Psíquico
+	{gBag_TMTiles, gBag_TMGhostPal},     // ITEM_TM30_SHADOW_BALL - Fantasma
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM31_BRICK_BREAK - Lutador
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM32_DOUBLE_TEAM - Normal
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM33_REFLECT - Psíquico
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM34_SHOCK_WAVE - Elétrico
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM35_FLAMETHROWER - Fogo
+	{gBag_TMTiles, gBag_TMPoisonPal},    // ITEM_TM36_SLUDGE_BOMB - Veneno
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM37_SANDSTORM - Pedra
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM38_FIRE_BLAST - Fogo
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM39_ROCK_TOMB - Pedra
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM40_AERIAL_ACE - Voador
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM41_TORMENT - Sombrio
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM42_FACADE - Normal
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM43_SECRET_POWER - Normal
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM44_REST - Psíquico
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM45_ATTRACT - Normal
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM46_THIEF - Sombrio
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM47_STEEL_WING - Voador/Aço
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM48_SKILL_SWAP - Psíquico
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM49_SNATCH - Sombrio
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM50_OVERHEAT - Fogo
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_HM01_CUT - Normal
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_HM02_FLY - Voador
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_HM03_SURF - Água
+	{gBag_TMTiles, gBag_TMNormalPal}, 	 // ITEM_HM04_STRENGTH - Normal
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_HM05_DIVE - Água
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_HM06_ROCK_SMASH - Lutador
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_HM07_WATERFALL - Água
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_HM08_ROCK_CLIMB - Normal
 	{gBag_DynamaxBandTiles, gBag_DynamaxBandPal},
 	{gBag_GoldTeethTiles, gBag_GoldTeethPal},
 	{gBag_OaksParcelTiles, gBag_OaksParcelPal},
@@ -1383,76 +1383,76 @@ const struct ItemIconTemplate gItemGraphicsTable[] =
 	{gBag_RubyTiles, gBag_RubyPal},
 	{gBag_SapphireTiles, gBag_SapphirePal},
 	{gBag_InterrogationTiles, gBag_InterrogationPal},
-	{gBag_TMTiles, gBag_TMGrassPal},	//51 
-	{gBag_TMTiles, gBag_TMDragonPal},   //52 
-	{gBag_TMTiles, gBag_TMSteelPal},    //53 
-	{gBag_TMTiles, gBag_TMFightingPal}, //54 
-	{gBag_TMTiles, gBag_TMPoisonPal},   //55 
-	{gBag_TMTiles, gBag_TMFirePal},     //56 
-	{gBag_TMTiles, gBag_TMFightingPal}, //57 
-	{gBag_TMTiles, gBag_TMPoisonPal},   //58 
-	{gBag_TMTiles, gBag_TMDarkPal},     //59 
-	{gBag_TMTiles, gBag_TMGrassPal},    //60 
-	{gBag_TMTiles, gBag_TMBugPal},      //61 
-	{gBag_TMTiles, gBag_TMBugPal},      //62 
-	{gBag_TMTiles, gBag_TMDragonPal},   //63 
-	{gBag_TMTiles, gBag_TMRockPal},     //64 
-	{gBag_TMTiles, gBag_TMFightingPal}, //65 
-	{gBag_TMTiles, gBag_TMGrassPal},    //66 
-	{gBag_TMTiles, gBag_TMFlyingPal},   //67 
-	{gBag_TMTiles, gBag_TMGroundPal},   //68 
-	{gBag_TMTiles, gBag_TMDarkPal},     //69 
-	{gBag_TMTiles, gBag_TMPsychicPal},  //70 
-	{gBag_TMTiles, gBag_TMSteelPal},    //71 
-	{gBag_TMTiles, gBag_TMGrassPal},    //72 
-	{gBag_TMTiles, gBag_TMGrassPal},    //73 
-	{gBag_TMTiles, gBag_TMPoisonPal},   //74 
-	{gBag_TMTiles, gBag_TMSteelPal},    //75 
-	{gBag_TMTiles, gBag_TMRockPal},     //76 
-	{gBag_TMTiles, gBag_TMRockPal},     //77 
-	{gBag_TMTiles, gBag_TMGrassPal},    //78 
-	{gBag_TMTiles, gBag_TMPoisonPal},   //79 
-	{gBag_TMTiles, gBag_TMSteelPal},    //80 
-	{gBag_TMTiles, gBag_TMElectricPal}, //81 
-	{gBag_TMTiles, gBag_TMDarkPal},     //82 
-	{gBag_TMTiles, gBag_TMPsychicPal},  //83 
-	{gBag_TMTiles, gBag_TMWaterPal},    //84 
-	{gBag_TMTiles, gBag_TMWaterPal},    //85 
-	{gBag_TMTiles, gBag_TMNormalPal},   //86 
-	{gBag_TMTiles, gBag_TMElectricPal}, //87 
-	{gBag_TMTiles, gBag_TMGroundPal},   //88 
-	{gBag_TMTiles, gBag_TMFirePal},     //89 
-	{gBag_TMTiles, gBag_TMFlyingPal},   //90 
-	{gBag_TMTiles, gBag_TMFairyPal},    //91 
-	{gBag_TMTiles, gBag_TMPoisonPal},   //92 
-	{gBag_TMTiles, gBag_TMFairyPal},    //93 
-	{gBag_TMTiles, gBag_TMDarkPal},     //94 
-	{gBag_TMTiles, gBag_TMGroundPal},   //95 
-	{gBag_TMTiles, gBag_TMDarkPal},     //96 
-	{gBag_TMTiles, gBag_TMBugPal},      //97 
-	{gBag_TMTiles, gBag_TMPsychicPal},  //98 
-	{gBag_TMTiles, gBag_TMWaterPal},    //99 
-	{gBag_TMTiles, gBag_TMFightingPal}, //100
-	{gBag_TMTiles, gBag_TMNormalPal},   //101
-	{gBag_TMTiles, gBag_TMElectricPal}, //102
-	{gBag_TMTiles, gBag_TMGroundPal},   //103
-	{gBag_TMTiles, gBag_TMElectricPal}, //104
-	{gBag_TMTiles, gBag_TMFlyingPal},   //105
-	{gBag_TMTiles, gBag_TMFightingPal}, //106
-	{gBag_TMTiles, gBag_TMDarkPal},     //107
-	{gBag_TMTiles, gBag_TMGhostPal},    //108
-	{gBag_TMTiles, gBag_TMFairyPal},    //109
-	{gBag_TMTiles, gBag_TMGrassPal},    //110
-	{gBag_TMTiles, gBag_TMFairyPal},    //111
-	{gBag_TMTiles, gBag_TMPsychicPal},  //112
-	{gBag_TMTiles, gBag_TMElectricPal}, //113
-	{gBag_TMTiles, gBag_TMFirePal},     //114
-	{gBag_TMTiles, gBag_TMElectricPal}, //115
-	{gBag_TMTiles, gBag_TMNormalPal},   //116
-	{gBag_TMTiles, gBag_TMFlyingPal},   //117
-	{gBag_TMTiles, gBag_TMSteelPal},    //118
-	{gBag_TMTiles, gBag_TMDarkPal},     //119
-	{gBag_TMTiles, gBag_TMDragonPal},   //120
+	{gBag_TMTiles, gBag_TMFlyingPal},  	 // ITEM_TM51_MOVE_ROOST - Voador
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM52_MOVE_FOCUSBLAST - Lutador
+	{gBag_TMTiles, gBag_TMGrassPal}, 	 // ITEM_TM53_MOVE_ENERGYBALL - Grama
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM54_MOVE_FALSESWIPE - Normal
+	{gBag_TMTiles, gBag_TMWaterPal},  	 // ITEM_TM55_MOVE_BRINE - Agua
+	{gBag_TMTiles, gBag_TMDarkPal}, 	 // ITEM_TM56_MOVE_HONECLAWS - Noturno
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM57_MOVE_CHARGEBEAM - Eletrico
+	{gBag_TMTiles, gBag_TMNormalPal},  	 // ITEM_TM58_MOVE_ENDURE - Normal
+	{gBag_TMTiles, gBag_TMDragonPal},    // ITEM_TM59_DRAGON_PULSE - Dragão
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM60_DRAIN_PUNCH - Lutador
+	{gBag_TMTiles, gBag_TMFirePal},   	 // ITEM_TM61_WILL_O_WISP - Fogo
+	{gBag_TMTiles, gBag_TMBugPal},       // ITEM_TM62_SILVER_WIND - Inseto
+	{gBag_TMTiles, gBag_TMPoisonPal},    // ITEM_TM63_VENOSHOCK - Veneno
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM64_EXPLOSION - Normal
+	{gBag_TMTiles, gBag_TMGhostPal},     // ITEM_TM65_SHADOW_CLAW - Fantasma
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM66_PAYBACK - Sombrio
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM67_RECYCLE - Normal
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM68_GIGA_IMPACT - Normal
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM69_ROCK_POLISH - Pedra
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM70_FLASH - Normal
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM71_STONE_EDGE - Pedra
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM72_AVALANCHE - Gelo
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM73_THUNDER_WAVE - Elétrico
+	{gBag_TMTiles, gBag_TMSteelPal},     // ITEM_TM74_GYRO_BALL - Aço
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM75_SWORDS_DANCE - Normal
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM76_STEALTH_ROCK - Pedra
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM77_FLAME_CHARGE - Fogo
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM78_LOW_SWEEP - Lutador
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM79_DARK_PULSE - Sombrio
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM80_ROCK_SLIDE - Pedra
+	{gBag_TMTiles, gBag_TMBugPal},       // ITEM_TM81_X_SCISSOR - Inseto
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM82_SLEEP_TALK - Normal
+	{gBag_TMTiles, gBag_TMWaterPal},     // ITEM_TM83_SCALD - Água
+	{gBag_TMTiles, gBag_TMPoisonPal},    // ITEM_TM84_POISON_JAB - Veneno
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM85_DREAM_EATER - Psíquico
+	{gBag_TMTiles, gBag_TMGrassPal},     // ITEM_TM86_GRASS_KNOT - Grama
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM87_SWAGGER - Normal
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM88_PLUCK - Voador
+	{gBag_TMTiles, gBag_TMBugPal},       // ITEM_TM89_U_TURN - Inseto
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM90_SUBSTITUTE - Normal
+	{gBag_TMTiles, gBag_TMSteelPal},     // ITEM_TM91_FLASH_CANNON - Aço
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM92_VOLT_SWITCH - Elétrico
+	{gBag_TMTiles, gBag_TMDragonPal},    // ITEM_TM93_DRAGON_TAIL - Dragão
+	{gBag_TMTiles, gBag_TMFirePal},      // ITEM_TM94_INCINERATE - Fogo
+	{gBag_TMTiles, gBag_TMBugPal},       // ITEM_TM95_STRUGGLE_BUG - Inseto
+	{gBag_TMTiles, gBag_TMGroundPal},    // ITEM_TM96_BULLDOZE - Terra
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM97_FROST_BREATH - Gelo
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM98_WORK_UP - Normal
+	{gBag_TMTiles, gBag_TMElectricPal},  // ITEM_TM99_WILD_CHARGE - Elétrico
+	{gBag_TMTiles, gBag_TMBugPal},       // ITEM_TM100_INFESTATION - Inseto
+	{gBag_TMTiles, gBag_TMFightingPal},  // ITEM_TM101_POWER_UP_PUNCH - Lutador
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM102_DAZZLING_GLEAM - Fada
+	{gBag_TMTiles, gBag_TMPoisonPal},    // ITEM_TM103_SLUDGE_WAVE - Veneno
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM104_PSYSHOCK - Psíquico
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM105_BRUTAL_SWING - Sombrio
+	{gBag_TMTiles, gBag_TMSteelPal},     // ITEM_TM106_SMART_STRIKE - Aço
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM107_ACROBATICS - Voador
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM108_SNARL - Sombrio
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM109_DEFOG - Voador
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM110_CAPTIVATE - Normal
+	{gBag_TMTiles, gBag_TMRockPal},      // ITEM_TM111_SMACK_DOWN - Pedra
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM112_ROUND - Normal
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM113_ECHOED_VOICE - Normal
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM114_NATURAL_GIFT - Normal
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM115_QUASH - Sombrio
+	{gBag_TMTiles, gBag_TMPsychicPal},   // ITEM_TM116_TRICK_ROOM - Psíquico
+	{gBag_TMTiles, gBag_TMDarkPal},      // ITEM_TM117_FLING - Sombrio
+	{gBag_TMTiles, gBag_TMIcePal},       // ITEM_TM118_AURORA_VEIL - Gelo
+	{gBag_TMTiles, gBag_TMFlyingPal},    // ITEM_TM119_SKY_DROP - Voador
+	{gBag_TMTiles, gBag_TMNormalPal},    // ITEM_TM120_NATURE_POWER - Normal
 	{gBag_OccaBerryTiles, gBag_OccaBerryPal},
 	{gBag_PasshoBerryTiles, gBag_PasshoBerryPal},
 	{gBag_WacanBerryTiles, gBag_WacanBerryPal},
