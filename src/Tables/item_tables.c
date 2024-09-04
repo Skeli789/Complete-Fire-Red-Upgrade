@@ -7252,7 +7252,7 @@ const struct Item gItemData[] =
 	},
 	{
 		.name = {_H, _M, _0, _5, _END},
-		.itemId = ITEM_HM05_FLASH,
+		.itemId = ITEM_HM05_DIVE,
 		.price = 0,
 		.holdEffect = 0,
 		.holdEffectParam = 0,
