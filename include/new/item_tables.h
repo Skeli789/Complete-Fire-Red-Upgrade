@@ -1380,6 +1380,7 @@ void FieldUseFunc_EVReducingBerry(u8 taskId);
 #define gFieldFunc_PowderJar ((void*)0x080A14E9)
 void FieldUseFunc_FormChangeItem(u8 taskId);
 void FieldUseFunc_AbilityCapsule(u8 taskId);
+void FieldUseFunc_ExpShare(u8 taskId);
 
 //Descriptions
 #define gText_ItemNone ((void*)0x083DB020)

@@ -1202,3 +1202,24 @@ PlayShinyJingle:
 	sound 0x5F
 	waitse
 	return
+
+.equ FLAG_EXP_SHARE, 0x906
+.global SystemScript_Exp_Share_On
+SystemScript_Exp_Share_On:
+	msgbox gText_Exp_Share_Ask_On MSG_YESNO
+	compare LASTRESULT FALSE
+	if equal _goto EndScript
+	setflag FLAG_EXP_SHARE
+	msgboxsign
+	msgbox gText_Exp_Share_On MSG_SIGN
+	goto EndScript
+
+.global SystemScript_Exp_Share_Off
+SystemScript_Exp_Share_Off:
+	msgbox gText_Exp_Share_Ask_Off MSG_YESNO
+	compare LASTRESULT FALSE
+	if equal _goto EndScript
+	clearflag FLAG_EXP_SHARE
+	msgboxsign
+	msgbox gText_Exp_Share_Off MSG_SIGN
+	goto EndScript

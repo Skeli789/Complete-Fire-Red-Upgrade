@@ -299,3 +299,15 @@ Engage
 
 #org @EncounterScript_msg
 What will you do?
+
+#org @gText_Exp_Share_Ask_On
+Do you want to turn On\nExp. Share?
+
+#org @gText_Exp_Share_Ask_Off
+Do you want to turn Off\nExp. Share?
+
+#org @gText_Exp_Share_On
+Exp. Share turned on.
+
+#org @gText_Exp_Share_Off
+Exp. Share turned off.

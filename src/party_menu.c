@@ -2905,3 +2905,25 @@ void FieldUseFunc_VsSeeker(u8 taskId)
         }
 }
 #endif
+
+extern const u8 SystemScript_Exp_Share_On[];
+extern const u8 SystemScript_Exp_Share_Off[];
+
+static void Task_ExpShareField(u8 taskId)
+{
+    if (FlagGet(FLAG_EXP_SHARE))
+    {
+        ScriptContext1_SetupScript(SystemScript_Exp_Share_Off);
+    }
+    else
+    {
+        ScriptContext1_SetupScript(SystemScript_Exp_Share_On);
+    }
+    DestroyTask(taskId);
+}
+
+void FieldUseFunc_ExpShare(u8 taskId)
+{
+    sItemUseOnFieldCB = Task_ExpShareField;
+    SetUpItemUseOnFieldCallback(taskId);
+}
