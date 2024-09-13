@@ -1808,7 +1808,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 1
 	},
 	{
 		.name = {_G, _r, _e, _a, _t, _SPACE, _B, _a, _l, _l, _END},
@@ -1824,7 +1824,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 2
 	},
 	{
 		.name = {_P, _o, _k, _eACUTE, _SPACE, _B, _a, _l, _l, _END},
@@ -1840,7 +1840,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 3
 	},
 	{
 		.name = {_S, _a, _f, _a, _r, _i, _SPACE, _B, _a, _l, _l, _END},
@@ -1856,7 +1856,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 4
 	},
 	{
 		.name = {_N, _e, _t, _SPACE, _B, _a, _l, _l, _END},
@@ -1872,7 +1872,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 5
 	},
 	{
 		.name = {_D, _i, _v, _e, _SPACE, _B, _a, _l, _l, _END},
@@ -1888,7 +1888,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 6
 	},
 	{
 		.name = {_N, _e, _s, _t, _SPACE, _B, _a, _l, _l, _END},
@@ -1904,7 +1904,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 7
 	},
 	{
 		.name = {_R, _e, _p, _e, _a, _t, _SPACE, _B, _a, _l, _l, _END},
@@ -1920,7 +1920,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 8
 	},
 	{
 		.name = {_T, _i, _m, _e, _r, _SPACE, _B, _a, _l, _l, _END},
@@ -1936,7 +1936,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 9
 	},
 	{
 		.name = {_L, _u, _x, _u, _r, _y, _SPACE, _B, _a, _l, _l, _END},
@@ -1952,7 +1952,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 10
 	},
 	{
 		.name = {_P, _r, _e, _m, _i, _e, _r, _SPACE, _B, _a, _l, _l, _END},
@@ -1968,7 +1968,7 @@ const struct Item gItemData[] =
 		.fieldUseFunc = 0,
 		.battleUsage = 2,
         .battleUseFunc = gFieldFunc_Pokeballs,
-        .secondaryId = 0
+        .secondaryId = 11
 	},
 	{
 		.name = {_P, _o, _t, _i, _o, _n, _END},
