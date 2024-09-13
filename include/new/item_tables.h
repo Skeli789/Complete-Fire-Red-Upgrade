@@ -13,7 +13,7 @@
 #define gBag_GreatBallTiles ((void*)0x08E87334)
 #define gBag_GreatBallPal ((void*)0x08E87404)
 #define gBag_PokeBallTiles ((void*)0x08E8742C)
-#define gBag_PokeBallPal ((void*)0x0E874DC)
+#define gBag_PokeBallPal ((void*)0x08E874DC)
 #define gBag_SafariBallTiles ((void*)0x08E87500)
 #define gBag_SafariBallPal ((void*)0x08E875D0)
 #define gBag_NetBallTiles ((void*)0x08E875F8)
