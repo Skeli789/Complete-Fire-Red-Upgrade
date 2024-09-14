@@ -5,7 +5,9 @@
 #include "../../include/easy_text.h"
 #include "../../include/constants/hold_effects.h"
 #include "../../include/constants/items.h"
+#include "../../include/constants/item_effects.h"
 #include "../../include/new/item.h"
+#include "../../include/new/item_effects.h"
 #include "../../include/new/pickup_items.h"
 #include "../../include/new/item_tables.h"
 /*
