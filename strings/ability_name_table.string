@@ -883,3 +883,24 @@ Face Shield
 
 #org @gText_AbilityName_RoyalRoar
 Royal Roar
+
+#org @gText_AbilityName_AngerShell
+Anger Shell
+
+#org @gText_AbilityName_ArmorTail
+Armor Tail
+
+#org @gText_AbilityName_BeadsofRuin
+Beads O'Ruin
+
+#org @gText_AbilityName_SwordofRuin
+Sword O'Ruin
+
+#org @gText_AbilityName_TabletsofRuin
+TabletO'Ruin
+
+#org @gText_AbilityName_VesselofRuin
+VesselO'Ruin
+
+#org @gText_AbilityName_Costar
+Costar

@@ -129,3 +129,18 @@ But [SCRIPTING_BANK] evaporates\nrain!
 
 #org @GigatonHammerNotAllowedString
 [CURRENT_MOVE] can't be used twice\nin a row!\p
+
+#org @gText_BeadsofRuin
+[SCRIPTING_BANK]'s Beads of Ruin weakened\nthe Sp.Def of around all Pokémon.
+
+#org @gText_TabletsofRuin
+[SCRIPTING_BANK]'s Tablets of Ruin weakened\nthe Attack of around all Pokémon.
+
+#org @gText_SwordofRuin
+[SCRIPTING_BANK]'s Sword of Ruin weakened\nthe Defense of around all Pokémon.
+
+#org @gText_VesselofRuin
+[SCRIPTING_BANK]'s Vessel of Ruin weakened\nthe Sp.Attack of around all Pokémon.
+
+#org @gText_CostarActivate
+[SCRIPTING_BANK] copied [TARGET]\nstat changes!

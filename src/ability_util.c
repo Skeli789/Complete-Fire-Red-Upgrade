@@ -58,6 +58,21 @@ extern const u8 gText_AbilityDescription_GrassDash[];
 extern const u8 gText_AbilityDescription_SlipperyTail[];
 extern const u8 gText_AbilityDescription_DrillBeak[];
 
+//Gen 9 Abilities
+extern const u8 gText_AbilityName_AngerShell[];
+extern const u8 gText_AbilityDescription_AngerShell[];
+extern const u8 gText_AbilityName_ArmorTail[];
+extern const u8 gText_AbilityDescription_BeadsofRuin[];
+extern const u8 gText_AbilityDescription_SwordofRuin[];
+extern const u8 gText_AbilityDescription_TabletsofRuin[];
+extern const u8 gText_AbilityDescription_VesselofRuin[];
+extern const u8 gText_AbilityName_BeadsofRuin[];
+extern const u8 gText_AbilityName_SwordofRuin[];
+extern const u8 gText_AbilityName_TabletsofRuin[];
+extern const u8 gText_AbilityName_VesselofRuin[];
+extern const u8 gText_AbilityName_Costar[];
+extern const u8 gText_AbilityDescription_Costar[];
+
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
@@ -242,6 +257,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_VESPIQUEN:
 				#endif
 					return gText_AbilityName_QueenlyMajesty;
+				if (SpeciesHasArmorTail(species))
+				return gText_AbilityName_ArmorTail;
 			}
 			break;
 		case ABILITY_RECEIVER:
@@ -351,6 +368,24 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#endif
 			}
 			break;
+		case ABILITY_WEAKARMOR:
+			if(SpeciesHasAngerShell(species))
+				return gText_AbilityName_AngerShell;
+			break;
+		case ABILITY_STALL:
+			if(SpeciesHasBeadsofRuin(species))
+				return gText_AbilityName_BeadsofRuin;
+			if(SpeciesHasSwordofRuin(species))
+				return gText_AbilityName_SwordofRuin;
+			if(SpeciesHasTabletsofRuin(species))
+				return gText_AbilityName_TabletsofRuin;
+			if(SpeciesHasVesselofRuin(species))
+				return gText_AbilityName_VesselofRuin;
+			break;
+		case ABILITY_CURIOUSMEDICINE:
+			if (SpeciesHasCostar(species))
+				return gText_AbilityName_Costar;
+			break;
 	}
 
 	return NULL;
@@ -387,6 +422,24 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_MERCILESS:
 			if (SpeciesHasDrillBeak(species))
 				return gText_AbilityDescription_DrillBeak;
+			break;
+		case ABILITY_WEAKARMOR:
+			if(SpeciesHasAngerShell(species))
+				return gText_AbilityDescription_AngerShell;
+			break;
+		case ABILITY_STALL:
+			if(SpeciesHasBeadsofRuin(species))
+				return gText_AbilityDescription_BeadsofRuin;
+			if(SpeciesHasSwordofRuin(species))
+				return gText_AbilityDescription_SwordofRuin;
+			if(SpeciesHasTabletsofRuin(species))
+				return gText_AbilityDescription_TabletsofRuin;
+			if(SpeciesHasVesselofRuin(species))
+				return gText_AbilityDescription_VesselofRuin;
+			break;
+		case ABILITY_CURIOUSMEDICINE:
+			if (SpeciesHasCostar(species))
+				return gText_AbilityDescription_Costar;
 			break;
 	}
 
@@ -839,4 +892,67 @@ bool8 IsVitalSpiritAbility(u8 ability, u16 species)
 	}
 
 	return FALSE;
+}
+
+bool8 SpeciesHasAngerShell(unusedArg u16 species)
+{
+	#ifdef SPECIES_KLAWF
+	return species == SPECIES_KLAWF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasArmorTail(unusedArg u16 species)
+{
+	#ifdef SPECIES_FARIGIRAF
+	return species == SPECIES_FARIGIRAF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasBeadsofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_CHI_YU
+	return species == SPECIES_CHI_YU;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSwordofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_CHIEN_PAO
+	return species == SPECIES_CHIEN_PAO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTabletsofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_WO_CHIEN
+	return species == SPECIES_WO_CHIEN;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasVesselofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_TING_LU
+	return species == SPECIES_TING_LU;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasCostar(unusedArg u16 species)
+{
+	#ifdef SPECIES_FLAMIGO
+	return species == SPECIES_FLAMIGO;
+	#else
+	return FALSE;
+	#endif
 }

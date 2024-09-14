@@ -146,3 +146,10 @@ extern const u8 gText_SlowStartEnd[];
 extern const u8 PrimalRainEndString[];
 extern const u8 PrimalSunEndString[];
 extern const u8 PrimalAirCurrentEndString[];
+extern const u8 gText_BeadsofRuin[];
+extern const u8 gText_TabletsofRuin[];
+extern const u8 gText_SwordofRuin[];
+extern const u8 gText_VesselofRuin[];
+
+//Gen 9 Ability Scripts
+extern const u8 BattleScript_AngerShellActivates[];

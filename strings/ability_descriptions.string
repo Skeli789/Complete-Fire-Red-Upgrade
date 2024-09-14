@@ -583,3 +583,21 @@ Tail moves hit first.
 
 #org @gText_AbilityDescription_DrillBeak
 Drill moves land critical hits.
+
+#org @gText_AbilityDescription_AngerShell
+Boost and fall stats if halved HP.
+
+#org @gText_AbilityDescription_BeadsofRuin
+Lowers all Pokémon SpDef status.
+
+#org @gText_AbilityDescription_SwordofRuin
+Lowers all Pokémon Def status.
+
+#org @gText_AbilityDescription_TabletsofRuin
+Lowers all Pokémon Atk status.
+
+#org @gText_AbilityDescription_VesselofRuin
+Lowers all Pokémon SpAtk status.
+
+#org @gText_AbilityDescription_Costar
+Copies an ally[B4]s stat stages.

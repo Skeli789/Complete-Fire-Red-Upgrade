@@ -1297,13 +1297,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			if (IS_DOUBLE_BATTLE)
 			{
 				u8 partner = PARTNER(bank);
-				if (BATTLER_ALIVE(partner))
+				if (BATTLER_ALIVE(partner) && !SpeciesHasCostar(SPECIES(bank)))
 				{
 					for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
 						gBattleMons[partner].statStages[i] = 6;
 
 					gBankTarget = partner;
 					gBattleStringLoader = gText_CuriousMedicineActivate;
+					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+					effect++;
+				}
+				else if (BATTLER_ALIVE(partner) && SpeciesHasCostar(SPECIES(bank)))
+				{
+					for (i = 0; i < BATTLE_STATS_NO - 1; i++)
+						gBattleMons[gBankAttacker].statStages[i] = gBattleMons[partner].statStages[i];
+					
+					gBankTarget = partner;
+					gBattleStringLoader = gText_CostarActivate;
 					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 					effect++;
 				}
@@ -1997,10 +2007,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == SPLIT_PHYSICAL
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
-				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN))
+				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN)
+				&& !SpeciesHasAngerShell(SPECIES(bank)))
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_WeakArmorActivates;
+					effect++;
+				}
+				else if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
+				&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
+				&& BATTLER_ALIVE(bank)
+				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
+				|| STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN || STAT_STAGE(bank, STAT_ATK) < STAT_STAGE_MAX
+				|| STAT_STAGE(bank, STAT_SPATK) < STAT_STAGE_MAX)
+				&& SpeciesHasAngerShell(SPECIES(bank)))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_AngerShellActivates;
 					effect++;
 				}
 				break;

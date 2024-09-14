@@ -107,6 +107,8 @@ ability_battle_scripts.s
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
 
+.global BattleScript_AngerShellActivates
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_OverworldWeatherStarts:
@@ -1386,6 +1388,66 @@ BattleScript_AbilityPopUp:
 
 BattleScript_AbilityPopUpRevert:
 	playanimation BANK_SCRIPTING ANIM_REMOVE_ABILITY_POP_UP 0x0
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_AngerShellActivates:
+	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN AngerShellModDef
+	jumpifstat BANK_TARGET EQUALS STAT_SPD STAT_MAX AngerShellReturn
+
+AngerShellModDef:
+	call BattleScript_AbilityPopUp
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES
+AS_SkipTo:
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange BANK_TARGET | STAT_BS_PTR | STAT_CERTAIN AS_LowerSpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AS_LowerSpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AS_LowerSpDef:
+	setstatchanger STAT_SPDEF | DECREASE_1
+	statbuffchange BANK_TARGET | STAT_BS_PTR | STAT_CERTAIN AngerShellModSpd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellModSpd
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	
+AngerShellModSpd:
+	jumpifstat BANK_TARGET EQUALS STAT_SPD STAT_MAX AngerShellModSpAtk
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellModSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellModSpAtk
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellModSpAtk:
+	jumpifstat BANK_TARGET EQUALS STAT_SPATK STAT_MAX AngerShellModAtk
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellModAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellModAtk
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+AngerShellModAtk:
+	jumpifstat BANK_TARGET EQUALS STAT_ATK STAT_MAX AngerShellRevertPopUp
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN AngerShellRevertPopUp
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 AngerShellRevertPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	
+AngerShellRevertPopUp:
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	call BattleScript_AbilityPopUpRevert
+
+AngerShellReturn:
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

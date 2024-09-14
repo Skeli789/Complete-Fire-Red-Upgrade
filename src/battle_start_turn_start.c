@@ -2215,7 +2215,10 @@ s32 BracketCalc(u8 bank, u8 action, u16 move)
 			}
 		}
 
-		if (ability == ABILITY_STALL)
+		if (ability == ABILITY_STALL && !(SpeciesHasBeadsofRuin(SPECIES(bank))
+										|| SpeciesHasSwordofRuin(SPECIES(bank))
+										|| SpeciesHasTabletsofRuin(SPECIES(bank))
+										|| SpeciesHasVesselofRuin(SPECIES(bank))))
 			return -1;
 	}
 

@@ -2959,6 +2959,61 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			spDefense = (15 * spDefense) / 10; //Ground types get a Sp. Def boost in a "Vicious Sandstorm"
 	}
 
+//Hail Def Increase
+    if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY)
+        && ((!useMonDef && IsOfType(bankDef, TYPE_ICE)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ICE)))){
+        defense = (defense * 15) / 10;
+	}
+
+	bool8 stallInField = FALSE;
+	bool8 beadsOfRuinInField = FALSE;
+	bool8 TabletsOfRuinInField = FALSE;
+	bool8 VesselOfRuinInField = FALSE;
+	bool8 SwordOfRuinInField = FALSE;
+	u8 stallSide = 0xFF;  // Stores the side of the field where ABILITY_STALL was found
+
+	// Check if any Pokémon on the field has ABILITY_STALL
+	for (u8 bank = 0; bank < gBattlersCount; ++bank) {
+		if (GetBankAbility(bank) == ABILITY_STALL) {
+			stallInField = TRUE;
+			stallSide = GetBattlerSide(bank); // Store the side of the field of the Pokémon with Stall
+		}
+		
+		if (SpeciesHasBeadsofRuin(SPECIES(bank)) && GetBattlerSide(bank) == stallSide) {
+			beadsOfRuinInField = TRUE;
+		}
+		if (SpeciesHasTabletsofRuin(SPECIES(bank)) && GetBattlerSide(bank) == stallSide) {
+			TabletsOfRuinInField = TRUE;
+		}
+		if (SpeciesHasVesselofRuin(SPECIES(bank)) && GetBattlerSide(bank) == stallSide) {
+			VesselOfRuinInField = TRUE;
+		}
+		if (SpeciesHasSwordofRuin(SPECIES(bank)) && GetBattlerSide(bank) == stallSide) {
+			SwordOfRuinInField = TRUE;
+		}
+
+		// If both are true and on the same side, no need to continue the loop
+		if (stallInField && (beadsOfRuinInField || TabletsOfRuinInField || VesselOfRuinInField || SwordOfRuinInField)) {
+			break;
+		}
+	}
+
+	if (stallInField && beadsOfRuinInField && !SpeciesHasBeadsofRuin(SPECIES(bankAtk))) {
+		spDefense = (spDefense * 75) / 100;  // Reduce Sp defense by 25%
+	}
+
+	if (stallInField && TabletsOfRuinInField && !SpeciesHasTabletsofRuin(SPECIES(bankAtk))) {
+		attack = (attack * 75) / 100;  // Reduce attack by 25%
+	}
+
+	if (stallInField && VesselOfRuinInField && !SpeciesHasVesselofRuin(SPECIES(bankAtk))) {
+		spAttack = (spAttack * 75) / 100;  // Reduce Sp attack by 25%
+	}
+
+	if (stallInField && SwordOfRuinInField && !SpeciesHasSwordofRuin(SPECIES(bankAtk))) {
+		defense = (defense * 75) / 100;  // Reduce defense by 25%
+	}
+
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
 		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
