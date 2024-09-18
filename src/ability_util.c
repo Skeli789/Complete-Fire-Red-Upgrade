@@ -72,6 +72,12 @@ extern const u8 gText_AbilityName_TabletsofRuin[];
 extern const u8 gText_AbilityName_VesselofRuin[];
 extern const u8 gText_AbilityName_Costar[];
 extern const u8 gText_AbilityDescription_Costar[];
+extern const u8 gText_AbilityName_CudChew[];
+extern const u8 gText_AbilityDescription_CudChew[];
+extern const u8 gText_AbilityName_EarthEater[];
+extern const u8 gText_AbilityDescription_EarthEater[];
+extern const u8 gText_AbilityName_Electromorphosis[];
+extern const u8 gText_AbilityDescription_Electromorphosis[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -386,6 +392,18 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if (SpeciesHasCostar(species))
 				return gText_AbilityName_Costar;
 			break;
+		case ABILITY_HARVEST:
+			if(SpeciesHasCudChew(species))
+				return gText_AbilityName_CudChew;
+			break;
+		case ABILITY_VOLTABSORB:
+			if(SpeciesHasEarthEater(species))
+				return gText_AbilityName_EarthEater;
+			break;
+		case ABILITY_COLORCHANGE:
+			if(SpeciesHasElectromorphosis(species))
+				return gText_AbilityName_Electromorphosis;
+			break;
 	}
 
 	return NULL;
@@ -440,6 +458,18 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_CURIOUSMEDICINE:
 			if (SpeciesHasCostar(species))
 				return gText_AbilityDescription_Costar;
+			break;
+		case ABILITY_HARVEST:
+			if(SpeciesHasCudChew(species))
+				return gText_AbilityDescription_CudChew;
+			break;
+		case ABILITY_VOLTABSORB:
+			if(SpeciesHasEarthEater(species))
+				return gText_AbilityDescription_EarthEater;
+			break;
+		case ABILITY_COLORCHANGE:
+			if(SpeciesHasElectromorphosis(species))
+				return gText_AbilityDescription_Electromorphosis;
 			break;
 	}
 
@@ -952,6 +982,24 @@ bool8 SpeciesHasCostar(unusedArg u16 species)
 {
 	#ifdef SPECIES_FLAMIGO
 	return species == SPECIES_FLAMIGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasEarthEater(unusedArg u16 species)
+{
+	#ifdef SPECIES_ORTHWORM
+	return species == SPECIES_ORTHWORM;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasElectromorphosis(unusedArg u16 species)
+{
+	#ifdef SPECIES_BELLIBOLT
+	return species == SPECIES_BELLIBOLT;
 	#else
 	return FALSE;
 	#endif

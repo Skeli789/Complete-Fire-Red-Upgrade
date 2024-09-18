@@ -525,3 +525,6 @@ The storm is getting too strong to\nwithstand!
 
 #org @gText_RaidMonRanAway
 [PLAY_SE][11][00][FD][06] disappeared\nsomewhere[.]\p
+
+#org @gText_ElectromorphosisActivates
+Being hit by [CURRENT_MOVE]\ncharged [SCRIPTING_BANK] with power.

@@ -108,6 +108,8 @@ ability_battle_scripts.s
 .global BattleScript_AbilityPopUpRevert
 
 .global BattleScript_AngerShellActivates
+.global BattleScript_CudChew
+.global BattleScript_ElectromorphosisActivates
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -574,6 +576,17 @@ BattleScript_Harvest:
 
 HarvestBSEnd:
 	setbyte FORM_COUNTER 0x0
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CudChew:
+	recycleitem HarvestBSEnd
+	call BattleScript_AbilityPopUp
+	call BattleScript_AbilityPopUpRevert
+	callasm CudChewBerryEat
+	callasm ClearDoingPluckItemEffect
+	removeitem BANK_SCRIPTING
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1448,6 +1461,18 @@ AngerShellRevertPopUp:
 	call BattleScript_AbilityPopUpRevert
 
 AngerShellReturn:
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_ElectromorphosisActivates:
+	call BattleScript_AbilityPopUp
+	setcharge
+	setword BATTLE_STRING_LOADER gText_ElectromorphosisActivates
+	printstring 0x184
+	playanimation BANK_SCRIPTING ANIM_CHARGE2 0x0
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	seteffectprimary
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

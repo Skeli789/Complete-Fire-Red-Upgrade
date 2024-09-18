@@ -1351,7 +1351,7 @@ extern const u8 gBagItem_Cornerstone_MaskPal[];
 #define gFieldFunc_Black_Flute ((void*)0x080A1A95)
 #define gFieldFunc_Sacred_Ash ((void*)0x080A176D)
 #define gFieldFunc_Rare_Candy ((void*)0x080A1735)
-#define gFieldFunc_PP_Up ((void*)0x08A1719)
+#define gFieldFunc_PP_Up ((void*)0x080A1719)
 void FieldUseFunc_MaxPowder(u8 taskId);
 #define gBattleFunc_X_Items ((void*)0x080A1E7D)
 #define gBattleFunc_Toy_Items ((void*)0x080A2011)

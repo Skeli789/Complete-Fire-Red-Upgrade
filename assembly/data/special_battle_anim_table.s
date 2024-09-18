@@ -99,6 +99,7 @@ gBattleAnims_General:
 .word ANIM_HOOPA_RING_SPAWN
 .word ANIM_SPLINTER_DAMAGE
 .word ANIM_SUBSTITUTE2
+.word ANIM_CHARGE2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1167,6 +1168,12 @@ SPLINTER: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDum
 .pool
 ANIM_SUBSTITUTE2:
 	goto 0x81d3433		@MOVE_SUBSTITUTE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_CHARGE2:
+	goto 0x81cb970 @Charge
 	endanimation
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

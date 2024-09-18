@@ -807,6 +807,8 @@ struct NewBattleStruct
 	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
 	u8 rageFistCounter[MAX_BATTLERS_COUNT];
 	u8 SaltcureTimers[MAX_BATTLERS_COUNT];
+	u8 CudChewCounter[MAX_BATTLERS_COUNT];
+	u8 ElectroCounter[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;

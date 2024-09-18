@@ -1540,6 +1540,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						BattleScriptPushCursorAndCallback(BattleScript_Harvest);
 						++effect;
 					}
+
+					else if (gItems[(SAVED_CONSUMED_ITEMS(bank))].pocket == POCKET_BERRY_POUCH
+					&& SpeciesHasCudChew(SPECIES(bank)) && gNewBS->CudChewCounter[bank] == 2)
+					{
+						BattleScriptPushCursorAndCallback(BattleScript_CudChew);
+								gNewBS->CudChewCounter[bank] = 2;
+								gNewBS->CudChewCounter[bank]++;
+						++effect;
+					}
+
+					else if (gItems[(SAVED_CONSUMED_ITEMS(bank))].pocket == POCKET_BERRY_POUCH
+					&& SpeciesHasCudChew(SPECIES(bank)) && gNewBS->CudChewCounter[bank] == 0)
+					{
+								gNewBS->CudChewCounter[bank] = 1;
+								gNewBS->CudChewCounter[bank]++;
+								effect++;
+					}
 					break;
 
 				case ABILITY_PICKUP: ;
@@ -1706,7 +1723,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			gBattleScripting.bank = bank;
 			switch (gLastUsedAbility) {
 				case ABILITY_VOLTABSORB:
-					if (moveType == TYPE_ELECTRIC)
+					if ((moveType == TYPE_ELECTRIC && !SpeciesHasEarthEater(SPECIES(bank)))
+					|| (moveType == TYPE_GROUND && SpeciesHasEarthEater(SPECIES(bank))))
 						effect = 1;
 					break;
 
@@ -1827,12 +1845,27 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
 				&& !SheerForceCheck()
+				&& !SpeciesHasElectromorphosis(SPECIES(bank))
 				&& gMultiHitCounter <= 1)
 				{
 					SET_BATTLER_TYPE(bank, moveType);
 					PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_AbilityChangedTypeContact;
+					effect++;
+				}
+				
+				else if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& SpeciesHasElectromorphosis(SPECIES(bank))
+				&& gNewBS->ElectroCounter[bank] <= 2)
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ElectromorphosisActivates;
+					if(gNewBS->ElectroCounter[bank] == 0)
+						gNewBS->ElectroCounter[bank] = 1;
+					gNewBS->ElectroCounter[bank]++;
 					effect++;
 				}
 				break;

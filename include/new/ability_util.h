@@ -57,3 +57,6 @@ bool8 SpeciesHasSwordofRuin(u16 species);
 bool8 SpeciesHasTabletsofRuin(u16 species);
 bool8 SpeciesHasVesselofRuin(u16 species);
 bool8 SpeciesHasCostar(u16 species);
+bool8 SpeciesHasCudChew(u16 species);
+bool8 SpeciesHasEarthEater(u16 species);
+bool8 SpeciesHasElectromorphosis(u16 species);

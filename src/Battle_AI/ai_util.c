@@ -2209,6 +2209,8 @@ u8 TryReplaceImposterAbility(u8 ability, u8 monBank) //monBank is the bank the m
 //These by default are not handled in IsUnusableMove
 bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 {
+	bool8 EarthEater = SpeciesHasEarthEater(SPECIES(bankDef));
+	
 	if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
 	{
 		switch (ABILITY(bankDef))
@@ -2217,7 +2219,8 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_ELECTRIC)
+				if ((GetMoveTypeSpecial(bankAtk, move) == TYPE_ELECTRIC && !EarthEater)
+				|| (GetMoveTypeSpecial(bankAtk, move) == TYPE_GROUND && EarthEater))
 					return TRUE;
 				break;
 
@@ -2323,6 +2326,8 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 {
+	bool8 EarthEater = SpeciesHasEarthEater(SPECIES(bankDef));
+
 	if (NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
 	{
 		switch (ABILITY(bankDef))
@@ -2331,7 +2336,8 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC)
+				if ((GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC && !EarthEater)
+				|| (GetMonMoveTypeSpecial(monAtk, move) == TYPE_GROUND && EarthEater))
 					return TRUE;
 				break;
 

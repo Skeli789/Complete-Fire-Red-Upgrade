@@ -143,7 +143,7 @@ const u16 gSandstormHailDmgStringIds[] =
 	STRINGID_CUSTOMSTRING,
 };
 
-u8 TurnBasedEffects(void)
+u8 TurnBasedEffects(u16 move, u8 bank, struct Pokemon* monAtk)
 {
 	int i, j;
 	u8 effect = 0;
@@ -232,6 +232,11 @@ u8 TurnBasedEffects(void)
 
 				if (gNewBS->activateTemperFlare)
 					--gNewBS->activateTemperFlare;
+
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC)
+				{
+					gNewBS->ElectroCounter[bank] = 0;
+				}
 
 				gSideStatuses[B_SIDE_PLAYER] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 				gSideStatuses[B_SIDE_OPPONENT] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);

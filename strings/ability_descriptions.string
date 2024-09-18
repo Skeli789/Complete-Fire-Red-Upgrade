@@ -601,3 +601,12 @@ Lowers all Pokémon SpAtk status.
 
 #org @gText_AbilityDescription_Costar
 Copies an ally[B4]s stat stages.
+
+#org @gText_AbilityDescription_CudChew
+Eat Berry again at next turn end.
+
+#org @gText_AbilityDescription_EarthEater
+Turns Ground move into HP.
+
+#org @gText_AbilityDescription_Electromorphosis
+Ups next electric move if damaged.

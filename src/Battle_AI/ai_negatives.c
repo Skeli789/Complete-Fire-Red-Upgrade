@@ -215,7 +215,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (moveType == TYPE_ELECTRIC) // && (moveSplit != SPLIT_STATUS))
+				if ((moveType == TYPE_ELECTRIC && !SpeciesHasEarthEater(SPECIES(gBankTarget)))
+				|| (moveType == TYPE_GROUND && SpeciesHasEarthEater(SPECIES(gBankTarget))))		 // && (moveSplit != SPLIT_STATUS))
 				{
 					if (!TARGETING_PARTNER) //Good idea to attack partner
 					{

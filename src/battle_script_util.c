@@ -2710,3 +2710,15 @@ void ChooseMoveEffectForSpringtideStorm(void)
 
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[moveEffect] - 5;
 }
+
+void CudChewBerryEat(void)
+{
+	gBattlescriptCurrInstr += 5;
+
+	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, TRUE))
+		gNewBS->doingPluckItemEffect = TRUE;
+	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBattleScripting.bank, TRUE, TRUE))
+		gNewBS->doingPluckItemEffect = TRUE;
+
+	gBattlescriptCurrInstr -= 5;
+}

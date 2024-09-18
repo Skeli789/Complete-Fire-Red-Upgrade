@@ -153,3 +153,5 @@ extern const u8 gText_VesselofRuin[];
 
 //Gen 9 Ability Scripts
 extern const u8 BattleScript_AngerShellActivates[];
+extern const u8 BattleScript_CudChew[];
+extern const u8 BattleScript_ElectromorphosisActivates[];
