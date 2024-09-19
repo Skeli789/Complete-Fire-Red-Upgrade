@@ -1996,6 +1996,9 @@ bool8 CanBeFlinched(u8 bankDef, u8 bankAtk, u8 defAbility, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef))
 		return FALSE; //Have to go first to flinch
 
+	if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_CLEAR_AMULET)
+		return FALSE;
+
 	return !MoveBlockedBySubstitute(move, bankAtk, bankDef); //Can't flinch a Substitute
 }
 
@@ -3332,7 +3335,8 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ATK)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
@@ -3347,7 +3351,8 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_DEF)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
@@ -3361,7 +3366,8 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPATK)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
@@ -3375,7 +3381,8 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPDEF)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
@@ -3389,7 +3396,8 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
 		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPEED)
-		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy));
+		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy))
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
@@ -3401,7 +3409,8 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 
 	return defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC);
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC)
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
@@ -3411,7 +3420,8 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 	if (!IsClearBodyAbility(defAbility)
 	&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
 	&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-	&& defAbility != ABILITY_CONTRARY)
+	&& defAbility != ABILITY_CONTRARY
+	&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET)
 	{
 		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6)
 			return TRUE;

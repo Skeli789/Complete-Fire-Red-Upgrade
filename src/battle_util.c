@@ -539,7 +539,8 @@ bool8 CanNeverMakeContactByAbilityItemEffect(u8 ability, u8 itemEffect)
 
 bool8 CanNeverMakeContactByItemEffect(u8 itemEffect)
 {
-	return itemEffect == ITEM_EFFECT_PROTECTIVE_PADS;
+	return itemEffect == ITEM_EFFECT_PROTECTIVE_PADS
+		|| itemEffect == ITEM_EFFECT_PUNCHING_GLOVE;
 }
 
 bool8 CheckHealingMove(move_t move)

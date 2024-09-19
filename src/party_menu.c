@@ -1636,7 +1636,8 @@ void Task_ClosePartyMenuAfterText(u8 taskId)
                 && CheckBagHasItem(Var800E, 1)
                 && Var800E != ITEM_DNA_SPLICERS
                 && Var800E != ITEM_N_SOLARIZER
-                && Var800E != ITEM_N_LUNARIZER)
+                && Var800E != ITEM_N_LUNARIZER
+                && Var800E != ITEM_REINS_OF_UNITY)
                 {
                         ClearStdWindowAndFrameToTransparent(6, 0);
                         ScheduleBgCopyTilemapToVram(2);
@@ -2019,6 +2020,12 @@ static bool8 FormFuseItemMatchesSpecies(u16 item, u16 species)
                 case SPECIES_LUNALA:
                 case SPECIES_NECROZMA_DAWN_WINGS:
                         return item == ITEM_N_LUNARIZER;
+                case SPECIES_CALYREX:
+		case SPECIES_GLASTRIER:
+		case SPECIES_SPECTRIER:
+		case SPECIES_CALYREX_ICE_RIDER:
+		case SPECIES_CALYREX_SHADOW_RIDER:
+			return item == ITEM_REINS_OF_UNITY;
         }
 
         return FALSE;
@@ -2158,11 +2165,12 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
                 case ITEM_DNA_SPLICERS:
                 case ITEM_N_SOLARIZER:
                 case ITEM_N_LUNARIZER:
+                case ITEM_REINS_OF_UNITY:
                         if (!FormFuseItemMatchesSpecies(item, species))
                                 goto NO_EFFECT;
 
-                        #if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA)
-                        if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA)
+                        #if (defined SPECIES_KYUREM && defined SPECIES_NECROZMA  && defined SPECIES_CALYREX)
+                        if (species == SPECIES_KYUREM || species == SPECIES_NECROZMA || species == SPECIES_CALYREX)
                         {
                                 DisplayPartyMenuStdMessage(MSG_FUSE); //Show "Fuse with which Pokemon?" in bottom left
                                 AnimatePartySlot(gPartyMenu.slotId, 1); //Update color of first selected box
@@ -2173,8 +2181,8 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
                         }
                         else
                         #endif
-                        #if (defined SPECIES_KYUREM_BLACK && defined SPECIES_KYUREM_WHITE && defined SPECIES_NECROZMA_DUSK_MANE && defined SPECIES_NECROZMA_DAWN_WINGS)
-                                if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE || species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS)
+                        #if (defined SPECIES_KYUREM_BLACK && defined SPECIES_KYUREM_WHITE && defined SPECIES_NECROZMA_DUSK_MANE && defined SPECIES_NECROZMA_DAWN_WINGS && defined SPECIES_CALYREX_ICE_RIDER && defined SPECIES_CALYREX_SHADOW_RIDER)
+                                if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE || species == SPECIES_NECROZMA_DUSK_MANE || species == SPECIES_NECROZMA_DAWN_WINGS || species == SPECIES_CALYREX_ICE_RIDER || species == SPECIES_CALYREX_SHADOW_RIDER)
                         {
                                 u8 slotId;
                                 for (slotId = 0; GetMonData(&gPlayerParty[slotId], MON_DATA_SPECIES, NULL) != SPECIES_NONE && slotId < PARTY_SIZE; ++slotId);
@@ -2201,6 +2209,8 @@ static void ItemUseCB_FormChangeItem(u8 taskId, TaskFunc func)
 
                                         if (species == SPECIES_KYUREM_BLACK || species == SPECIES_KYUREM_WHITE)
                                                 species = SPECIES_KYUREM;
+                                        else if (species == SPECIES_CALYREX_ICE_RIDER || species == SPECIES_CALYREX_SHADOW_RIDER)
+						species = SPECIES_CALYREX;
                                         else
                                                 species = SPECIES_NECROZMA;
                                         DoItemFormChange(mon, species);
@@ -2231,6 +2241,10 @@ static struct Pokemon* GetBaseMonForFusedSpecies(u16 species)
                         return &gSaveBlock1->fusedSolgaleo;
                 case SPECIES_NECROZMA_DAWN_WINGS:
                         return &gSaveBlock1->fusedLunala;
+                case SPECIES_CALYREX_ICE_RIDER:
+			return &gSaveBlock1->fusedGlastrier;
+		case SPECIES_CALYREX_SHADOW_RIDER:
+			return &gSaveBlock1->fusedSpectrier;
         }
 
         return NULL;
@@ -2265,6 +2279,18 @@ static bool8 AlreadyFused(u16 baseSpecies, u16 fuseSpecies)
                                         break;
                         }
                         break;
+                case SPECIES_CALYREX:
+			switch (fuseSpecies) {
+				case SPECIES_SPECTRIER:
+					if (GetMonData(&gSaveBlock1->fusedSpectrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+				case SPECIES_GLASTRIER:
+					if (GetMonData(&gSaveBlock1->fusedGlastrier, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+						alreadyFused = TRUE;
+					break;
+			}
+			break;
         }
 
         if (alreadyFused)        
@@ -2297,6 +2323,13 @@ static bool8 DoBaseAndFuseSpeciesMatch(u16 baseSpecies, u16 fuseSpecies)
                                         return TRUE;
                         }
                         break;
+                case SPECIES_CALYREX:
+			switch (fuseSpecies) {
+				case SPECIES_GLASTRIER:
+				case SPECIES_SPECTRIER:
+					return TRUE;
+			}
+			break;
         }
 
         return FALSE;
@@ -2348,6 +2381,12 @@ static void ItemUseCB_DNASplicersStep(u8 taskId, TaskFunc func)
                                         case SPECIES_LUNALA:
                                                 baseSpecies = SPECIES_NECROZMA_DAWN_WINGS;
                                                 break;
+                                        case SPECIES_GLASTRIER:
+						baseSpecies = SPECIES_CALYREX_ICE_RIDER;
+						break;
+					case SPECIES_SPECTRIER:
+						baseSpecies = SPECIES_CALYREX_SHADOW_RIDER;
+						break;
                                 }
                                 DoItemFormChange(mon, baseSpecies);
 
@@ -2420,6 +2459,12 @@ static void Task_TryLearnPostFormeChangeMove(u8 taskId)
                         case SPECIES_NECROZMA_DAWN_WINGS:
                                 gMoveToLearn = MOVE_MOONGEISTBEAM;
                                 break;
+                        case SPECIES_CALYREX_ICE_RIDER:
+				gMoveToLearn = MOVE_GLACIALLANCE;
+				break;
+			case SPECIES_CALYREX_SHADOW_RIDER:
+				gMoveToLearn = MOVE_ASTRALBARRAGE;
+				break;
                 }
 
                 if (gMoveToLearn != MOVE_NONE)

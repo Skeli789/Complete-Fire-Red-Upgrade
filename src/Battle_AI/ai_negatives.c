@@ -598,6 +598,16 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break;
 				}
 			}
+
+			if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_CLEAR_AMULET)
+			{
+				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
+					|| move == MOVE_PARTINGSHOT)
+					{
+						DECREASE_VIABILITY(10);
+						return viability;
+					}
+			}
 		}
 	}
 

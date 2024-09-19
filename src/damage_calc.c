@@ -3150,6 +3150,10 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (data->defStatus3 & STATUS3_GLAIVERUSH)
 		damage *= 2;
 
+	//Punching Glove Boost
+	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_PUNCHING_GLOVE && gSpecialMoveFlags[move].gPunchingMoves)
+		damage = (damage * 11) / 10;
+
 	//Weather Boost
 	if (WEATHER_HAS_EFFECT && !ItemEffectIgnoresSunAndRain(data->defItemEffect))
 	{

@@ -961,6 +961,10 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				{
 					gMultiHitCounter = 5;
 				}
+				else if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE && gCurrentMove != MOVE_POPULATIONBOMB &&  gCurrentMove != MOVE_TRIPLEKICK &&  gCurrentMove != MOVE_TRIPLEAXEL)
+				{
+					gMultiHitCounter = 5;
+				}
 				#ifdef SPECIES_ASHGRENINJA
 				else if (ability == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN

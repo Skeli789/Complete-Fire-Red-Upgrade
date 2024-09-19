@@ -2365,6 +2365,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 	if (gSideTimers[side].stickyWeb
 	&& IsMonAffectedByHazards(mon)
 	&& ability != ABILITY_CLEARBODY
+	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_CLEAR_AMULET
 	&& CheckMonGrounding(mon))
 	{
 		if (ability == ABILITY_CONTRARY) //Gets a speed boost

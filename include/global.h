@@ -791,6 +791,8 @@ struct SaveBlock1 //0x202552C
 	/*0x34F0*/ struct Pokemon fusedZekrom;	
 	/*0x3554*/ struct Pokemon fusedSolgaleo;
 	/*0x35B8*/ struct Pokemon fusedLunala;	
+	/*0x????*/ struct Pokemon fusedSpectrier;
+	/*0x????*/ struct Pokemon fusedGlastrier;
 	/*0x361C*/ struct RamScript ramScript;
 	/*0x3A08*/ u8 filler_3A08[0x44];
 	/*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];

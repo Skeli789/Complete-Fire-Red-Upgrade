@@ -848,7 +848,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					if (!IsClearBodyAbility(defAbility)
 					&& defAbility != ABILITY_CONTRARY
-					&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED))
+					&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED)
+					&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET)
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
 				}
 			}
