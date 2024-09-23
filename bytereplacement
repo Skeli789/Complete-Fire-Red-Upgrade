@@ -734,6 +734,5 @@
 #endif
 
 #ifdef SHOWPOKEPIC_WITHOUT_UGLY_BOX
-//ShowPokePic without that annoying box
-0809D696 66 F7 25 FB 04 to 00 00 00 00 00
-#endif
+## ShowPokePic without that annoying box
+0809D696 00 00 00 00 00

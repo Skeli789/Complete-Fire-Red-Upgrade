@@ -19485,7 +19485,7 @@ static const struct LevelUpMove sSneaselHLevelUpLearnset[] = {
 	LEVEL_UP_MOVE(68, MOVE_CLOSECOMBAT),
 	LEVEL_UP_END
 };		
-
+/*
 static const struct LevelUpMove sDialgaOriginLevelUpLearnset[] = {
 	LEVEL_UP_MOVE( 1, MOVE_TWISTER),
 	LEVEL_UP_MOVE( 6, MOVE_ANCIENTPOWER),
@@ -19513,7 +19513,7 @@ static const struct LevelUpMove sPalkiaOriginLevelUpLearnset[] = {
 	LEVEL_UP_MOVE(60, MOVE_SPACIALREND),
 	LEVEL_UP_END
 };		
-
+*/
 static const struct LevelUpMove sSamurottHLevelUpLearnset[] = {
 	LEVEL_UP_MOVE( 0, MOVE_NIGHTSLASH),
 	LEVEL_UP_MOVE( 1, MOVE_MEGAHORN),
@@ -23730,4 +23730,7 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_DURALUDON_GIGA] = sDuraludonLevelUpLearnset,
 	[SPECIES_URSHIFU_SINGLE_GIGA] = sUrshifuLevelUpLearnset,
 	[SPECIES_URSHIFU_RAPID_GIGA] = sUrshifuRapidLevelUpLearnset,
+	[SPECIES_DECIDUEYE_H] = sDecidueyeHLevelUpLearnset,
+	[SPECIES_CALYREX_SHADOW_RIDER] = sCalyrexShadowRiderLevelUpLearnset,
+	[SPECIES_CALYREX_ICE_RIDER] = sCalyrexIceRiderLevelUpLearnset,
 };

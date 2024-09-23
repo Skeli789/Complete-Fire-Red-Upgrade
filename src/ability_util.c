@@ -1004,3 +1004,12 @@ bool8 SpeciesHasElectromorphosis(unusedArg u16 species)
 	return FALSE;
 	#endif
 }
+
+bool8 SpeciesHasCudChew(unusedArg u16 species)
+{
+	#if (defined SPECIES_TAUROS_P && SPECIES_TAUROS_AQUA_P && SPECIES_TAUROS_BLAZE_P && SPECIES_FARIGIRAF)
+	return species == SPECIES_TAUROS_P || species == SPECIES_TAUROS_AQUA_P || species == SPECIES_TAUROS_BLAZE_P || species == SPECIES_FARIGIRAF;
+	#else
+	return FALSE;
+	#endif
+}

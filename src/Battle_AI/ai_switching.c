@@ -513,10 +513,11 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 			absorbingTypeAbility1 = 0;
 			absorbingTypeAbility2 = 0;
 			absorbingTypeAbility3 = 0;
-			if (!SpeciesHasEarthEater(SPECIES(gBankTarget)))
+			if (!SpeciesHasEarthEater(SPECIES(gBankTarget))){
 				absorbingTypeAbility1 = ABILITY_VOLTABSORB;
 				absorbingTypeAbility2 = ABILITY_LIGHTNINGROD;
 				absorbingTypeAbility3 = ABILITY_MOTORDRIVE;
+				}
 			break;
 		case TYPE_WATER:
 			absorbingTypeAbility1 = ABILITY_WATERABSORB;
@@ -532,10 +533,11 @@ static bool8 FindMonThatAbsorbsOpponentsMove(struct Pokemon* party, u8 firstId, 
 			absorbingTypeAbility1 = 0;
 			absorbingTypeAbility2 = 0;
 			absorbingTypeAbility3 = 0;
-			if (SpeciesHasEarthEater(SPECIES(gBankTarget)))
+			if (SpeciesHasEarthEater(SPECIES(gBankTarget))){
 				absorbingTypeAbility1 = ABILITY_VOLTABSORB;
 				absorbingTypeAbility2 = ABILITY_VOLTABSORB;
 				absorbingTypeAbility3 = ABILITY_VOLTABSORB;
+				}
 			break;
 		default:
 			return FALSE;
