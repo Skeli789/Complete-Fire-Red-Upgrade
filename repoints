@@ -318,6 +318,8 @@ TMCaseBGGirlPal 08131BD8
 gItemGraphicsTable 0809899C
 #endif
 
+#ifdef CHANGE_ITEM_STORAGE_GRAPHIC
 Item_StorageTiles 0810D7CC
 Item_StorageMap 0810d7e8
 Item_StoragePal 0810d7fc
+#endif
