@@ -728,6 +728,9 @@
 ## Remove gengar and nidoran battle scene
 080EC5D0 15 89 07
 
+# Remove Extra Save confirmation
+0806F874 56
+
 #ifdef EXPANDED_NEW_ITEMS
 ##Item icon Limit##
 08098998 EE 02
