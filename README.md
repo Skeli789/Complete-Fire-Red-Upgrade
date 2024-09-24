@@ -27,7 +27,7 @@ grilokapu
 - Shows enemy team by L button
 - Auto trigger wild battles
 - Continue screen icons
-- Tm case icons (graphic needs some modification)
+- Tm case icons (graphic modificable)
 - Timebox in menu
 - Skipped Gengar and nidoran cutscene
 - Ev-Iv screen (BW) , can be called by callasm
@@ -37,6 +37,10 @@ grilokapu
 - Gen 9 moves
 - Nickname by Party menu
 - Item expansion and some gen 9 items! No need to use leon rombase.
+- Dexnav Swsh
+- Item storage swsh + changable background
+- transparent showpokepic
+- Removed Extra sage confirmation (the overwrite warning)
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 
 #### [Note: It is advised to use DPE-gen9 with it](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9)
