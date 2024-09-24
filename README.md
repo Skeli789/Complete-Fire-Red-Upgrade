@@ -31,7 +31,7 @@ grilokapu
 - Timebox in menu
 - Skipped Gengar and nidoran cutscene
 - Ev-Iv screen (BW) , can be called by callasm
-- Battle backgrounds with CFRU
+- Battle backgrounds with CFRU based on DNS!
 - Switch Pokémon in Party Menu Screen pressing Select
 - Repeat item usage
 - Gen 9 moves
