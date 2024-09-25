@@ -382,7 +382,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if (!certain
-		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability)) || GuardDogPreventsLoweringStat(ability, statId, species)))
+		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability)) || !SpeciesHasGuardDog(SPECIES(bank))))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
