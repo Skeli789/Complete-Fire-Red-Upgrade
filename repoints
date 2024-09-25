@@ -324,6 +324,6 @@ Item_StorageMap 0810d7e8
 Item_StoragePal 0810d7fc
 #endif
 
-#Replace new egg hatch animation
+##Replace new egg hatch animation
 egg_hatchingTiles 0826011C
 egg_hatchingPal 0826012C
