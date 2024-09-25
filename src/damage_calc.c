@@ -2729,6 +2729,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			}
 			break;
 
+		case ABILITY_HADRONENGINE:
+			//1.33x Boost
+			if (gTerrainType == ELECTRIC_TERRAIN && SpeciesHasHadronEngine(SPECIES(bankAtk)) && data->atkIsGrounded)
+				spAttack = (spAttack * 133) / 100;
+			break;
+
 		case ABILITY_FLASHFIRE:
 		//1.5x Boost
 			if (!useMonAtk && data->moveType == TYPE_FIRE

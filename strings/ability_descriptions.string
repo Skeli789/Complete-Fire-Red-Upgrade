@@ -610,3 +610,12 @@ Turns Ground move into HP.
 
 #org @gText_AbilityDescription_Electromorphosis
 Ups next electric move if damaged.
+
+#org @gText_AbilityDescription_GoodAsGold
+Full immunity to status moves.
+
+#org @gText_AbilityDescription_GuardDog
+Blocks intimidate and switch out.
+
+#org @gText_AbilityDescription_HadronEngine
+Calls Electric Terrain, up SpAtk.

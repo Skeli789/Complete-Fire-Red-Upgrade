@@ -273,6 +273,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	bool8 affectsUser = FALSE;
 	bool8 notProtectAffected = FALSE;
 	u32 index;
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (flags & MOVE_EFFECT_AFFECTS_USER)
 	{
@@ -381,7 +382,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if (!certain
-		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability))))
+		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability)) || GuardDogPreventsLoweringStat(ability, statId, species)))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -408,6 +409,16 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				BattleScriptPush(BS_ptr);
 				gBattleScripting.bank = gActiveBattler;
 				gBattlescriptCurrInstr = BattleScript_MirrorArmorReflectsStatLoss;
+			}
+			return STAT_CHANGE_DIDNT_WORK;
+		}
+		else if (!certain && GuardDogPreventsLoweringStat(ability, statId, bank))
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				BattleScriptPush(BS_ptr);
+				gBattleScripting.bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_GuardDogActivates;
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}

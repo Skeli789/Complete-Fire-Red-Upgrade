@@ -144,3 +144,6 @@ But [SCRIPTING_BANK] evaporates\nrain!
 
 #org @gText_CostarActivate
 [SCRIPTING_BANK] copied [TARGET]\nstat changes!
+
+#org @gText_GoodAsGoldActivate
+It doesn't affect [SCRIPTING_BANK][.]

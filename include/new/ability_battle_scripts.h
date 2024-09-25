@@ -151,8 +151,10 @@ extern const u8 gText_TabletsofRuin[];
 extern const u8 gText_SwordofRuin[];
 extern const u8 gText_VesselofRuin[];
 extern const u8 gText_CostarActivate[];
+extern const u8 gText_GoodAsGoldActivate[];
 
 //Gen 9 Ability Scripts
 extern const u8 BattleScript_AngerShellActivates[];
 extern const u8 BattleScript_CudChew[];
 extern const u8 BattleScript_ElectromorphosisActivates[];
+extern const u8 BattleScript_GuardDogActivates[];

@@ -110,6 +110,7 @@ ability_battle_scripts.s
 .global BattleScript_AngerShellActivates
 .global BattleScript_CudChew
 .global BattleScript_ElectromorphosisActivates
+.global BattleScript_GuardDogActivates
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1473,6 +1474,38 @@ BattleScript_ElectromorphosisActivates:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	seteffectprimary
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_GuardDogActivates:
+	pause 0x10
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps @;Basically Mirror Armor
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
+	call BattleScript_AbilityPopUp
+
+GuardDog_NotLoss:
+	printstring 0x135
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	setbyte MULTISTRING_CHOOSER 0x3
+
+GuardDog_UpStatus:
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN GD_RevertPopUp
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GD_RevertPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+GD_RevertPopUp:
+bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	call BattleScript_AbilityPopUpRevert
+
+GD_Return:
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

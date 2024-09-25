@@ -78,6 +78,12 @@ extern const u8 gText_AbilityName_EarthEater[];
 extern const u8 gText_AbilityDescription_EarthEater[];
 extern const u8 gText_AbilityName_Electromorphosis[];
 extern const u8 gText_AbilityDescription_Electromorphosis[];
+extern const u8 gText_AbilityName_GoodAsGold[];
+extern const u8 gText_AbilityDescription_GoodAsGold[];
+extern const u8 gText_AbilityName_GuardDog[];
+extern const u8 gText_AbilityDescription_GuardDog[];
+extern const u8 gText_AbilityName_HadronEngine[];
+extern const u8 gText_AbilityDescription_HadronEngine[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -101,6 +107,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_CLEARBODY:
 			if (IsWhiteSmokeAbility(ability, species))
 				return gText_AbilityName_WhiteSmoke;
+			else if (SpeciesHasGoodAsGold(species))
+				return gText_AbilityName_GoodAsGold;
 			break;
 		case ABILITY_HUGEPOWER:
 			switch (dexNum)
@@ -404,6 +412,14 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if(SpeciesHasElectromorphosis(species))
 				return gText_AbilityName_Electromorphosis;
 			break;
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(species))
+				return gText_AbilityName_GuardDog;
+			break;
+		case ABILITY_ELECTRICSURGE:
+			if(SpeciesHasHadronEngine(species))
+				return gText_AbilityName_HadronEngine;
+			break;
 	}
 
 	return NULL;
@@ -470,6 +486,18 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_COLORCHANGE:
 			if(SpeciesHasElectromorphosis(species))
 				return gText_AbilityDescription_Electromorphosis;
+			break;
+		case ABILITY_CLEARBODY:
+			if(SpeciesHasGoodAsGold(species))
+				return gText_AbilityDescription_GoodAsGold;
+			break;
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(species))
+				return gText_AbilityDescription_GuardDog;
+			break;
+		case ABILITY_ELECTRICSURGE:
+			if(SpeciesHasHadronEngine(species))
+				return gText_AbilityDescription_HadronEngine;
 			break;
 	}
 
@@ -1009,6 +1037,46 @@ bool8 SpeciesHasCudChew(unusedArg u16 species)
 {
 	#if (defined SPECIES_TAUROS_P && SPECIES_TAUROS_AQUA_P && SPECIES_TAUROS_BLAZE_P && SPECIES_FARIGIRAF)
 	return species == SPECIES_TAUROS_P || species == SPECIES_TAUROS_AQUA_P || species == SPECIES_TAUROS_BLAZE_P || species == SPECIES_FARIGIRAF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGoodAsGold(unusedArg u16 species)
+{
+	#ifdef SPECIES_GHOLDENGO
+	return species == SPECIES_GHOLDENGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGuardDog(unusedArg u16 species)
+{
+	#if(defined SPECIES_MABOSSTIFF && SPECIES_OKIDOGI)
+	return species == SPECIES_MABOSSTIFF || species == SPECIES_OKIDOGI;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 GuardDogPreventsLoweringStat(u8 ability, u8 statId, u8 bank)
+{
+	switch (ability)
+	{
+		case ABILITY_GUARDDOG:
+		if(SpeciesHasGuardDog(SPECIES(bank))){
+			return statId == STAT_STAGE_ATK;
+		}
+		else
+			return FALSE;
+	}
+}
+
+bool8 SpeciesHasHadronEngine(unusedArg u16 species)
+{
+	#ifdef SPECIES_MIRAIDON
+	return species == SPECIES_MIRAIDON;
 	#else
 	return FALSE;
 	#endif

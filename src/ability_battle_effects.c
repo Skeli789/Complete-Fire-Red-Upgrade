@@ -2407,6 +2407,30 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						StringCopy(gBattleTextBuff1, gStatusConditionString_TauntProblem);
 						effect = 3;
 					}
+					break;
+				case ABILITY_GOODASGOLD:
+					if ((gBattleMons[bank].status1 & STATUS1_PSN_ANY
+					|| gBattleMons[bank].status1 & STATUS1_PARALYSIS
+					|| gBattleMons[bank].status1 & STATUS1_BURN
+					|| gBattleMons[bank].status1 & STATUS1_FREEZE)
+					&& SpeciesHasGoodAsGold(SPECIES(bank)))
+					{
+						gBattleStringLoader = gText_GoodAsGoldActivate;
+						effect = 1;
+					}
+					else if (gBattleMons[bank].status2 & STATUS2_INFATUATION
+					&& SpeciesHasGoodAsGold(SPECIES(bank)))
+					{
+						gBattleStringLoader = gText_GoodAsGoldActivate;
+						effect = 3;
+					}
+					else if (gBattleMons[bank].status2 & STATUS2_CONFUSION
+					&& SpeciesHasGoodAsGold(SPECIES(bank)))
+					{
+						gBattleStringLoader = gText_GoodAsGoldActivate;
+						effect = 2;
+					}
+					break;
 				}
 
 				if (effect)
