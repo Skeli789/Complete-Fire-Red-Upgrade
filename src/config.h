@@ -347,6 +347,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define EXPANDED_NEW_ITEMS //Expands items table and add new items util gen 9.
 #define SHOWPOKEPIC_WITHOUT_UGLY_BOX //Fixes the ShowPokePic command to only show Pokemon sprite and not a box with it
 #define CHANGE_ITEM_STORAGE_GRAPHIC //if uncommented, will change pc item storage to Swsh style (background modificable)
+//#define REMOVE_CRITICAL_HITS //Uncomment this to remove critical hits.
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
