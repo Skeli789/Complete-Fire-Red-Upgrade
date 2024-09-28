@@ -809,6 +809,8 @@ static void SandboxChangeNature(bool8 goingRight)
     //PutWindowTilemap(0);
     PutWindowTilemap(1);
     //PutWindowTilemap(2);
+	
+	MgbaPrintf(MGBA_LOG_INFO, "The code is running.");
 }
 
 static void Task_WaitForExit(u8 taskId)
