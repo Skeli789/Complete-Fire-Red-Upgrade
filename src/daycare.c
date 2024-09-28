@@ -283,11 +283,25 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 
 	switch(SpeciesToNationalPokedexNum(eggSpecies))
 	{
-		#if (defined NATIONAL_DEX_NIDORAN_F && defined SPECIES_NIDORAN_M)
+		#if (defined NATIONAL_DEX_NIDORAN_F && defined SPECIES_NIDORAN_M && defined SPECIES_NIDORINO && defined SPECIES_NIDOKING)
 		case NATIONAL_DEX_NIDORAN_F:
 			if (personality & 0x8000)
 				eggSpecies = SPECIES_NIDORAN_M;
 			break;
+		                case NATIONAL_DEX_NIDORAN_M:
+                        if (!(personality & 0x8000))
+                                 eggSpecies = SPECIES_NIDORAN_F;
+                        break;
+ 
+                 case NATIONAL_DEX_NIDORINO:
+                        if (!(personality & 0x8000))
+                                 eggSpecies = SPECIES_NIDORAN_F;
+                        break;
+ 
+                  case NATIONAL_DEX_NIDOKING:
+                        if (!(personality & 0x8000))
+                                 eggSpecies = SPECIES_NIDORAN_F;
+                        break;
 		#endif
 
 		#if (defined NATIONAL_DEX_ILLUMISE && defined SPECIES_VOLBEAT)
