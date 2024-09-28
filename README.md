@@ -40,7 +40,7 @@ grilokapu
 - Dexnav Swsh
 - Item storage swsh + changable background
 - transparent showpokepic
-- Removed Extra sage confirmation (the overwrite warning)
+- Removed Extra save confirmation (the overwrite warning)
 - Added new egg hatch animation 
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 
