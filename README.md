@@ -22,7 +22,7 @@ grilokapu
 # Complete Fire Red Upgrade
 ## This is CFRU expansion project and not affiliated to the og CFRU, it is going to be levels higher than CFRU.
 #### The new features (after CFRU dev branch):
-- Fixed bugs with dev branch 
+- Fixed bugs with dev branch (shiny odds , daycare nidoran breeding)
 - Last used pokeball by L button
 - Shows enemy team by L button
 - Auto trigger wild battles
