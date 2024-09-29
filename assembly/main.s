@@ -341,3 +341,59 @@ func_get_attr: .word 0x0803FBE8 + 1
 func_rand: .word 0x08044EC8 + 1
 func_set_attr: .word 0x0804037C + 1
 func_return: .word 0x08046120 + 1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Wonder trades
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.align 2
+.global TakePokemon
+
+TakePokemon:
+    push {r0-r7, lr}
+    mov r5, #0x0
+    ldr r6, .VAR
+    ldr r7, .POKEMON_AMOUNT
+    ldrb r4, [r7]
+    cmp r4, #0x2
+    blt return
+    ldrh r3, [r6]
+    cmp r3, r4
+    bhs return
+    sub r2, r4, #0x1
+    strb r2, [r7]
+    add r3, #0x1
+    sub r2, r4, r3
+    mov r5, #0x64
+    mul r2, r5
+    lsr r2, r2, #0x1
+    mul r3, r5
+    ldr r7, .POKEMON_PARTY
+    add r0, r7, r3
+    sub r1, r0, r5
+    swi #0xB
+    mul r4, r5
+    add r7, r4
+    sub r7, r5
+    mov r0, #0x0
+    mov r2, #0x19
+    mov r5, #0x1
+
+erase_loop:
+    stmia r7!, {r0}
+    sub r2, #0x1
+    cmp r2, #0x0
+    bne erase_loop
+
+return:
+    strh r5, [r6, #0x10]
+    pop {r0-r7, pc}
+
+.align 2
+.POKEMON_AMOUNT:
+    .word 0x02024029
+.POKEMON_PARTY:
+    .word 0x02024284
+.VAR:
+    .word 0x020270B8 + (0x8004 * 2)
+	
