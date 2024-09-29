@@ -9,3 +9,4 @@ EventScript_PalletTown_FatGuy:
     setflag 0xa03
     msgbox gText_PalletTown_FatGuy MSG_FACE
     end
+    
