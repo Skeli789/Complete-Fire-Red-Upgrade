@@ -41,7 +41,8 @@ grilokapu
 - Item storage swsh + changable background
 - transparent showpokepic
 - Removed Extra save confirmation (the overwrite warning)
-- Added new egg hatch animation 
+- Added new egg hatch animation
+- Wonder Trades
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 
 #### Note: It is advised to use [DPE-gen9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) with it.
