@@ -8,21 +8,20 @@ This contains a list of items/features we want to add to this CFRU.:
 - ORAS style key item registeration wheel (or Register items in a list menu given here - https://www.pokecommunity.com/threads/simple-modifications-directory.416647/page-15#post-10380770)
 - Configurable INtro and titlescreen
 - Show pokemon team on Trainer card back
-- Overworld Expansion
+- Done (100%), Overworld Expansion
 - Pokedex (HGSS or BW)
 - A pokenav or pokegear
 - Custom start menu (a menu with icons instead of text)
-- Gen 9 moves and abilites
-- Make your own items (item expansion (removes need to use leon rombase))
+- Done moves (abilities left 50%), Gen 9 moves and abilites
+- Done (100%), Make your own items (item expansion (removes need to use leon rombase))
 - Fast nurse joy
-- Wonder trades
+- Done 100%, Wonder trades
 - 3D cutscenes
 - Sidequest menu
 - RSE Berry system
 - 16 badges (based on cmnt/uncmnt)
 - BW Badge popups
-- New bag pokets
-- Pokemon storage expansion to 35 boxes
+- New bag pockets
 - PokeVial, PokePC
 - Wild pokemon attacks in overworld before the wild battle
 - Maps previews/Pre warp mugshots
