@@ -24,6 +24,7 @@ struct SpecialAbilityFlags
 	bool8 gReceiverBannedAbilities : 1;
 	bool8 gTraceBannedAbilities : 1;
 	bool8 gNeutralizingGasBannedAbilities : 1;
+	bool8 gMyceliumMighIgnoredAbilities : 1;
 };
 
 extern const struct SpecialAbilityFlags gSpecialAbilityFlags[];

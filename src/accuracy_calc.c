@@ -431,6 +431,8 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 	u8 acc;
 	if (defAbility == ABILITY_UNAWARE)
 		acc = 6;
+	else if (defAbility == ABILITY_MINDSEYE && SpeciesHasMindsEye(SPECIES(bankDef)))
+		acc = 6;
 	else
 		acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);
 

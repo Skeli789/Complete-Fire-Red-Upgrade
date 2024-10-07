@@ -2220,6 +2220,9 @@ s32 BracketCalc(u8 bank, u8 action, u16 move)
 										|| SpeciesHasTabletsofRuin(SPECIES(bank))
 										|| SpeciesHasVesselofRuin(SPECIES(bank))))
 			return -1;
+		
+		if (SPLIT(gCurrentMove) == SPLIT_STATUS && ability == ABILITY_MOLDBREAKER && SpeciesHasMyceliumMight(SPECIES(bank)))
+			return -2;
 	}
 
 	return 0;

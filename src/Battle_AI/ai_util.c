@@ -3066,6 +3066,7 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 		case ABILITY_WANDERINGSPIRIT:
 		case ABILITY_COTTONDOWN:
 		case ABILITY_PERISHBODY:
+		case ABILITY_LINGERINGAROMA:
 			return TRUE;
 	}
 
@@ -3410,6 +3411,7 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 	return defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC)
+		&& !(MindsEyePreventsLoweringStat(defAbility, STAT_STAGE_ACC) && (SpeciesHasMindsEye(gBankTarget)))
 		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 

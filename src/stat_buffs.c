@@ -382,7 +382,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if (!certain
-		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability)) || !SpeciesHasGuardDog(SPECIES(bank))))
+		&& (AbilityPreventsLoweringStat(ability, statId) || (MindsEyePreventsLoweringStat(ability, statId) && SpeciesHasMindsEye(gBankTarget)) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability) && !SpeciesHasMindsEye(SPECIES(bank))) || !SpeciesHasGuardDog(SPECIES(bank))))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -554,7 +554,7 @@ u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
 		return STAT_PROTECTED_BY_GENERAL_ABILITY;
 	else if (ABILITY(PARTNER(bankDef)) == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS))
 		return STAT_PROTECTED_BY_PARTNER_ABILITY;
-	else if (AbilityPreventsLoweringStat(defAbility, statId))
+	else if (AbilityPreventsLoweringStat(defAbility, statId) || (MindsEyePreventsLoweringStat(defAbility, statId) && SpeciesHasMindsEye(gBankTarget)))
 		return STAT_PROTECTED_BY_SPECIFIC_ABILITY;
 
 	return STAT_CAN_BE_LOWERED;

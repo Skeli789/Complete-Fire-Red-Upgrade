@@ -275,7 +275,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 
 	if (IsMoldBreakerAbility(ABILITY(bank)))
 	{
-		if (gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMoldBreakerIgnoredAbilities)
+		if (gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMoldBreakerIgnoredAbilities
+		|| gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMyceliumMighIgnoredAbilities)
 		{
 			gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = gBattleMons[gBankSwitching].ability;
 			gBattleMons[gBankSwitching].ability = 0;

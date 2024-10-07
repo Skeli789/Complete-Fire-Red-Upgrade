@@ -1525,12 +1525,34 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				break;
 			}
 
+			u8 bank = gNewBS->DancerTurnOrder[gNewBS->DancerBankCount];
+
 			if (!gNewBS->DancerInProgress
 			&& arg1 != ARG_IN_PURSUIT
 			&& ABILITY_ON_FIELD(ABILITY_DANCER)
 			&& gNewBS->attackAnimationPlayed
 			&& !gNewBS->moveWasBouncedThisTurn
-			&& gSpecialMoveFlags[gCurrentMove].gDanceMoves)
+			&& gSpecialMoveFlags[gCurrentMove].gBuffMoves
+			&& SpeciesHasOportunist(SPECIES(bank)))
+			{
+				gNewBS->DancerInProgress = TRUE;
+				gNewBS->CurrentTurnAttacker = gBankAttacker;
+				gNewBS->CurrentTurnTarget = gBankTarget;
+				gNewBS->DancerBankCount = 0;
+
+				for (i = 0; i < gBattlersCount; ++i)
+					gNewBS->DancerTurnOrder[i] = i;
+
+				SortBanksBySpeed(gNewBS->DancerTurnOrder, TRUE);
+			}
+
+			else if (!gNewBS->DancerInProgress
+			&& arg1 != ARG_IN_PURSUIT
+			&& ABILITY_ON_FIELD(ABILITY_DANCER)
+			&& gNewBS->attackAnimationPlayed
+			&& !gNewBS->moveWasBouncedThisTurn
+			&& gSpecialMoveFlags[gCurrentMove].gDanceMoves
+			&& !SpeciesHasOportunist(SPECIES(bank)))
 			{
 				gNewBS->DancerInProgress = TRUE;
 				gNewBS->CurrentTurnAttacker = gBankAttacker;
@@ -1550,8 +1572,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gNewBS->moveWasBouncedThisTurn = FALSE;
 				break;
 			}
-
-			u8 bank = gNewBS->DancerTurnOrder[gNewBS->DancerBankCount];
 
 			if (ABILITY(bank) == ABILITY_DANCER
 			&& BATTLER_ALIVE(bank)

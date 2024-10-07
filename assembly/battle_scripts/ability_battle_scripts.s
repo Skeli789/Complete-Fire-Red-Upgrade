@@ -111,6 +111,7 @@ ability_battle_scripts.s
 .global BattleScript_CudChew
 .global BattleScript_ElectromorphosisActivates
 .global BattleScript_GuardDogActivates
+.global BattleScript_LingeringAromaActivates
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -819,6 +820,23 @@ BattleScript_MummyActivates:
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert
 	setability BANK_ATTACKER ABILITY_MUMMY
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER MummyString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_LingeringAromaActivates:
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	setability BANK_ATTACKER ABILITY_LINGERINGAROMA
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER MummyString
 	printstring 0x184

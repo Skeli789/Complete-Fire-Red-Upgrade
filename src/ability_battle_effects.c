@@ -154,6 +154,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_LIGHTMETAL] = 2,
 	[ABILITY_LIGHTNINGROD] = 7,
 	[ABILITY_LIMBER] = 3,
+	[ABILITY_LINGERINGAROMA] = 5,
 	[ABILITY_LIQUIDOOZE] = 3,
 	[ABILITY_LIQUIDVOICE] = 5,
 	[ABILITY_LONGREACH] = 3,
@@ -2102,6 +2103,35 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						default:
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_MummyActivates;
+							effect++;
+							break;
+					}
+				}
+				break;
+
+			case ABILITY_LINGERINGAROMA:
+				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& gBankAttacker != bank
+				&& CheckContact(move, gBankAttacker, bank))
+				{
+					switch (ABILITY(gBankAttacker)) {
+						case ABILITY_LINGERINGAROMA:
+						case ABILITY_BATTLEBOND:
+						case ABILITY_COMATOSE:
+						case ABILITY_DISGUISE:
+						case ABILITY_MULTITYPE:
+						case ABILITY_POWERCONSTRUCT:
+						case ABILITY_RKS_SYSTEM:
+						case ABILITY_SCHOOLING:
+						case ABILITY_SHIELDSDOWN:
+						case ABILITY_STANCECHANGE:
+						case ABILITY_ICEFACE:
+							break;
+						default:
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_LingeringAromaActivates;
 							effect++;
 							break;
 					}

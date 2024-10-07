@@ -619,3 +619,12 @@ Blocks intimidate and switch out.
 
 #org @gText_AbilityDescription_HadronEngine
 Calls Electric Terrain, up SpAtk.
+
+#org @gText_AbilityDescription_MindsEye
+Enables moves to hit Ghost-type.
+
+#org @gText_AbilityDescription_MyceliumMight
+Low priority for Status Moves.
+
+#org @gText_AbilityDescription_Opportunist
+Copies foes status changes.

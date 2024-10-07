@@ -84,6 +84,11 @@ extern const u8 gText_AbilityName_GuardDog[];
 extern const u8 gText_AbilityDescription_GuardDog[];
 extern const u8 gText_AbilityName_HadronEngine[];
 extern const u8 gText_AbilityDescription_HadronEngine[];
+extern const u8 gText_AbilityName_MindsEye[];
+extern const u8 gText_AbilityDescription_MindsEye[];
+extern const u8 gText_AbilityName_MyceliumMight[];
+extern const u8 gText_AbilityDescription_MyceliumMight[];
+extern const u8 gText_AbilityName_Opportunist[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -159,6 +164,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				return gText_AbilityName_Turboblaze;
 			else if (SpeciesHasTeravolt(species))
 				return gText_AbilityName_Teravolt;
+			else if(SpeciesHasMyceliumMight(species))
+				return gText_AbilityName_MyceliumMight;
 			break;
 		case ABILITY_STORMDRAIN:
 			if (SpeciesHasEvaporate(species))
@@ -420,6 +427,14 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if(SpeciesHasHadronEngine(species))
 				return gText_AbilityName_HadronEngine;
 			break;
+		case ABILITY_SCRAPPY:
+			if(SpeciesHasMindsEye(species))
+				return gText_AbilityName_MindsEye;
+			break;
+		case ABILITY_DANCER:
+			if(SpeciesHasOportunist(species))
+				return gText_AbilityName_Opportunist;
+			break;
 	}
 
 	return NULL;
@@ -499,6 +514,18 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 			if(SpeciesHasHadronEngine(species))
 				return gText_AbilityDescription_HadronEngine;
 			break;
+		case ABILITY_SCRAPPY:
+			if(SpeciesHasMindsEye(species))
+				return gText_AbilityDescription_MindsEye;
+			break;
+		case ABILITY_MOLDBREAKER:
+			if(SpeciesHasMyceliumMight(species))
+				return gText_AbilityDescription_MyceliumMight;
+			break;
+		case ABILITY_DANCER:
+			if(SpeciesHasOportunist(species))
+				return gText_AbilityDescription_Opportunist;
+			break;
 	}
 
 	return NULL;
@@ -561,7 +588,10 @@ void ResetTookAbilityFrom(u8 bank)
 
 bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
 {
-	return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
+	if (SpeciesHasMyceliumMight(SPECIES(gBankAttacker)))
+		return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMyceliumMighIgnoredAbilities;
+	else
+		return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
 }
 
 bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
@@ -1064,11 +1094,13 @@ bool8 GuardDogPreventsLoweringStat(u8 ability, u8 statId, u8 bank)
 {
 	switch (ability)
 	{
-		case ABILITY_GUARDDOG:
-		if(SpeciesHasGuardDog(SPECIES(bank))){
-			return statId == STAT_STAGE_ATK;
-		}
-		else
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(SPECIES(bank))){
+				return statId == STAT_STAGE_ATK;
+			}
+			else
+				return FALSE;
+		default:
 			return FALSE;
 	}
 }
@@ -1077,6 +1109,44 @@ bool8 SpeciesHasHadronEngine(unusedArg u16 species)
 {
 	#ifdef SPECIES_MIRAIDON
 	return species == SPECIES_MIRAIDON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasMindsEye(unusedArg u16 species)
+{
+	#ifdef SPECIES_URSALUNA_BLOODMOON
+	return species == SPECIES_URSALUNA_BLOODMOON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 MindsEyePreventsLoweringStat(u8 ability, u8 statId)
+{
+	switch (ability)
+	{
+		case ABILITY_SCRAPPY:
+			return statId == STAT_STAGE_ACC;
+		default:
+			return FALSE;
+	}
+}	
+
+bool8 SpeciesHasMyceliumMight(unusedArg u16 species)
+{
+	#if (defined SPECIES_TOEDSCOOL && SPECIES_TOEDSCRUEL)
+	return species == SPECIES_TOEDSCOOL || species == SPECIES_TOEDSCRUEL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasOportunist(unusedArg u16 species)
+{
+	#ifdef SPECIES_ESPATHRA
+	return species == SPECIES_ESPATHRA;
 	#else
 	return FALSE;
 	#endif
