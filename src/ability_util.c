@@ -89,6 +89,7 @@ extern const u8 gText_AbilityDescription_MindsEye[];
 extern const u8 gText_AbilityName_MyceliumMight[];
 extern const u8 gText_AbilityDescription_MyceliumMight[];
 extern const u8 gText_AbilityName_Opportunist[];
+extern const u8 gText_AbilityDescription_Opportunist[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
