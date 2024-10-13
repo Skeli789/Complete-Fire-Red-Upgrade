@@ -21,7 +21,7 @@ if used.
 #include "../include/new/ability_util.h"
 #include "../include/new/dns.h"
 #include "../include/main.h"
-#include "../include/new/Vanilla_Functions.h"
+#include "../include/new/Vanilla_functions.h"
 #include "../include/new/ram_locs.h"
 #include "../include/gpu_regs.h"
 #include "../include/overworld.h"

@@ -11,7 +11,7 @@ if used.
 
 #include "../include/global.h"
 #include "../include/sound.h"
-#include "../include/new/Vanilla_Functions.h"
+#include "../include/new/Vanilla_functions.h"
 #include "../include/main.h"
 #include "../include/script.h"
 #include "../include/sprite.h"
