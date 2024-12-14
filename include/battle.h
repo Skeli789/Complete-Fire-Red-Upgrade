@@ -809,6 +809,8 @@ struct NewBattleStruct
 	u8 SaltcureTimers[MAX_BATTLERS_COUNT];
 	u8 CudChewCounter[MAX_BATTLERS_COUNT];
 	u8 ElectroCounter[MAX_BATTLERS_COUNT];
+	u8 quarkDriveActivated[MAX_BATTLERS_COUNT];
+	u8 ProtosynthesisActivated[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;

@@ -2712,6 +2712,32 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				spAttack = (spAttack * 15) / 10;
 			break;
 
+		case ABILITY_ORICHALCUMPULSE:
+			//1.4x Boost
+			if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect) && SpeciesHasOrichalcumPulse(SPECIES(bankAtk)))
+				attack = (attack * 14) / 10;
+			break;
+		
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(SPECIES(gBankAttacker)) && (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect)))
+			{
+				if (SPLIT(move) == SPLIT_PHYSICAL && GetHighestStat(bankAtk) == STAT_ATK)
+					attack = (attack * 13) / 10;
+				if (SPLIT(move) == SPLIT_SPECIAL && GetHighestStat(bankAtk) == STAT_SPATK)
+					spAttack = (spAttack * 13) / 10;
+			}
+
+			else if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(gBankAttacker))
+			{
+				if (SPLIT(move) == SPLIT_PHYSICAL && GetHighestStat(bankAtk) == STAT_ATK)
+					attack = (attack * 13) / 10;
+				if (SPLIT(move) == SPLIT_SPECIAL && GetHighestStat(bankAtk) == STAT_SPATK)
+					spAttack = (spAttack * 13) / 10;
+			}
+			break;
+
 		case ABILITY_SLOWSTART:
 		//0.5x Boost
 			if (useMonAtk)
@@ -2828,6 +2854,25 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				spAttack = (spAttack * 75) / 100;
 			}
 		#endif
+			break;
+
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(SPECIES(gBankTarget)) && (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+			&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect)))
+			{
+				if (SPLIT(move) == SPLIT_PHYSICAL && GetHighestStat(bankDef) == STAT_DEF)
+					defense = (defense * 13) / 10;
+				if (SPLIT(move) == SPLIT_SPECIAL && GetHighestStat(bankDef) == STAT_SPDEF)
+					spDefense = (spDefense * 13) / 10;
+			}
+
+			else if (gTerrainType == ELECTRIC_TERRAIN && IsAffectedByElectricTerrain(gBankTarget))
+			{
+				if (SPLIT(move) == SPLIT_PHYSICAL && GetHighestStat(bankDef) == STAT_DEF)
+					defense = (defense * 13) / 10;
+				if (SPLIT(move) == SPLIT_SPECIAL && GetHighestStat(bankDef) == STAT_SPDEF)
+					spDefense = (spDefense * 13) / 10;
+			}
 			break;
 	}
 

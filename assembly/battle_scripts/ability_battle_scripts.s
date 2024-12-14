@@ -112,6 +112,10 @@ ability_battle_scripts.s
 .global BattleScript_ElectromorphosisActivates
 .global BattleScript_GuardDogActivates
 .global BattleScript_LingeringAromaActivates
+.global BattleScript_QuarkDriveActivates
+.global BattleScript_QuarkDriveActivates2
+.global BattleScript_ProtosynthesisActivates
+.global BattleScript_ProtosynthesisActivates2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1525,6 +1529,46 @@ bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 
 GD_Return:
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_QuarkDriveActivates:
+	call BattleScript_AbilityPopUp
+	printstring STRINGID_ELECTRICTERRAINACTIVATEDABILITY
+	waitmessage DELAY_1SECOND
+	printstring STRINGID_STATWASHEIGHTENED
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_QuarkDriveActivates2:
+	call BattleScript_AbilityPopUp
+	printstring STRINGID_ELECTRICTERRAINACTIVATEDABILITY
+	waitmessage DELAY_1SECOND
+	printstring STRINGID_STATWASHEIGHTENED
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_ProtosynthesisActivates:
+	call BattleScript_AbilityPopUp
+	printstring STRINGID_SUNLIGHTACTIVATEDABILITY
+	waitmessage DELAY_1SECOND
+	printstring STRINGID_STATWASHEIGHTENED
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_ProtosynthesisActivates2:
+	call BattleScript_AbilityPopUp
+	printstring STRINGID_SUNLIGHTACTIVATEDABILITY
+	waitmessage DELAY_1SECOND
+	printstring STRINGID_STATWASHEIGHTENED
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

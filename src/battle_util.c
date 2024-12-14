@@ -2703,3 +2703,7 @@ u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
 
 	return species;
 }
+
+bool8 IsSunWeatherActive(u8 bank) {
+    return gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bank);
+}

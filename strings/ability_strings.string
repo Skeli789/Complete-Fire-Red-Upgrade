@@ -147,3 +147,12 @@ But [SCRIPTING_BANK] evaporates\nrain!
 
 #org @gText_GoodAsGoldActivate
 It doesn't affect [SCRIPTING_BANK][.]
+
+#org @sText_ElectricTerrainActivatedAbility
+The Electric Terrain activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
+
+#org @sText_StatWasHeightened
+[SCRIPTING_BANK]'s [BUFFER][00] was\nheightened!
+
+#org @sText_SunlightActivatedAbility
+The harsh sunlight activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!

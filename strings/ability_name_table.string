@@ -527,8 +527,8 @@ Stamina
 #org @NAME_STEELWORKER
 Steelworker
 
-#org @NAME_FULL_METAL_BODY
-Full Metal Body
+#org @QUARKDRIVE
+Quark Drive
 
 #org @NAME_TRIAGE
 Triage
@@ -931,3 +931,12 @@ Mycelium Might
 
 #org @gText_AbilityName_Opportunist
 Opportunist
+
+#org @gText_AbilityName_OrichalcumPulse
+Orichalcum Pulse
+
+#org @NAME_FULL_METAL_BODY
+Full Metal Body
+
+#org @gText_AbilityName_Protosynthesis
+Protosynthesis

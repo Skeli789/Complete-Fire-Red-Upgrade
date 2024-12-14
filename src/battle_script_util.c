@@ -2723,3 +2723,47 @@ void CudChewBerryEat(void)
 
 	gBattlescriptCurrInstr -= 5;
 }
+
+void TryActivateQuarkDrive(void)
+{
+    u32 terrainFlag = gTerrainType & (ELECTRIC_TERRAIN | GRASSY_TERRAIN | MISTY_TERRAIN | PSYCHIC_TERRAIN);
+    if (!terrainFlag)
+        return;
+
+    for (u8 bank = 0; bank < gBattlersCount; bank++)
+    {
+		if (gNewBS->quarkDriveActivated[bank]) 
+            continue;
+
+        u16 ability = ABILITY(bank);
+        if (ability == ABILITY_QUARKDRIVE && terrainFlag == ELECTRIC_TERRAIN
+            && IsAffectedByElectricTerrain(bank))
+        {
+			gNewBS->quarkDriveActivated[bank] = TRUE;
+			gBankAttacker = bank;
+            gActiveBattler = bank;
+            PREPARE_STAT_BUFFER(gBattleTextBuff1, GetHighestStat(bank));
+            gBattlescriptCurrInstr = BattleScript_QuarkDriveActivates2 - 5;
+        }
+    }
+}
+
+void TryActivateProtosynthesis(void)
+{
+    for (u8 bank = 0; bank < gBattlersCount; bank++)
+    {
+		if (gNewBS->ProtosynthesisActivated[bank]) 
+            continue;
+
+        u16 ability = ABILITY(bank);
+		u16 species = SPECIES(bank);
+        if (ability == ABILITY_QUARKDRIVE && IsSunWeatherActive(bank) && SpeciesHasProtosynthesis(species))
+        {
+			gNewBS->ProtosynthesisActivated[bank] = TRUE;
+			gBankAttacker = bank;
+            gActiveBattler = bank;
+            PREPARE_STAT_BUFFER(gBattleTextBuff1, GetHighestStat(bank));
+            gBattlescriptCurrInstr = BattleScript_ProtosynthesisActivates2 - 5;
+        }
+    }
+}

@@ -570,6 +570,9 @@ Sometimes moves quicker.
 #org @DESC_CURIOUSMEDICINE
 Resets ally's stat changes.
 
+#org @DESC_QUARKDRIVE
+Boost stat in Electric Terrain.
+
 //Unbound Custom Abilities//
 
 #org @gText_AbilityDescription_Evaporate
@@ -628,3 +631,9 @@ Low priority for Status Moves.
 
 #org @gText_AbilityDescription_Opportunist
 Copies foes status changes.
+
+#org @gText_AbilityDescription_OrichalcumPulse
+Summons sunlight and ups Attack.
+
+#org @gText_AbilityDescription_Protosynthesis
+Boost status when sunny.

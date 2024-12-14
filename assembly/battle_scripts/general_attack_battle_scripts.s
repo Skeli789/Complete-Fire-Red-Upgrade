@@ -3101,6 +3101,7 @@ BS_137_SunnyDay:
 SunnyDaySkipPrimalWeatherCheck:
 	setsunny
 	tryactivateprotean
+	callasm TryActivateProtosynthesis
 	goto BS_MOVE_WEATHER_CHANGE
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

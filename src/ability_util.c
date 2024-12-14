@@ -90,6 +90,11 @@ extern const u8 gText_AbilityName_MyceliumMight[];
 extern const u8 gText_AbilityDescription_MyceliumMight[];
 extern const u8 gText_AbilityName_Opportunist[];
 extern const u8 gText_AbilityDescription_Opportunist[];
+extern const u8 NAME_FULL_METAL_BODY[];
+extern const u8 gText_AbilityName_OrichalcumPulse[];
+extern const u8 gText_AbilityDescription_OrichalcumPulse[];
+extern const u8 gText_AbilityName_Protosynthesis[];
+extern const u8 gText_AbilityDescription_Protosynthesis[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -115,6 +120,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				return gText_AbilityName_WhiteSmoke;
 			else if (SpeciesHasGoodAsGold(species))
 				return gText_AbilityName_GoodAsGold;
+			else if (IsFullMetalBodyAbility(ability, species))
+				return NAME_FULL_METAL_BODY;
 			break;
 		case ABILITY_HUGEPOWER:
 			switch (dexNum)
@@ -436,6 +443,14 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if(SpeciesHasOportunist(species))
 				return gText_AbilityName_Opportunist;
 			break;
+		case ABILITY_DROUGHT:
+			if(SpeciesHasOrichalcumPulse(species))
+				return gText_AbilityName_OrichalcumPulse;
+			break;
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(species))
+				return gText_AbilityName_Protosynthesis;
+			break;
 	}
 
 	return NULL;
@@ -506,6 +521,7 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_CLEARBODY:
 			if(SpeciesHasGoodAsGold(species))
 				return gText_AbilityDescription_GoodAsGold;
+			
 			break;
 		case ABILITY_INNERFOCUS:
 			if(SpeciesHasGuardDog(species))
@@ -526,6 +542,14 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_DANCER:
 			if(SpeciesHasOportunist(species))
 				return gText_AbilityDescription_Opportunist;
+			break;
+		case ABILITY_DROUGHT:
+			if(SpeciesHasOrichalcumPulse(species))
+				return gText_AbilityDescription_OrichalcumPulse;
+			break;
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(species))
+				return gText_AbilityDescription_Protosynthesis;
 			break;
 	}
 
@@ -1151,4 +1175,42 @@ bool8 SpeciesHasOportunist(unusedArg u16 species)
 	#else
 	return FALSE;
 	#endif
+}
+
+bool8 SpeciesHasOrichalcumPulse(unusedArg u16 species)
+{
+	#ifdef SPECIES_KORAIDON
+	return species == SPECIES_KORAIDON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsFullMetalBodyAbility(u8 ability, u16 species)
+{
+	if (!IsClearBodyAbility(ability))
+		return FALSE;
+
+	switch (SpeciesToNationalPokedexNum(species))
+	{
+		#ifdef NATIONAL_DEX_SOLGALEO
+		case NATIONAL_DEX_SOLGALEO:
+			return TRUE;
+		#endif
+	}
+
+	return FALSE;
+}
+
+bool8 SpeciesHasProtosynthesis(unusedArg u16 species) //Custom Unbound Ability
+{
+	#if (defined SPECIES_GOUGING_FIRE && SPECIES_RAGING_BOLT && SPECIES_GREAT_TUSK && SPECIES_SCREAM_TAIL && SPECIES_BRUTE_BONNET && SPECIES_FLUTTER_MANE && SPECIES_SLITHER_WING && SPECIES_SANDY_SHOCKS && SPECIES_ROARING_MOON && SPECIES_WALKING_WAKE)
+	return species == SPECIES_GOUGING_FIRE || species == SPECIES_RAGING_BOLT || species == SPECIES_GREAT_TUSK || species == SPECIES_SCREAM_TAIL || species == SPECIES_BRUTE_BONNET || species == SPECIES_FLUTTER_MANE || species == SPECIES_SLITHER_WING || species == SPECIES_SANDY_SHOCKS || species == SPECIES_ROARING_MOON || species == SPECIES_WALKING_WAKE;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsSunWeatherActive(void) {
+    return WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)	&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect);
 }

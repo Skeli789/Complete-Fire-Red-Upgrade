@@ -17,6 +17,8 @@ void TransferAbilityPopUpHelper(void);
 void TransferAbilityPopUpHelperAsTrace(void);
 void TransferAbilityPopUpHelperAsImposter(void);
 void TransferAbilityPopUp(u8 bank, u8 ability);
+u16 GetHighestStat(u8 bankAtk);
+u16 GetHighestStatMon(struct Pokemon* mon);
 
 //Functions Hooked In
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon);

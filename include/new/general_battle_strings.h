@@ -101,3 +101,7 @@ extern const u8 sText_YourCaps[];
 
 #define sText_Someones (u8*) 0x83FD81A
 #define sText_Bills	(u8*) 0x83FD824
+
+extern const u8 sText_ElectricTerrainActivatedAbility[];
+extern const u8 sText_StatWasHeightened[];
+extern const u8 sText_SunlightActivatedAbility[];

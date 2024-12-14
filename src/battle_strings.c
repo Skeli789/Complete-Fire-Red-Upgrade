@@ -189,6 +189,18 @@ void BufferStringBattle(u16 stringID)
 		}
 		break;
 
+	case STRINGID_ELECTRICTERRAINACTIVATEDABILITY:
+		stringPtr = sText_ElectricTerrainActivatedAbility;
+		break;
+
+	case STRINGID_STATWASHEIGHTENED:
+		stringPtr = sText_StatWasHeightened;
+		break;
+
+	case STRINGID_SUNLIGHTACTIVATEDABILITY:
+		stringPtr = sText_StatWasHeightened;
+		break;
+
 	case STRINGID_INTROSENDOUT: // poke first send-out
 		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 		{

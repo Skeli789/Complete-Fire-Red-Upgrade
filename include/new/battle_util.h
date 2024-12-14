@@ -200,6 +200,9 @@ bool8 IsLaserFocused(u8 bank);
 bool8 IsAbilitySuppressed(u8 bank);
 bool8 AreAbilitiesSuppressed(void);
 bool8 CantScoreACrit(u8 bank, struct Pokemon* mon);
+u16 GetHighestStat(u8 bankAtk);
+u16 GetHighestStatMon(struct Pokemon* mon);
+bool8 IsSunWeatherActive(u8 bank);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);

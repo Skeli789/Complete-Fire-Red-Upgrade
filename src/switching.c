@@ -1282,6 +1282,8 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->splinterAttackerMonId[bank] = 0;
 	gNewBS->splinterMove[bank] = 0;
 	gNewBS->tookAbilityFrom[bank] = 0;
+	gNewBS->quarkDriveActivated[bank] = FALSE;
+	gNewBS->ProtosynthesisActivated[bank] = FALSE;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;

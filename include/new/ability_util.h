@@ -68,3 +68,6 @@ bool8 SpeciesHasMindsEye(u16 species);
 bool8 MindsEyePreventsLoweringStat(u8 ability, u8 statId);
 bool8 SpeciesHasMyceliumMight(u16 species);
 bool8 SpeciesHasOportunist(u16 species);
+bool8 SpeciesHasOrichalcumPulse(u16 species);
+bool8 IsFullMetalBodyAbility(u8 ability, u16 species);
+bool8 SpeciesHasProtosynthesis(u16 species);
