@@ -3101,8 +3101,14 @@ BS_137_SunnyDay:
 SunnyDaySkipPrimalWeatherCheck:
 	setsunny
 	tryactivateprotean
+	attackanimation
+	waitanimation
+	printfromtable 0x83FE528 @;gMoveWeatherChangeStringIds
+	waitmessage DELAY_1SECOND
+	jumpifmovehadnoeffect BS_MOVE_END
 	callasm TryActivateProtosynthesis
-	goto BS_MOVE_WEATHER_CHANGE
+	call BS_WEATHER_FORM_CHANGES
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
