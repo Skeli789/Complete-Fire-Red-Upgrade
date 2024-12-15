@@ -198,7 +198,7 @@ void BufferStringBattle(u16 stringID)
 		break;
 
 	case STRINGID_SUNLIGHTACTIVATEDABILITY:
-		stringPtr = sText_StatWasHeightened;
+		stringPtr = sText_SunlightActivatedAbility;
 		break;
 
 	case STRINGID_INTROSENDOUT: // poke first send-out
