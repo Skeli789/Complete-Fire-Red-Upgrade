@@ -763,8 +763,8 @@ struct SaveBlock1 //0x202552C
 	/*0x0294*/ u16 coins;
 	/*0x0296*/ u16 oldRegisteredItem; // was SELECT button item
 	/*0x0298*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
-	/*0x0310*/ u8 dexSeenFlags[(999 / 8) + 1]; //size = 125
-	/*0x038D*/ u8 dexCaughtFlags[(999 / 8) + 1];
+	/*0x0310*/ u8 dexSeenFlags[(1304 / 8) + 1]; //size = 125
+	/*0x038D*/ u8 dexCaughtFlags[(1304 / 8) + 1];
 	/*0x040A*/ u8 filler_40A[0x4E];
 	/*0x0458*/ struct BoxPokemon safeBackupParty[PARTY_SIZE]; // the party saved here is safe from tampering
 	/*0x0638*/ u16 trainerRematchStepCounter;
