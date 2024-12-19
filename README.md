@@ -43,6 +43,7 @@ grilokapu
 - Removed Extra save confirmation (the overwrite warning)
 - Added new egg hatch animation
 - Wonder Trades
+- Mini txtbox/namebox
 #### If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 
 #### Note: It is advised to use [DPE-gen9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) with it.
