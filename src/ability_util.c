@@ -1210,7 +1210,3 @@ bool8 SpeciesHasProtosynthesis(unusedArg u16 species) //Custom Unbound Ability
 	return FALSE;
 	#endif
 }
-
-bool8 IsSunWeatherActive(void) {
-    return WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)	&& !ItemEffectIgnoresSunAndRain(data->atkItemEffect);
-}
