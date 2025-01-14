@@ -3,6 +3,7 @@
 #include "../include/menu_helpers.h"
 #include "../include/rtc.h"
 #include "../include/save.h"
+#include "../include/string_util.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/dns.h"
@@ -19,11 +20,11 @@ extern struct SaveSection gSaveDataBuffer;
 #define SECTOR_FOOTER_SIZE 128
 #define NUM_SECTORS_PER_SAVE_SLOT 14
 #define FILE_SIGNATURE 0x08012025
-#define gSaveBlockParasite 0x0203B174
-#define parasiteSize 0xEC4
+#define SAVE_BLOCK_PARASITE 0x0203B174
+#define PARASITE_SIZE 0xEC4
 
 // old 0x080DA23C table changes
-const struct SaveSectionOffset gSaveSectionOffsets[] =
+const struct SaveSectionOffsets gSaveSectionOffsets[] =
 {
 	{SECTOR_DATA_SIZE * 0, 0xF24}, // saveblock2
 	// 0xCC byes saved
@@ -58,18 +59,31 @@ static const u16 sSaveBlockParasiteSizes[3] =
 void __attribute__((long_call)) PrintSaveErrorStatus(u8 taskId, const u8 *str);
 
 //This file's functions:
-static void LoadSector30And31();
-static u8 SaveSector30And31();
-static void SaveParasite();
-static void LoadParasite();
+static bool8 IsValidFileSignature(u32 signature);
+static void LoadSector30And31(void);
+static u8 SaveSector30And31(void);
+static void LoadParasite(void);
+extern bool8 TryPreventIncompleteSaves(u8 taskId);
 
-/* Saving and loading for sector 30 and 31. Could potentially add the Hall of fame sectors too */
-static void LoadSector30And31()
+static bool8 IsValidFileSignature(u32 signature)
+{
+	return signature == FILE_SIGNATURE
+		#ifdef CUSTOM_FILE_SIGNATURE_OLD
+		|| signature == CUSTOM_FILE_SIGNATURE_OLD
+		#endif
+		#ifdef CUSTOM_FILE_SIGNATURE 
+		|| signature == CUSTOM_FILE_SIGNATURE
+		#endif
+		;
+}
+
+//Saving and loading for sector 30 and 31.
+static void LoadSector30And31(void)
 {
 	struct SaveSection* saveBuffer = &gSaveDataBuffer;
-	
+
 	//Load sector 30
-	u32 startLoc = gSaveBlockParasite + parasiteSize;
+	u32 startLoc = SAVE_BLOCK_PARASITE + PARASITE_SIZE;
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
 	DoReadFlashWholeSection(30, saveBuffer);
 	Memcpy((void*)(startLoc), saveBuffer, SECTOR_DATA_SIZE);
@@ -81,14 +95,14 @@ static void LoadSector30And31()
 	Memcpy((void*) startLoc, saveBuffer, SECTOR_DATA_SIZE);
 }
 
-static u8 SaveSector30And31()
+static u8 SaveSector30And31(void)
 {
 	u8 retVal;
 	struct SaveSection* saveBuffer = &gSaveDataBuffer;
-	
+
 	//Write sector 30
 	Memset(saveBuffer, 0, sizeof(struct SaveSection));
-	u32 startLoc = gSaveBlockParasite + parasiteSize;
+	u32 startLoc = SAVE_BLOCK_PARASITE + PARASITE_SIZE;
 	Memcpy(saveBuffer->data, (void*)(startLoc), SECTOR_DATA_SIZE);
 	retVal = TryWriteSector(30, saveBuffer->data);
 	if (retVal != SAVE_STATUS_OK)
@@ -101,16 +115,15 @@ static u8 SaveSector30And31()
 	return TryWriteSector(31, saveBuffer->data);
 }
 
-
-/* This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector */
-static void SaveParasite()
+//This parasitic saveblock idea originated from JPAN's work. Frees up 0xEC4 bytes - almost a sector
+void SaveParasite(void)
 {
 	struct SaveSection* sector = gFastSaveSection;
 	u32 size = 0;
 	u32* data = NULL;
-	u32* parasiteP1 = (u32*) gSaveBlockParasite;
-	u32* parasiteP2 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0]);
-	u32* parasiteP3 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]);
+	u32* parasiteP1 = (u32*) SAVE_BLOCK_PARASITE;
+	u32* parasiteP2 = (u32*) (SAVE_BLOCK_PARASITE + sSaveBlockParasiteSizes[0]);
+	u32* parasiteP3 = (u32*) (SAVE_BLOCK_PARASITE + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]);
 
 	switch (sector->id) {
 		case 0:
@@ -133,15 +146,14 @@ static void SaveParasite()
 	Memcpy(&sector->data[index], (u32*) data, size);
 }
 
-
-static void LoadParasite()
+static void LoadParasite(void)
 {
 	struct SaveSection* sector = gFastSaveSection;
 	u32 size = 0;
 	u32* data = NULL;
-	u32* parasiteP1 = (u32*) gSaveBlockParasite;
-	u32* parasiteP2 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0]); //b240
-	u32* parasiteP3 = (u32*) (gSaveBlockParasite + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]); //b496
+	u32* parasiteP1 = (u32*) SAVE_BLOCK_PARASITE;
+	u32* parasiteP2 = (u32*) (SAVE_BLOCK_PARASITE + sSaveBlockParasiteSizes[0]); //b240
+	u32* parasiteP3 = (u32*) (SAVE_BLOCK_PARASITE + sSaveBlockParasiteSizes[0] + sSaveBlockParasiteSizes[1]); //b496
 
 	switch (sector->id) {
 		case 0:
@@ -165,7 +177,7 @@ static void LoadParasite()
 }
 
 // 080D9E54
-u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location)
+u8 HandleLoadSector(unusedArg u16 a1, const struct SaveBlockChunk* location)
 {
 	u16 id;
 	u16 sector = NUM_SECTORS_PER_SAVE_SLOT * (gSaveCounter % 2);
@@ -180,7 +192,7 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location
 			gFirstSaveSector = i;
 
 		u16 checksum = CalculateSaveChecksum(gFastSaveSection->data, location[id].size);
-		if (gFastSaveSection->security == FILE_SIGNATURE
+		if (IsValidFileSignature(gFastSaveSection->signature)
 		&&  gFastSaveSection->checksum == checksum)
 		{
 			Memcpy(location[id].data, gFastSaveSection->data, location[id].size);
@@ -196,8 +208,157 @@ u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location
 	return 1;
 }
 
+// 080DA120
+u8 TryLoadSaveSector(u8 sector, u8* data, u16 size)
+{
+	u16 i;
+	struct SaveSection* section = &gSaveDataBuffer;
+
+	DoReadFlashWholeSection(sector, section);
+	if (IsValidFileSignature(section->signature))
+	{
+		u16 checksum = CalculateSaveChecksum(section->data, size);
+		if (section->id == checksum)
+		{
+			for (i = 0; i < size; i++)
+				data[i] = section->data[i];
+			return SAVE_STATUS_OK;
+		}
+		else
+		{
+			return SAVE_STATUS_INVALID;
+		}
+	}
+	else
+	{
+		return SAVE_STATUS_EMPTY;
+	}
+}
+
+u8 GetSaveValidStatus(const struct SaveBlockChunk *chunks)
+{
+	u16 sector;
+	bool8 signatureValid;
+	u16 checksum;
+	s32 slot1saveCounter = 0;
+	s32 slot2saveCounter = 0;
+	u8 slot1Status;
+	u8 slot2Status;
+	u32 validSectors;
+	const u32 ALL_SECTORS = (1 << NUM_SECTORS_PER_SAVE_SLOT) - 1;  // bitmask of all saveblock sectors
+
+	//Check save slot 1.
+	validSectors = 0;
+	signatureValid = FALSE;
+	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
+	{
+		DoReadFlashWholeSection(sector, gFastSaveSection);
+		if (IsValidFileSignature(gFastSaveSection->signature))
+		{
+			signatureValid = TRUE;
+			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
+			if (gFastSaveSection->checksum == checksum)
+			{
+				slot1saveCounter = gFastSaveSection->counter;
+				validSectors |= 1 << gFastSaveSection->id;
+			}
+		}
+	}
+
+	if (signatureValid)
+	{
+		if (validSectors == ALL_SECTORS)
+			slot1Status = SAVE_STATUS_OK;
+		else
+			slot1Status = SAVE_STATUS_ERROR;
+	}
+	else
+	{
+		slot1Status = SAVE_STATUS_EMPTY;
+	}
+
+	//Check save slot 2.
+	validSectors = 0;
+	signatureValid = FALSE;
+	for (sector = 0; sector < NUM_SECTORS_PER_SAVE_SLOT; sector++)
+	{
+		DoReadFlashWholeSection(NUM_SECTORS_PER_SAVE_SLOT + sector, gFastSaveSection);
+		if (IsValidFileSignature(gFastSaveSection->signature))
+		{
+			signatureValid = TRUE;
+			checksum = CalculateSaveChecksum(gFastSaveSection->data, chunks[gFastSaveSection->id].size);
+			if (gFastSaveSection->checksum == checksum)
+			{
+				slot2saveCounter = gFastSaveSection->counter;
+				validSectors |= 1 << gFastSaveSection->id;
+			}
+		}
+	}
+
+	if (signatureValid)
+	{
+		if (validSectors == ALL_SECTORS)
+			slot2Status = SAVE_STATUS_OK;
+		else
+			slot2Status = SAVE_STATUS_ERROR;
+	}
+	else
+	{
+		slot2Status = SAVE_STATUS_EMPTY;
+	}
+
+	if (slot1Status == SAVE_STATUS_OK && slot2Status == SAVE_STATUS_OK)
+	{
+		// Choose counter of the most recent save file
+		if ((slot1saveCounter == -1 && slot2saveCounter == 0) || (slot1saveCounter == 0 && slot2saveCounter == -1))
+		{
+			if ((unsigned)(slot1saveCounter + 1) < (unsigned)(slot2saveCounter + 1))
+				gSaveCounter = slot2saveCounter;
+			else
+				gSaveCounter = slot1saveCounter;
+		}
+		else
+		{
+			if (slot1saveCounter < slot2saveCounter)
+				gSaveCounter = slot2saveCounter;
+			else
+				gSaveCounter = slot1saveCounter;
+		}
+		return SAVE_STATUS_OK;
+	}
+
+	if (slot1Status == SAVE_STATUS_OK)
+	{
+		gSaveCounter = slot1saveCounter;
+		if (slot2Status == SAVE_STATUS_ERROR)
+			return SAVE_STATUS_ERROR;
+		else
+			return SAVE_STATUS_OK;
+	}
+
+	if (slot2Status == SAVE_STATUS_OK)
+	{
+		gSaveCounter = slot2saveCounter;
+		if (slot1Status == SAVE_STATUS_ERROR)
+			return SAVE_STATUS_ERROR;
+		else
+			return SAVE_STATUS_OK;
+	}
+
+	if (slot1Status == SAVE_STATUS_EMPTY && slot2Status == SAVE_STATUS_EMPTY)
+	{
+		gSaveCounter = 0;
+		gFirstSaveSector = 0;
+		return SAVE_STATUS_EMPTY;
+	}
+
+	gSaveCounter = 0;
+	gFirstSaveSector = 0;
+	return 2;
+}
+
 // 080D9870
-u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
+u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* location)
 {
 	u16 sectorNum;
 	u8* chunkData;
@@ -215,7 +376,12 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 	Memset(gFastSaveSection, 0, sizeof(struct SaveSection));
 
 	gFastSaveSection->id = chunkId;
-	gFastSaveSection->security = FILE_SIGNATURE;
+	#ifdef CUSTOM_FILE_SIGNATURE 
+	gFastSaveSection->signature = CUSTOM_FILE_SIGNATURE;
+	#else
+	gFastSaveSection->signature = FILE_SIGNATURE;
+	#endif
+
 	gFastSaveSection->counter = gSaveCounter;
 
 	Memcpy(gFastSaveSection->data, chunkData, chunkSize);
@@ -225,16 +391,51 @@ u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 	//Write data to leftover save section
 	SaveParasite();
 	u8 retVal = TryWriteSector(sectorNum, gFastSaveSection->data);
-	if (retVal == SAVE_STATUS_OK) //Save so far is fine
-		retVal = SaveSector30And31();
-
 	return retVal;
+}
+
+// If chunkId is 0xFFFF, this function will write all of the chunks pointed to by 'chunks'.
+// Otherwise, it will write a single chunk with the given 'chunkId'.
+u8 SaveWriteToFlash(u16 chunkId, const struct SaveBlockChunk *chunks)
+{
+    u32 retVal;
+    u16 i;
+
+    gFastSaveSection = &gSaveDataBuffer;
+
+    if (chunkId != 0xFFFF)  // write single chunk
+    {
+        retVal = HandleWriteSector(chunkId, chunks);
+    }
+    else //Write all chunks
+    {
+        gLastKnownGoodSector = gFirstSaveSector; // backup the current written sector before attempting to write.
+        gPrevSaveCounter = gSaveCounter;
+        gFirstSaveSector++;
+        gFirstSaveSector %= NUM_SECTORS_PER_SAVE_SLOT; // array count save sector locations
+        gSaveCounter++;
+        retVal = SAVE_STATUS_OK;
+
+        for (i = 0; i < NUM_SECTORS_PER_SAVE_SLOT; i++)
+            HandleWriteSector(i, chunks);
+	
+		SaveSector30And31();
+
+        //Check for any bad sectors
+        if (gDamagedSaveSectors != 0) //Skip the damaged sector.
+        {
+            retVal = SAVE_STATUS_ERROR;
+            gFirstSaveSector = gLastKnownGoodSector;
+            gSaveCounter = gPrevSaveCounter;
+        }
+    }
+
+    return retVal;
 }
 
 u8 HandleSavingData(u8 saveType)
 {
 	u32* backupPtr = gMain.vblankCounter1;
-	//u8 *tempAddr;
 	gMain.vblankCounter1 = NULL;
 	UpdateSaveAddresses();
 	#ifdef VAR_LAST_SAVE
@@ -285,18 +486,30 @@ u8 HandleSavingData(u8 saveType)
 	return 0;
 }
 
-//Vanilla save wasn't saving the new sectors
+//Hard to save the parasite with the vanilla save splitting to prevent cheating
 u8 SaveDataAfterLinkBattle(void)
 {
 	gTerrainType = 0; //Doesn't get cleared for the second player
 	TrySavingData(SAVE_NORMAL);
 	ClearContinueGameWarpStatus2();
-	return 3; //New state in switch statemeny
+	return 3; //New state in switch statement
+}
+
+u8 SaveDataAfterLinkTrade(void)
+{
+	TrySavingData(SAVE_NORMAL);
+	ClearContinueGameWarpStatus2();
+	return 4; //New state in switch statement
 }
 
 void NewGameWipeNewSaveData(void)
 {
-	Memset((void*) gSaveBlockParasite, 0, 0x2EA4);
+	#ifdef UNBOUND
+	extern void WipeUnboundNewSaveRAM(void);
+	WipeUnboundNewSaveRAM();
+	#else
+	Memset((void*) SAVE_BLOCK_PARASITE, 0, 0x2EA4);
+	#endif
 }
 
 static void Task_SaveErrorStatus_RunPrinter(unusedArg u8 taskId)
@@ -312,16 +525,45 @@ void PrintChangeSaveTypeErrorStatus(u8 taskId, const u8* str)
 }
 
 extern const u8 gText_MainMenuEnableRTC[];
+extern const u8 gText_MainMenuEnableRTCNoSave[];
+extern const u8 gText_MainMenuTimeSetInFuture[];
 extern bool8 sPrintedRTCWarning;
 bool8 TryDisplayMainMenuRTCWarning(unusedArg u8 taskId)
 {
 	#ifdef TIME_ENABLED
-	if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK && !sPrintedRTCWarning)
+	if (!sPrintedRTCWarning)
 	{
-		sPrintedRTCWarning = TRUE;
-		PrintSaveErrorStatus(taskId, gText_MainMenuEnableRTC);
-		gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
-		return TRUE;
+		#ifdef UNBOUND
+		if (TryPreventIncompleteSaves(taskId))
+		{
+			sPrintedRTCWarning = TRUE;
+			return TRUE;
+		}
+		else
+		#endif
+		if (RtcGetErrorStatus() & RTC_ERR_FLAG_MASK)
+		{
+			const u8* warning;
+			sPrintedRTCWarning = TRUE;
+			
+			if (gSaveFileStatus == SAVE_STATUS_EMPTY)
+				warning = gText_MainMenuEnableRTCNoSave;
+			else
+				warning = gText_MainMenuEnableRTC;
+			
+			PrintSaveErrorStatus(taskId, warning);
+			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
+			return TRUE;
+		}
+		else if (IsDayInVarInFuture(VAR_SWARM_DAILY_EVENT)) //If the player tampered with their system time to access more daily events
+		{
+			sPrintedRTCWarning = TRUE;
+			BufferYearMonthDayFromVar(VAR_SWARM_DAILY_EVENT);
+			StringExpandPlaceholders(gStringVarC, gText_MainMenuTimeSetInFuture);
+			PrintSaveErrorStatus(taskId, gStringVarC);
+			gTasks[taskId].func = (void*) (0x0800C688 | 1); // Task_SaveErrorStatus_RunPrinterThenWaitButton
+			return TRUE;
+		}
 	}
 	#endif
 

@@ -28,16 +28,13 @@
 {																				\
     if (SIDE(battlerId) != B_SIDE_PLAYER)                     					\
     {                                                                   		\
-        if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)                     		\
+        if (useTheOpposing)                     								\
             toCpy = TheOpposingString;                                			\
-																				\
-																				\
 		else if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)					\
 			toCpy = TheShadowString;  											\
-																				\
-																				\
         else                                                            		\
-            toCpy = TheWildString;                               				\
+            toCpy = gText_TheWild;                               				\
+																				\
         while (*toCpy != EOS)                                           		\
         {                                                              	 		\
             dst[dstID] = *toCpy;                                        		\

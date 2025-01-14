@@ -53,6 +53,7 @@ extern bool8 gLinkVSyncDisabled;
 extern const u8 gGameVersion;
 extern const u8 gGameLanguage;
 
+void __attribute__((long_call)) DoSoftReset(void);
 void __attribute__((long_call)) SetMainCallback1(MainCallback callback);
 void __attribute__((long_call)) SetMainCallback2(MainCallback callback);
 void __attribute__((long_call)) ClearPokemonCrySongs(void);
@@ -65,6 +66,5 @@ void InitKeys(void);
 void SetVCountCallback(IntrCallback callback);
 void SetSerialCallback(IntrCallback callback);
 void InitFlashTimer(void);
-void DoSoftReset(void);
 */
 #endif // GUARD_MAIN_H

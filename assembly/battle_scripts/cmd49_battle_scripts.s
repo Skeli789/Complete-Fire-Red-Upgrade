@@ -27,10 +27,13 @@ cmd49_battle_scripts.s
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
 .global BattleScript_MultiHitPrintStrings
+.global BattleScript_MultiHitWaitAttackerSubstitute
+.global BattleScript_ScaleShotBuff
 .global BattleScript_PluckEat
 .global BattleScript_RaidShields
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
+.global BattleScript_MistProtected
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -63,7 +66,7 @@ BattleScript_KingsShieldPostDecrementSet:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 KingsShieldReturn
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 KingsShieldReturn:
@@ -116,7 +119,7 @@ RageReturn:
 	return
 	
 RageContraryBS: @;Rage says "Attack fell!" if the target has Contrary. Only the rage string is printed if the stat rises
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	goto RagePrintString
 	
@@ -143,14 +146,14 @@ BattleScript_Magician:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Moxie:
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MoxieReturnPostBuff
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
 	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
-MoxieReturnPostBuff:
+.LReturn:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -312,6 +315,37 @@ BattleScript_MultiHitPrintStrings:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_MultiHitWaitAttackerSubstitute:
+	pause 0x30 @Wait for the attacker to slide in from the Substitute
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ScaleShotBuff:
+	jumpifstat BANK_ATTACKER GREATERTHAN STAT_DEF STAT_MIN ScaleShot_Def
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX .LReturn
+
+ScaleShot_Def:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_IGNORE_ABILITIES 
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN, ScaleShot_Spd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ScaleShot_Spd
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+ScaleShot_Spd:
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPD, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN, .LReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 .LReturn
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_PluckEat:
 	setword BATTLE_STRING_LOADER PluckString
 	printstring 0x184
@@ -349,20 +383,18 @@ BattleScript_BrokenRaidBarrier:
 BattleScript_BrokenRaidBarrier_Def:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_DEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintDefMsg
-BattleScript_BrokenRaidBarrierPrintDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_BrokenRaidBarrier_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_BrokenRaidBarrierEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_BrokenRaidBarrier_SpDef:
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
 	setstatchanger STAT_SPDEF | DECREASE_2
-	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintSpDefMsg
-BattleScript_BrokenRaidBarrierPrintSpDefMsg:
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierEnd
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_BrokenRaidBarrierEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_BrokenRaidBarrierEnd:
@@ -376,6 +408,15 @@ BattleScript_RaidBattleStatIncrease:
 	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MistProtected:
+	pause DELAY_HALFSECOND
+	printstring 98 @;STRINGID_PKMNPROTECTEDBYMIST
+	waitmessage DELAY_1SECOND
+	callasm TryHideActiveAbilityPopUps @;For Gooey
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

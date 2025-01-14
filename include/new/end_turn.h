@@ -14,12 +14,16 @@
 //Exported Functions
 u8 CountAliveMonsOnField(void);
 u32 GetLeechSeedDamage(u8 bank);
-u32 GetPoisonDamage(u8 bank);
+u32 GetPoisonDamage(u8 bank, bool8 aiCalc);
 u32 GetBurnDamage(u8 bank);
+u32 GetFrostbiteDamage(u8 bank);
 u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
 u32 GetSeaOfFireDamage(u8 bank);
+u32 GetBadDreamsDamage(u8 bank);
+u32 GetSplintersDamage(u8 bank);
+u32 GetBadThoughtsDamage(u8 bank);
 u32 GetGMaxVineLashDamage(u8 bank);
 u32 GetGMaxWildfireDamage(u8 bank);
 u32 GetGMaxCannonadeDamage(u8 bank);

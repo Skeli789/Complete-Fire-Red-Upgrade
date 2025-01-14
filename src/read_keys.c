@@ -1,14 +1,17 @@
 #include "defines.h"
+#include "../include/bg.h"
+#include "../include/event_object_movement.h"
 #include "../include/link.h"
-#include "../include/script.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
-#include "../include/overworld.h"
 #include "../include/map_name_popup.h"
-#include "../include/rtc.h"
-#include "../include/start_menu.h"
+#include "../include/overworld.h"
 #include "../include/party_menu.h"
+#include "../include/rtc.h"
+#include "../include/script.h"
+#include "../include/start_menu.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 
@@ -47,6 +50,8 @@ extern const u8 SystemScript_EnableAutoRun[];
 extern const u8 SystemScript_DisableAutoRun[];
 extern const u8 SystemScript_EnableBikeTurboBoost[];
 extern const u8 SystemScript_DisableBikeTurboBoost[];
+extern const u8 SystemScript_EnableSurfTurboBoost[];
+extern const u8 SystemScript_DisableSurfTurboBoost[];
 extern const u8 SystemScript_PartyMenuFromField[];
 extern const u8 SystemScript_ItemMenuFromField[];
 extern const u8 SystemScript_MiningScan[];
@@ -125,17 +130,17 @@ void ReadKeys(void)
 	gMain.newKeys = gMain.newKeysRaw;
 	gMain.newAndRepeatedKeys = gMain.newKeysRaw;
 
-	// BUG: Key repeat won't work when pressing L using L=A button mode
-	// because it compares the raw key input with the remapped held keys.
-	// Note that newAndRepeatedKeys is never remapped either.
-
-	if (keyInput != 0 && gMain.heldKeys == keyInput)
+	if (keyInput != 0 && gMain.heldKeysRaw == keyInput)
 	{
 		gMain.keyRepeatCounter--;
 		if (gMain.keyRepeatCounter == 0)
 		{
 			gMain.newAndRepeatedKeys = keyInput;
 			gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
+
+			if (gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A
+			&& gMain.newKeys & L_BUTTON)
+				gMain.newAndRepeatedKeys |= A_BUTTON;
 		}
 	}
 	else
@@ -205,6 +210,26 @@ bool8 StartLButtonFunc(void)
 		}
 		else
 		#endif
+		#ifdef FLAG_SURF_TURBO_BOOST
+		if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) || gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		{
+			DismissMapNamePopup();
+
+			if (FlagGet(FLAG_SURF_TURBO_BOOST))
+			{
+				FlagClear(FLAG_SURF_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_DisableSurfTurboBoost);
+			}
+			else
+			{
+				FlagSet(FLAG_SURF_TURBO_BOOST);
+				ScriptContext1_SetupScript(SystemScript_EnableSurfTurboBoost);
+			}
+			
+			return TRUE;
+		}
+		else
+		#endif
 		#ifdef FLAG_RUNNING_ENABLED
 		if (FlagGet(FLAG_RUNNING_ENABLED)) //Only toggle auto-run if can run in the first place
 		#endif
@@ -242,7 +267,10 @@ bool8 StartRButtonFunc(void)
 	#ifndef VAR_R_BUTTON_MODE
 	if (dexNavSpecies != SPECIES_NONE)
 	{
-		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+		DismissMapNamePopup();
+		ChangeBgY(0, 0, 0);
+		if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15, FALSE))
+			return TRUE; //HUD wasn't enabled and a script was started instead
 		return FALSE; //Don't enable the script context
 	}
 	#else
@@ -250,7 +278,10 @@ bool8 StartRButtonFunc(void)
 		case OPTIONS_R_BUTTON_MODE_DEXNAV:
 			if (dexNavSpecies != SPECIES_NONE && FlagGet(FLAG_SYS_DEXNAV))
 			{
-				InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+				DismissMapNamePopup();
+				ChangeBgY(0, 0, 0);
+				if (!InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15, FALSE))
+					return TRUE; //HUD wasn't enabled and a script was started instead
 				return FALSE; //Don't enable the script context
 			}
 			break;
@@ -284,7 +315,12 @@ bool8 StartRButtonFunc(void)
 			break;
 		case OPTIONS_R_BUTTON_MODE_MINING:
 			#ifdef MB_UNDERGROUND_MINING
-			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY)
+			if (GetCurrentRegionMapSectionId() == MAPSEC_KBT_EXPRESSWAY
+			|| MAP_IS(CRYSTAL_PEAK_1F_LEFT_ROOM)
+			|| (gMapHeader.mapType == MAP_TYPE_UNDERWATER
+			 && !MAP_IS(MIRSKLE_LAB_UNDERWATER_1)
+			 && !MAP_IS(MIRSKLE_LAB_UNDERWATER_2)
+			 && !MAP_IS(VIVILL_WAREHOUSE_UNDERWATER)))
 			{
 				TryLoadMiningSpots();
 				ChooseMiningSpotToShow();
@@ -320,10 +356,54 @@ void InitBagMenuFromField(void)
 
 static void CB2_PartyMenuFromField(void)
 {
-    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldContinueScript);
+	FreezeEventObjects();
+	ScriptContext2_Enable(); //So HMs don't cause problems
+	PrepareOverworldReturn();
+	InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToFieldFromDiploma);
 }
 
 static void CB2_ItemMenuFromField(void)
 {
-	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldContinueScript); //Continue script is needed so followers don't get messed up
+	FreezeEventObjects();
+	PrepareOverworldReturn();
+	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToFieldFromDiploma); //Continue script is needed so followers don't get messed up
+}
+
+u8 GetLRKeysState(void)
+{
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_NEW(L_BUTTON))
+			return 1;
+		if (JOY_NEW(R_BUTTON))
+			return 2;
+	}
+
+	return 0;
+}
+
+u8 GetLRKeysPressedAndHeld(void)
+{
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_REPT(L_BUTTON))
+			return 1;
+		if (JOY_REPT(R_BUTTON))
+			return 2;
+	}
+
+	return 0;
+}
+
+s32 sub_8104284(void)
+{
+	if (gSaveBlock2->optionsButtonMode != OPTIONS_BUTTON_MODE_L_EQUALS_A)
+	{
+		if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_LEFT))
+			return 1;
+		else if (JOY_HELD(R_BUTTON) && JOY_NEW(DPAD_RIGHT))
+			return 2;
+	}
+
+	return 0;
 }

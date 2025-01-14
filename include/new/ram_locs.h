@@ -31,9 +31,6 @@
 
 		#define gBoxStatusAndType ((u8*) 0x0203709C)
 
-/*u8*/  #define gUnknown_2024005 ((u8*) 0x2024005) //Length 0x3
-/*u8*/  #define gUnknown_2024008 ((u8*) 0x2024008) //Length 0x10
-
 /*u8*/  //#define sLearningMoveTableID *((u8*) 0x2024028)
 /*u8*/  #define gPlayerPartyCount *((u8*) 0x2024029)
 /*u8*/  #define gEnemyPartyCount *((u8*) 0x202402A)
@@ -80,8 +77,6 @@
 
 /*u8*/  //#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
-		#define gShopDataPtr ((struct ShopData*) 0x2039934)
-
 		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x203998C))
 /*u8*/ //#define gSafariBallNumber 	(*((u8*) 0x02039994))	// see src/scripting.c
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
@@ -89,14 +84,13 @@
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
-		#define sHofFadingRelated (*((u32*) 0x0203AB34))
+		#define sHofSelectedPaletteIndices (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
 /*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
 		//#define sPartyMenuInternal ((struct PartyMenuViewing*) 0x203B09C)
 		//#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
-		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
-		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
+		#define sLastViewedMonIndex (*(u8*) 0x203B16C)
 
 /*u8*/  #define gBattlePartyCurrentOrder ((u8*) 0x203B0DC)
 
@@ -110,7 +104,7 @@
 		//#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		//#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		//#define gLoadPointer (*((const u8**) 0x03000f14))
-		//#define sScriptContext2Enabled (*((u8*) 0x3000F28))
+		//#define sScriptContext2Enabled (*((u8*) 0x3000F9C))
 		//#define gKeypadInitialCountdown ((*u16) 0x030030e0)
 		//#define gMain (((struct Main*) 0x30030F0)[0])
 		//#define gKeypadFollowUpCountdown ((*u16) 0x0300352c)
@@ -142,8 +136,10 @@
 
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
+extern u16 gLastUsedBall; //0x203B774
 
-//FREE: 0x203B774
+//FREE: 0x203B776
+
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
@@ -167,15 +163,15 @@
 #define gLastUsedRepel (*(u16*) 0x203C748)
 //#define sBagItemAmounts ((u16*) 0x203C74A)
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
-#define gDontFadeWhite (*((bool8*) 0x203C756))
+extern bool8 gDontFadeWhite; //0x203C756
 #define gWindowsLitUp (*((bool8*) 0x203C757))
 #define gWildDataSwitch (*((const u8**) 0x203C758))
-//#define sDexNavSearchLevels //0x203C75C -999 slots
+extern u8 gDexNavSearchLevels[999]; //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((const void**) 0x203E034))
+#define gPokeBackupPtr (*((const void**) 0x203E034)) //Not used during battle
 //#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203E044))
@@ -185,7 +181,7 @@ extern bool8 gInShop; //0x203E043
 #define gRaidBattleSpecies (*((u16*) 0x203E04C))
 #define gRaidBattleStars (*((u8*) 0x203E04E))
 #define gRaidBattleLevel (*((u8*) 0x203E04F))
-#define gRainFadeHelper (*((u8*) 0x203E050))
+#define gInvertAMPM (*((bool8*) 0x203E050))
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
 //#define sItemDescriptionPocket (*((bool8*) 0x203E053))
@@ -205,7 +201,8 @@ extern struct Coords16 gMiningSpots[8]; //0x203E060
 extern u16 gLastDexNavSpecies; //0x203E086
 //extern struct ListMenuItem[7] gMultiChoice; //0x203E088 - up to 7 pointers, 8 bytes each
 //extern u8 gPartyPresetTeamIndices[PARTY_SIZE]; //0x203E0C0
-//FREE: 0x203E0C6
+extern u8 gScored3CritsInBattle; //0x203E0C6
+//FREE: 0x203E0C7
 
 //DON'T GO PAST 0x203E0D4 for BTS!
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

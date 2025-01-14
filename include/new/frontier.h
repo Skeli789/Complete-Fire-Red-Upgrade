@@ -29,18 +29,27 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
+bool8 IsAIControlledBattle(void);
+bool8 IsStandardTier(u8 tier);
 bool8 IsCamomonsTier(u8 tier);
 bool8 IsLittleCupTier(u8 tier);
 bool8 IsMiddleCupTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
+bool8 IsOnlyScalemonsGame(void);
 bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 AreMegasZMovesBannedInTier(u8 tier);
 bool8 IsMegaZMoveBannedBattle(void);
+bool8 IsMoveBannedInRingChallenge(u16 move, u8 bank);
+bool8 IsMoveBannedInRingChallengeByMon(u16 move, struct Pokemon* mon);
+bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType);
+bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
+bool8 IsSpeciesBannedInTier(u16 species, u16 tier, u16 battleFormat);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetBattleMineStreak(u8 type, u8 tier);
+u16 GetRingChallengeSteak(u8 type);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
 
@@ -77,6 +86,8 @@ enum BattleFacilities
 	IN_BATTLE_SANDS,
 	IN_BATTLE_MINE,
 	IN_BATTLE_CIRCUS,
+	IN_BATTLE_FACTORY,
+	IN_RING_CHALLENGE,
 	IN_ISLE_CHALLENGE,
 	NUM_BATTLE_FACILITIES,
 };
@@ -123,9 +134,14 @@ enum BattleTowerFormats
 	BATTLE_FACILITY_MEGA_BRAWL,
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
+	BATTLE_FACILITY_METRONOME,
+	BATTLE_FACILITY_UU,
+	BATTLE_FACILITY_RU,
+	BATTLE_FACILITY_NU,
 	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
 	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
 	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
+	BATTLE_MINE_FORMAT_4, //Ubers, Ubers Camomons
 	NUM_TIERS
 };
 
@@ -172,6 +188,7 @@ enum
 	DOUBLES_RAIN_TEAM,
 	DOUBLES_HAIL_TEAM,
 	DOUBLES_ELECTRIC_TERRAIN_TEAM,
+	DOUBLES_PSYCHIC_TERRAIN_TEAM,
 	DOUBLES_TRICK_ROOM_TEAM,
 	DOUBLES_TAILWIND_TEAM,
 	DOUBLES_HYPER_OFFENSE_TEAM,
@@ -302,36 +319,34 @@ struct BattleSandsStreak
 	/*0x8*/ u16 streakLength;
 }; /*SIZE = 0xA*/
 
-extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
+struct RingChallengeStreak
+{
+	/*0x0*/ u16 streakLength;
+	/*0x2*/ u16 species1;
+	/*0x4*/ u16 species2;
+	/*0x6*/ u16 species3;
+}; /*SIZE = 0x8*/
+
+extern struct BattleSandsStreak gBattleSandsStreaks[/*PREVIOUS_OR_MAX*/ 2]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
 extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50 - sizeof(1) = 0x70
+extern struct RingChallengeStreak gRingChallengeStreaks[/*CURRENT_OR_MAX*/ 2]; //0x2028FC0
+
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 //FREE SPACE POST CIRCUS - 0x2027170: 0x2C4 bytes
 
 extern const u8 gBattleTowerTiers[];
 extern const u8 gBattleMineTiers[];
 extern const u8 gBattleCircusTiers[];
-#define gBattleSandsTiers gBattleTowerTiers //Battle Sands & Battle Tower have same tiers
 extern const u8 gNumBattleTowerTiers;
 extern const u8 gNumBattleMineTiers;
 extern const u8 gNumBattleCircusTiers;
-#define gNumBattleSandsTiers gNumBattleTowerTiers
 extern const u8* const gBattleFrontierTierNames[NUM_TIERS];
 
-extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];
-extern const species_t gSmogonOU_SpeciesBanList[];
-extern const species_t gSmogonNationalDexOU_SpeciesBanList[];
-extern const species_t gSmogonOUDoubles_SpeciesBanList[];
 extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
-extern const species_t gSmogonMonotype_SpeciesBanList[];
-extern const species_t gSmogonCamomons_SpeciesBanList[];
-extern const species_t gSmogonAverageMons_SpeciesBanList[];
-extern const species_t gSmogon350Cup_SpeciesBanList[];
-extern const species_t gSmogonScalemons_SpeciesBanList[];
-extern const species_t gSmogonBenjaminButterfree_SpeciesBanList[];
 extern const ability_t gSmogonOU_AbilityBanList[];
 extern const ability_t gSmogonOUDoubles_AbilityBanList[];
 extern const ability_t gSmogonMonotype_AbilityBanList[];
@@ -339,6 +354,9 @@ extern const ability_t gMiddleCup_AbilityBanList[];
 extern const ability_t gSmogonAverageMons_AbilityBanList[];
 extern const ability_t gSmogon350Cup_AbilityBanList[];
 extern const ability_t gSmogonScalemons_AbilityBanList[];
+extern const ability_t gSmogonMetronome_AbilityBanList[];
+extern const ability_t gSmogonUU_AbilityBanList[];
+extern const ability_t gSmogonRU_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
 extern const item_t gSmogonNationalDexOU_ItemBanList[];
@@ -349,6 +367,11 @@ extern const item_t gMiddleCup_ItemBanList[];
 extern const item_t gSmogonAverageMons_ItemBanList[];
 extern const item_t gSmogon350Cup_ItemBanList[];
 extern const item_t gSmogonScalemons_ItemBanList[];
+extern const item_t gSmogonMetronome_ItemBanList[];
+extern const item_t gSmogonUU_ItemBanList[];
+extern const item_t gSmogonRU_ItemBanList[];
+extern const item_t gSmogonNU_ItemBanList[];
+extern const move_t gRingChallenge_MoveBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];

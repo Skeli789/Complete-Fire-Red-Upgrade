@@ -73,13 +73,15 @@ BattleScript_BerryConfuseHealRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	printstring 0x144
 	waitmessage DELAY_1SECOND
 	setmoveeffect MOVE_EFFECT_CONFUSION
+	copyhword BACKUP_HWORD BATTLE_SCRIPTING_BANK @;Backup scripting bank
 	seteffectprimaryscriptingbank
+	copyhword BATTLE_SCRIPTING_BANK BACKUP_HWORD @;Restore scripting bank
 	call BattleScript_CheekPouch
 	return
 
@@ -95,7 +97,7 @@ BattleScript_BerryHealHP_RemoveBerryRet:
 	
 BattleScript_ItemHealHP_RemoveItem_SkipAnim:
 	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	printstring 0x12A
@@ -265,7 +267,7 @@ BattleScript_CheekPouch:
 	setbyte FORM_COUNTER 0x0
 	call BattleScript_AbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG @;NON_ATTACK_DMG is needed in case of Jump Kick missing
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER CheekPouchString
@@ -329,7 +331,7 @@ BattleScript_ItemStatChangeRet:
 	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	setbyte MULTISTRING_CHOOSER 0x4
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	removeitem BANK_TARGET
 ItemStatChangeReturn:
@@ -367,14 +369,14 @@ WP_Atk:
 	setstatchanger STAT_ATK | INCREASE_2
 	statbuffchange STAT_TARGET | STAT_BS_PTR WP_SpAtk
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_SpAtk
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 WP_SpAtk:
 	setstatchanger STAT_SP_ATK | INCREASE_2
 	statbuffchange STAT_TARGET | STAT_BS_PTR WP_Ret
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_Ret
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 
 WP_Ret:
@@ -506,9 +508,6 @@ BattleScript_RedCard:
 	jumpifdynamaxed BANK_ATTACKER RedCard_Dynamax
 	jumpifspecialstatusflag BANK_ATTACKER STATUS3_ROOTED 0x0 RedCard_Ingrain
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
-	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
-	callasm ClearAttackerDidDamageOnce
-	callasm TryRemovePrimalWeatherOnPivot	
 	forcerandomswitch BANK_ATTACKER BANK_TARGET RedCardEnd
 
 RedCardEnd:
@@ -570,15 +569,62 @@ BattleScript_WeaknessBerryActivate:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_AIUseFullRestoreOrHpHeal:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_HEALING_SPARKLES, 0x0 @Purposely before ignore Substitute
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 298 @;STRINGID_PKMNSITEMRESTOREDHEALTH
+	waitmessage DELAY_1SECOND
+	reloadhealthbar BANK_ATTACKER
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AIUseStatRestore:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_AI_ITEM_HEAL, 0x0
+	printfromtable 0x83FE628 @;gTrainerItemCuredStatusStringIds
+	waitmessage DELAY_1SECOND
+	reloadhealthbar BANK_ATTACKER
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_AIUseXstat:
 	printstring 304 @;STRINGID_EMPTYSTRING3
-	pause 48
+	pause DELAY_HALFSECOND
 	playse 0x1 @;SE_USE_ITEM
 	printstring 343 @;STRINGID_TRAINER1USEDITEM
 	waitmessage DELAY_1SECOND
 	useitemonopponent
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C @;gStatUpStringIds
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AIUseGuardSpec:
+	printstring 304 @;STRINGID_EMPTYSTRING3
+	pause DELAY_HALFSECOND
+	playse 0x1 @;SE_USE_ITEM
+	printstring 343 @;STRINGID_TRAINER1USEDITEM
+	waitmessage DELAY_1SECOND
+	useitemonopponent
+	playanimation BANK_ATTACKER, ANIM_AI_ITEM_HEAL, 0x0
+	printfromtable 0x83FE5AC @;gMistUsedStringIds
 	waitmessage DELAY_1SECOND
 	finishaction
 

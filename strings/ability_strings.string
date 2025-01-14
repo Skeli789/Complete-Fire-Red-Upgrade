@@ -38,7 +38,10 @@ The effects of weather\ndisappeared.
 It was alerted to\n[EFFECT_BANK]'s\l[BUFFER][00]!
 
 #org @gText_FriskActivate
-[SCRIPTING_BANK] frisked\n[TARGET] and found\lits [LAST_ITEM]!
+[SCRIPTING_BANK] frisked\n[EFFECT_BANK] and found\lits [LAST_ITEM]!
+
+#org @gText_ItIsHailing
+It is hailing.
 
 #org @gText_FogIsDeep
 The fog is deep[.]
@@ -51,6 +54,21 @@ The sunlight turned extremely harsh!
 
 #org @gText_DeltaStream
 Mysterious strong winds are protecting\nFlying-type Pok\emon!
+
+#org @gText_StrongWindsWeakenedAttack
+The mysterious strong winds\nweakened the attack!
+
+#org @gText_HarshSunStopsWeatherChange
+But the extremely harsh sunlight\nwas not lessened at all!
+
+#org @gText_HeavyRainStopsWeatherChange
+But there is no relief from the\nheavy rain!
+
+#org @gText_AirCurrentStopsWeatherChange
+But the mysterious strong winds\nblow on regardless!
+
+#org @gText_ViciousSandstormStopsWeatherChange
+But the vicious sandstorm refuses\nto let up!
 
 #org @gText_SlowStartEnd
 [SCRIPTING_BANK] got its\nact together!
@@ -74,7 +92,7 @@ The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 [SCRIPTING_BANK] stopped\nschooling!
 
 #org @gText_GorillaTacticsMoveMenuBlockage
-[CURRENT_MOVE] can't be selected\nbecause of [LAST_ABILITY]!\p
+[LAST_ABILITY] allows only\n[CURRENT_MOVE] to be used!\p
 
 #org @gText_IceFaceTookDamage
 The Ice Face took damage for\n[TARGET]!
@@ -91,6 +109,20 @@ Neutralizing Gas fills the area!
 #org @gText_NeutralizingGasEnd
 The effects of Neutralizing Gas\nwore off!
 
+#org @gText_CuriousMedicineActivate
+[TARGET]'s stat changes\nwere removed!
+
 #org @gText_PkmnHurtsWith
 [ATTACKER] was hurt!
 
+#org @gText_SymbiosisTransfer
+[SCRIPTING_BANK] shared its\n[LAST_ITEM] with [EFFECT_BANK]!
+
+#org @gText_AbilityEvaporatedAttack
+But [TARGET] evaporated\nthe attack!
+
+#org @gText_AbilityEvaporatedRain
+[SCRIPTING_BANK] evaporated\nthe rain!
+
+#org @gText_ButAbilityEvaporatesRain
+But [SCRIPTING_BANK] evaporates\nrain!

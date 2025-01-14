@@ -5,8 +5,11 @@ TagTeamExecutionCompleteHook 802E384
 
 ##Script Commands
 ScrCmd_message 815FB50
+ScrCmd_fadescreenswapbuffers 815FB90
 ScrCmd_hidemappopup 815FC78
-CreateSpriteLoadTable 0815fc5c
+ScrCmd_bufferitemnameplural 815FD04
+CreateSpriteLoadTable 815fc5c
+WaitForAorBPress 806BA7C
 
 ##Specials
 
@@ -42,6 +45,9 @@ sp01B_SwapPartyAndBoxData 0815FDCC
 
 sp024_AddTextByVariable 0815FDF0
 sp025_AddTextByPointer 0815FDF4
+#ifdef UNBOUND
+sp026_RandomizerNewGamePlusTeam 0815FDF8
+#endif
 
 sp02B_CheckABButtons 0815FE0C
 sp02C_CheckDPad 0815FE10
@@ -151,6 +157,11 @@ sp0E2_IsDexNavCompleteHere 81600E8
 sp0E4_ShowItemSpriteOnFindObtain 81600F0
 sp0E5_ClearItemSpriteAfterFindObtain 81600F4
 
+sp0E7_CreateFrontierOpponentTeamBeforeBattle 081600FC
+sp0E8_BufferRingChallengeOpponentTeamDetails 08160100
+sp0E9_ChooseRingChallengeOpponentMon 08160104
+sp0EA_BufferRingChallengeRecords 08160108
+
 sp100_CanPlayerUseFlashInCurrentLocation 08160160
 sp101_CanPlayerFlyInCurrentLocation 08160164
 sp102_IsPlayerFacingSurfableWater 08160168
@@ -161,6 +172,8 @@ sp109_IsPlayerFacingNPCWithOverworldPic 8160184
 sp10A_CanUseCutOnTree 8160188
 sp10B_CanUseRockSmashOnRock 816018C
 sp10C_CanUseStrengthOnBoulder 8160190
+
+sp112_BufferNaturalGiftPowerAndType 81601A8
 
 sp115_RaidBattleAvailable 081601B4
 sp116_StartRaidBattleIntro 081601B8
@@ -177,9 +190,6 @@ sp12D_CompareEnteredPhrase 08160214
 sp196_TryCopyTMNameToBuffer1 081603B8
 
 sp1AE_IsUntradableMonInParty 08160418
-
-##Field Effects
-FldEff_BikeTireTracks 081D98D9
 
 ## Expanded Text Buffers
 LoadTextBuffer07 08231E8C
@@ -203,7 +213,6 @@ LinkNpcFix 0805efe4
 #CB2_InitQuestMenu 0806F534
 
 ##Item Functions
-Task_ReturnToItemListAfterItemPurchase 0809BF64
 ItemUseCB_EvolutionStone 080A1768
 
 ##Nicknaming
@@ -228,6 +237,12 @@ PlayerAvatarTransition_HandleUnderwater 8471EEC
 MetatileBehavior_IsMuddySlope 835B7FC
 ForcedMovement_MuddySlope 835B800
 
+##Battle VBlank
+VBlankCB_Battle 800FF6C
+VBlankCB_Battle 8011B80
+VBlankCB_Battle 802AAC4
+VBlankCB_Battle 8077A9C
+
 #ifdef UNBOUND
 FieldUseFunc_MaxPowder 8876C40
 FieldUseFunc_Honey 8876E7C
@@ -237,7 +252,6 @@ FieldUseFunc_EVReducingBerry 8877CC0
 FieldUseFunc_EVReducingBerry 8877CEC
 FieldUseFunc_EVReducingBerry 8877D18
 FieldUseFunc_EVReducingBerry 8877D44
-FieldUseFunc_VsSeeker 887A054
 FieldUseFunc_FormChangeItem 887BE3C
 FieldUseFunc_FormChangeItem 887BE68
 FieldUseFunc_FormChangeItem 887BE94
@@ -250,4 +264,11 @@ FieldUseFunc_FormChangeItem 887D308
 FieldUseFunc_FormChangeItem 887D334
 FieldUseFunc_AbilityCapsule 8877168
 FieldUseFunc_AbilityCapsule 887CA9C
+#endif
+
+#ifdef UNBOUND
+CB2_NewGame 812EB54
+FieldUseFunc_VsSeeker 887A054
+CB2_PartyMenuFromField 801D7FC
+CB2_ItemMenuFromField 801D800
 #endif

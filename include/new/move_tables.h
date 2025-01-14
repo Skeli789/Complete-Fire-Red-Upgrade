@@ -7,59 +7,61 @@
  * \brief Contains declarations for many lists of moves.
  */
 
-//Move Ban Tables
-extern const move_t gGravityBannedMoves[];
-extern const move_t gMeFirstBannedMoves[];
-extern const move_t gCopycatBannedMoves[];
-extern const move_t gInstructBannedMoves[];
-extern const move_t gMetronomeBannedMoves[];
-extern const move_t gAssistBannedMoves[];
-extern const move_t gMimicBannedMoves[];
-extern const move_t gSleepTalkBannedMoves[];
-extern const move_t gParentalBondBannedMoves[];
-extern const move_t gSkyBattleBannedMoves[];
-extern const move_t gRaidBattleBannedMoves[];
-extern const move_t gRaidBattleBannedRaidMonMoves[];
-extern const move_t gDynamaxBannedMoves[];
+struct SpecialMoveFlags
+{
+	bool8 gGravityBannedMoves : 1;
+	bool8 gMeFirstBannedMoves : 1;
+	bool8 gCopycatBannedMoves : 1;
+	bool8 gInstructBannedMoves : 1;
+	bool8 gMetronomeBannedMoves : 1;
+	bool8 gAssistBannedMoves : 1;
+	bool8 gMimicBannedMoves : 1;
+	bool8 gSleepTalkBannedMoves : 1;
+	bool8 gParentalBondBannedMoves : 1;
+	bool8 gSkyBattleBannedMoves : 1;
+	bool8 gRaidBattleBannedMoves : 1;
+	bool8 gRaidBattleBannedRaidMonMoves : 1;
+	bool8 gDynamaxBannedMoves : 1;
+	bool8 gSheerForceBoostedMoves : 1;
+	bool8 gRecklessBoostedMoves : 1;
+	bool8 gPunchingMoves : 1;
+	bool8 gPulseAuraMoves : 1;
+	bool8 gBitingMoves : 1;
+	bool8 gBallBombMoves : 1;
+	bool8 gDanceMoves : 1;
+	bool8 gPowderMoves : 1;
+	bool8 gSoundMoves : 1;
+	bool8 gTailMoves : 1;
+	bool8 gDrillMoves : 1;
+	bool8 gSubstituteBypassMoves : 1;
+	bool8 gTypeChangeExceptionMoves : 1;
+	bool8 gIgnoreStatChangesMoves : 1;
+	bool8 gHighCriticalChanceMoves : 1;
+	bool8 gAlwaysCriticalMoves : 1;
+	bool8 gMovesThatCallOtherMoves : 1;
+	bool8 gAlwaysHitWhenMinimizedMoves : 1;
+	bool8 gMoldBreakerMoves : 1;
+	bool8 gFlinchChanceMoves : 1;
+	bool8 gMovesCanUnfreezeAttacker : 1;
+	bool8 gMovesCanUnfreezeTarget : 1;
+	bool8 gMovesThatChangePhysicality : 1;
+	bool8 gDoubleDamageOnStatus : 1;
+	bool8 gTwoToFiveStrikesMoves : 1;
+	bool8 gTwoStrikesMoves : 1;
+	bool8 gPercent25RecoilMoves : 1;
+	bool8 gPercent33RecoilMoves : 1;
+	bool8 gPercent50RecoilMoves : 1;
+	bool8 gHalfMaxHealthRecoilMoves : 1;
+	bool8 gIgnoreInAirMoves : 1;
+	bool8 gIgnoreUndergoundMoves : 1;
+	bool8 gIgnoreUnderwaterMoves : 1;
+	bool8 gAlwaysHitInRainMoves : 1;
+	bool8 gSpecialAttackPhysicalDamageMoves : 1;
+	bool8 gSpecialWholeFieldMoves : 1;
+	bool8 gAromaVeilProtectedMoves : 1;
+	bool8 gMovesThatLiftProtectTable : 1;
+	bool8 gRandomizerBanTable : 1;
+};
 
-//Move Categories
-extern const move_t gSheerForceBoostedMoves[];
-extern const move_t gRecklessBoostedMoves[];
-extern const move_t gPunchingMoves[];
-extern const move_t gPulseAuraMoves[];
-extern const move_t gBitingMoves[];
-extern const move_t gBallBombMoves[];
-extern const move_t gDanceMoves[];
-extern const move_t gPowderMoves[];
-extern const move_t gSoundMoves[];
-
-//Other Moves
-extern const move_t gSubstituteBypassMoves[];
-extern const move_t gTypeChangeExceptionMoves[];
-extern const move_t gIgnoreStatChangesMoves[];
-extern const move_t gHighCriticalChanceMoves[];
-extern const move_t gAlwaysCriticalMoves[];
-extern const move_t gMovesThatCallOtherMoves[];
-extern const move_t gMovesThatRequireRecharging[];
-extern const move_t gAlwaysHitWhenMinimizedMoves[];
-extern const move_t gMoldBreakerMoves[];
-extern const move_t gFlinchChanceMoves[];
-extern const move_t gMovesCanUnfreezeAttacker[];
-extern const move_t gMovesCanUnfreezeTarget[];
-extern const move_t gMovesThatChangePhysicality[];
-extern const move_t gTwoToFiveStrikesMoves[];
-extern const move_t gTwoStrikesMoves[];
-extern const move_t gPercent25RecoilMoves[];
-extern const move_t gPercent33RecoilMoves[];
-extern const move_t gPercent50RecoilMoves[];
-extern const move_t gPercent66RecoilMoves[];
-extern const move_t gPercent75RecoilMoves[];
-extern const move_t gPercent100RecoilMoves[];
-extern const move_t gIgnoreInAirMoves[];
-extern const move_t gIgnoreUndergoundMoves[];
-extern const move_t gIgnoreUnderwaterMoves[];
-extern const move_t gAlwaysHitInRainMoves[];
-extern const move_t gSpecialAttackPhysicalDamageMoves[];
-extern const move_t gSpecialWholeFieldMoves[];
-extern const move_t gAromaVeilProtectedMoves[];
-extern const move_t gMovesThatLiftProtectTable[];
+extern const struct SpecialMoveFlags gSpecialMoveFlags[];
+extern const u8 gMoveEffectsThatIgnoreWeaknessResistance[];

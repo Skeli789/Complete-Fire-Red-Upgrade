@@ -63,6 +63,11 @@ struct DamageCalc
 	u8 resultFlags;
 	u8 basePower;
 
+	u8 atkImposterBank;
+	u8 defImposterBank;
+	bool8 atkImposter;
+	bool8 defImposter;
+
 	u8 specialFlags;
 	bool8 attackerLoaded;
 	bool8 defenderLoaded;
@@ -73,12 +78,13 @@ void atk04_critcalc(void);
 
 void atk06_typecalc(void);
 void atk4A_typecalc2(void);
-u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 CheckParty);
-u8 AI_TypeCalc(move_t, u8 bankAtk, struct Pokemon* monDef);
+u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk);
+u8 AI_TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* monDef);
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* flags);
 void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 move, u8 moveType, u8* flags);
+void ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8* var);
 u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 u8 GetMoveTypeSpecialPreAbility(u16 move, u8 bankAtk, struct Pokemon* monAtk);
 u8 GetMoveTypeSpecialPostAbility(u16 move, u8 atkAbility, bool8 zMoveActive);
@@ -89,18 +95,22 @@ u8 CalcMonHiddenPowerType(struct Pokemon* mon);
 
 void atk05_damagecalc(void);
 void FutureSightDamageCalc(void);
+u32 SplintersDamageCalc(u8 bankAtk, u8 bankDef, u16 move);
 s32 ConfusionDamageCalc(void);
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon, struct DamageCalc* damageData);
 u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, struct DamageCalc* damageData);
+u32 TryAdjustDamageForRaidBoss(u8 bankDef, u32 damage);
 void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data);
 void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data);
 u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef);
 u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
 u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef);
+void CalculateShellSideArmSplits(void);
 
+u8 GetNaturalGiftMoveType(u16 item);
+u8 GetNaturalGiftMovePower(u16 item);
 u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble);
-bool8 IsBankHoldingFocusSash(u8 bank);
 
 //Functions Hooked In
 u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon);

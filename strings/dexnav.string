@@ -1,17 +1,4 @@
-#org @gText_DexNav
-Dexnav
-
-#org @gText_MissionLog
-Missions
-
-#org @gText_MenuExitRight
-Exit  [DPAD_RIGHT]
-
-#org @gText_MenuExitLeft
-Exit  [DPAD_LEFT]
-
-#org @gText_DexNavInstructions
-[R_BUTTON]Register [B_BUTTON]Cancel
+//GUI Strings
 
 #org @gText_DexNavWater
 Water
@@ -43,6 +30,87 @@ Magma
 #org @gText_Sand
 Sand
 
+#org @gText_DexNavReeds
+Reeds
+
+#org @gText_DexNavDeepWater
+Deep Water
+
+#org @gText_DexNav_Chain
+Chain: 
+
+#org @gText_DexNav_CaptureToSee
+Capture first!
+
+#org @gText_DexNav_Walk
+Walk
+
+#org @gText_DexNav_Surf
+Surf
+
+#org @gText_DexNav_LavaSurf
+Lava Surf
+
+#org @gText_DexNav_OldRod
+Old Rod
+
+#org @gText_DexNav_GoodRod
+Good Rod
+
+#org @gText_DexNav_SuperRod
+Super Rod
+
+#org @gText_DexNav_SurfOldRod
+Surf/Old Rod
+
+#org @gText_DexNav_SurfGoodRod
+Surf/Good Rod
+
+#org @gText_DexNav_SurfSuperRod
+Surf/Super Rod
+
+#org @gText_DexNav_Swarm
+Swarm
+
+#org @gText_DexNav_NoInfo
+--------
+
+#org @gText_DexNav_Unavailable
+Unavailable
+
+#org @gText_DexNav_ListMenuRegister
+Register
+
+#org @gText_DexNav_ListMenuScan
+Scan
+
+#org @gText_DexNav_ListMenuCancel
+Cancel
+
+#org @gText_DexNav_PokemonSelected
+[BUFFER1] is selected.
+
+#org @gText_DexNav_NeedRod
+The [BUFFER2] must be acquired\nbefore searching for [BUFFER1].[PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Invalid
+That Pok\emon can't be searched yet![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoDataForSlot
+There's no data for that Pok\emon[.][PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_Locked
+[BUFFER1] is searchable via [R_BUTTON]![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_TooDark
+It's too dark to search for a Pok\emon![PAUSE_UNTIL_PRESS]
+
+#org @gText_DexNav_NoPokemonHere
+No Pok\emon can be found here.[PAUSE_UNTIL_PRESS]
+
+
+//Field Strings
+
 #org @gText_DexNavDescription
 Search for wild Pok\emon in the area\nwith potential special qualities!
 
@@ -52,11 +120,20 @@ Search for wild Pok\emon in the area\nwith potential special qualities!
 #org @gText_GotAwayShouldSneak
 [BUFFER1] got away!\nTry moving more slowly.
 
+#org @gText_PokemonGotAway
+The Pok\emon got away!
+
+#org @gText_PokemonGotAwayShouldSneak
+The Pok\emon got away!\nTry moving more slowly.
+
 #org @gText_LostSignal
 There is no reaction.\nThe signal was lost!
 
 #org @gText_CannotBeFound
 [BUFFER1] cannot be found here.
+
+#org @gText_FormCannotBeFound
+That form of [BUFFER1] cannot\nbe found here.
 
 #org @gText_NotFoundNearby
 [BUFFER1] couldn't be found nearby.\nTry looking in a different area!
@@ -64,29 +141,23 @@ There is no reaction.\nThe signal was lost!
 #org @gText_TooDarkForDexNav
 It's too dark to search for\na Pok\emon!
 
-#org @gText_DexNavBack
- Back  
+#org @gText_DexNavDetectedRarePokemon
+Huh? The DexNav is detecting an\nunusual Pok\emon!
 
-#org @gText_DexNav_CaptureToSee
-Capture first!
+#org @gText_DexNav_UpArrow
+[ARROW_UP]
 
-#org @gText_DexNav_NoInfo
---------
+#org @gText_DexNav_DownArrow
+[ARROW_DOWN]
 
-#org @gText_DexNav_ChooseMon
-Choose a Pok\emon.
+#org @gText_DexNav_LeftArrow
+[ARROW_LEFT]
 
-#org @gText_DexNav_Invalid
-That Pok\emon can't be searched yet!
+#org @gText_DexNav_RightArrow
+[ARROW_RIGHT]
 
-#org @gText_DexNav_NoDataForSlot
-There's no data for that Pok\emon[.]
-
-#org @gText_DexNav_Locked
-Pok\emon searchable via [R_BUTTON]!
-
-#org @gText_DexNav_TooDark
-It's too dark to search for a Pok\emon!
+#org @gText_DexNavHUDChainNumber
+No. 
 
 #org @gText_MenuCube
 Cube

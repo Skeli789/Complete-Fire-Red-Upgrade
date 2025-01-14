@@ -7,9 +7,9 @@
 #define GAME_STAT_FIRST_HOF_PLAY_TIME        1
 #define GAME_STAT_STARTED_TRENDS             2 //Unused
 #define GAME_STAT_PLANTED_BERRIES            3 //Unused
-#define GAME_STAT_TRADED_BIKES               4 //Unused
+#define GAME_STAT_CHANGED_IV_NATURE          4 //Unused
 #define GAME_STAT_STEPS                      5
-#define GAME_STAT_GOT_INTERVIEWED            6 //Unused
+#define GAME_STAT_PICKUP_ITEMS               6 //NEW
 #define GAME_STAT_TOTAL_BATTLES              7
 #define GAME_STAT_WILD_BATTLES               8
 #define GAME_STAT_TRAINER_BATTLES            9
@@ -24,7 +24,7 @@
 #define GAME_STAT_USED_CUT                  18
 #define GAME_STAT_USED_ROCK_SMASH           19
 #define GAME_STAT_FOUND_HIDDEN_ITEM         20 //NEW!
-#define GAME_STAT_POKEMON_TRADES            21
+#define GAME_STAT_POKEMON_TRADES            21 //0x2026780
 #define GAME_STAT_CHECKED_TRASH             22 //NEW!
 #define GAME_STAT_LINK_BATTLE_WINS          23
 #define GAME_STAT_LINK_BATTLE_LOSSES        24
@@ -33,14 +33,14 @@
 #define GAME_STAT_USED_STRUGGLE             27
 #define GAME_STAT_SLOT_JACKPOTS             28
 #define GAME_STAT_READ_TRAINER_TIPS_SIGNS   29 //NEW!
-#define GAME_STAT_ENTERED_BATTLE_FACILITY   30
+#define GAME_STAT_WON_FRONTIER_BATTLE       30 //NEW!
 #define GAME_STAT_UNDERGROUND_MINING        31 //NEW!
 #define GAME_STAT_BATTLE_FACILITY_BEST_STREAK  32
 #define GAME_STAT_CAUGHT_TODAY              33 //NEW!
 #define GAME_STAT_EXP_EARNED_TODAY          34 //NEW!
 #define GAME_STAT_SOLD_ITEM_TO_MANIAC       35 //NEW!
 #define GAME_STAT_REVIVED_FOSSIL            36 //NEW!
-#define GAME_STAT_WON_CONTEST               37 //Unused
+#define GAME_STAT_HEADBUTT_WILD_ENCOUNTERS  37 //NEW!
 #define GAME_STAT_SHOPPED                   38
 #define GAME_STAT_USED_ITEMFINDER           39
 #define GAME_STAT_GOT_RAINED_ON             40

@@ -7,6 +7,9 @@ extern bool32 gFlashMemoryPresent;
 
 void __attribute__((long_call)) SetContinueGameWarpStatus(void);
 void __attribute__((long_call)) ClearContinueGameWarpStatus2(void);
+bool32 __attribute__((long_call)) UseContinueGameWarp(void);
+void __attribute__((long_call)) SavePlayerParty(void);
+void __attribute__((long_call)) LoadPlayerParty(void);
 
 /*
 void ClearSav2(void);
@@ -18,8 +21,6 @@ void ClearSecretBase2Field_9(void);
 void SetSecretBase2Field_9(void);
 void SetSecretBase2Field_9_AndHideBG(void);
 void ClearSecretBase2Field_9_2(void);
-void SavePlayerParty(void);
-void LoadPlayerParty(void);
 void SaveSerializedGame(void);
 void LoadSerializedGame(void);
 void LoadPlayerBag(void);
@@ -31,7 +32,6 @@ void ApplyNewEncryptionKeyToBagItems(u32 encryptionKey);
 void ApplyNewEncryptionKeyToWord(u32 * word, u32 encryptionKey);
 void ApplyNewEncryptionKeyToHword(u16 * hword, u32 encryptionKey);
 void SetContinueGameWarpStatusToDynamicWarp(void);
-bool32 UseContinueGameWarp(void);
 void ClearContinueGameWarpStatus();*/
 
 #endif // GUARD_LOAD_SAVE_H

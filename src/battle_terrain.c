@@ -2,17 +2,21 @@
 #include "defines_battle.h"
 #include "../include/bg.h"
 #include "../include/event_data.h"
+#include "../include/evolution_scene.h"
 #include "../include/gpu_regs.h"
 #include "../include/fieldmap.h"
 #include "../include/field_player_avatar.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/metatile_behaviors.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/frontier.h"
+#include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
 /*
@@ -128,16 +132,31 @@ u8 BattleSetup_GetTerrainId(void)
 u8 GetBattleTerrainOverride(void)
 {
 	u8 terrain = gBattleTerrain;
-	
-	if (!gMain.inBattle)
-		return BattleSetup_GetTerrainId(); //Mainly for evolution scene
+
+	if (gMain.callback2 == CB2_EvolutionSceneLoadGraphics
+	|| gMain.callback2 == CB2_BeginEvolutionScene
+	|| gMain.callback2 == CB2_EvolutionSceneUpdate
+	|| gMain.callback2 == CB2_TradeEvolutionSceneUpdate)
+	{
+		bool8 wasRoamerBattle = (gBattleTypeFlags & BATTLE_TYPE_ROAMER) != 0;
+		bool8 wasTwoOpponentBattle = IsTwoOpponentBattle();
+		gBattleTypeFlags = 0;
+
+		if (wasRoamerBattle)
+			gBattleTypeFlags |= BATTLE_TYPE_ROAMER; //Needed otherwise the Roamer may not disappear when caught
+
+		if (wasTwoOpponentBattle)
+			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS); //Needed otherwise the second opponent will battle the player again
+
+		gBattleTerrain = BattleSetup_GetTerrainId();
+	}
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 	{
 		#ifdef UNBOUND
 			terrain = BATTLE_TERRAIN_INSIDE;
 		#else
-			terrain = 10;
+			terrain = BATTLE_TERRAIN_INSIDE_2;
 		#endif
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
@@ -158,31 +177,29 @@ u8 GetBattleTerrainOverride(void)
 			u8 trainerClassB = GetFrontierTrainerClassId(SECOND_OPPONENT, 1);
 			if (trainerClass == CLASS_LEADER || trainerClassB == CLASS_LEADER)
 			{
-				terrain = 12;
+				terrain = BATTLE_TERRAIN_INSIDE_4;
 			}
 			else if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
 			{
-				terrain = 19;
+				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
-			else if (GetCurrentMapBattleScene() != 0)
+			else
+		#elif (defined UNBOUND)
+			if (MAP_IS(POKEMON_LEAGUE_CHAMP_ROOM))
 			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+				terrain = BATTLE_TERRAIN_CHAMPION;
 			}
-		#else
-			if (GetCurrentMapBattleScene() != 0)
-			{
-				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
-			}
+			else
 		#endif
+			if (GetCurrentMapBattleScene() != 0)
+				terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 			else
 				terrain = gBattleTerrain;
 	}
 	else
 	{
 		if (GetCurrentMapBattleScene() != 0)
-		{
-			terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
-		}
+			terrain = GetBattleTerrainByMapScene(GetCurrentMapBattleScene());
 		else
 			terrain = gBattleTerrain;
 	}
@@ -217,7 +234,8 @@ void DrawBattleEntryBackground(void)
 	}
 }
 
-void LoadBattleTerrainGfx(u8 terrainId) {
+void LoadBattleTerrainGfx(u8 terrainId)
+{
 	struct BattleBackground* table = gBattleTerrainTable;
 
 	if (gTerrainType) //A terrain like Electric Terrain is active
@@ -272,9 +290,51 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 #ifdef UNBOUND
 	u16 tileBehavior;
 	s16 x, y;
+	u8 mapSec = GetCurrentRegionMapSectionId();
 
 	PlayerGetDestCoords(&x, &y);
 	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+
+	switch (terrain) {
+		case BATTLE_TERRAIN_SNOW_CAVE:
+			if (MetatileBehavior_IsIce(tileBehavior))
+				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
+			break;
+		case BATTLE_TERRAIN_PLAIN:
+			if (IsCurrentAreaAutumn())
+				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
+			else if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_FIELD;
+			else if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
+			else if (mapSec == MAPSEC_DEHARA_CITY)
+				terrain = BATTLE_TERRAIN_SAND;
+			else if (mapSec == MAPSEC_ANTISIS_CITY || mapSec == MAPSEC_ANTISIS_PORT)
+				terrain = BATTLE_TERRAIN_ANTISIS_CITY;
+			else if (IsCurrentAreaSwamp())
+				terrain = BATTLE_TERRAIN_BOG;
+			break;
+		case BATTLE_TERRAIN_GRASS:
+			if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_POND:
+			if (IsCurrentAreaSwamp())
+				terrain = BATTLE_TERRAIN_BOG_WATER;
+			break;
+		case BATTLE_TERRAIN_SNOW_FIELD:
+			if (MetatileBehavior_IsTallGrass(tileBehavior))
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
+			break;
+		case BATTLE_TERRAIN_SAND:
+			if (IsCurrentAreaDesert())
+				terrain = BATTLE_TERRAIN_DESERT;
+			break;
+		case BATTLE_TERRAIN_INSIDE:
+			if (GetCurrentRegionMapSectionId() == MAPSEC_ANTISIS_SEWERS || MAP_IS(ANTISIS_CITY_GYM_B1F))
+				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS;
+			break;
+	}
 
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 	{
@@ -294,34 +354,16 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 			case BATTLE_TERRAIN_SNOW_CAVE:
 				terrain = BATTLE_TERRAIN_WATER_IN_SNOW_CAVE;
 				break;
+			case BATTLE_TERRAIN_CRYSTAL_PEAK:
+				terrain = BATTLE_TERRAIN_CRYSTAL_PEAK_WATER;
+				break;
+			case BATTLE_TERRAIN_ANTISIS_SEWERS:
+				terrain = BATTLE_TERRAIN_ANTISIS_SEWERS_WATER;
+				break;
+			case BATTLE_TERRAIN_BOG:
+				terrain = BATTLE_TERRAIN_BOG_WATER;
+				break;
 		}
-	}
-
-	switch (terrain) {
-		case BATTLE_TERRAIN_SNOW_CAVE:
-			if (MetatileBehavior_IsIce(tileBehavior))
-				terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
-			break;
-		case BATTLE_TERRAIN_PLAIN:
-			if (IsCurrentAreaAutumn())
-				terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
-			else if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_FIELD;
-			else if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			break;
-		case BATTLE_TERRAIN_GRASS:
-			if (IsCurrentAreaWinter())
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
-			break;
-		case BATTLE_TERRAIN_SNOW_FIELD:
-			if (MetatileBehavior_IsTallGrass(tileBehavior))
-				terrain = BATTLE_TERRAIN_SNOW_GRASS;
-			break;
-		case BATTLE_TERRAIN_SAND:
-			if (IsCurrentAreaDesert())
-				terrain = BATTLE_TERRAIN_DESERT;
-			break;
 	}
 #endif
 

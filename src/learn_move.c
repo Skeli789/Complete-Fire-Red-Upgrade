@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/daycare.h"
 #include "../include/list_menu.h"
+#include "../include/menu.h"
 #include "../include/move_reminder.h"
 #include "../include/string_util.h"
 #include "../include/constants/moves.h"
@@ -10,12 +11,16 @@
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/util.h"
+
 /*
 learn_move.c
 	handles functions for pokemon trying to learn moves
 */
 
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern const u8 PSSIconsTiles[];
 
 #ifdef EXPAND_MOVESETS
 	extern const struct LevelUpMove* const gLevelUpLearnsets[];
@@ -26,11 +31,6 @@ extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 //#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
-
-//This file's functions
-#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
-static move_t RandomizeMove(u16 move);
-#endif
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
@@ -100,6 +100,14 @@ u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)
 		#endif
 
 		++sLearningMoveTableID;
+
+		#if (defined SPECIES_ZACIAN_CROWNED && defined SPECIES_ZAMAZENTA_CROWNED)
+		if (gMoveToLearn == MOVE_IRONHEAD
+		&& ((species == SPECIES_ZACIAN_CROWNED && MoveInMonMoveset(MOVE_BEHEMOTHBLADE, mon))
+		 || (species == SPECIES_ZAMAZENTA_CROWNED && MoveInMonMoveset(MOVE_BEHEMOTHBASH, mon))))
+			return MON_ALREADY_KNOWS_MOVE; //Prevent learning Iron Head again
+		#endif
+
 		retVal = GiveMoveToMon(mon, gMoveToLearn);
 	}
 
@@ -114,17 +122,18 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	struct LevelUpMove lvlUpMove;
 
 	if (firstMove)
-	{
 		sLearningMoveTableID = 0;
-		lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
 
-		while (lvlUpMove.level != 0 && lvlUpMove.level != level)
-		{
-			lvlUpMove = gLevelUpLearnsets[species][++sLearningMoveTableID];
-			if (lvlUpMove.move == 0
-			&&  lvlUpMove.level == 0xFF)
-				return retVal; //0
-		}
+	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
+	if (lvlUpMove.move == 0 && lvlUpMove.level == 0xFF) //In case just learned last move and reentered into loop
+		return retVal; //0
+
+	while (lvlUpMove.level != 0 && lvlUpMove.level != level)
+	{
+		lvlUpMove = gLevelUpLearnsets[species][++sLearningMoveTableID];
+		if (lvlUpMove.move == 0
+		&&  lvlUpMove.level == 0xFF)
+			return retVal; //0
 	}
 
 	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
@@ -171,22 +180,28 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
 	for (i = 0; i < MAX_LEARNABLE_MOVES; ++i) //50 max moves can be relearned
 	{
 		struct LevelUpMove lvlUpMove = gLevelUpLearnsets[species][i];
+		u16 move = lvlUpMove.move;
 
-		if (lvlUpMove.move == 0 && lvlUpMove.level == 0xFF)
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER))
+			move = RandomizeMove(move);
+		#endif
+
+		if (move == 0 && lvlUpMove.level == 0xFF)
 			break;
 
 		if (lvlUpMove.level <= level)
 		{
-			for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != lvlUpMove.move; ++j)
+			for (j = 0; j < MAX_MON_MOVES && learnedMoves[j] != move; ++j)
 				;
 
 			if (j == MAX_MON_MOVES)
 			{
-				for (k = 0; k < numMoves && moves[k] != lvlUpMove.move; ++k)
+				for (k = 0; k < numMoves && moves[k] != move; ++k)
 					;
 
 				if (k == numMoves)
-					moves[numMoves++] = lvlUpMove.move;
+					moves[numMoves++] = move;
 			}
 		}
 	}
@@ -215,6 +230,29 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
 	return numMoves;
 }
 
+u8 GetLevelUpMovePairsBySpecies(u16 species, struct MovePair* moves)
+{
+	u8 numMoves = 0;
+	int i;
+
+	for (i = 0; i < MAX_LEARNABLE_MOVES && !(gLevelUpLearnsets[species][i].move == 0
+						&& gLevelUpLearnsets[species][i].level == 0xFF); ++i)
+	{
+		u16 move = gLevelUpLearnsets[species][i].move;
+
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
+			move = RandomizeMove(move);
+		#endif
+
+		moves[numMoves].move = move;
+		moves[numMoves].num = gLevelUpLearnsets[species][i].level;
+		++numMoves;
+	}
+
+	return numMoves;
+}
+
 u8 GetNumberOfRelearnableMoves(struct Pokemon* mon)
 {
 	u16 moves[MAX_LEARNABLE_MOVES];
@@ -225,18 +263,39 @@ u8 GetNumberOfRelearnableMoves(struct Pokemon* mon)
 	return GetMoveRelearnerMoves(mon, moves); //Returns the number of moves
 }
 
-#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
-static move_t RandomizeMove(u16 move)
+move_t RandomizeMove(u16 move)
 {
-	move = (move * T1_READ_32(gSaveBlock2->playerTrainerId));
-	move %= NON_Z_MOVE_COUNT;
+	if (move == MOVE_NONE)
+		return move;
 
-	if (move == MOVE_NONE || move == MOVE_STRUGGLE)
-		return move + 1;
+	u16 newMove;
+	u32 id = T1_READ_32(gSaveBlock2->playerTrainerId);
+	u16 startAt = (id & 0xFFFF) % (u32) NON_Z_MOVE_COUNT;
+	u16 xorVal = (id >> 16) % (u32) 0x300; //Only set the bits likely to be in the move
+	u32 numAttempts = 0;
 
-	return move;
+	newMove = move + startAt;
+	if (newMove >= NON_Z_MOVE_COUNT)
+	{
+		u16 overflow = newMove - (NON_Z_MOVE_COUNT - 2);
+		newMove = overflow;
+	}
+
+	newMove ^= xorVal;
+	newMove %= (u32) NON_Z_MOVE_COUNT; //Prevent overflow
+
+	while (gSpecialMoveFlags[newMove].gRandomizerBanTable && numAttempts < 100)
+	{
+		newMove *= xorVal; //Multiply this time
+		newMove %= (u32) NON_Z_MOVE_COUNT;
+		++numAttempts;
+	}
+
+	if (numAttempts >= 100 && gSpecialMoveFlags[newMove].gRandomizerBanTable) //Tried 100 times to change move but can't find a legal one
+		newMove = MOVE_TACKLE; //Just replace the move with tackle
+
+	return newMove;
 }
-#endif
 
 u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
 {
@@ -277,6 +336,58 @@ u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
 			#endif
 
 			if (*moves != MOVE_NONE)
+			{
+				++numTotalMoves;
+				++moves; //Increase Ptr
+			}
+		}
+	}
+
+	return numTotalMoves;
+}
+
+u16 BuildTMMoveset(struct Pokemon* mon, struct MovePair* moves)
+{
+	u16 numTotalMoves = 0;
+
+	for (u32 i = 0; i < NUM_TMSHMS; ++i)
+	{
+		if (CanMonLearnTMHM(mon, i))
+		{
+			moves[numTotalMoves].num = i + 1;
+			moves[numTotalMoves].move = gTMHMMoves[i];
+			++numTotalMoves;
+		}
+	}
+
+	return numTotalMoves;
+}
+
+u16 BuildTutorMoveset(struct Pokemon* mon, struct MovePair* moves)
+{
+	u16 numTotalMoves = 0;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+
+	for (u32 i = 0; i < NUM_MOVE_TUTORS; ++i)
+	{
+		#ifdef EXPANDED_MOVE_TUTORS
+		u8 tutRet = CanMonLearnTutorMove(mon, i);
+		#else
+		u8 tutRet = CanLearnTutorMove(mon->species, i);
+		#endif
+		if (tutRet == TRUE
+		|| (tutRet > TRUE && tutRet == dexNum))
+		{
+			#ifdef EXPANDED_MOVE_TUTORS
+			moves->move = GetExpandedTutorMove(i);
+			moves->num = i;
+			#else
+			moves->move = GetTutorMove(i);
+			moves->num = i;
+			#endif
+
+			if (moves->move != MOVE_NONE)
 			{
 				++numTotalMoves;
 				++moves; //Increase Ptr
@@ -445,4 +556,22 @@ bool16 InitMoveRelearnerWindows(void)
 	#else
 		return InitWindows(sMoveRelearnerWindowTemplates);
 	#endif
+}
+
+void HideMoveReminderBg1Palette(void)
+{
+	Memset(&gPlttBufferFaded[0], RGB_BLACK, sizeof(u16) * 16);
+}
+
+void PrintMoveReminderSplitIcon(u16 move)
+{
+	BlitBitmapToWindow(2, PSSIconsTiles + 24 * 8 * SPLIT(move), 0, 4, 24, 15);
+	CopyWindowToVram(0, COPYWIN_GFX); //Moved type icon
+}
+
+void PrintTMCaseTypeAndSplitIcons(u16 move, u8 type)
+{
+	blit_move_info_icon(4, type, 3, 0);
+	BlitBitmapToWindow(5, PSSIconsTiles + 24 * 8 * SPLIT(move), 1, 0, 24, 15);
+	CopyWindowToVram(4, COPYWIN_GFX); //Moved type icon
 }

@@ -738,7 +738,7 @@ Mirror Coat
 Psych Up
 
 #org @NAME_EXTREMESPEED
-Extremespeed
+ExtremeSpeed
 
 #org @NAME_ANCIENTPOWER
 AncientPower
@@ -1680,7 +1680,7 @@ Fell Stinger
 Noble Roar
 
 #org @NAME_DRAGON_RISE
-Dragon Rise
+DragonAscent
 
 #org @NAME_PARTING_SHOT
 Parting Shot
@@ -1778,8 +1778,8 @@ Floral Heal
 #org @NAME_GEAR_UP
 Gear Up
 
-#org @NAME_HORSEPOWER
-Horsepower
+#org @NAME_HIGH_HORSEPOWER
+HiHorsepower
 
 #org @NAME_ICE_HAMMER
 Ice Hammer
@@ -1881,7 +1881,7 @@ Zing Zap
 Elec Terrain
 
 #org @NAME_GRAS_TERRAIN
-Gras Terrain
+GrassTerrain
 
 #org @NAME_MIST_TERRAIN
 Mist Terrain
@@ -2070,7 +2070,7 @@ Octolock
 Bolt Beak
 
 #org @NAME_FISHIOUS_REND
-Fishy Rend
+FishiousRend
 
 #org @NAME_COURT_CHANGE
 Court Change
@@ -2216,11 +2216,92 @@ Thunder Kick
 #org @NAME_FIERY_WRATH
 Fiery Wrath
 
+#org @NAME_EERIE_SPEELL
+Eerie Spell
+
 #org @NAME_THUNDER_CAGE
 Thunder Cage
 
 #org @NAME_DRAGON_ENERGY
 DragonEnergy
+
+#org @NAME_ASTRAL_BARRAGE
+Astral Storm
+
+#org @NAME_GLACIAL_LANCE
+GlacialLance
+
+#org @NAME_DIRE_CLAW
+Dire Claw
+
+#org @NAME_PSYSHIELD_BASH
+PsyshieldRam
+
+#org @NAME_POWER_SHIFT
+Power Shift
+
+#org @NAME_STONE_AXE
+Stone Axe
+
+#org @NAME_MYSTICAL_POWER
+Mystic Power
+
+#org @NAME_RAGING_FURY
+Raging Fury
+
+#org @NAME_WAVE_CRASH
+Wave Crash
+
+#org @NAME_CHLOROBLAST
+Chloroblast
+
+#org @NAME_MOUNTAIN_GALE
+MountainGale
+
+#org @NAME_VICTORY_DANCE
+VictoryDance
+
+#org @NAME_HEADLONG_RUSH
+HeadlongRush
+
+#org @NAME_BARB_BARRAGE
+Barb Barrage
+
+#org @NAME_ESPER_WING
+Esper Wing
+
+#org @NAME_BITTER_MALICE
+BitterMalice
+
+#org @NAME_SHELTER
+Shelter
+
+#org @NAME_TRIPLE_ARROWS
+TripleArrows
+
+#org @NAME_INFERNAL_PARADE
+InfernalRage
+
+#org @NAME_CEASELESS_EDGE
+Endless Edge
+
+#org @NAME_BLEAKWIND_STORM
+BleakiceWind
+
+#org @NAME_WILDBOLT_STORM
+WildboltWind
+
+#org @NAME_SANDSEAR_STORM
+SandsearWind
+
+#org @NAME_SPRINGTIDE_STORM
+Spring Wind
+
+#org @NAME_LUNAR_BLESSING
+Lunar Bless
+
+#org @NAME_TAKE_HEART
+Take Heart
 
 #org @Z_Move_1
 Z-Move 1

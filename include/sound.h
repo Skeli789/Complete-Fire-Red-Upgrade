@@ -5,6 +5,12 @@
 extern bool8 gDisableMusic;
 extern bool8 gWarpMusicDisable;
 
+struct Fanfare
+{
+	u16 songNum;
+	u16 duration;
+};
+
 void __attribute__((long_call)) InitMapMusic(void);
 void __attribute__((long_call)) MapMusicMain(void);
 void __attribute__((long_call)) ResetMapMusic(void);
@@ -49,3 +55,5 @@ void __attribute__((long_call)) SE12PanpotControl(s8 pan);
 bool8 __attribute__((long_call)) IsSEPlaying(void);
 bool8 __attribute__((long_call)) IsBGMPlaying(void);
 bool8 __attribute__((long_call)) IsSpecialSEPlaying(void);
+void __attribute__((long_call)) SetBGMVolume_SuppressHelpSystemReduction(u16 volume);
+void __attribute__((long_call)) BGMVolumeMax_EnableHelpSystemReduction(void);

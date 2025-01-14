@@ -5,7 +5,9 @@
 #include "../include/random.h"
 #include "../include/pokemon_summary_screen.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/region_map_sections.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_util.h"
@@ -38,9 +40,12 @@ dynamax.c
 #define FIRST_RAID_BATTLE_FLAG 0x1800
 
 #define GFX_TAG_GIGANTAMAX_ICON 0x2715 //Some battle tag
+#define GFX_TAG_MAX_FRIENDSHIP_ICON 0x2716 //Some battle tag
 
 extern const u8 GigantamaxSummaryScreenIconTiles[];
 extern const u16 GigantamaxSummaryScreenIconPal[];
+extern const u8 MaxFriendshipSummaryScreenIconTiles[];
+extern const u16 MaxFriendshipSummaryScreenIconPal[];
 
 //This file's functions:
 static bool8 IsBannedHeldItemForDynamax(u16 item);
@@ -54,6 +59,7 @@ static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit);
 static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species, bool8 canGigantamax);
 static u8 GetRaidMapSectionId(void);
 static u32 GetRaidRandomNumber(void);
+static void ModifyNormalRaidBattleSpecies(void);
 static bool8 ShouldTryGigantamaxRaidMon(void);
 
 static const item_t sDynamaxBandTable[] =
@@ -95,8 +101,9 @@ static const struct GMaxMove sGMaxMoveTable[] =
 	{SPECIES_APPLETUN_GIGA,       TYPE_GRASS,      MOVE_G_MAX_SWEETNESS_P},
 	{SPECIES_SANDACONDA_GIGA,     TYPE_GROUND,     MOVE_G_MAX_SANDBLAST_P},
 	{SPECIES_TOXTRICITY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
+	{SPECIES_TOXTRICITY_LOW_KEY_GIGA,     TYPE_ELECTRIC,   MOVE_G_MAX_STUN_SHOCK_P},
 	{SPECIES_CENTISKORCH_GIGA,    TYPE_FIRE,       MOVE_G_MAX_CENTIFERNO_P},
-	{SPECIES_HATTERENE,           TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
+	{SPECIES_HATTERENE_GIGA,      TYPE_FAIRY,      MOVE_G_MAX_SMITE_P},
 	{SPECIES_GRIMMSNARL_GIGA,     TYPE_DARK,       MOVE_G_MAX_SNOOZE_P},
 	{SPECIES_ALCREMIE_GIGA,       TYPE_FAIRY,      MOVE_G_MAX_FINALE_P},
 	{SPECIES_COPPERAJAH_GIGA,     TYPE_STEEL,      MOVE_G_MAX_STEELSURGE_P},
@@ -116,16 +123,16 @@ const u8 gRaidBattleStarsByBadges[NUM_BADGE_OPTIONS][2] =
 	[6] = {THREE_STAR_RAID, FOUR_STAR_RAID},
 	[7] = {FOUR_STAR_RAID,  FOUR_STAR_RAID},
 	[8] = {FOUR_STAR_RAID,  FIVE_STAR_RAID},
-	[9] = {FIVE_STAR_RAID,  SIX_STAR_RAID}, //Beat Game
+	[9] = {FOUR_STAR_RAID,  SIX_STAR_RAID}, //Beat Game
 };
 
 const u8 gRaidBattleLevelRanges[RAID_STAR_COUNT][2] =
 {
 	[ONE_STAR_RAID]   = {15, 20},
 	[TWO_STAR_RAID]   = {25, 30},
-	[THREE_STAR_RAID] = {35, 40},
+	[THREE_STAR_RAID] = {36, 40},
 	[FOUR_STAR_RAID]  = {50, 55},
-	[FIVE_STAR_RAID]  = {60, 65},
+	[FIVE_STAR_RAID]  = {55, 62},
 	[SIX_STAR_RAID]   = {75, 90},
 };
 
@@ -165,6 +172,17 @@ static const struct OamData sGigantamaxIconOam =
 	.priority = 0, //Above all
 };
 
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct OamData sMaxFriendshipIconOam =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x8),
+	.size = SPRITE_SIZE(8x8),
+	.priority = 0, //Above all
+};
+#endif
+
 static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 {
 	.tileTag = GFX_TAG_GIGANTAMAX_ICON,
@@ -176,8 +194,25 @@ static const struct SpriteTemplate sSummaryScreenGigantamaxIconTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static const struct CompressedSpriteSheet   sSummaryScreenGigantamaxIconSpriteSheet =	{GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
-static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =	{GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct SpriteTemplate sSummaryScreenMaxFriendshipIconTemplate =
+{
+	.tileTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.paletteTag = GFX_TAG_MAX_FRIENDSHIP_ICON,
+	.oam = &sMaxFriendshipIconOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+#endif
+
+static const struct CompressedSpriteSheet sSummaryScreenGigantamaxIconSpriteSheet =    {GigantamaxSummaryScreenIconTiles, (16 * 16) / 2, GFX_TAG_GIGANTAMAX_ICON};
+static const struct SpritePalette sSummaryScreenGigantamaxIconSpritePalette =          {GigantamaxSummaryScreenIconPal, GFX_TAG_GIGANTAMAX_ICON};
+#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+static const struct CompressedSpriteSheet sSummaryScreenMaxFriendshipIconSpriteSheet = {MaxFriendshipSummaryScreenIconTiles, (8 * 8 * 5) / 2, GFX_TAG_MAX_FRIENDSHIP_ICON};
+static const struct SpritePalette sSummaryScreenMaxFriendshipIconSpritePalette =       {MaxFriendshipSummaryScreenIconPal, GFX_TAG_MAX_FRIENDSHIP_ICON};
+#endif
 
 species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 {
@@ -216,9 +251,10 @@ static bool8 IsBannedHeldItemForDynamax(u16 item)
 		|| IsPrimalOrb(item);
 }
 
-bool8 IsBannedDynamaxSpecies(u16 species)
+bool8 IsBannedDynamaxBaseSpecies(u16 species)
 {
-	switch (species) {
+	switch (species)
+	{
 		case SPECIES_NONE:
 		#ifdef SPECIES_ZACIAN
 		case SPECIES_ZACIAN:
@@ -235,10 +271,19 @@ bool8 IsBannedDynamaxSpecies(u16 species)
 		#ifdef SPECIES_ETERNATUS
 		case SPECIES_ETERNATUS:
 		#endif
+		#ifdef SPECIES_ETERNATUS_ETERNAMAX
+		//case SPECIES_ETERNATUS_ETERNAMAX: //Technically this one actually should only appear Dynamaxed
+		#endif
 			return TRUE;
 	}
 
-	if (IsMegaSpecies(species)
+	return FALSE;
+}
+
+bool8 IsBannedDynamaxSpecies(u16 species)
+{
+	if (IsBannedDynamaxBaseSpecies(species)
+	||  IsMegaSpecies(species)
 	||  IsRedPrimalSpecies(species)
 	||  IsBluePrimalSpecies(species)
 	||  IsUltraNecrozmaSpecies(species))
@@ -348,7 +393,9 @@ u16 GetGigantamaxSpecies(u16 species, bool8 canGigantamax)
 	{
 		for (i = 0; i < EVOS_PER_MON; ++i)
 		{
-			if (evolutions[i].method == EVO_GIGANTAMAX)
+			if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+				break; //Break now to save time
+			else if (evolutions[i].method == EVO_GIGANTAMAX)
 			{
 				//Ignore reversion information
 				if (evolutions[i].param == 0) continue;
@@ -368,7 +415,9 @@ u16 GetGigantamaxBaseForm(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
 			return evolutions[i].targetSpecies;
 	}
 
@@ -494,7 +543,9 @@ bool8 IsGigantamaxSpecies(u16 species)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_NONE) //Most likely end of entries
+			break; //Break now to save time
+		else if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == FALSE)
 			return TRUE;
 	}
 
@@ -508,7 +559,7 @@ bool8 IsDynamaxed(u8 bank)
 
 bool8 IsGigantamaxed(u8 bank)
 {
-	return IsGigantamaxSpecies(SPECIES(bank));
+	return IsGigantamaxSpecies(GetBankPartyData(bank)->species);
 }
 
 bool8 HasDynamaxSymbol(u8 bank)
@@ -542,12 +593,12 @@ static u8 GetMaxMoveType(u16 move, u8 bank, struct Pokemon* mon)
 
 		if (mon != NULL)
 		{
-			moveSplit = CalcMoveSplitFromParty(mon, move);
+			moveSplit = CalcMoveSplitFromParty(move, mon);
 			ability = GetMonAbility(mon);
 		}
 		else
 		{
-			moveSplit = CalcMoveSplit(bank, move);
+			moveSplit = CalcMoveSplit(move, bank, bank);
 			ability = ABILITY(bank);
 		}
 
@@ -590,7 +641,7 @@ move_t GetMaxMove(u8 bank, u8 moveIndex)
 
 move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 {
-	u8 moveSplit = CalcMoveSplit(bank, baseMove);
+	u8 moveSplit = CalcMoveSplit(baseMove, bank, bank);
 
 	if (baseMove == MOVE_NONE)
 		return MOVE_NONE;
@@ -617,7 +668,7 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 static move_t GetMonMaxMove(struct Pokemon* mon, u16 baseMove)
 {
 	u8 moveType = GetMaxMoveType(baseMove, 0, mon);
-	u8 moveSplit = CalcMoveSplitFromParty(mon, baseMove);
+	u8 moveSplit = CalcMoveSplitFromParty(baseMove, mon);
 	u16 maxMove = GetGMaxMove(moveType, moveSplit, mon->species, mon->gigantamax);
 	if (maxMove != MOVE_NONE)
 		return maxMove;
@@ -719,7 +770,17 @@ u8 GetMonDynamaxHPBoost(unusedArg struct Pokemon* mon)
 
 u8 GetRaidBattleHPBoost(void)
 {
-	return 4;
+	switch (gRaidBattleStars)
+	{
+		case 1:
+		case 2:
+			return 2;
+		case 3:
+		case 4:
+			return 3;
+		default:
+			return 4;
+	}
 }
 
 bool8 IsAnyMaxMove(u16 move)
@@ -735,9 +796,15 @@ bool8 IsGMaxMove(u16 move)
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 {
 	if (IsDynamaxed(bank)
-	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
+	|| (IsRaidBattle() && bank == BANK_RAID_BOSS && !IsBannedDynamaxBaseSpecies(SPECIES(BANK_RAID_BOSS)))) //So it stays lit up when you try to catch it
 	{
-		BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+		#ifdef NATIONAL_DEX_CALYREX
+		if (SpeciesToNationalPokedexNum(SPECIES(bank)) == NATIONAL_DEX_CALYREX)
+			BlendPalette(paletteOffset, 16, 4, RGB(0, 5, 31)); //Dynamax Blue
+		else
+		#endif
+			BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
+
 		CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
 	}
 }
@@ -924,9 +991,7 @@ void atkFF2F_setmaxmoveeffect(void)
 {
 	gBattlescriptCurrInstr += 1;
 
-	if (IsRaidBattle()
-	&& gBankTarget == BANK_RAID_BOSS
-	&& gNewBS->dynamaxData.raidShieldsUp)
+	if (HasRaidShields(gBankTarget)) //Shields can be used outside of Raid Battles now
 		return; //No special effect when move is blocked by shields
 
 	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
@@ -1168,8 +1233,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_YAWN_FOE:
 			if (BATTLER_ALIVE(gBankTarget)
-			&& CanBeYawned(gBankTarget)
-			&& !(gStatuses3[gBankTarget] & STATUS3_YAWN)
+			&& CanBeYawned(gBankTarget, gBankAttacker)
 			&& (Random() & 1) == 0) //50 % chance target is put to sleep
 			{
 				BattleScriptPushCursor();
@@ -1192,7 +1256,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_CONFUSE_FOES:
 			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
-			&&  (CanBeConfused(gBankTarget, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), TRUE)))) //Is it worth it to push the script
+			&&  (CanBeConfused(gBankTarget, gBankAttacker, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), gBankAttacker, TRUE)))) //Is it worth it to push the script
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveConfuseFoes;
@@ -1230,12 +1294,14 @@ void SetMaxMoveStatRaiseEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_RAISE_TEAM_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = (MOVE_EFFECT_ATK_PLUS_1 + statId) | MOVE_EFFECT_AFFECTS_USER;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void SetMaxMoveStatLowerEffect(void)
 {
 	u8 statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK);
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_MINUS_1 + statId;
+	gNewBS->statBuffEffectNotProtectAffected = TRUE;
 }
 
 void PickRandomGMaxBefuddleEffect(void)
@@ -1247,7 +1313,7 @@ void PickRandomGMaxBefuddleEffect(void)
 
 	switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
 		case MOVE_EFFECT_SLEEP:
-			if (CanBePutToSleep(gBankTarget, TRUE))
+			if (CanBePutToSleep(gBankTarget, gBankAttacker, TRUE))
 				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 			break;
 		case MOVE_EFFECT_POISON:
@@ -1256,7 +1322,7 @@ void PickRandomGMaxBefuddleEffect(void)
 			break;
 		case MOVE_EFFECT_BURN: //Gets changed to Paralysis
 			gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-			if (CanBeParalyzed(gBankTarget, TRUE))
+			if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 			break;
 	}
@@ -1265,7 +1331,7 @@ void PickRandomGMaxBefuddleEffect(void)
 void SetGMaxVoltCrashEffect(void)
 {
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-	if (CanBeParalyzed(gBankTarget, TRUE))
+	if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 }
 
@@ -1294,7 +1360,7 @@ void PickRandomGMaxStunshockEffect(void)
 	else
 	{
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
-		if (CanBeParalyzed(gBankTarget, TRUE))
+		if (CanBeParalyzed(gBankTarget, gBankAttacker, TRUE))
 			gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 	}
 }
@@ -1302,7 +1368,7 @@ void PickRandomGMaxStunshockEffect(void)
 void SetGMaxSmiteEffect(void)
 {
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
-	if (CanBeConfused(gBankTarget, TRUE))
+	if (CanBeConfused(gBankTarget, gBankAttacker, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 }
 
@@ -1331,6 +1397,32 @@ bool8 IsMaxMoveWithTerrainEffect(u16 move)
 			case MAX_EFFECT_GRASSY_TERRAIN:
 			case MAX_EFFECT_MISTY_TERRAIN:
 			case MAX_EFFECT_PSYCHIC_TERRAIN:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithMistyTerrainEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_MISTY_TERRAIN:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithElectricTerrainEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_ELECTRIC_TERRAIN:
 				return TRUE;
 		}
 	}
@@ -1394,12 +1486,15 @@ bool8 IsMaxGuardUp(u8 bank)
 
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 {
-	if (gProtectStructs[bankDef].protected && IsDynamaxed(bankDef) && move != MOVE_FEINT && move != MOVE_MEANLOOK) //Mean Look is probably a GF bug
+	if (gProtectStructs[bankDef].protected && IsDynamaxed(bankDef)
+	&& move != MOVE_FEINT
+	&& move != MOVE_MEANLOOK //Mean Look is probably a GF bug
+	&& !IsMaxMoveWithEffect(move, MAX_EFFECT_BYPASS_PROTECT))
 	{
 		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
 			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;
 
-		if (gBattleMoves[move].target & MOVE_TARGET_ALL && CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
+		if (gBattleMoves[move].target & MOVE_TARGET_ALL && gSpecialMoveFlags[gCurrentMove].gSpecialWholeFieldMoves)
 			return FALSE;
 
 		return TRUE;
@@ -1411,36 +1506,94 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 void CreateSummaryScreenGigantamaxIcon(void)
 {
 	//Base the position of the icon off of where the Poke Ball sprite is
-	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->caughtBallSpriteId];
+	struct Sprite* ballSprite = &gSprites[sMonSummaryScreen->ballIconSpriteId];
 
 	if (sMonSummaryScreen->currentMon.gigantamax)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenGigantamaxIconSpriteSheet);
-		LoadSpritePalette(&sSummaryScreenGigantamaxIconSpritePalette);
-		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 18, ballSprite->pos1.y, 0);
+		LoadPalette(sSummaryScreenGigantamaxIconSpritePalette.data, (15 * 16) + 0x100, 32); //Load into last sprite palette slot
+		ballSprite->data[0] = CreateSprite(&sSummaryScreenGigantamaxIconTemplate, ballSprite->pos1.x - 32, ballSprite->pos1.y, 0);
+		if (ballSprite->data[0] < MAX_SPRITES)
+			gSprites[ballSprite->data[0]].oam.paletteNum = 15; //Make sure it points to the right palette num
 	}
 	else
 		ballSprite->data[0] = MAX_SPRITES; //No icon
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	u8 friendship = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_FRIENDSHIP, NULL);
+	if (friendship >= 80)
+	{
+		LoadCompressedSpriteSheetUsingHeap(&sSummaryScreenMaxFriendshipIconSpriteSheet);
+		LoadSpritePalette(&sSummaryScreenMaxFriendshipIconSpritePalette);
+
+		#ifdef UNBOUND
+		s16 x = ballSprite->pos1.x - 78;
+		s16 y = ballSprite->pos1.y - 12;
+		#else
+		s16 x = ballSprite->pos1.x - 12;
+		s16 y = ballSprite->pos1.y + 2;
+		#endif
+
+		ballSprite->data[1] = CreateSprite(&sSummaryScreenMaxFriendshipIconTemplate, x, y, 0);
+		if (ballSprite->data[1] < MAX_SPRITES)
+		{
+			u16 imageNum = 0;
+
+			//Adjust heart colour based on how much friendship
+			switch (friendship)
+			{
+				case 80 ... 129:
+					imageNum = 4;
+					break;
+				case 130 ... 179:
+					imageNum = 3;
+					break;
+				case 180 ... 219:
+					imageNum = 2;
+					break;
+				case 220 ... 254:
+					imageNum = 1;
+					break;
+			}
+
+			gSprites[ballSprite->data[1]].oam.tileNum += (imageNum * (8 / 8) * (8 / 8));
+		}
+	}
+	else
+		ballSprite->data[1] = MAX_SPRITES; //No icon
+	#endif
 }
 
 void SummaryScreen_ChangeCaughtBallSpriteVisibility(u8 invisible)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     gSprites[ballSpriteId].invisible = invisible;
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		gSprites[gigantamaxIconSpriteId].invisible = invisible;
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		gSprites[maxFriendshipIconSpriteId].invisible = invisible;
+	#endif
 }
 
 void SummaryScreen_DestroyCaughtBallSprite(void)
 {
-	u8 ballSpriteId = sMonSummaryScreen->caughtBallSpriteId;
-	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->caughtBallSpriteId].data[0];
+	u8 ballSpriteId = sMonSummaryScreen->ballIconSpriteId;
+	u8 gigantamaxIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[0];
+	unusedArg u8 maxFriendshipIconSpriteId = gSprites[sMonSummaryScreen->ballIconSpriteId].data[1];
 
     DestroySpriteAndFreeResources(&gSprites[ballSpriteId]);
 	if (gigantamaxIconSpriteId != MAX_SPRITES)
 		DestroySpriteAndFreeResources(&gSprites[gigantamaxIconSpriteId]);
+
+	#ifdef FRIENDSHIP_HEART_ON_SUMMARY_SCREEN
+	if (maxFriendshipIconSpriteId != MAX_SPRITES)
+		DestroySpriteAndFreeResources(&gSprites[maxFriendshipIconSpriteId]);
+	#endif
 }
 
 //The following functions relate to raid battles:
@@ -1465,22 +1618,63 @@ bool8 IsCatchableRaidBattle(void)
 
 bool8 HasRaidShields(u8 bank)
 {
-	return GetBattlerPosition(bank) == B_POSITION_OPPONENT_LEFT
+	return bank == BANK_RAID_BOSS
 		&& gNewBS->dynamaxData.raidShieldsUp;
+}
+
+u8 GetNumRaidShieldsUp(void)
+{
+	if (gNewBS->dynamaxData.raidShieldsUp)
+		return gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed;
+
+	return 0;
+}
+
+bool8 ShouldStartWithRaidShieldsUp(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		return FALSE; //Only for wild battles
+
+	#if (defined FLAG_RAID_BATTLE_NO_FORCE_END && defined VAR_GAME_DIFFICULTY)
+	if (FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END) && VarGet(VAR_GAME_DIFFICULTY) >= OPTIONS_EXPERT_DIFFICULTY)
+		return TRUE;
+	#endif
+
+	#ifdef SPECIES_SHEDINJA
+	if (IsRaidBattle() && SPECIES(BANK_RAID_BOSS) == SPECIES_SHEDINJA)
+		return TRUE; //Starts with shields otherwise it can't survive a hit
+	#endif
+
+	#ifdef FLAG_START_WITH_RAID_SHIELDS
+	if (FlagGet(FLAG_START_WITH_RAID_SHIELDS))
+		return TRUE;
+	#endif
+	
+	return FALSE;
 }
 
 static u8 GetRaidShieldHealthRatio(u8 bank)
 {
+	u8 ratio;
+
 	switch (gBattleMons[bank].level) {
 		case 0 ... 19:
-			return 1; //Never
+			ratio = 1; //Never
+			break;
 		case 20 ... 40:
-			return 2; //Every 1/2 health lost
+			ratio = 2; //Every 1/2 health lost
+			break;
 		case 41 ... 70:
-			return 3; //Every 1/3 health lost
+			ratio = 3; //Every 1/3 health lost
+			break;
 		default:
-			return 4; //Every 1/4 health lost
+			ratio = 4; //Every 1/4 health lost
 	}
+
+	if (ShouldStartWithRaidShieldsUp() && ratio > 0)
+		--ratio; //Started with shields up so battle would have one less round of shields later
+
+	return ratio;
 }
 
 bool8 ShouldCreateRaidShields(u8 bank)
@@ -1496,7 +1690,7 @@ bool8 ShouldCreateRaidShields(u8 bank)
 	{
 		u16 cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
 
-		if (i == healthRatio)
+		if (i == healthRatio) //Last loop iteration
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
 
 		if (gBattleMons[bank].hp <= cutOff + (gBattleMons[bank].maxHP / 16) //Give some leeway for throwing up a shield
@@ -1523,8 +1717,11 @@ u16 GetNextRaidShieldHP(u8 bank)
 		prevCutOff = cutOff;
 		cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
 
-		if (i == healthRatio)
-			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
+		if (i == healthRatio) //Last loop iteration
+			return prevCutOff; //Can never have cut off at full HP
+
+		if (gBattleMons[bank].hp == cutOff && gNewBS->dynamaxData.turnStartHP != cutOff) //Fix multi-hit moves
+			return cutOff;
 
 		if (gBattleMons[bank].hp > prevCutOff && gBattleMons[bank].hp <= cutOff)
 			return prevCutOff;
@@ -1542,6 +1739,11 @@ void CreateRaidShieldSprites(void)
 	u8 bank = BANK_RAID_BOSS;
 	u16 baseStatTotal = GetBaseStatsTotal(SPECIES(bank));
 
+	#ifdef SPECIES_SHEDINJA
+	if (SPECIES(bank) == SPECIES_SHEDINJA)
+		numShields = MAX_NUM_RAID_SHIELDS; //Always gets max shields
+	else
+	#endif
 	#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	if (!FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END)) //Less shields for battle that ends in 10 turns
 	#endif
@@ -1671,7 +1873,8 @@ static u8 GetRaidMapSectionId(void)
 	if (currRegionMapSecId == MAPSEC_ICY_HOLE
 	||  currRegionMapSecId == MAPSEC_GRIM_WOODS
 	||  currRegionMapSecId == MAPSEC_RUINS_OF_VOID
-	||  currRegionMapSecId == MAPSEC_GREAT_DESERT)
+	||  currRegionMapSecId == MAPSEC_GREAT_DESERT
+	||  currRegionMapSecId == MAPSEC_UNDERWATER)
 		return currRegionMapSecId - MAPSEC_DYNAMIC;
 
 	return Overworld_GetMapHeaderByGroupAndId((u16) gSaveBlock1->dynamicWarp.mapGroup, (u16) gSaveBlock1->dynamicWarp.mapNum) -> regionMapSectionId - MAPSEC_DYNAMIC;
@@ -1689,8 +1892,16 @@ static u32 GetRaidRandomNumber(void)
 	u8 month = (gClock.month == 0) ? 13 : gClock.month;
 	u8 lastMapGroup = (gSaveBlock1->dynamicWarp.mapGroup == 0) ? 0xFF : gSaveBlock1->dynamicWarp.mapGroup;
 	u8 lastMapNum = (gSaveBlock1->dynamicWarp.mapNum == 0) ? 0xFF : gSaveBlock1->dynamicWarp.mapNum;
-	u8 lastWarpId = (gSaveBlock1->dynamicWarp.warpId == 0) ? 0xFF : gSaveBlock1->dynamicWarp.warpId;
-	u16 lastPos = (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y == 0) ? 0xFFFF : (u16) (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y);
+
+	u8 lastWarpId = 1;
+	u16 lastPos = 0;
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER || gMapHeader.mapType == MAP_TYPE_UNDERGROUND)
+	{
+		//Only use position not in routes because otherwise spawns may be affected unintentionally due to multi-entrance hidden grottos
+		lastWarpId = (gSaveBlock1->dynamicWarp.warpId == 0) ? 0xFF : gSaveBlock1->dynamicWarp.warpId;
+		lastPos = (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y == 0) ? 0xFFFF : (u16) (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y);
+	}
+
 	#ifdef VAR_RAID_NUMBER_OFFSET
 	u16 offset = VarGet(VAR_RAID_NUMBER_OFFSET); //Setting this var changes all the raid spawns for the current hour (helps with better Wishing Piece)
 	#else
@@ -1698,6 +1909,30 @@ static u32 GetRaidRandomNumber(void)
 	#endif
 
 	return ((hour * (day + month) * lastMapGroup * (lastMapNum + lastWarpId + lastPos)) + ((hour * (day + month)) ^ dayOfWeek) + offset) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
+}
+
+static void ModifyNormalRaidBattleSpecies(void)
+{
+	switch (gRaidBattleSpecies)
+	{
+		#if (defined SPECIES_WORMADAM && defined SPECIES_WORMADAM_SANDY && defined SPECIES_WORMADAM_TRASH)
+		case SPECIES_WORMADAM:
+			//Change based on the hour
+			if ((gClock.hour % 3) == 1)
+				gRaidBattleSpecies = SPECIES_WORMADAM_SANDY;
+			else if ((gClock.hour % 3) == 2)
+				gRaidBattleSpecies = SPECIES_WORMADAM_TRASH;
+			break;
+		case SPECIES_ALCREMIE_STRAWBERRY: ;
+			//Change based on the hour
+			u8 numAlcremieForms = 1 + (SPECIES_ALCREMIE_STAR - SPECIES_ALCREMIE_BERRY) + 1;
+			if ((gClock.hour % numAlcremieForms) == 0)
+				break; //Regular Alcremie
+			else
+				gRaidBattleSpecies = SPECIES_ALCREMIE_BERRY + (gClock.hour % (numAlcremieForms - 1));
+			break;
+		#endif
+	}
 }
 
 static bool8 ShouldTryGigantamaxRaidMon(void)
@@ -1708,12 +1943,20 @@ static bool8 ShouldTryGigantamaxRaidMon(void)
 
 void DetermineRaidStars(void)
 {
-	u8 numBadges = GetOpenWorldBadgeCount();
+	u8 min, max;
 	if (FlagGet(FLAG_BATTLE_FACILITY))
-		numBadges = 9; //Battle Frontier Demo
+	{
+		//Battle Frontier Demo
+		min = 5; 
+		max = 6;
+	}
+	else
+	{
+		u8 numBadges = GetOpenWorldBadgeCount();
+		min = gRaidBattleStarsByBadges[numBadges][0];
+		max = gRaidBattleStarsByBadges[numBadges][1];
+	}
 
-	u8 min = gRaidBattleStarsByBadges[numBadges][0];
-	u8 max = gRaidBattleStarsByBadges[numBadges][1];
 	u32 randomNum = GetRaidRandomNumber();
 
 	if (min == max)
@@ -1729,7 +1972,7 @@ void DetermineRaidSpecies(void)
 	u8 numStars = gRaidBattleStars;
 	const struct RaidData* raid = &gRaidsByMapSection[GetRaidMapSectionId()][numStars];
 
-	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Tower Demo
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
 	{
 		const struct BattleTowerSpread* spread;
 
@@ -1756,18 +1999,42 @@ void DetermineRaidSpecies(void)
 			altSpecies = GetGigantamaxSpecies(spread->species, TRUE);
 			if (altSpecies != SPECIES_NONE)
 				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
+			#if (defined SPECIES_ETERNATUS && defined SPECIES_ETERNATUS_ETERNAMAX)
+			else if (spread->species == SPECIES_ETERNATUS && gRaidBattleStars >= 6)
+				gRaidBattleSpecies = SPECIES_ETERNATUS_ETERNAMAX; //The only time it's available
+			#endif
 		}
 
 		gPokeBackupPtr = spread; //Save spread pointer for later
 	}
 	else if (raid->data != NULL)
 	{
-		index = GetRaidRandomNumber() % raid->amount;
+		u8 amount = raid->amount;
+
+		#ifdef FLAG_GEN_8_PLACED_IN_GAME
+		if (!FlagGet(FLAG_GEN_8_PLACED_IN_GAME))
+		{
+			//Don't spawn Gen 8 mons
+			for (u32 i = 0; i < raid->amount; ++i)
+			{
+				if (raid->data[i].species >= SPECIES_GROOKEY
+				&& raid->data[i].species < NUM_SPECIES_GEN_8)
+				{
+					amount = i;
+					break;
+				}
+			}
+		}
+		#endif
+
+		index = GetRaidRandomNumber() % amount;
 		gRaidBattleSpecies = raid->data[index].species;
+
+		ModifyNormalRaidBattleSpecies(); //Adjusts things like Wormadam and Alcremie
 
 		if (ShouldTryGigantamaxRaidMon())
 		{
-			altSpecies = GetGigantamaxSpecies(raid->data[index].species, TRUE);
+			altSpecies = GetGigantamaxSpecies(gRaidBattleSpecies, TRUE);
 			if (altSpecies != SPECIES_NONE)
 				gRaidBattleSpecies = altSpecies; //Update with Gigantamax form
 		}
@@ -1817,19 +2084,30 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners)
 	u16 numViable = 0;
 	u32 randomNum = GetRaidRandomNumber();
 
-	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; ++i)
+	#ifdef VAR_RAID_PARTNER_RANDOM_NUM
+	randomNum += VarGet(VAR_RAID_PARTNER_RANDOM_NUM); //Helps give more varied results
+	#endif
+
+	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; i += 3)
 	{
 		if (randomNum == 0) //0 causes an infinite loop
 			randomNum = 0xFFFFFFFF;
 
-		randomNum ^= i;
+		randomNum *= i;
 		index = randomNum % gNumRaidPartners;
 
 		if (checkedPartners[index] == 0)
 		{
 			++numMarked;
 
-			if (gRaidPartners[index].spreads[numStars] != NULL)
+			if (gRaidPartners[index].spreads[numStars] != NULL
+			#ifdef UNBOUND
+			&& (FlagGet(FLAG_SYS_GAME_CLEAR)
+			 || (gRaidPartners[index].trainerClass != CLASS_SHADOW_ADMIN
+			  && gRaidPartners[index].trainerClass != CLASS_RIVAL
+			  && gRaidPartners[index].trainerClass != CLASS_LEADER)) //These don't show up until the game is cleared
+			#endif
+			)
 			{
 				checkedPartners[index] = TRUE;
 				++numViable;
@@ -1902,6 +2180,12 @@ void sp119_SetRaidBattleFlag(void)
 	FlagSet(FIRST_RAID_BATTLE_FLAG + GetRaidMapSectionId());
 }
 
+void ClearAllRaidBattleFlags(void)
+{
+	for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
+		FlagClear(FIRST_RAID_BATTLE_FLAG + i);
+}
+
 //Input: Var8000 - 0: This Flag Only
 //				   1: All Flags
 void sp11A_ClearRaidBattleFlag(void)
@@ -1911,8 +2195,7 @@ void sp11A_ClearRaidBattleFlag(void)
 			FlagClear(FIRST_RAID_BATTLE_FLAG + GetRaidMapSectionId());
 			break;
 		case 1: //Clear all flags:
-			for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
-				FlagClear(FIRST_RAID_BATTLE_FLAG + i);
+			ClearAllRaidBattleFlags();
 			break;
 	}
 }
@@ -1940,54 +2223,89 @@ u16 GetRaidRewardAmount(u16 item)
 		return Random() % 5 + 1; //1 - 5
 
 	if (IsBerry(item))
-		return Random() % 5 + 1; //1 - 5
+	{
+		switch (ItemId_GetHoldEffect(item))
+		{
+			case ITEM_EFFECT_CURE_STATUS:
+			case ITEM_EFFECT_RESTORE_PP:
+			case ITEM_EFFECT_CONFUSE_SPICY:
+			case ITEM_EFFECT_CONFUSE_DRY:
+			case ITEM_EFFECT_CONFUSE_SWEET:
+			case ITEM_EFFECT_CONFUSE_BITTER:
+			case ITEM_EFFECT_CONFUSE_SOUR:
+				return Random() % 3 + 1; //1 - 3
 
-	switch (gItemsByType[item]) {
-		case ITEM_TYPE_HEALTH_RECOVERY:
-		case ITEM_TYPE_STATUS_RECOVERY:
-			return Random() % 5 + 1; //1 - 5
-		case ITEM_TYPE_PP_RECOVERY:
-		case ITEM_TYPE_STAT_BOOST_DRINK:
-			return Random() % 3 + 1; //1 - 3
-		case ITEM_TYPE_STAT_BOOST_WING:
-			return Random() % 21 + 10; //10 - 30
-		case ITEM_TYPE_SHARD:
-			return Random() % 10 + 1; //1 - 10
-		default:
-			return 1;
+			case ITEM_EFFECT_ATTACK_UP:
+			case ITEM_EFFECT_DEFENSE_UP:
+			case ITEM_EFFECT_SPEED_UP:
+			case ITEM_EFFECT_SP_ATTACK_UP:
+			case ITEM_EFFECT_SP_DEFENSE_UP:
+			case ITEM_EFFECT_WEAKNESS_BERRY:
+				return Random() % 2 + 1; //1 - 2
+
+			case ITEM_EFFECT_CRITICAL_UP:
+			case ITEM_EFFECT_RANDOM_STAT_UP:
+			case ITEM_EFFECT_MICLE_BERRY:
+			case ITEM_EFFECT_ENIGMA_BERRY:
+			case ITEM_EFFECT_JABOCA_ROWAP_BERRY:
+			case ITEM_EFFECT_CUSTAP_BERRY:
+			case ITEM_EFFECT_KEE_BERRY:
+			case ITEM_EFFECT_MARANGA_BERRY:
+				return 1;
+
+			default: //ITEM_EFFECT_RESTORE_HP - ITEM_EFFECT_CURE_CONFUSION
+				return Random() % 4 + 1; //1 - 4
+		}	
 	}
+
+	if (IsHealthRecoveryItem(item)
+	|| IsStatusRecoveryItem(item))
+		return Random() % 5 + 1; //1 - 5
+	else if (IsPPRecoveryItem(item)
+	|| IsStatBoostDrink(item)
+	|| IsExpModifierItem(item))
+		return Random() % 3 + 1; //1 - 3
+	else if (IsAbilityModifierItem(item)
+	|| IsPPBoostDrink(item))
+		return 1;
+	else if (IsStatBoostWing(item))
+		return Random() % 21 + 10; //10 - 30
+	else if (IsShard(item))
+		return Random() % 10 + 1; //1 - 10
+	else
+		return 1;
 }
 
 static const u16 s4StarFrontierRaidBattleDrops[] =
 {
 	/*100 %*/ ITEM_PP_UP,
-	/* 80 %*/ ITEM_HP_UP,
-	/* 80 %*/ ITEM_POMEG_BERRY,
-	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 80 %*/ ITEM_SITRUS_BERRY,
+	/* 80 %*/ ITEM_LUM_BERRY,
+	/* 50 %*/ ITEM_FIGY_BERRY,
 	/* 50 %*/ ITEM_FULL_RESTORE,
+	/* 30 %*/ ITEM_LIECHI_BERRY,
 	/* 30 %*/ ITEM_NORMAL_GEM,
-	/* 30 %*/ ITEM_NONE,
-	/* 25 %*/ ITEM_HEART_SCALE,
+	/* 25 %*/ ITEM_NONE,
 	/* 25 %*/ ITEM_NONE,
 	/*  5 %*/ ITEM_LEFTOVERS,
-	/*  4 %*/ ITEM_BOTTLE_CAP,
-	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+	/*  4 %*/ ITEM_WISHING_PIECE,
+	/*  1 %*/ ITEM_WISHING_PIECE,
 };
 
 static const u16 s56StarFrontierRaidBattleDrops[] =
 {
 	/*100 %*/ ITEM_PP_UP,
-	/* 80 %*/ ITEM_HP_UP,
-	/* 80 %*/ ITEM_POMEG_BERRY,
-	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 80 %*/ ITEM_SITRUS_BERRY,
+	/* 80 %*/ ITEM_LUM_BERRY,
+	/* 50 %*/ ITEM_FIGY_BERRY,
 	/* 50 %*/ ITEM_OCCA_BERRY,
+	/* 30 %*/ ITEM_LIECHI_BERRY,
 	/* 30 %*/ ITEM_NORMAL_GEM,
-	/* 30 %*/ ITEM_HEART_SCALE,
 	/* 25 %*/ ITEM_PP_MAX,
 	/* 25 %*/ ITEM_LEFTOVERS,
 	/*  5 %*/ ITEM_WISHING_PIECE,
-	/*  4 %*/ ITEM_BOTTLE_CAP,
-	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+	/*  4 %*/ ITEM_WISHING_PIECE,
+	/*  1 %*/ ITEM_WISHING_PIECE,
 };
 
 static u16 ModifyFrontierRaidDropItem(u16 item)
@@ -1997,6 +2315,9 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 			item += RandRange(0, NUM_STATS);
 			if (item >= ITEM_RARE_CANDY) //For some reason it comes before Zinc
 				item = ITEM_ZINC;
+			break;
+		case ITEM_FIGY_BERRY:
+			item += RandRange(0, NUM_STATS - 1); //Figy - Iapapa
 			break;
 		case ITEM_POMEG_BERRY:
 			item += RandRange(0, NUM_STATS); //Pomeg - Tamato
@@ -2017,6 +2338,44 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 	return item;
 }
 
+static bool8 IsFoughtRaidSpecies(u16 species)
+{
+	if (species == gRaidBattleSpecies)
+		return TRUE;
+
+	if (species == GetGigantamaxBaseForm(gRaidBattleSpecies))
+		return TRUE;
+
+	#ifdef NATIONAL_DEX_WORMADAM //Special exception for Wormadam since one species can become all three for the battle
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	if ((dexNum == NATIONAL_DEX_WORMADAM || dexNum == NATIONAL_DEX_ALCREMIE)
+	&& SpeciesToNationalPokedexNum(gRaidBattleSpecies) == dexNum) //Both are Wormadam/Alcremie
+		return TRUE; //Give the items for Wormadam/Alcremie
+	#endif
+
+	return FALSE;
+}
+
+static u8 TryAlterRaidItemDropRate(unusedArg u16 item, u8 rate)
+{
+	#ifdef UNBOUND
+	if (item == ITEM_WISHING_PIECE)
+	{
+		for (u32 i = 0; i < PARTY_SIZE; i++)
+		{
+			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL) == SPECIES_JIRACHI)
+			{
+				if (rate < 20)
+					rate = 20; //Bump up to 20%
+				break;
+			}
+		}
+	}
+	#endif
+
+	return rate;
+}
+
 //Input: VAR_TEMP_0 = 0
 void sp11C_GiveRaidBattleRewards(void)
 {
@@ -2029,14 +2388,17 @@ void sp11C_GiveRaidBattleRewards(void)
 	{
 		for (i = 0; i < raid->amount; ++i)
 		{
-			if (raid->data[i].species == gRaidBattleSpecies) //Max one species per dataset
+			if (IsFoughtRaidSpecies(raid->data[i].species)) //Max one species per dataset
 			{
 				for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 				{
 					u8 dropNum = VarGet(VAR_TEMP_0);
+					u16 dropItem = raid->data[i].drops[dropNum];
+					u8 dropRate = sRaidBattleDropRates[dropNum];
 
-					if (raid->data[i].drops[dropNum] != ITEM_NONE
-					&& Random32() % 100 < sRaidBattleDropRates[dropNum])
+					dropRate = TryAlterRaidItemDropRate(dropItem, dropRate);
+
+					if (dropItem != ITEM_NONE && Random32() % 100 < dropRate)
 					{
 						gSpecialVar_LastTalked = 0xFD; //So no event objects disappear
 						Var8000 = raid->data[i].drops[(*(GetVarPointer(VAR_TEMP_0)))++];

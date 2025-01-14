@@ -160,7 +160,8 @@ enum
 enum
 {
 	OPTIONS_BATTLE_STYLE_SHIFT,
-	OPTIONS_BATTLE_STYLE_SET
+	OPTIONS_BATTLE_STYLE_SET,
+	OPTIONS_BATTLE_STYLE_SEMI_SHIFT,
 };
 
 enum
@@ -169,6 +170,21 @@ enum
 	OPTIONS_EASY_DIFFICULTY,
 	OPTIONS_HARD_DIFFICULTY,
 	OPTIONS_EXPERT_DIFFICULTY,
+};
+
+enum
+{
+	OPTIONS_PROMPT_TAKE_WILD_ITEM,
+	OPTIONS_ALWAYS_TAKE_WILD_ITEM,
+	OPTIONS_NEVER_TAKE_WILD_ITEM,
+};
+
+enum
+{
+	OPTIONS_ITEM_RESTRICTIONS_NONE,
+	OPTIONS_ITEM_RESTRICTIONS_4_ITEMS,
+	OPTIONS_ITEM_RESTRICTIONS_NO_ITEMS,
+	OPTIONS_ITEM_RESTRICTIONS_AI_ONLY,
 };
 
 enum
@@ -720,6 +736,7 @@ struct TrainerNameRecord
 
 #define EVENT_OBJECTS_COUNT 16
 #define MAP_OBJECTS_COUNT  16
+#define EVENT_OBJECT_TEMPLATES_COUNT 64
 #define BERRY_TREES_COUNT  128
 #define FLAGS_COUNT        288 // 300
 #define VARS_COUNT         256
@@ -778,7 +795,8 @@ struct SaveBlock1 //0x202552C
 	/*0x3A08*/ u8 filler_3A08[0x44];
 	/*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
 	/*0x3A54*/ struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
-	/*0x3A94*/ u8 filler_3A94[0x40];
+	/*0x3A94*/ u8 ringChallengeStreaks[0x10];
+	/*0x3AA4*/ u8 filler_3AA4[0x30];
 	/*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
 	/*0x3C98*/ struct DaycareMon route5DayCareMon;

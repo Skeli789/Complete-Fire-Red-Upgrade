@@ -140,3 +140,6 @@ definitions for battle backgrounds
 .equ BG_AURA_SPHERE_IMG, Focus_BlastTiles
 .equ BG_AURA_SPHERE_PAL, Aura_Sphere_BGPal
 .equ BG_AURA_SPHERE_RAW, Focus_BlastMap
+.equ BG_CHLOROBLAST_IMG, Hydro_CannonTiles
+.equ BG_CHLOROBLAST_PAL, ChloroblastPal
+.equ BG_CHLOROBLAST_RAW, Hydro_CannonMap

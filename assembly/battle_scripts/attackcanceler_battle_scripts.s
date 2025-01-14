@@ -28,10 +28,12 @@ attackcanceler_battle_scripts.s
 .global BattleScript_ZMoveActivateDamaging
 .global BattleScript_DarkTypePreventsPrankster
 .global BattleScript_MoveUsedSkyBattlePrevents
+.global BattleScript_MoveUsedRingChallengePrevents
 .global BattleScript_CantUseSignatureMove
 .global BattleScript_HoopaCantUseHyperspaceFury
 .global BattleScript_MoveUsedDynamaxPrevents
 .global BattleScript_MoveUsedRaidBattlePrevents
+.global BattleScript_MoveUsedRaidShieldPrevents
 .global BattleScript_RaidBattleStatNullification
 
 .global BattleScript_TryRemoveIllusion
@@ -47,7 +49,7 @@ BattleScript_PrintCustomString:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MagicBounce:
-	attackstring
+	call BattleScript_AttackstringBackupScriptingBank
 	ppreduce
 	pause 0x10
 	call BattleScript_AbilityPopUp
@@ -55,7 +57,7 @@ BattleScript_MagicBounce:
 	printstring 0x184
 	waitmessage DELAY_1SECOND	
 	call BattleScript_AbilityPopUpRevert
-	orword 0x2023DD0 0x800C00
+	orword HIT_MARKER, HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_PPDEDUCT | HITMARKER_x800000
 	various BANK_ATTACKER 0x1
 	return
 
@@ -77,7 +79,7 @@ SteadfastBoost:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	copyarray 0x2023FDB USER_BANK 0x1 @;gBattlescripting->bank
-	printfromtable 0x83FE57C
+	printfromtable gStatUpStringIds
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
@@ -240,6 +242,7 @@ BattleScript_ZMoveActivateDamaging:
 BattleScript_TryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
+	call BS_FLUSH_MESSAGE_BOX
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
 	callasm ClearScriptingBankDisguisedAs
 	reloadhealthbar BANK_SCRIPTING
@@ -266,6 +269,17 @@ BattleScript_DarkTypePreventsPrankster:
 BattleScript_MoveUsedSkyBattlePrevents:
 	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER SkyBattleAttackCancelString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedRingChallengePrevents:
+	attackstring
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_RingChallengeAttackCancel
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -316,6 +330,18 @@ BattleScript_MoveUsedRaidBattlePrevents:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_MoveUsedRaidShieldPrevents:
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_RaidShieldProtected
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_RaidBattleStatNullification:
 	call BS_FLUSH_MSGBOX
 	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_ENERGY_BURST 0x0
@@ -328,6 +354,7 @@ BattleScript_RaidBattleStatNullification:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2
+.global PsychicTerrainAttackCancelString
 AbilityRaisedStatString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x00, 0xFE, 0xFD, 0x01, 0xFF
 GravityAttackCancelString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xFD, 0x14, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE9, 0xE7, 0xD9, 0x00, 0xE3, 0xDA, 0x00, 0xDB, 0xE6, 0xD5, 0xEA, 0xDD, 0xE8, 0xED, 0xAB, 0xFF
 HealBlockAttackCancelString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xFD, 0x14, 0x00, 0xD5, 0xDA, 0xE8, 0xD9, 0xE6, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xC2, 0xD9, 0xD5, 0xE0, 0x00, 0xBC, 0xE0, 0xE3, 0xD7, 0xDF, 0xAB, 0xFF

@@ -55,7 +55,7 @@ Utility:
 +18 - 12: Hit 2 Foes, KO 2 Foes
 +17 - Sleep
 +16 - Redirection/Pivot for Intimidate
-+15 - Heal Partner
++15 - Heal Partner/Taunt Wide Guard
 +14 - Protect from Allies
 +13 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
 +12 - Wide Guard/Quick Guard/Mat Block
@@ -101,7 +101,7 @@ General Team Support:
 +16 - 12: Hit 2 Foes, KO 2 Foes
 +15 - Reflect/Light Screen
 +14 - Protect from Allies
-+13 - Heal Partner
++13 - Heal Partner/Taunt Wide Guard
 +12 - Wide Guard/Quick Guard
 +11 - Speed Control/Will-o-Wisp
 +10 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
@@ -124,7 +124,7 @@ Set-Up Attacker:
 +17 - 1 Offsensive Boost
 +16 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
 +15 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
-+14 - Protect from Allies
++14 - Protect from Allies / Fake Out
 +13 - 9: Hit 2 Foes, Strongest Move 1 Foe/Hit 2 Foes, KO 2 Foes, Hurt Partner
 +12 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
 +11 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
@@ -147,7 +147,7 @@ All-Out Attacker:
 +18 - Intimidate Pivot
 +17 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
 +16 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
-+15 - Protect from Allies
++15 - Protect from Allies / Fake Out
 +14 - 9: Hit 2 Foes, Strongest Move 1 Foe/Hit 2 Foes, KO 2 Foes, Hurt Partner
 +13 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
 +12 - Protect from Foes

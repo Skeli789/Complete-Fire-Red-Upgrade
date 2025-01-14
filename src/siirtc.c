@@ -67,11 +67,11 @@
 
 extern bool8 sLocked;
 
-static int WriteCommand(u8 value);
-static int WriteData(u8 value);
+static void WriteCommand(u8 value);
+static void WriteData(u8 value);
 static u8 ReadData();
 static void EnableGpioPortRead();
-static void DisableGpioPortRead();
+//static void DisableGpioPortRead();
 
 void SiiRtcUnprotect(void)
 {
@@ -79,11 +79,13 @@ void SiiRtcUnprotect(void)
 	sLocked = FALSE;
 }
 
+/*
 void SiiRtcProtect(void)
 {
 	DisableGpioPortRead();
 	sLocked = TRUE;
 }
+*/
 
 u8 SiiRtcProbe(void)
 {
@@ -96,7 +98,7 @@ u8 SiiRtcProbe(void)
 	errorCode = 0;
 
 	if ((rtc.status & (SIIRTCINFO_POWER | SIIRTCINFO_24HOUR)) == SIIRTCINFO_POWER
-	 || (rtc.status & (SIIRTCINFO_POWER | SIIRTCINFO_24HOUR)) == 0)
+	 || !(rtc.status & (SIIRTCINFO_POWER | SIIRTCINFO_24HOUR)))
 	{
 		// The RTC is in 12-hour mode. Reset it and switch to 24-hour mode.
 
@@ -250,6 +252,7 @@ bool8 SiiRtcGetDateTime(struct SiiRtcInfo *rtc)
 	return TRUE;
 }
 
+/*
 bool8 SiiRtcSetDateTime(struct SiiRtcInfo *rtc)
 {
 	u8 i;
@@ -276,6 +279,7 @@ bool8 SiiRtcSetDateTime(struct SiiRtcInfo *rtc)
 
 	return TRUE;
 }
+*/
 
 bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
 {
@@ -308,6 +312,7 @@ bool8 SiiRtcGetTime(struct SiiRtcInfo *rtc)
 	return TRUE;
 }
 
+/*
 bool8 SiiRtcSetTime(struct SiiRtcInfo *rtc)
 {
 	u8 i;
@@ -334,6 +339,7 @@ bool8 SiiRtcSetTime(struct SiiRtcInfo *rtc)
 
 	return TRUE;
 }
+*/
 
 /*
 bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
@@ -351,11 +357,7 @@ bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
 
 	// The AM/PM flag must be set correctly even in 24-hour mode.
 
-	if (alarmData[0] < 12)
-		alarmData[0] = rtc->alarmHour | ALARM_AM;
-	else
-		alarmData[0] = rtc->alarmHour | ALARM_PM;
-
+	alarmData[0] = rtc->alarmHour | (alarmData[0] < 12 ? ALARM_AM : ALARM_PM);
 	alarmData[1] = rtc->alarmMinute;
 
 	GPIO_PORT_DATA = SCK_HI;
@@ -377,7 +379,7 @@ bool8 SiiRtcSetAlarm(struct SiiRtcInfo *rtc)
 }
 */
 
-static int WriteCommand(u8 value)
+static void WriteCommand(u8 value)
 {
 	u8 i;
 	u8 temp;
@@ -390,12 +392,9 @@ static int WriteCommand(u8 value)
 		GPIO_PORT_DATA = (temp << 1) | CS_HI;
 		GPIO_PORT_DATA = (temp << 1) | SCK_HI | CS_HI;
 	}
-
-	// control reaches end of non-void function
-	return 0;
 }
 
-static int WriteData(u8 value)
+static void WriteData(u8 value)
 {
 	u8 i;
 	u8 temp;
@@ -408,9 +407,6 @@ static int WriteData(u8 value)
 		GPIO_PORT_DATA = (temp << 1) | CS_HI;
 		GPIO_PORT_DATA = (temp << 1) | SCK_HI | CS_HI;
 	}
-
-	// control reaches end of non-void function
-	return 0;
 }
 
 static u8 ReadData()
@@ -429,7 +425,7 @@ static u8 ReadData()
 		GPIO_PORT_DATA = SCK_HI | CS_HI;
 
 		temp = ((GPIO_PORT_DATA & SIO_HI) >> 1);
-		value = (value >> 1) | (temp << 7); // UB: accessing uninitialized var
+		value = (value >> 1) | (temp << 7);
 	}
 
 	return value;
@@ -440,7 +436,7 @@ static void EnableGpioPortRead()
 	GPIO_PORT_READ_ENABLE = 1;
 }
 
-static void DisableGpioPortRead()
+/*static void DisableGpioPortRead()
 {
 	GPIO_PORT_READ_ENABLE = 0;
-}
+}*/

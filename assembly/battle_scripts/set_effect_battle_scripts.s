@@ -12,10 +12,13 @@ set_effect_battle_scripts.s
 .global BattleScript_TargetSleepHeal
 .global BattleScript_TargetBurnHeal
 .global BattleScript_StickyHoldActivatesRet
-.global BattleScript_TargetFrozen
+.global BattleScript_WasFrozen
 .global BattleScript_KnockedOff
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner
+.global BattleScript_AllStatsUp
+.global BattleScript_HigherOffensesDefensesUp
+.global BattleScript_HigherDefensesUp
 .global BattleScript_MaxMoveRaiseStatTeam
 .global BattleScript_MaxMoveLowerStatFoes
 .global BattleScript_EatEffectBankBerry
@@ -129,10 +132,111 @@ BattleScript_StatUpPartner:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_AllStatsUp:
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_ATK, STAT_MAX, BattleScript_AllStatsUpAtk
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_DEF, STAT_MAX, BattleScript_AllStatsUpAtk
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_SPATK, STAT_MAX, BattleScript_AllStatsUpAtk
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_SPDEF, STAT_MAX, BattleScript_AllStatsUpAtk
+	jumpifstat BANK_ATTACKER, EQUALS, STAT_SPD, STAT_MAX, BattleScript_AllStatsUpRet
+
+BattleScript_AllStatsUpAtk:
+	setbyte STAT_ANIM_PLAYED, 0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_DEF | STAT_ANIM_SPD | STAT_ANIM_SPATK | STAT_ANIM_SPDEF, STAT_ANIM_UP
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_AllStatsUpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_AllStatsUpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_AllStatsUpDef:
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_AllStatsUpSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_AllStatsUpSpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_AllStatsUpSpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_AllStatsUpSpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_AllStatsUpSpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_AllStatsUpSpDef:
+	setstatchanger STAT_SPDEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_AllStatsUpSpeed
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_AllStatsUpSpeed
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_AllStatsUpSpeed:
+	setstatchanger STAT_SPD | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_AllStatsUpRet
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_AllStatsUpRet
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_AllStatsUpRet:
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HigherOffensesDefensesUp:
+	callasm TryRaiseHigherDefensesOverOffenses
+
+BattleScript_HigherOffensesUp:
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_ATK, STAT_MAX, BattleScript_HigherOffensesUp_Atk
+	jumpifstat BANK_ATTACKER, EQUALS, STAT_SPATK, STAT_MAX, BattleScript_HigherOffensesDefensesUpRet
+
+BattleScript_HigherOffensesUp_Atk:
+	setbyte STAT_ANIM_PLAYED, 0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesUp_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesUp_SpAtk
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherOffensesUp_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesDefensesUpRet
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesDefensesUpRet
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherOffensesDefensesUpRet:
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HigherDefensesUp:
+	jumpifstat BANK_ATTACKER, LESSTHAN, STAT_DEF, STAT_MAX, BattleScript_HigherDefensesUp_Def
+	jumpifstat BANK_ATTACKER, EQUALS, STAT_SPDEF, STAT_MAX, BattleScript_HigherOffensesDefensesUpRet
+
+BattleScript_HigherDefensesUp_Def:
+	setbyte STAT_ANIM_PLAYED, 0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_UP
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherDefensesUp_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherDefensesUp_SpDef
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+
+BattleScript_HigherDefensesUp_SpDef:
+	setstatchanger STAT_SPDEF | INCREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR, BattleScript_HigherOffensesDefensesUpRet
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_HigherOffensesDefensesUpRet
+	printfromtable gStatUpStringIds
+	waitmessage DELAY_1SECOND
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_MaxMoveRaiseStatTeam:
 	jumpiffainted BANK_ATTACKER BattleScript_MaxMoveRaiseStatTeam_CheckPartner
 	callasm SetMaxMoveStatRaiseEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 
 BattleScript_MaxMoveRaiseStatTeam_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
@@ -140,6 +244,7 @@ BattleScript_MaxMoveRaiseStatTeam_CheckPartner:
 	jumpiffainted BANK_ATTACKER BattleScript_MaxMoveSetAttackerBackAndReturn
 	callasm SetMaxMoveStatRaiseEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 BattleScript_MaxMoveSetAttackerBackAndReturn:
 	callasm SetAttackerPartner
 	return
@@ -150,6 +255,7 @@ BattleScript_MaxMoveLowerStatFoes:
 	jumpiffainted BANK_TARGET BattleScript_MaxMoveLowerStatFoes_CheckPartner
 	callasm SetMaxMoveStatLowerEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 
 BattleScript_MaxMoveLowerStatFoes_CheckPartner:
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
@@ -157,6 +263,7 @@ BattleScript_MaxMoveLowerStatFoes_CheckPartner:
 	jumpiffainted BANK_TARGET BattleScript_MaxMoveSetTargetBackAndReturn
 	callasm SetMaxMoveStatLowerEffect
 	seteffectprimary
+	callasm ClearStatBuffEffectNotProtectAffected
 BattleScript_MaxMoveSetTargetBackAndReturn:
 	callasm SetTargetFoePartner
 	return
@@ -415,7 +522,7 @@ BattleScript_MaxMoveSpite:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MaxMoveSetGravity:
-	callasm DoFieldEffect
+	callasm DoBattleFieldEffect
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	callasm BringDownMons

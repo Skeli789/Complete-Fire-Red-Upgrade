@@ -6,7 +6,9 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ability_tables.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/battle_indicators.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start.h"
@@ -36,6 +38,7 @@ enum SwitchInStates
 {
 	SwitchIn_HandleAICooldown,
 	SwitchIn_CamomonsReveal,
+	SwitchIn_NeutralizingGasRemoveAbility,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -50,6 +53,8 @@ enum SwitchInStates
 	SwitchIn_Items,
 	SwitchIn_AirBalloon,
 	SwitchIn_TotemPokemon,
+	SwitchIn_MagnetRiseBattle,
+	SwitchIn_PixieBoost,
 	SwitchIn_LastPokemonMusic,
 	SwitchIn_TrainerMessage,
 	SwitchIn_PreEnd,
@@ -59,7 +64,7 @@ enum SwitchInStates
 
 //This file's functions:
 static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
-static bool8 TryRemoveNeutralizingGas(u8 ability);
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
@@ -127,10 +132,10 @@ void atkE2_switchoutabilities(void)
 	}
 }
 
-bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
+bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability, bool8 leftField)
 {
 	return TryRemovePrimalWeather(bank, ability)
-		|| TryRemoveNeutralizingGas(ability)
+		|| TryRemoveNeutralizingGas(bank, ability, leftField)
 		|| TryRemoveUnnerve(bank)
 		|| TryActivateFlowerGift(bank);
 }
@@ -142,7 +147,11 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 
 	switch (ability) {
 		case ABILITY_PRIMORDIALSEA:
-			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
+			if (gBattleWeather & WEATHER_RAIN_PRIMAL
+			#ifdef FLAG_PRIMORDIAL_SEA_BATTLE
+			&& !FlagGet(FLAG_PRIMORDIAL_SEA_BATTLE) //Should continue to rain even if mon leaves the field
+			#endif
+			)
 				gBattleStringLoader = PrimalRainEndString;
 			break;
 		case ABILITY_DESOLATELAND:
@@ -150,8 +159,10 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 				gBattleStringLoader = PrimalSunEndString;
 			break;
 		case ABILITY_DELTASTREAM:
-			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
+			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
+			&& !IsDeltaStreamBattle()) //Should continue to blow even if mon leaves the field
 				gBattleStringLoader = PrimalAirCurrentEndString;
+			break;
 	}
 
 	if (gBattleStringLoader != NULL)
@@ -159,7 +170,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (i == bank) continue;
-			if (ABILITY(i) == ability) break;
+			if (BATTLER_ALIVE(i) && ABILITY(i) == ability) break;
 		}
 
 		if (i == gBattlersCount)
@@ -175,7 +186,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-static bool8 TryRemoveNeutralizingGas(u8 ability)
+static bool8 TryRemoveNeutralizingGas(u8 bank, u8 ability, bool8 leftField)
 {
 	if (ability == ABILITY_NEUTRALIZINGGAS)
 	{
@@ -185,8 +196,14 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 			gBattleStringLoader = gText_NeutralizingGasEnd;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			gNewBS->printedNeutralizingGasOverMsg = TRUE;
+			gNewBS->dontActivateMoldBreakersAnymoreThisTurn = TRUE;
+			gNewBS->backupBattlerPosition = gBattlerPositions[bank];
+			gBattlerPositions[bank] = 0xFF; //So there are no issues with animations like Drought - will still cause problem in Link Battles
 			return TRUE;
 		}
+
+		if (leftField)
+			gBattleMons[bank].hp = 0; //So Switch-In Abilities like Intimidate don't affect the mon that's now gone
 
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
@@ -200,15 +217,10 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 				gDisableStructs[gBankTarget].truantCounter = 0;
 
 				//Some abilities don't reactivate
-				switch (ability) {
-					case ABILITY_UNNERVE:
-						break;
-					case ABILITY_IMPOSTER: //Never gets another chance
-						gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
-						break;
-					default:
-						gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
-				}
+				if (IsUnnerveAbility(ability) || ability == ABILITY_IMPOSTER) //Never gets another chance
+					gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+				else
+					gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
 
 				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
 					return TRUE;
@@ -216,7 +228,12 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 		}
 	}
 
-	gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	if (gNewBS->printedNeutralizingGasOverMsg)
+	{
+		gBattlerPositions[bank] = gNewBS->backupBattlerPosition;
+		gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	}
+
 	return FALSE;
 }
 
@@ -224,8 +241,9 @@ static bool8 TryRemoveUnnerve(u8 bank)
 {
 	u8 side = SIDE(bank);
 	bool8 ret = FALSE;
+	u8 ability = ABILITY(bank);
 
-	if (ABILITY(bank) == ABILITY_UNNERVE)
+	if (IsUnnerveAbility(ability))
 	{
 		*GetAbilityLocation(bank) = ABILITY_NONE; //Temporarily remove Unnerve so Berries can activate
 
@@ -245,7 +263,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 			}
 		}
 
-		*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+		*GetAbilityLocation(bank) = ability; //Restore Unnerve so loop can continue when we return to this function
 	}
 
 	return ret;
@@ -255,8 +273,11 @@ static bool8 TryActivateFlowerGift(u8 leavingBank)
 {
 	u32 i = 0;
 
-	if (ABILITY(leavingBank) == ABILITY_AIRLOCK
-	||  ABILITY(leavingBank) == ABILITY_CLOUDNINE)
+	if (ABILITY(leavingBank) == ABILITY_CLOUDNINE
+	#ifdef ABILITY_AIRLOCK
+	|| ABILITY(leavingBank) == ABILITY_AIRLOCK
+	#endif
+	)
 		gBattleMons[leavingBank].ability = ABILITY_NONE; //Remove ability because we can't have these anymore
 
 	for (u8 bank = gBanksByTurnOrder[i]; i < gBattlersCount; ++i, bank = gBanksByTurnOrder[i])
@@ -288,7 +309,7 @@ void atk61_drawpartystatussummary(void)
 		RestoreOriginalAttackerAndTarget(); //I'm not sure if this function is even necessary anymore, but I'd rather not remove it and cause bugs
 	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
-	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
+	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler), TRUE))
 		return;
 
 	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -350,11 +371,13 @@ void atk4D_switchindataupdate(void)
 
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
+	gNewBS->AttackerDidDamageAtLeastOnce = FALSE; //Helps with Throat Spray
 
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
 
-	//Former Knock Off Check was here
+	if (gNewBS->corrodedItems[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]])
+		gBattleMons[gActiveBattler].item = 0;
 
 	if (gCurrentMove == MOVE_BATONPASS)
 	{
@@ -380,7 +403,15 @@ void atk4D_switchindataupdate(void)
 		}
 	}
 	else
+	{
 		ClearBehindSubstituteBit(gActiveBattler);
+
+		if (AreAbilitiesSuppressed()) //Most likely circus
+		{
+			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
+			gBattleMons[gActiveBattler].ability = 0;
+		}
+	}
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
 		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
@@ -393,21 +424,19 @@ void atk4D_switchindataupdate(void)
 		TryReactivateCentifernoSandblast(backupStatus2);
 	}
 
+	//Transfer new Illusion status
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION)
 	{
 		gStatuses3[gActiveBattler] |= STATUS3_ILLUSION;
 
-		if (GetIllusionPartyData(gActiveBattler) != GetBankPartyData(gActiveBattler))
-		{
-			EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
-			MarkBufferBankForExecution(gActiveBattler);
-		}
-		else
+		if (GetIllusionPartyData(gActiveBattler) == GetBankPartyData(gActiveBattler)) //No one to disguise as
 			gStatuses3[gActiveBattler] &= ~STATUS3_ILLUSION;
 	}
 
-	gBattleScripting.bank = gActiveBattler;
+	EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]); //Necessary to overrite old Illusion data
+	MarkBufferBankForExecution(gActiveBattler);
 
+	gBattleScripting.bank = gActiveBattler;
 	PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, GetIllusionPartyNumber(gActiveBattler));
 
 	gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
@@ -427,35 +456,17 @@ void TryReactivateCentifernoSandblast(u32* status2)
 
 void atk4F_jumpifcantswitch(void)
 {
-	int i;
-	u8 firstMonId, lastMonId;
-	u8 battlerIn1, battlerIn2;
-	u8 foe1, foe2;
-
 	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
-	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
-	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
-	&& !IsOfType(gActiveBattler, TYPE_GHOST)
-	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
+	&& CanBeTrapped(gActiveBattler)
 	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	}
 	else
 	{
-		for (i = firstMonId; i < lastMonId; ++i)
-		{
-			if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			&& i != gBattlerPartyIndexes[battlerIn1]
-			&& i != gBattlerPartyIndexes[battlerIn2])
-				break;
-		}
-
-		if (i == lastMonId)
+		if (!HasMonToSwitchTo(gActiveBattler))
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 		else
 			gBattlescriptCurrInstr += 6;
@@ -489,17 +500,16 @@ void atk51_switchhandleorder(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 			{
-				gBattleStruct->field_60[gActiveBattler][0] &= 0xF;
-				gBattleStruct->field_60[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
-				gBattleStruct->field_60[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] &= 0xF;
+				gBattleStruct->battlerPartyOrders[gActiveBattler][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler][1] = gBattleBufferB[gActiveBattler][3];
 
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
-				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] &= (0xF0);
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][0] |= (gBattleBufferB[gActiveBattler][2] & 0xF0) >> 4;
+				gBattleStruct->battlerPartyOrders[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				SwitchPartyOrderInGameMulti(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
-
 			else
 				SwitchPartyOrder(gActiveBattler);
 
@@ -512,17 +522,19 @@ void atk51_switchhandleorder(void)
 
 void atk52_switchineffects(void)
 {
-	int i;
+	if (gBattleExecBuffer)
+		return;
+
+	u32 i;
 	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
 	if (arg == BS_GET_SCRIPTING_BANK)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
-
+	
 	gActiveBattler = GetBankForBattleScript(arg);
-	sub_80174B8(gActiveBattler);
+	UpdateSentPokesToOpponentValue(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);
-	u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 
 	if (gBattleMons[gActiveBattler].hp == 0)
 		goto SWITCH_IN_END;
@@ -537,17 +549,52 @@ void atk52_switchineffects(void)
 			if (SIDE(gActiveBattler) == B_SIDE_PLAYER) //Player switched in a Pokemon
 			{
 				//If the player switches out their Pokemon, allow the AI to immediately switch out if it wants to
-				gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+				if (gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] != 3)
+				{
+					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 0;
+				}
+				else
+					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] = 1; //AI just decided not to shift switch
+
 				if (IS_DOUBLE_BATTLE)
+				{
 					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)] = 0;
+				}
+
+				if (!(gNewBS->ai.sideSwitchedThisRound & gBitTable[SIDE(FOE(gActiveBattler))])) //There was no change on the other side of the field
+				{
+					++gNewBS->ai.switchesInARow[gActiveBattler];
+					if (ABILITY(gActiveBattler) == ABILITY_INTIMIDATE) //Don't allow Intimidate cheesing
+						++gNewBS->ai.switchesInARow[gActiveBattler];
+				}
 			}
-			else
+			else //A foe just switched in
 			{
-				gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] = 0;
+				u8 bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+				gNewBS->ai.switchingCooldown[bank] = 0;
+				gNewBS->ai.typeAbsorbSwitchingCooldown[bank] = 0;
+				gNewBS->ai.switchesInARow[bank] = 0; //Using for helping treat AI abuse
+				gNewBS->ai.previousMonIn[bank] = 0xFF;
+				gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
+				
 				if (IS_DOUBLE_BATTLE)
-					gNewBS->ai.switchingCooldown[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] = 0;
+				{
+					bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+					gNewBS->ai.switchingCooldown[bank] = 0;
+					gNewBS->ai.typeAbsorbSwitchingCooldown[bank] = 0;
+					gNewBS->ai.switchesInARow[bank] = 0;
+					gNewBS->ai.previousMonIn[bank] = 0xFF;
+					gNewBS->ai.secondPreviousMonIn[bank] = 0xFF;
+				}
+
+				gNewBS->revealedEnemyMons |= gBitTable[gBattlerPartyIndexes[gActiveBattler]]; //Add to team preview
 			}
 
+			gNewBS->ai.pivotTo[FOE(gActiveBattler)] = PARTY_SIZE; //Throw the old pivot out the window if the mon to be pivoted against has changed
+			if (IS_DOUBLE_BATTLE)
+				gNewBS->ai.pivotTo[PARTNER(FOE(gActiveBattler))] = PARTY_SIZE;
 			++gNewBS->switchInEffectsState;
 			//Fallthrough
 
@@ -558,12 +605,40 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
 
-				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
+				u8 type1, type2;
+				struct Pokemon* monIllusion = GetIllusionPartyData(gActiveBattler);
+				if (monIllusion != GetBankPartyData(gActiveBattler)) //Under Illusion
+				{
+					type1 = GetMonType(monIllusion, 0);
+					type2 = GetMonType(monIllusion, 1);
+				}
+				else
+				{
+					type1 = gBattleMons[gActiveBattler].type1;
+					type2 = gBattleMons[gActiveBattler].type2;
+				}
+
+				if (type1 == type2)
 					gBattleStringLoader = gText_CamomonsTypeReveal;
 				else
 					gBattleStringLoader = gText_CamomonsTypeRevealDualType;
-				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
-				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, type1);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff2, type2);
+			}
+			++gNewBS->switchInEffectsState;
+			break;
+
+		case SwitchIn_NeutralizingGasRemoveAbility:
+			if (!IsAbilitySuppressed(gActiveBattler) //Gastro Acid has higher priority
+			&& ABILITY(gActiveBattler) != ABILITY_NONE
+			&& !gSpecialAbilityFlags[ABILITY(gActiveBattler)].gNeutralizingGasBannedAbilities
+			&& AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_NEUTRALIZINGGAS, 0, 0))
+			{
+				u8* abilityLoc = GetAbilityLocation(gActiveBattler);
+				gNewBS->neutralizingGasBlockedAbilities[gActiveBattler] = *abilityLoc;
+				*abilityLoc = 0;
+				gNewBS->SlowStartTimers[gActiveBattler] = 0;
 			}
 			++gNewBS->switchInEffectsState;
 			break;
@@ -580,6 +655,7 @@ void atk52_switchineffects(void)
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 					gBattleMons[gActiveBattler].status1 = 0;
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+					MarkBufferBankForExecution(gActiveBattler);
 					gBattleScripting.bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
 					++gNewBS->switchInEffectsState;
@@ -600,6 +676,7 @@ void atk52_switchineffects(void)
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+				MarkBufferBankForExecution(gActiveBattler);
 
 				//PP Restored in Battle Script
 
@@ -632,7 +709,7 @@ void atk52_switchineffects(void)
 			if (CheckGrounding(gActiveBattler)
 			&& gSideTimers[SIDE(gActiveBattler)].spikesAmount > 0
 			&& ability != ABILITY_MAGICGUARD
-			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+			&& IsAffectedByHazards(gActiveBattler))
 			{
 				gBattleMoveDamage = CalcSpikesDamage(gActiveBattler);
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
@@ -652,7 +729,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_StealthRock:
 			if (gSideTimers[SIDE(gActiveBattler)].srAmount > 0
 			&& ability != ABILITY_MAGICGUARD
-			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+			&& IsAffectedByHazards(gActiveBattler))
 			{
 				gBattleMoveDamage = CalcStealthRockDamage(gActiveBattler);
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
@@ -672,7 +749,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_Steelsurge:
 			if (gSideTimers[SIDE(gActiveBattler)].steelsurge > 0
 			&& ability != ABILITY_MAGICGUARD
-			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+			&& IsAffectedByHazards(gActiveBattler))
 			{
 				gBattleMoveDamage = CalcSteelsurgeDamage(gActiveBattler);
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
@@ -698,7 +775,9 @@ void atk52_switchineffects(void)
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
 				}
-				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS) //Pokemon with this item can still remove T-Spikes
+				else if (IsAffectedByHazards(gActiveBattler) //Pokemon with this item can still remove T-Spikes
+				&& CanBePoisoned(gActiveBattler, 0xFF, TRUE) //Must include check here, otherwise Corrosion can activate (which it shouldn't)
+				&& !BankSideHasSafeguard(gActiveBattler))
 				{
 					if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
 					{
@@ -726,7 +805,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_StickyWeb:
 			if (gSideTimers[SIDE(gActiveBattler)].stickyWeb
 			&&  CheckGrounding(gActiveBattler)
-			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+			&& IsAffectedByHazards(gActiveBattler))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
@@ -748,6 +827,7 @@ void atk52_switchineffects(void)
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
 				&&  gBattleMons[gActiveBattler].hp + gNewBS->DamageTaken[gActiveBattler] > gBattleMons[gActiveBattler].maxHP / 2)
 				{
+					gBattleScripting.bank = gBankSwitching = gActiveBattler;
 					BattleScriptPush(gBattlescriptCurrInstr + 2);
 					gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 					return;
@@ -758,7 +838,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
-			if(script)
+			if (!IsMegaZMoveBannedBattle() && script != NULL)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
@@ -821,6 +901,16 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			else if (totemBoostType == TOTEM_MULTI_BOOST)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemMultiBoostRet;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
 				++gNewBS->switchInEffectsState;
 				return;
 			}
@@ -829,8 +919,44 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemOmniboostRet;
 				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				gBattleScripting.statAnimPlayed = FALSE;
+				GiveOmniboost(gBankAttacker);
 				++gNewBS->switchInEffectsState;
 				return;
+			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_MagnetRiseBattle:
+			if (IsFloatingWithMagnetism(gActiveBattler)
+			&& CheckGrounding(gActiveBattler) == IN_AIR)
+			{
+				BattleScriptPushCursor();
+				gBattleStringLoader = gText_MagnetRiseBattleStart;
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
+				++gNewBS->switchInEffectsState;
+				return;
+			}
+			++gNewBS->switchInEffectsState;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_PixieBoost:
+			if (IsPixieBattle())
+			{
+				if (IsAffectedByPixies(gActiveBattler))
+				{
+					if (gBattleMons[gActiveBattler].defense < gBattleMons[gActiveBattler].spDefense)
+						gBattleScripting.statChanger = STAT_STAGE_DEF | INCREASE_1;
+					else
+						gBattleScripting.statChanger = STAT_STAGE_SPDEF | INCREASE_1;
+
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_PixieBoostRet;
+					gBankAttacker = gBattleScripting.bank = gActiveBattler;
+					++gNewBS->switchInEffectsState;
+					return;
+				}
 			}
 			++gNewBS->switchInEffectsState;
 		__attribute__ ((fallthrough));
@@ -894,7 +1020,8 @@ void atk52_switchineffects(void)
 
 			for (i = 0; i < gBattlersCount; ++i)
 			{
-				if (ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK && ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger Eject Packs after Intimidate
+				if ((ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK || ITEM_EFFECT(i) == ITEM_EFFECT_RESTORE_STATS)
+				&& ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger White Herbs or Eject Packs after Intimidate
 					return;
 			}
 		__attribute__ ((fallthrough));
@@ -1000,18 +1127,19 @@ void atk8F_forcerandomswitch(void)
 				while (i == battler1PartyId
 					|| i == battler2PartyId
 					|| !MON_CAN_BATTLE(&party[i]));
-			}
-			gBattleStruct->monToSwitchIntoId[bankDef] = i;
 
-			if (!IsLinkDoubleBattle() && !IsTagBattle())
-				SwitchPartyOrder(bankDef);
-			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
-			{
-				SwitchPartyOrderLinkMulti(bankDef, i, 0);
-				SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				gBattleStruct->monToSwitchIntoId[bankDef] = i;
+
+				if (!IsLinkDoubleBattle() && !IsTagBattle())
+					SwitchPartyOrder(bankDef);
+				else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
+				{
+					SwitchPartyOrderLinkMulti(bankDef, i, 0);
+					SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
+				}
+				else if (IsTagBattle())
+					SwitchPartyOrderInGameMulti(bankDef, i);
 			}
-			else if (IsTagBattle())
-				SwitchPartyOrderInGameMulti(bankDef, i);
 		}
 	}
 	else //Regular Wild Battle
@@ -1029,34 +1157,33 @@ static bool8 TryDoForceSwitchOut(void)
 		return FALSE;
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)) //Wild
 	{
-		gBankSwitching = bankDef;
-		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
-		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
-		return TRUE;
+		if (IS_DOUBLE_BATTLE)
+		{
+			if (SIDE(bankDef) == B_SIDE_OPPONENT)
+			{
+				//Roar always fails in Wild Double Battles if used on a wild mon
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
+		else //Single Battle
+		{
+			if (AreAllKindsOfRunningPrevented() || IsRaidBattle())
+			{
+				//Roar always fails if running is impossible
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+			else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
+			{
+				//Pokemon using Roar must be of higher level to end the battle in a Single battle
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+				return FALSE;
+			}
+		}
 	}
-
-	//If Wild Battle
-	else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-
-	//Roar always fails in Wild Double Battles if used on the wild mon
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(bankDef) == B_SIDE_OPPONENT)
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}
-	
-	//Roar always fails in wild boss battles
-	else if (AreAllKindsOfRunningPrevented())
-	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
-		return FALSE;
-	}	
 
 	gBankSwitching = bankDef;
 	gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
@@ -1065,20 +1192,18 @@ static bool8 TryDoForceSwitchOut(void)
 }
 
 static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
-{	//0x8013F6C in FR
+{
 	if (SIDE(bank) != B_SIDE_OPPONENT)
 	{
 		s32 i;
 
-		// gBattleStruct->field_60[0][i]
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattlePartyCurrentOrder[i] = gBattleStruct->battlerPartyOrders[0][i];
 
-		for (i = 0; i < 3; i++)
-			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
+		SwitchPartyMonSlots(GetBattlePartyIdFromPartyId(gBattlerPartyIndexes[bank]), GetBattlePartyIdFromPartyId(monToSwitchIntoId));
 
-		SwitchPartyMonSlots(GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[bank]), GetPartyIdFromBattlePartyId(monToSwitchIntoId));
-
-		for (i = 0; i < 3; i++)
-			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];
+		for (i = 0; i < PARTY_SIZE / 2; i++)
+			gBattleStruct->battlerPartyOrders[0][i] = gBattlePartyCurrentOrder[i];
 	}
 }
 
@@ -1149,6 +1274,12 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->chiStrikeCritBoosts[bank] = 0;
 	gNewBS->sandblastCentiferno[bank] = 0;
 	gNewBS->disguisedAs[bank] = 0;
+	gNewBS->powerShifted[bank] = 0;
+	gNewBS->splinterTimer[bank] = 0;
+	gNewBS->splinterAttackerBank[bank] = 0;
+	gNewBS->splinterAttackerMonId[bank] = 0;
+	gNewBS->splinterMove[bank] = 0;
+	gNewBS->tookAbilityFrom[bank] = 0;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;
@@ -1157,14 +1288,17 @@ void ClearSwitchBytes(u8 bank)
 	gProtectStructs[bank].enduredSturdy = 0;
 	
 	DestroyMegaIndicator(bank);
+	WipeOldDeperateAttemptRecord(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);
+	ClearBattlerMoveHistory(bank);
+	ClearMovePredictionsOnBank(bank);
 }
 
 void ClearSwitchBits(u8 bank)
 {
 	gNewBS->PowderByte &= ~(gBitTable[bank]);
-	gNewBS->quashed &= ~(gBitTable[bank]);
+	gNewBS->turnOrderLocked &= ~(gBitTable[bank]);
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
 	gNewBS->tarShotBits &= ~(gBitTable[bank]);
 	gNewBS->trappedByOctolock &= ~(gBitTable[bank]);
@@ -1172,7 +1306,8 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
-	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
+	gNewBS->ateCustapBerry &= ~(gBitTable[bank]);
+	gNewBS->quickClawCustapIndicator &= ~(gBitTable[bank]);
 	gNewBS->devolveForgotMove &= ~(gBitTable[bank]);
 }
 
@@ -1180,40 +1315,44 @@ void PartyMenuSwitchingUpdate(void)
 {
 	int i;
 
-	if (IsOfType(gActiveBattler, TYPE_GHOST)
-	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
-		goto SKIP_SWITCH_BLOCKING_CHECK;
-
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
-	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
-	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
+
+	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET) //Being Ghost doesn't get you out of this
+		goto TRAPPED;
+	else if (!CanBeTrapped(gActiveBattler))
+		goto SKIP_SWITCH_BLOCKING_CHECK;
+	else if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
+	|| (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
 	|| IsFairyLockActive())
 	{
-		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+		TRAPPED:
+		EmitChoosePokemon(0, PARTY_CANT_SWITCH, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
-	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
-		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
-		 ||  ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_MAGNETPULL, 0, 0))
-				 && IsOfType(gActiveBattler, TYPE_STEEL)))
+	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && IsTrappedByAbility(gActiveBattler, ABILITY_SHADOWTAG))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && IsTrappedByAbility(gActiveBattler, ABILITY_ARENATRAP))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_MAGNETPULL)) && IsTrappedByAbility(gActiveBattler, ABILITY_MAGNETPULL)))
 	{
-		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
+		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
 	else
 	{
-	SKIP_SWITCH_BLOCKING_CHECK:
-		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gChosenActionByBank[0] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
-		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gChosenActionByBank[1] == ACTION_SWITCH)
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+		SKIP_SWITCH_BLOCKING_CHECK:
+		if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == ACTION_SWITCH)
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
+		else if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT
+		&& gChosenActionByBank[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)] == ACTION_SWITCH)
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 		else
-			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
+			EmitChoosePokemon(0, PARTY_CHOOSE_MON, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
 	}
+
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
 u32 CalcSpikesDamage(u8 bank)
 {
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	if (!IsAffectedByHazards(bank))
 		return 0;
 
 	u32 dmg = (5 - gSideTimers[SIDE(bank)].spikesAmount) * 2;
@@ -1222,7 +1361,7 @@ u32 CalcSpikesDamage(u8 bank)
 
 u32 CalcSpikesDamagePartyMon(struct Pokemon* mon, u8 side)
 {
-	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	if (!IsMonAffectedByHazards(mon))
 		return 0;
 
 	u32 dmg = (5 - gSideTimers[side].spikesAmount) * 2;
@@ -1235,28 +1374,38 @@ u32 CalcStealthRockDamage(u8 bank)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
-		return 0;
-
 	TypeDamageModification(0, bank, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, gBattleMons[bank].maxHP / divisor);
 }
 
-u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
+u32 GetStealthRockDamage(u8 bank)
+{
+	if (!IsAffectedByHazards(bank))
+		return 0;
+
+	return CalcStealthRockDamage(bank);
+}
+
+u32 CalcMonStealthRockDamage(struct Pokemon* mon)
 {
 	u8 flags;
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
-		return 0;
-
 	TypeDamageModificationPartyMon(0, mon, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
 	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
+}
+
+u32 GetStealthRockDamagePartyMon(struct Pokemon* mon)
+{
+	if (!IsMonAffectedByHazards(mon))
+		return 0;
+
+	return CalcMonStealthRockDamage(mon);
 }
 
 u32 CalcSteelsurgeDamage(u8 bank)
@@ -1265,7 +1414,7 @@ u32 CalcSteelsurgeDamage(u8 bank)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	if (!IsAffectedByHazards(bank))
 		return 0;
 
 	TypeDamageModification(0, bank, MOVE_IRONHEAD, TYPE_STEEL, &flags);
@@ -1280,7 +1429,7 @@ u32 CalcSteelsurgeDamagePartyMon(struct Pokemon* mon)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
-	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	if (!IsMonAffectedByHazards(mon))
 		return 0;
 
 	TypeDamageModificationPartyMon(0, mon, MOVE_IRONHEAD, TYPE_STEEL, &flags);
@@ -1319,27 +1468,28 @@ static u8 GetStealthRockDivisor(void)
 	return divisor;
 }
 
-bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+u32 GetMonEntryHazardDamage(struct Pokemon* mon, u8 side)
 {
-	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
 	u32 dmg = 0;
 
 	if (gSideStatuses[side] & SIDE_STATUS_SPIKES
 	&& GetMonAbility(mon) != ABILITY_MAGICGUARD
-	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+	&& IsMonAffectedByHazards(mon)) //Has Klutz or not holding boots
 	{
 		if (gSideTimers[side].srAmount > 0)
-			dmg += CalcStealthRockDamagePartyMon(mon);
+			dmg += CalcMonStealthRockDamage(mon);
 
 		if (gSideTimers[side].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);
 
 		if (gSideTimers[side].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, side);
-
-		if (dmg >= hp)
-			return TRUE;
 	}
 
-	return FALSE;
+	return dmg;
+}
+
+bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+{
+	return GetMonEntryHazardDamage(mon, side) >= mon->hp;
 }

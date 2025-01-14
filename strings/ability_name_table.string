@@ -218,11 +218,11 @@ Drought
 #org @NAME_ARENA_TRAP
 Arena Trap
 
-#org @NAME_VITAL_SPIRIT
-Vital Spirit
+#org @NAME_TRANSISTOR
+Transistor
 
-#org @NAME_WHITE_SMOKE
-White Smoke
+#org @NAME_DRAGONS_MAW
+Dragon's Maw
 
 #org @NAME_NEUTRALISING_GAS
 Neutralize Gas
@@ -233,8 +233,8 @@ Shell Armor
 #org @NAME_HUNGER_SWITCH
 Hunger Switch
 
-#org @NAME_AIR_LOCK
-Air Lock
+#org @NAME_UNUSED
+Unused
 
 #org @NAME_SWEET_VEIL
 Sweet Veil
@@ -302,8 +302,8 @@ Dry Skin
 #org @NAME_TINTED_LENS
 Tinted Lens
 
-#org @NAME_SOLID_ROCK
-Solid Rock
+#org @NAME_UNSEEN_FIST
+Unseen Fist
 
 #org @NAME_FILTER
 Filter
@@ -371,8 +371,8 @@ Gooey
 #org @NAME_MUMMY
 Mummy
 
-#org @NAME_IRON_BARBS
-Iron Barbs
+#org @NAME_GRIM_NEIGH
+Grim Neigh
 
 #org @NAME_SAND_RUSH
 Sand Rush
@@ -461,11 +461,11 @@ Parental Bond
 #org @NAME_MOLD_BREAKER
 Mold Breaker
 
-#org @NAME_TURBOBLAZE
-Turboblaze
+#org @NAME_AS_ONE_GRIM
+As One
 
-#org @NAME_TERAVOLT
-Teravolt
+#org @NAME_AS_ONE_CHILLING
+As One
 
 #org @NAME_ZEN_MODE
 Zen Mode
@@ -527,8 +527,8 @@ Stamina
 #org @NAME_STEELWORKER
 Steelworker
 
-#org @NAME_TANGLING_HAIR
-Tangling Hair
+#org @NAME_FULL_METAL_BODY
+Full Metal Body
 
 #org @NAME_TRIAGE
 Triage
@@ -659,8 +659,8 @@ Long Reach
 #org @NAME_LIQUID_VOICE
 Liquid Voice
 
-#org @NAME_QUEENLY_MAJESTY
-Queenly Majesty
+#org @NAME_QUICK_DRAW
+Quick Draw
 
 #org @NAME_INNARDS_OUT
 Innards Out
@@ -707,8 +707,8 @@ Battery
 #org @NAME_RECEIVER
 Receiver
 
-#org @NAME_POWER_OF_ALCHEMY
-Alchemic Power
+#org @NAME_CURIOUS_MEDICINE
+Odd Medicine
 
 #org @NAME_NEUROFORCE
 Neuroforce
@@ -731,7 +731,7 @@ Cotton Down
 #org @NAME_MIRROR_ARMOR
 Mirror Armor
 
-#org @NAME_GULP_MISSLE
+#org @NAME_GULP_MISSILE
 Gulp Missile
 
 #org @NAME_STALWART
@@ -766,3 +766,120 @@ Screen Cleaner
 
 #org @NAME_PASTEL_VEIL
 Pastel Veil
+
+#org @NAME_LAST_ABILITY
+-
+
+//Below Abilities are loaded dynamically by the engine
+#org @gText_AbilityName_AirLock
+Air Lock
+
+#org @gText_AbilityName_VitalSpirit
+Vital Spirit
+
+#org @gText_AbilityName_WhiteSmoke
+White Smoke
+
+#org @gText_AbilityName_PurePower
+Pure Power
+
+#org @gText_AbilityName_IronBarbs
+Iron Barbs
+
+#org @gText_AbilityName_SolidRock
+Solid Rock
+
+#org @gText_AbilityName_Turboblaze
+Turboblaze
+
+#org @gText_AbilityName_Teravolt
+Teravolt
+
+#org @gText_AbilityName_ChillingNeigh
+Chilling Neigh
+
+#org @gText_AbilityName_Libero
+Libero
+
+#org @gText_AbilityName_TanglingHair
+Tangling Hair
+
+#org @gText_AbilityName_WimpOut
+Wimp Out
+
+#org @gText_AbilityName_QueenlyMajesty
+Queenly Majesty
+
+#org @gText_AbilityName_PowerOfAlchemy
+Alchemic Power
+
+#org @gText_AbilityName_PropellerTail
+Propeller Tail
+
+//Unbound Custom Abilities//
+
+#org @gText_AbilityName_NineLives
+Nine Lives
+
+#org @gText_AbilityName_FocusBelt
+Focus Belt
+
+#org @gText_AbilityName_Evaporate
+Evaporate
+
+#org @gText_AbilityName_FieryNeigh
+Fiery Neigh
+
+#org @gText_AbilityName_ShockingNeigh
+Shocking Neigh
+
+#org @gText_AbilityName_Pride
+Pride
+
+#org @gText_AbilityName_Multieye
+Multieye
+
+#org @gText_AbilityName_Subterfuge
+Subterfuge
+
+#org @gText_AbilityName_HoneyArmor
+Honey Armor
+
+#org @gText_AbilityName_TanglingWool
+Tangling Wool
+
+#org @gText_AbilityName_BrainBond
+Brain Bond
+
+#org @gText_AbilityName_GrassDash
+Grass Dash
+
+#org @gText_AbilityName_SlipperyTail
+Slippery Tail
+
+#org @gText_AbilityName_DrillBeak
+Drill Beak
+
+#org @gText_AbilityName_CottonCloud
+Cotton Cloud
+
+#org @gText_AbilityName_Bellow
+Bellow
+
+#org @gText_AbilityName_SoundWaves
+Sound Waves
+
+#org @gText_AbilityName_IcySkin
+Icy Skin
+
+#org @gText_AbilityName_DustyScales
+Dusty Scales
+
+#org @gText_AbilityName_CrabbyTactics
+Crabby Tactics
+
+#org @gText_AbilityName_FaceShield
+Face Shield
+
+#org @gText_AbilityName_RoyalRoar
+Royal Roar

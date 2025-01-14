@@ -12,7 +12,8 @@
 //Exported Functions
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 species_t GetMegaSpecies(u16 species, u16 item, const u16* moves);
-ability_t GetBankMegaFormAbility(u8 bank);
+species_t GetPrimalSpecies(u16 species, u16 item);
+ability_t GetBankMegaFormAbility(u8 megaBank, u8 foe);
 const u8* DoMegaEvolution(u8 bank);
 const u8* DoPrimalReversion(u8 bank, u8 caseId);
 void MegaRevert(pokemon_t* mon);
@@ -25,6 +26,7 @@ bool8 IsRedPrimal(u8 bank);
 bool8 IsMegaSpecies(u16 species);
 bool8 IsBluePrimalSpecies(u16 species);
 bool8 IsRedPrimalSpecies(u16 species);
+bool8 IsPrimalSpecies(u16 species);
 bool8 IsUltraNecrozma(u8 bank);
 bool8 IsUltraNecrozmaSpecies(u16 species);
 const u8* GetTrainerName(u8 bank);

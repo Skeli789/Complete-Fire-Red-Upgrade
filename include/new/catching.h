@@ -15,8 +15,11 @@ void atkF1_trysetcaughtmondexflags(void);
 
 //Exported Functions
 struct Pokemon* LoadTargetPartyData(void);
+u32 GetBaseBallCatchOdds(u8 ballType, u8 bankAtk, u8 bankDef);
 bool8 IsCriticalCapture(void);
 bool8 IsCriticalCaptureSuccess(void);
+bool8 CantCatchBecauseFlag(void);
+bool8 CantCatchPokemonRightNow(void);
 
 //Functions Hooked In
 u8 GiveMonToPlayer(pokemon_t* mon);
@@ -76,9 +79,10 @@ enum BallTypes
 	BALL_TYPE_RANDOM = 0xFF,
 };
 
-//Make sure these two values are always correct!
+//Make sure these values are always correct!
 #define BALL_TYPE_MASTER_BALL 0
 #define BALL_TYPE_POKE_BALL 3
+#define BALL_TYPE_LUXURY_BALL 10
 #define BALL_TYPE_DYNAMAX_BALL 27
 
 #define LAST_BALL_INDEX BALL_TYPE_DREAM_BALL

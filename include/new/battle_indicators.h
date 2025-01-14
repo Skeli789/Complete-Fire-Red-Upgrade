@@ -18,6 +18,13 @@ void DestroyMegaIndicator(u8 bank);
 void TryLoadMegaTriggers(void);
 void TryLoadZTrigger(void);
 void TryLoadDynamaxTrigger(void);
+void TryLoadLastUsedBallTrigger(void);
+u16 GetLastUsedBall(void);
+bool8 CantLoadLastBallTrigger(void);
+void TryLoadTeamPreviewTrigger(void);
+bool8 CantLoadTeamPreviewTrigger(void);
+void DisplayInBattleTeamPreview(void);
+void HideInBattleTeamPreview(void);
 void DestroyRaidShieldSprite(void);
 
 //Exported Data Structures

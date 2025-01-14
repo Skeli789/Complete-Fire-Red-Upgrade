@@ -15,13 +15,15 @@ enum
     NAMING_SCREEN_PLAYER,
     NAMING_SCREEN_BOX,
     NAMING_SCREEN_CAUGHT_MON,
-    NAMING_SCREEN_HATCHED_MON,
+    NAMING_SCREEN_NAME_RATER,
     NAMING_SCREEN_RIVAL,
 
 	//New
     NAMING_SCREEN_CHOOSE_NUMBER,
 	NAMING_SCREEN_ENTER_PHRASE,
 	NAMING_SCREEN_ENTER_PASSWORD,
+	NAMING_SCREEN_ENTER_5_CHAR_PASSWORD,
+	NAMING_SCREEN_ENTER_SPECIES_NAME,
 };
 
 struct NamingScreenTemplate
@@ -91,13 +93,13 @@ enum
 };
 
 u8 __attribute__((long_call)) DoNamingScreen(u8 caseId, u8* dst, u16 monSpecies, u8 monGender, u32 monPersonality, void (*callback)(void));
-void __attribute__((long_call)) sub_809E518(u8, u8, u8);
+void __attribute__((long_call)) NamingScreen_TryStartButtonFlash(u8, u8, u8);
 bool8 __attribute__((long_call)) NameChooserSelectLetter(void);
-void __attribute__((long_call)) sub_809EAA8(void);
+void __attribute__((long_call)) NamingScreen_SquishCursor(void);
 void __attribute__((long_call)) SetInputState(u8);
 bool8 __attribute__((long_call)) MainState_StartPageSwap(void);
 u8 __attribute__((long_call)) GetKeyRoleAtCursorPos(void);
-bool8 __attribute__((long_call)) sub_809F1F0(void);
+bool8 __attribute__((long_call)) NamingScreen_TriggerKeyboardChange(void);
 void __attribute__((long_call)) MoveCursorToOKButton(void);
 void __attribute__((long_call)) DeleteTextCharacter(void);
 bool8 __attribute__((long_call)) KeyboardKeyHandler_Page(u8);

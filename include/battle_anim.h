@@ -298,6 +298,7 @@
 #define ANIM_TAG_WHIP_HIT                   (ANIM_SPRITES_START + 287)
 #define ANIM_TAG_BLUE_RING_2                (ANIM_SPRITES_START + 288)
 
+#define ANIM_TAG_WATER_GUN 0x2839
 #define ANIM_TAG_ABILITY_POP_UP	0x286E
 #define ANIM_TAG_STONE_PILLAR 0x2877
 #define ANIM_TAG_ICE_ROCK 0x287A
@@ -324,38 +325,37 @@
 
 enum
 {
-    ANIM_BANK_ATTACKER,
-    ANIM_BANK_TARGET,
-    ANIM_BANK_ATK_PARTNER,
-    ANIM_BANK_DEF_PARTNER,
+	ANIM_BANK_ATTACKER,
+	ANIM_BANK_TARGET,
+	ANIM_BANK_ATK_PARTNER,
+	ANIM_BANK_DEF_PARTNER,
 };
 
 enum
 {
-    BG_ANIM_SCREEN_SIZE,
-    BG_ANIM_AREA_OVERFLOW_MODE,
-    BG_ANIM2,
-    BG_ANIM3,
-    BG_ANIM_PRIORITY,
-    BG_ANIM_5,
-    BG_ANIM_6
+	BG_ANIM_SCREEN_SIZE,
+	BG_ANIM_AREA_OVERFLOW_MODE,
+	BG_ANIM_MOSAIC,
+	BG_ANIM_CHAR_BASE_BLOCK,
+	BG_ANIM_PRIORITY,
+	BG_ANIM_PALETTES_MODE,
+	BG_ANIM_SCREEN_BASE_BLOCK
 };
 
-struct UnknownAnimStruct2
+struct BattleAnimBgData
 {
-    void *unk0;
-    u16 *unk4;
-    u8 unk8;
-    u8 unk9;
-    u16 unkA;
-    u16 unkC;
+	u8 *bgTiles;
+	u16 *bgTilemap;
+	u8 paletteId;
+	u8 bgId;
+	u16 tilesOffset;
+	u16 unused;
 };
-
 struct BattleAnimBackground
 {
-    void *image;
-    void *palette;
-    void *tilemap;
+	void *image;
+	void *palette;
+	void *tilemap;
 };
 
 #define ANIM_ARGS_COUNT 8
@@ -369,22 +369,22 @@ void __attribute__((long_call)) SetAverageBattlerPositions(u8 battlerId, bool8 r
 
 enum
 {
-    BATTLER_COORD_X,
-    BATTLER_COORD_Y,
-    BATTLER_COORD_X_2,
-    BATTLER_COORD_Y_PIC_OFFSET,
-    BATTLER_COORD_Y_PIC_OFFSET_DEFAULT,
+	BATTLER_COORD_X,
+	BATTLER_COORD_Y,
+	BATTLER_COORD_X_2,
+	BATTLER_COORD_Y_PIC_OFFSET,
+	BATTLER_COORD_Y_PIC_OFFSET_DEFAULT,
 };
 
 enum
 {
-    BATTLER_COORD_ATTR_HEIGHT,
-    BATTLER_COORD_ATTR_WIDTH,
-    BATTLER_COORD_ATTR_TOP,
-    BATTLER_COORD_ATTR_BOTTOM,
-    BATTLER_COORD_ATTR_LEFT,
-    BATTLER_COORD_ATTR_RIGHT,
-    BATTLER_COORD_ATTR_RAW_BOTTOM,
+	BATTLER_COORD_ATTR_HEIGHT,
+	BATTLER_COORD_ATTR_WIDTH,
+	BATTLER_COORD_ATTR_TOP,
+	BATTLER_COORD_ATTR_BOTTOM,
+	BATTLER_COORD_ATTR_LEFT,
+	BATTLER_COORD_ATTR_RIGHT,
+	BATTLER_COORD_ATTR_RAW_BOTTOM,
 };
 
 u8 __attribute__((long_call)) GetBattlerSpriteCoord(u8 battlerId, u8 attributeId);
@@ -392,7 +392,7 @@ u8 __attribute__((long_call)) GetBattlerSpriteCoord2(u8 battlerId, u8 coordType)
 
 u8 __attribute__((long_call)) GetBankPosition(u8 bank, u8 attributeId);
 
-bool8 __attribute__((long_call)) IsBankSpritePresent(u8 bank);
+bool8 __attribute__((long_call)) IsBattlerSpritePresent(u8 bank);
 void __attribute__((long_call)) sub_80A6C68(u8 arg0);
 u8 __attribute__((long_call)) GetAnimBankSpriteId(u8 wantedBank);
 bool8 __attribute__((long_call)) IsDoubleBattle(void);
@@ -415,6 +415,7 @@ void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) AnimTranslateLinear(struct Sprite *sprite);
+void  __attribute__((long_call)) InitAndRunAnimFastLinearTranslation(struct Sprite *sprite);
 u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
 void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
 void __attribute__((long_call)) PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
@@ -423,7 +424,8 @@ void __attribute__((long_call)) SetSpriteRotScale(u8 spriteId, s16 xScale, s16 y
 u8 __attribute__((long_call)) GetAnimBattlerSpriteId(u8 wantedBattler);
 u8 __attribute__((long_call)) GetBattlerSpriteBGPriority(u8 battlerId);
 bool8 __attribute__((long_call)) IsBattlerSpriteVisible(u8 battlerId);
-void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2, bool8 setSpriteInvisible);
+void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2);
+void __attribute__((long_call)) ResetBattleAnimBg(u8);
 void __attribute__((long_call)) SpriteCB_AnimMissileArcStep(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimArcTranslation(struct Sprite *sprite);
 bool8 __attribute__((long_call)) TranslateAnimHorizontalArc(struct Sprite *sprite);
@@ -443,6 +445,17 @@ void __attribute__((long_call)) CompleteOnSpecialAnimDone(void);
 bool8 __attribute__((long_call)) CreateShockWaveLightning(struct Task *task, u8 taskId);
 u8 __attribute__((long_call)) CreateMonPicBattleAnim(u16 species, bool8 isBackpic, u8 a3, s16 x, s16 y, u8 subpriority, u32 personality, u32 trainerId, u32 battlerId, u32 a10);
 void __attribute__((long_call)) TranslateSpriteLinearFixedPoint(struct Sprite *sprite);
+void __attribute__((long_call)) TranslateMonSpriteLinearFixedPoint(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_SetInvisible(struct Sprite *sprite);
+u32 __attribute__((long_call)) SelectBattleAnimSpriteAndBgPalettes(bool8 battleBackground, bool8 attacker, bool8 target, bool8 attackerPartner, bool8 targetPartner, bool8 a6, bool8 a7);
+void __attribute__((long_call)) TryShinyAnimation(u8 bank, struct Pokemon *mon);
+void __attribute__((long_call)) AnimHitSplatOnMonEdge(struct Sprite *sprite);
+void __attribute__((long_call)) SetAnimBgAttribute(u8 bgId, u8 attributeId, u8 value);
+s32 __attribute__((long_call)) GetAnimBgAttribute(u8 bgId, u8 attributeId);
+void __attribute__((long_call)) GetBattleAnimBg1Data(struct BattleAnimBgData *animBgData);
+void __attribute__((long_call)) AnimLoadCompressedBgTilemap(u32 bgId, const u32 *src);
+void __attribute__((long_call)) AnimLoadCompressedBgGfx(u32 bgId, const u32 *src, u32 tilesOffset);
+void __attribute__((long_call)) RelocateBattleBgPal(u16 paletteNum, u16 *dest, s32 offset, u8 largeScreen);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15

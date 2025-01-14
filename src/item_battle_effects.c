@@ -61,7 +61,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	u8 bankHoldEffect, atkHoldEffect;
 	u8 bankQuality, atkQuality;
 	u16 atkItem;
-	u8 moveSplit = CalcMoveSplit(gBankAttacker, gCurrentMove);
 
 	#ifndef NO_GHOST_BATTLES
 	if (IS_GHOST_BATTLE && SIDE(bank) == B_SIDE_OPPONENT)
@@ -77,8 +76,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	{
 		gLastUsedItem = ITEM(bank);
 
-		if (IsBerry(gLastUsedItem)
-		&& AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
+		if (IsBerry(gLastUsedItem) && UnnerveOnOpposingField(bank))
 		{
 			bankHoldEffect = 0;
 			bankQuality = 0;
@@ -104,7 +102,16 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	case ItemEffects_SwitchIn:
 		switch (bankHoldEffect) {
 			case ITEM_EFFECT_DOUBLE_PRIZE:
-				gBattleStruct->moneyMultiplier *= 2;
+				if (!gNewBS->usedAmuletCoin && SIDE(bank) == B_SIDE_PLAYER)
+				{
+					gNewBS->usedAmuletCoin = TRUE;
+	
+					#ifdef VAR_AMULET_COIN_LEVEL
+					gBattleStruct->moneyMultiplier *= max(2, VarGet(VAR_AMULET_COIN_LEVEL));
+					#else
+					gBattleStruct->moneyMultiplier *= 2;
+					#endif
+				}
 				break;
 
 			case ITEM_EFFECT_RESTORE_STATS:
@@ -216,11 +223,13 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 	case ItemEffects_EndTurn:
 		gBattleScripting.bank = bank;
 
-		if (gBattleMons[bank].hp)
+		if (BATTLER_ALIVE(bank))
 		{
 			switch (bankHoldEffect) {
 			case ITEM_EFFECT_RESTORE_HP:
-				if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && !BATTLER_MAX_HP(bank)))
+			
+				if (!IsHealBlocked(bank)
+				&& ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && !BATTLER_MAX_HP(bank))))
 				{
 					if (gLastUsedItem == ITEM_SITRUS_BERRY)
 						gBattleMoveDamage = GetBaseMaxHP(bank) / 4;
@@ -414,44 +423,44 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 			case ITEM_EFFECT_RANDOM_STAT_UP:
 				if ((PINCH_BERRY_CHECK(bank) || doPluck)
-				&& !((StatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY) || (StatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY)))
+				&& !((MainStatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY)
+				  || (MainStatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY)))
 				{
-					u8 buff = (ABILITY(bank) == ABILITY_RIPEN) ? INCREASE_4 : INCREASE_2;
+					u8 buff = (ABILITY(bank) == ABILITY_RIPEN) ? 4 : 2;
 
 					do
 					{
 						i = RandRange(STAT_STAGE_ATK, NUM_STATS);
 					} while (STAT_STAGE(bank, i) >= STAT_STAGE_MAX);
 
-					i -= 1; //So stat starts at 0
-
-					gBattleTextBuff1[0] = 0xFD;
-					gBattleTextBuff1[1] = 5;
-					gBattleTextBuff1[2] = i + 1;
-					gBattleTextBuff1[3] = EOS;
-
-					gBattleTextBuff2[0] = 0xFD;
-					gBattleTextBuff2[1] = 0;
-					gBattleTextBuff2[2] = 0xD1;
-					gBattleTextBuff2[3] = 0xD1 >> 8;
-					gBattleTextBuff2[4] = 0;
-					gBattleTextBuff2[5] = 0xD2;
-					gBattleTextBuff2[6] = 0xD2 >> 8;
-					gBattleTextBuff2[7] = EOS;
-
-					gEffectBank = bank;
-					gBattleScripting.statChanger = (buff | 1) + i;
-					gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + i;
-					gBattleScripting.animArg2 = 0;
-
-					if (moveTurn || doPluck)
+					if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), i, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 					{
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, i);
+
+						gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+						gBattleTextBuff2[1] = B_BUFF_STRING;
+						gBattleTextBuff2[2] = STRINGID_STATSHARPLY;
+						gBattleTextBuff2[3] = STRINGID_STATSHARPLY >> 8;
+						gBattleTextBuff2[4] = B_BUFF_STRING;
+						gBattleTextBuff2[5] = STRINGID_STATROSE;
+						gBattleTextBuff2[6] = STRINGID_STATROSE >> 8;
+						gBattleTextBuff2[7] = EOS;
+
+						gEffectBank = bank;
+						SET_STATCHANGER(i, buff, FALSE);
+						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + (i - 1);
+						gBattleScripting.animArg2 = 0;
+
+						if (moveTurn || doPluck)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
+						}
+						else
+							BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
+
+						effect = ITEM_STATS_CHANGE;
 					}
-					else
-						BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-					effect = ITEM_STATS_CHANGE;
 				}
 				break;
 
@@ -676,7 +685,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 			if (effect)
 			{
 				if (GetPocketByItemId(gLastUsedItem) == POCKET_BERRY_POUCH)
-					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+					gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 
 				gBattleScripting.bank = bank;
 				gStringBank = bank;
@@ -705,15 +714,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		else
 			gBattleScripting.bank = bank = gBankTarget;
 
-		if (SheerForceCheck() && bankHoldEffect != ITEM_EFFECT_AIR_BALLOON) //Air Balloon still pops
-			break;
-
 		switch (bankHoldEffect) {
 			case ITEM_EFFECT_ROCKY_HELMET:
 				if (TOOK_DAMAGE(bank)
 				&& MOVE_HAD_EFFECT
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& CheckContact(gCurrentMove, gBankAttacker)
+				&& CheckContact(gCurrentMove, gBankAttacker, bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp)
 				{
@@ -776,7 +782,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& gBattleMons[gBankAttacker].hp
 					&& gBattleMons[bank].hp
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-					&& moveSplit == bankQuality)
+					&& CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == bankQuality)
 					{
 						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
 
@@ -802,6 +808,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 			case ITEM_EFFECT_ENIGMA_BERRY:
 				if (!doPluck
+				&& !IsHealBlocked(bank)
 				&& TOOK_DAMAGE(bank)
 				&& gMoveResultFlags == MOVE_RESULT_SUPER_EFFECTIVE
 				&& BATTLER_ALIVE(bank)
@@ -824,7 +831,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 			case ITEM_EFFECT_STICKY_BARB:
 				if (TOOK_DAMAGE(bank)
 				&& MOVE_HAD_EFFECT
-				&& CheckContact(gCurrentMove, gBankAttacker)
+				&& CheckContact(gCurrentMove, gBankAttacker, bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp != 0
 				&& gBattleMons[gBankAttacker].item == ITEM_NONE)
@@ -853,7 +860,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		}
 
 		if (effect && GetPocketByItemId(gLastUsedItem)== POCKET_BERRY_POUCH)
-			gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+			gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
 
 		if (effect == REQUEST_HP_BATTLE)
 		{
@@ -869,113 +876,127 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 	case ItemEffects_ContactAttacker:
 		//These item effects must explicitly be listed in CMD49.c in order to work!
-		if (!SheerForceCheck() || atkHoldEffect == ITEM_EFFECT_THROAT_SPRAY || atkHoldEffect == ITEM_EFFECT_BLUNDER_POLICY)
+		switch (atkHoldEffect)
 		{
-			switch (atkHoldEffect)
-			{
-				case ITEM_EFFECT_FLINCH:
-					if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
-						bankQuality *= 2;
-					if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
-					&& ABILITY(gBankTarget) != ABILITY_STENCH
-					&& TOOK_DAMAGE(gBankTarget)
-					&& MOVE_HAD_EFFECT
-					&& (umodsi(Random(), 100)) < bankQuality
-					&& !CheckTableForMove(gCurrentMove, gFlinchChanceMoves)
-					&& gBattleMons[gBankTarget].hp)
+			case ITEM_EFFECT_FLINCH:
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankHasRainbow(gBankAttacker)) //NO STACKING!
+					bankQuality *= 2;
+				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+				&& ABILITY(gBankTarget) != ABILITY_STENCH
+				&& TOOK_DAMAGE(gBankTarget)
+				&& MOVE_HAD_EFFECT
+				&& (umodsi(Random(), 100)) < bankQuality
+				&& !gSpecialMoveFlags[gCurrentMove].gFlinchChanceMoves
+				&& BATTLER_ALIVE(gBankTarget)
+				&& !SheerForceCheck())
+				{
+					gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
+				}
+				break;
+			case ITEM_EFFECT_SHELL_BELL:
+				if (gNewBS->totalDamageGiven > 0
+				&& bank != gBankTarget
+				&& BATTLER_ALIVE(bank)
+				&& !BATTLER_MAX_HP(bank)
+				&& !IsHealBlocked(bank)
+				&& !SheerForceCheck())
+				{
+					if (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2)
+						gNewBS->lessThanHalfHPBeforeShellBell = TRUE; //For Emergency Exit
+
+					gStringBank = bank;
+					gBattleScripting.bank = bank;
+					gBattleMoveDamage = MathMax(1, udivsi(gNewBS->totalDamageGiven, atkQuality)) * - 1;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ItemHealHP_Ret;
+					effect++;
+				}
+				break;
+			case ITEM_EFFECT_LIFE_ORB: ;
+				u8 moveEffect = gBattleMoves[gCurrentMove].effect;
+
+				if (gNewBS->AttackerDidDamageAtLeastOnce
+				&& moveEffect != EFFECT_BIDE //Moves that deal direct damage aren't included
+				&& moveEffect != EFFECT_COUNTER
+				&& moveEffect != EFFECT_MIRROR_COAT
+				&& moveEffect != EFFECT_ENDEAVOR
+				&& moveEffect != EFFECT_SUPER_FANG
+				&& moveEffect != EFFECT_LEVEL_DAMAGE
+				&& moveEffect != EFFECT_PSYWAVE
+				&& gCurrentMove != MOVE_FINALGAMBIT
+				&& ABILITY(bank) != ABILITY_MAGICGUARD
+				&& BATTLER_ALIVE(bank)
+				&& !SheerForceCheck())
+				{
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 10);
+					gNewBS->selfInflictedDamage += gBattleMoveDamage; //For Emergency Exit
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_LifeOrbDamage;
+					effect++;
+				}
+				break;
+			case ITEM_EFFECT_THROAT_SPRAY: ;
+				bool8 throatSprayWork = FALSE;
+
+				if (SPLIT(gCurrentMove) == SPLIT_STATUS)
+				{
+					if (IS_DOUBLE_BATTLE)
 					{
-						gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
+						if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_SPREAD)
+						{
+							//Check affected at least one target
+							//Assumes the status move doesn't do damage (which it shouldn't)
+							throatSprayWork = (BATTLER_ALIVE(gBankTarget) && !(gNewBS->ResultFlags[gBankTarget] & MOVE_RESULT_NO_EFFECT))
+											|| (BATTLER_ALIVE(PARTNER(gBankTarget)) && !(gNewBS->ResultFlags[PARTNER(gBankTarget)] & MOVE_RESULT_NO_EFFECT));
+
+							if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+								throatSprayWork |= (BATTLER_ALIVE(PARTNER(gBankAttacker)) && !(gNewBS->ResultFlags[PARTNER(gBankAttacker)] & MOVE_RESULT_NO_EFFECT));
+						}
 					}
-					break;
-				case ITEM_EFFECT_SHELL_BELL:
-					if (gNewBS->totalDamageGiven > 0
-					&& bank != gBankTarget
-					&& BATTLER_ALIVE(bank)
-					&& !BATTLER_MAX_HP(bank))
-					{
-						if (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2)
-							gNewBS->lessThanHalfHPBeforeShellBell = TRUE; //For Emergency Exit
+					else if (MOVE_HAD_EFFECT)
+						throatSprayWork = TRUE;
+				}
+				else //Damaging move
+				{
+					if (gNewBS->AttackerDidDamageAtLeastOnce)
+						throatSprayWork = TRUE;
+				}
 
-						gStringBank = bank;
-						gBattleScripting.bank = bank;
-						gBattleMoveDamage = MathMax(1, udivsi(gNewBS->totalDamageGiven, atkQuality)) * - 1;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_ItemHealHP_Ret;
-						effect++;
-					}
-					break;
-				case ITEM_EFFECT_LIFE_ORB: ;
-					u8 moveEffect = gBattleMoves[gCurrentMove].effect;
+				if (throatSprayWork
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+				&& CheckSoundMove(gCurrentMove)
+				&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), STAT_STAGE_SPATK, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
+				{
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
 
-					if (gNewBS->AttackerDidDamageAtLeastOnce
-					&& moveEffect != EFFECT_BIDE //Moves that deal direct damage aren't included
-					&& moveEffect != EFFECT_COUNTER
-					&& moveEffect != EFFECT_MIRROR_COAT
-					&& moveEffect != EFFECT_ENDEAVOR
-					&& moveEffect != EFFECT_SUPER_FANG
-					&& moveEffect != EFFECT_LEVEL_DAMAGE
-					&& moveEffect != EFFECT_PSYWAVE
-					&& gCurrentMove != MOVE_FINALGAMBIT
-					&& ABILITY(bank) != ABILITY_MAGICGUARD
-					&& BATTLER_ALIVE(bank))
-					{
-						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 10);
-						gNewBS->selfInflictedDamage += gBattleMoveDamage; //For Emergency Exit
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_LifeOrbDamage;
-						effect++;
-					}
-					break;
-				case ITEM_EFFECT_THROAT_SPRAY: ;
-					bool8 throatSprayWork = FALSE;
+					gEffectBank = bank;
+					gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + STAT_STAGE_SPATK - 1;
+					gBattleScripting.animArg2 = 0;
 
-					if (SPLIT(gCurrentMove) == SPLIT_STATUS)
-					{
-						if (MOVE_HAD_EFFECT)
-							throatSprayWork = TRUE;
-					}
-					else //Damaging move
-					{
-						if (gNewBS->AttackerDidDamageAtLeastOnce && !SheerForceCheck())
-							throatSprayWork = TRUE;
-					}
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
+					effect = ITEM_STATS_CHANGE;
+				}
+				break;
+			case ITEM_EFFECT_BLUNDER_POLICY:
+				if (gNewBS->activateBlunderPolicy
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), STAT_STAGE_SPEED, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
+				{
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
 
-					if (throatSprayWork
-					&& BATTLER_ALIVE(gBankAttacker)
-					&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
-					&& CheckSoundMove(gCurrentMove)
-					&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), STAT_STAGE_SPATK, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
-					{
-						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
+					gEffectBank = gBankAttacker;
+					gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + STAT_STAGE_SPEED - 1;
+					gBattleScripting.animArg2 = 0;
 
-						gEffectBank = bank;
-						gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + STAT_STAGE_SPATK - 1;
-						gBattleScripting.animArg2 = 0;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
+					effect = ITEM_STATS_CHANGE;
+				}
 
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
-						effect = ITEM_STATS_CHANGE;
-					}
-					break;
-				case ITEM_EFFECT_BLUNDER_POLICY:
-					if (gNewBS->activateBlunderPolicy
-					&& BATTLER_ALIVE(gBankAttacker)
-					&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), STAT_STAGE_SPEED, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
-					{
-						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
-
-						gEffectBank = gBankAttacker;
-						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + STAT_STAGE_SPEED - 1;
-						gBattleScripting.animArg2 = 0;
-
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
-						effect = ITEM_STATS_CHANGE;
-					}
-
-					gNewBS->activateBlunderPolicy = FALSE;
-					break;
-			}
+				gNewBS->activateBlunderPolicy = FALSE;
+				break;
 		}
 		break;
 	}
@@ -985,6 +1006,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 	u8 effect = 0;
+
+	if (IsHealBlocked(bank))
+		return effect;
 
 	#ifdef OLD_CONFUSION_HEAL_BERRIES
 	if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 && !moveTurn)
@@ -1148,8 +1172,9 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 doPluck) {
 		animId = STAT_ANIM_PLUS2;
 	}
 
-	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gBankAttacker, gCurrentMove) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || doPluck)
+	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || doPluck)
 	&& BATTLER_ALIVE(bank)
+	&& !SheerForceCheck()
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 	{
 		gEffectBank = gBankAttacker;

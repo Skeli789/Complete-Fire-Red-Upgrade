@@ -12,6 +12,7 @@
 void atk00_attackcanceler(void);
 bool8 CanTargetPartner(u8 bankDef);
 bool8 TargetFullyImmuneToCurrMove(u8 bankDef);
+bool8 DoesTargetHaveAbilityImmunity(void);
 
 //Exported Constants
 enum
@@ -36,6 +37,7 @@ enum
 	CANCELLER_PARALYSED,
 	CANCELLER_GHOST,
 	CANCELLER_IN_LOVE,
+	CANCELLER_OBEDIENCE,
 	CANCELLER_STANCE_CHANGE,
 	CANCELLER_BIDE,
 	CANCELLER_THAW,

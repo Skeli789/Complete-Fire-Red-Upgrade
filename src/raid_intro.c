@@ -25,6 +25,7 @@
 extern const u8 RaidBattleIntroBGTiles[];
 extern const u8 RaidBattleIntroBGPal[];
 extern const u8 RaidBattleIntroBGMap[];
+extern const u8 RaidBattleIntroBGUnboundPal[];
 extern const u8 RaidBattleStarTiles[];
 extern const u8 RaidBattleStarPal[];
 extern const u8 RaidBattleCursorTiles[];
@@ -233,6 +234,8 @@ static bool8 GetRaidBattleData(void)
 	if (gRaidBattleSpecies == SPECIES_NONE)
 		return FALSE;
 
+	TryRandomizeSpecies(&sRaidBattleIntroPtr->species);
+
 	for (i = 0; i < gNumRaidPartners; ++i)
 		checkedPartners[i] = FALSE;
 
@@ -427,8 +430,8 @@ static void Task_RaidBattleIntroWaitForKeyPress(u8 taskId)
 			name = gRaidPartners[id].name;
 		StringCopy(gStringVar1, name);
 		StringCopy(gStringVar7, name);
-		GetSpeciesName(gStringVar2, gRaidBattleSpecies);
-		GetSpeciesName(gStringVar8, gRaidBattleSpecies);
+		GetSpeciesName(gStringVar2, sRaidBattleIntroPtr->species);
+		GetSpeciesName(gStringVar8, sRaidBattleIntroPtr->species);
 
 		PlaySE(SE_CORRECT);
 		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
@@ -438,7 +441,6 @@ static void Task_RaidBattleIntroWaitForKeyPress(u8 taskId)
 	{
 		gSpecialVar_LastResult = 0;
 
-		PlaySE(SE_ERROR);
 		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
 		gTasks[taskId].func = Task_RaidBattleIntroFadeOut;
 	}
@@ -596,6 +598,7 @@ static void ShowPartnerTeams(void)
 			for (j = 0; j < MAX_TEAM_SIZE; ++j)
 			{
 				u16 species = sRaidBattleIntroPtr->partners[i].team[j];
+				TryRandomizeSpecies(&species);
 				if (species != SPECIES_NONE)
 				{
 					LoadMonIconPalette(species);
@@ -666,7 +669,11 @@ static void LoadRaidBattleIntroGfx(void)
 {
 	decompress_and_copy_tile_data_to_vram(2, &RaidBattleIntroBGTiles, 0, 0, 0);
 	LZDecompressWram(RaidBattleIntroBGMap, sRaidBattleIntroPtr->tilemapPtr);
+	#ifdef UNBOUND
+	LoadPalette(RaidBattleIntroBGUnboundPal, 0, 0x20);
+	#else
 	LoadPalette(RaidBattleIntroBGPal, 0, 0x20);
+	#endif
 	LoadMenuElementsPalette(0xC0, 1);
 	Menu_LoadStdPalAt(0xF0);
 }
@@ -727,7 +734,7 @@ static void CB2_RaidBattleIntro(void)
 				gMain.state++;
 				break;
 			case 4:
-				if (IsDma3ManagerBusyWithBgCopy() != TRUE)
+				if (!free_temp_tile_data_buffers_if_possible())
 				{
 					ShowBg(0);
 					ShowBg(1);

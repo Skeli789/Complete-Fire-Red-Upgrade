@@ -22,6 +22,15 @@ bool8 IsTypeZCrystal(u16 item, u8 moveType);
 bool8 IsBerry(u16 item);
 bool8 IsPinchBerryItemEffect(u8 itemEffect);
 bool8 IsGem(u16 item);
+bool8 IsHealthRecoveryItem(u16 item);
+bool8 IsStatusRecoveryItem(u16 item);
+bool8 IsPPRecoveryItem(u16 item);
+bool8 IsStatBoostDrink(u16 item);
+bool8 IsPPBoostDrink(u16 item);
+bool8 IsExpModifierItem(u16 item);
+bool8 IsAbilityModifierItem(u16 item);
+bool8 IsStatBoostWing(u16 item);
+bool8 IsShard(u16 item);
 bool8 IsTMHM(u16 item);
 u8 TMIdFromItemId(u16 itemId);
 u8 BerryIdFromItemId(u16 item);
@@ -45,6 +54,8 @@ u16 GetCurrentPocketItemAmount(void);
 bool8 DoesBagHaveBerry(void);
 void SortBerriesOrTMHMs(struct BagPocket* bagPocket);
 void SortItemsInBag(u8 pocket, u8 type);
+
+u16 GetBestBallInBag(void);
 
 //Hooked in Functions
 u8 TryHandleExcuseForDracoMeteorTutor(struct Pokemon* mon);
@@ -70,8 +81,9 @@ const void* FixTmHmDiscPalette(u8 type);
 void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount);
 void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 void SetMemoryForBagStorage(void);
-void AllocateBagItemListBuffers(void);
+bool8 AllocateBagItemListBuffers(void);
 bool8 AllocateBerryPouchListBuffers(void);
+void BagListMenuGetItemNameColored(u8 *dest, u16 itemId);
 void PokeDudeBackupBag(void);
 void PokeDudeRestoreBag(void);
 void PokeDudeBackupKeyItemsTMs(void);
@@ -104,29 +116,78 @@ enum ItemObtainFlags
 
 enum ItemType //Sorted in this order
 {
+	ITEM_TYPE_MAX_REPEL,
+	ITEM_TYPE_SUPER_REPEL,
+	ITEM_TYPE_REPEL,
 	ITEM_TYPE_FIELD_USE,
-	ITEM_TYPE_HEALTH_RECOVERY,
+
+	//Health Recovery
+	ITEM_TYPE_FULL_RESTORE,
+	ITEM_TYPE_MAX_POTION,
+	ITEM_TYPE_HYPER_POTION,
+	ITEM_TYPE_SUPER_POTION,
+	ITEM_TYPE_POTION,
+	ITEM_TYPE_REVIVE,
+	ITEM_TYPE_MOOMOO_MILK,
+	ITEM_TYPE_LEMONADE,
+	ITEM_TYPE_SODA_POP,
+	ITEM_TYPE_FRESH_WATER,
+	ITEM_TYPE_HERB_HEAL,
+
+	//Status Recovery
+	ITEM_TYPE_FULL_HEAL,
+	ITEM_TYPE_FOOD_STATUS_RECOVERY,
 	ITEM_TYPE_STATUS_RECOVERY,
 	ITEM_TYPE_PP_RECOVERY,
-	ITEM_TYPE_STAT_BOOST_DRINK,
-	ITEM_TYPE_STAT_BOOST_WING,
-	ITEM_TYPE_EVOLUTION_STONE,
-	ITEM_TYPE_EVOLUTION_ITEM,
-	ITEM_TYPE_BATTLE_ITEM,
+	
+	//Battle Items
+	ITEM_TYPE_X_ATTACK,
+	ITEM_TYPE_X_DEFENSE,
+	ITEM_TYPE_X_SP_ATTACK,
+	ITEM_TYPE_X_SP_DEFENSE,
+	ITEM_TYPE_X_SPEED,
+	ITEM_TYPE_X_ACCURACY,
+	ITEM_TYPE_OTHER_STAT_BATTLE_ITEM,
+	ITEM_TYPE_OTHER_BATTLE_ITEM,
+	
+	//Stat Boost Drink
+	ITEM_TYPE_ABILITY_GIGANTAMAX_MODIFIER,
+	ITEM_TYPE_LEVEL_MODIFIER,
+	ITEM_TYPE_PP_UP,
+	ITEM_TYPE_PP_MAX,
+	ITEM_TYPE_HP_UP,
+	ITEM_TYPE_PROTEIN,
+	ITEM_TYPE_IRON,
+	ITEM_TYPE_CALCIUM,
+	ITEM_TYPE_ZINC,
+	ITEM_TYPE_CARBOS,
+	
+	//Stat Boost Wings
+	ITEM_TYPE_HP_WING,
+	ITEM_TYPE_ATTACK_WING,
+	ITEM_TYPE_DEFENSE_WING,
+	ITEM_TYPE_SPATK_WING,
+	ITEM_TYPE_SPDEF_WING,
+	ITEM_TYPE_SPEED_WING,
+
+	//Other
 	ITEM_TYPE_FLUTE,
 	ITEM_TYPE_STAT_BOOST_HELD_ITEM,
 	ITEM_TYPE_HELD_ITEM,
+	ITEM_TYPE_INCENSE,
 	ITEM_TYPE_GEM,
 	ITEM_TYPE_PLATE,
-	ITEM_TYPE_MEMORY,
-	ITEM_TYPE_DRIVE,
-	ITEM_TYPE_INCENSE,
 	ITEM_TYPE_MEGA_STONE,
+	ITEM_TYPE_PRIMAL_ORB,
 	ITEM_TYPE_Z_CRYSTAL,
+	ITEM_TYPE_EVOLUTION_STONE,
+	ITEM_TYPE_EVOLUTION_ITEM,
 	ITEM_TYPE_NECTAR,
 	ITEM_TYPE_SELLABLE,
 	ITEM_TYPE_RELIC,
 	ITEM_TYPE_SHARD,
 	ITEM_TYPE_FOSSIL,
+	ITEM_TYPE_MEMORY,
+	ITEM_TYPE_DRIVE,
 	ITEM_TYPE_MAIL,
 };

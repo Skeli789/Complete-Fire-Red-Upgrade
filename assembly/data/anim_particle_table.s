@@ -5,6 +5,9 @@
 .global gBattleAnimPaletteTable
 .global gThinRingSpriteSheet
 .global gThinRingSpritePalette
+.global gExplosionSpriteSheet
+.global gExplosionSpritePalette
+
 /*
 anim_particle_table.s
 	tables for animation particles
@@ -212,6 +215,7 @@ animparticle 0x8d20e20,	0x800,	ANIM_TAG_MOON
 animparticle 0x8d21180,	0x200,	ANIM_TAG_GREEN_SPARKLE
 animparticle 0x8d20a64,	0x800,	ANIM_TAG_SPIRAL
 animparticle 0x8d21258,	0x200,	ANIM_TAG_SNORE_Z
+gExplosionSpriteSheet:
 animparticle 0x8d213f0,	0x800,	ANIM_TAG_EXPLOSION
 animparticle NAIL_IMG,	0x400,	ANIM_TAG_NAIL
 animparticle 0x8d218ec,	0x200,	ANIM_TAG_GHOSTLY_SPIRIT
@@ -379,10 +383,13 @@ animparticle MUSHROOM_IMG, (32 * 32 * 4) / 2, ANIM_TAG_MUSHROOM
 animparticle GOLDEN_APPLE_IMG, (32 * 32 * 4) / 2, ANIM_TAG_GOLDEN_APPLE
 animparticle ICE_ROCK_IMG, (64 * 64 * 5) / 2, ANIM_TAG_ICE_ROCK
 animparticle TORNADO_IMG, (64 * 64 * 3) / 2, ANIM_TAG_TORNADO
-animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 3) / 2, ANIM_TAG_STRAIGHT_BEAM
+animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 4) / 2, ANIM_TAG_STRAIGHT_BEAM
 animparticle DREEPY_IMG, (32 * 32 * 2) / 2, ANIM_TAG_DREEPY
 animparticle ICE_ROCK_IMG, (64 * 64 * 3) / 2, ANIM_TAG_ICE_ROCK_SINGLE @;For Max Hailstorm in Multi battles
 animparticle STONE_PILLAR_IMG, (64 * 64 * 3) / 2, ANIM_TAG_STONE_PILLAR_MULTI @;For Max Rockfall in Multi battles
+animparticle LARGE_HOOPA_RING_IMG, (64 * 64 * 4) / 2, ANIM_TAG_HOOPA_RING_LARGE
+animparticle OMEGA_SYMBOL_IMG, (32 * 32) / 2, ANIM_TAG_OMEGA_SYMBOL
+animparticle ALPHA_SYMBOL_IMG, (32 * 32) / 2, ANIM_TAG_ALPHA_SYMBOL
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE
@@ -583,6 +590,7 @@ animparticlepal 0x8d21158,	ANIM_TAG_MOON
 animparticlepal 0x8d21238,	ANIM_TAG_GREEN_SPARKLE
 animparticlepal 0x8d20e08,	ANIM_TAG_SPIRAL
 animparticlepal 0x8d213c8,	ANIM_TAG_SNORE_Z
+gExplosionSpritePalette:
 animparticlepal 0x8d217e0,	ANIM_TAG_EXPLOSION
 animparticlepal NAIL_PAL,	ANIM_TAG_NAIL
 animparticlepal 0x8d21a2c,	ANIM_TAG_GHOSTLY_SPIRIT
@@ -754,3 +762,6 @@ animparticlepal STRAIGHT_BEAM_PAL, ANIM_TAG_STRAIGHT_BEAM
 animparticlepal DREEPY_PAL, ANIM_TAG_DREEPY
 animparticlepal ICE_ROCK_PAL, ANIM_TAG_ICE_ROCK_SINGLE
 animparticlepal STONE_PILLAR_PAL, ANIM_TAG_STONE_PILLAR_MULTI
+animparticlepal LARGE_HOOPA_RING_PAL, ANIM_TAG_HOOPA_RING_LARGE
+animparticlepal OMEGA_SYMBOL_PAL, ANIM_TAG_OMEGA_SYMBOL
+animparticlepal ALPHA_SYMBOL_PAL, ANIM_TAG_ALPHA_SYMBOL

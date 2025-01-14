@@ -12,10 +12,15 @@
 //New Strings
 extern const u8 BattleText_TwoTrainersWantToBattle[];
 extern const u8 BattleText_ShadowWarriorAttacked[];
+extern const u8 BattleText_ShadowWarriorsAttacked[];
 extern const u8 BattleText_InGamePartnerSentOutZGoN[];
 extern const u8 BattleText_TwoTrainersSentPkmn[];
 extern const u8 BattleText_Trainer2WithdrewPkmn[];
 extern const u8 BattleText_Trainer2SentOutPkmn[];
+extern const u8 BattleText_TwoWildAttacked[];
+extern const u8 BattleText_DistortionWorldMonAttacked[];
+extern const u8 BattleText_WorstNightmare[];
+extern const u8 BattleText_LegendaryAppeared[];
 extern const u8 BattleText_GoTwoPkmn_BattleSands[];
 extern const u8 BattleText_GoPkmn_BattleSands[];
 extern const u8 BattleText_PartnerWithdrewPkmn[];
@@ -27,8 +32,8 @@ extern const u8 BattleText_TwoInGameTrainersDefeated[];
 extern const u8 BattleText_PlayerLostToTwoInGameTrainers[];
 extern const u8 TheOpposingString[];
 extern const u8 TheShadowString[];
-extern const u8 TheWildString[];
-extern const u8 sText_thewild[];
+extern const u8 gText_TheWild[];
+extern const u8 gText_BlackPlayerPrefix[];
 
 //Rewritten Strings
 extern const u8 BattleText_TwoLinkTrainersWantToBattle[];

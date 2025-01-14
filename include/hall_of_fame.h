@@ -24,10 +24,6 @@
 #define tMonNo          data[4]
 // #define tMonSpriteId(i) data[i + 5]
 
-#define CpuCopy16(src, dest, size) CPU_COPY(src, dest, size, 16)
-#define CPU_COPY(src, dest, size, bit) CpuSet(src, dest, CPU_SET_##bit##BIT | ((size)/(bit/8) & 0x1FFFFF))
-#define CPU_SET_16BIT     0x00000000
-
 /*
 struct __attribute__((packed, aligned(4))) HallofFameMon {
     u32 tid;
@@ -78,7 +74,7 @@ void CB2_DoHallOfFameScreenDontSaveData(void);
 void CB2_DoHallOfFamePC(void);
 void sub_8175280(void);
 
-void __attribute__((long_call)) sub_8112450(void);
+void __attribute__((long_call)) SaveQuestLogData(void);
 bool8 __attribute__((long_call)) InitHallOfFameScreen(void);
 void __attribute__((long_call)) Task_Hof_SetMonDisplayTask(u8 taskId);
 void __attribute__((long_call)) Task_Hof_TrySaveData(u8 taskId);

@@ -121,7 +121,7 @@ gBattleScriptingCommandsTable:
 .word 0x8025fa9					@cancelallactions
 .word atk69_adjustsetdamage
 .word atk6A_removeitem
-.word 0x80261cd					@atknameinbuff1
+.word atk6B_atknameinbuff1
 .word 0x8026209					@drawlvlupbox
 .word 0x80267d9					@resetsentmonsvalue
 .word 0x80267f1					@setatktoplayer0
@@ -191,7 +191,7 @@ gBattleScriptingCommandsTable:
 .word atkAE_healpartystatus		@healpartystatus
 .word atkAF_cursetarget
 .word atkB0_trysetspikes
-.word 0x802aaa5					@setforesight
+.word atkB1_setforesight
 .word atkB2_trysetperishsong	@setperishsong
 .word atkB3_rolloutdamagecalculation
 .word atkB4_jumpifconfusedandstatmaxed
@@ -223,7 +223,7 @@ gBattleScriptingCommandsTable:
 .word atkCE_settorment
 .word atkCF_jumpifnodamage
 .word atkD0_settaunt
-.word 0x802c039					@sethelpinghand
+.word atkD1_trysethelpinghand	@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
 .word atkD4_trywish
@@ -326,3 +326,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF33_SetEffectPrimaryScriptingBank
 .word atkFF34_canconfuse
 .word atkFF35_jumpifmaxchistrikecapped
+.word atkFF36_trygetcottondowntarget

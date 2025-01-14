@@ -35,11 +35,16 @@ loop_label:
 @ Pokedex Flags Banned Battle Types
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ BANNED_POKEDEX_FLAGS_BATTLE_TYPES, BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_POKE_DUDE | BATTLE_GHOST | BATTLE_TRAINER_TOWER @;Allowed in Frontier
+
 .org 0x13248, 0xFF
-.word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
 
 .org 0x13324, 0xFF
-.word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
+
+.org 0x1365E, 0xFF
+.word BANNED_POKEDEX_FLAGS_BATTLE_TYPES
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Vanilla Roamer Bug Fix
@@ -252,6 +257,18 @@ MaxLevelChange1:
 	.byte MAX_LEVEL	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Deoxys & Mew Trade Restrictions
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x4FAE0, 0xFF
+RemoveDeoxysMewTradeRestrictions_1:
+	mov r8, r8
+
+.org 0x4FBC8, 0xFF
+RemoveDeoxysMewTradeRestrictions_2:
+	mov r0, #0x0 @Not restricted
+	bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Fix Slow Camera Update
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -414,6 +431,7 @@ VeryTallGrassFix:
 .org 0x668DA, 0xFF @MovementAction_RestoreAnimation_Step0
 	mov r0, r4
 	bl GetEventObjectGraphicsInfoByEventObj
+	ldrb r1, [r0, #0xC] @;Necessary for no compile error - The FF won't get copied otherwise
 
 .org 0x67A12, 0xFF @npc_offscreen_culling
 	mov r5, r0
@@ -445,6 +463,30 @@ VeryTallGrassFix:
 .org 0x69310, 0xFF @DoRippleFieldEffect
 	mov r0, r0
 	bl GetEventObjectGraphicsInfoByEventObj
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Add/Delete Item Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x6A638, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A684, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A6C8, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x6A70C, 0xFF
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes & More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .org 0x79c18, 0xff	@don't load rain palette on entering map
 	.byte 0x0, 0x25, 0xe, 0xe0
@@ -486,11 +528,37 @@ VeryTallGrassFix:
 	lsr r1, #0x10
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ LR Button Mode Fixes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/*.org 0x941CA, 0xFF
+	cmp r0, #0x2
+	beq 0x0941F2
+
+.org 0x9445A, 0xFF
+	cmp r0, #0x2
+	beq 0x094482
+
+.org 0x94714, 0xFF
+	cmp r0, #0x2
+	beq 0x09473A
+
+.org 0x1347FE, 0xFF
+	cmp r0, #0x2
+	beq 0x134830
+
+.org 0x134822, 0xFF
+	cmp r0, #0x2
+	beq 0x134830*/
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ GetBagItemQuanity
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x99DA0, 0xFF
 	ldrh r0, [r0]
 	bx lr
+
+.org 0x9A816, 0xFF
+	ldrh r0, [r3, #0x4]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Triple Layer Blocks
@@ -603,6 +671,12 @@ RemoveCaughtMonPokedex151Limiter:
 	b RemoveCaughtMonPokedex151Limiter + 0x24 @0x106BA4
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove LR Change Bag Pockets
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x109182, 0xFF
+	mov r0, #0x0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove TM Animation
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x11CA2C, 0xFF
@@ -637,22 +711,18 @@ PPUpPostUseFix:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove TM Animation
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x125BC4, 0xFF
+RemoveTMAnimationLessThan4Moves:
+	bl RemoveTMAnimationLessThan4Moves + 0x84 @0x8125C48 Task_LearnedMove
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1262D2, 0xFF
 MaxLevelRareCandies:
 	.byte MAX_LEVEL
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Stay On Item Screen - Rare Candies
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.org 0x126332, 0xFF
-RareCandiesPostUseFix:
-	mov r1, r8
-	bl RareCandiesPostUseFix + 0x1E @ItemUseCB_RareCandyStep
-	mov r8, r8
-	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Summary Screen
@@ -745,6 +815,7 @@ SummaryScreenExpDisplay2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/* Handled in bytereplacement
 .org 0x3E05B0, 0xFF
 .word MULTICHOICE_STRING_LOADER
 .word 0x2
@@ -758,6 +829,7 @@ SummaryScreenExpDisplay2:
 .word 0x6
 .word MULTICHOICE_STRING_LOADER
 .word 0x7
+*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes

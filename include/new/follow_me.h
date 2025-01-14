@@ -28,7 +28,9 @@ void StairsMoveFollower(void);
 void FollowMe_HandleBike(void);
 void FollowMe_HandleSprite(void);
 void FollowMe_WarpSetEnd(void);
+bool8 IsFollowerAtCoords(s16 x, s16 y);
 void CreateFollowerAvatar(void);
+void TryAttachFollowerToPlayer(void);
 
 //Functions Hooked In
 void PlayerGoThroughDoor(u8 taskId);

@@ -10,13 +10,17 @@
 .equ BS_MOVE_MISSED_PAUSE, 0x81D6960
 .equ BS_BUFF_ATK_STATS, 0x81D6B9E
 .equ BS_MOVE_WEATHER_CHANGE, 0x81D7A14
+.equ BS_WEATHER_FORM_CHANGES, 0x81D92DC
 .equ BS_FLUSH_MSGBOX, 0x81D96A8
 .equ BS_HIT_FROM_ATTACKSTRING, 0x81D692E
 .equ BS_HIT_FROM_DAMAGE_CALC, 0x81D6930
 .equ BS_HIT_FROM_ATTACKANIMATION, 0x81D6934
 .equ BS_STANDARD_HIT, 0x81D6926
 .equ BS_FLUSH_MESSAGE_BOX, 0x81D96A8
-.equ BattleScript_AllStatsUp, 0x81D8D55
+
+@String Tables
+.equ gStatUpStringIds, 0x83FE57C
+.equ gStatDownStringIds, 0x83FE588
 
 @Banks
 .equ BANK_TARGET, 0
@@ -393,6 +397,10 @@
 	.4byte \checkaddr
 	.byte \compare
 	.4byte \rom_address
+	.endm
+
+	.macro jumpifbytenotequal byte1:req, byte2:req, jumpptr:req
+	jumpifarraynotequal \byte1, \byte2, 0x1, \jumpptr
 	.endm
 
 	.macro jumpifhalfword predicate, checkaddr, compare, rom_address
@@ -1722,6 +1730,11 @@
 	.4byte \rom_address
 	.endm
 
+	.macro trygetcottondowntarget rom_address
+	.byte 0xFF, 0x36
+	.4byte \rom_address
+	.endm
+
 @ various command changed to more readable macros
 	.equ VARIOUS_CANCEL_MULTI_TURN_MOVES, 0
 	.equ VARIOUS_SET_MAGIC_COAT_TARGET, 1
@@ -1788,3 +1801,10 @@
 	.macro waitfanfare battler:req
 	various \battler, VARIOUS_WAIT_FANFARE
 	.endm
+
+.macro tryblockweatherwithprimalweather suffix
+	jumpifweather weather_harsh_sun, BattleScript_ExtremelyHarshSunlightWasNotLessened\suffix 
+	jumpifweather weather_heavy_rain, BattleScript_NoReliefFromHeavyRain\suffix
+	jumpifweather weather_air_current, BattleScript_MysteriousAirCurrentBlowsOn\suffix
+	jumpifweather weather_vicious_sandstorm, BattleScript_ViciousSandstormRefusesToLetUp\suffix
+.endm

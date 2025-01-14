@@ -4,7 +4,7 @@
 #include "../include/fieldmap.h"
 #include "../include/field_message_box.h"
 #include "../include/field_weather.h"
-#include "../include/hall_of_fame.h"
+#include "../include/gpu_regs.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
@@ -15,7 +15,6 @@
 #include "../include/overworld.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/region_map.h"
-#include "../include/save.h"
 #include "../include/script.h"
 #include "../include/script_menu.h"
 #include "../include/sound.h"
@@ -29,13 +28,17 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_strings.h"
+#include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/dns.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
@@ -68,7 +71,7 @@ tables to edit:
 #define POKERUS_CURED 0x10
 
 extern u8 AddPalRef(u8 Type, u16 PalTag);
-extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
+extern u8 BuildFrontierParty(struct Pokemon* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
 
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
@@ -139,7 +142,8 @@ enum IVStatChecker
 	SetAllIVs
 };
 
-u32 GetMonDataFromVar8003(u8 dataRequest) {
+u32 GetMonDataFromVar8003(u8 dataRequest)
+{
 	u32 attr;
 	#ifdef SELECT_FROM_PC
 		if (Var8003 == 1)
@@ -152,7 +156,8 @@ u32 GetMonDataFromVar8003(u8 dataRequest) {
 	return attr;
 }
 
-void SetMonDataFromVar8003(u8 dataRequest) {
+void SetMonDataFromVar8003(u8 dataRequest)
+{
 	#ifdef SELECT_FROM_PC
 		if (Var8003 == 1)
 			SetBoxMonDataAt(Var8000, Var8001, dataRequest, &Var8005);
@@ -166,54 +171,53 @@ void SetMonDataFromVar8003(u8 dataRequest) {
 
 struct BoxPokemon* GetBoxedMonAddr(void)
 {
-	//return ((u32*) &(gSaveBlock3->boxes[Var8000][Var8001]));
 	return GetBoxedMonPtr(Var8000, Var8001);
 }
 
-
-u8 sp007_PokemonEVContestStatsChecker(void) {
-	u16 mon = Var8004;
+u8 sp007_PokemonEVContestStatsChecker(void)
+{
+	u16 partyId = Var8004;
 	u16 stat = Var8005;
 
-	if (mon >= PARTY_SIZE)
+	if (partyId >= PARTY_SIZE)
 		return 0;
 
 	switch(stat) {
-
-	case CheckEVs_HP:
-		return GetMonDataFromVar8003(MON_DATA_HP_EV);
-	case CheckEVs_Atk:
-		return GetMonDataFromVar8003(MON_DATA_ATK_EV);
-	case CheckEVs_Def:
-		return GetMonDataFromVar8003(MON_DATA_DEF_EV);
-	case CheckEVs_Spd:
-		return GetMonDataFromVar8003(MON_DATA_SPEED_EV);
-	case CheckEVs_SpAtk:
-		return GetMonDataFromVar8003(MON_DATA_SPATK_EV);
-	case CheckEVs_SpDef:
-		return GetMonDataFromVar8003(MON_DATA_SPDEF_EV);
-	case CheckEVs_Coolness:
-		return GetMonDataFromVar8003(MON_DATA_COOL);
-	case CheckEVs_Beauty:
-		return GetMonDataFromVar8003(MON_DATA_BEAUTY);
-	case CheckEVs_Cuteness:
-		return GetMonDataFromVar8003(MON_DATA_CUTE);
-	case CheckEVs_Smartness:
-		return GetMonDataFromVar8003(MON_DATA_SMART);
-	case CheckEVs_Toughness:
-		return GetMonDataFromVar8003(MON_DATA_TOUGH);
-	case CheckEVs_Luster:
-		return GetMonDataFromVar8003(MON_DATA_SHEEN);
-	default:
-		return 0;
+		case CheckEVs_HP:
+			return GetMonDataFromVar8003(MON_DATA_HP_EV);
+		case CheckEVs_Atk:
+			return GetMonDataFromVar8003(MON_DATA_ATK_EV);
+		case CheckEVs_Def:
+			return GetMonDataFromVar8003(MON_DATA_DEF_EV);
+		case CheckEVs_Spd:
+			return GetMonDataFromVar8003(MON_DATA_SPEED_EV);
+		case CheckEVs_SpAtk:
+			return GetMonDataFromVar8003(MON_DATA_SPATK_EV);
+		case CheckEVs_SpDef:
+			return GetMonDataFromVar8003(MON_DATA_SPDEF_EV);
+		case CheckEVs_Coolness:
+			return GetMonDataFromVar8003(MON_DATA_COOL);
+		case CheckEVs_Beauty:
+			return GetMonDataFromVar8003(MON_DATA_BEAUTY);
+		case CheckEVs_Cuteness:
+			return GetMonDataFromVar8003(MON_DATA_CUTE);
+		case CheckEVs_Smartness:
+			return GetMonDataFromVar8003(MON_DATA_SMART);
+		case CheckEVs_Toughness:
+			return GetMonDataFromVar8003(MON_DATA_TOUGH);
+		case CheckEVs_Luster:
+			return GetMonDataFromVar8003(MON_DATA_SHEEN);
+		default:
+			return 0;
 	}
 }
 
-u8 sp008_PokemonIVChecker(void) {
-	u16 mon = Var8004;
+u8 sp008_PokemonIVChecker(void)
+{
+	u16 partyId = Var8004;
 	u16 stat = Var8005;
 
-	if (mon >= 6)
+	if (partyId >= PARTY_SIZE)
 		return 0;
 
 	switch(stat) {
@@ -235,62 +239,61 @@ u8 sp008_PokemonIVChecker(void) {
 }
 
 
-bool8 sp009_PokemonRibbonChecker(void) {
-	u16 mon = Var8004;
+bool8 sp009_PokemonRibbonChecker(void)
+{
+	u16 partyId = Var8004;
 	u16 ribbon = Var8005;
 
-	if (mon >= PARTY_SIZE)
-		return FALSE;
-	else if (ribbon > 0x1F)
+	if (partyId >= PARTY_SIZE || ribbon > 0x1F)
 		return FALSE;
 
-	if (GetMonData(&gPlayerParty[mon], MON_DATA_RIBBONS, NULL) & gBitTable[ribbon])
+	if (GetMonData(&gPlayerParty[partyId], MON_DATA_RIBBONS, NULL) & gBitTable[ribbon])
 		return TRUE;
 
 	return FALSE;
 }
 
-
-u8 sp00A_CheckPokerusTimer(void) {
-	u16 mon = Var8004;
-	if (mon >= 6)
+u8 sp00A_CheckPokerusTimer(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return 0;
+
 	return GetMonDataFromVar8003(MON_DATA_POKERUS);
 }
 
 
-u16 sp00B_CheckPokeball(void) {
-	u16 mon = Var8004;
-
-	if (mon >= 6)
+u16 sp00B_CheckPokeball(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return 0;
 
 	return GetMonDataFromVar8003(MON_DATA_POKEBALL);
 }
 
-
-u8 sp00C_CheckCaptureLocation(void) {
-	u16 mon = Var8004;
-
-	if (mon >= 6)
+u8 sp00C_CheckCaptureLocation(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return 0;
 
 	return GetMonDataFromVar8003(MON_DATA_MET_LOCATION);
 }
 
-
-u8 sp00D_CheckHappiness(void) {
-	u16 mon = Var8004;
-	if (mon >= 6)
+u8 sp00D_CheckHappiness(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return 0;
+
 	return GetMonDataFromVar8003(MON_DATA_FRIENDSHIP);
 }
 
-
-item_t sp00E_CheckHeldItem(void) {
-	u16 mon = Var8004;
-
-	if (mon >= 6)
+item_t sp00E_CheckHeldItem(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return 0;
 
 	return GetMonDataFromVar8003(MON_DATA_HELD_ITEM);
@@ -298,11 +301,11 @@ item_t sp00E_CheckHeldItem(void) {
 
 
 void sp00F_EVAdderSubtracter(void) {
-	u16 mon = Var8004;
+	u16 partyId = Var8004;
 	u16 stat = Var8005;
 	s32 amount = Var8006;
 
-	if (mon >= PARTY_SIZE)
+	if (partyId >= PARTY_SIZE)
 		return;
 
 	s16 curr = sp007_PokemonEVContestStatsChecker();	//Current val
@@ -340,15 +343,19 @@ void sp00F_EVAdderSubtracter(void) {
 		case CheckEVs_SpDef:
 			return SetMonDataFromVar8003(MON_DATA_SPDEF_EV);
 	}
+
+	CalculateMonStats(&gPlayerParty[partyId]);
 }
 
-
-void sp010_IVSetter(void) {
-	u16 mon = Var8004;
+void sp010_IVSetter(void)
+{
+	u16 partyId = Var8004;
 	u16 stat = Var8005;
 	u16 amount = Var8006;
-	if (mon >= 6)
+
+	if (partyId >= PARTY_SIZE)
 		return;
+
 	if (amount > 31)
 		amount = 31;
 	Var8005 = amount;
@@ -373,23 +380,20 @@ void sp010_IVSetter(void) {
 			SetMonDataFromVar8003(MON_DATA_SPDEF_IV);
 			break;
 		case SetAllIVs:
-		{
-			u8 i;
-			for (i = 0; i <= CheckIVs_SpDef; ++i)
-			{
+			for (u32 i = 0; i <= CheckIVs_SpDef; ++i)
 				SetMonDataFromVar8003(MON_DATA_HP_IV + i);
-			}
-		}
 	}
-	return;
+
+	CalculateMonStats(&gPlayerParty[partyId]);
 }
 
-void sp011_RibbonSetterCleaner(void) {
-	u16 mon = Var8004;
+void sp011_RibbonSetterCleaner(void)
+{
+	u16 partyId = Var8004;
 	u16 ribbon = Var8005;
-	u32* ribbonArray = (u32*) &(((u8*) 0x20242D0)[mon * sizeof(struct Pokemon)]);
+	u32* ribbonArray = (u32*) &(((u8*) 0x20242D0)[partyId * sizeof(struct Pokemon)]);
 
-	if (mon >= PARTY_SIZE)
+	if (partyId >= PARTY_SIZE)
 		return;
 
 	if (ribbon & 0x100)
@@ -397,74 +401,67 @@ void sp011_RibbonSetterCleaner(void) {
 		ribbon ^= 0x100;
 		*ribbonArray &= ~gBitTable[ribbon];
 	}
-	else if (ribbon > 0x1F)
-	{
-		return;
-	}
-	else
+	else if (ribbon <= 0x1F)
 	{
 		*ribbonArray |= gBitTable[ribbon];
 	}
 }
 
-void sp012_PokerusSetter(void) {
-	u16 mon = Var8004;
-	//u16 timer = Var8005;
-	//u8 strain;
-
-	if (mon >= 6)
+void sp012_PokerusSetter(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return;
 
 	if (Var8005 > 16)
 		Var8005 = 16;
 
 	SetMonDataFromVar8003(MON_DATA_POKERUS);
-
 }
 
-void sp013_IncreaseDecreaseHappiness(void) {
-	u16 mon = Var8004;
+void sp013_IncreaseDecreaseHappiness(void)
+{
+	u16 partyId = Var8004;
 	u16 amount = Var8005;
 
-	if (mon >= 6)
+	if (partyId >= PARTY_SIZE)
 		return;
+
 	u8 current = GetMonDataFromVar8003(MON_DATA_FRIENDSHIP);	// current happiness
 	if (amount & 0x100)
 	{
-		//subtraction
+		//Subtraction
 		amount ^= 0x100;
 		Var8005 = current - amount;
 	}
 	else
 		Var8005 = current + amount;
-	// bound friendship
+
+	//Bound friendship
 	if (Var8005 < 0)
 		Var8005 = 0;
 	else if (Var8005 > 255)
 		Var8005 = 255;
+
 	Var8006 = 0;
 	SetMonDataFromVar8003(MON_DATA_FRIENDSHIP);
 }
 
-void sp014_ChangeCapturedBall(void) {
-	u16 mon = Var8004;
-	u16 ball = Var8005;
+void sp014_ChangeCapturedBall(void)
+{
+	u16 partyId = Var8004;
+	u16 ballType = Var8005;
 
-	if (mon >= 6)
-		return;
-	else if (ball >= NUM_BALLS)
-		return;
-	SetMonDataFromVar8003(MON_DATA_POKEBALL);
-
-	return;
+	if (partyId < PARTY_SIZE && ballType < NUM_BALLS)
+		SetMonDataFromVar8003(MON_DATA_POKEBALL);
 }
 
-void sp015_ModifyHeldItem(void) {
-	u16 mon = Var8004;
-	//u16 item = Var8005;
-	Var800D = 1;
+void sp015_ModifyHeldItem(void)
+{
+	u16 partyId = Var8004;
+	gSpecialVar_LastResult = TRUE;
 
-	if (mon >= 6)
+	if (partyId >= PARTY_SIZE)
 		return;
 
 	if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != ITEM_NONE)
@@ -478,20 +475,19 @@ void sp015_ModifyHeldItem(void) {
 	else
 	{
 		SetMonDataFromVar8003(MON_DATA_HELD_ITEM);
-		Var800D = 0;
+		gSpecialVar_LastResult = FALSE;
 	}
-	return;
 }
 
-void sp016_ChangePokemonSpecies(void) {
-	u16 mon = Var8004;
-	//u16 species = Var8005;
-
-	if (mon >= 6)
+void sp016_ChangePokemonSpecies(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
 		return;
-	SetMonDataFromVar8003(MON_DATA_SPECIES);
-}
 
+	SetMonDataFromVar8003(MON_DATA_SPECIES);
+	CalculateMonStats(&gPlayerParty[partyId]);
+}
 
 // Change Pokemon Attacks
 // Inputs:
@@ -500,57 +496,44 @@ void sp016_ChangePokemonSpecies(void) {
 //		Var8006: move to replace (0 to delete)
 //
 // Unavailable for pc selection
-void sp017_ChangePokemonAttacks(void) {
-	u16 mon = Var8004;
+void sp017_ChangePokemonAttacks(void)
+{
+	u16 partyId = Var8004;
 	u16 moveSlot = Var8005;
 	u16 move = Var8006;
 
-	u8 i;
-	if (mon >= 6)
-		return;
-	else if (move > LAST_MOVE_INDEX)
-		return;
-	else if (moveSlot > MAX_MON_MOVES)
+	if (partyId >= PARTY_SIZE || move > LAST_MOVE_INDEX || moveSlot > MAX_MON_MOVES)
 		return;
 
-	// check empty move slots, if not deleting
-	if (move != 0)
+	//Check empty move slots first, if not deleting
+	if (move != MOVE_NONE)
 	{
-		for (i = 0; i < MAX_MON_MOVES-1; ++i)
-		{
-			if (gPlayerParty[mon].moves[i] == 0)
-			{
-				gPlayerParty[mon].moves[i] = move;
-				gPlayerParty[mon].pp[i] = gBattleMoves[move].pp;
-				return;
-			}
-		}
-		// otherwise, replace given slot
-		gPlayerParty[mon].moves[moveSlot] = move;
-		gPlayerParty[mon].pp[moveSlot] = gBattleMoves[move].pp;
-		gPlayerParty[mon].pp_bonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
+		if (GiveMoveToMon(&gPlayerParty[partyId], move) != 0xFFFF)
+			return; //Had an empty slot
+
+		//Otherwise, replace given slot
+		SetMonMoveSlot(&gPlayerParty[partyId], move, moveSlot);
+		RemoveMonPPBonus(&gPlayerParty[partyId], moveSlot);
 	}
-	else if (move == 0)
+	else
 		Special_0DD_DeleteMove();
 }
 
+species_t sp018_CheckPokemonSpecies(void)
+{
+	u16 partyId = Var8004;
+	if (partyId >= PARTY_SIZE)
+		return SPECIES_NONE;
 
-species_t sp018_CheckPokemonSpecies(void) {
-	u16 mon = Var8004;
-	if (mon >= 6)
-		return 0;
-	else
-		return GetMonDataFromVar8003(MON_DATA_SPECIES);
+	return GetMonDataFromVar8003(MON_DATA_SPECIES);
 }
 
-
-//Add pp bonus calc?
-u8 sp019_CheckAttackPP(void) {
-	u16 mon = Var8004;
+u8 sp019_CheckAttackPP(void)
+{
+	u16 partyId = Var8004;
 	u16 slot = Var8005;
-	if (mon >= 6)
-		return 0;
-	else if (slot >= MAX_MON_MOVES)
+
+	if (partyId >= PARTY_SIZE || (slot >= MAX_MON_MOVES))
 		return 0;
 
 	return GetMonDataFromVar8003(MON_DATA_PP1 + slot);
@@ -568,13 +551,13 @@ u8 sp019_CheckAttackPP(void) {
 //			3 to store from box to free ram
 // 		Var8005: slot num (for special 0xFE, activate trade)
 // Outputs:
-//		Var800D: success (0) or failure (1)
+//		LastResult: success (0) or failure (1)
 //
 void sp01A_CopyPartyData(void)
 {
 #ifdef SELECT_FROM_PC
 	u8 slot = Var8005;
-	Var800D = 1;
+	gSpecialVar_LastResult = 1;
 	if (slot >= 6)
 		return;
 
@@ -598,13 +581,13 @@ void sp01A_CopyPartyData(void)
 		case 3:
 			// box to free ram
 			Memcpy(&gEnemyParty[5], GetBoxedMonAddr(), sizeof(struct CompressedPokemon));
-			CalculateMonStats((pokemon_t*) &gEnemyParty[5]);
+			CalculateMonStats((struct Pokemon*) &gEnemyParty[5]);
 			break;
 
 		default:
 			return;	//failure
 	}
-	Var800D = 0;
+	gSpecialVar_LastResult = 0;
 	return;
 #else
 	return;
@@ -619,13 +602,13 @@ void sp01A_CopyPartyData(void)
 //	var8002: withdraw (0) or deposit (1)
 //	var8005: party slot num
 //Outputs:
-//	var800d: success(0) or failure(1)
+//	gSpecialVar_LastResult: success(0) or failure(1)
 //
 void sp01B_SwapPartyAndBoxData(void)
 {
 #ifdef SELECT_FROM_PC
 	u16 slot = Var8005;
-	Var800D = 1;
+	gSpecialVar_LastResult = 1;
 	if (slot >= 6)
 		return;
 
@@ -634,13 +617,13 @@ void sp01B_SwapPartyAndBoxData(void)
 		case 0:
 			// withdraw from box to party
 			Memcpy(&gPlayerParty[slot], GetBoxedMonAddr(), sizeof(struct CompressedPokemon));
-			CalculateMonStats((pokemon_t*) &gPlayerParty[slot]);
+			CalculateMonStats((struct Pokemon*) &gPlayerParty[slot]);
 			ZeroBoxMonAt(Var8000, Var8001);	//clear box pokemon data
-			Var800D = 0;
+			gSpecialVar_LastResult = 0;
 			break;
 
 		case 1:
-			Var800D = SendMonToBoxPos(&gPlayerParty[slot], Var8000, Var8001);
+			gSpecialVar_LastResult = SendMonToBoxPos(&gPlayerParty[slot], Var8000, Var8001);
 			break;
 
 	}
@@ -745,20 +728,29 @@ u8 sp063_StatusChecker(void)
 }
 
 
-static void TryAssignStatusToMon(pokemon_t* mon, u32 status)
+static void TryAssignStatusToMon(struct Pokemon* mon, u32 status, bool8 checkAffected)
 {
-	if (status & STATUS1_SLEEP && CanPartyMonBePutToSleep(mon))
-		mon->condition = STATUS1_SLEEP;
-	else if (status & STATUS1_POISON && CanPartyMonBePoisoned(mon))
-		mon->condition = STATUS1_POISON;
-	else if (status & STATUS1_BURN && CanPartyMonBeBurned(mon))
-		mon->condition = STATUS1_BURN;
-	else if (status & STATUS1_FREEZE && CanPartyMonBeFrozen(mon))
-		mon->condition = STATUS1_FREEZE;
-	else if (status & STATUS1_PARALYSIS && CanPartyMonBeParalyzed(mon))
-		mon->condition = STATUS1_PARALYSIS;
-	else if (status & STATUS1_TOXIC_POISON && CanPartyMonBePoisoned(mon))
-		mon->condition = STATUS1_TOXIC_POISON;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+
+	if (species == SPECIES_NONE || species == SPECIES_EGG
+	|| GetMonData(mon, MON_DATA_HP, NULL) == 0)
+		return;
+
+	if (checkAffected) //Only assign status if the mon can actually get that status condition.
+	{
+		if (status & STATUS1_SLEEP && CanPartyMonBePutToSleep(mon))
+			mon->condition = STATUS1_SLEEP;
+		else if (status & STATUS1_POISON && CanPartyMonBePoisoned(mon))
+			mon->condition = STATUS1_POISON;
+		else if (status & STATUS1_BURN && CanPartyMonBeBurned(mon))
+			mon->condition = STATUS1_BURN;
+		else if (status & STATUS1_FREEZE && CanPartyMonBeFrozen(mon))
+			mon->condition = STATUS1_FREEZE;
+		else if (status & STATUS1_PARALYSIS && CanPartyMonBeParalyzed(mon))
+			mon->condition = STATUS1_PARALYSIS;
+		else if (status & STATUS1_TOXIC_POISON && CanPartyMonBePoisoned(mon))
+			mon->condition = STATUS1_TOXIC_POISON;
+	}
 }
 
 // Inflict a status to affect a party member or entire party
@@ -768,28 +760,13 @@ void sp064_InflictStatus(void)
 	u8 status = Var8005;
 	u8 i;
 
-	CalculatePlayerPartyCount();
-
-	if (!Var8006)
+	if (slot == 0xF)
 	{
-		if (slot == 0xF)
-		{
-			for (i = 0; i < gPlayerPartyCount; ++i)
-				gPlayerParty[i].condition = status;
-		}
-		else
-			gPlayerParty[slot].condition = status;
+		for (i = 0; i < PARTY_SIZE; ++i)
+			TryAssignStatusToMon(&gPlayerParty[i], status, Var8006);
 	}
-	else //Only assign status if the mon can actually get that status condition.
-	{
-		if (slot == 0xF)
-		{
-			for (i = 0; i < gPlayerPartyCount; ++i)
-				TryAssignStatusToMon(&gPlayerParty[i], status);
-		}
-		else
-			TryAssignStatusToMon(&gPlayerParty[slot], status);
-	}
+	else
+		TryAssignStatusToMon(&gPlayerParty[slot], status, Var8006);
 }
 
 
@@ -799,8 +776,13 @@ u16 sp065_CheckMonHP(void)
 	return gPlayerParty[Var8004].hp;
 }
 
-static void InflictPartyDamageOrHeal(pokemon_t* mon, u16 damage, u8 type)
+static void InflictPartyDamageOrHeal(struct Pokemon* mon, u16 damage, u8 type)
 {
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
+
+	if (species == SPECIES_NONE || species == SPECIES_EGG)
+		return;
+
 	s32 currHP = mon->hp;
 
 	if (type == 1) //Heal
@@ -816,17 +798,16 @@ static void InflictPartyDamageOrHeal(pokemon_t* mon, u16 damage, u8 type)
 	mon->hp = currHP;
 }
 
-// inflict damage on a party pokemon, or entire party
-void sp066_InflictPartyDamage(void) {
+//Inflict damage on a party pokemon, or entire party
+void sp066_InflictPartyDamage(void)
+{
 	u8 slot = Var8004;
 	u16 dmg = Var8005;
 	u8 switcher = Var8006;	//1 to heal, else damage
 
-	CalculatePlayerPartyCount();
-
-	if (slot == 0xf)
+	if (slot == 0xF)
 	{
-		for (int i = 0; i < gPlayerPartyCount; ++i)
+		for (u32 i = 0; i < PARTY_SIZE; ++i)
 			InflictPartyDamageOrHeal(&gPlayerParty[i], dmg, switcher);
 	}
 	else
@@ -946,7 +927,7 @@ u16 sp02E_CheckLRButtons(void)
 
 void sp02F_KeyDump(void)
 {
-	Var800D = ~(gKeyReg) & 0x3FF;
+	gSpecialVar_LastResult = ~(gKeyReg) & 0x3FF;
 }
 
 // Inputs:
@@ -1171,7 +1152,10 @@ bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
 
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL)
 	||  mon->hp == 0
-	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
+	#ifndef UNBOUND
+	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList)
+	#endif
+	)
 		return FALSE;
 
 	if (gBaseStats[species].type1 == TYPE_FLYING
@@ -1205,14 +1189,21 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 //@Returns: Species roaming.
 u16 sp058_BufferSwarmText(void)
 {
-	u8 index = VarGet(VAR_SWARM_INDEX);
-	u8 mapName = gSwarmTable[index].mapName;
-	u16 species = gSwarmTable[index].species;
+	u8 index = GetCurrentSwarmIndex();
 
-	GetMapName(sScriptStringVars[0], mapName, 0);
-	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
+	if (IsValidSwarmIndex(index))
+	{
+		u8 mapName = gSwarmTable[index].mapName;
+		u16 species = gSwarmTable[index].species;
+		TryRandomizeSpecies(&species);
 
-	return species;
+		GetMapName(sScriptStringVars[0], mapName, 0);
+		StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
+		
+		return species;
+	}
+	
+	return SPECIES_NONE;
 }
 
 //@Details: Buffers the map name where the given roamer can be found to buffer1,
@@ -1287,7 +1278,7 @@ void sp046_StartTimer(void)
 void sp047_HaltTimer(void)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
-		gTimerValue = gGbaTimer->timerVal;
+	gTimerValue = gGbaTimer->timerVal;
 	#endif
 	gGbaTimer->timerOn ^= 0x80;
 	gGbaTimer->timerFlags ^= 0x80;
@@ -1298,7 +1289,7 @@ void sp047_HaltTimer(void)
 void sp048_ResumeTimer(void)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
-		gGbaTimer->timerVal = gTimerValue;
+	gGbaTimer->timerVal = gTimerValue;
 	#endif
 	gGbaTimer->timerOn |= 0x80;
 	gGbaTimer->timerFlags |= 0x80;
@@ -1311,7 +1302,6 @@ u16 sp049_StopTimer(void)
 	gGbaTimer->timerOn ^= 0x80;
 	gGbaTimer->timerFlags ^= 0x80;
 	return gGbaTimer->timerVal;
-
 }
 
 //@Returns: The time on the timer.
@@ -1319,7 +1309,6 @@ u16 sp04A_GetTimerValue(void)
 {
 	return gGbaTimer->timerVal;
 }
-
 
 
 void sp04C_UpdatePlaytime(void)
@@ -1640,17 +1629,43 @@ bool8 IsTimeInVarInFuture(u16 var)
 {
 	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
 
-	u8 hour = timeData->hour;
-	u8 minute = timeData->minute;
+	//u8 hour = timeData->hour;
+	//u8 minute = timeData->minute; //Changing time within day is acceptable
 	u8 day = timeData->day;
 	u8 month = timeData->month;
 	u32 year = timeData->year + timeData->century * 100;
 
 	return year > gClock.year
 	|| (year == gClock.year && month > gClock.month)
-	|| (year == gClock.year && month == gClock.month && day > gClock.day)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
-	|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour > gClock.hour)
+	//|| (year == gClock.year && month == gClock.month && day == gClock.day && hour == gClock.hour && minute > gClock.minute);
+}
+
+bool8 IsDayInVarInFuture(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u8 day = timeData->day;
+	u8 month = timeData->month;
+	u32 year = timeData->year + timeData->century * 100;
+
+	return year > gClock.year
+	|| (year == gClock.year && month > gClock.month)
+	|| (year == gClock.year && month == gClock.month && day > gClock.day);
+}
+
+void BufferYearMonthDayFromVar(u16 var)
+{
+	struct DailyEventVar* timeData = (struct DailyEventVar*) GetVarPointer(var);
+
+	u32 year = timeData->year + timeData->century * 100;
+	u8 month = timeData->month;
+	u8 day = timeData->day;
+
+	ConvertIntToDecimalStringN(gStringVar1, year, STR_CONV_MODE_LEFT_ALIGN, 4);
+	ConvertIntToDecimalStringN(gStringVar2, month, STR_CONV_MODE_LEFT_ALIGN, 2);
+	ConvertIntToDecimalStringN(gStringVar3, day, STR_CONV_MODE_LEFT_ALIGN, 2);
 }
 
 //@Details: Runs a daily event.
@@ -1735,8 +1750,8 @@ void sp0A1_UpdateTimeInVars(void)
 //					  2 - Get day difference.
 //					  3 - Get month difference.
 //					  4 - Get year difference.
-//@Returns: The time difference between the current time and the time stored in the given var.
-u32 sp0A2_GetTimeDifference(void)
+//@Returns: The time difference between the current time and the time stored in the given var. Max 65535.
+u16 sp0A2_GetTimeDifference(void)
 {
 	u32 difference = 0;
 	u16 eventVar = Var8000; //Var contained in Var8000
@@ -1765,6 +1780,9 @@ u32 sp0A2_GetTimeDifference(void)
 			difference = GetYearDifference(startYear, gClock.year);
 			break;
 	}
+
+	if (difference > 0xFFFF)
+		difference = 0xFFFF; //Quantize to two bytes
 
 	return difference;
 }
@@ -2044,395 +2062,55 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 	return PARTY_SIZE;
 }
 
-// Hall of Fame Fix for Expanded Pokemon
-// credit to sagiri: https://github.com/Sagiri/fame-hall
+//Fix fadescreens in rain
+bool8 __attribute__((long_call)) IsPaletteNotActive(void);
 
-void CB2_DoHallOfFameScreen(void);
-void Task_Hof_InitTeamSaveData(u8 taskId);
-void Task_Hof_DisplayMon(u8 taskId);
-void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId);
-void Task_Hof_TryDisplayAnotherMon(u8 taskId);
-void Task_HofPC_CopySaveData(u8 taskId);
-void Task_HofPC_DrawSpritesPrintText(u8 taskId);
-void Task_HofPC_PrintMonInfo(u8 taskId);
-void Task_Hof_InitMonData(u8 taskId);
-void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2);
-
-
-void CB2_DoHallOfFameScreen(void) {
-	if (!InitHallOfFameScreen()) {
-		u8 taskId = CreateTask(Task_Hof_InitMonData, 0);
-		gTasks[taskId].tDontSaveData = FALSE;
-		sHofMonPtr = Calloc(sizeof(*sHofMonPtr));
-	}
+static bool8 IsPaletteFadeNotActive(void)
+{
+	return IsPaletteNotActive()
+		&& gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_IN; //Used instead of gPaletteFade.active in certain weathers
 }
 
-
-void Task_Hof_InitTeamSaveData(u8 taskId) {
-	u16 i;
-
-	Var8005 = 50;	// 020370c2
-	struct HallofFameTeam *lastSavedTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-
-	sub_8112450();
-
-	if (gHasHallOfFameRecords == 0)
-		Memset(gDecompressionBuffer, 0, 0x2000);
-	else
+static bool8 ResetUnfadedPaletteWhenPaletteNotActive(void)
+{
+	if (IsPaletteFadeNotActive())
 	{
-		if (SaveLoadGameData(3) != TRUE)
-			Memset(gDecompressionBuffer, 0, 0x2000);
+		CpuCopy32(gPaletteDecompressionBuffer, gPlttBufferUnfaded, PLTT_DECOMP_BUFFER_SIZE); //Restore original unfaded pelette
+		return TRUE;
 	}
 
-	for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++lastSavedTeam)
+	return FALSE;
+}
+
+bool8 ScrCmd_fadescreenswapbuffers(struct ScriptContext *ctx)
+{
+	u8 mode = ScriptReadByte(ctx);
+
+	switch (mode)
 	{
-		if (lastSavedTeam->mon[0].species == SPECIES_NONE)
+		case FADE_TO_BLACK:
+		case FADE_TO_WHITE:
+		default:
+			CpuCopy32(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_DECOMP_BUFFER_SIZE); //Backup because replaced with faded palette in weather
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, ResetUnfadedPaletteWhenPaletteNotActive);
+			break;
+		case FADE_FROM_BLACK:
+		case FADE_FROM_WHITE:
+			FadeScreen(mode, 0);
+			SetupNativeScript(ctx, IsPaletteFadeNotActive);
 			break;
 	}
 
-	if (i >= HALL_OF_FAME_MAX_TEAMS) {
-		struct HallofFameTeam *afterTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-		struct HallofFameTeam *beforeTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-		afterTeam++;
-		for (i = 0; i < HALL_OF_FAME_MAX_TEAMS - 1; ++i, beforeTeam++, afterTeam++) {
-			*beforeTeam = *afterTeam;
-		}
-		lastSavedTeam--;
-	}
-	*lastSavedTeam = *sHofMonPtr;
-
-	NewMenuHelpers_DrawDialogueFrame(0, 0);
-	AddTextPrinterParameterized2(0, 1, gText_SavingDontTurnOffPower, 0, NULL, 2, 1, 3);
-	CopyWindowToVram(0, 3);
-	gTasks[taskId].func = Task_Hof_TrySaveData;
-}
-
-
-void Task_Hof_DisplayMon(u8 taskId) {
-	u8 spriteId;
-	s16 xPos, yPos, field4, field6;
-
-	u16 currMonId = gTasks[taskId].tDisplayedMonId;
-	struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
-
-	if (gTasks[taskId].tMonNumber > 3) {
-		xPos = sHallOfFame_MonFullTeamPositions[currMonId][0];
-		yPos = sHallOfFame_MonFullTeamPositions[currMonId][1];
-		field4 = sHallOfFame_MonFullTeamPositions[currMonId][2];
-		field6 = sHallOfFame_MonFullTeamPositions[currMonId][3];
-	} else {
-		xPos = sHallOfFame_MonHalfTeamPositions[currMonId][0];
-		yPos = sHallOfFame_MonHalfTeamPositions[currMonId][1];
-		field4 = sHallOfFame_MonHalfTeamPositions[currMonId][2];
-		field6 = sHallOfFame_MonHalfTeamPositions[currMonId][3];
-	}
-
-	// if (currMon->species == SPECIES_EGG)
-	//	 field6 += 10;
-
-	spriteId = CreateMonPicSprite_HandleDeoxys(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
-	gSprites[spriteId].tDestinationX = field4;
-	gSprites[spriteId].tDestinationY = field6;
-	gSprites[spriteId].data[0] = 0;
-	// gSprites[spriteId].tSpecies = currMon->species;
-	gSprites[spriteId].callback = SpriteCB_GetOnScreenAndAnimate;
-	gTasks[taskId].tMonSpriteId(currMonId) = spriteId;
-	ClearDialogWindowAndFrame(0, TRUE);
-	gTasks[taskId].func = Task_Hof_PrintMonInfoAfterAnimating;
-}
-
-
-void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId) {
-	u16 currMonId = gTasks[taskId].tDisplayedMonId;
-	struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
-	struct Sprite *monSprite = &gSprites[gTasks[taskId].tMonSpriteId(currMonId)];
-
-	if (monSprite->data[0]) {
-		if (currMon->species != SPECIES_EGG)
-			PlayCry1(currMon->species, 0);
-
-		HallOfFame_PrintMonInfo(currMon, 0, 14);
-		gTasks[taskId].tFrameCount = 120;
-		gTasks[taskId].func = Task_Hof_TryDisplayAnotherMon;
-	}
-}
-
-
-void Task_Hof_TryDisplayAnotherMon(u8 taskId) {
-	u16 currPokeID = gTasks[taskId].tDisplayedMonId;
-	struct HallofFameMon *currMon = &sHofMonPtr->mon[currPokeID];
-
-	if (gTasks[taskId].tFrameCount != 0) {
-		gTasks[taskId].tFrameCount--;
-	} else {
-		sHofFadingRelated |= (0x10000 << gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.paletteNum);
-		if (gTasks[taskId].tDisplayedMonId <= 4 && currMon[1].species != SPECIES_NONE)  // there is another pokemon to display
-		{
-			gTasks[taskId].tDisplayedMonId++;
-			BeginNormalPaletteFade(sHofFadingRelated, 0, 12, 12, RGB(22, 24, 29));
-			gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.priority = 1;
-			gTasks[taskId].func = Task_Hof_DisplayMon;
-		} else {
-			gTasks[taskId].func = Task_Hof_PaletteFadeAndPrintWelcomeText;
-		}
-	}
-}
-
-
-
-void Task_HofPC_CopySaveData(u8 taskId) {
-	HofPC_CreateWindow(0, 0x1E, 0, 0xC, 0x226);
-	if (SaveLoadGameData(3) != 1) {
-		gTasks[taskId].func = Task_HofPC_PrintDataIsCorrupted;
-	}
-	else
-	{
-		u16 i;
-		struct HallofFameTeam *savedTeams;
-
-		CpuCopy16(gDecompressionBuffer, sHofMonPtr, 0x2000);
-		savedTeams = sHofMonPtr;
-		for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++savedTeams)
-		{
-			if (savedTeams->mon[0].species == SPECIES_NONE)
-				break;
-		}
-
-		if (i < HALL_OF_FAME_MAX_TEAMS)
-			gTasks[taskId].tCurrTeamNo = i - 1;
-		else
-			gTasks[taskId].tCurrTeamNo = HALL_OF_FAME_MAX_TEAMS - 1;
-
-		gTasks[taskId].tCurrPageNo = GetGameStat(GAME_STAT_ENTERED_HOF);
-
-		gTasks[taskId].func = Task_HofPC_DrawSpritesPrintText;
-	}
-}
-
-
-
-void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
-	struct HallofFameTeam *savedTeams = sHofMonPtr;
-	struct HallofFameMon *currMon;
-	u16 i;
-
-	for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
-		savedTeams++;
-
-	currMon = &savedTeams->mon[0];
-	sHofFadingRelated = 0;
-	gTasks[taskId].tCurrMonId = 0;
-	gTasks[taskId].tMonNo = 0;
-
-	for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
-		if (currMon->species != 0)
-			gTasks[taskId].tMonNo++;
-	}
-
-	currMon = &savedTeams->mon[0];
-
-	for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
-		if (currMon->species != 0) {
-			u16 spriteId;
-			s16 posX, posY;
-
-			if (gTasks[taskId].tMonNo > 3) {
-				posX = sHallOfFame_MonFullTeamPositions[i][2];
-				posY = sHallOfFame_MonFullTeamPositions[i][3];
-			} else {
-				posX = sHallOfFame_MonHalfTeamPositions[i][2];
-				posY = sHallOfFame_MonHalfTeamPositions[i][3];
-			}
-
-			if (currMon->species == SPECIES_EGG)
-				posY += 10;
-
-			spriteId = CreateMonPicSprite_HandleDeoxys(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
-			gSprites[spriteId].oam.priority = 1;
-			gTasks[taskId].tMonSpriteId(i) = spriteId;
-		} else {
-			gTasks[taskId].tMonSpriteId(i) = 0xFF;
-		}
-	}
-
-	BlendPalettes(0xFFFF0000, 0xC, RGB(22, 24, 29));
-
-	ConvertIntToDecimalStringN(gStringVar1, gTasks[taskId].tCurrPageNo, STR_CONV_MODE_LEFT_ALIGN, 3);
-	StringExpandPlaceholders(gStringVar4, gText_HOFNumber);
-
-	if (gTasks[taskId].tCurrTeamNo <= 0)
-		HofPC_PutText(gStringVar4, gText_PickCancel, 0, 0, TRUE);
-	else
-		HofPC_PutText(gStringVar4, gText_PickNextCancel, 0, 0, TRUE);
-
-	gTasks[taskId].func = Task_HofPC_PrintMonInfo;
-}
-
-
-
-void Task_HofPC_PrintMonInfo(u8 taskId) {
-	struct HallofFameTeam *savedTeams = sHofMonPtr;
-	struct HallofFameMon *currMon;
-	u16 i;
-	u16 currMonID;
-
-	for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
-		savedTeams++;
-
-	for (i = 0; i < PARTY_SIZE; ++i) {
-		u16 spriteId = gTasks[taskId].tMonSpriteId(i);
-		if (spriteId != 0xFF)
-			gSprites[spriteId].oam.priority = 1;
-	}
-
-	currMonID = gTasks[taskId].tMonSpriteId(gTasks[taskId].tCurrMonId);
-	gSprites[currMonID].oam.priority = 0;
-	sHofFadingRelated = (0x10000 << gSprites[currMonID].oam.paletteNum) ^ 0xFFFF0000;
-	BlendPalettesUnfaded(sHofFadingRelated, 0xC, RGB(22, 24, 29));
-
-	currMon = &savedTeams->mon[gTasks[taskId].tCurrMonId];
-	if (currMon->species != SPECIES_EGG)
-	{
-		StopCryAndClearCrySongs();
-		PlayCry1(currMon->species, 0);
-	}
-	HallOfFame_PrintMonInfo(currMon, 0, 14);
-
-	gTasks[taskId].func = Task_HofPC_HandleInput;
-}
-
-
-
-void Task_Hof_InitMonData(u8 taskId) {
-	u16 i, j;
-
-	gTasks[taskId].tMonNumber = 0;  // valid pokes
-
-	for (i = 0; i < PARTY_SIZE; ++i)
-	{
-		u8 nick[POKEMON_NAME_LENGTH + 2];
-		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != 0)
-		{
-			sHofMonPtr->mon[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
-			sHofMonPtr->mon[i].tid = GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL);
-			sHofMonPtr->mon[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
-			sHofMonPtr->mon[i].lvl = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
-			GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, nick);
-			for (j = 0; j < POKEMON_NAME_LENGTH; ++j)
-			{
-				sHofMonPtr->mon[i].nick[j] = nick[j];
-			}
-			gTasks[taskId].tMonNumber++;
-		}
-		else
-		{
-			sHofMonPtr->mon[i].species = 0;
-			sHofMonPtr->mon[i].tid = 0;
-			sHofMonPtr->mon[i].personality = 0;
-			sHofMonPtr->mon[i].lvl = 0;
-			sHofMonPtr->mon[i].nick[0] = EOS;
-		}
-	}
-
-	sHofFadingRelated = 0;
-	gTasks[taskId].tDisplayedMonId = 0;
-	gTasks[taskId].tPlayerSpriteID = 0xFF;
-
-	for (i = 0; i < PARTY_SIZE; ++i)
-	{
-		gTasks[taskId].tMonSpriteId(i) = 0xFF;
-	}
-
-	if (gTasks[taskId].tDontSaveData != 0)
-		gTasks[taskId].func = Task_Hof_SetMonDisplayTask;
-	else
-		gTasks[taskId].func = Task_Hof_InitTeamSaveData;
-}
-
-
-
-void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2) {
-	u8 text[30];
-	u8 *stringPtr;
-	s32 dexNumber;
-	s32 width;
-
-	FillWindowPixelBuffer(0, 0);
-	PutWindowTilemap(0);
-
-	// dex number
-	if (currMon->species != SPECIES_EGG) {
-		stringPtr = StringCopy(text, gText_Number);
-		dexNumber = SpeciesToPokedexNum(currMon->species);
-		if (dexNumber != 0xFFFF) {
-			stringPtr[0] = (dexNumber / 100) + CHAR_0;
-			stringPtr++;
-			dexNumber = umodsi(dexNumber, 100);
-			stringPtr[0] = (dexNumber / 10) + CHAR_0;
-			stringPtr++;
-			stringPtr[0] = umodsi(dexNumber, 10) + CHAR_0;
-			stringPtr++;
-		} else {
-			*(stringPtr)++ = CHAR_QUESTION_MARK;
-			*(stringPtr)++ = CHAR_QUESTION_MARK;
-			*(stringPtr)++ = CHAR_QUESTION_MARK;
-		}
-		stringPtr[0] = EOS;
-		WindowPrint(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
-	}
-
-	// nick, species names, gender and level
-	Memcpy(text, currMon->nick, POKEMON_NAME_LENGTH);
-	text[POKEMON_NAME_LENGTH] = EOS;
-	if (currMon->species == SPECIES_EGG) {
-		width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
-		WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
-		CopyWindowToVram(0, 3);
-	} else {
-		width = -128 - GetStringWidth(2, text, GetFontAttribute(2, 2));
-		WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
-
-		text[0] = CHAR_SLASH;
-		stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
-
-		#if (defined NATIONAL_DEX_NIDORAN_M && defined NATIONAL_DEX_NIDORAN_F)
-		if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F)
-		{
-		#endif
-			switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality)) {
-				case MON_MALE:
-					stringPtr[0] = CHAR_MALE;
-					stringPtr++;
-					break;
-				case MON_FEMALE:
-					stringPtr[0] = CHAR_FEMALE;
-					stringPtr++;
-					break;
-			}
-		#if (defined NATIONAL_DEX_NIDORAN_M && defined NATIONAL_DEX_NIDORAN_F)
-		}
-		#endif
-
-		stringPtr[0] = EOS;
-		WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
-
-		stringPtr = StringCopy(text, gText_Level);
-		ConvertIntToDecimalStringN(stringPtr, currMon->lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
-		WindowPrint(0, 2, 0x20, 0x11, sUnknown_0840C23C, 0, text);
-
-		stringPtr = StringCopy(text, gText_IDNumber);
-		ConvertIntToDecimalStringN(stringPtr, (u16)(currMon->tid), STR_CONV_MODE_LEADING_ZEROS, 5);
-		WindowPrint(0, 2, 0x60, 0x11, sUnknown_0840C23C, 0, text);
-
-		CopyWindowToVram(0, 3);
-	}
+	return TRUE;
 }
 
 //Naming Screen Special////////////////////////////////////////////////////////////////////////////
 //Pointer+1 at 083E23D0, orig func at 0809F11C
 bool8 KeyboardKeyHandler_Character(u8 event)
 {
-	sub_809E518(3, 0, 0);
+	NamingScreen_TryStartButtonFlash(3, 0, 0);
+
 	if (event == KBEVENT_PRESSED_A)
 	{
 		if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER)
@@ -2453,11 +2131,15 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 		bool8 atMaxChars = NameChooserSelectLetter();
 
 		#ifdef AUTO_NAMING_SCREEN_SWAP
-		if (gNamingScreenData->currentPage == PAGE_UPPER && GetTextCaretPosition() == 1)
+		if (gNamingScreenData->currentPage == PAGE_UPPER && GetTextCaretPosition() == 1
+		&& gNamingScreenData->templateNum != NAMING_SCREEN_CHOOSE_NUMBER
+		&& gNamingScreenData->templateNum != NAMING_SCREEN_ENTER_PHRASE
+		&& gNamingScreenData->templateNum != NAMING_SCREEN_ENTER_PASSWORD
+		&& gNamingScreenData->templateNum != NAMING_SCREEN_ENTER_5_CHAR_PASSWORD)
 			gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
 		#endif
 
-		sub_809EAA8();
+		NamingScreen_SquishCursor();
 		if (atMaxChars)
 		{
 			SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason
@@ -2514,10 +2196,31 @@ static void ConvertNumberEntryToInteger(void)
 	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
 
+static void Task_DoChooseNumberScreen(u8 taskId)
+{
+	if (!gPaletteFade->active) //Fade screen is done
+	{
+		gStringVar1[0] = EOS; //Empty input
+		DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
+		DestroyTask(taskId);
+	}
+}
+
 void sp0B3_DoChooseNumberScreen(void)
 {
-	gStringVar1[0] = EOS; //Empty input
-	DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
+	FadeScreen(1, 0);
+	CreateTask(Task_DoChooseNumberScreen, 0);
+}
+
+static void Task_DoEnterPhraseScreen(u8 taskId)
+{
+	if (!gPaletteFade->active) //Fade screen is done
+	{
+		u8 type = gTasks[taskId].data[0];
+		gStringVar1[0] = EOS; //Empty input
+		DoNamingScreen(type, gStringVar1, 0, 0, 0, (void*) CB2_ReturnToFieldContinueScriptPlayMapMusic);
+		DestroyTask(taskId);
+	}
 }
 
 void sp12C_DoEnterPhraseScreen(void)
@@ -2525,15 +2228,23 @@ void sp12C_DoEnterPhraseScreen(void)
 	u8 type;
 
 	switch (Var8000) {
-		case 0x1:
+		case 1:
 			type = NAMING_SCREEN_ENTER_PASSWORD;
+			break;
+		case 2:
+			type = NAMING_SCREEN_ENTER_5_CHAR_PASSWORD;
+			break;
+		case 3:
+			type = NAMING_SCREEN_ENTER_SPECIES_NAME;
 			break;
 		default:
 			type = NAMING_SCREEN_ENTER_PHRASE;
 	}
 
-	gStringVar1[0] = EOS; //Empty input
-	DoNamingScreen(type, gStringVar1, 0, 0, 0, (void*) CB2_ReturnToFieldContinueScriptPlayMapMusic);
+	FadeScreen(1, 0);
+	u8 taskId = CreateTask(Task_DoEnterPhraseScreen, 0);
+	if (taskId != 0xFF)
+		gTasks[taskId].data[0] = type;
 }
 
 void sp12D_CompareEnteredPhrase(void)
@@ -2577,6 +2288,29 @@ static const struct NamingScreenTemplate sEnterPasswordNamingScreenTemplate =
 	.title = gText_EnterPassword,
 };
 
+static const struct NamingScreenTemplate sEnter5CharPasswordNamingScreenTemplate =
+{
+	.copyExistingString = 0,
+	.maxChars = 5,
+	.iconFunction = 2,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterPassword,
+};
+
+extern const u8 gText_EnterSpeciesName[];
+static const struct NamingScreenTemplate sEnterSpeciesNamingScreenTemplate =
+{
+	.copyExistingString = 0,
+	.maxChars = 13,
+	.iconFunction = 0,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterSpeciesName,
+};
+
 const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 {
 	sPlayerNamingScreenTemplate,
@@ -2587,14 +2321,18 @@ const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 	&sChooseNumberNamingScreenTemplate,
 	&sEnterPhraseNamingScreenTemplate,
 	&sEnterPasswordNamingScreenTemplate,
+	&sEnter5CharPasswordNamingScreenTemplate,
+	&sEnterSpeciesNamingScreenTemplate,
 };
 
-void (*const sNamingScreenTitlePrintingFuncs[])(void) =
+void (*const sNamingScreenTitlePrintingFuncs[])(void) = //Must be the same length as sNamingScreenTemplates!
 {
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F4F0 | 1),
 	(void*) (0x809F4F0 | 1),
+	(void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
@@ -2605,7 +2343,7 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 //Item Find Show Picture Special (Really Callasm)
 #define ITEM_ICON_X (10 + 16)
 #define ITEM_ICON_Y (8 + 16)
-#define sHeaderBoxWindowId (*((u8*) 0x2039A28)) //Steal coin box Id
+#define sHeaderBoxWindowId (*((u8*) 0x203B020)) //Steal help menu window Id
 #if (defined ITEM_PICTURE_ACQUIRE && defined ITEM_DESCRIPTION_ACQUIRE)
 static void ShowObtainedItemDescription(unusedArg u16 itemId)
 {
@@ -2677,16 +2415,31 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 	};
 
 	s16 x, y;
+	u16 itemPicId;
 	u8 iconSpriteId;
+	u8 iconSpriteId2 = MAX_SPRITES;
+	bool8 handleFlash = Overworld_GetFlashLevel() != 0;
 
+	if (handleFlash) //Sprites don't show up normally when the room is dark, so prep the fix here
+	{
+		SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+		SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+	}
+
+	//Fix the item that replaced the close bag arrow sprite
 	if (itemId == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
-		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+		itemPicId = ITEM_TM02_DRAGON_CLAW; //Replace the close bag arrow with a Dragon TM sprite
 	else
-		iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemId);
+		itemPicId = itemId;
 
-	if (iconSpriteId != MAX_SPRITES)
+	iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemPicId);
+	if (handleFlash) //Create a second sprite over the first one in dark rooms
+		iconSpriteId2 = AddItemIconSprite(ITEM_TAG, ITEM_TAG, itemPicId);
+
+	if (iconSpriteId < MAX_SPRITES)
 	{
 		u8 pocket = GetPocketByItemId(itemId);
+
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
 		{ 	//Double the size of the item and place it in the centre of the screen
 			x = 96 + 16;
@@ -2728,25 +2481,80 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 		gSprites[iconSpriteId].pos2.x = x;
 		gSprites[iconSpriteId].pos2.y = y;
 		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
+
+		//Adjust the second sprite in dark rooms
+		if (iconSpriteId2 < MAX_SPRITES)
+		{
+			gSprites[iconSpriteId].data[7] = iconSpriteId2; //Store the spriteId for destruction later
+			gSprites[iconSpriteId2].pos2.x = x;
+			gSprites[iconSpriteId2].pos2.y = y;
+			gSprites[iconSpriteId2].oam.priority = 0;
+			gSprites[iconSpriteId2].oam.objMode = ST_OAM_OBJ_WINDOW; //VERY IMPORTANT
+		}
 	}
+	else if (iconSpriteId2 < MAX_SPRITES) //Shouldn't be reached...
+		DestroySprite(&gSprites[iconSpriteId2]);
 
 	*spriteId = iconSpriteId;
 	#endif
 }
 
+#ifdef ITEM_PICTURE_ACQUIRE
+static void Task_ClearItemSpriteAfterFind(u8 taskId)
+{
+	u8 spriteId1 = gTasks[taskId].data[0];
+
+	if (Overworld_GetFlashLevel() != 0) //Handle dark rooms
+	{
+		u8 spriteId2 = gSprites[spriteId1].data[7];
+		if (spriteId2 < MAX_SPRITES)
+		{
+			FreeSpriteOamMatrix(&gSprites[spriteId2]);
+			DestroySprite(&gSprites[spriteId2]);
+		}
+	}
+
+	if (spriteId1 < MAX_SPRITES)
+	{
+		FreeSpriteOamMatrix(&gSprites[spriteId1]);
+		DestroySprite(&gSprites[spriteId1]);
+	}
+
+	FreeSpriteTilesByTag(ITEM_TAG);
+	FreeSpritePaletteByTag(ITEM_TAG);
+
+	DestroyTask(taskId);
+}
+#endif
+
 static void ClearItemSpriteAfterFind(unusedArg u8 spriteId)
 {
 	#ifdef ITEM_PICTURE_ACQUIRE
-	FreeSpriteTilesByTag(ITEM_TAG);
-	FreeSpritePaletteByTag(ITEM_TAG);
-	FreeSpriteOamMatrix(&gSprites[spriteId]);
-	DestroySprite(&gSprites[spriteId]);
+	u8 taskId = CreateTask(Task_ClearItemSpriteAfterFind, 0xFF);
+	if (taskId != 0xFF)
+	{
+		gTasks[taskId].data[0] = spriteId;
+
+		//Hide sprites until they're destroyed
+		if (spriteId < MAX_SPRITES)
+			gSprites[spriteId].invisible = TRUE; //Hide until destroyed
 	
+		if (Overworld_GetFlashLevel() != 0) //Handle dark rooms
+		{
+			u8 spriteId2 = gSprites[spriteId].data[7];
+			if (spriteId2 < MAX_SPRITES)
+				gSprites[spriteId2].invisible = TRUE; //Hide until destroyed
+		}
+	}
+
+	#ifdef ITEM_DESCRIPTION_ACQUIRE
 	if (sHeaderBoxWindowId != 0xFF) //Description was shown
 	{
 		ClearDialogWindowAndFrame(sHeaderBoxWindowId, TRUE);
 		RemoveWindow(sHeaderBoxWindowId);
+		sHeaderBoxWindowId = 0xFF;
 	}
+	#endif
 	#endif
 }
 
@@ -2781,42 +2589,47 @@ bool8 sp196_TryCopyTMNameToBuffer1(void)
 	return FALSE;
 }
 
+static void MakeStringPlural(u8* stringVar, u32 length)
+{
+	switch (stringVar[length - 1])
+	{
+		case PC_y:
+			stringVar[length - 1] = PC_i;
+			stringVar[length + 0] = PC_e;
+			stringVar[length + 1] = PC_s;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_Y:
+			stringVar[length - 1] = PC_I;
+			stringVar[length + 0] = PC_E;
+			stringVar[length + 1] = PC_S;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_x:
+			stringVar[length + 0] = PC_e;
+			stringVar[length + 1] = PC_s;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_X:
+			stringVar[length + 0] = PC_E;
+			stringVar[length + 1] = PC_S;
+			stringVar[length + 2] = EOS;
+			break;
+		case PC_s:
+		case PC_S:
+			break; //Already S on end of string
+		default:
+			stringVar[length + 0] = PC_s;
+			stringVar[length + 1] = EOS;
+	}
+}
+
 void TryAppendSOntoEndOfItemString(void)
 {
 	if (Var8005 > 1)
 	{
-		u8 length = StringLength(gStringVar2);
-
-		switch (gStringVar2[length - 1]) {
-			case PC_y:
-				gStringVar2[length - 1] = PC_i;
-				gStringVar2[length + 0] = PC_e;
-				gStringVar2[length + 1] = PC_s;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_Y:
-				gStringVar2[length - 1] = PC_I;
-				gStringVar2[length + 0] = PC_E;
-				gStringVar2[length + 1] = PC_S;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_x:
-				gStringVar2[length + 0] = PC_e;
-				gStringVar2[length + 1] = PC_s;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_X:
-				gStringVar2[length + 0] = PC_E;
-				gStringVar2[length + 1] = PC_S;
-				gStringVar2[length + 2] = EOS;
-				break;
-			case PC_s:
-			case PC_S:
-				break; //Already S on end of string
-			default:
-				gStringVar2[length + 0] = PC_s;
-				gStringVar2[length + 1] = EOS;
-		}
+		u32 length = StringLength(gStringVar2);
+		MakeStringPlural(gStringVar2, length);
 	}
 }
 
@@ -2847,6 +2660,27 @@ bool8 ScrCmd_hidemappopup(unusedArg struct ScriptContext * ctx)
 	}
 
 	return FALSE;
+}
+
+//More Specials
+//@Details: Buffers the Natural Gift move type and power for a specific item.
+//@Input: Var 0x800E: The item to check.
+//@Returns: LastResult: 1 if the item can be used with Natural Gift. 0 otherwise.
+//			gStringVar2: The name of move type.
+//			gStringVar3: The power of the move.
+extern const u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
+void sp112_BufferNaturalGiftPowerAndType(void)
+{
+	u8 type = GetNaturalGiftMoveType(gSpecialVar_ItemId);
+	u8 power = GetNaturalGiftMovePower(gSpecialVar_ItemId);
+	gSpecialVar_LastResult = FALSE;
+
+	if (power != 0)
+	{
+		gSpecialVar_LastResult = TRUE;
+		StringCopy(gStringVar2, gTypeNames[type]);
+		ConvertIntToDecimalStringN(gStringVar3, power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	}
 }
 
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////
@@ -2911,13 +2745,30 @@ u8* LoadTextBuffer0D(void)
 	return sScriptStringVars[11];
 }
 
-//@Details: Buffers the given ability name to the chosen buffer.
+//@Details: Buffers the given Ability's name to the chosen buffer.
 //@Input: Var 0x8000 - Ability Num
-//		  Var 0x8001 - Buffer #
+//		  Var 0x8001 - Species
+//		  Var 0x8002 - Buffer #
 void sp0CF_BufferAbilityName(void)
 {
-	const u8* name = GetAbilityName(Var8000);
-	StringCopy(sScriptStringVars[Var8001], name);
+	const u8* name = GetAbilityName(Var8000, Var8001);
+	StringCopy(sScriptStringVars[Var8002], name);
+}
+
+bool8 ScrCmd_bufferitemnameplural(struct ScriptContext * ctx)
+{
+	u8 stringVarIndex = ScriptReadByte(ctx);
+	u16 itemId = VarGet(ScriptReadHalfword(ctx));
+	u16 quantity = VarGet(ScriptReadHalfword(ctx));
+
+	CopyItemName(itemId, sScriptStringVars[stringVarIndex]);
+	if (quantity >= 2)
+	{
+		u32 length = StringLength(sScriptStringVars[stringVarIndex]);
+		MakeStringPlural(sScriptStringVars[stringVarIndex], length);
+	}
+
+	return FALSE;
 }
 
 //////////////////EXPANDED COINS///////////////////////

@@ -37,6 +37,8 @@ enum
 
 #ifndef UNBOUND //Modify this
 
+//WARNING! Make sure there are always at least two maps in a set, or the game may crash when changing maps!
+
 static const u8 sRoamerLocations[][NUM_MAPS_IN_SET] = //0x8466C58 in FR
 {
 	{MAP_NUM(ROUTE_1),	MAP_NUM(ROUTE_2),	MAP_NUM(ROUTE_21_A),  0xFF,   0xFF, 0xFF, 0xFF},
@@ -80,7 +82,8 @@ static const u8 sRoamerLocations[][NUM_MAPS_IN_SET] =
 	{MAP_NUM(ROUTE_11),   MAP_NUM(ROUTE_12),   0xFF,                       0xFF,              0xFF, 0xFF, 0xFF},
 	{MAP_NUM(ROUTE_12),   MAP_NUM(ROUTE_14_B), MAP_NUM(ROUTE_14_C),        MAP_NUM(ROUTE_6),  0xFF, 0xFF, 0xFF},
 	{MAP_NUM(ROUTE_16),   MAP_NUM(ROUTE_17),   0xFF,                       0xFF,              0xFF, 0xFF, 0xFF},
-	{MAP_NUM(ROUTE_18_B), 0xFF,                0xFF,                       0xFF,              0xFF, 0xFF, 0xFF},
+	{MAP_NUM(ROUTE_16),   MAP_NUM(ROUTE_18_B),                0xFF,                       0xFF,              0xFF, 0xFF, 0xFF},
+	{MAP_NUM(COOTES_BOG), MAP_NUM(MAGNOLIA_FIELDS), 0xFF,                  0xFF,              0xFF, 0xFF, 0xFF},
 	{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
@@ -443,7 +446,7 @@ void DestroyTownMapRoamerSprites(void)
 			&&  (void*) gSprites[i].images == (void*) GetMonIconTiles(gRoamers[j].species, FALSE))
 			{
 				FreeSpriteOamMatrix(&gSprites[i]);
-				DestroyMonIconSprite(&gSprites[i]);
+				DestroyMonIcon(&gSprites[i]);
 			}
 		}
 	}

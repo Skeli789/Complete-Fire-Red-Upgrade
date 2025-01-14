@@ -1,0 +1,167 @@
+#org @gText_BattleUI_SuperEffective
+[ARROW_UP][ALIGN][0D]
+
+#org @gText_BattleUI_NotVeryEffective
+[ARROW_DOWN]
+
+#org @gText_BattleUI_NoEffect
+*
+
+#org @gText_BattleUI_STAB
+[MAIN_COLOUR][07][SHADOW_COLOUR][06]+
+
+#org @gText_Power
+Power: 
+
+#org @gText_OHKO
+OHKO
+
+#org @gText_Acc
+Acc: 
+
+#org @gText_NoMiss
+No Miss
+
+#org @gText_Contact
+Contact
+
+#org @gText_NoContact
+No Contact
+
+#org @gText_ResetStats
+Reset Lowered Stats
+
+#org @gText_StatsPlus
++ All Stats
+
+#org @gText_CritHitsPlus
++ Critical Hit Chance
+
+#org @gText_FollowMe
+Follow Me
+
+#org @gText_RecoverHP
+Recover HP
+
+#org @gText_HealAllyHP
+Heal Replacement HP
+
+#org @gText_MaxMoveProtect
+Protect Self
+
+#org @gText_MaxMoveRaiseTeamStat
++ Team [BUFFER][0]
+
+#org @gText_MaxMoveFoes
+ Foes
+
+#org @gText_MaxMoveSet
+Set 
+
+#org @gText_MaxMoveWeather
+ Weather
+
+#org @gText_MaxMoveTerrain
+ Terrain
+
+#org @gText_MaxMoveSunny
+Sunny
+
+#org @gText_MaxMoveRainy
+Rainy
+
+#org @gText_MaxMoveSandstorm
+Sandstorm
+
+#org @gText_MaxMoveHail
+Hail
+
+#org @gText_MaxMoveElectric
+Electric
+
+#org @gText_MaxMoveGrassy
+Grassy
+
+#org @gText_MaxMoveMisty
+Misty
+
+#org @gText_MaxMovePsychic
+Psychic
+
+#org @gText_MaxMoveLastingDamage
+Set Lasting Damage Trap
+
+#org @gText_MaxMoveTrapDamage
+Trap & Damage Foes
+
+#org @gText_MaxMoveEffectSpore
+Give Foes Psn, Par, or Slp
+
+#org @gText_MaxMoveParalyzeFoes
+Paralyze Foes
+
+#org @gText_MaxMoveConfusePayDay
+Confuse Foes & Get Rich
+
+#org @gText_MaxMoveCritPlus
++ Team Critical Hit Chance
+
+#org @gText_MaxMoveMeanLook
+Trap Foes
+
+#org @gText_MaxMoveAuroraVeil
+- Damage to Team
+
+#org @gText_MaxMoveInfatuate
+Infatuate Foes
+
+#org @gText_MaxMoveRecycleBerries
+Recycle Berries
+
+#org @gText_MaxMovePoisonFoes
+Poison Foes
+
+#org @gText_MaxMoveStealthRock
+Set Stealth Rock
+
+#org @gText_MaxMoveRemoveScreens
+Remove Screens & Hazards
+
+#org @gText_MaxMovePoisonParalyzeFoes
+Poison or Paralyze Foes
+
+#org @gText_MaxMoveHealTeam
+Heal Team
+
+#org @gText_MaxMoveSpite
+Reduce Last Move PP
+
+#org @gText_MaxMoveGravity
+Change Gravity
+
+#org @gText_MaxMoveYawn
+May Make Foes Drowsy
+
+#org @gText_MaxMoveLowerEvasiveness
+- Evasiveness Foes
+
+#org @gText_MaxMoveAromatherapy
+Cure Team Statuses
+
+#org @gText_MaxMoveSteelsurge
+Sets Steelsurge
+
+#org @gText_MaxMoveConfuseFoes
+Confuse Foes
+
+#org @gText_MaxMoveTormentFoes
+Torment Foes
+
+#org @gText_MaxMoveLowerSpeed2
+-- Speed Foes
+
+#org @gText_MaxMoveIgnoreAbility
+Ignore Foe Ability
+
+#org @gText_MaxMoveBypassProtect
+Bypass Protection

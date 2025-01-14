@@ -92,7 +92,7 @@ gBattleScriptsForMoveEffects:
 .word BS_074_LowerTargetEvsn1Chance
 .word BS_075_SkyAttack
 .word BS_076_SetConfusionChance
-.word BS_077_Blank
+.word BS_077_LowerTargetSpDef2Chance
 .word BS_078_Blank
 .word BS_079_Substitute
 .word BS_080_Recharge
@@ -124,7 +124,7 @@ gBattleScriptsForMoveEffects:
 .word BS_106_MeanLook
 .word BS_107_Nightmare
 .word BS_108_Minimize
-.word 0x81d774d		@EFFECT_CURSE
+.word BS_109_Curse
 .word BS_110_RaiseAttackerSpAtk1Chance
 .word BS_111_Protect
 .word BS_112_Spikes
@@ -156,7 +156,7 @@ gBattleScriptsForMoveEffects:
 .word BS_138_AttackerRaiseDef1Chance
 .word BS_139_AttackerRaiseAtk1Chance
 .word BS_140_AttackerRaiseAllStatsChance
-.word BS_141_Blank
+.word BS_141_AttackerHitRaiseHigherOffensesDefenses
 .word BS_142_BellyDrum
 .word BS_143_PsychUp
 .word BS_144_MirrorCoat
@@ -165,14 +165,14 @@ gBattleScriptsForMoveEffects:
 .word BS_147_Earthquake
 .word BS_148_FutureSight
 .word BS_149_Gust
-.word BS_150_Blank
+.word BS_150_Splinters
 .word BS_151_Solarbeam
 .word BS_152_Thunder
 .word BS_153_Teleport
 .word BS_154_BeatUp
 .word BS_155_Fly
 .word BS_156_DefenseCurl
-.word BS_157_Blank	@was softboiled
+.word BS_157_SpringtideStorm	@was softboiled
 .word BS_158_FakeOut
 .word BS_159_Uproar
 .word BS_160_Stockpile
@@ -213,12 +213,12 @@ gBattleScriptsForMoveEffects:
 .word BS_195_Snatch
 .word BS_196_Blank	@was low kick
 .word BS_197_SecretPower
-.word BS_198_Blank	@was 33% recoil
-.word BS_199_Blank	@was teeter dance
-.word BS_200_Blank	@was blaze kick
+.word BS_198_RaiseUserAtkSpAtk
+.word BS_199_RaiseUserAtkAcc
+.word BS_200_RaiseUserDefSpeed	@was blaze kick
 .word BS_201_MudSport
-.word BS_202_Blank	@was poison fang
-.word BS_203_Blank	@was weather ball
+.word BS_202_VenomDrench	@was poison fang
+.word BS_203_PlayNice	@was weather ball
 .word BS_204_Overheat
 .word BS_205_Tickle
 .word BS_206_CosmicPower
@@ -257,11 +257,11 @@ gBattleScriptsForMoveEffects:
 .word BS_239_TeamEffectsAndMagnetRise
 .word BS_240_Camouflage
 .word BS_241_FlameBurst
-.word BS_242_LastResortSkyDrop
+.word BS_242_LastResort
 .word BS_243_DamageSetTerrain
-.word BS_244_Blank
-.word BS_245_Blank
-.word BS_246_Blank
+.word BS_244_Teatime
+.word BS_245_Poltergeist
+.word BS_246_SkyDrop
 .word BS_247_Blank
 .word BS_248_Blank
 .word BS_249_Blank
@@ -269,7 +269,7 @@ gBattleScriptsForMoveEffects:
 .word BS_251_Blank
 .word BS_252_Blank
 .word BS_253_MaxMove
-.word BS_254_Synchronoise
+.word BS_254_Blank
 .word BS_255_Blank
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -300,15 +300,17 @@ gStatLoweringMoveEffects:
 .byte EFFECT_SPECIAL_DEFENSE_DOWN_2
 .byte EFFECT_ACCURACY_DOWN_2
 .byte EFFECT_EVASION_DOWN_2
+.byte EFFECT_TICKLE
+.byte EFFECT_PLAY_NICE
+.byte EFFECT_VENOM_DRENCH
 .byte MOVE_EFFECT_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 gConfusionMoveEffects:
-.byte EFFECT_CONFUSE_HIT
+.byte EFFECT_CONFUSE
 .byte EFFECT_SWAGGER
 .byte EFFECT_FLATTER
-.byte EFFECT_TEETER_DANCE
 .byte MOVE_EFFECT_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

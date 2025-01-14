@@ -16,6 +16,7 @@
 .equ PLAYER, 0xFF
 .equ PLAYERFACING, 0x800C
 .equ LASTRESULT, 0x800D
+.equ CHOSEN_ITEM, 0x800E
 .equ LASTTALKED, 0x800F
 
 .equ look_down, 0x0
@@ -75,14 +76,14 @@
 .equ slide_up_fast, 0x3A
 .equ slide_left_fast, 0x3B
 .equ slide_right_fast, 0x3C
-.equ slide_right_foot_down, 0x3D
-.equ slide_right_foot_up, 0x3E
-.equ slide_right_foot_left, 0x3F
-.equ slide_right_foot_right, 0x40
-.equ slide_left_foot_down, 0x41
-.equ slide_left_foot_up, 0x42
-.equ slide_left_foot_left, 0x43
-.equ slide_left_foot_right, 0x44
+.equ player_run_down, 0x3D
+.equ player_run_up, 0x3E
+.equ player_run_left, 0x3F
+.equ player_run_right, 0x40
+.equ player_run_down_slow, 0x41
+.equ player_run_up_slow, 0x42
+.equ player_run_left_slow, 0x43
+.equ player_run_right_slow, 0x44
 .equ start_anim_in_direction, 0x45
 .equ jump_special_down, 0x46
 .equ jump_special_up, 0x47

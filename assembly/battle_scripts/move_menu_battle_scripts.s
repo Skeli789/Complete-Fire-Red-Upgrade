@@ -13,9 +13,12 @@ move_menu_battle_scripts.s
 .global BattleScript_SelectingNotAllowedMoveChoiceAbility
 .global BattleScript_SelectingNotAllowedMoveAssaultVest
 .global BattleScript_SelectingNotAllowedSkyBattle
+.global BattleScript_SelectingNotAllowedRingChallenge
+.global Battlescript_SelectingSpecificMoveNotAllowedInRingChallenge
 .global BattleScript_SelectingNotAllowedGravity
 .global BattleScript_SelectingNotAllowedThroatChop
 .global BattleScript_SelectingNotAllowedHealBlock
+.global BattleScript_SelectingNotAllowedMinimize
 
 BattleScript_MustSelectEncoredMove:
 	setword BATTLE_STRING_LOADER EncoreMoveMenuString
@@ -37,6 +40,16 @@ BattleScript_SelectingNotAllowedSkyBattle:
 	printselectionstring 0x184
 	endselectionscript
 
+BattleScript_SelectingNotAllowedRingChallenge:
+	setword BATTLE_STRING_LOADER gText_RingChallengeBanMoveMenu
+	printselectionstring 0x184
+	endselectionscript
+
+Battlescript_SelectingSpecificMoveNotAllowedInRingChallenge:
+	setword BATTLE_STRING_LOADER gText_RingChallengeBanSpecificMove
+	printselectionstring 0x184
+	endselectionscript
+
 BattleScript_SelectingNotAllowedGravity:
 	setword BATTLE_STRING_LOADER GravityMoveMenuString
 	printselectionstring 0x184
@@ -49,6 +62,11 @@ BattleScript_SelectingNotAllowedThroatChop:
 
 BattleScript_SelectingNotAllowedHealBlock:
 	setword BATTLE_STRING_LOADER HealBlockMoveMenuString
+	printselectionstring 0x184
+	endselectionscript
+
+BattleScript_SelectingNotAllowedMinimize:
+	setword BATTLE_STRING_LOADER gText_NoMinimizeOnInsane
 	printselectionstring 0x184
 	endselectionscript
 

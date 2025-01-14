@@ -1,4 +1,3 @@
-.text
 .thumb
 .align 2
 /*
@@ -10,15 +9,25 @@ et_battle_scripts.s
 .include "../battle_script_macros.s"
 
 .global BattleScript_MysteriousAirCurrentContinues
+.global BattleScript_MysteriousAirCurrentContinuesNoString
+.global BattleScript_RainContinuesOrEnds
+.global BattleScript_RainContinuesOrEndsNoString
+.global BattleScript_SunlightContinues
+.global BattleScript_SunlightContinuesNoString
 .global BattleScript_SandstormHailContinues
+.global BattleScript_SandstormHailContinuesNoString
 .global BattleScript_WeatherDamage
 .global BattleScript_FogEnded
 .global BattleScript_FogContinues
+.global BattleScript_FogContinuesNoString
 .global BattleScript_SeaOfFireDamage
 .global BattleScript_GrassyTerrainHeal
 .global BattleScript_AquaRing
 .global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
+.global BattleScript_FrostbiteTurnDmg
+.global BattleScript_SplintersTurnDmg
+.global BattleScript_BadThoughtsTurnDmg
 .global BattleScript_YawnMakesAsleep
 .global BattleScript_MagnetRiseEnd
 .global BattleScript_TelekinesisEnd
@@ -43,13 +52,13 @@ et_battle_scripts.s
 .global BattleScript_StoppedSchooling
 .global BattleScript_ShieldsDownToCore
 .global BattleScript_ShieldsDownToMeteor
+.global BattleScript_IceFaceRestoreFace
 .global BattleScript_FlowerGift
 .global BattleScript_FlowerGiftEnd2
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_OctolockTurnDmg
 .global BattleScript_DynamaxEnd
-.global BattleScript_LoseRaidBattle
-.global BattleScript_LoseFrontierRaidBattle
+.global BattleScript_HoopaSOS
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
@@ -60,59 +69,71 @@ et_battle_scripts.s
 .global TerrainEndString
 .global TransformedString
 
-.global BattleScript_Victory @More of an "End Battle" BS but whatever
-.global BattleScript_PrintPlayerForfeited
-.global BattleScript_PrintPlayerForfeitedLinkBattle
-.global BattleScript_LostMultiBattleTower
-.global BattleScript_LostBattleTower
-.global BattleScript_AskIfWantsToForfeitMatch
-.global BattleScript_RanAwayUsingMonAbility
-.global BattleScript_RaidMonRanAway
-.global BattleScript_RaidMonEscapeBall
-
 .global AbilityActivatedString
 
+.equ BattleScript_DoStatusTurnDmg, 0x81d9059
 .equ BattleScript_DoTurnDmg, 0x81D905B
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-@0x80159DC with r0
-EndBattleFlagClearHook: @Not really a BS but whatever
-	bl EndOfBattleThings
-	ldr r1, .BattleMainFunc
-	ldr r0, .CallbackReturnToOverworld
-	str r0, [r1]
-	ldr r1, .CB2_AfterEvolution
-	ldr r0, =0x80159E4 | 1
-	bx r0
+BattleScript_MysteriousAirCurrentContinues:
+	setword BATTLE_STRING_LOADER gText_MysteriousAirCurrentContinues
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+BattleScript_MysteriousAirCurrentContinuesPlayAnim:
+	playanimation 0x0 ANIM_STRONG_WINDS_CONTINUE 0x0
+	end2
 
-.align 2
-.BattleMainFunc: .word 0x3004F84
-.CallbackReturnToOverworld: .word 0x8015A30 | 1
-.CB2_AfterEvolution: .word 0x300537C
+BattleScript_MysteriousAirCurrentContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_MysteriousAirCurrentContinuesPlayAnim
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.pool
-BattleScript_MysteriousAirCurrentContinues:
-	setword BATTLE_STRING_LOADER MysteriousAirCurrentContinuesString
-	printstring 0x184
+BattleScript_RainContinuesOrEnds:
+	printfromtable 0x83FE540 @;gRainContinuesStringIds
 	waitmessage DELAY_1SECOND
-	playanimation 0x0 ANIM_STRONG_WINDS_CONTINUE 0x0
+	jumpifbyte EQUALS, MULTISTRING_CHOOSER, 0x2, BattleScript_RainContinuesOrEndsEnd @;Rain ended
+BattleScript_RainContinuesOrEndsPlayAnim:
+	playanimation BANK_ATTACKER, ANIM_RAIN, 0x0
+BattleScript_RainContinuesOrEndsEnd:
 	end2
+
+BattleScript_RainContinuesOrEndsNoString:
+	jumpifbyte EQUALS, MULTISTRING_CHOOSER, 0x2, BattleScript_RainContinuesOrEnds @;Rain ended
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_RainContinuesOrEndsPlayAnim
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SunlightContinues:
+	printstring 0xF1 @;STRINGID_SUNLIGHTSTRONG
+	waitmessage DELAY_1SECOND
+BattleScript_SunlightContinuesPlayAnim:
+	playanimation BANK_ATTACKER, ANIM_SUN, 0x0
+	end2
+
+BattleScript_SunlightContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_SunlightContinuesPlayAnim
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SandstormHailContinues:
-	printfromtable 0x83FE534 @;gSandStormHailContinuesStringIds
+	printfromtable gSandstormHailContinuesStringIds
 	waitmessage DELAY_1SECOND
+BattleScript_SandstormHailContinuesPlayAnim:
 	playanimation2 BANK_ATTACKER, ANIM_ARG_1, 0x0
 	end2
+
+BattleScript_SandstormHailContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_SandstormHailContinuesPlayAnim
 
 BattleScript_WeatherDamage:
 	weatherdamage
 	jumpifword EQUALS DAMAGE_LOC 0x0 BattleScript_WeatherDamage_End
-	printfromtable 0x83FE538 @;gSandStormHailDmgStringIds
+	printfromtable gSandstormHailDmgStringIds
 	waitmessage DELAY_1SECOND
 	orword HIT_MARKER, HITMARKER_x20 | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG | HITMARKER_GRUDGE
 	effectivenesssound
@@ -138,8 +159,13 @@ BattleScript_FogContinues:
 	setword BATTLE_STRING_LOADER FogContinuesString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+BattleScript_FogContinuesPlayAnim:
 	playanimation 0x0 ANIM_FOG_CONTINUES 0x0
 	end2
+
+BattleScript_FogContinuesNoString:
+	call BS_FLUSH_MESSAGE_BOX
+	goto BattleScript_FogContinuesPlayAnim
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -178,7 +204,7 @@ BattleScript_AquaRing:
 BattleScript_LeechSeedTurnDrain:
 	playanimation BANK_ATTACKER, ANIM_LEECH_SEED_DRAIN, ANIM_ARG_1
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
-	graphicalhpupdate BANK_ATTACKER
+	graphicalhpupdate BANK_ATTACKER @;Attacker being the mon losing health
 	datahpupdate BANK_ATTACKER
 	copyword DAMAGE_LOC HP_DEALT
 	callasm TryManipulateDamageForLeechSeedBigRoot
@@ -191,9 +217,11 @@ BattleScript_LeechSeedTurnPrintLiquidOoze:
 	setbyte MULTISTRING_CHOOSER, 0x4
 
 BattleScript_LeechSeedTurnPrintAndUpdateHp:
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
+BattleScript_LeechSeedTurnPrintAndUpdateHp_SkipForHealBlock:
 	printfromtable 0x83FE558 @;gLeechSeedStringIds
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
@@ -212,6 +240,32 @@ BattleScript_PoisonHeal:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_FrostbiteTurnDmg:
+	setword BATTLE_STRING_LOADER gText_HurtByFrostbite
+	printstring 0x184
+	waitmessage 0x40
+	goto BattleScript_DoStatusTurnDmg
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SplintersTurnDmg:
+	playanimation BANK_ATTACKER ANIM_SPLINTER_DAMAGE 0x0
+	setword BATTLE_STRING_LOADER gText_HurtBySplinters
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BattleScript_DoTurnDmg
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BadThoughtsTurnDmg:
+	playanimation BANK_ATTACKER ANIM_WAITING_WAGGLE 0x0
+	setword BATTLE_STRING_LOADER gText_TormentedByBadThoughts
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BattleScript_DoTurnDmg
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -316,12 +370,16 @@ BattleScript_MagicRoomEnd:
 
 BattleScript_GravityEnd:
 	setword BATTLE_STRING_LOADER GravityEndString
-	goto PrintTimerString
-
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_COMMUNICATION 0
+	callasm PrintElectromagnetismFloatingStrings
+	end2
 
 BattleScript_TerrainEnd:
 	setbyte TERRAIN_BYTE 0x0
 	callasm TransferTerrainData
+	waitstateatk
 	playanimation 0x0 ANIM_LOAD_DEFAULT_BG 0x0
 	setword BATTLE_STRING_LOADER TerrainEndString
 	printstring 0x184
@@ -461,6 +519,21 @@ BattleScript_FlowerGiftEnd2:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_IceFaceRet:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER TransformedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_IceFaceRestoreFace:
+	call BattleScript_IceFaceRet
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_MonTookFutureAttack:
 	printstring 0xA2 @;STRINGID_PKMNTOOKATTACK
 	waitmessage 0x10
@@ -475,7 +548,7 @@ BattleScript_CalcDamage:
 	critcalc
 	callasm TryUseGemFutureSight
 	callasm FutureSightDamageCalc
-	typecalc
+	callasm FutureSightTypeCalc
 	adjustnormaldamage2
 	callasm TryActivateWeakenessBerryFutureSight
 	jumpifmove MOVE_DOOMDESIRE BattleScript_FutureHitAnimDoomDesire
@@ -530,7 +603,7 @@ BattleScript_OctolockTurnDmg_Def:
 BattleScript_OctolockTurnDmgPrintDefMsg:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_OctolockTurnDmg_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_OctolockTurnDmgEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_OctolockTurnDmg_SpDef:
@@ -539,7 +612,7 @@ BattleScript_OctolockTurnDmg_SpDef:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_NOT_PROTECT_AFFECTED BattleScript_OctolockTurnDmgPrintSpDefMsg
 BattleScript_OctolockTurnDmgPrintSpDefMsg:
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_OctolockTurnDmgEnd
-	printfromtable 0x83FE588
+	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
 
 BattleScript_OctolockTurnDmgEnd:
@@ -572,146 +645,23 @@ BattleScript_DynamaxEnd_SpecialTransformAnim:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_LoseRaidBattle:
-	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_STORM 0x0
-	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
-	callasm SetScriptingBankToItsPartner
-	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+.global BattleScript_HoopaSOS
+BattleScript_HoopaSOS:
+	getswitchedmondata BANK_SWITCHING
+	waitstateatk
+	switchindataupdate BANK_SWITCHING
+	callasm ShowSOSMon
+	playanimation BANK_SWITCHING ANIM_HOOPA_RING_SPAWN 0x0
+	callasm ShowSOSMonHealthbox
+	copybyte USER_BANK, BATTLE_SCRIPTING_BANK @;For the string
+	callasm SetTargetPartner
+	setword BATTLE_STRING_LOADER gText_HoopaRespawnedAlly
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x5 @;Teleported
-	end2
-
-BattleScript_LoseFrontierRaidBattle:
-	setword BATTLE_STRING_LOADER gText_RaidBattleKO4
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x5 @;Teleported
+	switchineffects BANK_SWITCHING
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_Victory:
-	jumpifword ANDS BATTLE_TYPE BATTLE_TWO_OPPONENTS BeatTwoPeeps
-	printstring 0x141
-	goto PostBeatString
-	
-BeatTwoPeeps:
-	setword BATTLE_STRING_LOADER BattleText_TwoInGameTrainersDefeated
-	printstring 0x184
-
-PostBeatString:
-	trainerslidein 0x1
-	waitstateatk
-	jumpifword ANDS BATTLE_TYPE BATTLE_E_READER 0x81D88FF @Just Pickup Calc
-	printstring 0xC
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_TWO_OPPONENTS CheckJumpLocForEndBattle
-	callasm TrainerSlideOut+1
-	waitstateatk
-	trainerslidein 0x3
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerBLoseString
-	printstring 0x184
-
-CheckJumpLocForEndBattle:
-	jumpifword ANDS BATTLE_TYPE BATTLE_FRONTIER 0x81D8900 @No Money Give
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_TRAINER_TOWER 0x81D87F8 @Give Money
-	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE 0x81D88FF @Just Pickup Calc
-	printstring 0x177 @Buffer Trainer Tower Win Text
-	goto 0x81D88FF @Just Pickup Calc
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_PrintPlayerForfeited:	
-	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	end2
-	
-BattleScript_PrintPlayerForfeitedLinkBattle:
-	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_LostMultiBattleTower:
-	returnopponentmon1toball BANK_ATTACKER
-	waitstateatk
-	callasm ReturnOpponentMon2
-	waitstateatk
-	trainerslidein BANK_ATTACKER
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerAWinString
-	printstring 0x184
-	callasm TrainerSlideOut
-	waitstateatk
-	trainerslidein 0x3
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerBVictoryString
-	printstring 0x184
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_LostBattleTower:
-	returnopponentmon1toball BANK_ATTACKER
-	waitstateatk
-	callasm ReturnOpponentMon2
-	waitstateatk
-	trainerslidein BANK_ATTACKER
-	waitstateatk
-	setword BATTLE_STRING_LOADER TrainerAWinString
-	printstring 0x184
-	flee
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_AskIfWantsToForfeitMatch:
-	setword BATTLE_STRING_LOADER sText_QuestionForfeitMatch
-	printstring 0x184
-	callasm DisplayForfeitYesNoBox
-	callasm HandleForfeitYesNoBox
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RanAwayUsingMonAbility:
-	printstring 0x130 @;STRINGID_EMPTYSTRING3
-	call BattleScript_AbilityPopUp
-	printstring 0xDF @;STRINGID_GOTAWAYSAFELY
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RaidMonRanAway:
-	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	end2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_RaidMonEscapeBall:
-	printfromtable 0x83FE5F2 @;gBallEscapeStringIds
-	waitmessage DELAY_1SECOND
-	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
-	callasm MakeScriptingBankInvisible
-	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	setbyte BATTLE_OUTCOME 0x1 @B_OUTCOME_WON
-	finishaction
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_PrintCustomStringEnd2:
 	call BattleScript_PrintCustomString
@@ -722,7 +672,6 @@ BattleScript_PrintCustomStringEnd3:
 	end3
 
 .align 2
-MysteriousAirCurrentContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xE1, 0xED, 0xE7, 0xE8, 0xD9, 0xE6, 0xDD, 0xE3, 0xE9, 0xE7, 0x00, 0xD5, 0xDD, 0xE6, 0x00, 0xD7, 0xE9, 0xE6, 0xE6, 0xD9, 0xE2, 0xE8, 0xFE, 0xD7, 0xE3, 0xE2, 0xE8, 0xDD, 0xE2, 0xE9, 0xD9, 0xE7, 0x00, 0xE8, 0xE3, 0x00, 0xD6, 0xE0, 0xE3, 0xEB, 0xAD, 0xFF
 FogEndedString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xD8, 0xDD, 0xE7, 0xD5, 0xE4, 0xE4, 0xD9, 0xD5, 0xE6, 0xD9, 0xD8, 0xAD, 0xFF
 FogContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xDD, 0xE7, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0xAD, 0xAD, 0xAD, 0xFF
 GrassyTerrainHealString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDB, 0xE6, 0xD5, 0xE7, 0xE7, 0xED, 0x00, 0xE8, 0xD9, 0xE6, 0xE6, 0xD5, 0xDD, 0xE2, 0x00, 0xE6, 0xD9, 0xE7, 0xE8, 0xE3, 0xE6, 0xD9, 0xD8, 0xFE, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xE8, 0xDC, 0xAB, 0xFF
@@ -744,6 +693,3 @@ PowerConstructCompleteString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0x
 ToCoreString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xD5, 0xD7, 0xE8, 0xDD, 0xEA, 0xD5, 0xE8, 0xD9, 0xD8, 0xAB, 0xFF
 ToMeteorString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xD8, 0xD9, 0xD5, 0xD7, 0xE8, 0xDD, 0xEA, 0xD5, 0xE8, 0xD9, 0xD8, 0xAB, 0xFF
 TransformedString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0xE7, 0xDA, 0xE3, 0xE6, 0xE1, 0xD9, 0xD8, 0xAB, 0xFF
-TrainerBLoseString: .byte 0xFD, 0x30, 0xFF
-TrainerBVictoryString: .byte 0xFD, 0x31, 0xFF
-TrainerAWinString: .byte 0xFD, 0x25, 0xFF

@@ -18,19 +18,25 @@ extern const u8 BattleScript_MustSelectEncoredMove[];
 extern const u8 BattleScript_SelectingNotAllowedMoveChoiceAbility[];
 extern const u8 BattleScript_SelectingNotAllowedMoveAssaultVest[];
 extern const u8 BattleScript_SelectingNotAllowedSkyBattle[];
+extern const u8 BattleScript_SelectingNotAllowedRingChallenge[];
+extern const u8 Battlescript_SelectingSpecificMoveNotAllowedInRingChallenge[];
 extern const u8 BattleScript_SelectingNotAllowedGravity[];
 extern const u8 BattleScript_SelectingNotAllowedThroatChop[];
 extern const u8 BattleScript_SelectingNotAllowedHealBlock[];
+extern const u8 BattleScript_SelectingNotAllowedMinimize[];
 
 //Strings
 extern const u8 StringNull[];
+extern const u8 gText_BattleUI_SuperEffective[];
+extern const u8 gText_BattleUI_NotVeryEffective[];
+extern const u8 gText_BattleUI_NoEffect[];
+extern const u8 gText_BattleUI_STAB[];
 extern const u8 gText_Power[];
 extern const u8 gText_Acc[];
 extern const u8 gText_NoMiss[];
 extern const u8 gText_OHKO[];
-extern const u8 gText_Physical[];
-extern const u8 gText_Special[];
-extern const u8 gText_Status[];
+extern const u8 gText_Contact[];
+extern const u8 gText_NoContact[];
 extern const u8 gText_ResetStats[];
 extern const u8 gText_StatsPlus[];
 extern const u8 gText_CritHitsPlus[];
@@ -38,9 +44,9 @@ extern const u8 gText_FollowMe[];
 extern const u8 gText_RecoverHP[];
 extern const u8 gText_HealAllyHP[];
 extern const u8 gText_BattleMenu[];
+extern const u8 gText_BattleMenuNoItems[];
 extern const u8 gText_BattleMenu2[];
-extern const u8 gText_UnboundBattleMenu[];
-extern const u8 gText_UnboundBattleMenu2[];
+extern const u8 gText_BattleMenu2NoItems[];
 extern const u8 gText_BattleMenuRaidEnd[];
 extern const u8 gText_CaptureRaidMon[];
 
@@ -82,6 +88,8 @@ extern const u8 gText_MaxMoveSteelsurge[];
 extern const u8 gText_MaxMoveConfuseFoes[];
 extern const u8 gText_MaxMoveTormentFoes[];
 extern const u8 gText_MaxMoveLowerSpeed2[];
+extern const u8 gText_MaxMoveIgnoreAbility[];
+extern const u8 gText_MaxMoveBypassProtect[];
 
 #define TXT_PLUS 0x2E
 #define TXT_MINUS 0xAE

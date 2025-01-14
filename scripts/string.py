@@ -19,6 +19,8 @@ SpecialBuffers = {
     "ATTACKER_ABILITY": ["FD", "18"],
     "TARGET_ABILITY": ["FD", "19"],
     "SCRIPTING_BANK_ABILITY": ["FD", "1A"],
+    "TRAINER1_CLASS": ["FD", "1C"],
+    "TRAINER1_NAME": ["FD", "1D"],
     "PLAYER_NAME": ["FD", "23"],
     "TARGET_NAME": ["FD", "3B"],
     "TARGET_PARTNER_NAME": ["FD", "3C"],
@@ -29,6 +31,13 @@ SpecialBuffers = {
     "BUFFER2": ["FD", "03"],
     "BUFFER3": ["FD", "04"],
     "RIVAL": ["FD", "06"],
+
+    "ARROW_UP": ["79"],
+    "ARROW_DOWN": ["7A"],
+    "ARROW_LEFT": ["7B"],
+    "ARROW_RIGHT": ["7C"],
+
+    "MAIN_COLOUR": ["FC", "01"],  # Takes 1 byte
     "WHITE": ["FC", "01", "01"],
     "BLACK": ["FC", "01", "02"],
     "GRAY": ["FC", "01", "03"],
@@ -38,20 +47,20 @@ SpecialBuffers = {
     "LIGHT_GREEN": ["FC", "01", "07"],
     "BLUE": ["FC", "01", "08"],
     "LIGHT_BLUE": ["FC", "01", "09"],
-    "MAIN_COLOUR": ["FC", "01"],
+    "HIGHLIGHT": ["FC", "02"],  # Same as MAIN_COLOUR
     "SHADOW_COLOUR": ["FC", "03"],
-
-    "ARROW_UP": ["79"],
-    "ARROW_DOWN": ["7A"],
-    "ARROW_LEFT": ["7B"],
-    "ARROW_RIGHT": ["7C"],
-
+    "COLOR_HIGHLIGHT_SHADOW": ["FC", "04"],  # Takes 3 bytes
+    "PALETTE": ["FC", "05"],
     "SHRINK": ["FC", "06", "00"],
+    "RESET_SIZE": ["FC", "07"],
     "PAUSE": ["FC", "08"],
     "PAUSE_UNTIL_PRESS": ["FC", "09"],
+    "WAIT_SE": ["FC", "0A"],
     "PLAY_BGM": ["FC", "0B"],
     "ESCAPE": ["FC", "0C"],
-    "SHIFT_TEXT": ["FC", "0D"],
+    "SHIFT_RIGHT": ["FC", "0D"],
+    "SHIFT_DOWN": ["FC", "0E"],
+    "FILL_WINDOW": ["FC", "0F"],
     "PLAY_SE": ["FC", "10"],
     "CLEAR": ["FC", "11"],
     "SKIP": ["FC", "12"],
@@ -73,12 +82,85 @@ SpecialBuffers = {
     "DPAD_UP_DOWN": ["F8", "0A"],
     "DPAD_LEFT_RIGHT": ["F8", "0B"],
     "DPAD": ["F8", "0C"],
+
+    "UP_ARROW_2": ["F9", "00"],
+    "DOWN_ARROW_2": ["F9", "01"],
+    "LEFT_ARROW_2": ["F9", "02"],
+    "RIGHT_ARROW_2": ["F9", "03"],
+    "PLUS": ["F9", "04"],
+    "LV_2": ["F9", "05"],
+    "PP": ["F9", "06"],
+    "ID": ["F9", "07"],
+    "NO": ["F9", "08"],
+    "UNDERSCORE": ["F9", "09"],
+    "CIRCLE_1": ["F9", "0A"],
+    "CIRCLE_2": ["F9", "0B"],
+    "CIRCLE_3": ["F9", "0C"],
+    "CIRCLE_4": ["F9", "0D"],
+    "CIRCLE_5": ["F9", "0E"],
+    "CIRCLE_6": ["F9", "0F"],
+    "CIRCLE_7": ["F9", "10"],
+    "CIRCLE_8": ["F9", "11"],
+    "CIRCLE_9": ["F9", "12"],
+    "LEFT_PAREN": ["F9", "13"],
+    "RIGHT_PAREN": ["F9", "14"],
+    "CIRCLE_DOT": ["F9", "15"],
+    "TRIANGLE": ["F9", "16"],
+    "BIG_MULT_X": ["F9", "17"],
+
+    "EMOJI_UNDERSCORE": ["F9", "D0"],
+    "EMOJI_PIPE": ["F9", "D1"],
+    "EMOJI_HIGHBAR": ["F9", "D2"],
+    "EMOJI_TILDE": ["F9", "D3"],
+    "EMOJI_LEFT_PAREN": ["F9", "D4"],
+    "EMOJI_RIGHT_PAREN": ["F9", "D5"],
+    "EMOJI_UNION": ["F9", "D6"],
+    "EMOJI_GREATER_THAN": ["F9", "D7"],
+    "EMOJI_LEFT_EYE": ["F9", "D8"],
+    "EMOJI_RIGHT_EYE": ["F9", "D9"],
+    "EMOJI_AT": ["F9", "DA"],
+    "EMOJI_SEMICOLON": ["F9", "DB"],
+    "EMOJI_PLUS": ["F9", "DC"],
+    "EMOJI_MINUS": ["F9", "DD"],
+    "EMOJI_EQUALS": ["F9", "DE"],
+    "EMOJI_SPIRAL": ["F9", "DF"],
+    "EMOJI_TONGUE": ["F9", "E0"],
+    "EMOJI_TRIANGLE_OUTLINE": ["F9", "E1"],
+    "EMOJI_ACUTE": ["F9", "E2"],
+    "EMOJI_GRAVE": ["F9", "E3"],
+    "EMOJI_CIRCLE": ["F9", "E4"],
+    "EMOJI_TRIANGLE": ["F9", "E5"],
+    "EMOJI_SQUARE": ["F9", "E6"],
+    "EMOJI_HEART": ["F9", "E7"],
+    "EMOJI_MOON": ["F9", "E8"],
+    "EMOJI_NOTE": ["F9", "E9"],
+    "EMOJI_BALL": ["F9", "EA"],
+    "EMOJI_BOLT": ["F9", "EB"],
+    "EMOJI_LEAF": ["F9", "EC"],
+    "EMOJI_FIRE": ["F9", "ED"],
+    "EMOJI_WATER": ["F9", "EE"],
+    "EMOJI_LEFT_FIST": ["F9", "EF"],
+    "EMOJI_RIGHT_FIST": ["F9", "F0"],
+    "EMOJI_BIGWHEEL": ["F9", "F1"],
+    "EMOJI_SMALLWHEEL": ["F9", "F2"],
+    "EMOJI_SPHERE": ["F9", "F3"],
+    "EMOJI_IRRITATED": ["F9", "F4"],
+    "EMOJI_MISCHIEVOUS": ["F9", "F5"],
+    "EMOJI_HAPPY": ["F9", "F6"],
+    "EMOJI_ANGRY": ["F9", "F7"],
+    "EMOJI_SURPRISED": ["F9", "F8"],
+    "EMOJI_BIGSMILE": ["F9", "F9"],
+    "EMOJI_EVIL": ["F9", "FA"],
+    "EMOJI_TIRED": ["F9", "FB"],
+    "EMOJI_NEUTRAL": ["F9", "FC"],
+    "EMOJI_SHOCKED": ["F9", "FD"],
+    "EMOJI_BIGANGER": ["F9", "FE"],
 }
 
 
 def StringFileConverter(fileName: str):
     stringToWrite = ".thumb\n.text\n.align 2\n\n"
-    with open(fileName, 'r', encoding="ISO-8859-1") as file:
+    with open(fileName, 'r', encoding="utf-8") as file:
         maxLength = 0
         fillFF = False
         readingState = 0
@@ -208,7 +290,7 @@ def ProcessString(string: str, lineNum: int, maxLength=0, fillWithFF=False) -> s
 
 def PokeByteTableMaker():
     dictionary = {}
-    with open(CharMap, 'r', encoding="ISO-8859-1") as file:
+    with open(CharMap, 'r', encoding="utf-8") as file:
         for line in file:
             if line.strip() != "/FF" and line.strip() != "":
                 if line[2] == '=' and line[3] != "":

@@ -6,20 +6,34 @@
 
 //extern EWRAM_DATA struct ItemSlot gUnknown_02039F80[3];
 
-
-struct ShopData {
-	/*0x0*/ void (*MainCallback)(void);
-	/*0x4*/ const u16 *itemList;
-	/*0x8*/ u32 itemPrice;
-	/*0xC*/ u16 cursorPos;
-	/*0xE*/ u16 _;
-	/*0x10*/ u16 itemCount;
-	/*0x12*/ u16 field12;
-	/*0x14*/ u16 field14;
-	/*0x16*/ bool8 martType;	// 0x1 if tm list
-	//INCOMPLETE
+enum
+{
+    MART_TYPE_REGULAR,
+    MART_TYPE_TMHM,
+    MART_TYPE_DECOR,
+    MART_TYPE_DECOR2,
 };
 
+struct ShopData
+{
+    /*0x00*/ void (*callback)(void);
+    /*0x04*/ const u16 *itemList;
+    /*0x08*/ u32 itemPrice;
+    /*0x0C*/ u16 selectedRow;
+    /*0x0E*/ u16 scrollOffset;
+    /*0x10*/ u16 itemCount;
+    /*0x12*/ u16 field12;
+    /*0x14*/ u16 maxQuantity;
+    /*0x16*/ u16 martType:4;    // 0x1 if tm list
+             u16 unk16_4:5;
+             u16 itemSlot:2;
+             u16 unk16_11:5;
+    /*0x18*/ u16 unk18;
+};
+
+extern struct ShopData gShopData;
+
+extern u16 (*gShopTilemapBuffer1)[0x400];
 
 void CreatePokemartMenu(const u16 *);
 void CreateDecorationShop1Menu(const u16 *);
@@ -39,5 +53,6 @@ void __attribute__((long_call)) BuildMartStrings(u16 item);
 //void __attribute__((long_call)) BuyMenuPrintPriceInList(u8 windowId, int item, u8 y);
 void __attribute__((long_call)) BuyMenuPrint(u8 windowId, u8 font, const u8 *text, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 color);
 void __attribute__((long_call)) RedrawListMenu(u8 taskId);
+void __attribute__((long_call)) BuyMenuDecompressBgGraphics(void);
 
 #endif // GUARD_SHOP_H

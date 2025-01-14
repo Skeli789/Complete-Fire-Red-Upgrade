@@ -34,7 +34,10 @@ BattleScript_FaintRaidAttacker:
 	pokemonfaintcry BANK_ATTACKER
 	playanimation BANK_ATTACKER ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_ATTACKER
+
+BattleScript_FinishFaintRaidBoss:
 	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
+	callasm IncrementBattleTurnCounter @;Stops Quick Ball from working (from SwSh)
 	callasm FinishTurn
 	return
 
@@ -52,28 +55,26 @@ BattleScript_FaintRaidTarget:
 	pokemonfaintcry BANK_TARGET
 	playanimation BANK_TARGET ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_TARGET
-	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
-	callasm FinishTurn
-	return
+	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_FaintScriptingBank:
-	pokemonfaintcry BANK_SCRIPTING
+	copybyte FAINTED_BANK, BATTLE_SCRIPTING_BANK @;Using BANK_SCRIPTING can cause problems in cleareffectsonfaint
+	pokemonfaintcry BANK_FAINTED
 	pause 0x30
-	dofaintanimation BANK_SCRIPTING
+	dofaintanimation BANK_FAINTED
 	setword BATTLE_STRING_LOADER ScriptingBankFainted
 	printstring 0x184
-	cleareffectsonfaint BANK_SCRIPTING
+	cleareffectsonfaint BANK_FAINTED
 	printstring 0x130
-	trytrainerslidefirstdownmsg BANK_SCRIPTING
+	trytrainerslidefirstdownmsg BANK_FAINTED
 	return
 
 BattleScript_FaintRaidScriptingBank:
-	pokemonfaintcry BANK_SCRIPTING
-	playanimation BANK_SCRIPTING ANIM_POWDER_EXPLOSION 0x0
-	cleareffectsonfaint BANK_SCRIPTING
-	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
-	callasm FinishTurn
-	return
+	copybyte FAINTED_BANK, BATTLE_SCRIPTING_BANK @;Using BANK_SCRIPTING can cause problems in cleareffectsonfaint
+	pokemonfaintcry BANK_FAINTED
+	playanimation BANK_FAINTED ANIM_POWDER_EXPLOSION 0x0
+	cleareffectsonfaint BANK_FAINTED
+	goto BattleScript_FinishFaintRaidBoss
 
 BattleScript_SuccessBallThrow:
 	jumpifhalfword EQUALS ITEM_BUFFER ITEM_SAFARI_BALL BattleScript_PrintCaughtMonInfo
@@ -86,7 +87,16 @@ BattleScript_PrintCaughtMonInfo:
 	setbyte EXP_STATE, 0x0
 	getexp BANK_TARGET
 	@;sethword gBattle_BG2_X, 0x0
-	goto 0x81D9A53
+	callasm ApplyBallSpecialEffect
+	pickupitemcalculation
+	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
+	printstring 0x10F @;STRINGID_PKMNDATAADDEDTODEX
+	waitstateatk
+	setbyte BATTLE_COMMUNICATION, 0
+	displaydexinfo
+BattleScript_CaughtPokemonSkipNewDex:
+	callasm TrySkipBattleNicknameOffer
+	goto 0x81D9A63
 	
 BattleScript_BenjaminButterfreeDevolution:
 	callasm RestoreEffectBankHPStatsAndRemoveBackupSpecies
@@ -103,6 +113,7 @@ BattleScript_BenjaminButterfreeDevolution:
 	waitmessage DELAY_1SECOND
 	callasm SetSkipCertainSwitchInAbilities  @;Skip certain abilities if you fainted from recoil and KO'd the Foe
 	tryactivateswitchinability BANK_EFFECT
+	callasm RestoreOriginalAttackerAndTarget
 	return
 
 .align 2

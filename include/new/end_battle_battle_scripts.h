@@ -21,5 +21,12 @@ extern const u8 BattleScript_LostMultiBattleTower[];
 extern const u8 BattleScript_LostBattleTower[];
 extern const u8 BattleScript_LoseFrontierRaidBattle[];
 extern const u8 BattleScript_AskIfWantsToForfeitMatch[];
+extern const u8 BattleScript_ConfirmRunAway[];
 extern const u8 BattleScript_RanAwayUsingMonAbility[];
 extern const u8 BattleScript_RaidMonRanAway[];
+extern const u8 BattleScript_TryTakeWildMonItem[];
+extern const u8 BattleScript_TakeWildMonItem[];
+
+//Strings
+extern const u8 gText_TookCaughtItemToCube[];
+extern const u8 gText_TookCaughtItemToBag[];

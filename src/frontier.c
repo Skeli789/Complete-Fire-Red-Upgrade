@@ -5,12 +5,17 @@
 #include "../include/random.h"
 #include "../include/script.h"
 #include "../include/string_util.h"
+#include "../include/constants/items.h"
 
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/build_pokemon.h"
-#include "../include/new/util.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/species_tables.h"
+#include "../include/new/util.h"
+
 /*
 frontier.c
 	all supporting and master functions for developing a battle frontier
@@ -20,6 +25,7 @@ tables to edit:
 	gBattleMineFormat1Tiers
 	gBattleMineFormat2Tiers
 	gBattleMineFormat3Tiers
+	gBattleMineFormat4Tiers
 	gBattleMineTiers
 	gBattleCircusTiers
 	gBattleFrontierTierNames
@@ -42,6 +48,7 @@ extern const u8 gText_RandomMultiBattle[];
 extern const u8 gText_BattleTowerStandard[];
 extern const u8 gText_NoRestrictions[];
 extern const u8 gText_SmogonGen7OU[];
+extern const u8 gText_SmogonOUDoubles[];
 extern const u8 gText_SmogonGen7Uber[];
 extern const u8 gText_SmogonLittleCup[];
 extern const u8 gText_MiddleCup[];
@@ -59,15 +66,21 @@ extern const u8 gText_SmogonBenjaminButterfree[];
 extern const u8 gText_MegaBrawl[];
 extern const u8 gText_DynamaxStandard[];
 extern const u8 gText_NationalDexOU[];
+extern const u8 gText_SmogonMetronome[];
+extern const u8 gText_SmogonGen7UU[];
+extern const u8 gText_SmogonGen7RU[];
+extern const u8 gText_SmogonGen7NU[];
 extern const u8 gText_BattleMineFormat1[];
 extern const u8 gText_BattleMineFormat2[];
 extern const u8 gText_BattleMineFormat3[];
+extern const u8 gText_BattleMineFormat4[];
 
 extern const u8 gText_On[];
 extern const u8 gText_Off[];
 extern const u8 gText_BeAble[];
 extern const u8 gText_NotBeAble[];
 extern const u8 gText_Previous[];
+extern const u8 gText_Current[];
 extern const u8 gText_Max[];
 extern const u8 gText_None[];
 
@@ -79,15 +92,15 @@ extern const u8 gText_BattleCircusDescriptionRain[];
 extern const u8 gText_BattleCircusDescriptionSun[];
 extern const u8 gText_BattleCircusDescriptionSandstorm[];
 extern const u8 gText_BattleCircusDescriptionHail[];
-extern const u8 gText_BattleCircusDescriptionFog[];
+extern const u8 gText_BattleCircusDescriptionDeltaStream[];
 extern const u8 gText_BattleCircusDescriptionTrickRoom[];
 extern const u8 gText_BattleCircusDescriptionMagicRoom[];
 extern const u8 gText_BattleCircusDescriptionWonderRoom[];
 extern const u8 gText_BattleCircusDescriptionGravity[];
-extern const u8 gText_BattleCircusDescriptionIonDeluge[];
+extern const u8 gText_BattleCircusDescriptionMagnetRise[];
 extern const u8 gText_BattleCircusDescriptionFairyLock[];
-extern const u8 gText_BattleCircusDescriptionMudSport[];
-extern const u8 gText_BattleCircusDescriptionWaterSport[];
+extern const u8 gText_BattleCircusDescriptionPixies[];
+extern const u8 gText_BattleCircusDescriptionBadThoughts[];
 extern const u8 gText_BattleCircusDescriptionInverseBattle[];
 extern const u8 gText_BattleCircusDescriptionDynamax[];
 extern const u8 gText_BattleCircusDescriptionTradeMon[];
@@ -116,7 +129,7 @@ const u8 gBattleTowerTiers[] =
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 };
 
-const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
+const u8 gNumBattleTowerTiers = NELEMS(gBattleTowerTiers);
 
 const u8 gBattleMineFormat1Tiers[] =
 {
@@ -138,14 +151,21 @@ const u8 gBattleMineFormat3Tiers[] =
 	BATTLE_FACILITY_LC_CAMOMONS,
 };
 
+const u8 gBattleMineFormat4Tiers[] =
+{
+	BATTLE_FACILITY_UBER,
+	BATTLE_FACILITY_UBER_CAMOMONS,
+};
+
 const u8 gBattleMineTiers[] =
 {
 	BATTLE_MINE_FORMAT_1,
 	BATTLE_MINE_FORMAT_2,
 	BATTLE_MINE_FORMAT_3,
+	BATTLE_MINE_FORMAT_4,
 };
 
-const u8 gNumBattleMineTiers = ARRAY_COUNT(gBattleMineTiers);
+const u8 gNumBattleMineTiers = NELEMS(gBattleMineTiers);
 
 const u8 gBattleCircusTiers[] =
 {
@@ -160,11 +180,12 @@ const u8 gBattleCircusTiers[] =
 	BATTLE_FACILITY_350_CUP,
 	BATTLE_FACILITY_AVERAGE_MONS,
 	BATTLE_FACILITY_BENJAMIN_BUTTERFREE,
+	BATTLE_FACILITY_MEGA_BRAWL,
 	BATTLE_FACILITY_DYNAMAX_STANDARD,
 	BATTLE_FACILITY_NATIONAL_DEX_OU,
 };
 
-const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
+const u8 gNumBattleCircusTiers = NELEMS(gBattleCircusTiers);
 
 const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 {
@@ -186,9 +207,14 @@ const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 	[BATTLE_FACILITY_MEGA_BRAWL] = gText_MegaBrawl,
 	[BATTLE_FACILITY_DYNAMAX_STANDARD] = gText_DynamaxStandard,
 	[BATTLE_FACILITY_NATIONAL_DEX_OU] = gText_NationalDexOU,
+	[BATTLE_FACILITY_METRONOME] = gText_SmogonMetronome,
+	[BATTLE_FACILITY_UU] = gText_SmogonGen7UU,
+	[BATTLE_FACILITY_NU] = gText_SmogonGen7RU,
+	[BATTLE_FACILITY_RU] = gText_SmogonGen7NU,
 	[BATTLE_MINE_FORMAT_1] = gText_BattleMineFormat1,
 	[BATTLE_MINE_FORMAT_2] = gText_BattleMineFormat2,
 	[BATTLE_MINE_FORMAT_3] = gText_BattleMineFormat3,
+	[BATTLE_MINE_FORMAT_4] = gText_BattleMineFormat4,
 };
 
 const u8* const gBattleFrontierFormats[NUM_TOWER_BATTLE_TYPES] =
@@ -212,15 +238,15 @@ const u8* const sBattleCircusEffectDescriptions[] =
 	gText_BattleCircusDescriptionSun,
 	gText_BattleCircusDescriptionSandstorm,
 	gText_BattleCircusDescriptionHail,
-	gText_BattleCircusDescriptionFog,
+	gText_BattleCircusDescriptionDeltaStream,
 	gText_BattleCircusDescriptionTrickRoom,
 	gText_BattleCircusDescriptionMagicRoom,
 	gText_BattleCircusDescriptionWonderRoom,
 	gText_BattleCircusDescriptionGravity,
-	gText_BattleCircusDescriptionIonDeluge,
+	gText_BattleCircusDescriptionMagnetRise,
 	gText_BattleCircusDescriptionFairyLock,
-	gText_BattleCircusDescriptionMudSport,
-	gText_BattleCircusDescriptionWaterSport,
+	gText_BattleCircusDescriptionPixies,
+	gText_BattleCircusDescriptionBadThoughts,
 	gText_BattleCircusDescriptionInverseBattle,
 	gText_BattleCircusDescriptionDynamax,
 	gText_BattleCircusDescriptionTradeMon,
@@ -480,7 +506,6 @@ bool8 IsGSCupBattle()
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_FACILITY_STANDARD
-	||  IsMiddleCupTier(tier)
 	||  tier == BATTLE_FACILITY_MEGA_BRAWL
 	||  tier == BATTLE_FACILITY_DYNAMAX_STANDARD)
 		return TRUE;
@@ -610,10 +635,12 @@ const u8* GetFrontierTierName(u8 tier, u8 format)
 
 	if (!IsFrontierSingles(format))
 	{
-		if (tier == BATTLE_FACILITY_MIDDLE_CUP)
+		if (tier == BATTLE_FACILITY_OU)
+			string = gText_SmogonOUDoubles;
+		else if (tier == BATTLE_FACILITY_MIDDLE_CUP)
 			string = gText_GSCup;
 		else if (tier == BATTLE_FACILITY_MC_CAMOMONS)
-		string = gText_GSCupCamomons;
+			string = gText_GSCupCamomons;
 	}
 
 	return string;
@@ -622,6 +649,17 @@ const u8* GetFrontierTierName(u8 tier, u8 format)
 bool8 InBattleSands(void)
 {
 	return (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS) != 0;
+}
+
+bool8 IsAIControlledBattle(void)
+{
+	return InBattleSands() || (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE) != 0;
+}
+
+bool8 IsStandardTier(u8 tier)
+{
+	return tier == BATTLE_FACILITY_STANDARD
+		|| tier == BATTLE_FACILITY_DYNAMAX_STANDARD;
 }
 
 bool8 IsCamomonsTier(u8 tier)
@@ -634,7 +672,9 @@ bool8 IsCamomonsTier(u8 tier)
 
 bool8 IsLittleCupTier(u8 tier)
 {
-	return tier == BATTLE_FACILITY_LITTLE_CUP || tier == BATTLE_FACILITY_LC_CAMOMONS;
+	return tier == BATTLE_FACILITY_LITTLE_CUP
+		|| tier == BATTLE_FACILITY_LC_CAMOMONS
+		|| tier == BATTLE_MINE_FORMAT_3;
 }
 
 bool8 IsMiddleCupTier(u8 tier)
@@ -654,7 +694,22 @@ bool8 Is350CupBattle(void)
 
 bool8 IsScaleMonsBattle(void)
 {
-	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS;
+	return (FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS)
+		#ifdef FLAG_SCALEMONS_GAME
+		|| FlagGet(FLAG_SCALEMONS_GAME)
+		#endif
+		;
+}
+
+bool8 IsOnlyScalemonsGame(void)
+{
+	#ifdef FLAG_SCALEMONS_GAME
+	if (FlagGet(FLAG_SCALEMONS_GAME)
+	&& !(FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_SCALEMONS))
+		return TRUE;
+	#endif
+
+	return FALSE;
 }
 
 bool8 IsCamomonsBattle(void)
@@ -674,10 +729,586 @@ bool8 AreMegasZMovesBannedInTier(u8 tier)
 
 bool8 IsMegaZMoveBannedBattle(void)
 {
+	if (gBattleTypeFlags & BATTLE_TYPE_RING_CHALLENGE
+	&& gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER) //Only in Frontier - works fine in regular Gym Battles
+		return TRUE;
+
 	return gBattleTypeFlags & BATTLE_TYPE_TRAINER //Excludes Raid Battles
 	&& FlagGet(FLAG_BATTLE_FACILITY)
 	&& (AreMegasZMovesBannedInTier(VarGet(VAR_BATTLE_FACILITY_TIER))
 	 || (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_DYNAMAX));
+}
+
+bool8 IsMoveBannedInRingChallenge(u16 move, u8 bank)
+{
+	if (FlagGet(FLAG_BATTLE_FACILITY) && gBattleMoves[move].effect == EFFECT_PERISH_SONG)
+		return TRUE;
+
+	u8 moveType = GetMoveTypeSpecial(bank, move);
+
+	return gNewBS->ringChallengeBannedTypes[0] == moveType
+		|| gNewBS->ringChallengeBannedTypes[1] == moveType
+		|| gNewBS->ringChallengeBannedTypes[2] == moveType;
+}
+
+bool8 IsMoveBannedInRingChallengeByMon(u16 move, struct Pokemon* mon)
+{
+	if (FlagGet(FLAG_BATTLE_FACILITY) && gBattleMoves[move].effect == EFFECT_PERISH_SONG)
+		return TRUE;
+
+	u8 moveType = GetMonMoveTypeSpecial(mon, move);
+
+	return gNewBS->ringChallengeBannedTypes[0] == moveType
+		|| gNewBS->ringChallengeBannedTypes[1] == moveType
+		|| gNewBS->ringChallengeBannedTypes[2] == moveType;
+}
+
+#define LOAD_TIER_CHECKING_ABILITY										\
+{																		\
+	if (spread->ability == 0 && gBaseStats[species].hiddenAbility != 0)	\
+		ability = GetHiddenAbility(species);							\
+	else if (spread->ability == 2 && gBaseStats[species].ability2 != 0)	\
+		ability = GetAbility2(species);									\
+	else																\
+		ability = GetAbility1(species);									\
+}
+bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType)
+{
+	u32 i;
+	u8 ability;
+	const u16* moveLoc;
+
+	if (species == SPECIES_EGG
+	#ifdef SPECIES_ETERNATUS_ETERNAMAX
+	|| species == SPECIES_ETERNATUS_ETERNAMAX
+	#endif
+	) //Hackmon
+		return TRUE;
+
+	u16 battleFormat = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
+
+	switch (tier) {
+		case BATTLE_FACILITY_STANDARD:
+		case BATTLE_FACILITY_MEGA_BRAWL:
+		case BATTLE_FACILITY_DYNAMAX_STANDARD:
+			//Load correct ability
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			if (gSpecialSpeciesFlags[species].battleTowerStandardBan
+			||  CheckTableForItem(item, gBattleTowerStandard_ItemBanList)
+			|| (ability == ABILITY_BATTLEBOND && tier != BATTLE_FACILITY_MEGA_BRAWL && BATTLE_FACILITY_NUM != IN_RING_CHALLENGE)) //Battle Bond is banned in Standard
+				return TRUE;
+
+			if (BATTLE_FACILITY_NUM == IN_RING_CHALLENGE) //1v1
+			{
+				#ifdef UNBOUND
+				if (species == SPECIES_REGIGIGAS && ability == ABILITY_STALL && !FlagGet(FLAG_ABILITY_RANDOMIZER)) //Too OP 1v1
+					return TRUE;
+				#endif
+
+				if (item == ITEM_FOCUS_SASH) //No Focus Sash in Ring Challenge
+					return TRUE;
+
+				//Check Banned Moves
+				for (i = 0; i < MAX_MON_MOVES; ++i)
+				{
+					if (CheckTableForMove(moveLoc[i], gRingChallenge_MoveBanList))
+						return TRUE;
+				}
+			}
+			break;
+
+		case BATTLE_FACILITY_OU:
+		case BATTLE_FACILITY_NATIONAL_DEX_OU:
+		STANDARD_OU_CHECK:
+		//For OU, there's a species, item, ability, and move ban list
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			if (IsFrontierSingles(battleFormat))
+			{
+				if (tier == BATTLE_FACILITY_NATIONAL_DEX_OU)
+				{
+					if (gSpecialSpeciesFlags[species].smogonNationalDexOUBan
+					||  CheckTableForItem(item, gSmogonNationalDexOU_ItemBanList))
+						return TRUE;
+				}
+				else //Gen 7 OU
+				{
+					if (gSpecialSpeciesFlags[species].smogonOUBan
+					||  CheckTableForItem(item, gSmogonOU_ItemBanList))
+						return TRUE;
+				}
+
+				//Check Banned Abilities
+				if (CheckTableForAbility(ability, gSmogonOU_AbilityBanList))
+					return TRUE;
+
+				//Check Banned Moves
+				for (i = 0; i < MAX_MON_MOVES; ++i)
+				{
+					if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList)
+					|| moveLoc[i] == MOVE_BATONPASS)
+						return TRUE;
+				}
+			}
+			else //Double Battles
+			{
+				bool8 knowsRecycle = FALSE;
+				bool8 knowsPainSplit = FALSE;
+				bool8 knowsFling = FALSE;
+				bool8 knowsHealingMove = FALSE;
+
+				if (gSpecialSpeciesFlags[species].smogonOUDoublesBan
+				||  CheckTableForItem(item, gSmogonOUDoubles_ItemBanList))
+					return TRUE;
+
+				//Check Banned Abilities
+				if (CheckTableForAbility(ability, gSmogonOUDoubles_AbilityBanList))
+					return TRUE;
+
+				//Check Banned Moves
+				for (i = 0; i < MAX_MON_MOVES; ++i)
+				{
+					if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList)
+					||  CheckTableForMove(moveLoc[i], gSmogonOUDoubles_MoveBanList))
+						return TRUE;
+
+					switch (moveLoc[i]) {
+						case MOVE_HEALPULSE:
+						case MOVE_MILKDRINK:
+						case MOVE_MOONLIGHT:
+						case MOVE_MORNINGSUN:
+						case MOVE_RECOVER:
+						case MOVE_ROOST:
+						case MOVE_SLACKOFF:
+						case MOVE_SOFTBOILED:
+						case MOVE_WISH:
+							knowsHealingMove = TRUE;
+							break;
+						case MOVE_RECYCLE:
+							knowsRecycle = TRUE;
+							break;
+						case MOVE_PAINSPLIT:
+							knowsPainSplit = TRUE;
+							break;
+						case MOVE_FLING:
+							knowsFling = TRUE;
+							break;
+					}
+
+					if (knowsRecycle && ItemId_GetHoldEffect(item) == ITEM_EFFECT_RESTORE_PP) //Leppa Berry
+					{
+						if (knowsHealingMove
+						||  knowsPainSplit
+						||  knowsFling)
+							return TRUE;
+					}
+				}
+			}
+			break;
+
+		case BATTLE_FACILITY_UBER:
+		case BATTLE_FACILITY_UBER_CAMOMONS:
+		//For Ubers ban Rayquaza with Dragon Ascent (handled in mega.c), Zacian, Moody, and some moves
+		if (species == SPECIES_ZACIAN || species == SPECIES_ZACIAN_CROWNED)
+			return TRUE;
+
+		STANDARD_UBER_CHECK:
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (ability == ABILITY_MOODY)
+				return 1;
+
+			//Check Banned Moves
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList))
+					return TRUE;
+			}
+			break;
+
+		case BATTLE_FACILITY_LITTLE_CUP:
+		case BATTLE_FACILITY_LC_CAMOMONS:
+			if (!gSpecialSpeciesFlags[species].smogonLittleCup
+			||  CheckTableForItem(item, gSmogonLittleCup_ItemBanList))
+				return TRUE; //Banned
+
+			if (checkFromLocationType == CHECK_BATTLE_TOWER_SPREADS)
+				moveLoc = spread->moves;
+			else
+				moveLoc = mon->moves;
+
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (CheckTableForMove(moveLoc[i], gSmogonLittleCup_MoveBanList))
+					return TRUE;
+			}
+			break;
+
+		case BATTLE_FACILITY_MIDDLE_CUP:
+		case BATTLE_FACILITY_MC_CAMOMONS:
+			if (IsFrontierSingles(battleFormat)) //Middle Cup in Singles
+			{
+				if (!gSpecialSpeciesFlags[species].middleCup
+				||   CheckTableForItem(item, gMiddleCup_ItemBanList))
+					return TRUE; //Banned
+
+				//Load correct ability and moves
+				switch (checkFromLocationType) {
+					case CHECK_BATTLE_TOWER_SPREADS:
+						LOAD_TIER_CHECKING_ABILITY;
+						break;
+					default:
+						ability = GetMonAbility(mon);
+				}
+
+				//Check Banned Abilities
+				if (CheckTableForAbility(ability, gMiddleCup_AbilityBanList))
+					return TRUE;
+			}
+			else //GS Cup
+			{
+				if (CheckTableForItem(item, gBattleTowerStandard_ItemBanList))
+					return TRUE;
+
+				if (gSpecialSpeciesFlags[species].battleTowerStandardBan
+				&& !gSpecialSpeciesFlags[species].gsCupLegendaries)
+					return TRUE;
+			}
+			break;
+
+		case BATTLE_FACILITY_MONOTYPE:
+		//For Monotype, there's a species, item, ability, and move ban list
+			if (gSpecialSpeciesFlags[species].smogonMonotypeBan
+			||  CheckTableForItem(item, gSmogonMonotype_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonMonotype_AbilityBanList))
+				return TRUE;
+
+			//Check Banned Moves
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (CheckTableForMove(moveLoc[i], gSmogon_MoveBanList)
+				|| moveLoc[i] == MOVE_BATONPASS
+				|| moveLoc[i] == MOVE_SWAGGER)
+					return TRUE;
+			}
+			break;
+
+		case BATTLE_FACILITY_CAMOMONS:
+			if (gSpecialSpeciesFlags[species].smogonCamomonsBan)
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+
+		case BATTLE_FACILITY_SCALEMONS:
+			if (gSpecialSpeciesFlags[species].smogonScalemonsBan
+			||  CheckTableForItem(item, gSmogonScalemons_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonScalemons_AbilityBanList))
+				return TRUE;
+
+			goto STANDARD_UBER_CHECK;
+
+		case BATTLE_FACILITY_350_CUP:
+			if (gSpecialSpeciesFlags[species].smogon350CupBan
+			||  CheckTableForItem(item, gSmogon350Cup_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogon350Cup_AbilityBanList))
+				return TRUE;
+
+			goto STANDARD_UBER_CHECK;
+
+		case BATTLE_FACILITY_AVERAGE_MONS:
+			if (gSpecialSpeciesFlags[species].smogonAverageMonsBan
+			||  CheckTableForItem(item, gSmogonAverageMons_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonAverageMons_AbilityBanList))
+				return TRUE;
+			break;
+
+		case BATTLE_FACILITY_BENJAMIN_BUTTERFREE:
+			if (gSpecialSpeciesFlags[species].smogonBenjaminButterfreeBan)
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+
+		case BATTLE_FACILITY_METRONOME:
+			//No Steel Types, Pokemon with BST > 625 (including Megas), and banned items or abilities
+			if (gBaseStats[species].type1 == TYPE_STEEL
+			||  gBaseStats[species].type2 == TYPE_STEEL
+			||  GetBaseStatsTotal(species) > 625)
+				return TRUE;
+
+			//Check banned items
+			if (CheckTableForItem(item, gSmogonMetronome_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check if can Mega Evolve and if that species should be banned
+			u16 megaSpecies = GetMegaSpecies(species, item, moveLoc);
+			if (megaSpecies != SPECIES_NONE)
+			{
+				if (gBaseStats[megaSpecies].type1 == TYPE_STEEL
+				||  gBaseStats[megaSpecies].type2 == TYPE_STEEL
+				||  GetBaseStatsTotal(megaSpecies) > 625)
+					return TRUE;
+			}
+
+			//Check banned abilities
+			if (CheckTableForAbility(ability, gSmogonMetronome_AbilityBanList))
+				return TRUE;
+
+			//Check specific item-ability combination
+			if (ability == ABILITY_HARVEST
+			&& (item == ITEM_JABOCA_BERRY || item == ITEM_ROWAP_BERRY))
+				return TRUE;
+			break;
+
+		case BATTLE_FACILITY_UU:
+			if (gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonUU_AbilityBanList))
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+
+		case BATTLE_FACILITY_RU:
+			if (gSpecialSpeciesFlags[species].smogonRUBan
+			||  gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonRU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
+				return TRUE;
+
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+				default:
+					moveLoc = mon->moves;
+					ability = GetMonAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gSmogonRU_AbilityBanList))
+				return TRUE;
+
+			//Check Banned Moves
+			for (i = 0; i < MAX_MON_MOVES; ++i)
+			{
+				if (moveLoc[i] == MOVE_AURORAVEIL)
+					return TRUE;
+			}
+
+			goto STANDARD_OU_CHECK;
+	
+		case BATTLE_FACILITY_NU:
+			if (gSpecialSpeciesFlags[species].smogonNUBan
+			||  gSpecialSpeciesFlags[species].smogonRUBan
+			||  gSpecialSpeciesFlags[species].smogonUUBan
+			||  CheckTableForItem(item, gSmogonNU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonRU_ItemBanList)
+			||  CheckTableForItem(item, gSmogonUU_ItemBanList))
+				return TRUE;
+
+			goto STANDARD_OU_CHECK;
+	}
+
+	return FALSE; //Not banned
+}
+
+bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+	return PokemonTierBan(species, item, NULL, mon, tier, CHECK_PARTY_OFFSET);
+}
+
+bool8 IsSpeciesBannedInTier(u16 species, u16 tier, u16 battleFormat)
+{
+	switch (tier)
+	{
+		case BATTLE_FACILITY_STANDARD:
+		case BATTLE_FACILITY_MEGA_BRAWL:
+		case BATTLE_FACILITY_DYNAMAX_STANDARD:
+			if (gSpecialSpeciesFlags[species].battleTowerStandardBan)
+				return TRUE;
+
+			return species == SPECIES_ASHGRENINJA && tier != BATTLE_FACILITY_MEGA_BRAWL && BATTLE_FACILITY_NUM != IN_RING_CHALLENGE;
+
+		case BATTLE_FACILITY_OU:
+		case BATTLE_FACILITY_NATIONAL_DEX_OU:
+		STANDARD_OU_CHECK:
+			if (IsFrontierSingles(battleFormat))
+			{
+				if (tier == BATTLE_FACILITY_NATIONAL_DEX_OU)
+					return gSpecialSpeciesFlags[species].smogonNationalDexOUBan;
+				else
+					return gSpecialSpeciesFlags[species].smogonOUBan;
+			}
+			else
+				return gSpecialSpeciesFlags[species].smogonOUDoublesBan;
+
+		case BATTLE_FACILITY_UBER:
+		case BATTLE_FACILITY_UBER_CAMOMONS:
+			return species == SPECIES_RAYQUAZA_MEGA
+				|| species == SPECIES_ZACIAN
+				|| species == SPECIES_ZACIAN_CROWNED;
+
+		case BATTLE_FACILITY_LITTLE_CUP:
+		case BATTLE_FACILITY_LC_CAMOMONS:
+			return !gSpecialSpeciesFlags[species].smogonLittleCup;
+
+		case BATTLE_FACILITY_MIDDLE_CUP:
+		case BATTLE_FACILITY_MC_CAMOMONS:
+			if (IsFrontierSingles(battleFormat)) //Middle Cup in Singles
+				return !gSpecialSpeciesFlags[species].middleCup;
+			else //GS Cup in Doubles
+			{
+				return gSpecialSpeciesFlags[species].battleTowerStandardBan
+					&& !gSpecialSpeciesFlags[species].gsCupLegendaries;
+			}
+		
+		case BATTLE_FACILITY_MONOTYPE:
+			return gSpecialSpeciesFlags[species].smogonMonotypeBan;
+		
+		case BATTLE_FACILITY_CAMOMONS:
+			if (gSpecialSpeciesFlags[species].smogonCamomonsBan)
+				return TRUE;
+			goto STANDARD_OU_CHECK;
+		
+		case BATTLE_FACILITY_SCALEMONS:
+			return gSpecialSpeciesFlags[species].smogonScalemonsBan;
+
+		case BATTLE_FACILITY_350_CUP:
+			return gSpecialSpeciesFlags[species].smogon350CupBan;
+		
+		case BATTLE_FACILITY_AVERAGE_MONS:
+			return gSpecialSpeciesFlags[species].smogonAverageMonsBan;
+		
+		case BATTLE_FACILITY_BENJAMIN_BUTTERFREE:
+			if (gSpecialSpeciesFlags[species].smogonBenjaminButterfreeBan)
+				return TRUE;
+			goto STANDARD_OU_CHECK;
+
+		case BATTLE_MINE_FORMAT_1:
+			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_OU, BATTLE_FACILITY_SINGLE)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_OU, BATTLE_FACILITY_DOUBLE) //OU Doubles has its own ban list
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_CAMOMONS, battleFormat)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_BENJAMIN_BUTTERFREE, battleFormat);
+
+		case BATTLE_MINE_FORMAT_2:
+			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_SCALEMONS, battleFormat)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_350_CUP, battleFormat)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_AVERAGE_MONS, battleFormat);
+
+		case BATTLE_MINE_FORMAT_3:
+			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_LITTLE_CUP, battleFormat)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_LC_CAMOMONS, battleFormat);
+
+		case BATTLE_MINE_FORMAT_4:
+			return IsSpeciesBannedInTier(species, BATTLE_FACILITY_UBER, battleFormat)
+				|| IsSpeciesBannedInTier(species, BATTLE_FACILITY_UBER_CAMOMONS, battleFormat);
+	}
+
+	return FALSE;
 }
 
 //@Details: Generates a tower trainer id and name for the requested trainer.
@@ -719,7 +1350,7 @@ u16 sp052_GenerateFacilityTrainer(void)
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
 		return gTowerTrainers[id].owNum;
 	}
-	else if (Var8001 == 1)
+	else if (Var8001 == 1) //Special Trainer
 	{
 		u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 
@@ -815,6 +1446,11 @@ u16 GetBattleMineStreak(u8 type, u8 tier)
 	return GetBattleTowerStreak(type, 0xFFFF, tier, 0xFFFF, 0);
 }
 
+u16 GetRingChallengeSteak(u8 type)
+{
+	return GetBattleTowerStreak(type, 0xFFFF, 0xFFFF, 0xFFFF, 0);
+}
+
 u16 GetMaxBattleTowerStreakForTier(u8 tier)
 {
 	u8 battleType, level, partySize;
@@ -858,6 +1494,9 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 	level = (level == 0) ? VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL) : level;
 	level = AdjustLevelForTier(level, tier);
 
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return 0; //No streak is kept for Metronome battles
+
 	LoadProperStreakData(&facilityNum, &currentOrMax, &battleStyle, &tier, &size, &level);
 
 	switch (facilityNum) {
@@ -870,6 +1509,8 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 			return gBattleMineStreaks[tier][currentOrMax];
 		case IN_BATTLE_CIRCUS:
 			return gBattleCircusStreaks[tier][battleStyle][size][level][currentOrMax];
+		case IN_RING_CHALLENGE:
+			return gRingChallengeStreaks[currentOrMax].streakLength;
 	}
 }
 
@@ -885,10 +1526,15 @@ void sp055_UpdateBattleFacilityStreak(void)
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	u8 partySize = VarGet(VAR_BATTLE_FACILITY_POKE_NUM);
 	u8 level = AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
+
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return; //This tier has no streaks
+
 	LoadProperStreakData(&facilityNum, &dummy, &battleStyle, &tier, &partySize, &level);
 
 	u16* currentStreak, *maxStreak;
 	bool8 inBattleSands = FALSE;
+	bool8 inRingChallenge = FALSE;
 
 	switch (facilityNum) {
 		case IN_BATTLE_TOWER:
@@ -909,12 +1555,26 @@ void sp055_UpdateBattleFacilityStreak(void)
 			currentStreak = &gBattleCircusStreaks[tier][battleStyle][partySize][level][CURR_STREAK]; //Current Streak
 			maxStreak = &gBattleCircusStreaks[tier][battleStyle][partySize][level][MAX_STREAK]; //Max Streak
 			break;
+		case IN_RING_CHALLENGE:
+			currentStreak = &gRingChallengeStreaks[CURR_STREAK].streakLength;
+			maxStreak = &gRingChallengeStreaks[MAX_STREAK].streakLength;
+			inRingChallenge = TRUE;
+			break;
 	}
 
 	switch (Var8000) {
-		case 0:
+		case 0: //Increment by 1
 			if (*currentStreak < 0xFFFF) //Prevent overflow
+			{
 				*currentStreak += 1;
+	
+				if (inRingChallenge)
+				{
+					gRingChallengeStreaks[CURR_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
+					gRingChallengeStreaks[CURR_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+					gRingChallengeStreaks[CURR_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
+				}
+			}
 
 			if (*maxStreak < *currentStreak)
 			{
@@ -934,10 +1594,16 @@ void sp055_UpdateBattleFacilityStreak(void)
 					gBattleSandsStreaks[MAX_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
 					gBattleSandsStreaks[MAX_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
 				}
+				else if (inRingChallenge)
+				{
+					gRingChallengeStreaks[MAX_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
+					gRingChallengeStreaks[MAX_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+					gRingChallengeStreaks[MAX_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
+				}
 			}
 			break;
 
-		case 1:
+		case 1: //Reset
 			*currentStreak = 0; //Rest current streak
 
 			if (inBattleSands)
@@ -952,6 +1618,12 @@ void sp055_UpdateBattleFacilityStreak(void)
 				gBattleSandsStreaks[CURR_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
 				gBattleSandsStreaks[CURR_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
 			}
+			else if (inRingChallenge)
+			{
+				gRingChallengeStreaks[CURR_STREAK].species1 = SPECIES_NONE;
+				gRingChallengeStreaks[CURR_STREAK].species2 = SPECIES_NONE;
+				gRingChallengeStreaks[CURR_STREAK].species3 = SPECIES_NONE;
+			}
 			break;
 	}
 }
@@ -963,9 +1635,18 @@ u16 sp056_DetermineBattlePointsToGive(void)
 {
 	u16 toGive;
 	u16 streakLength = GetCurrentBattleTowerStreak();
+	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
+
+	if (tier == BATTLE_FACILITY_METRONOME)
+		return 10; //Metronome battles always give 10 BP due to their sheer length
 
 	if (streakLength <= 10)
-		toGive = 2;
+	{
+		if (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD)
+			toGive = 2;
+		else
+			toGive = 3;
+	}
 	else if (streakLength <= 19)
 		toGive = 3;
 	else if (streakLength == 20)
@@ -974,12 +1655,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
@@ -988,8 +1669,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
+				break;
+
+			case IN_RING_CHALLENGE:
+				toGive = 20; //Always battle against frontier brain
 				break;
 		}
 	}
@@ -1005,12 +1690,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
@@ -1019,8 +1704,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_FACILITY_MONOTYPE)
+				if (tier != BATTLE_FACILITY_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
+				break;
+
+			case IN_RING_CHALLENGE:
+				toGive = 50; //Always battle against frontier brain
 				break;
 		}
 	}
@@ -1039,8 +1728,30 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 10000;
 	else if ((streakLength % 1000) == 0 && streakLength != 0) //Every 1000 wins give 1000
 		toGive = 1000;
+	else if (streakLength > 10000)
+		toGive = 50;
+	else if (streakLength > 5000)
+		toGive = 30;
+	else if (streakLength > 1000)
+		toGive = 20;
+	else if (streakLength > 500)
+		toGive = 15;
 	else
 		toGive = 10;
+
+	//Give half the amount of BP rounded up in the Battle Sands
+	if (BATTLE_FACILITY_NUM == IN_BATTLE_SANDS)
+	{
+		if (toGive & 1) //Odd number
+			toGive = (toGive / 2) + 1; //Round up
+		else
+			toGive /= 2;
+	}
+	else if (BATTLE_FACILITY_NUM != IN_BATTLE_MINE) //Party size constantly changes so not good idea
+	{
+		if (VarGet(VAR_BATTLE_FACILITY_POKE_NUM) >= PARTY_SIZE)
+			toGive *= 2; //Battles are twice as long, so give twice as much BP
+	}
 
 	return toGive;
 }
@@ -1081,7 +1792,7 @@ static void LoadProperStreakData(u8* facilityNum, u8* currentOrMax, u8* battleSt
 			break;
 
 		case IN_BATTLE_MINE:
-			*tier = MathMin(*tier - BATTLE_MINE_FORMAT_1, 2);
+			*tier = MathMin(*tier - BATTLE_MINE_FORMAT_1, BATTLE_MINE_FORMAT_4 - BATTLE_MINE_FORMAT_1);
 			break;
 
 		case IN_BATTLE_CIRCUS:
@@ -1212,10 +1923,12 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 	u16 choice = Var8000;
 	const u8* tiers = choice == 0 ? gBattleMineFormat1Tiers
 					: choice == 1 ? gBattleMineFormat2Tiers
-					: gBattleMineFormat3Tiers;
-	u8 numTiers = choice == 0 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
-				: choice == 1 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
-				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+					: choice == 2 ? gBattleMineFormat3Tiers
+					: gBattleMineFormat4Tiers;
+	u8 numTiers = choice == 0 ? NELEMS(gBattleMineFormat1Tiers)
+				: choice == 1 ? NELEMS(gBattleMineFormat2Tiers)
+				: choice == 2 ? NELEMS(gBattleMineFormat3Tiers)
+				: NELEMS(gBattleMineFormat4Tiers);
 
 	gSpecialVar_LastResult = FALSE;
 
@@ -1237,6 +1950,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 			if (IsMonBannedInTier(mon, tier))
 			{
 				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
+				Var8004 = i;
 				return;
 			}
 
@@ -1245,6 +1959,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 			if (IsMonBannedInTier(mon, tier))
 			{
 				VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, varBackup);
+				Var8004 = i;
 				return;
 			}
 
@@ -1252,7 +1967,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 		}
 	}
 
-	VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
+	VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, BATTLE_MINE_FORMAT_4 - BATTLE_MINE_FORMAT_1));
 	gSpecialVar_LastResult = TRUE;
 }
 
@@ -1271,29 +1986,26 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 	u8 originalTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
 					: originalTier == BATTLE_MINE_FORMAT_2 ? gBattleMineFormat2Tiers
-					: gBattleMineFormat3Tiers;
-	u8 numTiers = originalTier == BATTLE_MINE_FORMAT_1 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
-				: originalTier == BATTLE_MINE_FORMAT_2 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
-				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+					: originalTier == BATTLE_MINE_FORMAT_3 ? gBattleMineFormat3Tiers
+					: gBattleMineFormat4Tiers;
+	u8 numTiers = originalTier == BATTLE_MINE_FORMAT_1 ? NELEMS(gBattleMineFormat1Tiers)
+				: originalTier == BATTLE_MINE_FORMAT_2 ? NELEMS(gBattleMineFormat2Tiers)
+				: originalTier == BATTLE_MINE_FORMAT_3 ? NELEMS(gBattleMineFormat3Tiers)
+				: NELEMS(gBattleMineFormat4Tiers);
 
 	u16 streak = GetCurrentBattleTowerStreak();
 
 	//Choose Battle Format
 	switch (streak) {
-		case 0 ... 29:
+		case 0 ... 44:
 			format = BATTLE_FACILITY_SINGLE + (Random() & 1);
 			break;
-		default: ; //Random Battles become available after battle 30
-			u8 randomOption = Random() & 3;
-			switch (randomOption) {
-				case 0:
-				case 1:
-					format = BATTLE_FACILITY_SINGLE + (randomOption & 1);
-					break;
-				case 2:
-				default:
-					format = BATTLE_FACILITY_SINGLE_RANDOM + (randomOption & 1);
-			}
+		default: ; //Random Battles become available starting battle 45
+			u8 randomOption = Random() % 10;
+			if (randomOption == 0) //10 % chance of getting random option
+				format = BATTLE_FACILITY_SINGLE_RANDOM + (randomOption & 1);
+			else
+				format = BATTLE_FACILITY_SINGLE + (randomOption & 1);
 	}
 
 	//Choose Tier
@@ -1390,10 +2102,13 @@ void sp071_LoadBattleMineRecordTier(void)
 	u32 i, tier;
 	u8 currTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 
-	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
+	if (currTier == BATTLE_MINE_FORMAT_1
+	||  currTier == BATTLE_MINE_FORMAT_2
+	||  currTier == BATTLE_MINE_FORMAT_3
+	||  currTier == BATTLE_MINE_FORMAT_4)
 		return;
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat1Tiers); ++i)
 	{
 		tier = gBattleMineFormat1Tiers[i];
 		if (currTier == tier)
@@ -1403,7 +2118,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat2Tiers); ++i)
 	{
 		tier = gBattleMineFormat2Tiers[i];
 		if (currTier == tier)
@@ -1413,12 +2128,22 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i)
+	for (i = 0; i < NELEMS(gBattleMineFormat3Tiers); ++i)
 	{
 		tier = gBattleMineFormat3Tiers[i];
 		if (currTier == tier)
 		{
 			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_3);
+			return;
+		}
+	}
+
+	for (i = 0; i < NELEMS(gBattleMineFormat4Tiers); ++i)
+	{
+		tier = gBattleMineFormat4Tiers[i];
+		if (currTier == tier)
+		{
+			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_4);
 			return;
 		}
 	}
@@ -1443,38 +2168,48 @@ void sp072_LoadBattleCircusEffects(void)
 	}
 
 	u8 totalEffects = 1;
+	u8 playerPartyCount = CalculatePlayerPartyCount();
 	bool8 sideEffectsAllowed = FALSE;
 	bool8 personalEffectsAllowed = FALSE;
+	bool8 tradeMonAllowed = FALSE;
 	u16 streak = GetCurrentBattleTowerStreak();
 
 	switch (streak) {
 		case 0 ... 9:
 			break;
 		case 10 ... 19:
+			if (playerPartyCount >= 5) //Basically 6v6 only
+				tradeMonAllowed = TRUE;
 			sideEffectsAllowed = TRUE;
 			break;
 		case 20 ... 29:
+			if (playerPartyCount >= 4) //6v6 and Doubles only
+				tradeMonAllowed = TRUE;
 			sideEffectsAllowed = TRUE;
 			totalEffects = 2;
 			break;
 		case 30 ... 39:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 2;
 			break;
 		case 40 ... 49:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 3;
 			break;
 		case 50 ... 70:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 4;
 			break;
 		default:
 			sideEffectsAllowed = TRUE;
 			personalEffectsAllowed = TRUE;
+			tradeMonAllowed = TRUE;
 			totalEffects = 5;
 			break;
 	}
@@ -1483,6 +2218,7 @@ void sp072_LoadBattleCircusEffects(void)
 	{
 		bool8 weatherActive = (gBattleCircusFlags & BATTLE_CIRCUS_WEATHER) != 0;
 		bool8 terrainActive = (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) != 0;
+		bool8 critEffectActive = (gBattleCircusFlags & BATTLE_CIRCUS_CRIT_EFFECT) != 0;
 		bool8 dynamaxActive = DynamaxAllowedInTier(VarGet(VAR_BATTLE_FACILITY_TIER));
 		bool8 randomBattleActive = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE) >= BATTLE_FACILITY_SINGLE_RANDOM;
 
@@ -1493,8 +2229,10 @@ void sp072_LoadBattleCircusEffects(void)
 		} while (gBattleCircusFlags & gBitTable[effectNum] //Only add non active effects
 			|| (weatherActive && gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER) //One weather effect at a time
 			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
+			|| (critEffectActive && gBitTable[effectNum] & BATTLE_CIRCUS_CRIT_EFFECT) //One critical hit effect at a time
 			|| (dynamaxActive && gBitTable[effectNum] & BATTLE_CIRCUS_DYNAMAX) //No point in stacking Dynamax effect
 			|| (randomBattleActive && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //No point in swapping mons in a random battle
+			|| (!tradeMonAllowed && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //Swapping mons becomes available later on depending on team size
 			|| (!sideEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG && gBitTable[effectNum] <= LAST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG)
 			|| (!personalEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_PERSONAL_EFFECT_FLAG));
 
@@ -1509,8 +2247,6 @@ void sp072_LoadBattleCircusEffects(void)
 				weather = WEATHER_SANDSTORM;
 			else if (gBitTable[effectNum] == BATTLE_CIRCUS_HAIL)
 				weather = WEATHER_STEADY_SNOW;
-			else if (gBitTable[effectNum] == BATTLE_CIRCUS_FOG)
-				weather = WEATHER_FOG_2;
 
 			SetSav1Weather(weather); //Followed up by a doweather in the script
 		}
@@ -1521,6 +2257,7 @@ void sp072_LoadBattleCircusEffects(void)
 	}
 }
 
+//@Details: Sets the appropriate team levels for the battle facility.
 void sp073_ModifyTeamForBattleTower(void)
 {
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
@@ -1542,4 +2279,212 @@ void sp073_ModifyTeamForBattleTower(void)
 
 	Memcpy(gPlayerParty, enteredMons, sizeof(struct Pokemon) * PARTY_SIZE); //Overwrite old team
 	Free(enteredMons);
+}
+
+//@Details: Buffers details of the opposing team for the Ring Challenge.
+//@Returns: gStringVar1: Opponent Pokemon 1 species
+//			gStringVar2: Opponent Pokemon 2 species
+//			gStringVar3: Opponent Pokemon 3 species
+void sp0E8_BufferRingChallengeOpponentTeamDetails(void)
+{
+	GetSpeciesName(gStringVar1, GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL));
+	GetSpeciesName(gStringVar2, GetMonData(&gEnemyParty[1], MON_DATA_SPECIES, NULL));
+	GetSpeciesName(gStringVar3, GetMonData(&gEnemyParty[2], MON_DATA_SPECIES, NULL));
+}
+
+//@Details: Chooses one of the opponent's Pokemon to participate in the Ring Challenge.
+void sp0E9_ChooseRingChallengeOpponentMon(void)
+{
+	#if (defined VAR_RING_CHALLENGE_BANNED_TYPE_1 && defined VAR_RING_CHALLENGE_BANNED_TYPE_2 && defined VAR_RING_CHALLENGE_BANNED_TYPE_3)
+	u32 i, j, k;
+	u8 moveCount[3] = {0}; //[aiMonId]
+	u8 bannedMoveCount[3] = {0}; //[aiMonId]
+	u8 superEffectiveCount[3] = {0}; //[aiMonId]
+	u8 decentMoveCount[3] = {0}; //[aiMonId]
+	bool8 hasFocusSash[3] = {FALSE}; //[aiMonId]
+	bool8 hasPriorityMove[3] = {FALSE}; //[aiMonId]
+	u8 resultFlags[3][3][MAX_MON_MOVES] = {0}; //[aiMonId][playerMonId][moveSlot]
+	u8 bannedTypes[3] =
+	{
+		VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_1),
+		VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_2),
+		VarGet(VAR_RING_CHALLENGE_BANNED_TYPE_3),
+	};
+
+	//Initial calculations for figuring out the best Pokemon to pick
+	for (i = 0; i < 3; ++i) //Each AI mon
+	{
+		struct Pokemon* mon = &gEnemyParty[i];
+		u8 atkAbility = GetMonAbility(mon); 
+		hasFocusSash[i] = GetMonData(mon, MON_DATA_HELD_ITEM, NULL) == ITEM_FOCUS_SASH || atkAbility == ABILITY_STURDY;
+
+		//Go through each of the AI mon's moves
+		for (j = 0; j < MAX_MON_MOVES; ++j)
+		{
+			u16 move = GetMonData(mon, MON_DATA_MOVE1 + j, NULL);
+			if (move != MOVE_NONE)
+			{
+				u8 moveType = GetMonMoveTypeSpecial(mon, move);
+				bool8 isBanned = FALSE;
+				++moveCount[i];
+
+				//Check if the move is usable
+				if (gBattleMoves[move].effect == EFFECT_PERISH_SONG) //Cheap move
+				{
+					isBanned = TRUE;
+					++bannedMoveCount[i]; //Increase count of banned moves
+				}
+				else
+				{
+					for (k = 0; k < NELEMS(bannedTypes); ++k)
+					{
+						if (moveType == bannedTypes[k])
+						{
+							isBanned = TRUE;
+							++bannedMoveCount[i]; //Increase count of banned moves
+							break;
+						}
+					}
+				}
+
+				if (!isBanned && SPLIT(move) != SPLIT_STATUS) //If the move can be used and can do damage
+				{
+					if (gBattleMoves[move].effect != EFFECT_COUNTER && gBattleMoves[move].effect != EFFECT_MIRROR_COAT)
+					{
+						//Get the result flags of the moves against each opponent
+						for (k = 0; k < 3; ++k)
+							TypeDamageModificationPartyMon(atkAbility, &gPlayerParty[k], move, moveType, &resultFlags[i][k][j]);
+					}
+					else //Reflection moves
+					{
+						for (k = 0; k < 3; ++k)
+						{
+							TypeDamageModificationPartyMon(atkAbility, &gPlayerParty[k], move, moveType, &resultFlags[i][k][j]);
+							if (!(resultFlags[i][k][j] & MOVE_RESULT_NO_EFFECT))
+								resultFlags[i][k][j] = MOVE_RESULT_SUPER_EFFECTIVE; //Always count as super effective if they can hit
+						}
+					}
+
+					if (PriorityCalcMon(mon, move) > 0)
+						++hasPriorityMove[i];
+				}
+				else //Otherwise the move can't be used to do damage
+				{
+					for (k = 0; k < 3; ++k)
+						resultFlags[i][k][j] = MOVE_RESULT_NO_EFFECT;
+				}
+			}
+		}
+
+		//Count effectiveness of this AI mon
+		for (j = 0; j < 3; ++j)
+		{
+			for (k = 0; k < MAX_MON_MOVES; ++k)
+			{
+				if (resultFlags[i][j][k] & MOVE_RESULT_SUPER_EFFECTIVE)
+				{
+					++superEffectiveCount[i]; //Has super effective move against this opponent
+					break;
+				}
+				else if (!(resultFlags[i][j][k] & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
+				{
+					++decentMoveCount[i]; //Has at least one decent move that can be used against this opponent
+					break;
+				}
+			}
+		}
+	}
+
+	//Decide which Pokemon to use
+	u8 bestMonId = 0xFF;
+	u8 bestMonScore = 0;
+
+	for (i = 0; i < 3; ++i) //Each AI mon
+	{
+		u8 currMonScore = 0;
+		
+		if (bannedMoveCount[i] == moveCount[i]) //Mon has no usable moves
+			continue;
+
+		if (hasFocusSash[i])
+		{
+			if (hasPriorityMove[i])
+				currMonScore += 3; //Having a Focus Sash and a priority move helps a ton
+			else
+				currMonScore += 1;
+		}
+		else if (hasPriorityMove[i])
+			currMonScore += 1;
+
+		currMonScore += superEffectiveCount[i] * 2; //+ 0:6 Having super effective moves is ranked better
+		currMonScore += decentMoveCount[i]; //+ 0:3
+
+		if (currMonScore > bestMonScore)
+		{
+			bestMonScore = currMonScore;
+			bestMonId = i;
+		}
+		else if (currMonScore == bestMonScore)
+		{
+			if (bannedMoveCount[i] < bannedMoveCount[bestMonId] //This mon has less banned moves
+			||  superEffectiveCount[i] > superEffectiveCount[bestMonId]) //This mon can deal super effective damage to more foes
+			{
+				//Replace the old best mon
+				bestMonId = i;
+			}
+		}
+	}
+
+	if (bestMonScore == 0) //Sucky team as a whole
+		bestMonId = Random() % 3; //Pick Pokemon at random
+
+	//Give the AI the chosen Pokemon
+	struct Pokemon mon = gEnemyParty[bestMonId];
+	ZeroEnemyPartyMons();
+	gEnemyParty[0] = mon;
+	#endif
+}
+
+//@Details: Buffers text relating to battle sands records.
+//@Inputs:
+//		Var8000: 0 = Previous Streak
+//				 1 = Max Streak
+//@Returns: LastResult: TRUE if the requested record exists.
+//			gStringVar1: "previous" or "max"
+//			gStringVar2: Streak length.
+//			gStringVar3: "s" if streak length is not 1.
+//			gStringVar7: Last used species 1.
+//			gStringVar8: Last used species 2.
+//			gStringVar9: Last used species 3.
+void sp0EA_BufferRingChallengeRecords(void)
+{
+	static const u8* const requestStrings[] =
+	{
+		gText_Current,
+		gText_Max,
+	};
+
+	gSpecialVar_LastResult = FALSE;
+
+	struct RingChallengeStreak* streak = (Var8000 == 0) ? &gRingChallengeStreaks[CURR_STREAK] : &gRingChallengeStreaks[MAX_STREAK];
+	if (streak->streakLength != 0)
+	{
+		StringCopy(gStringVar1, requestStrings[(Var8000 == 0) ? 0 : 1]);
+		ConvertIntToDecimalStringN(gStringVar2, streak->streakLength, 0, 5);
+		GetSpeciesName(gStringVar7, streak->species1);
+		GetSpeciesName(gStringVar8, streak->species2);
+		GetSpeciesName(gStringVar9, streak->species3);
+		
+		if (streak->streakLength != 1)
+		{
+			gStringVar3[0] = CHAR_s;
+			gStringVar3[1] = EOS;
+		}
+		else
+		{
+			gStringVar3[0] = EOS;
+		}
+
+		gSpecialVar_LastResult = TRUE;
+	}
 }

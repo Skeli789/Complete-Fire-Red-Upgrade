@@ -8,6 +8,9 @@ Time to Dynamax!\p
 #org @gText_TestTrainerDynamaxMsg
 I now shall unleash the power\nof Dynamax!\p 
 
+#org @gText_RedDynamaxMsg
+[.]!\p 
+
 //For Pokemon Unbound - Feel free to remove, and do not place strings below
 #ifdef UNBOUND
 
@@ -15,27 +18,82 @@ I now shall unleash the power\nof Dynamax!\p
 Whoaaaaa[.]\nThat was intense[.]\p 
 
 #org @sText_VegaLastSwitchIn
-Prepare yourself for my trump card.\p 
+So[.] you ARE everything I had\nanticipated[.]\p 
 
 #org @sText_AliceLastSwitchIn
-It's time for you to fly high,\n[FD][06]!\p 
+The truly talented make their\nown luck!\p 
 
 #org @sText_MelLastSwitchIn
-Fight like the roaring waterfall\nbehind us, [FD][06]!\p 
+Alrighty! Time to fight as good\nas we look, I reckon!\p 
 
 #org @sText_GalavanLastSwitchIn
+#org @sText_GalavanLastLowHP
 Ha ha ha ha!\nIt ain't over yet!\p 
 
+#org @sText_BigMoLastSwitchIn
+No way[.] NO WAY!\nNot while I'm kingpin, you don't!\p 
+
 #org @sText_TessyLastSwitchIn
-It's tahm for the real fight,\nI reckon'!\p
+Well this ain't good, but it ain't\nover 'til it's over!\p 
+
+#org @sText_BenjaminLastSwitchIn
+Our time grows short, [FD][06][.]\nSo let's make the most of it!\p 
+
+#org @sText_MolemanLastLowHP
+The mole-people never give in!\nFeel our wrath, surface-dweller!\p 
+
+#org @sText_EliasLastSwitchIn
+Great. Just one left.\nWhat I always wanted[.]\p 
+
+#org @sText_AnabelleLastSwitchIn
+Ah!\nBut we're not done fighting yet!\p 
+
+#org @sText_PennyLastLowHP
+WROOOOOAR!\p 
+
+#org @sText_JaxLastLowHP
+Let's do this!\nWe can still come out on top!\p 
 
 #org @sText_Zeph1LowHP
 Impossible[.]\p 
 
-#org @sText_Zeph2LowHP
-No!\nI can't lose again!\p 
+#org @sText_Zeph2LastSwitchIn
+No! You won't take[.] anything else\nfrom me!\p 
+
+#org @sText_Zeph3LastSwitchIn
+One Pok\emon left[.]\pNow is the time when I demonstrate\nhow to truly battle!\p
 
 #org @sText_MaximaLastSwitchIn
-The power of Mega Evolution[.]\nCan you feel it within your reach?\p 
+This is your final trial!\nThe last obstacle! Now, focus!\p 
+
+#org @sText_Aklove1LowHP
+Impossible!\pYou[.] you cannot do this to me!\p 
+
+#org @sText_Aklove2LowHP
+[PLAYER_NAME][.] [PLAYER_NAME]!\nOnly you would dare[.]!\p 
+
+#org @sText_Aklove3LowHP
+No!\nThis cannot be my destiny!\p 
+
+#org @sText_RogueElectivire_DynamaxMsg
+The power of the Hidden Grottos!\nIt's mine to command!\p 
+
+#org @sText_RivalLeagueLastSwitchIn
+Agh[.] there's gotta be a way to turn\nthis around somehow!
+
+#org @sText_MarlonLeagueLastSwitchIn
+Nothing's over - not until my last\nPok\emon's down for the count!
+
+#org @sText_IvoryLeagueLastSwitchIn
+This feeling[.] so, this is what being\ncornered feels like[.]
+
+#org @sText_JaxPostGameLastLowHP
+The way you always manage to summon\nso much strength[.] it's amazing[.]
+
+#org @sText_MiloLeagueLastLowHP
+This is it! This is where the real\nbattle begins, [PLAYER_NAME]!
+
+#org @sText_YoungsterLeagueLastSwitchIn
+Not yet! It's time I showed you what\nwe're really made of!
 
 #endif

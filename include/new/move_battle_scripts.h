@@ -11,7 +11,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 //Scripts
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8
 #define BattleScript_MoveFaint (u8*) 0x81D6947
-#define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_ButItDoesntAffect (u8*) 0x81D7E04
 #define BattleScript_Pausex20 (u8*) 0x81D89F1
 #define BattleScript_MoveMissedPause (u8*) 0x81D695E
@@ -31,7 +30,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_LeechSeedFree (u8*) 0x81D8E04
 #define BattleScript_SpikesFree (u8*) 0x81D8E0B
 
-#define BattleScript_AllStatsUp (u8*) 0x81D8D55
 #define BattleScript_RapidSpinAway (u8*) 0x81D8DF1
 #define BattleScript_TargetPRLZHeal (u8*) 0x81D9177
 #define BattleScript_AtkDefDown (u8*) 0x81D8F35
@@ -45,6 +43,7 @@ extern const u8 BattleScript_MagneticFluxStatBoost[];
 extern const u8 BattleScript_GearUpStatBoost[];
 extern const u8 BattleScript_SapSipperAromatherapy[];
 extern const u8 BattleScript_DefogAdditionalEffects[];
+extern const u8 BattleScript_DefogAdditionalEffects_PlayAttackAnim[];
 extern const u8 BattleScript_PledgeCombined[];
 extern const u8 BattleScript_PledgeReady[];
 extern const u8 BattleScript_PrintCustomString[];
@@ -62,9 +61,16 @@ extern const u8 BattleScript_EnduredMsg[];
 extern const u8 BattleScript_SideStatusWoreOffRet[];
 extern const u8 RecoverBS[];
 extern const u8 BattleScript_LifeDewFail[];
+extern const u8 BattleScript_LunarBlessingFail[];
 extern const u8 BattleScript_CouldntFullyProtect[];
 extern const u8 BattleScript_TeleportSwitch[];
 extern const u8 BattleScript_TeleportFlee[];
+extern const u8 BattleScript_UproarWokeUp[];
+extern const u8 BattleScript_TransformFailedOnAura[];
+extern const u8 BattleScript_MoveFailedOnAura[];
+extern const u8 BattleScript_ShadowShieldBlocksSubstitute[];
+extern const u8 BattleScript_StrongWindsWeakenedttack[];
+extern const u8 BattleScript_RainDanceBlockedByEvaporate[];
 
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];
@@ -72,6 +78,9 @@ extern const u8 BattleScript_ItemSteal[];
 extern const u8 BattleScript_KnockedOff[];
 extern const u8 BattleScript_AbilityWasSuppressed[];
 extern const u8 BattleScript_StatUpPartner[];
+extern const u8 BattleScript_AllStatsUp[];
+extern const u8 BattleScript_HigherOffensesDefensesUp[];
+extern const u8 BattleScript_HigherDefensesUp[];
 extern const u8 BattleScript_EatEffectBankBerry[];
 extern const u8 BattleScript_SetTerrain[];
 extern const u8 BattleScript_MaxMoveRaiseStatTeam[];
@@ -120,6 +129,7 @@ extern const u8 SpeedSwapString[];
 extern const u8 HeartSwapString[];
 extern const u8 PowerSplitString[];
 extern const u8 GuardSplitString[];
+extern const u8 gText_PowerShiftSwappedStats[];
 extern const u8 SwampString[];
 extern const u8 SeaOfFireString[];
 extern const u8 RainbowString[];
@@ -185,6 +195,7 @@ extern const u8 gText_TargetWrappedInElectricTerrain[];
 extern const u8 gText_FlowerVeilProtects[];
 extern const u8 gText_SweetVeilProtects[];
 extern const u8 gText_SleepClausePrevents[];
+extern const u8 gText_TransformFailsOnWildBosses[];
 #define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
 
 #define gText_TargetAlreadyParalyzed (u8*) 0x83FB78A
@@ -192,11 +203,17 @@ extern const u8 gText_SleepClausePrevents[];
 #define gText_TargetAlreadyPoisoned (u8*) 0x83FB5F8
 
 extern const u8 IonDelugeShowerString[];
+extern const u8 gText_CourtChange[];
 extern const u8 TargetStatsResetString[];
 extern const u8 TerrainEndString[];
 extern const u8 RoastedBerryString[];
 extern const u8 gText_TargetWasInfested[];
 extern const u8 gText_TargetWasCaughtInSnapTrap[];
+extern const u8 gText_TargetWasTrappedByAttacker[];
+extern const u8 gText_EffectBankAfflictedBySplinters[];
+extern const u8 gText_BuffetedByViciousSandstorm[];
+extern const u8 gText_ViciousSandstormContinues[];
+extern const u8 gText_ShadowShieldBattleBlocksSafeguard[];
 
 extern const u8 BattleScript_HealingWishHeal[];
 extern const u8 BattleScript_LunarDanceHeal[];
@@ -210,6 +227,8 @@ extern const u8 BattleScript_TSAbsorb[];
 extern const u8 BattleScript_StickyWebSpeedDrop[];
 extern const u8 BattleScript_SuccessForceOut[];
 extern const u8 BattleScript_TrainerSlideMsgRet[];
+#define BattleScript_CaughtPokemonSkipNicknameFullParty (u8*) 0x81D9A72
+#define BattleScript_CaughtPokemonSkipNickname (u8*) 0x81D9A80
 
 extern const u8 gText_SurroundedByGMaxVineLash[];
 extern const u8 gText_SurroundedByGMaxWildfire[];

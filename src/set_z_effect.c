@@ -81,28 +81,32 @@ void SetZEffect(void)
 
 	switch (gNewBS->zMoveData.effect) {
 		case Z_EFFECT_RESET_STATS:
-			for (i = 0; i < BATTLE_STATS_NO-1; ++i) {
-				if (gBattleMons[gBankAttacker].statStages[i] < 6) {
+			for (i = 0; i < BATTLE_STATS_NO-1; ++i)
+			{
+				if (gBattleMons[gBankAttacker].statStages[i] < 6)
 					gBattleMons[gBankAttacker].statStages[i] = 6;
-				}
 			}
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
 			gBattlescriptCurrInstr = BattleScript_StatsResetZMove - 5;
 			break;
 
 		case Z_EFFECT_ALL_STATS_UP_1:
-			if (!MainStatsMaxed(gBankAttacker)) {
-				for (i = 0; i < STAT_ACC-1; ++i) { //Doesn't increase Acc or Evsn
-					if (gBattleMons[gBankAttacker].statStages[i] < 12)
+			if (!MainStatsMaxed(gBankAttacker))
+			{
+				for (i = 0; i < STAT_ACC-1; ++i) //Doesn't increase Acc or Evsn
+				{
+					if (gBattleMons[gBankAttacker].statStages[i] < STAT_STAGE_MAX)
 						++gBattleMons[gBankAttacker].statStages[i];
 				}
+
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_AllStatsUpZMove - 5;
 			}
 			break;
 
 		case Z_EFFECT_BOOST_CRITS:
-			if (!(gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY)) {
+			if (!(gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY))
+			{
 				gBattleMons[gBankAttacker].status2 |= STATUS2_FOCUS_ENERGY;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_BoostCritsZMove - 5;
@@ -117,7 +121,8 @@ void SetZEffect(void)
 			break;
 
 		case Z_EFFECT_RECOVER_HP:
-			if (gBattleMons[gBankAttacker].hp != gBattleMons[gBankAttacker].maxHP) {
+			if (!BATTLER_MAX_HP(gBankAttacker))
+			{
 				gBattleMoveDamage = (-1) * gBattleMons[gBankAttacker].maxHP;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_RecoverHPZMove - 5;
@@ -137,7 +142,8 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_1:
 		case Z_EFFECT_ACC_UP_1:
 		case Z_EFFECT_EVSN_UP_1:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1, MOVE_EFFECT_AFFECTS_USER, 0))
+			{
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
@@ -152,7 +158,8 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_2:
 		case Z_EFFECT_ACC_UP_2:
 		case Z_EFFECT_EVSN_UP_2:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1, MOVE_EFFECT_AFFECTS_USER, 0))
+			{
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
@@ -167,7 +174,8 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_3:
 		case Z_EFFECT_ACC_UP_3:
 		case Z_EFFECT_EVSN_UP_3:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(3), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(3), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1, MOVE_EFFECT_AFFECTS_USER, 0))
+			{
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
@@ -175,6 +183,7 @@ void SetZEffect(void)
 			}
 			break;
 	}
+
 	gNewBS->zMoveData.runningZEffect = FALSE;
 }
 
@@ -186,11 +195,11 @@ move_t GetTypeBasedZMove(u16 move, u8 bank)
 		moveType = GetMoveTypeSpecial(bank, move);
 
 	if (moveType < TYPE_FIRE)
-		return MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + CalcMoveSplit(bank, move);
+		return MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + CalcMoveSplit(move, bank, bank);
 	else if (moveType >= TYPE_FAIRY)
-		return MOVE_TWINKLE_TACKLE_P + ((moveType - TYPE_FAIRY) * 2) + CalcMoveSplit(bank, move);
+		return MOVE_TWINKLE_TACKLE_P + ((moveType - TYPE_FAIRY) * 2) + CalcMoveSplit(move, bank, bank);
 	else
-		return MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + CalcMoveSplit(bank, move);
+		return MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + CalcMoveSplit(move, bank, bank);
 }
 
 move_t GetSpecialZMove(u16 move, u16 species, u16 item)
@@ -249,8 +258,8 @@ bool8 DoesZMoveUsageStopDynamaxing(u8 bank)
 
 move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 {
-	struct Pokemon* mon = GetBankPartyData(bank);
-	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+	if (IS_TRANSFORMED(bank))
+		return MOVE_NONE;
 
 	if (move == MOVE_NONE)
 		move = gBattleMons[bank].moves[moveIndex];
@@ -274,6 +283,8 @@ move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank))
 		return MOVE_NONE;
+
+	u16 item = GetBankPartyData(bank)->item; //Direct access for runtime speed
 
 	if (IsZCrystal(item) || item == ITEM_ULTRANECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{

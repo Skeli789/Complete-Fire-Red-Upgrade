@@ -376,10 +376,10 @@ extern u8 gMPlayMemAccArea[];
 #define MAX_POKEMON_CRIES 2
 
 extern struct PokemonCrySong gPokemonCrySong;
-extern struct PokemonCrySong gPokemonCrySongs[];
+extern struct PokemonCrySong gPokemonCrySongs[MAX_POKEMON_CRIES];
 
-extern struct MusicPlayerInfo gPokemonCryMusicPlayers[];
-extern struct MusicPlayerTrack gPokemonCryTracks[];
+extern struct MusicPlayerInfo gPokemonCryMusicPlayers[MAX_POKEMON_CRIES];
+extern struct MusicPlayerTrack gPokemonCryTracks[MAX_POKEMON_CRIES * 2];
 
 extern char SoundMainRAM[];
 
@@ -410,6 +410,8 @@ extern char gMaxLines[];
 
 void __attribute__((long_call)) SetPokemonCryStereo(u32 val);
 void __attribute__((long_call)) m4aMPlayPanpotControl(struct MusicPlayerInfo *mplayInfo, u16 trackBits, s8 pan);
+void __attribute__((long_call)) m4aSoundMode(u32 mode);
+void __attribute__((long_call)) MPlayOpen(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track, u8 a3);
 
 /*
 u32 umul3232H32(u32 multiplier, u32 multiplicand);
@@ -428,8 +430,6 @@ void ClearChain(void *x);
 void Clear64byte(void *addr);
 void SoundInit(struct SoundInfo *soundInfo);
 void MPlayExtender(struct CgbChannel *cgbChans);
-void m4aSoundMode(u32 mode);
-void MPlayOpen(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track, u8 a3);
 void CgbSound(void);
 void CgbOscOff(u8);
 u32 MidiKeyToCgbFreq(u8, u8, u8);

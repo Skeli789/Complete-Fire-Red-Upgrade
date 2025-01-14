@@ -1,5 +1,12 @@
 #include "src/config.h"
 
+#org @DESC_MAGMAARMOR
+#ifdef FROSTBITE
+Can't get frostbite.
+#else
+Can't be frozen solid.
+#endif
+
 #org @DESC_SWEETVEIL
 Keeps user and allies awake.
 
@@ -10,7 +17,6 @@ Multi-hit moves hit five times.
 Turns electricity into Speed.
 
 #org @DESC_MULTISCALE
-#org @DESC_FULLMETALBODY
 Reduces damage at full HP.
 
 #org @DESC_TECHNICIAN
@@ -50,7 +56,7 @@ Trades added effects for power.
 Boosts punching moves.
 
 #org @DESC_RIVALRY
-Boosts moves against rivals.
+Ups power against same gender.
 
 #org @DESC_SANDFORCE
 Boosts moves in a sandstorm.
@@ -69,7 +75,8 @@ Boosts "not very effective\" moves.
 
 #org @DESC_SOLIDROCK
 #org @DESC_FILTER
-Weakens super-effective moves.
+#org @DESC_PRISMARMOR
+Weakens super effective moves.
 
 #org @DESC_INFILTRATOR
 #ifdef UNBOUND
@@ -88,7 +95,7 @@ Restores HP if poisoned.
 Slight HP recovery in hail.
 
 #org @DESC_MOODY
-Raises one stat and lowers another.
+Ups one stat and downs another.
 
 #org @DESC_HYDRATION
 Heals status problems in rain.
@@ -121,9 +128,10 @@ Only damaged by attacks.
 Avoids ball and bomb moves.
 
 #org @DESC_GALEWINGS
-Flying moves hit first.
+Flying-type moves hit first.
 
 #org @DESC_MOXIE
+#org @DESC_CHILLINGNEIGH
 Knockouts boost Attack.
 
 #org @DESC_AFTERMATH
@@ -161,10 +169,10 @@ Boosts moves that make contact.
 Boosts biting moves.
 
 #org @DESC_VICTORYSTAR
-Raises accuracy.
+Raises own and ally's accuracy.
 
 #org @DESC_STORMDRAIN
-Draws in Water-type moves.
+Draws in water to up Sp. Atk.
 
 #org @DESC_DARKAURA
 Powers up Dark-type moves.
@@ -215,7 +223,7 @@ Attack rises when poisoned.
 Sp. Atk rises when burned.
 
 #org @DESC_FURCOAT
-Raises Defense.
+Halves physical damage.
 
 #org @DESC_WONDERSKIN
 Ups status move evasion.
@@ -225,7 +233,7 @@ Ups status move evasion.
 Changes type to match move.
 
 #org @DESC_PARENTALBOND
-Parent and child attack together.
+Moves get a weaker second hit.
 
 #org @DESC_MOLDBREAKER
 #org @DESC_TURBOBLAZE
@@ -252,7 +260,7 @@ Takes one hit with no damage.
 Switches out below half HP.
 
 #org @DESC_FLUFFY
-Halves contact damage.
+Halves contact hits. Weak to Fire.
 
 #org @DESC_BROKEN_1
 #org @DESC_BROKEN_2
@@ -260,9 +268,6 @@ No special Ability.
 
 #org @DESC_POWERCONSTRUCT
 Transforms below half HP.
-
-#org @DESC_PRISMARMOR
-Weakens super-effective moves.
 
 #org @DESC_RKS_SYSTEM
 Changes type to match Memory.
@@ -298,7 +303,7 @@ Ups Water attacks. Prevents burn.
 Water-type hits raise Defense.
 
 #org @DESC_STALL
-Moves after even slower foes.
+Often attacks last.
 
 #org @DESC_MULTITYPE
 Changes type to match held Plate.
@@ -325,7 +330,7 @@ Ups Defense on Grassy Terrain.
 Maxes Attack after a critical hit.
 
 #org @DESC_ANTICIPATION
-Senses super-effective moves.
+Senses super effective moves.
 
 #org @DESC_FOREWARN
 Warns of the foe's strongest move.
@@ -340,7 +345,7 @@ Reverses stat changes.
 Stops the foe from eating Berries.
 
 #org @DESC_WEAKARMOR
-Hits raise Speed but drop Defense.
+Hits up Speed but drop Defense.
 
 #org @DESC_HEAVYMETAL
 Doubles weight.
@@ -460,13 +465,11 @@ Copies dance moves.
 Powers up allies.
 
 #org @DESC_RECEIVER
-Takes over a KOed ally's Ability.
-
 #org @DESC_POWEROFALCHEMY
 Takes over a KOed ally's Ability.
 
 #org @DESC_NEUROFORCE
-Powers up super-effective hits.
+Powers up super effective hits.
 
 #org @DESC_GALVANIZE
 Normal moves become Electric.
@@ -489,7 +492,7 @@ Lowers everyone's Speed when hit.
 Bounces back stat decreases.
 
 #org @DESC_GULPMISSILE
-Spits prey if damaged after a swim.
+Spits prey if hit after a swim.
 
 #org @DESC_STALWART
 #org @DESC_PROPELLERTAIL
@@ -511,7 +514,7 @@ Halves special damage.
 Doubles Berry effects.
 
 #org @DESC_ICEFACE
-Takes one free physical hit.
+Free physical hit. Hail renews.
 
 #org @DESC_POWERSPOT
 Powers up ally moves.
@@ -523,7 +526,7 @@ Changes type with terrain.
 Screens are removed on entry.
 
 #org @DESC_STEELYSPIRIT
-Boosts ally Steel moves.
+Boosts own and ally Steel moves.
 
 #org @DESC_PERISHBODY
 Gives a perish count on contact.
@@ -542,3 +545,41 @@ Protects team from poison.
 
 #org @DESC_HUNGERSWITCH
 Changes form each turn.
+
+#org @DESC_UNSEENFIST
+Contact moves bypass Protect.
+
+#org @DESC_DRAGONSMAW
+Powers up Dragon-type moves.
+
+#org @DESC_TRANSISTOR
+Powers up Electric-type moves.
+
+#org @DESC_GRIMNEIGH
+Knockouts boost Sp. Atk.
+
+#org @DESC_ASONE_GRIM
+Both Unnerve and Grim Neigh.
+
+#org @DESC_ASONE_CHILLING
+Both Unnerve and Chilling Neigh.
+
+#org @DESC_QUICKDRAW
+Sometimes moves quicker.
+
+#org @DESC_CURIOUSMEDICINE
+Resets ally's stat changes.
+
+//Unbound Custom Abilities//
+
+#org @gText_AbilityDescription_Evaporate
+Nullifies all water to up Sp. Atk.
+
+#org @gText_AbilityDescription_GrassDash
+Grass-type moves hit first.
+
+#org @gText_AbilityDescription_SlipperyTail
+Tail moves hit first.
+
+#org @gText_AbilityDescription_DrillBeak
+Drill moves land critical hits.

@@ -237,13 +237,13 @@ I have hay fever[.]\phahahaaACHOOO!!
 Hahah! Keep it coming!
 
 #org @sFrontierText_Hiker_PreBattle_3
-Let's be good sports about this!\nBig smile!
+Ho there!\pYou are a mountain standing in my\nway, aren't ya?
 
 #org @sFrontierText_Hiker_PlayerWin_3
-I'm cheerful even in defeat!\nAhaha!\lAhaha!
+Grrr[.] My victory has disappeared\nin a crevasse[.]
 
 #org @sFrontierText_Hiker_PlayerLose_3
-Ahaha!\nAhaha!\lCome on, you laugh too!
+Yahoooooo! Yahoooooooo!\nHear my cry of triumph!
 
 #org @sFrontierText_Biker_PreBattle_1
 Those stupid security guards won't\nlet me bike freely around here[.]\pI'll take out my anger on you!
@@ -318,7 +318,7 @@ I wish there was a thief Pok\emon.\nI'd use that to win!
 I get this uncontrollable urge to\nsteal other people's streaks.
 
 #org @sFrontierText_Burglar_PreBattle_3
-I'm calling myself "The Doodler,\"\nand with the simple addition of a\lsmall burglar's mask, I achieve\lutter anonymity.
+I'm calling myself "The Doodler\",\nand with the simple addition of a\lsmall burglar's mask, I achieve\lutter anonymity.
 
 #org @sFrontierText_Burglar_PlayerWin_3
 A good politician is quite as\nunthinkable as an honest burglar.
@@ -567,7 +567,7 @@ Behold my dexterity and grace!
 Whew! That was a jolt!
 
 #org @sFrontierText_Juggler_PlayerLose_3
-Behold! You've beend dazzled by my\nprize Pok\emon!
+Behold! You've been dazzled by my\nprized Pok\emon!
 
 #org @sFrontierText_DragonTamer_PreBattle_1
 The credo of the Dragon Tamer!\nNumber one!
@@ -1038,7 +1038,7 @@ But how[.] My[.]\nThe Pok\emon I've invested[.]
 I'm not interested in what was an\ninevitable result.
 
 #org @sFrontierText_Richgirl_PreBattle_1
-There isn't anything that I can't\nbuy. Money can buy battles!
+There isn't anything that I can't buy.\nMoney can buy battles!
 
 #org @sFrontierText_Richgirl_PlayerWin_1
 I'll give you my allowance if\nyou'll let me win.
@@ -1280,24 +1280,132 @@ This smell I have is the sweet\nscent of hay that Pok\emon surely\llove.
 #org @sFrontierText_Rancher_PlayerLose_6
 Whoa!
 
+#org @sFrontierText_ExpertM_PreBattle_1
+I won't lose to a child like you\nwho knows nothing of battles.
+
+#org @sFrontierText_ExpertM_PlayerWin_1
+What? This child is a fast learner?\nHa ha ha[.] I had no idea!
+
+#org @sFrontierText_ExpertM_PlayerLose_1
+After all, you are an amateur.\nNo sweat.\p(Whew[.] That was a little too\nclose!)
+
+#org @sFrontierText_ExpertM_PreBattle_2
+Argh. Cough, cough.\nI don't feel well.\pPlease show a little kindness.
+
+#org @sFrontierText_ExpertM_PlayerWin_2
+You are very sharp! You did not\nfall for my illness act.
+
+#org @sFrontierText_ExpertM_PlayerLose_2
+I lied when I said I did not feel\nwell! Experts do anything to win!
+
+#org @sFrontierText_ExpertM_PreBattle_3
+I will give you a taste of an\nExpert's well-trained Pok\emon.
+
+#org @sFrontierText_ExpertM_PlayerWin_3
+You have served me a spicy defeat.\pAnd yet defeat is also part of\nlife.
+
+#org @sFrontierText_ExpertM_PlayerLose_3
+How were the Expert's Pok\emon?\nDefeat is bitter, isn't it?
+
+#org @sFrontierText_ExpertF_PreBattle_1
+Oh, you are so cute!\pCome, I promise to be nice in\nthis battle.
+
+#org @sFrontierText_ExpertF_PlayerWin_1
+Your battle is a little too cute.\nLet's play again sometime.
+
+#org @sFrontierText_ExpertF_PlayerLose_1
+You are so cute, really[.]\pI want to see you again.\nI'll be waiting.
+
+#org @sFrontierText_ExpertF_PreBattle_2
+Oh, you are still a child.\nWho said you could come here?
+
+#org @sFrontierText_ExpertF_PlayerWin_2
+I thought you were a child.\nHee hee[.] You are tough[.]
+
+#org @sFrontierText_ExpertF_PlayerLose_2
+You're not bad, but you're\nimmature.\pCome back when you've learned\nsomething.
+
+#org @sFrontierText_ExpertF_PreBattle_3
+Don't call me decrepit!\nA woman's mind is always blooming.
+
+#org @sFrontierText_ExpertF_PlayerWin_3
+I have pains in my eyes, my\nshoulder, and my back, but my\lheart is forever young.
+
+#org @sFrontierText_ExpertF_PlayerLose_3
+I'm not finished with love or\nPok\emon.\pI'll stay fit and ready all my\nlife.
+
+#org @sFrontierText_PokefanM_PreBattle_1
+Join the Pok\efans.\nYour life will be happy!
+
+#org @sFrontierText_PokefanM_PlayerWin_1
+If you join the Pok\efans, your\nlife will be saved!
+
+#org @sFrontierText_PokefanM_PlayerLose_1
+If you join the Pok\efans, you will\nbe strong like me!
+
+#org @sFrontierText_PokefanM_PreBattle_2
+I am not a regular Pok\efan.\nI am a major mega-Pok\efan!
+
+#org @sFrontierText_PokefanM_PlayerWin_2
+You'll remember this!\nI am a big Pok\efan!
+
+#org @sFrontierText_PokefanM_PlayerLose_2
+I love Pok\emon!\nI love love Pok\emon!
+
+#org @sFrontierText_PokefanM_PreBattle_3
+I think I am a Pok\efan, therefore\nI am a Pok\efan.
+
+#org @sFrontierText_PokefanM_PlayerWin_3
+You should remember this.\nI am a Pok\efan.
+
+#org @sFrontierText_PokefanM_PlayerLose_3
+The Pok\efan is power.
+
+#org @sFrontierText_Nurse_PreBattle_1
+I took this job because I wanted to\nbe needed by someone.
+
+#org @sFrontierText_Nurse_PlayerWin_1
+When a patient leaves the hospital,\nI feel happy but a bit sad.
+
+#org @sFrontierText_Nurse_PlayerLose_1
+My job is hard, but I am happy to\nhelp people.
+
+#org @sFrontierText_Nurse_PreBattle_2
+Grown-ups have a lot of hobbies.\nActually, I am a uniform collector.
+
+#org @sFrontierText_Nurse_PlayerWin_2
+You realized that I am a fake\nNurse!\pYes, I am just a uniform collector.
+
+#org @sFrontierText_Nurse_PlayerLose_2
+I am not a Nurse.\nI wear this uniform just for fun.
+
+#org @sFrontierText_Nurse_PreBattle_3
+Even if you are injured, I will\ntreat you.\pSo let's fight hard.
+
+#org @sFrontierText_Nurse_PlayerWin_3
+You went too far! I will bill you\nthe cost of my medical expenses!
+
+#org @sFrontierText_Nurse_PlayerLose_3
+Sorry! I went too far. Do you\nrequire immediate hospitalization?
+
 //Frontier Brains
 #org @sFrontierText_Pat_PlayerWin
-Amazing!\pYou still won, even though the\nPokemon you used were not your own!
+Amazing!\nAgainst all odds, you triumphed!
 
 #org @sFrontierText_Pat_PlayerLose
-It's harder to win when you're not\nused to your Pok\emon, eh?
+Ah, pity!\pTighten your bonds, and come\nchallenge me again!
 
 #org @sFrontierText_Pablo_PlayerWin
-Huh.\pWell whadya know[.]\pSeems like your team is pretty well\nthought out.
+Huh, how about that.\pGuess you do know what you're doing\nafter all.
 
 #org @sFrontierText_Pablo_PlayerLose
-Why am I not surprised[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
+How boring[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
 
 #org @sFrontierText_Paula_PlayerWin
 Bravo! Bravo! Wonderful!\nYou're a true rising star!
 
 #org @sFrontierText_Paula_PlayerLose
-Well, the show must go on\pEven if our young star is not at\nthe forefront[.]
+Ah, too bad!\pLadies and gentlemen, boys and\ngirls, I hope you enjoyed the show!
 
 //Special Trainers
 
@@ -1352,7 +1460,7 @@ Even if you lose, never lose your\nlove of Pok\emon.
 [.]
 
 #org @sFrontierText_BigMo_PreBattle
-Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's see what you can do to\nthe kingpin of Antisis City!
+Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been lookin' forward to\nanother battle with you!\pNow, let's see what you can do to\nthe kingpin of Antisis City!
 
 #org @sFrontierText_BigMo_PlayerWin
 Ha ha ha ha!\pThey should start calling you\nBig [PLAYER_NAME]!

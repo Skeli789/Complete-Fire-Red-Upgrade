@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "../include/field_weather.h"
+#include "../include/constants/field_effects.h"
 
+#include "../include/new/character_customization.h"
 #include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/util.h"
 
@@ -14,7 +16,7 @@ Credit to Navenatox
 #define Green(Color)	((Color >> 5) & 31)
 #define Blue(Color)		((Color >> 10) & 31)
 
-#define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8))0x805F538+1)(PalTag, PalSlot)
+#define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8)) (0x805F538 | 1))(PalTag, PalSlot)
 #define TintOBJPalette(PalSlot) ((void(*)(u8))0x8083598+1)(PalSlot)
 
 #define OverworldIsActive FuncIsActiveTask(Task_WeatherMain)
@@ -68,6 +70,19 @@ u8 FindPalRef(u8 type, u16 palTag)
 	}
 
 	return 0xFF; // not found
+}
+
+void RemovePalRef(u16 palTag)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (sPalRefs[i].PalTag == palTag)
+		{
+			sPalRefs[i].Type = 0;
+			sPalRefs[i].PalTag = 0;
+			sPalRefs[i].Count = 0;
+		}
+	}
 }
 
 u8 GetPalTypeByPaletteOffset(u16 offset)
@@ -144,9 +159,17 @@ u8 PaletteNeedsFogBrightening(u8 palSlot) // hook at 0x7A748
 
 static u8 GetPalTypeByPalTag(u16 palTag)
 {
-	if (palTag >= 0x1000 && palTag <= 0x1010)
+	if (palTag == FLDEFF_PAL_TAG_SMALL_SPARKLE)
+		return PalTypeOther; //Small sparkle should never be faded by DNS
+
+	if (palTag >= 0x1000 && palTag <= 0x1012)
 		return PalTypeAnimation;
 
+	#ifdef UNBOUND
+	if (palTag == 0x1115) //For the boat
+		return PalTypeNPC; 
+	#endif
+	
 	if (palTag == 0x1200)
 		return PalTypeWeather;
 
@@ -247,7 +270,11 @@ u8 FindOrLoadPalette(struct SpritePalette* pal) //Hook at 0x8928 via r1
 	u8 palSlot;
 	u16 palTag = pal->tag;
 
-	if (OverworldIsActive || palTag == 0x1200) //0x1200 is for weather sprites
+	if (OverworldIsActive
+	#ifdef UNBOUND
+	|| palTag == 0x1115 //For the black boat
+	#endif
+	|| palTag == 0x1200) //0x1200 is for weather sprites
 	{
 		palSlot = FindPalRef(GetPalTypeByPalTag(palTag), palTag);
 		if (palSlot != 0xFF)
@@ -275,7 +302,7 @@ u8 FindOrLoadPalette(struct SpritePalette* pal) //Hook at 0x8928 via r1
 static void MaskPaletteIfFadingIn(u8 palSlot) //Prevent the palette from flashing briefly before fading starts
 {
 	u8 fadeState = gWeatherPtr->palProcessingState;
-	u8 aboutToFadeIn = gWeatherPtr->unknown_6CA;
+	u8 aboutToFadeIn = gWeatherPtr->fadeInFirstFrame;
 
 	if (fadeState == 1 && aboutToFadeIn)
 	{
@@ -320,6 +347,10 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 		return PalRefIncreaseCount(0);
 
 	LoadNPCPalette(palTag, palSlot);
+	#ifdef UNBOUND
+	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag);
+	#endif
 	FogBrightenPalettes(FOG_BRIGHTEN_INTENSITY);
 	MaskPaletteIfFadingIn(palSlot);
 	return PalRefIncreaseCount(palSlot);
@@ -337,6 +368,10 @@ u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
 		return PalRefIncreaseCount(0);
 
 	LoadNPCPalette(palTag, palSlot);
+	#ifdef UNBOUND
+	if (IsPaletteTagAffectedByCharacterCustomization(palTag))
+		ChangeEventObjPal(0x100 + palSlot * 16, palTag);
+	#endif
 	BlendPalettes(gBitTable[(palSlot + 16)], 6, RGB(12, 20, 27)); //Make it blueish
 	BrightenReflection(palSlot); //And a little brighter
 	TintOBJPalette(palSlot);
@@ -450,4 +485,29 @@ void LoadPaletteForOverworldSandstorm(void)
 		LoadCustomWeatherSpritePalette(HailstormWeatherPal);
 	else
         LoadCustomWeatherSpritePalette(gSandstormWeatherPalette);
+}
+
+u8 LoadPaletteForEmotionBubbles(void)
+{
+	#ifdef UNBOUND
+	return FindOrLoadNPCPalette(0x11A2);
+	#else
+	return FindOrLoadNPCPalette(0x1100);
+	#endif
+}
+
+u8 sub_805F510(const struct SpritePalette *spritePalette)
+{
+	if (IndexOfSpritePaletteTag(spritePalette->tag) != 0xFF)
+		return 0xFF;
+
+	u8 palSlot = LoadSpritePalette(spritePalette);
+	#ifdef UNBOUND
+	if (palSlot != 0xFF)
+	{
+		if (IsPaletteTagAffectedByCharacterCustomization(spritePalette->tag))
+			ChangeEventObjPal(0x100 + palSlot * 16, spritePalette->tag);
+	}
+	#endif
+	return palSlot;
 }

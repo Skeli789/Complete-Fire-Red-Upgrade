@@ -2,6 +2,12 @@
 
 #include "global.h"
 
+//Parent compatibility scores
+#define PARENTS_INCOMPATIBLE       0
+#define PARENTS_LOW_COMPATIBILITY  20
+#define PARENTS_MED_COMPATIBILITY  50
+#define PARENTS_MAX_COMPATIBILITY  70
+
 u16 __attribute__((long_call)) GetEggSpecies(u16 species);
 //u16 __attribute__((long_call)) DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parentSlots);
 //void __attribute__((long_call)) AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare);
@@ -9,7 +15,9 @@ u16 __attribute__((long_call)) GetEggSpecies(u16 species);
 void __attribute__((long_call)) RemoveEggFromDayCare(struct DayCare *daycare);
 void __attribute__((long_call)) RemoveIVIndexFromList(u8 *ivs, u8 selectedIv);
 bool8 __attribute__((long_call)) ShouldEggHatch(void);
-u8 __attribute__((long_call)) GetDaycareCompatibilityScore(struct DayCare *daycare);
+//u8 __attribute__((long_call)) GetDaycareCompatibilityScore(struct DayCare *daycare);
+u8 __attribute__((long_call)) GetNumLevelsGainedForDaycareMon(struct DaycareMon *daycareMon);
+bool8 __attribute__((long_call)) EggGroupsOverlap(u16 *eggGroups1, u16 *eggGroups2);
 
 /*
 #define EGG_HATCH_LEVEL 5

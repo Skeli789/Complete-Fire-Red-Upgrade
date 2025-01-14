@@ -87,9 +87,9 @@
 ///*u32*/ #define gMoveResultFlags *((u8*) 0x2023DCC)
 ///*u32*/ #define gHitMarker *((u32*) 0x2023DD0)
 //
-///*u8*/  #define gUnknown_2023DD4 ((u8*) 0x2023DD4)
+///*u8*/  #define sUnusedBattlersArray ((u8*) 0x2023DD4)
 ///*u8*/  #define gTakenDmgBanks ((u8*) 0x2023DD8)
-///*u16*/ #define gUnknown_2023DDC *((u16*) 0x2023DDC)
+///*u16*/ #define gUnusedFirstBattleVar2 *((u16*) 0x2023DDC)
 //
 ///*u16*/ #define gSideAffecting ((u16*) 0x2023DDE)
 ////Padding 0x2023DE2
@@ -103,8 +103,6 @@
 ///*u16*/ #define gPaydayMoney *((u16*) 0x2023E7E)
 ///*u16*/ #define gRandomTurnNumber *((u16*) 0x2023E80)
 ///*u8*/  #define gBattleCommunication ((u8*) 0x2023E82)
-//
-///*u8*/  #define gUnknown_02023E83 ((u8*) 0x2023E83) //Length 0x7
 //
 ///*u16*/ #define gBattleOutcome *((u16*) 0x2023E8A)
 
@@ -129,11 +127,11 @@
 ///*u8*/  #define gBideDamage *((u32*) 0x2023FC8) //Length 0x4 //Part of gBattleScripting
 ///*u8*/  #define gStatAnimByte	*((u8*) 0x2023FD4)
 ///*u8*/  #define gStatChangeByte	*((u8*) 0x2023FDE)
-///*u8*/  #define gUnknown_2023FEC  (u8*) (*((u32*) 0x2023FEC))
-///*u8*/  #define gUnknown_2023FF0  (u8*) (*((u32*) 0x2023FF0))
+///*u8*/  #define gLinkBattleSendBuffer  (u8*) (*((u32*) 0x2023FEC))
+///*u8*/  #define gLinkBattleRecvBuffer  (u8*) (*((u32*) 0x2023FF0))
 ///*u8*/  #define gActionSelectionCursor ((u8*) 0x2023FF8)
 ///*u8*/  #define gMoveSelectionCursor ((u8*) 0x2023FFC)
-///*u8*/  #define gUnknown_2024000 ((u8*) 0x2024000)
+///*u8*/  #define gBattlerStatusSummaryTaskId ((u8*) 0x2024000)
 //
 ///*u8*/  #define gBattlerInMenuId *((u8*) 0x2024004)
 //
@@ -177,13 +175,10 @@
 #define gShakerData (((u8*) 0x203E02C))
 #define gForceSwitchHelper (*((u8*) 0x203E02E))
 #define gAbilityPopUpHelper (*((u8*) 0x203E02F))
-#define gBackupHWord (*((u16*) 0x203E030))
+#define gAbilityPopUpSpecies (*((u16*) 0x203E030))
 #define gDontRemoveTransformSpecies (*((bool8*) 0x203E032))
 #define gBankSwitching (*((u8*) 0x203E033))
-
-//#define gInShop (*((bool8*) 0x203E043))
-//#define gBattleCircusFlags (*((u32*) 0x203E044))
-//#define gFishingByte *((u8*) 0x203E048)
+#define gBackupHWord (*((u16*) 0x203E034))
 
 //Don't go past 0x203E048
 

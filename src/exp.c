@@ -46,7 +46,9 @@ extern u8 String_TeamExpGain[];
 //This file's functions:
 static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s);
 static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
+static bool8 SomeoneOnTeamGetsExpFromExpShare(u8 bank, u8 sentIn);
 static bool8 MonGetsAffectionBoost(struct Pokemon* mon);
+static bool8 IsAffectedByHardLevelCap(struct Pokemon* mon);
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c);
 static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
 static void Task_GiveExpToMon(u8 taskId);
@@ -108,7 +110,6 @@ void atk23_getexp(void)
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
-
 		#ifndef FLAG_EXP_SHARE
 		else if (holdEffect != ITEM_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
 		{
@@ -149,7 +150,7 @@ void atk23_getexp(void)
 	case GetExp_Calculation:	; // calculate experience points to redistribute
 		u32 trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, divisor;
 
-		for (viaSentIn = 0, i = 0; i < 6; i++)
+		for (viaSentIn = 0, i = 0; i < PARTY_SIZE; i++)
 		{
 			if (gPlayerParty[i].species == SPECIES_NONE || gPlayerParty[i].hp == 0)
 				continue;
@@ -162,9 +163,15 @@ void atk23_getexp(void)
 			#endif
 
 			#ifndef FLAG_EXP_SHARE
-			if (gItems[SanitizeItemId(gPlayerParty[i].item)].holdEffect == ITEM_EFFECT_EXP_SHARE)
+			if (ItemId_GetHoldEffect(gPlayerParty[i].item) == ITEM_EFFECT_EXP_SHARE)
 					viaExpShare++;
 			#endif
+		}
+
+		if (IsAffectedByHardLevelCap(&gPlayerParty[gBattleStruct->expGetterMonId]))
+		{
+			calculatedExp = 1; //Doesn't really gain Exp. if above level cap
+			goto SKIP_EXP_CALC;
 		}
 
 		//Trainer Boost - a
@@ -193,23 +200,31 @@ void atk23_getexp(void)
 		//Lucky Egg Boost - e
 		eggBoost = 10;
 		if (holdEffect == ITEM_EFFECT_LUCKY_EGG)
+		{
 			eggBoost = 15;
 
-		//Level of Fainted Mon
+			#ifdef VAR_LUCKY_EGG_LEVEL
+			u16 luckyEggLevel = VarGet(VAR_LUCKY_EGG_LEVEL);
+			if (luckyEggLevel >= 2)
+				eggBoost += (luckyEggLevel - 1) * 5; //Increases by 0.5 for each level above 1
+			#endif
+		}
+
+		//Level of Fainted Mon - L
 		defLevel = gBattleMons[gBankFainted].level;
 
-		//Level of Victorious Mon
+		//Level of Victorious Mon - Lp
 		pokeLevel = gPlayerParty[gBattleStruct->expGetterMonId].level;
 
 		//Pass Power Bonus - Not implemented
 		passPower = 1;
 
-		//Affection Boost
+		//Affection Boost - f
 		affection = 10;
 		if (MonGetsAffectionBoost(&gPlayerParty[gBattleStruct->expGetterMonId]))
 			affection = 12;
 
-		//Evolution Boost
+		//Evolution Boost - v
 		evolutionBoost = 10;
 		if (CouldHaveEvolvedViaLevelUp(&gPlayerParty[gBattleStruct->expGetterMonId]))
 			evolutionBoost = 12;
@@ -245,7 +260,6 @@ void atk23_getexp(void)
 		#endif
 
 		calculatedExp = ExpCalculator(trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, divisor);
-		goto SKIP_EXP_CALC; //Only here so the compiler stops giving potential unused label errors (because it can be depending on your configuration)
 
 	SKIP_EXP_CALC:
 		calculatedExp = MathMax(1, calculatedExp);
@@ -264,7 +278,15 @@ void atk23_getexp(void)
 			|| (!(IS_DOUBLE_BATTLE) && gBattleMons[0].hp && gBattleMons[1].hp == 0))
 			{
 				BattleStopLowHpSound();
-				PlayBGM(BGM_VICTORY_WILD_POKE); //Wild PKMN Victory
+
+				#ifdef UNBOUND
+				if (gBattleTypeFlags & BATTLE_TYPE_SHADOW_WARRIOR)
+					PlayBGM(BGM_VICTORY_PLASMA);
+				else
+				#endif
+				if (!IsRaidBattle()) //Music would be played if the player caught the raid boss
+					PlayBGM(BGM_VICTORY_WILD_POKE); //Wild PKMN Victory
+
 				gBattleStruct->wildVictorySong++;
 				//gAbsentBattlerFlags |= gBitTable[gBankFainted];
 			}
@@ -411,14 +433,16 @@ void atk23_getexp(void)
 		else
 		{
 			gBattleStruct->expGetterMonId++;
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
-				if (gBattleStruct->expGetterMonId < 3)
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
+				if (gBattleStruct->expGetterMonId < PARTY_SIZE / 2)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
 					gBattleScripting.expStateTracker = GetExp_End; // we're done
 			}
-			else {
-				if (gBattleStruct->expGetterMonId < 6)
+			else
+			{
+				if (gBattleStruct->expGetterMonId < PARTY_SIZE)
 					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
 					gBattleScripting.expStateTracker = GetExp_End; // we're done
@@ -430,19 +454,23 @@ void atk23_getexp(void)
 		if (gBattleExecBuffer) break;
 
 		#ifdef FLAG_EXP_SHARE
-			if (FlagGet(FLAG_EXP_SHARE) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) {
+			if (FlagGet(FLAG_EXP_SHARE) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup))
+			{
 				*expGiveType = GiveExpViaExpShare;
 				gBattleStruct->expGetterMonId = 0;
 				gBattleMoveDamage = 0;
 				gBattleStruct->sentInPokes = gNewBS->SentInBackup;
 				gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
-				gBattleStringLoader = String_TeamExpGain;
-				PrepareStringBattle(0x184, 0);
+				if (SomeoneOnTeamGetsExpFromExpShare(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) //Still give EVs, but don't print message if no Exp gained
+				{
+					gBattleStringLoader = String_TeamExpGain;
+					PrepareStringBattle(0x184, 0);
+				}
 			}
 			else
 		#endif
 			{
-			END_EXP_GIVE:
+				END_EXP_GIVE:
 				gBattleMons[gBankFainted].item = 0;
 				gBattleMons[gBankFainted].ability = 0;
 				gBattlescriptCurrInstr += 2;
@@ -483,24 +511,47 @@ static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f
 	return MathMin(1640000, calculatedExp);
 }
 
-static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
+static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn)
+{
 	u8 start, end;
 	int i;
 
-	pokemon_t* party = LoadPartyRange(bank, &start, &end);
+	struct Pokemon* party = LoadPartyRange(bank, &start, &end);
 
 	for (i = start; i < end; ++i) {
 		if (party[i].species == 0)
 			return TRUE;
 
-		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) || party[i].level >= MAX_LEVEL)
+		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) /*|| party[i].level >= MAX_LEVEL*/) //Pokemon can still gain EVs at Max Level so don't check this
 			continue;
 
-		if (!(sentIn & (1 << i)))
+		if (!(sentIn & gBitTable[i]))
 			return FALSE;
 	}
 
 	return TRUE;
+}
+
+static bool8 SomeoneOnTeamGetsExpFromExpShare(u8 bank, u8 sentIn)
+{
+	u8 start, end;
+	int i;
+
+	struct Pokemon* party = LoadPartyRange(bank, &start, &end);
+
+	for (i = start; i < end; ++i)
+	{
+		if (party[i].species == 0)
+			continue;
+
+		if (party[i].hp == 0 || GetMonData(&party[i], MON_DATA_IS_EGG, 0) || party[i].level >= MAX_LEVEL)
+			continue;
+
+		if (!(sentIn & gBitTable[i]))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
@@ -509,11 +560,25 @@ static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
 	{
 		#ifdef EXP_AFFECTION_BOOST
 			#ifdef UNBOUND
-			if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY || FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
+			if (FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
 			#endif
 				return TRUE;
 		#endif
 	}
+
+	return FALSE;
+}
+
+static bool8 IsAffectedByHardLevelCap(unusedArg struct Pokemon* mon)
+{
+	#ifdef FLAG_HARD_LEVEL_CAP
+	extern u8 GetCurrentLevelCap(void); //Must be implemented yourself
+	if (FlagGet(FLAG_HARD_LEVEL_CAP))
+	{
+		if (GetMonData(mon, MON_DATA_LEVEL, NULL) >= GetCurrentLevelCap())
+			return TRUE;
+	}
+	#endif
 
 	return FALSE;
 }
@@ -613,6 +678,10 @@ static void Task_GiveExpToMon(u8 taskId)
 			if (monId == gBattlerPartyIndexes[bank]) //Pokemon in battle
 				TryBoostDynamaxHPAfterLevelUp(bank);
 			gainedExp -= (nextLvlExp - currExp);
+
+			if (IsAffectedByHardLevelCap(mon))
+				gainedExp = 0; //Don't gain any more Exp.
+
 			gActiveBattler = bank;
 			EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) (&gainedExp)); //Used to be EmitTwoReturnValues, but Cmd34 allows for more data transfer
 			gActiveBattler = savedActiveBattler;
@@ -673,6 +742,10 @@ static void sub_80300F4(u8 taskId)
 				CalculateMonStats(mon);
 				TryBoostDynamaxHPAfterLevelUp(bank);
 				gainedExp -= (nextLvlExp - currExp);
+
+				if (IsAffectedByHardLevelCap(mon))
+					gainedExp = 0; //Don't gain any more Exp.
+
 				gActiveBattler = bank;
 				EmitExpTransferBack(1, RET_VALUE_LEVELED_UP, (u8*) &gainedExp);
 
@@ -695,26 +768,27 @@ static u32 GetExpToLevel(u8 toLevel, u8 growthRate)
 	return gExperienceTables[growthRate][toLevel];
 }
 
+u32 GetSpeciesExpToLevel(u16 species, u8 toLevel)
+{
+	return GetExpToLevel(toLevel, gBaseStats[species].growthRate);
+}
+
 //////////////////// POWER ITEMS ////////////////////////////////
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 {
-	u8 multiplier;
 	u16 evIncrease;
-
 	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 	u8 holdEffect = ItemId_GetHoldEffect(heldItem);
 	u8 itemQuality = ItemId_GetHoldEffectParam(heldItem);
+	u8 pkrsMultiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
 
 	if (GetMonEVCount(mon) >= MAX_TOTAL_EVS)
 		return;
 
-	for (u8 stat = 0; stat < NUM_STATS; ++stat)
+	for (u8 stat = 0; stat < NUM_STATS; ++stat, evIncrease = 0)
 	{
 		if (GetMonData(mon, MON_DATA_HP_EV + stat, NULL) >= EV_CAP)
 			continue;
-
-		evIncrease = 0;
-		multiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
 
 		//Get EV yield
 		switch (stat)
@@ -740,16 +814,33 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 		}
 
 		//Pokerus
-		evIncrease *= multiplier;
+		evIncrease *= pkrsMultiplier;
 
 		//Check Macho Brace
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
+		{
+			#ifdef VAR_MACHO_BRACE_LEVEL
+			evIncrease *= MathMin(max(2, VarGet(VAR_MACHO_BRACE_LEVEL)), EV_CAP);
+			#else
 			evIncrease *= 2;
+			#endif
+		}
 
 		AddEVs(mon, stat, evIncrease);
 
+		//Check Power Item
 		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
-			AddEVs(mon, stat, POWER_ITEM_EV_YIELD); //Power items always add to requested stat
+		{
+			evIncrease = POWER_ITEM_EV_YIELD * pkrsMultiplier;
+
+			#ifdef VAR_POWER_ITEM_LEVEL
+			u8 powerItemLevel = VarGet(VAR_POWER_ITEM_LEVEL);
+			if (powerItemLevel >= 2) //At least doubling
+				evIncrease *= MathMin(powerItemLevel, EV_CAP);
+			#endif
+
+			AddEVs(mon, stat, evIncrease); //Power items always add to requested stat
+		}
 	}
 }
 

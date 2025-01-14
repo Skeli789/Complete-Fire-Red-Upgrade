@@ -23,10 +23,13 @@ struct FieldInput
 
 extern struct FieldInput gInputToStoreInQuestLogMaybe;
 
+void __attribute__((long_call)) HandleBoulderFallThroughHole(struct EventObject*);
 u8 __attribute__((long_call)) TrySetDiveWarp(void);
 void __attribute__((long_call)) GetPlayerPosition(struct MapPosition *);
 void __attribute__((long_call)) SetupWarp(struct MapHeader*, s8, struct MapPosition*);
 s8 __attribute__((long_call)) GetWarpEventAtMapPosition(struct MapHeader*, struct MapPosition*);
+void __attribute__((long_call)) HandleBoulderActivateVictoryRoadSwitch(u16 x, u16 y);
+bool8 __attribute__((long_call)) dive_warp(struct MapPosition *position, u16 metatileBehavior);
 
 /*
 void FieldClearPlayerInput(struct FieldInput *pStruct);

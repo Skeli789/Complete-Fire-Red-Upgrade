@@ -25,12 +25,15 @@ extern const u8 BattleScript_ZMoveActivateStatus[];
 extern const u8 BattleScript_ZMoveActivateDamaging[];
 extern const u8 BattleScript_DarkTypePreventsPrankster[];
 extern const u8 BattleScript_MoveUsedSkyBattlePrevents[];
+extern const u8 BattleScript_MoveUsedRingChallengePrevents[];
 extern const u8 BattleScript_CantUseSignatureMove[];
 extern const u8 BattleScript_HoopaCantUseHyperspaceFury[];
 extern const u8 BattleScript_MoveUsedDynamaxPrevents[];
 extern const u8 BattleScript_MoveUsedRaidBattlePrevents[];
+extern const u8 BattleScript_MoveUsedRaidShieldPrevents[];
 extern const u8 BattleScript_DampStopsExplosion[];
 extern const u8 BattleScript_TookAttack[];
+extern const u8 BattleScript_EvaporatedAttack[];
 extern const u8 BattleScript_RaidBattleStatNullification[];
 
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
@@ -58,3 +61,6 @@ extern const u8 BattleScript_RaidBattleStatNullification[];
 #define BattleScript_IgnoresAndUsesRandomMove (u8*) 0x81D94EA
 #define BattleScript_IgnoresAndFallsAsleep (u8*) 0x81D9504
 #define BattleScript_IgnoresAndHitsItself (u8*) 0x81D951B
+
+//Strings
+extern const u8 PsychicTerrainAttackCancelString[];

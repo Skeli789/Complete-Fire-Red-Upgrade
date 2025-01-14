@@ -33,7 +33,7 @@ GetSmallestItemAmount:
 	bx r3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
+/*.pool
 OpenBagBugFix1:
 	push {r2-r3}
 	mov r0, r4
@@ -44,9 +44,9 @@ OpenBagBugFix1:
 	cmp r2, r0
 	ldr r0, =0x8108A26 | 1
 	bx r0
-
+*/
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
+/*.pool
 OpenBagBugFix2:
 	push {r1-r2}
 	mov r0, r4
@@ -55,7 +55,7 @@ OpenBagBugFix2:
 	add r3, r0, #0x1
 	ldr r4, =0x8108A4C | 1
 	bx r4
-
+*/
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 OpenBagBugFix3:
@@ -67,6 +67,51 @@ OpenBagBugFix3:
 	ldr r1, =0x8108AC8 | 1
 bxr1:
 	bx r1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x810852E with r0
+BagLRScroll:
+	ldrb r0, [r3, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r3, #0x16]
+	bl FixCubeCursorDefaultColour
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
+
+@0x8131D1C with r0
+TMCaseLRScroll:
+	ldrb r0, [r2, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r2, #0x16]
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
+
+@0x813D306 with r0
+BerryPouchLRScroll:
+	ldrb r0, [r5, #0x16]
+	mov r1, #0x1 @LIST_MULTIPLE_SCROLL_DPAD
+	lsl r1, #0x6
+	bic r0, r1 @Remove possible old settings
+	mov r1, #0x2 @LIST_MULTIPLE_SCROLL_L_R
+	lsl r1, #0x6
+	orr r0, r1
+	strb r0, [r5, #0x16]
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -261,4 +306,13 @@ RegisterItemHook:
 	mov r0, r2
 	bl HandleItemRegistration
 	ldr r0, =0x810A052 | 1
+	bx r0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x81334C4 with r0
+TMCaseSplitIconsHook:
+	mov r0, r7 @Move (type is already in r1)
+	bl PrintTMCaseTypeAndSplitIcons
+	ldr r0, =0x81334CE | 1
 	bx r0

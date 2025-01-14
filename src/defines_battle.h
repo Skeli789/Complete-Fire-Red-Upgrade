@@ -27,7 +27,7 @@ defines_battle.h
 #define SIDE(bank) GetBattlerSide(bank)
 #define PARTNER(bank) (bank ^ BIT_FLANK)
 #define FOE(bank) ((bank ^ BIT_SIDE) & BIT_SIDE)
-#define ABILITY(bank) GetBankAbility(bank)
+#define ABILITY(bank) gBattleMons[bank].ability
 #define SPECIES(bank) gBattleMons[bank].species
 #define ITEM(bank) gBattleMons[bank].item
 #define ITEM_EFFECT(bank) GetBankItemEffect(bank)
@@ -41,16 +41,18 @@ defines_battle.h
 
 #define REALLY_SMART_AI //The vanilla FR AI memory system sucks so this should always be defined
 
-#define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
-#define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !CheckTableForMove(move, gMoldBreakerMoves))
+#define IS_MOLD_BREAKER(ability, move) (IsMoldBreakerAbility(ability) || gSpecialMoveFlags[move].gMoldBreakerMoves)
+#define NO_MOLD_BREAKERS(ability, move) (!IsMoldBreakerAbility(ability) && !gSpecialMoveFlags[move].gMoldBreakerMoves)
 #define IS_BLANK_TYPE(type) (type == TYPE_MYSTERY || type == TYPE_ROOSTLESS || type == TYPE_BLANK)
 #define IS_TRANSFORMED(bank) (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
 #define IS_BEHIND_SUBSTITUTE(bank) (gBattleMons[bank].status2 & STATUS2_SUBSTITUTE)
-#define TOOK_DAMAGE(bank) (gSpecialStatuses[bank].moveturnLostHP_physical || gSpecialStatuses[bank].moveturnLostHP_special)
+#define TOOK_DAMAGE(bank) (gSpecialStatuses[bank].moveturnLostHP_physical || gSpecialStatuses[bank].moveturnLostHP_special || (gNewBS->enduredDamage & gBitTable[bank]))
 #define MOVE_HAD_EFFECT (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
 #define PINCH_BERRY_CHECK(bank) (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 4 || (ABILITY(bank) == ABILITY_GLUTTONY && gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2))
-#define STAT_CAN_RISE(bank, stat) ((gBattleMons[bank].statStages[stat-1] < 12 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] > 0))
-#define STAT_CAN_FALL(bank, stat) ((gBattleMons[bank].statStages[stat-1] > 0 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] < 12))
+#define STAT_CAN_RISE(bank, stat) ((STAT_STAGE(bank, stat) < STAT_STAGE_MAX && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && STAT_STAGE(bank, stat) > 0))
+#define STAT_CAN_FALL(bank, stat) ((STAT_STAGE(bank, stat) > 0 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && STAT_STAGE(bank, stat) < STAT_STAGE_MAX))
+#define AI_STAT_CAN_RISE(bank, stat) (STAT_STAGE(bank, stat) < STAT_STAGE_MAX)
+#define AI_STAT_CAN_FALL(bank, stat) (STAT_STAGE(bank, stat) > STAT_STAGE_MIN)
 #define BATTLER_ALIVE(bank) (gBattleMons[bank].hp > 0)
 #define BATTLER_MAX_HP(bank) (gBattleMons[bank].hp == gBattleMons[bank].maxHP)
 #define BATTLER_SEMI_INVULNERABLE(bank) (gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
@@ -106,9 +108,10 @@ enum
 
 extern const struct BattleMove gBattleMoves[];
 extern const u8 gTypeEffectiveness[NUMBER_OF_MON_TYPES][NUMBER_OF_MON_TYPES];
-#define BattleScript_MoveEnd (u8*) 0x81D694E
-#define BattleScript_Atk49 (u8*) 0x81D6954
+#define BattleScript_MoveEnd (const u8*) 0x81D694E
+#define BattleScript_Atk49 (const u8*) 0x81D6954
 extern u8 BattleScript_ButItFailed[];
+#define BattleScript_NotAffected (const u8*) 0x81D7E04
 
 typedef u8 TrainerClassNames_t[13];
 #define gTrainerClassNames ((TrainerClassNames_t*) *((u32*) 0x811B4B4)) //0x823E558
@@ -125,6 +128,11 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 #define gStatusConditionString_Sleep ((u8*) 0x825009C)
 #define gStatusConditionString_Paralysis ((u8*) 0x82500A4)
 #define gStatusConditionString_Burn ((u8*) 0x82500AC)
+#ifdef FROSTBITE
+extern const u8 gStatusConditionString_Frostbite[];
+#define gStatusConditionString_Ice gStatusConditionString_Frostbite
+#else
 #define gStatusConditionString_Ice ((u8*) 0x82500B4)
+#endif
 #define gStatusConditionString_Confusion ((u8*) 0x82500BC)
 #define gStatusConditionString_Love ((u8*) 0x82500C4)

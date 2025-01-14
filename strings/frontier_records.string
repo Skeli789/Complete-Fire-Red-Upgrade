@@ -71,10 +71,13 @@ Standard
 No Restrictions
 
 #org @gText_SmogonGen7OU
-Smogon Gen 7 OU
+Smogon OU
+
+#org @gText_SmogonOUDoubles
+Smogon Doubles OU
 
 #org @gText_SmogonGen7Uber
-Smogon Gen 7 Ubers
+Smogon Ubers
 
 #org @gText_SmogonLittleCup
 Smogon Little Cup
@@ -124,6 +127,18 @@ Dynamax Standard
 #org @gText_NationalDexOU
 Smogon National Dex OU
 
+#org @gText_SmogonMetronome
+Smogon Metronome
+
+#org @gText_SmogonGen7UU
+Smogon Gen 7 UU
+
+#org @gText_SmogonGen7RU
+Smogon Gen 7 RU
+
+#org @gText_SmogonGen7NU
+Smogon Gen 7 NU
+
 #org @gText_BattleMineFormat1
 Cave Format
 
@@ -132,6 +147,9 @@ Mountain Format
 
 #org @gText_BattleMineFormat3
 Pebble Format
+
+#org @gText_BattleMineFormat4
+Cordillera Format
 
 #org @gText_On
 on
@@ -147,6 +165,9 @@ not be able
 
 #org @gText_Previous
 Previous
+
+#org @gText_Current
+Current
 
 #org @gText_Max
 Max
@@ -180,8 +201,8 @@ in a sandstorm!
 #org @gText_BattleCircusDescriptionHail
 in a hailstorm!
 
-#org @gText_BattleCircusDescriptionFog
-under the cover of a deep fog[.]
+#org @gText_BattleCircusDescriptionDeltaStream
+with strong winds blowing!\pFlying-type Pok\emon take less\ndamage from super effective moves!
 
 #org @gText_BattleCircusDescriptionTrickRoom
 in a Trick Room!\pSlower Pok\emon get to move first!
@@ -195,17 +216,17 @@ in a Wonder Room!\pDefense and Sp. Def stats are\nswapped!
 #org @gText_BattleCircusDescriptionGravity
 with intense gravity!\pNo Pok\emon will remain airborne!
 
-#org @gText_BattleCircusDescriptionIonDeluge
-with a deluge of ions in the air!\pAll Normal-type moves will become\nElectric-type!
+#org @gText_BattleCircusDescriptionMagnetRise
+with electromagnetism on the field!\pElectric- and Steel-type Pok\emon\ncan't be hit by Ground-type moves!
 
 #org @gText_BattleCircusDescriptionFairyLock
 with the battlefield locked down!\pNo Pok\emon will be able to switch\nout!
 
-#org @gText_BattleCircusDescriptionMudSport
-with mud showering the battlefield!\pAll Electric-type moves will be\nweakened!
+#org @gText_BattleCircusDescriptionPixies
+with pixies in the air!\pFairy-type Pok\emon will have their\nlowest defensive stat boosted!
 
-#org @gText_BattleCircusDescriptionWaterSport
-with water in the air!\pAll Fire-type moves will be\nweakened!
+#org @gText_BattleCircusDescriptionBadThoughts
+with negative emotions in the air!\pPok\emon that aren't part Dark-\ntype, Ghost-type, Psychic-type,\lor have one of the Abilities\lUnaware, Oblivious, or Magic Guard\lwill be hurt each turn!
 
 #org @gText_BattleCircusDescriptionInverseBattle
 in an Inverse Battle!\pAll type matchups are reversed!

@@ -51,6 +51,7 @@ extern void (*gFieldCallback)(void);
 extern bool8 (*gFieldCallback2)(void);
 extern u8 gLocalLinkPlayerId;
 extern u8 gFieldLinkPlayerCount;
+extern u8 gGlobalFieldTintMode;
 
 // Exported ROM declarations
 extern const struct UCoords32 gDirectionToVectors[];
@@ -103,6 +104,8 @@ void __attribute__((long_call)) CB2_ReturnToFieldFromMultiplayer(void);
 void __attribute__((long_call)) CB2_ReturnToFieldWithOpenMenu(void);
 void __attribute__((long_call)) CB2_ReturnToFieldContinueScript(void);
 void __attribute__((long_call)) CB2_ReturnToFieldContinueScriptPlayMapMusic(void);
+void __attribute__((long_call)) CB2_ReturnToFieldFromDiploma(void);
+void __attribute__((long_call)) CB2_Credits(void);
 void __attribute__((long_call)) SetWarpDestination(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 u8 __attribute__((long_call)) GetPlayerFacing(void);
 void __attribute__((long_call)) Overworld_SetEventObjTemplateMovementType(u8 localId, u8 movementType);

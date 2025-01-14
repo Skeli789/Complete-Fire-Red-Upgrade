@@ -132,6 +132,10 @@
 
 #define BATTLE_TERRAIN_BATTLE_TOWER			0xA
 #define BATTLE_TERRAIN_BATTLE_CIRCUS		0xB
+#define BATTLE_TERRAIN_MOLEMAN       		0xF
+#define BATTLE_TERRAIN_ELIAS 				0x10
+#define BATTLE_TERRAIN_ANABELLE       		0x11
+#define BATTLE_TERRAIN_PENNY 				0x12
 #define BATTLE_TERRAIN_SNOW_FIELD			0x14
 #define BATTLE_TERRAIN_VOLCANO				0x15
 #define BATTLE_TERRAIN_DARK_CAVE_WATER		0x16
@@ -151,6 +155,16 @@
 #define BATTLE_TERRAIN_AUTUMN_PLAIN			0x24
 #define BATTLE_TERRAIN_SNOW_GRASS			0x25
 #define BATTLE_TERRAIN_NIGHTMARE			0x26
+#define BATTLE_TERRAIN_ANTISIS_CITY			0x27
+#define BATTLE_TERRAIN_ANTISIS_SEWERS		0x28
+#define BATTLE_TERRAIN_ANTISIS_SEWERS_WATER	0x29
+#define BATTLE_TERRAIN_SKY_BATTLE			0x2A
+#define BATTLE_TERRAIN_BOG					0x2B
+#define BATTLE_TERRAIN_BOG_WATER			0x2C
+#define BATTLE_TERRAIN_DISTORTION_WORLD_FULL 0x2D
+#define BATTLE_TERRAIN_CUBE_SPACE			0x2E
+#define BATTLE_TERRAIN_CRYSTAL_PEAK			0x2F
+#define BATTLE_TERRAIN_CRYSTAL_PEAK_WATER	0x30
 
 #define BATTLE_TERRAIN_RANDOM				0xFF
 #endif
@@ -185,6 +199,8 @@ enum
 #define MOVE_TARGET_FOES_AND_ALLY   0x20
 #define MOVE_TARGET_ALL   			0x20
 #define MOVE_TARGET_OPPONENTS_FIELD 0x40
+
+#define MOVE_TARGET_SPREAD (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
 
 // defines for the u8 array gTypeEffectiveness
 #define TYPE_EFFECT_ATK_TYPE(i)((gTypeEffectiveness[i + 0]))
@@ -441,7 +457,8 @@ struct SideTimer
 			 u8 tspikesAmount : 2;
 			 u8 srAmount : 1;
 			 u8 stickyWeb : 1;
-    /*0x0B*/ u8 steelsurge: 1;
+			 u8 steelsurge: 1;
+	/*0x0B*/ u8 stickyWebBank;
 };
 
 extern struct SideTimer gSideTimers[];
@@ -492,7 +509,7 @@ extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 
 struct BattleHistory //0x20003D0
 {
-    /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
+    /*0x00*/ u16 usedMoves[MAX_BATTLERS_COUNT][MAX_MON_MOVES]; // 0xFFFF means move not used (confuse self hit, etc)
     /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT/* / 2*/];
     /*0x22*/ //u8 itemEffects[MAX_BATTLERS_COUNT / 2]; //Moved to gNewBS
     /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT]; //0x20003F4
@@ -625,7 +642,7 @@ struct BattleStruct
 	bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
 	u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
 	u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
-	u8 field_60[4][3];
+	u8 battlerPartyOrders[MAX_BATTLERS_COUNT][3];
 	u8 runTries;
 	u8 caughtMonNick[11]; //0x200007D
 	u8 field_78;
@@ -738,6 +755,10 @@ struct NewBattleStruct
 	u8 SlowStartTimers[MAX_BATTLERS_COUNT];
 	u8 StakeoutCounters[MAX_BATTLERS_COUNT];
 	u8 StompingTantrumTimers[MAX_BATTLERS_COUNT];
+	u8 splinterTimer[MAX_BATTLERS_COUNT];
+	u8 splinterAttackerBank[MAX_BATTLERS_COUNT];
+	u8 splinterAttackerMonId[MAX_BATTLERS_COUNT];
+	u16 splinterMove[MAX_BATTLERS_COUNT];
 	u8 NimbleCounters[MAX_BATTLERS_COUNT];
 	u8 DestinyBondCounters[MAX_BATTLERS_COUNT];
 	u8 MetronomeCounter[MAX_BATTLERS_COUNT];
@@ -758,10 +779,14 @@ struct NewBattleStruct
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 statFellThisRound[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
-	s8 lastBracketCalc[MAX_BATTLERS_COUNT];
-	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT]; //~0x2017A4B
+	s8 lastBracketCalc[MAX_BATTLERS_COUNT]; //~0x2017A4C
+	u8 chiStrikeCritBoosts[MAX_BATTLERS_COUNT];
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 	u8 disguisedAs[MAX_BATTLERS_COUNT]; //The party index + 1 the mon with Illusion is disguised as
+	u8 quickClawRandomNumber[MAX_BATTLERS_COUNT];
+	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
+	u8 powerShifted[MAX_BATTLERS_COUNT];
+	u16 tookAbilityFrom[MAX_BATTLERS_COUNT]; //Helps display the correct Ability when one has been passed around
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -770,10 +795,12 @@ struct NewBattleStruct
 	u8 playedFocusPunchMessage;
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
-	u8 CustapQuickClawIndicator; //0x2017632
+	u8 quickClawCustapIndicator;
+	u8 quickDrawIndicator;
+	u8 ateCustapBerry;
 	u8 HealingWishLoc;
 	u8 PowderByte;
-	u8 quashed;
+	u8 turnOrderLocked;
 	u8 tarShotBits;
 	u8 trappedByOctolock;
 	u8 trappedByNoRetreat;
@@ -785,10 +812,12 @@ struct NewBattleStruct
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
 	u8 hiddenAnimBattlerSprites;
+	u8 enduredDamage;
 
 	//Bit Fields for Party
-	u8 BelchCounters;
-	u8 IllusionBroken;
+	u8 canBelch[NUM_BATTLE_SIDES];
+	u8 corrodedItems[NUM_BATTLE_SIDES];
+	u8 revealedEnemyMons;
 
 	//Other Helpers
 	u8 switchOutAbilitiesState; //For tracking effects that happen on switch-out
@@ -796,6 +825,7 @@ struct NewBattleStruct
 	u8 preFaintEffectsState; //For tracking effects that happen right before the target faints
 	u8 faintEffectsState; //For tracking effects that happen after the target faints
 	u8 endTurnBlockState; //For tracking sub-blocks utilized by the end turn function
+	u8 IllusionBroken;
 	u8 SentInBackup;
 	u8 OriginalAttackerTargetCount;
 	u8 MoveBounceTargetCount;
@@ -813,9 +843,10 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
 	u8 maxGoldrushUses;
-	u8 playerItemUsedCount; //~0x2017A82
+	u8 playerItemUsedCount;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
+	u8 backupBattlerPosition : 2; //For Neutralizing Gas
 
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -825,11 +856,12 @@ struct NewBattleStruct
 	bool8 ParentalBondOn : 2;
 	bool8 MeFirstByte : 1;
 	bool8 ReceiverActivated : 1;
-	bool8 GemHelper : 1;
+	bool8 consumedGem : 1;
 	bool8 fusionFlareUsedPrior : 1;
 	bool8 fusionBoltUsedPrior : 1;
 	bool8 endTurnDone : 1;
-	bool8 HappyHourByte : 1;
+	bool8 usedAmuletCoin : 1;
+	bool8 usedHappyHour : 1;
 	bool8 attackAnimationPlayed : 1;
 	bool8 DancerInProgress : 1;
 	bool8 DancerByte : 1;
@@ -863,6 +895,20 @@ struct NewBattleStruct
 	bool8 doingPluckItemEffect : 1;
 	bool8 usedXSpDef : 1; //Needed because it's hooked into the X Sp. Atk
 	bool8 lessThanHalfHPBeforeShellBell : 1; //For Emergency Exit
+	bool8 statBuffEffectNotProtectAffected : 1; //For Max Moves
+	bool8 rolloutFinalHit : 1; //Helps with Rollout 5th hit damage calc
+	bool8 usedLastBall : 1; //Helps prevent the bag from opening
+	bool8 threwBall : 1; //Last Used Ball only appears once a ball has been thrown once
+	bool8 totemOmniboostActive : 1; //Allows Contrary mons to get the correct animation
+	bool8 dontActivateMoldBreakersAnymoreThisTurn : 1;
+	bool8 trainerSlideInProgress : 1;
+	bool8 stickyWebActive : 1;
+	bool8 inPivotingMove : 1;
+	bool8 triedToTakeWildItem : 1;
+	bool8 printedStrongWindsWeakenedAttack : 1;
+	bool8 isTrainerBattle : 1;
+	bool8 cottonDownActive : 1;
+	bool8 cramorantTransformed : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -880,9 +926,14 @@ struct NewBattleStruct
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
 	u8 hiddenHealthboxFlags[MAX_SPRITES / 8]; //~2017AD8
+	u8 ringChallengeBannedTypes[3];
+	u16 knockedOffWildItem;
+	u8 criticalHitsThisBattle[PARTY_SIZE];
+	u8 pickupMonId;
+	u8 shellSideArmSplit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT];
 
 	//Things for Spread Moves
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC8
+	s32 DamageTaken[MAX_BATTLERS_COUNT];
 	s32 turnDamageTaken[MAX_BATTLERS_COUNT]; //Specifically for multi-hit moves and Emergency Exit
 	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
@@ -946,29 +997,52 @@ struct NewBattleStruct
 
 	struct 
 	{
-		u16 zMoveHelper;
+		u16 zMoveHelper; //~0x2017B74
+		u32 randSeed; //Seeded every frame regardless of whether or not the Random seed is normally
 		bool8 sideSwitchedThisRound;
-		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //~0x2017B5B
+		bool8 goodToPivot;
+		u8 pivotTo[PARTY_SIZE]; //Should be MAX_BATTLERS_COUNT
+		u8 playerSwitchedCount;
+		u8 switchingCooldown[MAX_BATTLERS_COUNT]; //Used for anti-AI cheesing
+		u8 typeAbsorbSwitchingCooldown[MAX_BATTLERS_COUNT]; //Prevent a type absorb switching loop
+		u8 switchesInARow[MAX_BATTLERS_COUNT];
+		u8 previousMonIn[MAX_BATTLERS_COUNT];
+		u8 secondPreviousMonIn[MAX_BATTLERS_COUNT];
+		bool8 suckerPunchOkay[MAX_BATTLERS_COUNT];
 		u8 itemEffects[MAX_BATTLERS_COUNT];
+		u8 backupAbilities[MAX_BATTLERS_COUNT]; //For when Pokemon are temp Mega Evolved
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
+		u16 previousMovePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //previousMovePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
+		u16 strongestMoveGoesFirst[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMoveGoesFirst[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
 		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]
 		u32 damageByMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //damageByMove[bankAtk][bankDef][monMoveIndex]
+		u32 monDamageByMove[NUM_BATTLE_SIDES][PARTY_SIZE][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //monDamageByMove[side][atkMonId][bankDef][monMoveIndex]
+		u32 monMaxDamage[NUM_BATTLE_SIDES][PARTY_SIZE][MAX_BATTLERS_COUNT]; //monMaxDamage[side][atkMonId][bankDef]
 		u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
 		s8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef][bankDef / bankDefPartner / bankAtkPartner]
+		u32 secondaryEffectDamage[MAX_BATTLERS_COUNT]; //secondaryEffectDamage[bank]
 		bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
 		bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
-		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice]
-		s8 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice] //~0x2017DD8
+		s16 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		u8 bestMonIdToSwitchIntoFlags[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		s16 monIdToSwitchIntoScores[NUM_BATTLE_SIDES][PARTY_SIZE]; //monIdToSwitchIntoScores[sideToSwitchFrom][monIdToSwitchTo]
+		u8 monIdToSwitchIntoFlags[NUM_BATTLE_SIDES][PARTY_SIZE]; //monIdToSwitchIntoFlags[sideToSwitchFrom][monIdToSwitchTo]
 		u8 calculatedAISwitchings[MAX_BATTLERS_COUNT]; //calculatedAISwitchings[bankSwitch]
 		u8 fightingStyle[MAX_BATTLERS_COUNT]; //fightingStyle[bankAtk]
-		u8 dynamaxMonId[NUM_BATTLE_SIDES]; //dynamaxMonId[SIDE(bankAtk)] //2017C1E
+		u8 dynamaxMonId[NUM_BATTLE_SIDES]; //dynamaxMonId[SIDE(bankAtk)]
+		u8 didTypeAbsorbSwitchToMonBefore[NUM_BATTLE_SIDES]; //didTypeAbsorbSwitchToMonBefore[SIDE(bankAtk)] & gBitTable[monAtk]
 		bool8 onlyBadMovesLeft[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //onlyBadMovesLeft[bankAtk][bankDef]
+		bool8 usingDesperateMove[MAX_BATTLERS_COUNT]; //usingDesperateMove[bankAtk]
 		bool8 shouldFreeChoiceLockWithDynamax[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]
+		bool8 shouldUseZMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //shouldUseZMove[bankAtk][bankDef][monMoveIndex]
 		bool8 dynamaxPotential[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //dynamaxPotential[bankAtk][bankDef]
 		const void* megaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
 	} ai;
+
+	struct Pokemon** foePartyBackup; //Pointer to dynamically allocated memory
 };
 
 extern struct NewBattleStruct* gNewBS; //0x203E038
@@ -1134,7 +1208,7 @@ struct FlingStruct
 #define B_ANIM_CAPTURE_POKEMON 0x1F
 #define B_ANIM_TURN_INTO_POKEBALL 0x20
 #define B_ANIM_SWITCH 0x21
-#define B_ANIM_CREATE_SUBSTITUTE_2 0x22
+#define B_ANIM_MON_TO_SUBSTITUTE_2 0x22
 #define B_ANIM_TRANSFORM 0x23
 #define B_ANIM_WISHIWASHI_FISH 0x24
 #define B_ANIM_ZYGARDE_CELL_SWIRL 0x25
@@ -1156,12 +1230,12 @@ struct FlingStruct
 #define B_ANIM_BERRY_EAT 0x35
 #define B_ANIM_FOG_CONTINUES 0x36
 #define B_ANIM_AQUA_RING_HEAL 0x37
-#define B_ELECTRIC_TERRAIN_ACTIVE_ANIM 0x38
-#define B_GRASSY_TERRAIN_ACTIVE_ANIM 0x39
-#define B_MISTY_TERRAIN_ACTIVE_ANIM 0x3A
-#define B_PSYCHIC_TERRAIN_ACTIVE_ANIM 0x3B
-#define B_BATON_PASS_ANIM 0x3C
-#define B_DRAGON_TAIL_BLOW_AWAY_ANIM 0x3D
+#define B_ANIM_ELECTRIC_TERRAIN_ACTIVE 0x38
+#define B_ANIM_GRASSY_TERRAIN_ACTIVE 0x39
+#define B_ANIM_MISTY_TERRAIN_ACTIVE 0x3A
+#define B_ANIM_PSYCHIC_TERRAIN_ACTIVE 0x3B
+#define B_ANIM_BATON_PASS 0x3C
+#define B_ANIM_DRAGON_TAIL_BLOW_AWAY 0x3D
 #define B_ANIM_ZMOVE_ACTIVATE 0x3E
 #define B_ANIM_MEGA_EVOLUTION 0x3F
 #define B_ANIM_ULTRA_BURST 0x40
@@ -1173,10 +1247,14 @@ struct FlingStruct
 #define B_ANIM_DYNAMAX_ENERGY_SWIRL 0x46
 #define B_ANIM_RAID_BATTLE_STORM 0x47
 #define B_ANIM_RAID_BATTLE_ENERGY_BURST 0x48
-#define B_ANIM_G_MAX_VINE_LASH 0x49
-#define B_ANIM_G_MAX_WILDFIRE 0x4A
-#define B_ANIM_G_MAX_CANNONADE 0x4B
-#define B_ANIM_G_MAX_VOLCALITH 0x4C
+#define B_ANIM_RAID_BATTLE_BLOW_AWAY 0x49
+#define B_ANIM_G_MAX_VINE_LASH 0x4A
+#define B_ANIM_G_MAX_WILDFIRE 0x4B
+#define B_ANIM_G_MAX_CANNONADE 0x4C
+#define B_ANIM_G_MAX_VOLCALITH 0x4D
+#define B_ANIM_AI_ITEM_HEAL 0x4E
+#define B_ANIM_HOOPA_RING_SPAWN 0x4F
+#define B_ANIM_SPLINTER_DAMAGE 0x50
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 
@@ -1276,12 +1354,13 @@ extern struct BattleScripting gBattleScripting;
 // functions
 
 // battle_1
-void LoadBattleTextboxAndBackground(void);
-void LoadBattleEntryBackground(void);
-void ApplyPlayerChosenFrameToBattleMenu(void);
-bool8 LoadChosenBattleElement(u8 caseId);
-void DrawMainBattleBackground(void);
-void task00_0800F6FC(u8 taskId);
+//void LoadBattleTextboxAndBackground(void);
+//void LoadBattleEntryBackground(void);
+//void ApplyPlayerChosenFrameToBattleMenu(void);
+//bool8 LoadChosenBattleElement(u8 caseId);
+void __attribute__((long_call)) DrawMainBattleBackground(void);
+//void task00_0800F6FC(u8 taskId);
+void __attribute__((long_call)) BattleMainCB2(void);
 
 enum BackSprites
 {
@@ -1318,42 +1397,42 @@ struct BattleAnimationInfo
     u8 field_6;
     u8 field_7;
     u8 ballThrowCaseId;
-    u8 field_9_x1 : 1;
-    u8 field_9_x2 : 1;
+    u8 introAnimActive : 1;
+    u8 wildMonInvisible : 1;
     u8 field_9_x1C : 3;
     u8 field_9_x20 : 1;
     u8 field_9_x40 : 1;
     u8 field_9_x80 : 1;
-    u8 field_A;
+    u8 numBallParticles;
     u8 field_B;
-    s16 field_C;
+    s16 ballSubpx;
     u8 field_E;
     u8 field_F;
 };
 
 struct BattleHealthboxInfo
 {
-    u8 partyStatusSummaryShown:1;
-    u8 healthboxIsBouncing:1;
-    u8 battlerIsBouncing:1;
-    u8 ballAnimActive:1; // 0x8
-    u8 statusAnimActive:1; // x10
-    u8 animFromTableActive:1; // x20
-    u8 specialAnimActive:1; // x40
-    u8 flag_x80:1;
-    u8 field_1_x1:1;
-    u8 field_1_x1E:4;
-    u8 field_1_x20:1;
-    u8 field_1_x40:1;
-    u8 field_1_x80:1;
+    u8 partyStatusSummaryShown : 1; // x1
+    u8 healthboxIsBouncing : 1; // x2
+    u8 battlerIsBouncing : 1; // x4
+    u8 ballAnimActive : 1; // 0x8
+    u8 statusAnimActive : 1; // x10
+    u8 animFromTableActive : 1; // x20
+    u8 specialAnimActive : 1; // x40
+    u8 triedShinyMonAnim : 1; // x80
+    u8 finishedShinyMonAnim : 1; // x1
+	u8 opponentDrawPartyStatusSummaryDelay : 4;
+    u8 bgmRestored : 1;
+    u8 waitForCry : 1;
+    u8 healthboxSlideInStarted : 1;
     u8 healthboxBounceSpriteId;
     u8 battlerBounceSpriteId;
     u8 animationState;
-    u8 field_5;
+    u8 partyStatusDelayTimer;
     u8 matrixNum;
     u8 shadowSpriteId;
-    u8 field_8;
-    u8 field_9;
+    u8 soundTimer;
+    u8 introEndDelay;
     u8 field_A;
     u8 field_B;
 };
@@ -1472,7 +1551,7 @@ extern u16 gChosenMovesByBanks[MAX_BATTLERS_COUNT];
 extern u8 gMoveResultFlags;
 extern u32 gHitMarker;
 extern u8 gTakenDmgBanks[MAX_BATTLERS_COUNT];
-extern u8 gUnknown_2023DDC;
+extern u8 gUnusedFirstBattleVar2;
 extern u16 gSideStatuses[2];
 extern struct SideTimer gSideTimers[2];
 extern u32 gStatuses3[MAX_BATTLERS_COUNT];
@@ -1519,7 +1598,7 @@ extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(void);
 extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
 extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;
-extern u8 gUnknown_03005D7C[MAX_BATTLERS_COUNT];
+extern u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 
 extern u8 gUnknown_2023E8A;
 

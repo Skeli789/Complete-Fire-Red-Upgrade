@@ -1,8 +1,14 @@
 #org @gText_ChangeSaveType
-WRONG SAVE TYPE!\nPlease change to Flash 128k.
+WRONG SAVE TYPE!\nPlease change to Flash 128k.\pIf you are using VBA, consider\nswitching to the superior [GREEN]mGBA[BLACK].\pIf you do not wish to, then follow\nthese instructions to fix the Save Type.\p[RED]VBA Instructions[BLACK]:\pFirst, click [GREEN]Options[BLACK] on the top bar.\pNext, under [GREEN]Emulator[BLACK], select the\n[GREEN]Save Type[BLACK] option.\pAnd then, click [GREEN]Flash 128K[BLACK].\pFinally, completely close and restart\nthe emulator.\p[RED]3DS Instructions[BLACK]:\pUse the [GREEN]New Super Ultimate VC Injector\nfor 3DS[BLACK] to create the CIA file.\pOnce open, confirm the [GREEN]ROM Save Type[BLACK]\nis set to the following:\p[GREEN]Flash 1Mbit (Macronix, ID: 0x09C2)\n+ RTC[BLACK].\pThe [GREEN]injection method[BLACK] must also be\nset to [GREEN]GBA Virtual Console[BLACK].\pIf your emulator was not mentioned,\nplease change emulators.
 
 #org @gText_MainMenuEnableRTC
 WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.
+
+#org @gText_MainMenuEnableRTCNoSave
+WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Clock (RTC),\nand make sure the time is correct.\pIf you are using VBA, consider\nswitching to the superior [GREEN]mGBA[BLACK].\pIf you do not wish to, then follow\nthese instructions to enable the RTC.\p[RED]VBA Instructions[BLACK]:\pFirst, click [GREEN]Options[BLACK] on the top bar.\pNext, under [GREEN]Emulator[BLACK], select the\n[GREEN]Real Time Clock[BLACK] option.\pFinally, completely close and restart\nthe emulator.\p[RED]3DS Instructions[BLACK]:\pUse the [GREEN]New Super Ultimate VC Injector\nfor 3DS[BLACK] to create the CIA file.\pOnce open, confirm the [GREEN]ROM Save Type[BLACK]\nis set to the following:\p[GREEN]Flash 1Mbit (Macronix, ID: 0x09C2)\n+ RTC[BLACK].\pThe [GREEN]injection method[BLACK] must also be\nset to [GREEN]GBA Virtual Console[BLACK].\p[RED]Delta Instructions[BLACK]:\pUse the premium version of Delta\nor switch to [GREEN]GBA4iOS[BLACK].
+
+#org @gText_MainMenuTimeSetInFuture
+WARNING!\pRTC tampering has been detected\nin your save file!\pThe current ingame date is set to\n[BUFFER1]/[BUFFER2]/[BUFFER3].\pAll daily events such as gifts\nand Raids may cease to function\lproperly until the day after.\pPlease refrain from tampering\nwith the RTC again.
 
 #org @gText_UsedVar2WildStronger
 [BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]
@@ -14,16 +20,22 @@ WARNING!\pThe correct system time could\nnot be read.\pEnable the Real Time Cloc
 A second item in the Cube can be\nregistered to [L_BUTTON] for easy use.
 
 #org @gText_AutoRunEnable
-[GREEN]Auto-run[BLACK] has been [GREEN]enabled[BLACK].
+Auto-run has been [GREEN]enabled[BLACK].
 
 #org @gText_AutoRunDisable
-[GREEN]Auto-run[BLACK] has been [GREEN]disabled[BLACK].
+Auto-run has been [GREEN]disabled[BLACK].
 
 #org @gText_BikeTurboBoostEnable
-[GREEN]Turbo boost[BLACK] has been [GREEN]activated[BLACK].
+Turbo boost has been [GREEN]activated[BLACK].
 
 #org @gText_BikeTurboBoostDisable
-[GREEN]Turbo boost[BLACK] has been [GREEN]deactivated[BLACK].
+Turbo boost has been [GREEN]deactivated[BLACK].
+
+#org @gText_SurfTurboBoostEnable
+Turbo Surf has been [GREEN]activated[BLACK].
+
+#org @gText_SurfTurboBoostDisable
+Turbo Surf has been [GREEN]deactivated[BLACK].
 
 #org @gText_PoisonSurvial
 [BUFFER][02] survived the Poison.\nThe Poison faded away!
@@ -52,6 +64,24 @@ Obtained [BUFFER1] [BUFFER2]!
 #org @gText_ObtainedTMHM
 Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 
+#org @gText_RegisteredItemSelectButton
+[SELECT_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLButton
+[L_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemRButton
+[R_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemStartButton
+[START_BUTTON] [ALIGN][1E]
+
+#org @gText_RegisteredItemLeftButton
+[DPAD_LEFT] [ALIGN][1E]
+
+#org @gText_RegisteredItemRightButton
+[DPAD_RIGHT] [ALIGN][1E]
+
 #org @gText_UseWhichRegisteredItem
 Use which item?
 
@@ -61,11 +91,23 @@ Use which item?
 #org @gText_WantToScaleCliff
 The wall is very rocky[.]\nWould you like to use [BUFFER2]?
 
+#org @gText_WantToScaleCliffWithADM
+The wall is very rocky[.]\nWould you like to use the ADM?
+
+#org @gText_WantToScaleCliffSandbox
+The wall is very rocky[.]\nWould you like to scale it?
+
 #org @gText_RockIsRocky
 The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 
 #org @gText_DefogBlewAwayFog
 [BUFFER1] blew away the fog!
+
+#org @gText_OfferADMWaterfall
+It's a large waterfall.\nWould you like to use the ADM?
+
+#org @gText_OfferSandboxWaterfall
+It's a large waterfall.\nWould you like to climb it?
 
 #org @gText_WaterDyed
 The water is dyed a deep blue[.]
@@ -75,6 +117,18 @@ The water is a murky brown[.]
 
 #org @gText_WaterMurkyBrownUseSurf
 The water is a murky brown[.]\nWould you like to Surf?
+
+#org @gText_OfferSurfWithADM
+The water is dyed a deep blue[.]\nWould you like to use the ADM?
+
+#org @gText_WaterMurkyBrownUseADMSurf
+The water is a murky brown[.]\nWould you like to use the ADM?
+
+#org @gText_ADMBlewUpInflatablePokemon
+The ADM attached to [BUFFER1]\nas a floating device!
+
+#org @gText_SandboxSurfStarted
+A floating device attached to\n[BUFFER1]!
 
 #org @gText_LikeToLavaSurf
 The magma glistens a crimson red[.]\nWould you like to surf on it?
@@ -88,8 +142,20 @@ The magma glistens a crimson red[.]
 #org @gText_WantToDive
 The sea is deep here.\nWould you like to use [BUFFER2]?
 
+#org @gText_WantToADMDive
+The sea is deep here.\nWould you like to use the ADM?
+
+#org @gText_UsedADMDive
+The ADM allowed you to go\nunderwater!
+
 #org @gText_WantToSurface
 Light is filtering down from above.\nWould you like to use [BUFFER2]?
+
+#org @gText_WantToADMSurface
+Light is filtering down from above.\nWould you like to use the ADM?
+
+#org @gText_UsedADMDiveResurface
+The ADM allowed you to resurface!
 
 #org @gText_CantDive
 The sea is deep here. A Pok\emon\nmay be able to go underwater.
@@ -97,14 +163,14 @@ The sea is deep here. A Pok\emon\nmay be able to go underwater.
 #org @gText_CantSurface
 Light is filtering down from above.\nA Pok\emon may be able to surface.
 
+#org @gText_TVSwarm
+Calling all Trainers!\pA swarm of [GREEN][BUFFER2][BLACK] have appeared\naround [GREEN][BUFFER1][BLACK]!\pThis is a rare opportunity to get\nyour hands on a [BUFFER2], so\ldon't pass this chance up!\p[.]\pThis message is sponsored by\nCube Corp.
+
 #org @gText_DoorIsLocked
 The door is locked.
 
 #org @gText_PsychicBarrier
 There appears to be some sort of\nPsychic barrier in the way.
-
-#org @gText_ClimbLadder
-Would you like to climb the\nladder?
 
 #org @gText_CantReachLadder
 You can't reach the ladder from\nhere!
@@ -213,6 +279,9 @@ Enter a Phrase
 
 #org @gText_EnterPassword
 Enter Password
+
+#org @gText_EnterSpeciesName
+Enter a Species
 
 #org @gText_Purchased
 Purchased

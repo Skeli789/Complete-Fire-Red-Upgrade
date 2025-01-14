@@ -92,7 +92,7 @@ struct EventObjectTemplate
 {
 	/*0x00*/ u8 localId;
 	/*0x01*/ u8 graphicsIdLowerByte;
-	/*0x02*/ u8 unk2;
+	/*0x02*/ u8 inConnection;
 	/*0x03*/ u8 graphicsIdUpperByte;
 	/*0x04*/ s16 x;
 	/*0x06*/ s16 y;
@@ -247,7 +247,7 @@ struct EventObject
 	/*0x09*/ u8 mapNum;
 	/*0x0A*/ u8 mapGroup;
 	/*0x0B*/ u8 currentElevation:4;
-			 u8 elevation:4;
+			 u8 previousElevation:4;
 	/*0x0C*/ struct Coords16 initialCoords;
 	/*0x10*/ struct Coords16 currentCoords;
 	/*0x14*/ struct Coords16 previousCoords;

@@ -16,7 +16,7 @@ struct Task
     s16 data[16];	//8,A,C,E,10,12,14
 };
 
-#define gTasks ((struct Task*) 0x3005090) //extern struct Task gTasks[ACTIVE_SENTINEL];
+extern struct Task gTasks[];
 
 void __attribute__((long_call)) ResetTasks(void);
 u8 __attribute__((long_call)) CreateTask(TaskFunc func, u8 priority);

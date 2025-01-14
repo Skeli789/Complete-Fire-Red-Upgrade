@@ -30,5 +30,6 @@ u16 RtcCheckInfo(struct SiiRtcInfo *rtc);
 void RtcReset(void);
 void RtcCalcLocalTime(void);
 void ForceClockUpdate(void);
+void DirectClockUpdate(void);
 
 #endif // GUARD_RTC_UTIL_H

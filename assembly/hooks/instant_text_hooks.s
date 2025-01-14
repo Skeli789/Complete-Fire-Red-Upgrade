@@ -1,9 +1,8 @@
+.thumb
+.text
+.align 2
 
-	.thumb
-	.text
-	.align 2
-
-	.include "../asm_defines.s"
+.include "../asm_defines.s"
 
 @Hook at 0x8002d10 with r0
 FixInstantTextOptionSpeed:

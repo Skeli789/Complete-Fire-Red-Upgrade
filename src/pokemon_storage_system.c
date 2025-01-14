@@ -155,9 +155,17 @@ u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request)
 {
 	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
-		struct BoxPokemon mon;
-		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-		return GetBoxMonData(&mon, request, NULL);
+		if (request == MON_DATA_SPECIES)
+		{
+			//Save time since checking if a slot is empty is very common
+			return sPokemonBoxPtrs[boxId][boxPosition].substruct0.species;
+		}
+		else
+		{
+			struct BoxPokemon mon;
+			CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
+			return GetBoxMonData(&mon, request, NULL);
+		}
 	}
 	else
 		return 0;
@@ -193,6 +201,7 @@ void SetBoxMonNickAt(u8 boxId, u8 boxPosition, const u8* nick)
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
 		SetBoxMonData(&mon, MON_DATA_NICKNAME, nick);
+		CreateCompressedMonFromBoxMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Copy new data back
 	}
 }
 
@@ -298,8 +307,6 @@ void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedP
 	Memcpy(&boxMon->substruct0, &compMon->substruct0, sizeof(struct CompressedPokemonSubstruct0));
 	Memcpy(&boxMon->substruct2, &compMon->hpEv, NUM_STATS); //Copy EVs
 	Memcpy(&boxMon->substruct3, &compMon->pokerus, 8); //Copy some of substruct misc
-
-	boxMon->substruct3.obedient = TRUE;
 
 	boxMon->substruct1.moves[0] = compMon->move1;
 	boxMon->substruct1.moves[1] = compMon->move2;
@@ -469,7 +476,7 @@ void RestorePartyFromTempTeam(u8 firstId, u8 numPokes)
 	}
 }
 
-u16 __attribute__((long_call)) sub_80911D4(u16 species);
+u16 __attribute__((long_call)) PSS_TryLoadMonIconTiles(u16 species);
 void __attribute__((long_call)) LoadCursorMonSprite(void);
 void __attribute__((long_call)) RefreshCursorMonData(void);
 void PlaceBoxMonIcon(u8 boxId, u8 position)
@@ -482,13 +489,13 @@ void PlaceBoxMonIcon(u8 boxId, u8 position)
     }
     else
     {
-		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES);
+		u16 species = GetBoxMonDataAt(boxId, position, MON_DATA_SPECIES2);
 	
 		#if (defined SPECIES_HOOPA || defined SPECIES_SHAYMIN)
 		//Try an instant sprite change for post placing Hoopa-Unbound or Shaymin-Sky in the PC
 		if (species == SPECIES_HOOPA || species == SPECIES_SHAYMIN)
 		{
-			u16 tileNum = sub_80911D4(species); //Gets the tile number of the mon icon
+			u16 tileNum = PSS_TryLoadMonIconTiles(species); //Gets the tile number of the mon icon
 			if (tileNum != 0xFFFF)
 			{
 				//Update mon Icon

@@ -979,13 +979,17 @@ map \map
 .endm
 
 @ Sets the specified Object's position to somewhere off the screen
-.macro moveoffscreen localId:req
+.macro forceupdatepos localId:req
 .byte 0x64
 .2byte \localId
 .endm
 
+.macro moveoffscreen localId:req
+	forceupdatepos \localId
+.endm
+
 .macro moveobjectoffscreen localId:req
-	moveoffscreen \localId
+	forceupdatepos \localId
 .endm
 
 @ Sets the specified Object's movement behaviour
@@ -1132,10 +1136,10 @@ map \map
 	hidepokepic
 .endm
 
-@ Draws an image of the winner of the contest. In FireRed, this command is a nop. (The argument is discarded.)
-.macro drawcontestwinner a:req
+@ Same as fadescreen but works properly in rain
+.macro fadescreenswapbuffers effect:req
 .byte 0x77
-.byte \a
+.byte \effect
 .endm
 
 @ Displays the string at pointer as braille text in a standard message box. The string must be formatted to use braille characters.
@@ -1408,7 +1412,7 @@ map \map
 .endm
 
 @ In FireRed, this command is a nop.
-.macro getpricereduction
+.macro getpokenewsactive
 .byte 0x96
 .endm
 
@@ -1425,9 +1429,13 @@ map \map
 .byte \speed
 .endm
 
-.macro setflashradius word:req
+.macro setflashlevel word:req
 .byte 0x99
 .2byte \word
+.endm
+
+.macro setflashradius word:req
+	setflashlevel \word
 .endm
 
 .macro animateflash byte:req
@@ -1547,7 +1555,7 @@ map \map
 .hword \setmapfooter_param
 .endm
 
-.macro setobjectpriority index:req, bank:req, map:req, priority:req
+.macro setobjectsubpriority index:req, bank:req, map:req, priority:req
 .byte 0xa8
 .2byte \index
 .byte \bank
@@ -1555,7 +1563,7 @@ map \map
 .byte \priority
 .endm
 
-.macro resetobjectpriority index:req, bank:req, map:req
+.macro resetobjectsubpriority index:req, bank:req, map:req
 .byte 0xa9
 .byte \bank
 .byte \map
@@ -1834,8 +1842,8 @@ map \map
 .2byte \worldmapflag
 .endm
 
-@ Clone of warpteleport? It is apparently only used in FR/LG, and only with specials.[source]
-.macro warpteleport2 map:req, warp:req, x:req, y:req
+@ Alternate warpteleport. Spins the player in on entry.
+.macro warpspinenter map:req, warp:req, x:req, y:req
 .byte 0xd1
 map \map
 .byte \warp

@@ -15,10 +15,19 @@ stat_buffs.c
 	adjusts stat-related functions to include abilities and effects that change their opteraions (eg. contrary)
 */
 
-#define BattleScript_MistProtected (u8*) 0x81D8C3E
-
+extern u8 BattleScript_MistProtected[];
 extern u8 DrasticallyString[];
 extern u8 SeverelyString[];
+
+static bool8 IsIntimidateActive(void)
+{
+	return gNewBS->intimidateActive != 0 && !gNewBS->cottonDownActive;
+}
+
+static bool8 IsCottonDownActive(void)
+{
+	return gNewBS->intimidateActive != 0 && gNewBS->cottonDownActive;
+}
 
 void atk13_printfromtable(void)
 {
@@ -32,9 +41,15 @@ void atk13_printfromtable(void)
 	gBattleCommunication[MSG_DISPLAY] = 1;
 
 	if (stringId == STRINGID_PKMNSSTATCHANGED4)
-	{	
-		if (gNewBS->intimidateActive || SIDE(gBankTarget) != SIDE(gBankAttacker))
-			DefiantActivation(); //Stat Fell From Enemy
+	{
+		u8 atkSide = SIDE(gBankAttacker);
+		u8 defSide = SIDE(gBankTarget);
+
+		if (IsIntimidateActive()
+		|| (IsCottonDownActive() && defSide != atkSide)
+		|| (gNewBS->stickyWebActive && SIDE(gSideTimers[defSide].stickyWebBank) != defSide) //Was set by foe and not Court Change
+		|| defSide != atkSide)
+			DefiantActivation(); //Stat fell from enemy
 	}
 }
 
@@ -50,8 +65,10 @@ bool8 DefiantActivation(void)
 			break;
 
 		case ABILITY_RATTLED:
-			if (gNewBS->intimidateActive)
+			if (IsIntimidateActive())
 				gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
+			else
+				return FALSE;
 			break;
 
 		default:
@@ -150,18 +167,9 @@ void atk48_playstatchangeanimation(void)
 						changeableStatsCount++;
 					}
 				}
-				else if (!BankSideHasMist(gActiveBattler)
-						&& ability != ABILITY_CLEARBODY
-						&& ability != ABILITY_WHITESMOKE
-						//&& ability != ABILITY_FULLMETALBODY
-						&& !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
-						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
-						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF)
-						&& !(ability == ABILITY_INNERFOCUS && gNewBS->intimidateActive)
-						&& !(ability == ABILITY_OWNTEMPO && gNewBS->intimidateActive)
-						&& !(ability == ABILITY_OBLIVIOUS && gNewBS->intimidateActive)
-						&& !(ability == ABILITY_SCRAPPY && gNewBS->intimidateActive)
-						&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
+				else if (!CanStatNotBeLowered(currStat, gActiveBattler, (gBattlescriptCurrInstr[1] == BS_GET_TARGET) ? gBankAttacker : gActiveBattler, ability)
+					&& !(AbilityBlocksIntimidate(ability) && IsIntimidateActive())
+					&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
 				{
 					if (STAT_STAGE(gActiveBattler, currStat) > STAT_STAGE_MIN)
 					{
@@ -225,6 +233,11 @@ void atk48_playstatchangeanimation(void)
 			statAnimId = STAT_ANIM_MULTIPLE_PLUS1;
 			changeableStatsCount = 0xFF;
 		}
+	}
+	else if (gNewBS->totemOmniboostActive)
+	{
+		statAnimId = STAT_ANIM_MULTIPLE_PLUS1;
+		changeableStatsCount = 0xFF;
 	}
 
 	if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount < 2)
@@ -292,7 +305,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		if (BankSideHasMist(gActiveBattler)
 		&& !certain
 		&& gCurrentMove != MOVE_CURSE
-		&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
+		&& !BypassesScreens(ABILITY(gBankAttacker)))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -319,9 +332,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			return STAT_CHANGE_DIDNT_WORK;
 		}
 
-		else if ((ability == ABILITY_CLEARBODY
-			  ||  ability == ABILITY_WHITESMOKE
-			  //||  ability == ABILITY_FULLMETALBODY
+		else if ((IsClearBodyAbility(ability)
 			  || (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		&& !certain && gCurrentMove != MOVE_CURSE)
 		{
@@ -368,14 +379,8 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			return STAT_CHANGE_DIDNT_WORK;
 		}
 
-		else if (((ability == ABILITY_KEENEYE && statId == STAT_STAGE_ACC)
-			  ||  (ability == ABILITY_HYPERCUTTER && statId == STAT_STAGE_ATK)
-			  ||  (ability == ABILITY_BIGPECKS && statId == STAT_STAGE_DEF)
-			  ||  (ability == ABILITY_INNERFOCUS && gNewBS->intimidateActive)
-			  ||  (ability == ABILITY_OWNTEMPO && gNewBS->intimidateActive)
-			  ||  (ability == ABILITY_OBLIVIOUS && gNewBS->intimidateActive)
-			  ||  (ability == ABILITY_SCRAPPY && gNewBS->intimidateActive))
-		&& !certain)
+		else if (!certain
+		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability))))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -385,7 +390,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if (ability == ABILITY_MIRRORARMOR && gNewBS->intimidateActive && !certain)
+		else if (ability == ABILITY_MIRRORARMOR && (IsIntimidateActive() || IsCottonDownActive()) && !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -513,6 +518,40 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	return STAT_CHANGE_WORKED;
 }
 
+u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+{
+	if (!BATTLER_ALIVE(bankDef))
+		return STAT_FAINTED; 
+
+	if (defAbility == ABILITY_CONTRARY)
+	{
+		if (STAT_STAGE(bankDef, statId) >= STAT_STAGE_MAX)
+			return STAT_AT_MAX;
+
+		return STAT_CAN_BE_LOWERED;		
+	}
+
+	if (STAT_STAGE(bankDef, statId) == STAT_STAGE_MIN)
+		return STAT_AT_MIN;
+	else if (BankSideHasMist(bankDef) && bankDef != bankAtk && !BypassesScreens(ABILITY(bankAtk)))
+		return STAT_PROTECTED_BY_MIST;
+
+	if (IsClearBodyAbility(defAbility)
+	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS)))
+		return STAT_PROTECTED_BY_GENERAL_ABILITY;
+	else if (ABILITY(PARTNER(bankDef)) == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS))
+		return STAT_PROTECTED_BY_PARTNER_ABILITY;
+	else if (AbilityPreventsLoweringStat(defAbility, statId))
+		return STAT_PROTECTED_BY_SPECIFIC_ABILITY;
+
+	return STAT_CAN_BE_LOWERED;
+}
+
+bool8 CanStatBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
+{
+	return CanStatNotBeLowered(statId, bankDef, bankAtk, defAbility) == STAT_CAN_BE_LOWERED;
+}
+
 bool8 NewXSpecialBoost(u16 item, u8 boostAmount)
 {
 	u8 stat;
@@ -577,13 +616,12 @@ void PrepareStringForAIUsingXItem(void)
 	gBattleTextBuff2[index++] = STRINGID_STATROSE >> 8;
 	gBattleTextBuff2[index] = B_BUFF_EOS;
 
-	while (!(gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] & 1))
+	while (!(gBattleStruct->AI_itemFlags[gBankAttacker >> 1] & 1))
 	{
-		gBattleStruct->AI_itemFlags[gBankAttacker & BIT_FLANK] >>= 1;
+		gBattleStruct->AI_itemFlags[gBankAttacker >> 1] >>= 1;
 		++gBattleTextBuff1[2];
 	}
 
 	gBattleScripting.animArg1 = gBattleTextBuff1[2] + STAT_ANIM_PLUS2 - 1;
 	gBattleScripting.animArg2 = 0;
 }
-

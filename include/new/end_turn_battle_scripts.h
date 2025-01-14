@@ -8,9 +8,7 @@
  *		  Pokemon have finished their actions for the turn.
  */
 
-#define BattleScript_RainContinuesOrEnds (u8*) 0x81D8A64
 #define BattleScript_SunlightFaded (u8*) 0x81D8B18
-#define BattleScript_SunlightContinues (u8*) 0x81D8B0A
 #define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3)
@@ -32,15 +30,25 @@
 #define BattleScript_GiveExp ((u8*) 0x81D8694)
 
 extern const u8 BattleScript_MysteriousAirCurrentContinues[];
+extern const u8 BattleScript_MysteriousAirCurrentContinuesNoString[];
+extern const u8 BattleScript_RainContinuesOrEnds[];
+extern const u8 BattleScript_RainContinuesOrEndsNoString[];
+extern const u8 BattleScript_SunlightContinues[];
+extern const u8 BattleScript_SunlightContinuesNoString[];
 extern const u8 BattleScript_SandstormHailContinues[];
+extern const u8 BattleScript_SandstormHailContinuesNoString[];
 extern const u8 BattleScript_WeatherDamage[];
 extern const u8 BattleScript_FogEnded[];
 extern const u8 BattleScript_FogContinues[];
+extern const u8 BattleScript_FogContinuesNoString[];
 extern const u8 BattleScript_SeaOfFireDamage[];
 extern const u8 BattleScript_GrassyTerrainHeal[];
 extern const u8 BattleScript_AquaRing[];
 extern const u8 BattleScript_LeechSeedTurnDrain[];
 extern const u8 BattleScript_PoisonHeal[];
+extern const u8 BattleScript_FrostbiteTurnDmg[];
+extern const u8 BattleScript_SplintersTurnDmg[];
+extern const u8 BattleScript_BadThoughtsTurnDmg[];
 extern const u8 BattleScript_YawnMakesAsleep[];
 extern const u8 BattleScript_MagnetRiseEnd[];
 extern const u8 BattleScript_TelekinesisEnd[];
@@ -67,15 +75,19 @@ extern const u8 BattleScript_StartedSchooling[];
 extern const u8 BattleScript_StoppedSchooling[];
 extern const u8 BattleScript_ShieldsDownToCore[];
 extern const u8 BattleScript_ShieldsDownToMeteor[];
+extern const u8 BattleScript_IceFaceRestoreFace[];
 extern const u8 BattleScript_FlowerGift[];
 extern const u8 BattleScript_FlowerGiftEnd2[];
+extern const u8 BattleScript_HoopaSOS[];
 extern const u8 BattleScript_RaiseStatsItemEnd2[];
 extern const u8 BattleScript_HandleFaintedMonSingles[];
 extern const u8 BattleScript_HandleFaintedMonDoublesInitial[];
 extern const u8 BattleScript_HandleFaintedMonDoublesPart2[];
 extern const u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 extern const u8 BattleScript_FaintedMonChooseAnotherRejoin[];
+extern const u8 BattleScript_FaintedMonTryChooseAnother[];
 extern const u8 BattleScript_PrintCustomStringEnd2[];
+extern const u8 BattleScript_End3[];
 extern const u8 BattleScript_MonTookFutureAttack[];
 extern const u8 BattleScript_OctolockTurnDmg[];
 extern const u8 BattleScript_DynamaxEnd[];
@@ -83,6 +95,7 @@ extern const u8 BattleScript_LoseRaidBattle[];
 
 //Strings
 extern const u8 gText_SideStatusWoreOff[];
+extern const u8 gText_SplintersEnded[];
 extern const u8 gText_TauntWoreOff[];
 extern const u8 gText_RaidBattleKO1[];
 extern const u8 gText_RaidBattleKO2[];
@@ -98,3 +111,6 @@ extern const u8 gText_HurtByGMaxCannonade[];
 extern const u8 gText_GMaxCannonadeEnded[];
 extern const u8 gText_HurtByGMaxVolcalith[];
 extern const u8 gText_GMaxVolcalithEnded[];
+extern const u8 gText_PickedUpKnockedOffItem[];
+extern const u8 gText_PickUpItemToBag[];
+extern const u8 gText_PickUpItemToCube[];

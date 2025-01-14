@@ -6,7 +6,6 @@ gMoveDescriptions 08137BC8
 gAbilityDescriptions 080001C4
 gAbilityDescriptions 081367A8
 gMoveAnimations 080725D0
-gMovesWithQuietBGM 080726E8
 gBattleAnimPicTable 08072914
 gBattleAnimPicTable 08072BF8
 gAnimationBackgrounds 08073960
@@ -52,25 +51,25 @@ gTypeNames 0811977C
 
 ##Scripts
 BattleScript_RainDishActivates 0801A4A0
+BattleScript_AIUseFullRestoreOrHpHeal 081D99E8
+BattleScript_AIUseFullRestoreOrHpHeal 081D99EC
+BattleScript_AIUseStatRestore 081D99F0
 BattleScript_AIUseXstat 081D99F4
-FieldEffectScript_CaveDust 081D9714
-FieldEffectScript_Sparkles 081D9718
-FieldEffectScript_LavaBubbles 081D9768
-FieldEffectScript_MiningScanRing 081D976C
-SystemScript_FindItemMessage 081A67DD
+BattleScript_AIUseGuardSpec 081D99F8
 SystemScript_ObtainItem 08160450
+SystemScript_FindItem 08160454
 SystemScript_ObtainItemMessage 081A66AC
 SystemScript_PickedUpHiddenItem 081A685E
 
 ##Wild -> The Wild
-TheWildString 080D7B78
-TheWildString 080D7CA0
-TheWildString 080D7D14
-TheWildString 080D7D88
-TheWildString 080D7DFC
-TheWildString 080D7E70
-TheWildString 080D82BC
-TheWildString 080D8584
+gText_TheWild 080D7B78
+gText_TheWild 080D7CA0
+gText_TheWild 080D7D14
+gText_TheWild 080D7D88
+gText_TheWild 080D7DFC
+gText_TheWild 080D7E70
+gText_TheWild 080D82BC
+gText_TheWild 080D8584
 ##The Foe -> The Opposing
 TheOpposingString 080D7B7C
 TheOpposingString 080D7CA4
@@ -95,6 +94,8 @@ gText_AbilityPreventsSpecificStatLoss 083FE3E0
 gText_ItemPumpedMon 083FE424
 gText_AbilityBlocksHealBell 083FE484
 gText_AbilityCuredStatusProblem 083FE49C
+gText_BattleMenu 080EA760
+gText_UnknownLocation 08137618
 
 sText_GotMoneyForWinning 083FDF84
 sText_OutofUsablePokemon 083FDF88
@@ -108,6 +109,17 @@ gText_UsedVar2WildStronger 080A1B3C
 gText_UsedVar2WildWeaker 080A1AEC
 
 gText_PokemonAreNeeded 0845A32C
+
+#ifdef FROSTBITE
+PokeSummary_StatusAilmentIcons_FrostbiteTiles 0813A314
+StatusGfx_Icons_FrostbiteTiles 0845A574
+ANIM_FROSTBITE 081C6E9C
+gText_GotFrostbite 083FDFD0
+gText_RemovedTargetFrostbite 083FDFDC
+gText_RemovedAttackerFrostbite 083FDFE0
+gText_MoveUsedFrostbiteRemoved 083FDFE4
+gText_ItemRemovedFrostbite 083FE3A4
+#endif
 
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
@@ -125,7 +137,9 @@ EventScript_TrainerSpottedInitiate 08080374
 BattleScript_ItemSteal 08020E74
 BattleScript_PoisonedBy 08250634
 BattleScript_BurnedBy 08250638
+#ifndef FROSTBITE
 BattleScript_WasFrozen 0825063C
+#endif
 BattleScript_MoveEffectWrap 08250660
 BattleScript_BadPoisonedBy 08250644
 BattleScript_ActionSwitch 0801640C
@@ -192,32 +206,53 @@ sItemMenuActions 08109BA4
 sItemMenuActions 08109C20
 sItemMenuActions 08109C48
 
-##Grass Field Effects and Footstep Noises
-gFieldEffectScript_TallGrass 081D96BC
-gFieldEffectScript_JumpTallGrass 081D96DC
-gFieldEffectScript_LongGrass 081D96F0
-gFieldEffectScript_JumpLongGrass 081D96F4
-gFieldEffectScript_ShakingTallGrass 081D96F8
-gFieldEffectScript_ShakingLongGrass 081D96FC
+##Field Effects and Footstep Noises
+FieldEffectScript_TallGrass 081D96BC
+FieldEffectScript_Dust 081D96D4
+FieldEffectScript_JumpTallGrass 081D96DC
+FieldEffectScript_SandFootprints 081D96E0
+FieldEffectScript_LongGrass 081D96F0
+FieldEffectScript_JumpLongGrass 081D96F4
+FieldEffectScript_ShakingTallGrass 081D96F8
+FieldEffectScript_ShakingLongGrass 081D96FC
+FieldEffectScript_BikeTireTracks 081D9738
+FieldEffectScript_ShortGrass 081D9750
+FieldEffectScript_CaveDust 081D9714
+FieldEffectScript_Sparkles 081D9718
+FieldEffectScript_LavaBubbles 081D9768
+FieldEffectScript_MiningScanRing 081D976C
+FieldEffectScript_Explosion 081D977C
+FieldEffectScript_Sparkle 081D9784
+FieldEffectScript_UseRockClimb 081D9788
+FieldEffectScript_RockClimbDust 081D978C
 Wav_grass_footstep_sample 0848EE14
 Wav_sand_footstep_sample 0848EE20
+
+#ifdef UNBOUND
+gFieldEffectObjectImageAnim_ShakingGrass 83A5A2C
+#endif
 
 #ifdef CRITICAL_CAPTURE
 gBattleAnims_Special 08034238
 #endif
 
 ##Start Menu
+#ifndef UNBOUND
 sStartMenuActionTable 0806EF9C
 sStartMenuActionTable 0806F374
 sStartMenuActionTable 0806F3F8
 sStartMenuDescPointers 0806F138
 sStartMenuDescPointers 0806F368
+#endif
 
 #ifdef UNBOUND
-TestScript 08B7AD70
-TestScript 08B7ADA0
-TestScript 087D67B0
+#TestScript 08B7ADA0 #Need to change offset!
+#TestScript 087D67B0
+gWildMonNightHeaders 0801D778
 
+DESC_ICEBEAM 88795D0
+DESC_BLIZZARD 88795FC
+DESC_LEECHFANG 08879C00
 DESC_ROOST 08879c58
 DESC_FOCUSBLAST 08879c84
 DESC_ENERGYBALL 08879cb0
@@ -258,6 +293,7 @@ DESC_PSYSHOCK 0887aa44
 DESC_SMARTSTRIKE 0887aa9c
 DESC_ACROBATICS 0887aac8
 DESC_SNARL 0887aaf4
+DESC_DRAININGKISS 887AB4C
 DESC_ROUND 0887aba4
 DESC_NATURALGIFT 0887abfc
 DESC_QUASH 0887ac28

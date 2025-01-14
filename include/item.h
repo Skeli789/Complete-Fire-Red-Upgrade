@@ -56,6 +56,8 @@ bool8 __attribute__((long_call)) CheckBagHasSpace(u16 itemId, u16 count);
 u16 __attribute__((long_call)) BagGetItemIdByPocketPosition(u8 pocketId, u16 itemId);
 ItemUseFunc __attribute__((long_call)) ItemId_GetFieldFunc(u16 itemId);
 void __attribute__((long_call)) ClearItemSlots(struct ItemSlot *itemSlots, u8 b);
+bool8 __attribute__((long_call)) AddPCItem(u16 itemId, u16 count);
+void __attribute__((long_call)) RemovePCItem(u8 index, u16 count);
 
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);
@@ -66,8 +68,6 @@ bool8 AddBagItem(u16 itemId, u16 count);
 u8 GetPocketByItemId(u16 itemId);
 u8 CountUsedPCItemSlots(void);
 bool8 CheckPCHasItem(u16 itemId, u16 count);
-bool8 AddPCItem(u16 itemId, u16 count);
-void RemovePCItem(u8 index, u16 count);
 void SwapRegisteredBike(void);
 const struct Item *ItemId_GetItem(u16 itemId);
 u16 ItemId_GetId(u16 itemId);

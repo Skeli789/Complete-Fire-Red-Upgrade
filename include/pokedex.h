@@ -41,6 +41,8 @@ struct AlternateSize
 #define SEEN_DEX_FLAGS gSaveBlock1->dexSeenFlags //0x202583C
 #define CAUGHT_DEX_FLAGS gSaveBlock1->dexCaughtFlags //0x20258B9
 
+bool16 __attribute__((long_call)) HasAllMons(void);
+
 /*
 void ResetPokedex(void);
 void CopyMonCategoryText(u16 species, u8 *dst);
