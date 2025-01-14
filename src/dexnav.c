@@ -84,7 +84,7 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
-static void DexNavDrawBlackBars(u8* spriteIdAddr);
+static void DexNavDrawBlackBars(u8 spriteIdAddr[2]);
 static void DexNavDrawSight(u8 sight_lvl, u8* spriteIdAddr);
 static void DexNavDrawAbility(u8 ability, u8* spriteIdAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* spriteIdAddr);
