@@ -2206,9 +2206,9 @@ void sp11B_AllRaidBattlesCompleted(void)
 
 	for (u32 i = 0; i < KANTO_MAPSEC_COUNT; ++i)
 	{
-		if (gRaidsByMapSection[i] != NULL)
+		for (u32 j = 0; j < RAID_STAR_COUNT; ++j)
 		{
-			if (!FlagGet(FIRST_RAID_BATTLE_FLAG + i))
+			if (gRaidsByMapSection[i][j].data != NULL && !FlagGet(FIRST_RAID_BATTLE_FLAG + i))
 				return;
 		}
 	}
