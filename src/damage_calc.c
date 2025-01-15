@@ -2675,7 +2675,21 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		case ABILITY_PUREPOWER:
 		#endif
 		//2x Boost
-			if (!IsScaleMonsBattle() //Too OP
+			if(SpeciesHasSupremeOverlord(data->atkSpecies))
+			{
+				int boost = 10;
+				for(int i = 0; i < gPlayerPartyCount; i++)
+				{
+					struct Pokemon mon = gPlayerParty[i];
+					if(mon.hp == 0)
+					{
+						boost++;
+					}
+				}
+				attack *= (1 + (boost / 100));
+				spAttack *= (1 + (boost / 100));
+			}
+			else (!IsScaleMonsBattle() //Too OP
 			|| !IsSpeciesAffectedByScalemons(data->atkSpecies)) //Doesn't get the Scalemons boost
 				attack *= 2;
 			break;
@@ -3308,6 +3322,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 			if ((useMonAtk && CheckContactByMon(move, data->monAtk))
 			|| (!useMonAtk && CheckContact(move, bankAtk, bankDef)))
+				damage /= 2;
+			break;
+
+		case ABILITY_IMMUNITY:
+		//0.5x Decrement
+			if (data->moveType == TYPE_GHOST && SpeciesHasPurifyingSalt(SPECIES(bankDef)))
 				damage /= 2;
 			break;
 
@@ -4149,7 +4169,9 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case ABILITY_STRONGJAW:
 		//1.5x Boost
-			if (gSpecialMoveFlags[move].gBitingMoves)
+			if (gSpecialMoveFlags[move].gSlicingMoves && SpeciesHasSharpness(SPECIES(BankAtk)))
+				power = (power * 15) / 10;
+			else if (gSpecialMoveFlags[move].gBitingMoves)
 				power = (power * 15) / 10;
 			break;
 
@@ -4176,7 +4198,9 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_STEELWORKER:
 		case ABILITY_STEELYSPIRIT:
 		//1.5x Boost
-			if (data->moveType == TYPE_STEEL)
+			if (SpeciesHasRockyPayload(SPECIES(bankAtk)) && data->moveType == TYPE_ROCK)
+				power = (power * 15) / 10;
+			else if (data->moveType == TYPE_STEEL)
 				power = (power * 15) / 10;
 			break;
 

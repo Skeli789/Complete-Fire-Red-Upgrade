@@ -136,3 +136,4 @@ extern const u8 gStatusConditionString_Frostbite[];
 #endif
 #define gStatusConditionString_Confusion ((u8*) 0x82500BC)
 #define gStatusConditionString_Love ((u8*) 0x82500C4)
+extern const u8 gStatusConditionString_PurifySalt[];

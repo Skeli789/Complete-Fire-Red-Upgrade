@@ -637,3 +637,18 @@ Summons sunlight and ups Attack.
 
 #org @gText_AbilityDescription_Protosynthesis
 Boost status when sunny.
+
+#org @gText_AbilityDescription_PurifyingSalt
+Protects against status contidions.
+
+#org @gText_AbilityDescription_RockyPayload
+Powers up Rock-type moves.
+
+#org @gText_AbilityDescription_SeedSower
+Creates a Grassy Terrain if hit.
+
+#org @gText_AbilityDescription_Sharpness
+Powers up slicing moves.
+
+#org @gText_AbilityDescription_SupremeOverlord
+Boost power if an ally fainted.

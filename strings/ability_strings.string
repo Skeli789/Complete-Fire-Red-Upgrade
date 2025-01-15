@@ -156,3 +156,6 @@ The Electric Terrain activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
 
 #org @sText_SunlightActivatedAbility
 The harsh sunlight activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
+
+#org @gText_SupremeOverlordActivate
+[SCRIPTING_BANK] gained strength from\nthe fallen!

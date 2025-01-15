@@ -1068,7 +1068,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_IMMUNITY:
-			effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
+			if (SpeciesHasPurifyingSalt(SPECIES(bank)))
+				effect = ImmunityAbilityCheck(bank, STATUS1_ANY, gStatusConditionString_PurifySalt);
+			else
+				effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
+			break;
+
+		case ABILITY_GOODASGOLD:
+			if (SpeciesHasGoodAsGold(SPECIES(bank)))
+				effect = ImmunityAbilityCheck(bank, STATUS1_ANY, gStatusConditionString_PurifySalt);
 			break;
 
 		case ABILITY_PASTELVEIL:
@@ -1243,6 +1251,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#endif
 			break;
 
+		case ABILITY_HUGEPOWER:
+			if (SpeciesHasSupremeOverlord(SPECIES(bank)) && IsFaintedPokemonInParty())
+				{
+					gBattleStringLoader = gText_SupremeOverlordActivate;
+					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+					effect++;
+				}
+			break;
+
 		case ABILITY_ICEFACE:
 			#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
 			if (!IS_TRANSFORMED(bank) && SPECIES(bank) == SPECIES_EISCUE_NOICE
@@ -1260,7 +1277,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_GRASSYSURGE:
-			effect = TryActivateTerrainAbility(GRASSY_TERRAIN, B_ANIM_GRASSY_SURGE, bank);
+			if (!SpeciesHasSeedSower(SPECIES(bank)))
+				effect = TryActivateTerrainAbility(GRASSY_TERRAIN, B_ANIM_GRASSY_SURGE, bank);
 			break;
 
 		case ABILITY_MISTYSURGE:
@@ -1930,6 +1948,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					effect++;
 				}
 				break;
+			
+			case ABILITY_GRASSYSURGE:
+				if (MOVE_HAD_EFFECT
+					&& TOOK_DAMAGE(bank)
+					&& BATTLER_ALIVE(gBankAttacker)
+					&& SpeciesHasSeedSower(SPECIES(bank)))
+					{
+						effect = TryActivateTerrainAbility(GRASSY_TERRAIN, B_ANIM_GRASSY_SURGE, bank);
+						gBattleStringLoader = gText_GrassySurgeGrew;
+					}
+				break;
 
 			#ifdef ABILITY_IRONBARBS
 			case ABILITY_IRONBARBS:
@@ -2438,7 +2467,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				switch (ABILITY(bank))
 				{
 				case ABILITY_IMMUNITY:
-					if (gBattleMons[bank].status1 & (STATUS1_PSN_ANY))
+					if (CheckStatusAny(bank) && (SpeciesHasPurifyingSalt(SPECIES(bank))))
+					{
+						StringCopy(gBattleTextBuff1, gStatusConditionString_PurifySalt);
+						effect = 1;
+					}
+					else if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
 					{
 						StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
 						effect = 1;
@@ -2499,26 +2533,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 					break;
 				case ABILITY_GOODASGOLD:
-					if ((gBattleMons[bank].status1 & STATUS1_PSN_ANY
-					|| gBattleMons[bank].status1 & STATUS1_PARALYSIS
-					|| gBattleMons[bank].status1 & STATUS1_BURN
-					|| gBattleMons[bank].status1 & STATUS1_FREEZE)
-					&& SpeciesHasGoodAsGold(SPECIES(bank)))
+					if (SpeciesHasGoodAsGold(SPECIES(bank)))
 					{
-						gBattleStringLoader = gText_GoodAsGoldActivate;
-						effect = 1;
-					}
-					else if (gBattleMons[bank].status2 & STATUS2_INFATUATION
-					&& SpeciesHasGoodAsGold(SPECIES(bank)))
-					{
-						gBattleStringLoader = gText_GoodAsGoldActivate;
-						effect = 3;
-					}
-					else if (gBattleMons[bank].status2 & STATUS2_CONFUSION
-					&& SpeciesHasGoodAsGold(SPECIES(bank)))
-					{
-						gBattleStringLoader = gText_GoodAsGoldActivate;
-						effect = 2;
+						if (CheckStatusAny(bank))
+						{
+							gBattleStringLoader = gText_GoodAsGoldActivate;
+							effect = 1;
+						}
 					}
 					break;
 				}

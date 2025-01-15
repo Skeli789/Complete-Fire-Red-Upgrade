@@ -95,6 +95,16 @@ extern const u8 gText_AbilityName_OrichalcumPulse[];
 extern const u8 gText_AbilityDescription_OrichalcumPulse[];
 extern const u8 gText_AbilityName_Protosynthesis[];
 extern const u8 gText_AbilityDescription_Protosynthesis[];
+extern const u8 gText_AbilityName_PureSalt[];
+extern const u8 gText_AbilityDescription_PurifyingSalt[];
+extern const u8 gText_AbilityName_RockyPayload[];
+extern const u8 gText_AbilityDescription_RockyPayload[];
+extern const u8 gText_AbilityName_SeedSower[];
+extern const u8 gText_AbilityDescription_SeedSower[];
+extern const u8 gText_AbilityName_Sharpness[];
+extern const u8 gText_AbilityDescription_Sharpness[];
+extern const u8 gText_AbilityName_SupremeOverlord[];
+extern const u8 gText_AbilityDescription_SupremeOverlord[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -132,6 +142,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 					return gText_AbilityName_PurePower;
 				#endif
 			}
+			if (SpeciesHasSupremeOverlord(species))
+				return gText_AbilityName_SupremeOverlord;
 			break;
 		case ABILITY_ROUGHSKIN:
 			if (IsSpeciesOfType(species, TYPE_STEEL)) //Species original type is Steel - Assumes Ferroseed, Ferrothorn, and Togedemaru types haven't changed
@@ -451,6 +463,22 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if (SpeciesHasProtosynthesis(species))
 				return gText_AbilityName_Protosynthesis;
 			break;
+		case ABILITY_IMMUNITY:
+			if (SpeciesHasPurifyingSalt(species))
+				return gText_AbilityName_PureSalt;
+			break;
+		case ABILITY_STEELWORKER:
+			if (SpeciesHasRockyPayload(species))
+				return gText_AbilityName_RockyPayload;
+			break;
+		case ABILITY_GRASSYSURGE:
+			if (SpeciesHasSeedSower(species))
+				return gText_AbilityName_SeedSower;
+			break;
+		case ABILITY_STRONGJAW:
+			if (SpeciesHasSharpness(species))
+				return gText_AbilityName_Sharpness;
+			break;
 	}
 
 	return NULL;
@@ -550,6 +578,26 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_QUARKDRIVE:
 			if (SpeciesHasProtosynthesis(species))
 				return gText_AbilityDescription_Protosynthesis;
+			break;
+		case ABILITY_IMMUNITY:
+		if (SpeciesHasPurifyingSalt(species))
+				return gText_AbilityDescription_PurifyingSalt;
+			break;
+		case ABILITY_STEELWORKER:
+			if (SpeciesHasRockyPayload(species))
+				return gText_AbilityDescription_RockyPayload;
+			break;
+		case ABILITY_GRASSYSURGE:
+			if (SpeciesHasSeedSower(species))
+				return gText_AbilityDescription_SeedSower;
+			break;
+		case ABILITY_STRONGJAW:
+			if (SpeciesHasSharpness(species))
+				return gText_AbilityDescription_Sharpness;
+			break;
+		case ABILITY_HUGEPOWER:
+			if (SpeciesHasSupremeOverlord(species))
+				return gText_AbilityDescription_SupremeOverlord;
 			break;
 	}
 
@@ -1209,4 +1257,78 @@ bool8 SpeciesHasProtosynthesis(unusedArg u16 species) //Custom Unbound Ability
 	#else
 	return FALSE;
 	#endif
+}
+
+bool8 SpeciesHasPurifyingSalt(unusedArg u16 species)
+{
+	#if (defined SPECIES_NACLI && SPECIES_NACLSTACK && SPECIES_GARGANACL)
+	return species == SPECIES_NACLI || species == SPECIES_NACLSTACK || species == SPECIES_GARGANACL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGoodAsGold(unusedArg u16 species)
+{
+	#ifdef SPECIES_GHOLDENGO
+	return species == SPECIES_GHOLDENGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 CheckStatusAny(u8 bank)
+{
+    return (gBattleMons[bank].status1 & STATUS1_ANY);
+}
+
+bool8 SpeciesHasRockyPayload(unusedArg u16 species)
+{
+	#ifdef SPECIES_BOMBIRDIER
+	return species == SPECIES_BOMBIRDIER;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSeedSower(unusedArg u16 species)
+{
+	#ifdef SPECIES_ARBOLIVA
+	return species == SPECIES_ARBOLIVA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSharpness(unusedArg u16 species)
+{
+	#if (defined SPECIES_GALLADE || SPECIES_SAMUROTT_H || SPECIES_KLEAVOR || SPECIES_VELUZA)
+	return species == SPECIES_ARBOLIVA || species == SPECIES_SAMUROTT_H || species == SPECIES_KLEAVOR || species == SPECIES_VELUZA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSupremeOverlord(unusedArg u16 species)
+{
+	#ifdef SPECIES_KINGAMBIT
+	return species == SPECIES_KINGAMBIT;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsFaintedPokemonInParty(void)
+{
+    u8 i;
+    struct Pokemon* party = gPlayerParty;
+    u8 partyCount = gPlayerPartyCount;
+
+    for (i = 0; i < partyCount; i++)
+    {
+        if (GetMonData(&party[i], MON_DATA_HP, NULL) == 0)
+            return TRUE;
+    }
+
+    return FALSE;
 }
