@@ -105,6 +105,8 @@ extern const u8 gText_AbilityName_Sharpness[];
 extern const u8 gText_AbilityDescription_Sharpness[];
 extern const u8 gText_AbilityName_SupremeOverlord[];
 extern const u8 gText_AbilityDescription_SupremeOverlord[];
+extern const u8 gText_AbilityName_SuperSweetSyrup[];
+extern const u8 gText_AbilityDescription_SuperSweetSyrup[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -479,6 +481,10 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if (SpeciesHasSharpness(species))
 				return gText_AbilityName_Sharpness;
 			break;
+		case ABILITY_INTIMIDATE:
+			if (SpeciesHasSuperSweetSyrup(species))
+				return gText_AbilityName_SuperSweetSyrup;
+			break;
 	}
 
 	return NULL;
@@ -598,6 +604,10 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_HUGEPOWER:
 			if (SpeciesHasSupremeOverlord(species))
 				return gText_AbilityDescription_SupremeOverlord;
+			break;
+		case ABILITY_INTIMIDATE:
+			if (SpeciesHasSuperSweetSyrup(species))
+				return gText_AbilityDescription_SuperSweetSyrup;
 			break;
 	}
 
@@ -1331,4 +1341,13 @@ bool8 IsFaintedPokemonInParty(void)
     }
 
     return FALSE;
+}
+
+bool8 SpeciesHasSuperSweetSyrup(unusedArg u16 species)
+{
+	#if (defined SPECIES_DIPPLIN || SPECIES_HYDRAPPLE)
+	return species == SPECIES_DIPPLIN || species == SPECIES_HYDRAPPLE;
+	#else
+	return FALSE;
+	#endif
 }

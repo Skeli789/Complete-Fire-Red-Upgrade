@@ -220,6 +220,8 @@ BattleScript_IntimidateActivatesRet:
 	setbyte TARGET_BANK 0x0
 
 BS_IntimidateActivatesLoop:
+	jumpifspecies BANK_ATTACKER SPECIES_DIPPLIN SSSyrupActivatesLowStats
+	jumpifspecies BANK_ATTACKER SPECIES_HYDRAPPLE SSSyrupActivatesLowStats
 	setstatchanger STAT_ATK | DECREASE_1
 	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
 	jumpifbehindsubstitute BANK_TARGET IntimidateActivatesLoopIncrement
@@ -265,6 +267,19 @@ BattleScript_IntimidateActivatesReturn:
 	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
 	callasm RemoveIntimidateActive
 	return
+
+SSSyrupActivatesLowStats:
+	setstatchanger STAT_EVASION | DECREASE_1
+	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
+	jumpifbehindsubstitute BANK_TARGET IntimidateActivatesLoopIncrement
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR IntimidateActivatesLoopIncrement
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_IntimidatePrevented
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable gStatDownStringIds
+	waitmessage DELAY_1SECOND
+	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_AdrenalineOrb
+	goto IntimidateActivatesLoopIncrement
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

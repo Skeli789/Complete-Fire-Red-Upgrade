@@ -79,3 +79,4 @@ bool8 SpeciesHasSeedSower(u16 species);
 bool8 SpeciesHasSharpness(u16 species);
 bool8 SpeciesHasSupremeOverlord(u16 species);
 bool8 IsFaintedPokemonInParty(void);
+bool8 SpeciesHasSuperSweetSyrup(u16 species);
