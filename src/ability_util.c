@@ -107,6 +107,14 @@ extern const u8 gText_AbilityName_SupremeOverlord[];
 extern const u8 gText_AbilityDescription_SupremeOverlord[];
 extern const u8 gText_AbilityName_SuperSweetSyrup[];
 extern const u8 gText_AbilityDescription_SuperSweetSyrup[];
+extern const u8 gText_AbilityName_TeraShift[];
+extern const u8 gText_AbilityDescription_TeraShift[];
+extern const u8 gText_AbilityName_TeraShell[];
+extern const u8 gText_AbilityDescription_TeraShell[];
+extern const u8 gText_AbilityName_ThermalExchange[];
+extern const u8 gText_AbilityDescription_ThermalExchange[];
+extern const u8 gText_AbilityName_ToxicChain[];
+extern const u8 gText_AbilityDescription_ToxicChain[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -485,6 +493,24 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if (SpeciesHasSuperSweetSyrup(species))
 				return gText_AbilityName_SuperSweetSyrup;
 			break;
+		case ABILITY_ICEFACE:
+				if (SpeciesHasTeraShift(species))
+					return gText_AbilityName_TeraShift;
+			break;
+		case ABILITY_BLAZE:
+			if (SpeciesHasTeraShell(species))
+				return gText_AbilityName_TeraShell;
+			break;
+		case ABILITY_STEAMENGINE:
+			if(SpeciesHasThermalExchange(species))
+				return gText_AbilityName_ThermalExchange;
+			else if(SpeciesHasWellBakedBody(species))
+				return gText_AbilityName_WellBakedBody;
+			break;
+		case ABILITY_POISONTOUCH:
+			if(SpeciesHasToxicChain(species))
+				return gText_AbilityName_ToxicChain;
+			break;
 	}
 
 	return NULL;
@@ -608,6 +634,24 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_INTIMIDATE:
 			if (SpeciesHasSuperSweetSyrup(species))
 				return gText_AbilityDescription_SuperSweetSyrup;
+			break;
+		case ABILITY_ICEFACE:
+			if(SpeciesHasTeraShift(species))
+				return gText_AbilityDescription_TeraShift;
+			break;
+		case ABILITY_BLAZE:
+			if (SpeciesHasTeraShell(species))
+				return gText_AbilityDescription_TeraShell;
+			break;
+		case ABILITY_STEAMENGINE:
+			if(SpeciesHasThermalExchange(species))
+				return gText_AbilityDescription_ThermalExchange;
+			else if(SpeciesHasWellBakedBody(species))
+				return gText_AbilityDescription_WellBakedBody;
+			break;
+		case ABILITY_POISONTOUCH:
+			if(SpeciesHasToxicChain(species))
+				return gText_AbilityDescription_ToxicChain;
 			break;
 	}
 
@@ -1312,7 +1356,7 @@ bool8 SpeciesHasSeedSower(unusedArg u16 species)
 
 bool8 SpeciesHasSharpness(unusedArg u16 species)
 {
-	#if (defined SPECIES_GALLADE || SPECIES_SAMUROTT_H || SPECIES_KLEAVOR || SPECIES_VELUZA)
+	#if (defined SPECIES_GALLADE && SPECIES_SAMUROTT_H && SPECIES_KLEAVOR && SPECIES_VELUZA)
 	return species == SPECIES_ARBOLIVA || species == SPECIES_SAMUROTT_H || species == SPECIES_KLEAVOR || species == SPECIES_VELUZA;
 	#else
 	return FALSE;
@@ -1345,8 +1389,44 @@ bool8 IsFaintedPokemonInParty(void)
 
 bool8 SpeciesHasSuperSweetSyrup(unusedArg u16 species)
 {
-	#if (defined SPECIES_DIPPLIN || SPECIES_HYDRAPPLE)
+	#if (defined SPECIES_DIPPLIN && SPECIES_HYDRAPPLE)
 	return species == SPECIES_DIPPLIN || species == SPECIES_HYDRAPPLE;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTeraShift(unusedArg u16 species)
+{
+	#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERA)
+	return species == SPECIES_TERAPAGOS || species == SPECIES_TERAPAGOS_TERA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTeraShell(unusedArg u16 species)
+{
+	#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERA)
+	return species == SPECIES_TERAPAGOS || species == SPECIES_TERAPAGOS_TERA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasThermalExchange(unusedArg u16 species)
+{
+	#if (defined SPECIES_FRIGIBAX && SPECIES_ARCTIBAX && SPECIES_BAXCALIBUR)
+	return species == SPECIES_FRIGIBAX || species == SPECIES_ARCTIBAX || species == SPECIES_BAXCALIBUR;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasToxicChain(unusedArg u16 species)
+{
+	#if (defined SPECIES_OKIDOGI && SPECIES_FEZANDIPITI && SPECIES_MUNKIDORI)
+	return species == SPECIES_OKIDOGI || species == SPECIES_FEZANDIPITI || species == SPECIES_MUNKIDORI;
 	#else
 	return FALSE;
 	#endif

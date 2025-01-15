@@ -2905,11 +2905,12 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_TOXICBOOST && RealPhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
-		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
+		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef) && !SpeciesHasToxicChain(SPECIES(bankAtk))) //Just poison it using attacker's ability
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
-		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef)
+		|| (atkAbility == ABILITY_POISONTOUCH && SpeciesHasToxicChain(SPECIES(bankAtk)));
 }
 
 bool8 GoodIdeaToPoisonSelf(u8 bankAtk)

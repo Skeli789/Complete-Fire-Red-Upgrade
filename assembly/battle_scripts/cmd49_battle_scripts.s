@@ -36,6 +36,7 @@ cmd49_battle_scripts.s
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
 .global BattleScript_MistProtected
+.global BattleScript_ToxicChain
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -54,6 +55,12 @@ BattleScript_CouldntFullyProtect:
 BattleScript_PoisonTouch:
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x2
+	seteffectsecondary @;Affected by Safeguard
+	return
+
+BattleScript_ToxicChain:
+	setbyte POISONED_BY 0x5
+	setbyte EFFECT_BYTE 0x6
 	seteffectsecondary @;Affected by Safeguard
 	return
 
@@ -228,6 +235,7 @@ BattleScript_PoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
 	printfromtable 0x83FE5BC
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
@@ -263,6 +271,7 @@ BattleScript_BadPoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
 	printstring 0x2C
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
@@ -279,6 +288,15 @@ ToxicOrbBadPSN:
 	setword BATTLE_STRING_LOADER ToxicOrbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	goto 0x81D91C3
+
+ToxicChainBadPSN:
+	setbyte POISONED_BY 0x0
+	call BattleScript_AbilityPopUp
+	statusanimation 0x2
+	printfromtable 0x83FE5BC
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto 0x81D91C3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -1106,6 +1106,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			effect = ImmunityAbilityCheck(bank, STATUS1_BURN, gStatusConditionString_Burn);
 			break;
 
+		case ABILITY_STEAMENGINE:
+			if (SpeciesHasThermalExchange(SPECIES(bank)))
+				effect = ImmunityAbilityCheck(bank, STATUS1_BURN, gStatusConditionString_Burn);
+			break;
+
 		case ABILITY_MAGMAARMOR:
 			effect = ImmunityAbilityCheck(bank, STATUS1_FREEZE, gStatusConditionString_Ice);
 			break;
@@ -1261,11 +1266,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_ICEFACE:
-			#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE)
+			#if (defined SPECIES_EISCUE && defined SPECIES_EISCUE_NOICE && defined SPECIES_TERAPAGOS && defined SPECIES_TERAPAGOS_TERASTAL)
 			if (!IS_TRANSFORMED(bank) && SPECIES(bank) == SPECIES_EISCUE_NOICE
 			&& WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY))
 			{
 				DoFormChange(bank, SPECIES_EISCUE, FALSE, FALSE, FALSE);
+				BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
+				++effect;
+			}
+			else if (!IS_TRANSFORMED(bank) && SPECIES(bank) == SPECIES_TERAPAGOS)
+			{
+				DoFormChange(bank, SPECIES_TERAPAGOS_TERASTAL, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 				++effect;
 			}
@@ -2353,7 +2364,33 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				break;
 
 			case ABILITY_STEAMENGINE:
-				if (MOVE_HAD_EFFECT
+				if (SpeciesHasThermalExchange(SPECIES(bank))
+				&& MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gBankAttacker != bank
+				&& (moveType == TYPE_FIRE)
+				&& STAT_STAGE(bank, STAT_ATK) < STAT_STAGE_MAX)
+				{
+					gBattleScripting.statChanger = STAT_ATK | INCREASE_1;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+					effect++;
+				}
+				else if (SpeciesHasWellBakedBody(SPECIES(bank))
+				&& MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gBankAttacker != bank
+				&& (moveType == TYPE_FIRE)
+				&& STAT_STAGE(bank, STAT_DEF) < STAT_STAGE_MAX)
+				{
+					gBattleScripting.statChanger = STAT_DEF | INCREASE_2;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+					effect++;
+				}
+				else if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
@@ -2475,6 +2512,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					else if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
 					{
 						StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
+						effect = 1;
+					}
+					break;
+				case ABILITY_STEAMENGINE:
+					if ((gBattleMons[bank].status1 & STATUS1_BURN) && SpeciesHasThermalExchange(SPECIES(bank)))
+					{
+						StringCopy(gBattleTextBuff1, gStatusConditionString_Burn);
 						effect = 1;
 					}
 					break;

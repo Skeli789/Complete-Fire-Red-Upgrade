@@ -1514,6 +1514,12 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 		}
 	}
 
+	if (gBattleMons[bankDef].hp == gBattleMons[bankDef].maxHP && SpeciesHasTeraShell(SPECIES(bankDef))) // Check if target's HP is full
+	{
+		if (multiplier != TYPE_MUL_NO_EFFECT)
+			multiplier = TYPE_MUL_NOT_EFFECTIVE; // Override the multiplier to "not very effective"
+	}
+
 	if (!checkMonDef && multiplier == TYPE_MUL_NO_EFFECT)
 	{
 		if ((defType == TYPE_GHOST && (moveType == TYPE_NORMAL || moveType == TYPE_FIGHTING))

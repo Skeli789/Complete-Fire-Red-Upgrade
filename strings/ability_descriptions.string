@@ -655,3 +655,15 @@ Boost power if an ally fainted.
 
 #org @gText_AbilityDescription_SuperSweetSyrup
 Lowers foe's evasiveness stat.
+
+#org @gText_AbilityDescription_TeraShift
+Transforms into its Terastal Form.
+
+#org @gText_AbilityDescription_TeraShell
+Reduces damage when HP is full.
+
+#org @gText_AbilityDescription_ThermalExchange
+Fire hit ups Atk & Prevents burn.
+
+#org @gText_AbilityDescription_ToxicChain
+Can badly poison any foe on hit.

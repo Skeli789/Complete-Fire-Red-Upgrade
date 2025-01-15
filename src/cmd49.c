@@ -190,7 +190,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						if (BankHasRainbow(gBankAttacker))
 							chance *= 2;
 
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
+						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
+						&& umodsi(Random(), 100) < chance
+						&& SpeciesHasToxicChain(SPECIES(gBankAttacker)))
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicChain;
+							effect = TRUE;
+						}
+						else if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
 						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
 						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
