@@ -159,3 +159,6 @@ The harsh sunlight activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
 
 #org @gText_SupremeOverlordActivate
 [SCRIPTING_BANK] gained strength from\nthe fallen!
+
+#org @gText_GrassySurgeGrew
+Grass grew to cover the\nbattlefield!\p

@@ -2689,7 +2689,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				attack *= (1 + (boost / 100));
 				spAttack *= (1 + (boost / 100));
 			}
-			else (!IsScaleMonsBattle() //Too OP
+			else if (!IsScaleMonsBattle() //Too OP
 			|| !IsSpeciesAffectedByScalemons(data->atkSpecies)) //Doesn't get the Scalemons boost
 				attack *= 2;
 			break;
@@ -4169,7 +4169,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 
 		case ABILITY_STRONGJAW:
 		//1.5x Boost
-			if (gSpecialMoveFlags[move].gSlicingMoves && SpeciesHasSharpness(SPECIES(BankAtk)))
+			if (gSpecialMoveFlags[move].gSlicingMoves && SpeciesHasSharpness(SPECIES(bankAtk)))
 				power = (power * 15) / 10;
 			else if (gSpecialMoveFlags[move].gBitingMoves)
 				power = (power * 15) / 10;
