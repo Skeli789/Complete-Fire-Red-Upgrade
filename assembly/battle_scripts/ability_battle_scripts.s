@@ -278,7 +278,6 @@ SSSyrupActivatesLowStats:
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable gStatDownStringIds
 	waitmessage DELAY_1SECOND
-	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_AdrenalineOrb
 	goto IntimidateActivatesLoopIncrement
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
