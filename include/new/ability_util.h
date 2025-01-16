@@ -72,7 +72,6 @@ bool8 SpeciesHasOrichalcumPulse(u16 species);
 bool8 IsFullMetalBodyAbility(u8 ability, u16 species);
 bool8 SpeciesHasProtosynthesis(u16 species);
 bool8 SpeciesHasPurifyingSalt(u16 species);
-bool8 SpeciesHasGoodAsGold(u16 species);
 bool8 CheckStatusAny(u8 bank);
 bool8 SpeciesHasRockyPayload(u16 species);
 bool8 SpeciesHasSeedSower(u16 species);

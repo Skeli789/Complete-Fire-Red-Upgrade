@@ -2174,7 +2174,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_WEAKARMOR:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& BATTLER_ALIVE(bank)
+				&& BATTLER_ALIVE(bank))
 				{
 					if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
 					&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half

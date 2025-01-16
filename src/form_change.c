@@ -109,6 +109,7 @@ void SwitchOutFormsRevert(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
+	u8 ability = GetMonAbility(mon);
 
 	if (IS_TRANSFORMED(bank))
 		return;

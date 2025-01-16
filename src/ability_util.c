@@ -1377,15 +1377,6 @@ bool8 SpeciesHasPurifyingSalt(unusedArg u16 species)
 	#endif
 }
 
-bool8 SpeciesHasGoodAsGold(unusedArg u16 species)
-{
-	#ifdef SPECIES_GHOLDENGO
-	return species == SPECIES_GHOLDENGO;
-	#else
-	return FALSE;
-	#endif
-}
-
 bool8 CheckStatusAny(u8 bank)
 {
     return (gBattleMons[bank].status1 & STATUS1_ANY);
