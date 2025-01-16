@@ -100,6 +100,7 @@ gBattleAnims_General:
 .word ANIM_SPLINTER_DAMAGE
 .word ANIM_SUBSTITUTE2
 .word ANIM_CHARGE2
+.word ANIM_TOXICSPIKES2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1175,6 +1176,32 @@ ANIM_SUBSTITUTE2:
 ANIM_CHARGE2:
 	goto 0x81cb970 @Charge
 	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TOXICSPIKES2:
+	loadparticle ANIM_TAG_POISON_BUBBLE @Poison Bubbles
+	loadparticle ANIM_TAG_SPIKES @Spikes
+	loadparticle ANIM_TAG_SHADOW_BALL @Purple Colour
+	pokespritetoBG side_target
+	playsound2 0x88 SOUND_PAN_ATTACKER
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0x0 0x18 0x1e
+	pause 0xa
+	playsound2 0x88 SOUND_PAN_ATTACKER
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0xffe8 0x18 0x1e
+	pause 0xa
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0x18 0x18 0x1e
+	waitanimation
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER 0x0 0x4 0x0 0xc 0x681a
+	call POISON_BUBBLES
+	pokespritefromBG side_target
+	endanimation
+
+.align 2
+TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE8B1
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

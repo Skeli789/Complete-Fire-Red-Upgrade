@@ -162,3 +162,6 @@ The harsh sunlight activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
 
 #org @gText_GrassySurgeGrew
 Grass grew to cover the\nbattlefield!\p
+
+#org @gText_ZerotoHeroActivate
+[SCRIPTING_BANK] underwent a heroic\ntranformation!

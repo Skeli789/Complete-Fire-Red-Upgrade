@@ -53,7 +53,6 @@ static const species_t sBannedBackupSpecies[] =
 	SPECIES_ZACIAN_CROWNED,
 	SPECIES_ZAMAZENTA_CROWNED,
 	SPECIES_DARMANITAN_G_ZEN,
-	SPECIES_PALAFIN_HERO,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -197,7 +196,7 @@ void SwitchOutFormsRevert(u8 bank)
 
 		#if (defined SPECIES_PALAFIN && defined SPECIES_PALAFIN_HERO)
 		case SPECIES_PALAFIN:
-			if (backupSpecies != SPECIES_NONE)
+			if (backupSpecies != SPECIES_NONE && ability == ABILITY_TORRENT)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_PALAFIN_HERO, FALSE, TRUE, FALSE);

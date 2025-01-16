@@ -1808,3 +1808,7 @@
 	jumpifweather weather_air_current, BattleScript_MysteriousAirCurrentBlowsOn\suffix
 	jumpifweather weather_vicious_sandstorm, BattleScript_ViciousSandstormRefusesToLetUp\suffix
 .endm
+
+.macro chosenstatus2animation battler:req, status:req
+	chosenstatusanimation \battler, 0x1, \status
+.endm

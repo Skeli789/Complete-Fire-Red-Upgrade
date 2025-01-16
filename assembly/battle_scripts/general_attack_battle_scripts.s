@@ -112,6 +112,7 @@ BattleScript_PauseResultMessage:
 .global BS_002_SetPoisonChance
 BS_002_SetPoisonChance:
 	setmoveeffect MOVE_EFFECT_POISON
+	callasm TrySetPoisonPuppeterEffect
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -950,6 +951,7 @@ BS_033_SetBadPoison:
 	waitanimation
 	setmoveeffect MOVE_EFFECT_TOXIC
 	seteffectprimary
+	callasm TrySetPoisonPuppeterEffect
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1439,6 +1441,7 @@ PoisonChecks:
 	waitanimation
 	setmoveeffect MOVE_EFFECT_POISON
 	seteffectprimary
+	callasm TrySetPoisonPuppeterEffect
 	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5201,6 +5204,7 @@ VictoryDance_Speed:
 .global BS_209_BadPoisonChance
 BS_209_BadPoisonChance:
 	setmoveeffect MOVE_EFFECT_TOXIC
+	callasm TrySetPoisonPuppeterEffect
 	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -336,6 +336,14 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 					return viability;
 				}
 				break;
+				
+			case ABILITY_ANGERPOINT:
+				if (specialMoveFlags->gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
+				{
+					DECREASE_VIABILITY(10);
+					return viability;
+				}
+				break;
 
 			case ABILITY_DAZZLING:
 			#ifdef ABILITY_QUEENLYMAJESTY

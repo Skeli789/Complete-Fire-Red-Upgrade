@@ -2767,3 +2767,14 @@ void TryActivateProtosynthesis(void)
         }
     }
 }
+
+void TrySetPoisonPuppeterEffect(void)
+{
+	u32 status = gBattleMons[gBankTarget].status1;
+	
+	if (SpeciesHasPoisonPuppeteer(SPECIES(gBankAttacker)) && (status & STATUS_POISON) && !(gBattleMons[gBankTarget].status2 & STATUS2_CONFUSION))
+	{
+		gBattleMons[gBankTarget].status2 |= STATUS2_CONFUSION;
+		gBattlescriptCurrInstr = BattleScript_SetPuppetConfusion - 5;
+	}
+}

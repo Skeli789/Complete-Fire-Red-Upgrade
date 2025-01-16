@@ -115,6 +115,18 @@ extern const u8 gText_AbilityName_ThermalExchange[];
 extern const u8 gText_AbilityDescription_ThermalExchange[];
 extern const u8 gText_AbilityName_ToxicChain[];
 extern const u8 gText_AbilityDescription_ToxicChain[];
+extern const u8 gText_AbilityDescription_PoisonPuppeteer[];
+extern const u8 gText_AbilityName_PoisonPuppeteer[];
+extern const u8 gText_AbilityName_ToxicDebris[];
+extern const u8 gText_AbilityDescription_ToxicDebris[];
+extern const u8 gText_AbilityName_WellBakedBody[];
+extern const u8 gText_AbilityDescription_WellBakedBody[];
+extern const u8 gText_AbilityName_WindPower[];
+extern const u8 gText_AbilityDescription_WindPower[];
+extern const u8 gText_AbilityName_WindRider[];
+extern const u8 gText_AbilityDescription_WindRider[];
+extern const u8 gText_AbilityName_ZerotoHero[];
+extern const u8 gText_AbilityDescription_ZerotoHero[];
 
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
@@ -511,6 +523,26 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 			if(SpeciesHasToxicChain(species))
 				return gText_AbilityName_ToxicChain;
 			break;
+		case ABILITY_PLUS:
+			if (SpeciesHasPoisonPuppeteer(species))
+				return gText_AbilityName_PoisonPuppeteer;
+			break;
+		case ABILITY_POISONPOINT:
+			if(SpeciesHasToxicDebris(species))
+				return gText_AbilityName_ToxicDebris;
+			break;
+		case ABILITY_BERSERK:
+			if(SpeciesHasWindPower(species))
+				return gText_AbilityName_WindPower;
+			break;
+		case ABILITY_ANGERPOINT:
+			if(SpeciesHasWindRider(species))
+				return gText_AbilityName_WindRider;
+			break;
+		case ABILITY_TORRENT:
+			if (SpeciesHasZerotoHero(species))
+				return gText_AbilityName_ZerotoHero;
+			break;
 	}
 
 	return NULL;
@@ -652,6 +684,26 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_POISONTOUCH:
 			if(SpeciesHasToxicChain(species))
 				return gText_AbilityDescription_ToxicChain;
+			break;
+		case ABILITY_PLUS:
+			if (SpeciesHasPoisonPuppeteer(species))
+				return gText_AbilityDescription_PoisonPuppeteer;
+			break;
+		case ABILITY_POISONPOINT:
+			if(SpeciesHasToxicDebris(species))
+				return gText_AbilityDescription_ToxicDebris;
+			break;
+		case ABILITY_BERSERK:
+			if(SpeciesHasWindPower(species))
+				return gText_AbilityDescription_WindPower;
+			break;
+		case ABILITY_ANGERPOINT:
+			if(SpeciesHasWindRider(species))
+				return gText_AbilityDescription_WindRider;
+			break;
+		case ABILITY_TORRENT:
+			if (SpeciesHasZerotoHero(species))
+				return gText_AbilityDescription_ZerotoHero;
 			break;
 	}
 
@@ -864,6 +916,9 @@ bool8 IsElectricAbsorptionAblity(u8 ability)
 
 bool8 IsPlusMinusAbility(u8 ability)
 {
+	if (SpeciesHasPoisonPuppeteer(SPECIES(gActiveBattler)))
+		return FALSE;
+
 	switch (ability)
 	{
 		case ABILITY_PLUS:
@@ -1427,6 +1482,69 @@ bool8 SpeciesHasToxicChain(unusedArg u16 species)
 {
 	#if (defined SPECIES_OKIDOGI && SPECIES_FEZANDIPITI && SPECIES_MUNKIDORI)
 	return species == SPECIES_OKIDOGI || species == SPECIES_FEZANDIPITI || species == SPECIES_MUNKIDORI;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasPoisonPuppeteer(unusedArg u16 species)
+{
+	#ifdef SPECIES_PECHARUNT
+	return species == SPECIES_PECHARUNT;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasToxicDebris(unusedArg u16 species)
+{
+	#ifdef SPECIES_GLIMMORA
+	return species == SPECIES_GLIMMORA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasWellBakedBody(unusedArg u16 species)
+{
+	#ifdef SPECIES_DACHSBUN
+	return species == SPECIES_DACHSBUN;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 AngerShellStatsCheck(u8 bank)
+{
+    return (STAT_STAGE(bank, STAT_ATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPEED) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
+         || STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN);
+}
+
+bool8 SpeciesHasWindPower(unusedArg u16 species)
+{
+	#if (defined SPECIES_WATTREL && SPECIES_KILOWATTREL)
+	return species == SPECIES_WATTREL || species == SPECIES_KILOWATTREL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasWindRider(unusedArg u16 species)
+{
+	#if (defined SPECIES_BRAMBLIN && SPECIES_BRAMBLEGHAST && SPECIES_SHIFTRY)
+	return species == SPECIES_BRAMBLIN || species == SPECIES_BRAMBLEGHAST || species == SPECIES_SHIFTRY;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasZerotoHero(unusedArg u16 species) //Custom Unbound Ability
+{
+	#if (defined SPECIES_PALAFIN && defined SPECIES_PALAFIN_HERO)
+	return species == SPECIES_PALAFIN || species == SPECIES_PALAFIN_HERO;
 	#else
 	return FALSE;
 	#endif

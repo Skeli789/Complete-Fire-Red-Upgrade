@@ -1256,6 +1256,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			#endif
 			break;
 
+		case ABILITY_TORRENT:
+			if (SpeciesHasZerotoHero(SPECIES(bank)))
+				{
+					gBattleStringLoader = gText_ZerotoHeroActivate;
+					BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
+					effect++;
+				}
+			break;
+
 		case ABILITY_HUGEPOWER:
 			if (SpeciesHasSupremeOverlord(SPECIES(bank)) && IsFaintedPokemonInParty())
 				{
@@ -1746,6 +1755,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							effect = 1;
 						break;
 
+					case ABILITY_ANGERPOINT:
+						if (gSpecialMoveFlags[move].gWindMoves && SpeciesHasWindRider(SPECIES(bank)))
+							effect = 1;
+						break;
+
 					case ABILITY_OVERCOAT:
 						if (gSpecialMoveFlags[move].gPowderMoves)
 							effect = 1;
@@ -2035,16 +2049,38 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(gBankAttacker)
-				&& gBankAttacker != bank
-				&& CheckContact(move, gBankAttacker, bank)
-				&& CanBePoisoned(gBankAttacker, bank, TRUE)
-				&& umodsi(Random(), 3) == 0)
+				&& gBankAttacker != bank)
 				{
-					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
-					effect++;
+					// Check Toxic Debris
+					if (SpeciesHasToxicDebris(SPECIES(bank)) && SPLIT(move) == SPLIT_PHYSICAL)
+					{
+						if (gSideTimers[gBankAttacker].tspikesAmount >= 2)
+						{
+							// Failure message (maximum Toxic Spikes already present)
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicDebrisFailure;
+						}
+						else
+						{
+							// Add a layer of Toxic Spikes
+							gSideStatuses[gBankAttacker] |= SIDE_STATUS_SPIKES;
+							gSideTimers[gBankAttacker].tspikesAmount++;
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicDebrisActivates;
+						}
+						effect++;
+					}
+					// Check Poison Point
+					else if (CheckContact(move, gBankAttacker, bank)
+						&& CanBePoisoned(gBankAttacker, bank, TRUE)
+						&& umodsi(Random(), 3) == 0)
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
+						gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; // Safeguard checked earlier
+						effect++;
+					}
 				}
 				break;
 
@@ -2138,29 +2174,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_WEAKARMOR:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == SPLIT_PHYSICAL
 				&& BATTLER_ALIVE(bank)
-				&& gBankAttacker != bank
-				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN)
-				&& !SpeciesHasAngerShell(SPECIES(bank)))
 				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_WeakArmorActivates;
-					effect++;
-				}
-				else if (MOVE_HAD_EFFECT
-				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
-				&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
-				&& BATTLER_ALIVE(bank)
-				&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
-				|| STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN || STAT_STAGE(bank, STAT_ATK) < STAT_STAGE_MAX
-				|| STAT_STAGE(bank, STAT_SPATK) < STAT_STAGE_MAX)
-				&& SpeciesHasAngerShell(SPECIES(bank)))
-				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_AngerShellActivates;
-					effect++;
+					if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
+					&& gBattleMons[bank].hp + gHpDealt > gBattleMons[bank].maxHP / 2 //Hp fell below half
+					&& AngerShellStatsCheck(bank)
+					&& SpeciesHasAngerShell(SPECIES(bank)))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_AngerShellActivates;
+						effect++;
+					}
+					else if (CalcMoveSplit(gCurrentMove, gBankAttacker, bank) == SPLIT_PHYSICAL
+					&& gBankAttacker != bank
+					&& (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_WeakArmorActivates;
+						effect++;
+					}
 				}
 				break;
 
@@ -2254,7 +2286,17 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				break;
 
 			case ABILITY_ANGERPOINT:
-				if (MOVE_HAD_EFFECT
+				if (SpeciesHasWindRider(SPECIES(bank))
+				&& gSpecialMoveFlags[move].gWindMoves
+				&& BATTLER_ALIVE(bank)
+				&& STAT_STAGE(bank, STAT_ATK) < 12)
+				{
+					gBattleScripting.statChanger = STAT_ATK | INCREASE_1;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+					effect++;
+				}
+				else if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& gCritMultiplier > BASE_CRIT_MULTIPLIER
 				&& BATTLER_ALIVE(bank)
@@ -2287,6 +2329,20 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 			case ABILITY_BERSERK:
 				if (MOVE_HAD_EFFECT
+				&& TOOK_DAMAGE(bank)
+				&& BATTLER_ALIVE(bank)
+				&& gNewBS->ElectroCounter[bank] <= 2
+				&& SpeciesHasWindPower(SPECIES(bank))
+				&& gSpecialMoveFlags[move].gWindMoves)
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ElectromorphosisActivates;
+					if(gNewBS->ElectroCounter[bank] == 0)
+						gNewBS->ElectroCounter[bank] = 1;
+					gNewBS->ElectroCounter[bank]++;
+					effect++;
+				}
+				else if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(bank)
 				&& gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
@@ -2364,43 +2420,40 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				break;
 
 			case ABILITY_STEAMENGINE:
-				if (SpeciesHasThermalExchange(SPECIES(bank))
-				&& MOVE_HAD_EFFECT
+				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
 				&& BATTLER_ALIVE(bank)
-				&& gBankAttacker != bank
-				&& (moveType == TYPE_FIRE)
-				&& STAT_STAGE(bank, STAT_ATK) < STAT_STAGE_MAX)
+				&& gBankAttacker != bank)
 				{
-					gBattleScripting.statChanger = STAT_ATK | INCREASE_1;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
-					effect++;
-				}
-				else if (SpeciesHasWellBakedBody(SPECIES(bank))
-				&& MOVE_HAD_EFFECT
-				&& TOOK_DAMAGE(bank)
-				&& BATTLER_ALIVE(bank)
-				&& gBankAttacker != bank
-				&& (moveType == TYPE_FIRE)
-				&& STAT_STAGE(bank, STAT_DEF) < STAT_STAGE_MAX)
-				{
-					gBattleScripting.statChanger = STAT_DEF | INCREASE_2;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
-					effect++;
-				}
-				else if (MOVE_HAD_EFFECT
-				&& TOOK_DAMAGE(bank)
-				&& BATTLER_ALIVE(bank)
-				&& gBankAttacker != bank
-				&& (moveType == TYPE_WATER || moveType == TYPE_FIRE)
-				&& STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX)
-				{
-					gBattleScripting.statChanger = STAT_SPEED | INCREASE_6;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
-					effect++;
+					// Check Thermal Exchange
+					if (SpeciesHasThermalExchange(SPECIES(bank))
+					&& moveType == TYPE_FIRE
+					&& STAT_STAGE(bank, STAT_ATK) < STAT_STAGE_MAX)
+					{
+						gBattleScripting.statChanger = STAT_ATK | INCREASE_1;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+						effect++;
+					}
+					// Check Well-Baked Body
+					else if (SpeciesHasWellBakedBody(SPECIES(bank))
+						&& moveType == TYPE_FIRE
+						&& STAT_STAGE(bank, STAT_DEF) < STAT_STAGE_MAX)
+					{
+						gBattleScripting.statChanger = STAT_DEF | INCREASE_2;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+						effect++;
+					}
+					// Check Steam Engine
+					else if ((moveType == TYPE_WATER || moveType == TYPE_FIRE)
+						&& STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX)
+					{
+						gBattleScripting.statChanger = STAT_SPEED | INCREASE_6;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_TargetAbilityStatRaise;
+						effect++;
+					}
 				}
 				break;
 

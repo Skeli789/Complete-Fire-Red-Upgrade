@@ -116,6 +116,10 @@ ability_battle_scripts.s
 .global BattleScript_QuarkDriveActivates2
 .global BattleScript_ProtosynthesisActivates
 .global BattleScript_ProtosynthesisActivates2
+.global BattleScript_SetPuppetConfusion
+.global BattleScript_MoveEffectConfusion
+.global BattleScript_ToxicDebrisActivates
+.global BattleScript_ToxicDebrisFailure
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1583,6 +1587,39 @@ BattleScript_ProtosynthesisActivates2:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SetPuppetConfusion:
+	call BattleScript_AbilityPopUp
+	pause 0x10
+	call BattleScript_AbilityPopUpRevert
+	call BattleScript_MoveEffectConfusion
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveEffectConfusion:
+	chosenstatus2animation 0x2, STATUS2_CONFUSION
+	printstring 67
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+BattleScript_ToxicDebrisActivates:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_ATTACKER ANIM_TOXICSPIKES2 0x0
+	waitmessage DELAY_1SECOND
+	setword BATTLE_STRING_LOADER ToxicSpikesLayString
+	printstring 0x184
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_ToxicDebrisFailure:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_ToxicDebrisFailed
+	printstring 0x184
+	call BattleScript_AbilityPopUpRevert
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

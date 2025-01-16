@@ -171,3 +171,4 @@ void PSHealBlockTimer(void);
 void CudChewBerryEat(void);
 void TryActivateQuarkDrive(void);
 void TryActivateProtosynthesis(void);
+void TrySetPoisonPuppeterEffect(void);

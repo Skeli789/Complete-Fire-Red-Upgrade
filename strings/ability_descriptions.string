@@ -667,3 +667,21 @@ Fire hit ups Atk & Prevents burn.
 
 #org @gText_AbilityDescription_ToxicChain
 Can badly poison any foe on hit.
+
+#org @gText_AbilityDescription_PoisonPuppeteer
+Foe become confused if poisoned.
+
+#org @gText_AbilityDescription_ToxicDebris
+Set Toxic Spikes if physical hit.
+
+#org @gText_AbilityDescription_WellBakedBody
+Boost Defense if hit by Fire type.
+
+#org @gText_AbilityDescription_WindPower
+Boost electricity if hit by Wind.
+
+#org @gText_AbilityDescription_WindRider
+Boost Atk if hits by Wind Moves.
+
+#org @gText_AbilityDescription_ZerotoHero
+Change Hero form when switch out.

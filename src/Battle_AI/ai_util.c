@@ -2258,6 +2258,11 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 					return TRUE;
 				break;
 
+			case ABILITY_ANGERPOINT:
+				if (gSpecialMoveFlags[move].gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
+					return TRUE;
+				break;
+
 			case ABILITY_DAZZLING:
 			#ifdef ABILITY_QUEENLYMAJESTY
 			case ABILITY_QUEENLYMAJESTY:
@@ -2372,6 +2377,11 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 
 			case ABILITY_BULLETPROOF:
 				if (gSpecialMoveFlags[move].gBallBombMoves)
+					return TRUE;
+				break;
+			
+			case ABILITY_ANGERPOINT:
+				if (gSpecialMoveFlags[move].gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
 					return TRUE;
 				break;
 
