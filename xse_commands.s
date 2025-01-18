@@ -1969,14 +1969,10 @@ map \map
 .word \script
 .endm
 
-.macro msgboxminibox text:req pointer:req type:req
+.macro msgminibox text:req pointer:req type:req
 	loadpointer 0x0 \text
-	setvar 0x8000 0x1
-    setvar 0x8001 0xB
-    setvar 0x8002 0x8
-    setvar 0x8003 0x2
-    callasm box_func + 1
+    callasm MiniBoxOpen
 	loadpointer 0x0 \pointer
 	callstd \type
-	callasm box_func_end + 1
+	callasm ClearMiniBox
 .endm

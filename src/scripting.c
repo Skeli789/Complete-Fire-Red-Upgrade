@@ -81,6 +81,7 @@ extern u8 BuildFrontierParty(struct Pokemon* party, u16 trainerNum, bool8 firstT
 
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
+extern u8 sSafariZoneStatsWindowId;
 
 #ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void);
@@ -3116,4 +3117,42 @@ u8 CreateWindowFromRect(u8 left, u8 top, u8 width, u8 height) {
 
 void CheckIfFirstEnemyMonShiny() {
 	Var8000 = IsMonShiny(&gEnemyParty[0]);
+}
+
+struct WindowTemplate template = 
+{
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 11,
+    .width = 8,
+    .height = 2,
+    .paletteNum = 15,
+    .baseBlock = 0x100
+};
+
+void MiniBoxOpen(void)
+{
+    sSafariZoneStatsWindowId = AddWindow(&template);
+
+    if (sSafariZoneStatsWindowId == 0xFF)
+        return;
+
+    PutWindowTilemap(sSafariZoneStatsWindowId);
+    DrawStdWindowFrame(sSafariZoneStatsWindowId, TRUE);
+
+    if (gLoadPointer == NULL)
+        return;
+
+    StringExpandPlaceholders(gStringVar4, gLoadPointer);
+    AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 3, 255, NULL);
+    CopyWindowToVram(sSafariZoneStatsWindowId, 2);
+}
+
+void ClearMiniBox(void)
+{
+	sSafariZoneStatsWindowId = AddWindow(&template);
+
+    ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, TRUE);
+    RemoveWindow(sSafariZoneStatsWindowId);
+	CopyWindowToVram(sSafariZoneStatsWindowId, 2);
 }
