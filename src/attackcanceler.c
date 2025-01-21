@@ -94,7 +94,7 @@ void atk00_attackcanceler(void)
 	&& !(SPLIT(gCurrentMove) == SPLIT_STATUS && moveTarget & MOVE_TARGET_DEPENDS)) //Status moves like Metronome can still be used
 	{
 		CancelMultiTurnMoves(gBankAttacker);
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2);
 		return;
 	}
 	else if (!ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
@@ -830,7 +830,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			 || IsMagicRoomActive()
 			 || gNewBS->EmbargoTimers[gBankAttacker]))
 			{
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2);
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 				effect = 1;
 			}
@@ -843,21 +843,21 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				if ((gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 				&&  gCurrentMove != gLockedMoves[gBankAttacker])
 				{
-					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2);
 					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					effect = 1;
 				}
 				else if (gDisableStructs[gBankAttacker].encoredMove
 				&& gCurrentMove != gDisableStructs[gBankAttacker].encoredMove)
 				{
-					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2);
 					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					effect = 1;
 				}
 				else if (gBattleStruct->choicedMove[gBankAttacker]
 				&& gCurrentMove != gBattleStruct->choicedMove[gBankAttacker])
 				{
-					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2);
 					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					effect = 1;
 				}

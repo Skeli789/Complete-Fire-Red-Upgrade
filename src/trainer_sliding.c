@@ -329,7 +329,7 @@ void TryDoDynamaxTrainerSlide(void)
 	}
 
 	BattleScriptPush(gBattlescriptCurrInstr + 5); //After callasm
-	gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TrainerSlideMsgRet - 5);
 }
 
 //Hook in Battle Main

@@ -334,7 +334,7 @@ static bool8 TryActivateWeakenessBerry(u8 bank, u8 resultFlags)
 			gBattleScripting.bank = bank;
 			BattleScriptPushCursor();
 			gNewBS->canBelch[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]];
-			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_WeaknessBerryActivate - 5);
 			return TRUE;
 		}
 	}
@@ -857,7 +857,7 @@ void atk0C_datahpupdate(void)
 					gBattleScripting.bank = gActiveBattler;
 					gStatuses3[gActiveBattler] &= ~(STATUS3_ILLUSION);
 					BattleScriptPush(gBattlescriptCurrInstr + 2);
-					gBattlescriptCurrInstr = BattleScript_IllusionBrokenFaint - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_IllusionBrokenFaint - 2);
 				}
 
 				gHitMarker &= ~(HITMARKER_IGNORE_SUBSTITUTE);

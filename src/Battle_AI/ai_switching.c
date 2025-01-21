@@ -2651,5 +2651,5 @@ void ShouldDoAIShiftSwitch(void)
 	}
 	#endif
 
-	gBattlescriptCurrInstr = BattleScript_FaintedMonChooseAnotherRejoin - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_FaintedMonChooseAnotherRejoin - 5);
 }

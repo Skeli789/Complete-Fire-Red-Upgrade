@@ -3164,7 +3164,7 @@ void TryRemoveIntimidateAbilityPopUp(void)
 	if (gNewBS->intimidateActive > 0)
 	{
 		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_AbilityPopUpRevert - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_AbilityPopUpRevert - 5);
 		gBattleScripting.bank = gNewBS->intimidateActive - 1;
 		gNewBS->intimidateActive -= 10; //Intimidate is still active but pop-up is hidden
 	}
@@ -3177,7 +3177,7 @@ void TryHideActiveAbilityPopUps(void)
 		if (gNewBS->activeAbilityPopUps & gBitTable[i])
 		{
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_AbilityPopUpRevert - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_AbilityPopUpRevert - 5);
 			gBattleScripting.bank = i;
 		}
 	}
@@ -3198,7 +3198,7 @@ void TryReactiveIntimidatePopUp(void)
 	if (gNewBS->intimidateActive < 0) //Pop-up was hidden due to ability like Clear Body
 	{
 		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_AbilityPopUp - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_AbilityPopUp - 5);
 		gNewBS->intimidateActive += 10;
 		gBattleScripting.bank = gNewBS->intimidateActive - 1;
 	}

@@ -87,7 +87,7 @@ void SetZEffect(void)
 					gBattleMons[gBankAttacker].statStages[i] = 6;
 			}
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
-			gBattlescriptCurrInstr = BattleScript_StatsResetZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_StatsResetZMove - 5);
 			break;
 
 		case Z_EFFECT_ALL_STATS_UP_1:
@@ -100,7 +100,7 @@ void SetZEffect(void)
 				}
 
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_AllStatsUpZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_AllStatsUpZMove - 5);
 			}
 			break;
 
@@ -109,7 +109,7 @@ void SetZEffect(void)
 			{
 				gBattleMons[gBankAttacker].status2 |= STATUS2_FOCUS_ENERGY;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_BoostCritsZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_BoostCritsZMove - 5);
 			}
 			break;
 
@@ -117,7 +117,7 @@ void SetZEffect(void)
 			gSideTimers[SIDE(gBankAttacker)].followmeTimer = 1;
 			gSideTimers[SIDE(gBankAttacker)].followmeTarget = gBankAttacker;
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
-			gBattlescriptCurrInstr = BattleScript_FollowMeZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_FollowMeZMove - 5);
 			break;
 
 		case Z_EFFECT_RECOVER_HP:
@@ -125,14 +125,14 @@ void SetZEffect(void)
 			{
 				gBattleMoveDamage = (-1) * gBattleMons[gBankAttacker].maxHP;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_RecoverHPZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_RecoverHPZMove - 5);
 			}
 			break;
 
 		case Z_EFFECT_RESTORE_REPLACEMENT_HP:
 			gNewBS->zMoveData.healReplacement = TRUE;
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
-			gBattlescriptCurrInstr = BattleScript_SetUpHealReplacementZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_SetUpHealReplacementZMove - 5);
 			break;
 
 		case Z_EFFECT_ATK_UP_1:
@@ -147,7 +147,7 @@ void SetZEffect(void)
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_StatUpZMove - 5);
 			}
 			break;
 
@@ -163,7 +163,7 @@ void SetZEffect(void)
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_StatUpZMove - 5);
 			}
 			break;
 
@@ -179,7 +179,7 @@ void SetZEffect(void)
 				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1);
 				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
-				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_StatUpZMove - 5);
 			}
 			break;
 	}

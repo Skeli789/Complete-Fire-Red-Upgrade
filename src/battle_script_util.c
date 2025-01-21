@@ -99,19 +99,19 @@ void AcupressureFunc(void)
 	{
 		if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget) || CheckCraftyShield(gBankTarget))
 		{
-			gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			return;
 		}
 	}
 
 	if (StatsMaxed(gBankTarget) && ABILITY(gBankTarget) != ABILITY_CONTRARY)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 		return;
 	}
 	else if (StatsMinned(gBankTarget) && ABILITY(gBankTarget) == ABILITY_CONTRARY)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 		return;
 	}
 
@@ -328,7 +328,7 @@ void SetAuroraVeil(void)
 void MetalBurstDamageCalculator(void)
 {
 	if (GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 
 	u8 atkSide = SIDE(gBankAttacker);
 	u8 defSide = SIDE(gProtectStructs[gBankAttacker].physicalBank);
@@ -355,7 +355,7 @@ void MetalBurstDamageCalculator(void)
 	else
 	{
 		gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 	}
 }
 
@@ -374,7 +374,7 @@ void TryActivatePartnerSapSipper(void)
 		gBattleScripting.animArg2 = 0;
 		gLastUsedAbility = ABILITY(gBankTarget);
 		BattleScriptPush(gBattlescriptCurrInstr + 5);
-		gBattlescriptCurrInstr = BattleScript_SapSipperAromatherapy - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_SapSipperAromatherapy - 5);
 	}
 }
 
@@ -453,16 +453,16 @@ void DefogHelperFunc(void)
 										  | SIDE_STATUS_MIST))
 	{
 		if (MOVE_HAD_EFFECT)
-			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_DefogAdditionalEffects - 5);
 		else
-			gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects_PlayAttackAnim - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_DefogAdditionalEffects_PlayAttackAnim - 5);
 	}
 }
 
 void ClearBeakBlastBit(void)
 {
 	if (!(gNewBS->BeakBlastByte & gBitTable[gBankAttacker])) //Forced by Encore
-		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_NoTargetMoveFailed - 5);
 	else
 		gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
 }
@@ -489,7 +489,7 @@ void BestowItem(void)
 		MarkBufferBankForExecution(gActiveBattler);
 	}
 	else
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 }
 
 void BelchFunction(void)
@@ -498,7 +498,7 @@ void BelchFunction(void)
 		return; //Raid bosses can always use Belch
 
 	if (!(gNewBS->canBelch[SIDE(gBankAttacker)] & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2);
 }
 
 void StrengthSapFunc(void)
@@ -545,7 +545,7 @@ void CopycatFunc(void)
 	|| IsAnyMaxMove(gNewBS->LastUsedMove)
 	|| gSpecialMoveFlags[gNewBS->LastUsedMove].gCopycatBannedMoves)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 1 - 5;	//From PP Reduce
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 1 - 5);	//From PP Reduce
 	}
 	else
 	{
@@ -602,7 +602,7 @@ void CaptivateFunc(void)
 	|| GetGenderFromSpeciesAndPersonality(speciesAtk, personalityAtk) == MON_GENDERLESS
 	|| GetGenderFromSpeciesAndPersonality(speciesDef, personalityDef) == MON_GENDERLESS)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItDoesntAffect - 5);
 	}
 }
 
@@ -618,7 +618,7 @@ void MeFirstFunc(void)
 	|| gSpecialMoveFlags[move].gMeFirstBannedMoves
 	|| gSpecialMoveFlags[move].gMovesThatCallOtherMoves)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 1; //Start from PP Reduce
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 1); //Start from PP Reduce
 	}
 	else
 	{
@@ -663,7 +663,7 @@ void LoadPledgeScript(void)
 			gNewBS->PledgeHelper = Pledge_Rainbow;
 		}
 
-		gBattlescriptCurrInstr = BattleScript_PledgeCombined - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PledgeCombined - 5);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 	&& BATTLER_ALIVE(PARTNER(gBankAttacker))
@@ -698,7 +698,7 @@ void LoadPledgeScript(void)
 
 		gNewBS->PledgeHelper = TRUE;
 		gBattleScripting.bank = PARTNER(gBankAttacker);
-		gBattlescriptCurrInstr = BattleScript_PledgeReady - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PledgeReady - 5);
 	}
 }
 
@@ -713,7 +713,7 @@ void SetPledgeEffect(void)
 				//gBattleScripting.animArg1 = B_ANIM_SWAMP;
 			}
 			else
-				gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveFaint - 5);
 			break;
 
 		case Pledge_SeaOfFire:
@@ -724,7 +724,7 @@ void SetPledgeEffect(void)
 				gBattleScripting.animArg1 = B_ANIM_SEA_OF_FIRE;
 			}
 			else
-				gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveFaint - 5);
 			break;
 
 		case Pledge_Rainbow:
@@ -735,11 +735,11 @@ void SetPledgeEffect(void)
 				//BattleScripting->animArg1 = B_ANIM_RAINBOW;
 			}
 			else
-				gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveFaint - 5);
 			break;
 
 		default:
-			gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveFaint - 5);
 	}
 
 	gNewBS->PledgeHelper = 0;
@@ -813,7 +813,7 @@ void DoBattleFieldEffect(void)
 				gBattleStringLoader = TrickRoomSetString;
 			}
 			else
-				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			break;
 
 		case MOVE_WONDERROOM:
@@ -828,7 +828,7 @@ void DoBattleFieldEffect(void)
 				gBattleStringLoader = WonderRoomSetString;
 			}
 			else
-				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			break;
 
 		case MOVE_MAGICROOM:
@@ -843,7 +843,7 @@ void DoBattleFieldEffect(void)
 				gBattleStringLoader = MagicRoomSetString;
 			}
 			else
-				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			break;
 
 		case MOVE_GRAVITY:
@@ -864,7 +864,7 @@ void DoBattleFieldEffect(void)
 				gBattleStringLoader = GravitySetString;
 			}
 			else
-				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			break;
 
 		case MOVE_IONDELUGE:
@@ -924,7 +924,7 @@ void BringDownMons(void)
 			else
 				gBattleStringLoader = Bank0AWasBroughtDownString;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PrintCustomString - 5);
 			return;
 		}
 	}
@@ -935,7 +935,7 @@ void TryFling(void)
 	if (!CanFling(ITEM(gBankAttacker), SPECIES(gBankAttacker), ABILITY(gBankAttacker),
 				  gBankAttacker, gNewBS->EmbargoTimers[gBankAttacker]))
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 	}
 	else
 	{
@@ -953,7 +953,7 @@ void CheckTelekinesisFail(void)
 	||  ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_IRON_BALL
 	||  gSpecialSpeciesFlags[species].telekinesisBan)
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2);
 	}
 }
 
@@ -967,7 +967,7 @@ void ChangeTargetTypeFunc(void)
 				gBattleMons[gBankTarget].type2 == TYPE_WATER &&
 				gBattleMons[gBankTarget].type3 == TYPE_BLANK))
 			{
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			}
 			else
 			{
@@ -982,7 +982,7 @@ void ChangeTargetTypeFunc(void)
 			{
 				gMoveResultFlags |= MOVE_RESULT_MISSED;
 				TrySetMissStringForSafetyGoggles(gBankTarget);
-				gBattlescriptCurrInstr = BattleScript_NotAffected - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_NotAffected - 5);
 			}
 			else if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
 			||  ABILITY(gBankTarget) == ABILITY_RKS_SYSTEM
@@ -990,7 +990,7 @@ void ChangeTargetTypeFunc(void)
 				gBattleMons[gBankTarget].type2 == TYPE_PSYCHIC &&
 				gBattleMons[gBankTarget].type3 == TYPE_BLANK))
 			{
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			}
 			else
 			{
@@ -1002,7 +1002,7 @@ void ChangeTargetTypeFunc(void)
 
 		case MOVE_TRICKORTREAT:
 			if (IsOfType(gBankTarget, TYPE_GHOST))
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				if (gBattleMons[gBankTarget].type1 == gBattleMons[gBankTarget].type2)
@@ -1017,7 +1017,7 @@ void ChangeTargetTypeFunc(void)
 
 		case MOVE_FORESTSCURSE:
 			if (IsOfType(gBankTarget, TYPE_GRASS))
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				if (gBattleMons[gBankTarget].type1 == gBattleMons[gBankTarget].type2)
@@ -1037,7 +1037,7 @@ void HealTargetFunc(void)
 	u16 maxHP = gBattleMons[gBankTarget].maxHP;
 
 	if (BATTLER_MAX_HP(gBankTarget)) {
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 		return;
 	}
 
@@ -1079,7 +1079,7 @@ void TopsyTurvyFunc(void)
 	}
 
 	if (i == BATTLE_STATS_NO-1)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 	else
 	{
 		for (i = 0; i < BATTLE_STATS_NO-1; ++i)
@@ -1117,7 +1117,7 @@ void FailMoveIfAura(void)
 		fail = FALSE; //Allow Skill Swap to work
 
 	if (fail)
-		gBattlescriptCurrInstr = BattleScript_MoveFailedOnAura - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveFailedOnAura - 5);
 }
 
 void DoFairyLockHappyHourFunc(void)
@@ -1125,7 +1125,7 @@ void DoFairyLockHappyHourFunc(void)
 	switch (gCurrentMove) {
 		case MOVE_FAIRYLOCK:
 			if (IsFairyLockActive())
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				gNewBS->FairyLockTimer = 2;
@@ -1153,7 +1153,7 @@ void DoFairyLockHappyHourFunc(void)
 				gBattleStringLoader = HoldHandsString;
 			}
 			else
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 
 			break;
 	}
@@ -1208,7 +1208,7 @@ void AfterYouFunc(void)
 		gNewBS->turnOrderLocked |= gBitTable[gBankTarget]; //So their turn order isn't changed
 	}
 	else
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 }
 
 void QuashFunc(void)
@@ -1241,7 +1241,7 @@ void QuashFunc(void)
 		gNewBS->turnOrderLocked |= gBitTable[gBankTarget];
 	}
 	else
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 }
 
 void TryExecuteInstruct(void)
@@ -1262,7 +1262,7 @@ void TryExecuteInstruct(void)
 													 || gChosenMovesByBanks[gBankTarget] == MOVE_BEAKBLAST
 													 || gChosenMovesByBanks[gBankTarget] == MOVE_SHELLTRAP)))
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 		return;
 	}
 }
@@ -1292,7 +1292,7 @@ void InitiateInstruct(void)
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-	gBattlescriptCurrInstr = BattleScript_FlushMessageBox - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_FlushMessageBox - 5);
 	gNewBS->zMoveData.active = FALSE;
 }
 
@@ -1303,7 +1303,7 @@ void TrySetMagnetRise(void)
 	|| IsFloatingWithMagnetism(gBankAttacker)
 	|| gStatuses3[gBankAttacker] & (STATUS3_LEVITATING | STATUS3_SMACKED_DOWN | STATUS3_ROOTED)
 	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_IRON_BALL)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 	else
 	{
 		gNewBS->MagnetRiseTimers[gBankAttacker] = 5;
@@ -1316,7 +1316,7 @@ void TailwindLuckyChantFunc(void)
 	switch (gCurrentMove) {
 		case MOVE_TAILWIND:
 			if (BankSideHasTailwind(gBankAttacker))
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				gNewBS->TailwindTimers[SIDE(gBankAttacker)] = 4;
@@ -1325,7 +1325,7 @@ void TailwindLuckyChantFunc(void)
 			break;
 		case MOVE_LUCKYCHANT:
 			if (gNewBS->LuckyChantTimers[SIDE(gBankAttacker)])
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				gNewBS->LuckyChantTimers[SIDE(gBankAttacker)] = 4;
@@ -1343,7 +1343,7 @@ void FlameBurstFunc(void)
 	||  ABILITY(par) == ABILITY_MAGICGUARD
 	||  gBattleMons[par].hp == 0)
 	{
-		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveEnd - 5);
 	}
 	else
 	{
@@ -1411,7 +1411,7 @@ void AbilityChangeBSFunc(void)
 	switch (gCurrentMove) {
 		case MOVE_WORRYSEED:
 			if (gSpecialAbilityFlags[defAbility].gWorrySeedBannedAbilities)
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				*defAbilityLoc = ABILITY_INSOMNIA;
@@ -1426,7 +1426,7 @@ void AbilityChangeBSFunc(void)
 			if (gSpecialAbilityFlags[defAbility].gGastroAcidBannedAbilities
 			|| gStatuses3[gBankTarget] & STATUS3_ABILITY_SUPPRESS)
 			{
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			}
 			else
 			{
@@ -1447,7 +1447,7 @@ void AbilityChangeBSFunc(void)
 			||  *atkAbilityLoc == *defAbilityLoc
 			||  gSpecialAbilityFlags[atkAbility].gEntrainmentBannedAbilitiesAttacker
 			||  gSpecialAbilityFlags[defAbility].gEntrainmentBannedAbilitiesTarget)
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			else
 			{
 				*defAbilityLoc = atkAbility;
@@ -1464,7 +1464,7 @@ void AbilityChangeBSFunc(void)
 		case MOVE_SIMPLEBEAM:
 			if (gSpecialAbilityFlags[defAbility].gSimpleBeamBannedAbilities)
 			{
-				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 			}
 			else
 			{
@@ -1477,7 +1477,7 @@ void AbilityChangeBSFunc(void)
 			break;
 	}
 
-	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
+	if (gBattlescriptCurrInstr != (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5))
 		TransferAbilityPopUp(gBankTarget, gLastUsedAbility);
 }
 
@@ -1517,7 +1517,7 @@ void LoadStatustoPsychoShiftTransfer(void)
 	}
 	#endif
 	else
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 }
 
 void PluckBerryEat(void)
@@ -1569,7 +1569,7 @@ void SeedRoomServiceLooper(void)
 void LastResortFunc(void)
 {
 	if (!CanUseLastResort(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 2 - 5);
 }
 
 bool8 CanUseLastResort(u8 bank)
@@ -1605,7 +1605,7 @@ void SynchronoiseFunc(void)
 		return;
 	}
 
-	gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItDoesntAffect - 5);
 }
 
 void MakeScriptingBankInvisible(void)
@@ -1684,7 +1684,7 @@ void ClearAndTransferDontRemoveTransformSpecies(void)
 void FailTransformIfAura(void)
 {
 	if (IsAuraBoss(gBankTarget)) //Wild boss
-		gBattlescriptCurrInstr = BattleScript_TransformFailedOnAura - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TransformFailedOnAura - 5);
 }
 
 void BackupScriptingBankMoveSelectionCursor(void)
@@ -1727,7 +1727,7 @@ void TryLaunchShellTrap(void)
 	u8 defSide = SIDE(gProtectStructs[gBankAttacker].physicalBank);
 
 	if (!gProtectStructs[gBankAttacker].physicalDmg || atkSide == defSide)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2);
 }
 
 void TrySuckerPunch(void)
@@ -1736,7 +1736,7 @@ void TrySuckerPunch(void)
 	|| gChosenMovesByBanks[gBankTarget] == MOVE_MEFIRST)
 		return;
 
-	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2);
 }
 
 void DoProteanTypeChange(void)
@@ -1864,7 +1864,7 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
 	if (gNewBS->endTurnDone)
 	{
 		gNewBS->restartEndTurnSwitching = TRUE;
-		gBattlescriptCurrInstr = BattleScript_EntryHazardsHurtReturn - 5; //Continue the switch in effects
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_EntryHazardsHurtReturn - 5); //Continue the switch in effects
 	}
 
 	WipeSwitchInEffectsState();
@@ -1874,7 +1874,7 @@ void ClearSwitchInEffectsState(void)
 {
 	if (!gNewBS->endTurnDone)
 	{
-		gBattlescriptCurrInstr = BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5);
 		WipeSwitchInEffectsState();
 	}
 }
@@ -1938,7 +1938,7 @@ void UndoAbilityEffectsForNeutralizingGas(void)
 		gBattleWeather = 0;
 		gWishFutureKnock.weatherDuration = 0;
 		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PrimalWeatherEnd - 5);
 		return;
 	}
 
@@ -1948,7 +1948,7 @@ void UndoAbilityEffectsForNeutralizingGas(void)
 		{
 			gBattleScripting.bank = i;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_TryRemoveIllusion - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TryRemoveIllusion - 5);
 			break;
 		}
 	}
@@ -1965,7 +1965,7 @@ void TryLoadSecondFriskTargetDoubles(void)
 		return;
 	}
 
-	gBattlescriptCurrInstr = BattleScript_FriskEnd - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_FriskEnd - 5);
 }
 
 void BackupSwitchingBank(void)
@@ -2159,7 +2159,7 @@ void FailIfAttackerIsntHoldingEdibleBerry(void)
 
 	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
 	|| UnnerveOnOpposingField(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailedAttackstring - 5);
 }
 
 void SetTempIgnoreAnimations(void)
@@ -2175,7 +2175,7 @@ void ClearTempIgnoreAnimations(void)
 void FailIfTrappedByNoRetreat(void)
 {
 	if (gNewBS->trappedByNoRetreat & gBitTable[gBankAttacker])
-		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailedAttackstring - 5);
 }
 
 void FinishTurn(void)
@@ -2198,9 +2198,9 @@ void IncrementBattleTurnCounter(void)
 void TryFailLifeDew(void)
 {
 	if (!IS_DOUBLE_BATTLE || !BATTLER_ALIVE(PARTNER(gBankAttacker)))
-		gBattlescriptCurrInstr = RecoverBS - 5;
+		gBattlescriptCurrInstr = (const u8 *)((uintptr_t)RecoverBS - 5);
 	else if (BATTLER_MAX_HP(gBankAttacker) && BATTLER_MAX_HP(PARTNER(gBankAttacker)))
-		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_LifeDewFail - 5);
 }
 
 bool8 ShouldJungleHealingFail(u8 bankAtk)
@@ -2222,7 +2222,7 @@ bool8 ShouldJungleHealingFail(u8 bankAtk)
 void TryFailJungleHealing(void)
 {
 	if (ShouldJungleHealingFail(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_LifeDewFail - 5);
 }
 
 bool8 ShouldLunarBlessingFail(u8 bankAtk)
@@ -2239,7 +2239,7 @@ bool8 ShouldLunarBlessingFail(u8 bankAtk)
 void TryFailLunarBlessing(void)
 {
 	if (ShouldLunarBlessingFail(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_LunarBlessingFail - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_LunarBlessingFail - 5);
 }
 
 void SetStickyWebActive(void)
@@ -2371,13 +2371,13 @@ void ActivatePerishBody(void)
 	}
 
 	if (!activated)
-		gBattlescriptCurrInstr = BattleScript_PerishBodyReturn - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PerishBodyReturn - 5);
 }
 
 void FailClangorousSoulIfLowHP(void)
 {
 	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 3)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5);
 }
 
 void LoadMoodyStatToLower(void)
@@ -2399,7 +2399,7 @@ void ClearScriptingBankDisguisedAs(void)
 void GotoMoveEndIfMoveDidntDamageAtLeastOnce(void)
 {
 	if (!gNewBS->AttackerDidDamageAtLeastOnce)
-		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_MoveEnd - 5);
 }
 
 void SetSwitchingBankToPlayer0(void)
@@ -2431,14 +2431,14 @@ void SetCorrectTeleportBattleScript(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		gBattlescriptCurrInstr = BattleScript_TeleportSwitch - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TeleportSwitch - 5);
 	}
 	else //Wild Battle
 	{
 		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-			gBattlescriptCurrInstr = BattleScript_TeleportSwitch - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TeleportSwitch - 5);
 		else
-			gBattlescriptCurrInstr = BattleScript_TeleportFlee - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_TeleportFlee - 5);
 	}
 }
 
@@ -2453,7 +2453,7 @@ void TryFailPoltergeist(void)
 	u16 item = ITEM(gBankTarget);
 
 	if (WillPoltergeistFail(item, ABILITY(gBankTarget)))
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2); //From attackstring
 	else
 	{
 		gLastUsedItem = item;
@@ -2471,7 +2471,7 @@ void WakeUpSleepingPokemon(void)
 		{
 			gBattleScripting.bank = i;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_UproarWokeUp - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_UproarWokeUp - 5);
 			return;
 		}
 	}
@@ -2498,7 +2498,7 @@ void ClearStatBuffEffectNotProtectAffected(void)
 void TryFailCorrosiveGas(void)
 {
 	if (!CanKnockOffItem(gBankTarget))
-		gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItDoesntAffect - 5);
 }
 
 void CorrodeItem(void)
@@ -2511,7 +2511,7 @@ void CorrodeItem(void)
 void TryFailSteelRoller(void)
 {
 	if (gCurrentMove == MOVE_STEELROLLER && gTerrainType == 0)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2); //From attackstring
 }
 
 void PrintElectromagnetismFloatingStrings(void)
@@ -2525,7 +2525,7 @@ void PrintElectromagnetismFloatingStrings(void)
 			{
 				BattleScriptPushCursor();
 				gBattleStringLoader = gText_MagnetRiseBattleStart;
-				gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_PrintCustomString - 5);
 				gBattleScripting.bank = gBattleCommunication[0];
 				++gBattleCommunication[0];
 				return;
@@ -2546,9 +2546,9 @@ void TrySkipBattleNicknameOffer(void)
 	if (FlagGet(FLAG_DONT_OFFER_NICKNAMES_BATTLE))
 	{
 		if (CalculatePlayerPartyCount() >= PARTY_SIZE || IsTagBattle())
-			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNicknameFullParty - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_CaughtPokemonSkipNicknameFullParty - 5);
 		else
-			gBattlescriptCurrInstr = BattleScript_CaughtPokemonSkipNickname - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_CaughtPokemonSkipNickname - 5);
 	}
 	#endif
 }
@@ -2600,27 +2600,27 @@ void ShowSOSMonHealthbox(void)
 void FailSubstituteInShadowShieldBattle(void)
 {
 	if (IsShadowShieldBattle() && !IsAffectedByShadowShieldBattle(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_ShadowShieldBlocksSubstitute - 5;	
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ShadowShieldBlocksSubstitute - 5);	
 }
 
 void TryFailAuraWheel(void)
 {
 	#ifdef NATIONAL_DEX_MORPEKO
 	if (SpeciesToNationalPokedexNum(SPECIES(gBankAttacker)) != NATIONAL_DEX_MORPEKO)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2; //From attackstring
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_ButItFailed - 5 - 2); //From attackstring
 	#endif
 }
 
 void SkipUseNextPkmnPromptIfCantRun(void)
 {
 	if (AreAllKindsOfRunningPrevented())
-		gBattlescriptCurrInstr = BattleScript_FaintedMonTryChooseAnother - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_FaintedMonTryChooseAnother - 5);
 }
 
 void TryRaiseHigherDefensesOverOffenses(void)
 {
 	if (AreDefensesHigherThanOffenses(gBankAttacker))
-		gBattlescriptCurrInstr = BattleScript_HigherDefensesUp - 5;
+gBattlescriptCurrInstr = (const u8 *)((uintptr_t)BattleScript_HigherDefensesUp - 5);
 }
 
 bool8 IsSpringtideStormSpDefDown(unusedArg u8 bank)
