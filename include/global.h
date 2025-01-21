@@ -16,7 +16,7 @@
 #define asm_unified(x) asm(".syntax unified\n" x "\n.syntax divided")
 
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
-#define NELEMS(arr) (sizeof(arr)/sizeof(*(arr)))
+#define NELEMS(arr) sizeof arr / sizeof *arr
 
 #define SWAP(a, b, temp)    \
 {                           \

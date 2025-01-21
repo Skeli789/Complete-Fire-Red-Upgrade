@@ -7,6 +7,24 @@
  * \brief Contains functions relating to advanced AI analysis of Pokemon in battle.
  */
 
+//Exported Constants
+typedef enum __attribute__((packed))
+{
+	DONT_PROTECT,
+	USE_PROTECT,
+	USE_STATUS_THEN_PROTECT,
+	PROTECT_FROM_ALLIES,
+	PROTECT_FROM_FOES,
+} ProtectQueries;
+
+enum PivotQueries
+{
+	DONT_PIVOT,
+	CAN_TRY_PIVOT,
+	PIVOT,
+	PIVOT_IMMEDIATELY,
+};
+
 //Exported Functions
 u8 GetBankFightingStyle(u8 bank);
 u8 PredictBankFightingStyle(u8 bank);
@@ -42,7 +60,7 @@ bool8 ShouldPrioritizeMostDamageDoubles(u8 bank);
 bool8 ShouldPrioritizeDangerousTarget(u8 bank);
 bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move);
-u8 ShouldProtect(u8 bankAtk, u8 bankDef, u16 move);
+ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move);
 bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move);
@@ -72,24 +90,6 @@ void IncreasePsychUpViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 bool8 IncreaseViabilityForSpeedControl(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseDoublesDamageViability(s16* originalViability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseDoublesDamageViabilityToScore(s16* originalViability, u8 class, u8 score, u8 bankAtk, u8 bankDef);
-
-//Exported Constants
-enum ProtectQueries
-{
-	DONT_PROTECT,
-	USE_PROTECT,
-	USE_STATUS_THEN_PROTECT,
-	PROTECT_FROM_ALLIES,
-	PROTECT_FROM_FOES,
-};
-
-enum PivotQueries
-{
-	DONT_PIVOT,
-	CAN_TRY_PIVOT,
-	PIVOT,
-	PIVOT_IMMEDIATELY,
-};
 
 #define INCREASE_STATUS_VIABILITY(x) (IncreaseStatusViability(&viability, class, x, bankAtk, bankDef))
 #define INCREASE_STAT_VIABILITY(stat, statLimit, viabilityBoost) (IncreaseStatViability(&viability, class, viabilityBoost, bankAtk, bankDef, move, stat, statLimit))
