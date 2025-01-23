@@ -2,7 +2,7 @@
 
 #### if you support things like these, come here - https://discord.com/invite/axNX3rhR9K
 #### It is adviced to read the wiki [here](https://github.com/Shiny-Miner/CFRU-expansion/wiki) before touching anything.
-#### This fork is made by Tha Code Mining hub to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. Removed excessive og CFRU readme.
+###### This fork is made by Tha Code Mining hub to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers. Removed excessive og CFRU readme.
 
 #### To expand the amount of items just change the number in the file "bytereplacement" to the amount you want +1.
 Ex: 800 items +1 in hex will be 0x321.
@@ -34,7 +34,7 @@ grilokapu
 - Battle backgrounds with CFRU based on DNS!
 - Switch Pokémon in Party Menu Screen pressing Select
 - Repeat item usage
-- Gen 9 moves
+- Gen 9 moves and abili
 - Nickname by Party menu
 - Item expansion and some gen 9 items! No need to use leon rombase.
 - Dexnav Swsh
