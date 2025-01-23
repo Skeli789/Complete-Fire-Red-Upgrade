@@ -29,16 +29,24 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 
 ##### Introduction to the maintainers
 This fork is made by Tha Code Mining hub to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers.
-The shiny's team (actually not a team but collaborators)
+- The shiny's team (actually not a team but collaborators)
 (FORK, NOT ORIGINAL MAKERS OF CFRU OBVIOUSLY)
-Shiny hunter/Miner,
-ansh860,
-Zake,
-Sleepy jirachi,
-grilokapu
+- Shiny hunter/Miner,
+- ansh860,
+- Zake,
+- grilokapu
 ##### For queries and support :
 Join us on discord: https://discord.com/invite/axNX3rhR9K
-
+##### Useful and Optional Additions:
+- [Main Menu HGSS](https://github.com/Shiny-Miner/C-injections-FR/tree/Main-Menu-HGSS)
+- [Custom EV-IV screen](https://github.com/Acimut/Custom-EV-IV-Display-Screen)
+- [Main Menu BW](https://github.com/Shiny-Miner/C-injections-FR/tree/Main-Menu-BW)
+- [New version of BW summary screen](https://github.com/Shiny-Miner/New-BW-summary-screen)
+- [DPE gen 9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) (obviously)
+- [Dynamic surf overworlds expansion](https://github.com/Shiny-Miner/dynamic_surf_ows_masters-expansion/tree/master)
+- [Option menu BW](https://github.com/Shiny-Miner/FR-OptionMenu)
+- [Modified Naming screen BW](https://github.com/Shiny-Miner/Naming-screen-BW)
+- Some music patches said in leon rombase + others...
 ###### Notes :
 - To expand the amount of items just change the number in the file "bytereplacement" to the amount you want +1.
 Ex: 800 items +1 in hex will be 0x321.
@@ -46,3 +54,4 @@ Change word to new number of items for "21 03"
 - Mega Evolution system is not working.
 - It is advised to use [DPE-gen-9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) with it.
 - If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
+- Please don't try to use leon rombase on it as it already contains items + more
