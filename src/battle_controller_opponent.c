@@ -169,7 +169,7 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 	u32 speedCalcPartner = SpeedCalc(PARTNER(gActiveBattler));
 
 	if (speedCalcBank < speedCalcPartner //Second to choose action on either side
-	|| (speedCalcBank == speedCalcPartner && (GetBattlerPosition(gActiveBattler) & BIT_FLANK) == B_FLANK_RIGHT)) //Same speed and second mon on side
+	|| (speedCalcBank == speedCalcPartner && (GetBattlerPosition(gActiveBattler) & BIT_SIDE) == B_FLANK_RIGHT)) //Same speed and second mon on side
 	{
 		switch (gChosenMovesByBanks[PARTNER(gActiveBattler)]) {
 			case MOVE_HELPINGHAND:
