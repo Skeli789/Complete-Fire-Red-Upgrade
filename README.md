@@ -25,6 +25,7 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Wonder Trades
 - Mini textbox/namebox
 - Use HMs in field
+- Working Z moves,Mega evo and dynamax/gmax
 - And much more!
 
 ##### Introduction to the maintainers
@@ -51,7 +52,6 @@ Join us on discord: https://discord.com/invite/axNX3rhR9K
 - To expand the amount of items just change the number in the file "bytereplacement" to the amount you want +1.
 Ex: 800 items +1 in hex will be 0x321.
 Change word to new number of items for "21 03"
-- Mega Evolution system is not working.
 - It is advised to use [DPE-gen-9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) with it.
 - If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 - Please don't try to use leon rombase on it as it already contains items + more
