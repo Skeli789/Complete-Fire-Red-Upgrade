@@ -290,7 +290,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 #ifdef NEW_BATTLE_BACKGROUNDS
 	u16 tileBehavior;
 	s16 x, y;
-	u8 mapSec = GetCurrentRegionMapSectionId();
+	//u8 mapSec = GetCurrentRegionMapSectionId();
 
 	PlayerGetDestCoords(&x, &y);
 	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
