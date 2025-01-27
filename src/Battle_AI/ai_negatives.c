@@ -3230,6 +3230,8 @@ SKIP_CHECK_TARGET:
 		case EFFECT_LAST_RESORT:
 			if (!CanUseLastResort(bankAtk))
 				DECREASE_VIABILITY(10);
+			else if (gLastUsedMoves[bankAtk] == MOVE_GIGATONHAMMER || gLastUsedMoves[bankAtk] == MOVE_BLOODMOON)
+                DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
