@@ -1,0 +1,23 @@
+#org @gText_UndergroundMining_Offer
+The wall is bulging slightly.\nTry digging into it?
+
+#org @gText_UndergroundMining_DisplayPossiblePrizes
+Something pinged in the wall!\n[BUFFER1] confirmed!
+
+#org @gText_UndergroundMining_Instructions
+[.]\pOh? There's a note taped inside\nthe ADM.\p"Digging for Treasure!\"\pThe ADM comes equipped with its\nvery own sledgehammer and pickax!\pPress [A_BUTTON], and ye'll be able to dig\nout all sorts of stuff!\pIf at any point ye want to change\ntools, just press [L_BUTTON] or [R_BUTTON]!\pI'm sure ye can dig them out\nbefore the wall comes tumblin'\ldown!\pYe can do it!\nGood luck!
+
+#org @gText_UndergroundMining_WallCollapsed
+The wall collapsed!
+
+#org @gText_UndergroundMining_GotAllItems
+Everything was dug up!
+
+#org @gText_UndergroundMining_FoundItem
+A[BUFFER2] [BUFFER1]\nwas found.
+
+#org @gText_UndergroundMining_NoSpace
+A[BUFFER2] [BUFFER1]\nwas found.\pToo bad! There's no space for it in\nthe Cube.
+
+#org @gText_UndergroundMining_ToolSwapInstructions
+[L_BUTTON][R_BUTTON]

@@ -2144,3 +2144,11 @@ CursorCB_Switch = 0x08122e00|1;
 HandleChooseMonCancel = 0x811fd88|1;
 CalculatePlayerPartyCount = 0x08040c3c|1;
 UpdateCurrentPartySelection = 0x0811ff94|1; 
+
+/* Mining Funcs */
+
+AddTextPrinterParameterized3 = 0x812e51c | 1;
+gOamData_AffineOff_ObjNormal_32x32 = 0x83ac9d8;
+gOamData_AffineOff_ObjNormal_64x64 = 0x83ac9e0;
+gOamData_AffineOff_ObjNormal_64x32 = 0x83aca00;
+gOamData_AffineOff_ObjNormal_32x64 = 0x83aca20;
