@@ -7,6 +7,7 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Shows enemy team by L button
 - Auto trigger wild battles
 - Continue screen icons
+- Unbound Mining system!
 - Tm case icons (graphic modificable)
 - Timebox in menu
 - Skipped Gengar and nidoran cutscene
