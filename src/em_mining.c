@@ -23,7 +23,7 @@
 #include "../include/constants/songs.h"
 #include "../include/gba/io_reg.h"
 
-#include "../include/new/em_mining_data.h"
+#include "../include/new/em_mining.h"
 #include "../include/new/util.h"
 
 //#define FLAG_EXPLAINED_MINING_RULES 0x1 //UNCOMMENT AND CHANGE THIS IF YOU WANT
