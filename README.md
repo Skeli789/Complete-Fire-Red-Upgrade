@@ -56,3 +56,4 @@ Change word to new number of items for "21 03"
 - It is advised to use [DPE-gen-9](https://github.com/Shiny-Miner/Dynamic-Pokemon-Expansion-Gen-9) with it.
 - If you want to see how potential this expansion would have in future read [this](https://github.com/Shiny-Miner/CFRU-expansion/blob/Experiments/todo.md)
 - Please don't try to use leon rombase on it as it already contains items + more
+- Added convienience for compiling, now run a_makepy.bat to make the project (it executes "python scripts//make.py") and run b_cleanpy.bat to clean repo (it runs python scripts//clean.py)
