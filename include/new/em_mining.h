@@ -33,6 +33,17 @@ enum Prizes
 	PRIZE_REVIVE,
 	PRIZE_MAX_REVIVE,
 	PRIZE_STAR_PIECE,
+        PRIZE_OLD_AMBER,
+	PRIZE_DOME_FOSSIL,
+	PRIZE_HELIX_FOSSIL,
+	PRIZE_CLAW_FOSSIL,
+	PRIZE_ROOT_FOSSIL,
+	PRIZE_SKULL_FOSSIL,
+	PRIZE_ARMOR_FOSSIL,
+	PRIZE_PLUME_FOSSIL,
+	PRIZE_COVER_FOSSIL,
+	PRIZE_JAW_FOSSIL,
+	PRIZE_SAIL_FOSSIL,
 	PRIZE_COUNT
 };
 
@@ -40,6 +51,8 @@ enum Prizes
 #define PRIZE_LAST_SHARD PRIZE_BLUE_SHARD
 #define PRIZE_FIRST_EVO_STONE PRIZE_FIRE_STONE
 #define PRIZE_LAST_EVO_STONE PRIZE_DUSK_STONE
+#define PRIZE_FIRST_FOSSIL PRIZE_OLD_AMBER
+#define PRIZE_LAST_FOSSIL PRIZE_SAIL_FOSSIL
 
 typedef u8 PrizeShape_T[MAX_OBJECT_WIDTH];
 
@@ -91,6 +104,21 @@ extern const u8 MiningMaxReviveTiles[];
 extern const u16 MiningMaxRevivePal[];
 extern const u8 MiningStarPieceTiles[];
 extern const u16 MiningStarPiecePal[];
+extern const u8 MiningOldAmberTiles[];
+extern const u16 MiningOldAmberPal[];
+extern const u8 MiningHelixFossilTiles[];
+extern const u16 MiningHelixFossilPal[];
+extern const u8 MiningDomeFossilTiles[];
+extern const u8 MiningClawFossilTiles[];
+extern const u8 MiningRootFossilTiles[];
+extern const u8 MiningSkullFossilTiles[];
+extern const u8 MiningArmorFossilTiles[];
+extern const u8 MiningPlumeFossilTiles[];
+extern const u16 MiningPlumeFossilPal[];
+extern const u8 MiningCoverFossilTiles[];
+extern const u8 MiningJawFossilTiles[];
+extern const u16 MiningJawFossilPal[];
+extern const u8 MiningSailFossilTiles[];
 
 extern const u8 MiningBedrock0Tiles[];
 extern const u16 MiningBedrock0Pal[];
@@ -236,6 +264,94 @@ static const u8 sStarPieceShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
 	{0, 1, 0},
 };
 
+static const u8 sOldAmberShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 0},
+};
+
+static const u8 sDomeFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{0, 1, 1, 1},
+};
+
+static const u8 sHelixFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 0},
+};
+
+static const u8 sClawFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 0},
+};
+
+static const u8 sRootFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 0},
+	{1, 1, 1, 0},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
+static const u8 sSkullFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{0, 1, 1, 0},
+};
+
+static const u8 sArmorFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
+static const u8 sPlumeFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
+static const u8 sCoverFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
+static const u8 sJawFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
+static const u8 sSailFossilShape[MAX_OBJECT_HEIGHT][MAX_OBJECT_WIDTH] =
+{
+	{0, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+	{1, 1, 1, 1},
+};
+
 static const struct MiningPrize sMiningPrizes[PRIZE_COUNT] =
 {
 	[PRIZE_HEART_SCALE] = {ITEM_HEART_SCALE, MiningHeartScaleTiles, MiningHeartScalePal, sHeartScaleShape, &gOamData_AffineOff_ObjNormal_32x32, (32 * 32) / 2},
@@ -257,21 +373,33 @@ static const struct MiningPrize sMiningPrizes[PRIZE_COUNT] =
 	[PRIZE_REVIVE] = {ITEM_REVIVE, MiningReviveTiles, MiningRevivePal, sReviveShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
 	[PRIZE_MAX_REVIVE] = {ITEM_MAX_REVIVE, MiningMaxReviveTiles, MiningMaxRevivePal, sMaxReviveShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
 	[PRIZE_STAR_PIECE] = {ITEM_STAR_PIECE, MiningStarPieceTiles, MiningStarPiecePal, sStarPieceShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+        [PRIZE_OLD_AMBER] = {ITEM_OLD_AMBER, MiningOldAmberTiles, MiningOldAmberPal, sOldAmberShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_DOME_FOSSIL] = {ITEM_DOME_FOSSIL, MiningDomeFossilTiles, MiningHelixFossilPal, sDomeFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_HELIX_FOSSIL] = {ITEM_HELIX_FOSSIL, MiningHelixFossilTiles, MiningHelixFossilPal, sHelixFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_CLAW_FOSSIL] = {ITEM_CLAW_FOSSIL, MiningClawFossilTiles, MiningHelixFossilPal, sClawFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_ROOT_FOSSIL] = {ITEM_ROOT_FOSSIL, MiningRootFossilTiles, MiningHelixFossilPal, sRootFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_SKULL_FOSSIL] = {ITEM_SKULL_FOSSIL, MiningSkullFossilTiles, MiningHelixFossilPal, sSkullFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_ARMOR_FOSSIL] = {ITEM_ARMOR_FOSSIL, MiningArmorFossilTiles, MiningHelixFossilPal, sArmorFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_PLUME_FOSSIL] = {ITEM_PLUME_FOSSIL, MiningPlumeFossilTiles, MiningPlumeFossilPal, sPlumeFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_COVER_FOSSIL] = {ITEM_COVER_FOSSIL, MiningCoverFossilTiles,MiningPlumeFossilPal, sCoverFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_JAW_FOSSIL] = {ITEM_JAW_FOSSIL, MiningJawFossilTiles, MiningJawFossilPal, sJawFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
+	[PRIZE_SAIL_FOSSIL] = {ITEM_SAIL_FOSSIL, MiningSailFossilTiles, MiningJawFossilPal, sSailFossilShape, &gOamData_AffineOff_ObjNormal_64x64, (64 * 64) / 2},
 };
 
 static const u8 sPrizeEncounterChart[100] =
 {
-	/*40 %*/ PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE,
+	/*20 %*/ PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE,
 	/*"" %*/ PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE,
-	/*"" %*/ PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE,
-	/*"" %*/ PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE, PRIZE_HARD_STONE,
-	/*30 %*/ PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE,
-	/*"" %*/ PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE,
+	/*20 %*/ PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE,
 	/*"" %*/ PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE, PRIZE_EVERSTONE,
 	/*10 %*/ PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD, PRIZE_FIRST_SHARD,
 	/* 9 %*/ PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE, PRIZE_FIRST_EVO_STONE,
 	/* 6 %*/ PRIZE_HEART_SCALE, PRIZE_HEART_SCALE, PRIZE_HEART_SCALE, PRIZE_HEART_SCALE, PRIZE_HEART_SCALE, PRIZE_HEART_SCALE,
 	/* 5 %*/ PRIZE_REVIVE, PRIZE_REVIVE, PRIZE_REVIVE, PRIZE_REVIVE, PRIZE_REVIVE,
+	/* 5 %*/ PRIZE_MAX_REVIVE, PRIZE_MAX_REVIVE, PRIZE_MAX_REVIVE, PRIZE_MAX_REVIVE, PRIZE_MAX_REVIVE
+	/* 15 %*/ PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE,
+	/*"" %*/ PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, PRIZE_STAR_PIECE, 
+	/*10 %*/ PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL, PRIZE_FIRST_FOSSIL,
 };
 
 //Bedrock
