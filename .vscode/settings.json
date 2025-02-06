@@ -3,6 +3,7 @@
         "party_menu.h": "c",
         "types.h": "c",
         "overworld.h": "c",
-        "text.h": "c"
+        "text.h": "c",
+        "config.h": "c"
     }
 }

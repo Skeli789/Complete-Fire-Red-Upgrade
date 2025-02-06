@@ -1,4 +1,6 @@
 ##
+#include "include/pokedex.h"
+
 #ifdef NATIONAL_DEX_4_DIGITS
 DexScreen_PrintNumWLeadingZeroes 0x08104880 6 0
 #endif

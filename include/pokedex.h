@@ -2,6 +2,10 @@
 
 #include "global.h"
 
+#if NATIONAL_DEX_COUNT > 999
+#define NATIONAL_DEX_4_DIGITS
+#endif
+
 enum
 {
     FLAG_GET_SEEN,
@@ -42,6 +46,7 @@ struct AlternateSize
 #define CAUGHT_DEX_FLAGS gSaveBlock1->dexCaughtFlags //0x20258B9
 
 bool16 __attribute__((long_call)) HasAllMons(void);
+void __attribute__((long_call)) DexScreen_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 colorIdx);
 
 /*
 void ResetPokedex(void);

@@ -3,6 +3,7 @@
 #include "include/pokemon_storage_system.h"
 #include "include/constants/tutors.h"
 #include "include/new/catching.h"
+#include "include/pokedex.h"
 
 ##Optional Byte Changes##
 ##Don't Count Eggs Healing PKMN Centre
@@ -681,9 +682,11 @@
 #endif
 
 #ifdef NATIONAL_DEX_4_DIGITS
-08103A74 22 2D
-08103A94 22 7D
-08452186 3D
+08103A74 2C
+08103A94 7C
+08452186 3C
+08105F06 21
+08136126 04
 #endif
 
 #ifdef UNBOUND

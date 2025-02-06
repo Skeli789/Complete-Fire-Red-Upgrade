@@ -1,11 +1,6 @@
 #include "../include/gba/types.h"
 #include "../include/text.h"
-
-void __attribute__((long_call)) DexScreen_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 colorIdx);
-
-#if NATIONAL_DEX_COUNT < 999
-#define NATIONAL_DEX_4_DIGITS
-#endif
+#include "../include/pokedex.h"
 
 void DexScreen_PrintNumWLeadingZeroes(u8 windowId, u8 fontId, u16 num, u8 x, u8 y, u8 colorIdx) {
     u8 buff[5];
