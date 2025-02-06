@@ -2022,6 +2022,9 @@ TitleScreen_CreateBlankSprite = 0x80799F0 | 1;
 /* Playtime Functions */
 PlayTimeCounter_SetToMax = 0x80548D4 | 1;
 
+/* Pokedex Functions */
+DexScreen_AddTextPrinterParameterized = 0x081047C8 | 1;
+
 /* Math Functions */
 Sine = 0x8044E30 | 1;
 Cosine = 0x8044E4C | 1;

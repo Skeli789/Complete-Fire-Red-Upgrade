@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "party_menu.h": "c",
+        "types.h": "c",
+        "overworld.h": "c",
+        "text.h": "c"
+    }
+}
