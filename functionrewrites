@@ -3,4 +3,5 @@
 
 #ifdef NATIONAL_DEX_4_DIGITS
 DexScreen_PrintNumWLeadingZeroes 0x08104880 6 0
+DexScreen_PrintNumWRightAlign 0x0810491C 6 0
 #endif
