@@ -1161,7 +1161,7 @@ ExpBarNormalChangeAmount:
 @0x81E381C with r0
 ActivateMGBAPrint:
 	add sp, #0x10
-	bl mgba_open
+	bl MgbaOpen
 	pop {r4, r7, pc}
 
 .pool

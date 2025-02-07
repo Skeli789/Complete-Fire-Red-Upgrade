@@ -151,6 +151,13 @@
 #define MUS_FANFA1 0x101
 #define MUS_FANFA2 0x10D
 
+#define MUS_RS_VS_GYM_LEADER      265 // MUS_BATTLE32
+#define MUS_RS_VS_TRAINER         266 // MUS_BATTLE20
+#define MUS_RS_VS_WILD            348 
+#define MUS_RS_VS_E4              349 
+#define MUS_RS_VS_CHAMP           350 
+#define MUS_RS_VS_RIVAL           351 
+
 #ifdef UNBOUND //For Unbound
 
 #define SE_RELIC_SONG 0x1DF

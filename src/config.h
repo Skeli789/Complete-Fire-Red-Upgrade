@@ -349,6 +349,12 @@ enum //These vars need to be one after the other (hence the enum)
 #define CHANGE_ITEM_STORAGE_GRAPHIC //if uncommented, will change pc item storage to Swsh style (background modificable)
 //#define REMOVE_CRITICAL_HITS //Uncomment this to remove critical hits.
 
+//Save stuff
+#define VAR_R_BUTTON_MODE 0x5150
+#define VAR_BATTLE_MUSIC  0x5151
+#define VAR_WILD_LEVEL_SCALING 0x5153
+#define VAR_AUTO_SORT_BAG 0x5154
+
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
 

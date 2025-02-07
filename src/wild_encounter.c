@@ -97,8 +97,9 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	u8 rand;
 	u8 fluteBonus;
 
-	#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
-	if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
+	//#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
+	//if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
+	if(VarGet(VAR_WILD_LEVEL_SCALING) == 0)
 	{
 		min = max = GetLowestMonLevel(gPlayerParty);
 
@@ -109,7 +110,6 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 		#endif
 	}
 	else
-	#endif
 	//Make sure minimum level is less than maximum level
 	if (wildPokemon->maxLevel >= wildPokemon->minLevel)
 	{
@@ -143,6 +143,24 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 			else
 				min = 1;
 			break;
+	}
+	if(VarGet(VAR_WILD_LEVEL_SCALING) == 0)
+	{
+		u16 level = 0;
+		for (int i = 0; i < gPlayerPartyCount; i++) {
+			level += gPlayerParty[i].level;
+		}
+		level /= gPlayerPartyCount;
+		if(min <= level && max <= level) {
+			min = level - 6;
+			max = level - 7;
+		}
+		if (min < 1 || min > 100) {
+			min = 2;
+		}
+		if (max < 1 || max > 100) {
+			max = 3;
+		}
 	}
 
 	#ifdef FLAG_HARD_LEVEL_CAP

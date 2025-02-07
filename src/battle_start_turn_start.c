@@ -1794,6 +1794,15 @@ u16 GetMUS_ForBattle(void)
 		{
 			trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
 
+			if (trainerClass == CLASS_LEADER)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_GYM_LEADER : MUS_RS_VS_GYM_LEADER;
+			if(trainerClass == CLASS_ELITE_FOUR)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_GYM_LEADER : MUS_RS_VS_E4;
+			if(trainerClass == CLASS_CHAMPION || trainerClass == CLASS_CHAMPION_RS)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_CHAMPION : MUS_RS_VS_CHAMP;
+			if(trainerClass == CLASS_RIVAL || trainerClass == CLASS_RIVAL_2)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_TRAINER : MUS_RS_VS_RIVAL;
+
 			if (gClassBasedBattleBGM[trainerClass])
 				return gClassBasedBattleBGM[trainerClass];
 			
@@ -1819,7 +1828,7 @@ u16 GetMUS_ForBattle(void)
 		#ifdef UNBOUND
 			return BGM_BATTLE_BORRIUS_TRAINER;
 		#else
-			return BGM_BATTLE_TRAINER;
+		return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_TRAINER : MUS_RS_VS_TRAINER;
 		#endif
 	}
 
@@ -1862,7 +1871,7 @@ u16 GetMUS_ForBattle(void)
 				return song;
 		#endif
 
-		return BGM_BATTLE_WILD;
+		return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_WILD : MUS_RS_VS_WILD;
 	#endif
 }
 

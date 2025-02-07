@@ -778,4 +778,16 @@ TMCaseMonIconPalChangeHook 8131E5C 0
 
 #PrintContinueStats 0800ce58 0
 #PrintMonIcons_hook 0800C6CC 2
-Task_WaitFadeAndPrintMainMenuText 800C780 1
+Task_WaitFadeAndPrintMainMenuText 0800C780 1
+
+
+CB2_OptionsMenuFromStartMenu 08088388 0
+Task_OptionMenu 08088780 1
+CloseAndSaveOptionMenu 08088B00 1
+CB2_OptionMenu 08088454 0
+BufferOptionMenuString 080889A8 1
+OptionMenu_ProcessInput 080888C0 0
+LoadOptionMenuPalette 080886F0 0
+LoadOptionMenuItemNames 08088D8C 0
+OptionMenu_PickSwitchCancel 08088680 0
+StartMenuBagCallback 0806f480 0

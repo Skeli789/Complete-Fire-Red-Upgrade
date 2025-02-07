@@ -2338,9 +2338,7 @@ static void RegisterSpecies(u16 species, u8 taskId)
 	VarSet(VAR_DEXNAV, varStore);
 
 	//Update R-Button mode if applicable
-	#ifdef VAR_R_BUTTON_MODE
 	VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
-	#endif
 	
 	//Update registered icon details
 	sDexNavGUIPtr->registeredIndex = sDexNavGUIPtr->selectedIndex;

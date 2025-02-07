@@ -510,3 +510,42 @@ static bool8 ReloadStartMenuItems(void)
 
 	return FALSE;
 }
+
+enum
+{
+	SORT_ALPHABETICALLY,
+	SORT_BY_TYPE,
+	SORT_BY_LEAST,
+	SORT_BY_MOST,
+	SORT_BY_AMOUNT,
+};
+bool8 StartMenuBagCallback(void)
+{
+    if (!gPaletteFade->active)
+    {
+        PlayRainStoppingSoundEffect();
+        DestroySafariZoneStatsWindow();
+        CleanupOverworldWindowsAndTilemaps();
+        SetMainCallback2(CB2_BagMenuFromStartMenu);
+		if(VarGet(VAR_AUTO_SORT_BAG) != 0)
+		{
+			switch(VarGet(VAR_AUTO_SORT_BAG))
+			{
+				case 1:
+					SortItemsInBag(POCKET_ITEMS - 1, SORT_ALPHABETICALLY);
+					SortItemsInBag(POCKET_KEYITEMS - 1, SORT_ALPHABETICALLY);
+					SortItemsInBag(POCKET_POKEBALLS - 1, SORT_ALPHABETICALLY);
+					break;
+				case 2:
+					SortItemsInBag(POCKET_ITEMS - 1, SORT_BY_TYPE);
+					break;
+				case 3:
+					SortItemsInBag(POCKET_ITEMS - 1, SORT_BY_AMOUNT);
+					SortItemsInBag(POCKET_POKEBALLS - 1, SORT_BY_AMOUNT);
+					break;
+			}
+		}
+        return TRUE;
+    }
+    return FALSE;
+}

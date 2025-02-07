@@ -1,0 +1,47 @@
+#org @gText_RButtonMode
+R Button Mode
+
+#org @gText_RButtonDexNav
+DexNav
+
+#org @gText_RButtonPokemon
+Pok\emon
+
+#org @gText_RButtonItems
+Items
+
+#org @gText_PickSwitchCancel_Page1
+[L_BUTTON][R_BUTTON]Page 1 [DPAD_UP_DOWN]Pick [DPAD_LEFT_RIGHT]Switch [A_BUTTON][B_BUTTON]Cancel
+
+#org @gText_PickSwitchCancel_Page2
+[L_BUTTON][R_BUTTON]Page 2 [DPAD_UP_DOWN]Pick [DPAD_LEFT_RIGHT]Switch [A_BUTTON][B_BUTTON]Cancel
+
+#org @gText_BattleMusic
+Battle Music
+
+#org @gText_FRLG
+FRLG
+
+#org @gText_RSE
+RSE
+
+#org @gText_WildLevelScaling
+Wild Level Scaling
+
+#org @gText_OnOption
+On
+
+#org @gText_OffOption
+Off
+
+#org @gText_AutoSortBag
+Auto-Sort Bag
+
+#org @gText_ByName
+By Name
+
+#org @gText_ByType
+By Type
+
+#org @gText_ByAmount
+By Amount
