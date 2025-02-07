@@ -26,7 +26,8 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Wonder Trades
 - Mini textbox/namebox
 - Use HMs in field
-- Working Z moves,Mega evo and dynamax/gmax
+- Updated Z moves,Mega evo and dynamax/gmax trigger icons
+- Second page in options menu
 - And much more!
 
 ##### Introduction to the maintainers
