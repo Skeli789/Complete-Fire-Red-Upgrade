@@ -703,6 +703,7 @@ BS_031_Flinch:
 	jumpifmove MOVE_THUNDERFANG ThunderFangBS
 	jumpifmove MOVE_FIREFANG FireFangBS
 	jumpifmove MOVE_ICEFANG IceFangBS
+	jumpifmove MOVE_UPPERHAND UpperHandBS
 	goto BS_STANDARD_HIT
 	
 ThunderFangBS:
@@ -731,6 +732,10 @@ IceFangBS:
 	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectwithchancetarget
 	goto BS_MOVE_FAINT
+
+UpperHandBS:
+	callasm TryUpperHand
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

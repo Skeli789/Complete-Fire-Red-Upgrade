@@ -30366,9 +30366,24 @@ ANIM_BLOODMOON:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to -
+@Credits to - Matteo
 ANIM_UPPERHAND:
-	goto 0x81c7ced
+	loadparticle ANIM_TAG_HANDS_AND_FEET
+	loadparticle ANIM_TAG_IMPACT
+	SetBlends 0x080C
+	launchtask AnimTask_BendSprite 0x5 0x4 0x8 0x5 bank_attacker 0x0
+	pause 0x6
+	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x3
+	pause 0x4
+	PlaySound2 BashSound 0x3F
+	launchtemplate Template_FistAndFeet 0x82 0x4 0xA 0xFFF8 0xE 0x3
+	waitanimation
+	launchtask AnimTask_BendSprite 0x5 0x4 0x8 0x5 bank_attacker 0x1
+	PlaySound2 PoundSound 0x3F
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x4 0x0 0x6 0x1 
+	waitanimation
+	resetblends
+	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

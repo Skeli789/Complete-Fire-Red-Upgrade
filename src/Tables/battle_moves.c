@@ -15819,12 +15819,12 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_UPPERHAND] =
 	{
-		.effect = EFFECT_SUCKER_PUNCH,
+		.effect = EFFECT_FLINCH_HIT,
 		.power = 65,
 		.type = TYPE_FIGHTING,
 		.accuracy = 100,
 		.pp = 15,
-		.secondaryEffectChance = 30,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 3,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,

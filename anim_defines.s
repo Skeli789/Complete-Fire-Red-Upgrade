@@ -625,6 +625,8 @@
 .equ Template_PsywaveRing, 0x83e59e8
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
+.equ AnimTask_BendSprite, 0x8099981
+.equ Template_FistAndFeet, 0x83E68AC
 
 @OAM
 .equ OAM_OFF_8x8, 0x83AC9C8

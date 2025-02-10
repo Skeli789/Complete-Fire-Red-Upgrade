@@ -1471,6 +1471,20 @@ SKIP_CHECK_TARGET:
 			}
 			break;
 
+		case EFFECT_FLINCH_HIT:
+			switch(move) {
+				case MOVE_UPPERHAND:
+					if(!PriorityMoveInMovesetRange(bankDef, 1, 3))
+						DECREASE_VIABILITY(10); //Upper Hand can only be used against moves with priorities between 1-3
+					else if (Random() % 100 < 50) //Abusing AI with Upper Hand is easy, so only use 50% of the time
+						DECREASE_VIABILITY(8);
+					break;
+
+				default:
+					goto AI_STANDARD_DAMAGE;
+			}
+			break;
+
 		case EFFECT_RESTORE_HP:
 		case EFFECT_MORNING_SUN:
 		AI_RECOVERY:

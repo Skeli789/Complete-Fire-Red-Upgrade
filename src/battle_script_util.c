@@ -2778,3 +2778,11 @@ void TrySetPoisonPuppeterEffect(void)
 		gBattlescriptCurrInstr = BattleScript_SetPuppetConfusion - 5;
 	}
 }
+
+void TryUpperHand(void)
+{
+	if (PRIORITY(gChosenMovesByBanks[gBankTarget]) >= 1 && PRIORITY(gChosenMovesByBanks[gBankTarget]) <= 3)
+		return;
+
+	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+}

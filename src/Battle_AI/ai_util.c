@@ -3789,6 +3789,29 @@ bool8 PriorityMoveInMoveset(u8 bank)
 	return FALSE;	
 }
 
+//Checks if bank has a move with priority between the low value and high value
+bool8 PriorityMoveInMovesetRange(u8 bank, u8 lowValue, u8 highValue)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].priority >= lowValue 
+			&& gBattleMoves[move].priority <= highValue)
+				return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+
 bool8 DamagingPriorityMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 {
 	u16 move;
