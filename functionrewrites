@@ -1,1 +1,22 @@
+#include "src/config.h"
+
 ##
+Task_HandleChooseMonInput 0x0811fb28 1 0
+PartyMenuButtonHandler 0x0811fefc 1 1
+GetEventObjectIdByLocalIdAndMap 0x0805df60 0 1
+DoJumpAnimStep 0x08065000 0 1
+RemoveEventObjectsOutsideView 0x0805ed10 0 1
+GetInteractedEventObjectScript 0x0806cff4 0 1
+CB2_EndTrainerBattle 0x080804ac 0 1
+CB2_EndWildBattle 0x0807fb40 0 1
+CB2_EndScriptedWildBattle_2 0x0807fba0 0 1
+#ifdef NATURE_COLORS_ON_SUMMARY_SCREEN
+PrintSkillsPage 0x081370ec 0 1
+#endif
+#ifdef BW_SUMMARY_SCREEN
+ShowPokemonSummaryScreen 0x081344F8 0 1
+#endif
+
+SetTitleScreenScene_Cry 0x080791c0 0 1
+Task_OakSpeech_IsInhabitedFarAndWide 0x0812fa78 0 1
+CreateOakIntroPokemonSprite 0x08130f2c 0 1

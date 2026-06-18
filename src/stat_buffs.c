@@ -273,6 +273,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	bool8 affectsUser = FALSE;
 	bool8 notProtectAffected = FALSE;
 	u32 index;
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (flags & MOVE_EFFECT_AFFECTS_USER)
 	{
@@ -333,7 +334,8 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if ((IsClearBodyAbility(ability)
-			  || (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
+			  || (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS))
+			  || ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_CLEAR_AMULET)
 		&& !certain && gCurrentMove != MOVE_CURSE)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
@@ -380,7 +382,9 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		}
 
 		else if (!certain
-		&& (AbilityPreventsLoweringStat(ability, statId) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability))))
+		&& (AbilityPreventsLoweringStat(ability, statId) || (MindsEyePreventsLoweringStat(ability, statId)
+		&& SpeciesHasMindsEye(gBankTarget)) || (IsIntimidateActive() && AbilityBlocksIntimidate(ability)
+		&& !SpeciesHasMindsEye(SPECIES(bank)))) && !SpeciesHasGuardDog(SPECIES(bank)))
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
@@ -410,7 +414,17 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-		else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck()) && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && flags == 0)
+		else if (!certain && GuardDogPreventsLoweringStat(ability, statId, bank))
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				BattleScriptPush(BS_ptr);
+				gBattleScripting.bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_GuardDogActivates;
+			}
+			return STAT_CHANGE_DIDNT_WORK;
+		}
+		else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck() || ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_COVERT_CLOAK) && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && flags == 0)
 		{
 			return STAT_CHANGE_DIDNT_WORK;
 		}
@@ -537,11 +551,12 @@ u8 CanStatNotBeLowered(u8 statId, u8 bankDef, u8 bankAtk, u8 defAbility)
 		return STAT_PROTECTED_BY_MIST;
 
 	if (IsClearBodyAbility(defAbility)
-	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS)))
+	|| (defAbility == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS))
+	|| ITEM_EFFECT(bankDef) == ITEM_EFFECT_CLEAR_AMULET)
 		return STAT_PROTECTED_BY_GENERAL_ABILITY;
 	else if (ABILITY(PARTNER(bankDef)) == ABILITY_FLOWERVEIL && IsOfType(bankDef, TYPE_GRASS))
 		return STAT_PROTECTED_BY_PARTNER_ABILITY;
-	else if (AbilityPreventsLoweringStat(defAbility, statId))
+	else if (AbilityPreventsLoweringStat(defAbility, statId) || (MindsEyePreventsLoweringStat(defAbility, statId) && SpeciesHasMindsEye(gBankTarget)))
 		return STAT_PROTECTED_BY_SPECIFIC_ABILITY;
 
 	return STAT_CAN_BE_LOWERED;

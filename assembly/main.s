@@ -341,3 +341,114 @@ func_get_attr: .word 0x0803FBE8 + 1
 func_rand: .word 0x08044EC8 + 1
 func_set_attr: .word 0x0804037C + 1
 func_return: .word 0x08046120 + 1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Wonder trades
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.align 2
+.global TakePokemon
+
+TakePokemon:
+    push {r0-r7, lr}
+    mov r5, #0x0
+    ldr r6, .VAR
+    ldr r7, .POKEMON_AMOUNT
+    ldrb r4, [r7]
+    cmp r4, #0x2
+    blt return
+    ldrh r3, [r6]
+    cmp r3, r4
+    bhs return
+    sub r2, r4, #0x1
+    strb r2, [r7]
+    add r3, #0x1
+    sub r2, r4, r3
+    mov r5, #0x64
+    mul r2, r5
+    lsr r2, r2, #0x1
+    mul r3, r5
+    ldr r7, .POKEMON_PARTY
+    add r0, r7, r3
+    sub r1, r0, r5
+    swi #0xB
+    mul r4, r5
+    add r7, r4
+    sub r7, r5
+    mov r0, #0x0
+    mov r2, #0x19
+    mov r5, #0x1
+
+erase_loop:
+    stmia r7!, {r0}
+    sub r2, #0x1
+    cmp r2, #0x0
+    bne erase_loop
+
+return:
+    strh r5, [r6, #0x10]
+    pop {r0-r7, pc}
+
+.align 2
+.POKEMON_AMOUNT:
+    .word 0x02024029
+.POKEMON_PARTY:
+    .word 0x02024284
+.VAR:
+    .word 0x020270B8 + (0x8004 * 2)
+
+.align 2
+.global CopyPlayerPartyMonToBattleData_Hook
+.pool
+CopyPlayerPartyMonToBattleData_Hook:
+    ldr   r0, =0x8041BD8
+    ldr   r1, =0x8041BDC
+    add   r0, r0, r1
+    ldrb  r1, [r0, #0]
+    mov   r4, #2
+    mov   r0, #2
+    and   r0, r1
+    cmp   r0, #0
+    beq   .retorno
+
+    ldr   r2, [sp, #52]
+    cmp   r2, #4
+    beq   .jump_to
+
+    ldr   r2, =0x8041BE0
+    ldr   r1, =0x8041BE4
+    ldr   r3, [sp, #52]
+    lsl   r0, r3, #2
+    add   r0, r0, r1
+    ldr   r1, [r0, #0]
+    ldrb  r0, [r2, #0]
+    bic   r0, r1
+    strb  r0, [r2, #0]
+
+    ldr   r1, =0x8041BE8
+    lsl   r0, r3, #1
+    add   r0, r0, r1
+    ldrb  r0, [r0, #0]
+    bl    0x8128030
+
+    mov   r1, r0
+    lsl   r1, r1, #24
+    lsr   r1, r1, #24
+    ldr   r0, [sp, #52]
+	mov   r2, #1
+    bl    CopyPlayerPartyMonToBattleData
+
+    ldr   r0, =0x041BEC
+    ldrb  r0, [r0, #0]
+	ldr   r1, =0x08041C08 | 1
+    bx    r1
+
+.jump_to:
+    ldr   r0, =0x08041BF0 | 1
+    bx    r0
+
+.retorno:
+    ldr   r0, =0x08041C46 | 1
+    bx    r0
+
+.pool

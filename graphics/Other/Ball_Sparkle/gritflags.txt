@@ -1,0 +1,1 @@
+-g -gB4 -gu8 -gz! -ah192 -aw32 -m! -p -pu16 -pz! -fh -fts

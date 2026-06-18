@@ -4,6 +4,10 @@ trainers_with_evs_table.h
 	defining the EV/IV/ability/ball type to be assigned to trainer pokemon
 */
 
+#define TERA_TYPE_RANDOM_ALL 0xFE
+#define TERA_TYPE_RANDOM     0xFF
+#define DONT_TERA            TYPE_BLANK
+
 const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 {
 	[0] = {0}, //Empty Spread
@@ -16,6 +20,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[2] =
 	{ //Physical Sweeper: Speed Based
@@ -26,6 +31,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[3] =
 	{ //Special Sweeper: Power Based
@@ -36,6 +42,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[4] =
 	{ //Special Sweeper: Speed Based
@@ -46,6 +53,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[5] =
 	{ //Bulky Physical Attacker 
@@ -56,6 +64,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 6,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[6] =
 	{ //Bulky Physical Attacker 
@@ -66,6 +75,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.defEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[7] =
 	{ //Bulky Physical Attacker 
@@ -76,6 +86,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[8] =
 	{ //Bulky Special Attacker
@@ -86,6 +97,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[9] =
 	{ //Bulky Special Attacker
@@ -96,6 +108,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[10] =
 	{ //Bulky Special Attacker
@@ -106,6 +119,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[11] =
 	{ //Physical Wall
@@ -116,6 +130,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[12] =
 	{ //Physical Wall
@@ -126,6 +141,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[13] =
 	{ //Special Wall: Less Attack
@@ -136,6 +152,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[14] =
 	{ //Special Wall: Less Special Attack
@@ -146,6 +163,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[15] =
 	{ //Mixed Attacker: Attack Based, Less Defense
@@ -156,6 +174,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[16] =
 	{ //Mixed Attacker: Attack Based, Less Sp. Defense
@@ -166,6 +185,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[17] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Defense
@@ -176,6 +196,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[18] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Sp. Defense
@@ -186,6 +207,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[19] =
 	{ //Mixed Attacker: Speed Based, Less Defense
@@ -196,6 +218,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[20] =
 	{ //Mixed Attacker: Speed Based, Less Sp. Defense
@@ -206,6 +229,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[21] =
 	{ //Mixed Wall: Defense Based, Less Attack
@@ -216,6 +240,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[22] =
 	{ //Mixed Wall: Defense Based, Less Sp. Attack
@@ -226,6 +251,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[23] =
 	{ //Mixed Wall: Sp. Defense Based, Less Attack
@@ -236,6 +262,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[24] =
 	{ //Mixed Wall: Sp. Defense Based, Less Sp. Attack
@@ -246,6 +273,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[25] =
 	{ //Fast Wall: HP Based, Less Attack
@@ -256,6 +284,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[26] =
 	{ //Fast Wall: HP Based, Less Sp. Attack
@@ -266,6 +295,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[27] =
 	{ //Fast Wall: Defense Based, Less Attack
@@ -276,6 +306,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[28] =
 	{ //Fast Wall: Defense Based, Less Sp. Attack
@@ -286,6 +317,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[29] =
 	{ //Fast Wall: Sp. Defense Based, Less Attack
@@ -296,6 +328,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[30] =
 	{ //Fast Wall: Sp. Defense Based, Less Sp. Attack
@@ -306,6 +339,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Random_1_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[31] =
 	{ //Physical Sweeper: Power Based - Ability_1
@@ -316,6 +350,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[32] =
 	{ //Physical Sweeper: Speed Based - Ability_1
@@ -326,6 +361,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[33] =
 	{ //Special Sweeper: Power Based - Ability_1
@@ -336,6 +372,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[34] =
 	{ //Special Sweeper: Speed Based - Ability_1
@@ -346,6 +383,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[35] =
 	{ //Bulky Physical Attacker - Ability_1
@@ -356,6 +394,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 6,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[36] =
 	{ //Bulky Physical Attacker - Ability_1
@@ -366,6 +405,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.defEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[37] =
 	{ //Bulky Physical Attacker - Ability_1
@@ -376,6 +416,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[38] =
 	{ //Bulky Special Attacker - Ability_1
@@ -386,6 +427,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[39] =
 	{ //Bulky Special Attacker - Ability_1
@@ -396,6 +438,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[40] =
 	{ //Bulky Special Attacker - Ability_1
@@ -406,6 +449,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[41] =
 	{ //Physical Wall - Ability_1
@@ -416,6 +460,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[42] =
 	{ //Physical Wall - Ability_1
@@ -426,6 +471,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[43] =
 	{ //Special Wall - Ability_1
@@ -436,6 +482,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[44] =
 	{ //Special Wall - Ability_1
@@ -446,6 +493,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[45] =
 	{ //Mixed Attacker: Attack Based, Less Defense - Ability_1
@@ -456,6 +504,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[46] =
 	{ //Mixed Attacker: Attack Based, Less Sp. Defense - Ability_1
@@ -466,6 +515,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[47] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Defense - Ability_1
@@ -476,6 +526,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[48] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Sp. Defense - Ability_1
@@ -486,6 +537,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[49] =
 	{ //Mixed Attacker: Speed Based, Less Defense - Ability_1
@@ -496,6 +548,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[50] =
 	{ //Mixed Attacker: Speed Based, Less Sp. Defense - Ability_1
@@ -506,6 +559,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[51] =
 	{ //Mixed Wall: Defense Based, Less Attack - Ability_1
@@ -516,6 +570,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[52] =
 	{ //Mixed Wall: Defense Based, Less Sp. Attack - Ability_1
@@ -526,6 +581,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[53] =
 	{ //Mixed Wall: Sp. Defense Based, Less Attack - Ability_1
@@ -536,6 +592,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[54] =
 	{ //Mixed Wall: Sp. Defense Based, Less Sp. Attack - Ability_1
@@ -546,6 +603,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[55] =
 	{ //Fast Wall: HP Based, Less Attack - Ability_1
@@ -556,6 +614,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[56] =
 	{ //Fast Wall: HP Based, Less Sp. Attack - Ability_1
@@ -566,6 +625,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[57] =
 	{ //Fast Wall: Defense Based, Less Attack - Ability_1
@@ -576,6 +636,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[58] =
 	{ //Fast Wall: Defense Based, Less Sp. Attack - Ability_1
@@ -586,6 +647,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[59] =
 	{ //Fast Wall: Sp. Defense Based, Less Attack - Ability_1
@@ -596,6 +658,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[60] =
 	{ //Fast Wall: Sp. Defense Based, Less Sp. Attack - Ability_1
@@ -606,6 +669,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_1,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[61] =
 	{ //Physical Sweeper: Power Based - Ability_2
@@ -616,6 +680,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[62] =
 	{ //Physical Sweeper: Speed Based - Ability_2
@@ -626,6 +691,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[63] =
 	{ //Special Sweeper: Power Based - Ability_2
@@ -636,6 +702,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[64] =
 	{ //Special Sweeper: Speed Based - Ability_2
@@ -646,6 +713,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[65] =
 	{ //Bulky Physical Attacker - Ability_2
@@ -656,6 +724,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 6,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[66] =
 	{ //Bulky Physical Attacker - Ability_2
@@ -666,6 +735,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.defEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[67] =
 	{ //Bulky Physical Attacker - Ability_2
@@ -676,6 +746,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[68] =
 	{ //Bulky Special Attacker - Ability_2
@@ -686,6 +757,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[69] =
 	{ //Bulky Special Attacker - Ability_2
@@ -696,6 +768,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[70] =
 	{ //Bulky Special Attacker - Ability_2
@@ -706,6 +779,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[71] =
 	{ //Physical Wall - Ability_2
@@ -716,6 +790,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[72] =
 	{ //Physical Wall - Ability_2
@@ -726,6 +801,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[73] =
 	{ //Special Wall - Ability_2
@@ -736,6 +812,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[74] =
 	{ //Special Wall - Ability_2
@@ -746,6 +823,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[75] =
 	{ //Mixed Attacker: Attack Based, Less Defense - Ability_2
@@ -756,6 +834,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[76] =
 	{ //Mixed Attacker: Attack Based, Less Sp. Defense - Ability_2
@@ -766,6 +845,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[77] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Defense - Ability_2
@@ -776,6 +856,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[78] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Sp. Defense - Ability_2
@@ -786,6 +867,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[79] =
 	{ //Mixed Attacker: Speed Based, Less Defense - Ability_2
@@ -796,6 +878,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[80] =
 	{ //Mixed Attacker: Speed Based, Less Sp. Defense - Ability_2
@@ -806,6 +889,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[81] =
 	{ //Mixed Wall: Defense Based, Less Attack - Ability_2
@@ -816,6 +900,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[82] =
 	{ //Mixed Wall: Defense Based, Less Sp. Attack - Ability_2
@@ -826,6 +911,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[83] =
 	{ //Mixed Wall: Sp. Defense Based, Less Attack - Ability_2
@@ -836,6 +922,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[84] =
 	{ //Mixed Wall: Sp. Defense Based, Less Sp. Attack - Ability_2
@@ -846,6 +933,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[85] =
 	{ //Fast Wall: HP Based, Less Attack - Ability_2
@@ -856,6 +944,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[86] =
 	{ //Fast Wall: HP Based, Less Sp. Attack - Ability_2
@@ -866,6 +955,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[87] =
 	{ //Fast Wall: Defense Based, Less Attack - Ability_2
@@ -876,6 +966,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[88] =
 	{ //Fast Wall: Defense Based, Less Sp. Attack - Ability_2
@@ -886,6 +977,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[89] =
 	{ //Fast Wall: Sp. Defense Based, Less Attack - Ability_2
@@ -896,6 +988,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[90] =
 	{ //Fast Wall: Sp. Defense Based, Less Sp. Attack - Ability_2
@@ -906,6 +999,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[91] =
 	{ //Physical Sweeper: Power Based - Ability_Hidden
@@ -916,6 +1010,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[92] =
 	{ //Physical Sweeper: Speed Based - Ability_Hidden
@@ -926,6 +1021,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[93] =
 	{ //Special Sweeper: Power Based - Ability_Hidden
@@ -936,6 +1032,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[94] =
 	{ //Special Sweeper: Speed Based - Ability_Hidden
@@ -946,6 +1043,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[95] =
 	{ //Bulky Physical Attacker - Ability_Hidden
@@ -956,6 +1054,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 6,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[96] =
 	{ //Bulky Physical Attacker - Ability_Hidden
@@ -966,6 +1065,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.defEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[97] =
 	{ //Bulky Physical Attacker - Ability_Hidden
@@ -976,6 +1076,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[98] =
 	{ //Bulky Special Attacker - Ability_Hidden
@@ -986,6 +1087,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[99] =
 	{ //Bulky Special Attacker - Ability_Hidden
@@ -996,6 +1098,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[100] =
 	{ //Bulky Special Attacker - Ability_Hidden
@@ -1006,6 +1109,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[101] =
 	{ //Physical Wall - Ability_Hidden
@@ -1016,6 +1120,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[102] =
 	{ //Physical Wall - Ability_Hidden
@@ -1026,6 +1131,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[103] =
 	{ //Special Wall - Ability_Hidden
@@ -1036,6 +1142,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[104] =
 	{ //Special Wall - Ability_Hidden
@@ -1046,6 +1153,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[105] =
 	{ //Mixed Attacker: Attack Based, Less Defense - Ability_Hidden
@@ -1056,6 +1164,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[106] =
 	{ //Mixed Attacker: Attack Based, Less Sp. Defense - Ability_Hidden
@@ -1066,6 +1175,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[107] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Defense - Ability_Hidden
@@ -1076,6 +1186,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[108] =
 	{ //Mixed Attacker: Sp. Attack Based, Less Sp. Defense - Ability_Hidden
@@ -1086,6 +1197,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[109] =
 	{ //Mixed Attacker: Speed Based, Less Defense - Ability_Hidden
@@ -1096,6 +1208,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[110] =
 	{ //Mixed Attacker: Speed Based, Less Sp. Defense - Ability_Hidden
@@ -1106,6 +1219,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[111] =
 	{ //Mixed Wall: Defense Based, Less Attack - Ability_Hidden
@@ -1116,6 +1230,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[112] =
 	{ //Mixed Wall: Defense Based, Less Sp. Attack - Ability_Hidden
@@ -1126,6 +1241,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[113] =
 	{ //Mixed Wall: Sp. Defense Based, Less Attack - Ability_Hidden
@@ -1136,6 +1252,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[114] =
 	{ //Mixed Wall: Sp. Defense Based, Less Sp. Attack - Ability_Hidden
@@ -1146,6 +1263,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 128,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[115] =
 	{ //Fast Wall: HP Based, Less Attack - Ability_Hidden
@@ -1156,6 +1274,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spAtkEv = 4,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[116] =
 	{ //Fast Wall: HP Based, Less Sp. Attack - Ability_Hidden
@@ -1166,6 +1285,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[117] =
 	{ //Fast Wall: Defense Based, Less Attack - Ability_Hidden
@@ -1176,6 +1296,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[118] =
 	{ //Fast Wall: Defense Based, Less Sp. Attack - Ability_Hidden
@@ -1186,6 +1307,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spdEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[119] =
 	{ //Fast Wall: Sp. Defense Based, Less Attack - Ability_Hidden
@@ -1196,6 +1318,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[120] =
 	{ //Fast Wall: Sp. Defense Based, Less Sp. Attack - Ability_Hidden
@@ -1206,232 +1329,39 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
 	[121] =
 	{
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
+		.teraType = TYPE_DARK,
 	},
 	[122] =
 	{
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_2,
+		.teraType = DONT_TERA,
 	},
 	[123] =
 	{
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
 	},
-
-#ifdef UNBOUND
-	//Special Spreads
 	[124] =
-	{	//Rayquaza
-		.nature = NATURE_JOLLY,
-		.ivs = 31,
-		.hpEv = 252,
-		.defEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.spdEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[125] =
-	{	//Hitmontop
-		.nature = NATURE_IMPISH,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[126] =
-	{	//Insane Jax Arcanine
+	{ //Fast Wall: Sp. Defense Based, Less Attack - Ability_Hidden, Mon is Shiny
 		.nature = NATURE_TIMID,
 		.ivs = 31,
-		.hpEv = 252,
-		.spAtkEv = 252,
-		.defEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[127] =
-	{	//A-Golem
-		.nature = NATURE_ADAMANT,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
+		.hpEv = 4,
+		.spdEv = 252,
 		.spDefEv = 252,
 		.ball = TRAINER_EV_CLASS_BALL,
 		.ability = Ability_Hidden,
+		.teraType = TERA_TYPE_RANDOM,
+		.shiny = TRUE,
 	},
-	[128] =
-	{	//Benjamin Flygon/Volcarona
-		.nature = NATURE_NAIVE,
-		.ivs = 31,
-		.atkEv = 252,
-		.spAtkEv = 252,
-		.spdEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_Hidden,
-	},
-	[129] =
-	{	//Attack Boosting Stakataka - Ability_1
-        .nature = NATURE_LONELY,
-        .ivs = 31, //15 Def
-        .hpEv = 252,
-        .atkEv = 252,
-        .spDefEv = 6,
-        .ball = TRAINER_EV_CLASS_BALL,
-        .ability = Ability_1,
-    },
-	[130] =
-	{	//Anabelle Insane Mawile
-        .nature = NATURE_ADAMANT,
-        .ivs = 31,
-        .hpEv = 172,
-        .atkEv = 252,
-        .spdEv = 84,
-        .ball = TRAINER_EV_CLASS_BALL,
-        .ability = Ability_2, //Initimidate
-    },
-	[131] =
-	{	//Marlon Aegislash
-        .nature = NATURE_BRAVE,
-        .ivs = 31,
-        .hpEv = 252,
-        .atkEv = 128,
-        .spAtkEv = 128,
-        .ball = TRAINER_EV_CLASS_BALL,
-        .ability = Ability_1, //Stance Change
-    },
-	[132] =
-	{	//Galavan's Insane Mega Ampharos: Hidden Power Grass
-		.nature = NATURE_MODEST,
-		.ivs = 31,
-		.hpEv = 244,
-		.spdEv = 12,
-		.spAtkEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_Hidden,
-	},
-	[133] =
-	{	//Galavan's Insane Metagross: 0 IVs Speed Min Speed
-		.nature = NATURE_BRAVE,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.spDefEv = 6,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[134] =
-	{	//Necrozma-DM Autotomize Set
-		.nature = NATURE_ADAMANT,
-		.ivs = 31,
-		.hpEv = 136,
-		.atkEv = 252,
-		.spdEv = 120,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[135] =
-	{	//Physically offensive BH Set, Ability 1
-		.nature = NATURE_JOLLY,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[136] =
-	{	//Physically offensive BH Set, Ability Hidden
-		.nature = NATURE_JOLLY,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_Hidden,
-	},
-	[137] =
-	{	//VGC Doubles GeoXern
-		.nature = NATURE_MODEST,
-		.ivs = 31,
-		.defEv = 140,
-		.spdEv = 116,
-		.spAtkEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[138] =
-	{	//Mixed offensive BH Set Physically Oriented, Ability 1
-		.nature = NATURE_JOLLY,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[139] =
-	{	//Specially offensive BH Set, Ability 1
-		.nature = NATURE_MODEST,
-		.ivs = 31,
-		.hpEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[140] =
-	{	//Mixed offensive BH Set Specially Oriented, Ability 1
-		.nature = NATURE_TIMID,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-	[141] =
-	{	//Mixed offensive BH Set Physically Oriented, Ability 1
-		.nature = NATURE_JOLLY,
-		.ivs = 31,
-		.hpEv = 252,
-		.atkEv = 252,
-		.defEv = 252,
-		.spdEv = 252,
-		.spAtkEv = 252,
-		.spDefEv = 252,
-		.ball = TRAINER_EV_CLASS_BALL,
-		.ability = Ability_1,
-	},
-#endif
 };
 #endif
 
-#ifndef UNBOUND //Modify this
 const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
 {
 	[CLASS_YOUNGSTER] = 5,
@@ -1449,7 +1379,7 @@ const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
 	[CLASS_FISHERMAN] = 10,
 	[CLASS_SWIMMER_M] = 10,
 	[CLASS_CUE_BALL] = 10,
-	[CLASS_GAMBLER] = 10,
+	[CLASS_GAMER] = 10,
 	[CLASS_BEAUTY] =  10,
 	[CLASS_SWIMMER_F] =  10,
 	[CLASS_PSYCHIC] = 15,
@@ -1464,7 +1394,7 @@ const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
 	[CLASS_LEADER] = 31,
 	[CLASS_TEAM_ROCKET] = 15,
 	[CLASS_COOLTRAINER] = 25,
-	[CLASS_ELITE_4] = 31,
+	[CLASS_ELITE_FOUR] = 31,
 	[CLASS_GENTLEMAN] = 15,
 	[CLASS_RIVAL_2] = 31,
 	[CLASS_CHAMPION] = 31,
@@ -1485,105 +1415,3 @@ const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
 	[CLASS_LADY] =  20,
 	[CLASS_PAINTER] =  10,
 };
-#else //For Pokemon Unbound
-const u8 gBaseIVsByTrainerClass[NUM_TRAINER_CLASSES] =
-{
-	[CLASS_YOUNGSTER] = 5,
-	[CLASS_BUG_CATCHER] = 1,
-	[CLASS_LASS] =  5,
-	[CLASS_SAILOR] = 10,
-	[CLASS_CAMPER] = 5,
-	[CLASS_PICNICKER] =  5,
-	[CLASS_CAMPING_DUO] = 5,
-	[CLASS_POKEMANIAC] = 10,
-	[CLASS_SUPER_NERD] = 15,
-	[CLASS_HIKER] = 10,
-	[CLASS_BIKER] = 10,
-	[CLASS_BURGLAR] = 10,
-	[CLASS_WORKER] = 10,
-	[CLASS_FISHERMAN] = 10,
-	[CLASS_SWIMMER_M] = 10,
-	[CLASS_SWIMMER_F] = 10,
-	[CLASS_TUBER] = 5,
-	[CLASS_SIS_AND_BRO] = 10,
-	[CLASS_ROUGHNECK] = 10,
-	[CLASS_GAMBLER] = 10,
-	[CLASS_BEAUTY] =  10,
-	[CLASS_PSYCHIC] = 15,
-	[CLASS_ROCKER] = 10,
-	[CLASS_JUGGLER] = 10,
-	[CLASS_TAMER] = 20,
-	[CLASS_BIRD_KEEPER] = 10,
-	[CLASS_BLACK_BELT] = 15,
-	[CLASS_CRUSH_GIRL] = 15,
-	[CLASS_CRUSH_KIN] = 15,
-	[CLASS_RIVAL] = 25,
-	[CLASS_RIVAL_2] = 31,
-	[CLASS_SCIENTIST] = 15,
-	[CLASS_GENTLEMAN] = 15,
-	[CLASS_MEDIUM] = 10,
-	[CLASS_TWINS] = 5,
-	[CLASS_YOUNG_COUPLE] = 15,
-	[CLASS_PKMN_BREEDER] = 15,
-	[CLASS_PKMN_RANGER] = 20,
-	[CLASS_AROMA_LADY] = 10,
-	[CLASS_RUIN_MANIAC] = 10,
-	[CLASS_LADY] = 20,
-	[CLASS_PAINTER] = 10,
-	[CLASS_IDOL] = 20,
-	[CLASS_WAITER] = 10,
-	[CLASS_WAITRESS] = 10,
-	[CLASS_INTERVIEWER] = 10,
-	[CLASS_CYCLIST] = 10,
-	[CLASS_NURSE] = 15,
-	[CLASS_POKE_KID] = 5,
-	[CLASS_RICH_BOY] = 20,
-	[CLASS_SKIIER] = 10,
-	[CLASS_GUITARIST] = 10,
-	[CLASS_KINDLER] = 10,
-	[CLASS_SHOCKER] = 10,
-	[CLASS_BUG_MANIAC] = 10,
-	[CLASS_POLICEMAN] = 15,
-	[CLASS_BOARDER] = 10,
-	[CLASS_SCHOOL_KID] = 5,
-	[CLASS_COLLECTOR] = 10,
-	[CLASS_ACE_TRAINER] = 25,
-	[CLASS_ACE_DUO] = 25,
-	[CLASS_JOGGER] = 10,
-	[CLASS_DRAGON_TAMER] = 25,
-	[CLASS_NINJA_BOY] = 10,
-	[CLASS_PARASOL_LADY] = 10,
-	[CLASS_POKEFAN] = 10,
-	[CLASS_RANCHER] = 10,
-	[CLASS_EXPERT] = 25,
-	[CLASS_OLD_COUPLE] = 25,
-	[CLASS_MEGA_TRAINER] = 31,
-
-	[CLASS_SHADOW] = 18,
-	[CLASS_SHADOW_ADMIN] = 31,
-	[CLASS_BOSS] = 31,
-	[CLASS_LOR] = 18,
-	[CLASS_LOR_ADMIN] = 31,
-	[CLASS_LOR_LEADER] = 31,
-	[CLASS_AGENT] = 31,
-
-	[CLASS_BLACK_EMBOAR] = 18,
-	[CLASS_TERROR_GRANBULL] = 18,
-	[CLASS_BLACK_FERROTHORN] = 25,
-	[CLASS_BLACK_FERROTHORN_BOSS] = 31,
-	[CLASS_SCIENCE_SOCIETY] = 25,
-	[CLASS_BLACK_HORIZON] = 25,
-
-	[CLASS_LEADER] = 31,
-	[CLASS_SINNOH_LEADER] = 31,
-	[CLASS_SUCCESSOR] = 31,
-	[CLASS_ELITE_4] = 31,
-	[CLASS_PKMN_PROF] = 31,
-	[CLASS_DEVELOPER] = 31,
-	[CLASS_CHAMPION] = 31,
-	[CLASS_FRONTIER_BRAIN] = 31,
-	[CLASS_PKMN_TRAINER_1] = 25,
-	[CLASS_PKMN_TRAINER_2] = 25,
-	[CLASS_PKMN_TRAINER_3] = 25,
-};
-#endif

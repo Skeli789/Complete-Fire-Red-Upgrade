@@ -1,35 +1,56 @@
-#include "src/config.h"
+#org @sText_Normal
+Normal
 
-#ifdef SCROLLING_MULTICHOICE
+#org @sText_Fighting
+Fighting
 
-#org @sExampleText_1
-Example 1
+#org @sText_Flying
+Flying
 
-#org @sExampleText_2
-Example 2
+#org @sText_Poison
+Poison
 
-#org @sExampleText_3
-Example 3
+#org @sText_Ground
+Ground
 
-#org @sExampleText_4
-Example 4
+#org @sText_Rock
+Rock
 
-#org @sExampleText_5
-Example 5
+#org @sText_Bug
+Bug
 
-#org @sExampleText_6
-Example 6
+#org @sText_Ghost
+Ghost
 
-#org @sExampleText_7
-Example 7
+#org @sText_Steel
+Steel
 
-#org @sExampleText_8
-Example 8
+#org @sText_Fire
+Fire
 
-#org @sExampleText_9
-Example 9
+#org @sText_Water
+Water
 
-#org @sExampleText_10
-Example 10
+#org @sText_Grass
+Grass
 
-#endif
+#org @sText_Electric
+Electric
+
+#org @sText_Psychic
+Psychic
+
+#org @sText_Ice
+Ice
+
+#org @sText_Dragon
+Dragon
+
+#org @sText_Dark
+Dark
+
+#org @sText_Fairy
+Fairy
+
+#org @sText_Stellar
+Stellar

@@ -18,6 +18,7 @@ struct TrainerSlide
 	const u8* msgFirstDown;
 	const u8* msgLastSwitchIn;
 	const u8* msgLastLowHp;
+	const u8* msgFirstHurt;
 };
 
 struct DynamaxTrainerSlide
@@ -28,7 +29,7 @@ struct DynamaxTrainerSlide
 
 static const struct TrainerSlide sTrainerSlides[] =
 {
-	{},
+	{329, NULL, NULL, NULL, sText_RivalFirstMonHurt},
 
 	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
 	{0x6, sText_MirskleFirstMonDown, NULL, NULL},
@@ -251,13 +252,13 @@ static bool8 IsBankHpLow(u8 bank)
 
 bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 {
-	u32 i;
+    u32 i;
 
-	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) != B_SIDE_OPPONENT)
-		return FALSE;
+    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(bank) != B_SIDE_OPPONENT)
+        return FALSE;
 
-	for (i = 0; i < ARRAY_COUNT(sTrainerSlides); ++i)
-	{
+    for (i = 0; i < ARRAY_COUNT(sTrainerSlides); ++i)
+    {
 		if (trainerId == sTrainerSlides[i].trainerId)
 		{
 			gBattleScripting.bank = bank;
@@ -288,6 +289,16 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 					if (sTrainerSlides[i].msgFirstDown != NULL && GetEnemyMonCount(TRUE) == GetEnemyMonCount(FALSE) - 1)
 					{
 						gBattleStringLoader = sTrainerSlides[i].msgFirstDown;
+						return TRUE;
+					}
+					break;
+
+				case TRAINER_SLIDE_FIRST_HURT:
+					if (sTrainerSlides[i].msgFirstHurt != NULL && !gNewBS->trainerSlideFirstHurtMsgDone)
+					{
+						gNewBS->trainerSlideFirstHurtMsgDone = TRUE;
+						gBattleStringLoader = sTrainerSlides[i].msgFirstHurt;
+						gBattleScripting.bank = bank;
 						return TRUE;
 					}
 					break;

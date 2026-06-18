@@ -12,6 +12,7 @@
 #include "battle_ai_switch_items.h"
 #include "battle_gfx_sfx_util.h"
 #include "link.h"
+#include "../src/config.h"
 
 /*
     Banks are a name given to what could be called a 'battlerId' or 'monControllerId'.
@@ -109,7 +110,7 @@
 #define BATTLE_TERRAIN_GRASS        	0
 #define BATTLE_TERRAIN_LONG_GRASS   	1
 #define BATTLE_TERRAIN_SAND         	2
-#define BATTLE_TERRAIN_UNDERWATER   	3
+#define BATTLE_TERRAIN_SNOWY		   	3
 #define BATTLE_TERRAIN_WATER        	4
 #define BATTLE_TERRAIN_POND         	5
 #define BATTLE_TERRAIN_MOUNTAIN     	6
@@ -118,14 +119,27 @@
 #define BATTLE_TERRAIN_PLAIN        	9
 #define BATTLE_TERRAIN_INSIDE_2       	0xA
 #define BATTLE_TERRAIN_INSIDE_3       	0xB
-#define BATTLE_TERRAIN_INSIDE_4       	0xC
-#define BATTLE_TERRAIN_INSIDE_5       	0xD
+#define BATTLE_TERRAIN_INSIDE_4	       	0xC // Used by gym leaders  TODO: More interesting graphic here
+#define BATTLE_TERRAIN_INSIDE_5	       	0xD
 #define BATTLE_TERRAIN_INSIDE_6       	0xE
 #define BATTLE_TERRAIN_LORLEI       	0xF
 #define BATTLE_TERRAIN_BRUNO 			0x10
 #define BATTLE_TERRAIN_AGATHA       	0x11
 #define BATTLE_TERRAIN_LANCE 			0x12
 #define BATTLE_TERRAIN_CHAMPION       	0x13
+
+#ifdef NEW_BATTLE_BACKGROUNDS
+
+#define BATTLE_TERRAIN_SPOOKY			0x14
+#define BATTLE_TERRAIN_DESERT			0x15
+#define BATTLE_TERRAIN_TORMA			0x16
+#define BATTLE_TERRAIN_TORMA_DEPTHS		0x17
+#define BATTLE_TERRAIN_SCALDING_SPA		0x18
+#define BATTLE_TERRAIN_GYM				0x19
+#define BATTLE_TERRAIN_FOREST			0x1A
+#define BATTLE_TERRAIN_FOREST_PERADON	0x1B
+
+#endif
 
 //For Unbound
 #ifdef UNBOUND
@@ -263,16 +277,21 @@ struct TrainerMonItemCustomMoves
     u16 iv;
     u16 lvl;
     u16 species;
+		u8 	ability; //0 = Hidden, 1 = Ability_1, 2 = Ability_2, 3 = Random Ability 1 & 2, 4 = Random Any Ability
+		u8 	nature;
+		u8 	ivSpread[6];
+		u8 	evSpread[6];
     u16 heldItem;
     u16 moves[4];
+	u16 teraType;
 };
 
 union TrainerMonPtr
 {
-    struct TrainerMonNoItemDefaultMoves* NoItemDefaultMoves;
-    struct TrainerMonNoItemCustomMoves* NoItemCustomMoves;
-    struct TrainerMonItemDefaultMoves* ItemDefaultMoves;
-    struct TrainerMonItemCustomMoves* ItemCustomMoves;
+    const struct TrainerMonNoItemDefaultMoves* NoItemDefaultMoves;
+    const struct TrainerMonNoItemCustomMoves* NoItemCustomMoves;
+    const struct TrainerMonItemDefaultMoves* ItemDefaultMoves;
+    const struct TrainerMonItemCustomMoves* ItemCustomMoves;
 };
 
 struct Trainer
@@ -293,10 +312,11 @@ struct Trainer
 #define PARTY_FLAG_CUSTOM_MOVES     0x1
 #define PARTY_FLAG_HAS_ITEM         0x2
 
-/*
-extern const struct Trainer gTrainers[];
-*/
-#define TRAINER_ENCOUNTER_MUSIC(trainer)((gTrainers[trainer].encounterMusic_gender & 0x7F))
+#ifdef EXPAND_TRAINERS
+extern const struct TrainerMoney gTrainerMoneyTable[];
+#endif
+
+#define TRAINER_ENCOUNTER_MUSIC(trainer)((gTrainers[trainer].encounterMusic))
 
 struct UnknownFlags
 {
@@ -400,13 +420,17 @@ struct ProtectStruct
     u32 flag_x20 : 1;           	// 0x20
     u32 obstruct : 1;           	// 0x40
     u32 obstructDamage : 1;         // 0x80
+	u32 SilkTrap : 1;           	
+    u32 SilkTrapDamage : 1;
     /* field_3 */
     u32 KingsShield : 1;
     u32 SpikyShield : 1;
 	u32 BanefulBunker : 1;
+	u32 BurningBulwark : 1;
     u32 kingsshield_damage : 1;
     u32 spikyshield_damage : 1;
     u32 banefulbunker_damage : 1;
+	u32 BurningBulwark_damage : 1;
     u32 enduredSturdy : 1;
     u32 Field3 : 1;
 
@@ -787,6 +811,12 @@ struct NewBattleStruct
 	u8 quickDrawRandomNumber[MAX_BATTLERS_COUNT];
 	u8 powerShifted[MAX_BATTLERS_COUNT];
 	u16 tookAbilityFrom[MAX_BATTLERS_COUNT]; //Helps display the correct Ability when one has been passed around
+	u8 GlaiveRushTimers[MAX_BATTLERS_COUNT];
+	u8 rageFistCounter[MAX_BATTLERS_COUNT];
+	u8 CudChewCounter[MAX_BATTLERS_COUNT];
+	u8 ElectroCounter[MAX_BATTLERS_COUNT];
+	u8 quarkDriveActivated[MAX_BATTLERS_COUNT];
+	u8 ProtosynthesisActivated[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -874,6 +904,7 @@ struct NewBattleStruct
 	bool8 criticalCapture : 1;
 	bool8 criticalCaptureSuccess : 1;
 	bool8 trainerSlideLowHpMsgDone : 1;
+	bool8 trainerSlideFirstHurtMsgDone : 1;
 	bool8 TeleportBit : 1;
 	bool8 restartEndTurnSwitching : 1;
 	bool8 skipCertainSwitchInAbilities : 1;
@@ -909,6 +940,7 @@ struct NewBattleStruct
 	bool8 isTrainerBattle : 1;
 	bool8 cottonDownActive : 1;
 	bool8 cramorantTransformed : 1;
+	bool8 activateTemperFlare : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -920,6 +952,7 @@ struct NewBattleStruct
 	item_t SavedConsumedItems[PARTY_SIZE];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
+	u8 teraIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
 	u8 backupSynchronizeBanks[2];
 	u16 failedThrownPokeBall;
@@ -994,6 +1027,19 @@ struct NewBattleStruct
 		u16 turnStartHP;
 		u16 backupRaidMonItem;
 	} dynamaxData;
+
+	// For Terastallization
+	struct TeraData
+	{
+		u8 done[NUM_BATTLE_SIDES][PARTY_SIZE];               						// To check if the Pokemon on field used it
+		u8 activeBank;						                 						// Pokemon in turn order
+		u8 stellarBoostUsed[NUM_BATTLE_SIDES][PARTY_SIZE][NUMBER_OF_MON_TYPES];	// Stellar Type's unique Damage Boost Mechanics
+		u8 teraSpriteID[MAX_BATTLERS_COUNT];  										// Adds Tera Crown (TO BE IMPLEMENTED LATER)
+		u8 state;							  										// For looping
+		u8 chosen[MAX_BATTLERS_COUNT];		  										// Whether the user chooses to Terastallize or not
+		bool8 teraInProgress : 1;             										// A needed flag
+		bool8 viewing : 1;                    										// For Pokemon Summary Screen menu
+	} teraData;
 
 	struct 
 	{
@@ -1555,6 +1601,7 @@ extern u8 gUnusedFirstBattleVar2;
 extern u16 gSideStatuses[2];
 extern struct SideTimer gSideTimers[2];
 extern u32 gStatuses3[MAX_BATTLERS_COUNT];
+extern u32 gStatuses4[MAX_BATTLERS_COUNT];
 extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
 extern u16 gPauseCounterBattle;
 extern u16 gPaydayMoney;
@@ -1619,5 +1666,8 @@ extern u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT];
 extern u8 gAnimCustomPanning;
 
 extern u8 gBattleBuffersTransferData[0x100];
+
+extern bool8 gPlayerDoesNotWantToEvolveLeft;
+extern bool8 gPlayerDoesNotWantToEvolveRight;
 
 #define BATTLE_HISTORY ((struct BattleHistory*) (gBattleResources->battleHistory))

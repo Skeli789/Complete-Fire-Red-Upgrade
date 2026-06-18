@@ -54,7 +54,7 @@ extern u8 gFieldLinkPlayerCount;
 extern u8 gGlobalFieldTintMode;
 
 // Exported ROM declarations
-extern const struct UCoords32 gDirectionToVectors[];
+extern const struct Coords32 gDirectionToVectors[];
 
 struct MapHeader* __attribute__((long_call)) Overworld_GetMapHeaderByGroupAndId(u16 mapGroup, u16 mapNum);
 void __attribute__((long_call)) ResetInitialPlayerAvatarState(void);
@@ -95,7 +95,7 @@ void __attribute__((long_call)) CB2_OverworldBasic(void);
 void __attribute__((long_call)) CB2_Overworld(void);
 void __attribute__((long_call)) SetMainCallback1(void (*cb)(void));
 void __attribute__((long_call)) CB2_NewGame(void);
-void __attribute__((long_call)) CB2_WhiteOut(void);
+void CB2_WhiteOut(void);
 void __attribute__((long_call)) CB2_LoadMap(void);
 void __attribute__((long_call)) CB2_ReturnToField(void);
 void __attribute__((long_call)) CB2_ReturnToFieldLocal(void);
@@ -113,3 +113,18 @@ void __attribute__((long_call)) SetContinueGameWarp(s8 mapGroup, s8 mapNum, s8 w
 void __attribute__((long_call)) SetWarpData(struct WarpData *warp, s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 void __attribute__((long_call)) SetEscapeWarp(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
 const struct MapHeader* __attribute__((long_call)) GetDestinationWarpMapHeader(void);
+void __attribute__((long_call)) FieldClearVBlankHBlankCallbacks(void);
+bool32 __attribute__((long_call)) IsPlayerDefeated(u32 battleOutcome);
+void __attribute__((long_call)) SetBattledTrainerFlag(void);
+void __attribute__((long_call)) QuestLogEvents_HandleEndTrainerBattle(void);
+void __attribute__((long_call)) FieldCB_SafariZoneRanOutOfBalls(void);
+void __attribute__((long_call)) ResetSafariZoneFlag_(void);
+void __attribute__((long_call)) DoWhiteOut(void);
+void __attribute__((long_call)) SetInitialPlayerAvatarStateWithDirection(u8 direction);
+void __attribute__((long_call)) ScriptContext_Init(void);
+void __attribute__((long_call)) UnlockPlayerFieldControls(void);
+void __attribute__((long_call)) DoMapLoadLoop(u8 *state);
+void __attribute__((long_call)) QuestLog_CutRecording(void);
+void __attribute__((long_call)) CB2_NewGameOld(void);
+void __attribute__((long_call)) SetFieldVBlankCallback(void);
+void Nuzlock_PokemonEraser(void);

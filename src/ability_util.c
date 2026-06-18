@@ -58,6 +58,76 @@ extern const u8 gText_AbilityDescription_GrassDash[];
 extern const u8 gText_AbilityDescription_SlipperyTail[];
 extern const u8 gText_AbilityDescription_DrillBeak[];
 
+//Gen 9 Abilities
+extern const u8 gText_AbilityName_AngerShell[];
+extern const u8 gText_AbilityDescription_AngerShell[];
+extern const u8 gText_AbilityName_ArmorTail[];
+extern const u8 gText_AbilityDescription_BeadsofRuin[];
+extern const u8 gText_AbilityDescription_SwordofRuin[];
+extern const u8 gText_AbilityDescription_TabletsofRuin[];
+extern const u8 gText_AbilityDescription_VesselofRuin[];
+extern const u8 gText_AbilityName_BeadsofRuin[];
+extern const u8 gText_AbilityName_SwordofRuin[];
+extern const u8 gText_AbilityName_TabletsofRuin[];
+extern const u8 gText_AbilityName_VesselofRuin[];
+extern const u8 gText_AbilityName_Costar[];
+extern const u8 gText_AbilityDescription_Costar[];
+extern const u8 gText_AbilityName_CudChew[];
+extern const u8 gText_AbilityDescription_CudChew[];
+extern const u8 gText_AbilityName_EarthEater[];
+extern const u8 gText_AbilityDescription_EarthEater[];
+extern const u8 gText_AbilityName_Electromorphosis[];
+extern const u8 gText_AbilityDescription_Electromorphosis[];
+extern const u8 gText_AbilityName_GoodAsGold[];
+extern const u8 gText_AbilityDescription_GoodAsGold[];
+extern const u8 gText_AbilityName_GuardDog[];
+extern const u8 gText_AbilityDescription_GuardDog[];
+extern const u8 gText_AbilityName_HadronEngine[];
+extern const u8 gText_AbilityDescription_HadronEngine[];
+extern const u8 gText_AbilityName_MindsEye[];
+extern const u8 gText_AbilityDescription_MindsEye[];
+extern const u8 gText_AbilityName_MyceliumMight[];
+extern const u8 gText_AbilityDescription_MyceliumMight[];
+extern const u8 gText_AbilityName_Opportunist[];
+extern const u8 gText_AbilityDescription_Opportunist[];
+extern const u8 NAME_FULL_METAL_BODY[];
+extern const u8 gText_AbilityName_OrichalcumPulse[];
+extern const u8 gText_AbilityDescription_OrichalcumPulse[];
+extern const u8 gText_AbilityName_Protosynthesis[];
+extern const u8 gText_AbilityDescription_Protosynthesis[];
+extern const u8 gText_AbilityName_PureSalt[];
+extern const u8 gText_AbilityDescription_PurifyingSalt[];
+extern const u8 gText_AbilityName_RockyPayload[];
+extern const u8 gText_AbilityDescription_RockyPayload[];
+extern const u8 gText_AbilityName_SeedSower[];
+extern const u8 gText_AbilityDescription_SeedSower[];
+extern const u8 gText_AbilityName_Sharpness[];
+extern const u8 gText_AbilityDescription_Sharpness[];
+extern const u8 gText_AbilityName_SupremeOverlord[];
+extern const u8 gText_AbilityDescription_SupremeOverlord[];
+extern const u8 gText_AbilityName_SuperSweetSyrup[];
+extern const u8 gText_AbilityDescription_SuperSweetSyrup[];
+extern const u8 gText_AbilityName_TeraShift[];
+extern const u8 gText_AbilityDescription_TeraShift[];
+extern const u8 gText_AbilityName_TeraShell[];
+extern const u8 gText_AbilityDescription_TeraShell[];
+extern const u8 gText_AbilityName_ThermalExchange[];
+extern const u8 gText_AbilityDescription_ThermalExchange[];
+extern const u8 gText_AbilityName_ToxicChain[];
+extern const u8 gText_AbilityDescription_ToxicChain[];
+extern const u8 gText_AbilityDescription_PoisonPuppeteer[];
+extern const u8 gText_AbilityName_PoisonPuppeteer[];
+extern const u8 gText_AbilityName_ToxicDebris[];
+extern const u8 gText_AbilityDescription_ToxicDebris[];
+extern const u8 gText_AbilityName_WellBakedBody[];
+extern const u8 gText_AbilityDescription_WellBakedBody[];
+extern const u8 gText_AbilityName_WindPower[];
+extern const u8 gText_AbilityDescription_WindPower[];
+extern const u8 gText_AbilityName_WindRider[];
+extern const u8 gText_AbilityDescription_WindRider[];
+extern const u8 gText_AbilityName_ZerotoHero[];
+extern const u8 gText_AbilityDescription_ZerotoHero[];
+
 const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses the 255 Ability limitation and implements clone Abilities
 {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
@@ -80,6 +150,10 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 		case ABILITY_CLEARBODY:
 			if (IsWhiteSmokeAbility(ability, species))
 				return gText_AbilityName_WhiteSmoke;
+			else if (SpeciesHasGoodAsGold(species))
+				return gText_AbilityName_GoodAsGold;
+			else if (IsFullMetalBodyAbility(ability, species))
+				return NAME_FULL_METAL_BODY;
 			break;
 		case ABILITY_HUGEPOWER:
 			switch (dexNum)
@@ -90,6 +164,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 					return gText_AbilityName_PurePower;
 				#endif
 			}
+			if (SpeciesHasSupremeOverlord(species))
+				return gText_AbilityName_SupremeOverlord;
 			break;
 		case ABILITY_ROUGHSKIN:
 			if (IsSpeciesOfType(species, TYPE_STEEL)) //Species original type is Steel - Assumes Ferroseed, Ferrothorn, and Togedemaru types haven't changed
@@ -242,6 +318,8 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				case NATIONAL_DEX_VESPIQUEN:
 				#endif
 					return gText_AbilityName_QueenlyMajesty;
+				if (SpeciesHasArmorTail(species))
+				return gText_AbilityName_ArmorTail;
 			}
 			break;
 		case ABILITY_RECEIVER:
@@ -351,6 +429,121 @@ const u8* GetAbilityNameOverride(const u8 ability, const u16 species) //Bypasses
 				#endif
 			}
 			break;
+		case ABILITY_WEAKARMOR:
+			if(SpeciesHasAngerShell(species))
+				return gText_AbilityName_AngerShell;
+			break;
+		case ABILITY_STALL:
+			if(SpeciesHasBeadsofRuin(species))
+				return gText_AbilityName_BeadsofRuin;
+			if(SpeciesHasSwordofRuin(species))
+				return gText_AbilityName_SwordofRuin;
+			if(SpeciesHasTabletsofRuin(species))
+				return gText_AbilityName_TabletsofRuin;
+			if(SpeciesHasVesselofRuin(species))
+				return gText_AbilityName_VesselofRuin;
+			break;
+		case ABILITY_CURIOUSMEDICINE:
+			if (SpeciesHasCostar(species))
+				return gText_AbilityName_Costar;
+			break;
+		case ABILITY_HARVEST:
+			if(SpeciesHasCudChew(species))
+				return gText_AbilityName_CudChew;
+			break;
+		case ABILITY_VOLTABSORB:
+			if(SpeciesHasEarthEater(species))
+				return gText_AbilityName_EarthEater;
+			break;
+		case ABILITY_COLORCHANGE:
+			if(SpeciesHasElectromorphosis(species))
+				return gText_AbilityName_Electromorphosis;
+			break;
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(species))
+				return gText_AbilityName_GuardDog;
+			break;
+		case ABILITY_ELECTRICSURGE:
+			if(SpeciesHasHadronEngine(species))
+				return gText_AbilityName_HadronEngine;
+			break;
+		case ABILITY_SCRAPPY:
+			if(SpeciesHasMindsEye(species))
+				return gText_AbilityName_MindsEye;
+			break;
+		case ABILITY_DANCER:
+			if(SpeciesHasOportunist(species))
+				return gText_AbilityName_Opportunist;
+			break;
+		case ABILITY_DROUGHT:
+			if(SpeciesHasOrichalcumPulse(species))
+				return gText_AbilityName_OrichalcumPulse;
+			break;
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(species))
+				return gText_AbilityName_Protosynthesis;
+			break;
+		case ABILITY_IMMUNITY:
+			if (SpeciesHasPurifyingSalt(species))
+				return gText_AbilityName_PureSalt;
+			break;
+		case ABILITY_STEELWORKER:
+			if (SpeciesHasRockyPayload(species))
+				return gText_AbilityName_RockyPayload;
+			break;
+		case ABILITY_GRASSYSURGE:
+			if (SpeciesHasSeedSower(species))
+				return gText_AbilityName_SeedSower;
+			break;
+		case ABILITY_STRONGJAW:
+			if (SpeciesHasSharpness(species))
+				return gText_AbilityName_Sharpness;
+			break;
+		case ABILITY_INTIMIDATE:
+			if (SpeciesHasSuperSweetSyrup(species))
+				return gText_AbilityName_SuperSweetSyrup;
+			break;
+		case ABILITY_ICEFACE:
+				if (SpeciesHasTeraShift(species))
+					return gText_AbilityName_TeraShift;
+			break;
+		case ABILITY_BLAZE:
+			if (SpeciesHasTeraShell(species))
+				return gText_AbilityName_TeraShell;
+			break;
+		case ABILITY_STEAMENGINE:
+			if(SpeciesHasThermalExchange(species))
+				return gText_AbilityName_ThermalExchange;
+			else if(SpeciesHasWellBakedBody(species))
+				return gText_AbilityName_WellBakedBody;
+			break;
+		case ABILITY_POISONTOUCH:
+			if(SpeciesHasToxicChain(species))
+				return gText_AbilityName_ToxicChain;
+			break;
+		case ABILITY_PLUS:
+			if (SpeciesHasPoisonPuppeteer(species))
+				return gText_AbilityName_PoisonPuppeteer;
+			break;
+		case ABILITY_POISONPOINT:
+			if(SpeciesHasToxicDebris(species))
+				return gText_AbilityName_ToxicDebris;
+			break;
+		case ABILITY_BERSERK:
+			if(SpeciesHasWindPower(species))
+				return gText_AbilityName_WindPower;
+			break;
+		case ABILITY_ANGERPOINT:
+			if(SpeciesHasWindRider(species))
+				return gText_AbilityName_WindRider;
+			break;
+		case ABILITY_TORRENT:
+			if (SpeciesHasZerotoHero(species))
+				return gText_AbilityName_ZerotoHero;
+			break;
+		case ABILITY_MINUS:
+			if(SpeciesHasMyceliumMight(species))
+				return gText_AbilityName_MyceliumMight;
 	}
 
 	return NULL;
@@ -387,6 +580,131 @@ const u8* GetAbilityDescriptionOverride(const u8 ability, const u16 species) //B
 		case ABILITY_MERCILESS:
 			if (SpeciesHasDrillBeak(species))
 				return gText_AbilityDescription_DrillBeak;
+			break;
+		case ABILITY_WEAKARMOR:
+			if(SpeciesHasAngerShell(species))
+				return gText_AbilityDescription_AngerShell;
+			break;
+		case ABILITY_STALL:
+			if(SpeciesHasBeadsofRuin(species))
+				return gText_AbilityDescription_BeadsofRuin;
+			if(SpeciesHasSwordofRuin(species))
+				return gText_AbilityDescription_SwordofRuin;
+			if(SpeciesHasTabletsofRuin(species))
+				return gText_AbilityDescription_TabletsofRuin;
+			if(SpeciesHasVesselofRuin(species))
+				return gText_AbilityDescription_VesselofRuin;
+			break;
+		case ABILITY_CURIOUSMEDICINE:
+			if (SpeciesHasCostar(species))
+				return gText_AbilityDescription_Costar;
+			break;
+		case ABILITY_HARVEST:
+			if(SpeciesHasCudChew(species))
+				return gText_AbilityDescription_CudChew;
+			break;
+		case ABILITY_VOLTABSORB:
+			if(SpeciesHasEarthEater(species))
+				return gText_AbilityDescription_EarthEater;
+			break;
+		case ABILITY_COLORCHANGE:
+			if(SpeciesHasElectromorphosis(species))
+				return gText_AbilityDescription_Electromorphosis;
+			break;
+		case ABILITY_CLEARBODY:
+			if(SpeciesHasGoodAsGold(species))
+				return gText_AbilityDescription_GoodAsGold;
+			
+			break;
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(species))
+				return gText_AbilityDescription_GuardDog;
+			break;
+		case ABILITY_ELECTRICSURGE:
+			if(SpeciesHasHadronEngine(species))
+				return gText_AbilityDescription_HadronEngine;
+			break;
+		case ABILITY_SCRAPPY:
+			if(SpeciesHasMindsEye(species))
+				return gText_AbilityDescription_MindsEye;
+			break;
+		case ABILITY_DANCER:
+			if(SpeciesHasOportunist(species))
+				return gText_AbilityDescription_Opportunist;
+			break;
+		case ABILITY_DROUGHT:
+			if(SpeciesHasOrichalcumPulse(species))
+				return gText_AbilityDescription_OrichalcumPulse;
+			break;
+		case ABILITY_QUARKDRIVE:
+			if (SpeciesHasProtosynthesis(species))
+				return gText_AbilityDescription_Protosynthesis;
+			break;
+		case ABILITY_IMMUNITY:
+		if (SpeciesHasPurifyingSalt(species))
+				return gText_AbilityDescription_PurifyingSalt;
+			break;
+		case ABILITY_STEELWORKER:
+			if (SpeciesHasRockyPayload(species))
+				return gText_AbilityDescription_RockyPayload;
+			break;
+		case ABILITY_GRASSYSURGE:
+			if (SpeciesHasSeedSower(species))
+				return gText_AbilityDescription_SeedSower;
+			break;
+		case ABILITY_STRONGJAW:
+			if (SpeciesHasSharpness(species))
+				return gText_AbilityDescription_Sharpness;
+			break;
+		case ABILITY_HUGEPOWER:
+			if (SpeciesHasSupremeOverlord(species))
+				return gText_AbilityDescription_SupremeOverlord;
+			break;
+		case ABILITY_INTIMIDATE:
+			if (SpeciesHasSuperSweetSyrup(species))
+				return gText_AbilityDescription_SuperSweetSyrup;
+			break;
+		case ABILITY_ICEFACE:
+			if(SpeciesHasTeraShift(species))
+				return gText_AbilityDescription_TeraShift;
+			break;
+		case ABILITY_BLAZE:
+			if (SpeciesHasTeraShell(species))
+				return gText_AbilityDescription_TeraShell;
+			break;
+		case ABILITY_STEAMENGINE:
+			if(SpeciesHasThermalExchange(species))
+				return gText_AbilityDescription_ThermalExchange;
+			else if(SpeciesHasWellBakedBody(species))
+				return gText_AbilityDescription_WellBakedBody;
+			break;
+		case ABILITY_POISONTOUCH:
+			if(SpeciesHasToxicChain(species))
+				return gText_AbilityDescription_ToxicChain;
+			break;
+		case ABILITY_PLUS:
+			if (SpeciesHasPoisonPuppeteer(species))
+				return gText_AbilityDescription_PoisonPuppeteer;
+			break;
+		case ABILITY_POISONPOINT:
+			if(SpeciesHasToxicDebris(species))
+				return gText_AbilityDescription_ToxicDebris;
+			break;
+		case ABILITY_BERSERK:
+			if(SpeciesHasWindPower(species))
+				return gText_AbilityDescription_WindPower;
+			break;
+		case ABILITY_ANGERPOINT:
+			if(SpeciesHasWindRider(species))
+				return gText_AbilityDescription_WindRider;
+			break;
+		case ABILITY_TORRENT:
+			if (SpeciesHasZerotoHero(species))
+				return gText_AbilityDescription_ZerotoHero;
+			break;
+		case ABILITY_MINUS:
+			if(SpeciesHasMyceliumMight(species))
+				return gText_AbilityDescription_MyceliumMight;
 			break;
 	}
 
@@ -450,7 +768,10 @@ void ResetTookAbilityFrom(u8 bank)
 
 bool8 IsTargetAbilityIgnored(u8 defAbility, u8 atkAbility, u16 move)
 {
-	return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
+	if (SpeciesHasMyceliumMight(SPECIES(gBankAttacker)))
+		return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMyceliumMighIgnoredAbilities;
+	else
+		return IS_MOLD_BREAKER(atkAbility, move) && gSpecialAbilityFlags[defAbility].gMoldBreakerIgnoredAbilities;
 }
 
 bool8 IsTargetAbilityIgnoredNoMove(u8 defAbility, u8 atkAbility)
@@ -596,6 +917,9 @@ bool8 IsElectricAbsorptionAblity(u8 ability)
 
 bool8 IsPlusMinusAbility(u8 ability)
 {
+	if (SpeciesHasPoisonPuppeteer(LEECH_SPECIES(gActiveBattler)) || SpeciesHasMyceliumMight(LEECH_SPECIES(gActiveBattler)))
+		return FALSE;
+
 	switch (ability)
 	{
 		case ABILITY_PLUS:
@@ -839,4 +1163,381 @@ bool8 IsVitalSpiritAbility(u8 ability, u16 species)
 	}
 
 	return FALSE;
+}
+
+bool8 SpeciesHasAngerShell(unusedArg u16 species)
+{
+	#ifdef SPECIES_KLAWF
+	return species == SPECIES_KLAWF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasArmorTail(unusedArg u16 species)
+{
+	#ifdef SPECIES_FARIGIRAF
+	return species == SPECIES_FARIGIRAF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasBeadsofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_CHI_YU
+	return species == SPECIES_CHI_YU;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSwordofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_CHIEN_PAO
+	return species == SPECIES_CHIEN_PAO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTabletsofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_WO_CHIEN
+	return species == SPECIES_WO_CHIEN;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasVesselofRuin(unusedArg u16 species)
+{
+	#ifdef SPECIES_TING_LU
+	return species == SPECIES_TING_LU;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasCostar(unusedArg u16 species)
+{
+	#ifdef SPECIES_FLAMIGO
+	return species == SPECIES_FLAMIGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasEarthEater(unusedArg u16 species)
+{
+	#ifdef SPECIES_ORTHWORM
+	return species == SPECIES_ORTHWORM;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasElectromorphosis(unusedArg u16 species)
+{
+	#ifdef SPECIES_BELLIBOLT
+	return species == SPECIES_BELLIBOLT;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasCudChew(unusedArg u16 species)
+{
+	#if (defined SPECIES_TAUROS_P && SPECIES_TAUROS_AQUA_P && SPECIES_TAUROS_BLAZE_P && SPECIES_FARIGIRAF)
+	return species == SPECIES_TAUROS_P || species == SPECIES_TAUROS_AQUA_P || species == SPECIES_TAUROS_BLAZE_P || species == SPECIES_FARIGIRAF;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGoodAsGold(unusedArg u16 species)
+{
+	#ifdef SPECIES_GHOLDENGO
+	return species == SPECIES_GHOLDENGO;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasGuardDog(unusedArg u16 species)
+{
+	#if(defined SPECIES_MABOSSTIFF && SPECIES_OKIDOGI)
+	return species == SPECIES_MABOSSTIFF || species == SPECIES_OKIDOGI;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 GuardDogPreventsLoweringStat(u8 ability, u8 statId, u8 bank)
+{
+	switch (ability)
+	{
+		case ABILITY_INNERFOCUS:
+			if(SpeciesHasGuardDog(SPECIES(bank))){
+				return statId == STAT_STAGE_ATK;
+			}
+			else
+				return FALSE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 SpeciesHasHadronEngine(unusedArg u16 species)
+{
+	#ifdef SPECIES_MIRAIDON
+	return species == SPECIES_MIRAIDON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasMindsEye(unusedArg u16 species)
+{
+	#ifdef SPECIES_URSALUNA_BLOODMOON
+	return species == SPECIES_URSALUNA_BLOODMOON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 MindsEyePreventsLoweringStat(u8 ability, u8 statId)
+{
+	switch (ability)
+	{
+		case ABILITY_SCRAPPY:
+			return statId == STAT_STAGE_ACC;
+		default:
+			return FALSE;
+	}
+}	
+
+bool8 SpeciesHasMyceliumMight(unusedArg u16 species)
+{
+	#if (defined SPECIES_TOEDSCOOL && SPECIES_TOEDSCRUEL)
+	return species == SPECIES_TOEDSCOOL || species == SPECIES_TOEDSCRUEL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasOportunist(unusedArg u16 species)
+{
+	#ifdef SPECIES_ESPATHRA
+	return species == SPECIES_ESPATHRA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasOrichalcumPulse(unusedArg u16 species)
+{
+	#ifdef SPECIES_KORAIDON
+	return species == SPECIES_KORAIDON;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsFullMetalBodyAbility(u8 ability, u16 species)
+{
+	if (!IsClearBodyAbility(ability))
+		return FALSE;
+
+	switch (SpeciesToNationalPokedexNum(species))
+	{
+		#ifdef NATIONAL_DEX_SOLGALEO
+		case NATIONAL_DEX_SOLGALEO:
+			return TRUE;
+		#endif
+	}
+
+	return FALSE;
+}
+
+bool8 SpeciesHasProtosynthesis(unusedArg u16 species) //Custom Unbound Ability
+{
+	#if (defined SPECIES_GOUGING_FIRE && SPECIES_RAGING_BOLT && SPECIES_GREAT_TUSK && SPECIES_SCREAM_TAIL && SPECIES_BRUTE_BONNET && SPECIES_FLUTTER_MANE && SPECIES_SLITHER_WING && SPECIES_SANDY_SHOCKS && SPECIES_ROARING_MOON && SPECIES_WALKING_WAKE)
+	return species == SPECIES_GOUGING_FIRE || species == SPECIES_RAGING_BOLT || species == SPECIES_GREAT_TUSK || species == SPECIES_SCREAM_TAIL || species == SPECIES_BRUTE_BONNET || species == SPECIES_FLUTTER_MANE || species == SPECIES_SLITHER_WING || species == SPECIES_SANDY_SHOCKS || species == SPECIES_ROARING_MOON || species == SPECIES_WALKING_WAKE;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasPurifyingSalt(unusedArg u16 species)
+{
+	#if (defined SPECIES_NACLI && SPECIES_NACLSTACK && SPECIES_GARGANACL)
+	return species == SPECIES_NACLI || species == SPECIES_NACLSTACK || species == SPECIES_GARGANACL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 CheckStatusAny(u8 bank)
+{
+    return (gBattleMons[bank].status1 & STATUS1_ANY);
+}
+
+bool8 SpeciesHasRockyPayload(unusedArg u16 species)
+{
+	#ifdef SPECIES_BOMBIRDIER
+	return species == SPECIES_BOMBIRDIER;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSeedSower(unusedArg u16 species)
+{
+	#ifdef SPECIES_ARBOLIVA
+	return species == SPECIES_ARBOLIVA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSharpness(unusedArg u16 species)
+{
+	#if (defined SPECIES_GALLADE && SPECIES_SAMUROTT_H && SPECIES_KLEAVOR && SPECIES_VELUZA)
+	return species == SPECIES_GALLADE || species == SPECIES_SAMUROTT_H || species == SPECIES_KLEAVOR || species == SPECIES_VELUZA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasSupremeOverlord(unusedArg u16 species)
+{
+	#ifdef SPECIES_KINGAMBIT
+	return species == SPECIES_KINGAMBIT;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 IsFaintedPokemonInParty(void)
+{
+    u8 i;
+    struct Pokemon* party = gPlayerParty;
+    u8 partyCount = gPlayerPartyCount;
+
+    for (i = 0; i < partyCount; i++)
+    {
+        if (GetMonData(&party[i], MON_DATA_HP, NULL) == 0)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+bool8 SpeciesHasSuperSweetSyrup(unusedArg u16 species)
+{
+	#if (defined SPECIES_DIPPLIN && SPECIES_HYDRAPPLE)
+	return species == SPECIES_DIPPLIN || species == SPECIES_HYDRAPPLE;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTeraShift(unusedArg u16 species)
+{
+	#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERA)
+	return species == SPECIES_TERAPAGOS || species == SPECIES_TERAPAGOS_TERA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasTeraShell(unusedArg u16 species)
+{
+	#if (defined SPECIES_TERAPAGOS && SPECIES_TERAPAGOS_TERA)
+	return species == SPECIES_TERAPAGOS || species == SPECIES_TERAPAGOS_TERA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasThermalExchange(unusedArg u16 species)
+{
+	#if (defined SPECIES_FRIGIBAX && SPECIES_ARCTIBAX && SPECIES_BAXCALIBUR)
+	return species == SPECIES_FRIGIBAX || species == SPECIES_ARCTIBAX || species == SPECIES_BAXCALIBUR;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasToxicChain(unusedArg u16 species)
+{
+	#if (defined SPECIES_OKIDOGI && SPECIES_FEZANDIPITI && SPECIES_MUNKIDORI)
+	return species == SPECIES_OKIDOGI || species == SPECIES_FEZANDIPITI || species == SPECIES_MUNKIDORI;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasPoisonPuppeteer(unusedArg u16 species)
+{
+	#ifdef SPECIES_PECHARUNT
+	return species == SPECIES_PECHARUNT;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasToxicDebris(unusedArg u16 species)
+{
+	#ifdef SPECIES_GLIMMORA
+	return species == SPECIES_GLIMMORA;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasWellBakedBody(unusedArg u16 species)
+{
+	#ifdef SPECIES_DACHSBUN
+	return species == SPECIES_DACHSBUN;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 AngerShellStatsCheck(u8 bank)
+{
+    return (STAT_STAGE(bank, STAT_ATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPATK) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_SPEED) != STAT_STAGE_MAX
+         || STAT_STAGE(bank, STAT_DEF) > STAT_STAGE_MIN
+         || STAT_STAGE(bank, STAT_SPDEF) > STAT_STAGE_MIN);
+}
+
+bool8 SpeciesHasWindPower(unusedArg u16 species)
+{
+	#if (defined SPECIES_WATTREL && SPECIES_KILOWATTREL)
+	return species == SPECIES_WATTREL || species == SPECIES_KILOWATTREL;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasWindRider(unusedArg u16 species)
+{
+	#if (defined SPECIES_BRAMBLIN && SPECIES_BRAMBLEGHAST && SPECIES_SHIFTRY)
+	return species == SPECIES_BRAMBLIN || species == SPECIES_BRAMBLEGHAST || species == SPECIES_SHIFTRY;
+	#else
+	return FALSE;
+	#endif
+}
+
+bool8 SpeciesHasZerotoHero(unusedArg u16 species) //Custom Unbound Ability
+{
+	#if (defined SPECIES_PALAFIN && defined SPECIES_PALAFIN_HERO)
+	return species == SPECIES_PALAFIN || species == SPECIES_PALAFIN_HERO;
+	#else
+	return FALSE;
+	#endif
 }

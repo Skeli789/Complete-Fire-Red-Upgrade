@@ -71,7 +71,7 @@ void atk00_attackcanceler(void)
 			for (i = 0; i < gBattlersCount; ++i)
 			{
 				if (i != gBankAttacker
-				&& gSpecialAbilityFlags[ABILITY(i)].gMoldBreakerIgnoredAbilities)
+				&& (gSpecialAbilityFlags[ABILITY(i)].gMoldBreakerIgnoredAbilities))
 				{
 					gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
 					gBattleMons[i].ability = ABILITY_NONE;
@@ -210,6 +210,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_FLAGS: // flags clear
 			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_DESTINY_BOND);
 			gStatuses3[gBankAttacker] &= ~(STATUS3_GRUDGE);
+			gStatuses3[gBankAttacker] &= ~(STATUS3_GLAIVERUSH);
 			gBattleScripting.tripleKickPower = 0;
 			gNewBS->ai.zMoveHelper = 0;
 			gBattleStruct->atkCancellerTracker++;
@@ -880,7 +881,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (WEATHER_HAS_EFFECT && SPLIT(gCurrentMove) != SPLIT_STATUS) //Damaging moves only
 			{
 				if ((gBattleStruct->dynamicMoveType == TYPE_FIRE && gBattleWeather & WEATHER_RAIN_PRIMAL)
-				||  (gBattleStruct->dynamicMoveType == TYPE_WATER && gBattleWeather & WEATHER_SUN_PRIMAL))
+				||  (gBattleStruct->dynamicMoveType == TYPE_WATER && gCurrentMove != MOVE_HYDROSTEAM && gBattleWeather & WEATHER_SUN_PRIMAL))
 				{
 					CancelMultiTurnMoves(gBankAttacker);
 					gBattlescriptCurrInstr = BattleScript_MoveUsedFailedPrimalWeather;
@@ -960,6 +961,10 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				{
 					gMultiHitCounter = 5;
 				}
+				else if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LOADED_DICE &&  gCurrentMove != MOVE_TRIPLEKICK &&  gCurrentMove != MOVE_TRIPLEAXEL)
+				{
+					gMultiHitCounter = 5;
+				}
 				#ifdef SPECIES_ASHGRENINJA
 				else if (ability == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN
@@ -1002,6 +1007,11 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					//Smart target to partner
 					gBankTarget = PARTNER(gBankTarget);
 				}
+			}
+			else if (gSpecialMoveFlags[gCurrentMove].gTenStrikesMoves)
+			{
+				gMultiHitCounter = 10;
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting.multihitString, 1, 0)
 			}
 			else if (gBattleMoves[gCurrentMove].effect == EFFECT_TRIPLE_KICK)
 			{

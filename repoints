@@ -14,6 +14,7 @@ gBattleScriptingCommandsTable 08015A28
 gBattleScriptingCommandsTable 08015C6C
 gBattleScriptingCommandsTable 08015C98
 gBattleScriptingCommandsTable 0801D054
+gBattleTerrainTable 0800F320
 
 gSpriteTemplateTable_TrainerBackSprites 0803F8A0
 gTrainerBackAnimsPtrTable 0803F8A4
@@ -48,6 +49,15 @@ gStatusConditionStringsTable 080D7850
 gTypeNames 080D8510
 gTypeNames 0811972C
 gTypeNames 0811977C
+
+##Trainers
+#ifdef EXPAND_TRAINERS
+gTrainers 0800FC00
+gTrainerClassNames 0811B4B4
+gTrainerMoneyTable 080259CC
+## gTrainerFrontPicTable 0823957C
+## gTrainerFrontPicPaletteTable 08239A1C
+#endif
 
 ##Scripts
 BattleScript_RainDishActivates 0801A4A0
@@ -305,4 +315,24 @@ gUnknown_841F428 080f78dc
 gText_TextSpeedMid 083cc330
 gText_TextSpeedFast 083cc334
 gText_TextSpeedInstant 083cc338
+#endif 
+
+#Repoints TM Case BG gfx resources 
+TMCaseBGTiles 08131B70
+TMCaseBGMap 08131B8C 
+TMCaseBGPal 08131BC8 
+TMCaseBGGirlPal 08131BD8
+
+#ifdef EXPANDED_NEW_ITEMS
+gItemGraphicsTable 0809899C
 #endif
+
+#ifdef CHANGE_ITEM_STORAGE_GRAPHIC
+Item_StorageTiles 0810D7CC
+Item_StorageMap 0810d7e8
+Item_StoragePal 0810d7fc
+#endif
+
+##Replace new egg hatch animation
+egg_hatchingTiles 0826011C
+egg_hatchingPal 0826012C

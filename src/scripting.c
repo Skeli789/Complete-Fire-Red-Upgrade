@@ -4,17 +4,24 @@
 #include "../include/fieldmap.h"
 #include "../include/field_message_box.h"
 #include "../include/field_weather.h"
+#include "../include/decompress.h"
 #include "../include/gpu_regs.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
+#include "../include/malloc.h"
 #include "../include/map_name_popup.h"
 #include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/naming_screen.h"
+#include "../include/new_game.h"
+#include "../include/new_menu_helpers.h"
 #include "../include/overworld.h"
+#include "../include/palette.h"
+#include "../include/pokemon_summary_screen.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/region_map.h"
+#include "../include/save.h"
 #include "../include/script.h"
 #include "../include/script_menu.h"
 #include "../include/sound.h"
@@ -31,8 +38,11 @@
 #include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 
+#include "../include/gba/m4a_internal.h"
+
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/bw_summary_screen.h"
 #include "../include/new/catching.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dns.h"
@@ -40,6 +50,7 @@
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new_menu_helpers.h"
+#include "../include/new/mid_battle_evo.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/pokemon_storage_system.h"
@@ -50,6 +61,7 @@
 #include "../include/new/scrolling_multichoice.h"
 #include "../include/new/Vanilla_functions_battle.h"
 #include "../include/new/wild_encounter.h"
+#include "../include/random.h"
 /*
 scripting.c
 	handles all scripting specials or other functions associated with scripts
@@ -70,11 +82,19 @@ tables to edit:
 
 #define POKERUS_CURED 0x10
 
+/* Ignore Wild Pokemon*/
+#define gMonPaletteTable ((const struct CompressedSpritePalette*) *((u32*) 0x8000130)) 
+#ifdef IgnoreWildPokemon
+#define gMonShinyPaletteTable ((const struct CompressedSpritePalette*) *((u32*) 0x8000134))
+#endif
+
 extern u8 AddPalRef(u8 Type, u16 PalTag);
 extern u8 BuildFrontierParty(struct Pokemon* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
+void ClearMiniBox(void);
 
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
+extern u8 sSafariZoneStatsWindowId;
 
 #ifdef AUTO_NAMING_SCREEN_SWAP
 static u8 GetTextCaretPosition(void);
@@ -2256,7 +2276,7 @@ extern const u8 gText_EnterNumber[];
 static const struct NamingScreenTemplate sChooseNumberNamingScreenTemplate =
 {
 	.copyExistingString = 0,
-	.maxChars = 4, //Max 9999 - should be preloaded
+	.maxChars = 5, //Max 9999 - should be preloaded
 	.iconFunction = 0,
 	.addGenderIcon = 0,
 	.initialPage = 1,
@@ -2427,8 +2447,8 @@ static void ShowItemSpriteOnFind(unusedArg u16 itemId, unusedArg u8* spriteId)
 	}
 
 	//Fix the item that replaced the close bag arrow sprite
-	if (itemId == ITEM_TM59_DRAGON_PULSE && ITEM_TM59_DRAGON_PULSE == 0x177) //Replaced the arrow
-		itemPicId = ITEM_TM02_DRAGON_CLAW; //Replace the close bag arrow with a Dragon TM sprite
+	if (itemId == ITEM_TM59 && ITEM_TM59 == 0x177) //Replaced the arrow
+		itemPicId = ITEM_TM02; //Replace the close bag arrow with a Dragon TM sprite
 	else
 		itemPicId = itemId;
 
@@ -2933,68 +2953,54 @@ void ConvertCoinInt(u32 coinAmount)
 //special 0x158
 //waitstate
 
-//Text Declarations
-extern const u8 sExampleText_1[];
-extern const u8 sExampleText_2[];
-extern const u8 sExampleText_3[];
-extern const u8 sExampleText_4[];
-extern const u8 sExampleText_5[];
-extern const u8 sExampleText_6[];
-extern const u8 sExampleText_7[];
-extern const u8 sExampleText_8[];
-extern const u8 sExampleText_9[];
-extern const u8 sExampleText_10[];
+extern const u8 sText_Normal[];
+extern const u8 sText_Fighting[];
+extern const u8 sText_Flying[];
+extern const u8 sText_Poison[];
+extern const u8 sText_Ground[];
+extern const u8 sText_Rock[];
+extern const u8 sText_Bug[];
+extern const u8 sText_Ghost[];
+extern const u8 sText_Steel[];
+extern const u8 sText_Fire[];
+extern const u8 sText_Water[];
+extern const u8 sText_Grass[];
+extern const u8 sText_Electric[];
+extern const u8 sText_Psychic[];
+extern const u8 sText_Ice[];
+extern const u8 sText_Dragon[];
+extern const u8 sText_Dark[];
+extern const u8 sText_Fairy[];
+extern const u8 sText_Stellar[];
 
-extern const u8 sText_1[];
-extern const u8 sText_2[];
-extern const u8 sText_3[];
-extern const u8 sText_4[];
-extern const u8 sText_5[];
-extern const u8 sText_6[];
-extern const u8 sText_7[];
-extern const u8 sText_8[];
-extern const u8 sText_9[];
-extern const u8 sText_10[];
-extern const u8 sText_11[];
-extern const u8 sText_12[];
-extern const u8 sText_13[];
-extern const u8 sText_14[];
-extern const u8 sText_15[];
-
-//Scrolling Lists
+// Scrolling Lists
 static const u8* sMultichoiceSet1[] =
 {
-	sExampleText_1,
-	sExampleText_2,
-	sExampleText_3,
-	sExampleText_4,
-	sExampleText_5,
-	sExampleText_6,
-	sExampleText_7,
-	sExampleText_8,
-	sExampleText_9,
-	sExampleText_10,
-};
-
-static const u8* sMultichoiceSet2[] =
-{
-	sExampleText_1,
-	sExampleText_2,
-	sExampleText_3,
-	sExampleText_4,
-	sExampleText_5,
-	sExampleText_6,
-	sExampleText_7,
-	sExampleText_8,
-	sExampleText_9,
-	sExampleText_10,
+    sText_Normal,
+    sText_Fighting,
+    sText_Flying,
+    sText_Poison,
+    sText_Ground,
+    sText_Rock,
+    sText_Bug,
+    sText_Ghost,
+    sText_Steel,
+    sText_Fire,
+    sText_Water,
+    sText_Grass,
+    sText_Electric,
+    sText_Psychic,
+    sText_Ice,
+    sText_Dragon,
+    sText_Dark,
+    sText_Fairy,
+	sText_Stellar,
 };
 
 // Multichoice Lists
 const struct ScrollingMulti gScrollingSets[] =
 {
 	{sMultichoiceSet1, ARRAY_COUNT(sMultichoiceSet1)},
-	{sMultichoiceSet2, ARRAY_COUNT(sMultichoiceSet2)},
 };
 
 //Link number of opts shown at once to the box height
@@ -3065,4 +3071,299 @@ void SetScrollingListSize(unusedArg u8 taskId)
 	gTasks[taskId].data[3] = 1;	//y
 	gTasks[taskId].data[4] = 0xC;	//width?
 #endif
+}
+
+/* Ignore Wild Pokemon*/
+
+#ifdef IgnoreWildPokemon
+u8 CreateWindowFromRect(u8 left, u8 top, u8 width, u8 height) {
+	struct WindowTemplate template;
+	if (FlagGet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN)) {
+		template = SetWindowTemplateFields(0, left + 1, top + 1, width, height, 15, 0x98);
+		FlagClear(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
+	} else {
+		template = SetWindowTemplateFields(0, left + 1, top + 1, width, height, 15, 0x038);
+	}
+	u8 windowId = AddWindow(&template);
+    PutWindowTilemap(windowId);
+    return windowId;
+}
+
+u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y)
+{
+	u16 spriteId;
+	if (FlagGet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN) && IsMonShiny(&gEnemyParty[0])) {
+    spriteId = CreateMonPicSprite_HandleDeoxys(species, gEnemyParty[0].otid, gEnemyParty[0].personality, TRUE, x, y, 0, gMonShinyPaletteTable[species].tag);
+	PreservePaletteInWeather(IndexOfSpritePaletteTag(gMonShinyPaletteTable[species].tag) + 0x10);
+	} else {
+    spriteId = CreateMonPicSprite_HandleDeoxys(species, 0x0, 0x8000, TRUE, x, y, 0, gMonPaletteTable[species].tag);
+	PreservePaletteInWeather(IndexOfSpritePaletteTag(gMonPaletteTable[species].tag) + 0x10);
+	}
+    if (spriteId == 0xFFFF)
+        return MAX_SPRITES;
+    else
+        return spriteId;
+}
+
+#else
+u8 CreateWindowFromRect(u8 left, u8 top, u8 width, u8 height) {
+	struct WindowTemplate template = SetWindowTemplateFields(0, left + 1, top + 1, width, height, 15, 0x038);
+	u8 windowId = AddWindow(&template);
+    PutWindowTilemap(windowId);
+    return windowId;
+}
+#endif
+
+void CheckIfFirstEnemyMonShiny() {
+	Var8000 = IsMonShiny(&gEnemyParty[0]);
+}
+
+struct WindowTemplate template = 
+{
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 11,
+    .width = 8,
+    .height = 2,
+    .paletteNum = 15,
+    .baseBlock = 0x100
+};
+
+#ifdef NEW_MINI_NAME_BOX
+extern const u8 gMiniBoxTiles[];
+extern const u16 gMiniBoxPal[];
+
+static const u8 sMiniBoxTextColors[] = {
+    TEXT_COLOR_TRANSPARENT,  // Fundo
+    TEXT_COLOR_DARK_GREY,        // Texto
+    TEXT_COLOR_LIGHT_GREY     // Sombra
+};
+
+void MiniBoxOpen(void)
+{
+	ClearMiniBox();
+    sSafariZoneStatsWindowId = AddWindow(&template);
+
+    if (sSafariZoneStatsWindowId == 0xFF)
+        return;
+
+    LoadPalette(gMiniBoxPal, BG_PLTT_ID(15), 16 * sizeof(u16));
+    BlitBitmapToWindow(sSafariZoneStatsWindowId, gMiniBoxTiles, 0, 0, 72, 16);
+
+    if (gLoadPointer == NULL)
+        return;
+
+    StringExpandPlaceholders(gStringVar4, gLoadPointer);
+	AddTextPrinterParameterized3(sSafariZoneStatsWindowId, FONT_NORMAL, 4, 2, sMiniBoxTextColors, TEXT_SPEED_FF, gStringVar4);
+    PutWindowTilemap(sSafariZoneStatsWindowId);
+    CopyWindowToVram(sSafariZoneStatsWindowId, 2);
+}
+#else
+void MiniBoxOpen(void)
+{
+    sSafariZoneStatsWindowId = AddWindow(&template);
+
+    if (sSafariZoneStatsWindowId == 0xFF)
+        return;
+
+    PutWindowTilemap(sSafariZoneStatsWindowId);
+    DrawStdWindowFrame(sSafariZoneStatsWindowId, TRUE);
+
+    if (gLoadPointer == NULL)
+        return;
+
+    StringExpandPlaceholders(gStringVar4, gLoadPointer);
+    AddTextPrinterParameterized(sSafariZoneStatsWindowId, 2, gStringVar4, 4, 3, 255, NULL);
+    CopyWindowToVram(sSafariZoneStatsWindowId, 2);
+}
+#endif
+void ClearMiniBox(void)
+{
+	sSafariZoneStatsWindowId = AddWindow(&template);
+
+    ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, TRUE);
+    RemoveWindow(sSafariZoneStatsWindowId);
+	CopyWindowToVram(sSafariZoneStatsWindowId, 2);
+}
+void StoreFollowerMonInVar4004(void)
+{
+    u16 species = SPECIES_NONE;
+
+    for (int i = 0; i < gPlayerPartyCount; i++) {
+        struct Pokemon* mon = &gPlayerParty[i];
+
+        if (!GetMonData(mon, MON_DATA_IS_EGG, NULL) && GetMonData(mon, MON_DATA_HP, NULL) > 0) {
+            species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+            break;
+        }
+    }
+
+    VarSet(0x4004, species);
+}
+
+void Nuzlock_PokemonEraser(void)
+{
+    u8 i;
+    bool8 erased = FALSE;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL) == 0)
+        {
+            ZeroMonData(&gPlayerParty[i]);
+            erased = TRUE;
+        }
+    }
+
+    if (erased)
+    {
+        CompactPartySlots();
+        CalculatePlayerPartyCount();
+    }
+}
+
+enum
+{
+    WIN_INTRO_TEXTBOX,
+    WIN_INTRO_BOYGIRL,
+    WIN_INTRO_YESNO,
+    WIN_INTRO_NAMES,
+    NUM_INTRO_WINDOWS,
+};
+
+struct OakSpeechResources
+{
+    void *oakSpeechBackgroundTiles;
+    void *trainerPicTilemap;
+    void *pikachuIntroTilemap;
+    void *unused1;
+    u16 hasPlayerBeenNamed;
+    u16 currentPage;
+    u16 windowIds[NUM_INTRO_WINDOWS];
+    u8 textColor[3];
+    u8 textSpeed;
+    u8 unused2[0x1800];
+    u8 bg2TilemapBuffer[0x400];
+    u8 bg1TilemapBuffer[0x800];
+};
+
+#define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
+#define tNidoranFSpriteId           data[4]
+
+void CreateOakIntroPokemonSprite(u8 taskId)
+{
+    u8 spriteId;
+
+    DecompressPicFromTable(&gMonFrontPicTable[OAK_INTRO_SPECIES], MonSpritesGfxManager_GetSpritePtr(0), OAK_INTRO_SPECIES);
+    LoadCompressedSpritePaletteUsingHeap(&gMonPaletteTable[OAK_INTRO_SPECIES]);
+    SetMultiuseSpriteTemplateToPokemon(OAK_INTRO_SPECIES, 0);
+    spriteId = CreateSprite(gMultiuseSpriteTemplate, 96, 96, 1);
+    gSprites[spriteId].callback = SpriteCallbackDummy;
+    gSprites[spriteId].oam.priority = 1;
+    gSprites[spriteId].invisible = TRUE;
+    gTasks[taskId].tNidoranFSpriteId = spriteId;
+}
+
+#define OakSpeechPrintMessage(str, speed) ({                                                                                                                 \
+    DrawDialogueFrame(WIN_INTRO_TEXTBOX, FALSE);                                                                                                             \
+    if (str != gStringVar4)                                                                                                                                  \
+    {                                                                                                                                                        \
+        StringExpandPlaceholders(gStringVar4, str);                                                                                                          \
+        AddTextPrinterParameterized2(WIN_INTRO_TEXTBOX, FONT_MALE, gStringVar4, speed, NULL, 2, TEXT_COLOR_WHITE, 3); \
+    }                                                                                                                                                        \
+    else                                                                                                                                                     \
+    {                                                                                                                                                        \
+        AddTextPrinterParameterized2(WIN_INTRO_TEXTBOX, FONT_MALE, str, speed, NULL, 2, TEXT_COLOR_WHITE, 3);         \
+    }                                                                                                                                                        \
+    CopyWindowToVram(WIN_INTRO_TEXTBOX, 3);                                                                                                       \
+})
+
+#define tTimer 	data[3]
+extern const u8 gOakSpeech_Text_IsInhabitedFarAndWide[];
+extern const struct OakSpeechResources *sOakSpeechResources;
+void Task_OakSpeech_IsInhabitedFarAndWide(u8 taskId)
+{
+    if (IsCryFinished())
+    {
+        if (gTasks[taskId].tTimer >= 96)
+            gTasks[taskId].func = Task_OakSpeech_IStudyPokemon;
+    }
+    if (gTasks[taskId].tTimer < 0x4000)
+    {
+        gTasks[taskId].tTimer++;
+        if (gTasks[taskId].tTimer == 32)
+        {
+            OakSpeechPrintMessage(gOakSpeech_Text_IsInhabitedFarAndWide, sOakSpeechResources->textSpeed);
+            PlayCry1(OAK_INTRO_SPECIES, 0);
+        }
+    }
+}
+
+#define tSceneNum              data[0]
+#define tState                 data[1]
+#define tHasCreatedBlankSprite data[5]
+#define tSlashSpriteId         data[6]
+#define SAVE_NORMAL 0
+#define SAVE_STATUS_EMPTY    0
+#define SAVE_STATUS_INVALID  2
+
+void SetTitleScreenScene_Cry(s16 *data)
+{
+    switch (tState)
+    {
+    case 0:
+        if (!gPaletteFade->active)
+        {
+            PlayCry1(CRY_SPECIES, 0);
+            DeactivateSlashSprite(tSlashSpriteId);
+            data[2] = 0;
+            tState++;
+        }
+        break;
+    case 1:
+        if (data[2] < 90)
+            data[2]++;
+        else if (!IsSlashSpriteDeactivated(tSlashSpriteId))
+        {
+            BeginNormalPaletteFade((PALETTES_ALL & ~(1 << 0x1C) & ~(1 << 0x1D) & ~(1 << 0x1E) & ~(1 << 0x1F)), 0, 0, 16, RGB_WHITE);
+            SignalEndTitleScreenPaletteSomethingTask();
+            FadeOutBGM(4);
+            tState++;
+        }
+        break;
+    case 2:
+        if (!gPaletteFade->active)
+        {
+            SeedRngAndSetTrainerId();
+            SetSaveBlocksPointers();
+            ResetMenuAndMonGlobals();
+            Save_ResetSaveCounters();
+            LoadGameSave(SAVE_NORMAL);
+            if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_INVALID)
+                Sav2_ClearSetDefault();
+            SetPokemonCryStereo(gSaveBlock2->optionsSound);
+            InitHeap(gHeap, HEAP_SIZE);
+            SetMainCallback2(CB2_InitMainMenu);
+            DestroyTask(FindTaskIdByFunc(Task_TitleScreenMain));
+        }
+        break;
+    }
+}
+
+// To change/set Pokemon's IVs manually
+void SetCustomMonIVs(void)
+{
+    u16 *ivs = &Var8006; // Till Var800B
+    u8 partyIndex = VarGet(Var8005);
+    struct Pokemon *mon = &gPlayerParty[partyIndex];
+
+    for (u8 i = 0; i < NUM_STATS; ++i)
+    {
+        u16 *currIv = &ivs[i];
+        u16 monIv = GetMonData(mon, MON_DATA_HP_IV + i, NULL);
+
+        // Only change if var is not 32
+		const u16 ivValue = (*currIv < 32) ? *currIv : monIv;
+		SetMonData(mon, MON_DATA_HP_IV + i, &ivValue);
+    }
 }

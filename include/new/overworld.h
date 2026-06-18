@@ -24,6 +24,7 @@ void TrainerFaceFix(void);
 void FollowerPositionFix(u8 offset);
 bool8 IsAutoRunEnabled(void);
 bool8 IsRunningDisallowed(u8 tile);
+bool8 IsCurrentAreaHotCave(void);
 bool8 IsCurrentAreaVolcano(void);
 bool8 IsCurrentAreaAutumn(void);
 bool8 IsCurrentAreaWinter(void);

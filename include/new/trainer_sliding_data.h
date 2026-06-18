@@ -15,6 +15,8 @@ extern const u8 gText_DefaultTrainerDynamaxMsg[];
 extern const u8 gText_TestTrainerDynamaxMsg[];
 extern const u8 gText_RedDynamaxMsg[];
 
+extern const u8 sText_RivalFirstMonHurt[];
+
 //For Unbound
 
 extern const u8 sText_MirskleFirstMonDown[];

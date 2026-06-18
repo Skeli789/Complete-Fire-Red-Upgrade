@@ -1,0 +1,1 @@
+void __attribute__((long_call)) Task_PrintMainMenuText(u8 taskId);

@@ -103,6 +103,9 @@ u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSect
 u8 __attribute__((long_call)) Save_LoadGameData(u8 a1);
 u8 __attribute__((long_call)) TrySavingData(u8 saveType);
 u8 __attribute__((long_call)) HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
+void __attribute__((long_call)) SetSaveBlocksPointers(void);
+void __attribute__((long_call)) Save_ResetSaveCounters(void);
+u8 __attribute__((long_call)) LoadGameSave(u8 saveType);
 
 /*
 void Save_ResetSaveCounters(void);

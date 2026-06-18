@@ -34,6 +34,9 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/util.h"
+#include "../include/metatile_behavior.h"
+#include "../include/fieldmap.h"
+#include "../include/new/terastallization.h"
 
 /*
 battle_start_turn_start.c
@@ -44,6 +47,7 @@ battle_start_turn_start.c
 enum BattleBeginStates
 {
 	BTSTART_BACKUP_PARTY_ITEMS,
+	BTSTART_TRY_CHANGE_ABILITY,
 	BTSTART_GET_TURN_ORDER,
 	BTSTART_ACTIVATE_OW_WEATHER,
 	BTSTART_ACTIVATE_OW_TERRAIN,
@@ -68,12 +72,26 @@ enum BattleBeginStates
 	BTSTART_END,
 };
 
+#ifdef EXPAND_TRAINERS
+const struct TrainerCustomAbility gCustomTrainerAbilityTable[TRAINERS_COUNT][PARTY_SIZE] = {
+	[TRAINER_RIVAL_ROUTE22_EARLY_SQUIRTLE] = {
+		{SPECIES_GOOMY, ABILITY_MOLDBREAKER},
+		{SPECIES_GROWLITHE, ABILITY_INTREPIDSWORD},
+		CUSTOM_ABILITYTABLE_TERMIN
+	},
+};
+#endif
+
 enum SpeedWarResults
 {
 	FirstMon,
 	SecondMon,
 	SpeedTie,
 };
+
+// For Terastallization
+extern u8* DoTerastallize(u8 bank);
+extern bool8 IsTerastallized(u8 bank);
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);
@@ -105,12 +123,24 @@ static void SavePartyItems(void);
 static void TryPrepareTotemBoostInBattleSands(void);
 static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed);
+static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed, u8 bank);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed, bool8 isDynamaxed);
 static void TryClearLevelCapKeptOn(void);
+extern void RemoveFollowerBeforeBattle(void);
 
 void HandleNewBattleRamClearBeforeBattle(void)
 {
+	if (MetatileBehavior_IsSurfableWaterOrUnderwater(MapGridGetMetatileBehaviorAt(
+		gEventObjects[gPlayerAvatar->eventObjectId].currentCoords.x,
+		gEventObjects[gPlayerAvatar->eventObjectId].currentCoords.y)))
+	{
+		// Player on water — surf encounter
+		FlagSet(FLAG_FOLLOWER_WAS_SURFING);         // Mark surf follower state
+	}
+	else
+	{
+		RemoveFollowerBeforeBattle();               // Land/normal battle
+	}
 	gNewBS = Calloc(sizeof(struct NewBattleStruct));
 	Memset(FIRST_NEW_BATTLE_RAM_LOC, 0, (u32) LAST_NEW_BATTLE_RAM_LOC - (u32) FIRST_NEW_BATTLE_RAM_LOC);
 	Memset(gBattleBufferA, 0x0, sizeof(gBattleBufferA)); //Clear both battle buffers
@@ -219,6 +249,13 @@ static void TryClearLevelCapKeptOn(void)
 void BattleBeginFirstTurn(void)
 {
 	int i, j;
+
+	#ifdef EXPAND_TRAINERS
+	int tableSlot;
+	u16 trainerId = gTrainerBattleOpponent_A;
+	const struct TrainerCustomAbility *table = gCustomTrainerAbilityTable[trainerId];
+	#endif
+
 	u8* state = &(gBattleStruct->switchInAbilitiesCounter);
 	u8* bank = &(gBattleStruct->switchInItemsCounter);
 
@@ -233,6 +270,30 @@ void BattleBeginFirstTurn(void)
 				SavePartyItems();
 				TryBackupEnemyTeam();
 				TryClearLevelCapKeptOn();
+				++*state;
+				break;
+			
+			case BTSTART_TRY_CHANGE_ABILITY:
+			#ifdef EXPAND_TRAINERS
+				for (i = 0; i < gBattlersCount; ++i)
+				{
+					u16 species = gBattleMons[i].species;
+
+					for (tableSlot = 0; tableSlot < PARTY_SIZE; tableSlot++)
+					{
+						u16 targetSpecies = table[tableSlot].species;
+						u8 targetAbility = table[tableSlot].ability;
+
+						// Quit on encountering SPECIES_NONE
+						if (targetSpecies == SPECIES_NONE)
+							break;
+
+						// Set ability
+						if (targetSpecies == species)
+							gBattleMons[i].ability = targetAbility;
+					}
+				}
+			#endif
 				++*state;
 				break;
 
@@ -1013,11 +1074,20 @@ enum MegaStates
 	Mega_End
 };
 
+// For Terastallization
+enum TeraStates
+{
+    Tera_Check,
+    Tera_CalcTurnOrder,
+    Tera_End
+};
+
 void RunTurnActionsFunctions(void)
 {
 	int i, j;
 	u8 effect, savedActionFuncId;
 	u8* megaBank = &(gNewBS->megaData.activeBank);
+	u8* teraBank = &(gNewBS->teraData.activeBank); // For Terastallization
 
 	if (gBattleOutcome != 0)
 		gCurrentActionFuncId = ACTION_FINISHED;
@@ -1194,6 +1264,79 @@ void RunTurnActionsFunctions(void)
 	}
 
 	*megaBank = 0;
+// For Terastallization
+	switch (gNewBS->teraData.state) 
+	{
+		case Tera_Check:
+			for (i = *teraBank; i < gBattlersCount; ++i, ++*teraBank)
+			{
+				u8 bank = gActiveBattler = gBanksByTurnOrder[i];
+				u8 side = GetBattlerSide(bank);
+
+				// Check if there is already a Terastallized Pokémon on the same side
+				bool8 sideHasTerastallized = FALSE;
+				for (u8 j = 0; j < PARTY_SIZE; j++)
+				{
+					if (gNewBS->teraData.done[side][j])
+					{
+						sideHasTerastallized = TRUE;
+						break;
+					}
+				}
+
+				if (gNewBS->teraData.chosen[bank]
+				&& !IsTerastallized(bank)
+				&& !sideHasTerastallized
+				&& gCurrentActionFuncId == ACTION_USE_MOVE)
+				{
+					const u8* script = DoTerastallize(bank);
+					if (script != NULL)
+					{
+						u8 partyId = gBattlerPartyIndexes[bank];
+
+						gNewBS->teraData.done[side][partyId] = TRUE;
+						gNewBS->teraData.chosen[bank] = 0;
+						gNewBS->teraData.teraInProgress = TRUE;
+
+						BattleScriptExecute(script);
+						gCurrentActionFuncId = savedActionFuncId;
+						return;
+					}
+				}
+			}
+			if (gNewBS->teraData.teraInProgress)
+				++gNewBS->teraData.state;
+			else
+			{	
+				gNewBS->teraData.state = Tera_End;
+				gNewBS->teraData.teraInProgress = FALSE;
+			}
+			return;
+
+		// Adjust turn order after Terastallization
+		case Tera_CalcTurnOrder:
+			for (i = 0; i < gBattlersCount - 1; ++i)
+			{
+				for (j = i + 1; j < gBattlersCount; ++j)
+				{
+					u8 bank1 = gBanksByTurnOrder[i];
+					u8 bank2 = gBanksByTurnOrder[j];
+					if (GetWhoStrikesFirst(bank1, bank2, FALSE))
+						SwapTurnOrder(i, j);
+				}
+			}
+			*teraBank = 0;
+			++gNewBS->teraData.state;
+
+			return;
+
+		case Tera_End:
+			gNewBS->teraData.state = 0;
+			gNewBS->teraData.teraInProgress = FALSE;
+	}
+
+	*teraBank = 0;
+
 
 	if (gCurrentActionFuncId == ACTION_USE_MOVE)
 	{
@@ -1794,6 +1937,15 @@ u16 GetMUS_ForBattle(void)
 		{
 			trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
 
+			if (trainerClass == CLASS_LEADER)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_GYM_LEADER : MUS_RS_VS_GYM_LEADER;
+			if(trainerClass == CLASS_ELITE_FOUR)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_GYM_LEADER : MUS_RS_VS_E4;
+			if(trainerClass == CLASS_CHAMPION || trainerClass == CLASS_CHAMPION_RS)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_CHAMPION : MUS_RS_VS_CHAMP;
+			if(trainerClass == CLASS_RIVAL || trainerClass == CLASS_RIVAL_2)
+				return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_TRAINER : MUS_RS_VS_RIVAL;
+
 			if (gClassBasedBattleBGM[trainerClass])
 				return gClassBasedBattleBGM[trainerClass];
 			
@@ -1805,6 +1957,7 @@ u16 GetMUS_ForBattle(void)
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
 				trainerClass = gTrainers[SECOND_OPPONENT].trainerClass;
+
 				if (gClassBasedBattleBGM[trainerClass])
 					return gClassBasedBattleBGM[trainerClass];
 			}
@@ -1819,7 +1972,7 @@ u16 GetMUS_ForBattle(void)
 		#ifdef UNBOUND
 			return BGM_BATTLE_BORRIUS_TRAINER;
 		#else
-			return BGM_BATTLE_TRAINER;
+		return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_TRAINER : MUS_RS_VS_TRAINER;
 		#endif
 	}
 
@@ -1862,7 +2015,7 @@ u16 GetMUS_ForBattle(void)
 				return song;
 		#endif
 
-		return BGM_BATTLE_WILD;
+		return VarGet(VAR_BATTLE_MUSIC) == 0 ? BGM_BATTLE_WILD : MUS_RS_VS_WILD;
 	#endif
 }
 
@@ -2215,14 +2368,20 @@ s32 BracketCalc(u8 bank, u8 action, u16 move)
 			}
 		}
 
-		if (ability == ABILITY_STALL)
+		if (ability == ABILITY_STALL && !(SpeciesHasBeadsofRuin(LEECH_SPECIES(bank))
+										|| SpeciesHasSwordofRuin(LEECH_SPECIES(bank))
+										|| SpeciesHasTabletsofRuin(LEECH_SPECIES(bank))
+										|| SpeciesHasVesselofRuin(LEECH_SPECIES(bank))))
 			return -1;
+
+		if (SPLIT(gCurrentMove) == SPLIT_STATUS && SpeciesHasMyceliumMight(LEECH_SPECIES(bank)))
+			return -2;
 	}
 
 	return 0;
 }
 
-static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed)
+static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed, u8 bank)
 {
 	if (WEATHER_HAS_EFFECT) {
 		switch (ability) {
@@ -2242,6 +2401,17 @@ static u32 BoostSpeedInWeather(u8 ability, u8 itemEffect, u32 speed)
 				if (gBattleWeather & WEATHER_HAIL_ANY)
 					speed *= 2;
 				break;
+			case ABILITY_QUARKDRIVE:
+				if(bank != 255)
+				{
+					if (gTerrainType == ELECTRIC_TERRAIN
+					&& GetHighestStat(bank) == STAT_SPEED && !SpeciesHasProtosynthesis(SPECIES(bank)))
+						speed = (speed * 15) / 10;
+
+					if (IsSunWeatherActive(bank) && GetHighestStat(bank) == STAT_SPEED && SpeciesHasProtosynthesis(SPECIES(bank)))
+						speed = (speed * 15) / 10;
+				}
+			break;
 		}
 	}
 
@@ -2291,7 +2461,7 @@ u32 SpeedCalc(u8 bank)
 	speed = (rawSpeed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
 
 	//Check for abilities that alter speed
-	speed = BoostSpeedInWeather(ability, itemEffect, speed);
+	speed = BoostSpeedInWeather(ability, itemEffect, speed, bank);
 
 	switch (ability) {
 		case ABILITY_UNBURDEN:
@@ -2350,6 +2520,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 	u8 itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(mon->item) : 0;
 	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
 	u8 statVal = 6;
+	u8 bank = GetBankFromPartyData(mon);
 
 	#ifdef FLAG_WEIGHT_SPEED_BATTLE
 	if (FlagGet(FLAG_WEIGHT_SPEED_BATTLE))
@@ -2362,6 +2533,7 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 	if (gSideTimers[side].stickyWeb
 	&& IsMonAffectedByHazards(mon)
 	&& ability != ABILITY_CLEARBODY
+	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_CLEAR_AMULET
 	&& CheckMonGrounding(mon))
 	{
 		if (ability == ABILITY_CONTRARY) //Gets a speed boost
@@ -2378,7 +2550,16 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon) //Used for the AI
 	speed = (speed * gStatStageRatios[statVal][0]) / gStatStageRatios[statVal][1];
 
 	//Check for abilities that alter speed
-	speed = BoostSpeedInWeather(ability, itemEffect, speed);
+	speed = BoostSpeedInWeather(ability, itemEffect, speed, 255);
+
+	if(ability == ABILITY_QUARKDRIVE)
+	{
+		if (gTerrainType == ELECTRIC_TERRAIN && GetHighestStatMon(mon) == STAT_SPEED && !SpeciesHasProtosynthesis(mon->species))
+				speed = (speed * 15) / 10;
+
+		if (IsSunWeatherActive(bank) && GetHighestStatMon(mon) == STAT_SPEED && SpeciesHasProtosynthesis(mon->species))
+				speed = (speed * 15) / 10;
+	}
 
 	switch (ability) {
 		case ABILITY_SLOWSTART:

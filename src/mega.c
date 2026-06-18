@@ -590,7 +590,7 @@ const u8* GetTrainerName(u8 bank)
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
 			|| IsFrontierTrainerId(trainerId))
 				return GetFrontierTrainerName(trainerId, battlerNum);
-
+			
 			return gTrainers[trainerId].trainerName;
 		}
 

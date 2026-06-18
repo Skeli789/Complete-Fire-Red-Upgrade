@@ -18,6 +18,9 @@ bool8 __attribute__((long_call)) MetatileBehavior_IsSlidingIce(u8 metatileBehavi
 bool8 __attribute__((long_call)) MetatileBehavior_IsSlideAround(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsSeafoamIsland(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsNonAnimDoor(u8);
+bool8 __attribute__((long_call)) MetatileBehavior_IsCyclingRoadPullDownTile(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsFootprints(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsCounter(u8 metatileBehavior);
 
 /*
 bool8 MetatileBehavior_UnusedReturnTrue(u8 metatileBehavior);

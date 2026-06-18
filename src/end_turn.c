@@ -101,6 +101,7 @@ enum EndTurnEffects
 	ET_Reactivate_Overworld_Weather,
 	ET_Reactivate_Overworld_Terrain,
 	ET_SOS,
+	ET_Saltcure,
 	ET_End
 };
 
@@ -143,7 +144,7 @@ const u16 gSandstormHailDmgStringIds[] =
 	STRINGID_CUSTOMSTRING,
 };
 
-u8 TurnBasedEffects(void)
+u8 TurnBasedEffects(u16 move, u8 bank, struct Pokemon* monAtk)
 {
 	int i, j;
 	u8 effect = 0;
@@ -183,6 +184,9 @@ u8 TurnBasedEffects(void)
 
 					if(gNewBS->StompingTantrumTimers[i])
 						--gNewBS->StompingTantrumTimers[i];
+
+					if(gNewBS->GlaiveRushTimers[i])
+						--gNewBS->GlaiveRushTimers[i];
 
 					if (gNewBS->StakeoutCounters[i])
 						--gNewBS->StakeoutCounters[i];
@@ -226,6 +230,14 @@ u8 TurnBasedEffects(void)
 
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
+
+				if (gNewBS->activateTemperFlare)
+					--gNewBS->activateTemperFlare;
+
+				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC)
+				{
+					gNewBS->ElectroCounter[bank] = 0;
+				}
 
 				gSideStatuses[B_SIDE_PLAYER] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 				gSideStatuses[B_SIDE_OPPONENT] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
@@ -1744,11 +1756,25 @@ u8 TurnBasedEffects(void)
 				#endif
 				break;
 
+			case ET_Saltcure:
+				if (gStatuses4[gActiveBattler] & STATUS4_SALTCURE
+				&&  BATTLER_ALIVE(gActiveBattler)
+				&&  ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
+				{
+					gBattleMoveDamage = GetSaltCureDamage(gActiveBattler);
+					PREPARE_MOVE_BUFFER(gBattleTextBuff1, MOVE_SALTCURE);
+					BattleScriptExecute(BattleScript_SaltCureExtraDamage);
+					effect++;
+				}
+				gNewBS->turnDamageTaken[gActiveBattler] = gBattleMoveDamage; //For Emergency Exit
+				break;
+
 			case ET_End:
 			END_TURN_SKIP:
 				gBattleStruct->turnEffectsBank = gBattlersCount;
 				gNewBS->endTurnDone = TRUE;
 				gNewBS->megaData.state = 0;
+				gNewBS->teraData.state = 0; // For Terastallization
 				gNewBS->calculatedAIPredictions = FALSE;
 				gNewBS->batonPassing = FALSE;
 				gNewBS->NoMoreMovingThisTurn = 0; //May be set during end turn Emergency Exit
@@ -2071,6 +2097,22 @@ u32 GetGMaxVolcalithDamage(u8 bank)
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
 	{
 		damage = MathMax(1, GetBaseMaxHP(bank) / 6);
+	}
+
+	return damage;
+}
+
+u32 GetSaltCureDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (gStatuses4[bank] & STATUS4_SALTCURE
+	&& ABILITY(bank) != ABILITY_MAGICGUARD)
+	{
+		if (IsOfType(bank, TYPE_WATER) || IsOfType(bank, TYPE_STEEL))
+			damage = MathMax(1, GetBaseMaxHP(bank) / 4);
+		else
+			damage = MathMax(1, GetBaseMaxHP(bank) / 8);
 	}
 
 	return damage;

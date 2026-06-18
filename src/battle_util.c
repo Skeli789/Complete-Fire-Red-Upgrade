@@ -18,6 +18,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
+#include "../include/new/terastallization.h"
 
 /*
 battle_util.c
@@ -28,6 +29,9 @@ battle_util.c
 
 static void TryRemoveUnburdenBoost(u8 bank);
 static bool8 CanBeGeneralStatused(u8 bankDef, u8 defAbility, u8 atkAbility, bool8 checkFlowerVeil);
+// For Terastallization
+extern bool8 IsTerastallized(u8 bank);
+
 
 u8 GetBankForBattleScript(u8 caseId)
 {
@@ -539,7 +543,8 @@ bool8 CanNeverMakeContactByAbilityItemEffect(u8 ability, u8 itemEffect)
 
 bool8 CanNeverMakeContactByItemEffect(u8 itemEffect)
 {
-	return itemEffect == ITEM_EFFECT_PROTECTIVE_PADS;
+	return itemEffect == ITEM_EFFECT_PROTECTIVE_PADS
+		|| itemEffect == ITEM_EFFECT_PUNCHING_GLOVE;
 }
 
 bool8 CheckHealingMove(move_t move)
@@ -591,6 +596,7 @@ bool8 LiftProtect(u8 bank)
 	|| gProtectStructs[bank].SpikyShield
 	|| gProtectStructs[bank].BanefulBunker
 	|| gProtectStructs[bank].obstruct
+	|| gProtectStructs[bank].BurningBulwark
 	|| gSideStatuses[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
 	{
 		if (!IsDynamaxed(bank))
@@ -600,6 +606,7 @@ bool8 LiftProtect(u8 bank)
 		gProtectStructs[bank].SpikyShield = 0;
 		gProtectStructs[bank].BanefulBunker = 0;
 		gProtectStructs[bank].obstruct = 0;
+		gProtectStructs[bank].BurningBulwark = 0;
 		gSideStatuses[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 		return TRUE;
 	}
@@ -612,7 +619,8 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 	if (gProtectStructs[bankDef].protected
 	|| gProtectStructs[bankDef].SpikyShield
 	|| gProtectStructs[bankDef].BanefulBunker
-	|| gProtectStructs[bankDef].obstruct)
+	|| gProtectStructs[bankDef].obstruct
+	|| gProtectStructs[bankDef].BurningBulwark)
 	{
 		return TRUE;
 	}
@@ -780,6 +788,10 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 		return TRUE;
 	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && gSpecialMoveFlags[move].gRaidBattleBannedMoves && check & MOVE_LIMITATION_ENCORE)
 		return TRUE;
+	else if (move == MOVE_GIGATONHAMMER && gNewBS->LastUsedMove == MOVE_GIGATONHAMMER)
+        return TRUE;
+	else if (move == MOVE_BLOODMOON && gNewBS->LastUsedMove == MOVE_BLOODMOON)
+        return TRUE;
 
 	return FALSE;
 }
@@ -1589,6 +1601,15 @@ u8 CalcMoveSplit(u16 move, u8 bankAtk, u8 bankDef)
 		
 		APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(bankAtk, STAT_STAGE_ATK));
 		APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(bankAtk, STAT_STAGE_SPATK));
+
+		// Added Tera Blast check
+		if (move == MOVE_TERABLAST) 
+		{
+			if (IsTerastallized(bankAtk))
+				return (attack >= spAttack) ? SPLIT_PHYSICAL : SPLIT_SPECIAL;
+			else
+				return SPLIT_SPECIAL; // Ensures it defaults to special when not terastallized
+		}
 
 		if (spAttack >= attack)
 			return SPLIT_SPECIAL;
@@ -2689,4 +2710,28 @@ u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
 		species = gBattleSpritesDataPtr->bankData[bank].transformSpecies;
 
 	return species;
+}
+
+bool8 IsSunWeatherActive(u8 bank) {
+    return gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && AffectedBySun(bank);
+}
+
+bool32 IsMyceliumMightOnField(void)
+{
+    u32 i;
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (IsBattlerAlive(i) && SpeciesHasMyceliumMight(gBattleMons[i].species) && SPLIT(gCurrentMove) == SPLIT_STATUS)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+void BS_ApplySaltCure(void)
+{
+    u8 battler = GetBattlerForBattleScript(gBattlerAttacker);
+    gStatuses4[battler] |= STATUS4_SALTCURE;
+    gBattlescriptCurrInstr++;
 }

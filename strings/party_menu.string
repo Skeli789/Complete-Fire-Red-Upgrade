@@ -60,3 +60,84 @@ Remove the Gigantamax factor from\n[BUFFER1]?
 
 #org @gText_MaxPowderRemovesGigantamax
 [BUFFER1] can no longer Gigantamax.[PAUSE_UNTIL_PRESS]
+
+#org @gMenuText_NickName
+NICKNAME
+ 
+#org @gText_Slash
+/
+
+#org @gText_MintOfferGive
+It might affect [BUFFER1]'s stats.\nAre you sure you want to use it?
+
+#org @gText_MintUsed
+[BUFFER1] nature changed to\n[BUFFER2] nature.[PAUSE_UNTIL_PRESS]
+
+#org @sText_Nature_Lonely
+Lonely
+
+#org @sText_Nature_Brave
+Brave
+
+#org @sText_Nature_Adamant
+Adamant
+
+#org @sText_Nature_Naughty
+Naughty
+
+#org @sText_Nature_Bold
+Bold
+
+#org @sText_Nature_Docile
+Docile
+
+#org @sText_Nature_Relaxed
+Relaxed
+
+#org @sText_Nature_Impish
+Impish
+
+#org @sText_Nature_Lax
+Lax
+
+#org @sText_Nature_Timid
+Timid
+
+#org @sText_Nature_Hasty
+Hasty
+
+#org @sText_Nature_Serious
+Serious
+
+#org @sText_Nature_Jolly
+Jolly
+
+#org @sText_Nature_Naive
+Naive
+
+#org @sText_Nature_Modest
+Modest
+
+#org @sText_Nature_Mild
+Mild
+
+#org @sText_Nature_Quiet
+Quiet
+
+#org @sText_Nature_Bashful
+Bashful
+
+#org @sText_Nature_Rash
+Rash
+
+#org @sText_Nature_Calm
+Calm
+
+#org @sText_Nature_Gentle
+Gentle
+
+#org @sText_Nature_Sassy
+Sassy
+
+#org @sText_Nature_Careful
+Careful

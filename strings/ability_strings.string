@@ -126,3 +126,42 @@ But [TARGET] evaporated\nthe attack!
 
 #org @gText_ButAbilityEvaporatesRain
 But [SCRIPTING_BANK] evaporates\nrain!
+
+#org @GigatonHammerNotAllowedString
+[CURRENT_MOVE] can't be used twice\nin a row!\p
+
+#org @gText_BeadsofRuin
+[SCRIPTING_BANK]'s Beads of Ruin weakened\nthe Sp.Def of around all Pokémon.
+
+#org @gText_TabletsofRuin
+[SCRIPTING_BANK]'s Tablets of Ruin weakened\nthe Attack of around all Pokémon.
+
+#org @gText_SwordofRuin
+[SCRIPTING_BANK]'s Sword of Ruin weakened\nthe Defense of around all Pokémon.
+
+#org @gText_VesselofRuin
+[SCRIPTING_BANK]'s Vessel of Ruin weakened\nthe Sp.Attack of around all Pokémon.
+
+#org @gText_CostarActivate
+[SCRIPTING_BANK] copied [TARGET]\nstat changes!
+
+#org @gText_GoodAsGoldActivate
+It doesn't affect [SCRIPTING_BANK][.]
+
+#org @sText_ElectricTerrainActivatedAbility
+The Electric Terrain activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
+
+#org @sText_StatWasHeightened
+[SCRIPTING_BANK]'s [BUFFER][00] was\nheightened!
+
+#org @sText_SunlightActivatedAbility
+The harsh sunlight activated\n[SCRIPTING_BANK]'s [LAST_ABILITY]!
+
+#org @gText_SupremeOverlordActivate
+[SCRIPTING_BANK] gained strength from\nthe fallen!
+
+#org @gText_GrassySurgeGrew
+Grass grew to cover the\nbattlefield!\p
+
+#org @gText_ZerotoHeroActivate
+[SCRIPTING_BANK] underwent a heroic\ntranformation!

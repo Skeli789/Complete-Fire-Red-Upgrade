@@ -132,6 +132,7 @@ enum OverworldNPCSprites
 #define TRACKS_FOOT       1
 #define TRACKS_BIKE_TIRE  2
 
+#define OBJ_EVENT_ID_FOLLOWER 0xFE
 #define EVENT_OBJ_ID_PLAYER 0xFF
 #define EVENT_OBJ_ID_CAMERA 0x7F
 

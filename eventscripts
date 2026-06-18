@@ -1,1 +1,12 @@
 ##
+npc 3 0 1 EventScript_Pallet_FatGuy
+npc 3 0 0 EventScript_Pallet_Girl
+npc 4 3 1 SystemScript_DebugMenu
+npc 4 3 2 EventScript_ChangeTeraTypeNPC
+npc 4 3 0 EventScript_Pallet_AideGuy
+
+## Viridian City
+npc 3 1 3 EventScript_ChangeTeraTypeNPC
+npc 3 1 4 EventScript_Pallet_FatGuy
+npc 3 1 5 EventScript_ViridianCity_Youngster
+npc 3 1 6 EventScript_ViridianCity_YoungMan

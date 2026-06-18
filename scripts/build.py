@@ -129,7 +129,7 @@ def MakeGeneralOutputFile(fileName: str) -> [str, bool]:
     """Return hash of filename to use as object filename."""
     m = hashlib.md5()
     m.update(fileName.encode())
-    newFileName = os.path.join(BUILD, m.hexdigest() + '.o')
+    newFileName = os.path.join(BUILD, m.hexdigest()[:8] + '.o')
 
     return CreateOutputFile(fileName, newFileName)
 
@@ -138,7 +138,7 @@ def MakeOutputImageFile(assemblyFile: str) -> [str, bool]:
     """Return 'IMG_' + hash of filename to use as object filename."""
     m = hashlib.md5()
     m.update(assemblyFile.encode())
-    objectFile = os.path.join(BUILD, 'IMG_' + m.hexdigest() + '.o')
+    objectFile = os.path.join(BUILD, 'IMG_' + m.hexdigest()[:8] + '.o')
 
     return CreateOutputFile(assemblyFile, objectFile)
 
@@ -441,8 +441,8 @@ def main():
             '**/*.mid': ProcessMusic,
     }
 
-    if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
-        print("Warning! Python 3.8 may not be able to build this engine.\nPlease downgrade to Python 3.7.4")
+   # if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
+   #    print("Warning! Python 3.8 may not be able to build this engine.\nPlease downgrade to Python 3.7.4")
 
     # Create output directory
     try:

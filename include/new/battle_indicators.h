@@ -26,6 +26,7 @@ bool8 CantLoadTeamPreviewTrigger(void);
 void DisplayInBattleTeamPreview(void);
 void HideInBattleTeamPreview(void);
 void DestroyRaidShieldSprite(void);
+void TryLoadTeraTrigger(void); // For Terastallization
 
 //Exported Data Structures
 extern const struct SpriteTemplate gRaidShieldSpriteTemplate;

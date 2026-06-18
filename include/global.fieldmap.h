@@ -91,7 +91,10 @@ union __attribute__((packed)) EventObjectRange {
 struct EventObjectTemplate
 {
 	/*0x00*/ u8 localId;
-	/*0x01*/ u8 graphicsIdLowerByte;
+	/*0x01*/ union {
+		u8 graphicsIdLowerByte;
+		u8 graphicsId;
+	};
 	/*0x02*/ u8 inConnection;
 	/*0x03*/ u8 graphicsIdUpperByte;
 	/*0x04*/ s16 x;
@@ -240,7 +243,10 @@ struct EventObject
 			 u32 fixedPriority:1;
 			 u32 hideReflection:1;
 	/*0x04*/ u8 spriteId;
-	/*0x05*/ u8 graphicsIdLowerByte;
+	/*0x05*/ union {
+		u8 graphicsIdLowerByte;
+		u8 graphicsId;
+	};
 	/*0x06*/ u8 movementType;
 	/*0x07*/ u8 trainerType;
 	/*0x08*/ u8 localId;

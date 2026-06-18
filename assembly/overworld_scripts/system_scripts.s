@@ -625,6 +625,13 @@ EventScript_UseSurf_CheckAnswer:
 	if equal _goto EventScript_SurfEnd
 	lockall
 	msgbox 0x81BDFD7 MSG_KEEPOPEN
+	checkflag 0x4BD
+	if equal _goto EventScript_FollowerMonWasOn
+
+EventScript_FollowerMonWasOn:
+	setflag 0xA07
+	callasm CreateSparkleSprite
+	hidefollowermon
 
 EventScript_UseSurf_SkipAsk:
 	lockall
@@ -1107,13 +1114,17 @@ SystemScript_DebugMenu:
 	multichoiceoption gText_DebugMenu_Level100Team 2
 	multichoiceoption gText_DebugMenu_MaxCoinage 3
 	multichoiceoption gText_DebugMenu_ShinyTeam 4
-	multichoice 0x0 0x0 FIVE_MULTICHOICE_OPTIONS 0x0
+	multichoiceoption gText_DebugMenu_Give 5
+	multichoiceoption gText_DebugMenu_Debug 6
+	multichoice 0x0 0x0 SEVEN_MULTICHOICE_OPTIONS 0x0
 	switch LASTRESULT
 	case 0, SystemScript_DebugMenu_SetFlag
 	case 1, SystemScript_DebugMenu_GiveItem
 	case 2, SystemScript_DebugMenu_Level100Team
 	case 3, SystemScript_DebugMenu_MaxCoinage
 	case 4, SystemScript_DebugMenu_ShinyTeam
+	case 5, SystemScript_DebugMenu_Custom
+	case 6, SystemScript_DebugMenu_Debug
 SystemScript_DebugMenu_End:
 	releaseall
 	end
@@ -1154,3 +1165,231 @@ SystemScript_DebugMenu_MaxCoinage:
 SystemScript_DebugMenu_ShinyTeam:
 	callasm DebugMenu_ShinyTeam
 	goto SystemScript_DebugMenu
+
+.global SystemScript_DebugMenu_GiveCustom
+SystemScript_DebugMenu_Custom:
+	lockall
+	multichoiceoption gText_DebugMenu_GivePokemonById 0
+	multichoiceoption gText_DebugMenu_GiveItemById 1
+	multichoiceoption gText_DebugMenu_CustomSetFlag 2
+	multichoiceoption gText_DebugMenu_SetVar 3
+	multichoiceoption gText_DebugMenu_Trainerbattle 4
+	multichoice 0, 0, FIVE_MULTICHOICE_OPTIONS, 0
+	switch LASTRESULT
+		case 0, SystemScript_DebugMenu_GivePokemonPrompt
+		case 1, SystemScript_DebugMenu_GiveItemPrompt
+		case 2, SystemScript_DebugMenu_CustomSetFlag
+		case 3, SystemScript_DebugMenu_SetVar
+		case 4, SystemScript_DebugMenu_Trainerbattle
+	releaseall
+	end
+
+.global SystemScript_DebugMenu_Debug
+SystemScript_DebugMenu_Debug:
+	lockall
+	multichoiceoption gText_DebugMenu_Dex 0
+	multichoiceoption gText_DebugMenu_StartWildBattle 1
+	multichoice 0, 0, TWO_MULTICHOICE_OPTIONS, 0
+	switch LASTRESULT
+		case 0, SystemScript_DebugMenu_DebugPokedex
+		case 1, SystemScript_DebugMenu_StartWildBattleNow
+	releaseall
+	end
+
+SystemScript_DebugMenu_DebugPokedex:
+	lock
+	callasm DebugMenu_Dex
+	setflag 0x829
+	special 0x16F
+	msgbox gText_DebugMenu_SuccessfulDex MSG_NORMAL
+	release
+	end
+
+.global SystemScript_DebugMenu_GivePokemonPrompt
+SystemScript_DebugMenu_GivePokemonPrompt:
+	msgbox gText_DebugMenu_EnterSpecies MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x8000, LASTRESULT
+	callasm DebugMenu_GivePokemonFromVar
+	bufferpokemon 0x0 0x8000
+	if equal _goto SuccessFul
+	msgbox gText_Failed MSG_NORMAL
+	end
+SuccessFul:
+	lock
+	msgbox gText_ReceivedPokemon MSG_NORMAL
+	setflag 0x828
+	release
+	end
+
+.global SystemScript_DebugMenu_GiveItemPrompt
+SystemScript_DebugMenu_GiveItemPrompt:
+	lockall
+	msgbox Text_EnterItem MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x8000, LASTRESULT
+	bufferitem 0x0 0x8000
+	callasm DebugMenu_GiveItemFromVar
+	giveitem 0x8000 0x1 MSG_OBTAIN
+	releaseall
+	end
+
+.global SystemScript_DebugMenu_CustomSetFlag
+SystemScript_DebugMenu_CustomSetFlag:
+	lockall
+	msgbox Text_CustomSetFlag MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x8000, LASTRESULT
+	callasm DebugMenu_SetterFlag
+	msgbox Text_FlagSet MSG_NORMAL
+	releaseall
+	end
+
+.global SystemScript_DebugMenu_SetVar
+SystemScript_DebugMenu_SetVar:
+	lockall
+	msgbox Text_CustomSetVar MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x5158, LASTRESULT
+	msgbox gText_VarValue MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x5159, LASTRESULT
+	callasm DebugMenu_SetterVar
+	msgbox Text_VarSet MSG_NORMAL
+	releaseall
+	end
+
+.global SystemScript_DebugMenu_Trainerbattle
+SystemScript_DebugMenu_Trainerbattle:
+	lockall
+	msgbox gText_TrainerCustomBattle MSG_NORMAL
+	special 0xB3
+	waitstate
+	setvar 0x8000 0xFEFE
+	setvar 0x503A 0x2
+	setvar 0x503B 0x0
+	trainerbattle3 0x3 LASTRESULT 0x100 DebugMenu_LossMessage
+	releaseall
+	end
+
+SystemScript_DebugMenu_StartWildBattleNow:
+	msgbox gText_DebugMenu_EnterSpecies MSG_NORMAL
+	special 0xB3
+	waitstate
+	copyvar 0x8000, LASTRESULT
+	setwildbattle 0x8000 0x20 0x0
+	dowildbattle
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_PokemonEncounter
+SystemScript_PokemonEncounter:
+	lock
+	call 0x020370B9
+	callasm CheckIfFirstEnemyMonShiny
+	compare 0x8000 0x1
+	if equal _call PlayShinyJingle
+	setvar 0x8000 0x0
+	setvar 0x8001 0x0
+	setvar 0x8002 0x0
+	setvar 0x8003 0x0
+	preparemsg EncounterScript_msg
+	waitmsg
+	setvar 0x8006 0x0
+	loadpointer 0x0 EncounterScript_option1
+	special 0x25
+	setvar 0x8006 0x1
+	loadpointer 0x0 EncounterScript_option2
+	special 0x25
+	multichoice 0x0 0x0 0x20 0x0
+	compare 0x800D 0x0
+	if equal _goto selectedOption1
+	compare 0x800D 0x1
+	if equal _goto selectedOption2
+	hidepokepic
+	release
+	end
+
+selectedOption1:
+	hidepokepic
+	release
+	end
+
+selectedOption2:
+	hidepokepic
+	dowildbattle
+	release
+	end
+
+PlayShinyJingle:
+	waitcry
+	pause 0x2
+	sound 0x5F
+	waitse
+	return
+
+.equ FLAG_EXP_SHARE, 0x906
+.global SystemScript_Exp_Share_On
+SystemScript_Exp_Share_On:
+	msgbox gText_Exp_Share_Ask_On MSG_YESNO
+	compare LASTRESULT FALSE
+	if equal _goto EndScript
+	setflag FLAG_EXP_SHARE
+	msgboxsign
+	msgbox gText_Exp_Share_On MSG_SIGN
+	goto EndScript
+
+.global SystemScript_Exp_Share_Off
+SystemScript_Exp_Share_Off:
+	msgbox gText_Exp_Share_Ask_Off MSG_YESNO
+	compare LASTRESULT FALSE
+	if equal _goto EndScript
+	clearflag FLAG_EXP_SHARE
+	msgboxsign
+	msgbox gText_Exp_Share_Off MSG_SIGN
+	goto EndScript
+
+.global SystemScript_Portable_PC_On
+.global SystemScript_Portable_PC_Off
+
+SystemScript_Portable_PC_On:
+	lockall
+	msgbox gText_PortablePCPrompt MSG_KEEPOPEN
+
+	@ Define multichoice options inline
+	multichoiceoption gText_OpenPCBox 0
+	multichoiceoption gText_HealPokemon 1
+	multichoice 0x0, 0x0, TWO_MULTICHOICE_OPTIONS, 0x0
+
+	switch LASTRESULT
+	case 0, OpenPCBox
+	case 1, HealParty
+	releaseall
+	end
+
+OpenPCBox:
+	special 0x3C
+	waitstate
+	playse 0x3
+	releaseall
+	end
+
+HealParty:
+	special 0x0
+	playse 0x1
+	waitse
+	msgbox gText_HealedPCParty MSG_NORMAL
+	releaseall
+	end
+
+SystemScript_Portable_PC_Off:
+	lock
+	msgbox gText_PCUnavailable MSG_NORMAL
+	release
+	end

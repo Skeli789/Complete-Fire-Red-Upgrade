@@ -93,6 +93,9 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 #org @SimpleBeamString
 [TARGET] acquired\n[TARGET_ABILITY]!
 
+#org @DoodleString
+[ATTACKER] acquired\n[TARGET_ABILITY]!
+
 #org @AbilitySuppressedString
 [TARGET]'s Ability\nwas suppressed!
 
@@ -522,3 +525,15 @@ The storm is getting too strong to\nwithstand!
 
 #org @gText_RaidMonRanAway
 [PLAY_SE][11][00][FD][06] disappeared\nsomewhere[.]\p
+
+#org @gText_ElectromorphosisActivates
+Being hit by [CURRENT_MOVE]\ncharged [SCRIPTING_BANK] with power.
+
+#org @gText_ToxicDebrisFailed
+[SCRIPTING_BANK] tried to set\nToxic Spikes, but failed.
+
+#org @sText_TargetIsBeingSaltCured
+[TARGET] is being\nsalt cured!
+
+#org @sText_TargetIsHurtBySaltCure
+[TARGET] is hurt by\n[FD][00]!

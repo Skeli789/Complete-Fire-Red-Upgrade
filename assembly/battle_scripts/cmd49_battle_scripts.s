@@ -14,7 +14,9 @@ cmd49_battle_scripts.s
 .global BattleScript_KingsShield
 .global BattleScript_SpikyShield
 .global BattleScript_BanefulBunker
+.global BattleScript_BurningBulwark
 .global BattleScript_ObstructStatDecrement
+.global BattleScript_SilkTrapStatDecrement
 .global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
@@ -34,6 +36,7 @@ cmd49_battle_scripts.s
 .global BattleScript_BrokenRaidBarrier
 .global BattleScript_RaidBattleStatIncrease
 .global BattleScript_MistProtected
+.global BattleScript_ToxicChain
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -52,6 +55,12 @@ BattleScript_CouldntFullyProtect:
 BattleScript_PoisonTouch:
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x2
+	seteffectsecondary @;Affected by Safeguard
+	return
+
+BattleScript_ToxicChain:
+	setbyte POISONED_BY 0x5
+	setbyte EFFECT_BYTE 0x6
 	seteffectsecondary @;Affected by Safeguard
 	return
 
@@ -97,8 +106,24 @@ BattleScript_BanefulBunker:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_BurningBulwark:
+	statusanimation BANK_ATTACKER
+	refreshhpbar BANK_ATTACKER
+	setword BATTLE_STRING_LOADER BurningBulwarkBRNString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_ObstructStatDecrement:
 	setstatchanger STAT_DEF | DECREASE_2
+	goto BattleScript_KingsShieldPostDecrementSet
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SilkTrapStatDecrement:
+	setstatchanger STAT_SPD | DECREASE_1
 	goto BattleScript_KingsShieldPostDecrementSet
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -210,6 +235,7 @@ BattleScript_PoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
 	printfromtable 0x83FE5BC
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
@@ -245,6 +271,7 @@ BattleScript_BadPoisonedBy:
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
+	jumpifbyte EQUALS POISONED_BY 0x5 ToxicChainBadPSN
 	printstring 0x2C
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
@@ -263,17 +290,34 @@ ToxicOrbBadPSN:
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
 
+ToxicChainBadPSN:
+	setbyte POISONED_BY 0x0
+	call BattleScript_AbilityPopUp
+	statusanimation 0x2
+	printfromtable 0x83FE5BC
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto 0x81D91C3
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BurnedBy:
 	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x1 BeakBlastBurnBS
+	jumpifbyte EQUALS POISONED_BY 0x1 BurningBulwarkBS
 	jumpifbyte EQUALS POISONED_BY 0x3 FlameOrbBurnBS
 	printfromtable 0x83FE5C8
 	waitmessage DELAY_1SECOND
 	goto 0x81D91C3
 
 BeakBlastBurnBS:
+	setbyte POISONED_BY 0x0
+	setword BATTLE_STRING_LOADER BeakBlastString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto 0x81D91C3
+
+BurningBulwarkBS:
 	setbyte POISONED_BY 0x0
 	setword BATTLE_STRING_LOADER BeakBlastString
 	printstring 0x184
@@ -435,3 +479,4 @@ PickpocketStealString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xFD, 0x16, 0xFE, 0xE
 MindBlownString: .byte 0xFD, 0x0F, 0x0, 0xD7, 0xE9, 0xE8, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xE3, 0xEB, 0xE2, 0xFE, 0xC2, 0xCA, 0x00, 0xE8, 0xE3, 0x00, 0xE4, 0xE3, 0xEB, 0xD9, 0xE6, 0x00, 0xE9, 0xE4, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xD5, 0xE8, 0xE8, 0xD5, 0xD7, 0xDF, 0xAB, 0xFF
 LifeOrbString: .byte 0xFD, 0x0F, 0x00, 0xE0, 0xE3, 0xE7, 0xE8, 0x00, 0xE7, 0xE3, 0xE1, 0xD9, 0xFE, 0xE3, 0xDA, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xC2, 0xCA, 0xAB, 0xFF
 PluckString: .byte 0xFD, 0x0F, 0x00, 0xE7, 0xE8, 0xE3, 0xE0, 0xD9, 0x00, 0xD5, 0xE2, 0xD8, 0x00, 0xD5, 0xE8, 0xD9, 0xFE, 0xDD, 0xE8, 0xE7, 0x00, 0xDA, 0xE3, 0xD9, 0xB4, 0xE7, 0x00, 0xFD, 0x16, 0xAB, 0xFF
+BurningBulwarkBRNString: .byte 0xFD, 0x11, 0x00, 0xEB, 0xD5, 0xE7, 0xFE, 0xD6, 0xE9, 0xE6, 0xE2, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, B_, u_, r_, n_, i_, g_, 0x00, B_, u_, l_, w_, a_, r_, k_, 0xAB, 0xFF

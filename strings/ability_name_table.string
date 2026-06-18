@@ -233,8 +233,8 @@ Shell Armor
 #org @NAME_HUNGER_SWITCH
 Hunger Switch
 
-#org @NAME_UNUSED
-Unused
+#org @NAME_LINGERINGAROMA
+Lingering Aroma
 
 #org @NAME_SWEET_VEIL
 Sweet Veil
@@ -527,8 +527,8 @@ Stamina
 #org @NAME_STEELWORKER
 Steelworker
 
-#org @NAME_FULL_METAL_BODY
-Full Metal Body
+#org @QUARKDRIVE
+Quark Drive
 
 #org @NAME_TRIAGE
 Triage
@@ -883,3 +883,108 @@ Face Shield
 
 #org @gText_AbilityName_RoyalRoar
 Royal Roar
+
+#org @gText_AbilityName_AngerShell
+Anger Shell
+
+#org @gText_AbilityName_ArmorTail
+Armor Tail
+
+#org @gText_AbilityName_BeadsofRuin
+Beads O'Ruin
+
+#org @gText_AbilityName_SwordofRuin
+Sword O'Ruin
+
+#org @gText_AbilityName_TabletsofRuin
+Tablet O'Ruin
+
+#org @gText_AbilityName_VesselofRuin
+Vessel O'Ruin
+
+#org @gText_AbilityName_Costar
+Costar
+
+#org @gText_AbilityName_CudChew
+Cud Chew
+
+#org @gText_AbilityName_EarthEater
+Earth Eater
+
+#org @gText_AbilityName_Electromorphosis
+Electromorphosis
+
+#org @gText_AbilityName_GoodAsGold
+Good As Gold
+
+#org @gText_AbilityName_GuardDog
+Guard Dog
+
+#org @gText_AbilityName_HadronEngine
+HadronEngine
+
+#org @gText_AbilityName_MindsEye
+Mind[B4]s Eye
+
+#org @gText_AbilityName_MyceliumMight
+Mycelium Might
+
+#org @gText_AbilityName_Opportunist
+Opportunist
+
+#org @gText_AbilityName_OrichalcumPulse
+Orichalcum Pulse
+
+#org @NAME_FULL_METAL_BODY
+Full Metal Body
+
+#org @gText_AbilityName_Protosynthesis
+Protosynthesis
+
+#org @gText_AbilityName_PureSalt
+Purifying Salt
+
+#org @gText_AbilityName_RockyPayload
+Rock Payload
+
+#org @gText_AbilityName_SeedSower
+Seed Sower
+
+#org @gText_AbilityName_Sharpness
+Sharpness
+
+#org @gText_AbilityName_SupremeOverlord
+Supreme Overlord
+
+#org @gText_AbilityName_SuperSweetSyrup
+Supsweet Syrup
+
+#org @gText_AbilityName_TeraShift
+Tera Shift
+
+#org @gText_AbilityName_TeraShell
+Tera Shell
+
+#org @gText_AbilityName_ThermalExchange
+Thermal Exchange
+
+#org @gText_AbilityName_ToxicChain
+Toxic Chain
+
+#org @gText_AbilityName_PoisonPuppeteer
+Poison Puppeter
+
+#org @gText_AbilityName_ToxicDebris
+Toxic Debris
+
+#org @gText_AbilityName_WellBakedBody
+Well-Baked Body
+
+#org @gText_AbilityName_WindPower
+Wind Power
+
+#org @gText_AbilityName_WindRider
+Wind Rider
+
+#org @gText_AbilityName_ZerotoHero
+Zero to Hero

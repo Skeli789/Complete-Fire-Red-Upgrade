@@ -91,6 +91,7 @@
 #define MON_DATA_SPEED2            86
 #define MON_DATA_SPATK2            87
 #define MON_DATA_SPDEF2            88
+#define MON_DATA_TERA_TYPE MON_DATA_ENCRYPT_SEPARATOR
 
 #define OT_ID_RANDOM_NO_SHINY 2
 #define OT_ID_PRESET 1
@@ -129,8 +130,9 @@
 #define TYPE_ROOSTLESS 0x13
 #define TYPE_BLANK	  0x14
 #define TYPE_FAIRY	  0x17
+#define TYPE_STELLAR   0x18
 
-#define NUMBER_OF_MON_TYPES (TYPE_FAIRY + 1)
+#define NUMBER_OF_MON_TYPES (TYPE_STELLAR + 1)
 #define NUM_HIDDEN_POWER_TYPES 16
 
 #define PARTY_SIZE 6
@@ -291,7 +293,7 @@ struct BoxPokemon
     u8 otName[OT_NAME_LENGTH];
     u8 markings;
     u16 checksum;
-    u16 unknown;
+    u16 teraType; // For Terastallization
 
     struct PokemonSubstruct0 substruct0;
     struct PokemonSubstruct1 substruct1;
@@ -309,7 +311,7 @@ typedef struct Pokemon
 	u8 otname[7];
 	u8 markings;
 	u16 backupSpecies;
-	u16 unused;
+	u16 teraType;       // For Terastallization
 
 //Substructure Growth
     u16 species;
@@ -759,6 +761,8 @@ bool8 __attribute__((long_call)) PokemonItemUseNoEffect(struct Pokemon *mon, u16
 u8 __attribute__((long_call)) GetItemEffectParamOffset(u16 itemId, u8 effectByte, u8 effectBit);
 u16 __attribute__((long_call)) GetEvolutionTargetSpeciesOld(struct Pokemon *mon, u8 type, u16 evolutionItem);
 void __attribute__((long_call)) AdjustFriendship(struct Pokemon *mon, u8 event);
+void __attribute__((long_call)) Task_OakSpeech_IStudyPokemon(u8 taskId);
+u8 __attribute__((long_call)) *MonSpritesGfxManager_GetSpritePtr(u8 spriteNum);
 
 /*
 void ZeroMonData(struct Pokemon *mon);

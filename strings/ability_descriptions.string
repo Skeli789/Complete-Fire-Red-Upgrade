@@ -570,6 +570,9 @@ Sometimes moves quicker.
 #org @DESC_CURIOUSMEDICINE
 Resets ally's stat changes.
 
+#org @DESC_QUARKDRIVE
+Boost stat in Electric Terrain.
+
 //Unbound Custom Abilities//
 
 #org @gText_AbilityDescription_Evaporate
@@ -583,3 +586,102 @@ Tail moves hit first.
 
 #org @gText_AbilityDescription_DrillBeak
 Drill moves land critical hits.
+
+#org @gText_AbilityDescription_AngerShell
+Boost and fall stats if halved HP.
+
+#org @gText_AbilityDescription_BeadsofRuin
+Lowers all Pokémon SpDef status.
+
+#org @gText_AbilityDescription_SwordofRuin
+Lowers all Pokémon Def status.
+
+#org @gText_AbilityDescription_TabletsofRuin
+Lowers all Pokémon Atk status.
+
+#org @gText_AbilityDescription_VesselofRuin
+Lowers all Pokémon SpAtk status.
+
+#org @gText_AbilityDescription_Costar
+Copies an ally[B4]s stat stages.
+
+#org @gText_AbilityDescription_CudChew
+Eat Berry again at next turn end.
+
+#org @gText_AbilityDescription_EarthEater
+Turns Ground move into HP.
+
+#org @gText_AbilityDescription_Electromorphosis
+Ups next electric move if damaged.
+
+#org @gText_AbilityDescription_GoodAsGold
+Full immunity to status moves.
+
+#org @gText_AbilityDescription_GuardDog
+Blocks intimidate and switch out.
+
+#org @gText_AbilityDescription_HadronEngine
+Calls Electric Terrain, up SpAtk.
+
+#org @gText_AbilityDescription_MindsEye
+Enables moves to hit Ghost-type.
+
+#org @gText_AbilityDescription_MyceliumMight
+Low priority for Status Moves.
+
+#org @gText_AbilityDescription_Opportunist
+Copies foes status changes.
+
+#org @gText_AbilityDescription_OrichalcumPulse
+Summons sunlight and ups Attack.
+
+#org @gText_AbilityDescription_Protosynthesis
+Boost status when sunny.
+
+#org @gText_AbilityDescription_PurifyingSalt
+Protects against status contidions.
+
+#org @gText_AbilityDescription_RockyPayload
+Powers up Rock-type moves.
+
+#org @gText_AbilityDescription_SeedSower
+Creates a Grassy Terrain if hit.
+
+#org @gText_AbilityDescription_Sharpness
+Powers up slicing moves.
+
+#org @gText_AbilityDescription_SupremeOverlord
+Boost power if an ally fainted.
+
+#org @gText_AbilityDescription_SuperSweetSyrup
+Lowers foe's evasiveness stat.
+
+#org @gText_AbilityDescription_TeraShift
+Transforms into its Terastal Form.
+
+#org @gText_AbilityDescription_TeraShell
+Reduces damage when HP is full.
+
+#org @gText_AbilityDescription_ThermalExchange
+Fire hit ups Atk & Prevents burn.
+
+#org @gText_AbilityDescription_ToxicChain
+Can badly poison any foe on hit.
+
+#org @gText_AbilityDescription_PoisonPuppeteer
+Foe become confused if poisoned.
+
+#org @gText_AbilityDescription_ToxicDebris
+Set Toxic Spikes if physical hit.
+
+#org @gText_AbilityDescription_WellBakedBody
+Boost Defense if hit by Fire type.
+
+#org @gText_AbilityDescription_WindPower
+Boost electricity if hit by Wind.
+
+#org @gText_AbilityDescription_WindRider
+Boost Atk if hits by Wind Moves.
+
+#org @gText_AbilityDescription_ZerotoHero
+Change Hero form when switch out.

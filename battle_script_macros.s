@@ -1808,3 +1808,21 @@
 	jumpifweather weather_air_current, BattleScript_MysteriousAirCurrentBlowsOn\suffix
 	jumpifweather weather_vicious_sandstorm, BattleScript_ViciousSandstormRefusesToLetUp\suffix
 .endm
+
+.macro chosenstatus2animation battler:req, status:req
+	chosenstatusanimation \battler, 0x1, \status
+.endm
+
+.macro applysaltcure battler:req
+	callasm BS_ApplySaltCure
+	.byte \battler
+.endm
+
+.macro getbattlerfainted battler:req
+	various \battler, VARIOUS_CASE_4
+.endm
+
+.macro jumpiffaintedmon battler:req, value:req, ptr:req
+	getbattlerfainted \battler
+	jumpifbyte 0, gBattleCommunication, \value, \ptr
+.endm

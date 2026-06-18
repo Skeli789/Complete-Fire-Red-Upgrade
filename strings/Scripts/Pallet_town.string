@@ -1,0 +1,77 @@
+#org @gText_TestScript
+Creating following mon.
+
+#org @gText_PalletGirl_Text1
+Show or hide follower mon?\nSelect Yes to show or No to hide.
+
+#org @gText_ChangeTeraTypeNPCAsk
+Ah, hi there[.]\pI can change your Pok\emon's\nTera Type!\pWould you like me to change it?
+
+#org @gText_ChangeTeraTypeNPCNo
+Oh, I see[.]\pPlease do visit again\nnext time!
+
+#org @gText_ChangeTeraTypeNPCOpenMenu
+Which Pok\emon's Tera Type\nwould you like me to change[.]?
+
+#org @gText_ChangeTeraTypeNPCSelected
+Ah, so you've selected\n[BUFFER1][.]\pWhich type would you like\nme to change it to[.]?
+
+#org @gText_ChangeTeraTypeNPCFetchTeraNormal
+The Tera Type of [BUFFER1]\nis now Normal!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraFighting
+The Tera Type of [BUFFER1]\nis now Fighting!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraFlying
+The Tera Type of [BUFFER1]\nis now Flying!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraPoison
+The Tera Type of [BUFFER1]\nis now Poison!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraGround
+The Tera Type of [BUFFER1]\nis now Ground!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraRock
+The Tera Type of [BUFFER1]\nis now Rock!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraBug
+The Tera Type of [BUFFER1]\nis now Bug!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraGhost
+The Tera Type of [BUFFER1]\nis now Ghost!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraSteel
+The Tera Type of [BUFFER1]\nis now Steel!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraFire
+The Tera Type of [BUFFER1]\nis now Fire!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraWater
+The Tera Type of [BUFFER1]\nis now Water!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraGrass
+The Tera Type of [BUFFER1]\nis now Grass!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraElectric
+The Tera Type of [BUFFER1]\nis now Electric!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraPsychic
+The Tera Type of [BUFFER1]\nis now Psychic!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraIce
+The Tera Type of [BUFFER1]\nis now Ice!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraDragon
+The Tera Type of [BUFFER1]\nis now Dragon!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraDark
+The Tera Type of [BUFFER1]\nis now Dark!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraFairy
+The Tera Type of [BUFFER1]\nis now Fairy!
+
+#org @gText_ChangeTeraTypeNPCFetchTeraStellar
+The Tera Type of [BUFFER1]\nis now Stellar!
+
+#org @gText_TestScript2
+Tera Flag is now set!

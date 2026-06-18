@@ -35,7 +35,7 @@ ai_util.c
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
 static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
-static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
+bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 static bool8 ShouldUseHumanLikelyMove(u8 bankAtk, u8 bankDef);
 static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move);
 static bool8 IsEffectivePursuit(u16 move, bool8 defCantSwitch, bool8 playerHasSwitchedBefore);
@@ -1190,7 +1190,7 @@ static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 nu
 	return FALSE;
 }
 
-static bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+bool8 CalculateMoveKnocksOutXHitsFresh(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
 	if (CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits, NULL) >= gBattleMons[bankDef].hp)
 		return TRUE;
@@ -1996,6 +1996,9 @@ bool8 CanBeFlinched(u8 bankDef, u8 bankAtk, u8 defAbility, u16 move)
 	if (!MoveWouldHitFirst(move, bankAtk, bankDef))
 		return FALSE; //Have to go first to flinch
 
+	if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_CLEAR_AMULET)
+		return FALSE;
+
 	return !MoveBlockedBySubstitute(move, bankAtk, bankDef); //Can't flinch a Substitute
 }
 
@@ -2209,6 +2212,8 @@ u8 TryReplaceImposterAbility(u8 ability, u8 monBank) //monBank is the bank the m
 //These by default are not handled in IsUnusableMove
 bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 {
+	bool8 EarthEater = SpeciesHasEarthEater(SPECIES(bankDef));
+	
 	if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
 	{
 		switch (ABILITY(bankDef))
@@ -2217,7 +2222,8 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (GetMoveTypeSpecial(bankAtk, move) == TYPE_ELECTRIC)
+				if ((GetMoveTypeSpecial(bankAtk, move) == TYPE_ELECTRIC && !EarthEater)
+				|| (GetMoveTypeSpecial(bankAtk, move) == TYPE_GROUND && EarthEater))
 					return TRUE;
 				break;
 
@@ -2249,6 +2255,11 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 
 			case ABILITY_BULLETPROOF:
 				if (gSpecialMoveFlags[move].gBallBombMoves)
+					return TRUE;
+				break;
+
+			case ABILITY_ANGERPOINT:
+				if (gSpecialMoveFlags[move].gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
 					return TRUE;
 				break;
 
@@ -2323,6 +2334,8 @@ bool8 IsDamagingMoveUnusable(u16 move, u8 bankAtk, u8 bankDef)
 
 bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 {
+	bool8 EarthEater = SpeciesHasEarthEater(SPECIES(bankDef));
+
 	if (NO_MOLD_BREAKERS(GetMonAbilityAfterTrace(monAtk, bankDef), move))
 	{
 		switch (ABILITY(bankDef))
@@ -2331,7 +2344,8 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC)
+				if ((GetMonMoveTypeSpecial(monAtk, move) == TYPE_ELECTRIC && !EarthEater)
+				|| (GetMonMoveTypeSpecial(monAtk, move) == TYPE_GROUND && EarthEater))
 					return TRUE;
 				break;
 
@@ -2363,6 +2377,11 @@ bool8 IsDamagingMoveUnusableByMon(u16 move, struct Pokemon* monAtk, u8 bankDef)
 
 			case ABILITY_BULLETPROOF:
 				if (gSpecialMoveFlags[move].gBallBombMoves)
+					return TRUE;
+				break;
+			
+			case ABILITY_ANGERPOINT:
+				if (gSpecialMoveFlags[move].gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
 					return TRUE;
 				break;
 
@@ -2804,6 +2823,8 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move, bool8 optimiz
 				case MOVE_KINGSSHIELD:
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
+				case MOVE_SILKTRAP:
+				case MOVE_BURNINGBULWARK:
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
@@ -2893,11 +2914,12 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_TOXICBOOST && RealPhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && RealPhysicalMoveInMoveset(bankDef))
-		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
+		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef) && !SpeciesHasToxicChain(SPECIES(bankAtk))) //Just poison it using attacker's ability
 		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && WEATHER_HAS_EFFECT)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
-		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef)
+		|| (atkAbility == ABILITY_POISONTOUCH && SpeciesHasToxicChain(SPECIES(bankAtk)));
 }
 
 bool8 GoodIdeaToPoisonSelf(u8 bankAtk)
@@ -3054,6 +3076,7 @@ bool8 BadIdeaToMakeContactWith(u8 bankAtk, u8 bankDef)
 		case ABILITY_WANDERINGSPIRIT:
 		case ABILITY_COTTONDOWN:
 		case ABILITY_PERISHBODY:
+		case ABILITY_LINGERINGAROMA:
 			return TRUE;
 	}
 
@@ -3182,6 +3205,10 @@ bool8 BadIdeaToRaiseSpeedAgainst(u8 bankAtk, u8 bankDef, u8 amount, bool8 checkP
 
 	if (BadIdeaToRaiseStatAgainst(bankAtk, bankDef, checkingOriginalTarget)
 	|| HasUsedMoveWithEffect(bankDef, EFFECT_SPEED_DOWN_2))
+		return TRUE;
+
+	if (checkingOriginalTarget
+	&& MoveInMoveset(MOVE_SILKTRAP, bankDef) && CheckContact(GetStrongestMove(bankAtk, bankDef), bankAtk, bankDef))
 		return TRUE;
 
 	if (amount <= 1)
@@ -3319,7 +3346,8 @@ bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ATK)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
@@ -3334,7 +3362,8 @@ bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_DEF)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
@@ -3348,7 +3377,8 @@ bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPATK)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
@@ -3362,7 +3392,8 @@ bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPDEF)
 		&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-		&& defAbility != ABILITY_CONTRARY;
+		&& defAbility != ABILITY_CONTRARY
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
@@ -3376,7 +3407,8 @@ bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move, u8 reduceBy)
 		&& defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
 		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_SPEED)
-		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy));
+		&& (!IS_DOUBLE_BATTLE || WillBeFasterAfterSpeedDrop(bankAtk, bankDef, reduceBy))
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
@@ -3388,7 +3420,9 @@ bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
 
 	return defAbility != ABILITY_CONTRARY
 		&& !IsClearBodyAbility(defAbility)
-		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC);
+		&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_ACC)
+		&& !(MindsEyePreventsLoweringStat(defAbility, STAT_STAGE_ACC) && (SpeciesHasMindsEye(gBankTarget)))
+		&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET;
 }
 
 bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
@@ -3398,7 +3432,8 @@ bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
 	if (!IsClearBodyAbility(defAbility)
 	&& !AbilityPreventsLoweringStat(defAbility, STAT_STAGE_EVASION)
 	&& !AbilityRaisesOneStatWhenSomeStatIsLowered(defAbility)
-	&& defAbility != ABILITY_CONTRARY)
+	&& defAbility != ABILITY_CONTRARY
+	&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET)
 	{
 		if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6)
 			return TRUE;
@@ -3753,6 +3788,29 @@ bool8 PriorityMoveInMoveset(u8 bank)
 	return FALSE;	
 }
 
+//Checks if bank has a move with priority between the low value and high value
+bool8 PriorityMoveInMovesetRange(u8 bank, u8 lowValue, u8 highValue)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].priority >= lowValue 
+			&& gBattleMoves[move].priority <= highValue)
+				return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+
 bool8 DamagingPriorityMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef)
 {
 	u16 move;
@@ -3819,6 +3877,8 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 					case MOVE_KINGSSHIELD:
 					case MOVE_BANEFULBUNKER:
 					case MOVE_OBSTRUCT:
+					case MOVE_SILKTRAP:
+					case MOVE_BURNINGBULWARK:
 						if (checkType & CHECK_REGULAR_PROTECTION)
 							return TRUE;
 						break;
@@ -3869,6 +3929,8 @@ bool8 HasContactProtectionMoveInMoveset(u8 bank)
 				case MOVE_KINGSSHIELD:
 				case MOVE_BANEFULBUNKER:
 				case MOVE_OBSTRUCT:
+				case MOVE_SILKTRAP:
+				case MOVE_BURNINGBULWARK:
 					return TRUE;
 			}
 		}
@@ -5328,7 +5390,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				defAbility = ABILITY_NONE;
 
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
-			|| (defMovePrediction == MOVE_SUBSTITUTE
+			|| (defMovePrediction == (MOVE_SUBSTITUTE || MOVE_SHEDTAIL)
 			 && !MoveWouldHitFirst(zMove, bankAtk, bankDef)
 			 && !MoveIgnoresSubstitutes(zMove, atkAbility)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
@@ -5336,7 +5398,7 @@ static bool8 CalcShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			if (IsAffectedByDisguse(defAbility, defSpecies, CalcMoveSplit(zMove, bankAtk, bankDef)))
 				return FALSE; //Don't waste a Z-Move breaking a disguise
 
-			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT
+			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT || defMovePrediction == MOVE_SILKTRAP
 			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))
 				return FALSE; //Don't waste a Z-Move on a Protect
 

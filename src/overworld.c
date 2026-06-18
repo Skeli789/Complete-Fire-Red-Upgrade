@@ -16,6 +16,7 @@
 #include "../include/field_weather.h"
 #include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
+#include "../include/follower_mon.h"
 #include "../include/item.h"
 #include "../include/link.h"
 #include "../include/list_menu.h"
@@ -31,6 +32,7 @@
 #include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/script.h"
+#include "../include/sprite.h"
 #include "../include/script_menu.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
@@ -56,6 +58,7 @@
 #include "../include/new/party_menu.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/wild_encounter.h"
+#include "../include/save.h"
 
 /*
 overworld.c
@@ -98,6 +101,7 @@ static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
 static bool8 IsPlayerFacingSea(void);
 static bool8 UseRegisteredKeyItemOnField(void);
+extern void ChangeFollowerPalette(void);
 
 #if (defined VAR_DEFAULT_WALKING_SCRIPT && !defined UNBOUND)
 //Table full of pointers to custom walking scripts
@@ -1620,7 +1624,7 @@ static const u8* TryUseFlashInDarkCave(void)
 
 	if (gSpecialVar_LastResult && HasBadgeToUseFlash())
 	{
-		if ((Var8004 = gFieldEffectArguments[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70_FLASH, 0)) < PARTY_SIZE)
+		if ((Var8004 = gFieldEffectArguments[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70, 0)) < PARTY_SIZE)
 			return EventScript_UseFlash;
 	}
 
@@ -1638,6 +1642,18 @@ void RunOnTransitionMapScript(void)
 	ResetMiningSpots();
 	ForceClockUpdate();
 	MapHeaderRunScriptByTag(3);
+	if (FlagGet(FLAG_NUZLOCKE))
+	{
+		u16 sectionId = Overworld_GetMapHeaderByGroupAndId(
+							gSaveBlock1->location.mapGroup,
+							gSaveBlock1->location.mapNum)->regionMapSectionId;
+	
+		if (!FlagGet(FLAG_VISITED_AREA_START + sectionId)) // only clear if unvisited
+		{
+			FlagSet(FLAG_VISITED_AREA_START + sectionId);
+			FlagClear(FLAG_NO_CATCHING);
+		}
+	}	
 }
 
 void RunOnResumeMapScript(void)
@@ -2074,20 +2090,10 @@ bool8 IsCurrentAreaAutumn(void)
 
 bool8 IsCurrentAreaWinter(void)
 {
-	#ifdef UNBOUND
+	#ifdef NEW_BATTLE_BACKGROUNDS
 		u8 mapSec = GetCurrentRegionMapSectionId();
-		return mapSec == MAPSEC_FROZEN_HEIGHTS
-			|| mapSec == MAPSEC_ROUTE_1
-			|| mapSec == MAPSEC_BELLIN_TOWN
-			|| mapSec == MAPSEC_ICICLE_CAVE
-			|| mapSec == MAPSEC_ROUTE_8
-			|| mapSec == MAPSEC_BLIZZARD_CITY
-			|| mapSec == MAPSEC_FROZEN_FOREST
-			|| mapSec == MAPSEC_POKEMON_LEAGUE
-			|| (mapSec == MAPSEC_VICTORY_ROAD
-			 && MAP_IS(VICTORY_ROAD_MOUNTAINSIDE))
-			|| (mapSec == MAPSEC_HIDDEN_GROTTO
-			 && MAP_IS(HIDDEN_GROTTO_WINTER));
+		return mapSec == MAPSEC_ROUTE_12;
+		return mapSec == MAPSEC_ROUTE_12 || mapSec == MAPSEC_RUIN_VALLEY;		
 	#else
 		return FALSE;
 	#endif
@@ -2095,15 +2101,23 @@ bool8 IsCurrentAreaWinter(void)
 
 bool8 IsCurrentAreaDesert(void)
 {
-	#ifdef UNBOUND
+	#ifdef NEW_BATTLE_BACKGROUNDS
 		u8 mapSec = GetCurrentRegionMapSectionId();
-		return mapSec == MAPSEC_GREAT_DESERT
-			|| mapSec == MAPSEC_GURUN_TOWN;
+		return mapSec == MAPSEC_BERRY_FOREST;
 	#else
 		return FALSE;
 	#endif
 }
 
+bool8 IsCurrentAreaHotCave(void)
+{
+	#ifdef NEW_BATTLE_BACKGROUNDS
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_ROUTE_12; // Scalding Spa is here
+	#else
+		return FALSE;
+	#endif
+}
 bool8 IsCurrentAreaSwamp(void)
 {
 	#ifdef UNBOUND
@@ -3074,3 +3088,202 @@ const union AnimCmd gEventObjectImageAnim_RunEast[] =
 };
 #endif
 
+/*
+#define ReturnFieldOpenedMenu ((void*)0x0807E3BD)
+void CB2_ReturnToFieldWithOpenMenu(void)
+{
+    FieldClearVBlankHBlankCallbacks(); 
+    gFieldCallback2 = ReturnFieldOpenedMenu;
+	if (FlagGet(FLAG_FOLLOWER_POKEMON) && gFollowerState.inProgress)
+    	UpdateFollowerMonSprite();
+    CB2_ReturnToField();
+}
+static u16 GetTrainerAFlag(void)
+{
+    return FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_A;
+}
+static u16 GetTrainerBFlag(void)
+{
+    return FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_B;
+}
+static void SetBattledTrainersFlags(void)
+{
+    if (gTrainerBattleOpponent_B != 0)
+        FlagSet(GetTrainerBFlag());
+    FlagSet(GetTrainerAFlag());
+}
+static bool32 IsPlayerDefeated(u32 battleOutcome)
+{
+    switch (battleOutcome)
+    {
+    case B_OUTCOME_LOST:
+    case B_OUTCOME_DREW:
+        return TRUE;
+    case B_OUTCOME_WON:
+    case B_OUTCOME_RAN:
+    case B_OUTCOME_PLAYER_TELEPORTED:
+    case B_OUTCOME_MON_FLED:
+    case B_OUTCOME_CAUGHT:
+        return FALSE;
+    default:
+        return FALSE;
+    }
+}
+*/
+
+void CB2_EndTrainerBattle(void)
+{
+    if (sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL)
+    {
+        if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+        {
+            gSpecialVar_LastResult = TRUE;
+
+			#ifndef CONTINUE_LOST_BATTLES
+            if (sRivalBattleFlags & RIVAL_BATTLE_HEAL_AFTER)
+            {
+                HealPlayerParty();
+            }
+            else
+            {
+                SetMainCallback2(CB2_WhiteOut);
+                return;
+            }
+			#endif
+            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+            SetBattledTrainerFlag();
+            QuestLogEvents_HandleEndTrainerBattle();
+        }
+        else
+        {
+            gSpecialVar_LastResult = FALSE;
+            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+            SetBattledTrainerFlag();
+            QuestLogEvents_HandleEndTrainerBattle();
+        }
+
+    }
+    else
+    {
+        if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+        {
+            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+        }
+        else if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+        {
+            SetMainCallback2(CB2_WhiteOut);
+        }
+        else
+        {
+            SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+			if (FlagGet(FLAG_NUZLOCKE))
+			{
+				Nuzlock_PokemonEraser();
+			}
+            SetBattledTrainerFlag();
+            QuestLogEvents_HandleEndTrainerBattle();
+        }
+    }
+}
+
+void CB2_EndWildBattle(void)
+{
+    CpuFill16(0, (void *)BG_PLTT, BG_PLTT_SIZE);
+    ResetOamRange(0, 128);
+    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+    {
+        SetMainCallback2(CB2_WhiteOut);
+    }
+    else
+    {	
+        SetMainCallback2(CB2_ReturnToField);
+        gFieldCallback = FieldCB_SafariZoneRanOutOfBalls;
+		if (FlagGet(FLAG_NUZLOCKE))
+		{
+			Nuzlock_PokemonEraser();
+			u16 count = VarGet(VAR_WILD_BATTLE_COUNT);
+			count++;
+			VarSet(VAR_WILD_BATTLE_COUNT, count);
+
+			// Set flag on 2nd battle
+			if (count >= 1)
+			{
+				FlagSet(FLAG_NO_CATCHING);
+			}
+		}
+    }
+}
+
+void CB2_EndScriptedWildBattle_2(void)
+{
+    CpuFill16(0, (void *)BG_PLTT, BG_PLTT_SIZE);
+    ResetOamRange(0, 128);
+    if (IsPlayerDefeated(gBattleOutcome) == TRUE)
+        SetMainCallback2(CB2_WhiteOut);
+    else
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+		if (FlagGet(FLAG_NUZLOCKE))
+		{
+			Nuzlock_PokemonEraser();
+		}
+}
+
+void CB2_WhiteOut(void)
+{
+    u8 val;
+	if (FlagGet(FLAG_NUZLOCKE))
+		{
+			ClearSaveData();
+			CB2_NewGameOld();
+		}
+    if (++gMain.state >= 120)
+    {
+        FieldClearVBlankHBlankCallbacks();
+        StopMapMusic();
+        ResetSafariZoneFlag_();
+        DoWhiteOut();
+        SetInitialPlayerAvatarStateWithDirection(DIR_NORTH);
+        ScriptContext_Init();
+        UnlockPlayerFieldControls();
+        gFieldCallback = FieldCB_RushInjuredPokemonToCenter;
+        val = 0;
+        DoMapLoadLoop(&val);
+        QuestLog_CutRecording();
+        SetFieldVBlankCallback();
+        SetMainCallback1(CB1_Overworld);
+        SetMainCallback2(CB2_Overworld);
+    }
+}
+
+extern void RestoreFollowerAfterBattle(void);
+void CB2_ReturnToField(void)
+{
+    if (IsUpdateLinkStateCBActive() == TRUE)
+    {
+        SetMainCallback2(CB2_ReturnToFieldLink);
+    }
+    else
+    {
+        FieldClearVBlankHBlankCallbacks();
+        SetMainCallback2(CB2_ReturnToFieldLocal);
+    }
+	if (FlagGet(FLAG_FOLLOWER_POKEMON) && gFollowerState.inProgress)
+	{
+		UpdateFollowerMonSprite();
+		ChangeFollowerPalette();
+	}
+	RestoreFollowerAfterBattle();
+}
+
+const struct Coords32 gDirectionToVectors[] = 
+{
+    [DIR_NONE]      = { 0,  0},
+    [DIR_SOUTH]     = { 0,  1},
+    [DIR_NORTH]     = { 0, -1},
+    [DIR_WEST]      = {-1,  0},
+    [DIR_EAST]      = { 1,  0},
+    [DIR_SOUTHWEST] = {-1,  1},
+    [DIR_SOUTHEAST] = { 1,  1},
+    [DIR_NORTHWEST] = {-1, -1},
+    [DIR_NORTHEAST] = { 1, -1},
+};

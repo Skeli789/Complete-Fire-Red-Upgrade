@@ -222,7 +222,7 @@ void HandleEndTurn_BattleWon(void)
 		switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
 			case CLASS_LEADER:
-			case CLASS_ELITE_4:
+			case CLASS_ELITE_FOUR:
 			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_SPECIAL);
 				specialMus = TRUE;
@@ -236,8 +236,8 @@ void HandleEndTurn_BattleWon(void)
 				PlayBGM(BGM_VICTORY_CHAMPION);
 				specialMus = TRUE;
 				break;
-			case CLASS_ELITE_4:
-				PlayBGM(BGM_VICTORY_ELITE_4);
+			case CLASS_ELITE_FOUR:
+				PlayBGM(BGM_VICTORY_ELITE_FOUR);
 				specialMus = TRUE;
 				break;
 			case CLASS_LEADER:
@@ -702,20 +702,25 @@ static void RestoreNonConsumableItems(void)
 	#else
 	bool8 keepConsumables = FALSE;
 	#endif
+	bool8 trainerOrRaidBattle = (gBattleTypeFlags & BATTLE_TYPE_TRAINER) || IsRaidBattle();
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER || IsRaidBattle() || keepConsumables)
+	if (trainerOrRaidBattle || keepConsumables)
 	{
 		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-			||  keepConsumables
-			||  items[i] == ITEM_NONE
-			||  !IsConsumable(items[i]))
+			bool8 backedUpItemIsConsumable = IsConsumable(items[i]);
+
+			if ((trainerOrRaidBattle
+			&&  (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+			||   items[i] == ITEM_NONE
+			||   !backedUpItemIsConsumable))
+			||  (keepConsumables && backedUpItemIsConsumable))
 			{
 				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &items[i]);
 			}
-			else if (gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
-			&& IsConsumable(items[i]))
+			else if (trainerOrRaidBattle
+			&& gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
+			&& backedUpItemIsConsumable)
 			{
 				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &none);
 			}
@@ -860,6 +865,13 @@ static void EndBattleFlagClear(void)
 
 	for (i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
+	
+	#ifdef FLAG_TERA_BATTLE
+    // Wild Battle check
+    if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
+    ||   (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))  
+		FlagClear(FLAG_TERA_BATTLE);
+	#endif
 
 	#ifdef VAR_STATUS_INDUCER
 	u16 inducer = VarGet(VAR_STATUS_INDUCER);

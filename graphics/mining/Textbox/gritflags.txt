@@ -1,0 +1,1 @@
+-gB4 -gzl -pn16 -gu8 -ps32 -pn16 -pu8 -mzl -mR4 -aw256 -fts

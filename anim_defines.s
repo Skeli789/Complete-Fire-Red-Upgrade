@@ -16,7 +16,7 @@
 .equ TEMPLATE_ABOVE, 0x20
 .equ TEMPLATE_BELOW, 0x40 @;Appears underneath the sprite
 .equ TEMPLATE_TARGET, 0x80
-
+ 
 @background IDs
 .equ BG_DARK, 0x1
 .equ BG_GHOST, 0x2
@@ -625,6 +625,8 @@
 .equ Template_PsywaveRing, 0x83e59e8
 .equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
+.equ AnimTask_BendSprite, 0x8099981
+.equ Template_FistAndFeet, 0x83E68AC
 
 @OAM
 .equ OAM_OFF_8x8, 0x83AC9C8
@@ -1120,3 +1122,19 @@ waitbgfadein
 .equ ANIM_TAG_HOOPA_RING_LARGE, 0x2880
 .equ ANIM_TAG_OMEGA_SYMBOL, 0x2881
 .equ ANIM_TAG_ALPHA_SYMBOL, 0x2882
+.equ ANIM_TAG_TERA_SYMBOL, 0x2883
+.equ ANIM_TAG_TERA_CRYSTAL, 0x2884
+
+//New Anim
+.equ Template_ElectricStatic, 0x83E6204
+.equ SparksSound, 0x70
+.equ ThunderSound, 0xD6
+.equ Template_ElectricSparkPlayer2, 0x83E6070   @Temp271B_A
+.equ Template_SpotlightTarget, 0x83FF3A0
+.equ AnimTask_FadeWhiteOrBlack, 0x80BAB39
+.equ AnimTask_PlayUserCry, 0x80DD333    @PlayUserCry
+.equ Template_Sparkle, 0x83E6EA4 
+.equ Template_Temp27AB_G, 0x83E5B70
+.equ AnimTask_GetWeather, 0x80E44EB
+.equ Template_GraySmoke, 0x83E36A8
+.equ CoinSound, 0xA7

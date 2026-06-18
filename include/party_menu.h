@@ -109,7 +109,10 @@ enum
 #define MENU_TRADE2 17
 #define MENU_MOVE_ITEM 18
 #define MENU_FIELD_MOVES 19
-
+#define MENU_DIR_DOWN     1
+#define MENU_DIR_UP      -1
+#define MENU_DIR_RIGHT    2
+#define MENU_DIR_LEFT    -2
 #define MENU_FIELD_MOVES_MINUS_1 18
 
 struct PartyMenu
@@ -153,7 +156,6 @@ extern void (*gItemUseCB)(u8, TaskFunc);
 
 void __attribute__((long_call)) InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback);
 void __attribute__((long_call)) DisplayPartyPokemonSelectData(u8 slot, u8 stringID);
-void __attribute__((long_call)) Task_HandleChooseMonInput(u8 taskId);
 bool8 __attribute__((long_call)) IsPartyMenuTextPrinterActive(void);
 u8 __attribute__((long_call)) GetMonPrimaryAilments(u32 status);
 void __attribute__((long_call)) DisplayPartyMenuStdMessage(u32 stringID);
@@ -162,10 +164,8 @@ u8 __attribute__((long_call)) GetCursorSelectionMonId(void);
 bool8 __attribute__((long_call)) FieldCallback_PrepareFadeInFromMenu(void);
 
 void __attribute__((long_call)) AnimatePartySlot(u8 slot, u8 b);
-u16 __attribute__((long_call)) PartyMenuButtonHandler(s8 *ptr);
 bool8 __attribute__((long_call)) some_other_kind_of_link_test(void);
 void __attribute__((long_call)) InitChooseHalfPartyForBattle(u8 a1);
 u8 __attribute__((long_call)) GetItemEffectType(u16 item);
 void __attribute__((long_call)) PartyMenuModifyHP(u8 taskId, u8 slot, s8 hpIncrement, s16 hpDifference, TaskFunc task);
-
 void __attribute__((long_call)) Task_ClosePartyMenu(u8 taskId);

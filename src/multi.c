@@ -19,6 +19,7 @@
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
 #include "../include/new/switching.h"
+#include "../include/new/terastallization.h"
 /*
 multi.c
 	handles partner battle logic
@@ -487,11 +488,13 @@ u32 MultiMoneyCalc(void)
 	return money;
 }
 
+#ifndef EXPAND_TRAINERS
 #define gTrainerMoneyTable ((struct TrainerMoney*) *((u32*) 0x80259CC))
+#endif
 static u32 CalcPrizeiMoneyForTrainer(u16 trainerId)
 {
 	u8 i, firstMonId, lastMonId, level, rate;
-	struct Trainer* trainer = &gTrainers[trainerId];
+	const struct Trainer* trainer = &gTrainers[trainerId];
 
 	//Get the party range to search through for the given trainer
 	if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
@@ -730,6 +733,11 @@ static void PlayerPartnerHandleChooseMove(void)
 		if (ShouldAIDynamax(gActiveBattler))
 			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
+	else if (moveInfo->canTera) // For Terastallization
+	{
+		if (!ShouldAIDelayTerastallization(gActiveBattler, gBankTarget, chosenMove, FALSE, TRUE))
+			gNewBS->teraData.chosen[gActiveBattler] = TRUE;
+	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
 	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
@@ -739,7 +747,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	if (IsMockBattle())
 		TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, FALSE); //Moves are chosen in order of bank
 
-	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
+	EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE, gNewBS->teraData.chosen[gActiveBattler]); // For Terastallization
 	PlayerPartnerBufferExecComplete();
 }
 

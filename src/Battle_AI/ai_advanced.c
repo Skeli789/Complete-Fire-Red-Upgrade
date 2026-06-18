@@ -2077,7 +2077,7 @@ static bool8 ShouldUseSubstitute(u8 bankAtk, u8 bankDef)
 
 	if (defPrediction != MOVE_NONE)
 	{
-		if (MoveWouldHitFirst(MOVE_SUBSTITUTE, bankAtk, bankDef)) //Attacker goes first
+		if (MoveWouldHitFirst((MOVE_SUBSTITUTE || MOVE_SHEDTAIL), bankAtk, bankDef)) //Attacker goes first
 		{
 			if (GetFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1, NULL) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
 				return TRUE;

@@ -170,7 +170,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		gBattleScripting.bank = gBankAttacker;
 	}
 
-	if (ABILITY(gEffectBank) == ABILITY_SHIELDDUST
+	if ((ABILITY(gEffectBank) == ABILITY_SHIELDDUST || ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_COVERT_CLOAK)
 	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) //Used by contact abilities and synchronize
 	&& !primary
 	&& CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sShieldDustIgnoredEffects))

@@ -1,0 +1,14 @@
+#org @TextAsk
+I'm the Egg Hatcher. Want me to\nhatch your Egg for \$5000?
+
+#org @TextNo
+If you change your mind, talk to\nme again.
+
+#org @TextNoMoney
+Sorry, you don't have enough money.
+
+#org @TextCancel
+Hey, this isn't an Egg!
+
+#org @TextProcessing
+Alright, let's hatch your Egg.

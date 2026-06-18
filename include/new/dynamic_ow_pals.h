@@ -40,3 +40,10 @@ void LoadCloudOrSandstormPalette(u16* pal);
 #define PalTypeWeather 3
 #define PalTypeReflection 4
 #define PalTypeOther 5
+
+#ifdef PALETTE_SWAPPER
+void LoadObjectEventPalette(u16 paletteTag);
+void PatchObjectPalette(u16 paletteTag, u8 paletteSlot);
+u8 FindObjectEventPaletteIndexByTag(u16 tag);
+u8 GetObjectEventPalettesTableByTag(u16 tag);
+#endif

@@ -18,7 +18,8 @@ void __attribute__((long_call)) CB2_ReturnFromLinkTrade(void);
 s32 __attribute__((long_call)) Trade_CalcLinkPlayerCompatibilityParam(void);
 s32 __attribute__((long_call)) CanRegisterMonForTradingBoard(struct GFtgtGnameSub rfuPlayer, u16 species2, u16 species, u8 isEventLegal);
 s32 __attribute__((long_call)) GetUnionRoomTradeMessageId(struct GFtgtGnameSub rfuPlayer, struct GFtgtGnameSub rfuPartner, u16 playerSpecies2, u16 partnerSpecies, u8 requestedType, u16 playerSpecies, u8 isEventLegal);
-void __attribute__((long_call)) CB2_ReturnToTradeMenuFromSummary(void);
 */
+
+void __attribute__((long_call)) CB2_ReturnToTradeMenuFromSummary(void);
 
 #endif //GUARD_TRADE_H

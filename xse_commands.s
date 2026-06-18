@@ -1968,3 +1968,47 @@ map \map
 .hword \var, \val
 .word \script
 .endm
+
+.macro msgminibox text:req pointer:req type:req
+	loadpointer 0x0 \text
+    callasm MiniBoxOpen
+	loadpointer 0x0 \pointer
+	callstd \type
+	callasm ClearMiniBox
+.endm
+
+.macro followerfaceplayer
+callasm FollowerMonFacePlayer
+.endm
+
+.macro hidefollowermon
+callasm CreateSparkleSprite
+callasm HideFollower
+.endm
+
+.macro showfollowermon
+callasm CreateSparkleSprite
+callasm ShowFollowerMon
+.endm
+
+.macro storemonid
+callasm StoreFollowerMonInVar4004
+.endm
+
+.macro resetpokevial
+callasm ResetPokeVialUses
+.endm
+
+.macro resetvar var:req
+	setvar \var 0
+.endm
+
+.macro goto_if_flag flag:req destination:req
+	checkflag \flag
+	if equal _goto \destination
+.endm
+
+.macro call_if_flag flag:req destination:req
+	checkflag \flag
+	if equal _call \destination
+.endm

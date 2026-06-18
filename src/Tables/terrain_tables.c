@@ -93,13 +93,13 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
 
-	[BATTLE_TERRAIN_UNDERWATER + 4] =
+	[BATTLE_TERRAIN_SNOWY + 4] =
 		{
-			.camouflageType = TYPE_WATER,
-			.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
-			.secretPowerAnim = MOVE_WATERPULSE,
-			.naturePowerMove = MOVE_HYDROPUMP,
-			.burmyForm = SPECIES_NONE,
+			.camouflageType = TYPE_ICE,
+			.secretPowerEffect = MOVE_EFFECT_FREEZE,
+			.secretPowerAnim = MOVE_ICESHARD,
+			.naturePowerMove = MOVE_ICEBEAM,
+			.burmyForm = SPECIES_BURMY_TRASH,
 		},
 
 	[BATTLE_TERRAIN_WATER + 4] =
@@ -248,6 +248,79 @@ const struct TerrainTableStruct gTerrainTable[] =
 		},
 #endif
 	//ADD NEW ENTRIES HERE
+#ifdef NEW_BATTLE_BACKGROUNDS
+	[BATTLE_TERRAIN_SPOOKY + 4] =
+		{
+			.camouflageType = TYPE_GHOST,
+			.secretPowerEffect = MOVE_EFFECT_EVS_MINUS_1,
+			.secretPowerAnim = MOVE_SHADOWSNEAK,
+			.naturePowerMove = MOVE_SHADOWBALL,
+			.burmyForm = SPECIES_BURMY_TRASH,
+		},
+
+	[BATTLE_TERRAIN_DESERT + 4] =
+		{
+			.camouflageType = TYPE_GROUND,
+			.secretPowerEffect = MOVE_EFFECT_SPD_MINUS_1,
+			.secretPowerAnim = MOVE_MUDSHOT,
+			.naturePowerMove = MOVE_MUDBOMB,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_TORMA + 4] =
+		{
+			.camouflageType = TYPE_ROCK,
+			.secretPowerEffect = MOVE_EFFECT_FLINCH,
+			.secretPowerAnim = MOVE_ROCKTHROW,
+			.naturePowerMove = MOVE_POWERGEM,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_TORMA_DEPTHS + 4] =
+		{
+			.camouflageType = TYPE_ICE,
+			.secretPowerEffect = MOVE_EFFECT_FREEZE,
+			.secretPowerAnim = MOVE_AVALANCHE,
+			.naturePowerMove = MOVE_FROSTBREATH,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_SCALDING_SPA + 4] =
+		{
+			.camouflageType = TYPE_ICE,
+			.secretPowerEffect = MOVE_EFFECT_BURN,
+			.secretPowerAnim = MOVE_FLAMECHARGE,
+			.naturePowerMove = MOVE_FLAREBLITZ,
+			.burmyForm = SPECIES_BURMY_SANDY,
+		},
+
+	[BATTLE_TERRAIN_GYM + 4] =
+		{
+			.camouflageType = TYPE_NORMAL,
+			.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
+			.secretPowerAnim = MOVE_BODYSLAM,
+			.naturePowerMove = MOVE_TRIATTACK,
+			.burmyForm = SPECIES_BURMY_TRASH,
+		},
+
+	[BATTLE_TERRAIN_FOREST + 4] =
+		{
+			.camouflageType = TYPE_NORMAL,
+			.secretPowerEffect = MOVE_EFFECT_PREVENT_ESCAPE,
+			.secretPowerAnim = MOVE_INGRAIN,
+			.naturePowerMove = MOVE_POWERWHIP,
+			.burmyForm = SPECIES_BURMY,
+		},
+
+	[BATTLE_TERRAIN_FOREST_PERADON + 4] =
+		{
+			.camouflageType = TYPE_NORMAL,
+			.secretPowerEffect = MOVE_EFFECT_PREVENT_ESCAPE,
+			.secretPowerAnim = MOVE_INGRAIN,
+			.naturePowerMove = MOVE_POWERWHIP,
+			.burmyForm = SPECIES_BURMY,
+		},
+#endif
 
 #ifdef UNBOUND //The ones below are for Pokemon Unbound. Feel free to remove.
 	[BATTLE_TERRAIN_MOLEMAN + 4] =

@@ -22,8 +22,9 @@
 #define TYPE_ROOSTLESS 0x13
 #define TYPE_BLANK	  0x14
 #define TYPE_FAIRY	  0x17
+#define TYPE_STELLAR 0x18
 
-#define NUMBER_OF_MON_TYPES (TYPE_FAIRY + 1)
+#define NUMBER_OF_MON_TYPES (TYPE_STELLAR + 1)
 
 #define TYPE_NAME_LENGTH 6
 
@@ -100,9 +101,9 @@
 #define EVO_MODE_NORMAL     0
 #define EVO_MODE_TRADE      1
 #define EVO_MODE_ITEM_USE   2
-#define EVO_MODE_ITEM_CHECK 3 // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
+#define EVO_MODE_ITEM_CHECK 3 // If an Everstone is being held, still want to show that the stone *could* be used on that PokÃ©mon to evolve
 
-#define SHINY_ODDS 16 // Actual probability is SHINY_ODDS/65536
+#define SHINY_ODDS 8 // Actual probability is SHINY_ODDS/65536
 
 // Learning moves
 #define MON_ALREADY_KNOWS_MOVE 0xFFFE

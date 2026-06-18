@@ -109,6 +109,7 @@ void SwitchOutFormsRevert(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
+	u8 ability = GetMonAbility(mon);
 
 	if (IS_TRANSFORMED(bank))
 		return;
@@ -193,6 +194,16 @@ void SwitchOutFormsRevert(u8 bank)
 				DoFormChange(bank, SPECIES_CRAMORANT, FALSE, TRUE, FALSE);
 			break;
 		#endif
+
+		#if (defined SPECIES_PALAFIN && defined SPECIES_PALAFIN_HERO)
+		case SPECIES_PALAFIN:
+			if (backupSpecies != SPECIES_NONE && ability == ABILITY_TORRENT)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
+			else
+				DoFormChange(bank, SPECIES_PALAFIN_HERO, FALSE, TRUE, FALSE);
+			break;
+		#endif
+
 	}
 }
 
@@ -572,7 +583,8 @@ static const u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_DARK] =		SPECIES_ARCEUS_DARK,
 	[TYPE_ROOSTLESS] =	SPECIES_ARCEUS_FLYING, //This Arceus should stay in the proper form
 
-	[TYPE_FAIRY] =		SPECIES_ARCEUS_FAIRY
+	[TYPE_FAIRY] =		SPECIES_ARCEUS_FAIRY,
+	[TYPE_STELLAR] =    0
 };
 
 const u16 gTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
@@ -597,7 +609,8 @@ const u16 gTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
 	[TYPE_DARK] =		SPECIES_SILVALLY_DARK,
 	[TYPE_ROOSTLESS] =	SPECIES_SILVALLY_FLYING, //This Silvally should stay in the proper form
 
-	[TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY
+	[TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY,
+	[TYPE_STELLAR] =    0
 };
 
 void HoldItemFormChange(struct Pokemon* mon, u16 item)

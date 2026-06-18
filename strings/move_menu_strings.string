@@ -10,6 +10,9 @@
 #org @gText_BattleUI_STAB
 [MAIN_COLOUR][07][SHADOW_COLOUR][06]+
 
+#org @gText_BattleUI_DoubleTeraSTAB
+[MAIN_COLOUR][07][SHADOW_COLOUR][06]++
+
 #org @gText_Power
 Power: 
 

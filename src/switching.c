@@ -29,6 +29,7 @@
 #include "../include/new/switching.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/z_move_battle_scripts.h"
+#include "../include/new/terastallization.h"
 /*
 switching.c
 	handles battle switching logic
@@ -36,6 +37,7 @@ switching.c
 
 enum SwitchInStates
 {
+	SwitchIn_TryChangeAbility,
 	SwitchIn_HandleAICooldown,
 	SwitchIn_CamomonsReveal,
 	SwitchIn_NeutralizingGasRemoveAbility,
@@ -59,6 +61,7 @@ enum SwitchInStates
 	SwitchIn_TrainerMessage,
 	SwitchIn_PreEnd,
 	SwitchIn_EjectPack,
+	SwitchIn_ReactivateTera,
 	SwitchIn_End,
 };
 
@@ -526,6 +529,11 @@ void atk52_switchineffects(void)
 		return;
 
 	u32 i;
+	#ifdef EXPAND_TRAINERS
+	int tableSlot;
+	u16 trainerId = gTrainerBattleOpponent_A;
+	const struct TrainerCustomAbility *table = gCustomTrainerAbilityTable[trainerId];
+	#endif
 	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
 	if (arg == BS_GET_SCRIPTING_BANK)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
@@ -545,6 +553,32 @@ void atk52_switchineffects(void)
 		gNewBS->switchInEffectsState = SwitchIn_PrimalReversion;
 
 	switch (gNewBS->switchInEffectsState) {
+		case SwitchIn_TryChangeAbility:
+		#ifdef EXPAND_TRAINERS
+		{
+			u16 species = SPECIES(gActiveBattler);
+
+			for (tableSlot = 0; tableSlot < PARTY_SIZE; tableSlot++)
+			{
+				u16 targetSpecies = table[tableSlot].species;
+				u8 targetAbility = table[tableSlot].ability;
+
+				// Quit on encountering SPECIES_NONE
+				if (targetSpecies == SPECIES_NONE)
+					break;
+
+				// Set ability
+				if (targetSpecies == species)
+				{
+					gBattleMons[gActiveBattler].ability = targetAbility;
+					continue;
+				}
+			}
+		}
+		#endif
+			++gNewBS->switchInEffectsState;
+			break;
+
 		case SwitchIn_HandleAICooldown:
 			if (SIDE(gActiveBattler) == B_SIDE_PLAYER) //Player switched in a Pokemon
 			{
@@ -1026,6 +1060,19 @@ void atk52_switchineffects(void)
 			}
 		__attribute__ ((fallthrough));
 
+		case SwitchIn_ReactivateTera:
+			// Special Case - If Tera is chosen, and mon is switched, turn off Tera
+			if (gNewBS->teraData.chosen[gActiveBattler])
+				gNewBS->teraData.chosen[gActiveBattler] = FALSE;
+
+			// If user is already terastallized, bring back the effects
+			if (IsTerastallized(gActiveBattler))
+			{
+				if (GetTeraType(gActiveBattler) != TYPE_STELLAR)
+					SET_BATTLER_TYPE(gActiveBattler, GetTeraType(gActiveBattler));
+			}
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_End:
 			break;
 	}
@@ -1256,6 +1303,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->HealBlockTimers[bank] = 0;
 	gNewBS->LaserFocusTimers[bank] = 0;
 	gNewBS->ThroatChopTimers[bank] = 0;
+	gNewBS->GlaiveRushTimers[bank] = 0;
 	gNewBS->StompingTantrumTimers[bank] = 0;
 	gNewBS->MetronomeCounter[bank] = 0;
 	gNewBS->DestinyBondCounters[bank] = 0;
@@ -1280,12 +1328,15 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->splinterAttackerMonId[bank] = 0;
 	gNewBS->splinterMove[bank] = 0;
 	gNewBS->tookAbilityFrom[bank] = 0;
+	gNewBS->quarkDriveActivated[bank] = FALSE;
+	gNewBS->ProtosynthesisActivated[bank] = FALSE;
 
 	gProtectStructs[bank].KingsShield = 0;	//Necessary because could be sent away with Roar
 	gProtectStructs[bank].SpikyShield = 0;
 	gProtectStructs[bank].BanefulBunker = 0;
 	gProtectStructs[bank].obstruct = 0;
 	gProtectStructs[bank].enduredSturdy = 0;
+	gProtectStructs[bank].BurningBulwark = 0;
 	
 	DestroyMegaIndicator(bank);
 	WipeOldDeperateAttemptRecord(bank);

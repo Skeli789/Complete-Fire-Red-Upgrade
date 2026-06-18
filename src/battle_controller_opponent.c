@@ -17,6 +17,8 @@
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
 #include "../include/new/switching.h"
+#include "../include/naming_screen.h"
+#include "../include/new/terastallization.h"
 
 /*
 battle_controller_opponent.c
@@ -127,14 +129,19 @@ void OpponentHandleChooseMove(void)
 					if (ShouldAIDynamax(gActiveBattler))
 						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 				}
-
+				//For Terastallization
+				else if (moveInfo->canTera) // For Terastallization
+				{
+					if (!ShouldAIDelayTerastallization(gActiveBattler, gBankTarget, chosenMove, FALSE, TRUE))
+						gNewBS->teraData.chosen[gActiveBattler] = TRUE;
+				}
 				//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMovePos;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
 				TryRemovePartnerDoublesKillingScoreComplete(gActiveBattler, gBankTarget, chosenMove, moveTarget, TRUE); //Allow the partner to choose a new target if its best move was this target
 
-				EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
+				EmitMoveChosen(1, chosenMovePos, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler], gNewBS->teraData.chosen[gActiveBattler]); // For Terastallization
 				TryRechoosePartnerMove(moveInfo->moves[chosenMovePos]);
 				break;
 		}
@@ -152,11 +159,11 @@ void OpponentHandleChooseMove(void)
 		} while (move == MOVE_NONE);
 
 		if (GetBaseMoveTarget(move, gActiveBattler) & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
-			EmitMoveChosen(1, chosenMovePos, gActiveBattler, 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, gActiveBattler, 0, 0, 0, FALSE, 0); // For Terastallization
 		else if (IS_DOUBLE_BATTLE)
-			EmitMoveChosen(1, chosenMovePos, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE, 0); // For Terastallization
 		else
-			EmitMoveChosen(1, chosenMovePos, FOE(gActiveBattler), 0, 0, 0, FALSE);
+			EmitMoveChosen(1, chosenMovePos, FOE(gActiveBattler), 0, 0, 0, FALSE, 0); // For Terastallization
 
 		OpponentBufferExecCompleted();
 	}
@@ -368,51 +375,55 @@ void OpponentHandleChoosePokemon(void)
 
 static u8 LoadCorrectTrainerPicId(void)
 {
-	u8 trainerPicId;
-	u8 position = GetBattlerPosition(gActiveBattler);
+    u8 trainerPicId;
+    u8 position = GetBattlerPosition(gActiveBattler);
 
-	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-	{
-		trainerPicId = GetSecretBaseTrainerPicIndex();
-	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-	|| (position == B_POSITION_OPPONENT_LEFT && IsFrontierTrainerId(gTrainerBattleOpponent_A))
-	|| (position == B_POSITION_OPPONENT_RIGHT && IsFrontierTrainerId(gTrainerBattleOpponent_B)))
-	{
-		if (IsTwoOpponentBattle()
-		|| (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI))
-		{
-			if (position == B_POSITION_OPPONENT_LEFT)
-				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
-			else
-				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_B, 1);
-		}
-		else
-		{
-			trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
-		}
-	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
-	{
-		trainerPicId = GetTrainerTowerTrainerPicIndex(); //0x815DA3C
-	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-	{
-		trainerPicId = GetEreaderTrainerFrontSpriteId(); //0x80E7420
-	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-	{
-		if (position == 1)
-			trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
-		else
-			trainerPicId = gTrainers[gTrainerBattleOpponent_B].trainerPic;
-	}
-	else
-	{
-		trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
-	}
+    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+    {
+        trainerPicId = GetSecretBaseTrainerPicIndex();
+    }
+    else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+          || (position == B_POSITION_OPPONENT_LEFT && IsFrontierTrainerId(gTrainerBattleOpponent_A))
+          || (position == B_POSITION_OPPONENT_RIGHT && IsFrontierTrainerId(gTrainerBattleOpponent_B)))
+    {
+        if (IsTwoOpponentBattle()
+         || ((gBattleTypeFlags & BATTLE_TYPE_LINK) && (gBattleTypeFlags & BATTLE_TYPE_MULTI)))
+        {
+            if (position == B_POSITION_OPPONENT_LEFT)
+                trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
+            else
+                trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_B, 1);
+        }
+        else
+        {
+            trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
+        }
+    }
+    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
+    {
+        trainerPicId = GetTrainerTowerTrainerPicIndex(); // 0x815DA3C
+    }
+    else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
+    {
+        trainerPicId = GetEreaderTrainerFrontSpriteId(); // 0x80E7420
+    }
+    else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+    {
+        if (position == B_POSITION_OPPONENT_LEFT)
+        {
+            trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
+        }
+        else
+        {
+            trainerPicId = gTrainers[gTrainerBattleOpponent_B].trainerPic;
+        }
+    }
+    else
+    {
+        trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
+    }
 
-	return trainerPicId;
+    return trainerPicId;
 }
 
 void SpriteCB_SlideInTrainer(struct Sprite* sprite)
@@ -483,3 +494,110 @@ void SpriteCB_OpponentMonSendOut_1(struct Sprite* sprite)
 	sprite->callback = SpriteCB_PlayerMonSendOut_2;
 }
 #undef sBattler
+extern u8 gBattlerAttacker;
+#define gText_BattleYesNoChoice (u8*) 0x83FE791
+#define B_WIN_YESNO 14
+#define SE_SELECT 5
+void Cmd_trygivecaughtmonnick(void)
+{
+    if (FlagGet(FLAG_NUZLOCKE)) // ⭐ Nuzlocke Mode: Always nickname
+    {
+        switch (gBattleCommunication[MULTIUSE_STATE])
+        {
+        case 0:
+            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            FreeAllWindowBuffers();
+
+            DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gBattleStruct->caughtMonNick,
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_SPECIES, NULL),
+                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]]),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_PERSONALITY, NULL),
+                           BattleMainCB2);
+
+            gBattleCommunication[MULTIUSE_STATE]++;
+            break;
+        case 1:
+            if (gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
+            {
+                SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+                gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+            }
+            break;
+        }
+        return;
+    }
+
+    // Default behavior when Nuzlocke is OFF (yes/no choice)
+    switch (gBattleCommunication[MULTIUSE_STATE])
+    {
+    case 0:
+        HandleBattleWindow(23, 8, 29, 13, 0);
+        BattlePutTextOnWindow(gText_BattleYesNoChoice, B_WIN_YESNO);
+        gBattleCommunication[MULTIUSE_STATE]++;
+        gBattleCommunication[CURSOR_POSITION] = 0;
+        BattleCreateYesNoCursorAt(0);
+        break;
+    case 1:
+        if (JOY_NEW(DPAD_UP) && gBattleCommunication[CURSOR_POSITION] != 0)
+        {
+            PlaySE(SE_SELECT);
+            BattleDestroyYesNoCursorAt(0);
+            gBattleCommunication[CURSOR_POSITION] = 0;
+            BattleCreateYesNoCursorAt(0);
+        }
+        if (JOY_NEW(DPAD_DOWN) && gBattleCommunication[CURSOR_POSITION] == 0)
+        {
+            PlaySE(SE_SELECT);
+            BattleDestroyYesNoCursorAt(0);
+            gBattleCommunication[CURSOR_POSITION] = 1;
+            BattleCreateYesNoCursorAt(1);
+        }
+        if (JOY_NEW(A_BUTTON))
+        {
+            PlaySE(SE_SELECT);
+            if (gBattleCommunication[CURSOR_POSITION] == 0)
+            {
+                gBattleCommunication[MULTIUSE_STATE]++;
+                BeginFastPaletteFade(3);
+            }
+            else
+            {
+                gBattleCommunication[MULTIUSE_STATE] = 4;
+            }
+        }
+        else if (JOY_NEW(B_BUTTON))
+        {
+            PlaySE(SE_SELECT);
+            gBattleCommunication[MULTIUSE_STATE] = 4;
+        }
+        break;
+    case 2:
+        if (!gPaletteFade->active)
+        {
+            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            FreeAllWindowBuffers();
+
+            DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gBattleStruct->caughtMonNick,
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_SPECIES, NULL),
+                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]]),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_PERSONALITY, NULL),
+                           BattleMainCB2);
+
+            gBattleCommunication[MULTIUSE_STATE]++;
+        }
+        break;
+    case 3:
+        if (gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
+        {
+            SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+        break;
+    case 4:
+        if (CalculatePlayerPartyCount() == PARTY_SIZE)
+            gBattlescriptCurrInstr += 5;
+        else
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        break;
+    }
+}

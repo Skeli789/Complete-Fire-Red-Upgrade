@@ -1,6 +1,8 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+#include "global.h"
+
 
 typedef void (*ItemUseFunc)(u8);
 
@@ -27,8 +29,6 @@ struct BagPocket
     struct ItemSlot *itemSlots;
     u16 capacity;
 };
-
-extern struct BagPocket gBagPockets[];
 
 bool8 __attribute__((long_call)) IsMail(u16 item_id);
 void __attribute__((long_call)) CopyItemName(u16 itemId, u8* dst);

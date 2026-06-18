@@ -57,6 +57,7 @@
 #include "../include/new/overworld.h"
 #include "../include/new/wild_encounter.h"
 #include "../include/new/util.h"
+#include "../include/new/terastallization.h"
 
 /*
 dexnav.c
@@ -2338,9 +2339,7 @@ static void RegisterSpecies(u16 species, u8 taskId)
 	VarSet(VAR_DEXNAV, varStore);
 
 	//Update R-Button mode if applicable
-	#ifdef VAR_R_BUTTON_MODE
 	VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
-	#endif
 	
 	//Update registered icon details
 	sDexNavGUIPtr->registeredIndex = sDexNavGUIPtr->selectedIndex;
@@ -3149,7 +3148,7 @@ static void UpdateSpritePosition(struct Sprite* sprite, u8 areaType, u8 selected
 	if (areaType == AREA_WATER)
 	{
 		baseX = 4 + (32 / 2);
-		baseY = 26 + (32 / 2);
+		baseY = 22 + (32 / 2);
 		xSpace = 24;
 		ySpace = 25;
 		row = min(selectedIndex / WATER_ROW_LENGTH, VISIBLE_WATER_ROW_COUNT - 1);
@@ -3158,7 +3157,7 @@ static void UpdateSpritePosition(struct Sprite* sprite, u8 areaType, u8 selected
 	else //Land
 	{
 		baseX = 4 + (32 / 2);
-		baseY = 98 + (32 / 2);
+		baseY = 94 + (32 / 2);
 		xSpace = 24;
 		ySpace = 25;
 		row = min(selectedIndex / LAND_ROW_LENGTH, VISIBLE_LAND_ROW_COUNT - 1);

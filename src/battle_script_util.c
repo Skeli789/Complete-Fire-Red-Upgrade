@@ -275,7 +275,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 
 	if (IsMoldBreakerAbility(ABILITY(bank)))
 	{
-		if (gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMoldBreakerIgnoredAbilities)
+		if (gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMoldBreakerIgnoredAbilities
+		|| gSpecialAbilityFlags[ABILITY(gBankSwitching)].gMyceliumMighIgnoredAbilities)
 		{
 			gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = gBattleMons[gBankSwitching].ability;
 			gBattleMons[gBankSwitching].ability = 0;
@@ -1408,6 +1409,12 @@ void AbilityChangeBSFunc(void)
 
 	gNewBS->backupAbility = *defAbilityLoc;
 
+	if (IsMyceliumMightOnField())
+    {
+        *defAbilityLoc = ABILITY_NONE;
+        defAbility = ABILITY_NONE;
+    }
+
 	switch (gCurrentMove) {
 		case MOVE_WORRYSEED:
 			if (gSpecialAbilityFlags[defAbility].gWorrySeedBannedAbilities)
@@ -1473,6 +1480,26 @@ void AbilityChangeBSFunc(void)
 				gLastUsedAbility = defAbility; //Original ability
 				ResetVarsForAbilityChange(gBankTarget);
 				gBattleStringLoader = SimpleBeamString;
+			}
+			break;
+
+		case MOVE_DOODLE:
+			if (defAbility == ABILITY_NONE
+			||  IsDynamaxed(gBankTarget)
+			||  *defAbilityLoc == *atkAbilityLoc
+			||  gSpecialAbilityFlags[atkAbility].gEntrainmentBannedAbilitiesAttacker
+			||  gSpecialAbilityFlags[defAbility].gEntrainmentBannedAbilitiesTarget)
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else
+			{
+				*atkAbilityLoc = defAbility;
+				//SetTookAbilityFrom(gBankTarget, gBankAttacker); //Set after the first Ability pop up
+				gLastUsedAbility = atkAbility; //Original ability
+				ResetVarsForAbilityChange(gBankAttacker);
+				gBattleStringLoader = EntrainmentString;
+
+				if (gLastUsedAbility == ABILITY_TRUANT)
+					gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
 			}
 			break;
 	}
@@ -1549,6 +1576,18 @@ void BurnUpFunc(void)
 		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
 }
 
+void DoubleShockFunc(void)
+{
+	if (gBattleMons[gBankAttacker].type1 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type1 = TYPE_MYSTERY;
+
+	if (gBattleMons[gBankAttacker].type2 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type2 = TYPE_MYSTERY;
+
+	if (gBattleMons[gBankAttacker].type3 == TYPE_ELECTRIC)
+		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+}
+
 void SeedRoomServiceLooper(void)
 {
 	for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
@@ -1593,6 +1632,16 @@ bool8 CanUseLastResort(u8 bank)
 		return FALSE;
 
 	return TRUE;
+}
+
+void GigatonHammerFunc(void)
+{
+    if(gLastUsedMoves[gBankAttacker] == MOVE_GIGATONHAMMER)
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+
+	else if(gLastUsedMoves[gBankAttacker] == MOVE_BLOODMOON)
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+    
 }
 
 void SynchronoiseFunc(void)
@@ -2136,10 +2185,22 @@ void SetHealBlockTimer(void)
 		gNewBS->HealBlockTimers[gBankTarget] = 5;
 }
 
+void PSHealBlockTimer(void)
+{
+	if (!IsHealBlocked(gBankTarget))
+		gNewBS->HealBlockTimers[gBankTarget] = 2;
+}
+
 void SetThroatChopTimer(void)
 {
 	if (!CantUseSoundMoves(gBankTarget))
 		gNewBS->ThroatChopTimers[gBankTarget] = 2;
+}
+
+void GlaiveRushTimer(void)
+{
+	gNewBS->GlaiveRushTimers[gBankAttacker] = 1;
+	gStatuses3[gBankTarget] |= STATUS3_GLAIVERUSH;
 }
 
 void SetNoMoreMovingThisTurnSwitchingBank(void)
@@ -2380,6 +2441,12 @@ void FailClangorousSoulIfLowHP(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 }
 
+void FailShedTailIfLowHP(void)
+{
+	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 2)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+}
+
 void LoadMoodyStatToLower(void)
 {
 	gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + gBattleCommunication[MOVE_EFFECT_BYTE] - 1;
@@ -2446,6 +2513,12 @@ void TrySetBurningJealousyMoveEffect(void)
 {
 	if (gNewBS->statRoseThisRound[gBankTarget])
 		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
+}
+
+void TrySetAlluringVoiceMoveEffect(void)
+{
+	if (gNewBS->statRoseThisRound[gBankTarget])
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
 }
 
 void TryFailPoltergeist(void)
@@ -2642,4 +2715,79 @@ void ChooseMoveEffectForSpringtideStorm(void)
 		moveEffect = EFFECT_ALL_STATS_UP_HIT;
 
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[moveEffect] - 5;
+}
+
+void CudChewBerryEat(void)
+{
+	gBattlescriptCurrInstr += 5;
+
+	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, TRUE))
+		gNewBS->doingPluckItemEffect = TRUE;
+	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBattleScripting.bank, TRUE, TRUE))
+		gNewBS->doingPluckItemEffect = TRUE;
+
+	gBattlescriptCurrInstr -= 5;
+}
+
+void TryActivateQuarkDrive(void)
+{
+    u32 terrainFlag = gTerrainType & (ELECTRIC_TERRAIN | GRASSY_TERRAIN | MISTY_TERRAIN | PSYCHIC_TERRAIN);
+    if (!terrainFlag)
+        return;
+
+    for (u8 bank = 0; bank < gBattlersCount; bank++)
+    {
+		if (gNewBS->quarkDriveActivated[bank]) 
+            continue;
+
+        u16 ability = ABILITY(bank);
+        if (ability == ABILITY_QUARKDRIVE && terrainFlag == ELECTRIC_TERRAIN
+            && IsAffectedByElectricTerrain(bank))
+        {
+			gNewBS->quarkDriveActivated[bank] = TRUE;
+			gBankAttacker = bank;
+            gActiveBattler = bank;
+            PREPARE_STAT_BUFFER(gBattleTextBuff1, GetHighestStat(bank));
+            gBattlescriptCurrInstr = BattleScript_QuarkDriveActivates2 - 5;
+        }
+    }
+}
+
+void TryActivateProtosynthesis(void)
+{
+    for (u8 bank = 0; bank < gBattlersCount; bank++)
+    {
+		if (gNewBS->ProtosynthesisActivated[bank]) 
+            continue;
+
+        u16 ability = ABILITY(bank);
+		u16 species = SPECIES(bank);
+        if (ability == ABILITY_QUARKDRIVE && IsSunWeatherActive(bank) && SpeciesHasProtosynthesis(species))
+        {
+			gNewBS->ProtosynthesisActivated[bank] = TRUE;
+			gBankAttacker = bank;
+            gActiveBattler = bank;
+            PREPARE_STAT_BUFFER(gBattleTextBuff1, GetHighestStat(bank));
+            gBattlescriptCurrInstr = BattleScript_ProtosynthesisActivates2 - 5;
+        }
+    }
+}
+
+void TrySetPoisonPuppeterEffect(void)
+{
+	u32 status = gBattleMons[gBankTarget].status1;
+	
+	if (SpeciesHasPoisonPuppeteer(SPECIES(gBankAttacker)) && (status & STATUS_POISON) && !(gBattleMons[gBankTarget].status2 & STATUS2_CONFUSION))
+	{
+		gBattleMons[gBankTarget].status2 |= STATUS2_CONFUSION;
+		gBattlescriptCurrInstr = BattleScript_SetPuppetConfusion - 5;
+	}
+}
+
+void TryUpperHand(void)
+{
+	if (PRIORITY(gChosenMovesByBanks[gBankTarget]) >= 1 && PRIORITY(gChosenMovesByBanks[gBankTarget]) <= 3)
+		return;
+
+	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 }

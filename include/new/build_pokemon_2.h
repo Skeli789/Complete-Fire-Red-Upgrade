@@ -87,6 +87,8 @@ struct TrainersWithEvs
 	u8 spDefEv;
 	u8 ball; //0FE = Class-Based Ball, 0xFF = Random Ball
 	u8 ability; //0 = Hidden, 1 = Ability_1, 2 = Ability_2, 3 = Random Ability 1 & 2, 4 = Random Any Ability
+	u8 teraType; // 0xFF = Random Tera Type based on Original Types, 0xFE = Random Tera Type
+	bool8 shiny; // 0 = not shiny, 1 = shiny
 };
 
 enum

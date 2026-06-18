@@ -1,0 +1,206 @@
+#org @gText_FollowerMon_Test
+[BUFFER1] eagerly looks around, \nready for adventure!
+
+#org @sText_HappyJumping
+[BUFFER1] is jumping with joy!
+
+#org @sText_LooksLonely
+[BUFFER1] looks a little lonely…
+
+#org @sText_TiredButReady
+[BUFFER1] looks tired but ready to keep going.
+
+#org @sText_StatusAsleep
+[BUFFER1] dreaming deeply.
+
+#org @sText_StatusParalyzed
+[BUFFER1] struggling to move.
+
+#org @sText_StatusPoisoned
+[BUFFER1] seems to be in discomfort.
+
+#org @sText_StatusBurned
+[BUFFER1] is trembling slightly \nfrom the heat.
+
+#org @sText_StatusFrozen
+[BUFFER1] looks stiff and chilly.
+
+#org @sText_TypeFire
+[BUFFER1] warms up the area around you.
+
+#org @sText_TypeWater
+You feel a cool mist around.
+
+#org @sText_TypeElectric
+The air feels slightly charged.
+
+#org @sText_TypeGrass
+There's a fresh scent of grass nearby.
+
+#org @sText_TypeIce
+It's suddenly a bit colder near [BUFFER1].
+
+#org @sText_TypeFighting
+[BUFFER1] looks ready to spar.
+
+#org @sText_TypeFlying
+A breeze follows [BUFFER1] as it moves.
+
+#org @sText_TypePoison
+There's a strange, sharp smell in the air...
+
+#org @sText_TypeGround
+The ground seems to tremble slightly.
+
+#org @sText_TypeRock
+You hear the faint crunch of gravel underfoot.
+
+#org @sText_TypeBug
+You hear faint buzzing near [BUFFER1].
+
+#org @sText_TypeGhost
+A chill runs down your spine...
+
+#org @sText_TypeSteel
+You hear metallic clinking as [BUFFER1] moves.
+
+#org @sText_TypePsychic
+You feel like something is watching you.
+
+#org @sText_TypeDragon
+[BUFFER1]'s presence feels powerful.
+
+#org @sText_TypeDark
+You feel a shadow following you...
+
+#org @sText_TypeFairy
+There's a soft shimmer in the air around [BUFFER1].
+
+#org @sText_TypeNormal
+Nothing seems out of the ordinary.
+
+#org @sText_FoundItem
+[BUFFER1] found something!\pAdded to the bag!
+
+#org @sText_IdleLookingAround
+[BUFFER1] eagerly looks around, \nready for adventure!
+
+#org @sText_IdleBored
+[BUFFER1] seems a bit bored…
+
+#org @sText_IdleStretching
+[BUFFER1] is stretching and \nrelaxing a bit.
+
+#org @sText_IdleTailWag
+[BUFFER1] wagging its tail happily.
+
+#org @sText_RecallsMetLocation
+[BUFFER1] seems to miss [BUFFER2]\na little.
+
+#org @sText_NatureHardy
+[BUFFER1] is standing firm.
+
+#org @sText_NatureLonely
+[BUFFER1] looks a little lonely...
+
+#org @sText_NatureBrave
+[BUFFER1] seems fearless.
+
+#org @sText_NatureAdamant
+[BUFFER1] is flexing its muscles!
+
+#org @sText_NatureNaughty
+[BUFFER1] is looking mischievous!
+
+#org @sText_NatureBold
+[BUFFER1] is puffing its chest.
+
+#org @sText_NatureDocile
+[BUFFER1] is calmly watching.
+
+#org @sText_NatureRelaxed
+[BUFFER1] looks chill.
+
+#org @sText_NatureImpish
+[BUFFER1] is grinning playfully.
+
+#org @sText_NatureLax
+[BUFFER1] is wagging lazily.
+
+#org @sText_NatureTimid
+[BUFFER1] is hiding behind you.
+
+#org @sText_NatureHasty
+[BUFFER1] is darting around.
+
+#org @sText_NatureSerious
+[BUFFER1] is staying focused.
+
+#org @sText_NatureJolly
+[BUFFER1] is bouncing happily!
+
+#org @sText_NatureNaive
+[BUFFER1] is staring in awe.
+
+#org @sText_NatureModest
+[BUFFER1] is quietly smiling.
+
+#org @sText_NatureMild
+[BUFFER1] is humming softly.
+
+#org @sText_NatureQuiet
+[BUFFER1] is lost in thought.
+
+#org @sText_NatureBashful
+[BUFFER1] blushes when noticed.
+
+#org @sText_NatureRash
+[BUFFER1] is eager to go!
+
+#org @sText_NatureCalm
+[BUFFER1] brings a peaceful vibe.
+
+#org @sText_NatureGentle
+[BUFFER1] brushes against you.
+
+#org @sText_NatureSassy
+[BUFFER1] smirks confidently.
+
+#org @sText_NatureCareful
+[BUFFER1] scans the area cautiously.
+
+#org @sText_NatureQuirky
+[BUFFER1] is acting weird again.
+
+#org @sText_HoldingFood
+[BUFFER1] munches on something happily.
+
+#org @sText_ChecksHeldItem
+[BUFFER1] fiddles with its held item.
+
+#org @sText_LuxuryBallPride
+[BUFFER1] seems proud of its shiny ball.
+
+#org @sText_TryingToStandUpright
+[BUFFER1] tries walking like you.
+
+#org @sText_StompingAround
+[BUFFER1] stomps heavily as it walks.
+
+#org @sText_SkippingAlong
+[BUFFER1] is skipping cheerfully\nbeside you.
+
+#org @sText_SeemsDistracted
+[BUFFER1] seems to be thinking \nof its old Trainer.
+
+#org @sText_FlexesMuscles
+[BUFFER1] flexes confidently, \nshowing off its strength.
+
+#org @sText_EnjoyingSunlight
+[BUFFER1] is basking in sunlight!
+
+#org @sText_NighttimeEnergy
+[BUFFER1] is feeling energized from\nthe moonlight!
+
+#org @sText_MorningGreeting
+[BUFFER1] yawns[.] Sounds like it's\nsaying "Good morning"!

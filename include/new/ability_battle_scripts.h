@@ -146,3 +146,27 @@ extern const u8 gText_SlowStartEnd[];
 extern const u8 PrimalRainEndString[];
 extern const u8 PrimalSunEndString[];
 extern const u8 PrimalAirCurrentEndString[];
+extern const u8 gText_BeadsofRuin[];
+extern const u8 gText_TabletsofRuin[];
+extern const u8 gText_SwordofRuin[];
+extern const u8 gText_VesselofRuin[];
+extern const u8 gText_CostarActivate[];
+extern const u8 gText_GoodAsGoldActivate[];
+extern const u8 gText_GrassySurgeGrew[];
+extern const u8 gText_SupremeOverlordActivate[];
+extern const u8 gText_ZerotoHeroActivate[];
+
+//Gen 9 Ability Scripts
+extern const u8 BattleScript_AngerShellActivates[];
+extern const u8 BattleScript_CudChew[];
+extern const u8 BattleScript_ElectromorphosisActivates[];
+extern const u8 BattleScript_GuardDogActivates[];
+extern const u8 BattleScript_LingeringAromaActivates[];
+extern const u8 BattleScript_QuarkDriveActivates[];
+extern const u8 BattleScript_QuarkDriveActivates2[];
+extern const u8 BattleScript_ProtosynthesisActivates[];
+extern const u8 BattleScript_ProtosynthesisActivates2[];
+extern const u8 BattleScript_MoveEffectConfusion[];
+extern const u8 BattleScript_SetPuppetConfusion[];
+extern const u8 BattleScript_ToxicDebrisActivates[];
+extern const u8 BattleScript_ToxicDebrisFailure[];

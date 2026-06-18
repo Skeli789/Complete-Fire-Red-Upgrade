@@ -289,6 +289,15 @@ void __attribute__((long_call)) TextPrinterDrawDownArrow(struct TextPrinter *tex
 bool8 __attribute__((long_call)) TextPrinterWaitAutoMode(struct TextPrinter *textPrinter);
 bool16 __attribute__((long_call)) TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter);
 
+// Ported from pokeemerald. May or may not be correct.
+#define CHAR_LESS_THAN         0x85
+#define CHAR_GREATER_THAN      0x86
+#define CHAR_PERCENT           0x5B
+#define CHAR_LEFT_PAREN        0x5C
+#define CHAR_RIGHT_PAREN       0x5D
+
+u8 GetFontAttribute(u8 fontId, u8 attributeId);
+
 /*
 extern u8 gStringVar1[];
 extern u8 gStringVar2[];

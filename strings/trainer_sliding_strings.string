@@ -11,6 +11,9 @@ I now shall unleash the power\nof Dynamax!\p
 #org @gText_RedDynamaxMsg
 [.]!\p 
 
+#org @sText_RivalFirstMonHurt
+Yeah[.] We ain't letting this\none slide, buddy!\p
+
 //For Pokemon Unbound - Feel free to remove, and do not place strings below
 #ifdef UNBOUND
 

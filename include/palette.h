@@ -10,6 +10,21 @@
 #define PLTT_BUFFER_SIZE 0x200
 #define PLTT_DECOMP_BUFFER_SIZE (PLTT_BUFFER_SIZE * 2)
 
+#define PALETTES_BG      0x0000FFFF
+#define PALETTES_OBJECTS 0xFFFF0000
+#define PALETTES_ALL     (PALETTES_BG | PALETTES_OBJECTS)
+
+#define PLTT_SIZEOF(n) ((n) * sizeof(u16))
+#define PLTT_SIZE_4BPP PLTT_SIZEOF(16)
+#define PLTT_SIZE_8BPP PLTT_SIZEOF(256)
+
+#define PLTT_ID(n) ((n) * 16)
+#define BG_PLTT_OFFSET 0x000
+#define OBJ_PLTT_OFFSET 0x100
+#define BG_PLTT_ID(n) (BG_PLTT_OFFSET + PLTT_ID(n))
+#define OBJ_PLTT_ID(n) (OBJ_PLTT_OFFSET + PLTT_ID(n))
+#define OBJ_PLTT_ID2(n) (PLTT_ID((n) + 16))
+
 enum
 {
     NORMAL_FADE,
@@ -87,5 +102,6 @@ void __attribute__((long_call)) TintPalette_CustomTone(u16 *palette, u16 count, 
 void __attribute__((long_call)) sub_80716F8(const u16 *src, u16 *dst, u16 count, u8 a4);
 void __attribute__((long_call)) sub_80717A8(u32 a1, s8 a2, u8 a3, u8 a4, u16 a5, u8 a6, u8 a7);
 bool32 __attribute__((long_call)) sub_807185C(u8 var);
+void __attribute__((long_call)) SignalEndTitleScreenPaletteSomethingTask(void);
 
 // extern struct PaletteFadeControl gPaletteFade;

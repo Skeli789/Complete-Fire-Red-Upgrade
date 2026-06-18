@@ -36,7 +36,7 @@ wild_encounter.c
 */
 
 //Chain Fishing
-
+extern u8 GetCurrentLevelCap(void);
 #define NUM_TANOBY_CHAMBERS 7
 
 struct EncounterRate
@@ -53,10 +53,15 @@ extern const struct WildPokemonHeader* sSavedWildDataDaytimeHeader;
 extern u8 sSavedWildDataMapGroup;
 extern u8 sSavedWildDataMapNum;
 
+#ifdef IgnoreWildPokemon
+extern const u8 SystemScript_PokemonEncounter[];
+#endif
+
 extern struct EncounterRate sWildEncounterData;
 
 extern u8 sUnownLetterSlots[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 extern const struct WildPokemonHeader gWildMonMorningHeaders[];
+extern const struct WildPokemonHeader gWildMonDayHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
 extern const u8 gSwarmOrders[31][24];
@@ -93,8 +98,9 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	u8 rand;
 	u8 fluteBonus;
 
-	#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
-	if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
+	//#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
+	//if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
+	if(VarGet(VAR_WILD_LEVEL_SCALING) == 1)
 	{
 		min = max = GetLowestMonLevel(gPlayerParty);
 
@@ -105,7 +111,6 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 		#endif
 	}
 	else
-	#endif
 	//Make sure minimum level is less than maximum level
 	if (wildPokemon->maxLevel >= wildPokemon->minLevel)
 	{
@@ -139,6 +144,24 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 			else
 				min = 1;
 			break;
+	}
+	if(VarGet(VAR_WILD_LEVEL_SCALING) == 1)
+	{
+		u16 level = 0;
+		for (int i = 0; i < gPlayerPartyCount; i++) {
+			level += gPlayerParty[i].level;
+		}
+		level /= gPlayerPartyCount;
+		if(min <= level && max <= level) {
+			min = level - 6;
+			max = level - 7;
+		}
+		if (min < 1 || min > 100) {
+			min = 2;
+		}
+		if (max < 1 || max > 100) {
+			max = 3;
+		}
 	}
 
 	#ifdef FLAG_HARD_LEVEL_CAP
@@ -204,6 +227,8 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void)
 			headerTable = gWildMonMorningHeaders;
 		else if (IsEvening())
 			headerTable = gWildMonEveningHeaders;
+		else if (IsDayTime())
+			headerTable = gWildMonDayHeaders; //Daytime
 
 		if (headerTable != NULL) //Not Daytime
 		{
@@ -670,8 +695,33 @@ SKIP_INDEX_SEARCH:
 	else if (flags & WILD_CHECK_KEEN_EYE && !IsAbilityAllowingEncounter(level))
 		return FALSE;
 
-	else if (area != WILD_AREA_LAND || !TryGenerateSwarmMon(level, wildMonIndex, TRUE)) //Swarms can only appear on land
+	#ifdef IgnoreWildPokemon
+	else if (area != WILD_AREA_LAND || !TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+	{
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
+		if (FlagGet(FLAG_ENABLE_WILD_PMN_PREBATTLE_SCREEN))
+		{
+			Var8001 = wildMonInfo->wildPokemon[wildMonIndex].species;
+			Var8000 = 0x7500;
+			Var8002 = 0x030A;
+			Var8003 = 0xFF03;
+			Var8004 = 0x098;
+			FlagSet(FLAG_WILD_POKEMON_PREBATTLE_SCREEN);
+			ScriptContext1_SetupScript(SystemScript_PokemonEncounter); 
+			return FALSE;
+		} 
+		else
+  	{
+		   CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
+  	}
+	}
+	#else
+	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
+	{
+		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
+	}
+	#endif
+
 
 	#ifdef FLAG_DOUBLE_WILD_BATTLE
 	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))

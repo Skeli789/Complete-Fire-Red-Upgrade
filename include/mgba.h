@@ -28,17 +28,22 @@
 extern "C" {
 #endif
 
-#define MGBA_LOG_FATAL 0
-#define MGBA_LOG_ERROR 1
-#define MGBA_LOG_WARN 2
-#define MGBA_LOG_INFO 3
-#define MGBA_LOG_DEBUG 4
+#define MGBA_LOG_FATAL  (0)
+#define MGBA_LOG_ERROR  (1)
+#define MGBA_LOG_WARN   (2)
+#define MGBA_LOG_INFO   (3)
+#define MGBA_LOG_DEBUG  (4)
 
-void mgba_printf(int level, const char* string, ...);
-bool8 mgba_open(void);
-void mgba_close(void);
-void NoCashGBAPrint(const char *pBuf);
-void NoCashGBAPrintf(const char *pBuf, ...);
+#define MGBA_REG_DEBUG_MAX (256)
+
+void MgbaPrintf(s32 level, const char* string, ...);
+bool8 MgbaOpen(void);
+void MgbaClose(void);
+void MgbaAssert(const char *pFile, s32 nLine, const char *pExpression, bool32 nStopProgram);
+void MgbaPrintEncoded(s32 level, const char *encodedString);
+
+#define MGBA_ASSERT(exp) (exp) ? ((void*)0) : MgbaAssert(__FILE__, __LINE__, #exp, 1);
+#define MGBA_WARNING(exp) (exp) ? ((void*)0) : MgbaAssert(__FILE__, __LINE__, #exp, 0);
 
 #ifdef __cplusplus
 }

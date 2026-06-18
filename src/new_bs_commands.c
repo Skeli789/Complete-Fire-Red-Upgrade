@@ -24,6 +24,7 @@
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/util.h"
+#include "../include/new/terastallization.h"
 
 /*
 new_bs_commands.c
@@ -32,6 +33,9 @@ new_bs_commands.c
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
+
+// For Terastallization
+extern bool8 IsTerastallized(u8 bank);
 
 //callasm FUNCTION_OFFSET
 void atkF8_callasm(void)
@@ -311,6 +315,12 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
+		case Counters_GlaiveRush:
+			if (gNewBS->GlaiveRushTimers[bank])
+				gNewBS->GlaiveRushTimers[bank] = 0;
+			else
+				failed = TRUE;
+			break;
 		case Counters_Embargo:
 			if (gNewBS->EmbargoTimers[bank])
 				gNewBS->EmbargoTimers[bank] = 0;
@@ -543,6 +553,9 @@ void atkFF0E_setcounter(void)
 			break;
 		case Counters_ThroatChop:
 			gNewBS->ThroatChopTimers[bank] = amount;
+			break;
+		case Counters_GlaiveRush:
+			gNewBS->GlaiveRushTimers[bank] = amount;
 			break;
 		case Counters_Embargo:
 			gNewBS->EmbargoTimers[bank] = amount;
@@ -988,8 +1001,19 @@ void atkFE_prefaintmoveendeffects(void)
 						if (BankHasRainbow(gBankAttacker))
 							chance *= 2;
 
-						if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
+						if (ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
+						&& umodsi(Random(), 100) < chance
+						&& SpeciesHasToxicChain(SPECIES(gBankAttacker)))
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_ToxicChain;
+							effect = TRUE;
+						}
+						else if (CheckContact(gCurrentMove, gBankAttacker, gBankTarget)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_COVERT_CLOAK
 						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
 						&& umodsi(Random(), 100) < chance)
 						{
@@ -1056,6 +1080,37 @@ void atkFE_prefaintmoveendeffects(void)
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
+					effect = TRUE;
+					break;
+				}
+			}
+
+			if (gProtectStructs[gBankTarget].SilkTrapDamage)
+			{
+				gProtectStructs[gBankTarget].SilkTrapDamage = FALSE;
+
+				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_SPD))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SilkTrapStatDecrement;
+					effect = TRUE;
+					break;
+				}
+			}
+
+			if (gProtectStructs[gBankTarget].BurningBulwark_damage)
+			{
+				gProtectStructs[gBankTarget].BurningBulwark_damage = 0;
+
+				if (BATTLER_ALIVE(gBankAttacker) && CanBeBurned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+				{
+					gBattleMons[gBankAttacker].status1 = STATUS_BURN;
+					gEffectBank = gActiveBattler = gBankAttacker;
+					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+					MarkBufferBankForExecution(gActiveBattler);
+
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BurningBulwark;
 					effect = TRUE;
 					break;
 				}
@@ -1288,7 +1343,8 @@ void atkFF27_tryactivateprotean(void)
 	&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
-	&& !gSpecialMoveFlags[gCurrentMove].gMovesThatCallOtherMoves)
+	&& !gSpecialMoveFlags[gCurrentMove].gMovesThatCallOtherMoves
+	&& !IsTerastallized(gBankAttacker))
 	{
 		if (gBattleMons[gBankAttacker].type1 != moveType
 		||  gBattleMons[gBankAttacker].type2 != moveType

@@ -848,7 +848,8 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 				{
 					if (!IsClearBodyAbility(defAbility)
 					&& defAbility != ABILITY_CONTRARY
-					&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED))
+					&& AI_STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED)
+					&& ITEM_EFFECT(bankDef) != ITEM_EFFECT_CLEAR_AMULET)
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
 				}
 			}
@@ -1263,6 +1264,24 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 							break;
 						}
 					}
+					goto PROTECT_CHECKS;
+
+				case MOVE_BURNINGBULWARK:
+					if (predictedMove != MOVE_NONE 
+					 && CheckContact(predictedMove, bankDef, bankAtk) //Enemy will hit with a contact move
+					 && CanBeBurned(bankDef, bankAtk, TRUE))
+					{
+						if (IsClassStall(class))
+						{
+							INCREASE_VIABILITY(8);
+							break;
+						}
+						else if (IS_DOUBLE_BATTLE)
+						{
+							INCREASE_VIABILITY(19);
+							break;
+						}
+					}	
 					//Fallthrough
 
 				default:
@@ -1656,6 +1675,7 @@ u8 AIScript_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			 || MoveEffectInMoveset(EFFECT_THUNDER, bankDef)
 			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
 			 || MoveInMoveset(MOVE_GROWTH, bankAtk)
+			 || MoveInMoveset(MOVE_HYDROSTEAM, bankAtk)
 			 || MoveTypeInMoveset(bankAtk, TYPE_FIRE)
 			 || MoveTypeInMoveset(bankDef, TYPE_WATER)
 			 || data->atkItemEffect == ITEM_EFFECT_HEAT_ROCK))

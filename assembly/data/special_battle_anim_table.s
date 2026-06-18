@@ -98,6 +98,13 @@ gBattleAnims_General:
 .word ANIM_AI_ITEM_HEAL
 .word ANIM_HOOPA_RING_SPAWN
 .word ANIM_SPLINTER_DAMAGE
+.word ANIM_SUBSTITUTE2
+.word ANIM_CHARGE2
+.word ANIM_TOXICSPIKES2
+.word ANIM_TERASTAL
+.word ANIM_STEALTHROCK2
+.word ANIM_SPIKES2
+.word ANIM_FROSTBITE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1164,6 +1171,44 @@ SPLINTER: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 gDum
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+ANIM_SUBSTITUTE2:
+	goto 0x81d3433		@MOVE_SUBSTITUTE
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_CHARGE2:
+	goto 0x81cb970 @Charge
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TOXICSPIKES2:
+	loadparticle ANIM_TAG_POISON_BUBBLE @Poison Bubbles
+	loadparticle ANIM_TAG_SPIKES @Spikes
+	loadparticle ANIM_TAG_SHADOW_BALL @Purple Colour
+	pokespritetoBG side_target
+	playsound2 0x88 SOUND_PAN_ATTACKER
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0x0 0x18 0x1e
+	pause 0xa
+	playsound2 0x88 SOUND_PAN_ATTACKER
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0xffe8 0x18 0x1e
+	pause 0xa
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
+	launchtemplate TSPIKES TEMPLATE_TARGET | 2, 0x5 0x14 0x0 0x18 0x18 0x1e
+	waitanimation
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER 0x0 0x4 0x0 0xc 0x681a
+	call POISON_BUBBLES
+	pokespritefromBG side_target
+	endanimation
+
+.align 2
+TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL OAM_OFF_16x16 gDummySpriteAnimTable 0x0 gDummySpriteAffineAnimTable 0x80DE8B1
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 .global ANIM_FROSTBITE
 ANIM_FROSTBITE:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @Ice
@@ -1182,6 +1227,68 @@ ANIM_FROSTBITE:
 	waitanimation 
 	endanimation
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Credits to grilokapu (André Freitas)
+.pool
+ANIM_TERASTAL:
+	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
+	loadparticle ANIM_TAG_TERA_SYMBOL
+	loadparticle ANIM_TAG_WHIP_HIT @green color
+	loadparticle ANIM_TAG_SWEAT_BEAD @blue color
+	loadparticle ANIM_TAG_PAW_PRINT @yellow color
+	loadparticle ANIM_TAG_TERA_CRYSTAL
+	pokespritetoBG bank_attacker
+	setblends 0x80c
+	playsound2 0xC2 SOUND_PAN_ATTACKER
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x76BC
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	waitanimation
+	playsound2 130 SOUND_PAN_ATTACKER
+	launchtemplate TERA_CRYSTAL 0x29 0x4 0x0 0x0 0x0 0x0
+	pause 0x14
+	launchtask AnimTask_BlendExcept 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff
+	launchtask AnimTask_BlendParticle 0x5 0x5 ANIM_TAG_TERA_CRYSTAL 0x4 0x0 0x10 0x7fff
+	waitanimation @;Wait until screen is white
+	call PRIMAL_REVERSION_FADE_IN
+	resetblends
+	pokespritefromBG side_attacker
+	launchtask AnimTask_FadeOutParticles 0x2 0x1 2
+	launchtemplate TERASYMBOL TEMPLATE_ATTACKER | TEMPLATE_ABOVE, 0x3, 0, 3, bank_attacker
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	playsound2 191 0xc0
+	waitanimation
+	endanimation
+
+.align 2
+TERASYMBOL: objtemplate ANIM_TAG_TERA_SYMBOL ANIM_TAG_TERA_SYMBOL OAM_DOUBLE_BLEND_32x32 gDummySpriteAnimTable 0x0 gSpriteAffineAnimTable_PrimalSymbol SpriteCB_AnimSpriteOnSelectedMonPos
+TERA_CRYSTAL: objtemplate ANIM_TAG_TERA_CRYSTAL ANIM_TAG_TERA_CRYSTAL OAM_DOUBLE_64x64 gDummySpriteAnimTable 0x0 0x83E7144 0x8075D9D
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_STEALTHROCK2:
+	loadparticle ANIM_TAG_STEALTH_ROCK
+	playsound2 0x7C SOUND_PAN_TARGET
+	launchtemplate STEALTH_ROCKS2 TEMPLATE_TARGET | 2, 0x6 0xf 0x0 0x0 0x18 0x23 0xffe0
+	pause 0x8
+	launchtemplate STEALTH_ROCKS2 TEMPLATE_TARGET | 2, 0x6 0xf 0x0 0xfff0 0x18 0x23 0xffd8
+	pause 0x8
+	launchtemplate STEALTH_ROCKS2 TEMPLATE_TARGET | 2, 0x6 0xf 0x0 0x10 0x18 0x23 0xffdb
+	pause 0xc
+	soundcomplex 0xa0 SOUND_PAN_TARGET 0xa 0x8
+	waitanimation
+	endanimation
+
+.align 2
+STEALTH_ROCKS2: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x83E2B2C 0x0 gDummySpriteAffineAnimTable 0x80A26F1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+	ANIM_SPIKES2:
+		goto 0x81cf503
+		
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 .align 2

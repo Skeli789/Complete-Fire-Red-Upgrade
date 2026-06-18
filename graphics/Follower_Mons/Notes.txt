@@ -1,0 +1,4 @@
+Add sprites here with format : gFollowerMonPic(NationalDexNumber)_(PokemonName).png
+the tutorial at wiki is totally correct,
+Just now as CFRU doesn't compile over 1000 sprites, we're using sprite compiled data using DPE.
+So do not think Follower Pokemon sprites aren't there. 

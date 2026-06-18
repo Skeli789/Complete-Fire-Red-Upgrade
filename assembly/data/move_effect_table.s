@@ -262,7 +262,7 @@ gBattleScriptsForMoveEffects:
 .word BS_244_Teatime
 .word BS_245_Poltergeist
 .word BS_246_SkyDrop
-.word BS_247_Blank
+.word BS_247_Glaive_Rush
 .word BS_248_Blank
 .word BS_249_Blank
 .word BS_250_Blank

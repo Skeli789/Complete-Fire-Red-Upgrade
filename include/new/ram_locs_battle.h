@@ -59,7 +59,7 @@
 ///*u16*/ #define gLastUsedItem (*((u16*) 0x2023D68))
 ///*u8*/  #define gLastUsedAbility (*((u8*) 0x2023D6A))
 ///*u8*/	#define gBankAttacker (*((u8*) 0x2023D6B))
-///*u8*/  #define gBattlerAttacker (*((u8*) 0x2023D6B))
+extern u8 gBattlerAttacker;
 ///*u8*/	#define gBankTarget (*((u8*) 0x2023D6C))
 ///*u8*/  #define gBattlerTarget (*((u8*) 0x2023D6C))
 ///*u8*/  #define gBank1 (*((u8*) 0x2023D6D))

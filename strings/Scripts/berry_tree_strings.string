@@ -1,0 +1,36 @@
+
+#org @gText_Berry_Received
+[PLAYER] found [BUFFER1] [BUFFER2]!
+
+#org @gText_Berry_Returned
+The soil returned to it's soft and\nloamy state.
+
+#org @gText_None_Planted
+The soil is soft here[.]\nPlant a berry?
+
+#org @gText_Added_Berry
+You planted a [BUFFER1] here.
+
+#org @gText_New_Plant
+A [BUFFER1] was planted here.
+
+#org @gText_Watered_Already
+It's been watered already.
+
+#org @gText_Berry_Sprouted
+The [BUFFER1] has sprouted.
+
+#org @gText_Berry_Is_Tall
+The [BUFFER1] plant\nis growing bigger.
+
+#org @gText_Berry_Bloom
+The [BUFFER1] plant is in bloom!
+
+#org @gText_Berry_Want_Water
+The plant can use some water[.]\nWould you like to water it?
+
+#org @gText_Berry_Finished_Watering
+You finished watering!
+
+#org @gText_Berry_WrongItem
+Silly child[.]\nYou can't plant that

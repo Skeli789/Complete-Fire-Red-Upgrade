@@ -129,6 +129,9 @@ ACCURACY_CHECK_START:
 						if (atkItemEffect == ITEM_EFFECT_BLUNDER_POLICY)
 							gNewBS->activateBlunderPolicy = TRUE;
 
+						if (gCurrentMove == MOVE_TEMPERFLARE)
+							gNewBS->activateTemperFlare = TRUE;
+
 						if (gCurrentMove == MOVE_DRAGONDARTS
 						&& !recalculatedDragonDarts //So don't jump back and forth between targets
 						&& CanTargetPartner(bankDef)
@@ -196,6 +199,9 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		protectFlag = FALSE;
 	#endif
 
+	if (protectFlag && move == MOVE_HYPERDRILL)
+		protectFlag = FALSE;
+
 	if (ProtectedByMaxGuard(bankDef, move))
 	{
 		effect = 1;
@@ -243,6 +249,26 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 		if (contact && set)
 		{
 			gProtectStructs[bankDef].obstructDamage = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
+	else if (gProtectStructs[bankDef].SilkTrap && protectFlag)
+	{
+		effect = 1;
+		gNewBS->missStringId[bankDef] = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankDef].SilkTrapDamage = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
+	else if (gProtectStructs[bankDef].BurningBulwark && protectFlag)
+	{
+		effect = 1;
+		gNewBS->missStringId[bankDef] = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankDef].BurningBulwark_damage = 1;
 			gBattleCommunication[6] = 1;
 		}
 	}
@@ -299,8 +325,10 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 			case MOVE_PROTECT:
 			case MOVE_SPIKYSHIELD:
 			case MOVE_BANEFULBUNKER:
+			case MOVE_BURNINGBULWARK:
 				return protectFlag != 0;
 
+			case MOVE_SILKTRAP:
 			case MOVE_KINGSSHIELD:
 			case MOVE_OBSTRUCT:
 				return protectFlag && split != SPLIT_STATUS;
@@ -361,7 +389,9 @@ static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
 	||   (move == MOVE_TOXIC && IsOfType(gBankAttacker, TYPE_POISON))
 	||   (gSpecialMoveFlags[move].gAlwaysHitWhenMinimizedMoves && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	||  ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
-	||	 gBattleMoves[move].accuracy == 0)
+	||	 gBattleMoves[move].accuracy == 0
+	||  (gStatuses3[bankDef] & STATUS3_GLAIVERUSH)
+	||  (move == MOVE_TACHYONCUTTER))
 	{
 		//JumpIfMoveFailed(7, move);
 		doneStatus = TRUE;
@@ -400,6 +430,8 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 
 	u8 acc;
 	if (defAbility == ABILITY_UNAWARE)
+		acc = 6;
+	else if (defAbility == ABILITY_MINDSEYE && SpeciesHasMindsEye(SPECIES(bankDef)))
 		acc = 6;
 	else
 		acc = STAT_STAGE(bankAtk, STAT_STAGE_ACC);

@@ -1,0 +1,29 @@
+#org @gText_ViridianCity_BattleStart
+Let's battle!
+
+#org @gText_ViridianCity_BattleEnd
+Aw, shucks!
+
+#org @gText_ViridianCity_BattleOver
+You beat me!
+
+#org @gText_Initial
+Hi[.]
+
+#org @gText_Lose
+I lost[.]
+
+#org @gText_Later
+Hello[.]
+
+#org @gText_ViridianCity_OldMan_IVChangeAsk
+Hi there! Would you like me\nto change your Pok\emon's IVs?
+
+#org @gText_ViridianCity_OldMan_No
+I see[.]\pPlease come again later!
+
+#org @gText_ViridianCity_OldMan_OpenMenu
+Which Pok\emon's IVs should I change?
+
+#org @gText_ViridianCity_OldMan_Done
+IVs have been set to max!

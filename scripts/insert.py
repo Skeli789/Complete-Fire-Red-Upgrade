@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 import _io
 
-OFFSET_TO_PUT = 0x900000
+OFFSET_TO_PUT = 0x1000000
 SOURCE_ROM = "BPRE0.gba"
 ROM_NAME = "test.gba"
 
@@ -48,6 +48,7 @@ EVENT_SCRIPTS = "eventscripts"
 SONGS = "songs"
 SPECIAL_INSERTS = 'special_inserts.asm'
 SPECIAL_INSERTS_OUT = 'build/special_inserts.bin'
+FREE_BYTE_REPLACEMENTS = 'free_bytereplacements'
 
 
 def ExtractPointer(byteList: [bytes]):
@@ -402,6 +403,41 @@ def main():
                             word = ExtractPointer(binFile.read(4))
 
                     ReplaceBytes(rom, originalOffset, dataList.strip())
+                # Insert free byte replacements
+
+
+        if os.path.isfile(FREE_BYTE_REPLACEMENTS):
+
+
+            FREE_BYTE_SEARCH_START = 0x900000  # Adjust to your preferred free space startMore actions
+            MINIMUM_FREE_LENGTH = 0x100        # Minimum space to be considered free
+
+            def FindFreeSpace(rom: _io.BufferedReader, length: int, start: int = FREE_BYTE_SEARCH_START) -> int:
+                rom.seek(start)
+                data = rom.read()
+                index = 0
+                while index + length <= len(data):
+                    chunk = data[index:index+length]
+                    if all(b in (0x00, 0xFF) for b in chunk):
+                        return start + index
+                    index += 4
+                raise Exception(f"No free space found for {length} bytes.")
+
+            with open('free_bytereplacements', 'r') as file:
+                for line in file:
+                    if line.strip().startswith('#') or line.strip() == '':
+                        continue
+                    try:
+                        label, *hexbytes = line.strip().split()
+                        byte_data = bytes([int(x, 16) for x in hexbytes])
+                        insert_len = max(len(byte_data), MINIMUM_FREE_LENGTH)
+                        insert_at = FindFreeSpace(rom, insert_len)
+                        rom.seek(insert_at)
+                        rom.write(byte_data)
+                        table[label] = insert_at  # Add to symbol table
+                    except Exception as e:
+                        print(f"Error processing line: {line.strip()}")
+                        print(e)
 
         # Insert byte changes
         if os.path.isfile(BYTE_REPLACEMENT):
@@ -428,6 +464,7 @@ def main():
 
                         newNumber = str(hex(newNumber)).split('0x')[1]
                         ReplaceBytes(rom, offset, newNumber) 
+
 
         # Read hooks from a file
         if os.path.isfile(HOOKS):

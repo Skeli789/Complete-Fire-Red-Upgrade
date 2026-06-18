@@ -215,7 +215,8 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 			case ABILITY_VOLTABSORB:
 			case ABILITY_MOTORDRIVE:
 			case ABILITY_LIGHTNINGROD:
-				if (moveType == TYPE_ELECTRIC) // && (moveSplit != SPLIT_STATUS))
+				if ((moveType == TYPE_ELECTRIC && !SpeciesHasEarthEater(SPECIES(gBankTarget)))
+				|| (moveType == TYPE_GROUND && SpeciesHasEarthEater(SPECIES(gBankTarget))))		 // && (moveSplit != SPLIT_STATUS))
 				{
 					if (!TARGETING_PARTNER) //Good idea to attack partner
 					{
@@ -330,6 +331,14 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 
 			case ABILITY_BULLETPROOF:
 				if (specialMoveFlags->gBallBombMoves)
+				{
+					DECREASE_VIABILITY(10);
+					return viability;
+				}
+				break;
+				
+			case ABILITY_ANGERPOINT:
+				if (specialMoveFlags->gWindMoves && SpeciesHasWindRider(SPECIES(bankDef)))
 				{
 					DECREASE_VIABILITY(10);
 					return viability;
@@ -597,6 +606,16 @@ u8 AIScript_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove
 						break;
 				}
 			}
+
+			if (ITEM_EFFECT(bankDef) == ITEM_EFFECT_CLEAR_AMULET)
+			{
+				if (CheckTableForMovesEffect(move, gStatLoweringMoveEffects)
+					|| move == MOVE_PARTINGSHOT)
+					{
+						DECREASE_VIABILITY(10);
+						return viability;
+					}
+			}
 		}
 	}
 
@@ -728,8 +747,10 @@ SKIP_CHECK_TARGET:
 	//Primal Weather Check
 	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && moveSplit != SPLIT_STATUS && WEATHER_HAS_EFFECT)
 	{
-		DECREASE_VIABILITY(20);
-		return viability;
+		if(move != MOVE_HYDROSTEAM) {
+			DECREASE_VIABILITY(20);
+			return viability;
+		}
 	}
 	else if (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE && moveSplit != SPLIT_STATUS && WEATHER_HAS_EFFECT)
 	{
@@ -1448,6 +1469,20 @@ SKIP_CHECK_TARGET:
 				//Check first move type
 				if (IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type))
 					DECREASE_VIABILITY(10);
+			}
+			break;
+
+		case EFFECT_FLINCH_HIT:
+			switch(move) {
+				case MOVE_UPPERHAND:
+					if(!PriorityMoveInMovesetRange(bankDef, 1, 3))
+						DECREASE_VIABILITY(10); //Upper Hand can only be used against moves with priorities between 1-3
+					else if (Random() % 100 < 50) //Abusing AI with Upper Hand is easy, so only use 50% of the time
+						DECREASE_VIABILITY(8);
+					break;
+
+				default:
+					goto AI_STANDARD_DAMAGE;
 			}
 			break;
 
@@ -3210,6 +3245,8 @@ SKIP_CHECK_TARGET:
 		case EFFECT_LAST_RESORT:
 			if (!CanUseLastResort(bankAtk))
 				DECREASE_VIABILITY(10);
+			else if (gLastUsedMoves[bankAtk] == MOVE_GIGATONHAMMER || gLastUsedMoves[bankAtk] == MOVE_BLOODMOON)
+                DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;

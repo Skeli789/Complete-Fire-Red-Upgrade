@@ -8,6 +8,7 @@
 #include "../include/script_menu.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
+#include "../include/global.h"
 
 #include "../include/new/mega.h"
 
@@ -449,4 +450,48 @@ void ReshowPCMenuAfterHallOfFamePC(void)
 	gWeatherPtr->readyForInit = TRUE; //Fixes start menu bug
 	FadeScreen(FADE_FROM_BLACK, 0);
 	CreateTask(Task_HOFPCWaitForPaletteFade, 10);
+}
+
+extern const u8 gText_WelcomeToHOF[];
+extern const u8 gText_Normal[];
+extern const u8 gText_Easy[];
+extern const u8 gText_Hard[];
+extern const u8 gText_Expert[];
+
+static const u8 sTextColors[][4] = {
+    { 0, 1, 2 },
+    { 0, 2, 3 },
+    { 4, 5, 0 }
+};
+
+void HallOfFame_PrintWelcomeText(unusedArg u8 not, unusedArg u8 used)
+{
+    u8 x1 = (0xd0 - GetStringWidth(2, gText_WelcomeToHOF, 0)) / 2;
+    FillWindowPixelBuffer(0, PIXEL_FILL(0));
+    PutWindowTilemap(0);
+    AddTextPrinterParameterized3(0, 2, x1, 1, sTextColors[0], 0, gText_WelcomeToHOF);
+
+	#ifdef VAR_GAME_DIFFICULTY
+		const u8* difficultyText = NULL;
+		switch (VarGet(VAR_GAME_DIFFICULTY)) {
+			case OPTIONS_EASY_DIFFICULTY:
+				difficultyText = gText_Easy;
+				break;
+			case OPTIONS_NORMAL_DIFFICULTY:
+				difficultyText = gText_Normal;
+				break;
+			case OPTIONS_HARD_DIFFICULTY:
+				difficultyText = gText_Hard;
+				break;
+			case OPTIONS_EXPERT_DIFFICULTY:
+			default:
+				difficultyText = gText_Expert;
+				break;
+		}
+
+		u8 x2 = (0xd0 - GetStringWidth(2, difficultyText, 0)) / 2;
+		x2 += 4;
+		AddTextPrinterParameterized3(0, 2, x2, 16, sTextColors[0], 0, difficultyText);
+	#endif
+    CopyWindowToVram(0, 3);
 }

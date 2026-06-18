@@ -147,6 +147,7 @@ bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit);
 bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations);
 bool8 SpecialMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations);
 bool8 PriorityMoveInMoveset(u8 bank);
+bool8 PriorityMoveInMovesetRange(u8 bank, u8 lowValue, u8 highValue);
 bool8 DamagingPriorityMoveInMovesetThatAffects(u8 bankAtk, u8 bankDef);
 bool8 MagicCoatableMovesInMoveset(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType);

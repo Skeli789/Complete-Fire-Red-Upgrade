@@ -19,7 +19,7 @@ bool8 IsBagDisabled(void);
 void InitMoveSelectionsVarsAndStrings(void);
 void MoveSelectionDisplayMoveEffectiveness(void);
 void HandleInputChooseMove(void);
-void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState, u8 dynamaxState);
+void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState, u8 dynamaxState, u8 teraState); // For Terastallization
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct* movePpData);
 void HandleMoveSwitchingUpdate(void);
 u8 TrySetCantSelectMoveBattleScript(void);

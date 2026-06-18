@@ -673,8 +673,8 @@ RemoveCaughtMonPokedex151Limiter:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove LR Change Bag Pockets
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x109182, 0xFF
-	mov r0, #0x0
+@ .org 0x109182, 0xFF
+@ 	mov r0, #0x0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove TM Animation
